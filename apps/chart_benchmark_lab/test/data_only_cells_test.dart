@@ -37,13 +37,14 @@ void main() {
       testWidgets('chartjs ${type.name} ${full ? 'full' : 'plain'}: the path '
           'of a tick of new data', (tester) async {
         var layouts = 0;
-        final spy = <String, Object?>{
-          'id': r'$dataOnlyCells',
-          'supportsDataUpdates': true,
-          'beforeLayout': (Object? chart, Object? args, Object? options) {
+        final spy = cj.Plugin<Object?>(
+          id: r'$dataOnlyCells',
+          supportsDataUpdates: true,
+          beforeLayout: (chart, args, options) {
             layouts++;
+            return true;
           },
-        };
+        );
         cj.Chart.register([spy]);
         addTearDown(() => cj.Chart.unregister([spy]));
 

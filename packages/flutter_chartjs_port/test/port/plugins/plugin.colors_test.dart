@@ -204,10 +204,12 @@ void main() {
   });
 
   group('plugin object', () {
-    test('has the keys of plugin.colors.ts:94-126 in order', () {
-      expect(jsObjectKeys(colors), ['id', 'defaults', 'beforeLayout']);
-      expect(colors['id'], 'colors');
-      expect(_plain(colors['defaults']), <String, Object?>{
+    test('has the keys of plugin.colors.ts:94-126', () {
+      // The native plugin of Chart.js ADR 0144: the upstream keys are `id`,
+      // `defaults` and the hook `beforeLayout`.
+      expect(pluginHookNames(colors), ['beforeLayout']);
+      expect(colors.id, 'colors');
+      expect(_plain(colors.defaults), <String, Object?>{
         'enabled': true,
         'forceOverride': false,
       });

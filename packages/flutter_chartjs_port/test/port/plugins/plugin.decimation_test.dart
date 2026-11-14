@@ -185,15 +185,14 @@ void main() {
   });
 
   group('plugin object', () {
-    test('has the keys of plugin.decimation.js:197-287 in order', () {
-      expect(jsObjectKeys(decimation), [
-        'id',
-        'defaults',
-        'beforeElementsUpdate',
-        'destroy',
-      ]);
-      expect(decimation['id'], 'decimation');
-      expect(_plain(decimation['defaults']), <String, Object?>{
+    test('has the keys of plugin.decimation.js:197-287', () {
+      // The native plugin of Chart.js ADR 0144: the upstream keys are `id`,
+      // `defaults`, `beforeElementsUpdate` and `destroy`. `destroy` is no
+      // hook of the `Plugin` interface (`index.d.ts:856`), so no chart calls
+      // it, and the native plugin has no field for it.
+      expect(pluginHookNames(decimation), ['beforeElementsUpdate']);
+      expect(decimation.id, 'decimation');
+      expect(_plain(decimation.defaults), <String, Object?>{
         'algorithm': const MinMaxDecimationAlgorithm(),
         'enabled': false,
       });

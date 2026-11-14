@@ -133,14 +133,13 @@ Object? _targets(Chart chart) {
   ];
 }
 
-/// The keys of the default export of index.js:12-97, in their order.
-const List<String> _upstreamKeys = [
-  'id',
+/// The hook keys of the default export of index.js:12-97, in the order of
+/// `PluginHook`. Its other keys are `id` and `defaults`.
+const List<String> _upstreamHooks = [
   'afterDatasetsUpdate',
   'beforeDraw',
   'beforeDatasetsDraw',
   'beforeDatasetDraw',
-  'defaults',
 ];
 
 void main() {
@@ -229,12 +228,17 @@ void main() {
   });
 
   group('plugin object', () {
-    test('the keys of the plugin object are the upstream keys', () {
-      expect(jsObjectKeys(filler), _upstreamKeys);
+    test('the plugin has the hooks and the keys of the upstream object', () {
+      // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
+      // object are its hooks, and `id` and `defaults` its fields.
+      expect(pluginHookNames(filler), _upstreamHooks);
+      expect(filler.id, 'filler');
+      expect(filler.defaultRoutes, isNull);
+      expect(filler.descriptors, isNull);
     });
 
     test('the defaults are the upstream defaults (index.js:93-96)', () {
-      final defaults = filler['defaults']! as JsObjectFace;
+      final defaults = filler.defaults! as JsObjectFace;
       expect(jsObjectKeys(defaults), ['propagate', 'drawTime']);
       expect(defaults['propagate'], isTrue);
       expect(defaults['drawTime'], FillerDrawTime.beforeDatasetDraw);

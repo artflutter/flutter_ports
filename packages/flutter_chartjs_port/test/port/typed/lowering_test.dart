@@ -2596,7 +2596,7 @@ void main() {
     });
 
     test('the inline plugins go by reference', () {
-      final plugin = <String, Object?>{'id': 'p'};
+      final plugin = Plugin<Object?>(id: 'p');
       final plugins = [plugin];
       final lowered = ChartConfigLowering(
         ChartConfig(type: .line, datasets: const [], plugins: plugins),

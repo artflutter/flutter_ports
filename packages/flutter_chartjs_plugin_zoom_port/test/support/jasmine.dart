@@ -12,6 +12,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show JsObjectFace, Plugin, undefined;
 import 'package:flutter_chartjs_port/js_semantics.dart'
@@ -80,16 +82,21 @@ final class SpyStrategy._(final Spy _spy) {
 /// `jasmine.createSpy(name)`.
 Spy createSpy([String name = 'unknown']) => Spy(name);
 
-/// `spyOn(plugin, hook)`: replaces the [hook] of [plugin] with a spy, with
-/// no call-through, and puts back the hook at the end of the test.
+/// `spyOn(plugin, 'beforeUpdate')`: replaces the hook `beforeUpdate` of
+/// [plugin] with a spy, with no call-through, and puts back the hook at the
+/// end of the test.
 ///
-/// The spy is written through the face of the typed plugin (`jsWrite`), as a
-/// JavaScript spy replaces the property.
-Spy spyOnHook(Plugin plugin, String hook) {
-  final previous = plugin.jsRead(hook);
-  final spy = Spy(hook);
-  plugin.jsWrite(hook, spy.call);
-  addTearDown(() => plugin.jsWrite(hook, previous));
+/// The spy is written into the hook field of the native plugin (Chart.js ADR
+/// 0126), as a JavaScript spy replaces the property. The hook continues the
+/// update, as the `undefined` result of a JavaScript spy does.
+Spy spyOnBeforeUpdate(Plugin<ZoomPluginOptions> plugin) {
+  final previous = plugin.beforeUpdate;
+  final spy = Spy('beforeUpdate');
+  plugin.beforeUpdate = (chart, args, options) {
+    spy(chart, args, options);
+    return true;
+  };
+  addTearDown(() => plugin.beforeUpdate = previous);
   return spy;
 }
 

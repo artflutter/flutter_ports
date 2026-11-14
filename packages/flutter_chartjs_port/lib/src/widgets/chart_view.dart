@@ -45,6 +45,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show Opt, OptionKey;
@@ -57,7 +59,7 @@ import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartConfig;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
@@ -450,7 +452,7 @@ class _ChartViewState() extends State<ChartView> {
   );
 
   /// The inline plugin of the widget, last in the root `plugins`.
-  late final AnyObject _viewPlugin = createChartViewPlugin(
+  late final Plugin<OptionView> _viewPlugin = createChartViewPlugin(
     _themeSwitch,
     _keyboard,
   );

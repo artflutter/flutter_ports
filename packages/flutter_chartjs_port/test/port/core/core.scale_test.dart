@@ -28,6 +28,7 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, ScaleValuePosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginHook;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -163,8 +164,8 @@ final class _Chart(Map<String, Object?> spec) implements types.Chart {
   ContextObject? _context;
 
   @override
-  bool notifyPlugins(String hook, [Object? args]) {
-    _log.add('notify:$hook:${jsGet(args, 'type')}');
+  bool notifyPlugins<A extends Object>(PluginHook<A> hook, [A? args]) {
+    _log.add('notify:${hook.jsName}:${jsGet(args, 'type')}');
     return true;
   }
 

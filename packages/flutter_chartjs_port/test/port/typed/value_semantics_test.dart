@@ -472,32 +472,26 @@ void main() {
         ChartConfig(
           type: .bar,
           datasets: const [],
-          plugins: _runtime([<String, Object?>{}]),
+          plugins: _runtime([Plugin<Object?>(id: 'p')]),
         ),
         isNot(
           ChartConfig(
             type: .bar,
             datasets: const [],
-            plugins: _runtime([<String, Object?>{}]),
+            plugins: _runtime([Plugin<Object?>(id: 'p')]),
           ),
         ),
       );
     });
 
     test('the plugins compare by the identity of their items', () {
-      final plugin = <String, Object?>{'id': 'p'};
-      ChartConfig config(List<Map<String, Object?>> plugins) =>
+      final plugin = Plugin<Object?>(id: 'p');
+      ChartConfig config(List<Plugin<Object?>> plugins) =>
           ChartConfig(type: .bar, datasets: const [], plugins: plugins);
       _expectEqual(config(_runtime([plugin])), config(_runtime([plugin])));
       expect(
         config(_runtime([plugin])),
-        isNot(
-          config(
-            _runtime([
-              <String, Object?>{'id': 'p'},
-            ]),
-          ),
-        ),
+        isNot(config(_runtime([Plugin<Object?>(id: 'p')]))),
       );
       expect(
         config(_runtime([plugin])),

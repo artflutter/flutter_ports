@@ -17,7 +17,7 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 import '../../fixture_events.dart';
 
@@ -100,8 +100,10 @@ Map<String, Object?> fixture() {
         'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},
       },
       'plugins': <Object?>[
-        <String, Object?>{
-          'beforeDatasetsUpdate': (types.Chart chart) {
+        // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
+        Plugin<Object?>(
+          id: 'inline',
+          beforeDatasetsUpdate: (chart, _, _) {
             gradient ??= const ChartGradient.linear(
               native_ui.Offset.zero,
               native_ui.Offset(512, 256),
@@ -115,7 +117,7 @@ Map<String, Object?> fixture() {
 
             return true;
           },
-          'afterDraw': (types.Chart chart) {
+          afterDraw: (chart, _, _) {
             // var canvas = chart.canvas;
             // var rect = canvas.getBoundingClientRect();
             for (var i = 0; i < 3; ++i) {
@@ -131,7 +133,7 @@ Map<String, Object?> fixture() {
               }
             }
           },
-        },
+        ),
       ],
     },
     'options': <String, Object?>{

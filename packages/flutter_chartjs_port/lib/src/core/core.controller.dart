@@ -110,11 +110,11 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, LayoutItem, LayoutItemConfigure, LayoutLayer;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show
-        CancelableHookArgs,
         DatasetDrawHookArgs,
         DatasetUpdateHookArgs,
         EventHookArgs,
-        Plugin,
+        PluginHook,
+        PluginHookArgs,
         ResizeHookArgs,
         UpdateHookArgs;
 import 'package:flutter_chartjs_port/src/upstream.dart'
@@ -198,7 +198,7 @@ void _onAnimationsComplete(AnimationEvent context) {
   final chart = context.chart;
   final animationOptions = readOption(chart.options, OptionKey.animation);
 
-  chart.notifyPlugins('afterRender');
+  chart.notifyPlugins(PluginHook.afterRender);
   // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
   _animationCallback(animationOptions, OptionKey.onComplete)?.call(context);
 }
@@ -847,7 +847,7 @@ class Chart(
   /// @private
   Chart _initialize() {
     // Before init plugin notification
-    notifyPlugins('beforeInit');
+    notifyPlugins(PluginHook.beforeInit);
 
     final options = _options;
     if (jsTruthy(options.readKey(OptionKey.responsive))) {
@@ -862,7 +862,7 @@ class Chart(
     bindEvents();
 
     // After init plugin notification
-    notifyPlugins('afterInit');
+    notifyPlugins(PluginHook.afterInit);
 
     // The upstream method returns this.
     // ignore: avoid_returning_this
@@ -939,7 +939,7 @@ class Chart(
     }
 
     // DIVERGES(chartjs): adapt-typed-plugins, the typed hook arguments.
-    notifyPlugins('resize', ResizeHookArgs(size: newSize));
+    notifyPlugins(PluginHook.resize, ResizeHookArgs(size: newSize));
 
     // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
     functionOption<ChartResizeHandler>(
@@ -1201,7 +1201,7 @@ class Chart(
   void reset() {
     _invalidateDataUpdate();
     _resetElements();
-    notifyPlugins('reset');
+    notifyPlugins(PluginHook.reset);
   }
 
   /// core.controller.js:475 `update(mode)`.
@@ -1243,10 +1243,7 @@ class Chart(
     // https://github.com/chartjs/Chart.js/issues/5111#issuecomment-355934167
     plugins.invalidate();
 
-    if (notifyPlugins(
-          'beforeUpdate',
-          UpdateHookArgs(mode: mode, cancelable: true),
-        ) ==
+    if (notifyPlugins(PluginHook.beforeUpdate, UpdateHookArgs(mode: mode)) ==
         false) {
       return;
     }
@@ -1255,7 +1252,7 @@ class Chart(
     // reset
     final newControllers = buildOrUpdateControllers();
 
-    notifyPlugins('beforeElementsUpdate');
+    notifyPlugins(PluginHook.beforeElementsUpdate);
 
     // Make sure all dataset controllers have correct meta data counts
     var minPadding = 0.0;
@@ -1292,7 +1289,7 @@ class Chart(
 
     // Do this before render so that any plugins that need final scale
     // updates can use it
-    notifyPlugins('afterUpdate', UpdateHookArgs(mode: mode));
+    notifyPlugins(PluginHook.afterUpdate, UpdateHookArgs(mode: mode));
 
     jsSort(
       _layers,
@@ -1498,13 +1495,13 @@ class Chart(
     _updatingData = true;
     try {
       if (notifyPlugins(
-            'beforeUpdate',
-            UpdateHookArgs(mode: 'none', cancelable: true),
+            PluginHook.beforeUpdate,
+            UpdateHookArgs(mode: 'none'),
           ) ==
           false) {
         return true;
       }
-      notifyPlugins('beforeElementsUpdate');
+      notifyPlugins(PluginHook.beforeElementsUpdate);
       var padding = 0.0;
       for (final controller in controllers) {
         controller.buildOrUpdateElements(false);
@@ -1535,7 +1532,7 @@ class Chart(
       }
       if (!_updateDatasets('none', configure: false)) _invalidateDataUpdate();
       notifyPlugins(
-        'afterUpdate',
+        PluginHook.afterUpdate,
         UpdateHookArgs(mode: 'none', layoutKept: reuseLayout),
       );
       // A layout gave the layers in the order of the boxes. The kept ones have
@@ -1691,10 +1688,7 @@ class Chart(
     // invalidates the descriptors.
     plugins.refreshDescriptorViews(this);
 
-    if (notifyPlugins(
-          'beforeUpdate',
-          UpdateHookArgs(mode: mode, cancelable: true),
-        ) ==
+    if (notifyPlugins(PluginHook.beforeUpdate, UpdateHookArgs(mode: mode)) ==
         false) {
       return;
     }
@@ -1707,7 +1701,7 @@ class Chart(
       getDatasetMeta(i).visible = isDatasetVisible(i);
     }
 
-    notifyPlugins('beforeElementsUpdate');
+    notifyPlugins(PluginHook.beforeElementsUpdate);
 
     // No new controller: `reset` is the value of a controller that is not
     // new.
@@ -1730,7 +1724,7 @@ class Chart(
 
     final datasetsUpdated = _updateDatasets(mode, keepResolvers: true);
 
-    notifyPlugins('afterUpdate', UpdateHookArgs(mode: mode));
+    notifyPlugins(PluginHook.afterUpdate, UpdateHookArgs(mode: mode));
 
     jsSort(
       _layers,
@@ -1880,7 +1874,7 @@ class Chart(
   // DIVERGES(chartjs): adapt-incremental-data-update, the result tells whether
   // a layout ran.
   bool _updateLayout(double minPadding) {
-    if (notifyPlugins('beforeLayout', CancelableHookArgs(cancelable: true)) ==
+    if (notifyPlugins(PluginHook.beforeLayout, const PluginHookArgs()) ==
         false) {
       return false;
     }
@@ -1910,7 +1904,7 @@ class Chart(
       _layers[index].idx = index.toDouble();
     }
 
-    notifyPlugins('afterLayout');
+    notifyPlugins(PluginHook.afterLayout);
     return true;
   }
 
@@ -1928,8 +1922,8 @@ class Chart(
     bool keepResolvers = false,
   }) {
     if (notifyPlugins(
-          'beforeDatasetsUpdate',
-          UpdateHookArgs(mode: mode, cancelable: true),
+          PluginHook.beforeDatasetsUpdate,
+          UpdateHookArgs(mode: mode),
         ) ==
         false) {
       return false;
@@ -1962,7 +1956,7 @@ class Chart(
           completed;
     }
 
-    notifyPlugins('afterDatasetsUpdate', UpdateHookArgs(mode: mode));
+    notifyPlugins(PluginHook.afterDatasetsUpdate, UpdateHookArgs(mode: mode));
     return completed;
   }
 
@@ -1977,27 +1971,22 @@ class Chart(
   /// takes a `String`: [_modeArg] gives the falsy modes as Dart `null`.
   bool _updateDataset(int index, Object? mode) {
     final meta = getDatasetMeta(index);
-    final args = DatasetUpdateHookArgs(
-      meta: meta,
-      index: index,
-      mode: mode,
-      cancelable: true,
-    );
+    final args = DatasetUpdateHookArgs(meta: meta, index: index, mode: mode);
 
-    if (notifyPlugins('beforeDatasetUpdate', args) == false) {
+    if (notifyPlugins(PluginHook.beforeDatasetUpdate, args) == false) {
       return false;
     }
 
     meta.controller!.update_(_modeArg(mode));
 
-    args.cancelable = false;
-    notifyPlugins('afterDatasetUpdate', args);
+    // `args.cancelable = false`: the kind of the next hook.
+    notifyPlugins(PluginHook.afterDatasetUpdate, args);
     return true;
   }
 
   /// core.controller.js:683 `render()`.
   void render() {
-    if (notifyPlugins('beforeRender', CancelableHookArgs(cancelable: true)) ==
+    if (notifyPlugins(PluginHook.beforeRender, const PluginHookArgs()) ==
         false) {
       return;
     }
@@ -2030,8 +2019,7 @@ class Chart(
       return;
     }
 
-    if (notifyPlugins('beforeDraw', CancelableHookArgs(cancelable: true)) ==
-        false) {
+    if (notifyPlugins(PluginHook.beforeDraw, const PluginHookArgs()) == false) {
       return;
     }
 
@@ -2050,7 +2038,7 @@ class Chart(
       layers[i].draw(chartArea!);
     }
 
-    notifyPlugins('afterDraw');
+    notifyPlugins(PluginHook.afterDraw);
   }
 
   /// core.controller.js:737 `_getSortedDatasetMetas(filterVisible)`.
@@ -2091,10 +2079,7 @@ class Chart(
   /// `afterDatasetsDraw`.
   /// @private
   void _drawDatasets() {
-    if (notifyPlugins(
-          'beforeDatasetsDraw',
-          CancelableHookArgs(cancelable: true),
-        ) ==
+    if (notifyPlugins(PluginHook.beforeDatasetsDraw, const PluginHookArgs()) ==
         false) {
       return;
     }
@@ -2104,7 +2089,7 @@ class Chart(
       _drawDataset(metasets[i]);
     }
 
-    notifyPlugins('afterDatasetsDraw');
+    notifyPlugins(PluginHook.afterDatasetsDraw);
   }
 
   /// core.controller.js:783 `_drawDataset(meta)`.
@@ -2117,14 +2102,10 @@ class Chart(
   /// `getDatasetClipArea` gives Dart `null` for the upstream `false`.
   void _drawDataset(ChartMeta<DatasetController> meta) {
     final ctx = this.ctx;
-    final args = DatasetDrawHookArgs(
-      meta: meta,
-      index: meta.index,
-      cancelable: true,
-    );
+    final args = DatasetDrawHookArgs(meta: meta, index: meta.index);
     final clip = getDatasetClipArea(this, meta);
 
-    if (notifyPlugins('beforeDatasetDraw', args) == false) {
+    if (notifyPlugins(PluginHook.beforeDatasetDraw, args) == false) {
       return;
     }
 
@@ -2138,8 +2119,8 @@ class Chart(
       unclipArea(ctx!);
     }
 
-    args.cancelable = false;
-    notifyPlugins('afterDatasetDraw', args);
+    // `args.cancelable = false`: the kind of the next hook.
+    notifyPlugins(PluginHook.afterDatasetDraw, args);
   }
 
   /// core.controller.js:816 `isPointInArea(point)`.
@@ -2406,7 +2387,7 @@ class Chart(
   /// pending (Chart.js ADR 0016, decision 4).
   void destroy() {
     _invalidateDataUpdate();
-    notifyPlugins('beforeDestroy');
+    notifyPlugins(PluginHook.beforeDestroy);
     final canvas = this.canvas;
     final ctx = this.ctx;
 
@@ -2425,7 +2406,7 @@ class Chart(
 
     instances.remove(jsNumberToString(id));
 
-    notifyPlugins('afterDestroy');
+    notifyPlugins(PluginHook.afterDestroy);
   }
 
   /// core.controller.js:957 `toBase64Image(...args)`: the data URL of the
@@ -2660,12 +2641,16 @@ class Chart(
   /// Dart `null` for the result stands for the `undefined` of
   /// `PluginService.notify` before `install` and after `uninstall`.
   ///
-  /// The plugin service maps a hook name of the `Plugin` interface to its
-  /// `PluginHook` and passes another name by name. [args] passes through by
-  /// identity: the call sites of this file give the typed argument classes
-  /// of `lib/src/types/plugin.dart` (Chart.js ADR 0054 §12).
+  /// [hook] is a [PluginHook] with the argument class [A] of its calls, and
+  /// Dart `null` for [args] is the absent argument of a hook whose argument
+  /// class is [PluginHookArgs] (Chart.js ADR 0144). [args] passes through by
+  /// identity.
   @override
-  bool? notifyPlugins(String hook, [Object? args, FilterCallback? filter]) {
+  bool? notifyPlugins<A extends Object>(
+    PluginHook<A> hook, [
+    A? args,
+    FilterCallback? filter,
+  ]) {
     return plugins.notify(this, hook, args, filter);
   }
 
@@ -2681,10 +2666,7 @@ class Chart(
   /// `filter` of `undefined` does.
   @override
   bool isPluginEnabled(String pluginId) {
-    return plugins.cache!
-            .where((p) => _pluginId(p.plugin) == pluginId)
-            .length ==
-        1;
+    return plugins.cache!.where((p) => p.plugin.id == pluginId).length == 1;
   }
 
   /// core.controller.js:1145 `_updateHoverStyles(active, lastActive,
@@ -2744,8 +2726,7 @@ class Chart(
   void _eventHandlerMethod(types.ChartEvent e, [bool? replay]) {
     final args = EventHookArgs(
       event: e,
-      replay: replay ?? undefined,
-      cancelable: true,
+      replay: replay ?? false,
       inChartArea: isPointInArea(e),
     );
     bool eventFilter(PluginDescriptor plugin) => _includes(
@@ -2756,14 +2737,14 @@ class Chart(
       e.native!.type,
     );
 
-    if (notifyPlugins('beforeEvent', args, eventFilter) == false) {
+    if (notifyPlugins(PluginHook.beforeEvent, args, eventFilter) == false) {
       return;
     }
 
     final changed = handleEvent(e, replay, args.inChartArea);
 
-    args.cancelable = false;
-    notifyPlugins('afterEvent', args, eventFilter);
+    // `args.cancelable = false`: the kind of the next hook.
+    notifyPlugins(PluginHook.afterEvent, args, eventFilter);
 
     // DIVERGES(chartjs): adapt-replay-single-draw, the caller draws next.
     final drawFollows =
@@ -2976,12 +2957,6 @@ Object? _defaultsValue(Object? object, Object key) {
   }
   return jsGet(object, key is OptionKey ? key.jsName : key);
 }
-
-/// `plugin.id` of a plugin of the plugin service: the typed field of a
-/// [Plugin], else the read of the Map plugin of the user (core.controller.js
-/// :1139).
-Object? _pluginId(Object plugin) =>
-    plugin is Plugin ? plugin.id : readOption(plugin, OptionKey.id);
 
 /// `value || other`: [value] when it is truthy, else [other].
 Object? _or(Object? value, Object? other) => jsTruthy(value) ? value : other;

@@ -32,14 +32,31 @@ final class _Counts() {
   }
 }
 
-const _hooks = <String>[
-  'beforeRender',
-  'beforeDraw',
-  'afterDraw',
-  'afterRender',
-  'beforeEvent',
-  'afterEvent',
-];
+/// The plugin that counts its hooks `beforeRender`, `beforeDraw`,
+/// `afterDraw`, `afterRender`, `beforeEvent` and `afterEvent` in [counts].
+Plugin<Object?> _counting(_Counts counts) => Plugin<Object?>(
+  id: 'counting',
+  supportsDataUpdates: true,
+  beforeRender: (chart, args, options) {
+    counts.hit('beforeRender');
+    return true;
+  },
+  beforeDraw: (chart, args, options) {
+    counts.hit('beforeDraw');
+    return true;
+  },
+  afterDraw: (chart, args, options) => counts.hit('afterDraw'),
+  afterRender: (chart, args, options) => counts.hit('afterRender'),
+  beforeEvent: (chart, args, options) {
+    counts.hit('beforeEvent');
+    return true;
+  },
+  afterEvent: (chart, args, options) {
+    counts
+      ..hit('afterEvent')
+      ..events.add('${args.event.type} ${args.replay ? 'replay' : 'real'}');
+  },
+);
 
 /// A line chart with markers and the tooltip of the defaults. [animation] is
 /// the `options.animation` of the chart. `false` is the form that the double
@@ -51,23 +68,7 @@ Chart _chart(
   Map<String, Object?>? plugins,
 }) => acquireChart(<String, Object?>{
   'type': 'line',
-  'plugins': <Object?>[
-    <String, Object?>{
-      'id': 'counting',
-      'supportsDataUpdates': true,
-      for (final hook in _hooks)
-        hook: (Object? chart, Object? args, Object? options) {
-          counts.hit(hook);
-          if (hook == 'afterEvent') {
-            final event = args! as EventHookArgs;
-            counts.events.add(
-              '${event.event!.type} '
-              '${event.replay == true ? 'replay' : 'real'}',
-            );
-          }
-        },
-    },
-  ],
+  'plugins': <Object?>[_counting(counts)],
   'data': <String, Object?>{
     'labels': <Object?>['a', 'b', 'c'],
     'datasets': <Object?>[

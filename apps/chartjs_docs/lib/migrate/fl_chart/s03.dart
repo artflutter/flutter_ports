@@ -12,9 +12,9 @@ final Color _dotStroke = Fl.yellow.withValues(alpha: 0.5);
 final Color _average = Fl.green.withValues(alpha: 0.8);
 
 /// The drop lines of the spots, which fl_chart calls the spots line.
-Map<String, Object?> _dropLines() => {
-  'id': 'dropLines',
-  'beforeDatasetsDraw': (Chart chart, Object? args, Object? options) {
+final _dropLines = Plugin<Object?>(
+  id: 'dropLines',
+  beforeDatasetsDraw: (chart, args, options) {
     final area = chart.chartArea!;
     final elements = chart.getDatasetMeta(0).data;
     final ctx = chart.ctx!
@@ -29,11 +29,12 @@ Map<String, Object?> _dropLines() => {
         ..stroke();
     }
     ctx.restore();
+    return true;
   },
-};
+);
 
-final List<Map<String, Object?>> _plugins = [
-  _dropLines(),
+final List<Plugin<Object?>> _plugins = [
+  _dropLines,
   annotations([
     HLine(1.8, _average, 3, const [20, 10]),
   ]),

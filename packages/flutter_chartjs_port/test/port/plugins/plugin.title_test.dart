@@ -12,10 +12,7 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -24,6 +21,8 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show PluginHookArgs, UpdateHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -96,18 +95,10 @@ Object? _observeTitle(Chart chart) {
   };
 }
 
-/// The keys of the default export of plugin.title.js:120-166, in their
-/// order (the probe output `keys`).
-const List<String> _upstreamKeys = [
-  'id',
-  '_element',
-  'start',
-  'stop',
-  'beforeUpdate',
-  'defaults',
-  'defaultRoutes',
-  'descriptors',
-];
+/// The hook keys of the default export of plugin.title.js:120-166, in the
+/// order of `PluginHook` (the probe output `keys`: `id`, `_element`, these
+/// hooks, `defaults`, `defaultRoutes` and `descriptors`).
+const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 
 /// `new Title(config)` through the class value.
 Object? _construct(List<Object?> args) => jsConstruct(Title.jsClass, args);
@@ -195,14 +186,6 @@ void main() {
       expect(Title.jsClass.superclass, same(Element.jsClass));
     });
 
-    test('the plugin entry _element is Title.jsClass', () {
-      expect(
-        jsGet(registry.getPlugin('title'), '_element'),
-        same(Title.jsClass),
-      );
-      expect(title['_element'], same(Title.jsClass));
-    });
-
     test('new Title(config) keeps a plain chart object', () {
       final chart = <String, Object?>{'options': <String, Object?>{}};
       final options = <String, Object?>{'display': true, 'text': 'a'};
@@ -224,8 +207,16 @@ void main() {
       expect(() => _construct([null]), throwsA(isA<TypeError>()));
     });
 
-    test('the keys of the plugin object are the upstream keys', () {
-      expect(jsObjectKeys(title), _upstreamKeys);
+    test('the plugin has the hooks and the keys of the upstream object', () {
+      // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
+      // object are its hooks, and `id`, `defaults`, `defaultRoutes` and
+      // `descriptors` its fields. `_element` is no field: the class is
+      // `Title.jsClass`.
+      expect(pluginHookNames(title), _upstreamHooks);
+      expect(title.id, 'title');
+      expect(title.defaults, isNotNull);
+      expect(title.defaultRoutes, isNotNull);
+      expect(title.descriptors, isNotNull);
     });
   });
 
@@ -326,7 +317,7 @@ void main() {
       // The probe stopWithoutBlock: no throw, the boxes stay.
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
-      jsCall(title['stop'], [chart, <String, Object?>{}, <String, Object?>{}]);
+      title.stop!(chart, const PluginHookArgs(), chart.options);
       expect(chart.titleBlock, isNull);
       expect(chart.boxes, boxes);
     });
@@ -336,11 +327,11 @@ void main() {
       // The probe beforeUpdateWithoutBlock.
       final chart = acquireChart(_line(false));
       expect(
-        () => jsCall(title['beforeUpdate'], [
+        () => title.beforeUpdate!(
           chart,
-          <String, Object?>{},
-          <String, Object?>{},
-        ]),
+          UpdateHookArgs(mode: undefined),
+          chart.options,
+        ),
         throwsA(isA<TypeError>()),
       );
     });
@@ -352,7 +343,7 @@ void main() {
       final box = chart.titleBlock;
       expect(box, isA<Title>());
       expect(chart.boxes, contains(same(box)));
-      jsCall(title['stop'], [chart, <String, Object?>{}, <String, Object?>{}]);
+      title.stop!(chart, const PluginHookArgs(), chart.options);
       expect(chart.titleBlock, isNull);
       expect(chart.boxes.where((b) => identical(b, box)), isEmpty);
     });

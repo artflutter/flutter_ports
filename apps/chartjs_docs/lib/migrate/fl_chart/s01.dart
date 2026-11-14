@@ -141,7 +141,7 @@ ChartConfig _config(bool main) => fills(
   ),
 );
 
-final Map<String, Object?> _indicator = touchIndicator();
+final Plugin<Object?> _indicator = touchIndicator();
 final ChartConfig _mainConfig = _config(true);
 final ChartConfig _otherConfig = _config(false);
 

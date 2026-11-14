@@ -69,11 +69,11 @@ import '../support/jasmine.dart';
 // 0039, section 6). An active element is the Map `{datasetIndex, index,
 // element}` in a Jasmine `toEqual` ([_activeItems]).
 
-/// :2 `Chart.registry.getPlugin('tooltip')`, read in each case.
-Object _tooltipPlugin() => Chart.registry.getPlugin('tooltip');
-
-/// :3 `tooltipPlugin._element`, the class value `Tooltip`.
-JsClass _tooltipClass() => jsGet(_tooltipPlugin(), '_element')! as JsClass;
+/// :2-3 `Chart.registry.getPlugin('tooltip')._element`: the class value of
+/// [Tooltip]. The native plugin `tooltip` has no key `_element` (Chart.js
+/// ADR 0144).
+// DIVERGES(chartjs): adapt-typed-plugins, the class value of Tooltip.
+JsClass _tooltipClass() => Tooltip.jsClass;
 
 /// `Chart.defaults`.
 JsObjectFace _defaults() => Chart.defaults;
@@ -204,14 +204,22 @@ AnyObject _bodyItem(String line) => <String, Object?>{
 /// The default value of an absent argument of the spy of `update`.
 const Object _absent = Object();
 
+/// The record `[true, undefined]` of `toHaveBeenCalledWith(true, undefined)`
+/// (:968, :1031, :1039): the update of `handleEvent` for an event of the
+/// platform. The `replay` of the hook arguments of an event is a bool
+/// (`EventHookArgs.replay`, Chart.js ADR 0144): `false` for an event of the
+/// platform, where upstream gives `undefined`.
+// DIVERGES(chartjs): adapt-typed-plugins, the replay of an event is a bool.
+const List<Object?> _eventUpdate = [true, false];
+
 /// `spyOn(tooltip, 'update')`: replaces the field `update` of [tooltip] with
 /// a recording closure. With [callThrough], the closure also calls the old
 /// function with the same arguments. Each record is the list of the
 /// arguments that the caller passed, as Jasmine records them: the record of
-/// `update(true)` has 1 item, and the record of `update(true, undefined)`
-/// has 2 items. Thus `toHaveBeenCalledWith(true, undefined)` accepts
-/// the call of `handleEvent` (`plugin.tooltip.js:1167`) and not the call of
-/// `setActiveElements` (`plugin.tooltip.js:1128`), as upstream.
+/// `update(true)` has 1 item, and the record of `update(true, replay)`
+/// has 2 items. Thus `toHaveBeenCalledWith(true, undefined)` ([_eventUpdate])
+/// accepts the call of `handleEvent` (`plugin.tooltip.js:1167`) and not the
+/// call of `setActiveElements` (`plugin.tooltip.js:1128`), as upstream.
 List<List<Object?>> _spyOnUpdate(Tooltip tooltip, {bool callThrough = false}) {
   final calls = <List<Object?>>[];
   final original = tooltip.update;
@@ -1038,7 +1046,7 @@ void main() {
 
       // First dispatch change event, should update tooltip
       await triggerMouseEvent(chart, 'mousemove', firstPoint);
-      expect(calls, contains(jasmineEquals(<Object?>[true, undefined])));
+      expect(calls, contains(jasmineEquals(_eventUpdate)));
 
       // Reset calls
       calls.clear();
@@ -1084,7 +1092,7 @@ void main() {
 
         // First dispatch change event, should update tooltip
         await triggerMouseEvent(chart, 'mousemove', firstPoint);
-        expect(calls, contains(jasmineEquals(<Object?>[true, undefined])));
+        expect(calls, contains(jasmineEquals(_eventUpdate)));
 
         // Reset calls
         calls.clear();
@@ -1092,7 +1100,7 @@ void main() {
         // Second dispatch change event (same event), should update tooltip
         // because position mode is 'nearest'
         await triggerMouseEvent(chart, 'mousemove', secondPoint);
-        expect(calls, contains(jasmineEquals(<Object?>[true, undefined])));
+        expect(calls, contains(jasmineEquals(_eventUpdate)));
       },
     );
 
@@ -1135,11 +1143,8 @@ void main() {
             isTrue,
           );
           // `instanceof Tooltip` with `Tooltip = tooltipPlugin._element`
-          // (:3): the object is a Dart `Tooltip`, and `_element` is the
-          // class value of `Tooltip`. Thus the case has one assertion more
-          // than upstream.
+          // (:3): the object is a Dart `Tooltip`.
           expect(positioner.calls.first.tooltip, isA<Tooltip>());
-          expect(identical(_tooltipClass(), Tooltip.jsClass), isTrue);
         },
       );
 

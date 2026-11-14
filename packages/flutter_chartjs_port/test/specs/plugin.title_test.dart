@@ -35,10 +35,11 @@ import '../support/jasmine.dart';
 // chartjs_test_utils. A recorded call is a Map with the keys 'name' and
 // 'args'. `toEqual` is jasmineEquals of test/support/jasmine.dart.
 //
-// `Title` of :3 is the class value of the plugin entry `_element`
-// (Chart.js ADR 0038, section 4). `new Title(config)` is jsConstruct with
-// the config object, and the result is the Dart class Title of
-// plugin.title.dart.
+// `Title` of :3, the plugin entry `_element`, is the class value
+// `Title.jsClass` (Chart.js ADR 0038, section 4): the native plugin `title`
+// has no key `_element` (Chart.js ADR 0144). `new Title(config)` is
+// jsConstruct with the config object, and the result is the Dart class Title
+// of plugin.title.dart.
 //
 // The cases of `config update` build charts. Thus the file runs on the VM,
 // and each chart case is a `testWidgets` case with the harness of Chart.js
@@ -47,9 +48,10 @@ import '../support/jasmine.dart';
 // write through `operator []=` of the option resolver, the `set` trap of
 // upstream.
 
-/// `Chart.registry.getPlugin('title')._element` (:3), read in each case.
-JsClass _titleClass() =>
-    jsGet(Chart.registry.getPlugin('title'), '_element')! as JsClass;
+/// `Chart.registry.getPlugin('title')._element` (:3): the class value of
+/// [Title].
+// DIVERGES(chartjs): adapt-typed-plugins, the class value of Title.
+JsClass _titleClass() => Title.jsClass;
 
 /// `new Title(config)`.
 Title _newTitle(AnyObject config) =>

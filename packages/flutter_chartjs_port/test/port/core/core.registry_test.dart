@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -53,6 +54,20 @@ JsClass _class(
 /// The keys of the items of [registry] in the `Object.keys` order.
 List<String> _keys(Map<String, Object> items) => jsObjectKeys(items);
 
+/// The reference text [reference] with the line of each observation of
+/// [port] replaced by the line of the port. A plugin is a native [Plugin]
+/// (Chart.js ADR 0144): another value that reaches the registry of the
+/// plugins stops a debug build (`Registry._exec`), where upstream registers
+/// the object of its `id` or throws for a missing `id`.
+String _port(String reference, Map<String, String> port) => [
+  for (final line in reference.split('\n'))
+    switch (port.entries.where((e) => line.startsWith('${e.key}: '))) {
+      final Iterable<MapEntry<String, String>> found when found.isNotEmpty =>
+        '${found.first.key}: ${found.first.value}',
+      _ => line,
+    },
+].join('\n');
+
 void main() {
   setUpSpecs();
 
@@ -79,8 +94,10 @@ void main() {
       superclass: Element.jsClass,
       statics: {'id': 'relem'},
     );
-    final rPlug = _class('RPlug', statics: {'id': 'rplug'});
-    final rMap = <String, Object?>{'id': 'rmap'};
+    // The plugin class `RPlug` and the plugin Map of upstream are native
+    // plugins with their ids (Chart.js ADR 0144).
+    final rPlug = Plugin<Object?>(id: 'rplug');
+    final rMap = Plugin<Object?>(id: 'rmap');
     reg.add([rCtl, rScale, rElem, rPlug, rMap]);
     o
       ..observe('controllers', o.json(_keys(reg.controllers.items)))
@@ -116,26 +133,35 @@ void main() {
       o.observe(name, result.startsWith(start) ? start : result);
     }
     o.observe('plugins', o.json(_keys(reg.plugins.items)));
-    expect(o.text, registryReference['registry base classes']);
+    // The base classes DatasetController and Element are no item of their
+    // registries (core.typedRegistry.js:22-24), so they reach the registry of
+    // the plugins.
+    expect(
+      o.text,
+      _port(registryReference['registry base classes']!, {
+        'DatasetController': '_AssertionError',
+        'Element': '_AssertionError',
+      }),
+    );
   });
 
   test('a List and a Map of items, and a Map with an id', () {
     final o = Observations();
     final reg = Registry();
-    final ra = o.label(<String, Object?>{'id': 'ra'}, 'ra');
-    final rb = o.label(<String, Object?>{'id': 'rb'}, 'rb');
-    final rc = o.label(<String, Object?>{'id': 'rc'}, 'rc');
-    final rd = o.label(<String, Object?>{'id': 'rd'}, 'rd');
-    final re = o.label(<String, Object?>{'id': 're'}, 're');
+    // The plugin objects of upstream are native plugins (Chart.js ADR 0144).
+    final ra = o.label(Plugin<Object?>(id: 'ra'), 'ra');
+    final rb = o.label(Plugin<Object?>(id: 'rb'), 'rb');
+    final rc = o.label(Plugin<Object?>(id: 'rc'), 'rc');
+    final rd = o.label(Plugin<Object?>(id: 'rd'), 'rd');
+    final re = o.label(Plugin<Object?>(id: 're'), 're');
     reg.add([
       [ra, rb],
       <String, Object?>{'k2': rc, '10': rd, 'k1': re},
     ]);
     o.observe('plugins', o.json(_keys(reg.plugins.items)));
-    final withId = o.label(<String, Object?>{
-      'id': 'rwithid',
-      'k': o.label(<String, Object?>{'id': 'rf'}, 'rf'),
-    }, 'rwithid');
+    // Upstream registers the object with an `id` and the item `k` as one
+    // plugin: an item, not a loopable. The native plugin has no item `k`.
+    final withId = o.label(Plugin<Object?>(id: 'rwithid'), 'rwithid');
     reg.add([withId]);
     o.observe('with id', o.json(_keys(reg.plugins.items)));
     final rCtl2 = _class(
@@ -143,7 +169,7 @@ void main() {
       superclass: DatasetController.jsClass,
       statics: {'id': 'rctl2'},
     );
-    final rplug2 = o.label(<String, Object?>{'id': 'rplug2'}, 'rplug2');
+    final rplug2 = o.label(Plugin<Object?>(id: 'rplug2'), 'rplug2');
     reg.add([
       <String, Object?>{'a': rCtl2, 'b': rplug2},
     ]);
@@ -179,17 +205,10 @@ void main() {
       (
         'nested list',
         [
-          [
-            <String, Object?>{'id': 'rn1'},
-          ],
+          [Plugin<Object?>(id: 'rn1')],
         ],
       ),
-      (
-        'list',
-        [
-          <String, Object?>{'id': 'rn2'},
-        ],
-      ),
+      ('list', [Plugin<Object?>(id: 'rn2')]),
     ]) {
       o.observe(name, error(() => reg.add([value])));
     }
@@ -198,13 +217,18 @@ void main() {
       ..observe('remove null', error(() => reg.remove([null])))
       ..observe(
         'remove map',
-        error(
-          () => reg.remove([
-            <String, Object?>{'id': 'rnone'},
-          ]),
-        ),
+        error(() => reg.remove([Plugin<Object?>(id: 'rnone')])),
       );
-    expect(o.text, registryReference['registry items of other values']);
+    // The string, the number and the inner List of a loopable reach the
+    // registry of the plugins.
+    expect(
+      o.text,
+      _port(registryReference['registry items of other values']!, {
+        'map of a string': '_AssertionError',
+        'map of a number': '_AssertionError',
+        'nested list': '_AssertionError',
+      }),
+    );
   });
 
   test('the register callbacks get the component as this', () {
@@ -234,14 +258,10 @@ void main() {
       }
     }
 
-    final rCb = o.label(_class('RCb', statics: {'id': 'rcb'}), 'RCb');
-    callbacks(rCb);
-    final rCbSub = o.label(
-      _class('RCbSub', superclass: rCb, statics: {'id': 'rcbsub'}),
-      'RCbSub',
-    );
-    final map = o.label(<String, Object?>{'id': 'rcbmap'}, 'rcbmap');
-    callbacks(map);
+    // The plugin class `RCb`, its subclass `RCbSub` and the plugin Map
+    // `rcbmap` of upstream have their register callbacks. A native plugin
+    // (Chart.js ADR 0144) has no callback and no other key: the case keeps
+    // the element classes, and the lines of the plugins go.
     final rCbP = o.label(
       _class('RCbP', superclass: Element.jsClass, statics: {'id': 'rcbp'}),
       'RCbP',
@@ -252,16 +272,25 @@ void main() {
       'RCbC',
     );
     reg
-      ..add([rCbSub, rCb, map, rCbC])
-      ..remove([rCbSub, map, rCbC]);
+      ..add([rCbC])
+      ..remove([rCbC]);
     for (final line in log) {
       o.observe('log', line);
     }
     o
       ..observe('elements', o.json(_keys(reg.elements.items)))
       ..observe('plugins', o.json(_keys(reg.plugins.items)));
-    reg.remove([rCb, rCbP]);
-    expect(o.text, registryReference['registry callbacks']);
+    reg.remove([rCbP]);
+    expect(
+      o.text,
+      [
+        for (final line in registryReference['registry callbacks']!.split('\n'))
+          if (line.startsWith('plugins: '))
+            'plugins: []'
+          else if (!line.startsWith('log: ') || line.contains(' RCbC '))
+            line,
+      ].join('\n'),
+    );
   });
 
   test('the getters, and the explicit registries', () {
@@ -282,20 +311,27 @@ void main() {
       ),
       'RExt',
     );
-    for (final (name, add, get, remove) in [
+    // The plugin of the class `RExt` is a native plugin (Chart.js ADR 0144)
+    // with the same id and defaults.
+    final rExtPlugin = o.label(
+      Plugin<Object?>(id: 'rext', defaults: <String, Object?>{'prop': true}),
+      'RExt',
+    );
+    for (final (name, item, add, get, remove) in [
       (
         'controller',
+        rExt,
         reg.addControllers,
         reg.getController,
         reg.removeControllers,
       ),
-      ('element', reg.addElements, reg.getElement, reg.removeElements),
-      ('plugin', reg.addPlugins, reg.getPlugin, reg.removePlugins),
-      ('scale', reg.addScales, reg.getScale, reg.removeScales),
+      ('element', rExt, reg.addElements, reg.getElement, reg.removeElements),
+      ('plugin', rExtPlugin, reg.addPlugins, reg.getPlugin, reg.removePlugins),
+      ('scale', rExt, reg.addScales, reg.getScale, reg.removeScales),
     ]) {
-      add([rExt]);
+      add([item]);
       o.observe('$name get', o.json(get('rext')));
-      remove([rExt]);
+      remove([item]);
       o.observe('$name after', error(() => get('rext')));
     }
     expect(o.text, registryReference['registry getters']);
@@ -335,21 +371,22 @@ void main() {
     // `Chart.register(registerables)` of upstream is
     // `Chart.register([registerables])`. The namespace objects of the
     // bundle have a null prototype: `'id' in null` throws a TypeError.
-    // Here a namespace is a Map, so `register` throws its StateError. Both
-    // throw at the first namespace, before a write (Chart.js ADR 0020,
-    // section 6).
+    // Here a namespace is a Map, which reaches the registry of the plugins,
+    // and a debug build stops there: a plugin is a Plugin (Chart.js ADR
+    // 0126). Both stop at the first namespace, before a write (Chart.js ADR
+    // 0020, section 6).
     expect(
       namespaceLines(),
       registryReference['registry elements namespace']!.replaceFirst(
         'as a list: TypeError',
-        'as a list: Error: class does not have id: [object Object]',
+        'as a list: _AssertionError',
       ),
     );
   });
 
   test('the singleton', () {
     final o = Observations();
-    final plugin = <String, Object?>{'id': 'rsingle'};
+    final plugin = Plugin<Object?>(id: 'rsingle');
     o.observe(
       'is a Registry',
       '${isA<Registry>().matches(registry, <Object?, Object?>{})}',

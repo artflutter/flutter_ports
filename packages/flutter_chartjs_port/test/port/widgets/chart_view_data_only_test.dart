@@ -179,7 +179,7 @@ ChartConfig _bars(
   Map<String, ChartAxis>? scales = _categoryAxes,
   ChartAnimation? animation = ChartAnimation.none,
   ChartTitle? title,
-  List<Map<String, Object?>>? plugins,
+  List<Plugin<Object?>>? plugins,
   Map<String, Object?>? extra,
 }) => ChartConfig(
   type: ChartKind.bar,
@@ -246,19 +246,21 @@ final class _Spy() {
 /// unregisters at the end of the test.
 _Spy _spyOnChart() {
   final spy = _Spy();
-  final plugin = <String, Object?>{
-    'id': r'$dataOnlySpy',
-    'supportsDataUpdates': true,
-    'beforeUpdate': (Object? chart, JsObjectFace args, Object? options) {
-      spy.modes.add(args['mode']);
+  final plugin = Plugin<Object?>(
+    id: r'$dataOnlySpy',
+    supportsDataUpdates: true,
+    beforeUpdate: (chart, args, options) {
+      spy.modes.add(args.mode);
+      return true;
     },
-    'beforeLayout': (Object? chart, Object? args, Object? options) {
+    beforeLayout: (chart, args, options) {
       spy.layouts++;
+      return true;
     },
-    'afterDraw': (Object? chart, Object? args, Object? options) {
+    afterDraw: (chart, args, options) {
       spy.draws++;
     },
-  };
+  );
   Chart.register([plugin]);
   addTearDown(() => Chart.unregister([plugin]));
   return spy;
@@ -635,10 +637,10 @@ void main() {
     });
 
     testWidgets('a replaced plugin list', (tester) async {
-      final plugin = <String, Object?>{
-        'id': r'$replaced',
-        'supportsDataUpdates': true,
-      };
+      final plugin = Plugin<Object?>(
+        id: r'$replaced',
+        supportsDataUpdates: true,
+      );
       final spy = await afterChange(
         tester,
         (labels) => _bars(1, labels, plugins: [plugin]),
@@ -808,12 +810,13 @@ void main() {
     testWidgets('a plugin that does not opt in: updateData goes to the full '
         'update by itself', (tester) async {
       var layouts = 0;
-      final plugin = <String, Object?>{
-        'id': r'$noOptIn',
-        'beforeLayout': (Object? chart, Object? args, Object? options) {
+      final plugin = Plugin<Object?>(
+        id: r'$noOptIn',
+        beforeLayout: (chart, args, options) {
           layouts++;
+          return true;
         },
-      };
+      );
       await afterChange(
         tester,
         (labels) => _bars(3, labels, plugins: [plugin]),
@@ -1573,20 +1576,16 @@ void main() {
       draws = 0;
     }
 
-    final plugin = <String, Object?>{
-      'id': r'$dataOnlyMouse',
-      'supportsDataUpdates': true,
-      'afterEvent': (Object? chart, Object? args, Object? options) {
-        final event = args! as EventHookArgs;
-        events.add(
-          '${event.event!.type} '
-          '${event.replay == true ? 'replay' : 'real'}',
-        );
+    final plugin = Plugin<Object?>(
+      id: r'$dataOnlyMouse',
+      supportsDataUpdates: true,
+      afterEvent: (chart, args, options) {
+        events.add('${args.event.type} ${args.replay ? 'replay' : 'real'}');
       },
-      'afterDraw': (Object? chart, Object? args, Object? options) {
+      afterDraw: (chart, args, options) {
         draws++;
       },
-    };
+    );
 
     ChartConfig live(int step, List<Object> labels) =>
         _bars(step, labels, plugins: [plugin]);

@@ -255,9 +255,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     typed API of `lib/src/typed/typed.dart`),
     `lib/chartjs.dart` (the `chart.js` entry: `lib/src/types.dart` with a hide list, the Canvas 2D
     interface, `ChartMeta`, `defaultDateZone`, `setDefaultDateZone`, `notifyArrayListeners`,
-    `JsClass`, `JsObjectFace`, `Undefined`, `undefined` and `lib/src/upstream.dart`; the typed
-    plugin API of Chart.js ADR 0108: `Plugin`, `PluginHookFunction` and the eight hook argument
-    classes; and the input surface of Chart.js ADR 0108: `NativeEvent`, `NativeTouch`,
+    `JsClass`, `JsObjectFace`, `Undefined`, `undefined` and `lib/src/upstream.dart`; the native
+    plugin API of Chart.js ADRs 0108 and 0144: `Plugin`, `PluginHook`, `PluginHookFunction`,
+    `CancelableHookFunction` and the seven hook argument classes; and the input surface of Chart.js ADR 0108: `NativeEvent`, `NativeTouch`,
     `NativeEventListener`, `NativeEventTarget`, `DOMRect` and the extensions `CanvasEventTarget`
     and `CssStyleProperties`; and the option types of the rows `adapt-interaction-mode-objects`,
     `adapt-interaction-axis-enum`, `adapt-tooltip-positioner-objects` and
@@ -372,11 +372,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     bits, extras, the JS key order, the face), `parsed.dart` (`ParsedItem`, `ItemStacks`,
     `StackEntry`, `IndexValues`, `FloatingBar`), `props.dart` (`PointProperties`,
     `BarProperties`, `ArcProperties`, `LineProperties`), `animated_prop.dart` (`AnimatedProp`),
-    `lib/src/types/data_item.dart` (`TypedDataItem`) and `lib/src/types/plugin.dart` (`Plugin`,
-    `PluginHook`, `PluginHookFunction`, the hook argument classes, `MapPlugin`).
-    `PluginService._notify` dispatches by `PluginHook`: a `Plugin` by its hook field, a Map plugin
-    through `MapPlugin`; the `notifyPlugins` call sites of `core.controller.dart` give the typed
-    argument classes (row `adapt-typed-plugins`). `Element.markUndefined(AnimatedProp)` and
+    `lib/src/types/data_item.dart` (`TypedDataItem`). `lib/src/types/plugin.dart` has the native
+    plugins of Chart.js ADR 0144 (row `adapt-typed-plugins`): `Plugin<O>` with one typed field for
+    each of the 35 hooks and no key by name, the generic enum `PluginHook<A>` (JS name, kind,
+    argument class), the hook types `PluginHookFunction<A, O>` (returns `void`) and
+    `CancelableHookFunction<A, O>` (returns `bool`: `false` cancels; the ten hooks that upstream
+    calls with `cancelable: true`), and the argument classes, plain classes with no `cancelable`
+    field. `O` is the options type of the hooks: the `options` function of the plugin makes it from
+    the resolved options, or the hooks get the resolved options themselves. `PluginService._notify`
+    calls `Plugin.notify`, a generic method that reads the hook field inside the class (a read
+    through `Plugin<Object?>` fails the covariance check). `chart.notifyPlugins` takes a
+    `PluginHook<A>` and an `A?`; a custom hook name has no form. A value that is not a `Plugin` in
+    `config.plugins` or in `Chart.register` stops a debug build; a Map without an `id` stays a
+    container of `Chart.register`. A hook takes `types.Chart`: a named hook of an add-on takes
+    `Object chart` and casts it to `Chart`. `Element.markUndefined(AnimatedProp)` and
     `isUndefined` are the typed property API of the elements.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
@@ -818,9 +827,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/src/plugins/` (Chart.js ADRs 0038-0041 and 0050): the seven plugins of phase 8.
     `index.dart` (the port of `src/plugins/index.js`) exports the plugin objects `colors`,
     `decimation`, `filler`, `legend`, `subTitle`, `title` and `tooltip`, with the export names in
-    lowerCamelCase. Each plugin object is a typed `Plugin` of `lib/src/types/plugin.dart` with the
-    upstream keys in the upstream order; its hooks are private functions of the hook type `(chart,
-    args, options)` (Chart.js ADR 0054 §12). The plugins read their options through the facades of
+    lowerCamelCase. Each plugin object is a native `Plugin` of `lib/src/types/plugin.dart` with the
+    upstream keys in the upstream order (Chart.js ADR 0144); its hooks are private functions of
+    the hook type `(chart, args, options)`. `filler`, `decimation` and `colors` are
+    `Plugin<FillerOptions>`, `Plugin<DecimationOptions>` and `Plugin<ColorsPluginOptions>`: their
+    hooks get the facade. `legend`, `title`, `subTitle` and `tooltip` are `Plugin<OptionView>`. The
+    key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
+    `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The plugins read their options through the facades of
     the port-only pure `plugin_options.dart`. The library exports no class `Title`, `Legend` or
     `Tooltip`. `plugin.decimation.dart`, `plugin_options.dart` and the files of `plugin.filler/` are
     pure layers. The other plugin files are not: `plugin.title`, `plugin.legend` and
@@ -1378,7 +1391,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     §14.9, with its field generator and its server, Chart.js ADR 0053).
   - `doc/`: all Chart.js port docs: roadmap, parity tracker, design docs, Chart.js-only decisions
     (`doc/adr/`, numbered from 0001) and the Chart.js prior-art survey (`doc/prior-art/`).
-    - `doc/adr/`: Chart.js ADRs 0001-0142. Since 2026-10-31, Chart.js ADR 0054 supersedes
+    - `doc/adr/`: Chart.js ADRs 0001-0144. Since 2026-10-31, Chart.js ADR 0054 supersedes
       Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050;
       Chart.js ADR 0055 supersedes Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of
       Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010
@@ -1464,8 +1477,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       Chart.js ADR 0125 (native tooltip callbacks) is accepted (2026-11-13): its code passes the
       tests. Chart.js ADR 0129 (an index is an int) is accepted (2026-11-13): its code passes the
       tests. It supersedes the index rule of Chart.js ADR 0045 section 7 and Chart.js ADR 0052
-      section 10. Chart.js ADR 0126 (a native plugin contract) is proposed (2026-11-13): it waits for
-      the review of the maintainer, and no code implements it. Chart.js ADR 0130 (native callback
+      section 10. Chart.js ADR 0126 (a native plugin contract) is superseded by Chart.js ADR 0144. Chart.js ADR 0130 (native callback
       options) is accepted (2026-11-13): its code passes the tests. It supersedes the details objects
       of Chart.js ADR 0052 §6 and the point-label closure call of Chart.js ADR 0095. Chart.js ADR
       0132 (exports for add-on chart types) is accepted (2026-11-13): its code passes the tests. It
@@ -1502,6 +1514,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       scope kind `SegmentOptions` of §2.
       Chart.js ADR 0143 (`Date.now()` is `clock.now()`) is accepted (2026-11-14): its code passes
       the tests. It supersedes the `jsDateNow` parts of Chart.js ADR 0045 §6.
+      Chart.js ADR 0144 (native plugins) is accepted (2026-11-14): its code passes the tests. It
+      supersedes Chart.js ADR 0126 and the plugin parts of Chart.js ADRs 0054 §12, 0108 and 0052.
       The other ADRs are accepted. Docs
       name them "Chart.js ADR NNNN". "ADR NNNN" alone is a `docs/adr/` file. "D3 ADR NNNN" is a
       file of `packages/flutter_d3_port/doc/adr/`. "ECharts ADR NNNN" is a file of
@@ -1731,7 +1745,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   does not have. A run disables the features that the settings show.
   `ChartLibrary.zoomsWith` gives the zoom and pan of the x axis (line, bar, scatter
   and bubble): the Chart.js port through the zoom port, which the adapter registers
-  only for a chart with zoom (`ChartConfig.plugins` takes no typed plugin), fl_chart
+  only for a chart with zoom, fl_chart
   `transformationConfig`, Graphic `RectCoord.horizontalRangeUpdater` and Syncfusion
   `ZoomPanBehavior`, each inside the data and at most `chartMaxZoom` times. The
   adapter claims each wheel over a chart with zoom, so the page does not scroll
@@ -1840,16 +1854,18 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `lib/src/upstream.dart` has `chartjsPluginZoomVersion` (`2.2.0+fb81d331`, a commit pin) and
     `chartjsPluginZoomPackageVersion` (`2.2.0`), port-only. An app gives the options in
     `ChartConfig.extra` as `{'plugins': {'zoom': {...}}}` or in a raw config, and registers the
-    plugin with `Chart.register([zoomPlugin])`: the typed `ChartConfig.plugins` takes only plugin
-    Maps (seam H18). The port-only zoom option `rangeOnlyUpdates: true` (no default) makes the
+    plugin with `Chart.register([zoomPlugin])`, or gives it inline in `ChartConfig.plugins` or in
+    the `plugins` of a raw config (seam H18). The port-only zoom option `rangeOnlyUpdates: true` (no default) makes the
     five update calls of `core.dart` (`_updateChart`) call `chart.updateRanges(transition)` of
     Chart.js ADR 0111 in place of `chart.update(transition)`; the app keeps the contract of
     `updateRanges` (row `adapt-range-only-updates`, seam H28).
   - `lib/src/`: the 12 files of `src/` at their mapped paths: `types`, `options`, `defaults`,
     `state`, `utils`, `scale.types`, `core`, `handlers`, `gestures`, `plugin` and `index`;
-    `src/index.umd.ts` has no Dart file (Zoom ADR 0002 item 8, Chart.js ADR 0120). `zoomPlugin` (`plugin.dart`) is a typed `Plugin` of the host with the upstream keys
-    in order and `supportsDataUpdates: true` (row `adapt-typed-plugin-object`, seam H25); its hooks
-    take `Object chart` and narrow it with `chart as Chart`. The options are extension-type facades
+    `src/index.umd.ts` has no Dart file (Zoom ADR 0002 item 8, Chart.js ADR 0120). `zoomPlugin` (`plugin.dart`) is a native `Plugin<ZoomPluginOptions>` of the host
+    (Chart.js ADR 0144) with the upstream hooks in order and `supportsDataUpdates: true` (row
+    `adapt-typed-plugin-object`, seam H25); its hooks get the facade `ZoomPluginOptions`, take
+    `Object chart` and narrow it with `chart as Chart`. The upstream keys `version`,
+    `panFunctions`, `zoomFunctions` and `zoomRectFunctions` are top-level names of the library. The options are extension-type facades
     over the resolver of the host (`ZoomPluginOptions` of `options.dart`), read live. A callback
     option (`onZoomStart`, `onZoom`, `onPanComplete`, ...) and a `ModeFn` hold the function of
     their typedef, and the plugin calls them directly; a start callback returns `bool`, and a
@@ -2488,9 +2504,15 @@ sankey ADRs are proposed. The doc paths are relative to
   `test/support/jasmine.dart` holds the shared matchers (`jasmineEquals`, `objectContaining`,
   `anyFunction`, `JasmineOptions`) and spies (Chart.js ADR 0030). A draw spy needs
   `animation: false` (the default of `acquireChart`) or the end of the animations: it throws a
-  `StateError` for an element with a running animation.
+  `StateError` for an element with a running animation. A spy of a plugin hook is `hookSpy()`:
+  its `hook` or its `cancelableHook` goes into the hook field of a native plugin (Chart.js ADR
+  0144).
 - A Jasmine `spyOn(chart, 'update')` is a plugin with a `beforeUpdate` hook (`_spyOnUpdate` of
   `test/specs/global.defaults_test.dart`, Chart.js ADR 0041 §11 item 2).
+- A plugin of a test is a native `Plugin<Object?>(id: ..., hooks)`, never a Map. A cancelable
+  hook returns `bool`. A test that gets a plugin Map from the reference data makes the native
+  plugin with `nativePlugin` of `test/support/native_plugin.dart` (`copyReference` of
+  `test/port/scales/scale_chart_harness.dart` does it for the key `plugins`).
 - Jasmine `this` in a spec port is a set of `late` variables of the group closure.
 - A test scale overrides `getPixelForValue(Object? value, [int? index])` and applies
   `jsToNumber(value)` before its arithmetic. A test controller passes the raw

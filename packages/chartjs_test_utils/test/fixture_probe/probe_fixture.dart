@@ -26,6 +26,7 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 const String _folder = 'test/fixture_probe';
@@ -180,7 +181,7 @@ void main() {
     LineElement.jsClass,
     BarElement.jsClass,
     // A plugin for the stale skip of `source/stale-skip.json`.
-    <String, Object?>{'id': 'probe'},
+    Plugin<Object?>(id: 'probe'),
   ]);
 
   group('probe', () {

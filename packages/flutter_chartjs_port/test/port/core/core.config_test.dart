@@ -39,6 +39,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
@@ -555,9 +556,7 @@ void main() {
 
   group('getters and setters', () {
     test('platform, plugins and type read the raw config', () {
-      final plugins = [
-        <String, Object?>{'id': 'p'},
-      ];
+      final plugins = [Plugin<Object?>(id: 'p')];
       void platform() {}
       final raw = <String, Object?>{
         'type': 'bar',
@@ -1154,39 +1153,35 @@ void main() {
     test('pluginScopeKeys', () {
       final config = Config(<String, Object?>{'type': 'k6bar'});
       final config2 = Config(<String, Object?>{'type': 'k6line'});
-      final legend = config.pluginScopeKeys(<String, Object?>{'id': 'legend'});
+      final legend = config.pluginScopeKeys(Plugin<Object?>(id: 'legend'));
       expect(legend, [
         ['plugins.legend'],
       ]);
       expect(
-        config.pluginScopeKeys(<String, Object?>{'id': 'legend'}),
+        config.pluginScopeKeys(Plugin<Object?>(id: 'legend')),
         same(legend),
       );
       expect(
-        config.pluginScopeKeys(<String, Object?>{
-          'id': 'tooltip',
-          'additionalOptionScopes': ['interaction', 'x.y'],
-        }),
+        config.pluginScopeKeys(
+          Plugin<Object?>(
+            id: 'tooltip',
+            additionalOptionScopes: ['interaction', 'x.y'],
+          ),
+        ),
         [
           ['plugins.tooltip', 'interaction', 'x.y'],
         ],
       );
-      expect(config.pluginScopeKeys(<String, Object?>{'id': 'tooltip'}), [
+      expect(config.pluginScopeKeys(Plugin<Object?>(id: 'tooltip')), [
         ['plugins.tooltip', 'interaction', 'x.y'],
       ]);
-      expect(config2.pluginScopeKeys(<String, Object?>{'id': 'tooltip'}), [
+      expect(config2.pluginScopeKeys(Plugin<Object?>(id: 'tooltip')), [
         ['plugins.tooltip'],
       ]);
       expect(
-        config.pluginScopeKeys(<String, Object?>{'id': 'z'}),
+        config.pluginScopeKeys(Plugin<Object?>(id: 'z')),
         same(config.datasetScopeKeys('k6bar-plugin-z')),
       );
-      expect(config.pluginScopeKeys(<String, Object?>{'id': 2.5}), [
-        ['plugins.2.5'],
-      ]);
-      expect(config.pluginScopeKeys(<String, Object?>{}), [
-        ['plugins.undefined'],
-      ]);
     });
   });
 
@@ -1413,13 +1408,13 @@ void main() {
 
     test('a scope that a caller adds stays in the cached list', () {
       final c = Config(<String, Object?>{'type': 'tbar'});
-      final plugin = <String, Object?>{
-        'id': 'local',
-        'defaults': <String, Object?>{'p': 1.0},
-      };
+      final plugin = Plugin<Object?>(
+        id: 'local',
+        defaults: <String, Object?>{'p': 1.0},
+      );
       final keys = c.pluginScopeKeys(plugin);
       final main = <String, Object?>{};
-      final first = c.getOptionScopes(main, keys)..add(plugin['defaults']);
+      final first = c.getOptionScopes(main, keys)..add(plugin.defaults);
       final second = c.getOptionScopes(main, keys);
       expect(second, same(first));
       expect(second.length, 2);
@@ -2008,26 +2003,6 @@ void main() {
         throwsA(isA<TypeError>()),
       );
     });
-
-    test('additionalOptionScopes is a List of strings', () {
-      // Upstream spreads a string into its characters. A key that is not a
-      // string throws a TypeError in getOptionScopes.
-      final config = Config(<String, Object?>{'type': 'k7bar'});
-      expect(
-        () => config.pluginScopeKeys(<String, Object?>{
-          'id': 'a',
-          'additionalOptionScopes': 'ab',
-        }),
-        throwsA(isA<TypeError>()),
-      );
-      expect(
-        () => config.pluginScopeKeys(<String, Object?>{
-          'id': 'b',
-          'additionalOptionScopes': [5.0],
-        }),
-        throwsA(isA<TypeError>()),
-      );
-    });
   });
 
   group('adapt-typed-element-options', () {
@@ -2434,7 +2409,7 @@ void main() {
         c
             .getOptionScopes(
               undefined,
-              c.pluginScopeKeys(<String, Object?>{'id': 'tp'}),
+              c.pluginScopeKeys(Plugin<Object?>(id: 'tp')),
             )
             .map(label),
         ['theme.plugins.tp'],
@@ -2617,7 +2592,7 @@ void main() {
         final opts = _at(c.options, 'plugins.tp');
         final scopes = c.getOptionScopes(
           opts,
-          c.pluginScopeKeys(<String, Object?>{'id': 'tp'}),
+          c.pluginScopeKeys(Plugin<Object?>(id: 'tp')),
         );
         final resolver = c.createResolver(
           scopes,

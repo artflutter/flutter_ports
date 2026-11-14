@@ -1623,23 +1623,22 @@ void main() {
             });
             final dataset = _first(cfg);
             cfg['plugins'] = <Object?>[
-              <String, Object?>{
-                'id': 'writes-read-back',
-                'afterDatasetUpdate':
-                    (Object? chart, Object? args, Object? options) {
-                      final view = (chart! as Chart)
-                          .getDatasetMeta(0)
-                          .controller!
-                          .options;
-                      if (own.containsKey('spacing')) {
-                        dataset['spacing'] = value;
-                      }
-                      if (own.containsKey('spacingMode')) {
-                        dataset['spacingMode'] = modeAt[value];
-                      }
-                      trace.add([view['spacing'], view['spacingMode']]);
-                    },
-              },
+              Plugin<Object?>(
+                id: 'writes-read-back',
+                afterDatasetUpdate: (chart, args, options) {
+                  final view = (chart as Chart)
+                      .getDatasetMeta(0)
+                      .controller!
+                      .options;
+                  if (own.containsKey('spacing')) {
+                    dataset['spacing'] = value;
+                  }
+                  if (own.containsKey('spacingMode')) {
+                    dataset['spacingMode'] = modeAt[value];
+                  }
+                  trace.add([view['spacing'], view['spacingMode']]);
+                },
+              ),
             ];
             final chart = _chart(cfg);
             value = 20.0;

@@ -64,7 +64,7 @@ const List<String> _pluginKeys = [
 /// The plugin options of the plugin [id] of [chart]: the options of its
 /// descriptor (core.plugins.js:175-188).
 Object _pluginOptions(Chart chart, String id) => chart.plugins.cache!
-    .firstWhere((descriptor) => jsGet(descriptor.plugin, 'id') == id)
+    .firstWhere((descriptor) => descriptor.plugin.id == id)
     .options;
 
 /// The value of the dot path [path] in [root].

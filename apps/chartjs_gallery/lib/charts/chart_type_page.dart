@@ -133,15 +133,12 @@ class ChartTypePageState() extends State<ChartTypePage> {
   /// (core.controller.js:1250-1252). The tooltip also clears on a
   /// `mouseout` event, in its hook `afterEvent`
   /// (plugin.tooltip.js:1186-1188).
-  late final Map<String, Object?> _mouseoutPlugin = {
-    'id': 'typeReadout',
-    'afterEvent': (Object? chart, Object? args, Object? options) {
-      // The hook arguments are a typed object, read by name through its
-      // face (core.controller.js:1164-1169, Chart.js ADR 0054 §12).
-      final event = (args! as JsObjectFace)['event']! as ChartEvent;
-      if (event.type == 'mouseout') _readout.value++;
+  late final Plugin<Object?> _mouseoutPlugin = Plugin(
+    id: 'typeReadout',
+    afterEvent: (chart, args, options) {
+      if (args.event.type == 'mouseout') _readout.value++;
     },
-  };
+  );
 
   void _onChart(Chart chart) {
     _chart = chart;

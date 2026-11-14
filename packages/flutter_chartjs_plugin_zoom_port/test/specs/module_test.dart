@@ -3,7 +3,7 @@
 library;
 
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show zoomPlugin;
+    show panFunctions, zoomFunctions, zoomPlugin, zoomRectFunctions;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart, Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -20,7 +20,7 @@ void main() {
   group('module', () {
     test('should be globally exported in ChartZoom', () {
       // `typeof window.ChartZoom === 'object'`: an object, not a function.
-      expect(zoomPlugin, isA<Plugin>());
+      expect(zoomPlugin, isA<Plugin<Object?>>());
     });
 
     test('should be referenced with id "zoom"', () {
@@ -30,10 +30,12 @@ void main() {
     test(
       'should expose zoomFunctions, zoomRectFunctions, and panFunctions',
       () {
-        // `instanceof Object`: the tables are Maps.
-        expect(zoomPlugin['zoomFunctions'] is Map, toBe(true));
-        expect(zoomPlugin['zoomRectFunctions'] is Map, toBe(true));
-        expect(zoomPlugin['panFunctions'] is Map, toBe(true));
+        // `instanceof Object`: the tables are Maps. They are top-level names
+        // of the library, not keys of the native plugin (differences.md row
+        // `adapt-typed-plugin-object`).
+        expect(zoomFunctions, isA<Map<Object?, Object?>>());
+        expect(zoomRectFunctions, isA<Map<Object?, Object?>>());
+        expect(panFunctions, isA<Map<Object?, Object?>>());
       },
     );
 

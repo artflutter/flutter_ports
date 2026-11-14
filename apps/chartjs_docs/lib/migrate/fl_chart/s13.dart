@@ -72,9 +72,9 @@ class _Sample13State() extends State<Sample13> {
   }
 
   /// The error bars of the sample, which Chart.js does not have.
-  late final Map<String, Object?> _errorBars = {
-    'id': 'errorBars',
-    'afterDatasetsDraw': (Chart chart, Object? args, Object? options) {
+  late final _errorBars = Plugin<Object?>(
+    id: 'errorBars',
+    afterDatasetsDraw: (chart, args, options) {
       final days = _months![_month];
       final y = chart.scales['y']!;
       final elements = chart.getDatasetMeta(0).data;
@@ -107,7 +107,7 @@ class _Sample13State() extends State<Sample13> {
       }
       ctx.restore();
     },
-  };
+  );
 
   void _hover(ChartEvent event, List<ActiveElement> hits, Chart chart) {
     final next = hits.isEmpty ? -1 : hits.first.index;

@@ -31,6 +31,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -85,7 +86,13 @@ import '../support/jasmine.dart';
 // - `chart.data.datasets.splice(...)` is `jsSplice`: no listener watches
 //   the datasets array.
 // - `[].concat(hooks.a, hooks.b)` is a list literal with spreads.
-// - `'before-' + args.index` is `jsToString` of the index.
+// - A plugin is a native `Plugin` (Chart.js ADR 0144), with a field for
+//   each hook. `Plugin.id` is a required String: an inline plugin of
+//   upstream without `id` gets an id that no option names. `plugin[name] =
+//   function` for each name of `hooks` is [_sequencePlugin]. A cancelable
+//   hook returns `true`, the `undefined` of the upstream function.
+// - `'before-' + args.index` is the interpolation of the `int` index of
+//   `DatasetDrawHookArgs`.
 // - A `beforeEach` or an `afterEach` that reads a chart is a local function
 //   that each case calls first or last.
 // - `push`, `pop`, `shift`, `splice` and `unshift` of `chart.data.labels` or
@@ -124,6 +131,54 @@ List<Object?> _activeElements(Chart chart) => [
 /// plugin.tooltip.dart extends `Element` and gives the property by name.
 List<types.ActiveElement> _tooltipActive(types.TooltipModel tooltip) =>
     (tooltip as Element)['_active']! as List<types.ActiveElement>;
+
+/// The plugin of the cases of the plugin order (:1817-1826, :1865-1874):
+/// the id [id] and each hook of the table `hooks` of the group
+/// `plugin.extensions`, which calls [record] with its name.
+Plugin<Object?> _sequencePlugin(String id, void Function(String name) record) {
+  void Function(types.Chart chart, Object args, Object? options) hook(
+    String name,
+  ) =>
+      (_, _, _) => record(name);
+  bool Function(types.Chart chart, Object args, Object? options) cancelable(
+    String name,
+  ) => (_, _, _) {
+    record(name);
+    return true;
+  };
+  return Plugin<Object?>(
+    id: id,
+    install: hook('install'),
+    uninstall: hook('uninstall'),
+    beforeInit: hook('beforeInit'),
+    resize: hook('resize'),
+    afterInit: hook('afterInit'),
+    start: hook('start'),
+    stop: hook('stop'),
+    beforeUpdate: cancelable('beforeUpdate'),
+    beforeLayout: cancelable('beforeLayout'),
+    beforeDataLimits: hook('beforeDataLimits'),
+    afterDataLimits: hook('afterDataLimits'),
+    beforeBuildTicks: hook('beforeBuildTicks'),
+    afterBuildTicks: hook('afterBuildTicks'),
+    afterLayout: hook('afterLayout'),
+    beforeDatasetsUpdate: cancelable('beforeDatasetsUpdate'),
+    beforeDatasetUpdate: cancelable('beforeDatasetUpdate'),
+    afterDatasetUpdate: hook('afterDatasetUpdate'),
+    afterDatasetsUpdate: hook('afterDatasetsUpdate'),
+    afterUpdate: hook('afterUpdate'),
+    beforeRender: cancelable('beforeRender'),
+    beforeDraw: cancelable('beforeDraw'),
+    beforeDatasetsDraw: cancelable('beforeDatasetsDraw'),
+    beforeDatasetDraw: cancelable('beforeDatasetDraw'),
+    afterDatasetDraw: hook('afterDatasetDraw'),
+    afterDatasetsDraw: hook('afterDatasetsDraw'),
+    afterDraw: hook('afterDraw'),
+    afterRender: hook('afterRender'),
+    beforeDestroy: hook('beforeDestroy'),
+    afterDestroy: hook('afterDestroy'),
+  );
+}
 
 /// `point.y` of a data element.
 double _y(types.Element point) => (point as Element).y;
@@ -2340,16 +2395,8 @@ void main() {
 
       testWidgets('should notify plugin in correct order', (tester) async {
         await waitForDone((done) {
-          final plugin = <String, Object?>{};
           final sequence = <Object?>[];
-
-          for (final group in jsObjectKeys(hooks)) {
-            for (final name in hooks[group]!) {
-              plugin[name] = () {
-                sequence.add(name);
-              };
-            }
-          }
+          final plugin = _sequencePlugin('sequence', sequence.add);
 
           final chart = acquireChart(
             <String, Object?>{
@@ -2395,16 +2442,8 @@ void main() {
       testWidgets('should notify initially disabled plugin in correct order', (
         tester,
       ) async {
-        final plugin = <String, Object?>{'id': 'plugin'};
         var sequence = <Object?>[];
-
-        for (final group in jsObjectKeys(hooks)) {
-          for (final name in hooks[group]!) {
-            plugin[name] = () {
-              sequence.add(name);
-            };
-          }
-        }
+        final plugin = _sequencePlugin('plugin', (name) => sequence.add(name));
 
         final chart = acquireChart(<String, Object?>{
           'type': 'line',
@@ -2448,14 +2487,16 @@ void main() {
         'should not notify before/afterDatasetDraw if dataset is hidden',
         (tester) async {
           final sequence = <Object?>[];
-          final plugin = <String, Object?>{
-            'beforeDatasetDraw': (Object? chart, Object? args) {
-              sequence.add('before-${jsToString(jsGet(args, 'index'))}');
+          final plugin = Plugin<Object?>(
+            id: 'datasetDraws',
+            beforeDatasetDraw: (_, args, _) {
+              sequence.add('before-${args.index}');
+              return true;
             },
-            'afterDatasetDraw': (Object? chart, Object? args) {
-              sequence.add('after-${jsToString(jsGet(args, 'index'))}');
+            afterDatasetDraw: (_, args, _) {
+              sequence.add('after-${args.index}');
             },
-          };
+          );
 
           acquireChart(<String, Object?>{
             'type': 'line',
@@ -2489,7 +2530,8 @@ void main() {
       // (core.plugins.js:101-107). `Object.getPrototypeOf(plugin.options)` is
       // null: the options are a resolver of helpers.config, a Map, and a Map
       // has no prototype (the trap table of helpers.config.dart,
-      // differences.md row js-semantics-resolver-objects).
+      // differences.md row js-semantics-resolver-objects). The blank inline
+      // plugin `{}` is a `Plugin` with an id and no hook (Chart.js ADR 0144).
       testWidgets(
         'should not crash when accessing options of a blank inline plugin',
         (tester) async {
@@ -2498,7 +2540,7 @@ void main() {
             'data': <String, Object?>{
               'datasets': <Object?>[<String, Object?>{}],
             },
-            'plugins': <Object?>[<String, Object?>{}],
+            'plugins': <Object?>[Plugin<Object?>(id: 'blank')],
           });
 
           void iterateOptions() {

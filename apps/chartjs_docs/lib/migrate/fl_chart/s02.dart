@@ -96,7 +96,7 @@ ChartConfig _config(List<num> ys, {required bool average}) {
   );
 }
 
-final Map<String, Object?> _border = areaBorder(_gridColor);
+final Plugin<Object?> _border = areaBorder(_gridColor);
 final ChartConfig _main = _config(const [
   3,
   2,

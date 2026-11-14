@@ -26,6 +26,8 @@ import 'dart:ui' show FontWeight;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
@@ -63,26 +65,26 @@ void _stop(types.Chart chart, Object _, Object _) {
 /// plugin.subtitle.js:26 `beforeUpdate(chart, _args, options)`. Without a
 /// subtitle, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-void _beforeUpdate(types.Chart chart, Object _, Object options) {
+bool _beforeUpdate(types.Chart chart, Object _, Object options) {
   final title = _map[chart]!;
   layouts.configure(chart, title, options);
   title.options = options;
+  return true;
 }
 
 /// plugin.subtitle.js:6 the default export, `SubTitle` of
 /// `src/plugins/index.js:5` (Chart.js ADR 0038, section 1).
 ///
-/// A typed [Plugin] with the upstream keys in the upstream order. The hooks
-/// read no args, so they take any args object.
-// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-final Plugin subTitle = Plugin(supportsDataUpdates: true)
-  ..id = 'subtitle'
-  ..start = _start
-  ..stop = _stop
-  ..beforeUpdate = _beforeUpdate
+/// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
+/// upstream order. The hooks read no args, so they take any args object.
+final subTitle = Plugin<OptionView>(
+  id: 'subtitle',
+  start: _start,
+  stop: _stop,
+  beforeUpdate: _beforeUpdate,
   // plugin.subtitle.js:32-43. A typed scope of the kind `TitleOptions`
   // (Chart.js ADR 0054 §3).
-  ..defaults = (TitleOptionsScope()
+  defaults: TitleOptionsScope()
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     ..align = ChartAlign.center
     ..display = false
@@ -93,10 +95,13 @@ final Plugin subTitle = Plugin(supportsDataUpdates: true)
     ..position = ChartPosition.top
     ..text = ''
     // by default greater than legend (1000) and smaller than title (2000)
-    ..weight = 1500.0)
+    ..weight = 1500.0,
   // plugin.subtitle.js:45-47.
-  ..defaultRoutes = <String, Object?>{'color': 'color'}
+  defaultRoutes: const {'color': 'color'},
   // plugin.subtitle.js:49-52. A typed scope of the kind `Descriptors`.
-  ..descriptors = (DescriptorsScope()
+  descriptors: DescriptorsScope()
     ..descScriptable = true
-    ..descIndexable = false);
+    ..descIndexable = false,
+  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+  supportsDataUpdates: true,
+);

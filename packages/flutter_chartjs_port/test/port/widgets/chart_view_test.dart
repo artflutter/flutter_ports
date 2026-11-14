@@ -18,9 +18,9 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -79,14 +79,33 @@ Widget _motion(Widget child, {required bool reduced}) => MediaQuery(
   child: child,
 );
 
-/// A plugin that counts the calls of [hook] in [counts].
-AnyObject _counter(String id, String hook, Map<String, int> counts) =>
-    <String, Object?>{
-      'id': id,
-      hook: (Object? chart, Object? args, Object? options) {
-        counts[hook] = (counts[hook] ?? 0) + 1;
+/// A plugin that counts the calls of [hook] in [counts]: `afterRender`,
+/// `afterDestroy`, `afterDraw` or `beforeUpdate`.
+Plugin<Object?> _counter(String id, String hook, Map<String, int> counts) {
+  void count() => counts[hook] = (counts[hook] ?? 0) + 1;
+  return switch (hook) {
+    'afterRender' => Plugin<Object?>(
+      id: id,
+      afterRender: (chart, args, options) => count(),
+    ),
+    'afterDestroy' => Plugin<Object?>(
+      id: id,
+      afterDestroy: (chart, args, options) => count(),
+    ),
+    'afterDraw' => Plugin<Object?>(
+      id: id,
+      afterDraw: (chart, args, options) => count(),
+    ),
+    'beforeUpdate' => Plugin<Object?>(
+      id: id,
+      beforeUpdate: (chart, args, options) {
+        count();
+        return true;
       },
-    };
+    ),
+    _ => throw ArgumentError.value(hook, 'hook'),
+  };
+}
 
 /// The diagnostics of [object] at the level info, as strings.
 List<String> _properties(Diagnosticable object) => [
@@ -203,12 +222,12 @@ void main() {
           ChartView.raw(
             config: _config(
               plugins: [
-                <String, Object?>{
-                  'id': 'init',
-                  'afterInit': (Object? chart, Object? args, Object? options) {
-                    attachedAtInit = (chart! as Chart).attached;
+                Plugin<Object?>(
+                  id: 'init',
+                  afterInit: (chart, args, options) {
+                    attachedAtInit = (chart as Chart).attached;
                   },
-                },
+                ),
               ],
             ),
             onChartCreated: (chart) => created = chart,
@@ -296,12 +315,12 @@ void main() {
       late StateSetter setOuter;
       final config = _config(
         plugins: [
-          <String, Object?>{
-            'id': 'init',
-            'afterInit': (Object? chart, Object? args, Object? options) {
+          Plugin<Object?>(
+            id: 'init',
+            afterInit: (chart, args, options) {
               setOuter(() {});
             },
-          },
+          ),
         ],
       );
       await tester.pumpWidget(
@@ -321,12 +340,12 @@ void main() {
 
     testWidgets('an error in a plugin install hook is reported, the host '
         'keeps a size, and a new config starts the chart', (tester) async {
-      final boom = <String, Object?>{
-        'id': 'boom',
-        'install': (Object? chart, Object? args, Object? options) {
+      final boom = Plugin<Object?>(
+        id: 'boom',
+        install: (chart, args, options) {
           throw StateError('boom');
         },
-      };
+      );
       final details = <FlutterErrorDetails>[];
       final previous = FlutterError.onError;
       FlutterError.onError = details.add;
@@ -522,12 +541,13 @@ void main() {
     ) async {
       final phases = <SchedulerPhase>[];
       final plugins = <Object?>[
-        <String, Object?>{
-          'id': 'update',
-          'beforeUpdate': (Object? chart, Object? args, Object? options) {
+        Plugin<Object?>(
+          id: 'update',
+          beforeUpdate: (chart, args, options) {
             phases.add(SchedulerBinding.instance.schedulerPhase);
+            return true;
           },
-        },
+        ),
       ];
       final config = _config(plugins: plugins);
       await tester.pumpWidget(_box(ChartView.raw(config: config)));
@@ -631,15 +651,15 @@ void main() {
       tester,
     ) async {
       final log = <String>[];
-      AnyObject plugin(String id) => <String, Object?>{
-        'id': id,
-        'start': (Object? chart, Object? args, Object? options) {
+      Plugin<Object?> plugin(String id) => Plugin<Object?>(
+        id: id,
+        start: (chart, args, options) {
           log.add('$id.start');
         },
-        'stop': (Object? chart, Object? args, Object? options) {
+        stop: (chart, args, options) {
           log.add('$id.stop');
         },
-      };
+      );
       final config = _config(plugins: [plugin('a')]);
       await tester.pumpWidget(_box(ChartView.raw(config: config)));
       final chart = _chart(tester)!;
@@ -685,12 +705,13 @@ void main() {
       final modes = <Object?>[];
       final config = _config(
         plugins: [
-          <String, Object?>{
-            'id': 'mode',
-            'beforeUpdate': (Object? chart, Object? args, Object? options) {
-              modes.add(jsGet(args, 'mode'));
+          Plugin<Object?>(
+            id: 'mode',
+            beforeUpdate: (chart, args, options) {
+              modes.add(args.mode);
+              return true;
             },
-          },
+          ),
         ],
       );
       await tester.pumpWidget(_Parent(config: config));

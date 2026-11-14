@@ -37,7 +37,7 @@ ChartConfig _config(
   ChartTitle? title,
   EdgeInsets? padding,
   ChartAnimation? animation = ChartAnimation.none,
-  List<Map<String, Object?>>? plugins,
+  List<Plugin<Object?>>? plugins,
   Map<String, Object?>? extra,
 }) => ChartConfig(
   type: type,
@@ -213,15 +213,11 @@ void main() {
         _report(
           _config(
             [BarDataset(data: _data())],
-            plugins: [
-              <String, Object?>{'id': 'a'},
-            ],
+            plugins: [Plugin<Object?>(id: 'a')],
           ),
           _config(
             [BarDataset(data: _data())],
-            plugins: [
-              <String, Object?>{'id': 'b'},
-            ],
+            plugins: [Plugin<Object?>(id: 'b')],
           ),
         ),
         isFalse,

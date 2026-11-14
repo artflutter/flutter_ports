@@ -1,5 +1,17 @@
 ## 0.1.0
 
+- A plugin is a native `Plugin<O>` with one typed field for each hook (Chart.js
+  ADR 0144). A plugin Map is no longer a plugin: a Map in `plugins` or in
+  `Chart.register` stops a debug build. A cancelable hook (`beforeUpdate`,
+  `beforeDatasetsUpdate`, `beforeDatasetUpdate`, `beforeLayout`,
+  `beforeRender`, `beforeDraw`, `beforeDatasetsDraw`, `beforeDatasetDraw`,
+  `beforeEvent` and `beforeTooltipDraw`) returns `bool`, and `false` cancels.
+  The hook arguments have typed fields and no `cancelable`.
+  `chart.notifyPlugins` takes a `PluginHook`, and `ChartConfig.plugins` takes
+  `List<Plugin<Object?>>`. `CancelableHookArgs`, `MapPlugin` and
+  `isHookFunction` are removed:
+  `Plugin<Object?>(id: 'probe', afterDraw: (chart, args, options) => draws++)`.
+
 - The JS runtime of `js_semantics.dart` has no `canvasKeyword`, `jsTypeof` and
   `jsObjectIsFrozen`: no library code called them. Read the frozen state with
   the `isFrozen` getter of a `JsFreezable`, and test a type with `is`.
@@ -192,8 +204,9 @@ The first release: a native Dart port of Chart.js v4.6.1 for Flutter.
   Chart.js helpers.
 - **Typed internals.** The options, the resolvers, the parsed data, the element properties, the
   contexts and the plugins are typed Dart objects, not Maps. Code that extends Chart.js reads such
-  an object by name through `JsObjectFace` (for example `(context as JsObjectFace)['dataIndex']`
-  or `(args as JsObjectFace)['event']` in a plugin hook): a missing key reads `undefined`.
+  an object by name through `JsObjectFace` (for example `(context as JsObjectFace)['dataIndex']`):
+  a missing key reads `undefined`. A plugin hook reads its arguments through their typed fields
+  (`args.event`).
   `Chart.data`, `Chart.config.data` and `Chart.config.options` are `Object` (the `Map` of a raw
   configuration, or a typed object), `Chart.options` is the options resolver, and the
   `Merger` and `InteractionModeFunction` types take `Object` targets and options.

@@ -38,12 +38,13 @@ Chart _chart(WidgetTester tester) {
 /// update. It unregisters at the end of the test.
 List<Object?> _spyOnUpdates() {
   final modes = <Object?>[];
-  final plugin = <String, Object?>{
-    'id': r'$updateSpy',
-    'beforeUpdate': (Object? chart, JsObjectFace args, Object? o) {
-      modes.add(args['mode']);
+  final plugin = Plugin<Object?>(
+    id: r'$updateSpy',
+    beforeUpdate: (chart, args, o) {
+      modes.add(args.mode);
+      return true;
     },
-  };
+  );
   Chart.register([plugin]);
   addTearDown(() => Chart.unregister([plugin]));
   return modes;
@@ -230,14 +231,14 @@ void main() {
         'plugin is the same object; another plugin gives one', (tester) async {
       final modes = _spyOnUpdates();
       final starts = <String>[];
-      Map<String, Object?> plugin(String id) => <String, Object?>{
-        'id': id,
-        'start': (Object? chart, Object? args, Object? options) {
+      Plugin<Object?> plugin(String id) => Plugin<Object?>(
+        id: id,
+        start: (chart, args, options) {
           starts.add(id);
         },
-      };
+      );
       final first = plugin('first');
-      Widget view(Map<String, Object?> plugin) => _box(
+      Widget view(Plugin<Object?> plugin) => _box(
         ChartView(
           config: ChartConfig(
             type: .bar,

@@ -241,16 +241,22 @@ final _update = _Phase();
 final _draw = _Phase();
 void Function()? _onDrawn;
 
-Map<String, Object?> _timingPlugin() => <String, Object?>{
-  'id': 'labEverydayTiming',
-  'beforeUpdate': (Object? c, Object? a, Object? o) => _update.begin(),
-  'afterUpdate': (Object? c, Object? a, Object? o) => _update.end(),
-  'beforeDraw': (Object? c, Object? a, Object? o) => _draw.begin(),
-  'afterDraw': (Object? c, Object? a, Object? o) {
+cj.Plugin<Object?> _timingPlugin() => cj.Plugin(
+  id: 'labEverydayTiming',
+  beforeUpdate: (c, a, o) {
+    _update.begin();
+    return true;
+  },
+  afterUpdate: (c, a, o) => _update.end(),
+  beforeDraw: (c, a, o) {
+    _draw.begin();
+    return true;
+  },
+  afterDraw: (c, a, o) {
     _draw.end();
     _onDrawn?.call();
   },
-};
+);
 
 class const _Harness({super.key}) extends StatefulWidget {
   @override

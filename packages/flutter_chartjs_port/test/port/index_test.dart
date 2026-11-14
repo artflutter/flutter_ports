@@ -6,7 +6,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show Registry;
 import 'package:flutter_chartjs_port/src/index.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 // The namespaces and `registerables` of src/index.ts:8-25 (Chart.js ADR
@@ -223,9 +223,9 @@ void main() {
     expect(jsObjectKeys(registry.plugins.items), pluginIds);
     expect(jsObjectKeys(defaults.get('plugins')), pluginIds);
     for (final name in jsObjectKeys(plugins)) {
-      final plugin = plugins[name]! as JsObjectFace;
+      final plugin = plugins[name]! as Plugin<Object?>;
       expect(
-        registry.plugins.items[plugin['id']! as String],
+        registry.plugins.items[plugin.id],
         same(plugin),
         reason: 'the registry item of $name',
       );
@@ -234,17 +234,13 @@ void main() {
 
   test('Chart.register([registerables]) throws at the first namespace', () {
     // Upstream throws a TypeError: the namespaces of the bundle have a null
-    // prototype, and `'id' in null` throws. Both throw before a write
-    // (Chart.js ADR 0020, section 6).
+    // prototype, and `'id' in null` throws. Here the namespace reaches the
+    // registry of the plugins, and a debug build stops there: a plugin is a
+    // Plugin (Chart.js ADR 0144). Both stop before a write (Chart.js ADR
+    // 0020, section 6).
     expect(
       () => Chart.register([registerables]),
-      throwsA(
-        isA<StateError>().having(
-          (e) => e.message,
-          'message',
-          'class does not have id: [object Object]',
-        ),
-      ),
+      throwsA(isA<AssertionError>()),
     );
   });
 

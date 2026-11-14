@@ -96,6 +96,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart'
         LayoutLayer;
 import 'package:flutter_chartjs_port/src/types/layout.dart'
     show ChartPosition, ScaleValuePosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginHook;
 import 'package:flutter_chartjs_port/src/types/tick.dart';
 import 'package:meta/meta.dart';
 
@@ -1312,10 +1313,10 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:534 `_callHooks(name)`.
   ///
-  /// The name is the [OptionKey] of the hook option: its JS name is the
-  /// name of the plugin hook, and the option reads with the typed key.
-  void _callHooks(OptionKey name) {
-    chart.notifyPlugins(name.jsName, getContext());
+  /// [hook] is the plugin hook of the name, and [name] the [OptionKey] of
+  /// the hook option, which reads with the typed key (Chart.js ADR 0144).
+  void _callHooks(PluginHook<ScriptableScaleContext> hook, OptionKey name) {
+    chart.notifyPlugins(hook, getContext());
     _callHook(options.readKey(name), name);
   }
 
@@ -1323,7 +1324,7 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:540 `beforeDataLimits()`.
   void beforeDataLimits() {
-    _callHooks(OptionKey.beforeDataLimits);
+    _callHooks(PluginHook.beforeDataLimits, OptionKey.beforeDataLimits);
   }
 
   /// core.scale.js:543 `determineDataLimits()`.
@@ -1331,14 +1332,14 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:544 `afterDataLimits()`.
   void afterDataLimits() {
-    _callHooks(OptionKey.afterDataLimits);
+    _callHooks(PluginHook.afterDataLimits, OptionKey.afterDataLimits);
   }
 
   //
 
   /// core.scale.js:549 `beforeBuildTicks()`.
   void beforeBuildTicks() {
-    _callHooks(OptionKey.beforeBuildTicks);
+    _callHooks(PluginHook.beforeBuildTicks, OptionKey.beforeBuildTicks);
   }
 
   /// core.scale.js:555 `buildTicks()`.
@@ -1353,7 +1354,7 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:558 `afterBuildTicks()`.
   void afterBuildTicks() {
-    _callHooks(OptionKey.afterBuildTicks);
+    _callHooks(PluginHook.afterBuildTicks, OptionKey.afterBuildTicks);
   }
 
   /// core.scale.js:562 `beforeTickToLabelConversion()`.

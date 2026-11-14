@@ -93,13 +93,14 @@ List<Object?> _labelsOf(Chart chart) => [
 /// and calls [onBeforeUpdate]. It unregisters at the end of the test.
 List<Object?> _spyOnUpdates([void Function(Chart chart)? onBeforeUpdate]) {
   final modes = <Object?>[];
-  final plugin = <String, Object?>{
-    'id': r'$updateSpy',
-    'beforeUpdate': (Chart chart, JsObjectFace args, Object? options) {
-      modes.add(args['mode']);
-      onBeforeUpdate?.call(chart);
+  final plugin = Plugin<Object?>(
+    id: r'$updateSpy',
+    beforeUpdate: (chart, args, options) {
+      modes.add(args.mode);
+      onBeforeUpdate?.call(chart as Chart);
+      return true;
     },
-  };
+  );
   Chart.register([plugin]);
   addTearDown(() => Chart.unregister([plugin]));
   return modes;

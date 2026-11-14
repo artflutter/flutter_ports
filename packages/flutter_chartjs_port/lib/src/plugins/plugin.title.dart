@@ -32,6 +32,8 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show renderText;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
@@ -327,31 +329,30 @@ void _stop(types.Chart chart, Object _, Object _) {
 /// plugin.title.js:139 `beforeUpdate(chart, _args, options)`. Without a
 /// title block, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-void _beforeUpdate(types.Chart chart, Object _, Object options) {
+bool _beforeUpdate(types.Chart chart, Object _, Object options) {
   final title = chart.titleBlock! as Title;
   layouts.configure(chart, title, options);
   title.options = options;
+  return true;
 }
 
 /// plugin.title.js:120 the default export, `Title` of
 /// `src/plugins/index.js:6` (Chart.js ADR 0038, section 1).
 ///
-/// A typed [Plugin] (Chart.js ADR 0054 §12) with the upstream keys in the
+/// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
 /// upstream order. Each hook is a private function of the hook type
 /// `(chart, args, options)`: the hooks of the title read no args, so they
-/// take any args object.
-// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-final Plugin title = Plugin(supportsDataUpdates: true)
-  ..id = 'title'
-  // For tests
-  // @private
-  ..jsWrite('_element', Title.jsClass)
-  ..start = _start
-  ..stop = _stop
-  ..beforeUpdate = _beforeUpdate
+/// take any args object. The key `_element: Title` of plugin.title.js:127 is
+/// for the tests: they read `Title.jsClass`.
+// DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
+final title = Plugin<OptionView>(
+  id: 'title',
+  start: _start,
+  stop: _stop,
+  beforeUpdate: _beforeUpdate,
   // plugin.title.js:145-156. A typed scope of the kind `TitleOptions`
   // (Chart.js ADR 0054 §3).
-  ..defaults = (TitleOptionsScope()
+  defaults: TitleOptionsScope()
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     ..align = ChartAlign.center
     ..display = false
@@ -362,10 +363,13 @@ final Plugin title = Plugin(supportsDataUpdates: true)
     ..position = ChartPosition.top
     ..text = ''
     // by default greater than legend (1000) to be above
-    ..weight = 2000.0)
+    ..weight = 2000.0,
   // plugin.title.js:158-160.
-  ..defaultRoutes = <String, Object?>{'color': 'color'}
+  defaultRoutes: const {'color': 'color'},
   // plugin.title.js:162-165. A typed scope of the kind `Descriptors`.
-  ..descriptors = (DescriptorsScope()
+  descriptors: DescriptorsScope()
     ..descScriptable = true
-    ..descIndexable = false);
+    ..descIndexable = false,
+  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+  supportsDataUpdates: true,
+);

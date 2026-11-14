@@ -16,7 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -29,8 +29,9 @@ import '../support/jasmine.dart';
 // 6).
 //
 // `spyOn(chart, 'update').and.callThrough()` (:110, :186) is _spyOnUpdate:
-// a plugin whose beforeUpdate records each update of the chart (Chart.js
-// ADR 0041, section 11 item 2). `Chart.update` stays a method.
+// a native plugin (Chart.js ADR 0144) whose beforeUpdate records each update
+// of the chart (Chart.js ADR 0041, section 11 item 2). `Chart.update` stays a
+// method.
 // `expect(chart.update).toHaveBeenCalled()` is `expect(calls, isNotEmpty)`.
 
 /// spyOn(chart, 'update').and.callThrough() (global.defaults.tests.js:110,
@@ -38,12 +39,13 @@ import '../support/jasmine.dart';
 /// mode of each update of [chart]. It unregisters at the end of the test.
 List<Object?> _spyOnUpdate(Chart chart) {
   final calls = <Object?>[];
-  final plugin = <String, Object?>{
-    'id': r'$updateSpy',
-    'beforeUpdate': (types.Chart c, Object args, Object options) {
-      if (identical(c, chart)) calls.add(jsGet(args, 'mode'));
+  final plugin = Plugin<Object?>(
+    id: r'$updateSpy',
+    beforeUpdate: (c, args, _) {
+      if (identical(c, chart)) calls.add(args.mode);
+      return true;
     },
-  };
+  );
   Chart.register([plugin]);
   addTearDown(() => Chart.unregister([plugin]));
   return calls;

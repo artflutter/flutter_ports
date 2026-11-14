@@ -22,7 +22,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
         TrianglePointStyle;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 import '../../fixture_events.dart';
 
@@ -94,8 +94,10 @@ Map<String, Object?> fixture() {
         'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},
       },
       'plugins': <Object?>[
-        <String, Object?>{
-          'afterDraw': (types.Chart chart) {
+        // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
+        Plugin<Object?>(
+          id: 'inline',
+          afterDraw: (chart, _, _) {
             // var canvas = chart.canvas;
             // var rect = canvas.getBoundingClientRect();
             for (var i = 0; i < pointStyles.length; ++i) {
@@ -108,7 +110,7 @@ Map<String, Object?> fixture() {
                 ..draw(chart.ctx!);
             }
           },
-        },
+        ),
       ],
     },
     'options': <String, Object?>{

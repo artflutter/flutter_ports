@@ -35,6 +35,8 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show Plugin, PluginHook;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../controllers/controller_chart_harness.dart';
@@ -114,3 +116,48 @@ void testPluginChartCases(
   hits: false,
   observeExtra: _pluginObservation(observers),
 );
+
+/// The JS names of the hooks that the native plugin [plugin] sets (Chart.js
+/// ADR 0144), in the order of [PluginHook]: the hook keys of the upstream
+/// plugin object. A plugin has no keys by name, so a test compares its hooks
+/// and its typed fields.
+List<String> pluginHookNames<O>(Plugin<O> plugin) => [
+  for (final (hook, function) in <(PluginHook<Object>, Function?)>[
+    (PluginHook.install, plugin.install),
+    (PluginHook.start, plugin.start),
+    (PluginHook.stop, plugin.stop),
+    (PluginHook.beforeInit, plugin.beforeInit),
+    (PluginHook.afterInit, plugin.afterInit),
+    (PluginHook.beforeUpdate, plugin.beforeUpdate),
+    (PluginHook.afterUpdate, plugin.afterUpdate),
+    (PluginHook.beforeElementsUpdate, plugin.beforeElementsUpdate),
+    (PluginHook.reset, plugin.reset),
+    (PluginHook.beforeDatasetsUpdate, plugin.beforeDatasetsUpdate),
+    (PluginHook.afterDatasetsUpdate, plugin.afterDatasetsUpdate),
+    (PluginHook.beforeDatasetUpdate, plugin.beforeDatasetUpdate),
+    (PluginHook.afterDatasetUpdate, plugin.afterDatasetUpdate),
+    (PluginHook.beforeLayout, plugin.beforeLayout),
+    (PluginHook.beforeDataLimits, plugin.beforeDataLimits),
+    (PluginHook.afterDataLimits, plugin.afterDataLimits),
+    (PluginHook.beforeBuildTicks, plugin.beforeBuildTicks),
+    (PluginHook.afterBuildTicks, plugin.afterBuildTicks),
+    (PluginHook.afterLayout, plugin.afterLayout),
+    (PluginHook.beforeRender, plugin.beforeRender),
+    (PluginHook.afterRender, plugin.afterRender),
+    (PluginHook.beforeDraw, plugin.beforeDraw),
+    (PluginHook.afterDraw, plugin.afterDraw),
+    (PluginHook.beforeDatasetsDraw, plugin.beforeDatasetsDraw),
+    (PluginHook.afterDatasetsDraw, plugin.afterDatasetsDraw),
+    (PluginHook.beforeDatasetDraw, plugin.beforeDatasetDraw),
+    (PluginHook.afterDatasetDraw, plugin.afterDatasetDraw),
+    (PluginHook.beforeEvent, plugin.beforeEvent),
+    (PluginHook.afterEvent, plugin.afterEvent),
+    (PluginHook.resize, plugin.resize),
+    (PluginHook.beforeDestroy, plugin.beforeDestroy),
+    (PluginHook.afterDestroy, plugin.afterDestroy),
+    (PluginHook.uninstall, plugin.uninstall),
+    (PluginHook.beforeTooltipDraw, plugin.beforeTooltipDraw),
+    (PluginHook.afterTooltipDraw, plugin.afterTooltipDraw),
+  ])
+    if (function != null) hook.jsName,
+];

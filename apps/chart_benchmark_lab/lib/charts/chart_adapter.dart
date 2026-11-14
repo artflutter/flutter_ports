@@ -1206,10 +1206,8 @@ class const BenchmarkChart({
 
 /// Registers the zoom plugin of the Chart.js port for the chart below it, and
 /// removes it when the chart leaves the tree, so that a chart without zoom
-/// runs no hook of the plugin. The typed plugin `zoomPlugin` cannot be an
-/// inline plugin of one typed chart: `ChartConfig.plugins` takes only plugin
-/// Maps (seam H18 of the zoom port). Thus the registry holds it, as
-/// `Chart.register` of the docs of the plugin does.
+/// runs no hook of the plugin. The registry holds it, as `Chart.register`
+/// of the docs of the plugin does.
 ///
 /// One engine is mounted at a time. A chart reads the registry at its first
 /// layout. A build deactivates the widget of the chart before it, before

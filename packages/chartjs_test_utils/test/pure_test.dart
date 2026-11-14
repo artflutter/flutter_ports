@@ -7,6 +7,7 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:test/test.dart';
 
 // setUpBuiltins and removeBuiltins of pure.dart (Chart.js ADR 0022, section
@@ -81,14 +82,15 @@ void main() {
   // writes `defaults.plugins.colors.enabled = false` (test/index.js:25-28).
   // removeBuiltins puts back the scopes of before the registration, so a
   // pure-layer file has no colors plugin and no colors line to undo. The
-  // plugin here is a stand-in with the id and the defaults of
-  // plugin.colors.ts:93-99, because plugin.colors.dart is not a pure layer.
+  // plugin here is a stand-in, a native plugin (Chart.js ADR 0144) with the
+  // id and the defaults of plugin.colors.ts:93-99, because plugin.colors.dart
+  // is not a pure layer.
   test('removeBuiltins removes the colors plugin and the colors line', () {
     final plugins = TypedRegistry(jsObjectClass, 'plugins');
-    final colors = <String, Object?>{
-      'id': 'colors',
-      'defaults': <String, Object?>{'enabled': true, 'forceOverride': false},
-    };
+    final colors = Plugin<Object?>(
+      id: 'colors',
+      defaults: <String, Object?>{'enabled': true, 'forceOverride': false},
+    );
     setUpBuiltins(
       () => plugins.register(colors),
       () => plugins.unregister(colors),

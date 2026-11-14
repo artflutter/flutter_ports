@@ -15,13 +15,13 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 // The tests replace and call `Chart.eventHandler`, which only the harness
@@ -81,45 +81,45 @@ void _forceRatio() {
 }
 
 /// The size of a `resize` hook, the record of `getMaximumSize`, as text.
-String _sizeText(Object? size) {
-  final (:width, :height) = size! as ({double width, double height});
-  return '${jsToString(width)}x${jsToString(height)}';
-}
+String _sizeText(({double width, double height}) size) =>
+    '${jsToString(size.width)}x${jsToString(size.height)}';
 
 /// An inline plugin that logs into [log] the hook `resize` with the size
-/// and `chart.attached`, and the mode of `beforeUpdate`.
-Map<String, Object?> _resizeLog(List<String> log) => <String, Object?>{
-  'id': 'resizeLog',
-  'resize': (Object? chart, Object? args, Object? options) {
-    log.add(
-      'resize ${(chart! as Chart).attached} ${_sizeText(jsGet(args, 'size'))}',
-    );
+/// and `chart.attached`, and the mode of `beforeUpdate`. It is a native
+/// plugin (Chart.js ADR 0144).
+Plugin<Object?> _resizeLog(List<String> log) => Plugin<Object?>(
+  id: 'resizeLog',
+  resize: (chart, args, _) {
+    log.add('resize ${(chart as Chart).attached} ${_sizeText(args.size)}');
   },
-  'beforeUpdate': (Object? chart, Object? args, Object? options) {
-    log.add('update ${jsToString(jsGet(args, 'mode'))}');
+  beforeUpdate: (chart, args, _) {
+    log.add('update ${jsToString(args.mode)}');
+    return true;
   },
-};
+);
 
 /// An inline plugin that logs into [log] each event before and after the
-/// handler, and each render. It asks for a render after each event.
-Map<String, Object?> _eventLog(List<String> log) => <String, Object?>{
-  'id': 'eventLog',
-  'beforeEvent': (Object? chart, Object? args, Object? options) {
-    final event = jsGet(args, 'event')! as types.ChartEvent;
+/// handler, and each render. It asks for a render after each event. It is
+/// a native plugin (Chart.js ADR 0144).
+Plugin<Object?> _eventLog(List<String> log) => Plugin<Object?>(
+  id: 'eventLog',
+  beforeEvent: (chart, args, _) {
+    final event = args.event;
     log.add('beforeEvent ${event.type} ${event.native!.type}');
+    return true;
   },
-  'afterEvent': (Object? chart, Object? args, Object? options) {
-    final event = jsGet(args, 'event')! as types.ChartEvent;
+  afterEvent: (chart, args, _) {
+    final event = args.event;
     log.add(
       'afterEvent ${event.type} ${event.native!.type} '
       '${jsToString(event.x)},${jsToString(event.y)}',
     );
-    (args! as JsObjectFace)['changed'] = true;
+    args.changed = true;
   },
-  'afterRender': (Object? chart, Object? args, Object? options) {
+  afterRender: (chart, args, _) {
     log.add('afterRender');
   },
-};
+);
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();

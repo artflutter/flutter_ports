@@ -24,7 +24,7 @@ class _Sample12State() extends State<Sample12> {
   double _start = 0;
   double _end = 1;
   double _gestureScale = 1;
-  final List<Map<String, Object?>> _plugins = [
+  final List<Plugin<Object?>> _plugins = [
     touchIndicator(
       color: Fl.red,
       width: 1.5,

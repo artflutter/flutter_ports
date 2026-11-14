@@ -13,8 +13,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.subtitle.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
@@ -22,6 +22,8 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show PluginHookArgs, UpdateHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -114,17 +116,10 @@ final Map<String, Object? Function(Chart chart)> _observers = {
   'title': _observeTitle,
 };
 
-/// The keys of the default export of plugin.subtitle.js:6-53, in their
-/// order (the probe output `keys`). No `_element`.
-const List<String> _upstreamKeys = [
-  'id',
-  'start',
-  'stop',
-  'beforeUpdate',
-  'defaults',
-  'defaultRoutes',
-  'descriptors',
-];
+/// The hook keys of the default export of plugin.subtitle.js:6-53, in the
+/// order of `PluginHook` (the probe output `keys`: `id`, these hooks,
+/// `defaults`, `defaultRoutes` and `descriptors`). No `_element`.
+const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 
 /// A line chart with the subtitle options [subtitleOptions] and the
 /// plugins other than `subtitle` and `title` off.
@@ -153,13 +148,26 @@ AnyObject _startOptions(String text) => <String, Object?>{
   'fullSize': true,
 };
 
-/// `plugin.<hook>(chart, {}, options)` through the face of the plugin.
+/// `plugin.<hook>(chart, args, options)`: the hook field [hook] of the
+/// native plugin (Chart.js ADR 0144) with the arguments of its hook. The
+/// hooks of the subtitle take any options object, so the call gives them
+/// the option values [options] of a Map, as the probe did.
 void _hook(String hook, Chart chart, [AnyObject? options]) {
-  jsCall(subTitle[hook], [
+  final function =
+      switch (hook) {
+            'start' => subTitle.start,
+            'stop' => subTitle.stop,
+            'beforeUpdate' => subTitle.beforeUpdate,
+            _ => throw ArgumentError.value(hook, 'hook'),
+          }!
+          as void Function(types.Chart, Object, Object);
+  function(
     chart,
-    <String, Object?>{},
+    hook == 'beforeUpdate'
+        ? UpdateHookArgs(mode: undefined)
+        : const PluginHookArgs(),
     options ?? <String, Object?>{},
-  ]);
+  );
 }
 
 /// `chart.options.plugins` of [chart], the option resolver of the plugins.
@@ -212,9 +220,15 @@ void main() {
   });
 
   group('plugin object', () {
-    test('the keys are the upstream keys, with no _element', () {
-      expect(jsObjectKeys(subTitle), _upstreamKeys);
-      expect(subTitle.jsHas('_element'), isFalse);
+    test('the hooks and the fields are the upstream keys', () {
+      // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
+      // object are its hooks, and `id`, `defaults`, `defaultRoutes` and
+      // `descriptors` its fields.
+      expect(pluginHookNames(subTitle), _upstreamHooks);
+      expect(subTitle.id, 'subtitle');
+      expect(subTitle.defaults, isNotNull);
+      expect(subTitle.defaultRoutes, isNotNull);
+      expect(subTitle.descriptors, isNotNull);
     });
 
     test('the registry gives the plugin object', () {
@@ -229,14 +243,18 @@ void main() {
       // behavior of Chart.js. The hooks of the subtitle read no args, so
       // they take any args object. The `Never` parameter type of the
       // `isNot` matcher rejects each function with one more parameter.
-      for (final hook in ['start', 'stop', 'beforeUpdate']) {
+      for (final (hook, function) in <(String, Function?)>[
+        ('start', subTitle.start),
+        ('stop', subTitle.stop),
+        ('beforeUpdate', subTitle.beforeUpdate),
+      ]) {
         expect(
-          subTitle[hook],
+          function,
           isA<void Function(types.Chart, AnyObject, AnyObject)>(),
           reason: hook,
         );
         expect(
-          subTitle[hook],
+          function,
           isNot(isA<void Function(types.Chart, AnyObject, AnyObject, Never)>()),
           reason: hook,
         );
@@ -245,7 +263,7 @@ void main() {
 
     test('the defaults have the upstream keys and values', () {
       // The probe output `defaults`, `defaultRoutes` and `descriptors`.
-      final defaults = subTitle['defaults']! as JsObjectFace;
+      final defaults = subTitle.defaults! as JsObjectFace;
       expect(jsObjectKeys(defaults), [
         'align',
         'display',
@@ -267,10 +285,10 @@ void main() {
       expect(defaults['position'], ChartPosition.top);
       expect(defaults['text'], '');
       expect(defaults['weight'], 1500);
-      expect(_plain(subTitle['defaultRoutes']), <String, Object?>{
+      expect(_plain(subTitle.defaultRoutes), <String, Object?>{
         'color': 'color',
       });
-      expect(_plain(subTitle['descriptors']), <String, Object?>{
+      expect(_plain(subTitle.descriptors), <String, Object?>{
         '_scriptable': true,
         '_indexable': false,
       });

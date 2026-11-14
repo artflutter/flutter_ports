@@ -3,6 +3,8 @@
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show DecimationOptions;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -494,8 +496,11 @@ void main() {
         expect(
           () => decimation.beforeElementsUpdate!(
             chart,
-            PluginHookArgs(),
-            <String, Object?>{'enabled': true, 'algorithm': algorithm},
+            const PluginHookArgs(),
+            DecimationOptions(<String, Object?>{
+              'enabled': true,
+              'algorithm': algorithm,
+            }),
           ),
           throwsA(
             isA<StateError>().having(
@@ -510,10 +515,14 @@ void main() {
 
     test('the algorithm min-max decimates', () {
       final chart = _Chart(_series(50, _wave));
-      decimation.beforeElementsUpdate!(chart, PluginHookArgs(), {
-        'enabled': true,
-        'algorithm': const MinMaxDecimationAlgorithm(),
-      });
+      decimation.beforeElementsUpdate!(
+        chart,
+        const PluginHookArgs(),
+        const DecimationOptions(<String, Object?>{
+          'enabled': true,
+          'algorithm': MinMaxDecimationAlgorithm(),
+        }),
+      );
       final datasets = (chart.data as AnyObject)['datasets']! as List<Object?>;
       final dataset = datasets.single! as AnyObject;
       expect(dataset['_data'], hasLength(50));

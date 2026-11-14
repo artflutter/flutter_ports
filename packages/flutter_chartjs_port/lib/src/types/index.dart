@@ -59,6 +59,8 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show PluginHook, PluginHookArgs;
 import 'package:flutter_chartjs_port/src/types/tick.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
 import 'package:meta/meta.dart';
@@ -250,11 +252,13 @@ abstract interface class Chart() {
   /// index.d.ts:585 `notifyPlugins(hook: string, args?: AnyObject): boolean
   /// | void`. The scale hooks call it (core.scale.js:535).
   ///
-  /// Dart `null` for [args] stands for JS `undefined`. The result is the
-  /// result of `notify`: false when a plugin cancels the hook. Dart `null`
-  /// stands for the `void` result, the `undefined` of a notify before the
-  /// hook `install` or after the hook `uninstall` (core.plugins.js:41-43).
-  bool? notifyPlugins(String hook, [Object? args]);
+  /// [hook] is a [PluginHook] with the argument class [A] of its calls
+  /// (Chart.js ADR 0144). Dart `null` for [args] is the absent argument of a
+  /// hook whose argument class is [PluginHookArgs]. The result is the result
+  /// of `notify`: false when a plugin cancels the hook. Dart `null` stands for
+  /// the `void` result, the `undefined` of a notify before the hook `install`
+  /// or after the hook `uninstall` (core.plugins.js:41-43).
+  bool? notifyPlugins<A extends Object>(PluginHook<A> hook, [A? args]);
 
   /// index.d.ts:587 `isPluginEnabled(pluginId: string): boolean`. The
   /// dataset controller calls it for the filler

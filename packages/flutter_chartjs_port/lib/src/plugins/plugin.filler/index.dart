@@ -46,7 +46,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show DatasetDrawHookArgs, Plugin;
+    show DatasetDrawHookArgs, Plugin, PluginHookArgs, UpdateHookArgs;
 
 /// index.js:26-34, the source object of a dataset. The fields keep the
 /// upstream key order. `index.js:47` writes [fill].
@@ -102,7 +102,11 @@ ScaleAxis? _axisArgument(Object? axis) => axis is ScaleAxis ? axis : null;
 /// index.js:15 `afterDatasetsUpdate(chart, _args, options)`.
 ///
 /// `chart.data.datasets` is the data of the user, read by name.
-void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
+void _afterDatasetsUpdate(
+  types.Chart chart,
+  UpdateHookArgs _,
+  FillerOptions options,
+) {
   final datasets = jsGet(chart.data, 'datasets');
   final count = jsTruthy(datasets)
       ? jsToNumber(jsGet(datasets, 'length'))
@@ -137,18 +141,17 @@ void _afterDatasetsUpdate(types.Chart chart, Object _, Object options) {
       continue;
     }
 
-    source.fill = resolveTarget(sources, i, FillerOptions(options).propagate);
+    source.fill = resolveTarget(sources, i, options.propagate);
   }
 }
 
 /// index.js:51 `beforeDraw(chart, _args, options)`. `if (!source)` is the
 /// type test: the port writes only Dart `null` and a [FillerSource], and an
-/// absent property reads `undefined` (Chart.js ADR 0040, section 6).
-void _beforeDraw(types.Chart chart, Object _, Object options) {
+/// absent property reads `undefined` (Chart.js ADR 0040, section 6). The
+/// hook continues the draw: `true` is the `undefined` result of upstream.
+bool _beforeDraw(types.Chart chart, PluginHookArgs _, FillerOptions options) {
   // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
-  final draw =
-      FillerDrawTime.of(FillerOptions(options).drawTime) ==
-      FillerDrawTime.beforeDraw;
+  final draw = FillerDrawTime.of(options.drawTime) == FillerDrawTime.beforeDraw;
   final metasets = chart.getSortedVisibleDatasetMetas();
   final area = chart.chartArea;
   for (var i = metasets.length - 1; i >= 0; --i) {
@@ -162,14 +165,20 @@ void _beforeDraw(types.Chart chart, Object _, Object options) {
       drawfill(chart.ctx!, source, area);
     }
   }
+  return true;
 }
 
-/// index.js:68 `beforeDatasetsDraw(chart, _args, options)`.
-void _beforeDatasetsDraw(types.Chart chart, Object _, Object options) {
+/// index.js:68 `beforeDatasetsDraw(chart, _args, options)`. The hook
+/// continues the draw: `true` is the `undefined` result of upstream.
+bool _beforeDatasetsDraw(
+  types.Chart chart,
+  PluginHookArgs _,
+  FillerOptions options,
+) {
   // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
-  if (FillerDrawTime.of(FillerOptions(options).drawTime) !=
+  if (FillerDrawTime.of(options.drawTime) !=
       FillerDrawTime.beforeDatasetsDraw) {
-    return;
+    return true;
   }
 
   final metasets = chart.getSortedVisibleDatasetMetas();
@@ -180,43 +189,48 @@ void _beforeDatasetsDraw(types.Chart chart, Object _, Object options) {
       drawfill(chart.ctx!, source!, chart.chartArea);
     }
   }
+  return true;
 }
 
 /// index.js:83 `beforeDatasetDraw(chart, args, options)`. `args.meta` is
 /// the meta of the dataset (core.controller.js:785-789), a typed field of
-/// [DatasetDrawHookArgs]. A meta of Dart `null` throws the [TypeError] of
-/// the read of `undefined.$filler`.
-void _beforeDatasetDraw(
+/// [DatasetDrawHookArgs]. The hook continues the draw: `true` is the
+/// `undefined` result of upstream.
+bool _beforeDatasetDraw(
   types.Chart chart,
   DatasetDrawHookArgs args,
-  Object options,
+  FillerOptions options,
 ) {
-  final source = _fillerSources[args.meta!];
+  final source = _fillerSources[args.meta];
 
   // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
   if (!shouldApplyFill(source) ||
-      FillerDrawTime.of(FillerOptions(options).drawTime) !=
-          FillerDrawTime.beforeDatasetDraw) {
-    return;
+      FillerDrawTime.of(options.drawTime) != FillerDrawTime.beforeDatasetDraw) {
+    return true;
   }
 
   drawfill(chart.ctx!, source!, chart.chartArea);
+  return true;
 }
 
 /// index.js:12 the default export, `Filler` of `src/plugins/index.js:3`
 /// (Chart.js ADR 0038, section 1).
 ///
-/// A typed [Plugin] with the upstream keys in the upstream order.
-// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-final Plugin filler = Plugin(supportsDataUpdates: true)
-  ..id = 'filler'
-  ..afterDatasetsUpdate = _afterDatasetsUpdate
-  ..beforeDraw = _beforeDraw
-  ..beforeDatasetsDraw = _beforeDatasetsDraw
-  ..beforeDatasetDraw = _beforeDatasetDraw
+/// A native [Plugin] with the upstream keys in the upstream order (Chart.js
+/// ADR 0144). Its hooks get the options through the facade [FillerOptions].
+final filler = Plugin<FillerOptions>(
+  id: 'filler',
+  options: FillerOptions.new,
+  afterDatasetsUpdate: _afterDatasetsUpdate,
+  beforeDraw: _beforeDraw,
+  beforeDatasetsDraw: _beforeDatasetsDraw,
+  beforeDatasetDraw: _beforeDatasetDraw,
   // index.js:93-96. A typed scope of the kind `FillerOptions` (Chart.js ADR
   // 0054 §3).
-  ..defaults = (FillerOptionsScope()
+  defaults: FillerOptionsScope()
     ..propagate = true
     // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
-    ..drawTime = FillerDrawTime.beforeDatasetDraw);
+    ..drawTime = FillerDrawTime.beforeDatasetDraw,
+  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+  supportsDataUpdates: true,
+);

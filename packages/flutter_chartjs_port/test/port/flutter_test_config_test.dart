@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 // The set-up of test/flutter_test_config.dart, the port of Chart.js
@@ -48,12 +49,12 @@ final List<String> _releaseLog = [];
 
 /// An inline plugin that logs the destroy hooks of a chart into
 /// [_releaseLog].
-Map<String, Object?> _destroyLog() => <String, Object?>{
-  'id': 'destroyLog',
-  'afterDestroy': (Object? chart, Object? args, Object? options) {
+Plugin<Object?> _destroyLog() => Plugin<Object?>(
+  id: 'destroyLog',
+  afterDestroy: (chart, args, options) {
     _releaseLog.add('afterDestroy');
   },
-};
+);
 
 /// The element class that a test of the group `harness-register-builtins`
 /// leaves registered.

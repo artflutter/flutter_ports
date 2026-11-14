@@ -54,9 +54,9 @@ List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
 
 // The annotation of the original: a key of the three zones, at 95 % and
 // 19 % of the plot area.
-final Map<String, Object?> _zoneKey = {
-  'id': 'zoneKey',
-  'afterDraw': (Chart chart, Object? args, Object? options) {
+final _zoneKey = Plugin<Object?>(
+  id: 'zoneKey',
+  afterDraw: (chart, args, options) {
     final area = chart.chartArea!;
     final x = area.left + area.width * 0.95 - 40;
     var y = area.top + area.height * 0.19 - 30;
@@ -81,7 +81,7 @@ final Map<String, Object?> _zoneKey = {
     }
     ctx.restore();
   },
-};
+);
 
 final ChartConfig _config = ChartConfig(
   type: .line,

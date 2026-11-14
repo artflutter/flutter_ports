@@ -28,6 +28,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -221,7 +222,10 @@ void main() {
           ],
         },
         'plugins': <Object?>[
-          <String, Object?>{'id': 'noDraw', 'beforeDraw': (Object? _) => false},
+          Plugin<Object?>(
+            id: 'noDraw',
+            beforeDraw: (c, args, options) => false,
+          ),
         ],
       });
       final meta = chart.getDatasetMeta(0);
@@ -480,10 +484,10 @@ void main() {
           'plugins': <String, Object?>{'legend': false},
         },
         'plugins': <Object?>[
-          <String, Object?>{
-            'id': 'noLayout',
-            'beforeLayout': (Object? _) => false,
-          },
+          Plugin<Object?>(
+            id: 'noLayout',
+            beforeLayout: (c, args, options) => false,
+          ),
         ],
       };
 

@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 // platform.flutter.dart replaces platform.dom.js (Chart.js ADR 0037). Each
@@ -39,6 +40,10 @@ import 'package:flutter_test/flutter_test.dart';
 // at the end of the task attaches it. Upstream attaches it at construction.
 // The cases destroy the chart before the checkpoint, and their expectations
 // do not depend on it (Chart.js ADR 0022, Consequences).
+//
+// An inline plugin is a native `Plugin` (Chart.js ADR 0144), and its hook
+// reads the typed fields of its arguments. `Plugin.id` is a required String:
+// the plugin of upstream without `id` gets one that no option names.
 //
 // The cases of DOM ids, iframes and DOM nodes have no Flutter counterpart.
 // test/port/platform/platform.flutter_test.dart and chart_host_test.dart
@@ -439,11 +444,12 @@ void main() {
     group('event handling', () {
       testWidgets('should notify plugins about events', (tester) async {
         Object? notifiedEvent = undefined;
-        final plugin = <String, Object?>{
-          'afterEvent': (Object? chart, Object? args) {
-            notifiedEvent = jsGet(args, 'event');
+        final plugin = Plugin<Object?>(
+          id: 'notifiedEvent',
+          afterEvent: (_, args, _) {
+            notifiedEvent = args.event;
           },
-        };
+        );
         final chart = acquireChart(<String, Object?>{
           'type': 'line',
           'data': <String, Object?>{

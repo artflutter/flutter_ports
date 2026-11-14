@@ -25,6 +25,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
@@ -173,12 +174,13 @@ Object? _scaleOption(Chart chart, String id, List<String> path) {
 /// unregisters at the end of the test.
 List<Object?> _spyOnUpdates() {
   final calls = <Object?>[];
-  final plugin = <String, Object?>{
-    'id': r'$updateSpy',
-    'beforeUpdate': (types.Chart chart, Object args, Object options) {
-      calls.add(jsGet(args, 'mode'));
+  final plugin = Plugin<Object?>(
+    id: r'$updateSpy',
+    beforeUpdate: (chart, args, options) {
+      calls.add(args.mode);
+      return true;
     },
-  };
+  );
   Chart.register([plugin]);
   addTearDown(() => Chart.unregister([plugin]));
   return calls;
@@ -826,12 +828,12 @@ void main() {
   group('the widget', () {
     testWidgets(r'the plugin $chartView comes last, after the inline plugins '
         'of the app', (tester) async {
-      final app = <String, Object?>{'id': 'app'};
+      final app = Plugin<Object?>(id: 'app');
       await tester.pumpWidget(_view(_config(plugins: [app]), theme: _themeA));
       final plugins = _chart(tester).config.plugins! as List;
       expect(plugins, hasLength(2));
       expect(plugins.first, same(app));
-      expect(jsGet(plugins.last, 'id'), chartViewPluginId);
+      expect((plugins.last as Plugin<Object?>).id, chartViewPluginId);
       expect(chartViewPluginId, r'$chartView');
     });
 

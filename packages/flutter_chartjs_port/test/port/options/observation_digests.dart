@@ -536,7 +536,7 @@ const Map<String, String> observationDigests = {
   'fixture controller.doughnut/doughnut-animation.js (plain)':
       '08b1cf0b92a9efb1cb4f99ba46ec7fda5c3b6a50ed223d1fbd03c5c22396b241',
   'fixture controller.doughnut/doughnut-animation.js (trace)':
-      '3b7bfb1449ba3054b13b87c707a145625248a61828fc68a8f5babeaea68b11b2',
+      'd501097332c900ca6b967b3f33c3c9dee66b33c5fa17b988e39079ce9d080327',
   'fixture controller.doughnut/doughnut-border-align-center.json (plain)':
       '9a9e21306898b9cf7b05bcbfaa9efa0fb60ab9f1287dec7fa16b23718d7c9f6b',
   'fixture controller.doughnut/doughnut-border-align-center.json (trace)':
@@ -568,7 +568,7 @@ const Map<String, String> observationDigests = {
   'fixture controller.doughnut/doughnut-hidden.js (plain)':
       'bc919e05f9218b31e745bcdbed503f7665147fd77539f50476f017bea4e8789c',
   'fixture controller.doughnut/doughnut-hidden.js (trace)':
-      '67e5961708c547048d3ea1ae89af86503680f2657a72ddaa2d6181b1659a10d8',
+      '201a8c086063a76997d0812d99ebca72930585a74b6b83d1ea22e20a254f8a62',
   'fixture controller.doughnut/doughnut-offset.js (plain)':
       '1e4998f7ff1b6a5e1c3c790d1824d91054c20fc72c5e7d248fc243ac209c3484',
   'fixture controller.doughnut/doughnut-offset.js (trace)':
@@ -1588,11 +1588,11 @@ const Map<String, String> observationDigests = {
   'fixture core.scale/ticks/rotated-long.js (plain)':
       '64907726ea46c257db81aa3f1d2d2804eaeb5a79d668857a8cca6eeaad19a4de',
   'fixture core.scale/ticks/rotated-long.js (trace)':
-      '934a0cba5bae22d8d15fc9ae3f66b73be8f02199b62704235449e5ccb4fc2a69',
+      'b77183430a1ea608ea765c7d5eafb8f2a8df5688ffa45ef0122f88e31c8dd913',
   'fixture core.scale/ticks/rotated-multi-line.js (plain)':
       '913725d8b34118b07d6efbba6332a1a05e8538b920693098b1893ec8ccc4c2b8',
   'fixture core.scale/ticks/rotated-multi-line.js (trace)':
-      'a731b5d66c4e0ddc151c19f147435499f13abc375b363ac0475e82f38f5f05d0',
+      '788e482ec67aed7fbd1009160b2288af128311a044ef08fc38e86e45c24a2287',
   'fixture core.scale/ticks/skip-by-callback.js (plain)':
       '4d795dadd2f93cd14d8b7bdc69d1502197fd6f0234336254044d668f11b404f6',
   'fixture core.scale/ticks/skip-by-callback.js (trace)':
@@ -2092,7 +2092,7 @@ const Map<String, String> observationDigests = {
   'fixture plugin.legend/horizontal-rtl-hitbox.js (plain)':
       '39f95d71c4a9da3cc05e5f49f2130ab69a5028534208b1486163e495592617fd',
   'fixture plugin.legend/horizontal-rtl-hitbox.js (trace)':
-      'bf2a2d4b0781a0bf6627539638d4b1a25b4e9966655b1f2931ea4105924ea88b',
+      '8eb2a989fd51c0996ddc6320dca3a7a5ffb0e9de7e47b290cc7be33e6f152a14',
   'fixture plugin.legend/label-textAlign/center.js (plain)':
       '4f8600e4c4ec6bbfea162163c4b7d8d41f4e64a1a1fadbf8304cb2650e852852',
   'fixture plugin.legend/label-textAlign/center.js (trace)':
@@ -2304,35 +2304,35 @@ const Map<String, String> observationDigests = {
   'fixture plugin.tooltip/box-padding.js (plain)':
       '523de55f16aa6716246deb94b876138ffc9f3a5e9a42c8b88b5756a9d41e03d0',
   'fixture plugin.tooltip/box-padding.js (trace)':
-      'fe6d7ec8a507d61849f544ea8d04c4b29feec4e66ff79d38c3ffb4801b3964fb',
+      'ef834d0b1eaf122041a970c522d8450306e7b1c5847c778f5dce20359a739a2d',
   'fixture plugin.tooltip/caret-position.js (plain)':
       'b823d10b7c449466b5d42b1d7d32f480de6d7bfe50075a41c4f913e5be5934c7',
   'fixture plugin.tooltip/caret-position.js (trace)':
-      'e8e419a6f83d99142b8c4a6c5a8aa916c618d4544515f63127ae847257c6eadf',
+      'ad39b6f3b817b70ea845c787ef2474a51a89dac6f5208a09cf3f1696b9906cc2',
   'fixture plugin.tooltip/color-box-border-dash.js (plain)':
       '77cd6bb3eb9e5a13f286c8849bee4f19a12b5a73e4499b30b7a37f6bb0f3e101',
   'fixture plugin.tooltip/color-box-border-dash.js (trace)':
-      '6b60abbb88f10abad69a740c6a2bdcf9ef1171a7a9de367b994da371bb6d7d5d',
+      '25798edbebdbee1e201e3a9eebb2a0fe4081f3b7510c7e863f4dbe4a2230f79e',
   'fixture plugin.tooltip/color-box-border-radius.js (plain)':
       '4ed0f82cbae63929a7902344fa65b86574969884db9f9f5129ffed109d23c907',
   'fixture plugin.tooltip/color-box-border-radius.js (trace)':
-      '472af4e49aae449d7620d3318f6c73049dcdb8cfbcc4551746d1436ed0e60922',
+      '21dfdfc15121853436e214242478d3dd33756f3de5da9c422cf9907850020126',
   'fixture plugin.tooltip/corner-radius.js (plain)':
       'c04244c64cdb8969dd1a08fd3e16b20cb4b7b58604e68110c3e45ffb18c93dd9',
   'fixture plugin.tooltip/corner-radius.js (trace)':
-      '9d6e6fa0ce8bb0435f31b174e9d561e2cbbaa3ed8ad2ebc85bac90fec21acc99',
+      '1781af25870f0a72bd422004d80e89605e080225eeaa97ee4f632db899db8734',
   'fixture plugin.tooltip/opacity.js (plain)':
       '73922c166730ad5cd473a705c452e3c5968aeb3bc3a69d5cfb94a7d21114c716',
   'fixture plugin.tooltip/opacity.js (trace)':
-      '492d7717a8c1748cebad8401e8df7261a8df20b1092c186a42ff8370169e5b87',
+      'f050ae53bf895eb0990b794861e51d920e2517c7d8a69ff99bc215ab34af8821',
   'fixture plugin.tooltip/point-style.js (plain)':
       'f49aa3cec87c6155cdccf2c84ccb971c50ed41a8d395fefdfcfc6103159670f9',
   'fixture plugin.tooltip/point-style.js (trace)':
-      'fc54107d6cbf05399f600d033fd7515c99b76c0baa9e0091c772ccce67b12d12',
+      '889cbdebb52dc0826241d91d16dcdad830490bf5c9b09b2b10f62c08b8ee9767',
   'fixture plugin.tooltip/positioning.js (plain)':
       'd9c8b8b626e934cfa9ad86b9dd448e1dd293034ccb6e9497daf322a2a3e06cd3',
   'fixture plugin.tooltip/positioning.js (trace)':
-      '4104e1c4d3bedce67f6cb6952209f15b4f53f31153d281dc9ced6f1503d32e77',
+      'b5fb36e7f5fc9ec274ace2cb02685ca031055974c75ff386a83c534d80d0ac55',
   'fixture scale.category/invalid-data.js (plain)':
       '1b456abc7cca4ee6ab1a4cf47d8479f09db7b20836d1de17bf4d373ec81684fc',
   'fixture scale.category/invalid-data.js (trace)':

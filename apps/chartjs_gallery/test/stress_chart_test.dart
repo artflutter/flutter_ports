@@ -1043,12 +1043,15 @@ void main() {
         expect(chart.runtimeType, Chart);
         expect(chart.platform, isA<FlutterPlatform>());
         final plugins = chart.config.plugins! as List<Object?>;
-        expect(jsGet(plugins.first, 'id'), 'stressDrawStart');
+        expect((plugins.first! as Plugin<Object?>).id, 'stressDrawStart');
         // The inline plugin of the widget comes after the plugins of the app
         // (Chart.js ADR 0050). Its `afterDraw` (the focus ring of Chart.js ADR
         // 0051) thus runs after the end of the draw meter.
-        expect(jsGet(plugins[plugins.length - 2], 'id'), 'stressDrawEnd');
-        expect(jsGet(plugins.last, 'id'), r'$chartView');
+        expect(
+          (plugins[plugins.length - 2]! as Plugin<Object?>).id,
+          'stressDrawEnd',
+        );
+        expect((plugins.last! as Plugin<Object?>).id, r'$chartView');
         await _frames(tester, 40);
         await tester.runAsync(
           () => Future<void>.delayed(const Duration(milliseconds: 600)),

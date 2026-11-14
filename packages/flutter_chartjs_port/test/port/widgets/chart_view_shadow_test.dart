@@ -224,13 +224,14 @@ void main() {
 
     testWidgets('a shadow keeps the data-only updates', (tester) async {
       var layouts = 0;
-      final spy = <String, Object?>{
-        'id': r'$shadowSpy',
-        'supportsDataUpdates': true,
-        'beforeLayout': (Object? chart, Object? args, Object? options) {
+      final spy = Plugin<Object?>(
+        id: r'$shadowSpy',
+        supportsDataUpdates: true,
+        beforeLayout: (chart, args, options) {
           layouts++;
+          return true;
         },
-      };
+      );
       Chart.register([spy]);
       addTearDown(() => Chart.unregister([spy]));
       Widget view(List<double> data) => _box(

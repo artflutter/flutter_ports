@@ -17,7 +17,7 @@ BasicPlatform
 BorderSkippedEdge
 BubbleController
 CSSStyleDeclaration
-CancelableHookArgs
+CancelableHookFunction
 CanvasCompositeOperation
 CanvasEventTarget
 CanvasImageSource
@@ -112,6 +112,7 @@ PercentRadius
 PieController
 PixelRadius
 Plugin
+PluginHook
 PluginHookArgs
 PluginHookFunction
 Point
@@ -290,7 +291,7 @@ BulkBarElement
 BulkBarOptions
 BulkBarScale
 CSSStyleDeclaration
-CancelableHookArgs
+CancelableHookFunction
 CanvasCompositeOperation
 CanvasContainer
 CanvasDocument
@@ -503,7 +504,6 @@ LongestTextCache
 LttbDecimationAlgorithm
 MajorTickOptions
 MajorTickOptionsScope
-MapPlugin
 MergeOptions
 Merger
 MinMax
@@ -920,7 +920,6 @@ isClickEvent
 isDomSupported
 isFinite
 isFunction
-isHookFunction
 isNullOrUndef
 isNumber
 isObject

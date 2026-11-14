@@ -19,9 +19,9 @@ class _Sample5State() extends State<Sample5> {
   final List<int> _shown = [1, 3, 5];
 
   /// fl_chart keeps tooltips open. The Chart.js tooltip shows one group.
-  late final Map<String, Object?> _pinned = {
-    'id': 'pinned',
-    'afterDatasetsDraw': (Chart chart, Object? args, Object? options) {
+  late final _pinned = Plugin<Object?>(
+    id: 'pinned',
+    afterDatasetsDraw: (chart, args, options) {
       final area = chart.chartArea!;
       final elements = chart.getDatasetMeta(0).data;
       final ctx = chart.ctx!..save();
@@ -59,7 +59,7 @@ class _Sample5State() extends State<Sample5> {
       }
       ctx.restore();
     },
-  };
+  );
 
   void _click(ChartEvent event, List<ActiveElement> hits, Chart chart) {
     if (hits.isEmpty) return;

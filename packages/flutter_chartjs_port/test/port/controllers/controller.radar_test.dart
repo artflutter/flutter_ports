@@ -22,6 +22,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -325,10 +326,10 @@ void main() {
               options: <String, Object?>{'animation': <String, Object?>{}},
             )
             ..['plugins'] = <Object?>[
-              <String, Object?>{
-                'id': 'probeLayout',
-                'beforeLayout': (Object? chart, Object? args, Object? options) {
-                  final data = (chart! as Chart).getDatasetMeta(0).data;
+              Plugin<Object?>(
+                id: 'probeLayout',
+                beforeLayout: (chart, args, options) {
+                  final data = (chart as Chart).getDatasetMeta(0).data;
                   if (data.length > 3 && beforeLayout == null) {
                     final point = data[3] as types.ElementPropertyRead;
                     beforeLayout = {
@@ -337,8 +338,9 @@ void main() {
                       'skip': point['skip'],
                     };
                   }
+                  return true;
                 },
-              },
+              ),
             ];
       final chart = acquireChart(config);
       final meta = chart.getDatasetMeta(0);

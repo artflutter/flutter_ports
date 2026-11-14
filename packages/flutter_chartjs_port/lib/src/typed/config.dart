@@ -27,6 +27,7 @@ import 'package:flutter_chartjs_port/src/typed/groups.dart'
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, XAxis, YAxis;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart' show internal;
 
 /// The config of a chart: the chart type, the data and the options of a
@@ -166,14 +167,14 @@ final class const ChartConfig({
   /// The function of a pointer move on the chart: `options.onHover`.
   final ChartEventHandler? onHover,
 
-  /// The inline plugins of the chart: `plugins`, each a plugin Map with an
-  /// `id` and its hooks (`docs/developers/plugins.md`). The List goes to
-  /// the chart by reference.
+  /// The inline plugins of the chart: `plugins`, each a [Plugin] with an
+  /// `id` and its hooks (`docs/developers/plugins.md`, Chart.js ADR 0144).
+  /// The List goes to the chart by reference.
   ///
   /// `==` compares the plugins one by one by identity. Thus
   /// `plugins: [plugin]` in each build gives no update while `plugin` is
   /// the same object, for example a field or a top-level constant.
-  final List<Map<String, Object?>>? plugins,
+  final List<Plugin<Object?>>? plugins,
 
   /// The Chart.js options that have no parameter, for example
   /// `{'locale': 'de-DE'}`.
@@ -211,7 +212,7 @@ final class const ChartConfig({
     ChartElements? elements,
     ChartEventHandler? onClick,
     ChartEventHandler? onHover,
-    List<Map<String, Object?>>? plugins,
+    List<Plugin<Object?>>? plugins,
     Map<String, Object?>? extra,
   }) => ChartConfig(
     type: type ?? this.type,

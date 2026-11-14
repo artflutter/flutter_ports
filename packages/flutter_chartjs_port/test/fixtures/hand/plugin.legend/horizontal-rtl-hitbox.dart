@@ -9,8 +9,8 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -50,9 +50,10 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
     },
     'plugins': <Object?>[
-      <String, Object?>{
-        'id': 'legend-hit-box',
-        'afterDraw': (types.Chart chart) {
+      // DIVERGES(chartjs): adapt-typed-plugins, a native Plugin.
+      Plugin<Object?>(
+        id: 'legend-hit-box',
+        afterDraw: (chart, _, _) {
           final ctx = chart.ctx!
             ..save()
             ..strokeStyle = const native_ui.Color(0xff008000)
@@ -65,7 +66,7 @@ Map<String, Object?> fixture() => <String, Object?>{
 
           ctx.restore();
         },
-      },
+      ),
     ],
   },
   'options': <String, Object?>{
