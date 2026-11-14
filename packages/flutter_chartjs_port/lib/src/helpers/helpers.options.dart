@@ -794,13 +794,19 @@ final class ScriptableContext extends ContextObject {
 
   /// `context.index = context.dataIndex = index` of two present keys. An index
   /// that does not change keeps its box: a live chart writes the same number
-  /// into each context several times in each update.
+  /// into each context several times in each update. -0 is another number:
+  /// on JavaScript it is an int equal to 0.
   void _writeIndexes(int index) {
     final current = _index;
     // On dart2wasm an int in an Object? field is a box: one box for both keys,
-    // and the box of the last write when the index is the same.
-    // js-ok: the test picks one of two equal boxes, the value is the same.
-    final Object box = current is int && current == index ? current : index;
+    // and the box of the last write when the index is the same number.
+    final Object box =
+        // js-ok: an equal int of the same sign is the same JS number.
+        current is int &&
+            current == index &&
+            current.isNegative == index.isNegative
+        ? current
+        : index;
     _dataIndex = box;
     _index = box;
   }

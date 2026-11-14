@@ -88,6 +88,27 @@ void main() {
     expect(context.index, 5);
   });
 
+  test('the index fields keep the sign of zero of each write', () {
+    // Runtime values: on JavaScript, the constant `-0.0` evaluates to +0, and
+    // the negation of an int 0 is -0, an int there. On the VM and dart2wasm,
+    // an int has no negative zero.
+    final negativeZero = double.parse('-0');
+    final negativeIntZero = -int.parse('0');
+    final context = ScriptableContext.data(null, 0, 'point')
+      ..index = negativeZero
+      ..refresh(1, 2, 0, false, 'none');
+    expect((context.index! as num).isNegative, isFalse);
+    expect((context.dataIndex! as num).isNegative, isFalse);
+
+    context.refresh(1, 2, negativeIntZero, false, 'none');
+    expect((context.index! as num).isNegative, negativeIntZero.isNegative);
+    expect((context.dataIndex! as num).isNegative, negativeIntZero.isNegative);
+
+    context.refreshAfterParsed(2, 0, false, 'none');
+    expect((context.index! as num).isNegative, isFalse);
+    expect((context.dataIndex! as num).isNegative, isFalse);
+  });
+
   test('a refresh changes no other key and no prototype', () {
     final parent = ScriptableContext.dataset(null, 2);
     final context = ScriptableContext.data(parent, 0, 'point')
