@@ -217,20 +217,6 @@ class _ObservedMap(final Map<String, Object?> fields)
   void clear() => fields.clear();
 }
 
-const _hooks = [
-  'beforeUpdate',
-  'beforeElementsUpdate',
-  'beforeLayout',
-  'afterLayout',
-  'beforeDatasetsUpdate',
-  'beforeDatasetUpdate',
-  'afterDatasetUpdate',
-  'afterDatasetsUpdate',
-  'afterUpdate',
-  'beforeDraw',
-  'afterDraw',
-];
-
 const _length = 12;
 
 Object? _plain(Object? value) {
@@ -444,14 +430,42 @@ List<String> _run(
   final trace = <String>[];
   late Chart chart;
   var created = false;
-  final plugin = <String, Object?>{
-    'id': 'contextTracer',
-    for (final hook in _hooks)
-      hook: (Object? c, Object? a, Object? o) {
-        trace.add('$hook ${_state(c! as Chart)}');
-        onHook?.call(c as Chart, hook);
-      },
-  };
+  void traced(Object c, String hook) {
+    trace.add('$hook ${_state(c as Chart)}');
+    onHook?.call(c, hook);
+  }
+
+  // A native plugin (Chart.js ADR 0144) with the hooks of an update and of
+  // a draw.
+  final plugin = Plugin<Object?>(
+    id: 'contextTracer',
+    beforeUpdate: (c, a, o) {
+      traced(c, 'beforeUpdate');
+      return true;
+    },
+    beforeElementsUpdate: (c, a, o) => traced(c, 'beforeElementsUpdate'),
+    beforeLayout: (c, a, o) {
+      traced(c, 'beforeLayout');
+      return true;
+    },
+    afterLayout: (c, a, o) => traced(c, 'afterLayout'),
+    beforeDatasetsUpdate: (c, a, o) {
+      traced(c, 'beforeDatasetsUpdate');
+      return true;
+    },
+    beforeDatasetUpdate: (c, a, o) {
+      traced(c, 'beforeDatasetUpdate');
+      return true;
+    },
+    afterDatasetUpdate: (c, a, o) => traced(c, 'afterDatasetUpdate'),
+    afterDatasetsUpdate: (c, a, o) => traced(c, 'afterDatasetsUpdate'),
+    afterUpdate: (c, a, o) => traced(c, 'afterUpdate'),
+    beforeDraw: (c, a, o) {
+      traced(c, 'beforeDraw');
+      return true;
+    },
+    afterDraw: (c, a, o) => traced(c, 'afterDraw'),
+  );
   final cfg = _config(
     type,
     id: id,
@@ -670,12 +684,13 @@ void main() {
           id: id,
           options: {'parsing': false},
           plugins: [
-            <String, Object?>{
-              'id': 'arm',
-              'beforeDatasetUpdate': (Object? c, Object? a, Object? o) {
+            Plugin<Object?>(
+              id: 'arm',
+              beforeDatasetUpdate: (c, a, o) {
                 armed = !ran;
+                return true;
               },
-            },
+            ),
           ],
         );
         final chart = _chart(config);

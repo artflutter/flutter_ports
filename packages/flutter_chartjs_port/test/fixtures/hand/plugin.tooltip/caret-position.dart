@@ -8,7 +8,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show PointInteractionMode;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 import '../../fixture_events.dart';
 
@@ -64,8 +64,10 @@ Map<String, Object?> fixture() {
         },
       },
       'plugins': <Object?>[
-        <String, Object?>{
-          'afterDraw': (types.Chart chart) {
+        // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
+        Plugin<Object?>(
+          id: 'inline',
+          afterDraw: (chart, _, _) {
             // const canvas = chart.canvas;
             // const rect = canvas.getBoundingClientRect();
             final meta = chart.getDatasetMeta(0);
@@ -80,7 +82,7 @@ Map<String, Object?> fixture() {
                 ..draw(chart.ctx!);
             }
           },
-        },
+        ),
       ],
     },
     'options': <String, Object?>{

@@ -190,22 +190,20 @@ class CoreDemoState() extends State<CoreDemo> {
 
   /// The inline plugin of the chart, made once: the same plugin in each
   /// config keeps the configs equal.
-  late final Map<String, Object?> _valueLines = <String, Object?>{
-    'id': 'galleryValueLines',
-    'beforeDatasetsDraw': (Object? chart, Object? args, Object? options) {
-      _drawValueLines(chart! as Chart);
+  late final Plugin<Object?> _valueLines = Plugin(
+    id: 'galleryValueLines',
+    beforeDatasetsDraw: (chart, args, options) {
+      _drawValueLines(chart as Chart);
+      return true;
     },
     // The registered plugins come before the inline plugins
     // (core.plugins.js:125-144). Thus the legend has handled a click
     // when this hook runs. A replayed event of `update` is not new
     // input (core.controller.js:528-534).
-    'afterEvent': (Object? chart, Object? args, Object? options) {
-      // The hook arguments are a typed object, read by name through its
-      // face (core.controller.js:1164-1169, Chart.js ADR 0054 §12).
-      final replay = (args! as JsObjectFace)['replay'];
-      if (replay != true) _readout.value++;
+    afterEvent: (chart, args, options) {
+      if (!args.replay) _readout.value++;
     },
-  };
+  );
 
   /// The typed config of the `ChartView` from the control values and the
   /// data Lists. A rebuild with the same values gives an equal config, thus

@@ -125,13 +125,14 @@ void main() {
 
   testWidgets('the live sample takes the data-only path', (tester) async {
     var layouts = 0;
-    final spy = <String, Object?>{
-      'id': r'$layoutSpy',
-      'supportsDataUpdates': true,
-      'beforeLayout': (Object? chart, JsObjectFace args, Object? options) {
+    final spy = Plugin<Object?>(
+      id: r'$layoutSpy',
+      supportsDataUpdates: true,
+      beforeLayout: (chart, args, options) {
         layouts++;
+        return true;
       },
-    };
+    );
     Chart.register([spy]);
     addTearDown(() => Chart.unregister([spy]));
     Widget view(int step) => Directionality(

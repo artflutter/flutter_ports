@@ -88,6 +88,7 @@ import '../../support/color_json.dart';
 import '../../support/font_record.dart';
 import '../../support/legend_hit_box.dart';
 import '../../support/legend_item.dart';
+import '../../support/native_plugin.dart';
 import '../../support/segment_style.dart';
 import '../../support/tick_label.dart';
 import '../canvas/path2d_record.dart';
@@ -757,7 +758,10 @@ void expectCalls(
 
 /// A mutable copy of a reference value, with each `'fn:<name>'` replaced by
 /// the function [functions] gives for the name. The chart and
-/// `acquireChart` write into the config and the options.
+/// `acquireChart` write into the config and the options. A `segment` Map is
+/// the native `LineSegmentStyle` (Chart.js ADR 0142), and each Map of a List
+/// under the key `plugins` is the native `Plugin` of [nativePlugin] (Chart.js
+/// ADR 0144).
 Object? copyReference(
   Object? value, [
   Map<String, Object?> functions = const {},
@@ -768,12 +772,25 @@ Object? copyReference(
         : throw ArgumentError.value(s, 'value', 'No function of this name'),
   final Map<String, Object?> map => <String, Object?>{
     for (final MapEntry(:key, :value) in map.entries)
-      // The typed segment style of Chart.js ADR 0142.
-      key: key == 'segment' && value is Map<String, Object?>
-          ? nativeSegmentStyle(
-              copyReference(value, functions)! as Map<String, Object?>,
-            )
-          : copyReference(value, functions),
+      key: switch (value) {
+        // The typed segment style of Chart.js ADR 0142.
+        final Map<String, Object?> segment when key == 'segment' =>
+          nativeSegmentStyle(
+            copyReference(segment, functions)! as Map<String, Object?>,
+          ),
+        // The inline plugins of a config: a native Plugin for each plugin
+        // Map (Chart.js ADR 0144). `options.plugins` is a Map and stays.
+        final List<Object?> plugins when key == 'plugins' => <Object?>[
+          for (final item in plugins)
+            if (item is Map<String, Object?>)
+              nativePlugin(
+                copyReference(item, functions)! as Map<String, Object?>,
+              )
+            else
+              copyReference(item, functions),
+        ],
+        _ => copyReference(value, functions),
+      },
   },
   final List<Object?> list => <Object?>[
     for (final item in list) copyReference(item, functions),

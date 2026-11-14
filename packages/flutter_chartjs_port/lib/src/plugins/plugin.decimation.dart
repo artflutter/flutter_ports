@@ -58,7 +58,8 @@ import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show Plugin, PluginHookArgs;
 import 'package:meta/meta.dart';
 
 /// plugin.decimation.js:270 `case 'lttb'`: the Largest Triangle Three
@@ -543,8 +544,11 @@ List<Object?> _datasets(types.Chart chart) =>
 /// The options are read through the facade [DecimationOptions], and the
 /// chart options through their typed reads ([optionOf]). The reads of the
 /// datasets of the user are reads by name ([_Dataset]).
-void _beforeElementsUpdate(types.Chart chart, Object args, Object options) {
-  final opts = DecimationOptions(options);
+void _beforeElementsUpdate(
+  types.Chart chart,
+  PluginHookArgs args,
+  DecimationOptions opts,
+) {
   if (!opts.enabled) {
     // The decimation plugin may have been previously enabled. Need to remove
     // old `dataset._data` handlers
@@ -635,7 +639,7 @@ void _beforeElementsUpdate(types.Chart chart, Object args, Object options) {
       start,
       count,
       availableWidth,
-      options,
+      opts.object!,
     );
 
     target.write(OptionKey.descDecimated, decimated);
@@ -648,29 +652,27 @@ void _beforeElementsUpdate(types.Chart chart, Object args, Object options) {
   }
 }
 
-/// plugin.decimation.js:284 `destroy(chart)`: the body is the call of
-/// `cleanDecimatedData(chart)`. The plugin service has no hook `destroy`,
-/// so the key stays an extra of the plugin with the upstream parameter
-/// count.
-void _destroy(types.Chart chart) {
-  _cleanDecimatedData(chart);
-}
+// plugin.decimation.js:284 `destroy(chart)` has no Dart function: no notify
+// of Chart.js v4 calls a hook `destroy`, and a native Plugin has no field
+// for it (Chart.js ADR 0144).
+// DIVERGES(chartjs): adapt-typed-plugins, no hook `destroy`.
 
 /// plugin.decimation.js:197 the default export, `Decimation` of
 /// src/plugins/index.js:2.
 ///
-/// A typed [Plugin] with the upstream keys in the upstream order.
-// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-final Plugin decimation =
-    Plugin(
-        supportsDataUpdates: true,
-        dataUpdateGuard: (options) => !DecimationOptions(options).enabled,
-      )
-      ..id = 'decimation'
-      // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
-      ..defaults = (DecimationOptionsScope()
-        // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the class.
-        ..algorithm = const MinMaxDecimationAlgorithm()
-        ..enabled = false)
-      ..beforeElementsUpdate = _beforeElementsUpdate
-      ..jsWrite('destroy', _destroy);
+/// A native [Plugin] with the upstream keys in the upstream order (Chart.js
+/// ADR 0144). Its hooks get the options through the facade
+/// [DecimationOptions].
+final decimation = Plugin<DecimationOptions>(
+  id: 'decimation',
+  options: DecimationOptions.new,
+  // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
+  defaults: DecimationOptionsScope()
+    // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the class.
+    ..algorithm = const MinMaxDecimationAlgorithm()
+    ..enabled = false,
+  beforeElementsUpdate: _beforeElementsUpdate,
+  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+  supportsDataUpdates: true,
+  dataUpdateGuard: (options) => !options.enabled,
+);

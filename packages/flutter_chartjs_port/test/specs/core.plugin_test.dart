@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/core.plugin.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-typed-plugins, the native plugins of the cases.
 @TestOn('vm')
 library;
 
@@ -8,11 +9,11 @@ import 'package:chartjs_test_utils/pure.dart' show toEqualOptions;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show Plugin, PluginHook, PluginHookArgs, TooltipDrawHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -21,63 +22,115 @@ import '../support/jasmine.dart';
 // without a type and without datasets, with inline or registered plugins.
 // Thus it is a `testWidgets` case. `flutter_test_config.dart` registers the
 // built-in components and releases the charts at the unmount of the harness
-// body. In phase 5, no built-in plugin exists. Upstream, the built-in
-// plugins have no hook `hook`, so the results of the cases do not depend on
-// them.
+// body.
 //
-// A plugin is a Map, and a hook is a Dart closure (Chart.js ADR 0020,
-// section 8). `Chart.register(plugin)` is `Chart.register([plugin])`, and
+// A plugin is a native `Plugin` (Chart.js ADR 0144): an object with an `id`
+// and a field for each hook of the `Plugin` interface. A hook has the type
+// of its hook: a cancelable hook returns a bool, and each other hook returns
+// nothing. `Plugin.id` is a required String, so an inline plugin of upstream
+// without `id` gets an id here that no option names: its options are those
+// of upstream. `Chart.register(plugin)` is `Chart.register([plugin])`, and
 // `Chart.register([a, b])` is `Chart.register([[a, b]])` (Chart.js ADR 0020,
 // section 6). A spec map literal of a JS object has the type
 // `<String, Object?>`, because `acquireChart` writes into it.
 //
-// `spyOn(plugin, 'hook')` is `spyOn(plugin, 'hook')` of
-// test/support/jasmine.dart: it replaces the hook with a recording function
-// value. `plugin.hook.calls` reads the calls of the spy through the hook of
-// the plugin. `toBe` is `same` for objects,
-// `toBeTruthy()` and `toBeFalsy()` test [jsTruthy].
+// No hook has the name `hook` of upstream: `chart.notifyPlugins` takes a
+// `PluginHook`. A case that does not cancel takes the hook `reset` in place
+// of `hook`: only `chart.reset()` notifies it, so the chart does not call it
+// between the spy and the expectations. A case of the result of a notify
+// takes the cancelable hook `beforeTooltipDraw` with the arguments
+// `TooltipDrawHookArgs` of the tooltip of the chart: the chart draws no
+// tooltip in these cases. The args objects `{value: 42}`, `{arg1: 'bla'}`
+// and `{arg1: 'bla', arg2: 42}` of upstream are objects of [_SpecArgs], a
+// `PluginHookArgs` with these fields.
+//
+// `spyOn(plugin, 'hook')` is [_spyOnReset] or [_spyOnTooltipDraw]: it puts a
+// spy of `hookSpy` (test/support/jasmine.dart) into the hook field.
+// `plugin.hook.calls` reads the calls of the spy through the hook field of
+// the plugin. `toBe` is `same` for objects. A notify returns a `bool?`:
+// `toBeTruthy()` and `toBeFalsy()` are `isTrue` and `isFalse`.
 //
 // The case with `done` is `await waitForDone((done) { ... })`, and an
 // `async` case awaits `triggerMouseEvent` (Chart.js ADR 0022, sections 2, 6
 // and 7). The hook `start` runs in the constructor of the chart. Thus the
 // `done` of `:425` comes before `acquireChart` returns.
 
+/// The args objects of the spec: `{value: 42}` (:8, :23), and `{arg1: 'bla'}`
+/// and `{arg1: 'bla', arg2: 42}` (:182-183). A notify passes them to each
+/// hook by identity.
+final class _SpecArgs({
+  /// `value`.
+  final Object? value,
+
+  /// `arg1`.
+  final Object? arg1,
+
+  /// `arg2`.
+  final Object? arg2,
+}) extends PluginHookArgs;
+
+/// `spyOn(plugin, 'hook')`: puts a spy into the hook `reset` of [plugin].
+JasmineSpy _spyOnReset(Plugin<Object?> plugin) {
+  final spy = hookSpy(plugin.reset);
+  plugin.reset = spy.hook;
+  return spy;
+}
+
+/// `spyOn(plugin, 'hook')`: puts a spy into the cancelable hook
+/// `beforeTooltipDraw` of [plugin].
+JasmineSpy _spyOnTooltipDraw(Plugin<Object?> plugin) {
+  final spy = hookSpy(plugin.beforeTooltipDraw);
+  plugin.beforeTooltipDraw = spy.cancelableHook;
+  return spy;
+}
+
+/// `chart.notifyPlugins('hook', {cancelable: true})`: a notify of the
+/// cancelable hook `beforeTooltipDraw`.
+bool? _notifyCancelable(Chart chart) => chart.notifyPlugins(
+  PluginHook.beforeTooltipDraw,
+  TooltipDrawHookArgs(tooltip: chart.tooltip!),
+);
+
+/// The inline plugins of [chart], `chart.config.plugins`.
+List<Plugin<Object?>> _inlinePlugins(Chart chart) =>
+    (chart.config.plugins! as List<Object?>).cast<Plugin<Object?>>();
+
 void main() {
   group('Chart.plugins', () {
     group('Chart.notifyPlugins', () {
       testWidgets('should call inline plugins with arguments', (tester) async {
-        final plugin = <String, Object?>{'hook': () {}};
+        final plugin = Plugin<Object?>(id: 'inline', reset: (_, _, _) {});
         final chart = acquireChart(<String, Object?>{
           'plugins': [plugin],
         });
-        final args = <String, Object?>{'value': 42};
+        final args = _SpecArgs(value: 42);
 
-        spyOn(plugin, 'hook');
+        _spyOnReset(plugin);
 
-        chart.notifyPlugins('hook', args);
-        expect(plugin['hook'].calls.count(), 1);
-        expect(plugin['hook'].calls.first().args[0], same(chart));
-        expect(plugin['hook'].calls.first().args[1], same(args));
+        chart.notifyPlugins(PluginHook.reset, args);
+        expect(plugin.reset.calls.count(), 1);
+        expect(plugin.reset.calls.first().args[0], same(chart));
+        expect(plugin.reset.calls.first().args[1], same(args));
         expect(
-          plugin['hook'].calls.first().args[2],
+          plugin.reset.calls.first().args[2],
           toEqualOptions(<String, Object?>{}),
         );
       });
 
       testWidgets('should call global plugins with arguments', (tester) async {
-        final plugin = <String, Object?>{'id': 'a', 'hook': () {}};
+        final plugin = Plugin<Object?>(id: 'a', reset: (_, _, _) {});
         final chart = acquireChart(<String, Object?>{});
-        final args = <String, Object?>{'value': 42};
+        final args = _SpecArgs(value: 42);
 
-        spyOn(plugin, 'hook');
+        _spyOnReset(plugin);
 
         Chart.register([plugin]);
-        chart.notifyPlugins('hook', args);
-        expect(plugin['hook'].calls.count(), 1);
-        expect(plugin['hook'].calls.first().args[0], same(chart));
-        expect(plugin['hook'].calls.first().args[1], same(args));
+        chart.notifyPlugins(PluginHook.reset, args);
+        expect(plugin.reset.calls.count(), 1);
+        expect(plugin.reset.calls.first().args[0], same(chart));
+        expect(plugin.reset.calls.first().args[1], same(args));
         expect(
-          plugin['hook'].calls.first().args[2],
+          plugin.reset.calls.first().args[2],
           toEqualOptions(<String, Object?>{}),
         );
         Chart.unregister([plugin]);
@@ -86,18 +139,18 @@ void main() {
       testWidgets(
         'should call plugin only once even if registered multiple times',
         (tester) async {
-          final plugin = <String, Object?>{'id': 'test', 'hook': () {}};
+          final plugin = Plugin<Object?>(id: 'test', reset: (_, _, _) {});
           final chart = acquireChart(<String, Object?>{
             'plugins': [plugin, plugin],
           });
 
-          spyOn(plugin, 'hook');
+          _spyOnReset(plugin);
 
           Chart.register([
             [plugin, plugin],
           ]);
-          chart.notifyPlugins('hook');
-          expect(plugin['hook'].calls.count(), 1);
+          chart.notifyPlugins(PluginHook.reset);
+          expect(plugin.reset.calls.count(), 1);
           Chart.unregister([plugin]);
         },
       );
@@ -108,136 +161,158 @@ void main() {
         final results = <Object?>[];
         final chart = acquireChart(<String, Object?>{
           'plugins': [
-            <String, Object?>{
-              'hook': () {
+            Plugin<Object?>(
+              id: 'inline1',
+              reset: (_, _, _) {
                 results.add(1);
               },
-            },
-            <String, Object?>{
-              'hook': () {
+            ),
+            Plugin<Object?>(
+              id: 'inline2',
+              reset: (_, _, _) {
                 results.add(2);
               },
-            },
-            <String, Object?>{
-              'hook': () {
+            ),
+            Plugin<Object?>(
+              id: 'inline3',
+              reset: (_, _, _) {
                 results.add(3);
               },
-            },
+            ),
           ],
         });
 
         final plugins = [
-          <String, Object?>{
-            'id': 'a',
-            'hook': () {
+          Plugin<Object?>(
+            id: 'a',
+            reset: (_, _, _) {
               results.add(4);
             },
-          },
-          <String, Object?>{
-            'id': 'b',
-            'hook': () {
+          ),
+          Plugin<Object?>(
+            id: 'b',
+            reset: (_, _, _) {
               results.add(5);
             },
-          },
-          <String, Object?>{
-            'id': 'c',
-            'hook': () {
+          ),
+          Plugin<Object?>(
+            id: 'c',
+            reset: (_, _, _) {
               results.add(6);
             },
-          },
+          ),
         ];
         Chart.register([plugins]);
 
-        final ret = chart.notifyPlugins('hook');
-        expect(jsTruthy(ret), isTrue);
+        final ret = chart.notifyPlugins(PluginHook.reset);
+        expect(ret, isTrue);
         expect(results, [4, 5, 6, 1, 2, 3]);
         Chart.unregister([plugins]);
       });
 
+      // The hooks of upstream return `undefined`, `null`, `0`, `true` and
+      // `1`: no `false`. A cancelable hook returns a bool, so each of them
+      // returns `true` here.
       testWidgets('should return TRUE if no plugin explicitly returns FALSE', (
         tester,
       ) async {
         final chart = acquireChart(<String, Object?>{
           'plugins': [
-            <String, Object?>{'hook': () => undefined},
-            <String, Object?>{
-              'hook': () {
-                return null;
-              },
-            },
-            <String, Object?>{
-              'hook': () {
-                return 0;
-              },
-            },
-            <String, Object?>{
-              'hook': () {
+            Plugin<Object?>(
+              id: 'inline1',
+              beforeTooltipDraw: (_, _, _) => true,
+            ),
+            Plugin<Object?>(
+              id: 'inline2',
+              beforeTooltipDraw: (_, _, _) {
                 return true;
               },
-            },
-            <String, Object?>{
-              'hook': () {
-                return 1;
+            ),
+            Plugin<Object?>(
+              id: 'inline3',
+              beforeTooltipDraw: (_, _, _) {
+                return true;
               },
-            },
+            ),
+            Plugin<Object?>(
+              id: 'inline4',
+              beforeTooltipDraw: (_, _, _) {
+                return true;
+              },
+            ),
+            Plugin<Object?>(
+              id: 'inline5',
+              beforeTooltipDraw: (_, _, _) {
+                return true;
+              },
+            ),
           ],
         });
 
-        final plugins = chart.config.plugins! as List<Object?>;
+        final plugins = _inlinePlugins(chart);
         for (final plugin in plugins) {
-          spyOn(plugin! as Map<String, Object?>, 'hook').and.callThrough();
+          _spyOnTooltipDraw(plugin).and.callThrough();
         }
 
-        final ret = chart.notifyPlugins('hook');
-        expect(jsTruthy(ret), isTrue);
+        final ret = _notifyCancelable(chart);
+        expect(ret, isTrue);
         for (final plugin in plugins) {
-          expect(jsGet(plugin, 'hook'), toHaveBeenCalled());
+          expect(plugin.beforeTooltipDraw, toHaveBeenCalled());
         }
       });
 
+      // The hooks of upstream return `undefined`, `null`, `false`, `42` and
+      // `'bar'`, and the notify gives `{cancelable: true}`. Here the hook is
+      // cancelable, and its hooks return `true`, `true`, `false`, `true` and
+      // `true`.
       testWidgets(
         'should return FALSE if any plugin explicitly returns FALSE',
         (tester) async {
           final chart = acquireChart(<String, Object?>{
             'plugins': [
-              <String, Object?>{'hook': () => undefined},
-              <String, Object?>{
-                'hook': () {
-                  return null;
+              Plugin<Object?>(
+                id: 'inline1',
+                beforeTooltipDraw: (_, _, _) => true,
+              ),
+              Plugin<Object?>(
+                id: 'inline2',
+                beforeTooltipDraw: (_, _, _) {
+                  return true;
                 },
-              },
-              <String, Object?>{
-                'hook': () {
+              ),
+              Plugin<Object?>(
+                id: 'inline3',
+                beforeTooltipDraw: (_, _, _) {
                   return false;
                 },
-              },
-              <String, Object?>{
-                'hook': () {
-                  return 42;
+              ),
+              Plugin<Object?>(
+                id: 'inline4',
+                beforeTooltipDraw: (_, _, _) {
+                  return true;
                 },
-              },
-              <String, Object?>{
-                'hook': () {
-                  return 'bar';
+              ),
+              Plugin<Object?>(
+                id: 'inline5',
+                beforeTooltipDraw: (_, _, _) {
+                  return true;
                 },
-              },
+              ),
             ],
           });
 
-          final plugins = chart.config.plugins! as List<Object?>;
+          final plugins = _inlinePlugins(chart);
           for (final plugin in plugins) {
-            spyOn(plugin! as Map<String, Object?>, 'hook').and.callThrough();
+            _spyOnTooltipDraw(plugin).and.callThrough();
           }
 
-          final ret = chart.notifyPlugins('hook', <String, Object?>{
-            'cancelable': true,
-          });
-          expect(jsTruthy(ret), isFalse);
-          expect(jsGet(plugins[0], 'hook'), toHaveBeenCalled());
-          expect(jsGet(plugins[1], 'hook'), toHaveBeenCalled());
-          expect(jsGet(plugins[2], 'hook'), toHaveBeenCalled());
-          expect(jsGet(plugins[3], 'hook'), isNot(toHaveBeenCalled()));
-          expect(jsGet(plugins[4], 'hook'), isNot(toHaveBeenCalled()));
+          final ret = _notifyCancelable(chart);
+          expect(ret, isFalse);
+          expect(plugins[0].beforeTooltipDraw, toHaveBeenCalled());
+          expect(plugins[1].beforeTooltipDraw, toHaveBeenCalled());
+          expect(plugins[2].beforeTooltipDraw, toHaveBeenCalled());
+          expect(plugins[3].beforeTooltipDraw, isNot(toHaveBeenCalled()));
+          expect(plugins[4].beforeTooltipDraw, isNot(toHaveBeenCalled()));
         },
       );
     });
@@ -246,7 +321,7 @@ void main() {
       testWidgets('should call plugins with options at last argument', (
         tester,
       ) async {
-        final plugin = <String, Object?>{'id': 'foo', 'hook': () {}};
+        final plugin = Plugin<Object?>(id: 'foo', reset: (_, _, _) {});
 
         final chart = acquireChart(<String, Object?>{
           'options': <String, Object?>{
@@ -256,25 +331,25 @@ void main() {
           },
         });
 
-        spyOn(plugin, 'hook');
+        _spyOnReset(plugin);
 
         Chart.register([plugin]);
         chart
-          ..notifyPlugins('hook')
-          ..notifyPlugins('hook', <String, Object?>{'arg1': 'bla'})
-          ..notifyPlugins('hook', <String, Object?>{'arg1': 'bla', 'arg2': 42});
+          ..notifyPlugins(PluginHook.reset)
+          ..notifyPlugins(PluginHook.reset, _SpecArgs(arg1: 'bla'))
+          ..notifyPlugins(PluginHook.reset, _SpecArgs(arg1: 'bla', arg2: 42));
 
-        expect(plugin['hook'].calls.count(), 3);
+        expect(plugin.reset.calls.count(), 3);
         expect(
-          plugin['hook'].calls.argsFor(0)[2],
+          plugin.reset.calls.argsFor(0)[2],
           toEqualOptions(<String, Object?>{'a': '123'}),
         );
         expect(
-          plugin['hook'].calls.argsFor(1)[2],
+          plugin.reset.calls.argsFor(1)[2],
           toEqualOptions(<String, Object?>{'a': '123'}),
         );
         expect(
-          plugin['hook'].calls.argsFor(2)[2],
+          plugin.reset.calls.argsFor(2)[2],
           toEqualOptions(<String, Object?>{'a': '123'}),
         );
 
@@ -284,10 +359,10 @@ void main() {
       testWidgets(
         'should call plugins with options associated to their identifier',
         (tester) async {
-          final plugins = <String, Map<String, Object?>>{
-            'a': <String, Object?>{'id': 'a', 'hook': () {}},
-            'b': <String, Object?>{'id': 'b', 'hook': () {}},
-            'c': <String, Object?>{'id': 'c', 'hook': () {}},
+          final plugins = <String, Plugin<Object?>>{
+            'a': Plugin<Object?>(id: 'a', reset: (_, _, _) {}),
+            'b': Plugin<Object?>(id: 'b', reset: (_, _, _) {}),
+            'c': Plugin<Object?>(id: 'c', reset: (_, _, _) {}),
           };
 
           Chart.register([plugins['a']]);
@@ -303,25 +378,25 @@ void main() {
             },
           });
 
-          spyOn(plugins['a']!, 'hook');
-          spyOn(plugins['b']!, 'hook');
-          spyOn(plugins['c']!, 'hook');
+          _spyOnReset(plugins['a']!);
+          _spyOnReset(plugins['b']!);
+          _spyOnReset(plugins['c']!);
 
-          chart.notifyPlugins('hook');
+          chart.notifyPlugins(PluginHook.reset);
 
-          expect(plugins['a']!['hook'], toHaveBeenCalled());
-          expect(plugins['b']!['hook'], toHaveBeenCalled());
-          expect(plugins['c']!['hook'], toHaveBeenCalled());
+          expect(plugins['a']!.reset, toHaveBeenCalled());
+          expect(plugins['b']!.reset, toHaveBeenCalled());
+          expect(plugins['c']!.reset, toHaveBeenCalled());
           expect(
-            plugins['a']!['hook'].calls.first().args[2],
+            plugins['a']!.reset.calls.first().args[2],
             toEqualOptions(<String, Object?>{'a': '123'}),
           );
           expect(
-            plugins['b']!['hook'].calls.first().args[2],
+            plugins['b']!.reset.calls.first().args[2],
             toEqualOptions(<String, Object?>{'b': '456'}),
           );
           expect(
-            plugins['c']!['hook'].calls.first().args[2],
+            plugins['c']!.reset.calls.first().args[2],
             toEqualOptions(<String, Object?>{'c': '789'}),
           );
 
@@ -332,10 +407,10 @@ void main() {
       testWidgets(
         'should not call plugins when config.options.plugins.{id} is FALSE',
         (tester) async {
-          final plugins = <String, Map<String, Object?>>{
-            'a': <String, Object?>{'id': 'a', 'hook': () {}},
-            'b': <String, Object?>{'id': 'b', 'hook': () {}},
-            'c': <String, Object?>{'id': 'c', 'hook': () {}},
+          final plugins = <String, Plugin<Object?>>{
+            'a': Plugin<Object?>(id: 'a', reset: (_, _, _) {}),
+            'b': Plugin<Object?>(id: 'b', reset: (_, _, _) {}),
+            'c': Plugin<Object?>(id: 'c', reset: (_, _, _) {}),
           };
 
           Chart.register([plugins['a']]);
@@ -347,15 +422,15 @@ void main() {
             },
           });
 
-          spyOn(plugins['a']!, 'hook');
-          spyOn(plugins['b']!, 'hook');
-          spyOn(plugins['c']!, 'hook');
+          _spyOnReset(plugins['a']!);
+          _spyOnReset(plugins['b']!);
+          _spyOnReset(plugins['c']!);
 
-          chart.notifyPlugins('hook');
+          chart.notifyPlugins(PluginHook.reset);
 
-          expect(plugins['a']!['hook'], isNot(toHaveBeenCalled()));
-          expect(plugins['b']!['hook'], isNot(toHaveBeenCalled()));
-          expect(plugins['c']!['hook'], toHaveBeenCalled());
+          expect(plugins['a']!.reset, isNot(toHaveBeenCalled()));
+          expect(plugins['b']!.reset, isNot(toHaveBeenCalled()));
+          expect(plugins['c']!.reset, toHaveBeenCalled());
 
           Chart.unregister([plugins['a']]);
         },
@@ -364,11 +439,11 @@ void main() {
       testWidgets(
         'should call plugins with default options when plugin options is TRUE',
         (tester) async {
-          final plugin = <String, Object?>{
-            'id': 'a',
-            'hook': () {},
-            'defaults': <String, Object?>{'a': 42},
-          };
+          final plugin = Plugin<Object?>(
+            id: 'a',
+            reset: (_, _, _) {},
+            defaults: <String, Object?>{'a': 42},
+          );
 
           Chart.register([plugin]);
 
@@ -378,15 +453,15 @@ void main() {
             },
           });
 
-          spyOn(plugin, 'hook');
+          _spyOnReset(plugin);
 
-          chart.notifyPlugins('hook');
+          chart.notifyPlugins(PluginHook.reset);
 
-          expect(plugin['hook'], toHaveBeenCalled());
-          expect(jsObjectKeys(plugin['hook'].calls.first().args[2]), ['a']);
+          expect(plugin.reset, toHaveBeenCalled());
+          expect(jsObjectKeys(plugin.reset.calls.first().args[2]), ['a']);
           // jasmine.objectContaining({a: 42})
           expect(
-            plugin['hook'].calls.first().args[2],
+            plugin.reset.calls.first().args[2],
             objectContaining({'a': 42}),
           );
 
@@ -398,20 +473,20 @@ void main() {
         'should call plugins with default options if plugin config options '
         'is undefined',
         (tester) async {
-          final plugin = <String, Object?>{
-            'id': 'a',
-            'hook': () {},
-            'defaults': <String, Object?>{'a': 'foobar'},
-          };
+          final plugin = Plugin<Object?>(
+            id: 'a',
+            reset: (_, _, _) {},
+            defaults: <String, Object?>{'a': 'foobar'},
+          );
 
           Chart.register([plugin]);
-          spyOn(plugin, 'hook');
+          _spyOnReset(plugin);
 
-          acquireChart().notifyPlugins('hook');
+          acquireChart().notifyPlugins(PluginHook.reset);
 
-          expect(plugin['hook'], toHaveBeenCalled());
+          expect(plugin.reset, toHaveBeenCalled());
           expect(
-            plugin['hook'].calls.first().args[2],
+            plugin.reset.calls.first().args[2],
             toEqualOptions(<String, Object?>{'a': 'foobar'}),
           );
 
@@ -421,11 +496,11 @@ void main() {
 
       // https://github.com/chartjs/Chart.js/issues/10482
       testWidgets('should resolve defaults for local plugins', (tester) async {
-        final plugin = <String, Object?>{
-          'id': 'a',
-          'hook': () {},
-          'defaults': <String, Object?>{'bar': 'bar'},
-        };
+        final plugin = Plugin<Object?>(
+          id: 'a',
+          reset: (_, _, _) {},
+          defaults: <String, Object?>{'bar': 'bar'},
+        );
         final chart = acquireChart(<String, Object?>{
           'plugins': [plugin],
           'options': <String, Object?>{
@@ -435,12 +510,12 @@ void main() {
           },
         });
 
-        spyOn(plugin, 'hook');
-        chart.notifyPlugins('hook');
+        _spyOnReset(plugin);
+        chart.notifyPlugins(PluginHook.reset);
 
-        expect(plugin['hook'], toHaveBeenCalled());
+        expect(plugin.reset, toHaveBeenCalled());
         expect(
-          plugin['hook'].calls.first().args[2],
+          plugin.reset.calls.first().args[2],
           toEqualOptions(<String, Object?>{'foo': 'foo', 'bar': 'bar'}),
         );
 
@@ -449,7 +524,7 @@ void main() {
 
       // https://github.com/chartjs/Chart.js/issues/5111#issuecomment-355934167
       testWidgets('should update plugin options', (tester) async {
-        final plugin = <String, Object?>{'id': 'a', 'hook': () {}};
+        final plugin = Plugin<Object?>(id: 'a', reset: (_, _, _) {});
         final chart = acquireChart(<String, Object?>{
           'plugins': [plugin],
           'options': <String, Object?>{
@@ -459,13 +534,13 @@ void main() {
           },
         });
 
-        spyOn(plugin, 'hook');
+        _spyOnReset(plugin);
 
-        chart.notifyPlugins('hook');
+        chart.notifyPlugins(PluginHook.reset);
 
-        expect(plugin['hook'], toHaveBeenCalled());
+        expect(plugin.reset, toHaveBeenCalled());
         expect(
-          plugin['hook'].calls.first().args[2],
+          plugin.reset.calls.first().args[2],
           toEqualOptions(<String, Object?>{'foo': 'foo'}),
         );
 
@@ -474,12 +549,12 @@ void main() {
         };
         chart.update();
 
-        plugin['hook'].calls.reset();
-        chart.notifyPlugins('hook');
+        plugin.reset.calls.reset();
+        chart.notifyPlugins(PluginHook.reset);
 
-        expect(plugin['hook'], toHaveBeenCalled());
+        expect(plugin.reset, toHaveBeenCalled());
         expect(
-          plugin['hook'].calls.first().args[2],
+          plugin.reset.calls.first().args[2],
           toEqualOptions(<String, Object?>{'bar': 'bar'}),
         );
       });
@@ -489,22 +564,22 @@ void main() {
         'should resolve options even if some subnodes are set as undefined',
         (tester) async {
           Object? runtimeOptions;
-          final plugin = <String, Object?>{
-            'id': 'a',
-            'afterUpdate': (Object? chart, Object? args, Object? options) {
+          final plugin = Plugin<Object?>(
+            id: 'a',
+            afterUpdate: (chart, args, options) {
               (jsGet(jsGet(jsGet(options, 'l1'), 'l2'), 'l3')!
                       as JsObjectFace)['display'] =
                   true;
               runtimeOptions = options;
             },
-            'defaults': <String, Object?>{
+            defaults: <String, Object?>{
               'l1': <String, Object?>{
                 'l2': <String, Object?>{
                   'l3': <String, Object?>{'display': false},
                 },
               },
             },
-          };
+          );
           acquireChart(<String, Object?>{
             'plugins': [plugin],
             'options': <String, Object?>{
@@ -528,17 +603,17 @@ void main() {
       );
 
       testWidgets('should disable all plugins', (tester) async {
-        final plugin = <String, Object?>{'id': 'a', 'hook': () {}};
+        final plugin = Plugin<Object?>(id: 'a', reset: (_, _, _) {});
         final chart = acquireChart(<String, Object?>{
           'plugins': [plugin],
           'options': <String, Object?>{'plugins': false},
         });
 
-        spyOn(plugin, 'hook');
+        _spyOnReset(plugin);
 
-        chart.notifyPlugins('hook');
+        chart.notifyPlugins(PluginHook.reset);
 
-        expect(plugin['hook'], isNot(toHaveBeenCalled()));
+        expect(plugin.reset, isNot(toHaveBeenCalled()));
       });
 
       testWidgets('should not restart plugins when a double register occurs', (
@@ -547,20 +622,17 @@ void main() {
         final results = <Object?>[];
         final chart = acquireChart(<String, Object?>{
           'plugins': [
-            <String, Object?>{
-              'start': () {
+            Plugin<Object?>(
+              id: 'inline',
+              start: (_, _, _) {
                 results.add(1);
               },
-            },
+            ),
           ],
         });
 
-        Chart.register([
-          <String, Object?>{'id': 'abc', 'hook': () {}},
-        ]);
-        Chart.register([
-          <String, Object?>{'id': 'def', 'hook': () {}},
-        ]);
+        Chart.register([Plugin<Object?>(id: 'abc', reset: (_, _, _) {})]);
+        Chart.register([Plugin<Object?>(id: 'def', reset: (_, _, _) {})]);
 
         chart.update();
 
@@ -572,9 +644,9 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final plugin = <String, Object?>{
-            'id': 'test',
-            'start': (Object? chart, Object? args, Object? opts) {
+          final plugin = Plugin<Object?>(
+            id: 'test',
+            start: (chart, args, opts) {
               expect(jsGet(opts, 'fun'), isA<Function>());
               expect(jsCall(jsGet(opts, 'fun'), const []), 'test');
               expect(jsGet(opts, 'arr'), [1, 2, 3]);
@@ -587,7 +659,7 @@ void main() {
               expect(jsGet(jsGet(opts, 'sub'), 'subarr'), [3, 2, 1]);
               done();
             },
-          };
+          );
           acquireChart(<String, Object?>{
             'options': <String, Object?>{
               'plugins': <String, Object?>{
@@ -620,19 +692,16 @@ void main() {
             },
           },
           'plugins': [
-            <String, Object?>{
-              'id': 'testPlugin',
-              'beforeEvent': (Object? chart, Object? args) {
-                results.add(
-                  'before${(jsGet(args, 'event')! as types.ChartEvent).type}',
-                );
+            Plugin<Object?>(
+              id: 'testPlugin',
+              beforeEvent: (_, args, _) {
+                results.add('before${args.event.type}');
+                return true;
               },
-              'afterEvent': (Object? chart, Object? args) {
-                results.add(
-                  'after${(jsGet(args, 'event')! as types.ChartEvent).type}',
-                );
+              afterEvent: (_, args, _) {
+                results.add('after${args.event.type}');
               },
-            },
+            ),
           ],
         });
         await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
@@ -671,12 +740,12 @@ void main() {
             },
           },
           'plugins': [
-            <String, Object?>{
-              'id': 'testPlugin',
-              'reset': () => results.add('reset'),
-              'afterDestroy': () => results.add('afterDestroy'),
-              'uninstall': () => results.add('uninstall'),
-            },
+            Plugin<Object?>(
+              id: 'testPlugin',
+              reset: (_, _, _) => results.add('reset'),
+              afterDestroy: (_, _, _) => results.add('afterDestroy'),
+              uninstall: (_, _, _) => results.add('uninstall'),
+            ),
           ],
         })..reset();
         expect(results, ['reset']);

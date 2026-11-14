@@ -1,845 +1,361 @@
-// Original code, not ported from Chart.js: the typed plugin objects.
+// Original code, not ported from Chart.js: the native plugin objects.
 
-/// The typed plugins of Chart.js ADR 0054 §12: [Plugin] (the name of
-/// `index.d.ts:856`), the hook names ([PluginHook]), the argument classes of
-/// the hooks and [MapPlugin], the reader of a plugin object that is a Map.
+/// The native plugins of Chart.js ADR 0144: [Plugin] (the name of
+/// `index.d.ts:856`), the hooks ([PluginHook]), the hook function types and
+/// the argument classes of the hooks.
 ///
-/// The plugin service (`core.plugins.dart`) reads the hook of a plugin at
-/// each notify, as upstream reads `plugin[hook]`: the field of a [Plugin],
-/// `map[hook]` of a Map plugin ([MapPlugin]), and the property by name of
-/// another value. The built-in plugins stay Maps until lane L4 makes them
-/// [Plugin] instances.
+/// A [Plugin] has one field for each hook, with the function type of its
+/// hook. A hook that upstream calls with `cancelable: true` is a
+/// [CancelableHookFunction]: it returns `false` to cancel the step. Each
+/// other hook is a [PluginHookFunction], which returns nothing. The plugin
+/// service (`core.plugins.dart`) calls a hook through [Plugin.notify]. No
+/// hook is read by name, and no plugin is a Map.
 ///
-/// The argument classes are [TypedRecord]s: typed fields in the key order of
-/// the upstream literals, extras for a key that a plugin writes, and the
-/// face (Chart.js ADR 0054 §5). `args` passes through each hook by identity.
+/// The argument classes are plain classes. `args` passes through each hook
+/// of one notify by identity.
 ///
-/// This library is a pure layer.
+/// This library is a core layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
-import 'package:flutter_chartjs_port/src/js/js_function.dart'
-    show jsCall, jsIsFunction;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/typed_record.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show ContextResolver;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableScaleContext;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
-// A hook argument class writes each key through the setter of its slot,
-// which keeps the key order and the present bit: no key is a field.
-// ignore_for_file: use_declaring_parameters
-
-/// A hook of the `Plugin` interface (U `index.d.ts:856-1240` and the hooks
-/// of the tooltip plugin, `index.d.ts:2777-2786`), with its JS name.
-enum PluginHook(
-  /// The JS name of the hook.
-  final String jsName,
-) {
-  /// `install`.
-  install('install'),
-
-  /// `start`.
-  start('start'),
-
-  /// `stop`.
-  stop('stop'),
-
-  /// `beforeInit`.
-  beforeInit('beforeInit'),
-
-  /// `afterInit`.
-  afterInit('afterInit'),
-
-  /// `beforeUpdate`.
-  beforeUpdate('beforeUpdate'),
-
-  /// `afterUpdate`.
-  afterUpdate('afterUpdate'),
-
-  /// `beforeElementsUpdate`.
-  beforeElementsUpdate('beforeElementsUpdate'),
-
-  /// `reset`.
-  reset('reset'),
-
-  /// `beforeDatasetsUpdate`.
-  beforeDatasetsUpdate('beforeDatasetsUpdate'),
-
-  /// `afterDatasetsUpdate`.
-  afterDatasetsUpdate('afterDatasetsUpdate'),
-
-  /// `beforeDatasetUpdate`.
-  beforeDatasetUpdate('beforeDatasetUpdate'),
-
-  /// `afterDatasetUpdate`.
-  afterDatasetUpdate('afterDatasetUpdate'),
-
-  /// `beforeLayout`.
-  beforeLayout('beforeLayout'),
-
-  /// `beforeDataLimits`.
-  beforeDataLimits('beforeDataLimits'),
-
-  /// `afterDataLimits`.
-  afterDataLimits('afterDataLimits'),
-
-  /// `beforeBuildTicks`.
-  beforeBuildTicks('beforeBuildTicks'),
-
-  /// `afterBuildTicks`.
-  afterBuildTicks('afterBuildTicks'),
-
-  /// `afterLayout`.
-  afterLayout('afterLayout'),
-
-  /// `beforeRender`.
-  beforeRender('beforeRender'),
-
-  /// `afterRender`.
-  afterRender('afterRender'),
-
-  /// `beforeDraw`.
-  beforeDraw('beforeDraw'),
-
-  /// `afterDraw`.
-  afterDraw('afterDraw'),
-
-  /// `beforeDatasetsDraw`.
-  beforeDatasetsDraw('beforeDatasetsDraw'),
-
-  /// `afterDatasetsDraw`.
-  afterDatasetsDraw('afterDatasetsDraw'),
-
-  /// `beforeDatasetDraw`.
-  beforeDatasetDraw('beforeDatasetDraw'),
-
-  /// `afterDatasetDraw`.
-  afterDatasetDraw('afterDatasetDraw'),
-
-  /// `beforeEvent`.
-  beforeEvent('beforeEvent'),
-
-  /// `afterEvent`.
-  afterEvent('afterEvent'),
-
-  /// `resize`.
-  resize('resize'),
-
-  /// `beforeDestroy`.
-  beforeDestroy('beforeDestroy'),
-
-  /// `afterDestroy`.
-  afterDestroy('afterDestroy'),
-
-  /// `uninstall`.
-  uninstall('uninstall'),
-
-  /// `beforeTooltipDraw`.
-  beforeTooltipDraw('beforeTooltipDraw'),
-
-  /// `afterTooltipDraw`.
-  afterTooltipDraw('afterTooltipDraw');
-
-  /// The hook of the JS name [name], or Dart `null` for another name.
-  static PluginHook? of(String name) => switch (name) {
-    'install' => install,
-    'start' => start,
-    'stop' => stop,
-    'beforeInit' => beforeInit,
-    'afterInit' => afterInit,
-    'beforeUpdate' => beforeUpdate,
-    'afterUpdate' => afterUpdate,
-    'beforeElementsUpdate' => beforeElementsUpdate,
-    'reset' => reset,
-    'beforeDatasetsUpdate' => beforeDatasetsUpdate,
-    'afterDatasetsUpdate' => afterDatasetsUpdate,
-    'beforeDatasetUpdate' => beforeDatasetUpdate,
-    'afterDatasetUpdate' => afterDatasetUpdate,
-    'beforeLayout' => beforeLayout,
-    'beforeDataLimits' => beforeDataLimits,
-    'afterDataLimits' => afterDataLimits,
-    'beforeBuildTicks' => beforeBuildTicks,
-    'afterBuildTicks' => afterBuildTicks,
-    'afterLayout' => afterLayout,
-    'beforeRender' => beforeRender,
-    'afterRender' => afterRender,
-    'beforeDraw' => beforeDraw,
-    'afterDraw' => afterDraw,
-    'beforeDatasetsDraw' => beforeDatasetsDraw,
-    'afterDatasetsDraw' => afterDatasetsDraw,
-    'beforeDatasetDraw' => beforeDatasetDraw,
-    'afterDatasetDraw' => afterDatasetDraw,
-    'beforeEvent' => beforeEvent,
-    'afterEvent' => afterEvent,
-    'resize' => resize,
-    'beforeDestroy' => beforeDestroy,
-    'afterDestroy' => afterDestroy,
-    'uninstall' => uninstall,
-    'beforeTooltipDraw' => beforeTooltipDraw,
-    'afterTooltipDraw' => afterTooltipDraw,
-    _ => null,
-  };
-}
-
-/// The function of a hook: `hook(chart, args, options)`, with the argument
-/// class [A] of the hook. The result is `false` to cancel a cancelable hook,
-/// else any value.
+/// The function of a hook that cannot cancel: `hook(chart, args, options)`.
 ///
-/// [A] is the argument class of the hook (a typed record of this library),
-/// or `AnyObject` for the hooks whose upstream arguments are an object
-/// literal that the caller makes (`{scale}` of the scale hooks). The
-/// options are the plugin options view (`OptionView`, Chart.js ADR 0054
-/// §12).
-typedef PluginHookFunction<A extends Object> = Object? Function(
+/// [A] is the argument class of the hook, and [O] the options type of the
+/// plugin ([Plugin.options]).
+///
+/// ```dart
+/// final probe = Plugin<ContextResolver>(
+///   id: 'probe',
+///   afterDraw: (chart, args, options) => draws++,
+/// );
+/// ```
+typedef PluginHookFunction<A extends Object, O> = void Function(
   types.Chart chart,
   A args,
-  Object options,
+  O options,
 );
+
+/// The function of a cancelable hook: `hook(chart, args, options)`. The
+/// result `false` cancels the step of the chart, and `true` continues (U
+/// `core.plugins.js:66`).
+///
+/// ```dart
+/// final freeze = Plugin<ContextResolver>(
+///   id: 'freeze',
+///   beforeUpdate: (chart, args, options) => !frozen,
+/// );
+/// ```
+typedef CancelableHookFunction<A extends Object, O> = bool Function(
+  types.Chart chart,
+  A args,
+  O options,
+);
+
+/// A hook of the `Plugin` interface (U `index.d.ts:856-1240` and the hooks
+/// of the tooltip plugin, `index.d.ts:2777-2786`), with its JS name and the
+/// argument class [A] of its calls.
+///
+/// A hook is cancelable when upstream calls it with `cancelable: true`. The
+/// call sites decide it, not the declarations of `index.d.ts`.
+///
+/// ```dart
+/// chart.notifyPlugins(PluginHook.afterDraw);
+/// ```
+enum PluginHook<A extends Object>(
+  /// The JS name of the hook.
+  final String jsName, {
+
+  /// Whether a hook of the plugin can cancel the step with `false`.
+  final bool cancelable = false,
+}) {
+  /// `install` (U `core.plugins.js:38`).
+  install<PluginHookArgs>('install'),
+
+  /// `start` (U `core.plugins.js:118`).
+  start<PluginHookArgs>('start'),
+
+  /// `stop` (U `core.plugins.js:117`).
+  stop<PluginHookArgs>('stop'),
+
+  /// `beforeInit` (U `core.controller.js:238`).
+  beforeInit<PluginHookArgs>('beforeInit'),
+
+  /// `afterInit` (U `core.controller.js:249`).
+  afterInit<PluginHookArgs>('afterInit'),
+
+  /// `beforeUpdate` (U `core.controller.js:490`).
+  beforeUpdate<UpdateHookArgs>('beforeUpdate', cancelable: true),
+
+  /// `afterUpdate` (U `core.controller.js:524`).
+  afterUpdate<UpdateHookArgs>('afterUpdate'),
+
+  /// `beforeElementsUpdate` (U `core.controller.js:497`).
+  beforeElementsUpdate<PluginHookArgs>('beforeElementsUpdate'),
+
+  /// `reset` (U `core.controller.js:472`).
+  reset<PluginHookArgs>('reset'),
+
+  /// `beforeDatasetsUpdate` (U `core.controller.js:649`).
+  beforeDatasetsUpdate<UpdateHookArgs>(
+    'beforeDatasetsUpdate',
+    cancelable: true,
+  ),
+
+  /// `afterDatasetsUpdate` (U `core.controller.js:661`).
+  afterDatasetsUpdate<UpdateHookArgs>('afterDatasetsUpdate'),
+
+  /// `beforeDatasetUpdate` (U `core.controller.js:673`).
+  beforeDatasetUpdate<DatasetUpdateHookArgs>(
+    'beforeDatasetUpdate',
+    cancelable: true,
+  ),
+
+  /// `afterDatasetUpdate` (U `core.controller.js:680`).
+  afterDatasetUpdate<DatasetUpdateHookArgs>('afterDatasetUpdate'),
+
+  /// `beforeLayout` (U `core.controller.js:612`).
+  beforeLayout<PluginHookArgs>('beforeLayout', cancelable: true),
+
+  /// `beforeDataLimits` (U `core.scale.js:541`).
+  beforeDataLimits<ScriptableScaleContext>('beforeDataLimits'),
+
+  /// `afterDataLimits` (U `core.scale.js:545`).
+  afterDataLimits<ScriptableScaleContext>('afterDataLimits'),
+
+  /// `beforeBuildTicks` (U `core.scale.js:550`).
+  beforeBuildTicks<ScriptableScaleContext>('beforeBuildTicks'),
+
+  /// `afterBuildTicks` (U `core.scale.js:559`).
+  afterBuildTicks<ScriptableScaleContext>('afterBuildTicks'),
+
+  /// `afterLayout` (U `core.controller.js:640`).
+  afterLayout<PluginHookArgs>('afterLayout'),
+
+  /// `beforeRender` (U `core.controller.js:684`).
+  beforeRender<PluginHookArgs>('beforeRender', cancelable: true),
+
+  /// `afterRender` (U `core.controller.js:37`).
+  afterRender<PluginHookArgs>('afterRender'),
+
+  /// `beforeDraw` (U `core.controller.js:712`).
+  beforeDraw<PluginHookArgs>('beforeDraw', cancelable: true),
+
+  /// `afterDraw` (U `core.controller.js:731`).
+  afterDraw<PluginHookArgs>('afterDraw'),
+
+  /// `beforeDatasetsDraw` (U `core.controller.js:766`).
+  beforeDatasetsDraw<PluginHookArgs>('beforeDatasetsDraw', cancelable: true),
+
+  /// `afterDatasetsDraw` (U `core.controller.js:775`).
+  afterDatasetsDraw<PluginHookArgs>('afterDatasetsDraw'),
+
+  /// `beforeDatasetDraw` (U `core.controller.js:793`).
+  beforeDatasetDraw<DatasetDrawHookArgs>('beforeDatasetDraw', cancelable: true),
+
+  /// `afterDatasetDraw` (U `core.controller.js:808`).
+  afterDatasetDraw<DatasetDrawHookArgs>('afterDatasetDraw'),
+
+  /// `beforeEvent` (U `core.controller.js:1172`).
+  beforeEvent<EventHookArgs>('beforeEvent', cancelable: true),
+
+  /// `afterEvent` (U `core.controller.js:1179`).
+  afterEvent<EventHookArgs>('afterEvent'),
+
+  /// `resize` (U `core.controller.js:292`).
+  resize<ResizeHookArgs>('resize'),
+
+  /// `beforeDestroy` (U `core.controller.js:938`).
+  beforeDestroy<PluginHookArgs>('beforeDestroy'),
+
+  /// `afterDestroy` (U `core.controller.js:954`).
+  afterDestroy<PluginHookArgs>('afterDestroy'),
+
+  /// `uninstall` (U `core.plugins.js:50`).
+  uninstall<PluginHookArgs>('uninstall'),
+
+  /// `beforeTooltipDraw` (U `plugin.tooltip.js:1254`).
+  beforeTooltipDraw<TooltipDrawHookArgs>('beforeTooltipDraw', cancelable: true),
+
+  /// `afterTooltipDraw` (U `plugin.tooltip.js:1260`).
+  afterTooltipDraw<TooltipDrawHookArgs>('afterTooltipDraw'),
+}
 
 /// The arguments `{}` of a hook without arguments (`EmptyObject` of
 /// `index.d.ts`), and the base of the argument classes.
-base class PluginHookArgs() extends TypedRecord {
-  /// An object without own keys.
+///
+/// ```dart
+/// chart.notifyPlugins(PluginHook.reset, const PluginHookArgs());
+/// ```
+base class const PluginHookArgs() {
+  /// An object without fields.
   this;
-
-  @override
-  List<String> get fieldNames => const [];
-
-  @override
-  int slotOf(String name) => -1;
-
-  @override
-  Object? readSlot(int slot) => throw StateError('no field $slot');
-
-  @override
-  bool writeSlot(int slot, Object? value) => throw StateError('no field $slot');
-
-  @override
-  void clearSlot(int slot) => throw StateError('no field $slot');
 }
 
-/// `{mode, cancelable: true}` of `beforeUpdate` and `beforeDatasetsUpdate`,
-/// and `{mode}` of `afterUpdate` and `afterDatasetsUpdate` (U
-/// `core.controller.js:490`, `:524`, `:649`, `:661`).
+/// `{mode}` of `beforeUpdate`, `afterUpdate`, `beforeDatasetsUpdate` and
+/// `afterDatasetsUpdate` (U `core.controller.js:490`, `:524`, `:649`,
+/// `:661`).
+///
+/// ```dart
+/// beforeUpdate: (chart, args, options) => args.mode != 'resize',
+/// ```
 final class UpdateHookArgs({
-  required Object? mode,
-  bool? cancelable,
+  /// `mode`: the update mode of `chart.update(mode)`, a string, a function
+  /// or `undefined`.
+  required final Object? mode,
 
   /// Whether this update kept the layout of the last update, so no box ran its
   /// `update`: the data-only lifecycle of Chart.js ADR 0074. It is not a key of
   /// the object, because upstream always runs the layout.
   @internal final bool layoutKept = false,
 }) extends PluginHookArgs {
-  /// The object with the given keys, in the key order of the upstream
-  /// literal. A required key is always present.
-  this {
-    this.mode = mode;
-    if (cancelable != null) this.cancelable = cancelable;
-  }
-
-  static const List<String> _fieldNames = ['mode', 'cancelable'];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'mode' => 0,
-    'cancelable' => 1,
-    _ => -1,
-  };
-
-  Object? _mode;
-
-  bool _cancelable = false;
-
-  /// `mode`, or [undefined] when absent.
-  Object? get mode => hasSlot(0) ? _mode : undefined;
-
-  set mode(Object? value) {
-    _mode = value;
-    touchSlot(0);
-  }
-
-  /// `cancelable`: false when absent.
-  bool get cancelable => _cancelable;
-
-  set cancelable(bool value) {
-    _cancelable = value;
-    touchSlot(1);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _mode,
-    _ => _cancelable,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      case 0:
-        _mode = value;
-        return true;
-      default:
-        _cancelable = value is bool ? value : jsTruthy(value);
-        return value is bool;
-    }
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _mode = null;
-      default:
-        _cancelable = false;
-    }
-  }
+  /// The arguments of an update.
+  this;
 }
 
-/// `{cancelable: true}` of `beforeLayout`, `beforeRender`, `beforeDraw` and
-/// `beforeDatasetsDraw` (U `core.controller.js:612`, `:684`, `:712`, `:766`).
-final class CancelableHookArgs({bool? cancelable}) extends PluginHookArgs {
-  /// The object with the given keys, in the key order of the upstream
-  /// literal. A required key is always present.
-  this {
-    if (cancelable != null) this.cancelable = cancelable;
-  }
+/// `{meta, index, mode}` of `beforeDatasetUpdate` and `afterDatasetUpdate`
+/// (U `core.controller.js:670-680`).
+///
+/// ```dart
+/// beforeDatasetUpdate: (chart, args, options) => args.meta.visible,
+/// ```
+final class DatasetUpdateHookArgs({
+  /// `meta`: the meta of the dataset.
+  required final types.ChartMeta meta,
 
-  static const List<String> _fieldNames = ['cancelable'];
+  /// `index`: the index of the dataset.
+  required final int index,
 
-  @override
-  List<String> get fieldNames => _fieldNames;
+  /// `mode`: the update mode, as in [UpdateHookArgs.mode].
+  required final Object? mode,
+}) extends PluginHookArgs {
+  /// The arguments of the update of one dataset.
+  this;
+}
 
-  @override
-  int slotOf(String name) => switch (name) {
-    'cancelable' => 0,
-    _ => -1,
-  };
+/// `{meta, index}` of `beforeDatasetDraw` and `afterDatasetDraw` (U
+/// `core.controller.js:786-808`).
+///
+/// ```dart
+/// afterDatasetDraw: (chart, args, options) => labels.draw(args.meta),
+/// ```
+final class DatasetDrawHookArgs({
+  /// `meta`: the meta of the dataset.
+  required final types.ChartMeta meta,
 
-  bool _cancelable = false;
+  /// `index`: the index of the dataset.
+  required final int index,
+}) extends PluginHookArgs {
+  /// The arguments of the draw of one dataset.
+  this;
+}
 
-  /// `cancelable`: false when absent.
-  bool get cancelable => _cancelable;
+/// `{event, replay, inChartArea}` of `beforeEvent` and `afterEvent`, and the
+/// key `changed` that a plugin writes (U `core.controller.js:1162-1179`).
+///
+/// ```dart
+/// afterEvent: (chart, args, options) {
+///   if (args.event.type == 'click') args.changed = select(args.event);
+/// },
+/// ```
+final class EventHookArgs({
+  /// `event`: the chart event.
+  required final types.ChartEvent event,
 
-  set cancelable(bool value) {
-    _cancelable = value;
-    touchSlot(0);
-  }
+  /// `replay`: whether the chart replays the last event in an update.
+  required final bool replay,
 
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    _ => _cancelable,
-  };
+  /// `inChartArea`: whether the event is in the chart area. A `beforeEvent`
+  /// hook can write it: the chart reads it after the hook.
+  var bool inChartArea = false,
 
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      default:
-        _cancelable = value is bool ? value : jsTruthy(value);
-        return value is bool;
-    }
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      default:
-        _cancelable = false;
-    }
-  }
+  /// `changed`: a hook writes `true` to render the chart after the event.
+  var bool changed = false,
+}) extends PluginHookArgs {
+  /// The arguments of an event.
+  this;
 }
 
 /// `{size}` of `resize` (U `core.controller.js:292`).
-final class ResizeHookArgs({required Object? size}) extends PluginHookArgs {
-  /// The object with the given keys, in the key order of the upstream
-  /// literal. A required key is always present.
-  this {
-    this.size = size;
-  }
-
-  static const List<String> _fieldNames = ['size'];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'size' => 0,
-    _ => -1,
-  };
-
-  Object? _size;
-
-  /// `size`, or [undefined] when absent.
-  Object? get size => hasSlot(0) ? _size : undefined;
-
-  set size(Object? value) {
-    _size = value;
-    touchSlot(0);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    _ => _size,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      default:
-        _size = value;
-        return true;
-    }
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      default:
-        _size = null;
-    }
-  }
-}
-
-/// `{meta, index, mode, cancelable}` of `beforeDatasetUpdate` and
-/// `afterDatasetUpdate` (U `core.controller.js:670-680`).
-final class DatasetUpdateHookArgs({
-  required types.ChartMeta? meta,
-  required int index,
-  required Object? mode,
-  bool? cancelable,
-}) extends PluginHookArgs {
-  /// The object with the given keys, in the key order of the upstream
-  /// literal. A required key is always present.
-  this {
-    this.meta = meta;
-    this.index = index;
-    this.mode = mode;
-    if (cancelable != null) this.cancelable = cancelable;
-  }
-
-  static const List<String> _fieldNames = [
-    'meta',
-    'index',
-    'mode',
-    'cancelable',
-  ];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'meta' => 0,
-    'index' => 1,
-    'mode' => 2,
-    'cancelable' => 3,
-    _ => -1,
-  };
-
-  types.ChartMeta? _meta;
-
-  int _index = -1;
-
-  Object? _mode;
-
-  bool _cancelable = false;
-
-  /// `meta`, or Dart `null`.
-  types.ChartMeta? get meta => hasSlot(0) && !isForeignSlot(0) ? _meta : null;
-
-  set meta(types.ChartMeta? value) {
-    _meta = value;
-    touchSlot(0);
-  }
-
-  /// `index`: -1 when absent.
-  int get index => _index;
-
-  set index(int value) {
-    _index = value;
-    touchSlot(1);
-  }
-
-  /// `mode`, or [undefined] when absent.
-  Object? get mode => hasSlot(2) ? _mode : undefined;
-
-  set mode(Object? value) {
-    _mode = value;
-    touchSlot(2);
-  }
-
-  /// `cancelable`: false when absent.
-  bool get cancelable => _cancelable;
-
-  set cancelable(bool value) {
-    _cancelable = value;
-    touchSlot(3);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _meta,
-    1 => _index,
-    2 => _mode,
-    _ => _cancelable,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      case 0:
-        _meta = value is types.ChartMeta ? value : null;
-        return value is types.ChartMeta?;
-      case 1:
-        _index = value is num && value.isFinite ? value.toInt() : -1;
-        return value is num;
-      case 2:
-        _mode = value;
-        return true;
-      default:
-        _cancelable = value is bool ? value : jsTruthy(value);
-        return value is bool;
-    }
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _meta = null;
-      case 1:
-        _index = -1;
-      case 2:
-        _mode = null;
-      default:
-        _cancelable = false;
-    }
-  }
-}
-
-/// `{meta, index, cancelable}` of `beforeDatasetDraw` and
-/// `afterDatasetDraw` (U `core.controller.js:786-808`).
-final class DatasetDrawHookArgs({
-  required types.ChartMeta? meta,
-  required int index,
-  bool? cancelable,
-}) extends PluginHookArgs {
-  /// The object with the given keys, in the key order of the upstream
-  /// literal. A required key is always present.
-  this {
-    this.meta = meta;
-    this.index = index;
-    if (cancelable != null) this.cancelable = cancelable;
-  }
-
-  static const List<String> _fieldNames = ['meta', 'index', 'cancelable'];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'meta' => 0,
-    'index' => 1,
-    'cancelable' => 2,
-    _ => -1,
-  };
-
-  types.ChartMeta? _meta;
-
-  int _index = -1;
-
-  bool _cancelable = false;
-
-  /// `meta`, or Dart `null`.
-  types.ChartMeta? get meta => hasSlot(0) && !isForeignSlot(0) ? _meta : null;
-
-  set meta(types.ChartMeta? value) {
-    _meta = value;
-    touchSlot(0);
-  }
-
-  /// `index`: -1 when absent.
-  int get index => _index;
-
-  set index(int value) {
-    _index = value;
-    touchSlot(1);
-  }
-
-  /// `cancelable`: false when absent.
-  bool get cancelable => _cancelable;
-
-  set cancelable(bool value) {
-    _cancelable = value;
-    touchSlot(2);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _meta,
-    1 => _index,
-    _ => _cancelable,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      case 0:
-        _meta = value is types.ChartMeta ? value : null;
-        return value is types.ChartMeta?;
-      case 1:
-        _index = value is num && value.isFinite ? value.toInt() : -1;
-        return value is num;
-      default:
-        _cancelable = value is bool ? value : jsTruthy(value);
-        return value is bool;
-    }
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _meta = null;
-      case 1:
-        _index = -1;
-      default:
-        _cancelable = false;
-    }
-  }
-}
-
-/// `{event, replay, cancelable, inChartArea}` of `beforeEvent` and
-/// `afterEvent`, and the key `changed` that a plugin writes (U
-/// `core.controller.js:1162-1179`).
-final class EventHookArgs({
-  required types.ChartEvent? event,
-  required Object? replay,
-  bool? cancelable,
-  bool? inChartArea,
-  bool? changed,
-}) extends PluginHookArgs {
-  /// The object with the given keys, in the key order of the upstream
-  /// literal. A required key is always present.
-  this {
-    this.event = event;
-    this.replay = replay;
-    if (cancelable != null) this.cancelable = cancelable;
-    if (inChartArea != null) this.inChartArea = inChartArea;
-    if (changed != null) this.changed = changed;
-  }
-
-  static const List<String> _fieldNames = [
-    'event',
-    'replay',
-    'cancelable',
-    'inChartArea',
-    'changed',
-  ];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'event' => 0,
-    'replay' => 1,
-    'cancelable' => 2,
-    'inChartArea' => 3,
-    'changed' => 4,
-    _ => -1,
-  };
-
-  types.ChartEvent? _event;
-
-  Object? _replay;
-
-  bool _cancelable = false;
-
-  bool _inChartArea = false;
-
-  bool _changed = false;
-
-  /// `event`, or Dart `null`.
-  types.ChartEvent? get event =>
-      hasSlot(0) && !isForeignSlot(0) ? _event : null;
-
-  set event(types.ChartEvent? value) {
-    _event = value;
-    touchSlot(0);
-  }
-
-  /// `replay`, or [undefined] when absent.
-  Object? get replay => hasSlot(1) ? _replay : undefined;
-
-  set replay(Object? value) {
-    _replay = value;
-    touchSlot(1);
-  }
-
-  /// `cancelable`: false when absent.
-  bool get cancelable => _cancelable;
-
-  set cancelable(bool value) {
-    _cancelable = value;
-    touchSlot(2);
-  }
-
-  /// `inChartArea`: false when absent.
-  bool get inChartArea => _inChartArea;
-
-  set inChartArea(bool value) {
-    _inChartArea = value;
-    touchSlot(3);
-  }
-
-  /// `changed`: false when absent.
-  bool get changed => _changed;
-
-  set changed(bool value) {
-    _changed = value;
-    touchSlot(4);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _event,
-    1 => _replay,
-    2 => _cancelable,
-    3 => _inChartArea,
-    _ => _changed,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      case 0:
-        _event = value is types.ChartEvent ? value : null;
-        return value is types.ChartEvent?;
-      case 1:
-        _replay = value;
-        return true;
-      case 2:
-        _cancelable = value is bool ? value : jsTruthy(value);
-        return value is bool;
-      case 3:
-        _inChartArea = value is bool ? value : jsTruthy(value);
-        return value is bool;
-      default:
-        _changed = value is bool ? value : jsTruthy(value);
-        return value is bool;
-    }
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _event = null;
-      case 1:
-        _replay = null;
-      case 2:
-        _cancelable = false;
-      case 3:
-        _inChartArea = false;
-      default:
-        _changed = false;
-    }
-  }
-}
-
-/// `{tooltip}` of `afterTooltipDraw` and `{...args, cancelable: true}` of
-/// `beforeTooltipDraw` (U `plugin.tooltip.js:1250-1260`).
-final class TooltipDrawHookArgs({required Object? tooltip, bool? cancelable})
-    extends PluginHookArgs {
-  /// The object with the given keys, in the key order of the upstream
-  /// literal. A required key is always present.
-  this {
-    this.tooltip = tooltip;
-    if (cancelable != null) this.cancelable = cancelable;
-  }
-
-  static const List<String> _fieldNames = ['tooltip', 'cancelable'];
-
-  @override
-  List<String> get fieldNames => _fieldNames;
-
-  @override
-  int slotOf(String name) => switch (name) {
-    'tooltip' => 0,
-    'cancelable' => 1,
-    _ => -1,
-  };
-
-  Object? _tooltip;
-
-  bool _cancelable = false;
-
-  /// `tooltip`, or [undefined] when absent.
-  Object? get tooltip => hasSlot(0) ? _tooltip : undefined;
-
-  set tooltip(Object? value) {
-    _tooltip = value;
-    touchSlot(0);
-  }
-
-  /// `cancelable`: false when absent.
-  bool get cancelable => _cancelable;
-
-  set cancelable(bool value) {
-    _cancelable = value;
-    touchSlot(1);
-  }
-
-  @override
-  Object? readSlot(int slot) => switch (slot) {
-    0 => _tooltip,
-    _ => _cancelable,
-  };
-
-  @override
-  bool writeSlot(int slot, Object? value) {
-    switch (slot) {
-      case 0:
-        _tooltip = value;
-        return true;
-      default:
-        _cancelable = value is bool ? value : jsTruthy(value);
-        return value is bool;
-    }
-  }
-
-  @override
-  void clearSlot(int slot) {
-    switch (slot) {
-      case 0:
-        _tooltip = null;
-      default:
-        _cancelable = false;
-    }
-  }
-}
-
-/// `Plugin` (U `index.d.ts:856`): a plugin object with a field for `id`,
-/// `events`, each hook, `defaults`, `defaultRoutes`, `descriptors` and
-/// `additionalOptionScopes`.
 ///
-/// A hook is a property that code reads and writes at run time (U
-/// `test/specs/core.plugin.tests.js:3-16`): the field is that property. A
-/// typed getter gives the function when it has the type of the hook
-/// ([PluginHookFunction] of its argument class), else Dart `null`. A write
-/// by name keeps any value: the plugin service reads it with [hookValue]
-/// and calls a function of another type with JS arity, `this` the plugin.
-/// The own-key order is the insertion order; another key is an extra. The
-/// face reads and writes the fields by name. A plugin is not a `Map`.
-final class Plugin({
+/// ```dart
+/// resize: (chart, args, options) => layoutFor(args.size.width),
+/// ```
+final class ResizeHookArgs({
+  /// `size`: the new size of the chart in logical pixels.
+  required final ({double width, double height}) size,
+}) extends PluginHookArgs {
+  /// The arguments of a resize.
+  this;
+}
+
+/// `{tooltip}` of `beforeTooltipDraw` and `afterTooltipDraw` (U
+/// `plugin.tooltip.js:1250-1260`).
+///
+/// ```dart
+/// beforeTooltipDraw: (chart, args, options) => args.tooltip.opacity > 0,
+/// ```
+final class TooltipDrawHookArgs({
+  /// `tooltip`: the tooltip of the chart.
+  required final types.TooltipModel tooltip,
+}) extends PluginHookArgs {
+  /// The arguments of the draw of the tooltip.
+  this;
+}
+
+/// `Plugin` (U `index.d.ts:856`): a plugin with its `id`, its metadata and
+/// one field for each hook.
+///
+/// [O] is the type of the options that the hooks get: [options] makes it
+/// from the resolved options of the plugin, a [ContextResolver]. A hook is a
+/// field, so a test can replace it at run time, as upstream code replaces
+/// `plugin[hook]`. A plugin is not a `Map`, and it has no key by name.
+///
+/// ```dart
+/// final crosshair = Plugin<ContextResolver>(
+///   id: 'crosshair',
+///   afterDraw: (chart, args, options) => drawCrosshair(chart),
+///   beforeEvent: (chart, args, options) => args.event.type != 'mouseout',
+/// );
+/// Chart.register([crosshair]);
+/// ```
+final class Plugin<O>({
+  /// `id`: the id of the plugin, the key of its options in
+  /// `options.plugins`.
+  required final String id,
+
+  /// Makes the options that the hooks get from the resolved options of the
+  /// plugin, for example the constructor of an extension type over them.
+  /// Dart `null` gives the resolved options themselves: then [O] must be
+  /// [ContextResolver], `Object` or `Object?`.
+  final O Function(ContextResolver options)? options,
+
+  /// `events`: the event types of the plugin.
+  final List<String>? events,
+
+  /// `defaults`: the default options, which the registry merges into
+  /// `defaults.plugins.<id>`. A built-in plugin gives a typed scope, and
+  /// another plugin a `Map<String, Object?>`.
+  final Object? defaults,
+
+  /// `defaultRoutes`: a route of the defaults for each option key, for
+  /// example `{'color': 'color'}` (`defaults.route`).
+  final Map<String, String>? defaultRoutes,
+
+  /// `descriptors`: the `_scriptable` and `_indexable` rules of the options.
+  /// A built-in plugin gives a typed scope, and another plugin a
+  /// `Map<String, Object?>`.
+  final Object? descriptors,
+
+  /// `additionalOptionScopes`: more scopes of the options after
+  /// `plugins.<id>` (U `core.config.js:267-278`).
+  final List<String>? additionalOptionScopes,
+
   /// Opt into Chart.updateData's data/update/draw hooks without layout hooks.
   /// Such hooks must not mutate configuration, source/parsed data or structure.
   /// They may refresh their own derived state from the committed chart data.
@@ -848,10 +364,155 @@ final class Plugin({
 
   /// Optional additional eligibility check of the resolved plugin options.
   /// It must be observational only and must not modify the chart or options.
-  final bool Function(Object options)? dataUpdateGuard,
-}) implements JsObjectFace {
-  /// A plugin without own keys.
-  this;
+  final bool Function(O options)? dataUpdateGuard,
+
+  /// `install` (U `core.plugins.js:38`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? install,
+
+  /// `start` (U `core.plugins.js:118`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? start,
+
+  /// `stop` (U `core.plugins.js:117`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? stop,
+
+  /// `beforeInit` (U `core.controller.js:238`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? beforeInit,
+
+  /// `afterInit` (U `core.controller.js:249`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? afterInit,
+
+  /// `beforeUpdate` (U `core.controller.js:490`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<UpdateHookArgs, O>? beforeUpdate,
+
+  /// `afterUpdate` (U `core.controller.js:524`).
+  /// It cannot cancel.
+  var PluginHookFunction<UpdateHookArgs, O>? afterUpdate,
+
+  /// `beforeElementsUpdate` (U `core.controller.js:497`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? beforeElementsUpdate,
+
+  /// `reset` (U `core.controller.js:472`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? reset,
+
+  /// `beforeDatasetsUpdate` (U `core.controller.js:649`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<UpdateHookArgs, O>? beforeDatasetsUpdate,
+
+  /// `afterDatasetsUpdate` (U `core.controller.js:661`).
+  /// It cannot cancel.
+  var PluginHookFunction<UpdateHookArgs, O>? afterDatasetsUpdate,
+
+  /// `beforeDatasetUpdate` (U `core.controller.js:673`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<DatasetUpdateHookArgs, O>? beforeDatasetUpdate,
+
+  /// `afterDatasetUpdate` (U `core.controller.js:680`).
+  /// It cannot cancel.
+  var PluginHookFunction<DatasetUpdateHookArgs, O>? afterDatasetUpdate,
+
+  /// `beforeLayout` (U `core.controller.js:612`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<PluginHookArgs, O>? beforeLayout,
+
+  /// `beforeDataLimits` (U `core.scale.js:541`).
+  /// It cannot cancel.
+  var PluginHookFunction<ScriptableScaleContext, O>? beforeDataLimits,
+
+  /// `afterDataLimits` (U `core.scale.js:545`).
+  /// It cannot cancel.
+  var PluginHookFunction<ScriptableScaleContext, O>? afterDataLimits,
+
+  /// `beforeBuildTicks` (U `core.scale.js:550`).
+  /// It cannot cancel.
+  var PluginHookFunction<ScriptableScaleContext, O>? beforeBuildTicks,
+
+  /// `afterBuildTicks` (U `core.scale.js:559`).
+  /// It cannot cancel.
+  var PluginHookFunction<ScriptableScaleContext, O>? afterBuildTicks,
+
+  /// `afterLayout` (U `core.controller.js:640`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? afterLayout,
+
+  /// `beforeRender` (U `core.controller.js:684`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<PluginHookArgs, O>? beforeRender,
+
+  /// `afterRender` (U `core.controller.js:37`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? afterRender,
+
+  /// `beforeDraw` (U `core.controller.js:712`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<PluginHookArgs, O>? beforeDraw,
+
+  /// `afterDraw` (U `core.controller.js:731`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? afterDraw,
+
+  /// `beforeDatasetsDraw` (U `core.controller.js:766`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<PluginHookArgs, O>? beforeDatasetsDraw,
+
+  /// `afterDatasetsDraw` (U `core.controller.js:775`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? afterDatasetsDraw,
+
+  /// `beforeDatasetDraw` (U `core.controller.js:793`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<DatasetDrawHookArgs, O>? beforeDatasetDraw,
+
+  /// `afterDatasetDraw` (U `core.controller.js:808`).
+  /// It cannot cancel.
+  var PluginHookFunction<DatasetDrawHookArgs, O>? afterDatasetDraw,
+
+  /// `beforeEvent` (U `core.controller.js:1172`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<EventHookArgs, O>? beforeEvent,
+
+  /// `afterEvent` (U `core.controller.js:1179`).
+  /// It cannot cancel.
+  var PluginHookFunction<EventHookArgs, O>? afterEvent,
+
+  /// `resize` (U `core.controller.js:292`).
+  /// It cannot cancel.
+  var PluginHookFunction<ResizeHookArgs, O>? resize,
+
+  /// `beforeDestroy` (U `core.controller.js:938`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? beforeDestroy,
+
+  /// `afterDestroy` (U `core.controller.js:954`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? afterDestroy,
+
+  /// `uninstall` (U `core.plugins.js:50`).
+  /// It cannot cancel.
+  var PluginHookFunction<PluginHookArgs, O>? uninstall,
+
+  /// `beforeTooltipDraw` (U `plugin.tooltip.js:1254`).
+  /// Cancelable: `false` cancels the step.
+  var CancelableHookFunction<TooltipDrawHookArgs, O>? beforeTooltipDraw,
+
+  /// `afterTooltipDraw` (U `plugin.tooltip.js:1260`).
+  /// It cannot cancel.
+  var PluginHookFunction<TooltipDrawHookArgs, O>? afterTooltipDraw,
+}) {
+  /// A plugin with the given id, options and hooks.
+  this {
+    assert(
+      options != null || <ContextResolver>[] is List<O>,
+      'Plugin<$O> $id: give options, a function that makes a $O.',
+    );
+  }
 
   /// The check of the resolved plugin options for `Chart.updateRanges`
   /// (Chart.js ADR 0111), or Dart `null` for none. A false result sends the
@@ -862,620 +523,245 @@ final class Plugin({
   /// observational only. It is a Dart field outside the JavaScript own keys.
   @internal
   // DIVERGES(chartjs): adapt-range-updates, the guard of a built-in plugin.
-  bool Function(Object options)? rangeUpdateGuard;
+  bool Function(O options)? rangeUpdateGuard;
 
-  /// The JS names of the fields, by slot.
-  static const List<String> fieldNames = [
-    'id',
-    'events',
-    'install',
-    'start',
-    'stop',
-    'beforeInit',
-    'afterInit',
-    'beforeUpdate',
-    'afterUpdate',
-    'beforeElementsUpdate',
-    'reset',
-    'beforeDatasetsUpdate',
-    'afterDatasetsUpdate',
-    'beforeDatasetUpdate',
-    'afterDatasetUpdate',
-    'beforeLayout',
-    'beforeDataLimits',
-    'afterDataLimits',
-    'beforeBuildTicks',
-    'afterBuildTicks',
-    'afterLayout',
-    'beforeRender',
-    'afterRender',
-    'beforeDraw',
-    'afterDraw',
-    'beforeDatasetsDraw',
-    'afterDatasetsDraw',
-    'beforeDatasetDraw',
-    'afterDatasetDraw',
-    'beforeEvent',
-    'afterEvent',
-    'resize',
-    'beforeDestroy',
-    'afterDestroy',
-    'uninstall',
-    'defaults',
-    'defaultRoutes',
-    'descriptors',
-    'additionalOptionScopes',
-    'beforeTooltipDraw',
-    'afterTooltipDraw',
-  ];
-
-  /// The slot of the field [name], or -1.
-  static int _slotOf(String name) => switch (name) {
-    'id' => 0,
-    'events' => 1,
-    'install' => 2,
-    'start' => 3,
-    'stop' => 4,
-    'beforeInit' => 5,
-    'afterInit' => 6,
-    'beforeUpdate' => 7,
-    'afterUpdate' => 8,
-    'beforeElementsUpdate' => 9,
-    'reset' => 10,
-    'beforeDatasetsUpdate' => 11,
-    'afterDatasetsUpdate' => 12,
-    'beforeDatasetUpdate' => 13,
-    'afterDatasetUpdate' => 14,
-    'beforeLayout' => 15,
-    'beforeDataLimits' => 16,
-    'afterDataLimits' => 17,
-    'beforeBuildTicks' => 18,
-    'afterBuildTicks' => 19,
-    'afterLayout' => 20,
-    'beforeRender' => 21,
-    'afterRender' => 22,
-    'beforeDraw' => 23,
-    'afterDraw' => 24,
-    'beforeDatasetsDraw' => 25,
-    'afterDatasetsDraw' => 26,
-    'beforeDatasetDraw' => 27,
-    'afterDatasetDraw' => 28,
-    'beforeEvent' => 29,
-    'afterEvent' => 30,
-    'resize' => 31,
-    'beforeDestroy' => 32,
-    'afterDestroy' => 33,
-    'uninstall' => 34,
-    'defaults' => 35,
-    'defaultRoutes' => 36,
-    'descriptors' => 37,
-    'additionalOptionScopes' => 38,
-    'beforeTooltipDraw' => 39,
-    'afterTooltipDraw' => 40,
-    _ => -1,
-  };
-
-  /// The value of each field, or [_absent].
-  final List<Object?> _slots = List<Object?>.filled(fieldNames.length, _absent);
-
-  /// The own keys in insertion order.
-  final List<String> _order = <String>[];
-
-  /// The extras, in insertion order.
-  Map<String, Object?>? _extras;
-
-  void _store(int slot, Object? value) {
-    if (identical(_slots[slot], _absent)) _order.add(fieldNames[slot]);
-    _slots[slot] = value;
-  }
-
-  Object? _member(int slot) {
-    final value = _slots[slot];
-    return identical(value, _absent) ? undefined : value;
-  }
-
-  /// `id`.
-  Object? get id => _member(0);
-
-  set id(Object? value) => _store(0, value);
-
-  /// `events`.
-  Object? get events => _member(1);
-
-  set events(Object? value) => _store(1, value);
-
-  /// `defaults`.
-  Object? get defaults => _member(35);
-
-  set defaults(Object? value) => _store(35, value);
-
-  /// `defaultRoutes`.
-  Object? get defaultRoutes => _member(36);
-
-  set defaultRoutes(Object? value) => _store(36, value);
-
-  /// `descriptors`.
-  Object? get descriptors => _member(37);
-
-  set descriptors(Object? value) => _store(37, value);
-
-  /// `additionalOptionScopes`.
-  Object? get additionalOptionScopes => _member(38);
-
-  set additionalOptionScopes(Object? value) => _store(38, value);
-
-  /// The value of the hook [hook]: the field value, or [undefined] when the
-  /// plugin does not own it. The plugin service reads it ([PluginHook] is
-  /// internal, Chart.js ADR 0108).
+  /// Calls the hook [hook] of this plugin with `(chart, args, options)`, the
+  /// options made from the resolved options [view] (U `core.plugins.js:59-71`).
+  ///
+  /// The result is `false` when a cancelable hook cancels, else `true`: an
+  /// absent hook continues. The plugin service calls it. The hook fields are
+  /// read here, where their type has the [O] of this plugin: a read through
+  /// `Plugin<Object?>` fails the covariance check of Dart.
   @internal
-  Object? hookValue(PluginHook hook) => _member(_hookSlot(hook));
-
-  /// The slot of the hook [hook].
-  static int _hookSlot(PluginHook hook) =>
-      hook.index < 33 ? hook.index + 2 : hook.index + 6;
-
-  /// Calls the hook function [function] of [hook] with `(chart, args,
-  /// options)`: a typed call when [function] has the type of the hook and
-  /// [args] is of its argument class, else a call with JS arity, `this` the
-  /// plugin. [args] passes by identity. A function that is typed for the
-  /// argument class of [hook] throws a [TypeError] for an args object of
-  /// another class (the narrow case of the row `adapt-typed-plugins`). The
-  /// plugin service calls it (Chart.js ADR 0108).
-  @internal
-  Object? invokeHook(
-    PluginHook hook,
-    Object function,
+  bool notify<A extends Object>(
+    PluginHook<A> hook,
     types.Chart chart,
-    Object args,
-    Object options,
+    A args,
+    Object view,
+  ) => switch (hook) {
+    PluginHook.install => _call(install, chart, args as PluginHookArgs, view),
+    PluginHook.start => _call(start, chart, args as PluginHookArgs, view),
+    PluginHook.stop => _call(stop, chart, args as PluginHookArgs, view),
+    PluginHook.beforeInit => _call(
+      beforeInit,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.afterInit => _call(
+      afterInit,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.beforeUpdate => _cancel(
+      beforeUpdate,
+      chart,
+      args as UpdateHookArgs,
+      view,
+    ),
+    PluginHook.afterUpdate => _call(
+      afterUpdate,
+      chart,
+      args as UpdateHookArgs,
+      view,
+    ),
+    PluginHook.beforeElementsUpdate => _call(
+      beforeElementsUpdate,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.reset => _call(reset, chart, args as PluginHookArgs, view),
+    PluginHook.beforeDatasetsUpdate => _cancel(
+      beforeDatasetsUpdate,
+      chart,
+      args as UpdateHookArgs,
+      view,
+    ),
+    PluginHook.afterDatasetsUpdate => _call(
+      afterDatasetsUpdate,
+      chart,
+      args as UpdateHookArgs,
+      view,
+    ),
+    PluginHook.beforeDatasetUpdate => _cancel(
+      beforeDatasetUpdate,
+      chart,
+      args as DatasetUpdateHookArgs,
+      view,
+    ),
+    PluginHook.afterDatasetUpdate => _call(
+      afterDatasetUpdate,
+      chart,
+      args as DatasetUpdateHookArgs,
+      view,
+    ),
+    PluginHook.beforeLayout => _cancel(
+      beforeLayout,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.beforeDataLimits => _call(
+      beforeDataLimits,
+      chart,
+      args as ScriptableScaleContext,
+      view,
+    ),
+    PluginHook.afterDataLimits => _call(
+      afterDataLimits,
+      chart,
+      args as ScriptableScaleContext,
+      view,
+    ),
+    PluginHook.beforeBuildTicks => _call(
+      beforeBuildTicks,
+      chart,
+      args as ScriptableScaleContext,
+      view,
+    ),
+    PluginHook.afterBuildTicks => _call(
+      afterBuildTicks,
+      chart,
+      args as ScriptableScaleContext,
+      view,
+    ),
+    PluginHook.afterLayout => _call(
+      afterLayout,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.beforeRender => _cancel(
+      beforeRender,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.afterRender => _call(
+      afterRender,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.beforeDraw => _cancel(
+      beforeDraw,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.afterDraw => _call(
+      afterDraw,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.beforeDatasetsDraw => _cancel(
+      beforeDatasetsDraw,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.afterDatasetsDraw => _call(
+      afterDatasetsDraw,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.beforeDatasetDraw => _cancel(
+      beforeDatasetDraw,
+      chart,
+      args as DatasetDrawHookArgs,
+      view,
+    ),
+    PluginHook.afterDatasetDraw => _call(
+      afterDatasetDraw,
+      chart,
+      args as DatasetDrawHookArgs,
+      view,
+    ),
+    PluginHook.beforeEvent => _cancel(
+      beforeEvent,
+      chart,
+      args as EventHookArgs,
+      view,
+    ),
+    PluginHook.afterEvent => _call(
+      afterEvent,
+      chart,
+      args as EventHookArgs,
+      view,
+    ),
+    PluginHook.resize => _call(resize, chart, args as ResizeHookArgs, view),
+    PluginHook.beforeDestroy => _call(
+      beforeDestroy,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.afterDestroy => _call(
+      afterDestroy,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.uninstall => _call(
+      uninstall,
+      chart,
+      args as PluginHookArgs,
+      view,
+    ),
+    PluginHook.beforeTooltipDraw => _cancel(
+      beforeTooltipDraw,
+      chart,
+      args as TooltipDrawHookArgs,
+      view,
+    ),
+    PluginHook.afterTooltipDraw => _call(
+      afterTooltipDraw,
+      chart,
+      args as TooltipDrawHookArgs,
+      view,
+    ),
+  };
+
+  /// Whether the data-only lifecycle can run this plugin with the resolved
+  /// options [view] (Chart.js ADR 0074).
+  @internal
+  bool allowsDataUpdates(Object view) =>
+      supportsDataUpdates && (dataUpdateGuard?.call(_optionsOf(view)) ?? true);
+
+  /// Whether `Chart.updateRanges` can keep this plugin with the resolved
+  /// options [view] (Chart.js ADR 0111).
+  @internal
+  bool allowsRangeUpdates(Object view) =>
+      supportsDataUpdates && (rangeUpdateGuard?.call(_optionsOf(view)) ?? true);
+
+  /// The options of a hook: [options] of the resolved options [view], or
+  /// [view] itself.
+  O _optionsOf(Object view) {
+    final make = options;
+    return make == null ? view as O : make(view as ContextResolver);
+  }
+
+  bool _call<A extends Object>(
+    PluginHookFunction<A, O>? function,
+    types.Chart chart,
+    A args,
+    Object view,
   ) {
-    switch (function) {
-      case final PluginHookFunction<AnyObject> f when args is AnyObject:
-        return f(chart, args, options);
-      case final PluginHookFunction<CancelableHookArgs> f
-          when args is CancelableHookArgs:
-        return f(chart, args, options);
-      case final PluginHookFunction<DatasetDrawHookArgs> f
-          when args is DatasetDrawHookArgs:
-        return f(chart, args, options);
-      case final PluginHookFunction<DatasetUpdateHookArgs> f
-          when args is DatasetUpdateHookArgs:
-        return f(chart, args, options);
-      case final PluginHookFunction<EventHookArgs> f when args is EventHookArgs:
-        return f(chart, args, options);
-      case final PluginHookFunction<PluginHookArgs> f
-          when args is PluginHookArgs:
-        return f(chart, args, options);
-      case final PluginHookFunction<ResizeHookArgs> f
-          when args is ResizeHookArgs:
-        return f(chart, args, options);
-      case final PluginHookFunction<TooltipDrawHookArgs> f
-          when args is TooltipDrawHookArgs:
-        return f(chart, args, options);
-      case final PluginHookFunction<UpdateHookArgs> f
-          when args is UpdateHookArgs:
-        return f(chart, args, options);
-    }
-    return jsCall(function, [chart, args, options], thisArg: this);
-  }
-
-  /// `install`.
-  PluginHookFunction<PluginHookArgs>? get install => switch (_slots[2]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set install(PluginHookFunction<PluginHookArgs>? value) => _store(2, value);
-
-  /// `start`.
-  PluginHookFunction<PluginHookArgs>? get start => switch (_slots[3]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set start(PluginHookFunction<PluginHookArgs>? value) => _store(3, value);
-
-  /// `stop`.
-  PluginHookFunction<PluginHookArgs>? get stop => switch (_slots[4]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set stop(PluginHookFunction<PluginHookArgs>? value) => _store(4, value);
-
-  /// `beforeInit`.
-  PluginHookFunction<PluginHookArgs>? get beforeInit => switch (_slots[5]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set beforeInit(PluginHookFunction<PluginHookArgs>? value) => _store(5, value);
-
-  /// `afterInit`.
-  PluginHookFunction<PluginHookArgs>? get afterInit => switch (_slots[6]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set afterInit(PluginHookFunction<PluginHookArgs>? value) => _store(6, value);
-
-  /// `beforeUpdate`.
-  PluginHookFunction<UpdateHookArgs>? get beforeUpdate => switch (_slots[7]) {
-    final PluginHookFunction<UpdateHookArgs> f => f,
-    _ => null,
-  };
-
-  set beforeUpdate(PluginHookFunction<UpdateHookArgs>? value) =>
-      _store(7, value);
-
-  /// `afterUpdate`.
-  PluginHookFunction<UpdateHookArgs>? get afterUpdate => switch (_slots[8]) {
-    final PluginHookFunction<UpdateHookArgs> f => f,
-    _ => null,
-  };
-
-  set afterUpdate(PluginHookFunction<UpdateHookArgs>? value) =>
-      _store(8, value);
-
-  /// `beforeElementsUpdate`.
-  PluginHookFunction<PluginHookArgs>? get beforeElementsUpdate =>
-      switch (_slots[9]) {
-        final PluginHookFunction<PluginHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeElementsUpdate(PluginHookFunction<PluginHookArgs>? value) =>
-      _store(9, value);
-
-  /// `reset`.
-  PluginHookFunction<PluginHookArgs>? get reset => switch (_slots[10]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set reset(PluginHookFunction<PluginHookArgs>? value) => _store(10, value);
-
-  /// `beforeDatasetsUpdate`.
-  PluginHookFunction<UpdateHookArgs>? get beforeDatasetsUpdate =>
-      switch (_slots[11]) {
-        final PluginHookFunction<UpdateHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeDatasetsUpdate(PluginHookFunction<UpdateHookArgs>? value) =>
-      _store(11, value);
-
-  /// `afterDatasetsUpdate`.
-  PluginHookFunction<UpdateHookArgs>? get afterDatasetsUpdate =>
-      switch (_slots[12]) {
-        final PluginHookFunction<UpdateHookArgs> f => f,
-        _ => null,
-      };
-
-  set afterDatasetsUpdate(PluginHookFunction<UpdateHookArgs>? value) =>
-      _store(12, value);
-
-  /// `beforeDatasetUpdate`.
-  PluginHookFunction<DatasetUpdateHookArgs>? get beforeDatasetUpdate =>
-      switch (_slots[13]) {
-        final PluginHookFunction<DatasetUpdateHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeDatasetUpdate(PluginHookFunction<DatasetUpdateHookArgs>? value) =>
-      _store(13, value);
-
-  /// `afterDatasetUpdate`.
-  PluginHookFunction<DatasetUpdateHookArgs>? get afterDatasetUpdate =>
-      switch (_slots[14]) {
-        final PluginHookFunction<DatasetUpdateHookArgs> f => f,
-        _ => null,
-      };
-
-  set afterDatasetUpdate(PluginHookFunction<DatasetUpdateHookArgs>? value) =>
-      _store(14, value);
-
-  /// `beforeLayout`.
-  PluginHookFunction<CancelableHookArgs>? get beforeLayout =>
-      switch (_slots[15]) {
-        final PluginHookFunction<CancelableHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeLayout(PluginHookFunction<CancelableHookArgs>? value) =>
-      _store(15, value);
-
-  /// `beforeDataLimits`.
-  PluginHookFunction<AnyObject>? get beforeDataLimits => switch (_slots[16]) {
-    final PluginHookFunction<AnyObject> f => f,
-    _ => null,
-  };
-
-  set beforeDataLimits(PluginHookFunction<AnyObject>? value) =>
-      _store(16, value);
-
-  /// `afterDataLimits`.
-  PluginHookFunction<AnyObject>? get afterDataLimits => switch (_slots[17]) {
-    final PluginHookFunction<AnyObject> f => f,
-    _ => null,
-  };
-
-  set afterDataLimits(PluginHookFunction<AnyObject>? value) =>
-      _store(17, value);
-
-  /// `beforeBuildTicks`.
-  PluginHookFunction<AnyObject>? get beforeBuildTicks => switch (_slots[18]) {
-    final PluginHookFunction<AnyObject> f => f,
-    _ => null,
-  };
-
-  set beforeBuildTicks(PluginHookFunction<AnyObject>? value) =>
-      _store(18, value);
-
-  /// `afterBuildTicks`.
-  PluginHookFunction<AnyObject>? get afterBuildTicks => switch (_slots[19]) {
-    final PluginHookFunction<AnyObject> f => f,
-    _ => null,
-  };
-
-  set afterBuildTicks(PluginHookFunction<AnyObject>? value) =>
-      _store(19, value);
-
-  /// `afterLayout`.
-  PluginHookFunction<PluginHookArgs>? get afterLayout => switch (_slots[20]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set afterLayout(PluginHookFunction<PluginHookArgs>? value) =>
-      _store(20, value);
-
-  /// `beforeRender`.
-  PluginHookFunction<CancelableHookArgs>? get beforeRender =>
-      switch (_slots[21]) {
-        final PluginHookFunction<CancelableHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeRender(PluginHookFunction<CancelableHookArgs>? value) =>
-      _store(21, value);
-
-  /// `afterRender`.
-  PluginHookFunction<PluginHookArgs>? get afterRender => switch (_slots[22]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set afterRender(PluginHookFunction<PluginHookArgs>? value) =>
-      _store(22, value);
-
-  /// `beforeDraw`.
-  PluginHookFunction<CancelableHookArgs>? get beforeDraw =>
-      switch (_slots[23]) {
-        final PluginHookFunction<CancelableHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeDraw(PluginHookFunction<CancelableHookArgs>? value) =>
-      _store(23, value);
-
-  /// `afterDraw`.
-  PluginHookFunction<PluginHookArgs>? get afterDraw => switch (_slots[24]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set afterDraw(PluginHookFunction<PluginHookArgs>? value) => _store(24, value);
-
-  /// `beforeDatasetsDraw`.
-  PluginHookFunction<CancelableHookArgs>? get beforeDatasetsDraw =>
-      switch (_slots[25]) {
-        final PluginHookFunction<CancelableHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeDatasetsDraw(PluginHookFunction<CancelableHookArgs>? value) =>
-      _store(25, value);
-
-  /// `afterDatasetsDraw`.
-  PluginHookFunction<PluginHookArgs>? get afterDatasetsDraw =>
-      switch (_slots[26]) {
-        final PluginHookFunction<PluginHookArgs> f => f,
-        _ => null,
-      };
-
-  set afterDatasetsDraw(PluginHookFunction<PluginHookArgs>? value) =>
-      _store(26, value);
-
-  /// `beforeDatasetDraw`.
-  PluginHookFunction<DatasetDrawHookArgs>? get beforeDatasetDraw =>
-      switch (_slots[27]) {
-        final PluginHookFunction<DatasetDrawHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeDatasetDraw(PluginHookFunction<DatasetDrawHookArgs>? value) =>
-      _store(27, value);
-
-  /// `afterDatasetDraw`.
-  PluginHookFunction<DatasetDrawHookArgs>? get afterDatasetDraw =>
-      switch (_slots[28]) {
-        final PluginHookFunction<DatasetDrawHookArgs> f => f,
-        _ => null,
-      };
-
-  set afterDatasetDraw(PluginHookFunction<DatasetDrawHookArgs>? value) =>
-      _store(28, value);
-
-  /// `beforeEvent`.
-  PluginHookFunction<EventHookArgs>? get beforeEvent => switch (_slots[29]) {
-    final PluginHookFunction<EventHookArgs> f => f,
-    _ => null,
-  };
-
-  set beforeEvent(PluginHookFunction<EventHookArgs>? value) =>
-      _store(29, value);
-
-  /// `afterEvent`.
-  PluginHookFunction<EventHookArgs>? get afterEvent => switch (_slots[30]) {
-    final PluginHookFunction<EventHookArgs> f => f,
-    _ => null,
-  };
-
-  set afterEvent(PluginHookFunction<EventHookArgs>? value) => _store(30, value);
-
-  /// `resize`.
-  PluginHookFunction<ResizeHookArgs>? get resize => switch (_slots[31]) {
-    final PluginHookFunction<ResizeHookArgs> f => f,
-    _ => null,
-  };
-
-  set resize(PluginHookFunction<ResizeHookArgs>? value) => _store(31, value);
-
-  /// `beforeDestroy`.
-  PluginHookFunction<PluginHookArgs>? get beforeDestroy => switch (_slots[32]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set beforeDestroy(PluginHookFunction<PluginHookArgs>? value) =>
-      _store(32, value);
-
-  /// `afterDestroy`.
-  PluginHookFunction<PluginHookArgs>? get afterDestroy => switch (_slots[33]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set afterDestroy(PluginHookFunction<PluginHookArgs>? value) =>
-      _store(33, value);
-
-  /// `uninstall`.
-  PluginHookFunction<PluginHookArgs>? get uninstall => switch (_slots[34]) {
-    final PluginHookFunction<PluginHookArgs> f => f,
-    _ => null,
-  };
-
-  set uninstall(PluginHookFunction<PluginHookArgs>? value) => _store(34, value);
-
-  /// `beforeTooltipDraw`.
-  PluginHookFunction<TooltipDrawHookArgs>? get beforeTooltipDraw =>
-      switch (_slots[39]) {
-        final PluginHookFunction<TooltipDrawHookArgs> f => f,
-        _ => null,
-      };
-
-  set beforeTooltipDraw(PluginHookFunction<TooltipDrawHookArgs>? value) =>
-      _store(39, value);
-
-  /// `afterTooltipDraw`.
-  PluginHookFunction<TooltipDrawHookArgs>? get afterTooltipDraw =>
-      switch (_slots[40]) {
-        final PluginHookFunction<TooltipDrawHookArgs> f => f,
-        _ => null,
-      };
-
-  set afterTooltipDraw(PluginHookFunction<TooltipDrawHookArgs>? value) =>
-      _store(40, value);
-
-  /// Whether the plugin owns [name].
-  bool _owns(String name) {
-    final slot = _slotOf(name);
-    if (slot >= 0) return !identical(_slots[slot], _absent);
-    return _extras?.containsKey(name) ?? false;
-  }
-
-  // The face of Chart.js ADR 0054 §5.
-
-  @override
-  Object? jsRead(String name) {
-    final slot = _slotOf(name);
-    if (slot >= 0) return _member(slot);
-    final extras = _extras;
-    return extras != null && extras.containsKey(name)
-        ? extras[name]
-        : undefined;
-  }
-
-  @override
-  void jsWrite(String name, Object? value) {
-    final slot = _slotOf(name);
-    if (slot >= 0) {
-      _store(slot, value);
-      return;
-    }
-    final extras = _extras ??= <String, Object?>{};
-    if (!extras.containsKey(name)) _order.add(name);
-    extras[name] = value;
-  }
-
-  @override
-  Object? operator [](String name) => jsRead(name);
-
-  @override
-  void operator []=(String name, Object? value) => jsWrite(name, value);
-
-  @override
-  List<String> jsKeys() {
-    if (!_order.any((name) => jsArrayIndex(name) != null)) {
-      return List<String>.of(_order);
-    }
-    // The indices are distinct integers: an unstable sort gives one order.
-    final indices =
-        [
-            for (final name in _order)
-              if (jsArrayIndex(name) case final int index) (index, name),
-          ]
-          // js-ok: distinct keys, as jsObjectKeys sorts them
-          ..sort((a, b) => a.$1.compareTo(b.$1));
-    return [
-      for (final (_, name) in indices) name,
-      for (final name in _order)
-        if (jsArrayIndex(name) == null) name,
-    ];
-  }
-
-  @override
-  bool jsHas(String name) => _owns(name);
-
-  @override
-  bool jsDelete(String name) {
-    if (!_owns(name)) return false;
-    final slot = _slotOf(name);
-    if (slot >= 0) {
-      _slots[slot] = _absent;
-    } else {
-      _extras!.remove(name);
-    }
-    _order.remove(name);
+    function?.call(chart, args, _optionsOf(view));
     return true;
   }
-}
 
-/// The value of a field that a [Plugin] does not own.
-const Object _absent = _Absent();
-
-/// The type of [_absent].
-final class const _Absent();
-
-/// A plugin object that is a Map (an inline plugin of `config.plugins`, a
-/// registered Map plugin, or a built-in plugin until lane L4): the hook is
-/// `map[hook]`, read at each notify, and its call has JS arity with `this`
-/// the Map, as upstream (U `core.plugins.js:59-71`).
-extension type const MapPlugin(Map<dynamic, dynamic> map) {
-  /// `map[hook]`: Dart `null` for an absent key, which is not a function,
-  /// as `undefined` is not.
-  Object? hookValue(String hook) => map[hook];
-
-  /// Calls the hook function [function] with `(chart, args, options)`,
-  /// `this` the Map.
-  Object? invokeHook(
-    Object function,
+  bool _cancel<A extends Object>(
+    CancelableHookFunction<A, O>? function,
     types.Chart chart,
-    Object args,
-    Object options,
-  ) => jsCall(function, [chart, args, options], thisArg: map);
-}
+    A args,
+    Object view,
+  ) => function == null || function(chart, args, _optionsOf(view));
 
-/// Whether [value] is a function value of a hook.
-bool isHookFunction(Object? value) => jsIsFunction(value);
+  @override
+  String toString() => 'Plugin($id)';
+}

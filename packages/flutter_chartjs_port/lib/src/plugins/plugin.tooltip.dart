@@ -99,7 +99,7 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show EventHookArgs, Plugin, TooltipDrawHookArgs;
+    show EventHookArgs, Plugin, PluginHook, TooltipDrawHookArgs;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart';
 
@@ -2287,11 +2287,13 @@ void _afterInit(types.Chart chart, Object _, Object options) {
   }
 }
 
-/// plugin.tooltip.js:1234 `beforeUpdate(chart, _args, options)`.
-void _beforeUpdate(types.Chart chart, Object _, Object options) {
+/// plugin.tooltip.js:1234 `beforeUpdate(chart, _args, options)`. The hook
+/// continues the update: `true` is the `undefined` result of upstream.
+bool _beforeUpdate(types.Chart chart, Object _, Object options) {
   if (chart.tooltip != null) {
     (chart.tooltip! as Tooltip).initialize(options);
   }
+  return true;
 }
 
 /// plugin.tooltip.js:1240 `reset(chart, _args, options)`.
@@ -2313,8 +2315,8 @@ void _afterDraw(types.Chart chart, Object _, Object _) {
     final args = TooltipDrawHookArgs(tooltip: tooltip);
 
     if (chart.notifyPlugins(
-          'beforeTooltipDraw',
-          TooltipDrawHookArgs(tooltip: args.tooltip, cancelable: true),
+          PluginHook.beforeTooltipDraw,
+          TooltipDrawHookArgs(tooltip: args.tooltip),
         ) ==
         false) {
       return;
@@ -2322,21 +2324,20 @@ void _afterDraw(types.Chart chart, Object _, Object _) {
 
     tooltip.draw(chart.ctx!);
 
-    chart.notifyPlugins('afterTooltipDraw', args);
+    chart.notifyPlugins(PluginHook.afterTooltipDraw, args);
   }
 }
 
 /// plugin.tooltip.js:1264 `afterEvent(chart, args)`: the typed `replay`,
 /// `event` and `inChartArea` of [EventHookArgs], and the typed write of
-/// `changed`. An event of Dart `null` throws the [TypeError] of the null
-/// check, as `handleEvent` throws at `e.type` of `undefined` upstream.
+/// `changed`.
 void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
   if (chart.tooltip != null) {
     // If the event is replayed from `update`, we should evaluate with the
     // final positions.
     final useFinalPosition = args.replay;
     if ((chart.tooltip! as Tooltip).handleEvent(
-      args.event!,
+      args.event,
       useFinalPosition,
       args.inChartArea,
     )) {
@@ -2349,19 +2350,20 @@ void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
 /// plugin.tooltip.js:1223 the default export, `Tooltip` of
 /// `src/plugins/index.js:7` (Chart.js ADR 0038, section 1).
 ///
-/// A typed [Plugin] with the upstream keys in the upstream order.
-// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-final Plugin tooltip = Plugin(supportsDataUpdates: true)
-  ..id = 'tooltip'
-  ..jsWrite('_element', Tooltip.jsClass)
-  ..afterInit = _afterInit
-  ..beforeUpdate = _beforeUpdate
-  ..reset = _reset
-  ..afterDraw = _afterDraw
-  ..afterEvent = _afterEvent
+/// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
+/// upstream order. The key `_element: Tooltip` of plugin.tooltip.js:1225 is
+/// for the tests: they read `Tooltip.jsClass`.
+// DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
+final tooltip = Plugin<OptionView>(
+  id: 'tooltip',
+  afterInit: _afterInit,
+  beforeUpdate: _beforeUpdate,
+  reset: _reset,
+  afterDraw: _afterDraw,
+  afterEvent: _afterEvent,
   // plugin.tooltip.js:1275-1325. A typed scope of the kind `TooltipOptions`
   // (Chart.js ADR 0054 §3).
-  ..defaults = (TooltipOptionsScope()
+  defaults: TooltipOptionsScope()
     ..enabled = true
     ..externalCell = optNull
     // DIVERGES(chartjs): adapt-tooltip-positioner-objects, the positioner.
@@ -2419,15 +2421,15 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
         // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
         ..easing = Curves.linear
         ..duration = 200.0))
-    ..callbacks = _defaultCallbacks)
+    ..callbacks = _defaultCallbacks,
   // plugin.tooltip.js:1327-1331.
-  ..defaultRoutes = <String, Object?>{
+  defaultRoutes: const {
     'bodyFont': 'font',
     'footerFont': 'font',
     'titleFont': 'font',
-  }
+  },
   // plugin.tooltip.js:1333-1346. A typed scope of the kind `Descriptors`.
-  ..descriptors = (DescriptorsScope()
+  descriptors: DescriptorsScope()
     ..descScriptable = _scriptableDescriptor
     ..descIndexable = false
     ..jsWrite(
@@ -2437,6 +2439,9 @@ final Plugin tooltip = Plugin(supportsDataUpdates: true)
         ..descIndexable = false,
     )
     ..jsWrite('animation', DescriptorsScope()..descFallback = false)
-    ..jsWrite('animations', DescriptorsScope()..descFallback = 'animation'))
+    ..jsWrite('animations', DescriptorsScope()..descFallback = 'animation'),
   // Resolve additionally from `interaction` options and defaults.
-  ..additionalOptionScopes = <Object?>['interaction'];
+  additionalOptionScopes: const ['interaction'],
+  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+  supportsDataUpdates: true,
+);

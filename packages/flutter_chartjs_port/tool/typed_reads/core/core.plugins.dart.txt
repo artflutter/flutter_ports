@@ -1,12 +1,7 @@
-# Native Map plugins opt into the data-only lifecycle through the user key
-# supportsDataUpdates (ADR 0074); the native Plugin capability stays typed.
-# L4 allowlist (Chart.js ADR 0054 §5, §12): the reads by name of objects of
-# user code. jsGet 7: the hook of a plugin of another kind (a class value),
-# the length and the items of the inline plugins of the config, the plugin
-# options of the user by plugin id, the id and the defaults of a plugin
-# object of user code (_idOf, _defaultsOf), the cancelable of an args object
-# of user code (_cancelable). jsObjectKeys 1: the registry items by plugin
-# id, in the Object.keys order.
-jsGet 7
-stringIndex 1
+# L4 allowlist (Chart.js ADR 0054 §5): the reads by name of objects of user
+# code. The plugins are native (Chart.js ADR 0144) and read no key by name.
+# jsGet 3: the length and the items of the inline plugins of the config, and
+# the plugin options of the user by plugin id. jsObjectKeys 1: the registry
+# items by plugin id, in the Object.keys order.
+jsGet 3
 jsObjectKeys 1

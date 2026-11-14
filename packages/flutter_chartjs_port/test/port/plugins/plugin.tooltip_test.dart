@@ -26,7 +26,6 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode, IndexInteractionMode;
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
@@ -44,6 +43,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     show tooltipCallbacksOf;
 import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
@@ -383,22 +383,16 @@ final List<ScaleChartCase> _themedReference = _mapObservations(
   },
 );
 
-/// The keys of the default export of plugin.tooltip.js:1223-1350, in their
-/// order.
-const List<String> _upstreamKeys = [
-  'id',
-  '_element',
-  // Upstream has `positioners` here. The port has no table of positioners
-  // (row `adapt-tooltip-positioner-objects`).
+/// The hook keys of the default export of plugin.tooltip.js:1223-1350, in
+/// the order of `PluginHook`. Its other keys are `id`, `_element`,
+/// `positioners`, `defaults`, `defaultRoutes`, `descriptors` and
+/// `additionalOptionScopes`.
+const List<String> _upstreamHooks = [
   'afterInit',
   'beforeUpdate',
   'reset',
   'afterDraw',
   'afterEvent',
-  'defaults',
-  'defaultRoutes',
-  'descriptors',
-  'additionalOptionScopes',
 ];
 
 /// The keys of the `defaults` of plugin.tooltip.js:1275-1325.
@@ -888,18 +882,10 @@ void main() {
       expect(Tooltip.jsClass.superclass, same(Element.jsClass));
     });
 
-    test('the plugin entry _element is Tooltip.jsClass', () {
-      expect(
-        jsGet(registry.getPlugin('tooltip'), '_element'),
-        same(Tooltip.jsClass),
-      );
-      expect(tooltip['_element'], same(Tooltip.jsClass));
-    });
-
-    test('the plugin and the class have no table of positioners', () {
+    test('the class has no table of positioners', () {
       // Upstream: `tooltip.positioners`, `Tooltip.positioners` and the
       // registered plugin share one object (the probe `samePositioners`).
-      expect(identical(tooltip['positioners'], undefined), isTrue);
+      // The native plugin (Chart.js ADR 0144) has no field for it.
       expect(identical(Tooltip.jsClass['positioners'], undefined), isTrue);
     });
 
@@ -922,9 +908,18 @@ void main() {
       expect(() => _construct([null]), throwsA(isA<TypeError>()));
     });
 
-    test('the keys of the plugin object are the upstream keys', () {
-      expect(jsObjectKeys(tooltip), _upstreamKeys);
-      final defaults = tooltip['defaults']! as JsObjectFace;
+    test('the plugin has the hooks and the keys of the upstream object', () {
+      // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
+      // object are its hooks, and `id`, `defaults`, `defaultRoutes`,
+      // `descriptors` and `additionalOptionScopes` its fields. `_element` is
+      // no field: the class is `Tooltip.jsClass`. The port has no table of
+      // positioners (row `adapt-tooltip-positioner-objects`).
+      expect(pluginHookNames(tooltip), _upstreamHooks);
+      expect(tooltip.id, 'tooltip');
+      expect(tooltip.defaultRoutes, isNotNull);
+      expect(tooltip.descriptors, isNotNull);
+      expect(tooltip.additionalOptionScopes, ['interaction']);
+      final defaults = tooltip.defaults! as JsObjectFace;
       expect(jsObjectKeys(defaults), _upstreamDefaultsKeys);
       expect(
         _callbackNamesOf(defaults['callbacks']! as TooltipCallbacks),
@@ -1128,8 +1123,12 @@ void main() {
       chart.update();
       calls.add('after update 2');
 
+      // The `replay` of the mousemove is `false`, where upstream gives the
+      // absent `replay` of the event arguments, `undefined`: the native
+      // `EventHookArgs.replay` is a bool (Chart.js ADR 0144), and `afterEvent`
+      // gives it to `handleEvent`. Both are falsy for the tooltip.
       expect(calls, [
-        [true, undefined],
+        [true, false],
         'after mousemove',
         [true, true],
         'after update',
@@ -1373,8 +1372,7 @@ void main() {
 
     test('default callbacks expose native fields', () {
       final callbacks =
-          (tooltip['defaults']! as JsObjectFace)['callbacks']!
-              as TooltipCallbacks;
+          (tooltip.defaults! as JsObjectFace)['callbacks']! as TooltipCallbacks;
       expect(callbacks.labelTextColor, isNotNull);
       expect(callbacks.title, isNotNull);
     });
@@ -1624,28 +1622,32 @@ void main() {
       final chart = acquireChart(<String, Object?>{
         ..._probeChart(),
         'plugins': <Object?>[
-          <String, Object?>{
-            'id': 'probe',
-            'afterDatasetsDraw': (Object? c) {
+          // The keys of the arguments of upstream are `tooltip` and, before
+          // the draw, `cancelable`: the native arguments (Chart.js ADR 0144)
+          // have the field `tooltip`, and the kind of the hook is the
+          // `cancelable` of upstream.
+          Plugin<Object?>(
+            id: 'probe',
+            afterDatasetsDraw: (c, args, options) {
               order.add('afterDatasetsDraw');
             },
-            'beforeTooltipDraw': (Object? c, Object? args) {
+            beforeTooltipDraw: (c, args, options) {
               order.add(
                 'beforeTooltipDraw '
-                '${jsObjectKeys(args).join(',')}',
+                '${identical(args.tooltip, c.tooltip) ? 'tooltip' : '-'}',
               );
-              return cancel ? false : undefined;
+              return !cancel;
             },
-            'afterTooltipDraw': (Object? c, Object? args) {
+            afterTooltipDraw: (c, args, options) {
               order.add(
                 'afterTooltipDraw '
-                '${jsObjectKeys(args).join(',')}',
+                '${identical(args.tooltip, c.tooltip) ? 'tooltip' : '-'}',
               );
             },
-            'afterDraw': (Object? c) {
+            afterDraw: (c, args, options) {
               order.add('afterDraw');
             },
-          },
+          ),
         ],
       });
       _activate(chart);
@@ -1660,7 +1662,7 @@ void main() {
       // The probe output `drawOrder`.
       expect(drawOrder(), [
         'afterDatasetsDraw',
-        'beforeTooltipDraw tooltip,cancelable',
+        'beforeTooltipDraw tooltip',
         'afterTooltipDraw tooltip',
         'afterDraw',
       ]);
@@ -1671,7 +1673,7 @@ void main() {
       // afterTooltipDraw.
       expect(drawOrder(cancel: true), [
         'afterDatasetsDraw',
-        'beforeTooltipDraw tooltip,cancelable',
+        'beforeTooltipDraw tooltip',
         'afterDraw',
       ]);
     });

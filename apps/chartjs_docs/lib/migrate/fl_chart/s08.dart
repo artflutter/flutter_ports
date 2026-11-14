@@ -13,9 +13,9 @@ const Map<int, (IconData, Color)> _icons = {
 };
 
 /// The SVG picture of the sample, drawn with paths.
-Map<String, Object?> _pictures(List<double> xs) => {
-  'id': 'pictures',
-  'afterDatasetsDraw': (Chart chart, Object? args, Object? options) {
+Plugin<Object?> _pictures(List<double> xs) => Plugin(
+  id: 'pictures',
+  afterDatasetsDraw: (chart, args, options) {
     final area = chart.chartArea!;
     final ctx = chart.ctx!..save();
     for (final x in xs) {
@@ -37,9 +37,9 @@ Map<String, Object?> _pictures(List<double> xs) => {
     }
     ctx.restore();
   },
-};
+);
 
-final List<Map<String, Object?>> _plugins = [
+final List<Plugin<Object?>> _plugins = [
   annotations([
     VRange(2, 5, Fl.blue.withValues(alpha: 0.2)),
     VRange(8, 9, Fl.blue.withValues(alpha: 0.2)),

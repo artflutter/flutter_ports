@@ -177,7 +177,7 @@ final class DemoChart(
 
   /// No plugins: no plugin cancels the hook.
   @override
-  bool notifyPlugins(String hook, [Object? args]) => true;
+  bool notifyPlugins<A extends Object>(PluginHook<A> hook, [A? args]) => true;
 
   /// No plugins.
   @override

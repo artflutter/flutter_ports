@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -32,6 +33,12 @@ import '../support/jasmine.dart';
 // is a StateError with the message m. `toEqual` of a class compares by
 // identity, and `toEqual` of an object compares the keys and values.
 // `not.toBeDefined()` is the `undefined` sentinel.
+//
+// A plugin is a native `Plugin` (Chart.js ADR 0144): a class value or a Map
+// in the registry of the plugins stops a debug build. A case that registers
+// an object of upstream as a plugin registers a `Plugin` with its id and its
+// defaults. The cases of a class plugin and of a plugin without id skip
+// with `diverges: adapt-typed-plugins`.
 
 /// `Chart.defaults[scope][key]`, the JS member read.
 Object? _defaults(String scope, String key) =>
@@ -119,47 +126,30 @@ void main() {
       expect(_defaults('elements', 'es6element'), same(undefined));
     });
 
-    test('should handle an ES6 plugin', () {
-      final customPlugin = JsClass('CustomPlugin');
-      customPlugin['id'] = 'es6plugin';
-      customPlugin['defaults'] = <String, Object?>{'foo': 'bar'};
-      Chart.register([customPlugin]);
+    // A class value is not a plugin: `Chart.register(CustomPlugin)` stops
+    // a debug build. The case `as plugin` of `Should allow registering
+    // explicitly` registers a `Plugin` with an id and defaults.
+    test(
+      'should handle an ES6 plugin',
+      () {},
+      skip: 'diverges: adapt-typed-plugins',
+    );
 
-      expect(Chart.registry.getPlugin('es6plugin'), customPlugin);
-      expect(
-        _defaults('plugins', 'es6plugin'),
-        jasmineEquals(customPlugin['defaults']),
-      );
-
-      Chart.unregister([customPlugin]);
-
-      expect(() {
-        Chart.registry.getPlugin('es6plugin');
-      }, _throwsError('"es6plugin" is not a registered plugin.'));
-      expect(_defaults('plugins', 'es6plugin'), same(undefined));
-    });
-
-    test('should not accept an object without id', () {
-      expect(() {
-        Chart.register([
-          <String, Object?>{'foo': 'bar'},
-        ]);
-      }, _throwsError('class does not have id: bar'));
-
-      final faultyPlugin = JsClass('FaultyPlugin');
-
-      expect(() {
-        Chart.register([faultyPlugin]);
-      }, _throwsError('class does not have id: class FaultyPlugin {}'));
-    });
+    // `Plugin.id` is a required String. The object `{foo: 'bar'}` gives its
+    // value `'bar'` to the registry of the plugins, and the class
+    // `FaultyPlugin` is a class value: both are no `Plugin`, and they stop a
+    // debug build, not with the error of a missing id.
+    test(
+      'should not accept an object without id',
+      () {},
+      skip: 'diverges: adapt-typed-plugins',
+    );
 
     test(
       'should not fail when unregistering an object that is not registered',
       () {
         expect(() {
-          Chart.unregister([
-            <String, Object?>{'id': 'foo'},
-          ]);
+          Chart.unregister([Plugin<Object?>(id: 'foo')]);
         }, returnsNormally);
       },
     );
@@ -168,6 +158,13 @@ void main() {
       final customExtension = JsClass('customExtension');
       customExtension['id'] = 'custom';
       customExtension['defaults'] = <String, Object?>{'prop': true};
+      // The case `as plugin` registers a native plugin with the id and the
+      // defaults of customExtension: a class value is not a plugin
+      // (Chart.js ADR 0144).
+      final customPlugin = Plugin<Object?>(
+        id: 'custom',
+        defaults: customExtension['defaults'],
+      );
 
       test('as controller', () {
         Chart.registry.addControllers([customExtension]);
@@ -221,15 +218,15 @@ void main() {
       });
 
       test('as plugin', () {
-        Chart.registry.addPlugins([customExtension]);
+        Chart.registry.addPlugins([customPlugin]);
 
-        expect(Chart.registry.getPlugin('custom'), customExtension);
+        expect(Chart.registry.getPlugin('custom'), customPlugin);
         expect(
           _defaults('plugins', 'custom'),
-          jasmineEquals(customExtension['defaults']),
+          jasmineEquals(customPlugin.defaults),
         );
 
-        Chart.registry.removePlugins([customExtension]);
+        Chart.registry.removePlugins([customPlugin]);
 
         expect(() {
           Chart.registry.getPlugin('custom');
@@ -271,12 +268,13 @@ void main() {
       expect(beforeUnregisterCount, 3, reason: 'beforeUnregister');
       expect(afterUnregisterCount, 3, reason: 'afterUnregister');
 
-      Chart.register([custom]);
-      expect(beforeRegisterCount, 4, reason: 'beforeRegister');
-      expect(afterRegisterCount, 4, reason: 'afterRegister');
-      Chart.unregister([custom]);
-      expect(beforeUnregisterCount, 4, reason: 'beforeUnregister');
-      expect(afterUnregisterCount, 4, reason: 'afterUnregister');
+      // :198-203 `Chart.register(custom)` puts the class value into the
+      // registry of the plugins, the fallback registry. A plugin is a native
+      // `Plugin` (Chart.js ADR 0144), which has no `beforeRegister`,
+      // `afterRegister`, `beforeUnregister` and `afterUnregister`, and a class
+      // value there stops a debug build. Thus the case ends after the
+      // elements.
+      // DIVERGES(chartjs): adapt-typed-plugins, no class value as a plugin.
     });
 
     test('should preserve existing defaults', () {

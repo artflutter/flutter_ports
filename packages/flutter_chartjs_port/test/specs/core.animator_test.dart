@@ -8,6 +8,7 @@ import 'package:flutter_chartjs_port/src/core/core.animator.dart'
 import 'package:flutter_chartjs_port/src/types/animation.dart'
     show AnimationEvent;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 // `Chart.animator` is `animator` of core.animator.dart. The first case makes
@@ -15,6 +16,10 @@ import 'package:flutter_test/flutter_test.dart';
 // `waitForDone` (Chart.js ADR 0019, section 12, Chart.js ADR 0022, section
 // 7). `animation.currentStep <= 250` reads the `double?` field: the
 // listener of `progress` always gets a number.
+//
+// The inline plugin is a native `Plugin` (Chart.js ADR 0144). `Plugin.id`
+// is a required String: the plugin of upstream without `id` gets one that
+// no option names.
 
 /// The chart object `{}` of the spec. Its members throw.
 final class _Chart() implements types.Chart {
@@ -63,11 +68,12 @@ void main() {
               },
             },
             'plugins': <Object?>[
-              <String, Object?>{
-                'afterDraw': () {
+              Plugin<Object?>(
+                id: 'drawCount',
+                afterDraw: (_, _, _) {
                   drawCount++;
                 },
-              },
+              ),
             ],
           },
           <String, Object?>{

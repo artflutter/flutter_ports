@@ -83,9 +83,9 @@ AxisGrid flGrid({bool Function(double value)? show}) => AxisGrid(
 );
 
 /// The frame around the chart area that fl_chart calls the border data.
-Map<String, Object?> areaBorder(Color color, {double width = 1}) => {
-  'id': 'areaBorder',
-  'afterDraw': (Chart chart, Object? args, Object? options) {
+Plugin<Object?> areaBorder(Color color, {double width = 1}) => Plugin(
+  id: 'areaBorder',
+  afterDraw: (chart, args, options) {
     final area = chart.chartArea!;
     chart.ctx!
       ..save()
@@ -94,10 +94,10 @@ Map<String, Object?> areaBorder(Color color, {double width = 1}) => {
       ..strokeRect(area.left, area.top, area.width, area.height)
       ..restore();
   },
-};
+);
 
 /// The line from a hovered point to an edge, as the touch indicator.
-Map<String, Object?> touchIndicator({
+Plugin<Object?> touchIndicator({
   Color? color,
   double width = 4,
   List<double> dash = const [],
@@ -105,12 +105,12 @@ Map<String, Object?> touchIndicator({
   bool fullHeight = false,
   double? fromValue,
   bool Function(int index)? when,
-}) => {
-  'id': 'touchIndicator',
-  'beforeDatasetsDraw': (Chart chart, Object? args, Object? options) {
+}) => Plugin(
+  id: 'touchIndicator',
+  beforeDatasetsDraw: (chart, args, options) {
     final area = chart.chartArea!;
     final ctx = chart.ctx!;
-    for (final hit in chart.getActiveElements()) {
+    for (final hit in (chart as Chart).getActiveElements()) {
       if (when != null && !when(hit.index)) continue;
       final element = hit.element!;
       final dataset = chart.getDatasetMeta(hit.datasetIndex);
@@ -134,8 +134,9 @@ Map<String, Object?> touchIndicator({
         ..stroke()
         ..restore();
     }
+    return true;
   },
-};
+);
 
 sealed class const Annotation();
 
@@ -162,9 +163,9 @@ final class const HRange(final double y1, final double y2, final Color color)
     extends Annotation;
 
 /// A small form of the Chart.js annotation plugin, which is not ported.
-Map<String, Object?> annotations(List<Annotation> items) => {
-  'id': 'annotations',
-  'beforeDatasetsDraw': (Chart chart, Object? args, Object? options) {
+Plugin<Object?> annotations(List<Annotation> items) => Plugin(
+  id: 'annotations',
+  beforeDatasetsDraw: (chart, args, options) {
     final area = chart.chartArea!;
     final x = chart.scales['x']!;
     final y = chart.scales['y']!;
@@ -242,8 +243,9 @@ Map<String, Object?> annotations(List<Annotation> items) => {
       }
     }
     ctx.restore();
+    return true;
   },
-};
+);
 
 Color lerpStops(List<Color> colors, List<double> stops, double t) {
   for (var s = 0; s < stops.length - 1; s++) {
@@ -261,9 +263,7 @@ Color lerpStops(List<Color> colors, List<double> stops, double t) {
 
 const noLegend = ChartLegend(display: false);
 
-const List<ChartPluginList> noPlugins = [];
-
-typedef ChartPluginList = Map<String, Object?>;
+const List<Plugin<Object?>> noPlugins = [];
 
 /// A chart that fills its box, as the fl_chart widget does.
 Widget flChart(

@@ -1355,7 +1355,11 @@ void main() {
       // config before `new Chart`, and the palette hooks last.
       expect(scene.config.keys, contains(r'$theme'), reason: type);
       final plugins = scene.config['plugins']! as List<Object?>;
-      expect(jsGet(plugins.last, 'id'), r'$chartView', reason: type);
+      expect(
+        (plugins.last! as Plugin<Object?>).id,
+        r'$chartView',
+        reason: type,
+      );
       final chart = Chart(
         UiCanvasElement(width: chartBenchWidth, height: chartBenchHeight),
         scene.config,

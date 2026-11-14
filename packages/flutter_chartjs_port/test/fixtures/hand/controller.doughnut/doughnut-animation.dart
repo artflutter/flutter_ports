@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
@@ -66,12 +67,13 @@ Map<String, Object?> fixture() {
         },
       },
       'plugins': <Object?>[
-        <String, Object?>{
-          'id': 'hide',
-          'afterInit': (Object? chart) {
-            (chart! as Chart).toggleDataVisibility(4);
+        // DIVERGES(chartjs): adapt-typed-plugins, a native Plugin.
+        Plugin<Object?>(
+          id: 'hide',
+          afterInit: (chart, _, _) {
+            (chart as Chart).toggleDataVisibility(4);
           },
-        },
+        ),
       ],
     },
     'options': <String, Object?>{

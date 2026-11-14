@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show EventHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart';
@@ -103,15 +104,12 @@ final class _Logs() {
 Map<String, Object?> _functions(_Logs logs) => {
   // (chart, args) => { const e = args.event; events.push([e.type,
   //   e.native.type, e.x, e.y, args.replay === true]); }
+  // The hook of the native plugin of the Map (Chart.js ADR 0144) gets the
+  // typed arguments.
   'logEvent': (Object? chart, Object? args) {
-    final e = jsGet(args, 'event')! as types.ChartEvent;
-    logs.events.add([
-      e.type,
-      e.native!.type,
-      e.x,
-      e.y,
-      jsGet(args, 'replay') == true,
-    ]);
+    final a = args! as EventHookArgs;
+    final e = a.event;
+    logs.events.add([e.type, e.native!.type, e.x, e.y, a.replay]);
   },
   // (e, item) => { legend.push(`hover:${e.type}:${item.text}`); }
   'legendHover': (Object? e, Object? item, Object? _) {

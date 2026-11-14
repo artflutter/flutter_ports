@@ -16,8 +16,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
 
-// `Chart.Filler` (index.umd.ts:46) is the plugin Map `filler` of
-// lib/src/plugins/plugin.filler/index.dart (Chart.js ADR 0038, section 1).
+// `Chart.Filler` (index.umd.ts:46) is the native plugin `filler` of
+// lib/src/plugins/plugin.filler/index.dart (Chart.js ADRs 0038, section 1,
+// and 0126).
 // `Chart.unregister` and `Chart.register` take one List.
 //
 // `spyOn(console, 'warn')` is a zone that records the `print` lines:

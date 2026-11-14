@@ -22,20 +22,16 @@ final class _Log() {
   }
 
   late final List<Object?> plugins = <Object?>[
-    <String, Object?>{
-      'id': 'log',
-      'supportsDataUpdates': true,
-      'afterEvent': (Object? chart, Object? args, Object? options) {
-        final event = args! as EventHookArgs;
-        events.add(
-          '${event.event!.type} '
-          '${event.replay == true ? 'replay' : 'real'}',
-        );
+    Plugin<Object?>(
+      id: 'log',
+      supportsDataUpdates: true,
+      afterEvent: (chart, args, options) {
+        events.add('${args.event.type} ${args.replay ? 'replay' : 'real'}');
       },
-      'afterDraw': (Object? chart, Object? args, Object? options) {
+      afterDraw: (chart, args, options) {
         draws++;
       },
-    },
+    ),
   ];
 }
 

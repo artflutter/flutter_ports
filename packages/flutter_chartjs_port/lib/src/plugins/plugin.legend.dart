@@ -1789,10 +1789,14 @@ void _stop(types.Chart chart, Object _, Object _) {
 /// A legend that is not a Legend throws the TypeError of the cast. Upstream
 /// throws a TypeError in the same update, at `buildLabels` of afterUpdate
 /// (Chart.js ADR 0038, section 6).
-void _beforeUpdate(types.Chart chart, Object _, Object options) {
+///
+/// The hook continues the update: `true` is the `undefined` result of
+/// upstream.
+bool _beforeUpdate(types.Chart chart, Object _, Object options) {
   final legend = chart.legend! as Legend;
   layouts.configure(chart, legend, options);
   legend.options = options;
+  return true;
 }
 
 /// plugin.legend.js:623 `afterUpdate(chart)`. The labels need to be built
@@ -1816,29 +1820,28 @@ void _afterUpdate(types.Chart chart, Object args, Object _) {
 /// [TypeError] of the null check, as `handleEvent` throws at `e.type` of
 /// `undefined` upstream.
 void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
-  if (!jsTruthy(args.replay)) {
-    (chart.legend! as Legend).handleEvent(args.event!);
+  if (!args.replay) {
+    (chart.legend! as Legend).handleEvent(args.event);
   }
 }
 
 /// plugin.legend.js:592 the default export, `Legend` of
 /// `src/plugins/index.js:4` (Chart.js ADR 0038, section 1).
 ///
-/// A typed [Plugin] with the upstream keys in the upstream order.
-// DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-final Plugin legend = Plugin(supportsDataUpdates: true)
-  ..id = 'legend'
-  // For tests
-  // @private
-  ..jsWrite('_element', Legend.jsClass)
-  ..start = _start
-  ..stop = _stop
-  ..beforeUpdate = _beforeUpdate
-  ..afterUpdate = _afterUpdate
-  ..afterEvent = _afterEvent
+/// A native [Plugin] with the upstream keys in the upstream order (Chart.js
+/// ADR 0144). The key `_element: Legend` of plugin.legend.js:599 is for the
+/// tests: they read `Legend.jsClass`.
+// DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
+final legend = Plugin<OptionView>(
+  id: 'legend',
+  start: _start,
+  stop: _stop,
+  beforeUpdate: _beforeUpdate,
+  afterUpdate: _afterUpdate,
+  afterEvent: _afterEvent,
   // plugin.legend.js:636-712. A typed scope of the kind `LegendOptions`
   // (Chart.js ADR 0054 §3).
-  ..defaults = (LegendOptionsScope()
+  defaults: LegendOptionsScope()
     ..display = true
     ..position = ChartPosition.top
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
@@ -1861,14 +1864,17 @@ final Plugin legend = Plugin(supportsDataUpdates: true)
       ..display = false
       // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
       ..position = ChartAlign.center
-      ..text = ''))
+      ..text = ''),
   // plugin.legend.js:714-719. A typed scope of the kind `Descriptors`.
-  ..descriptors = (DescriptorsScope()
+  descriptors: DescriptorsScope()
     ..descScriptable = _scriptableDescriptor
     ..jsWrite(
       'labels',
       DescriptorsScope()..descScriptable = _labelsScriptableDescriptor,
-    ));
+    ),
+  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
+  supportsDataUpdates: true,
+);
 
 /// plugin.legend.js:715 the `_scriptable` descriptor of the plugin.
 bool _scriptableDescriptor(String name) => !name.startsWith('on');

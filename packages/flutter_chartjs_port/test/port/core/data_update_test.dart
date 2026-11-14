@@ -370,26 +370,31 @@ void main() {
     () {
       for (final approved in [false, true]) {
         final calls = <String>[];
-        final plugin = <String, Object?>{
-          'id': 'dataUpdateProbe',
-          if (approved) 'supportsDataUpdates': true,
-          for (final hook in [
-            'beforeUpdate',
-            'beforeElementsUpdate',
-            'beforeLayout',
-            'afterLayout',
-            'beforeDatasetsUpdate',
-            'beforeDatasetUpdate',
-            'afterDatasetUpdate',
-            'afterDatasetsUpdate',
-            'afterUpdate',
-            'beforeDraw',
-            'afterDraw',
-          ])
-            hook: (Object? c, Object? a, Object? o) {
-              calls.add(hook);
-            },
+        PluginHookFunction<A, Object?> logs<A extends Object>(
+          PluginHook<A> hook,
+        ) =>
+            (c, a, o) => calls.add(hook.jsName);
+        CancelableHookFunction<A, Object?> continues<A extends Object>(
+          PluginHook<A> hook,
+        ) => (c, a, o) {
+          calls.add(hook.jsName);
+          return true;
         };
+        final plugin = Plugin<Object?>(
+          id: 'dataUpdateProbe',
+          supportsDataUpdates: approved,
+          beforeUpdate: continues(PluginHook.beforeUpdate),
+          beforeElementsUpdate: logs(PluginHook.beforeElementsUpdate),
+          beforeLayout: continues(PluginHook.beforeLayout),
+          afterLayout: logs(PluginHook.afterLayout),
+          beforeDatasetsUpdate: continues(PluginHook.beforeDatasetsUpdate),
+          beforeDatasetUpdate: continues(PluginHook.beforeDatasetUpdate),
+          afterDatasetUpdate: logs(PluginHook.afterDatasetUpdate),
+          afterDatasetsUpdate: logs(PluginHook.afterDatasetsUpdate),
+          afterUpdate: logs(PluginHook.afterUpdate),
+          beforeDraw: continues(PluginHook.beforeDraw),
+          afterDraw: logs(PluginHook.afterDraw),
+        );
         final cfg = config('bar', plugins: [plugin]);
         final a = chart(cfg);
         calls.clear();
@@ -408,12 +413,12 @@ void main() {
     () {
       var cancel = false;
       var fail = false;
-      final plugin = Plugin(supportsDataUpdates: true)
-        ..id = 'cancelData'
-        ..beforeUpdate = (chart, args, options) {
-          if (fail) throw StateError('test');
-          return !cancel;
-        };
+      final plugin =
+          Plugin<Object?>(id: 'cancelData', supportsDataUpdates: true)
+            ..beforeUpdate = (chart, args, options) {
+              if (fail) throw StateError('test');
+              return !cancel;
+            };
       final cfg = config('bar', plugins: [plugin]);
       final a = chart(cfg);
       final before = observe(a);
@@ -519,7 +524,7 @@ void main() {
     a.resize(420, 300);
     a.updateData();
     expect(a.updateData(), isTrue);
-    final p = <String, Object?>{'id': 'registeredUnknownData'};
+    final p = Plugin<Object?>(id: 'registeredUnknownData');
     Chart.register([p]);
     addTearDown(() => Chart.unregister([p]));
     expect(a.updateData(), isFalse);
@@ -527,13 +532,14 @@ void main() {
   test('data hooks cannot recursively enter full or incremental updates', () {
     var enabled = false;
     late Chart a;
-    final p = <String, Object?>{
-      'id': 'recursiveData',
-      'supportsDataUpdates': true,
-      'beforeUpdate': (Object? c, Object? args, Object? o) {
+    final p = Plugin<Object?>(
+      id: 'recursiveData',
+      supportsDataUpdates: true,
+      beforeUpdate: (c, args, o) {
         if (enabled) a.update('none');
+        return true;
       },
-    };
+    );
     a = chart(config('bar', plugins: [p]));
     enabled = true;
     expect(a.updateData, throwsStateError);
@@ -609,17 +615,17 @@ void main() {
     test('a draw hook may run update, as in a full update', () {
       var armed = false;
       Chart? hooked;
-      final plugin = <String, Object?>{
-        'id': 'updateInDraw',
-        'supportsDataUpdates': true,
-        'afterDraw': (Object? c, Object? args, Object? o) {
+      final plugin = Plugin<Object?>(
+        id: 'updateInDraw',
+        supportsDataUpdates: true,
+        afterDraw: (c, args, o) {
           if (armed) {
             armed = false;
-            hooked = c! as Chart;
+            hooked = c as Chart;
             hooked!.update('none');
           }
         },
-      };
+      );
       final a = chart(config('bar', plugins: [plugin]));
       expect(a.updateData(), isTrue);
       armed = true;
@@ -631,11 +637,11 @@ void main() {
   group('a plugin that cancels beforeLayout', () {
     (Chart, void Function({bool on})) cancelled(String type) {
       var cancel = false;
-      final plugin = <String, Object?>{
-        'id': 'cancelLayout',
-        'supportsDataUpdates': true,
-        'beforeLayout': (Object? c, Object? args, Object? o) => !cancel,
-      };
+      final plugin = Plugin<Object?>(
+        id: 'cancelLayout',
+        supportsDataUpdates: true,
+        beforeLayout: (c, args, o) => !cancel,
+      );
       final cfg = config(type, plugins: [plugin]);
       ((cfg['options']! as Map)['plugins'] as Map)['legend'] =
           <String, Object?>{'display': true};
@@ -682,11 +688,11 @@ void main() {
 
     test('a layout that a tick cancels makes the next tick a full update', () {
       var cancel = false;
-      final plugin = <String, Object?>{
-        'id': 'cancelTickLayout',
-        'supportsDataUpdates': true,
-        'beforeLayout': (Object? c, Object? args, Object? o) => !cancel,
-      };
+      final plugin = Plugin<Object?>(
+        id: 'cancelTickLayout',
+        supportsDataUpdates: true,
+        beforeLayout: (c, args, o) => !cancel,
+      );
       List<Object?> points(double r) => [
         for (var i = 0; i < 4; i++)
           <String, Object?>{'x': i.toDouble(), 'y': 1.0, 'r': r},
@@ -716,21 +722,20 @@ void main() {
       expect(jsGet(context, 'mode'), same(undefined), reason: type);
     }
   });
-  test('the arguments of afterUpdate have only the key mode', () {
-    final seen = <List<String>>[];
-    final plugin = <String, Object?>{
-      'id': 'updateArgs',
-      'supportsDataUpdates': true,
-      'afterUpdate': (Object? c, Object? args, Object? o) {
-        seen.add((args! as JsObjectFace).jsKeys().toList());
-      },
-    };
+  test('the arguments of afterUpdate are the arguments {mode}', () {
+    // The native arguments of Chart.js ADR 0144: the data update gives the
+    // class of the upstream object `{mode}` with the mode `none`, as the full
+    // update gives it with its mode. Its flag of the kept layout is no field
+    // of the public class.
+    final seen = <(Type, Object?)>[];
+    final plugin = Plugin<Object?>(
+      id: 'updateArgs',
+      supportsDataUpdates: true,
+      afterUpdate: (c, args, o) => seen.add((args.runtimeType, args.mode)),
+    );
     final a = chart(config('bar', plugins: [plugin]));
     expect(a.updateData(), isTrue);
-    expect(seen, [
-      ['mode'],
-      ['mode'],
-    ]);
+    expect(seen, [(UpdateHookArgs, undefined), (UpdateHookArgs, 'none')]);
   });
   test('a category scale with bounds data falls back', () {
     final cfg = config('bar');
@@ -2088,13 +2093,14 @@ void main() {
 
     test('a bubble whose overflow grows runs a layout, as a full update', () {
       final calls = <String>[];
-      final plugin = <String, Object?>{
-        'id': 'indexedLayoutProbe',
-        'supportsDataUpdates': true,
-        'beforeLayout': (Object? c, Object? a, Object? o) {
+      final plugin = Plugin<Object?>(
+        id: 'indexedLayoutProbe',
+        supportsDataUpdates: true,
+        beforeLayout: (c, a, o) {
           calls.add('beforeLayout');
+          return true;
         },
-      };
+      );
       final ca = indexed('bubble');
       final cb = indexed('bubble');
       (ca['plugins'] = <Object?>[plugin]) as List;

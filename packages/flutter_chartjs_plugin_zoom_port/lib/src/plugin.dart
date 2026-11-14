@@ -20,12 +20,10 @@ import 'package:flutter_chartjs_plugin_zoom_port/src/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/gestures.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/handlers.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/scale.types.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/upstream.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
     show
-        CancelableHookArgs,
         Chart,
         EventHookArgs,
         JsObjectFace,
@@ -118,9 +116,8 @@ bool _hasOwnProperty(Object? object, String key) => switch (object) {
 /// plugin.ts:71 `start(chart, _args, options)`: keeps the options in the
 /// state of [chart], warns about the removed options and starts the
 /// gestures.
-void _start(Object chart, PluginHookArgs _, Object options) {
+void _start(Object chart, PluginHookArgs _, ZoomPluginOptions pluginOptions) {
   chart as Chart;
-  final pluginOptions = ZoomPluginOptions(options);
   getState(chart).options = pluginOptions;
 
   // console.warn of upstream: the host writes its warnings with print too
@@ -150,9 +147,9 @@ void _start(Object chart, PluginHookArgs _, Object options) {
 
 /// plugin.ts:94 `beforeEvent(chart, {event})`: cancels each chart event
 /// while a pan or a drag runs, and the next `click` or `mouseup` after a
-/// drag or a pan. The result `false` cancels the event, Dart `null` is the
-/// `undefined` of upstream.
-bool? _beforeEvent(Object chart, EventHookArgs args, Object _) {
+/// drag or a pan. The result `false` cancels the event, and `true` is the
+/// `undefined` of upstream: the event continues.
+bool _beforeEvent(Object chart, EventHookArgs args, ZoomPluginOptions _) {
   final event = args.event;
   final state = getState(chart);
   if (isZoomingOrPanningState(state)) {
@@ -160,21 +157,24 @@ bool? _beforeEvent(Object chart, EventHookArgs args, Object _) {
     return false;
   }
   // cancel the next click or mouseup after drag or pan
-  if (event!.type == 'click' || event.type == 'mouseup') {
+  if (event.type == 'click' || event.type == 'mouseup') {
     if (state.filterNextClick) {
       state.filterNextClick = false;
       return false;
     }
   }
-  return null;
+  return true;
 }
 
 /// plugin.ts:112 `beforeUpdate(chart, _args, options)`: keeps the new
 /// options, restarts the gestures when their options changed, and adds the
 /// listeners.
-void _beforeUpdate(Object chart, UpdateHookArgs _, Object options) {
+bool _beforeUpdate(
+  Object chart,
+  UpdateHookArgs _,
+  ZoomPluginOptions pluginOptions,
+) {
   chart as Chart;
-  final pluginOptions = ZoomPluginOptions(options);
   final state = getState(chart);
   final previousOptions = state.options;
   state.options = pluginOptions;
@@ -186,31 +186,42 @@ void _beforeUpdate(Object chart, UpdateHookArgs _, Object options) {
   }
 
   addListeners(chart, pluginOptions);
+  return true;
 }
 
 /// plugin.ts:126 `beforeDatasetsDraw(chart, _args, options)`.
-void _beforeDatasetsDraw(Object chart, CancelableHookArgs _, Object options) {
-  draw(chart as Chart, DrawTime.beforeDatasetsDraw, ZoomPluginOptions(options));
+bool _beforeDatasetsDraw(
+  Object chart,
+  PluginHookArgs _,
+  ZoomPluginOptions options,
+) {
+  draw(chart as Chart, DrawTime.beforeDatasetsDraw, options);
+  return true;
 }
 
 /// plugin.ts:130 `afterDatasetsDraw(chart, _args, options)`.
-void _afterDatasetsDraw(Object chart, PluginHookArgs _, Object options) {
-  draw(chart as Chart, DrawTime.afterDatasetsDraw, ZoomPluginOptions(options));
+void _afterDatasetsDraw(
+  Object chart,
+  PluginHookArgs _,
+  ZoomPluginOptions options,
+) {
+  draw(chart as Chart, DrawTime.afterDatasetsDraw, options);
 }
 
 /// plugin.ts:134 `beforeDraw(chart, _args, options)`.
-void _beforeDraw(Object chart, CancelableHookArgs _, Object options) {
-  draw(chart as Chart, DrawTime.beforeDraw, ZoomPluginOptions(options));
+bool _beforeDraw(Object chart, PluginHookArgs _, ZoomPluginOptions options) {
+  draw(chart as Chart, DrawTime.beforeDraw, options);
+  return true;
 }
 
 /// plugin.ts:138 `afterDraw(chart, _args, options)`.
-void _afterDraw(Object chart, PluginHookArgs _, Object options) {
-  draw(chart as Chart, DrawTime.afterDraw, ZoomPluginOptions(options));
+void _afterDraw(Object chart, PluginHookArgs _, ZoomPluginOptions options) {
+  draw(chart as Chart, DrawTime.afterDraw, options);
 }
 
 /// plugin.ts:142 `stop(chart)`: removes the listeners, the gestures and the
 /// state of [chart].
-void _stop(Object chart, PluginHookArgs _, Object _) {
+void _stop(Object chart, PluginHookArgs _, ZoomPluginOptions _) {
   chart as Chart;
   removeListeners(chart);
 
@@ -224,26 +235,26 @@ void _stop(Object chart, PluginHookArgs _, Object _) {
 /// it to one chart in the `plugins` list of its raw config. The options of a
 /// chart are `options.plugins.zoom` ([ZoomPluginOptions]).
 ///
-/// The keys are those of upstream, in the upstream order. `version` (the
-/// `version` of the upstream `package.json`,
-/// [chartjsPluginZoomPackageVersion]), `panFunctions`, `zoomFunctions` and
-/// `zoomRectFunctions` are extras of the typed plugin. `defaults` is the
-/// mutable Map of the zoom defaults. The plugin opts into the data-only
-/// updates of the host (`supportsDataUpdates`): its hooks change no option
-/// and no data.
-// DIVERGES(zoom): adapt-typed-plugin-object, a typed Plugin with extras.
-final Plugin zoomPlugin = Plugin(supportsDataUpdates: true)
-  ..id = 'zoom'
-  ..jsWrite('version', chartjsPluginZoomPackageVersion)
-  ..defaults = defaults
-  ..start = _start
-  ..beforeEvent = _beforeEvent
-  ..beforeUpdate = _beforeUpdate
-  ..beforeDatasetsDraw = _beforeDatasetsDraw
-  ..afterDatasetsDraw = _afterDatasetsDraw
-  ..beforeDraw = _beforeDraw
-  ..afterDraw = _afterDraw
-  ..stop = _stop
-  ..jsWrite('panFunctions', panFunctions)
-  ..jsWrite('zoomFunctions', zoomFunctions)
-  ..jsWrite('zoomRectFunctions', zoomRectFunctions);
+/// A native `Plugin` of the host (Chart.js ADR 0144) with the hooks of
+/// upstream, in the upstream order. Its hooks get the options through the
+/// facade [ZoomPluginOptions]. `defaults` is the mutable Map of the zoom
+/// defaults. The keys `version`, `panFunctions`, `zoomFunctions` and
+/// `zoomRectFunctions` of upstream are top-level names of the library:
+/// [chartjsPluginZoomPackageVersion] and the three function tables. The
+/// plugin opts into the data-only updates of the host
+/// (`supportsDataUpdates`): its hooks change no option and no data.
+// DIVERGES(zoom): adapt-typed-plugin-object, a native Plugin.
+final zoomPlugin = Plugin<ZoomPluginOptions>(
+  id: 'zoom',
+  options: ZoomPluginOptions.new,
+  defaults: defaults,
+  start: _start,
+  beforeEvent: _beforeEvent,
+  beforeUpdate: _beforeUpdate,
+  beforeDatasetsDraw: _beforeDatasetsDraw,
+  afterDatasetsDraw: _afterDatasetsDraw,
+  beforeDraw: _beforeDraw,
+  afterDraw: _afterDraw,
+  stop: _stop,
+  supportsDataUpdates: true,
+);

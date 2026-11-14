@@ -13,7 +13,6 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -35,6 +34,8 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show PluginHookArgs, UpdateHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -254,18 +255,15 @@ final List<ScaleChartCase> _themedReference = _mapObservations(
   },
 );
 
-/// The keys of the default export of plugin.legend.js:592-720, in their
-/// order (the probe output `keys`).
-const List<String> _upstreamKeys = [
-  'id',
-  '_element',
+/// The hook keys of the default export of plugin.legend.js:592-720, in the
+/// order of `PluginHook` (the probe output `keys`: `id`, `_element`, these
+/// hooks, `defaults` and `descriptors`).
+const List<String> _upstreamHooks = [
   'start',
   'stop',
   'beforeUpdate',
   'afterUpdate',
   'afterEvent',
-  'defaults',
-  'descriptors',
 ];
 
 /// The keys of the `defaults` of plugin.legend.js:636-712 (the probe output
@@ -400,14 +398,6 @@ void main() {
       expect(Legend.jsClass.superclass, same(Element.jsClass));
     });
 
-    test('the plugin entry _element is Legend.jsClass', () {
-      expect(
-        jsGet(registry.getPlugin('legend'), '_element'),
-        same(Legend.jsClass),
-      );
-      expect(legend['_element'], same(Legend.jsClass));
-    });
-
     test('new Legend(config) keeps the chart, the options and the ctx', () {
       final chart = _FakeChart();
       final options = <String, Object?>{'display': true};
@@ -429,9 +419,15 @@ void main() {
       expect(() => _construct([null]), throwsA(isA<TypeError>()));
     });
 
-    test('the keys of the plugin object are the upstream keys', () {
-      expect(jsObjectKeys(legend), _upstreamKeys);
-      expect(jsObjectKeys(legend['defaults']), _upstreamDefaultsKeys);
+    test('the plugin has the hooks and the keys of the upstream object', () {
+      // The native plugin of Chart.js ADR 0144: the hook keys of the upstream
+      // object are its hooks, and `id`, `defaults` and `descriptors` its
+      // fields. `_element` is no field: the class is `Legend.jsClass`.
+      expect(pluginHookNames(legend), _upstreamHooks);
+      expect(legend.id, 'legend');
+      expect(legend.descriptors, isNotNull);
+      expect(legend.defaultRoutes, isNull);
+      expect(jsObjectKeys(legend.defaults), _upstreamDefaultsKeys);
     });
   });
 
@@ -556,7 +552,7 @@ void main() {
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
       chart.legend = _ForeignLegend();
-      jsCall(legend['stop'], [chart, <String, Object?>{}, <String, Object?>{}]);
+      legend.stop!(chart, const PluginHookArgs(), chart.options);
       expect(chart.legend, isNull);
       expect(chart.boxes, boxes);
     });
@@ -570,21 +566,21 @@ void main() {
       // section 6.
       final chart = acquireChart(_line(false))..legend = _ForeignLegend();
       expect(
-        () => jsCall(legend['beforeUpdate'], [
+        () => legend.beforeUpdate!(
           chart,
-          <String, Object?>{},
-          <String, Object?>{},
-        ]),
+          UpdateHookArgs(mode: undefined),
+          chart.options,
+        ),
         throwsA(isA<TypeError>()),
       );
       // The typed hook takes `(chart, args, options)` (Chart.js ADR 0054
       // §12): the TypeError comes from the cast of the legend.
       expect(
-        () => jsCall(legend['afterUpdate'], [
+        () => legend.afterUpdate!(
           chart,
-          <String, Object?>{},
-          <String, Object?>{},
-        ]),
+          UpdateHookArgs(mode: undefined),
+          chart.options,
+        ),
         throwsA(isA<TypeError>()),
       );
       chart.legend = null;
@@ -594,7 +590,7 @@ void main() {
       // The probe stopWithoutLegend.
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
-      jsCall(legend['stop'], [chart, <String, Object?>{}, <String, Object?>{}]);
+      legend.stop!(chart, const PluginHookArgs(), chart.options);
       expect(chart.legend, isNull);
       expect(chart.boxes, boxes);
     });
@@ -604,7 +600,7 @@ void main() {
       final box = chart.legend;
       expect(box, isA<Legend>());
       expect(chart.boxes, contains(same(box)));
-      jsCall(legend['stop'], [chart, <String, Object?>{}, <String, Object?>{}]);
+      legend.stop!(chart, const PluginHookArgs(), chart.options);
       expect(chart.legend, isNull);
       expect(chart.boxes.where((b) => identical(b, box)), isEmpty);
     });

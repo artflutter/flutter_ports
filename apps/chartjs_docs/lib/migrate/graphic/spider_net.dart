@@ -23,9 +23,9 @@ final ({double min, double max}) _range = graphicRange([
 /// The radial axis of Graphic is a line up from the center, with the labels
 /// of the round values on its left. Chart.js draws its tick labels along the
 /// start angle, so this plugin draws the axis of Graphic instead.
-final Map<String, Object?> _radialAxis = {
-  'id': 'radialAxis',
-  'beforeDatasetsDraw': (Chart chart, Object? args, Object? options) {
+final _radialAxis = Plugin<Object?>(
+  id: 'radialAxis',
+  beforeDatasetsDraw: (chart, args, options) {
     final scale = chart.scales['r']! as RadialLinearScale;
     final x = scale.xCenter!;
     final y = scale.yCenter!;
@@ -51,8 +51,9 @@ final Map<String, Object?> _radialAxis = {
       ctx.fillText(tick.value.toString(), x, y - radius);
     }
     ctx.restore();
+    return true;
   },
-};
+);
 
 /// `multiTuples: true`: the index, then one line for each type.
 String? _index(List<TooltipItem> items) => _indexes[items.first.dataIndex];

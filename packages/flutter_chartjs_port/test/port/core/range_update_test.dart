@@ -76,34 +76,72 @@ final class _Log() {
   }
 }
 
-/// The names of the hooks of [Plugin], without `id`, `events`, `defaults`
-/// and the other keys that are no hook.
-final List<String> _hookNames = [
-  for (final hook in PluginHook.values) hook.jsName,
-];
-
 /// The text of a mode for the log: a function is `<fn>`.
 String _mode(Object? mode) => mode is Function ? '<fn>' : '$mode';
 
-/// An inline plugin that logs each hook with the mode and the index of its
-/// arguments. It opts into the partial lifecycles.
-Map<String, Object?> _recorder(_Log log) => <String, Object?>{
-  'id': 'rangeRecorder',
-  'supportsDataUpdates': true,
-  for (final name in _hookNames)
-    name: (Object? chart, Object? args, Object? options) {
-      final text = switch (args) {
-        final UpdateHookArgs a => ' mode=${_mode(a.mode)}',
-        final DatasetUpdateHookArgs a =>
-          ' index=${a.index} mode=${_mode(a.mode)}',
-        final DatasetDrawHookArgs a => ' index=${a.index}',
-        final EventHookArgs a => ' ${a.event?.type} replay=${a.replay}',
-        _ => '',
-      };
-      log.add('$name$text');
-      return null;
-    },
-};
+/// An inline plugin that logs each hook of [PluginHook] with the mode and the
+/// index of its arguments. It opts into the partial lifecycles.
+Plugin<Object?> _recorder(_Log log) {
+  void record(PluginHook<Object> hook, Object args) {
+    final text = switch (args) {
+      final UpdateHookArgs a => ' mode=${_mode(a.mode)}',
+      final DatasetUpdateHookArgs a =>
+        ' index=${a.index} mode=${_mode(a.mode)}',
+      final DatasetDrawHookArgs a => ' index=${a.index}',
+      final EventHookArgs a => ' ${a.event.type} replay=${a.replay}',
+      _ => '',
+    };
+    log.add('${hook.jsName}$text');
+  }
+
+  PluginHookFunction<A, Object?> logs<A extends Object>(PluginHook<A> hook) =>
+      (chart, args, options) => record(hook, args);
+  CancelableHookFunction<A, Object?> continues<A extends Object>(
+    PluginHook<A> hook,
+  ) => (chart, args, options) {
+    record(hook, args);
+    return true;
+  };
+  return Plugin<Object?>(
+    id: 'rangeRecorder',
+    supportsDataUpdates: true,
+    install: logs(PluginHook.install),
+    start: logs(PluginHook.start),
+    stop: logs(PluginHook.stop),
+    beforeInit: logs(PluginHook.beforeInit),
+    afterInit: logs(PluginHook.afterInit),
+    beforeUpdate: continues(PluginHook.beforeUpdate),
+    afterUpdate: logs(PluginHook.afterUpdate),
+    beforeElementsUpdate: logs(PluginHook.beforeElementsUpdate),
+    reset: logs(PluginHook.reset),
+    beforeDatasetsUpdate: continues(PluginHook.beforeDatasetsUpdate),
+    afterDatasetsUpdate: logs(PluginHook.afterDatasetsUpdate),
+    beforeDatasetUpdate: continues(PluginHook.beforeDatasetUpdate),
+    afterDatasetUpdate: logs(PluginHook.afterDatasetUpdate),
+    beforeLayout: continues(PluginHook.beforeLayout),
+    beforeDataLimits: logs(PluginHook.beforeDataLimits),
+    afterDataLimits: logs(PluginHook.afterDataLimits),
+    beforeBuildTicks: logs(PluginHook.beforeBuildTicks),
+    afterBuildTicks: logs(PluginHook.afterBuildTicks),
+    afterLayout: logs(PluginHook.afterLayout),
+    beforeRender: continues(PluginHook.beforeRender),
+    afterRender: logs(PluginHook.afterRender),
+    beforeDraw: continues(PluginHook.beforeDraw),
+    afterDraw: logs(PluginHook.afterDraw),
+    beforeDatasetsDraw: continues(PluginHook.beforeDatasetsDraw),
+    afterDatasetsDraw: logs(PluginHook.afterDatasetsDraw),
+    beforeDatasetDraw: continues(PluginHook.beforeDatasetDraw),
+    afterDatasetDraw: logs(PluginHook.afterDatasetDraw),
+    beforeEvent: continues(PluginHook.beforeEvent),
+    afterEvent: logs(PluginHook.afterEvent),
+    resize: logs(PluginHook.resize),
+    beforeDestroy: logs(PluginHook.beforeDestroy),
+    afterDestroy: logs(PluginHook.afterDestroy),
+    uninstall: logs(PluginHook.uninstall),
+    beforeTooltipDraw: continues(PluginHook.beforeTooltipDraw),
+    afterTooltipDraw: logs(PluginHook.afterTooltipDraw),
+  );
+}
 
 /// The scriptable options of the ADR: the title text, `layout.padding`, a
 /// dataset `clip`, a scale `ticks.color` and `grid.display`. Each logs its
@@ -776,7 +814,7 @@ Chart _canvasChart(Object cfg, {bool user = false}) {
 
 /// The resolver of the descriptor of the plugin [id] of [chart].
 Object? _pluginResolver(Chart chart, String id) =>
-    (chart.plugins.cache!.firstWhere((d) => jsGet(d.plugin, 'id') == id).options
+    (chart.plugins.cache!.firstWhere((d) => d.plugin.id == id).options
             as OptionView)
         .resolver;
 
@@ -849,13 +887,15 @@ void main() {
         _small(
           log,
           plugins: <Object?>[
-            <String, Object?>{
-              'id': 'withDefaults',
-              'supportsDataUpdates': true,
-              'defaults': <String, Object?>{'size': 3.0},
-              'beforeDraw': (Object? chart, Object? args, Object? options) =>
-                  log.add('size ${jsGet(options, 'size')}'),
-            },
+            Plugin<Object?>(
+              id: 'withDefaults',
+              supportsDataUpdates: true,
+              defaults: <String, Object?>{'size': 3.0},
+              beforeDraw: (chart, args, options) {
+                log.add('size ${jsGet(options, 'size')}');
+                return true;
+              },
+            ),
           ],
           pluginOptions: <String, Object?>{'withDefaults': <String, Object?>{}},
         ),
@@ -886,16 +926,16 @@ void main() {
     ) async {
       final results = <bool>[];
       var enabled = false;
-      final nested = <String, Object?>{
-        'id': 'nested',
-        'supportsDataUpdates': true,
-        'afterUpdate': (Object? chart, Object? args, Object? options) {
+      final nested = Plugin<Object?>(
+        id: 'nested',
+        supportsDataUpdates: true,
+        afterUpdate: (chart, args, options) {
           if (enabled) {
             enabled = false;
-            results.add((chart! as Chart).updateRanges('none'));
+            results.add((chart as Chart).updateRanges('none'));
           }
         },
-      };
+      );
       final fullLog = _Log();
       final rangeLog = _Log();
       final full = acquireChart(_small(fullLog, plugins: [nested]));
@@ -917,24 +957,28 @@ void main() {
       tester,
     ) async {
       for (final hook in [
-        'beforeUpdate',
-        'beforeLayout',
-        'beforeDatasetsUpdate',
+        PluginHook.beforeUpdate,
+        PluginHook.beforeLayout,
+        PluginHook.beforeDatasetsUpdate,
       ]) {
         var cancel = false;
-        Map<String, Object?> canceller() => <String, Object?>{
-          'id': 'canceller',
-          'supportsDataUpdates': true,
-          hook: (Object? chart, Object? args, Object? options) =>
-              cancel ? false : null,
-        };
+        bool cancels(Object chart, Object args, Object? options) => !cancel;
+        Plugin<Object?> canceller() => Plugin<Object?>(
+          id: 'canceller',
+          supportsDataUpdates: true,
+          beforeUpdate: hook == PluginHook.beforeUpdate ? cancels : null,
+          beforeLayout: hook == PluginHook.beforeLayout ? cancels : null,
+          beforeDatasetsUpdate: hook == PluginHook.beforeDatasetsUpdate
+              ? cancels
+              : null,
+        );
         final fullLog = _Log();
         final rangeLog = _Log();
         final full = acquireChart(_small(fullLog, plugins: [canceller()]));
         final ranges = acquireChart(_small(rangeLog, plugins: [canceller()]));
         cancel = true;
         full.update('none');
-        expect(ranges.updateRanges('none'), isTrue, reason: hook);
+        expect(ranges.updateRanges('none'), isTrue, reason: hook.jsName);
         cancel = false;
         _expectFallbackTwins(
           full,
@@ -942,7 +986,7 @@ void main() {
           ranges,
           rangeLog,
           expected: false,
-          reason: hook,
+          reason: hook.jsName,
         );
         _expectFallbackTwins(
           full,
@@ -950,20 +994,20 @@ void main() {
           ranges,
           rangeLog,
           expected: true,
-          reason: '$hook, then',
+          reason: '${hook.jsName}, then',
         );
       }
       var thrown = false;
-      final thrower = <String, Object?>{
-        'id': 'thrower',
-        'supportsDataUpdates': true,
-        'afterLayout': (Object? chart, Object? args, Object? options) {
+      final thrower = Plugin<Object?>(
+        id: 'thrower',
+        supportsDataUpdates: true,
+        afterLayout: (chart, args, options) {
           if (thrown) {
             thrown = false;
             throw StateError('hook');
           }
         },
-      };
+      );
       final log = _Log();
       final chart = acquireChart(_small(log, plugins: [thrower]));
       thrown = true;
@@ -988,10 +1032,10 @@ void main() {
 
     testWidgets('4. a plugin that does not opt in, a register, the colors '
         'plugin with forceOverride', (tester) async {
-      Map<String, Object?> plain() => <String, Object?>{
-        'id': 'plain',
-        'beforeUpdate': (Object? chart, Object? args, Object? options) {},
-      };
+      Plugin<Object?> plain() => Plugin<Object?>(
+        id: 'plain',
+        beforeUpdate: (chart, args, options) => true,
+      );
       var fullLog = _Log();
       var rangeLog = _Log();
       var full = acquireChart(_small(fullLog, plugins: [plain()]));
@@ -1002,7 +1046,10 @@ void main() {
       rangeLog = _Log();
       full = acquireChart(_small(fullLog));
       ranges = acquireChart(_small(rangeLog));
-      final registered = Plugin(supportsDataUpdates: true)..id = 'registered';
+      final registered = Plugin<Object?>(
+        id: 'registered',
+        supportsDataUpdates: true,
+      );
       Chart.register([registered]);
       addTearDown(() => Chart.unregister([registered]));
       _expectFallbackTwins(full, fullLog, ranges, rangeLog, expected: false);
@@ -1085,10 +1132,9 @@ void main() {
         },
         'config.type': (chart) => chart.config.type = 'scatter',
         'an inline plugin added in place': (chart) {
-          (chart.config.plugins! as List<Object?>).add(<String, Object?>{
-            'id': 'added',
-            'supportsDataUpdates': true,
-          });
+          (chart.config.plugins! as List<Object?>).add(
+            Plugin<Object?>(id: 'added', supportsDataUpdates: true),
+          );
         },
       };
       for (final MapEntry(key: name, value: change) in changes.entries) {
@@ -1128,11 +1174,11 @@ void main() {
       var enabled = false;
       Object? error;
       Chart? target;
-      final plugin = <String, Object?>{
-        'id': 'reentry',
-        'supportsDataUpdates': true,
-        'beforeDatasetsUpdate': (Object? chart, Object? args, Object? opts) {
-          if (!enabled) return;
+      final plugin = Plugin<Object?>(
+        id: 'reentry',
+        supportsDataUpdates: true,
+        beforeDatasetsUpdate: (chart, args, opts) {
+          if (!enabled) return true;
           enabled = false;
           try {
             target!.updateData();
@@ -1141,8 +1187,9 @@ void main() {
           } on StateError catch (e) {
             error = e;
           }
+          return true;
         },
-      };
+      );
       final log = _Log();
       final chart = target = acquireChart(_small(log, plugins: [plugin]));
       enabled = true;
@@ -1154,15 +1201,16 @@ void main() {
         'path', (tester) async {
       var enabled = false;
       Chart? target;
-      final plugin = <String, Object?>{
-        'id': 'reentry',
-        'supportsDataUpdates': true,
-        'beforeDatasetsUpdate': (Object? chart, Object? args, Object? opts) {
-          if (!enabled) return;
+      final plugin = Plugin<Object?>(
+        id: 'reentry',
+        supportsDataUpdates: true,
+        beforeDatasetsUpdate: (chart, args, opts) {
+          if (!enabled) return true;
           enabled = false;
           target!.update('none');
+          return true;
         },
-      };
+      );
       final fullLog = _Log();
       final rangeLog = _Log();
       final full = acquireChart(_small(fullLog, plugins: [plugin]));

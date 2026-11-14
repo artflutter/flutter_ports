@@ -115,15 +115,15 @@ final class InputProbeRecorder() {
   final List<FrameTiming> _timings = [];
 
   /// The inline plugin of the chart: it counts the updates and the draws.
-  late final Map<String, Object?> plugin = <String, Object?>{
-    'id': 'inputProbe',
-    'afterUpdate': (Object? chart, Object? args, Object? options) {
+  late final Plugin<Object?> plugin = Plugin(
+    id: 'inputProbe',
+    afterUpdate: (chart, args, options) {
       _updates++;
     },
-    'afterDraw': (Object? chart, Object? args, Object? options) {
+    afterDraw: (chart, args, options) {
       _draws++;
     },
-  };
+  );
 
   /// The frames since the last [take].
   List<InputProbeFrame> get frames => List.unmodifiable(_frames);
@@ -333,70 +333,68 @@ File get inputProbeLinesFile =>
 
 /// The config of the chart: a line chart of [points] points on linear
 /// scales, with the zoom options and the inline [plugin].
-Map<String, Object?> inputProbeConfig(
-  int points,
-  Map<String, Object?> plugin,
-) => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'Probe',
-        'data': inputProbeData(points),
-        'borderColor': const ChartPaint.solid(Color(0xFF36A2EB)),
-        'borderWidth': 1.0,
+Map<String, Object?> inputProbeConfig(int points, Plugin<Object?> plugin) =>
+    <String, Object?>{
+      'type': 'line',
+      'data': <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{
+            'label': 'Probe',
+            'data': inputProbeData(points),
+            'borderColor': const ChartPaint.solid(Color(0xFF36A2EB)),
+            'borderWidth': 1.0,
+          },
+        ],
       },
-    ],
-  },
-  'options': <String, Object?>{
-    'animation': false,
-    'maintainAspectRatio': false,
-    'parsing': false,
-    'layout': <String, Object?>{
-      'padding': const EdgeInsets.only(right: inputProbeRightPadding),
-    },
-    // Stable axes for zoom and pan: only round tick values (no bounds),
-    // no rotation of the x labels, and a fixed y-axis width. Then a step
-    // changes no axis size, and the plot area stays in place.
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': 'linear',
-        'ticks': <String, Object?>{
-          'includeBounds': false,
-          'maxRotation': 0,
-          'minRotation': 0,
+      'options': <String, Object?>{
+        'animation': false,
+        'maintainAspectRatio': false,
+        'parsing': false,
+        'layout': <String, Object?>{
+          'padding': const EdgeInsets.only(right: inputProbeRightPadding),
         },
-        // The x axis asks for room at the sides for half of its first and
-        // last label, from the positions of these ticks. A pan moves them,
-        // so the room changes in each step. The fixed layout padding at the
-        // right gives the last label its room.
-        'afterFit': (Object? scale) {
-          (scale! as Scale)
-            ..paddingLeft = 0
-            ..paddingRight = 0;
+        // Stable axes for zoom and pan: only round tick values (no bounds),
+        // no rotation of the x labels, and a fixed y-axis width. Then a step
+        // changes no axis size, and the plot area stays in place.
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'linear',
+            'ticks': <String, Object?>{
+              'includeBounds': false,
+              'maxRotation': 0,
+              'minRotation': 0,
+            },
+            // The x axis asks for room at the sides for half of its first and
+            // last label, from the positions of these ticks. A pan moves them,
+            // so the room changes in each step. The fixed layout padding at the
+            // right gives the last label its room.
+            'afterFit': (Object? scale) {
+              (scale! as Scale)
+                ..paddingLeft = 0
+                ..paddingRight = 0;
+            },
+          },
+          'y': <String, Object?>{
+            'type': 'linear',
+            'ticks': <String, Object?>{'includeBounds': false},
+            'afterFit': (Object? scale) {
+              (scale! as Scale).width = inputProbeYAxisWidth;
+            },
+          },
+        },
+        'plugins': <String, Object?>{
+          'zoom': <String, Object?>{
+            'pan': <String, Object?>{'enabled': true, 'mode': Mode.xy},
+            'zoom': <String, Object?>{
+              'wheel': <String, Object?>{'enabled': true},
+              'pinch': <String, Object?>{'enabled': true},
+              'mode': Mode.xy,
+            },
+          },
         },
       },
-      'y': <String, Object?>{
-        'type': 'linear',
-        'ticks': <String, Object?>{'includeBounds': false},
-        'afterFit': (Object? scale) {
-          (scale! as Scale).width = inputProbeYAxisWidth;
-        },
-      },
-    },
-    'plugins': <String, Object?>{
-      'zoom': <String, Object?>{
-        'pan': <String, Object?>{'enabled': true, 'mode': Mode.xy},
-        'zoom': <String, Object?>{
-          'wheel': <String, Object?>{'enabled': true},
-          'pinch': <String, Object?>{'enabled': true},
-          'mode': Mode.xy,
-        },
-      },
-    },
-  },
-  'plugins': <Object?>[plugin],
-};
+      'plugins': <Object?>[plugin],
+    };
 
 /// The app of the probe.
 class const InputProbeApp({

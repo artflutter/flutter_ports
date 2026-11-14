@@ -183,11 +183,10 @@ class ZoomPageState() extends State<ZoomPage> {
   /// updates of a zoom and a pan, rebuilds the readout and the actions after
   /// the frame. An update can run in a layout (the first update of the
   /// chart), where no widget can rebuild.
-  late final Map<String, Object?> _readoutPlugin = {
-    'id': 'zoomReadout',
-    'afterUpdate': (Object? chart, Object? args, Object? options) =>
-        _scheduleReadout(),
-  };
+  late final Plugin<Object?> _readoutPlugin = Plugin(
+    id: 'zoomReadout',
+    afterUpdate: (chart, args, options) => _scheduleReadout(),
+  );
 
   void _scheduleReadout() {
     if (_readoutScheduled) return;

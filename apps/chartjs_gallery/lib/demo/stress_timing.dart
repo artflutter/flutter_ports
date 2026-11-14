@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: the timing parts of a chart.
 
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Plugin;
+
 /// The time of four parts of the chart path, from the hooks of an inline
 /// plugin ([plugin]), in the ticks of a `Stopwatch` (Chart.js ADR 0031
 /// section 6).
@@ -58,42 +60,45 @@ final class StressChartTiming() {
   int _datasetsUpdateStart = 0;
   int _datasetsDrawStart = 0;
 
-  /// The inline plugin `stressChartTiming`. A hook returns Dart `null`
-  /// (JS `undefined`): it cancels nothing.
-  late final Map<String, Object?> plugin = <String, Object?>{
-    'id': 'stressChartTiming',
-    'supportsDataUpdates': true,
-    'beforeElementsUpdate': (Object? chart, Object? args, Object? options) {
+  /// The inline plugin `stressChartTiming`. Each cancelable hook returns
+  /// `true`: it cancels nothing.
+  late final Plugin<Object?> plugin = Plugin(
+    id: 'stressChartTiming',
+    supportsDataUpdates: true,
+    beforeElementsUpdate: (chart, args, options) {
       _elementsStart = _watch.elapsedTicks;
     },
-    'beforeLayout': (Object? chart, Object? args, Object? options) {
+    beforeLayout: (chart, args, options) {
       final now = _watch.elapsedTicks;
       if (_elementsStart >= 0) {
         elementsTicks += now - _elementsStart;
         _elementsStart = -1;
       }
       _layoutStart = now;
+      return true;
     },
-    'afterLayout': (Object? chart, Object? args, Object? options) {
+    afterLayout: (chart, args, options) {
       layoutTicks += _watch.elapsedTicks - _layoutStart;
     },
-    'beforeDatasetsUpdate': (Object? chart, Object? args, Object? options) {
+    beforeDatasetsUpdate: (chart, args, options) {
       if (_elementsStart >= 0) {
         elementsTicks += _watch.elapsedTicks - _elementsStart;
         _elementsStart = -1;
       }
       _datasetsUpdateStart = _watch.elapsedTicks;
+      return true;
     },
-    'afterDatasetsUpdate': (Object? chart, Object? args, Object? options) {
+    afterDatasetsUpdate: (chart, args, options) {
       datasetsUpdateTicks += _watch.elapsedTicks - _datasetsUpdateStart;
     },
-    'beforeDatasetsDraw': (Object? chart, Object? args, Object? options) {
+    beforeDatasetsDraw: (chart, args, options) {
       _datasetsDrawStart = _watch.elapsedTicks;
+      return true;
     },
-    'afterDatasetsDraw': (Object? chart, Object? args, Object? options) {
+    afterDatasetsDraw: (chart, args, options) {
       datasetsDrawTicks += _watch.elapsedTicks - _datasetsDrawStart;
     },
-  };
+  );
 
   /// The ticks of each part since the last call, by the name of the part:
   /// `elements`, `layout`, `datasetsUpdate` and `datasetsDraw`. It resets

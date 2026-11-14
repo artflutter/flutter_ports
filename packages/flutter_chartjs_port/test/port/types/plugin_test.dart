@@ -1,9 +1,5 @@
-// Original code, not ported from Chart.js: tests of the typed plugin objects.
+// Original code, not ported from Chart.js: tests of the native plugin objects.
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:test/test.dart';
@@ -15,150 +11,164 @@ final class _Chart() implements types.Chart {
 }
 
 void main() {
-  // The typed plugins of Chart.js ADR 0054 §12.
+  // The native plugins of Chart.js ADR 0144.
   group('PluginHook', () {
-    test('maps each JS name to its hook', () {
-      for (final hook in PluginHook.values) {
-        expect(PluginHook.of(hook.jsName), hook);
-        expect(Plugin.fieldNames, contains(hook.jsName));
-      }
+    test('has the 35 hooks with distinct JS names', () {
       expect(PluginHook.values, hasLength(35));
-      expect(PluginHook.of('myHook'), isNull);
+      expect({
+        for (final hook in PluginHook.values) hook.jsName,
+      }, hasLength(35));
+      expect(PluginHook.afterDraw.jsName, 'afterDraw');
+    });
+
+    test('is cancelable where upstream passes cancelable: true', () {
+      // core.controller.js:490, :612, :649, :671, :684, :712, :766, :788,
+      // :1167 and plugin.tooltip.js:1254.
+      expect(
+        [
+          for (final hook in PluginHook.values)
+            if (hook.cancelable) hook.jsName,
+        ],
+        [
+          'beforeUpdate',
+          'beforeDatasetsUpdate',
+          'beforeDatasetUpdate',
+          'beforeLayout',
+          'beforeRender',
+          'beforeDraw',
+          'beforeDatasetsDraw',
+          'beforeDatasetDraw',
+          'beforeEvent',
+          'beforeTooltipDraw',
+        ],
+      );
     });
   });
 
   group('Plugin', () {
-    test('keeps the fields in the order of the writes', () {
-      final plugin = Plugin()
-        ..id = 'p'
-        ..afterDraw = ((chart, args, options) => null)
-        ..defaults = {'a': 1}
-        ..['custom'] = 2;
-      expect(jsObjectKeys(plugin), ['id', 'afterDraw', 'defaults', 'custom']);
-      expect(jsGet(plugin, 'id'), 'p');
-      expect(jsGet(plugin, 'beforeDraw'), same(undefined));
-      expect(plugin['beforeDraw'], same(undefined));
-      expect(plugin.hookValue(PluginHook.beforeDraw), same(undefined));
-      expect(plugin.hookValue(PluginHook.afterDraw), isA<Function>());
-      expect(plugin['afterDraw'], isA<Function>());
-      expect(plugin.jsDelete('afterDraw'), isTrue);
-      expect(plugin.afterDraw, isNull);
-      expect(jsObjectKeys(plugin), ['id', 'defaults', 'custom']);
-    });
-
-    test('a hook of another type is kept, and its typed getter is null', () {
-      void raw(Object? chart) {}
-      final plugin = Plugin()..['beforeUpdate'] = raw;
-      expect(plugin.beforeUpdate, isNull);
-      expect(plugin.hookValue(PluginHook.beforeUpdate), same(raw));
-    });
-
-    test('invokeHook calls a typed hook with its argument class', () {
-      final chart = _Chart();
-      final options = <String, Object?>{};
-      final seen = <Object?>[];
-      final plugin = Plugin()
-        ..beforeEvent = (c, args, o) {
-          seen
-            ..add(args.event)
-            ..add(args.replay)
-            ..add(args.inChartArea);
-          args.changed = true;
-          return false;
-        };
-      final args = EventHookArgs(
-        event: null,
-        replay: undefined,
-        cancelable: true,
-        inChartArea: true,
-      );
-      final result = plugin.invokeHook(
-        PluginHook.beforeEvent,
-        plugin.hookValue(PluginHook.beforeEvent)!,
-        chart,
-        args,
-        options,
-      );
-      expect(result, isFalse);
-      expect(seen, [isNull, same(undefined), isTrue]);
-      expect(jsObjectKeys(args), [
-        'event',
-        'replay',
-        'cancelable',
-        'inChartArea',
-        'changed',
-      ]);
-      expect(args['changed'], isTrue);
-    });
-
-    test('invokeHook calls another function with JS arity', () {
+    test('calls the field of the hook with the typed arguments', () {
       final chart = _Chart();
       final calls = <Object?>[];
-      final plugin = Plugin();
-      plugin['resize'] = JsFunction((Object? self, Object? c) {
-        calls
-          ..add(self)
-          ..add(c);
-      });
-      plugin.invokeHook(
-        PluginHook.resize,
-        plugin.hookValue(PluginHook.resize)!,
-        chart,
-        ResizeHookArgs(size: const {'width': 1}),
-        const {},
+      final plugin = Plugin<Object?>(
+        id: 'p',
+        afterUpdate: (c, args, options) => calls.add([c, args.mode, options]),
+        beforeUpdate: (c, args, options) => false,
+        resize: (c, args, options) => calls.add(args.size.width),
       );
-      expect(calls, [same(plugin), same(chart)]);
+      expect(
+        plugin.notify(
+          PluginHook.afterUpdate,
+          chart,
+          UpdateHookArgs(mode: 'm'),
+          'view',
+        ),
+        isTrue,
+      );
+      expect(
+        plugin.notify(
+          PluginHook.beforeUpdate,
+          chart,
+          UpdateHookArgs(mode: 'm'),
+          'view',
+        ),
+        isFalse,
+      );
+      expect(
+        plugin.notify(
+          PluginHook.resize,
+          chart,
+          ResizeHookArgs(size: (width: 4.0, height: 5.0)),
+          'view',
+        ),
+        isTrue,
+      );
+      expect(calls, [
+        [same(chart), 'm', 'view'],
+        4.0,
+      ]);
+    });
+
+    test('an absent hook continues', () {
+      final plugin = Plugin<Object?>(id: 'p');
+      for (final hook in [PluginHook.beforeDraw, PluginHook.afterDraw]) {
+        expect(
+          plugin.notify(hook, _Chart(), const PluginHookArgs(), 'view'),
+          isTrue,
+        );
+      }
+    });
+
+    test('a hook field is writable', () {
+      final calls = <String>[];
+      final plugin = Plugin<Object?>(id: 'p');
+      void draw() => plugin.notify(
+        PluginHook.afterDraw,
+        _Chart(),
+        const PluginHookArgs(),
+        1,
+      );
+      plugin.afterDraw = (chart, args, options) {
+        calls.add('first');
+      };
+      draw();
+      plugin.afterDraw = (chart, args, options) {
+        calls.add('second');
+      };
+      draw();
+      expect(calls, ['first', 'second']);
+    });
+
+    test('the data-only and range guards read the options', () {
+      final plugin = Plugin<Object?>(
+        id: 'p',
+        supportsDataUpdates: true,
+        dataUpdateGuard: (options) => options == 'ok',
+      )..rangeUpdateGuard = (options) => options == 'range';
+      expect(plugin.allowsDataUpdates('ok'), isTrue);
+      expect(plugin.allowsDataUpdates('no'), isFalse);
+      expect(plugin.allowsRangeUpdates('range'), isTrue);
+      expect(plugin.allowsRangeUpdates('ok'), isFalse);
+      final off = Plugin<Object?>(id: 'off');
+      expect(off.allowsDataUpdates('ok'), isFalse);
+      expect(off.allowsRangeUpdates('range'), isFalse);
+    });
+
+    test('keeps its metadata', () {
+      final plugin = Plugin<Object?>(
+        id: 'p',
+        events: const ['click'],
+        defaults: const <String, Object?>{'a': 1.0},
+        defaultRoutes: const {'color': 'color'},
+        additionalOptionScopes: const ['interaction'],
+      );
+      expect(plugin.id, 'p');
+      expect(plugin.events, ['click']);
+      expect(plugin.defaults, {'a': 1.0});
+      expect(plugin.defaultRoutes, {'color': 'color'});
+      expect(plugin.additionalOptionScopes, ['interaction']);
+      expect('$plugin', 'Plugin(p)');
     });
   });
 
   group('hook arguments', () {
-    test('keep the key order of the upstream literals', () {
-      expect(jsObjectKeys(UpdateHookArgs(mode: undefined, cancelable: true)), [
-        'mode',
-        'cancelable',
-      ]);
-      expect(jsObjectKeys(UpdateHookArgs(mode: 'none')), ['mode']);
-      expect(jsGet(UpdateHookArgs(mode: undefined), 'mode'), same(undefined));
-      final dataset = DatasetUpdateHookArgs(
-        meta: null,
-        index: 1,
-        mode: 'm',
-        cancelable: true,
-      );
-      expect(jsObjectKeys(dataset), ['meta', 'index', 'mode', 'cancelable']);
-      dataset['cancelable'] = false;
-      expect(dataset.cancelable, isFalse);
-      expect(jsObjectKeys(DatasetDrawHookArgs(meta: null, index: 0)), [
-        'meta',
-        'index',
-      ]);
-      expect(jsObjectKeys(CancelableHookArgs(cancelable: true)), [
-        'cancelable',
-      ]);
-      expect(jsObjectKeys(TooltipDrawHookArgs(tooltip: 1)), ['tooltip']);
-      expect(jsObjectKeys(PluginHookArgs()), isEmpty);
-    });
-
-    test('a write by name of another type is foreign', () {
-      final args = CancelableHookArgs(cancelable: true)..['cancelable'] = 0;
-      expect(args.cancelable, isFalse);
-      expect(args['cancelable'], 0);
+    test('keep their values, and a hook writes changed and inChartArea', () {
+      final event = EventHookArgs(event: _Event(), replay: true);
+      expect(event.replay, isTrue);
+      expect(event.inChartArea, isFalse);
+      expect(event.changed, isFalse);
+      event
+        ..inChartArea = true
+        ..changed = true;
+      expect(event.inChartArea, isTrue);
+      expect(event.changed, isTrue);
+      expect(UpdateHookArgs(mode: 'none').mode, 'none');
+      expect(UpdateHookArgs(mode: 'none').layoutKept, isFalse);
     });
   });
+}
 
-  group('MapPlugin', () {
-    test('reads map[hook] and calls it with JS arity', () {
-      final calls = <Object?>[];
-      final map = <String, Object?>{'afterInit': JsFunction(calls.add)};
-      final plugin = MapPlugin(map);
-      expect(plugin.hookValue('beforeInit'), isNull);
-      plugin.invokeHook(
-        plugin.hookValue('afterInit')!,
-        _Chart(),
-        PluginHookArgs(),
-        const {},
-      );
-      expect(calls, [same(map)]);
-    });
-  });
+/// An event for [EventHookArgs]: each member throws.
+final class _Event() implements types.ChartEvent {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

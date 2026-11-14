@@ -51,16 +51,18 @@ final class _Spy() {
 /// layout stays valid. It unregisters at the end of the test.
 _Spy _spyOnCharts() {
   final spy = _Spy();
-  final plugin = Plugin(supportsDataUpdates: true)
-    ..id = r'$zoomDataOnlySpy'
-    ..beforeUpdate = (chart, args, options) {
+  final plugin = Plugin<Object?>(
+    id: r'$zoomDataOnlySpy',
+    supportsDataUpdates: true,
+    beforeUpdate: (chart, args, options) {
       spy.updates++;
-      return null;
-    }
-    ..beforeLayout = (chart, args, options) {
+      return true;
+    },
+    beforeLayout: (chart, args, options) {
       spy.layouts++;
-      return null;
-    };
+      return true;
+    },
+  );
   Chart.register([plugin]);
   addTearDown(() => Chart.unregister([plugin]));
   return spy;

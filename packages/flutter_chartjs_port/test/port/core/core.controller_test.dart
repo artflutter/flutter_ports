@@ -44,6 +44,7 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
@@ -219,43 +220,6 @@ final JsClass _testScale = JsClass(
   construct: (newTarget, args) => _TestScale(scaleCfgArg(args)),
 );
 
-/// The hooks that the spy plugin logs, in the order of the generator.
-const List<String> _hooks = [
-  'install',
-  'start',
-  'stop',
-  'uninstall',
-  'beforeInit',
-  'afterInit',
-  'resize',
-  'reset',
-  'beforeUpdate',
-  'beforeElementsUpdate',
-  'beforeLayout',
-  'beforeDataLimits',
-  'afterDataLimits',
-  'beforeBuildTicks',
-  'afterBuildTicks',
-  'afterLayout',
-  'beforeDatasetsUpdate',
-  'beforeDatasetUpdate',
-  'afterDatasetUpdate',
-  'afterDatasetsUpdate',
-  'afterUpdate',
-  'beforeRender',
-  'beforeDraw',
-  'beforeDatasetsDraw',
-  'beforeDatasetDraw',
-  'afterDatasetDraw',
-  'afterDatasetsDraw',
-  'afterDraw',
-  'afterRender',
-  'beforeEvent',
-  'afterEvent',
-  'beforeDestroy',
-  'afterDestroy',
-];
-
 /// The text of a value of a hook argument, as `argText` of the generator.
 String _argText(Object? value, Observations o) {
   if (value == null) return 'null';
@@ -268,31 +232,114 @@ String _argText(Object? value, Observations o) {
   return label != null ? '<$label>' : '<obj>';
 }
 
-/// The text `hook(key=value,...)` of one hook call.
-String _hookText(String hook, Object? args, Observations o) {
-  final keys = jsObjectKeys(args);
-  final texts = keys.map((k) => '$k=${_argText(jsGet(args, k), o)}');
-  return '$hook(${texts.join(',')})';
+/// The keys and values of the hook arguments [args] of [hook] in the key
+/// order of the upstream object (Chart.js ADR 0144): the native argument
+/// classes have no `cancelable` key, which upstream writes `true` before a
+/// cancelable hook and `false` before the after hook of the same object
+/// (core.controller.js:670-680, :786-808, :1162-1179). An absent `replay`
+/// is `undefined` upstream and `false` in the port, and upstream writes
+/// `changed` only with `true` (plugin.tooltip.js:1236-1241). The scale
+/// context keeps its face.
+List<(String, Object?)> _argEntries(PluginHook<Object> hook, Object args) {
+  final before = hook.cancelable;
+  return switch (args) {
+    UpdateHookArgs(:final mode) => [
+      ('mode', mode),
+      if (before) ('cancelable', true),
+    ],
+    DatasetUpdateHookArgs(:final meta, :final index, :final mode) => [
+      ('meta', meta),
+      ('index', index),
+      ('mode', mode),
+      ('cancelable', before),
+    ],
+    DatasetDrawHookArgs(:final meta, :final index) => [
+      ('meta', meta),
+      ('index', index),
+      ('cancelable', before),
+    ],
+    final EventHookArgs a => [
+      ('event', a.event),
+      ('replay', a.replay ? true : undefined),
+      ('cancelable', before),
+      ('inChartArea', a.inChartArea),
+      if (a.changed) ('changed', true),
+    ],
+    ResizeHookArgs(:final size) => [('size', size)],
+    TooltipDrawHookArgs(:final tooltip) => [
+      ('tooltip', tooltip),
+      if (before) ('cancelable', true),
+    ],
+    final JsObjectFace face => [
+      for (final k in jsObjectKeys(face)) (k, jsGet(face, k)),
+    ],
+    _ => [if (before) ('cancelable', true)],
+  };
 }
 
-/// The plugin `{id}` of the generator that logs each hook into [log].
-/// [results] gives the result of a hook by name.
-AnyObject _spy(
+/// The text `hook(key=value,...)` of one hook call.
+String _hookText(PluginHook<Object> hook, Object args, Observations o) {
+  final texts = _argEntries(
+    hook,
+    args,
+  ).map((e) => '${e.$1}=${_argText(e.$2, o)}');
+  return '${hook.jsName}(${texts.join(',')})';
+}
+
+/// The plugin `{id}` of the generator that logs each hook into [log]: each
+/// hook of the generator, which are the hooks without the tooltip hooks.
+/// [results] gives the result of a hook by name: `false` cancels a
+/// cancelable hook, and a hook that cannot cancel has no result.
+Plugin<Object?> _spy(
   String id,
   List<String> log,
   Observations o, [
   Map<String, Object?> results = const {},
 ]) {
-  final plugin = <String, Object?>{'id': id};
-  for (final hook in _hooks) {
-    Object? logHook(Object? chart, Object? args, Object? options) {
-      log.add(_hookText(hook, args, o));
-      return results[hook];
-    }
-
-    plugin[hook] = logHook;
-  }
-  return plugin;
+  PluginHookFunction<A, Object?> logs<A extends Object>(PluginHook<A> hook) =>
+      (chart, args, options) => log.add(_hookText(hook, args, o));
+  CancelableHookFunction<A, Object?> cancels<A extends Object>(
+    PluginHook<A> hook,
+  ) => (chart, args, options) {
+    log.add(_hookText(hook, args, o));
+    return !identical(results[hook.jsName], false);
+  };
+  return Plugin<Object?>(
+    id: id,
+    install: logs(PluginHook.install),
+    start: logs(PluginHook.start),
+    stop: logs(PluginHook.stop),
+    uninstall: logs(PluginHook.uninstall),
+    beforeInit: logs(PluginHook.beforeInit),
+    afterInit: logs(PluginHook.afterInit),
+    resize: logs(PluginHook.resize),
+    reset: logs(PluginHook.reset),
+    beforeUpdate: cancels(PluginHook.beforeUpdate),
+    beforeElementsUpdate: logs(PluginHook.beforeElementsUpdate),
+    beforeLayout: cancels(PluginHook.beforeLayout),
+    beforeDataLimits: logs(PluginHook.beforeDataLimits),
+    afterDataLimits: logs(PluginHook.afterDataLimits),
+    beforeBuildTicks: logs(PluginHook.beforeBuildTicks),
+    afterBuildTicks: logs(PluginHook.afterBuildTicks),
+    afterLayout: logs(PluginHook.afterLayout),
+    beforeDatasetsUpdate: cancels(PluginHook.beforeDatasetsUpdate),
+    beforeDatasetUpdate: cancels(PluginHook.beforeDatasetUpdate),
+    afterDatasetUpdate: logs(PluginHook.afterDatasetUpdate),
+    afterDatasetsUpdate: logs(PluginHook.afterDatasetsUpdate),
+    afterUpdate: logs(PluginHook.afterUpdate),
+    beforeRender: cancels(PluginHook.beforeRender),
+    beforeDraw: cancels(PluginHook.beforeDraw),
+    beforeDatasetsDraw: cancels(PluginHook.beforeDatasetsDraw),
+    beforeDatasetDraw: cancels(PluginHook.beforeDatasetDraw),
+    afterDatasetDraw: logs(PluginHook.afterDatasetDraw),
+    afterDatasetsDraw: logs(PluginHook.afterDatasetsDraw),
+    afterDraw: logs(PluginHook.afterDraw),
+    afterRender: logs(PluginHook.afterRender),
+    beforeEvent: cancels(PluginHook.beforeEvent),
+    afterEvent: logs(PluginHook.afterEvent),
+    beforeDestroy: logs(PluginHook.beforeDestroy),
+    afterDestroy: logs(PluginHook.afterDestroy),
+  );
 }
 
 /// The config of a `test` chart with [datasets] on two `testlinear` scales.
@@ -397,10 +444,15 @@ final class const _Point(@override final double? x, @override final double? y)
 
 /// Runs the scenario [name] of the reference: [body] observes, and the
 /// charts of [body] are destroyed at the end, as in the generator.
+///
+/// [port] replaces the reference line of each of its observations with the
+/// line of the port: a difference that a decision of the port gives, with
+/// its reason at the call.
 void _scenario(
   String name,
-  void Function(Observations o, List<Chart> charts) body,
-) {
+  void Function(Observations o, List<Chart> charts) body, {
+  Map<String, String> port = const {},
+}) {
   test(name, () {
     final o = Observations();
     final charts = <Chart>[];
@@ -411,7 +463,16 @@ void _scenario(
         chart.destroy();
       }
     }
-    expect(o.text, controllerReference[name]);
+    final expected = [
+      for (final line in controllerReference[name]!.split('\n'))
+        switch (port.entries.where((e) => line.startsWith('${e.key}: '))) {
+          final Iterable<MapEntry<String, String>> found
+              when found.isNotEmpty =>
+            '${found.first.key}: ${found.first.value}',
+          _ => line,
+        },
+    ].join('\n');
+    expect(o.text, expected);
   });
 }
 
@@ -598,9 +659,18 @@ void main() {
         cancel.update();
         o.observe(hook, cancelLog.join(' '));
       }
+      // The kind of a native hook is the `args.cancelable` of upstream
+      // (Chart.js ADR 0144): the notify `beforeUpdate` with `{cancelable:
+      // true}` is the notify of the cancelable hook `beforeUpdate`, and the
+      // notify with `{}` or without arguments of a hook that returns `false`
+      // is the notify of a hook that cannot cancel, `resize` and
+      // `afterRender`, which no built-in plugin has.
       o.observe(
         'notify',
-        chart.notifyPlugins('beforeUpdate', {'cancelable': true}),
+        chart.notifyPlugins(
+          PluginHook.beforeUpdate,
+          UpdateHookArgs(mode: undefined),
+        ),
       );
       final falseLog = <String>[];
       final falsy = Chart(
@@ -608,7 +678,11 @@ void main() {
         _testConfig(
           [],
           plugins: [
-            _spy('spy', falseLog, o, {'beforeUpdate': false}),
+            _spy('spy', falseLog, o, {
+              'beforeUpdate': false,
+              'resize': false,
+              'afterRender': false,
+            }),
           ],
         ),
       );
@@ -616,10 +690,19 @@ void main() {
       o
         ..observe(
           'notify false cancelable',
-          falsy.notifyPlugins('beforeUpdate', {'cancelable': true}),
+          falsy.notifyPlugins(
+            PluginHook.beforeUpdate,
+            UpdateHookArgs(mode: undefined),
+          ),
         )
-        ..observe('notify false', falsy.notifyPlugins('beforeUpdate', {}))
-        ..observe('notify no args', falsy.notifyPlugins('beforeUpdate'))
+        ..observe(
+          'notify false',
+          falsy.notifyPlugins(
+            PluginHook.resize,
+            ResizeHookArgs(size: (width: 0, height: 0)),
+          ),
+        )
+        ..observe('notify no args', falsy.notifyPlugins(PluginHook.afterRender))
         ..observe('enabled spy', chart.isPluginEnabled('spy'))
         ..observe('enabled other', chart.isPluginEnabled('other'));
       final failed = Chart(<String, Object?>{}, <String, Object?>{});
@@ -627,7 +710,10 @@ void main() {
       o
         ..observe(
           'failed notify',
-          failed.notifyPlugins('beforeUpdate', {'cancelable': true}) ??
+          failed.notifyPlugins(
+                PluginHook.beforeUpdate,
+                UpdateHookArgs(mode: undefined),
+              ) ??
               'undefined',
         )
         ..observe(
@@ -855,14 +941,13 @@ void main() {
           [_points('a'), _points('b')],
           plugins: [
             _spy('spy', log, o),
-            <String, Object?>{
-              'id': 'clicks',
-              'beforeEvent': (Object? c, Object? args) {
-                log.add(
-                  'clicks ${(jsGet(args, 'event')! as types.ChartEvent).type}',
-                );
+            Plugin<Object?>(
+              id: 'clicks',
+              beforeEvent: (c, args, options) {
+                log.add('clicks ${args.event.type}');
+                return true;
               },
-            },
+            ),
           ],
           options: options,
         ),
@@ -1144,43 +1229,49 @@ void main() {
         );
     });
 
-    _scenario('statics', (o, charts) {
-      o
-        ..observe('version', Chart.version)
-        ..observe(
-          'register forms',
-          error(
-            () => Chart.register([
-              [
+    _scenario(
+      'statics',
+      (o, charts) {
+        o
+          ..observe('version', Chart.version)
+          ..observe(
+            'register forms',
+            error(
+              () => Chart.register([
                 [
-                  <String, Object?>{'id': 'x'},
+                  [Plugin<Object?>(id: 'x')],
                 ],
-              ],
-            ]),
-          ),
-        );
-      final log = <String>[];
-      final chart = Chart(_Canvas(), _testConfig([]));
-      charts.add(chart);
-      chart.notifyPlugins('afterRender');
-      final plugin = _spy('late', log, o);
-      Chart.register([plugin]);
-      o.observe('cache after register', chart.plugins.cache ?? 'undefined');
-      chart.notifyPlugins('afterDraw');
-      o.observe('late plugin', log.join(' '));
-      Chart.unregister([plugin]);
-      log.clear();
-      chart.notifyPlugins('afterDraw');
-      o
-        ..observe('after unregister', log.join(' '))
-        ..observe('BasicPlatform', chart.platform is BasicPlatform);
-      final own = Chart(_Canvas(), <String, Object?>{
-        'platform': BasicPlatform.jsClass,
-        'type': 'test',
-      });
-      charts.add(own);
-      o.observe('config platform', own.platform.runtimeType);
-    });
+              ]),
+            ),
+          );
+        final log = <String>[];
+        final chart = Chart(_Canvas(), _testConfig([]));
+        charts.add(chart);
+        chart.notifyPlugins(PluginHook.afterRender);
+        final plugin = _spy('late', log, o);
+        Chart.register([plugin]);
+        o.observe('cache after register', chart.plugins.cache ?? 'undefined');
+        chart.notifyPlugins(PluginHook.afterDraw);
+        o.observe('late plugin', log.join(' '));
+        Chart.unregister([plugin]);
+        log.clear();
+        chart.notifyPlugins(PluginHook.afterDraw);
+        o
+          ..observe('after unregister', log.join(' '))
+          ..observe('BasicPlatform', chart.platform is BasicPlatform);
+        final own = Chart(_Canvas(), <String, Object?>{
+          'platform': BasicPlatform.jsClass,
+          'type': 'test',
+        });
+        charts.add(own);
+        o.observe('config platform', own.platform.runtimeType);
+      },
+      // The inner List `[x]` reaches the registry of the plugins. Upstream
+      // throws there for its missing `id` (core.typedRegistry.js:46), and the
+      // port stops a debug build first: a plugin is a Plugin (Chart.js ADR
+      // 0126, core.registry.dart `_exec`).
+      port: const {'register forms': '_AssertionError'},
+    );
   });
 
   group('the meta clip', () {
@@ -1458,11 +1549,11 @@ void main() {
     });
 
     test('a List of items registers each item in its order', () {
-      final a = <String, Object?>{'id': 'formA'};
-      final b = <String, Object?>{'id': 'formB'};
-      final c = <String, Object?>{'id': 'formC'};
-      final d = <String, Object?>{'id': 'formD'};
-      final e = <String, Object?>{'id': 'formE'};
+      final a = Plugin<Object?>(id: 'formA');
+      final b = Plugin<Object?>(id: 'formB');
+      final c = Plugin<Object?>(id: 'formC');
+      final d = Plugin<Object?>(id: 'formD');
+      final e = Plugin<Object?>(id: 'formE');
       Chart.register([a]);
       Chart.register([b, c]);
       Chart.register([
@@ -1487,21 +1578,16 @@ void main() {
     });
 
     test('a nested List and Dart null throw', () {
+      // The inner List reaches the registry of the plugins: upstream throws
+      // for its missing `id`, and the port stops a debug build first, because
+      // a plugin is a Plugin (Chart.js ADR 0144).
       expect(
         () => Chart.register([
           [
-            [
-              <String, Object?>{'id': 'nested'},
-            ],
+            [Plugin<Object?>(id: 'nested')],
           ],
         ]),
-        throwsA(
-          isA<StateError>().having(
-            (e) => e.message,
-            'message',
-            'class does not have id: [object Object]',
-          ),
-        ),
+        throwsA(isA<AssertionError>()),
       );
       expect(() => Chart.register([null]), throwsA(isA<TypeError>()));
     });
@@ -1509,9 +1595,9 @@ void main() {
     test('a register invalidates the plugins of each chart', () {
       final chart = Chart(_Canvas(), <String, Object?>{});
       addTearDown(chart.destroy);
-      chart.notifyPlugins('afterRender');
+      chart.notifyPlugins(PluginHook.afterRender);
       expect(chart.plugins.cache, isNotNull);
-      final plugin = <String, Object?>{'id': 'invalidates'};
+      final plugin = Plugin<Object?>(id: 'invalidates');
       Chart.register([plugin]);
       addTearDown(() => Chart.unregister([plugin]));
       expect(chart.plugins.cache, isNull);
@@ -1797,10 +1883,10 @@ void main() {
         _testConfig(
           [_points('a')],
           plugins: [
-            <String, Object?>{
-              'id': 'draws',
-              'afterDraw': (Object? c, Object? args) => draws++,
-            },
+            Plugin<Object?>(
+              id: 'draws',
+              afterDraw: (c, args, options) => draws++,
+            ),
           ],
           options: <String, Object?>{
             'animation': <String, Object?>{'duration': 100, 'loop': true},

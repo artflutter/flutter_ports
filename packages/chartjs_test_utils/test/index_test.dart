@@ -7,6 +7,7 @@ import 'dart:ui' show Size;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/src/index.dart' show charts;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 // acquireChart, releaseChart and releaseCharts of chartjs-test-utils 0.4.0
@@ -20,16 +21,16 @@ import 'package:flutter_test/flutter_test.dart';
 final List<String> _destroys = [];
 
 /// An inline plugin that logs the destroy hooks into [_destroys] as
-/// `'<name> <hook>'`.
-Map<String, Object?> _destroyLog(String name) => <String, Object?>{
-  'id': 'destroyLog',
-  'beforeDestroy': (Object? chart, Object? args, Object? options) {
+/// `'<name> <hook>'`. It is a native plugin (Chart.js ADR 0144).
+Plugin<Object?> _destroyLog(String name) => Plugin<Object?>(
+  id: 'destroyLog',
+  beforeDestroy: (chart, args, options) {
     _destroys.add('$name beforeDestroy');
   },
-  'afterDestroy': (Object? chart, Object? args, Object? options) {
+  afterDestroy: (chart, args, options) {
     _destroys.add('$name afterDestroy');
   },
-};
+);
 
 /// A chart of [acquireChart] whose plugin logs as [name].
 Chart _acquire(String name, [Map<String, Object?>? options]) =>

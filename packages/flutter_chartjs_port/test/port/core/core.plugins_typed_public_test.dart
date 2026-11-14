@@ -1,19 +1,19 @@
-// Original code, not ported from Chart.js: a typed plugin from the public API.
+// Original code, not ported from Chart.js: a native plugin from the public API.
 @TestOn('vm')
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/helpers.dart' show ContextResolver;
 import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// The typed plugin API of Chart.js ADR 0108 for a plugin of an add-on port:
-// this file imports only the public libraries of the package and the
-// harness. The plugin has the keys of the plugin object of
+// The native plugin API of Chart.js ADRs 0108 and 0126 for a plugin of an
+// add-on port: this file imports only the public libraries of the package
+// and the harness. The plugin has the hooks of the plugin object of
 // chartjs-plugin-zoom (`src/plugin.ts:64-152` of chartjs-plugin-zoom) in its
-// order: typed hooks, and extras that `jsWrite` stores. Each hook declares
-// its chart as `Object` and casts it to `Chart` once, because the hook type
-// names the internal chart interface.
+// order. Each hook declares its chart as `Object` and casts it to `Chart`
+// once, because the hook type names the internal chart interface.
 
 /// The hook calls of the plugins of this file, in call order.
 final List<String> _calls = <String>[];
@@ -34,100 +34,73 @@ void _record(String hook, Object chart, Object options) {
 /// Whether [_beforeEvent] cancels the event.
 bool _cancelEvents = false;
 
-/// The event type and `cancelable` of the calls of [_beforeEvent], at the
-/// call: the chart passes the same args object to `afterEvent` with
-/// `cancelable: false` (core.controller.js:1178).
-final List<(String?, bool)> _events = <(String?, bool)>[];
+/// The event types of the calls of [_beforeEvent].
+final List<String> _events = <String>[];
 
-Object? _start(Object chart, PluginHookArgs args, Object options) {
+void _start(Object chart, PluginHookArgs args, ContextResolver options) {
   _record('start', chart, options);
-  return null;
 }
 
-Object? _beforeEvent(Object chart, EventHookArgs args, Object options) {
+bool _beforeEvent(Object chart, EventHookArgs args, ContextResolver options) {
   _record('beforeEvent', chart, options);
-  _events.add((args.event?.type, args.cancelable));
-  return _cancelEvents ? false : null;
+  _events.add(args.event.type);
+  return !_cancelEvents;
 }
 
-Object? _beforeUpdate(Object chart, UpdateHookArgs args, Object options) {
+bool _beforeUpdate(Object chart, UpdateHookArgs args, ContextResolver options) {
   _record('beforeUpdate ${args.mode}', chart, options);
-  return null;
+  return true;
 }
 
-Object? _beforeDatasetsDraw(
+bool _beforeDatasetsDraw(
   Object chart,
-  CancelableHookArgs args,
-  Object options,
+  PluginHookArgs args,
+  ContextResolver options,
 ) {
   _record('beforeDatasetsDraw', chart, options);
-  return null;
+  return true;
 }
 
-Object? _afterDatasetsDraw(Object chart, PluginHookArgs args, Object options) {
+void _afterDatasetsDraw(
+  Object chart,
+  PluginHookArgs args,
+  ContextResolver options,
+) {
   _record('afterDatasetsDraw', chart, options);
-  return null;
 }
 
-Object? _beforeDraw(Object chart, CancelableHookArgs args, Object options) {
+bool _beforeDraw(Object chart, PluginHookArgs args, ContextResolver options) {
   _record('beforeDraw', chart, options);
-  return null;
+  return true;
 }
 
-Object? _afterDraw(Object chart, PluginHookArgs args, Object options) {
+void _afterDraw(Object chart, PluginHookArgs args, ContextResolver options) {
   _record('afterDraw', chart, options);
-  return null;
 }
 
-Object? _stop(Object chart, PluginHookArgs args, Object options) {
+void _stop(Object chart, PluginHookArgs args, ContextResolver options) {
   _record('stop', chart, options);
-  return null;
 }
 
-/// The extras of the plugin: the function tables of chartjs-plugin-zoom.
-final Map<String, Object?> _panFunctions = <String, Object?>{};
-final Map<String, Object?> _zoomFunctions = <String, Object?>{};
-final Map<String, Object?> _zoomRectFunctions = <String, Object?>{};
-
-/// The keys of the plugin object of chartjs-plugin-zoom, in its order.
-const List<String> _upstreamKeys = [
-  'id',
-  'version',
-  'defaults',
-  'start',
-  'beforeEvent',
-  'beforeUpdate',
-  'beforeDatasetsDraw',
-  'afterDatasetsDraw',
-  'beforeDraw',
-  'afterDraw',
-  'stop',
-  'panFunctions',
-  'zoomFunctions',
-  'zoomRectFunctions',
-];
-
-/// A plugin with the keys of the zoom plugin object, in its order.
-Plugin _zoomLike({bool supportsDataUpdates = true}) =>
-    Plugin(supportsDataUpdates: supportsDataUpdates)
-      ..id = 'zoomLike'
-      ..jsWrite('version', '2.2.0')
-      ..defaults = <String, Object?>{
+/// A plugin with the hooks of the zoom plugin object, in its order.
+Plugin<ContextResolver> _zoomLike({bool supportsDataUpdates = true}) =>
+    Plugin<ContextResolver>(
+      id: 'zoomLike',
+      defaults: <String, Object?>{
         'mode': 'xy',
         'speed': 0.1,
         'nested': <String, Object?>{'enabled': false},
-      }
-      ..start = _start
-      ..beforeEvent = _beforeEvent
-      ..beforeUpdate = _beforeUpdate
-      ..beforeDatasetsDraw = _beforeDatasetsDraw
-      ..afterDatasetsDraw = _afterDatasetsDraw
-      ..beforeDraw = _beforeDraw
-      ..afterDraw = _afterDraw
-      ..stop = _stop
-      ..jsWrite('panFunctions', _panFunctions)
-      ..jsWrite('zoomFunctions', _zoomFunctions)
-      ..jsWrite('zoomRectFunctions', _zoomRectFunctions);
+      },
+      start: _start,
+      beforeEvent: _beforeEvent,
+      beforeUpdate: _beforeUpdate,
+      beforeDatasetsDraw: _beforeDatasetsDraw,
+      afterDatasetsDraw: _afterDatasetsDraw,
+      beforeDraw: _beforeDraw,
+      afterDraw: _afterDraw,
+      stop: _stop,
+      supportsDataUpdates: supportsDataUpdates,
+    );
 
 /// A line chart with fixed value bounds, so that `updateData` can keep the
 /// layout (Chart.js ADR 0074). [plugins] are the inline plugins, and
@@ -172,33 +145,26 @@ void main() {
     _cancelEvents = false;
   });
 
-  group('a typed plugin of the public API', () {
-    test('keeps the keys and the extras in insertion order', () {
+  group('a native plugin of the public API', () {
+    test('keeps its id and its hooks in typed fields', () {
       final plugin = _zoomLike();
-      expect(plugin.jsKeys(), _upstreamKeys);
       expect(plugin.id, 'zoomLike');
-      expect(plugin.jsRead('version'), '2.2.0');
-      expect(plugin['panFunctions'], same(_panFunctions));
-      expect(plugin.jsRead('zoomRectFunctions'), same(_zoomRectFunctions));
-      expect(plugin.jsHas('zoomFunctions'), isTrue);
-      expect(plugin.jsRead('afterEvent'), same(undefined));
       // A hook declared with `Object chart` has the type of the hook.
-      expect(_beforeEvent, isA<PluginHookFunction<EventHookArgs>>());
-      expect(_beforeEvent, isNot(isA<PluginHookFunction<PluginHookArgs>>()));
+      expect(
+        _beforeEvent,
+        isA<CancelableHookFunction<EventHookArgs, ContextResolver>>(),
+      );
+      expect(
+        _afterDraw,
+        isA<PluginHookFunction<PluginHookArgs, ContextResolver>>(),
+      );
       expect(plugin.start, same(_start));
       expect(plugin.beforeEvent, same(_beforeEvent));
       expect(plugin.beforeUpdate, same(_beforeUpdate));
       expect(plugin.beforeDatasetsDraw, same(_beforeDatasetsDraw));
       expect(plugin.afterDraw, same(_afterDraw));
       expect(plugin.stop, same(_stop));
-      // A write of a key that the plugin owns keeps its place.
-      plugin.jsWrite('version', '2.2.1');
-      expect(plugin.jsKeys(), _upstreamKeys);
-      expect(plugin.jsDelete('version'), isTrue);
-      expect(plugin.jsKeys(), [
-        for (final key in _upstreamKeys)
-          if (key != 'version') key,
-      ]);
+      expect(plugin.afterEvent, isNull);
     });
 
     testWidgets('gets the typed calls of a registered plugin', (tester) async {
@@ -250,8 +216,7 @@ void main() {
         'x': 256,
         'y': 256,
       });
-      expect(_events, hasLength(1));
-      expect(_events.single, ('mousemove', true));
+      expect(_events, ['mousemove']);
       expect(hovers, 1);
 
       _cancelEvents = true;
@@ -263,42 +228,26 @@ void main() {
       expect(hovers, 1);
     });
 
-    testWidgets('calls a hook that jsWrite replaces, and keeps the key order', (
-      tester,
-    ) async {
+    testWidgets('calls a hook that a field write replaces', (tester) async {
       final plugin = _zoomLike();
       final chart = acquireChart(_config(plugins: [plugin]));
 
-      // A spy with the type of the hook: a typed call.
       final typed = <Object>[];
-      Object? spy(Object chart, UpdateHookArgs args, Object options) {
+      final original = plugin.beforeUpdate;
+      plugin.beforeUpdate = (chart, args, options) {
         typed.add(args);
-        return null;
-      }
-
-      final original = plugin.jsRead('beforeUpdate');
-      plugin.jsWrite('beforeUpdate', spy);
-      expect(plugin.jsKeys(), _upstreamKeys);
-      expect(plugin.beforeUpdate, same(spy));
+        return true;
+      };
       _calls.clear();
       chart.update();
       expect(typed, hasLength(1));
       expect(typed.single, isA<UpdateHookArgs>());
       expect(_calls, isNot(contains(startsWith('beforeUpdate'))));
 
-      // A spy of another type: no typed hook, a call with JS arity.
-      var untyped = 0;
-      plugin.jsWrite('beforeUpdate', () => untyped++);
-      expect(plugin.beforeUpdate, isNull);
-      chart.update();
-      expect(untyped, 1);
-
-      plugin.jsWrite('beforeUpdate', original);
-      expect(plugin.beforeUpdate, same(_beforeUpdate));
+      plugin.beforeUpdate = original;
       _calls.clear();
       chart.update();
       expect(_calls.first, 'beforeUpdate undefined');
-      expect(plugin.jsKeys(), _upstreamKeys);
     });
 
     for (final approved in [false, true]) {

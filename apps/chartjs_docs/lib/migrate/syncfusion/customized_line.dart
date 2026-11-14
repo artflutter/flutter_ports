@@ -21,9 +21,9 @@ const List<double> _share = [2.9, 2.7, 2.3, 2.5, 2.2, 1.9, 1.6, 1.5, 1.9, 2];
 // The custom renderer of the original draws a dashed line at the highest
 // and at the lowest value, with a label. Here an inline plugin draws them
 // after the datasets.
-final Map<String, Object?> _highLow = {
-  'id': 'highLow',
-  'afterDatasetsDraw': (Chart chart, Object? args, Object? options) {
+final _highLow = Plugin<Object?>(
+  id: 'highLow',
+  afterDatasetsDraw: (chart, args, options) {
     final points = chart.getDatasetMeta(1).data;
     final y = chart.scales['y']!;
     final left = points.first.x;
@@ -55,7 +55,7 @@ final Map<String, Object?> _highLow = {
       ..fillText('Low point', points[lowIndex].x, low + 10)
       ..restore();
   },
-};
+);
 
 List<String>? _percent(
   Scale scale,

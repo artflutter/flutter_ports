@@ -87,14 +87,20 @@ final _draw = _Phase();
 final _busyMs = <double>[];
 var _measuring = false;
 
-Map<String, Object?> _timingPlugin() => <String, Object?>{
-  'id': 'labMatrixTiming',
-  'supportsDataUpdates': true,
-  'beforeUpdate': (Object? c, Object? a, Object? o) => _update.begin(),
-  'afterUpdate': (Object? c, Object? a, Object? o) => _update.end(),
-  'beforeDraw': (Object? c, Object? a, Object? o) => _draw.begin(),
-  'afterDraw': (Object? c, Object? a, Object? o) => _draw.end(),
-};
+cj.Plugin<Object?> _timingPlugin() => cj.Plugin(
+  id: 'labMatrixTiming',
+  supportsDataUpdates: true,
+  beforeUpdate: (c, a, o) {
+    _update.begin();
+    return true;
+  },
+  afterUpdate: (c, a, o) => _update.end(),
+  beforeDraw: (c, a, o) {
+    _draw.begin();
+    return true;
+  },
+  afterDraw: (c, a, o) => _draw.end(),
+);
 
 void _measureFrames() {
   late void Function(Duration) onFrame;

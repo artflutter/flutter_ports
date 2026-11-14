@@ -38,19 +38,18 @@ LineDataset _group(int index, String name) {
 
 /// The `updaters` of `ColorEncode`: when a point is selected, the other
 /// groups fade to the alpha 100.
-final Map<String, Object?> _fadeOtherGroups = {
-  'id': 'fadeOtherGroups',
-  'beforeDatasetDraw': (Chart chart, Object? args, Object? options) {
-    final index = (args! as JsObjectFace)['index']! as num;
-    final active = chart.getActiveElements();
+final _fadeOtherGroups = Plugin<Object?>(
+  id: 'fadeOtherGroups',
+  beforeDatasetDraw: (chart, args, options) {
+    final active = (chart as Chart).getActiveElements();
     final ctx = chart.ctx!..save();
-    if (active.isNotEmpty && active.first.datasetIndex != index) {
+    if (active.isNotEmpty && active.first.datasetIndex != args.index) {
       ctx.globalAlpha = 100 / 255;
     }
+    return true;
   },
-  'afterDatasetDraw': (Chart chart, Object? args, Object? options) =>
-      chart.ctx!.restore(),
-};
+  afterDatasetDraw: (chart, args, options) => chart.ctx!.restore(),
+);
 
 /// `OrdinalScale(tickCount: 5, inflate: true)`.
 List<String>? _dateLabel(

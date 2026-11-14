@@ -337,19 +337,20 @@ void main() {
         },
         'plugins': <Object?>[
           if (shadow)
-            <String, Object?>{
-              'id': 'lineShadow',
-              'beforeDatasetDraw': (Chart c, Object? args, Object? options) {
-                c.ctx!
+            Plugin<Object?>(
+              id: 'lineShadow',
+              beforeDatasetDraw: (c, args, options) {
+                (c as Chart).ctx!
                   ..save()
                   ..shadowColor = _red
                   ..shadowBlur = 8
                   ..shadowOffsetY = 20;
+                return true;
               },
-              'afterDatasetDraw': (Chart c, Object? args, Object? options) {
-                c.ctx!.restore();
+              afterDatasetDraw: (c, args, options) {
+                (c as Chart).ctx!.restore();
               },
-            },
+            ),
         ],
       });
       final source = (chart.canvas! as UiCanvasElement).toImageSource();

@@ -26,6 +26,7 @@ import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
@@ -1262,7 +1263,7 @@ void main() {
       });
       final scopes = config.getOptionScopes(
         undefined,
-        config.pluginScopeKeys(<String, Object?>{'id': 'tooltip'}),
+        config.pluginScopeKeys(Plugin<Object?>(id: 'tooltip')),
       );
       expect(scopes.first, same(_at(compiled, 'plugins.tooltip')));
       final resolver = config.createResolver(scopes, <String, Object?>{});

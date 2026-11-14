@@ -12,7 +12,7 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 import '../../fixture_events.dart';
 
@@ -80,8 +80,10 @@ Map<String, Object?> fixture() => <String, Object?>{
       'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},
     },
     'plugins': <Object?>[
-      <String, Object?>{
-        'afterDraw': (types.Chart chart) {
+      // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
+      Plugin<Object?>(
+        id: 'inline',
+        afterDraw: (chart, _, _) {
           // const canvas = chart.canvas;
           // const rect = canvas.getBoundingClientRect();
           final point = chart.getDatasetMeta(0).data[1];
@@ -92,7 +94,7 @@ Map<String, Object?> fixture() => <String, Object?>{
             ..handleEvent(event)
             ..draw(chart.ctx!);
         },
-      },
+      ),
     ],
   },
   'options': <String, Object?>{

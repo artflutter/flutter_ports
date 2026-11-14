@@ -44,10 +44,10 @@ String? _tooltipLabel(TooltipItem item) =>
     '${item.label.join(" ")} : ${item.formattedValue}mm';
 
 // TrackballBehavior draws a vertical line at the active point.
-final Map<String, Object?> _trackball = {
-  'id': 'trackball',
-  'afterDatasetsDraw': (Chart chart, Object? args, Object? options) {
-    final active = chart.getActiveElements();
+final _trackball = Plugin<Object?>(
+  id: 'trackball',
+  afterDatasetsDraw: (chart, args, options) {
+    final active = (chart as Chart).getActiveElements();
     if (active.isEmpty) return;
     final area = chart.chartArea!;
     final x = active.first.element!.x;
@@ -61,7 +61,7 @@ final Map<String, Object?> _trackball = {
       ..stroke()
       ..restore();
   },
-};
+);
 
 final ChartConfig _config = ChartConfig(
   type: .line,

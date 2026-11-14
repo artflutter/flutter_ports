@@ -84,12 +84,13 @@ Widget _view({
 /// unregistered at the end of the test.
 List<int> _spyOnUpdates() {
   final updates = [0];
-  final plugin = Plugin()
-    ..id = r'$zoomUpdateSpy'
-    ..beforeUpdate = (chart, args, options) {
+  final plugin = Plugin<Object?>(
+    id: r'$zoomUpdateSpy',
+    beforeUpdate: (chart, args, options) {
       updates[0]++;
-      return null;
-    };
+      return true;
+    },
+  );
   Chart.register([plugin]);
   addTearDown(() => Chart.unregister([plugin]));
   return updates;

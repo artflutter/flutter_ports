@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -461,12 +462,12 @@ void main() {
       var updates = 0;
       final config = _one(const {}, <Object?>[1.0, 2.0, 3.0])
         ..['plugins'] = <Object?>[
-          <String, Object?>{
-            'id': 'countUpdates',
-            'afterUpdate': (Object? chart, Object? args, Object? options) {
+          Plugin<Object?>(
+            id: 'countUpdates',
+            afterUpdate: (chart, args, options) {
               updates++;
             },
-          },
+          ),
         ];
       final chart = acquireChart(config);
       final legend = chart.legend!;

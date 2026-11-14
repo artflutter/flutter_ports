@@ -30,6 +30,8 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 /// core.registry.js:11 `Registry`.
 ///
@@ -185,7 +187,8 @@ final class Registry() {
       final reg = typedRegistry ?? _getRegistryForType(arg);
       if (typedRegistry != null ||
           reg.isForType(arg) ||
-          (identical(reg, plugins) && jsTruthy(jsGet(arg, 'id')))) {
+          (identical(reg, plugins) &&
+              (arg is Plugin<Object?> || jsTruthy(jsGet(arg, 'id'))))) {
         _exec(method, reg, arg);
       } else {
         // Handle loopable args
@@ -211,7 +214,18 @@ final class Registry() {
   ///
   /// The callbacks get [component] as `this`. The call
   /// `registry[method](component)` is a `switch` on the two method names.
+  ///
+  /// A plugin is a native [Plugin] (Chart.js ADR 0144). Another value for the
+  /// registry of the plugins stops a debug build, and a release build skips
+  /// it.
   void _exec(String method, TypedRegistry registry, Object? component) {
+    if (identical(registry, plugins) &&
+        component != null &&
+        component is! Undefined &&
+        component is! Plugin<Object?>) {
+      assert(false, 'A plugin is a Plugin, not $component.');
+      return;
+    }
     final camelMethod = capitalize(method);
     // beforeRegister / beforeUnregister
     callback(jsGet(component, 'before$camelMethod'), const [], component);

@@ -45,6 +45,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/legend_item.dart';
@@ -152,12 +153,72 @@ Map<String, Object?> _labelOptionsOf(Chart chart) =>
             as Map<String, Object?>)['labels']!
         as Map<String, Object?>;
 
+/// An inline plugin [id] with the hooks of the names [hooks] (Chart.js ADR
+/// 0126): each calls [run] with its name and the chart. A cancelable hook
+/// cancels when [run] gives `false`, as `_notify` (core.plugins.js:66).
+Plugin<Object?> _plugin(
+  String id,
+  Iterable<String> hooks,
+  Object? Function(String hook, Chart chart) run,
+) {
+  assert(
+    hooks.every((name) => PluginHook.values.any((h) => h.jsName == name)),
+    'a hook name: $hooks',
+  );
+  PluginHookFunction<A, Object?>? call<A extends Object>(PluginHook<A> hook) =>
+      hooks.contains(hook.jsName)
+      ? (chart, args, options) => run(hook.jsName, chart as Chart)
+      : null;
+  CancelableHookFunction<A, Object?>? cancel<A extends Object>(
+    PluginHook<A> hook,
+  ) => hooks.contains(hook.jsName)
+      ? (chart, args, options) =>
+            !identical(run(hook.jsName, chart as Chart), false)
+      : null;
+  return Plugin<Object?>(
+    id: id,
+    install: call(PluginHook.install),
+    start: call(PluginHook.start),
+    stop: call(PluginHook.stop),
+    beforeInit: call(PluginHook.beforeInit),
+    afterInit: call(PluginHook.afterInit),
+    beforeUpdate: cancel(PluginHook.beforeUpdate),
+    afterUpdate: call(PluginHook.afterUpdate),
+    beforeElementsUpdate: call(PluginHook.beforeElementsUpdate),
+    reset: call(PluginHook.reset),
+    beforeDatasetsUpdate: cancel(PluginHook.beforeDatasetsUpdate),
+    afterDatasetsUpdate: call(PluginHook.afterDatasetsUpdate),
+    beforeDatasetUpdate: cancel(PluginHook.beforeDatasetUpdate),
+    afterDatasetUpdate: call(PluginHook.afterDatasetUpdate),
+    beforeLayout: cancel(PluginHook.beforeLayout),
+    beforeDataLimits: call(PluginHook.beforeDataLimits),
+    afterDataLimits: call(PluginHook.afterDataLimits),
+    beforeBuildTicks: call(PluginHook.beforeBuildTicks),
+    afterBuildTicks: call(PluginHook.afterBuildTicks),
+    afterLayout: call(PluginHook.afterLayout),
+    beforeRender: cancel(PluginHook.beforeRender),
+    afterRender: call(PluginHook.afterRender),
+    beforeDraw: cancel(PluginHook.beforeDraw),
+    afterDraw: call(PluginHook.afterDraw),
+    beforeDatasetsDraw: cancel(PluginHook.beforeDatasetsDraw),
+    afterDatasetsDraw: call(PluginHook.afterDatasetsDraw),
+    beforeDatasetDraw: cancel(PluginHook.beforeDatasetDraw),
+    afterDatasetDraw: call(PluginHook.afterDatasetDraw),
+    beforeEvent: cancel(PluginHook.beforeEvent),
+    afterEvent: call(PluginHook.afterEvent),
+    resize: call(PluginHook.resize),
+    beforeDestroy: call(PluginHook.beforeDestroy),
+    afterDestroy: call(PluginHook.afterDestroy),
+    uninstall: call(PluginHook.uninstall),
+    beforeTooltipDraw: cancel(PluginHook.beforeTooltipDraw),
+    afterTooltipDraw: call(PluginHook.afterTooltipDraw),
+  );
+}
+
 /// An inline plugin with the hook [hook]. A plugin of a chart has one id for
 /// each hook name.
-Map<String, Object?> _hook(String hook, Object? Function(Chart chart) run) => {
-  'id': 'hook-$hook',
-  hook: (Chart chart, Object? args, Object? options) => run(chart),
-};
+Plugin<Object?> _hook(String hook, Object? Function(Chart chart) run) =>
+    _plugin('hook-$hook', [hook], (_, chart) => run(chart));
 
 /// A list of another class: each read can run user code.
 final class _ObservedList(final List<Object?> values)
@@ -273,14 +334,11 @@ const _hooks = [
 
 /// An inline plugin that reads the items in each hook of [_hooks], except
 /// when [armed] gives false, and appends them to [log].
-Map<String, Object?> _reader(List<Object?> log, bool Function() armed) => {
-  'id': 'reader',
-  for (final hook in _hooks)
-    hook: (Chart chart, Object? args, Object? options) {
+Plugin<Object?> _reader(List<Object?> log, bool Function() armed) =>
+    _plugin('reader', _hooks, (hook, chart) {
       if (armed()) log.add([hook, _items(chart.legend!)]);
       return null;
-    },
-};
+    });
 
 // The tests of Chart.js ADR 0099: native indexed colors leave no cached entry,
 // and the state that the skipped resolves leave in the contexts stays.
@@ -637,13 +695,11 @@ void main() {
       testWidgets('$type: a plugin that reads in afterUpdate', (tester) async {
         Object? seen;
         Object? twinSeen;
-        Map<String, Object?> reader(void Function(Object?) keep) => {
-          'id': 'afterUpdateReader',
-          'afterUpdate': (Chart chart, Object? args, Object? options) {
-            keep(_items(chart.legend!));
-            return null;
-          },
-        };
+        Plugin<Object?> reader(void Function(Object?) keep) =>
+            _plugin('afterUpdateReader', ['afterUpdate'], (_, chart) {
+              keep(_items(chart.legend!));
+              return null;
+            });
         final chart = acquireChart(
           _config(type, plugins: [reader((items) => seen = items)]),
         );
@@ -804,15 +860,10 @@ void main() {
               _config(
                 'polarArea',
                 plugins: [
-                  {
-                    'id': 'layoutProbe',
-                    'afterLayout':
-                        (Chart chart, Object? args, Object? options) {
-                          pendingAfterLayout = _legendOf(chart)
-                              .legendItemsPending;
-                          return null;
-                        },
-                  },
+                  _plugin('layoutProbe', ['afterLayout'], (_, chart) {
+                    pendingAfterLayout = _legendOf(chart).legendItemsPending;
+                    return null;
+                  }),
                 ],
               ),
             )
@@ -1313,7 +1364,7 @@ void main() {
         var armed = false;
         final seen = <Object?>[];
         final twinSeen = <Object?>[];
-        Map<String, Object?> reader(List<Object?> log) =>
+        Plugin<Object?> reader(List<Object?> log) =>
             _hook('beforeUpdate', (chart) {
               if (armed) log.add(chart.legend!.legendItems!.length);
               return null;
@@ -1349,7 +1400,7 @@ void main() {
       final seen = <Object?>[];
       final twinSeen = <Object?>[];
       var armed = false;
-      Map<String, Object?> reader(List<Object?> log) => _hook(hook, (chart) {
+      Plugin<Object?> reader(List<Object?> log) => _hook(hook, (chart) {
         if (armed) log.add((read ?? _texts)(chart));
         return null;
       });
@@ -1424,7 +1475,7 @@ void main() {
         ) async {
           Object? atRead;
           var armed = false;
-          Map<String, Object?> reader() => _hook(hook, (chart) {
+          Plugin<Object?> reader() => _hook(hook, (chart) {
             if (!armed) return null;
             try {
               chart.legend!.legendItems;
@@ -1537,7 +1588,7 @@ void main() {
         tester,
       ) async {
         var armed = false;
-        Map<String, Object?> cancel() =>
+        Plugin<Object?> cancel() =>
             _hook('beforeUpdate', (chart) => armed ? false : null);
         var calls = 0;
         final chart = acquireChart(_config(type, plugins: [cancel()]));
@@ -1566,11 +1617,11 @@ void main() {
         tester,
       ) async {
         var armed = false;
-        Map<String, Object?> reader() => _hook('beforeUpdate', (chart) {
+        Plugin<Object?> reader() => _hook('beforeUpdate', (chart) {
           if (armed) chart.legend!.legendItems;
           return null;
         });
-        Map<String, Object?> writer() => _hook('beforeLayout', (chart) {
+        Plugin<Object?> writer() => _hook('beforeLayout', (chart) {
           if (armed) {
             _labelOptionsOf(chart)['pointStyle'] = const StarPointStyle();
             (chart.config.options as Map<String, Object?>)['color'] = _green;
@@ -1610,25 +1661,20 @@ void main() {
 
     /// Writes [key] of the label options in `afterLayout`, and reads it in
     /// `afterUpdate` through the options of the box.
-    Map<String, Object?> writeThenRead(
-      String key,
-      void Function(Object?) keep,
-    ) => <String, Object?>{
-      'id': 'writeThenRead',
-      'afterLayout': (Chart chart, Object? args, Object? options) {
-        _labelOptionsOf(chart)[key] = written[key];
-        return null;
-      },
-      'afterUpdate': (Chart chart, Object? args, Object? options) {
-        keep(
-          readOption(
-            readOption(chart.legend!.options, OptionKey.labels),
-            optionKeyOf(key)!,
-          ),
-        );
-        return null;
-      },
-    };
+    Plugin<Object?> writeThenRead(String key, void Function(Object?) keep) =>
+        _plugin('writeThenRead', ['afterLayout', 'afterUpdate'], (hook, chart) {
+          if (hook == 'afterLayout') {
+            _labelOptionsOf(chart)[key] = written[key];
+            return null;
+          }
+          keep(
+            readOption(
+              readOption(chart.legend!.options, OptionKey.labels),
+              optionKeyOf(key)!,
+            ),
+          );
+          return null;
+        });
 
     for (final type in const ['pie', 'polarArea', 'bar', 'line']) {
       for (final display in const [true, false]) {
@@ -1690,18 +1736,18 @@ void main() {
             ],
           },
           plugins: [
-            <String, Object?>{
-              'id': 'writeThenRead',
-              'afterLayout': (Chart chart, Object? args, Object? options) {
+            _plugin('writeThenRead', ['afterLayout', 'afterUpdate'], (
+              hook,
+              chart,
+            ) {
+              if (hook == 'afterLayout') {
                 (chart.config.options as Map<String, Object?>)['color'] =
                     _green;
-                return null;
-              },
-              'afterUpdate': (Chart chart, Object? args, Object? options) {
+              } else {
                 seen = readOption(chart.options, OptionKey.color);
-                return null;
-              },
-            },
+              }
+              return null;
+            }),
           ],
         ),
       );
@@ -1744,7 +1790,7 @@ void main() {
     ]) {
       testWidgets('$type $mode: a scriptable color at a read', (tester) async {
         var armed = false;
-        Map<String, Object?> reader() => _hook('afterDatasetsUpdate', (chart) {
+        Plugin<Object?> reader() => _hook('afterDatasetsUpdate', (chart) {
           if (armed) chart.legend!.legendItems;
           return null;
         });
@@ -1786,7 +1832,7 @@ void main() {
         return _black;
       }
 
-      Map<String, Object?> clear() => _hook('afterDatasetsUpdate', (chart) {
+      Plugin<Object?> clear() => _hook('afterDatasetsUpdate', (chart) {
         if (armed) {
           chart.config.clearCache();
           (_datasetsOf(chart)[0]! as Map<String, Object?>)['backgroundColor'] =
@@ -1955,15 +2001,13 @@ void main() {
       var armed = false;
       final seen = <Object?>[];
       final twinSeen = <Object?>[];
-      Map<String, Object?> reader(List<Object?> log) => {
-        'id': 'colorReader',
-        'afterDatasetsUpdate': (Chart chart, Object? args, Object? options) {
-          if (armed) {
-            log.add(chart.legend!.legendItems![0].fillStyle);
-          }
-          return null;
-        },
-      };
+      Plugin<Object?> reader(List<Object?> log) =>
+          _plugin('colorReader', ['afterDatasetsUpdate'], (_, chart) {
+            if (armed) {
+              log.add(chart.legend!.legendItems![0].fillStyle);
+            }
+            return null;
+          });
       final chart = acquireChart(_config('pie', plugins: [reader(seen)]));
       final twin = acquireChart(_eager('pie', plugins: [reader(twinSeen)]));
       armed = true;
@@ -2045,7 +2089,7 @@ void main() {
           var armed = false;
           final seen = <Object?>[];
           final twinSeen = <Object?>[];
-          Map<String, Object?> reader(List<Object?> log) =>
+          Plugin<Object?> reader(List<Object?> log) =>
               _hook('beforeDatasetUpdate', (chart) {
                 if (armed) log.add(_texts(chart));
                 return null;
@@ -2123,7 +2167,7 @@ void main() {
       }
 
       final arc = jsGet(jsGet(defaults, 'elements'), 'arc');
-      Map<String, Object?> add() => _hook('afterDatasetsUpdate', (chart) {
+      Plugin<Object?> add() => _hook('afterDatasetsUpdate', (chart) {
         if (armed) jsSet(arc, 'pinned', function);
         return null;
       });
@@ -2576,13 +2620,11 @@ void main() {
         // new arc gets its context in the first build of its update.
         final log = <Object?>[];
         final twinLog = <Object?>[];
-        Map<String, Object?> probe(List<Object?> into) => {
-          'id': 'layoutContexts',
-          'afterLayout': (Chart chart, Object? args, Object? options) {
-            into.add(_contexts(chart));
-            return null;
-          },
-        };
+        Plugin<Object?> probe(List<Object?> into) =>
+            _plugin('layoutContexts', ['afterLayout'], (_, chart) {
+              into.add(_contexts(chart));
+              return null;
+            });
         final chart = acquireChart(
           _config(type, dataset: _indexedColors, plugins: [probe(log)]),
         );
@@ -2772,17 +2814,15 @@ void main() {
         var armed = false;
         final seen = <Object?>[];
         final twinSeen = <Object?>[];
-        Map<String, Object?> plugin(List<Object?> into) => {
-          'id': 'writer',
-          hook: (Chart chart, Object? args, Object? options) {
-            if (armed) {
-              into.add(_items(chart.legend!));
-              _dataset0(chart)['borderWidth'] = 9.0;
-              _dataset0(chart)['backgroundColor'] = <Object?>[_black];
-            }
-            return null;
-          },
-        };
+        Plugin<Object?> plugin(List<Object?> into) =>
+            _plugin('writer', [hook], (_, chart) {
+              if (armed) {
+                into.add(_items(chart.legend!));
+                _dataset0(chart)['borderWidth'] = 9.0;
+                _dataset0(chart)['backgroundColor'] = <Object?>[_black];
+              }
+              return null;
+            });
         final chart = acquireChart(
           _config('pie', dataset: _indexedColors, plugins: [plugin(seen)]),
         );
@@ -2816,13 +2856,10 @@ void main() {
           return _black;
         }
 
-        Map<String, Object?> plugin() => {
-          'id': 'writer',
-          hook: (Chart chart, Object? args, Object? options) {
-            if (armed) _dataset0(chart)['backgroundColor'] = color;
-            return null;
-          },
-        };
+        Plugin<Object?> plugin() => _plugin('writer', [hook], (_, chart) {
+          if (armed) _dataset0(chart)['backgroundColor'] = color;
+          return null;
+        });
         final chart = acquireChart(
           _config('pie', dataset: _indexedColors, plugins: [plugin()]),
         );
@@ -2850,16 +2887,14 @@ void main() {
       tester,
     ) async {
       var armed = false;
-      Map<String, Object?> plugin() => {
-        'id': 'readThenWrite',
-        'beforeUpdate': (Chart chart, Object? args, Object? options) {
-          if (armed) {
-            chart.legend!.legendItems;
-            _dataset0(chart)['borderWidth'] = 9.0;
-          }
-          return null;
-        },
-      };
+      Plugin<Object?> plugin() =>
+          _plugin('readThenWrite', ['beforeUpdate'], (_, chart) {
+            if (armed) {
+              chart.legend!.legendItems;
+              _dataset0(chart)['borderWidth'] = 9.0;
+            }
+            return null;
+          });
       final chart = acquireChart(
         _config('pie', dataset: _indexedColors, plugins: [plugin()]),
       );
@@ -2920,20 +2955,16 @@ void main() {
   group('Chart.js ADR 0099: the reads of each hook', () {
     /// An inline plugin that logs the state in each hook of [_hooks], except
     /// when [armed] gives false. With [read], each hook reads the items first.
-    Map<String, Object?> logger(
+    Plugin<Object?> logger(
       List<Object?> log,
       bool Function() armed, {
       required bool read,
-    }) => {
-      'id': 'logger',
-      for (final hook in _hooks)
-        hook: (Chart chart, Object? args, Object? options) {
-          if (armed()) {
-            log.add([hook, if (read) _items(chart.legend!), _contexts(chart)]);
-          }
-          return null;
-        },
-    };
+    }) => _plugin('logger', _hooks, (hook, chart) {
+      if (armed()) {
+        log.add([hook, if (read) _items(chart.legend!), _contexts(chart)]);
+      }
+      return null;
+    });
 
     for (final type in _kinds) {
       for (final read in const [false, true]) {

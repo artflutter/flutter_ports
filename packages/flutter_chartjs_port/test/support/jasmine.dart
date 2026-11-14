@@ -374,6 +374,30 @@ final class JasmineSpy._(
   /// `spy.and`: the strategy of the spy.
   late final JasmineSpyStrategy and = JasmineSpyStrategy._(this);
 
+  /// The spy as a hook of a native plugin that cannot cancel (Chart.js ADR
+  /// 0126): each call records `(chart, args, options)`.
+  late final void Function(types.Chart chart, Object args, Object? options)
+  hook = _register((chart, args, options) {
+    calls.add([chart, args, options]);
+    if (_callThrough) jsCall(_original, [chart, args, options]);
+  });
+
+  /// The spy as a cancelable hook of a native plugin (Chart.js ADR 0144):
+  /// each call records `(chart, args, options)` and gives `true`, or the
+  /// result of the original hook after `and.callThrough()`.
+  late final bool Function(types.Chart chart, Object args, Object? options)
+  cancelableHook = _register((chart, args, options) {
+    calls.add([chart, args, options]);
+    return !_callThrough ||
+        !identical(jsCall(_original, [chart, args, options]), false);
+  });
+
+  /// Registers [hook] as a function of this spy for [spyOf].
+  F _register<F extends Function>(F hook) {
+    _spies[hook] = this;
+    return hook;
+  }
+
   /// The function value of the spy. A call gets up to three arguments.
   late final JsFunction function = JsFunction((
     Object? self, [
@@ -409,8 +433,19 @@ JasmineSpy spyOn(Map<String, Object?> object, String method) {
 /// The spy of the function value [value]. As in Jasmine, a value that is not
 /// a spy throws.
 JasmineSpy spyOf(Object? value) =>
-    (value is JsFunction ? _spies[value] : null) ??
+    (value is JsFunction || value is Function ? _spies[value!] : null) ??
     (throw ArgumentError.value(value, 'value', 'is not a spy'));
+
+/// A spy of a hook of a native plugin (Chart.js ADR 0144): [JasmineSpy.hook]
+/// or [JasmineSpy.cancelableHook] goes into the hook field. [original] is
+/// the hook that `and.callThrough()` calls.
+///
+/// ```dart
+/// final spy = hookSpy();
+/// final plugin = Plugin<Object?>(id: 'a', afterDraw: spy.hook);
+/// expect(plugin.afterDraw, toHaveBeenCalled());
+/// ```
+JasmineSpy hookSpy([Function? original]) => JasmineSpy._(original);
 
 /// The read `object.method.calls` of a spied function value.
 extension JasmineSpyCalls on Object? {

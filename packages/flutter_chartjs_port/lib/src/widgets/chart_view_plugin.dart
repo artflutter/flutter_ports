@@ -14,15 +14,14 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
+    show OptionView, readOption;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_shadow.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show DatasetDrawHookArgs;
+    show DatasetDrawHookArgs, Plugin;
 import 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 
@@ -30,48 +29,54 @@ import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 @internal
 const String chartViewPluginId = r'$chartView';
 
-/// The internal inline plugin of a `ChartView`: a plugin Map (Chart.js ADR
-/// 0038) with the id [chartViewPluginId]. Its `beforeUpdate` and
-/// `beforeLayout` record the palette keys of [theme] (Chart.js ADR 0050,
+/// The internal inline plugin of a `ChartView`: a native [Plugin]
+/// (Chart.js ADR 0144) with the id [chartViewPluginId]. Its `beforeUpdate`
+/// and `beforeLayout` record the palette keys of [theme] (Chart.js ADR 0050,
 /// "Runtime switch", step 4), and its `afterDraw` draws the focus ring of
 /// [keys] (Chart.js ADR 0051, section 6). Its `beforeDatasetDraw` and
 /// `afterDatasetDraw` draw the shadow of a dataset (Chart.js ADR 0107). The
-/// hooks take the upstream parameter counts.
+/// cancelable hooks continue the step.
 @internal
-AnyObject createChartViewPlugin(ChartThemeSwitch theme, ChartKeyboard keys) {
+Plugin<OptionView> createChartViewPlugin(
+  ChartThemeSwitch theme,
+  ChartKeyboard keys,
+) {
   // Whether the last `beforeDatasetDraw` saved the context for a shadow.
   var shadowed = false;
-  return <String, Object?>{
-    'id': chartViewPluginId,
-    'supportsDataUpdates': true,
+  return Plugin<OptionView>(
+    id: chartViewPluginId,
+    supportsDataUpdates: true,
 
-    /// core.controller.js:490 `notifyPlugins('beforeUpdate', ...)`.
-    'beforeUpdate': (types.Chart chart, Object? args, Object? options) {
+    // core.controller.js:490 `notifyPlugins('beforeUpdate', ...)`.
+    beforeUpdate: (chart, args, options) {
       theme.beforeUpdate(chart);
+      return true;
     },
 
-    /// core.controller.js:612 `notifyPlugins('beforeLayout', ...)`.
-    'beforeLayout': (types.Chart chart, Object? args, Object? options) {
+    // core.controller.js:612 `notifyPlugins('beforeLayout', ...)`.
+    beforeLayout: (chart, args, options) {
       theme.afterColorize(chart);
+      return true;
     },
 
-    /// core.controller.js:793 `notifyPlugins('beforeDatasetDraw', args)`.
-    'beforeDatasetDraw': (types.Chart chart, Object? args, Object? options) {
+    // core.controller.js:793 `notifyPlugins('beforeDatasetDraw', args)`.
+    beforeDatasetDraw: (chart, args, options) {
       shadowed = _beginShadow(chart, args);
+      return true;
     },
 
-    /// core.controller.js:808 `notifyPlugins('afterDatasetDraw', args)`.
-    'afterDatasetDraw': (types.Chart chart, Object? args, Object? options) {
+    // core.controller.js:808 `notifyPlugins('afterDatasetDraw', args)`.
+    afterDatasetDraw: (chart, args, options) {
       if (!shadowed) return;
       shadowed = false;
       chart.ctx?.restore();
     },
 
-    /// core.controller.js:731 `notifyPlugins('afterDraw')`.
-    'afterDraw': (types.Chart chart, Object? args, Object? options) {
+    // core.controller.js:731 `notifyPlugins('afterDraw')`.
+    afterDraw: (chart, args, options) {
       keys.paintRing(chart);
     },
-  };
+  );
 }
 
 /// Sets the shadow of the dataset of [args] on the context of [chart]
@@ -81,11 +86,11 @@ AnyObject createChartViewPlugin(ChartThemeSwitch theme, ChartKeyboard keys) {
 /// plugin reads the dataset only: the shadow does not cascade from
 /// `options.datasets` or from `options`. A dataset with no shadow keeps the
 /// context as it is. Another value stops a debug build.
-bool _beginShadow(types.Chart chart, Object? args) {
+bool _beginShadow(types.Chart chart, DatasetDrawHookArgs args) {
   final ctx = chart.ctx;
-  if (ctx == null || args is! DatasetDrawHookArgs) return false;
+  if (ctx == null) return false;
   final shadow = readOption(
-    args.meta?.controller?.getDataset(),
+    args.meta.controller?.getDataset(),
     OptionKey.shadow,
   );
   if (shadow is! ChartShadow) {

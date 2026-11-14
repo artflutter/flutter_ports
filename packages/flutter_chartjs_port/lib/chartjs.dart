@@ -24,12 +24,13 @@
 /// of a user subclass, Chart.js ADR 0020) and `undefined` (the third state
 /// of a config value, Chart.js ADR 0043).
 ///
-/// It also exports the typed plugin API (Chart.js ADR 0108): `Plugin`, the
-/// hook type `PluginHookFunction` and the argument classes of the hooks. A
-/// plugin of user code or of an add-on port is a `Plugin`, or a Map. A hook
+/// It also exports the native plugin API (Chart.js ADRs 0108 and 0126):
+/// `Plugin`, the hooks `PluginHook`, the hook types `PluginHookFunction` and
+/// `CancelableHookFunction` and the argument classes of the hooks. A plugin
+/// of user code or of an add-on port is a `Plugin`, never a Map. A hook
 /// function can declare its chart parameter as `Object` and cast it to
-/// `Chart` once: `Object? beforeEvent(Object chart, EventHookArgs args,
-/// Object options)`.
+/// `Chart` once: `bool beforeEvent(Object chart, EventHookArgs args,
+/// ZoomPluginOptions options)`.
 ///
 /// It also exports the input surface of the canvas for plugins that listen
 /// to the input themselves (Chart.js ADR 0108): `NativeEvent` (the DOM event
@@ -199,11 +200,12 @@ export 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
     show LineSegmentStyle;
 export 'package:flutter_chartjs_port/src/types/plugin.dart'
     show
-        CancelableHookArgs,
+        CancelableHookFunction,
         DatasetDrawHookArgs,
         DatasetUpdateHookArgs,
         EventHookArgs,
         Plugin,
+        PluginHook,
         PluginHookArgs,
         PluginHookFunction,
         ResizeHookArgs,

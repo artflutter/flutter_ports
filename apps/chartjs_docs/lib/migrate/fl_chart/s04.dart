@@ -20,7 +20,7 @@ const _months = [
   'Dec',
 ];
 final Color _above = Fl.purple.withValues(alpha: 0.7);
-final List<Map<String, Object?>> _plugins = [areaBorder(Fl.white54)];
+final List<Plugin<Object?>> _plugins = [areaBorder(Fl.white54)];
 
 final ChartConfig _config = fills(
   ChartConfig(

@@ -1228,17 +1228,16 @@ class StressDemoState() extends State<StressDemo> {
 
   /// The inline plugin `stressLabels`: the M labels and the title, after the
   /// draw of the chart.
-  Map<String, Object?> get _labelsPlugin => <String, Object?>{
-    'id': 'stressLabels',
-    'supportsDataUpdates': true,
-    'afterDraw': (Object? chart, Object? args, Object? options) {
-      final stressChart = chart! as Chart;
-      final ctx = stressChart.ctx;
+  Plugin<Object?> get _labelsPlugin => Plugin(
+    id: 'stressLabels',
+    supportsDataUpdates: true,
+    afterDraw: (chart, args, options) {
+      final ctx = chart.ctx;
       if (ctx == null) return;
-      _drawLabels(ctx, stressChart.width, stressChart.height);
+      _drawLabels(ctx, chart.width, chart.height);
       _drawTitle(ctx);
     },
-  };
+  );
 
   /// A host gave its chart. The first chart starts the loop for
   /// [StressDemo.autoStart]. A running loop that waited for the chart of a
@@ -2757,25 +2756,26 @@ final class _PluginMeter() with _TickMark implements _StressMeter {
   int? _drawStart;
 
   /// The first inline plugin of the chart.
-  late final Map<String, Object?> first = <String, Object?>{
-    'id': 'stressDrawStart',
-    'supportsDataUpdates': true,
-    'beforeDraw': (Object? chart, Object? args, Object? options) {
+  late final Plugin<Object?> first = Plugin(
+    id: 'stressDrawStart',
+    supportsDataUpdates: true,
+    beforeDraw: (chart, args, options) {
       _takeMark();
       _drawStart = _meterWatch.elapsedMicroseconds;
+      return true;
     },
-  };
+  );
 
   /// The last inline plugin of the chart.
-  late final Map<String, Object?> last = <String, Object?>{
-    'id': 'stressDrawEnd',
-    'supportsDataUpdates': true,
-    'afterDraw': (Object? chart, Object? args, Object? options) {
+  late final Plugin<Object?> last = Plugin(
+    id: 'stressDrawEnd',
+    supportsDataUpdates: true,
+    afterDraw: (chart, args, options) {
       final start = _drawStart;
       if (start != null) {
         drawMicros += _meterWatch.elapsedMicroseconds - start;
       }
       _drawStart = null;
     },
-  };
+  );
 }

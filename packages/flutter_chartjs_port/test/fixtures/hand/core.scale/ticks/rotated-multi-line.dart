@@ -6,8 +6,8 @@ library;
 
 import 'dart:ui' as native_ui;
 
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -55,8 +55,10 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
     },
     'plugins': <Object?>[
-      <String, Object?>{
-        'afterDraw': (Chart chart) {
+      // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
+      Plugin<Object?>(
+        id: 'inline',
+        afterDraw: (chart, _, _) {
           // const ctx = chart.ctx; ctx.save(); ...
           chart.ctx!
             ..save()
@@ -64,7 +66,7 @@ Map<String, Object?> fixture() => <String, Object?>{
             ..strokeRect(0, 0, chart.width, chart.height)
             ..restore();
         },
-      },
+      ),
     ],
   },
   'options': <String, Object?>{

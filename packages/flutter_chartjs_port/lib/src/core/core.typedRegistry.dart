@@ -29,6 +29,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
 /// core.typedRegistry.js:8 `TypedRegistry`, the default export.
 final class TypedRegistry(
@@ -98,7 +99,7 @@ final class TypedRegistry(
     }
 
     final items = this.items;
-    final id = jsGet(item, 'id');
+    final id = _idOf(item);
     final scope = '${this.scope}.${jsToString(id)}';
 
     if (!jsTruthy(id)) {
@@ -140,7 +141,7 @@ final class TypedRegistry(
   /// value that is not an object (core.typedRegistry.js:75).
   void unregister(Object? item) {
     final items = this.items;
-    final id = jsGet(item, 'id');
+    final id = _idOf(item);
     final scope = this.scope;
     final key = _propertyKey(id);
 
@@ -170,6 +171,9 @@ final class TypedRegistry(
 /// [scope]: a value of `item.defaults` replaces the current value of its
 /// key, and its new keys follow.
 void _registerDefaults(Object item, String scope, String? parentScope) {
+  final pluginDefaults = item is Plugin<Object?>
+      ? item.defaults
+      : jsGet(item, 'defaults');
   // Inherit the parent's defaults and keep existing defaults
   final sources = [
     if (jsTruthy(parentScope))
@@ -177,7 +181,7 @@ void _registerDefaults(Object item, String scope, String? parentScope) {
     else
       <String, Object?>{},
     defaults.get(scope),
-    jsGet(item, 'defaults'),
+    pluginDefaults,
   ];
   // The object of upstream is a new typed scope of the kind of the scope
   // node (Chart.js ADR 0054 §3), or a raw Map for a raw node.
@@ -190,12 +194,16 @@ void _registerDefaults(Object item, String scope, String? parentScope) {
 
   defaults.set(scope, itemDefaults);
 
-  final defaultRoutes = jsGet(item, 'defaultRoutes');
+  final defaultRoutes = item is Plugin<Object?>
+      ? item.defaultRoutes
+      : jsGet(item, 'defaultRoutes');
   if (jsTruthy(defaultRoutes)) {
     _routeDefaults(scope, defaultRoutes);
   }
 
-  final itemDescriptors = jsGet(item, 'descriptors');
+  final itemDescriptors = item is Plugin<Object?>
+      ? item.descriptors
+      : jsGet(item, 'descriptors');
   if (jsTruthy(itemDescriptors)) {
     defaults.describe(scope, itemDescriptors);
   }
@@ -246,6 +254,12 @@ JsClass? _getPrototypeOf(Object? item) => switch (item) {
 /// The `ToPropertyKey` of [id]: [id] itself for a string, else its
 /// `ToString` ([jsToString]).
 String _propertyKey(Object? id) => id is String ? id : jsToString(id);
+
+/// `item.id`: the typed field of a native [Plugin] (Chart.js ADR 0144), else
+/// the read by name of a class value. Throws a [TypeError] for Dart `null`
+/// and [undefined], as the read does.
+Object? _idOf(Object? item) =>
+    item is Plugin<Object?> ? item.id : jsGet(item, 'id');
 
 /// `Object.keys(value)` for the truthy `defaultRoutes` value [value]: an
 /// object (a Map or a typed object) gives [jsObjectKeys], a List or a String

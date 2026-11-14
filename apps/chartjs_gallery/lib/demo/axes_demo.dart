@@ -232,12 +232,10 @@ class AxesDemoState() extends State<AxesDemo> {
   /// canvas, also outside the chart area, from the hook `afterEvent`. The
   /// option `onHover` gets only the events in the chart area
   /// (core.controller.js:1213).
-  late final Map<String, Object?> _pointerPlugin = {
-    'id': 'axesPointer',
-    'afterEvent': (Object? chart, Object? args, Object? options) {
-      // The hook arguments are a typed object, read by name through its
-      // face (core.controller.js:1164-1169, Chart.js ADR 0054 §12).
-      final event = (args! as JsObjectFace)['event']! as ChartEvent;
+  late final Plugin<Object?> _pointerPlugin = Plugin(
+    id: 'axesPointer',
+    afterEvent: (chart, args, options) {
+      final event = args.event;
       final x = event.x;
       final y = event.y;
       _pointer = event.type == 'mouseout' || x == null || y == null
@@ -245,7 +243,7 @@ class AxesDemoState() extends State<AxesDemo> {
           : (x: x, y: y);
       _readout.value++;
     },
-  };
+  );
 
   /// The chart, once it exists.
   @visibleForTesting

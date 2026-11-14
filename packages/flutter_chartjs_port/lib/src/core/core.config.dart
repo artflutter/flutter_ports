@@ -72,6 +72,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
 
 /// core.config.js:5 `getIndexAxis`.
@@ -1062,25 +1063,15 @@ class Config([Object? config]) implements types.ChartConfiguration {
   /// @param {{id: string, additionalOptionScopes?: string[]}} plugin
   /// @return {string[][]}
   ///
-  /// [plugin] is a plugin object (a Map) or a class value (Chart.js ADR
-  /// 0020, section 7). A truthy `additionalOptionScopes` must be a `List` of
-  /// strings. Another value throws a [TypeError] when the key lists are made
-  /// (row `adapt-config-objects`). Upstream spreads any iterable value, and
-  /// a key that is not a string throws a `TypeError` in [getOptionScopes].
-  List<List<String>> pluginScopeKeys(Object? plugin) {
-    final id = jsToString(jsGet(plugin, 'id'));
+  /// [plugin] is a native plugin (Chart.js ADR 0144): its
+  /// `additionalOptionScopes` is a `List<String>?`.
+  List<List<String>> pluginScopeKeys(Plugin<Object?> plugin) {
+    final id = plugin.id;
     final type = jsToString(this.type);
     return _cachedKeys(
       '$type-plugin-$id',
       () => [
-        [
-          'plugins.$id',
-          // DIVERGES(chartjs): adapt-config-objects, a List of strings.
-          for (final scope
-              in _or(jsGet(plugin, 'additionalOptionScopes'), const [])!
-                  as List)
-            scope as String,
-        ],
+        ['plugins.$id', ...?plugin.additionalOptionScopes],
       ],
     );
   }

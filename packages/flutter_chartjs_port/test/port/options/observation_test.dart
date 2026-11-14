@@ -48,6 +48,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show handFixtures;
@@ -867,6 +868,141 @@ Object? _wrapped(Object? value, String path, List<String> trace) {
       borderJoinStyle: rec('borderJoinStyle', value.borderJoinStyle),
     );
   }
+  // A native plugin (Chart.js ADR 0144): trace each hook with the path of
+  // its field, as the hooks of a plugin Map. Only a Plugin<Object?>: the
+  // fields of a plugin with another options type do not read through it.
+  if (value is Plugin<Object?> && value.runtimeType == Plugin<Object?>) {
+    return Plugin<Object?>(
+      id: value.id,
+      options: value.options,
+      events: value.events,
+      defaults: value.defaults,
+      defaultRoutes: value.defaultRoutes,
+      descriptors: value.descriptors,
+      additionalOptionScopes: value.additionalOptionScopes,
+      supportsDataUpdates: value.supportsDataUpdates,
+      dataUpdateGuard: value.dataUpdateGuard,
+      install: _hookRecorder(value.install, '$path.install', trace),
+      start: _hookRecorder(value.start, '$path.start', trace),
+      stop: _hookRecorder(value.stop, '$path.stop', trace),
+      beforeInit: _hookRecorder(value.beforeInit, '$path.beforeInit', trace),
+      afterInit: _hookRecorder(value.afterInit, '$path.afterInit', trace),
+      beforeUpdate: _cancelRecorder(
+        value.beforeUpdate,
+        '$path.beforeUpdate',
+        trace,
+      ),
+      afterUpdate: _hookRecorder(value.afterUpdate, '$path.afterUpdate', trace),
+      beforeElementsUpdate: _hookRecorder(
+        value.beforeElementsUpdate,
+        '$path.beforeElementsUpdate',
+        trace,
+      ),
+      reset: _hookRecorder(value.reset, '$path.reset', trace),
+      beforeDatasetsUpdate: _cancelRecorder(
+        value.beforeDatasetsUpdate,
+        '$path.beforeDatasetsUpdate',
+        trace,
+      ),
+      afterDatasetsUpdate: _hookRecorder(
+        value.afterDatasetsUpdate,
+        '$path.afterDatasetsUpdate',
+        trace,
+      ),
+      beforeDatasetUpdate: _cancelRecorder(
+        value.beforeDatasetUpdate,
+        '$path.beforeDatasetUpdate',
+        trace,
+      ),
+      afterDatasetUpdate: _hookRecorder(
+        value.afterDatasetUpdate,
+        '$path.afterDatasetUpdate',
+        trace,
+      ),
+      beforeLayout: _cancelRecorder(
+        value.beforeLayout,
+        '$path.beforeLayout',
+        trace,
+      ),
+      beforeDataLimits: _hookRecorder(
+        value.beforeDataLimits,
+        '$path.beforeDataLimits',
+        trace,
+      ),
+      afterDataLimits: _hookRecorder(
+        value.afterDataLimits,
+        '$path.afterDataLimits',
+        trace,
+      ),
+      beforeBuildTicks: _hookRecorder(
+        value.beforeBuildTicks,
+        '$path.beforeBuildTicks',
+        trace,
+      ),
+      afterBuildTicks: _hookRecorder(
+        value.afterBuildTicks,
+        '$path.afterBuildTicks',
+        trace,
+      ),
+      afterLayout: _hookRecorder(value.afterLayout, '$path.afterLayout', trace),
+      beforeRender: _cancelRecorder(
+        value.beforeRender,
+        '$path.beforeRender',
+        trace,
+      ),
+      afterRender: _hookRecorder(value.afterRender, '$path.afterRender', trace),
+      beforeDraw: _cancelRecorder(value.beforeDraw, '$path.beforeDraw', trace),
+      afterDraw: _hookRecorder(value.afterDraw, '$path.afterDraw', trace),
+      beforeDatasetsDraw: _cancelRecorder(
+        value.beforeDatasetsDraw,
+        '$path.beforeDatasetsDraw',
+        trace,
+      ),
+      afterDatasetsDraw: _hookRecorder(
+        value.afterDatasetsDraw,
+        '$path.afterDatasetsDraw',
+        trace,
+      ),
+      beforeDatasetDraw: _cancelRecorder(
+        value.beforeDatasetDraw,
+        '$path.beforeDatasetDraw',
+        trace,
+      ),
+      afterDatasetDraw: _hookRecorder(
+        value.afterDatasetDraw,
+        '$path.afterDatasetDraw',
+        trace,
+      ),
+      beforeEvent: _cancelRecorder(
+        value.beforeEvent,
+        '$path.beforeEvent',
+        trace,
+      ),
+      afterEvent: _hookRecorder(value.afterEvent, '$path.afterEvent', trace),
+      resize: _hookRecorder(value.resize, '$path.resize', trace),
+      beforeDestroy: _hookRecorder(
+        value.beforeDestroy,
+        '$path.beforeDestroy',
+        trace,
+      ),
+      afterDestroy: _hookRecorder(
+        value.afterDestroy,
+        '$path.afterDestroy',
+        trace,
+      ),
+      uninstall: _hookRecorder(value.uninstall, '$path.uninstall', trace),
+      beforeTooltipDraw: _cancelRecorder(
+        value.beforeTooltipDraw,
+        '$path.beforeTooltipDraw',
+        trace,
+      ),
+      afterTooltipDraw: _hookRecorder(
+        value.afterTooltipDraw,
+        '$path.afterTooltipDraw',
+        trace,
+      ),
+    );
+  }
   // The legend label callbacks return typed values (Chart.js ADR 0130): a
   // recorder of `Object?` parameters returns `dynamic`, which is not one of
   // their function types.
@@ -908,6 +1044,32 @@ Object? _wrapped(Object? value, String path, List<String> trace) {
   }
   return null;
 }
+
+/// The recorder of the hook [hook] of a native plugin, or Dart `null`: it
+/// writes one line into [trace] and calls the hook.
+PluginHookFunction<A, Object?>? _hookRecorder<A extends Object>(
+  PluginHookFunction<A, Object?>? hook,
+  String path,
+  List<String> trace,
+) => hook == null
+    ? null
+    : (chart, args, options) {
+        trace.add(_traceLine(path, [chart, args, options]));
+        hook(chart, args, options);
+      };
+
+/// The recorder of the cancelable hook [hook] of a native plugin, or Dart
+/// `null`: it writes one line into [trace] and gives the result of the hook.
+CancelableHookFunction<A, Object?>? _cancelRecorder<A extends Object>(
+  CancelableHookFunction<A, Object?>? hook,
+  String path,
+  List<String> trace,
+) => hook == null
+    ? null
+    : (chart, args, options) {
+        trace.add(_traceLine(path, [chart, args, options]));
+        return hook(chart, args, options);
+      };
 
 /// A closure of [k] `Object?` parameters that records its arguments and
 /// calls [function]. With [self], the first parameter is `this`.

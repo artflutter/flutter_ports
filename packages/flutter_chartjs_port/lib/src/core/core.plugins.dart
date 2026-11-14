@@ -1,27 +1,20 @@
 // Ported from Chart.js v4.6.1 src/core/core.plugins.js (MIT, Chart.js Contributors).
-// DIVERGES(chartjs): adapt-typed-plugins, typed plugins of Chart.js ADR 0054.
+// DIVERGES(chartjs): adapt-typed-plugins, the plugins of Chart.js ADR 0144.
 
 /// Port of `src/core/core.plugins.js`: the plugin service of a chart
 /// (Chart.js ADR 0020, section 7).
 ///
-/// A plugin is a JavaScript object in the forms of Chart.js ADR 0043: a
-/// `Map<String, Object?>` (the built-in plugins, the inline plugins of
-/// `config.plugins` and the plugin objects of the specs), or a class value
-/// (`JsClass`) that a program registers as a plugin. A hook is a function
-/// value of `lib/src/js/js_function.dart`: a Dart `Function`, or a
-/// `JsFunction` when the hook reads `this`. [PluginService] reads the hook
-/// at each call, as upstream reads `plugin[hook]`.
+/// A plugin is a native [Plugin] (Chart.js ADR 0144): the built-in plugins,
+/// the registered plugins and the inline plugins of `config.plugins`. A hook
+/// is a field of the plugin with the function type of its hook, and
+/// [PluginService] reads it at each call through [Plugin.notify], as
+/// upstream reads `plugin[hook]`.
 ///
-/// The dispatch is typed (Chart.js ADR 0054 §12): a hook name of the
-/// `Plugin` interface is a [PluginHook]. A typed [Plugin] (the seven
-/// built-in plugins) gives the value of its hook field, and a Map plugin is
-/// a [MapPlugin] (`map[hook]`). A hook without arguments gets a new
-/// [PluginHookArgs], the `{}` of upstream. The `id` and the `defaults` of a
-/// typed plugin are its typed fields ([_idOf], [_defaultsOf]), and the
-/// `cancelable` of the typed args is their typed field ([_cancelable]).
-/// The other plugin objects (a Map or a class value of user code), the
-/// inline plugins of the config and the plugin options of the user are read
-/// by name, as upstream.
+/// The dispatch is typed: a hook is a [PluginHook], with its argument class
+/// and its kind. A hook without arguments gets the `{}` of upstream, a
+/// [PluginHookArgs]. A cancelable hook cancels with `false`: the kind of the
+/// hook is the `args.cancelable` of upstream. The plugin options of the user
+/// are read by name, as upstream.
 ///
 /// The chart is a `types.Chart` (Chart.js ADR 0003). The file reads
 /// `chart.config` as the `Config` of `core.config.dart`, as the dataset
@@ -32,15 +25,13 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart';
-import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show DescriptorDefaults, OptionView, attachContext, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show callback, isNullOrUndef, valueOrDefault;
+    show isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsToString, jsTruthy;
+    show jsToNumber, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
@@ -53,9 +44,9 @@ import 'package:meta/meta.dart';
 /// of a plugin: the plugin and its options resolver.
 ///
 /// A record, as Chart.js ADR 0003 gives for an inline object type that
-/// ported code only reads. `plugin` is a Map, a class value or another
-/// registered value.
-typedef PluginDescriptor = ({Object plugin, Object options});
+/// ported code only reads. `options` is the resolver view of
+/// `createResolver`.
+typedef PluginDescriptor = ({Plugin<Object?> plugin, Object options});
 
 /// core.plugins.js:11 `filterCallback`: the filter of [PluginService.notify].
 ///
@@ -94,17 +85,7 @@ final class PluginService() {
     final descriptors = cache;
     if (descriptors == null) return false;
     for (final descriptor in descriptors) {
-      final plugin = descriptor.plugin;
-      if (plugin is Plugin) {
-        if (!plugin.supportsDataUpdates ||
-            !(plugin.dataUpdateGuard?.call(descriptor.options) ?? true)) {
-          return false;
-        }
-      } else if (plugin is Map<String, Object?> &&
-          nativeDataUpdateObject(plugin)) {
-        // User plugin objects declare their partial-lifecycle compatibility.
-        if (!_mapPluginOptsIn(plugin)) return false;
-      } else {
+      if (!descriptor.plugin.allowsDataUpdates(descriptor.options)) {
         return false;
       }
     }
@@ -114,8 +95,7 @@ final class PluginService() {
   /// Whether each plugin of the cached descriptors keeps the promise of the
   /// partial lifecycles for `Chart.updateRanges` (Chart.js ADR 0111): a
   /// [Plugin] with [Plugin.supportsDataUpdates] and no failed
-  /// [Plugin.rangeUpdateGuard], a Map plugin with the own key
-  /// `supportsDataUpdates: true`. [Plugin.dataUpdateGuard] states a concern
+  /// [Plugin.rangeUpdateGuard]. [Plugin.dataUpdateGuard] states a concern
   /// of the data-only lifecycle, which skips the layout: the range update runs
   /// each hook and the layout, so it does not call it. No cache (a
   /// [invalidate] since the last notify) gives false, and so does the options
@@ -128,18 +108,7 @@ final class PluginService() {
     for (final descriptor in descriptors) {
       final options = descriptor.options;
       if (options is! OptionView) return false;
-      final plugin = descriptor.plugin;
-      if (plugin is Plugin) {
-        if (!plugin.supportsDataUpdates ||
-            !(plugin.rangeUpdateGuard?.call(options) ?? true)) {
-          return false;
-        }
-      } else if (plugin is Map<String, Object?> &&
-          nativeDataUpdateObject(plugin)) {
-        if (!_mapPluginOptsIn(plugin)) return false;
-      } else {
-        return false;
-      }
+      if (!descriptor.plugin.allowsRangeUpdates(options)) return false;
     }
     return true;
   }
@@ -196,19 +165,21 @@ final class PluginService() {
   /// @returns {boolean} false if any of the plugins return false, else
   /// returns true.
   ///
-  /// Dart `null` for [args] and [filter] stands for an absent argument. The
-  /// result is Dart `null` for the `undefined` of a notify before the hook
-  /// `install` (core.plugins.js:41-43).
-  bool? notify(
+  /// [hook] is a hook of the `Plugin` interface, with the argument class [A]
+  /// of its calls (Chart.js ADR 0144). Dart `null` for [args] stands for the
+  /// absent argument of a hook without arguments, the `{}` of upstream, and
+  /// Dart `null` for [filter] for an absent filter. The result is Dart `null`
+  /// for the `undefined` of a notify before the hook `install`
+  /// (core.plugins.js:41-43).
+  bool? notify<A extends Object>(
     types.Chart chart,
-    String hook, [
-    Object? args,
+    PluginHook<A> hook, [
+    A? args,
     FilterCallback? filter,
   ]) {
-    final pluginHook = PluginHook.of(hook);
-    if (pluginHook == PluginHook.beforeInit) {
+    if (hook == PluginHook.beforeInit) {
       final init = _init = _createDescriptors(chart, true);
-      _notify(init, chart, PluginHook.install);
+      _notify(init, chart, PluginHook.install, const PluginHookArgs());
     }
 
     if (_init == null) {
@@ -219,11 +190,11 @@ final class PluginService() {
     final descriptors = filter != null
         ? _descriptors(chart).where(filter).toList()
         : _descriptors(chart);
-    final result = _notify(descriptors, chart, pluginHook, args, hook);
+    final result = _notify(descriptors, chart, hook, args ?? _noArgs(hook));
 
-    if (pluginHook == PluginHook.afterDestroy) {
-      _notify(descriptors, chart, PluginHook.stop);
-      _notify(_init!, chart, PluginHook.uninstall);
+    if (hook == PluginHook.afterDestroy) {
+      _notify(descriptors, chart, PluginHook.stop, const PluginHookArgs());
+      _notify(_init!, chart, PluginHook.uninstall, const PluginHookArgs());
       _init = null; // Do not trigger events after uninstall
     }
     return result;
@@ -233,54 +204,21 @@ final class PluginService() {
   /// @private
   ///
   /// The lines differ from the upstream lines with the same result for each
-  /// input (Chart.js ADR 0020, sections 7 and 13, Chart.js ADR 0054 §12).
-  /// [hook] is the [PluginHook] of the name, or Dart `null` for another
-  /// [name] (the hook name of a user plugin), which reads the hook by name.
-  /// A typed [Plugin] gives the value of its hook field and calls a function
-  /// of the type of the hook with typed arguments ([Plugin.invokeHook]). A
-  /// Map plugin ([MapPlugin]) reads `plugin[hook]` as a Map read: an absent
-  /// key gives Dart `null`, which is not a function, as `undefined` is not.
-  /// The `params` list exists only for a function value, where
-  /// `callCallback` uses it (helpers.core.ts:108-110). A `JsFunction` hook
-  /// gets the plugin as `this`: the plugin object, the Map, or the class
-  /// value of a class plugin. A null [args] is the `{}` of upstream, a new
-  /// [PluginHookArgs].
-  bool _notify(
+  /// input (Chart.js ADR 0020, sections 7 and 13, Chart.js ADR 0144).
+  /// [Plugin.notify] reads the hook field of [hook] and calls it with
+  /// `(chart, args, options)`: an absent hook continues. A cancelable hook
+  /// cancels with `false`, which is the `false` result with the
+  /// `args.cancelable` of upstream: the kind of the hook is that flag.
+  bool _notify<A extends Object>(
     List<PluginDescriptor> descriptors,
     types.Chart chart,
-    PluginHook? hook, [
-    Object? args,
-    String? name,
-  ]) {
-    final hookName = name ?? hook!.jsName;
-    args ??= PluginHookArgs();
+    PluginHook<A> hook,
+    A args,
+  ) {
     for (final descriptor in descriptors) {
       final plugin = descriptor.plugin;
-      final options = descriptor.options;
-      final Object? result;
-      switch (plugin) {
-        case final Plugin typed:
-          final method = hook != null
-              ? typed.hookValue(hook)
-              : typed.jsRead(hookName);
-          if (method == null || !jsIsFunction(method)) continue;
-          result = hook != null
-              ? typed.invokeHook(hook, method, chart, args, options)
-              : callback(method, [chart, args, options], typed);
-        // `<dynamic, dynamic>` is the type test of jsGet: on dart2wasm it
-        // costs about 33 ns less for each notify of 7 plugins than
-        // `<String, Object?>` (Chart.js ADR 0020, probe 8).
-        case final Map<dynamic, dynamic> map:
-          final method = MapPlugin(map).hookValue(hookName);
-          if (method == null || !jsIsFunction(method)) continue;
-          result = MapPlugin(map).invokeHook(method, chart, args, options);
-        default:
-          // A plugin object of another kind (a class value of user code).
-          final method = jsGet(plugin, hookName);
-          if (!jsIsFunction(method)) continue;
-          result = callback(method, [chart, args, options], plugin);
-      }
-      if (identical(result, false) && _cancelable(args)) {
+      if (!plugin.notify(hook, chart, args, descriptor.options) &&
+          hook.cancelable) {
         return false;
       }
     }
@@ -356,13 +294,30 @@ final class PluginService() {
     List<PluginDescriptor> diff(
       List<PluginDescriptor> a,
       List<PluginDescriptor> b,
-    ) => a
-        .where((x) => !b.any((y) => _idOf(x.plugin) == _idOf(y.plugin)))
-        .toList();
-    _notify(diff(previousDescriptors, descriptors), chart, PluginHook.stop);
-    _notify(diff(descriptors, previousDescriptors), chart, PluginHook.start);
+    ) => a.where((x) => !b.any((y) => x.plugin.id == y.plugin.id)).toList();
+    _notify(
+      diff(previousDescriptors, descriptors),
+      chart,
+      PluginHook.stop,
+      const PluginHookArgs(),
+    );
+    _notify(
+      diff(descriptors, previousDescriptors),
+      chart,
+      PluginHook.start,
+      const PluginHookArgs(),
+    );
   }
 }
+
+/// The `{}` of a notify without arguments (core.plugins.js:60): a
+/// [PluginHookArgs] for a hook whose argument class is [PluginHookArgs]. A
+/// hook with another argument class needs its arguments.
+A _noArgs<A extends Object>(PluginHook<A> hook) =>
+    switch (const PluginHookArgs()) {
+      final A args => args,
+      _ => throw ArgumentError.notNull('args of ${hook.jsName}'),
+    };
 
 /// core.plugins.js:125 `allPlugins`.
 ///
@@ -371,18 +326,20 @@ final class PluginService() {
 /// The registered plugins come in the `Object.keys` order of
 /// `registry.plugins.items` ([jsObjectKeys]), then the inline plugins of
 /// `config.plugins` in their index order. The test
-/// `plugins.indexOf(plugin) === -1` is a test with `identical`. The key of
-/// `localIds[plugin.id]` is the `ToString` of the `id`. Thus a local plugin
-/// without an `id` gets the key `'undefined'`. The result is the object
-/// `{plugins, localIds}` as a record.
-({List<Object> plugins, Map<String, bool> localIds}) _allPlugins(
+/// `plugins.indexOf(plugin) === -1` is a test with `identical`. The result
+/// is the object `{plugins, localIds}` as a record.
+///
+/// An inline plugin is a [Plugin] (Chart.js ADR 0144). A value of another
+/// type stops a debug build, and a release build skips it. Dart `null`
+/// throws the JavaScript `TypeError` of `plugin.id`.
+({List<Plugin<Object?>> plugins, Map<String, bool> localIds}) _allPlugins(
   Config config,
 ) {
   final localIds = <String, bool>{};
-  final plugins = <Object>[];
+  final plugins = <Plugin<Object?>>[];
   final keys = jsObjectKeys(registry.plugins.items);
   for (var i = 0; i < keys.length; i++) {
-    plugins.add(registry.getPlugin(keys[i]));
+    plugins.add(registry.getPlugin(keys[i]) as Plugin<Object?>);
   }
 
   // The inline plugins of the config of the user, read by index.
@@ -390,11 +347,16 @@ final class PluginService() {
   final length = jsToNumber(jsGet(local, 'length'));
   for (var i = 0; i < length; i++) {
     final plugin = jsGet(local, i);
+    // A JavaScript TypeError at `plugin.id` below for null.
+    if (plugin == null || identical(plugin, undefined)) throw TypeError();
+    if (plugin is! Plugin<Object?>) {
+      assert(false, 'An inline plugin is a Plugin, not $plugin.');
+      continue;
+    }
 
     if (!plugins.any((p) => identical(p, plugin))) {
-      // A JavaScript TypeError at `plugin.id` below for null.
-      plugins.add(plugin ?? (throw TypeError()));
-      localIds[_propertyKey(_idOf(plugin))] = true;
+      plugins.add(plugin);
+      localIds[plugin.id] = true;
     }
   }
 
@@ -421,7 +383,7 @@ Object? _getOpts(Object? options, bool all) {
 /// hides a private library function with the same name.
 List<PluginDescriptor> createDescriptors(
   types.Chart chart,
-  ({List<Object> plugins, Map<String, bool> localIds}) allPlugins,
+  ({List<Plugin<Object?>> plugins, Map<String, bool> localIds}) allPlugins,
   Object? options,
   bool all,
 ) {
@@ -430,7 +392,7 @@ List<PluginDescriptor> createDescriptors(
   final context = chart.getContext();
 
   for (final plugin in plugins) {
-    final id = _idOf(plugin);
+    final id = plugin.id;
     // The plugin options of the user, read by the plugin id.
     final opts = _getOpts(jsGet(options, id), all);
     if (opts == null) {
@@ -440,7 +402,7 @@ List<PluginDescriptor> createDescriptors(
       plugin: plugin,
       options: _pluginOpts(
         chart.config as Config,
-        (plugin: plugin, local: localIds[_propertyKey(id)] ?? false),
+        (plugin: plugin, local: localIds[id] ?? false),
         opts,
         context,
       ),
@@ -456,17 +418,17 @@ List<PluginDescriptor> createDescriptors(
 /// config keeps in its cache, as upstream does.
 Object _pluginOpts(
   Config config,
-  ({Object plugin, bool local}) pluginAndLocal,
+  ({Plugin<Object?> plugin, bool local}) pluginAndLocal,
   Object? opts,
   Object context,
 ) {
   final (:plugin, :local) = pluginAndLocal;
   final keys = config.pluginScopeKeys(plugin);
   final scopes = config.getOptionScopes(opts, keys);
-  if (local && jsTruthy(_defaultsOf(plugin))) {
+  if (local && jsTruthy(plugin.defaults)) {
     // make sure plugin defaults are in scopes for local (not registered)
     // plugins
-    scopes.add(_defaultsOf(plugin));
+    scopes.add(plugin.defaults);
   }
   return config.createResolver(
     scopes,
@@ -477,12 +439,6 @@ Object _pluginOpts(
   );
 }
 
-/// Whether the Map plugin [plugin] of user code opts into the partial
-/// lifecycles: its own key `supportsDataUpdates` is `true` (Chart.js ADRs
-/// 0074 and 0111).
-bool _mapPluginOptsIn(Map<String, Object?> plugin) =>
-    plugin['supportsDataUpdates'] == true;
-
 /// The descriptor defaults of `pluginOpts` (core.plugins.js:186-189).
 const DescriptorDefaults _pluginDescriptorDefaults = DescriptorDefaults(
   scriptable: false,
@@ -490,33 +446,5 @@ const DescriptorDefaults _pluginDescriptorDefaults = DescriptorDefaults(
   allKeys: true,
 );
 
-/// `plugin.id`: the typed field of a [Plugin], else the read by name of a
-/// plugin object of user code (a Map or a class value). `null` and
-/// `undefined` throw the [TypeError] of the read.
-Object? _idOf(Object? plugin) =>
-    plugin is Plugin ? plugin.id : jsGet(plugin, 'id');
-
-/// `plugin.defaults`: the typed field of a [Plugin], else the read by name
-/// of a plugin object of user code.
-Object? _defaultsOf(Object? plugin) =>
-    plugin is Plugin ? plugin.defaults : jsGet(plugin, 'defaults');
-
-/// `args.cancelable` with ToBoolean (core.plugins.js:66): the typed field of
-/// a hook argument class, else the read by name of an args object of user
-/// code (the public `notifyPlugins`).
-bool _cancelable(Object args) => switch (args) {
-  final CancelableHookArgs typed => typed.cancelable,
-  final UpdateHookArgs typed => typed.cancelable,
-  final DatasetUpdateHookArgs typed => typed.cancelable,
-  final DatasetDrawHookArgs typed => typed.cancelable,
-  final EventHookArgs typed => typed.cancelable,
-  final TooltipDrawHookArgs typed => typed.cancelable,
-  _ => jsTruthy(jsGet(args, 'cancelable')),
-};
-
 /// `value || other`: [value] when it is truthy, else [other].
 Object? _or(Object? value, Object? other) => jsTruthy(value) ? value : other;
-
-/// The `ToPropertyKey` of [id]: [id] itself for a string, else its
-/// `ToString` ([jsToString]).
-String _propertyKey(Object? id) => id is String ? id : jsToString(id);

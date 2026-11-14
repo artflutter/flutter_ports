@@ -173,10 +173,10 @@ List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
 
 /// The tooltip of Graphic has a shadow (`elevation: 3`).
-final Map<String, Object?> tooltipShadow = {
-  'id': 'tooltipShadow',
-  'beforeTooltipDraw': (Chart chart, Object? args, Object? options) {
-    final tip = chart.tooltip!;
+final tooltipShadow = Plugin<Object?>(
+  id: 'tooltipShadow',
+  beforeTooltipDraw: (chart, args, options) {
+    final tip = args.tooltip;
     chart.ctx!
       ..save()
       ..globalAlpha = tip.opacity
@@ -186,8 +186,9 @@ final Map<String, Object?> tooltipShadow = {
       ..fillStyle = Gx.tooltipBackground
       ..fillRect(tip.x, tip.y, tip.width, tip.height)
       ..restore();
+    return true;
   },
-};
+);
 
 /// The pointer of the event position of a positioner: a chart event or an
 /// object with `x` and `y`. `null` for a selection without an event.
@@ -269,8 +270,8 @@ final class const TopLeftPositioner() extends TooltipPositioner {
 /// The last pointer position of each chart, `null` after the pointer left.
 final Expando<Offset> _pointers = Expando('graphic pointer');
 
-void _trackPointer(Chart chart, Object? args, Object? options) {
-  final event = (args! as JsObjectFace)['event']! as ChartEvent;
+void _trackPointer(Object chart, EventHookArgs args, Object? options) {
+  final event = args.event;
   _pointers[chart] = event.type == 'mouseout'
       ? null
       : Offset(event.x ?? 0, event.y ?? 0);
@@ -278,16 +279,16 @@ void _trackPointer(Chart chart, Object? args, Object? options) {
 
 /// The `CrosshairGuide` of Graphic: gray lines through the selected point.
 /// With [followX] or [followY], a line follows the pointer instead.
-Map<String, Object?> crosshair({
+Plugin<Object?> crosshair({
   bool followX = false,
   bool followY = true,
   bool vertical = true,
   bool horizontal = true,
-}) => {
-  'id': 'crosshair',
-  'afterEvent': _trackPointer,
-  'afterDatasetsDraw': (Chart chart, Object? args, Object? options) {
-    final active = chart.getActiveElements();
+}) => Plugin(
+  id: 'crosshair',
+  afterEvent: _trackPointer,
+  afterDatasetsDraw: (chart, args, options) {
+    final active = (chart as Chart).getActiveElements();
     if (active.isEmpty) return;
     final area = chart.chartArea!;
     final element = active.first.element!;
@@ -313,15 +314,15 @@ Map<String, Object?> crosshair({
       ..stroke()
       ..restore();
   },
-};
+);
 
 /// The `CrosshairGuide` of Graphic in a `PolarCoord`: a spoke through the
 /// selected index and a circle through the pointer.
-final Map<String, Object?> polarCrosshair = {
-  'id': 'polarCrosshair',
-  'afterEvent': _trackPointer,
-  'afterDatasetsDraw': (Chart chart, Object? args, Object? options) {
-    final active = chart.getActiveElements();
+final polarCrosshair = Plugin<Object?>(
+  id: 'polarCrosshair',
+  afterEvent: _trackPointer,
+  afterDatasetsDraw: (chart, args, options) {
+    final active = (chart as Chart).getActiveElements();
     if (active.isEmpty) return;
     final scale = chart.scales['r']! as RadialLinearScale;
     final center = Offset(scale.xCenter!, scale.yCenter!);
@@ -344,18 +345,19 @@ final Map<String, Object?> polarCrosshair = {
       ..stroke()
       ..restore();
   },
-};
+);
 
 /// `RectCoord(color: ...)`: a background color of the region.
-Map<String, Object?> regionColor(Color color) => {
-  'id': 'regionColor',
-  'beforeDraw': (Chart chart, Object? args, Object? options) {
+Plugin<Object?> regionColor(Color color) => Plugin(
+  id: 'regionColor',
+  beforeDraw: (chart, args, options) {
     final area = chart.chartArea!;
     chart.ctx!
       ..save()
       ..fillStyle = color
       ..fillRect(area.left, area.top, area.width, area.height)
       ..restore();
+    return true;
   },
-};
+);
 // #enddocregion graphic-kit

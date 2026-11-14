@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -534,13 +535,14 @@ void main() {
           ],
         },
         plugins: [
-          <String, Object?>{
-            'id': 'events',
-            'beforeEvent': (Object? chart, Object? args, Object? options) {
-              final event = jsGet(args, 'event')! as types.ChartEvent;
+          Plugin<Object?>(
+            id: 'events',
+            beforeEvent: (chart, args, options) {
+              final event = args.event;
               events.add('${event.type} ${event.x} ${event.y}');
+              return true;
             },
-          },
+          ),
         ],
       );
       final node = FocusNode();
@@ -572,12 +574,13 @@ void main() {
       final config = _config(
         'bar',
         plugins: [
-          <String, Object?>{
-            'id': 'events',
-            'beforeEvent': (Object? chart, Object? args, Object? options) {
-              events.add((jsGet(args, 'event')! as types.ChartEvent).type);
+          Plugin<Object?>(
+            id: 'events',
+            beforeEvent: (chart, args, options) {
+              events.add(args.event.type);
+              return true;
             },
-          },
+          ),
         ],
       );
       final node = FocusNode();
@@ -959,11 +962,10 @@ void main() {
       final config = _config(
         'bar',
         plugins: [
-          <String, Object?>{
-            'id': 'renders',
-            'afterRender': (Object? chart, Object? args, Object? options) =>
-                renders.add('render'),
-          },
+          Plugin<Object?>(
+            id: 'renders',
+            afterRender: (chart, args, options) => renders.add('render'),
+          ),
         ],
       );
       await tester.pumpWidget(

@@ -491,18 +491,19 @@ final class _PluginTiming({final bool tooltip = false}) {
   int _tooltipTicks = 0;
 
   /// The inline plugins of the chart.
-  List<Object?> get plugins => [
+  List<Plugin<Object?>> get plugins => [
     _parts.plugin,
     if (tooltip)
-      <String, Object?>{
-        'id': 'benchTooltipTiming',
-        'beforeTooltipDraw': (Object? chart, Object? args, Object? options) {
+      Plugin(
+        id: 'benchTooltipTiming',
+        beforeTooltipDraw: (chart, args, options) {
           _tooltipStart = _watch.elapsedTicks;
+          return true;
         },
-        'afterTooltipDraw': (Object? chart, Object? args, Object? options) {
+        afterTooltipDraw: (chart, args, options) {
           _tooltipTicks += _watch.elapsedTicks - _tooltipStart;
         },
-      },
+      ),
   ];
 
   /// The ticks of each part since the last call. It resets the parts.
@@ -1266,15 +1267,17 @@ final class _BenchTheme(
   /// `beforeLayout` of the widget plugin `$chartView`
   /// (`chart_view_plugin.dart`), without its focus ring. It comes last in
   /// the plugins of the chart, as the widget plugin does.
-  late final Map<String, Object?> plugin = <String, Object?>{
-    'id': r'$chartView',
-    'beforeUpdate': (Object? chart, Object? args, Object? options) {
-      _switch.beforeUpdate(chart! as Chart);
+  late final Plugin<Object?> plugin = Plugin(
+    id: r'$chartView',
+    beforeUpdate: (chart, args, options) {
+      _switch.beforeUpdate(chart);
+      return true;
     },
-    'beforeLayout': (Object? chart, Object? args, Object? options) {
-      _switch.afterColorize(chart! as Chart);
+    beforeLayout: (chart, args, options) {
+      _switch.afterColorize(chart);
+      return true;
     },
-  };
+  );
 
   /// The switch to [theme] in the update callback of the widget: steps 1 to
   /// 4 of the switch, then one `chart.update` with the mode of step 5
@@ -2152,7 +2155,11 @@ final class _BenchChart(super.item, [super.userConfig]) extends Chart {
   }
 
   @override
-  bool? notifyPlugins(String hook, [Object? args, FilterCallback? filter]) {
+  bool? notifyPlugins<A extends Object>(
+    PluginHook<A> hook, [
+    A? args,
+    FilterCallback? filter,
+  ]) {
     notifies++;
     return super.notifyPlugins(hook, args, filter);
   }

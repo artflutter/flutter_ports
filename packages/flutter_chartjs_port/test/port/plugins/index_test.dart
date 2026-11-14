@@ -6,19 +6,20 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show OptionView;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show ScriptableScaleContext;
 import 'package:flutter_chartjs_port/src/index.dart' show plugins;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show PluginHook, PluginHookFunction;
+import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart';
+import 'plugin_chart_harness.dart' show pluginHookNames;
 import 'plugin_dispatch_reference.dart';
 
 // The plugin hook dispatch with the seven plugins of src/plugins/index.js
@@ -30,13 +31,13 @@ import 'plugin_dispatch_reference.dart';
 // registers them here.
 //
 // The group `plugin objects` compares the keys of each plugin object of the
-// namespace `plugins` and the registry order. A function key gives its count
-// of positional parameters: the `length` of the JS function and the count
-// that the Dart function takes. A hook of the `Plugin` interface is a typed
-// hook function `(chart, args, options)` (Chart.js ADR 0054 §12, which
-// supersedes the upstream parameter counts of the hooks of Chart.js ADR
-// 0038, section 3): both sides give it as `<key>(hook)`, the Dart side for a
-// function of the hook type with 3 parameters ([_hookText]).
+// namespace `plugins` and the registry order. A plugin is a native [Plugin]
+// (Chart.js ADR 0144): its keys are its fields, with no key order, and each
+// hook is a field of the type of its hook. Both sides give a hook as
+// `<key>(hook)`: the JS `length` of a hook is no behavior of Chart.js
+// (Chart.js ADR 0054 §12). The native plugins have no field for the
+// `_element` class of upstream and for the `destroy` of the decimation,
+// which is no hook of the `Plugin` interface ([_removedKeys]).
 //
 // The group `dispatch` builds the chart of each case with acquireChart and
 // runs its steps. Each hook of each plugin object is a recording closure
@@ -48,127 +49,81 @@ import 'plugin_dispatch_reference.dart';
 // go through triggerMouseEvent (Chart.js ADR 0022, section 6). The
 // generator calls `chart._eventHandler` with the same point.
 
-/// The hook names of the interface `Plugin` (src/types/index.d.ts:856-1164)
-/// in source order, then the two hooks of `ExtendedPlugin`
-/// (src/types/index.d.ts:2764-2787): `HOOKS` of the generator.
-const List<String> _hooks = [
-  'install',
-  'start',
-  'stop',
-  'beforeInit',
-  'afterInit',
-  'beforeUpdate',
-  'afterUpdate',
-  'beforeElementsUpdate',
-  'reset',
-  'beforeDatasetsUpdate',
-  'afterDatasetsUpdate',
-  'beforeDatasetUpdate',
-  'afterDatasetUpdate',
-  'beforeLayout',
-  'beforeDataLimits',
-  'afterDataLimits',
-  'beforeBuildTicks',
-  'afterBuildTicks',
-  'afterLayout',
-  'beforeRender',
-  'afterRender',
-  'beforeDraw',
-  'afterDraw',
-  'beforeDatasetsDraw',
-  'afterDatasetsDraw',
-  'beforeDatasetDraw',
-  'afterDatasetDraw',
-  'beforeEvent',
-  'afterEvent',
-  'resize',
-  'beforeDestroy',
-  'afterDestroy',
-  'uninstall',
-  'beforeTooltipDraw',
-  'afterTooltipDraw',
-];
+/// The hooks of the generator by their JS names: `HOOKS` of the generator,
+/// the hooks of the interface `Plugin` (src/types/index.d.ts:856-1164) and
+/// the two hooks of `ExtendedPlugin` (src/types/index.d.ts:2764-2787).
+final Map<String, PluginHook<Object>> _hooks = {
+  for (final hook in PluginHook.values) hook.jsName: hook,
+};
+
+/// The keys of the upstream plugin objects that the native plugins of
+/// Chart.js ADR 0144 have no field for: the class of the box (the classes
+/// are `Legend.jsClass`, `Title.jsClass` and `Tooltip.jsClass`), and the
+/// `destroy` of the decimation, which no chart calls.
+const Set<String> _removedKeys = {'_element: class', 'destroy(1)'};
 
 /// The hooks whose args have the dataset `index`.
-const Set<String> _indexHooks = {
-  'beforeDatasetUpdate',
-  'afterDatasetUpdate',
-  'beforeDatasetDraw',
-  'afterDatasetDraw',
+const Set<PluginHook<Object>> _indexHooks = {
+  PluginHook.beforeDatasetUpdate,
+  PluginHook.afterDatasetUpdate,
+  PluginHook.beforeDatasetDraw,
+  PluginHook.afterDatasetDraw,
 };
 
 /// The hooks whose args are the context of a scale (core.scale.js:534-537).
-const Set<String> _scaleHooks = {
-  'beforeDataLimits',
-  'afterDataLimits',
-  'beforeBuildTicks',
-  'afterBuildTicks',
+const Set<PluginHook<Object>> _scaleHooks = {
+  PluginHook.beforeDataLimits,
+  PluginHook.afterDataLimits,
+  PluginHook.beforeBuildTicks,
+  PluginHook.afterBuildTicks,
 };
 
 /// The hooks whose args have the `event`.
-const Set<String> _eventHooks = {'beforeEvent', 'afterEvent'};
+const Set<PluginHook<Object>> _eventHooks = {
+  PluginHook.beforeEvent,
+  PluginHook.afterEvent,
+};
 
 /// The hooks whose args have the update `mode`.
-const Set<String> _modeHooks = {
-  'beforeUpdate',
-  'afterUpdate',
-  'beforeDatasetsUpdate',
-  'afterDatasetsUpdate',
-  'beforeDatasetUpdate',
-  'afterDatasetUpdate',
+const Set<PluginHook<Object>> _modeHooks = {
+  PluginHook.beforeUpdate,
+  PluginHook.afterUpdate,
+  PluginHook.beforeDatasetsUpdate,
+  PluginHook.afterDatasetsUpdate,
+  PluginHook.beforeDatasetUpdate,
+  PluginHook.afterDatasetUpdate,
 };
 
 /// `detail(hook, args)` of the generator: [hook], then `:<detail>` for the
 /// `index` of a dataset hook, the `id` of the `scale` of a scale hook, the
 /// `type` of the `event` of an event hook and the `ToString` of the `mode`
-/// of an update hook.
-String _detail(String hook, Object? args) {
-  final text = StringBuffer(hook);
+/// of an update hook. Dart `null` for [args] is the `{}` of the generator
+/// for a hook with one parameter: its `index` and `mode` are `undefined`.
+String _detail(PluginHook<Object> hook, Object? args) {
+  final text = StringBuffer(hook.jsName);
   if (_indexHooks.contains(hook)) {
-    text.write(':${jsToString(jsGet(args, 'index'))}');
+    final index = switch (args) {
+      DatasetUpdateHookArgs(:final index) ||
+      DatasetDrawHookArgs(:final index) => index,
+      _ => undefined,
+    };
+    text.write(':${jsToString(index)}');
   }
   if (_scaleHooks.contains(hook)) {
-    text.write(':${(jsGet(args, 'scale')! as Scale).id}');
+    text.write(':${((args! as ScriptableScaleContext).scale! as Scale).id}');
   }
   if (_eventHooks.contains(hook)) {
-    text.write(':${(jsGet(args, 'event')! as types.ChartEvent).type}');
+    text.write(':${(args! as EventHookArgs).event.type}');
   }
   if (_modeHooks.contains(hook)) {
-    text.write(':${jsToString(jsGet(args, 'mode'))}');
+    final mode = switch (args) {
+      UpdateHookArgs(:final mode) || DatasetUpdateHookArgs(:final mode) => mode,
+      _ => undefined,
+    };
+    text.write(':${jsToString(mode)}');
   }
   return text.toString();
 }
-
-/// The counts of positional arguments, from 0 to 4, that [f] takes with no
-/// named argument (the arity test of `jsCall`). A parameter of type `Never`
-/// accepts every parameter type.
-List<int> _counts(Function f) => [
-  if (f is Object? Function()) 0,
-  if (f is Object? Function(Never)) 1,
-  if (f is Object? Function(Never, Never)) 2,
-  if (f is Object? Function(Never, Never, Never)) 3,
-  if (f is Object? Function(Never, Never, Never, Never)) 4,
-];
-
-/// `keyText(plugin, key)` of the generator: `<key>(<count>)` for a closure,
-/// `<key>: class` for a class value, else the key. A closure that takes
-/// more than one count gives the counts with `|`, and fails the comparison.
-/// A hook of the `Plugin` interface gives `<key>(hook)` for a typed hook
-/// function ([_hookText]).
-String _keyText(JsObjectFace plugin, String key) => switch (plugin[key]) {
-  final JsClass _ => '$key: class',
-  final Function f when PluginHook.of(key) != null => _hookText(key, f),
-  final Function f => '$key(${_counts(f).join('|')})',
-  _ => key,
-};
-
-/// The text of the hook [key] with the function [f]: `<key>(hook)` for a
-/// function of the hook type `(chart, args, options)` that takes exactly 3
-/// arguments (Chart.js ADR 0054 §12), else the counts of [f].
-String _hookText(String key, Function f) =>
-    f is PluginHookFunction<Never> && _counts(f).join('|') == '3'
-    ? '$key(hook)'
-    : '$key(${_counts(f).join('|')})';
 
 /// The reference text of a key: `<key>(hook)` for a hook of the `Plugin`
 /// interface (the JS `length` of the hook is no behavior of Chart.js:
@@ -177,8 +132,32 @@ String _referenceKeyText(String text) {
   final open = text.indexOf('(');
   if (open < 0 || !text.endsWith(')')) return text;
   final key = text.substring(0, open);
-  return PluginHook.of(key) != null ? '$key(hook)' : text;
+  return _hooks.containsKey(key) ? '$key(hook)' : text;
 }
+
+/// The keys of the native plugin [plugin]: `id`, `<key>(hook)` for each
+/// hook that it sets, and each other field of the upstream keys that it
+/// sets, sorted: a native plugin has no key order.
+List<String> _nativeKeys<O>(Plugin<O> plugin) => [
+  'id',
+  for (final hook in pluginHookNames(plugin)) '$hook(hook)',
+  if (plugin.defaults != null) 'defaults',
+  if (plugin.defaultRoutes != null) 'defaultRoutes',
+  if (plugin.descriptors != null) 'descriptors',
+  if (plugin.additionalOptionScopes != null) 'additionalOptionScopes',
+  if (plugin.events != null) 'events',
+]..sort();
+
+/// [f] of the plugin object [plugin] of the namespace `plugins`, with the
+/// options type of the plugin: a hook field is read through the type of its
+/// plugin. A plugin with the options of an extension type is a
+/// `Plugin<Object?>` at run time.
+T _withPlugin<T>(Object? plugin, T Function<O>(Plugin<O> plugin) f) =>
+    switch (plugin) {
+      final Plugin<OptionView> p => f<OptionView>(p),
+      final Plugin<Object?> p => f<Object?>(p),
+      _ => throw ArgumentError.value(plugin, 'plugin', 'is not a Plugin'),
+    };
 
 /// The upstream count of parameters of each function key of each plugin of
 /// the reference, by plugin id and key: the `length` of the JS function.
@@ -198,77 +177,220 @@ Map<String, Map<String, int>> _upstreamCounts() {
   return counts;
 }
 
-/// A recording closure for the hook [key] of the plugin [id]: it adds the
-/// hook text to [calls] and calls [f] with the same arguments. It takes the
-/// count of positional arguments of [f]. The generator gives `{}` as the
-/// args of a hook with one parameter, as `_notify` gives `args || {}`.
-///
-/// A typed hook function (Chart.js ADR 0054 §12) takes the 3 arguments of
-/// the hook type: its recording closure takes them too, and records the
-/// args as the generator does for the upstream count [upstream] of the
-/// hook.
-Function _recording(
-  String id,
-  String key,
-  Function f,
+/// Copies each hook field of [from] into [to].
+void _copyHooks<O>(Plugin<O> to, Plugin<O> from) => to
+  ..install = from.install
+  ..start = from.start
+  ..stop = from.stop
+  ..beforeInit = from.beforeInit
+  ..afterInit = from.afterInit
+  ..beforeUpdate = from.beforeUpdate
+  ..afterUpdate = from.afterUpdate
+  ..beforeElementsUpdate = from.beforeElementsUpdate
+  ..reset = from.reset
+  ..beforeDatasetsUpdate = from.beforeDatasetsUpdate
+  ..afterDatasetsUpdate = from.afterDatasetsUpdate
+  ..beforeDatasetUpdate = from.beforeDatasetUpdate
+  ..afterDatasetUpdate = from.afterDatasetUpdate
+  ..beforeLayout = from.beforeLayout
+  ..beforeDataLimits = from.beforeDataLimits
+  ..afterDataLimits = from.afterDataLimits
+  ..beforeBuildTicks = from.beforeBuildTicks
+  ..afterBuildTicks = from.afterBuildTicks
+  ..afterLayout = from.afterLayout
+  ..beforeRender = from.beforeRender
+  ..afterRender = from.afterRender
+  ..beforeDraw = from.beforeDraw
+  ..afterDraw = from.afterDraw
+  ..beforeDatasetsDraw = from.beforeDatasetsDraw
+  ..afterDatasetsDraw = from.afterDatasetsDraw
+  ..beforeDatasetDraw = from.beforeDatasetDraw
+  ..afterDatasetDraw = from.afterDatasetDraw
+  ..beforeEvent = from.beforeEvent
+  ..afterEvent = from.afterEvent
+  ..resize = from.resize
+  ..beforeDestroy = from.beforeDestroy
+  ..afterDestroy = from.afterDestroy
+  ..uninstall = from.uninstall
+  ..beforeTooltipDraw = from.beforeTooltipDraw
+  ..afterTooltipDraw = from.afterTooltipDraw;
+
+/// Replaces each hook of [plugin] with a recording closure that adds the
+/// hook text to [calls] and calls the hook with the same arguments, and
+/// restores the hooks with `addTearDown`. The closure records the args as
+/// the generator does for the upstream count of parameters of the hook in
+/// [upstream]: the generator gives `{}` as the args of a hook with one
+/// parameter, as `_notify` gives `args || {}`.
+void _recordHooks<O>(
+  Plugin<O> plugin,
   List<String> calls,
-  int? upstream,
+  Map<String, int>? upstream,
 ) {
-  final counts = _counts(f);
-  expect(counts, hasLength(1), reason: 'the parameters of $id.$key');
-  if (f is PluginHookFunction<Never> && PluginHook.of(key) != null) {
-    expect(upstream, isNotNull, reason: 'the upstream count of $id.$key');
-    return (Object? chart, Object? args, Object? options) {
-      calls.add(
-        '$id.${_detail(key, upstream == 1 ? const <String, Object?>{} : args)}',
-      );
-      return Function.apply(f, [chart, args, options]);
-    };
+  void record(PluginHook<Object> hook, Object args) {
+    final count = upstream?[hook.jsName];
+    expect(
+      count,
+      isNotNull,
+      reason: 'the upstream count of ${plugin.id}.$hook',
+    );
+    calls.add('${plugin.id}.${_detail(hook, count == 1 ? null : args)}');
   }
-  return switch (counts.single) {
-    1 => (Object? chart) {
-      calls.add('$id.${_detail(key, const <String, Object?>{})}');
-      return Function.apply(f, [chart]);
-    },
-    2 => (Object? chart, Object? args) {
-      calls.add('$id.${_detail(key, args)}');
-      return Function.apply(f, [chart, args]);
-    },
-    3 => (Object? chart, Object? args, Object? options) {
-      calls.add('$id.${_detail(key, args)}');
-      return Function.apply(f, [chart, args, options]);
-    },
-    final n => throw StateError('$id.$key takes $n arguments'),
+
+  PluginHookFunction<A, O>? hook<A extends Object>(
+    PluginHook<A> hook,
+    PluginHookFunction<A, O>? f,
+  ) => f == null
+      ? null
+      : (chart, args, options) {
+          record(hook, args);
+          f(chart, args, options);
+        };
+  CancelableHookFunction<A, O>? cancelable<A extends Object>(
+    PluginHook<A> hook,
+    CancelableHookFunction<A, O>? f,
+  ) => f == null
+      ? null
+      : (chart, args, options) {
+          record(hook, args);
+          return f(chart, args, options);
+        };
+
+  final saved = Plugin<O>(id: plugin.id, options: plugin.options);
+  _copyHooks(saved, plugin);
+  _copyHooks(
+    plugin,
+    Plugin<O>(
+      id: plugin.id,
+      options: plugin.options,
+      install: hook(PluginHook.install, plugin.install),
+      start: hook(PluginHook.start, plugin.start),
+      stop: hook(PluginHook.stop, plugin.stop),
+      beforeInit: hook(PluginHook.beforeInit, plugin.beforeInit),
+      afterInit: hook(PluginHook.afterInit, plugin.afterInit),
+      beforeUpdate: cancelable(PluginHook.beforeUpdate, plugin.beforeUpdate),
+      afterUpdate: hook(PluginHook.afterUpdate, plugin.afterUpdate),
+      beforeElementsUpdate: hook(
+        PluginHook.beforeElementsUpdate,
+        plugin.beforeElementsUpdate,
+      ),
+      reset: hook(PluginHook.reset, plugin.reset),
+      beforeDatasetsUpdate: cancelable(
+        PluginHook.beforeDatasetsUpdate,
+        plugin.beforeDatasetsUpdate,
+      ),
+      afterDatasetsUpdate: hook(
+        PluginHook.afterDatasetsUpdate,
+        plugin.afterDatasetsUpdate,
+      ),
+      beforeDatasetUpdate: cancelable(
+        PluginHook.beforeDatasetUpdate,
+        plugin.beforeDatasetUpdate,
+      ),
+      afterDatasetUpdate: hook(
+        PluginHook.afterDatasetUpdate,
+        plugin.afterDatasetUpdate,
+      ),
+      beforeLayout: cancelable(PluginHook.beforeLayout, plugin.beforeLayout),
+      beforeDataLimits: hook(
+        PluginHook.beforeDataLimits,
+        plugin.beforeDataLimits,
+      ),
+      afterDataLimits: hook(PluginHook.afterDataLimits, plugin.afterDataLimits),
+      beforeBuildTicks: hook(
+        PluginHook.beforeBuildTicks,
+        plugin.beforeBuildTicks,
+      ),
+      afterBuildTicks: hook(PluginHook.afterBuildTicks, plugin.afterBuildTicks),
+      afterLayout: hook(PluginHook.afterLayout, plugin.afterLayout),
+      beforeRender: cancelable(PluginHook.beforeRender, plugin.beforeRender),
+      afterRender: hook(PluginHook.afterRender, plugin.afterRender),
+      beforeDraw: cancelable(PluginHook.beforeDraw, plugin.beforeDraw),
+      afterDraw: hook(PluginHook.afterDraw, plugin.afterDraw),
+      beforeDatasetsDraw: cancelable(
+        PluginHook.beforeDatasetsDraw,
+        plugin.beforeDatasetsDraw,
+      ),
+      afterDatasetsDraw: hook(
+        PluginHook.afterDatasetsDraw,
+        plugin.afterDatasetsDraw,
+      ),
+      beforeDatasetDraw: cancelable(
+        PluginHook.beforeDatasetDraw,
+        plugin.beforeDatasetDraw,
+      ),
+      afterDatasetDraw: hook(
+        PluginHook.afterDatasetDraw,
+        plugin.afterDatasetDraw,
+      ),
+      beforeEvent: cancelable(PluginHook.beforeEvent, plugin.beforeEvent),
+      afterEvent: hook(PluginHook.afterEvent, plugin.afterEvent),
+      resize: hook(PluginHook.resize, plugin.resize),
+      beforeDestroy: hook(PluginHook.beforeDestroy, plugin.beforeDestroy),
+      afterDestroy: hook(PluginHook.afterDestroy, plugin.afterDestroy),
+      uninstall: hook(PluginHook.uninstall, plugin.uninstall),
+      beforeTooltipDraw: cancelable(
+        PluginHook.beforeTooltipDraw,
+        plugin.beforeTooltipDraw,
+      ),
+      afterTooltipDraw: hook(
+        PluginHook.afterTooltipDraw,
+        plugin.afterTooltipDraw,
+      ),
+    ),
+  );
+  addTearDown(() => _copyHooks(plugin, saved));
+}
+
+/// The inline plugin `recorder`: a closure for each hook of [_hooks] that
+/// adds the hook text to [notifies].
+Plugin<Object?> _recorder(List<String> notifies) {
+  PluginHookFunction<A, Object?> hook<A extends Object>(PluginHook<A> hook) =>
+      (chart, args, options) => notifies.add(_detail(hook, args));
+  CancelableHookFunction<A, Object?> cancelable<A extends Object>(
+    PluginHook<A> hook,
+  ) => (chart, args, options) {
+    notifies.add(_detail(hook, args));
+    return true;
   };
+  return Plugin<Object?>(
+    id: 'recorder',
+    install: hook(PluginHook.install),
+    start: hook(PluginHook.start),
+    stop: hook(PluginHook.stop),
+    beforeInit: hook(PluginHook.beforeInit),
+    afterInit: hook(PluginHook.afterInit),
+    beforeUpdate: cancelable(PluginHook.beforeUpdate),
+    afterUpdate: hook(PluginHook.afterUpdate),
+    beforeElementsUpdate: hook(PluginHook.beforeElementsUpdate),
+    reset: hook(PluginHook.reset),
+    beforeDatasetsUpdate: cancelable(PluginHook.beforeDatasetsUpdate),
+    afterDatasetsUpdate: hook(PluginHook.afterDatasetsUpdate),
+    beforeDatasetUpdate: cancelable(PluginHook.beforeDatasetUpdate),
+    afterDatasetUpdate: hook(PluginHook.afterDatasetUpdate),
+    beforeLayout: cancelable(PluginHook.beforeLayout),
+    beforeDataLimits: hook(PluginHook.beforeDataLimits),
+    afterDataLimits: hook(PluginHook.afterDataLimits),
+    beforeBuildTicks: hook(PluginHook.beforeBuildTicks),
+    afterBuildTicks: hook(PluginHook.afterBuildTicks),
+    afterLayout: hook(PluginHook.afterLayout),
+    beforeRender: cancelable(PluginHook.beforeRender),
+    afterRender: hook(PluginHook.afterRender),
+    beforeDraw: cancelable(PluginHook.beforeDraw),
+    afterDraw: hook(PluginHook.afterDraw),
+    beforeDatasetsDraw: cancelable(PluginHook.beforeDatasetsDraw),
+    afterDatasetsDraw: hook(PluginHook.afterDatasetsDraw),
+    beforeDatasetDraw: cancelable(PluginHook.beforeDatasetDraw),
+    afterDatasetDraw: hook(PluginHook.afterDatasetDraw),
+    beforeEvent: cancelable(PluginHook.beforeEvent),
+    afterEvent: hook(PluginHook.afterEvent),
+    resize: hook(PluginHook.resize),
+    beforeDestroy: hook(PluginHook.beforeDestroy),
+    afterDestroy: hook(PluginHook.afterDestroy),
+    uninstall: hook(PluginHook.uninstall),
+    beforeTooltipDraw: cancelable(PluginHook.beforeTooltipDraw),
+    afterTooltipDraw: hook(PluginHook.afterTooltipDraw),
+  );
 }
-
-/// Replaces each hook of each plugin object of the namespace `plugins` with
-/// a [_recording] closure, and restores the hooks with `addTearDown`.
-void _recordHooks(List<String> calls) {
-  final upstream = _upstreamCounts();
-  for (final name in jsObjectKeys(plugins)) {
-    final plugin = plugins[name]! as JsObjectFace;
-    final id = plugin['id']! as String;
-    for (final key in jsObjectKeys(plugin)) {
-      final value = plugin[key];
-      if (value is! Function) {
-        continue;
-      }
-      plugin[key] = _recording(id, key, value, calls, upstream[id]?[key]);
-      addTearDown(() => plugin[key] = value);
-    }
-  }
-}
-
-/// The inline plugin `recorder`: a closure for each of [_hooks] that adds
-/// the hook text to [notifies].
-AnyObject _recorder(List<String> notifies) => <String, Object?>{
-  'id': 'recorder',
-  for (final hook in _hooks)
-    hook: (Object? chart, Object? args, Object? options) {
-      notifies.add(_detail(hook, args));
-    },
-};
 
 void main() {
   testReferenceOrigin(
@@ -293,13 +415,13 @@ void main() {
     test('the keys of each plugin object', () {
       final keys = [
         for (final name in jsObjectKeys(plugins))
-          <String, Object?>{
-            'id': (plugins[name]! as JsObjectFace)['id'],
-            'keys': [
-              for (final key in jsObjectKeys(plugins[name]))
-                _keyText(plugins[name]! as JsObjectFace, key),
-            ],
-          },
+          _withPlugin(
+            plugins[name],
+            <O>(plugin) => <String, Object?>{
+              'id': plugin.id,
+              'keys': _nativeKeys(plugin),
+            },
+          ),
       ];
       for (final c in pluginDispatchReference) {
         expect(keys, [
@@ -310,8 +432,9 @@ void main() {
               'id': plugin['id'],
               'keys': [
                 for (final text in plugin['keys']! as List<Object?>)
-                  _referenceKeyText(text! as String),
-              ],
+                  if (!_removedKeys.contains(text))
+                    _referenceKeyText(text! as String),
+              ]..sort(),
             },
         ], reason: c.name);
       }
@@ -326,9 +449,9 @@ void main() {
         );
       }
       for (final name in jsObjectKeys(plugins)) {
-        final plugin = plugins[name]! as JsObjectFace;
+        final plugin = plugins[name]! as Plugin<Object?>;
         expect(
-          registry.getPlugin(plugin['id']! as String),
+          registry.getPlugin(plugin.id),
           same(plugin),
           reason: 'the registry item of $name',
         );
@@ -341,7 +464,13 @@ void main() {
       testWidgets(c.name, (tester) async {
         final calls = <String>[];
         final notifies = <String>[];
-        _recordHooks(calls);
+        final upstream = _upstreamCounts();
+        for (final name in jsObjectKeys(plugins)) {
+          _withPlugin(
+            plugins[name],
+            <O>(plugin) => _recordHooks(plugin, calls, upstream[plugin.id]),
+          );
+        }
         final config = copyReference(c.config)! as AnyObject;
         config['plugins'] = [_recorder(notifies)];
         final options = copyReference(c.options)! as AnyObject;
