@@ -48,9 +48,10 @@ on:
   workflow_dispatch:
 
 concurrency:
-  # A deploy that started finishes. A newer push waits for it.
+  # A newer push cancels the run in progress: only the newest commit deploys.
+  # A cancelled run skips the deploy job, so the old pages stay.
   group: pages
-  cancel-in-progress: false
+  cancel-in-progress: true
 
 permissions:
   contents: read
