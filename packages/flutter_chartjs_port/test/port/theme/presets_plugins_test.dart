@@ -17,32 +17,49 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/color_json.dart';
 import '../../support/font_record.dart';
 import '../../support/light_theme.dart';
-import 'light_reference.dart';
 
-// theming.md §8 test 3, the plugin keys (Chart.js ADR 0050): the options of
-// the title, subtitle, legend and tooltip plugins of a chart with the light
-// preset equal the upstream options without a theme. The expected values
-// are `themeLightPlugins` of light_reference.dart. The generator
-// tool/reference/theme_light_reference.mjs resolves them as `pluginOpts`
-// does (core.plugins.js:175-188), in Node.js v24.12.0 on x64.
-//
-// Each case reads the options of the plugin descriptors of a real chart
-// (`chart.plugins.cache`, core.plugins.js:89-94), the resolver that each
-// hook of the plugin gets. The colors compare after the parse of the ported
-// @kurkle/color, as the canvas layer parses them. The fonts compare as
+// The theme keys of the title, subtitle, legend and tooltip plugins
+// (Chart.js ADR 0050): a compiled theme reaches the options of the plugin
+// descriptors of a real chart (`chart.plugins.cache`, core.plugins.js:89-94),
+// the resolver that each hook of the plugin gets. The fonts compare as
 // `toFont` results, as the plugins read them (plugin.title.js:92,
 // plugin.legend.js:136, 446, plugin.tooltip.js:152-154). Thus the title,
 // tooltip title and tooltip footer fonts keep their local 'bold'
 // (plugin.title.js:148-150, plugin.tooltip.js:1281-1283, 1295-1297) and the
 // subtitle font its local 'normal' (plugin.subtitle.js:35-37).
 //
+// The light pixel test (light_pixels_test.dart) shows that the light preset
+// paints the bytes of the unthemed chart.
+//
 // The reads use `jsGet`, and no resolver goes to `equals`.
 //
 // flutter_test_config.dart registers the plugins with the built-in
 // components (Chart.js ADR 0041, section 1).
+
+/// The 19 plugin keys of the theme spec (theming.md section 4).
+const List<String> _pluginKeys = [
+  'title.color',
+  'title.font',
+  'subtitle.color',
+  'subtitle.font',
+  'legend.labels.color',
+  'legend.labels.font',
+  'legend.title.color',
+  'legend.title.font',
+  'tooltip.backgroundColor',
+  'tooltip.titleColor',
+  'tooltip.bodyColor',
+  'tooltip.footerColor',
+  'tooltip.multiKeyBackground',
+  'tooltip.borderColor',
+  'tooltip.titleFont',
+  'tooltip.bodyFont',
+  'tooltip.footerFont',
+  'tooltip.boxWidth',
+  'tooltip.boxHeight',
+];
 
 /// The plugin options of the plugin [id] of [chart]: the options of its
 /// descriptor (core.plugins.js:175-188).
@@ -59,29 +76,18 @@ Object? _at(Object? root, String path) {
   return node;
 }
 
-/// The fields of the `toFont` result [font], as the generator writes them
-/// (`font_record.dart`).
-Map<String, Object?> _fontFields(ChartTextStyle font) =>
-    resolvedFontRecordOf(font);
+/// Whether the key [path] of [_pluginKeys] is a font.
+bool _isFont(String path) => path.endsWith('font') || path.endsWith('Font');
 
-/// The parsed form of the CSS color [value].
-String? _parsed(Object? value) => referenceParsedColor(value).rgbString();
-
-/// Whether the key [path] of `themeLightPlugins` is a font.
-bool _isFont(String path) => themeLightPlugins[path] is Map<String, Object?>;
-
-/// Whether the key [path] of `themeLightPlugins` is a color.
-bool _isColor(String path) => !_isFont(path) && !path.contains('.box');
-
-/// The keys of `themeLightPlugins` in [chart]: a font as its `toFont`
-/// fields, else the resolved value.
+/// The keys of [_pluginKeys] in [chart]: a font as the fields of its
+/// `toFont` result (`font_record.dart`), else the resolved value.
 Map<String, Object?> _resolve(Chart chart) => {
-  for (final path in themeLightPlugins.keys)
+  for (final path in _pluginKeys)
     path: () {
       final dot = path.indexOf('.');
       final options = _pluginOptions(chart, path.substring(0, dot));
       final value = _at(options, path.substring(dot + 1));
-      return _isFont(path) ? _fontFields(toFont(value)) : value;
+      return _isFont(path) ? resolvedFontRecordOf(toFont(value)) : value;
     }(),
 };
 
@@ -102,79 +108,13 @@ Chart _chart(Object? theme) => acquireChart(<String, Object?>{
 });
 
 void main() {
-  test('the plugin keys are the 19 keys of the theme spec', () {
-    expect(themeLightPlugins.keys, [
-      'title.color',
-      'title.font',
-      'subtitle.color',
-      'subtitle.font',
-      'legend.labels.color',
-      'legend.labels.font',
-      'legend.title.color',
-      'legend.title.font',
-      'tooltip.backgroundColor',
-      'tooltip.titleColor',
-      'tooltip.bodyColor',
-      'tooltip.footerColor',
-      'tooltip.multiKeyBackground',
-      'tooltip.borderColor',
-      'tooltip.titleFont',
-      'tooltip.bodyFont',
-      'tooltip.footerFont',
-      'tooltip.boxWidth',
-      'tooltip.boxHeight',
-    ]);
-    expect(themeLightPlugins.keys.where(_isFont), hasLength(7));
-    expect(themeLightPlugins.keys.where(_isColor), hasLength(10));
+  test('the plugin keys have 7 fonts', () {
+    expect(_pluginKeys.where(_isFont), hasLength(7));
   });
 
-  group('theming.md §8 test 3, the plugin keys', () {
-    testWidgets('without a theme, the plugin options equal upstream', (
-      tester,
-    ) async {
-      final options = _resolve(_chart(null));
-      for (final MapEntry(key: path, value: upstream)
-          in themeLightPlugins.entries) {
-        expect(
-          options[path],
-          upstream is String ? referenceColorOrString(upstream) : upstream,
-          reason: path,
-        );
-      }
-    });
-
-    testWidgets('with the light preset, the plugin options equal upstream', (
-      tester,
-    ) async {
-      final options = _resolve(_chart(compileLightTheme()));
-      for (final MapEntry(key: path, value: upstream)
-          in themeLightPlugins.entries) {
-        if (_isColor(path)) {
-          expect(_parsed(options[path]), _parsed(upstream), reason: path);
-          expect(_parsed(upstream), isNotNull, reason: path);
-        } else {
-          expect(
-            options[path],
-            upstream is String ? referenceColorOrString(upstream) : upstream,
-            reason: path,
-          );
-        }
-      }
-      // The local weights stay (theming.md §3.4). A weight is the value of
-      // a FontWeight (font_record.dart).
-      Object? weight(String path) =>
-          (options[path]! as Map<String, Object?>)['weight'];
-      expect(weight('title.font'), 700);
-      expect(weight('tooltip.titleFont'), 700);
-      expect(weight('tooltip.footerFont'), 700);
-      expect(weight('subtitle.font'), 400);
-      expect(weight('tooltip.bodyFont'), isNull);
-      expect(weight('legend.labels.font'), isNull);
-      expect(weight('legend.title.font'), isNull);
-    });
-
+  group('the theme reaches the plugin options', () {
     testWidgets('the light preset reaches the plugin options', (tester) async {
-      // The theme strings, not the upstream strings: the theme scope gives
+      // The theme values, not the upstream strings: the theme scope gives
       // the values (hunk H2).
       final options = _resolve(_chart(compileLightTheme()));
       const gray = native_ui.Color.fromRGBO(102, 102, 102, 1);
@@ -205,15 +145,24 @@ void main() {
         options['tooltip.borderColor'],
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0)),
       );
+      // The local weights stay (theming.md §3.4). A weight is the value of
+      // a FontWeight (font_record.dart).
+      Object? weight(String path) =>
+          (options[path]! as Map<String, Object?>)['weight'];
+      expect(weight('title.font'), 700);
+      expect(weight('tooltip.titleFont'), 700);
+      expect(weight('tooltip.footerFont'), 700);
+      expect(weight('subtitle.font'), 400);
+      expect(weight('tooltip.bodyFont'), isNull);
+      expect(weight('legend.labels.font'), isNull);
+      expect(weight('legend.title.font'), isNull);
     });
 
     testWidgets('a theme font keeps the local weights', (tester) async {
       // A theme with other tokens: the tooltip colors, and a font with a
       // weight. The weight reaches the fonts without a local weight only.
       // The tooltip boxes follow the size of the body font
-      // (plugin.tooltip.js:1303-1304). A probe of the JavaScript prototype
-      // of the hunks H0-H5 at the pin, with the compiled form of this theme
-      // in `$theme`, gives the same colors, fonts and box sizes.
+      // (plugin.tooltip.js:1303-1304).
       final options = _resolve(
         _chart(
           compileChartTheme(

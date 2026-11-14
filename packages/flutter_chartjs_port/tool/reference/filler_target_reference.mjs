@@ -10,8 +10,8 @@
 // (porting-flow.md section 4).
 //
 // The script runs the pinned upstream sources with the type stripping of
-// Node.js, as scale_autoskip_reference.mjs and theme_light_reference.mjs
-// do: src/plugins/plugin.filler/filler.options.js, filler.target.js,
+// Node.js, as scale_autoskip_reference.mjs
+// does: src/plugins/plugin.filler/filler.options.js, filler.target.js,
 // filler.segment.js and filler.drawing.js, src/elements/index.js and the
 // mock context of third_party/chartjs-test-utils/src/context.js. A resolve
 // hook maps the upstream `./x.js` imports to the `.ts` files, and
@@ -86,7 +86,7 @@ const PINNED = [
 /**
  * Stops unless each submodule of PINNED is at the `commit` of its entry in
  * tool/port_sources.yaml, with no change in the folders that the script
- * imports from. It is a copy of checkPin in theme_light_reference.mjs.
+ * imports from. It is a copy of checkPin in scale_chart_common.mjs.
  */
 function checkPin() {
   const sources = fileURLToPath(new URL('../port_sources.yaml', import.meta.url));

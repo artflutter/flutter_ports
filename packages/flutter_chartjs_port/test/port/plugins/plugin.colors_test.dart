@@ -43,9 +43,7 @@ import 'plugin_colors_reference.dart';
 //
 // The groups `plugin object`, `theme palette` and
 // `js-semantics-narrow-datasets` hold the pin tests that need no generated
-// value. test/port/theme/precedence_test.dart (group
-// `palette`) compares the theme palette rows with the JavaScript prototype
-// of the hunks H4a-H5.
+// value.
 
 /// [cases] with `undefined` for each expected `xAxisID` and `yAxisID` of
 /// JS `null` in the cases with a `doughnut` or `pie` chart type or dataset

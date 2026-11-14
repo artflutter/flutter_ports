@@ -119,7 +119,7 @@
 // Only the width of measureText is a real value. The bounding box values
 // are the fixed values of the upstream mock: no scale reads them.
 //
-// How to write a generator: see tool/reference/scale_chart_harness_reference.mjs.
+// How to write a generator: see tool/reference/scale_linear_reference.mjs.
 // It calls loadChartJs(), registerBuiltins() with its own classes, runCase()
 // for each chart, and writeReference().
 
@@ -188,7 +188,7 @@ const PINNED = [
 /**
  * Stops unless each submodule of PINNED is at the `commit` of its entry in
  * tool/port_sources.yaml, with no change in the folders that this file
- * imports from. It is a copy of checkPin in theme_precedence_reference.mjs.
+ * imports from.
  * The read of a commit is the one of readPin. A folder that is not a git
  * checkout also stops the process.
  */

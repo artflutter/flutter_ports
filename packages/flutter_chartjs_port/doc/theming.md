@@ -133,7 +133,8 @@ For bar `backgroundColor`, from highest to lowest:
 
 The defaults level has three parts in this order: the controller defaults `defaults.datasets[type]`,
 the element defaults `defaults.elements[type]`, and the root defaults that the routes read. The
-theme beats all three. `test/port/theme/precedence_test.dart` pins this order.
+theme beats all three. The groups `theme-H1` and `theme-H2` of
+`test/port/core/core.config_test.dart` pin this order.
 
 Lookup is prefix-major. In active mode, the resolver searches every scope for
 `barHoverBackgroundColor` and `hoverBackgroundColor` before `backgroundColor`
@@ -632,16 +633,14 @@ Required in phases 5-8. The hunks in brackets are the `differences.md` rows that
    `compileChartTheme()` with no token compiles to null, no dependence on `TargetPlatform`.
 2. **Precedence** (H1, H2, H3, H5). A sentinel table has one row per level of section 3.2, for
    elements, scales, plugins and chart level. The palette beats the theme element colors. User
-   colors disable the palette. The group `palette` of `test/port/theme/precedence_test.dart` has
-   the palette rows (phase 8, wave 1). The expected lines come from a JavaScript prototype of the
-   hunks H4a-H5 on the pinned `plugin.colors.ts`.
+   colors disable the palette. The group `theme palette` of
+   `test/port/plugins/plugin.colors_test.dart` has the palette rows.
 3. **The light preset equals upstream** (H4a, H4b, H4c, H5). The test resolves 8 chart types with
    the colors plugin on and off. It compares element options (default and active) and the scale,
    legend, tooltip, title and subtitle keys, with colors parsed. The JS prototype matched 16 of 16
    cases with the explicit palette. The controller test files have the part with the colors
-   plugin off (phase 7). The group `test 3: the light palette` of `precedence_test.dart` has the
-   part with the colors plugin on (phase 8, wave 1). The plugin keys are in
-   `presets_plugins_test.dart` (phase 8, wave 3). The reference tests of the seven plugins run
+   plugin off (phase 7). `presets_plugins_test.dart` shows that the light preset reaches the
+   plugin keys. The reference tests of the seven plugins run
    their cases again with the light preset (phase 8). `test/port/theme/light_pixels_test.dart`
    checks the pixels (Chart.js ADR 0050): in the 16 cases, with an active element and the
    tooltip, the light preset paints the bytes of the unthemed chart. It runs on the three OS of
@@ -770,6 +769,15 @@ theming work in each phase.
 | 8. Plugins | H4a-H4c and H5, the palette rows of test 2, test 3 for plugin keys and the palette, decimation tests, the full blue screen | plugin ports |
 | 9. Flutter API and release | public theme classes and presets, the theme widget and its sync, docs, tests 7-9 | public widget |
 | After 0.1.0 | section 5.2 items on demand, `flutter_chartjs_port_forui` | ADR: Toolchain pin and library floor |
+
+**Removed tests (2026-11-14).** The port removed the generators `theme_light_reference.mjs` and
+`theme_precedence_reference.mjs`, their data, `precedence_test.dart`, `presets_test.dart` and
+`presets_radial_test.dart`. Their expected values came from a JavaScript copy of the theme hunks,
+not from upstream. The phase-state lists below name these files as history.
+`presets_plugins_test.dart` keeps two tests with written values. These tests pin the rules now: the
+groups `theme-H0` to `theme-H3` of `core.config_test.dart`, the group `theme palette` of
+`plugin.colors_test.dart`, the themed runs of the controller and plugin reference tests,
+`light_pixels_test.dart` and `blue_screen_test.dart`.
 
 **Phase 5 state.** These parts exist:
 - The hunks H0-H3 in `lib/src/core/core.config.dart`, with the rows `theme-H0` to `theme-H3`. The

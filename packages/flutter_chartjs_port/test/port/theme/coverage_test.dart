@@ -108,7 +108,7 @@ const Map<String, String> _notThemed = {
       '(scale.radialLinear.js:374)',
   'scales.radialLinear.ticks.color':
       'a route to Defaults.color; hunk H1 fills it from scale.ticks.color '
-      'first (precedence_test.dart, radial tick color)',
+      'first',
   'plugins.legend.labels.color':
       'a function that reads chart.options.color (plugin.legend.js:661), '
       'which the token color emits',
