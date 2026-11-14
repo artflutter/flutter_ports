@@ -3,7 +3,7 @@
 - Status: accepted (2026-10-18)
 - Superseded by: [Chart.js ADR 0016](0016-frame-scheduling.md) (2026-10-21)
 - Date: 2026-10-17
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0007-frame-scheduling.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0007-frame-scheduling.md`
 
 ## Summary
 

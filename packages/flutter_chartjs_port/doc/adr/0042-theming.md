@@ -4,7 +4,7 @@
 - Superseded by: [Chart.js ADR 0050](0050-public-theme-api.md) (2026-10-30)
 - Date: 2026-10-22
 - Supersedes: [Chart.js ADR 0001](0001-theming.md)
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0042-theming.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0042-theming.md`
 
 ## Summary
 

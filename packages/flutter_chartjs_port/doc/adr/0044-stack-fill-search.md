@@ -4,7 +4,7 @@
   the VS Code browser. Thus the change is not in the tree.
   [Chart.js ADR 0046](0046-stack-fill-search-result.md) records the result.
 - Date: 2026-10-24
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0044-stack-fill-search.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0044-stack-fill-search.md`
 
 ## Summary
 

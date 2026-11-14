@@ -4,7 +4,7 @@
 - Superseded by: [Chart.js ADR 0032](0032-js-numeric-semantics.md) (2026-10-21)
 - Date: 2026-10-19
 - Supersedes: [Chart.js ADR 0002](0002-js-numeric-semantics.md)
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0010-js-numeric-semantics.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0010-js-numeric-semantics.md`
 
 ## Summary
 

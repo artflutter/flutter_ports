@@ -3,7 +3,7 @@
 - Status: accepted (2026-10-21)
 - Superseded by: [Chart.js ADR 0054](0054-typed-internal-model.md) (2026-10-31)
 - Date: 2026-10-19
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0018-typed-element-options.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0018-typed-element-options.md`
 
 ## Summary
 

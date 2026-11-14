@@ -3,7 +3,7 @@
 - Status: accepted (2026-10-18)
 - Date: 2026-10-17
 - Superseded by: [Chart.js ADR 0012](0012-dart-file-naming.md) (2026-10-19)
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0004-dart-file-naming.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0004-dart-file-naming.md`
 
 ## Summary
 

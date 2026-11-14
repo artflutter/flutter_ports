@@ -5,7 +5,7 @@
 - Date: 2026-11-13
 - Supersedes: the `jsSquare` parts of [Chart.js ADR 0045](0045-reference-engine-arm64.md): the
   `Math.pow(x, 2)` rule of §4, its table row and its tests.
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0136-math-pow-square.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0136-math-pow-square.md`
 
 ## Summary
 

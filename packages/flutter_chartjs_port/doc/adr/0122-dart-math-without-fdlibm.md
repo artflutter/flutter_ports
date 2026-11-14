@@ -7,7 +7,7 @@
   generators), §3 (the fdlibm ports `jsLog10`, `jsAtan2`, `jsSin` and `jsCos`, and the protected sites of `sin` and
   `cos`) and §8 (the tool 3 rule of the transcendental `dart:math` functions and its `js-ok` texts); and the fdlibm
   entry of [Chart.js ADR 0035](0035-third-party-sources.md) (the source list, the notice and the committed copy).
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0122-dart-math-without-fdlibm.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0122-dart-math-without-fdlibm.md`
 
 ## Summary
 

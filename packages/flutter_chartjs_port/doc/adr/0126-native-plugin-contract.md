@@ -3,7 +3,7 @@
 - Status: superseded (2026-11-14) by [Chart.js ADR 0144](0144-native-plugins.md), which states the decision as built.
 - Superseded by: [Chart.js ADR 0144](0144-native-plugins.md) (2026-11-14)
 - Date: 2026-11-13
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0126-native-plugin-contract.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0126-native-plugin-contract.md`
 
 ## Summary
 

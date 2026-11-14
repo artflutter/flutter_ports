@@ -9,7 +9,7 @@
   and a test enforce this list" of the never-emitted list, and the words "`_put` with its assert" in "No public `raw`
   in 0.1.0"; and the sentence of [Chart.js ADR 0054](0054-typed-internal-model.md) "The frozen Map of the compiled
   theme (an object under a key with no option kind) is `JsFrozenMap` of the JS runtime".
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0118-theme-compile-typed-setters.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0118-theme-compile-typed-setters.md`
 
 ## Summary
 
