@@ -505,9 +505,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     table of the names that map and one section for each demo: notes, the live replica and its code on
     a tap. Each replica is one file of `lib/migrate/<library>/` with one region. `Snippets.load` reads
     the regions of each Dart file of `snippetFolders`, and `pubspec.yaml` lists each folder as assets.
+  - The bar chart migration pages (`lib/pages/migrate_bar_<library>_page.dart`) rebuild the 8 bar samples
+    of fl_chart 1.3.0, the 8 rectangular bar demos of the Graphic 2.7.0 example app and the 14 column and
+    bar demos of the Syncfusion gallery. Their replicas are in the same folders: `bar_s01.dart` to
+    `bar_s08.dart` and `fl_bar_kit.dart`, `bar_<demo>.dart`, `graphic_bar_kit.dart` and
+    `graphic_bar_data.dart`, and `<demo>_column.dart`, `<demo>_bar.dart` and `sf_bar_kit.dart`. Three
+    Graphic replicas zoom and pan the x axis through `flutter_chartjs_plugin_zoom_port`, a path dependency
+    of the app.
   - The replicas are new code. The Syncfusion replicas use no Syncfusion code. The data of the fl_chart
-    samples 12 and 13 (`assets/flchart/`) and `lib/migrate/graphic/graphic_data.dart` are MIT copies:
-    the `LICENSE` of the app and `REUSE.toml` name their holders.
+    samples 12 and 13 (`assets/flchart/`), `lib/migrate/graphic/graphic_data.dart` and
+    `graphic_bar_data.dart` are MIT copies: the `LICENSE` of the app and `REUSE.toml` name their holders.
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC). Phase 0
   has no ported code. `doc/README.md` has the plan and the roadmap.
