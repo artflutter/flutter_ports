@@ -1,7 +1,7 @@
 # Chart.js ADR 0035: Third-party sources
 
 - Status: accepted (2026-10-21)
-- Superseded in part by: [Chart.js ADR 0122](0122-dart-math-without-fdlibm.md) (2026-11-12)
+- Superseded in part by: [Chart.js ADR 0122](0122-dart-math-without-fdlibm.md) (2026-11-12); [Chart.js ADR 0146](0146-js-numeric-semantics.md) (2026-11-14)
 - Date: 2026-10-21
 - Supersedes: [Chart.js ADR 0011](0011-third-party-sources.md)
 - Related: [ADR 0005](../../../../docs/adr/0005-pin-upstream-sources.md) (the pin of each

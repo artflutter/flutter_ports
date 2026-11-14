@@ -1,6 +1,7 @@
 # Chart.js ADR 0127: Native legend label generation
 
-- Status: proposed (2026-11-13).
+- Status: superseded (2026-11-14)
+- Superseded by: [Chart.js ADR 0145](0145-native-option-types.md)
 - Date: 2026-11-13
 - Related: Chart.js ADR 0054 §12 (the typed legend items), Chart.js ADR 0092 and 0099 (the hidden legend that
   waits), Chart.js ADR 0125 (native tooltip callbacks).

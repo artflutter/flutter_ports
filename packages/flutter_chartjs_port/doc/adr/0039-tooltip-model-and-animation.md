@@ -1,6 +1,7 @@
 # Chart.js ADR 0039: Tooltip model and animation
 
 - Status: accepted (2026-10-23)
+- Superseded in part by: [Chart.js ADR 0145](0145-native-option-types.md) (2026-11-14)
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (records for inline object types),
   [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (plain objects as Maps, the

@@ -193,72 +193,57 @@ repository.
     `xCenter` and `yCenter` are `double?`: Dart `null` is the `undefined` before the first layout
     (Chart.js ADR 0033). The scale reads `xCenter ?? double.nan` in arithmetic, and the radar and
     polar area controllers write it into a new element as `undefined`.
-    Chart.js ADR 0067 computes ordinary bar draw geometry with scalar locals for
-    the exact built-in element and typed options/edges. The canvas calls remain
-    unchanged; custom, rounded, inflated and degenerate cases keep the old path.
-    Chart.js ADR 0068 validates live single-dataset bar topology at its original
-    observation points. Container types are cached by identity; values/routes
-    remain live. Cached primitive category traits permit reuse within one pure
-    calculation. Unknown/custom/indexed-stack paths keep the original reads.
-    Owned ordered finite scale values skip sorting, and BarProperties.geometry
-    constructs the initial seven fields with the same presence/key order.
-    Chart.js ADR 0069 bulk-updates a preflighted numeric remainder after the first
-    ordinary bar in mode none. Native arrays/elements/scales, shared options and
-    cached scalar/grid settings are required. Direct writes preserve field order,
-    fresh skipped-edge objects, visibility and contexts. All unsupported cases
-    retain the ordinary path; see `core/bar_bulk_update.dart` and its regressions.
-    Chart.js ADR 0078 copies private static templates for native indexed point/bar
-    options, preserving fresh results, live list reads and context refresh. The
-    numeric bulk-bar remainder also accepts indexed background/border colors
-    under native source/class guards, with no active bars or user callbacks in
-    the remainder. Indexed geometry and custom reads keep ordinary resolution.
-    Chart.js ADR 0079 prepares indexed point colors within scatter update and
-    overflow loops. Plans end before custom reads/points or active callbacks;
-    coordinate guards run at their original iteration, without a whole-data
-    scan. Fresh options and ordinary fallback order remain; contexts take
-    `ScriptableContext.refresh` (Chart.js ADR 0101).
-    Chart.js ADR 0080 applies guarded indexed preparation to line updates.
-    Scriptable color options copy private static fields while preserving live
-    calls, fresh results and resolver invalidation. Exact one-argument callbacks
-    avoid unused contextual views. Context membership masks retain key order
-    and deletion/reinsertion. The 20k native matrix still misses 60 FPS in the
-    connected indexed and scriptable update cases (performance.md §48).
-    Chart.js ADR 0081 reuses immutable native default-key snapshots and private
-    prefixes. Key mutation and restore invalidate snapshots; custom Configs and
-    key producers retain their original calls. Private frozen point/bar type
-    tokens eliminate discarded temporary options through the owned-result entry;
-    fallback preserves context calls. Values and scope reads remain live.
-    Chart.js ADR 0082 prepares native Map-based point-color resolution within
-    one mode-none line loop. Cache generations, source/default identities, routes,
-    keys and existing point-none cache entries guard reuse. A native context
-    reader uses live array items and `ScriptableContext.refresh` (Chart.js ADR 0101); generic fallbacks
-    keep their original context factory. See performance.md §50.
-    Chart.js ADR 0083 visits only ordered varying colors on a valid scriptable
-    plan and separates one-argument scalar callbacks from view setup. Non-scalar
-    returns retain original post-call processing; invalidation resumes at the
-    next original key with fresh views and the original descriptor snapshot.
-    See performance.md §§52–53 and varying_color_resolution_test.dart. The
-    96-case native frame verification still misses every-mode 60 FPS; data-only
-    stress cases fall back to the full lifecycle.
-    performance.md §54 identifies suggested x bounds as the first data-only
-    blocker. Do not replace them with fixed bounds under unsorted parsing:false
-    input: binary visible-range selection can omit points. GC timeline evidence
-    prioritizes temporary circle/path objects; the diagnostics change no runtime.
-    Chart.js ADR 0086 adds bounded weak coordinate-map identities for native
-    indexed line loops. Classifier state stays loop-local; live x/y checks,
-    routes, callbacks and data-only eligibility remain. Each prepared pass
-    creates at most 1,024 weak entries; replacement input falls back normally.
-    Chart.js ADR 0087 consolidates line/scatter point capabilities and update
-    prerequisites in point_options.dart, with controller orchestration in
-    point_option_preparation.dart. Exact-controller and per-item observation
-    points stay local. NativePointResolution validates before its private
-    executor; callback-time generation checks remain with Config/resolvers.
-    Reuse these predicates for equivalent guarantees. Keep narrower operation
-    requirements explicit; never widen eligibility merely to share a helper.
-    Chart.js ADR 0088 captures a direct executor for an already-prepared scalar
-    point-color plan inside one native line loop. Source and post-context guards
-    remain live. A failed context attempt resumes ordinary resolution with that
-    same context; callbacks, fresh options and original-key continuation remain.
+    - [Chart.js ADR 0067](doc/adr/0067-scalar-bar-geometry.md): the exact `BarElement` computes an ordinary bar
+      with scalar locals and keeps the same canvas calls. See `test/port/elements/element.bar_rectangular_test.dart`.
+      On an upstream bump, recheck `getBarBounds`, `parseBorderWidth`, `parseBorderRadius`, `boundingRects`,
+      `inflateRect` and `draw` (row `adapt-rectangular-bar-draw`).
+    - [Chart.js ADR 0068](doc/adr/0068-live-bar-update-layout.md): the exact bar controller proves a live
+      single-dataset layout and skips the axis and stack search. See
+      `test/port/controllers/bar_index_layout_test.dart`. Only the class check of a container is cached, by its
+      identity. Values, routes and ids stay live reads.
+    - [Chart.js ADR 0069](doc/adr/0069-bulk-numeric-bar-updates.md): in mode `none`, the bars after the first
+      ordinary bar take one bulk numeric update (`core/bar_bulk_update.dart`). See
+      `test/port/controllers/bar_bulk_update_test.dart`. The preflight ends before the first bulk write. A failed
+      preflight runs the ordinary loop, with no partial bulk write.
+    - [Chart.js ADR 0078](doc/adr/0078-prepared-indexed-options.md): native indexed point and bar options copy a
+      private static template, and the bulk bar update also takes indexed colors. See
+      `test/port/core/indexed_element_options_test.dart`. Each result is a fresh, unfrozen copy. No plan lives
+      across an update or a plugin hook.
+    - [Chart.js ADR 0079](doc/adr/0079-scatter-point-options.md): the scatter update and overflow loops prepare
+      indexed point colors once for each loop. See `test/port/controllers/scatter_point_options_test.dart`. A plan
+      checks each point at its original iteration, with no scan of the whole data. It ends before user code can run.
+    - [Chart.js ADR 0080](doc/adr/0080-line-20k-options.md): line updates prepare indexed colors, scriptable colors
+      copy a template, and contexts track their keys with a mask. See
+      `test/port/controllers/line_point_options_test.dart` and `test/port/helpers/context_presence_test.dart`. No
+      callback result is cached. Each resolver write or delete ends the plan.
+    - [Chart.js ADR 0081](doc/adr/0081-option-resolution-setup.md): native default-key snapshots, kept prefixes and
+      owned results cut the setup of point and bar options. See `test/port/options/key_snapshot_test.dart` and
+      `test/port/core/owned_element_options_test.dart`. A key add, a key delete and a restore end a snapshot. A
+      custom `Config` or key producer keeps its virtual calls.
+    - [Chart.js ADR 0082](doc/adr/0082-native-line-resolution.md): a mode-`none` line loop keeps its warmed
+      point-color resolver and its native sources. See `test/port/controllers/line_resolution_test.dart`. No plan
+      persists across `updateElements` calls. A generic fallback keeps the ordinary context factory.
+    - [Chart.js ADR 0083](doc/adr/0083-ordered-color-resolution.md): a scriptable color plan visits only the
+      varying colors, and one-argument callbacks take a scalar loop. See
+      `test/port/core/varying_color_resolution_test.dart`. No callback result is memoized. An invalidation resumes
+      at the next original key.
+    - performance.md §54 identifies suggested x bounds as the first data-only
+      blocker. Do not replace them with fixed bounds under unsorted parsing:false
+      input: binary visible-range selection can omit points. GC timeline evidence
+      prioritizes temporary circle/path objects; the diagnostics change no runtime.
+    - [Chart.js ADR 0086](doc/adr/0086-weak-point-coordinate-cache.md): the indexed-color line loop keeps weak
+      references to the native coordinate maps that it accepted. See `test/port/core/point_coordinate_cache_test.dart`.
+      A hit skips only the class check: the loop reads each x and y at its original iteration. A prepared pass makes
+      at most 1,024 weak entries.
+    - [Chart.js ADR 0087](doc/adr/0087-shared-native-point-contracts.md): `core/point_options.dart` holds the native
+      point contracts, and `core/point_option_preparation.dart` holds the preparation of the controllers. See
+      `test/port/core/native_point_contracts_test.dart`. Reuse a predicate only when its guarantee and its lifetime
+      match the new read. Keep a narrower requirement explicit at its observation point. Do not widen an allowlist
+      or a capability to share a helper. `NativePointResolution.resolve` validates its sources before its executor.
+    - [Chart.js ADR 0088](doc/adr/0088-prepared-scalar-point-resolution.md): a native line loop runs a prepared
+      scalar point-color plan through a direct executor. See `test/port/core/prepared_scalar_point_test.dart`. A
+      context that invalidates the attempt continues the ordinary resolution with that context. No context factory
+      runs twice.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
       ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
@@ -272,11 +257,9 @@ repository.
       `date_format.dart` are the port-only default date adapter (Chart.js ADR 0024), pure layers.
       `DateAdapterBase.prototype` starts with `dateAdapterMembers`, the rules of
       chartjs-adapter-moment 1.0.1 on moment 2.29.4 with ICU patterns. `setDefaultDateZone`
-      selects local time (the default) or UTC. Chart.js ADR 0110: `LocalZone` of `date_zone.dart`
-      reads `timeZoneOffset` on the VM (the offset of the local fields there) and the local
-      fields on the web, and keeps up to 64 intervals of the 1-day rule, cleared by `formats()`
-      once per update. See `date_zone_test.dart` (group `cached intervals`, the VM
-      `timeZoneOffset` test) and the `(LocalZone cache)` groups of `date_adapter_test.dart`.
+      selects local time (the default) or UTC. [Chart.js ADR 0110](doc/adr/0110-local-zone-offset-cache.md):
+      `LocalZone` of `date_zone.dart` keeps up to 64 offset intervals, and `formats()` clears them once for each
+      update. See `test/port/core/date_zone_test.dart` and `date_adapter_test.dart`.
     - `core.interaction.dart` and `core.layouts.dart` are pure layers. `Interaction` is a class with
       the static member `evaluateInteractionItems`. The option `mode` of `interaction`, `hover`
       and the tooltip holds an `InteractionMode` (row `adapt-interaction-mode-objects`, the schema
@@ -325,12 +308,10 @@ repository.
       `Scale` implements `MinMax`. Its value methods take `Object?` (Chart.js ADR 0025).
       `Scale._alignToPixels` is a `bool`, the `ToBoolean` of the option at its write in
       `configure` (row `adapt-loop-invariant-truthiness`).
-    - Chart.js ADR 0064: the exact category scale reuses full string-label
-      measurements under static-font/native-canvas guards. Tick objects, contexts,
-      callbacks and geometry fitting remain live. `category_label_source.dart`
-      guards bulk reads of native label containers; unknown chart/config classes
-      keep ordinary reads. The native canvas tracks Flutter font notifications
-      through `canvas_font_tracking.dart` to invalidate measurement plans.
+    - [Chart.js ADR 0064](doc/adr/0064-axis-label-plan.md): the exact category scale reuses its string-label
+      measurements. See `test/port/core/axis_label_plan_test.dart` and `category_label_source_test.dart`. Tick
+      objects, contexts, callbacks and the fit stay live. A Flutter font notification (`canvas_font_tracking.dart`)
+      ends the plans.
     - `scale_options.dart` (port-only, pure through `core.ticks`) has the typed facades of the
       scale options (Chart.js ADR 0054 §4): extension types over the `OptionView` of a scale.
       `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
@@ -340,22 +321,20 @@ repository.
       of an on/off key of the scale and plugin facades gives a `bool` through `boolOption` of
       `helpers.config.dart` (Chart.js ADR 0121, row `adapt-bool-options`): an absent option is
       `false` (`includeBounds`: `true`), and another type stops a debug build.
-    - Chart.js ADR 0074: `Chart.updateData()` is an explicit data-only lifecycle
-      with fixed native ranges, stable configuration, metadata refresh and full
-      fallback. `data_update.dart` owns native source/settings checks and
-      full-update generation snapshots. Plugins must opt in; enabled decimation
-      declines. The typed facade registers immutable point containers through
-      this framework-free contract. Font/size/DPR and structural changes
-      invalidate the retained layout. Ordinary update keeps the full lifecycle.
-    - Chart.js ADR 0073: owned finite sorted bar indexes use a linear duplicate
-      scan (`bar_sorted_values.dart`). Unique lists keep identity and zero signs;
-      duplicate results are growable and normalize zero as the original Set does.
-      The helper is an explicit framework-free import-check root so its tests
-      remain in the automatic JavaScript and WebAssembly suites.
-    - Chart.js ADR 0071: `primitive_parse.dart` shares guarded numeric/category
-      parsing between bars and the base controller. Native source/type preflight
-      is local to each call; parsed records stay fresh and custom inputs retain
-      ordinary reads and conversions.
+    - [Chart.js ADR 0074](doc/adr/0074-incremental-data-updates.md): `Chart.updateData()` is an explicit data-only
+      update. It returns `true` when it takes the data-only lifecycle, and `false` when it calls `update('none')`.
+      Between two full updates, the caller changes only the data values. A change of the options, the labels, the
+      datasets, the stacks or the visibility needs `update`. A plugin opts in with `supportsDataUpdates`. An enabled
+      decimation declines. `data_update.dart` holds the native checks and the snapshots of the last full update. The
+      typed facade registers its point containers through this framework-free contract. A font, size, DPR or
+      structural change ends the kept layout. `update` keeps the full lifecycle. See
+      `test/port/core/data_update_test.dart`.
+    - [Chart.js ADR 0073](doc/adr/0073-sorted-bar-values.md): a linear scan removes the duplicates of the sorted
+      finite bar values (`bar_sorted_values.dart`). See `test/port/core/bar_sorted_values_test.dart`. The helper
+      stays a core-layer root of `tool/src/lib_imports.dart`, so that `test:web` runs its tests.
+    - [Chart.js ADR 0071](doc/adr/0071-numeric-category-parsing.md): `primitive_parse.dart` parses native numeric
+      data on a category scale for the bar and base controllers. See `test/port/core/primitive_parse_test.dart`.
+      The preflight is local to each call, and each parsed item is fresh.
     - `core.datasetController.dart` has `DatasetController`, with the mixin `ArrayListener` and
       the class value `DatasetController.jsClass` (Chart.js ADR 0020). `_update` is `update_`, and
       `_getSharedOptions` is `getSharedOptions_` (Chart.js ADR 0023). `cloneIfNotShared` and
@@ -400,125 +379,64 @@ repository.
       `DoughnutController`. `_lastEvent` is `lastEvent` with
       `@internal`: the input reference test reads it after each step. `Chart.legend` is a field that
       the legend plugin writes. It is not a pure layer: it imports the platform layer.
-    - Chart.js ADR 0090: `update` and `updateData` replay the last event through
-      `_replayLastEvent`. With no queued animation, the replay skips its render, and the render
-      after it draws once. Thus the draw hooks and `animation.onComplete` run once in such an
-      update. The pixels do not change. See `test/port/core/core.controller_replay_test.dart`.
-    - Chart.js ADR 0091: `ChartView` gives the chart `holdMouseMove`. A `mousemove` of a live chart
-      (a config update in the last 34 ms of frame time, no queued animation) waits for the update
-      of its frame, which replays it in place of the last event. `releaseHeldMove` handles a move
-      that no update takes. A `Chart` with no `ChartView` keeps the upstream path. See
+    - [Chart.js ADR 0090](doc/adr/0090-replay-single-draw.md): `update` and `updateData` replay the last event
+      through `_replayLastEvent`. With no queued animation, the replay skips its render, and the render after it
+      draws once. Thus the draw hooks and `animation.onComplete` run once in such an update. The pixels do not
+      change. See `test/port/core/core.controller_replay_test.dart`.
+    - [Chart.js ADR 0091](doc/adr/0091-live-mouse-move.md): `ChartView` gives the chart `holdMouseMove`. A
+      `mousemove` of a live chart (a config update in the last 34 ms of frame time, no queued animation) waits for
+      the update of its frame, which replays it in place of the last event. `releaseHeldMove` handles a move that
+      no update takes. A `Chart` with no `ChartView` keeps the upstream path. See
       `test/port/widgets/chart_view_live_mouse_test.dart`.
-    - Chart.js ADR 0092: a hidden legend of an exact built-in doughnut, pie or polar area chart
-      marks `legendItems` pending in `update` and `afterUpdate` and keeps the options of that mark
-      (`plugins/plugin.legend.dart`). The first read that can run the build runs it with them.
-      Guards run no user code and test the generator of the exact controller of dataset 0 first
-      (index 0, no meta write), then only its keys. A failed read gives the last built items, and
-      the build still waits. Row `adapt-hidden-legend-items` states the stale reads and the one
-      count difference.
-    - Chart.js ADR 0093 gives arcs the native option paths: key snapshot, owned entry, templates,
-      indexed and scriptable plans. A `borderDash` that is not indexable stays a raw reference,
-      with a live check. Arc and doughnut predicates pass by identity (`nativeElementPredicate`).
-      Exact doughnut and pie scans stop at a frozen cached entry, or at a colors-only plan: mode
-      `none`, inside `update`, one dataset, no active arc, native sources, scalar dataset options
-      in native scopes (`nativeOptionScope`). Loops take a loop-local color plan that ends before a
-      custom or active arc. The polar area loop also needs the exact radial scale with a scalar
-      `reverse`. See `core/arc_options.dart`, `core/arc_option_preparation.dart` and
-      `test/port/controllers/arc_options_test.dart`. Generated clones share foreign slots with copy
-      on write.
-    - Chart.js ADR 0094: the exact scatter controller takes the point size of its overflow from the
-      frozen entry or from one plan result. Prepared loops refresh contexts through the native reader, also on typed roots, except the
-      scatter loop of Chart.js ADR 0101. The bubble parse skips an eager resolve with no effect for an
-      item with its own radius, which needs a primitive entry radius and a plain old `_custom`. The
-      bubble overflow computes from scalars (`nativePointSize`). An update in mode `none` prepares
-      constant and indexed options for each loop. Plans end before user code, at the original
-      reads. `DataPoint.bubble` works with `parsing: false` through the typed `r` in `_customOf`
-      (row `adapt-bubble-typed-radius`). See `controller.scatter.dart`, `controller.bubble.dart`,
-      `core/point_options.dart` and `core/point_option_preparation.dart`.
-    - Chart.js ADR 0095: guarded static plans for the fit, the point labels and the angle lines of
-      `RadialLinearScale`, local to one loop, after one ordinary pass of the first index. Guards: the
-      exact scale, a context with a text-metrics generation, cached plain values
-      (`cachedStaticValue`, `TickFontCache`). Other cases stay ordinary. The limits stay per index, and each spoke stroke too unless the native context takes the fan
-      (Chart.js ADR 0103). `RadarController` takes typed writes in direct modes, and in mode `none`
-      a loop over the cached point-none entry with `RadialPositions`
-      (`core/radial_positions.dart`, `dart:math` `cos` and `sin`). `LineElement.points` keeps its copy for
-      the same elements. See `scale.radialLinear_plans_test.dart`.
-    - Chart.js ADR 0096 makes the per-item plumbing direct. `readOption` reads a typed scope through
-      `OptionScope.readKey`: its own cell without routes, else `lookup`. `Config.data`, `getDataset`
-      and the raw read of `getContext` use it, and a Map still reads by name. `parsedValueOf` reads
-      the `x` and `y` of a `TypedDataItem`, and `r` and other axes go by name. `clearStacks` skips a
-      native `List<TypedDataItem>` until the first `_objectStacks` entry (the flag stays true). A
-      subclass that overrides `jsRead` must also override `readKey`. The parse functions use a
-      growable `List.generate`. `meta.parsed` grows once for start 0 into the empty plain List from a
-      native source. Before it compares a value that is not a number, the parse truncates to the
-      upstream length. `ParsedItem.of` writes `x`, `y` and `r` at once, and a user axis name goes by
-      name. See `core.datasetController_plumbing_test.dart` and
-      `core.datasetController_walk_test.dart`.
-    - Chart.js ADR 0099 lets a hidden legend wait with native indexed arc options.
-      `Config.prepareIndexedArcStyles` peeks at each arc key (`OptionResolver.peekKey`:
-      no cache write, no sub resolver), then takes the ADR 0093 plan. Each mark writes
-      `getContext(i, false, 'default')` state in a scalar loop (`ScriptableContext.refresh`).
-      A read uses the mark's `IndexedElementStyles` and arc count and writes no context.
-      Functions, objects, custom classes, custom Map scopes of the legend, a visible
-      legend and user descriptors keep the eager build. Guards are in `plugin.legend.dart`;
-      see `plugin.legend_hidden_test.dart`.
-    - Chart.js ADR 0100: `updateData` also accepts a data element with no cached entry when
-      `DatasetController.hasDataUpdateOptions` proves its resolver's native indexed plan:
-      every key, read through all scopes including defaults and overrides, is a native
-      scalar or list of them, in native scopes. List items are walked once per config
-      cache generation. Functions in dataset options, foreign or nested items, custom
-      lists or scopes and user subclasses keep the full path. A function of a chart or
-      plugin option in the defaults or overrides and a tick callback stay on the path,
-      under the contract of Chart.js ADR 0074. `hasStaticDataUpdateOptions` (ADR 0092) is
-      unchanged. See `core.config.dart` `hasStaticIndexedElementOptions` and
-      `data_update_test.dart`.
-    - Chart.js ADR 0101: `ScriptableContext.refresh` writes a data context's six keys with
-      one mask test; a deleted key takes the setters, in `getContext` order.
-      `NativePointContextReader.readQualified` serves a loop that read the element
-      capability at this iteration; the bar bulk loop uses it too. The prepared exact
-      scatter loop under `update_` (whole dataset, no `showLine`, scalar raw `clip`) leaves
-      its refresh to the overflow pass. A plan that ends writes the waiting contexts first,
-      and a public `update` or `updateElements` keeps each write. The refresh before the
-      layout stays. Guards live in `controller.scatter.dart` and `core/point_options.dart`;
-      twins are in `test/port/controllers/context_refresh_twins_test.dart`.
-    - Chart.js ADR 0102: the exact doughnut, pie, polar area and bubble controllers in mode
-      none or reset write a built-in element through typed setters
-      (`types.ArcElementWrites`, `types.PointElementWrites`) where `updateElement` stood,
-      after the options resolve. A user controller or element, another mode, an undefined
-      value or another bubble axis takes `updateElement`. A polar loop with constant
-      options copies one template of its frozen entry, also on a tick of
-      `Chart.updateData`, which keeps the entry. Its guard reads only the keys whose
-      spacing fix-up fires on the entry, after an arc that is not active. See
-      `direct_element_writes_test.dart`.
-    - Chart.js ADR 0109: the gap test `stop` of the line and scatter loops takes the `ToNumber`
-      of the x of the previous pass in place of the read `prevParsed[iAxis]` when no user code
-      can run between the two reads: the exact controller, a direct update, no stack and no
-      `segment`, the axes x and y, a native chart, the native linear projection of both scales,
-      native lists; at both passes a typed exact point, a native item (`ParsedItem`, a
-      registered typed item, an SDK map of a native class; only `ParsedItem` on dart2wasm), a
-      number x and a number, `null` or `undefined` value; the holding pass with shared options
-      or the indexed-color plan. Guards: `NativeGapReads` of `point_options.dart` and
-      `prepareNativeGapReads` of `point_option_preparation.dart`. `nativeGapReadsEnabled`
-      (define `CHARTJS_NATIVE_GAP_READS`) and `nativeGapReadsTaken` serve the twins of
-      `test/port/controllers/native_gap_reads_test.dart`.
-    - Chart.js ADR 0111: `Chart.updateRanges([mode])` (also on `types.Chart`) is `update(mode)`
-      after a change of the `min` and `max` options of the scales only, written or deleted
-      through a view of the options. It keeps the configuration of the last full update: no
-      `config.update()`, no new resolver (a new context view over the kept one for the chart, each
-      plugin descriptor, `PluginService.refreshDescriptorViews`, and each dataset,
-      `configureKeptResolver`; `OptionView.resolver`), no scale id, type or position checks, no
-      `buildOrUpdateControllers` (it writes `meta.visible`). `scale.init` runs in the key order of
-      `options.scales`, the scale boxes go and come back, and each hook, the layout, the dataset updates, the replay and the draw run
-      as in `update`. Checks (`_canUpdateRanges`) send it to `update(mode)`: a nested call, no
-      range state (`RangeUpdateSnapshot` of `data_update.dart`, the invalidation points of Chart.js
-      ADR 0074, a cancelled or thrown update), a chart or config of another class, a plugin
-      without the opt-in or with a failed `Plugin.rangeUpdateGuard` (the colors plugin with
-      `forceOverride`), a notified data change, another `data`, `options` or dataset object, another
-      chart type or inline plugin List, a controller of another class. Options that only the
-      skipped steps read (`responsive`, the chart `indexAxis`, the scale `axis` and `position`)
-      and a `Chart.register` or `Chart.unregister` fall under the contract. It counts as a full update for re-entry, and ends as one
-      (`_recordUpdateState`). Row `adapt-range-updates`; twins in
-      `test/port/core/range_update_test.dart`.
+    - [Chart.js ADR 0092](doc/adr/0092-hidden-legend-items.md): a hidden legend of an exact built-in doughnut, pie
+      or polar area chart builds `legendItems` at the first read that can run the build, not in `update`. Its guards
+      run no user code. Row `adapt-hidden-legend-items` states the stale reads and the one count difference. See
+      `test/port/plugins/plugin.legend_hidden_test.dart`.
+    - [Chart.js ADR 0093](doc/adr/0093-arc-options.md): arcs take the native option paths: key snapshot, owned
+      entry, templates, indexed and scriptable plans (`core/arc_options.dart`, `core/arc_option_preparation.dart`).
+      See `test/port/controllers/arc_options_test.dart`. Generated clones share foreign slots with copy on write.
+    - [Chart.js ADR 0094](doc/adr/0094-scatter-bubble-point-loops.md): the scatter overflow takes one point size,
+      and the bubble parse and loops take native paths. See `test/port/controllers/scatter_point_size_test.dart` and
+      `bubble_point_options_test.dart`. Plans end before user code, at the original reads. `DataPoint.bubble` works
+      with `parsing: false` through the typed `r` in `_customOf` (row `adapt-bubble-typed-radius`).
+    - [Chart.js ADR 0095](doc/adr/0095-radial-static-plans.md): the exact `RadialLinearScale` takes static plans
+      for its fit, point labels and angle lines, and `RadarController` writes typed values. See
+      `test/port/scales/scale.radialLinear_plans_test.dart` and
+      `test/port/controllers/controller.radar_plans_test.dart`. Each plan is local to one loop and starts after one
+      ordinary pass of the first index.
+    - [Chart.js ADR 0096](doc/adr/0096-per-item-plumbing.md): the per-item reads are direct. `readOption` reads a
+      typed scope through `OptionScope.readKey`, and the parse grows `meta.parsed` once. See
+      `test/port/core/core.datasetController_plumbing_test.dart` and `core.datasetController_walk_test.dart`. A
+      subclass of `OptionScope` that overrides `jsRead` must also override `readKey`.
+    - [Chart.js ADR 0099](doc/adr/0099-hidden-legend-indexed-colors.md): a hidden legend also waits with native
+      indexed arc options (`Config.prepareIndexedArcStyles`). See `test/port/plugins/plugin.legend_hidden_test.dart`.
+      `OptionResolver.peekKey` writes no cache and makes no sub-resolver. A read of the items writes no context.
+    - [Chart.js ADR 0100](doc/adr/0100-data-only-indexed-colors.md): `updateData` also takes a data element with no
+      cached entry when `DatasetController.hasDataUpdateOptions` proves a native indexed plan. See
+      `test/port/core/data_update_test.dart`. A function of a chart or plugin option in the defaults or overrides
+      and a tick callback stay on the data-only path, under the contract of
+      [Chart.js ADR 0074](doc/adr/0074-incremental-data-updates.md).
+    - [Chart.js ADR 0101](doc/adr/0101-context-refresh.md): `ScriptableContext.refresh` writes the six keys of a
+      data context with one mask test, and the prepared scatter loop leaves its refresh to the overflow pass. See
+      `test/port/controllers/context_refresh_twins_test.dart`. A deleted key takes the setters in `getContext`
+      order. A public `update` or `updateElements` keeps each context write.
+    - [Chart.js ADR 0102](doc/adr/0102-direct-element-writes.md): in mode `none` or reset, the exact doughnut, pie,
+      polar area and bubble controllers write built-in elements through typed setters. See
+      `test/port/controllers/direct_element_writes_test.dart`. A user controller or element, another mode, an
+      undefined value or another bubble axis takes `updateElement`.
+    - [Chart.js ADR 0109](doc/adr/0109-previous-x-of-the-gap-test.md): the gap test of the line and scatter loops
+      takes the x of the previous pass when no user code can run between the two reads (`NativeGapReads` of
+      `point_options.dart`). `nativeGapReadsEnabled` (define `CHARTJS_NATIVE_GAP_READS`) and `nativeGapReadsTaken`
+      serve the twins of `test/port/controllers/native_gap_reads_test.dart`.
+    - [Chart.js ADR 0111](doc/adr/0111-range-updates.md): `Chart.updateRanges([mode])` (also on `types.Chart`) is
+      `update(mode)` after a change of the `min` and `max` options of the scales only, written or deleted through a
+      view of the options. It keeps the configuration of the last full update: no `config.update()`, no new
+      resolver, no scale id, type or position checks and no `buildOrUpdateControllers`. Each hook, the layout, the
+      dataset updates, the replay and the draw run as in `update`. `_canUpdateRanges` sends each other case to
+      `update(mode)`, also a plugin without the opt-in or with a failed `Plugin.rangeUpdateGuard`. Options that only
+      the skipped steps read (`responsive`, the chart `indexAxis`, the scale `axis` and `position`) and a
+      `Chart.register` or `Chart.unregister` fall under the contract. It counts as a full update for re-entry, and
+      ends as one (`_recordUpdateState`). Row `adapt-range-updates`. See `test/port/core/range_update_test.dart`.
     - `index.dart` has the exports of `src/core/index.ts`. `lib/src/index.dart` is the port of
       `src/index.ts`, with the four namespaces and `registerables`. The namespace `controllers` has
       the eight controllers of phase 7 and the namespace `plugins` has the seven plugins of
@@ -836,93 +754,67 @@ repository.
     values as strings (Chart.js ADR 0022). The canvas `textBaseline` holds the enum
     `CanvasTextBaseline` of `canvas.dart` (row `adapt-canvas-text-baseline-enum`), also in a label
     item and in the options of `renderText`.
-    Chart.js ADR 0070 offers ordinary bar rectangles to an optional native
-    context operation. It preserves the final path, state and fill accounting,
-    and declines callbacks, unsupported colors/transforms and complex geometry.
-    `test/port/canvas/canvas_rect_bar_test.dart` pins pixel/state equivalence.
-    Chart.js ADR 0084 passes native circle geometry as scalars and packs
-    unobserved Path2D move/line/close commands. Reading commands materializes
-    one stable mutable list; public/custom replay retains the original loop.
-    Only native uiPathOf uses scalar replay before observation. Complex paths
-    retain ordinary commands, and version/cache and drawing order stay intact.
-    Chart.js ADR 0085 grows the first compact path buffer from 16 to 1,024
-    commands, then retains full chunks without copying or cross-path pooling.
-    Public list exposure and complex commands materialize in original order.
-    Boundary/ownership tests cover this storage-only change; no capacity hint
-    or line algorithm/data-only guard changes are involved.
-    Chart.js ADR 0106: the canvas has `shadowBlur`, `shadowColor`, `shadowOffsetX` and `shadowOffsetY`,
-    for plugins: no ported caller reads them. `_castShadow` of `canvas_ui.dart` draws the shape with
-    a blur mask filter before the shape. Each fast path declines while `_State.shadowOn` is true.
-    See `test/port/canvas/canvas_ui_shadow_test.dart`, which the CI job `test-impeller` also runs.
-    Chart.js ADRs 0107 and 0139: each typed dataset has `shadow`, a `ChartShadow` of the core file
-    `lib/src/types/chart_shadow.dart` (exported by `chartjs.dart`). The dataset option `shadow` (the
-    typed atom `chartShadow` of the schema, port-only) holds the `ChartShadow` itself, in typed and raw
-    configs; the native option plans and the data-only check accept it, so the data-only path stays.
-    The `$chartView` plugin of `ChartView` reads it with `readOption` and sets the four canvas
-    attributes around the draw of the dataset; another value stops a debug build. The area fill has
-    no shadow, and the shadow does not cascade. See `test/port/widgets/chart_view_shadow_test.dart`.
-    Chart.js ADR 0113 (it supersedes Chart.js ADR 0105): on the web only, a stroke of a `Path2D` and
-    a line fill to `origin`, `start` or `end` with one color draw in pieces with small bounds
-    (`UiPathPieces`, `UiPathBuilder.tryFillColumns`). Skia on WebGL is slow for one large path, and
-    one draw of a dense fill misses the true area by up to 57% there. A stroke takes pieces from
-    `UiCanvasContext.strokePieceMinCommands` commands: 2 when `defaultTargetPlatform` (the system of
-    the browser) is macOS, Windows or Linux, else 128 (`minPieceCommands`); the fill keeps 128. The
-    overlap of a piece is about 1.5 bitmap pixels: a straight segment is cut at its end, and a curve
-    at the larger of the remaining overlap and two line widths (de Casteljau; a shorter curve stays
-    whole). The switch `debugDrawLongPathsInPieces` turns the form on for a test on the VM,
-    and `debugDefaultTargetPlatformOverride` picks the rule. Native engines keep one draw. See
-    performance.md §68 and §70, and the twins of `test/port/canvas/canvas_ui_pieces_test.dart`.
-    Chart.js ADR 0114 (it supersedes Chart.js ADR 0089): on a native context, a line with curves
-    writes a curve whose ends and control points lie within half a bitmap pixel in x as lines
-    through its start, its extremes in y and its end, and a bitmap pixel column with more than 3
-    such vertices after its first keeps the first, the lowest, the highest and the last
-    (`writeDenseCurve` of `lib/src/elements/line_dense_curve.dart`, `_denseCurveSegment` of
-    `element.line.dart`). The first and the last curve of a run stay. A merged stroke takes round
-    joins. The fill reads the same vertices, and the partitions of the native fill are cut from
-    them (`denseCurveScaleOfLine`). Below 2 points for each bitmap pixel the bytes are the same.
-    A line with no border (the maintainer's choice), a dash, a loop, a decimated line, a user
-    class, options that are not typed, a context without `DenseCurveCanvas`, a transform that is
-    not axis aligned and a shadow keep the upstream commands. Hit tests and `interpolate` read the
-    points and do not change. The switch `denseCurveMergeEnabled` (define
-    `CHARTJS_DENSE_CURVE_MERGE`) and the counter `denseCurvesMerged` serve the twins of
-    `test/port/elements/line_dense_curve_test.dart`. See performance.md §73.
-    Chart.js ADR 0104: `Path2D` packs unobserved cubic curves too. A filler walk that a partitioned
-    fill can replace keeps the original path out of the engine (`deferCurrentPath`), and a read gets
-    the same path. `boundSegment` proves a whole ascending segment with one scan.
-    `PointElement.drawCircleRun` (`canvas_circle_run.dart`) sends exact point elements with plain
-    options and the style `circle` to the batch with one call each; the first other element or state
-    ends the run, and `DatasetController.draw` draws the rest in order. See performance.md §66.
-    Once the batch took a circle of a run, `CircleBatch.hold` keeps the run while it has one
-    radius, no varying radii and the identical last colors, and `tryAddRunCircle` appends each
-    further fill and stroke with `addHeld`, with no test: the batches, the flush points, the draw
-    calls and the pixels stay. Another add, a flush, a clear and the start of a run end it. See
-    `test/port/canvas/canvas_ui_circle_run_test.dart` (`debugHoldCircleRuns`,
-    `debugRecordingCanvas`) and performance.md §69.
-    Chart.js ADR 0103: on Impeller, the static angle-line plan sends the lines after the
-    first through `LineFanCanvas` (`canvas_line_fan.dart`), one `drawRawPoints(PointMode.lines)`.
-    Each line stays its own stroke; the last spoke stays the current path; the call counts as
-    one draw of ADR 0066. Dash, shader, non-similarity transform, observers, unnotified canvas,
-    zero-length or non-finite lines and non-Impeller engines decline to the ordinary loop.
-    Tests on software Skia set `debugLineFanWithoutImpeller`; on Impeller they run with no
-    switch (`test/port/canvas/line_fan_engine.dart`). The CI job `test-impeller` (macos-latest)
-    runs `test/port/canvas/canvas_line_fan_test.dart` and
-    `scale.radialLinear_line_fan_test.dart` with `--enable-impeller` and `CHART_IMPELLER=1`, on
-    Impeller on Vulkan through the SwiftShader of flutter_tester; that variable fails a run
-    that is not on Impeller. No job runs on Impeller on Metal or its signed distance route.
-    Chart.js ADR 0097: `RenderChartHost` adds chunk pictures through `ChartPicturesLayer`
-    unless the content needs its layer. The web keeps `drawPicture`. `ArcSectorCanvas` fuses a
-    plain exact `ArcElement` sector, and the ordinary path stays pending in `UiPathBuilder`.
-    Adjacent sectors of one color collapse into one `drawArc`: the seams go (row
-    `adapt-sector-run-seams`). Fills with varying radii of at least 2 bitmap pixels (64 or more
-    fills) draw a ladder atlas in `canvas_ui_batch.dart`. Strokes keep `drawCircle`, and a
-    shorter run draws exact colors. A color that 32 bits of sRGB do not keep joins no circle
-    batch (`batchKeepsColor`). A single-line stroke uses `drawLine`. Guards decline before any
-    state change: observers, colors that are not exact, transforms that are not similar. See
-    `chart_host_scene_test.dart` and `test/port/canvas/canvas_ui_ladder_test.dart`.
-    Chart.js ADR 0066 bounds native recordings at 256 non-batched paint calls.
-    Internal picture chunks share one paint generation; more than eight completed
-    generations flatten. Circle runs keep their existing batching. The pixel and
-    lifecycle regressions are in `test/port/canvas/canvas_ui_chunks_test.dart`.
+    - [Chart.js ADR 0070](doc/adr/0070-native-rectangular-bar-drawing.md): an ordinary bar rectangle draws through
+      the optional `RectBarCanvas` operation of the native context. See
+      `test/port/canvas/canvas_rect_bar_test.dart`. A declined call changes no canvas state. The current path stays
+      the inner rectangle.
+    - [Chart.js ADR 0084](doc/adr/0084-scalar-circles-and-compact-paths.md): the native context reads a full
+      circle as scalars, and `Path2D` packs unread move, line and close commands. See
+      `test/port/canvas/canvas_test.dart` (group `compact native Path2D`). The first read of `commands` makes one
+      stable mutable list. Public and custom replay keep the ordinary loop. Only `uiPathOf` takes the scalar replay.
+    - [Chart.js ADR 0085](doc/adr/0085-chunked-path-storage.md): the compact path storage grows to chunks of 1,024
+      commands and never copies a full chunk. See `test/port/canvas/path_chunks_test.dart`. No buffer is shared
+      across paths, because a user can keep and read an old path.
+    - [Chart.js ADR 0106](doc/adr/0106-canvas-shadows.md): the canvas has `shadowBlur`, `shadowColor`,
+      `shadowOffsetX` and `shadowOffsetY`, for plugins: no ported caller reads them. `_castShadow` of
+      `canvas_ui.dart` draws the shape with a blur mask filter before the shape. Each fast path declines while
+      `_State.shadowOn` is true. See `test/port/canvas/canvas_ui_shadow_test.dart`, which the CI job
+      `test-impeller` also runs.
+    - Chart.js ADRs 0107 and 0139: each typed dataset has `shadow`, a `ChartShadow` of the core file
+      `lib/src/types/chart_shadow.dart` (exported by `chartjs.dart`). The dataset option `shadow` (the
+      typed atom `chartShadow` of the schema, port-only) holds the `ChartShadow` itself, in typed and raw
+      configs; the native option plans and the data-only check accept it, so the data-only path stays.
+      The `$chartView` plugin of `ChartView` reads it with `readOption` and sets the four canvas
+      attributes around the draw of the dataset; another value stops a debug build. The area fill has
+      no shadow, and the shadow does not cascade. See `test/port/widgets/chart_view_shadow_test.dart`.
+    - [Chart.js ADR 0113](doc/adr/0113-stroke-pieces-by-browser-system.md): on the web only, a long `Path2D`
+      stroke and a one-color line fill to `origin`, `start` or `end` draw in pieces with small bounds
+      (`UiPathPieces`, `UiPathBuilder.tryFillColumns`). A stroke takes pieces from
+      `UiCanvasContext.strokePieceMinCommands` commands: 2 on a desktop browser system, else 128. Native engines
+      keep one draw. The switch `debugDrawLongPathsInPieces` turns the form on for a test on the VM, and
+      `debugDefaultTargetPlatformOverride` picks the rule. See `test/port/canvas/canvas_ui_pieces_test.dart`.
+    - [Chart.js ADR 0114](doc/adr/0114-dense-curve-merge.md): on a native context, the curves of a dense line
+      that lie within half a bitmap pixel in x become lines through their extremes (`writeDenseCurve` of
+      `lib/src/elements/line_dense_curve.dart`). Below 2 points for each bitmap pixel the bytes are the same. Hit
+      tests and `interpolate` read the points and do not change. The switch `denseCurveMergeEnabled` (define
+      `CHARTJS_DENSE_CURVE_MERGE`) and the counter `denseCurvesMerged` serve the twins of
+      `test/port/elements/line_dense_curve_test.dart`.
+    - [Chart.js ADR 0104](doc/adr/0104-line-curve-draw.md): a dense line draws with packed cubic curves, a
+      deferred filler path, a one-scan bound of an ascending segment and a run of circle markers. See
+      `test/port/elements/element.point_circle_run_test.dart`. A read of a deferred path gets the same path.
+      `PointElement.drawCircleRun` (`canvas_circle_run.dart`) ends its run at the first element or state that it
+      does not take, and `DatasetController.draw` draws the rest in order.
+    - Once the batch took a circle of a run, `CircleBatch.hold` keeps the run while it has one
+      radius, no varying radii and the identical last colors, and `tryAddRunCircle` appends each
+      further fill and stroke with `addHeld`, with no test: the batches, the flush points, the draw
+      calls and the pixels stay. Another add, a flush, a clear and the start of a run end it. See
+      `test/port/canvas/canvas_ui_circle_run_test.dart` (`debugHoldCircleRuns`,
+      `debugRecordingCanvas`) and performance.md §69.
+    - [Chart.js ADR 0103](doc/adr/0103-radial-line-fan.md): on Impeller, the static angle-line plan draws the
+      lines after the first in one `drawRawPoints` call (`LineFanCanvas` of `canvas_line_fan.dart`). See
+      `test/port/canvas/canvas_line_fan_test.dart`. Tests on software Skia set `debugLineFanWithoutImpeller`. On
+      Impeller, they run with no switch (`test/port/canvas/line_fan_engine.dart`). The CI job `test-impeller` runs
+      `canvas_line_fan_test.dart` and `scale.radialLinear_line_fan_test.dart` with `--enable-impeller` and
+      `CHART_IMPELLER=1`. That variable fails a run that is not on Impeller.
+    - [Chart.js ADR 0097](doc/adr/0097-native-chart-drawing-routes.md): live charts take native drawing routes:
+      chunk pictures, fused arc sectors, a ladder atlas of circle fills and `drawLine` for a single-line stroke. See
+      `test/port/platform/chart_host_scene_test.dart` and `test/port/canvas/canvas_ui_ladder_test.dart`. Adjacent
+      sectors of one color collapse into one `drawArc`, so the seams go (row `adapt-sector-run-seams`). A color
+      that 32 bits of sRGB do not keep joins no circle batch (`batchKeepsColor`). Each guard declines before any
+      state change.
+    - [Chart.js ADR 0066](doc/adr/0066-bounded-canvas-recordings.md): a native recording ends after 256
+      non-batched paint calls, and more than eight paint generations flatten into one image. See
+      `test/port/canvas/canvas_ui_chunks_test.dart`. Circle runs keep their batching and do not count.
 
   - `lib/src/platform/` (Chart.js ADR 0037): the ports of `index.js`, `platform.base.js` and
     `platform.basic.js`, and three port-only files. `platform.flutter.dart` replaces
@@ -957,11 +849,10 @@ repository.
     `style.touchAction`, `style.userSelect` and `removeProperty`. See
     `test/port/platform/chart_host_test.dart` (groups `canvas event target`, `document target`,
     `getBoundingClientRect`, `touch sequence`) and `native_event_test.dart`.
-    Chart.js ADR 0137: a trackpad scroll gives a `wheel` with the scroll deltas, and a trackpad
-    pinch a `wheel` with `ctrlKey` and `deltaY` -100 times the natural log of the scale step, as
-    Chrome sends them. A prevented `wheel` takes the gesture from the arena.
-    `ChartView.trackpadGestures` (default true) turns it off. See the trackpad cases of
-    `chart_host_test.dart`.
+    [Chart.js ADR 0137](doc/adr/0137-trackpad-wheel-events.md): a trackpad scroll gives a `wheel` with the scroll
+    deltas, and a trackpad pinch a `wheel` with `ctrlKey` and `deltaY` -100 times the natural log of the scale
+    step, as Chrome sends them. A prevented `wheel` takes the gesture from the arena.
+    `ChartView.trackpadGestures` (default true) turns it off. See the trackpad cases of `chart_host_test.dart`.
   - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme` and
     the deep freeze. `compileChartTheme` takes the typed tokens as named
     parameters (Chart.js ADR 0117): 6 `Color?` tokens, 2 `TextStyle?` fonts, `palette` and
@@ -1053,13 +944,14 @@ repository.
       `MediaQuery.maybeDisableAnimationsOf`. A chart under `TickerMode(enabled: false)` is muted.
       `dispose` destroys the chart and disposes the context. A `Focus` and a `Semantics` node
       (`container`, `image`, `semanticLabel`) wrap the host (Chart.js ADR 0051 §1 and §8).
-      Chart.js ADR 0098: `ChartView.dataOnlyUpdates` (typed only, default false) calls
-      `chart.updateData` when `ChartConfigLowering.apply` reports `lastApplyDataOnly`: equal type,
-      options and plugins, the same labels List, kept dataset scopes, and each patch changed only `data` or stored a style List with equal items. It needs mode `'none'` and `animation: false`, else `chart.update(mode)`. A theme or
-      reduced-motion update stays full. All checks of Chart.js ADR 0074 stay in `updateData`. A
-      category scale also needs `bounds: 'ticks'` and no added label. After `afterUpdate`, the
-      replay and the draw act as in `update`: their callbacks can call `update`. See
-      `test/port/widgets/chart_view_data_only_test.dart`.
+      [Chart.js ADR 0098](doc/adr/0098-chart-view-data-only-updates.md): `ChartView.dataOnlyUpdates` (typed only,
+      default false) calls `chart.updateData` when `ChartConfigLowering.apply` reports `lastApplyDataOnly`: equal
+      type, options and plugins, the same labels List, kept dataset scopes, and each patch changed only `data` or
+      stored a style List with equal items. It needs mode `'none'` and `animation: false`, else
+      `chart.update(mode)`. A theme or reduced-motion update stays full. All checks of
+      [Chart.js ADR 0074](doc/adr/0074-incremental-data-updates.md) stay in `updateData`. A category scale also needs
+      `bounds: 'ticks'` and no added label. After `afterUpdate`, the replay and the draw act as in `update`: their
+      callbacks can call `update`. See `test/port/widgets/chart_view_data_only_test.dart`.
     - `chart_theme_switch.dart` has `ChartThemeSwitch`, the runtime theme switch (theming.md §3.7):
       the entry `$theme`, the in-place restore of the user `scales` and of the palette keys, and
       one update with `'theme'`, `'themeFrame'` or `'default'`.

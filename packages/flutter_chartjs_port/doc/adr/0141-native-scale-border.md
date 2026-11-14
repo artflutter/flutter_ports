@@ -1,6 +1,7 @@
 # Chart.js ADR 0141: The scale option `border` holds a `ScaleBorder`
 
 - Status: accepted
+- Superseded in part by: [Chart.js ADR 0147](0147-public-theme-api.md) (2026-11-14)
 - Date: 2026-11-13
 - Related: Chart.js ADRs 0050, 0052, 0054, 0115, 0116, 0118, 0139, 0140. The design draft
   [native-axis-border-design-draft.md](../native-axis-border-design-draft.md).

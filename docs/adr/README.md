@@ -20,7 +20,7 @@ its own list.
    "Still in force" line, or the fix of a broken header line.
 4. Code, docs and tool messages cite the ADR that holds the current rule.
 5. An ADR that is superseded in whole, or rejected, can become a stub. The stub keeps the title, the header
-   lines, a summary of at most 5 lines, a map from each old section to its new place, and the command that
+   lines except "Related", a summary of at most 5 lines, a map from each old section to its new place, and the command that
    shows the full text (`git show <commit>:<path>`). The stub of a rejected ADR keeps the reason of the
    rejection. The file name and the number do not change. The maintainer approved this rule on 2026-11-14.
 6. `dart run tool/adr_index.dart` writes the list of each folder from the header lines. With `--check`

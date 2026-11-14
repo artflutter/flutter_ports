@@ -3,33 +3,22 @@
 - Status: accepted
 - Date: 2026-10-16
 - Superseded by: [ADR 0007](0007-package-names.md) (2026-10-22)
+- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:docs/adr/0003-package-names.md`
 
-## Context
+## Summary
 
-pub.dev names are permanent once published. For Chart.js the obvious names are taken by
-unrelated packages (checked 2026-10-16):
+The Chart.js port took the pub.dev name `flutter_chartjs`, and its gallery app took `chartjs_gallery`.
+On 2026-10-16, other packages held the names `chart`, `chartjs`, `chartjs2` and `chartjs_flutter`.
+A later port took a free `flutter_<library>` name. A port with a taken name decided its name in its own ADR.
 
-| Name | Owner and kind |
-|---|---|
-| `chart` | Dart 1 port of Chart.js 0.2 (2015) |
-| `chartjs` | Google's archived JS-interop bindings (discontinued) |
-| `chartjs2` | fork of `chartjs` |
-| `chartjs_flutter` | WebView/HtmlElementView wrapper (2025) |
+## Where each part went
 
-`chart_js` is unregistered, but pub.dev may reject it as too similar to `chartjs` (not tested).
-
-## Decision
-
-The Chart.js port is published as **`flutter_chartjs`**. Its gallery app is `chartjs_gallery`
-(never published).
-
-Later ports take a free `flutter_<library>` name where possible. Where that name is taken (for
-example `flutter_echarts`, an ECharts WebView wrapper), the name is decided in that port's own
-ADR.
-
-## Consequences
-
-- Workspace packages stay `publish_to: none` until their first release, so a rename before then
-  costs nothing.
-- The README and pub.dev description must make clear that `flutter_chartjs` is a native port, as
-  the existing `chartjs_flutter` wrapper has an almost identical name.
+- Context (the taken names of 2026-10-16): [ADR 0007](0007-package-names.md) Context, the pub.dev
+  examination.
+- Decision (the Chart.js name `flutter_chartjs`): [ADR 0007](0007-package-names.md) item 2, now
+  `flutter_chartjs_port`.
+- Decision (the gallery app `chartjs_gallery`): [ADR 0007](0007-package-names.md) items 2 and 4.
+- Decision (the names of later ports): [ADR 0007](0007-package-names.md) items 1 and 9.
+- Consequences (a rename before the first release costs nothing, [ADR 0007](0007-package-names.md) cites it):
+  [ADR 0007](0007-package-names.md) item 10.
+- Consequences (the README says that the package is a native port): [ADR 0007](0007-package-names.md) item 1.

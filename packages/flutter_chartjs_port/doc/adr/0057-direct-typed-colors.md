@@ -1,7 +1,7 @@
 # Chart.js ADR 0057: Color-only inputs
 
 - Status: implemented; explicitly requested on 2026-11-01.
-- Superseded in part by: [Chart.js ADR 0061](0061-native-flutter-colors.md), [Chart.js ADR 0128](0128-chart-paint-options.md) (2026-11-13)
+- Superseded in part by: [Chart.js ADR 0061](0061-native-flutter-colors.md), [Chart.js ADR 0128](0128-chart-paint-options.md) (2026-11-13); [Chart.js ADR 0147](0147-public-theme-api.md) (2026-11-14)
 - Related: ADRs 0050, 0052 and 0054; `performance.md` §§20–22.
 - Supersedes: the CSS-string color input/serialization portions of Chart.js ADRs 0050, 0052 and 0054.
   Their theme isolation, typed model and pure-layer requirements remain in force.

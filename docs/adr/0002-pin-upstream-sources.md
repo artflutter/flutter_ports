@@ -3,44 +3,23 @@
 - Status: accepted
 - Date: 2026-10-16
 - Superseded by: [ADR 0005](0005-pin-upstream-sources.md) (2026-10-19)
+- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:docs/adr/0002-pin-upstream-sources.md`
 
-## Context
+## Summary
 
-A port is only checkable against an exact upstream version. Porting from memory or from a moving
-branch makes behaviour drift silently and makes upstream releases impossible to replay.
+The upstream repository of each port was a shallow git submodule under `third_party/`, at a release tag.
+The submodule was reference material only. No tool built it, no package shipped it, and no code imported it.
+`chartJsVersion` held the version in code, and two checks kept it equal to the gitlink.
+A bump was deliberate port work in one PR. The port did not use Dependabot.
 
-## Decision
+## Where each part went
 
-Each port's upstream repository is a shallow git submodule under `third_party/`, checked out at a
-release tag. Chart.js: `third_party/Chart.js` at `v4.5.1` (commit `9c5cf9f`).
-
-- The submodule is reference material only: it is never built, shipped or imported, and it is
-  excluded from analysis and licensing checks of this tree.
-- `melos run upstream` checks it out (`git submodule update --init --depth 1`).
-- The tracked version also lives in code (`chartJsVersion` in `flutter_chartjs_port`). Two checks keep
-  the two in step:
-  - `tool/check_upstream_pin.sh` (`melos run upstream:check`, and the CI `upstream-pin` job)
-    fails unless the recorded gitlink is exactly the commit of tag `v<chartJsVersion>`, looked up
-    with `git ls-remote`. It needs no submodule checkout.
-  - `upstream_test.dart` compares `chartJsVersion` with the checked-out submodule's
-    `package.json` when the submodule is present.
-
-  The version string alone is not enough: upstream `master` still reports `4.5.1`.
-- Bumping upstream is deliberate port work. The submodule is a shallow clone without tags, so the
-  sequence is:
-  1. fetch both tags: `git -C third_party/Chart.js fetch --depth 1 origin tag <old-tag> tag <new-tag>`;
-  2. check out the new tag;
-  3. review `git -C third_party/Chart.js diff <old-tag> <new-tag> -- src test/specs`;
-  4. `git add third_party/Chart.js`, then port the changes and update `chartJsVersion` and
-     [parity.md](../../packages/flutter_chartjs_port/doc/parity.md).
-
-  All of it goes in one PR.
-- Dependabot's `gitsubmodule` updater is not used: it follows the upstream default branch, not
-  release tags.
-
-## Consequences
-
-- Contributors and agents read upstream source locally at the exact version being ported.
-- Cloning the repository does not download upstream unless asked for.
-- Upstream fixes that land after the pinned tag (Chart.js `master` is 22 commits past `v4.5.1` as
-  of 2026-10-16) are not picked up until the next deliberate bump.
+- Decision (the pin at a release tag): [ADR 0005](0005-pin-upstream-sources.md) item 1.
+- Decision (reference material only): [ADR 0005](0005-pin-upstream-sources.md) item 2.
+- Decision (the checkout with `melos run upstream`): [ADR 0005](0005-pin-upstream-sources.md) item 3.
+- Decision (the version in code and its two checks): [ADR 0005](0005-pin-upstream-sources.md) item 4.
+- Decision (the four bump steps, [ADR 0004](0004-follow-upstream-between-releases.md) cites step 3):
+  [ADR 0005](0005-pin-upstream-sources.md) item 5.
+- Decision (no Dependabot): [ADR 0005](0005-pin-upstream-sources.md) item 6.
+- Consequences (local upstream sources, no download on a clone): [ADR 0005](0005-pin-upstream-sources.md)
+  Consequences.

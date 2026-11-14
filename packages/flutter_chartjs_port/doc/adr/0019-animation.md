@@ -1,6 +1,7 @@
 # Chart.js ADR 0019: Animation
 
 - Status: accepted (2026-10-21)
+- Superseded in part by: [Chart.js ADR 0145](0145-native-option-types.md) (2026-11-14)
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0001](0001-theming.md) (theming),
   [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (options and the `undefined`

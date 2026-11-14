@@ -3,47 +3,23 @@
 - Status: accepted
 - Superseded by: [Chart.js ADR 0114](0114-dense-curve-merge.md) (2026-11-11)
 - Date: 2026-11-05
+- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0089-partitioned-baseline-fill.md`
 
-## Decision
+## Summary
 
-Keep the upstream filler path construction. After it closes the original path,
-an eligible native canvas can fill an equivalent compound path instead. The
-original current path remains available to subsequent strokes, clips and custom
-draws. Curve control points are reused unchanged, never fitted per partition.
-The alternate path uses at most 32 cubic segments per contour and a shared
-horizontal baseline, with one nonzero fill operation. No points are removed.
+After the upstream filler path, an eligible native canvas filled an equivalent compound path over a shared baseline.
+Each contour had at most 32 cubic segments, with unchanged control points and no removed point.
+A geometry preflight and native canvas checks kept every other fill on the original path.
+[Chart.js ADR 0114](0114-dense-curve-merge.md) states the complete decision with one change.
+The partitions take the merged vertices of a dense curved line.
 
-`PartitionedFillCanvas` is an internal optional capability, following the native
-rectangle-bar capability. `UiCanvasContext` owns its alternate builder and native
-paint/state checks. The filler helper owns one geometry preflight; it checks
-native line/segment/point/list types, resolved ordinary curved-line options,
-full source range, finite strictly increasing x coordinates, control points
-within each segment's x interval, and a single-sided constant private boundary.
-Total vertical variation must exceed 16 times the point y range, excluding
-flat, monotone and gently varying curves from the extra path construction.
-Only equal-color origin/start/end x-axis fills qualify. Source styles, gaps,
-stops, loops, decimation, partial ranges, stepped/straight/foreign options,
-dataset/stack/shape targets, gradients, non-source-over blending, rotated or
-singular transforms and observable canvas lifecycle hooks retain the old path.
+## Where each part went
 
-The canvas declines before invoking the alternate writer when unsupported.
-The color comparison is evaluated once, at its original observation point.
-The plan performs no user point/list/option getters during its preflight.
-There is no global cache of chart geometry. The test-only enable switch and draw
-counter support differential verification without a new public chart option.
-
-## Costs and validation
-
-The original path is still built to preserve Canvas 2D semantics. This costs an
-additional validation walk and alternate path construction, and retains a second
-native path builder. The GPU benefit must therefore be measured together with
-full chart-update CPU cost, not only Flutter's UI-build timing.
-
-Software Skia pixel twins permit at most 3/255 channel difference at antialiased
-pixels, fewer than 200 differing pixels in the 160-square test, no solid-area
-differences and relative ink error below 0.0002. Native beta correctness and
-performance are recorded separately; this is not a universal pixel-identity or
-every-device frame-rate guarantee. These are ordinary differential images, not
-updates to the platform-pinned theme goldens.
-
-See performance.md §62 and the benchmark application's diagnostic report.
+- Decision ¶1 (the compound path after the original path): [Chart.js ADR 0114](0114-dense-curve-merge.md)
+  section "The partitioned fill".
+- Decision ¶2 (`PartitionedFillCanvas` and the geometry preflight): [Chart.js ADR 0114](0114-dense-curve-merge.md)
+  section "The partitioned fill".
+- Decision ¶3 (the decline, the color test, no user getters, the test switch):
+  [Chart.js ADR 0114](0114-dense-curve-merge.md) section "The partitioned fill".
+- Costs and validation (the extra path build and the pixel twins): [Chart.js ADR 0114](0114-dense-curve-merge.md)
+  section Tests (`partitioned_baseline_fill_test.dart`). Figures: performance.md §62.
