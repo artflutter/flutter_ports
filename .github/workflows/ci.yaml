@@ -65,12 +65,14 @@ jobs:
       # compares the part of chartjsPluginZoomVersion before "+" with
       # third_party/chartjs-plugin-zoom/package.json.
       # packages/flutter_chartjs_chart_sankey_port/test/upstream_test.dart
-      # reads third_party/chartjs-chart-sankey/package.json. Each shard runs a part
-      # of the tests of each upstream_test.dart. Thus each ubuntu leg makes
+      # reads third_party/chartjs-chart-sankey/package.json.
+      # packages/flutter_d3_color_port/test/upstream_test.dart compares
+      # d3ColorVersion with third_party/d3-color/package.json. Each shard runs a
+      # part of the tests of each upstream_test.dart. Thus each ubuntu leg makes
       # the checkout.
-      - name: Check out the Chart.js submodules, third_party/d3, the ECharts submodules, chartjs-plugin-zoom and chartjs-chart-sankey
+      - name: Check out the Chart.js submodules, third_party/d3, third_party/d3-color, the ECharts submodules, chartjs-plugin-zoom and chartjs-chart-sankey
         if: matrix.os == 'ubuntu-latest'
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/echarts third_party/zrender third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/d3-color third_party/echarts third_party/zrender third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
       - uses: ./.github/actions/setup
       # Melos gives the options after "--" to each flutter test call.
       # --experimental-faster-testing compiles the test files of a package
@@ -204,14 +206,17 @@ jobs:
     # Tools 1-3 also examine the add-on ports flutter_chartjs_plugin_zoom_port
     # and flutter_chartjs_chart_sankey_port (ADR 0009 item 6). Their
     # tool/port_sources.yaml files have no "files" entry, so the header check
-    # reads their source paths from the submodules. The job checks out only
-    # the Chart.js submodules, third_party/chartjs-plugin-zoom and
-    # third_party/chartjs-chart-sankey, by path.
+    # reads their source paths from the submodules. The header check of
+    # flutter_d3_port reads the source path of its bundle index from
+    # third_party/d3; the entry of flutter_d3_color_port lists its "files". The
+    # job checks out only the Chart.js submodules, third_party/d3,
+    # third_party/chartjs-plugin-zoom and third_party/chartjs-chart-sankey, by
+    # path.
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
-      - name: Check out the Chart.js, chartjs-plugin-zoom and chartjs-chart-sankey submodules
-        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
+      - name: Check out the Chart.js, d3, chartjs-plugin-zoom and chartjs-chart-sankey submodules
+        run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
       - uses: ./.github/actions/setup
       - run: dart run melos run check:lib-imports
       - run: dart run melos run check:headers

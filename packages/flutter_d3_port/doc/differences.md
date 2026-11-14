@@ -11,7 +11,10 @@ The ID starts with its category: `adapt`, `platform`, `js-semantics`, `harness` 
 `not-followed`. A skip reason `'diverges: <ID>'` names a row. The upstream column names the
 repository, the path, the tag and the lines, for example `d3-array src/ticks.js@v3.2.4:7`.
 
-Phase 0 ports no code. Thus the table has no rows.
+Each ported D3 module is a package of its own ([D3 ADR 0008](adr/0008-module-packages.md)), with
+its own `doc/differences.md`, for example
+[the d3-color rows](../../flutter_d3_color_port/doc/differences.md). This table has the rows of the
+files of `packages/flutter_d3_port`. It has no rows yet.
 
 | ID | Dart file and symbol | Upstream file@version:lines | Category | Reason | Upstream reference | Pinning test | Re-check on bump |
 |---|---|---|---|---|---|---|---|

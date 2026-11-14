@@ -25,6 +25,7 @@ rules:
       - flutter_chartjs_plugin_zoom_port
       - flutter_chartjs_chart_sankey_port
       - flutter_kurkle_color_port
+      - flutter_d3_color_port
       - ci
       - deps
       - docs

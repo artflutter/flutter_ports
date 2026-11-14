@@ -9,4 +9,6 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0004](0004-spec-harness.md) Spec harness: proposed.
 - [0005](0005-path-context.md) Path context and drawing: proposed.
 - [0006](0006-generators-accessors-and-js-values.md) Generators, accessors and JS values: proposed.
+- [0007](0007-native-dart-forms.md) Native Dart forms, no JS runtime: proposed, supersedes 0003, 0004, 0006.
+- [0008](0008-module-packages.md) One package for each D3 module: proposed, supersedes 0002.
 <!-- adr-index:end -->

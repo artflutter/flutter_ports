@@ -1,0 +1,60 @@
+# The projects that packages/flutter_d3_color_port ports code from (D3 ADR
+# 0008). Each "// Ported from" header must name a project of this file, with
+# the same license and holder. The only entry is d3-color. The package
+# imports no other port: flutter_d3_port depends on it.
+#
+# tool/check_upstream_pin.sh and the test/upstream_test.dart of this package
+# and of flutter_d3_port read this file. The pin readers skip the top-level
+# keys other than "sources".
+#
+# The header check of packages/flutter_chartjs_port/tool reads this file
+# (check:headers with this package as its home package).
+#
+# Top-level keys before "sources":
+# - marker: the tag of the DIVERGES markers, "// DIVERGES(d3-color): <row
+#   id>, <reason>". The rows are in doc/differences.md.
+#
+# The keys of an entry are those of packages/flutter_d3_port/tool/
+# port_sources.yaml. The pin is a release pin: "version" is
+# "v<d3ColorVersion>", and "ref" is the tag. "files" lists the ported source
+# paths at the pin, so the header check needs no checkout of the submodule.
+#
+# All paths are relative to the repository root, except "source" and
+# "files", which are relative to the project root.
+
+marker: d3-color
+
+sources:
+  - header: d3-color
+    version: "v3.1.0"
+    version_source: d3ColorVersion in packages/flutter_d3_color_port/lib/src/upstream.dart
+    url: https://github.com/d3/d3-color
+    language: js
+    spdx: ISC
+    holder: Mike Bostock
+    pin:
+      kind: submodule
+      path: third_party/d3-color
+      ref: "v3.1.0"
+      commit: 7a1573ed260de4fd97d061975244841132adde92
+    targets:
+      - source: src/
+        dart: packages/flutter_d3_color_port/lib/src/
+      - source: test/
+        dart: packages/flutter_d3_color_port/test/
+    files:
+      - src/color.js
+      - src/cubehelix.js
+      - src/define.js
+      - src/index.js
+      - src/lab.js
+      - src/math.js
+      - test/asserts.js
+      - test/color-test.js
+      - test/cubehelix-test.js
+      - test/gray-test.js
+      - test/hcl-test.js
+      - test/hsl-test.js
+      - test/lab-test.js
+      - test/lch-test.js
+      - test/rgb-test.js

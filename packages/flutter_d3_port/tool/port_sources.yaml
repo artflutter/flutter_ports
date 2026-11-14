@@ -1,7 +1,10 @@
 # The projects that packages/flutter_d3_port ports code from (D3 ADR 0001).
+# A ported module is a package of its own (D3 ADR 0008), with its pin in the
+# tool/port_sources.yaml of that package: d3-color in
+# packages/flutter_d3_color_port.
 # Each "// Ported from" header must name a project of this file, with the
 # same license and holder. The first entry is the d3 bundle, the upstream
-# repository of ADR 0005. The other 33 entries are the D3 module
+# repository of ADR 0005. The other 32 entries are the D3 module
 # repositories and the three repositories outside the d3 organization. They
 # are the "other projects" of the port, as in Chart.js ADR 0035.
 #
@@ -41,6 +44,15 @@
 #
 # All paths are relative to the repository root. Only "source" is relative
 # to the project root.
+#
+# Top-level keys before "sources" (check:headers, D3 ADR 0007):
+# - marker: the tag of the DIVERGES markers, "// DIVERGES(d3): <row id>,
+#   <reason>". The rows are in doc/differences.md.
+# - project: the project name of the port-only marker, "// Original code,
+#   not ported from D3: <reason>.". The header of the first entry is "d3".
+
+marker: d3
+project: D3
 
 sources:
   - header: d3
@@ -132,24 +144,6 @@ sources:
         dart: packages/flutter_d3_port/lib/src/d3-chord/
       - source: test/
         dart: packages/flutter_d3_port/test/specs/d3-chord/
-
-  - header: d3-color
-    version: "v3.1.0"
-    version_source: the newest release tag in the range "3" of the d3 v7.9.0 package.json:42 on 2026-10-20. The d3 v7.9.0 yarn.lock:956-957 also locks 3.1.0.
-    url: https://github.com/d3/d3-color
-    language: js
-    spdx: ISC
-    holder: Mike Bostock
-    pin:
-      kind: submodule
-      path: third_party/d3-color
-      ref: "v3.1.0"
-      commit: 7a1573ed260de4fd97d061975244841132adde92
-    targets:
-      - source: src/
-        dart: packages/flutter_d3_port/lib/src/d3-color/
-      - source: test/
-        dart: packages/flutter_d3_port/test/specs/d3-color/
 
   - header: d3-contour
     version: "v4.0.2"

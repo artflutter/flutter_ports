@@ -6,7 +6,9 @@ results with its own canvas. The package uses no WebView, no JavaScript and no n
 runtime. The goal is one code base for every Flutter platform, also for web builds that compile to
 WebAssembly.
 
-> **Status:** phase 0, scaffold and design. The package has no ported code. It is not published.
+> **Status:** phase 0, scaffold and design. It is not published. Each D3 module is a package of
+> its own, as on npm, and this package re-exports each of them. The first module package is
+> `flutter_d3_color_port` (d3-color 3.1.0).
 > The plan, the roadmap and the decisions are in
 > [doc/README.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_d3_port/doc/README.md).
 

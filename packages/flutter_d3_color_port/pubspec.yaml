@@ -1,0 +1,33 @@
+name: flutter_d3_color_port
+description: >-
+  A native Dart port of d3-color 3.1.0: the CSS color parser and the RGB, HSL,
+  CIELAB, HCL and Cubehelix color spaces of D3, with conversions to and from
+  the Flutter Color. No WebView and no JavaScript.
+version: 0.1.0
+# Remove at the first release.
+publish_to: none
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_color_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - color
+  - css
+  - lab
+  - hcl
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  # The Flutter layer (lib/src/ui/ui_color.dart) converts to and from the
+  # Flutter Color of dart:ui. lib/d3_color.dart imports no Flutter library.
+  flutter:
+    sdk: flutter
+
+dev_dependencies:
+  # The tests use package:test; flutter test runs them on the VM and in
+  # Chrome. The constraint is the test constraint of flutter_chartjs_port.
+  test: ^1.32.0

@@ -88,6 +88,8 @@ Future<void> main(List<String> args) async {
     'flutter_chartjs_port',
     'chartjs_test_utils',
     'flutter_kurkle_color_port',
+    'flutter_d3_port',
+    'flutter_d3_color_port',
   ]) {
     final directory = '$repository/packages/$name';
     final files = browserTestFiles(directory);
