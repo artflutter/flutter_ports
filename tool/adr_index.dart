@@ -73,7 +73,7 @@ Map<String, _Adr> _readFolder(Directory dir, List<String> errors) {
     final lines = file.readAsLinesSync();
     final title = lines.isEmpty
         ? ''
-        : lines.first.replaceFirst(RegExp(r'^#.*?\d{4}:\s*'), '');
+        : lines.first.replaceFirst(RegExp(r'^#[^:]*:\s*'), '');
     final bullets = _headerBullets(lines);
     String? status;
     final supersedes = <String>{};

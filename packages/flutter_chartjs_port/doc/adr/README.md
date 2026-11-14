@@ -128,7 +128,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0123](0123-edge-insets-padding.md) Padding holds an EdgeInsets: accepted, supersedes 0052, 0054.
 - [0124](0124-native-text-direction.md) Native text direction and scoped restoration: accepted.
 - [0125](0125-native-tooltip-callbacks.md) Native TooltipCallbacks: accepted, superseded in part by 0128.
-- [0126](0126-native-plugin-contract.md) # Chart.js ADR 0126 proposal: A native plugin contract: superseded, superseded by 0144.
+- [0126](0126-native-plugin-contract.md) A native plugin contract: superseded, superseded by 0144.
 - [0127](0127-native-legend-labels.md) Native legend label generation: proposed.
 - [0128](0128-chart-paint-options.md) ChartPaint from options to canvas: accepted, supersedes 0057, 0061, 0125.
 - [0129](0129-int-indexes.md) An index is an int: accepted.
