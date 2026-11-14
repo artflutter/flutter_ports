@@ -3,6 +3,7 @@
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/pages/bar_chart_page.dart';
 import 'package:chartjs_docs/pages/line_chart_page.dart';
+import 'package:chartjs_docs/pages/migrate_bar_fl_chart_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_graphic_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_syncfusion_page.dart';
 import 'package:chartjs_docs/pages/migrate_fl_chart_page.dart';
@@ -58,6 +59,13 @@ final List<DocPageLink> docPages = [
     navLabel: 'Bar chart',
     icon: Icons.bar_chart,
     build: barChartPage,
+  ),
+  const DocPageLink(
+    route: '/charts/bar/migrate/fl_chart',
+    group: 'Bar chart',
+    navLabel: 'From fl_chart',
+    icon: Icons.swap_horiz,
+    build: flChartBarMigrationPage,
   ),
   const DocPageLink(
     route: '/charts/bar/migrate/graphic',
