@@ -18,7 +18,7 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A shared test bed that compares Flutter chart libraries.">
+  <meta name="description" content="Compare Flutter chart libraries in your browser: the same chart and data on the Chart.js port, fl_chart, Graphic and Syncfusion, with frame times and a ranking.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="theme-color" content="#f4f6fa">
 
@@ -29,13 +29,25 @@
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" href="favicon.png"/>
+  <link rel="icon" type="image/svg+xml" href="favicon.svg">
+  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png">
 
   <title>Chart benchmark lab</title>
   <link rel="manifest" href="manifest.json">
   <!-- The engine and the text font come from these hosts. -->
   <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <!--
+    The engine reads these files before the first frame, but only after its two
+    WebAssembly modules are ready. A preload fetches them in parallel with the
+    modules. The engine fetches each one with a plain fetch(), so each link has
+    as="fetch" and crossorigin. Roboto is the fallback font of the engine (the
+    file name comes from the engine): if a new engine names another file, this
+    link loads a file that no code reads, and the engine fetches its own.
+  -->
+  <link rel="preload" href="assets/FontManifest.json" as="fetch" crossorigin>
+  <link rel="preload" href="assets/fonts/MaterialIcons-Regular.otf" as="fetch" crossorigin>
+  <link rel="preload" href="https://fonts.gstatic.com/s/roboto/v32/KFOmCnqEu92Fr1Me4GZLCzYlKw.woff2" as="fetch" crossorigin>
   <style>
     /* The color of the page, so that a load and a growing window show no white. */
     html, body { margin: 0; height: 100%; background: #f4f6fa; }

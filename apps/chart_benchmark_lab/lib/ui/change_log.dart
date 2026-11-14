@@ -19,6 +19,14 @@ class const ChangeLogEntry(
 /// when a change of the library or of the lab moves a figure. The full records
 /// are in `doc/performance.md` of the Chart.js port.
 const List<ChangeLogEntry> changeLog = [
+  ChangeLogEntry('2026-11-14', [
+    'Web: the page fetches the code of fl_chart, Graphic and Syncfusion only '
+        'when a person selects the library or a run needs it, and never '
+        'during a timed run. The fonts load in parallel with the engine. On a '
+        '20 Mbit/s connection in Chrome, the first frame came about 0.3 s '
+        'sooner (1.9 s to 1.6 s). The JavaScript build is 0.5 MB smaller. The '
+        'first selection of one of these libraries waits for its download.',
+  ]),
   ChangeLogEntry('2026-11-13', [
     'Lab: a ninth chart type, Sankey, with one flow for each item between '
         'nodes in three columns. Only the Chart.js port has it, through the '

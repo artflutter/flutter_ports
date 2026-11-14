@@ -162,11 +162,22 @@ class BenchmarkResult({
   };
 }
 
+/// Loads the code of a chart library on demand. It gives `null` when the code
+/// is ready, else a future that completes when the code is ready.
+typedef LibraryLoader = Future<void>? Function(ChartLibrary library);
+
+Future<void>? _codeReady(ChartLibrary library) => null;
+
 /// Owns one active library and one isolated measurement session.
-class BenchmarkController(TickerProvider vsync, {Random? random})
-    extends ChangeNotifier {
+class BenchmarkController(
+  TickerProvider vsync, {
+  Random? random,
+  LibraryLoader? loadCode,
+}) extends ChangeNotifier {
   /// Register the engine timing observer and a display-driven workload ticker.
   /// [random] orders each bulk capture pass; tests give it a fixed seed.
+  /// [loadCode] loads the code of a library before its chart shows or a run
+  /// starts; without it, the code of each library is ready.
   this {
     _generator = DatasetGenerator(config.count, config.seed);
     frames = ValueNotifier(_generator.frame(0));
@@ -183,6 +194,10 @@ class BenchmarkController(TickerProvider vsync, {Random? random})
 
   /// The only mounted chart engine.
   ChartLibrary library = ChartLibrary.chartjs;
+
+  /// The library whose code loads now, or `null`. The page shows a note in
+  /// place of the chart until the code is ready, and a run waits for it.
+  ChartLibrary? loadingLibrary;
 
   /// Changing data updates only the chart subtree.
   late final ValueNotifier<DatasetFrame> frames;
@@ -237,6 +252,7 @@ class BenchmarkController(TickerProvider vsync, {Random? random})
   int _step = 0;
   int _session = 0;
   final Random _random = random ?? Random();
+  final LibraryLoader _loadCode = loadCode ?? _codeReady;
   List<ChartLibrary> _batchOrder = const [];
   int? _batchIndex;
   bool _disposed = false;
@@ -292,9 +308,51 @@ class BenchmarkController(TickerProvider vsync, {Random? random})
     pause();
     library = value;
     _reset();
-    if (resume) start();
+    if (!_awaitCode(resume ? start : null) && resume) start();
     notifyListeners();
   }
+
+  /// Starts to load the code of [library] when it is not ready, and gives
+  /// whether the load goes on. After the load, [then] runs if the session did
+  /// not change in the meantime. A load starts only between runs, so that no
+  /// download or compile falls in a timed window.
+  bool _awaitCode([VoidCallback? then]) {
+    final pending = _loadCode(library);
+    if (pending == null) {
+      loadingLibrary = null;
+      return false;
+    }
+    final target = library;
+    final session = _session;
+    loadingLibrary = target;
+    message = _readyMessage;
+    unawaited(
+      pending.then(
+        (_) {
+          if (_disposed || library != target) return;
+          loadingLibrary = null;
+          final waiting = message == _loadingMessage(target);
+          if (session == _session && then != null) {
+            then();
+          } else if (waiting) {
+            message = _readyMessage;
+          }
+          notifyListeners();
+        },
+        onError: (Object _) {
+          if (_disposed || library != target) return;
+          loadingLibrary = null;
+          _batchIndex = null;
+          message = 'Could not load ${target.label}. Reload the page.';
+          notifyListeners();
+        },
+      ),
+    );
+    return true;
+  }
+
+  static String _loadingMessage(ChartLibrary library) =>
+      'Loading ${library.label}…';
 
   /// Editing a setting starts an entirely new data/timing session.
   void configure(BenchmarkConfig value) {
@@ -319,7 +377,9 @@ class BenchmarkController(TickerProvider vsync, {Random? random})
     message = _readyMessage;
   }
 
-  String get _readyMessage => canRun
+  String get _readyMessage => loadingLibrary == library
+      ? _loadingMessage(library)
+      : canRun
       ? 'Ready. Measurements exclude the first 2 seconds.'
       : library.reasonFor(config);
 
@@ -344,6 +404,10 @@ class BenchmarkController(TickerProvider vsync, {Random? random})
     }
     if (!canRun) {
       message = library.reasonFor(config);
+      notifyListeners();
+      return;
+    }
+    if (_awaitCode(() => _begin(capture: capture))) {
       notifyListeners();
       return;
     }

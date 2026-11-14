@@ -137,6 +137,8 @@ Future<void> _end(WidgetTester tester) async {
 
 void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
+  // The code of fl_chart, Graphic and Syncfusion is deferred.
+  setUpAll(BenchmarkChart.loadAll);
   staleSections();
 
   testWidgets('the first frames mount the chart once', (tester) async {
