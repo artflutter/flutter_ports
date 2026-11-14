@@ -12,6 +12,9 @@ void main() {
 class const ChartBenchmarkApp({
   /// Optional driver hook for native smoke runs, called once at initialization.
   final ValueChanged<BenchmarkController>? onControllerReady,
+
+  /// Whether the page shows the note on its web mode before the first test.
+  final bool showModeNote = true,
   super.key,
 }) extends StatelessWidget {
   /// Creates the benchmark dashboard.
@@ -46,6 +49,9 @@ class const ChartBenchmarkApp({
     // fl_chart and Syncfusion still read the theme of the old Material library.
     // ignore: deprecated_member_use
     builder: (context, child) => MaterialUiCompatibilityBridge(child: child!),
-    home: BenchmarkPage(onControllerReady: onControllerReady),
+    home: BenchmarkPage(
+      onControllerReady: onControllerReady,
+      showModeNote: showModeNote,
+    ),
   );
 }

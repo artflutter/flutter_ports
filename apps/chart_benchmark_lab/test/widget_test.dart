@@ -4,6 +4,7 @@ import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/benchmark/metrics.dart';
 import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
 import 'package:chart_benchmark_lab/main.dart';
+import 'package:chart_benchmark_lab/ui/benchmark_page.dart';
 import 'package:chart_benchmark_lab/ui/change_log.dart';
 import 'package:chart_benchmark_lab/ui/page_note.dart';
 import 'package:chart_benchmark_lab/ui/results_table.dart';
@@ -107,6 +108,47 @@ void main() {
     expect(find.byType(PageNote), findsNothing);
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(milliseconds: 20));
+  });
+
+  group('the web mode note', () {
+    final native = pageModeNote;
+    setUp(() => pageModeNote = () => (mode: 'WASM · THREADS', why: 'Why.'));
+    tearDown(() => pageModeNote = native);
+
+    testWidgets('goes for good when the first test starts', (tester) async {
+      tester.view.physicalSize = const Size(1400, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      late BenchmarkController c;
+      await tester.pumpWidget(
+        ChartBenchmarkApp(onControllerReady: (value) => c = value),
+      );
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(find.byKey(const ValueKey('page.note')), findsOneWidget);
+      expect(find.text('WASM · THREADS'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('run')));
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(c.running, isTrue, reason: c.message);
+      c.pause();
+      await tester.pump(const Duration(milliseconds: 20));
+      await tester.pump(const Duration(seconds: 1));
+      expect(c.running, isFalse);
+      expect(find.byKey(const ValueKey('page.note')), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 20));
+    });
+
+    testWidgets('does not show for a test driver', (tester) async {
+      await tester.binding.setSurfaceSize(const Size(1400, 900));
+      addTearDown(() => tester.binding.setSurfaceSize(null));
+      await tester.pumpWidget(const ChartBenchmarkApp(showModeNote: false));
+      await tester.pump(const Duration(milliseconds: 20));
+      expect(find.byType(PageNote), findsNothing);
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 20));
+    });
   });
 
   for (final size in const [Size(1400, 900), Size(412, 915)]) {
