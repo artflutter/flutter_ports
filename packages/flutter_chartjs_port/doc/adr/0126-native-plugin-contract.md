@@ -1,6 +1,7 @@
 # Chart.js ADR 0126 proposal: A native plugin contract
 
 - Status: superseded (2026-11-14) by [Chart.js ADR 0144](0144-native-plugins.md), which states the decision as built.
+- Superseded by: [Chart.js ADR 0144](0144-native-plugins.md) (2026-11-14)
 - Date: 2026-11-13
 - Related: Chart.js ADR 0054 §12 (the typed plugin objects), Chart.js ADR 0108 (the typed plugin API for add-on
   ports), Chart.js ADR 0074 and 0111 (the data-only and range-only capabilities), Chart.js ADR 0125 (native tooltip

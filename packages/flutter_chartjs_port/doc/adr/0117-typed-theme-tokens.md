@@ -1,6 +1,7 @@
 # Chart.js ADR 0117: The theme compiles from typed tokens
 
 - Status: accepted (2026-11-12): its code and the tests of section Tests pass.
+- Superseded in part by: [Chart.js ADR 0118](0118-theme-compile-typed-setters.md) (2026-11-12)
 - Date: 2026-11-12
 - Supersedes: parts of [Chart.js ADR 0050](0050-public-theme-api.md): the raw Map theme as the input of
   `compileChartTheme` (the fields `colors`, `typography`, `palette` and `raw`), the conversion to the raw Map theme in

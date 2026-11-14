@@ -3,6 +3,7 @@
 - Status: accepted (2026-11-10). The host wave of the zoom port (`140f081..0b09600`) is on `main`,
   and the full pre-push list passed. The lead accepted it by the maintainer's rule of 2026-10-31: a
   record is accepted when its code passes the tests.
+- Superseded in part by: [Chart.js ADR 0132](0132-exports-for-add-on-chart-types.md) (2026-11-13), [Chart.js ADR 0135](0135-math-hypot-as-sqrt.md) (2026-11-13), [Chart.js ADR 0144](0144-native-plugins.md) (2026-11-14)
 - Date: 2026-11-10
 - Gate: the code and the tests of section 13 pass. The lead then accepts this ADR (the maintainer
   rule of 2026-10-31). The device check of `touch-action: none` (Open 1) is evidence, not a gate.

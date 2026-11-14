@@ -1,6 +1,7 @@
 # Chart.js ADR 0024: Dates
 
 - Status: accepted (2026-10-20)
+- Superseded in part by: [Chart.js ADR 0110](0110-local-zone-offset-cache.md) (2026-11-10)
 - Date: 2026-10-20
 - Related: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (JS values as Maps,
   the `undefined` sentinel),

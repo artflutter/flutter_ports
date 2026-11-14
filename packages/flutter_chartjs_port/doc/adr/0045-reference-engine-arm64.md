@@ -1,6 +1,7 @@
 # Chart.js ADR 0045: Reference engine on arm64
 
 - Status: accepted (2026-10-29)
+- Superseded in part by: [Chart.js ADR 0122](0122-dart-math-without-fdlibm.md) (2026-11-12), [Chart.js ADR 0134](0134-dart-math-max-min.md) (2026-11-13), [Chart.js ADR 0136](0136-math-pow-square.md) (2026-11-13), [Chart.js ADR 0138](0138-math-round-as-round-to-double.md) (2026-11-13), [Chart.js ADR 0143](0143-clock-now.md) (2026-11-14)
 - Date: 2026-10-28
 - Supersedes: [Chart.js ADR 0032](0032-js-numeric-semantics.md)
 - Related: [Chart.js ADR 0002](0002-js-numeric-semantics.md) (the first numeric rules),

@@ -1,6 +1,7 @@
 # Chart.js ADR 0061: Flutter Color throughout the core
 
 - Status: implemented and locally validated.
+- Superseded in part by: [Chart.js ADR 0116](0116-text-style-fonts.md) (2026-11-12), [Chart.js ADR 0128](0128-chart-paint-options.md) (2026-11-13)
 - Date: 2026-11-02
 - Requested: use Flutter Color directly; drop standalone-Dart execution for the
   affected layers rather than introduce another platform adapter.

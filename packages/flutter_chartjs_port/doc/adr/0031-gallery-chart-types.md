@@ -1,6 +1,7 @@
 # Chart.js ADR 0031: Gallery chart types and the stress controller
 
 - Status: accepted (2026-10-21)
+- Superseded in part by: [Chart.js ADR 0075](0075-stress-screen-layout.md)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) (the protected behavior),
   [Chart.js ADR 0010](0010-js-numeric-semantics.md) (the reference engine),

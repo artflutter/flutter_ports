@@ -1,6 +1,7 @@
 # Chart.js ADR 0048: Entry points and the public library
 
 - Status: accepted (2026-10-30)
+- Superseded in part by: [Chart.js ADR 0052](0052-typed-public-api.md) (2026-10-31), [Chart.js ADR 0108](0108-input-surface-and-exports-for-add-on-plugins.md) (2026-11-10), [Chart.js ADR 0120](0120-no-umd-entry.md) (2026-11-12), [Chart.js ADR 0132](0132-exports-for-add-on-chart-types.md) (2026-11-13), [Chart.js ADR 0133](0133-construct-helpers-and-meta-for-add-on-chart-types.md) (2026-11-13)
 - Date: 2026-10-29
 - Related: [Chart.js ADR 0012](0012-dart-file-naming.md) (names, `_` exports and `_` members),
   [Chart.js ADR 0013](0013-canvas-model.md) (a canvas member arrives with its caller),

@@ -1,6 +1,7 @@
 # Chart.js ADR 0107: The dataset shadow
 
 - Status: accepted
+- Superseded in part by: [Chart.js ADR 0139](0139-typed-dataset-shadow.md)
 - Date: 2026-11-10
 - Related: Chart.js ADRs 0049, 0052, 0054, 0074, 0100, 0106.
 - Supersedes: item 8 of Chart.js ADR 0106 ("No typed option exists for a shadow").

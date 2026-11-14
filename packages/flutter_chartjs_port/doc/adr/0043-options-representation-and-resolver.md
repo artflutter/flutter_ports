@@ -2,6 +2,8 @@
 
 - Status: accepted (2026-10-23)
 - Superseded by: [Chart.js ADR 0054](0054-typed-internal-model.md) (2026-10-31)
+- Still in force: the parts that [Chart.js ADR 0054](0054-typed-internal-model.md) §17 lists.
+- Superseded in part by: [Chart.js ADR 0052](0052-typed-public-api.md) (2026-10-31)
 - Date: 2026-10-23
 - Supersedes: [Chart.js ADR 0006](0006-options-representation-and-resolver.md)
 - Related: [Chart.js ADR 0039](0039-tooltip-model-and-animation.md) §10 (`helpers.merge` with an

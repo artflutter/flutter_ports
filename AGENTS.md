@@ -56,8 +56,8 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   it. It needs a local Google Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
   `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8)
-  and tool 9, and `options:gen:check`, as melos steps. The CI job `port-checks` runs the seven
-  checks with a shallow checkout of the three Chart.js submodules,
+  and tool 9, `options:gen:check` and `adr:index:check`, as melos steps. The CI job `port-checks`
+  runs the eight checks with a shallow checkout of the three Chart.js submodules,
   `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey`. `check:lib-imports`,
   `check:headers` and `check:js-semantics` also examine the add-on ports
   `flutter_chartjs_plugin_zoom_port` and `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6).
@@ -122,6 +122,10 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     (also of `lib/src/options/`) with a Map supertype (`Map`, or a name that ends with `Map`,
     `MapBase`, `MapMixin` or `MapView`) is an error, with no baseline.
   - `options:gen:check`: the check mode of `options:gen` (below).
+- `dart run melos run adr:index`: writes the list in the `README.md` of each ADR folder from the
+  header lines of the ADRs (`tool/adr_index.dart`). `adr:index:check` fails on a stale list, and on a
+  "Supersedes" line without the matching "Superseded by" or "Superseded in part by" line, or the
+  reverse. `check:port` and the CI job `port-checks` run it. `docs/adr/README.md` has the ADR rules.
 - `dart run melos run options:gen`: writes the typed option scopes of `flutter_chartjs_port`
   (`lib/src/options/option_keys.g.dart`, `scope_kinds.g.dart` and `scopes.g.dart`) and the
   resolved element options (`resolved.g.dart`) from the
@@ -520,10 +524,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `doc/`: all D3 port docs: `README.md` (overview, roadmap, decisions), `porting-flow.md`
     (proposed), `parity.md`, `differences.md`, `upstream-ledger.md` (one section for each
     repository) and the prior-art survey `prior-art/`.
-    - `doc/adr/`: D3 ADRs 0001-0006, all proposed. D3 ADR 0001 (upstream sources) has gate 0.
-      D3 ADRs 0002 (file naming and layout), 0003 (number to string), 0004 (spec harness) and
-      0006 (generators, accessors and JS values) have gate 1. D3 ADR 0005 (path context) has
-      gate 1 for the pure interface and gate 4 for the `dart:ui` builder.
+    - `doc/adr/`: the D3 ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
     yet. `test --no-select` runs its tests. In D3 phase 1, ADR 0008 adds the package to tools 1-3.
 - `packages/flutter_echarts_port`: the Apache ECharts port (library, `publish_to: none` until
@@ -548,13 +549,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `doc/`: all ECharts port docs: `README.md` (overview, roadmap, decisions), `porting-flow.md`
     (proposed), `parity.md`, `differences.md`, `upstream-ledger.md` (one section for each
     repository) and the prior-art survey `prior-art/`.
-    - `doc/adr/`: ECharts ADRs 0001-0009, all proposed. ECharts ADR 0001 (upstream sources) has
-      gate 0. ECharts ADRs 0002 (file naming and layout), 0003 (numbers and JS semantics), 0004
-      (JS values, classes and options) and 0005 (spec harness and reference tests) have gate 1.
-      ECharts ADR 0006 (renderer and canvas layer) has gate 3. ECharts ADR 0007 (environment,
-      host and input events) has gates 1, 3 and 5. ECharts ADR 0008 (dates, locales and
-      formatting) has gate 4. ECharts ADR 0009 (DOM-bound features, app hooks and theming) has
-      gate 6 and later gates.
+    - `doc/adr/`: the ECharts ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
     yet. `test --no-select` runs its tests.
 - `packages/flutter_chartjs_plugin_zoom_port`: the chartjs-plugin-zoom port (library,
@@ -643,11 +638,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `parity.md` (a person writes it), `differences.md` (its table of the reserved IDs has the
     header cell `Reserved ID`, so `check:headers` reads no rows from it) and `upstream-ledger.md`.
     `prior-art/README.md` is the prior-art survey (2026-11-10).
-    - `doc/adr/`: Zoom ADRs 0001-0004. Zoom ADRs 0001-0003 are proposed. Zoom ADR 0001 (upstream
-      source, name and license) has gate 0. Zoom ADR 0002 (file naming and layout) has gate 1.
-      Zoom ADR 0003 (the connection to the host port) has gates 1 and 2. Zoom ADR 0004 (native
-      zoom and pan callbacks) is accepted (2026-11-13): its code passes the tests. It supersedes
-      the user-function bullet of Zoom ADR 0003 item 9. Docs name them "Zoom ADR NNNN".
+    - `doc/adr/`: the zoom ADRs. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:lib-imports`, `check:headers` and `check:js-semantics` examine the package (ADR 0009
     item 6). `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
@@ -721,8 +712,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `differences.md`, `performance.md` (the figures of each faster form, and the open items),
     `upstream-ledger.md` and `prior-art/README.md` (2026-11-13: no Dart port of
     this library exists).
-    - `doc/adr/`: Sankey ADRs 0001-0003, all proposed: 0001 (upstream source, name and license),
-      0002 (file naming, layout and the Dart forms) and 0003 (the connection to the host port).
+    - `doc/adr/`: the sankey ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:lib-imports`, `check:headers` and `check:js-semantics` examine the package (ADR 0009
     item 6). `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
@@ -777,11 +767,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   the GitHub Pages site, a template that the workflow `pages` fills in.
 - `docs/`: docs for all ports only. `docs/adr/`: decisions for all ports. `docs/prior-art/`: prior
   art for future ports. Docs for one port go in the `doc/` folder of its package.
-  - ADR 0007 (package names) is accepted (2026-10-22). It supersedes ADR 0003. ADR 0010 (primary
-    constructors) is accepted (2026-11-13). ADR 0008 (shared
-    JS runtime and port tools) is proposed. The gate of ADR 0008 is D3 phase 1. ADR 0009 (ports of
-    add-on libraries) is proposed. Its gate is zoom phase 0. An add-on port depends on its host
-    port and imports only the public libraries of the host. ADR 0008 item 1 has the clause for it.
+  - `docs/adr/README.md` has the rules and the template of all ADRs, and the list of the ADRs of
+    this folder. An add-on port depends on its host port and imports only the public libraries of
+    the host (ADR 0009). ADR 0008 item 1 has the clause for it.
 
 The other callback options hold typed functions in raw and typed configs (Chart.js ADR 0130, row
 `adapt-native-callbacks`): the chart `onClick` and `onHover` (`ChartEventHandler`) and `onResize`
