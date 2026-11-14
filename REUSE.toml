@@ -151,10 +151,13 @@ precedence = "override"
 SPDX-FileCopyrightText = "2022 Flutter 4 Fun"
 SPDX-License-Identifier = "MIT"
 
-# The data of the Graphic demos of the docs site: a trimmed copy of the data of
+# The data of the Graphic demos of the docs site: trimmed copies of the data of
 # the Graphic example app (MIT).
 [[annotations]]
-path = "apps/chartjs_docs/lib/migrate/graphic/graphic_data.dart"
+path = [
+  "apps/chartjs_docs/lib/migrate/graphic/graphic_data.dart",
+  "apps/chartjs_docs/lib/migrate/graphic/graphic_bar_data.dart",
+]
 precedence = "override"
 SPDX-FileCopyrightText = ["2024 LIN Chen", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "MIT"

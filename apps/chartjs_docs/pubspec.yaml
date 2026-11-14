@@ -12,6 +12,10 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
+  # The zoom and the pan of the Graphic bar replicas: the port of
+  # chartjs-plugin-zoom.
+  flutter_chartjs_plugin_zoom_port:
+    path: ../../packages/flutter_chartjs_plugin_zoom_port
   flutter_chartjs_port:
     path: ../../packages/flutter_chartjs_port
   material_ui: ^1.10.0
