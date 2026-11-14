@@ -20,6 +20,7 @@ const String _gallery = '${_demos}default-line-chart';
 /// The page "Migrate from Syncfusion": the line chart demos of the
 /// Syncfusion Flutter gallery.
 DocPageContent syncfusionMigrationPage() => migrationPage(
+  chart: 'line',
   library: 'Syncfusion',
   version: '35.1.43',
   gallery: _gallery,
