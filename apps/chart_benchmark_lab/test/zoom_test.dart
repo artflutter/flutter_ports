@@ -203,6 +203,8 @@ bool get _zoomRegistered => cj.registry.plugins.get(zp.zoomPlugin.id) != null;
 
 void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
+  // The code of fl_chart, Graphic and Syncfusion is deferred.
+  setUpAll(BenchmarkChart.loadAll);
 
   for (final library in ChartLibrary.values) {
     // Only the Chart.js port has the sankey chart (ChartLibrary.supports).

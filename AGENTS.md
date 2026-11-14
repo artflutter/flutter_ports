@@ -1756,6 +1756,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   are pinned; Syncfusion is included under the owner's confirmed eligible license.
   Shared seeded data and controls live in `lib/benchmark`, adapters in
   `lib/charts`, dashboard in `lib/ui`. One engine is mounted at a time.
+  `chart_adapter.dart` imports the adapters of fl_chart, Graphic and
+  Syncfusion (`*_adapter.dart`) as deferred libraries. The controller loads
+  one (`BenchmarkChart.load`) before its chart shows or a run starts, never
+  in a timed window. A test that draws them calls `BenchmarkChart.loadAll` in
+  `setUpAll`. The workflow `pages` and `benchmark:build:web` build with
+  `--enable-wasm-deferred-loading` when the Flutter has the flag. `web/index.html`
+  preloads the font files that the engine reads before the first frame.
   Preserve warmup/timestamp filtering, viewport/visibility cancellation and
   comparable-run keys. Engine build timing excludes some deferred work: retain
   frame-interval metrics and full-window FPS. Do not silently downsample an engine.

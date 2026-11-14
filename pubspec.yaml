@@ -33,7 +33,7 @@ melos:
       stdio: inherit
       description: Preview the cross-library chart benchmark in Chrome.
     benchmark:build:web:
-      run: cd apps/chart_benchmark_lab && flutter build web --wasm
+      run: cd apps/chart_benchmark_lab && flutter build web --wasm --enable-wasm-deferred-loading
       description: Build the chart benchmark for web with a JavaScript fallback.
     docs:
       run: cd apps/chartjs_docs && flutter run -d chrome --web-browser-flag=--enable-blink-features=ExtendedTextMetrics

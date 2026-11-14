@@ -14,6 +14,8 @@ import 'package:material_ui/material_ui.dart';
 
 void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
+  // The code of fl_chart, Graphic and Syncfusion is deferred.
+  setUpAll(BenchmarkChart.loadAll);
   for (final library in ChartLibrary.values) {
     for (final type in ChartType.values) {
       testWidgets(

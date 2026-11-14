@@ -5,7 +5,7 @@
     "display": "standalone",
     "background_color": "#f4f6fa",
     "theme_color": "#f4f6fa",
-    "description": "A shared test bed that compares Flutter chart libraries.",
+    "description": "Compare Flutter chart libraries in your browser: the same chart and data on the Chart.js port, fl_chart, Graphic and Syncfusion, with frame times and a ranking.",
     "orientation": "portrait-primary",
     "prefer_related_applications": false,
     "icons": [
