@@ -6,3 +6,5 @@ test/
 tool/
 dart_test.yaml
 build/
+AGENTS.md
+CLAUDE.md
