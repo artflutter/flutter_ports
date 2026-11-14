@@ -3,7 +3,7 @@ description: >-
   A native Dart port of @kurkle/color 0.3.2, the color library of Chart.js:
   hex, rgb, hsl, hwb and hsv parsing, CSS color names, color manipulation and
   conversion from a Flutter Color.
-version: 0.1.0
+version: 0.1.1
 repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_kurkle_color_port
 issue_tracker: https://github.com/artflutter/flutter_ports/issues
 topics:

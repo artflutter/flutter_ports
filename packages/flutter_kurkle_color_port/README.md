@@ -1,7 +1,5 @@
 A native Dart port of `@kurkle/color` 0.3.2 for Flutter.
 
-# @kurkle/color
-
 ## Overview
 
 Fast and small CSS color parsing and manipulation library.
@@ -59,21 +57,3 @@ hwb(244, 100%, 100%, 0.6)
 hsv(240, 100%, 50.5%)
 hsv(244, 100%, 100%, 0.6)
 ```
-
-## Docs
-
-typedocs
-
-**note** The docs are for the ESM module. UMD module only exports the default export
-
-## Benchmarks
-
-benchmarks
-
-## Size visualization
-
-color.min.js
-
-## License
-
-`@kurkle/color` is available under the MIT license.
