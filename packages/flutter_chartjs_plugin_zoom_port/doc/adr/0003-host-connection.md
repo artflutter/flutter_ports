@@ -1,6 +1,7 @@
 # Zoom ADR 0003: The connection to the host port
 
 - Status: proposed
+- Superseded in part by: [Zoom ADR 0004](0004-native-zoom-pan-callbacks.md) (2026-11-13)
 - Date: 2026-10-30
 - Revised: 2026-11-10, with the host change of Chart.js ADR 0108 and the design of the zoom
   modules (items 1, 3 to 9 and 12 to 14 are new or rewritten).

@@ -1,7 +1,7 @@
 # Chart.js ADR 0050: The public theme API, the presets, the theme switch and the touch sizes
 
 - Status: accepted (2026-10-30)
-- Superseded in part by: [Chart.js ADR 0054](0054-typed-internal-model.md) (2026-10-31), for the form of the compiled theme in "One scope", the memo of `compileThemeData` and steps 1 and 2 of "Runtime switch"
+- Superseded in part by: [Chart.js ADR 0054](0054-typed-internal-model.md) (2026-10-31), for the form of the compiled theme in "One scope", the memo of `compileThemeData` and steps 1 and 2 of "Runtime switch"; [Chart.js ADR 0057](0057-direct-typed-colors.md), [Chart.js ADR 0116](0116-text-style-fonts.md) (2026-11-12), [Chart.js ADR 0117](0117-typed-theme-tokens.md) (2026-11-12), [Chart.js ADR 0118](0118-theme-compile-typed-setters.md) (2026-11-12), [Chart.js ADR 0141](0141-native-scale-border.md)
 - Date: 2026-10-29
 - Supersedes: [Chart.js ADR 0042](0042-theming.md)
 - Related: [theming.md](../theming.md) (the design), [Chart.js ADR 0001](0001-theming.md),

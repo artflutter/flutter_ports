@@ -1,6 +1,7 @@
 # Chart.js ADR 0106: Canvas shadows
 
 - Status: accepted
+- Superseded in part by: [Chart.js ADR 0107](0107-dataset-shadow.md)
 - Date: 2026-11-09
 - Related: Chart.js ADRs 0013, 0055, 0097, 0103, 0104, 0105.
 - Supersedes: the sentence of Chart.js ADR 0055 section 1 "A member arrives when a ported caller or

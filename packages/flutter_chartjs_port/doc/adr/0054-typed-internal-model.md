@@ -1,9 +1,9 @@
 # Chart.js ADR 0054: The typed internal model
 
 - Status: accepted (2026-10-31). The base step, the five lanes and the close step are on `main`,
-- Superseded in part by [ADR 0123](0123-edge-insets-padding.md): padding stays an `EdgeInsets` through lowering and option storage.
   and their full gates and CI passed. The lead accepted it by the maintainer's rule of 2026-10-31: a
   record is accepted when its code passes the tests, and no record waits for a measurement night.
+- Superseded in part by: [Chart.js ADR 0123](0123-edge-insets-padding.md): padding stays an `EdgeInsets` through lowering and option storage.; [Chart.js ADR 0057](0057-direct-typed-colors.md), [Chart.js ADR 0108](0108-input-surface-and-exports-for-add-on-plugins.md) (2026-11-10), [Chart.js ADR 0118](0118-theme-compile-typed-setters.md) (2026-11-12), [Chart.js ADR 0121](0121-bool-options.md) (2026-11-12), [Chart.js ADR 0141](0141-native-scale-border.md), [Chart.js ADR 0142](0142-native-line-segment-style.md), [Chart.js ADR 0144](0144-native-plugins.md) (2026-11-14)
 - Date: 2026-10-30
 - Supersedes (§17 restates what stays of each one):
   - [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (options representation

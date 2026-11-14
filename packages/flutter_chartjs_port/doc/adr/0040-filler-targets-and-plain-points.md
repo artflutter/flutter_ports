@@ -1,6 +1,7 @@
 # Chart.js ADR 0040: Filler targets and plain points
 
 - Status: accepted (2026-10-23)
+- Superseded in part by: [Chart.js ADR 0140](0140-native-fill-target.md) (2026-11-13)
 - Date: 2026-10-22
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, records for
   inline object types),

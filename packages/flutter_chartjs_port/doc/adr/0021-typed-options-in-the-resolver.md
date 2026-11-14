@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-10-21)
 - Superseded by: [Chart.js ADR 0054](0054-typed-internal-model.md) (2026-10-31)
+- Still in force: §2, §3, §4 and §5, as [Chart.js ADR 0054](0054-typed-internal-model.md) §17 states.
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (options and the
   `undefined` sentinel), [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) (the protected

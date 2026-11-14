@@ -1,6 +1,7 @@
 # Chart.js ADR 0118: The theme compile writes typed setters and has no guard
 
 - Status: accepted (2026-11-12): its code and the tests of section Tests pass.
+- Superseded in part by: [Chart.js ADR 0141](0141-native-scale-border.md)
 - Date: 2026-11-12
 - Supersedes: item 6 of [Chart.js ADR 0117](0117-typed-theme-tokens.md) (the emission guard stays as the debug
   assert of each emitted key); parts of [Chart.js ADR 0050](0050-public-theme-api.md): the sentence "A debug assert

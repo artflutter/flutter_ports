@@ -1,6 +1,7 @@
 # Chart.js ADR 0037: Legend and tooltip input path
 
 - Status: accepted (2026-10-29)
+- Superseded in part by: [Chart.js ADR 0108](0108-input-surface-and-exports-for-add-on-plugins.md) (2026-11-10)
 - Date: 2026-10-22
 - Revised: 2026-10-23, after the device check of Open 1 (Evidence E8 and E9); 2026-10-24, after
   the device re-check of the input fix (Evidence E10, row STN10); 2026-10-29, after the device

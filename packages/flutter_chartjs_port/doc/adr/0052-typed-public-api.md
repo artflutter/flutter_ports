@@ -1,8 +1,8 @@
 # Chart.js ADR 0052: The typed public API
 
 - Status: accepted (2026-10-31). The lead accepted it when its code passed the tests, by the
-- Superseded in part by [ADR 0123](0123-edge-insets-padding.md): padding stays an `EdgeInsets` through lowering and option storage.
   maintainer's rule of 2026-10-31: no record waits for a measurement night.
+- Superseded in part by: [Chart.js ADR 0123](0123-edge-insets-padding.md): padding stays an `EdgeInsets` through lowering and option storage.; [Chart.js ADR 0057](0057-direct-typed-colors.md), [Chart.js ADR 0077](0077-background-chart-value.md), [Chart.js ADR 0116](0116-text-style-fonts.md) (2026-11-12), [Chart.js ADR 0130](0130-native-callback-options.md) (2026-11-13), [Chart.js ADR 0140](0140-native-fill-target.md) (2026-11-13), [Chart.js ADR 0144](0144-native-plugins.md) (2026-11-14)
 - Date: 2026-10-30
 - Background-color follow-up: [ADR 0077](0077-background-chart-value.md) replaces
   the Dataset background/border-color companion parameters with ChartValue<Color>.

@@ -1,6 +1,7 @@
 # Chart.js ADR 0095: Guarded static plans of the radial scale and the radar loop
 
 - Status: accepted
+- Superseded in part by: [Chart.js ADR 0130](0130-native-callback-options.md) (2026-11-13)
 - Date: 2026-11-06
 - Related: Chart.js ADRs 0025, 0036, 0063, 0064, 0071, 0078, 0087. Measurements: performance.md §65.
 - Rows of `differences.md`: `adapt-radial-static-plans`, `adapt-radial-label-dispatch`,

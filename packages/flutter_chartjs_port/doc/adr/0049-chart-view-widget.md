@@ -1,6 +1,7 @@
 # Chart.js ADR 0049: The ChartView widget and reduced motion
 
 - Status: accepted (2026-10-30)
+- Superseded in part by: [Chart.js ADR 0052](0052-typed-public-api.md) (2026-10-31)
 - Date: 2026-10-29
 - Related: [Chart.js ADR 0016](0016-frame-scheduling.md) (frame scheduling, the `setState` rule of
   the host layout), [Chart.js ADR 0019](0019-animation.md) §10 and Open "Reduced motion",

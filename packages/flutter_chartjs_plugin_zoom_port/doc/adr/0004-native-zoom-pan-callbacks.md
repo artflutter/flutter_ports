@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-11-13): the zoom tests, the fixtures, the range-only suite, analysis and port checks pass.
 - Date: 2026-11-13
+- Supersedes: of [Zoom ADR 0003](0003-host-connection.md) item 9, the bullet of the call of a user function.
 - Related: [Zoom ADR 0003](0003-host-connection.md) item 9 (the call of a user function),
   [Chart.js ADR 0125](../../../flutter_chartjs_port/doc/adr/0125-native-tooltip-callbacks.md) (native tooltip
   callbacks), the candidate list

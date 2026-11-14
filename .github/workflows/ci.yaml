@@ -220,6 +220,7 @@ jobs:
       - run: dart run melos run parity:check
       - run: dart run melos run check:typed-reads
       - run: dart run melos run options:gen:check
+      - run: dart run melos run adr:index:check
 
   upstream-manifest:
     # Tool 4 of packages/flutter_chartjs_port/doc/porting-flow.md section 4. The

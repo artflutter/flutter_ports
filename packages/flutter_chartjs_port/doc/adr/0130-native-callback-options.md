@@ -1,6 +1,7 @@
 # Chart.js ADR 0130: Native callback options
 
 - Status: accepted (2026-11-13): its code passes the tests, the specs, the fixtures, the oracle O1 and the port checks.
+- Superseded in part by: [Chart.js ADR 0131](0131-native-point-labels.md) (2026-11-13)
 - Date: 2026-11-13
 - Related: Chart.js ADR 0125 (native tooltip callbacks), Chart.js ADR 0129 (an index is an int), Zoom ADR 0004
   (native zoom and pan callbacks), Chart.js ADR 0052 §6 (the callbacks of the typed API), Chart.js ADR 0054 §5

@@ -89,6 +89,12 @@ melos:
     check:typed-reads:
       run: dart run packages/flutter_chartjs_port/tool/check_typed_reads.dart
       description: Fail when a count of the by-name forms (jsGet, jsGetKey, string index, jsCall, jsObjectKeys, extends MapBase, with MapMixin, implements Map) in a flutter_chartjs_port lib/src file outside lib/src/js/ and lib/src/options/ is above its baseline in tool/typed_reads/, or when a baseline is stale, and on a class of lib/src outside lib/src/js/ with a Map supertype, the structural rule (tool 9). Options go after "--", for example "dart run melos run check:typed-reads -- --update" (write the baselines from the current tree).
+    adr:index:
+      run: dart run tool/adr_index.dart
+      description: Write the list in the README.md of each ADR folder from the ADR headers (docs/adr/README.md).
+    adr:index:check:
+      run: dart run tool/adr_index.dart --check
+      description: Fail when the list of an ADR folder is stale, or when a "Supersedes" line has no matching "Superseded by" or "Superseded in part by" line, or the reverse.
     check:port:
       steps:
         - check:lib-imports
@@ -98,7 +104,8 @@ melos:
         - parity:check
         - check:typed-reads
         - options:gen:check
-      description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check, parity:check, check:typed-reads and options:gen:check.
+        - adr:index:check
+      description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check, parity:check, check:typed-reads, options:gen:check and adr:index:check.
     test:fixtures:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart --fixtures
       description: Run the fixture smoke tests of flutter_chartjs_port (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.

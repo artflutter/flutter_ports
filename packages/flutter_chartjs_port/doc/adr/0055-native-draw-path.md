@@ -6,6 +6,7 @@
   second for each chart type at 1,000 and 5,000 elements, and less UI build time; the raster time
   rose for the doughnut (+11 %) and the bar (+4 %) at 5,000. A later measurement can still reject
   a form of section 8. This ADR supersedes Chart.js ADR 0013.
+- Superseded in part by: [Chart.js ADR 0106](0106-canvas-shadows.md)
 - Date: 2026-10-30
 - Supersedes: [Chart.js ADR 0013](0013-canvas-model.md)
 - Related: [Chart.js ADR 0015](0015-text.md) (canvas text),

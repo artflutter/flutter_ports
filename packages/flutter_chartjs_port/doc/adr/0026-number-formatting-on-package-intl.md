@@ -1,6 +1,7 @@
 # Chart.js ADR 0026: Number formatting on package:intl
 
 - Status: accepted (2026-10-20)
+- Superseded by: [Chart.js ADR 0119](0119-plain-intl-number-format.md) (2026-11-12)
 - Date: 2026-10-20
 - Supersedes: [Chart.js ADR 0008](0008-number-formatting-on-package-intl.md)
 - Related: [Chart.js ADR 0009](0009-no-display-only-js-exactness.md) (no display-only JS

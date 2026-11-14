@@ -1,0 +1,150 @@
+# Chart.js ADRs
+
+The list below comes from the header of each ADR (`dart run tool/adr_index.dart`). The rules and the template of an ADR are in `docs/adr/README.md`.
+
+<!-- adr-index:start -->
+- [0001](0001-theming.md) Theming: accepted, superseded by 0042.
+- [0002](0002-js-numeric-semantics.md) JS numeric semantics: accepted, superseded by 0010.
+- [0003](0003-type-only-dependencies.md) Type-only dependencies: accepted.
+- [0004](0004-dart-file-naming.md) Dart file naming: accepted, superseded by 0012.
+- [0005](0005-third-party-sources.md) Third-party sources: accepted, superseded by 0011.
+- [0006](0006-options-representation-and-resolver.md) Options representation and resolver: accepted, superseded by 0043.
+- [0007](0007-frame-scheduling.md) Frame scheduling: accepted, superseded by 0016.
+- [0008](0008-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, superseded by 0026.
+- [0009](0009-no-display-only-js-exactness.md) No display-only JS exactness: accepted, superseded by 0034.
+- [0010](0010-js-numeric-semantics.md) JS numeric semantics: accepted, supersedes 0002, superseded by 0032.
+- [0011](0011-third-party-sources.md) Third-party sources: accepted, supersedes 0005, superseded by 0035.
+- [0012](0012-dart-file-naming.md) Dart file naming: accepted, supersedes 0004.
+- [0013](0013-canvas-model.md) Canvas model: accepted, superseded by 0055, superseded in part by 0066.
+- [0014](0014-input-events-and-chart-host.md) Input events and the chart host: accepted, superseded by 0037.
+- [0015](0015-text.md) Text: accepted, superseded in part by 0116.
+- [0016](0016-frame-scheduling.md) Frame scheduling: accepted, supersedes 0007.
+- [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054.
+- [0018](0018-typed-element-options.md) Typed element options: accepted, superseded by 0054.
+- [0019](0019-animation.md) Animation: accepted.
+- [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted.
+- [0021](0021-typed-options-in-the-resolver.md) Typed options in the resolver: accepted, superseded by 0054.
+- [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108.
+- [0023](0023-underscore-member-collisions.md) Underscore members with a colliding name: accepted.
+- [0024](0024-dates.md) Dates: accepted, superseded in part by 0110.
+- [0025](0025-scale-value-parameters.md) Scale value parameters: accepted, superseded in part by 0033.
+- [0026](0026-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, supersedes 0008, superseded by 0119.
+- [0027](0027-parsed-data.md) Parsed data in the controllers: accepted, superseded by 0036.
+- [0028](0028-controller-interfaces.md) Controller interfaces and values: accepted.
+- [0029](0029-fixture-smoke-runner.md) Fixture smoke runner: accepted, superseded in part by 0115.
+- [0030](0030-controller-test-strategy.md) Controller test strategy: accepted.
+- [0031](0031-gallery-chart-types.md) Gallery chart types and the stress controller: accepted, superseded in part by 0075.
+- [0032](0032-js-numeric-semantics.md) JS numeric semantics: accepted, supersedes 0010, superseded by 0045.
+- [0033](0033-radial-scale-centers.md) Radial scale centers before the first layout: accepted, supersedes 0025.
+- [0034](0034-no-display-only-js-exactness.md) No display-only JS exactness: accepted, supersedes 0009.
+- [0035](0035-third-party-sources.md) Third-party sources: accepted, supersedes 0011, superseded in part by 0122.
+- [0036](0036-parsed-data.md) Parsed data in the controllers: accepted, supersedes 0027, superseded in part by 0054, 0109.
+- [0037](0037-legend-and-tooltip-input-path.md) Legend and tooltip input path: accepted, supersedes 0014, superseded in part by 0108.
+- [0038](0038-plugin-modules-class-values-and-interfaces.md) Plugin modules, class values and interfaces: accepted, superseded in part by 0054.
+- [0039](0039-tooltip-model-and-animation.md) Tooltip model and animation: accepted.
+- [0040](0040-filler-targets-and-plain-points.md) Filler targets and plain points: accepted, superseded in part by 0140.
+- [0041](0041-plugin-test-strategy.md) Plugin test strategy: accepted.
+- [0042](0042-theming.md) Theming: accepted, supersedes 0001, superseded by 0050.
+- [0043](0043-options-representation-and-resolver.md) Options representation and resolver: accepted, supersedes 0006, superseded by 0054, superseded in part by 0052.
+- [0044](0044-stack-fill-search.md) Stack fill search: rejected.
+- [0045](0045-reference-engine-arm64.md) Reference engine on arm64: accepted, supersedes 0032, superseded in part by 0122, 0134, 0136, 0138, 0143.
+- [0046](0046-stack-fill-search-result.md) Stack fill search, the result of the code A/B: accepted.
+- [0047](0047-published-archive.md) The published archive: accepted.
+- [0048](0048-entry-points-and-public-library.md) Entry points and the public library: accepted, superseded in part by 0052, 0108, 0120, 0132, 0133.
+- [0049](0049-chart-view-widget.md) The ChartView widget and reduced motion: accepted, superseded in part by 0052.
+- [0050](0050-public-theme-api.md) The public theme API, the presets, the theme switch and the touch sizes: accepted, supersedes 0042, superseded in part by 0054, 0057, 0116, 0117, 0118, 0141.
+- [0051](0051-input-events-and-interaction-state.md) Input events and interaction state: accepted, superseded in part by 0108.
+- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144.
+- [0053](0053-resolver-fast-paths.md) The resolver fast paths: rejected.
+- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144.
+- [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106.
+- [0056](0056-color-performance.md) Profile-guided color implementation: proposed.
+- [0057](0057-direct-typed-colors.md) Color-only inputs: implemented, supersedes 0050, 0052, 0054, superseded in part by 0061, 0128.
+- [0058](0058-stack-exact-point-search.md) Exact-point search for stacked fills: implemented.
+- [0059](0059-boundary-exact-point-search.md) Exact endpoints of private fill boundaries: implemented.
+- [0060](0060-boundary-segment-search.md) Exact segment bounds on private fill boundaries: implemented.
+- [0061](0061-native-flutter-colors.md) Flutter Color throughout the core: implemented, supersedes 0057, superseded in part by 0116, 0128.
+- [0062](0062-element-option-cache-key.md) Reuse the element option cache-key string: implemented.
+- [0063](0063-static-tick-font.md) Reuse parsed static tick fonts: implemented.
+- [0064](0064-axis-label-plan.md) Guarded category label measurement plans: implemented.
+- [0065](0065-lazy-tick-context.md) Defer unobserved tick contexts: implemented.
+- [0066](0066-bounded-canvas-recordings.md) Bound native canvas recordings: implemented, supersedes 0013.
+- [0067](0067-scalar-bar-geometry.md) Scalar geometry for ordinary bar drawing: implemented.
+- [0068](0068-live-bar-update-layout.md) Live single-dataset bar layout and update construction: implemented.
+- [0069](0069-bulk-numeric-bar-updates.md) Guarded bulk numeric bar updates: implemented.
+- [0070](0070-native-rectangular-bar-drawing.md) Native rectangular bar drawing: implemented.
+- [0071](0071-numeric-category-parsing.md) Guarded numeric category parsing: implemented.
+- [0072](0072-bar-position-reuse.md) Reuse numeric positions within one bar ruler: rejected.
+- [0073](0073-sorted-bar-values.md) Linear duplicate removal for sorted bar values: implemented.
+- [0074](0074-incremental-data-updates.md) Explicit incremental data updates: implemented.
+- [0075](0075-stress-screen-layout.md) Consistent stress-screen controls: implemented, supersedes 0031.
+- [0076](0076-indexed-element-options.md) Cached native indexed element options: implemented.
+- [0077](0077-background-chart-value.md) Sealed dataset color values: prototype, supersedes 0052.
+- [0078](0078-prepared-indexed-options.md) Prepared indexed styles and color-only bulk bars: implemented.
+- [0079](0079-scatter-point-options.md) Scatter options prepared within native loops: implemented.
+- [0080](0080-line-20k-options.md) Line option costs at 20k items: implemented.
+- [0081](0081-option-resolution-setup.md) Native option setup and owned results: implemented.
+- [0082](0082-native-line-resolution.md) Loop-local native line resolution and contexts: implemented.
+- [0083](0083-ordered-color-resolution.md) Ordered varying colors and scalar callbacks: implemented.
+- [0084](0084-scalar-circles-and-compact-paths.md) Scalar circles and compact unobserved paths: implemented.
+- [0085](0085-chunked-path-storage.md) Bounded chunks for unobserved paths: implemented.
+- [0086](0086-weak-point-coordinate-cache.md) Bounded weak map classification for line updates: implemented.
+- [0087](0087-shared-native-point-contracts.md) Shared native point contracts and preparation: implemented.
+- [0088](0088-prepared-scalar-point-resolution.md) Direct execution of prepared scalar point colors: implemented.
+- [0089](0089-partitioned-baseline-fill.md) # 0089 — Native compound paths for dense curved baseline fills: accepted, superseded by 0114.
+- [0090](0090-replay-single-draw.md) One draw for an update that replays an event: accepted.
+- [0091](0091-live-mouse-move.md) One hover pass and one draw for each frame of a live chart: accepted.
+- [0092](0092-hidden-legend-items.md) The items of a hidden legend wait for a read: accepted.
+- [0093](0093-arc-options.md) Native arc options: accepted.
+- [0094](0094-scatter-bubble-point-loops.md) One size in scatter overflow and native bubble loops: accepted.
+- [0095](0095-radial-static-plans.md) Guarded static plans of the radial scale and the radar loop: accepted, superseded in part by 0130.
+- [0096](0096-per-item-plumbing.md) Direct reads and one growth in the per-item plumbing: accepted.
+- [0097](0097-native-chart-drawing-routes.md) Native drawing routes of live charts: accepted.
+- [0098](0098-chart-view-data-only-updates.md) A data-only path through ChartView: accepted.
+- [0099](0099-hidden-legend-indexed-colors.md) A hidden legend waits with native indexed colors: accepted.
+- [0100](0100-data-only-indexed-colors.md) Native indexed colors on the data-only path: accepted.
+- [0101](0101-context-refresh.md) One write of a data context, and one refresh less in a scatter update: accepted.
+- [0102](0102-direct-element-writes.md) Direct typed writes of arcs and bubbles: accepted.
+- [0103](0103-radial-line-fan.md) The angle lines of the radial scale in one native call: accepted.
+- [0104](0104-line-curve-draw.md) The curve and the markers of a dense line draw: accepted.
+- [0105](0105-web-long-paths-in-pieces.md) Long paths in pieces on the web: accepted, superseded by 0113.
+- [0106](0106-canvas-shadows.md) Canvas shadows: accepted, supersedes 0055, superseded in part by 0107.
+- [0107](0107-dataset-shadow.md) The dataset shadow: accepted, supersedes 0106, superseded in part by 0139.
+- [0108](0108-input-surface-and-exports-for-add-on-plugins.md) The input surface and exports for add-on plugins: accepted, supersedes 0022, 0037, 0048, 0051, 0054, superseded in part by 0132, 0135, 0144.
+- [0109](0109-previous-x-of-the-gap-test.md) The previous x of the gap test in the line and scatter loops: accepted, supersedes 0036.
+- [0110](0110-local-zone-offset-cache.md) The local-zone offset cache: accepted, supersedes 0024.
+- [0111](0111-range-updates.md) An opt-in range update for scale range changes: accepted.
+- [0112](0112-frame-aligned-input-coalescing.md) Frame-aligned coalescing of continuous input in the chart host: proposed, supersedes 0016, 0037, 0108.
+- [0113](0113-stroke-pieces-by-browser-system.md) Paths in pieces on the web, with a stroke rule for desktop browsers: accepted, supersedes 0105.
+- [0114](0114-dense-curve-merge.md) The merge of the narrow curves of a dense line: accepted, supersedes 0089.
+- [0115](0115-hand-ports-of-typed-data-fixtures.md) Hand ports of data fixtures with a class value: accepted, supersedes 0029.
+- [0116](0116-text-style-fonts.md) The font is a Flutter TextStyle: accepted, supersedes 0015, 0050, 0052, 0061.
+- [0117](0117-typed-theme-tokens.md) The theme compiles from typed tokens: accepted, supersedes 0050, superseded in part by 0118.
+- [0118](0118-theme-compile-typed-setters.md) The theme compile writes typed setters and has no guard: accepted, supersedes 0050, 0054, 0117, superseded in part by 0141.
+- [0119](0119-plain-intl-number-format.md) The number format is package:intl as it is: accepted, supersedes 0026.
+- [0120](0120-no-umd-entry.md) The port has no UMD entry: accepted, supersedes 0048.
+- [0121](0121-bool-options.md) An on/off option holds a bool: accepted, supersedes 0054.
+- [0122](0122-dart-math-without-fdlibm.md) `dart:math` without the fdlibm ports: accepted, supersedes 0035, 0045.
+- [0123](0123-edge-insets-padding.md) Padding holds an EdgeInsets: accepted, supersedes 0052, 0054.
+- [0124](0124-native-text-direction.md) Native text direction and scoped restoration: accepted.
+- [0125](0125-native-tooltip-callbacks.md) Native TooltipCallbacks: accepted, superseded in part by 0128.
+- [0126](0126-native-plugin-contract.md) # Chart.js ADR 0126 proposal: A native plugin contract: superseded, superseded by 0144.
+- [0127](0127-native-legend-labels.md) Native legend label generation: proposed.
+- [0128](0128-chart-paint-options.md) ChartPaint from options to canvas: accepted, supersedes 0057, 0061, 0125.
+- [0129](0129-int-indexes.md) An index is an int: accepted.
+- [0130](0130-native-callback-options.md) Native callback options: accepted, supersedes 0052, 0095, superseded in part by 0131.
+- [0131](0131-native-point-labels.md) Native point labels: accepted, supersedes 0130.
+- [0132](0132-exports-for-add-on-chart-types.md) Exports for add-on chart types: accepted, supersedes 0048, 0108.
+- [0133](0133-construct-helpers-and-meta-for-add-on-chart-types.md) The construct helpers, the meta and a recording context for add-on chart types: accepted, supersedes 0048.
+- [0134](0134-dart-math-max-min.md) `Math.max` and `Math.min` are `dart:math` `max` and `min` on doubles: accepted, supersedes 0045.
+- [0135](0135-math-hypot-as-sqrt.md) `Math.hypot` is `math.sqrt(a * a + b * b)`: accepted, supersedes 0108.
+- [0136](0136-math-pow-square.md) `Math.pow(x, 2)` is `dart:math` `pow`: accepted, supersedes 0045.
+- [0137](0137-trackpad-wheel-events.md) trackpad gestures as `wheel` events: accepted.
+- [0138](0138-math-round-as-round-to-double.md) `Math.round` is `roundToDouble()`: accepted, supersedes 0045.
+- [0139](0139-typed-dataset-shadow.md) The dataset option `shadow` holds a `ChartShadow`: accepted, supersedes 0107.
+- [0140](0140-native-fill-target.md) The option `fill` holds a `FillTarget`: accepted, supersedes 0040, 0052.
+- [0141](0141-native-scale-border.md) The scale option `border` holds a `ScaleBorder`: accepted, supersedes 0050, 0054, 0118.
+- [0142](0142-native-line-segment-style.md) The line option `segment` holds a `LineSegmentStyle`: accepted, supersedes 0054.
+- [0143](0143-clock-now.md) `Date.now()` is `clock.now()`: accepted, supersedes 0045.
+- [0144](0144-native-plugins.md) Native plugins: accepted, supersedes 0052, 0054, 0108, 0126.
+<!-- adr-index:end -->
