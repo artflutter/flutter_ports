@@ -154,7 +154,7 @@ Map<String, Object?> _labelOptionsOf(Chart chart) =>
         as Map<String, Object?>;
 
 /// An inline plugin [id] with the hooks of the names [hooks] (Chart.js ADR
-/// 0126): each calls [run] with its name and the chart. A cancelable hook
+/// 0144): each calls [run] with its name and the chart. A cancelable hook
 /// cancels when [run] gives `false`, as `_notify` (core.plugins.js:66).
 Plugin<Object?> _plugin(
   String id,

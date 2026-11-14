@@ -104,7 +104,7 @@ final class _Kind<T extends ElementOptions>({
   required final AnyObject defaultRoutes,
 
   /// The known keys that other code writes into the options (Chart.js ADR
-  /// 0018, section 2), after the defaults and the routes.
+  /// 0054 §2 and §4), after the defaults and the routes.
   required final List<String> writtenKeys,
 
   /// The typed getter of each known key.
@@ -229,7 +229,7 @@ Matcher _value(Object? value) => switch (value) {
 
 /// The key order of options with the entries of [model]: the present known
 /// keys in the order of [knownKeys], then the extra keys of [model] in its
-/// order (Chart.js ADR 0018, section 3).
+/// order (Chart.js ADR 0054 §17).
 List<String> _expectedKeys(List<String> knownKeys, AnyObject model) => [
   for (final key in knownKeys)
     if (model.containsKey(key)) key,

@@ -7,7 +7,7 @@
 ///
 /// - A generator `tool/reference/controller_<name>_reference.mjs` builds
 ///   each chart of its cases with a build of Chart.js at the pinned commit in
-///   the arm64 Node.js v24.22.1 (Chart.js ADR 0045), through
+///   the arm64 Node.js v24.22.1 (Chart.js ADR 0146), through
 ///   `tool/reference/controller_chart_common.mjs`. It runs the steps of each
 ///   case, and records the observations, the hit queries and the draw calls.
 /// - A test file `controller.<name>_test.dart` builds the same charts with
@@ -772,7 +772,7 @@ void expectControllerObservations(
 ///
 /// A border point lies exactly on the border of two arcs. Upstream finds it
 /// in both with the V8 `Math.atan2`; `dart:math` `atan2` can put it on one
-/// side (Chart.js ADR 0122, row `adapt-dart-math-transcendentals`).
+/// side (Chart.js ADR 0146 §3, row `adapt-dart-math-transcendentals`).
 Object? _withoutBorders(Object? items, Set<String> hitBorders, String label) {
   if (hitBorders.isEmpty) return items;
   final rows = [

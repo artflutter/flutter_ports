@@ -28,7 +28,7 @@ import 'animation_reference.dart';
 // The expected values come from src/core/core.animation.js at v4.5.1, run
 // with type stripping in Node.js v24.22.1 on arm64 with a fake Date.now.
 // tool/reference/animation_reference.mjs writes them to
-// animation_reference.dart (Chart.js ADR 0045). Here withClock gives the
+// animation_reference.dart (Chart.js ADR 0146). Here withClock gives the
 // same dates to clock.now(): the constructor reads animationCancelNow, and a
 // cancel step reads `start + offset`. jsRunWithMicrotaskCheckpoint runs the
 // promise jobs of each step before the next step, as the script waits for a

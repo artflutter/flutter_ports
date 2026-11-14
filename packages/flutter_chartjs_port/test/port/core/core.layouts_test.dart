@@ -24,7 +24,7 @@ import 'layouts_reference.dart';
 // area and box order come from src/core/core.layouts.js at v4.5.1, run with
 // type stripping in Node.js v24.22.1 on arm64 over the same scenes.
 // layouts_reference.dart has the data, which
-// tool/reference/layouts_reference.mjs writes (Chart.js ADR 0045). The
+// tool/reference/layouts_reference.mjs writes (Chart.js ADR 0146). The
 // layout is IEEE arithmetic and `Math.max`. Thus the tests compare the
 // numbers exactly.
 //

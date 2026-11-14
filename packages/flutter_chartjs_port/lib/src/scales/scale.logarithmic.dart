@@ -16,9 +16,9 @@
 ///   0054 §4), through the facade [LogarithmicScaleOptions]. The scale reads
 ///   an option with a getter of the facade (`options.ticks.format`), and tests
 ///   it with [jsTruthy].
-/// - Numbers are `double` (Chart.js ADR 0045). A property that starts JS
+/// - Numbers are `double` (Chart.js ADR 0146). A property that starts JS
 ///   `undefined` and holds a number starts as NaN. `log10` of helpers.math
-///   gives the exponent of an exact power of ten (Chart.js ADR 0122).
+///   gives the exponent of an exact power of ten (Chart.js ADR 0146 §3).
 ///   `Math.pow` is `dart:math` `pow` with `double` operands.
 /// - [LogarithmicScale.parse] gives the [undefined] sentinel for a 0, and
 ///   JS `null` (Dart `null`) for a value that is not a positive finite
@@ -81,19 +81,19 @@ double _log10Floor(double v) => log10(v).floorToDouble();
 /// (scale.logarithmic.js:115-116). `log10` applies `ToNumber` to it
 /// ([jsToNumber]): `log10(0)` is -Infinity, and the result is 0.
 double _changeExponent(double? v, double m) =>
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
     math.pow(10.0, _log10Floor(jsToNumber(v)) + m).toDouble();
 
 /// scale.logarithmic.js:11 `isMajor`.
 bool _isMajor(double tickVal) {
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
   final remain = tickVal / (math.pow(10.0, _log10Floor(tickVal)));
   return remain == 1;
 }
 
 /// scale.logarithmic.js:16 `steps`.
 double _steps(double min, double max, double rangeExp) {
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
   final rangeStep = math.pow(10.0, rangeExp).toDouble();
   final start = (min / rangeStep).floorToDouble();
   final end = (max / rangeStep).ceilToDouble();
@@ -137,19 +137,19 @@ List<Tick> _generateTicks(
   final ticks = <Tick>[];
   final minExp = _log10Floor(min);
   var exp = _startExp(min, max);
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
   var precision = exp < 0 ? math.pow(10.0, exp.abs()).toDouble() : 1.0;
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
   final stepSize = math.pow(10.0, exp).toDouble();
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
   final base = minExp > exp ? math.pow(10.0, minExp).toDouble() : 0.0;
   final start = ((min - base) * precision).roundToDouble() / precision;
   final offset = ((min - base) / stepSize / 10).floorToDouble() * stepSize * 10;
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+  // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
   var significand = ((start - offset) / math.pow(10.0, exp)).floorToDouble();
   var value = finiteOrDefault(
     generationOptions.min,
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
     ((base + offset + significand * math.pow(10.0, exp)) * precision)
             .roundToDouble() /
         precision,
@@ -170,7 +170,7 @@ List<Tick> _generateTicks(
     }
     value =
         (
-            // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+            // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
             (base + offset + significand * math.pow(10.0, exp)) * precision)
             .roundToDouble() /
         precision;
@@ -440,7 +440,7 @@ class LogarithmicScale(super.cfg) extends Scale {
   @override
   double getValueForPixel(double pixel) {
     final decimal = getDecimalForPixel(pixel);
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
     return math.pow(10.0, _startValue + decimal * _valueRange).toDouble();
   }
 }

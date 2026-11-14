@@ -28,7 +28,7 @@ final ThemeData galleryDarkTheme = ThemeData(
 );
 
 /// The chart theme of [galleryDarkTheme]: the dark preset with the surface
-/// of the dark color scheme (Chart.js ADR 0050).
+/// of the dark color scheme (Chart.js ADR 0147).
 ///
 /// One instance for the life of the app: the compiled theme is kept for
 /// each instance, and the `==` of the theme skips a rebuild with the same
@@ -51,7 +51,7 @@ final ChartThemeData galleryDarkChartTheme = const ChartThemeData.dark()
 ///
 /// The app follows the platform brightness. The builder of the app puts a
 /// [ChartTheme] above each route: the light preset in the light theme, and
-/// [galleryDarkChartTheme] in the dark theme (Chart.js ADR 0050). A change
+/// [galleryDarkChartTheme] in the dark theme (Chart.js ADR 0147). A change
 /// of the brightness switches the theme of each chart once, at the middle
 /// of the theme animation of the app, where the brightness of the animated
 /// theme changes.

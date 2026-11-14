@@ -32,7 +32,7 @@ import 'package:material_ui/material_ui.dart';
 /// over the legend items and the elements, Enter or Space clicks, and
 /// Escape clears the hover. Its semantics label is
 /// `<title> chart: <variant>`, for example `Bar chart: vertical`. The
-/// [ChartTheme] of the app themes the chart (Chart.js ADR 0050).
+/// [ChartTheme] of the app themes the chart (Chart.js ADR 0147).
 class const ChartTypePage({
   /// The chart type of the page.
   required final ChartTypeEntry entry,

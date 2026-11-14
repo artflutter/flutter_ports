@@ -301,7 +301,7 @@ types.TooltipItem _createTooltipItem(
 ///
 /// A numeric option goes through `ToNumber` ([jsToNumber]) before its
 /// arithmetic (Chart.js ADR 0039, section 7), and `Math.max` is `dart:math`
-/// `max` with `double` operands (Chart.js ADR 0134).
+/// `max` with `double` operands (Chart.js ADR 0146 §4).
 /// `measureText` gets the `ToString` of a line that is not a string.
 ({double width, double height}) _getTooltipSize(
   Tooltip tooltip,

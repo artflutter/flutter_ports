@@ -1,7 +1,7 @@
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: the typed element options of Chart.js ADR 0018.
+// Not public: the typed element options of Chart.js ADR 0054.
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     as element_options;
 import 'package:flutter_test/flutter_test.dart';
@@ -180,14 +180,14 @@ void main() {
         // (element.line.js:439-443).
         expect(identical(line['_path'], undefined), isTrue);
         // The points share one typed options object, and the line has typed
-        // options (Chart.js ADR 0018).
+        // options (Chart.js ADR 0054).
         final options = (after.first as PointElement).options;
         expect(options, isA<element_options.PointOptions>());
         expect(identical((after[1] as PointElement).options, options), isTrue);
         expect(line.options, isA<element_options.LineOptions>());
       }
       if (mode == StressMode.bars) {
-        // The bars share one typed options object (Chart.js ADR 0018).
+        // The bars share one typed options object (Chart.js ADR 0054).
         final options = (after.first as BarElement).options;
         expect(options, isA<element_options.BarOptions>());
         expect(identical((after[1] as BarElement).options, options), isTrue);

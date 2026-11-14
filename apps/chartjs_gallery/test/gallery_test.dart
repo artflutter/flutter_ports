@@ -114,7 +114,7 @@ void main() {
   });
 
   testWidgets('a dark platform gives the charts the dark preset over the '
-      'surface of the dark theme (Chart.js ADR 0050)', (tester) async {
+      'surface of the dark theme (Chart.js ADR 0147)', (tester) async {
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
     addTearDown(tester.platformDispatcher.clearPlatformBrightnessTestValue);
     final chart = await _openChart(tester, 'bar');
@@ -148,7 +148,7 @@ void main() {
     tester.platformDispatcher.platformBrightnessTestValue = Brightness.dark;
     await tester.pumpAndSettle();
     // The same chart, with the dark preset after its transition (Chart.js ADR
-    // 0050, "Runtime switch").
+    // 0147 §13).
     final state = tester.state<ChartTypePageState>(find.byType(ChartTypePage));
     expect(state.chart, same(chart));
     expect(

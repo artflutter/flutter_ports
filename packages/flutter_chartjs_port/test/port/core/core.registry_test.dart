@@ -373,7 +373,7 @@ void main() {
     // bundle have a null prototype: `'id' in null` throws a TypeError.
     // Here a namespace is a Map, which reaches the registry of the plugins,
     // and a debug build stops there: a plugin is a Plugin (Chart.js ADR
-    // 0126). Both stop at the first namespace, before a write (Chart.js ADR
+    // 0144). Both stop at the first namespace, before a write (Chart.js ADR
     // 0020, section 6).
     expect(
       namespaceLines(),

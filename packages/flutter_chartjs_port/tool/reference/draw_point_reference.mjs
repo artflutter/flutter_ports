@@ -14,14 +14,14 @@
 // files. Check out the submodule first (`dart run melos run upstream`).
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045) and with the
+// Node.js v24.22.1 (Chart.js ADR 0146) and with the
 // Dart SDK on the PATH (the script formats the output with `dart format`):
 //
 //   node tool/reference/draw_point_reference.mjs
 //
-// The reference is V8 13.6 on arm64 (Chart.js ADR 0045). The script does not
+// The reference is V8 13.6 on arm64 (Chart.js ADR 0146). The script does not
 // stop on another architecture. The test compares each number with closeTo, but
-// Chart.js ADR 0045 takes these reference data from one engine.
+// Chart.js ADR 0146 takes these reference data from one engine.
 
 import {execFileSync} from 'node:child_process';
 import {existsSync, writeFileSync} from 'node:fs';

@@ -184,7 +184,7 @@ double longestText(
 /// @returns The aligned pixel value.
 /// @private
 ///
-/// `Math.round` is `roundToDouble()` (Chart.js ADR 0138).
+/// `Math.round` is `roundToDouble()` (Chart.js ADR 0146 §7).
 double alignPixel(Chart chart, double pixel, double width) {
   final devicePixelRatio = chart.currentDevicePixelRatio;
   final halfWidth = width != 0 ? math.max(width / 2, 0.5) : 0.0;
@@ -668,7 +668,7 @@ final class const ImagePointStyle(
 /// A null [point] or [area] stands for a falsy JavaScript value: `null` or
 /// `undefined`. A null [margin] stands for `undefined`. A null `point.x` or
 /// `point.y` is JS `null`, which the relational operators make 0: the port
-/// writes `point.x ?? 0` (Chart.js ADR 0045).
+/// writes `point.x ?? 0` (Chart.js ADR 0146).
 ///
 /// Upstream returns `point` itself when `point` is falsy and [area] is not.
 /// Here the result is `false` (`adapt-point-in-area-bool`, differences.md).
@@ -719,7 +719,7 @@ void unclipArea(CanvasRenderingContext2D ctx) {
 /// point of a segment. A null [flip] is JS `undefined`. [mode] is the
 /// `stepped` option value (`element.line.js:89`): `true` or a [SteppedLine]
 /// (row `adapt-stepped-line-enum`). A null coordinate is JS `null`, which
-/// `ToNumber` makes 0 (Chart.js ADR 0045).
+/// `ToNumber` makes 0 (Chart.js ADR 0146).
 void steppedLineTo(
   CanvasPath ctx,
   Point? previous,

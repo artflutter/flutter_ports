@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the dart:ui canvas context.
 
-/// The `dart:ui` implementation of the canvas layer (Chart.js ADR 0013 and
+/// The `dart:ui` implementation of the canvas layer (Chart.js ADR 0055 and
 /// 0015, porting-flow.md 2.2 and 2.8).
 ///
 /// [UiCanvasElement] stands for the HTML `<canvas>`: it has the bitmap size

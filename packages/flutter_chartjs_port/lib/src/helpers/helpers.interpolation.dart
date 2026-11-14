@@ -38,7 +38,7 @@ final class InterpolatedPoint(
 /// helpers.interpolation.ts:6 `_pointInLine`. Upstream does not read
 /// `mode`. `ToNumber` makes a JS `null` member 0, as in
 /// `distanceBetweenPoints` (helpers.math.ts:144): the port writes
-/// `p1.x ?? 0` (Chart.js ADR 0045).
+/// `p1.x ?? 0` (Chart.js ADR 0146).
 InterpolatedPoint pointInLine(Point p1, Point p2, double t, [Object? mode]) {
   return InterpolatedPoint(
     (p1.x ?? 0) + t * ((p2.x ?? 0) - (p1.x ?? 0)),

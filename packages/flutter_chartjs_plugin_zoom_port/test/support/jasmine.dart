@@ -87,7 +87,7 @@ Spy createSpy([String name = 'unknown']) => Spy(name);
 /// end of the test.
 ///
 /// The spy is written into the hook field of the native plugin (Chart.js ADR
-/// 0126), as a JavaScript spy replaces the property. The hook continues the
+/// 0144), as a JavaScript spy replaces the property. The hook continues the
 /// update, as the `undefined` result of a JavaScript spy does.
 Spy spyOnBeforeUpdate(Plugin<ZoomPluginOptions> plugin) {
   final previous = plugin.beforeUpdate;

@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the inline plugin of ChartView.
 
-/// The internal inline plugin of `ChartView` (Chart.js ADRs 0050 and 0051).
+/// The internal inline plugin of `ChartView` (Chart.js ADRs 0147 and 0051).
 ///
 /// The widget puts it last in the `plugins` List of its root config, after
 /// the inline plugins of the app. Registered plugins come before the inline
@@ -31,8 +31,8 @@ const String chartViewPluginId = r'$chartView';
 
 /// The internal inline plugin of a `ChartView`: a native [Plugin]
 /// (Chart.js ADR 0144) with the id [chartViewPluginId]. Its `beforeUpdate`
-/// and `beforeLayout` record the palette keys of [theme] (Chart.js ADR 0050,
-/// "Runtime switch", step 4), and its `afterDraw` draws the focus ring of
+/// and `beforeLayout` record the palette keys of [theme] (Chart.js ADR 0147
+/// §13 step 4), and its `afterDraw` draws the focus ring of
 /// [keys] (Chart.js ADR 0051, section 6). Its `beforeDatasetDraw` and
 /// `afterDatasetDraw` draw the shadow of a dataset (Chart.js ADR 0107). The
 /// cancelable hooks continue the step.

@@ -47,7 +47,7 @@ const double twoThirdsPi = pi * 2 / 3;
 /// Dart has no `log10`. `log(x) / ln10` gives `2.9999999999999996` for 1000,
 /// and the floor of a logarithm decides the tick spacing and the decimals of
 /// the labels. Thus an exact power of ten gives its exponent (Chart.js ADR
-/// 0122), as the fallback of earlier Chart.js versions did.
+/// 0146 §3), as the fallback of earlier Chart.js versions did.
 // DIVERGES(chartjs): adapt-log10-powers, the exponent of a power of ten.
 double log10(double x) {
   final exponent = math.log(x) * math.log10e;
@@ -75,7 +75,7 @@ double niceNum(double range) {
   range = almostEquals(range, roundedRange, range / 1000)
       ? roundedRange
       : range;
-  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0045).
+  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0146).
   final niceRange = math.pow(10.0, log10(range).floorToDouble()).toDouble();
   final fraction = range / niceRange;
   final niceFraction = fraction <= 1
@@ -199,7 +199,7 @@ double? decimalPlaces(Object? x) {
 }
 
 /// helpers.math.ts:124 `getAngleFromPoint`. `Math.atan2` is `dart:math`
-/// (Chart.js ADR 0122).
+/// (Chart.js ADR 0146 §3).
 ///
 /// Gets the angle from vertical upright to the point about a centre.
 ({double angle, double distance}) getAngleFromPoint(
@@ -226,9 +226,9 @@ double? decimalPlaces(Object? x) {
 /// helpers.math.ts:144 `distanceBetweenPoints`.
 double distanceBetweenPoints(Point pt1, Point pt2) {
   return math.sqrt(
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
     math.pow((pt2.x ?? 0) - (pt1.x ?? 0), 2.0).toDouble() +
-        // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+        // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
         math.pow((pt2.y ?? 0) - (pt1.y ?? 0), 2.0).toDouble(),
   );
 }

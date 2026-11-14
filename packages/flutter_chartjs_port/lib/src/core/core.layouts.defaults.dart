@@ -4,7 +4,7 @@
 ///
 /// The value object of `defaults.set` is a typed option scope of the kind
 /// `LayoutOptions` (Chart.js ADR 0054 §3), and numbers are `double`
-/// (Chart.js ADR 0045). [Defaults] is the interface of the `defaults` object
+/// (Chart.js ADR 0146). [Defaults] is the interface of the `defaults` object
 /// of `core.defaults.js`.
 library;
 

@@ -21,7 +21,7 @@ import '../../support/font_record.dart';
 import '../../support/light_theme.dart';
 
 // The theme keys of the title, subtitle, legend and tooltip plugins
-// (Chart.js ADR 0050): a compiled theme reaches the options of the plugin
+// (Chart.js ADR 0147): a compiled theme reaches the options of the plugin
 // descriptors of a real chart (`chart.plugins.cache`, core.plugins.js:89-94),
 // the resolver that each hook of the plugin gets. The fonts compare as
 // `toFont` results, as the plugins read them (plugin.title.js:92,

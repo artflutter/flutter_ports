@@ -66,7 +66,7 @@ import 'package:meta/meta.dart';
 /// ## Properties
 ///
 /// Each upstream property is a typed member with the upstream name. A
-/// number is a `double` (Chart.js ADR 0045).
+/// number is a `double` (Chart.js ADR 0146).
 ///
 /// - A numeric property is a `double` field and a bit of an `int` mask of
 ///   the `undefined` state (Chart.js ADR 0054 §9). The field holds NaN, the

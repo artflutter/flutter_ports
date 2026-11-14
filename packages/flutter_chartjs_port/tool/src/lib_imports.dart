@@ -8,7 +8,7 @@
 /// - A test without `@TestOn('vm')` compiles for the web legs, so it and its
 ///   test imports use only pure layers, `package:test` and
 ///   `package:chartjs_test_utils/pure.dart`.
-/// - Ported files do not import `lib/src/theme/` (Chart.js ADR 0050).
+/// - Ported files do not import `lib/src/theme/` (Chart.js ADR 0147).
 /// - A file of `lib/src/widgets/` imports no component and no index of the
 ///   components: the widget registers no component (Chart.js ADR 0048,
 ///   section 3).
@@ -16,7 +16,7 @@
 ///   and ported files do not import `lib/src/typed/` (Chart.js ADR 0052,
 ///   section 8).
 /// - `lib/` imports `package:collection/collection.dart` only with
-///   `show mergeSort` (Chart.js ADR 0045, Sort).
+///   `show mergeSort` (Chart.js ADR 0146, Sort).
 /// - The `lib/pure.dart` closure of the harness package `chartjs_test_utils`
 ///   is a pure layer too. It also imports `package:test` and the pure layers
 ///   of the checked package (porting-flow.md 3).
@@ -50,9 +50,9 @@ const Set<String> pureDartLibraries = {
 };
 
 /// The other libraries of pure layers. [collectionLibrary] gives
-/// `mergeSort` to `jsSort` from phase 2 (Chart.js ADR 0045, Sort).
+/// `mergeSort` to `jsSort` from phase 2 (Chart.js ADR 0146, Sort).
 /// `package:clock/clock.dart` gives `clock.now()`, the time of ported code
-/// (Chart.js ADR 0143).
+/// (Chart.js ADR 0146 §6).
 const Set<String> purePackageLibraries = {
   collectionLibrary,
   colorLibrary,
@@ -88,7 +88,7 @@ const Set<String> paintingNames = {'EdgeInsets', 'TextOverflow', 'TextStyle'};
 const String collectionLibrary = 'package:collection/collection.dart';
 
 /// The names that `lib/` shows from [collectionLibrary]. The other sorts of
-/// the library are not those of `Array.prototype.sort` (Chart.js ADR 0045,
+/// the library are not those of `Array.prototype.sort` (Chart.js ADR 0146,
 /// Sort).
 const Set<String> collectionNames = {'mergeSort'};
 
@@ -107,10 +107,10 @@ const Set<String> flutterLibraries = {
 
 /// URI prefixes that `lib/` never imports, with the rule that forbids them.
 const Map<String, String> forbiddenInLib = {
-  'package:flutter/material.dart': 'Chart.js ADR 0050: no Material in lib/',
-  'package:flutter/cupertino.dart': 'Chart.js ADR 0050: no Cupertino in lib/',
-  'package:material_ui/': 'Chart.js ADR 0050: no Material in lib/',
-  'package:forui/': 'Chart.js ADR 0050: no forui in lib/',
+  'package:flutter/material.dart': 'Chart.js ADR 0147: no Material in lib/',
+  'package:flutter/cupertino.dart': 'Chart.js ADR 0147: no Cupertino in lib/',
+  'package:material_ui/': 'Chart.js ADR 0147: no Material in lib/',
+  'package:forui/': 'Chart.js ADR 0147: no forui in lib/',
   'dart:io': 'AGENTS.md rule 5: lib/ compiles for every platform',
   'dart:html': 'AGENTS.md rule 5: no JavaScript at runtime',
   'dart:js_interop': 'AGENTS.md rule 5: no JavaScript at runtime',
@@ -153,7 +153,7 @@ const Map<String, String> forbiddenInLib = {
 /// imports `helpers.extras`.
 ///
 /// The theme compiler and the internal presets of `lib/src/theme/` are
-/// roots (Chart.js ADR 0050, theming.md §7). Their port-only tests run on
+/// roots (Chart.js ADR 0147, theming.md §7). Their port-only tests run on
 /// the VM, dart2js and dart2wasm. The theme widget of phase 9 uses the
 /// Flutter framework, so the directory is not a root as a whole.
 ///
@@ -199,7 +199,7 @@ const List<String> pureRoots = [
 
 /// Files that match [pureRoots] but are not pure-layer roots.
 /// `helpers.extras` imports `package:flutter/scheduler.dart` (Chart.js ADR
-/// 0007, decision 10).
+/// 0016, item 10).
 const List<String> pureRootExceptions = ['lib/src/helpers/helpers.extras.dart'];
 
 /// The test libraries that a test without `@TestOn('vm')` can import, in
@@ -214,7 +214,7 @@ const Set<String> webTestLibraries = {
   paintingLibrary,
   // The NumberFormat of the tick option `format` (Chart.js ADR 0119).
   'package:intl/intl.dart',
-  // The time of the animations, clock.now() (Chart.js ADR 0143).
+  // The time of the animations, clock.now() (Chart.js ADR 0146 §6).
   'package:clock/clock.dart',
 };
 
@@ -430,7 +430,7 @@ final class _Edge(
           library,
           directive.line,
           '${directive.keyword}s $collectionLibrary without '
-          '"show ${collectionNames.join(', ')}" (Chart.js ADR 0045, Sort).',
+          '"show ${collectionNames.join(', ')}" (Chart.js ADR 0146, Sort).',
         );
       }
     }
@@ -519,7 +519,7 @@ final class _Edge(
           library,
           edge.line,
           'imports ${edge.target}, but ported files never import '
-          '$themeDirectory (Chart.js ADR 0050).',
+          '$themeDirectory (Chart.js ADR 0147).',
         );
       }
       if (edge.target?.startsWith(typedDirectory) ?? false) {

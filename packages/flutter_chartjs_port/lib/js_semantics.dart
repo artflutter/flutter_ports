@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: the JS runtime for add-on ports.
 /// The JS runtime for the ports of Chart.js add-ons (Chart.js ADR 0132, ADR
 /// 0009, item 4): the JavaScript semantics that ported add-on code needs
-/// where a Dart form gives another result (Chart.js ADRs 0034 and 0045).
+/// where a Dart form gives another result (Chart.js ADRs 0034 and 0146).
 ///
 /// The library exports each library of `lib/src/js/` with each of its
 /// names. Some examples:
@@ -15,10 +15,10 @@
 /// - `jsGet`: the property read `object[key]` of a Map, a typed object of
 ///   the port (`JsObjectFace`), a List or a String. An absent key gives
 ///   `undefined`.
-/// - `Math.round` is `roundToDouble()` (Chart.js ADR 0138). `Math.max`
+/// - `Math.round` is `roundToDouble()` (Chart.js ADR 0146 §7). `Math.max`
 ///   and `Math.min` are `dart:math` `max` and `min` with `double` operands
-///   (Chart.js ADR 0134), and `Math.hypot(a, b)` is
-///   `math.sqrt(a * a + b * b)` (Chart.js ADR 0135).
+///   (Chart.js ADR 0146 §4), and `Math.hypot(a, b)` is
+///   `math.sqrt(a * a + b * b)` (Chart.js ADR 0146 §4).
 /// - `jsToNumber`, `jsToString` and `jsTruthy`: the conversions `ToNumber`,
 ///   `ToString` and `ToBoolean`. `jsNumberToString`: the V8 text of a
 ///   number.

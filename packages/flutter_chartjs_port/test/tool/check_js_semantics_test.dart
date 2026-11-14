@@ -163,7 +163,7 @@ void main() {
     expect(
       _check(['final a = list.sorted(compare);']).single,
       endsWith(
-        'Array.prototype.sort is (Chart.js ADR 0045, Sort). Use jsSort.',
+        'Array.prototype.sort is (Chart.js ADR 0146, Sort). Use jsSort.',
       ),
     );
     expect(
@@ -178,7 +178,7 @@ void main() {
     );
   });
 
-  test('flags DateTime.now( (Chart.js ADR 0143)', () {
+  test('flags DateTime.now( (Chart.js ADR 0146 §6)', () {
     expect(
       _sites([
         'final a = DateTime.now();',
@@ -192,7 +192,7 @@ void main() {
     );
     expect(
       _check(['final a = DateTime.now();']).single,
-      endsWith('Use clock.now() of package:clock (Chart.js ADR 0143).'),
+      endsWith('Use clock.now() of package:clock (Chart.js ADR 0146 §6).'),
     );
   });
 

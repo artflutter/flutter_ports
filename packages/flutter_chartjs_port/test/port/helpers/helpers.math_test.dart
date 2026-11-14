@@ -350,14 +350,17 @@ void main() {
   });
 
   group('log10', () {
-    test('gives the exponent of an exact power of ten (Chart.js ADR 0122)', () {
-      for (var e = -15; e <= 22; e++) {
-        final x = js_math.pow(10.0, e).toDouble();
-        expect(math.log10(x), e.toDouble(), reason: '10^$e');
-      }
-      // log(1000) / ln10 is 2.9999999999999996.
-      expect(math.log10(1000), 3);
-    });
+    test(
+      'gives the exponent of an exact power of ten (Chart.js ADR 0146 §3)',
+      () {
+        for (var e = -15; e <= 22; e++) {
+          final x = js_math.pow(10.0, e).toDouble();
+          expect(math.log10(x), e.toDouble(), reason: '10^$e');
+        }
+        // log(1000) / ln10 is 2.9999999999999996.
+        expect(math.log10(1000), 3);
+      },
+    );
 
     test('handles the special values', () {
       expect(math.log10(0), double.negativeInfinity);

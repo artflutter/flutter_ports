@@ -131,7 +131,7 @@ The selectors are the selectors of `lib/main_bench.dart`: a mode, a name or both
 The selection `chart,plugins,tooltip,fill,legend,title` gives the 46 cases of the 100 cells of
 §14.9 (48 cells of phase 7 and 52 plugin cells). The page has no form of these Dart cases:
 - the mode `axes`: no cell of §14.9, and the time scale needs a date adapter;
-- the mode `theme`: the theme switch of `ChartView` (Chart.js ADR 0050) has no upstream form.
+- the mode `theme`: the theme switch of `ChartView` (Chart.js ADR 0147 §13) has no upstream form.
 
 ## The checks of 2026-10-30
 

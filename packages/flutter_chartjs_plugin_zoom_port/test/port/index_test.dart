@@ -19,7 +19,7 @@ import 'package:flutter_test/flutter_test.dart';
 //   upstream app that sets `chart.options` and calls `chart.update()`: the
 //   range goes back to the options of the app.
 // - A theme switch writes the recorded scale options of the app back
-//   (Chart.js ADR 0050), and the range goes with them (row
+//   (Chart.js ADR 0147), and the range goes with them (row
 //   `theme-switch-zoom-range` of doc/differences.md).
 //
 // flutter_test_config.dart registers the built-in components and the plugin

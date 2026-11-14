@@ -25,7 +25,7 @@ import 'scale_logarithmic_reference.dart';
 //
 // The reference group compares real charts with the charts of
 // tool/reference/scale_logarithmic_reference.mjs: a build of the pinned
-// Chart.js in Node.js v24.22.1 on arm64 (Chart.js ADR 0045), with a mock
+// Chart.js in Node.js v24.22.1 on arm64 (Chart.js ADR 0146), with a mock
 // context that measures text in Liberation Sans 2.1.5, the test font of the
 // harness (scale_chart_harness.dart, tool/reference/scale_chart_common.mjs).
 // Each chart comes from acquireChart in a testWidgets case (Chart.js ADR
@@ -282,7 +282,7 @@ void main() {
         );
         _actions[c.name]?.call(chart);
         // A small log range scales the last bit of dart:math log (Chart.js
-        // ADR 0122) to 6e-8 px.
+        // ADR 0146 §3) to 6e-8 px.
         if (c.name == 'fixture large values in a small range') {
           final saved = referenceAbsoluteTolerance;
           referenceAbsoluteTolerance = 1e-6;

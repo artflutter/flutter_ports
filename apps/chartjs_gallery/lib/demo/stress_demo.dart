@@ -26,7 +26,7 @@ import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     hide PointOptions;
-// Not public: the typed options of Chart.js ADR 0018. The prefix keeps them
+// Not public: the typed options of Chart.js ADR 0054. The prefix keeps them
 // apart from the PointOptions of demo_chart.dart (the primitives mode).
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     as element_options;
@@ -971,7 +971,7 @@ class StressDemoState() extends State<StressDemo> {
 
   /// The resolved options of each point element: the defaults of
   /// element.point.ts and the colors of the [StressMode.primitives] points,
-  /// as typed options (Chart.js ADR 0018). All points share the object, as
+  /// as typed options (Chart.js ADR 0054). All points share the object, as
   /// the shared options of a dataset are.
   static final element_options.PointOptions _pointElementOptions =
       element_options.PointOptions({
@@ -987,7 +987,7 @@ class StressDemoState() extends State<StressDemo> {
 
   /// The resolved options of the line: the defaults of element.line.js and
   /// the color and width of the [StressMode.primitives] polyline, as typed
-  /// options (Chart.js ADR 0018). A `List<double>` dash goes to
+  /// options (Chart.js ADR 0054). A `List<double>` dash goes to
   /// `setLineDash` without a copy.
   static final element_options.LineOptions _lineElementOptions =
       element_options.LineOptions({
@@ -999,7 +999,7 @@ class StressDemoState() extends State<StressDemo> {
       });
 
   /// The resolved options of each bar: the defaults of element.bar.js with
-  /// a border and rounded corners, as typed options (Chart.js ADR 0018). All
+  /// a border and rounded corners, as typed options (Chart.js ADR 0054). All
   /// bars share the object, as the shared options of a dataset are.
   static final element_options.BarOptions _barOptions =
       element_options.BarOptions({
@@ -1026,7 +1026,7 @@ class StressDemoState() extends State<StressDemo> {
   /// The resolved options of the arcs of each slice index: the defaults of
   /// element.arc.ts with the spacing and the rounded corners, and the
   /// colors of the Chart.js colors plugin, as typed options (Chart.js ADR
-  /// 0018). A `List<double>` dash goes to `setLineDash` without a copy.
+  /// 0054). A `List<double>` dash goes to `setLineDash` without a copy.
   static final List<element_options.ArcOptions> _arcOptions = [
     for (final color in const [
       ui.Color.fromRGBO(54, 162, 235, 0.5),

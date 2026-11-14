@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: batched circles of the canvas.
 
-/// The circle batch of the `dart:ui` canvas context (Chart.js ADR 0013).
+/// The circle batch of the `dart:ui` canvas context (Chart.js ADR 0055).
 ///
 /// A chart draws most points as one full circle with a fill and a stroke
 /// (`drawPointLegend`, helpers.canvas.ts:200-207, then :303-306). Each fill

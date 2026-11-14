@@ -22,7 +22,7 @@
 /// :174, :234, :236): `BarElement` reads a `null` coordinate as "ignore this
 /// axis" (element.bar.js:103-111). Where this file does arithmetic or a
 /// comparison on a coordinate, it writes the `ToNumber` as `x ?? 0`
-/// (Chart.js ADR 0045).
+/// (Chart.js ADR 0146).
 ///
 /// Upstream imports `_isPointInArea` and `isNullOrUndef` from
 /// `helpers/index.js`. The port imports `helpers.canvas.dart` and
@@ -129,7 +129,7 @@ bool _skipped(Element element) => jsTruthy(switch (element) {
 /// @param {boolean} [intersect] - should the element intersect
 /// @returns {{lo:number, hi:number}} indices to search data array between
 ///
-/// The indices are list indices, thus `int` values (Chart.js ADR 0045). The
+/// The indices are list indices, thus `int` values (Chart.js ADR 0146). The
 /// search reads [value] as a number: Dart `null` gives 0, the `ToNumber` of
 /// JS `null`. `getRange` follows Chart.js ADR 0020, section 9.
 ///
@@ -260,7 +260,7 @@ void _evaluateInteractionItems(
 /// axis mode setting
 /// @param {string} axis - the axis mode. x|y|xy|r
 ///
-/// `Math.pow(delta, 2)` is `dart:math` `pow` (Chart.js ADR 0136).
+/// `Math.pow(delta, 2)` is `dart:math` `pow` (Chart.js ADR 0146 §4).
 double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
   InteractionAxis axis,
 ) {
@@ -271,7 +271,7 @@ double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
     final deltaX = useX ? ((pt1.x ?? 0) - (pt2.x ?? 0)).abs() : 0.0;
     final deltaY = useY ? ((pt1.y ?? 0) - (pt2.y ?? 0)).abs() : 0.0;
     return math.sqrt(
-      // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+      // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
       math.pow(deltaX, 2.0).toDouble() + math.pow(deltaY, 2.0).toDouble(),
     );
   };

@@ -34,7 +34,7 @@ import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
 import 'package:flutter_test/flutter_test.dart';
 
 // theming.md §8 test 8: the runtime theme switch of ChartView (Chart.js ADR
-// 0050, "Runtime switch"). The widget switches in its post-frame update
+// 0147 §13). The widget switches in its post-frame update
 // callback (Chart.js ADR 0049, section 4): it writes the compiled theme
 // under `$theme` of its root config (step 2), puts the recorded user
 // `scales` object back into the options (step 3), restores the palette keys

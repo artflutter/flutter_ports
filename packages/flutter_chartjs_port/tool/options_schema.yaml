@@ -13,7 +13,7 @@
 # - `others`: optional, the shape of a key that `keys` does not list (a dictionary, for example
 #   the scale ids under `scales`). Without `others`, an unknown key keeps any value (an extra).
 # - `resolved`: only for the four element kinds: the known keys of the resolved options class
-#   (`resolved.g.dart`, Chart.js ADR 0054 §9) in the key order of Chart.js ADR 0018 §3: `$shared`,
+#   (`resolved.g.dart`, Chart.js ADR 0054 §9) in the key order of Chart.js ADR 0054 §17: `$shared`,
 #   the keys of the element defaults, the keys of its defaultRoutes, `$animations`.
 # - `implements`: an interface of the resolved options class (`DrawPointOptions`).
 # - `keys`: each JS property name with its shape, or the scalar `none`. The order is the
@@ -81,7 +81,7 @@ kinds:
       options: scope ChartOptions
       plugins: list
       platform: any
-      $theme: any  # the compiled theme of Chart.js ADR 0050, read at core.config.dart chartThemeOf
+      $theme: any  # the compiled theme of Chart.js ADR 0147, read at core.config.dart chartThemeOf
   ChartData:
     doc: index.d.ts:3892 ChartData, the `data` object of the config.
     keys:
@@ -1124,8 +1124,8 @@ kinds:
       enabled: bool
       forceOverride: bool
       events: list  # read at core.controller.js:1170
-      $borderColors: list  # port-only theme palette (Chart.js ADR 0050, hunk H4a of plugin.colors.dart)
-      $backgroundColors: list  # port-only theme palette (Chart.js ADR 0050, hunk H4a of plugin.colors.dart)
+      $borderColors: list  # port-only theme palette (Chart.js ADR 0147, hunk H4a of plugin.colors.dart)
+      $backgroundColors: list  # port-only theme palette (Chart.js ADR 0147, hunk H4a of plugin.colors.dart)
   GenericPluginOptions:
     doc: Port-only kind, the options of a plugin without a plugin kind (an inline or a registered user plugin).
     others: any

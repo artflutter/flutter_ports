@@ -8,7 +8,7 @@ import 'package:flutter_chartjs_port/helpers.dart' show ContextResolver;
 import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// The native plugin API of Chart.js ADRs 0108 and 0126 for a plugin of an
+// The native plugin API of Chart.js ADRs 0108 and 0144 for a plugin of an
 // add-on port: this file imports only the public libraries of the package
 // and the harness. The plugin has the hooks of the plugin object of
 // chartjs-plugin-zoom (`src/plugin.ts:64-152` of chartjs-plugin-zoom) in its

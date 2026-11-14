@@ -16,7 +16,7 @@
 ///   and JavaScript then throws a `TypeError` at the call. The callers give
 ///   the context of a point label in the range of the labels, or of a tick:
 ///   it is not Dart `null`.
-/// - Numbers are `double` (Chart.js ADR 0045). A property that starts JS
+/// - Numbers are `double` (Chart.js ADR 0146). A property that starts JS
 ///   `undefined` and holds a number starts as NaN.
 /// - The value methods take any JS value (Chart.js ADR 0025, section 1).
 ///   They have no fast path (Chart.js ADR 0025, Open 1). The object

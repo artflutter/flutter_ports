@@ -14,7 +14,7 @@
 ///   [jsTruthy], and applies [jsToNumber] before arithmetic. The radial
 ///   scale extends this class: [Scale.options] is a `CoreScaleOptions`,
 ///   whose facade has `bounds` and the linear tick options.
-/// - Numbers are `double` (Chart.js ADR 0045). A property that starts JS
+/// - Numbers are `double` (Chart.js ADR 0146). A property that starts JS
 ///   `undefined` and holds a number starts as NaN.
 /// - The `_` members that other modules read drop the underscore and carry
 ///   `@internal` (Chart.js ADR 0012, Chart.js ADR 0025, section 6):
@@ -163,7 +163,7 @@ List<Tick> _generateTicks(
   if (!isNullOrUndef(precision)) {
     // If the user specified a precision, round to that number of decimal
     // places
-    // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0045).
+    // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0146).
     factor = math.pow(10.0, jsToNumber(precision)).toDouble();
     spacing = (spacing * factor).ceilToDouble() / factor;
   }
@@ -228,7 +228,7 @@ List<Tick> _generateTicks(
   final exponent = isNullOrUndef(precision)
       ? decimalPlaces_
       : jsToNumber(precision);
-  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0045).
+  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0146).
   factor = math.pow(10.0, exponent).toDouble();
   niceMin = (jsToNumber(niceMin) * factor).roundToDouble() / factor;
   niceMax = (jsToNumber(niceMax) * factor).roundToDouble() / factor;

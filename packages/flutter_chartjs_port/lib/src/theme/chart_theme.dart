@@ -1,16 +1,16 @@
-// Original code, not ported from Chart.js: ChartTheme of Chart.js ADR 0050.
+// Original code, not ported from Chart.js: ChartTheme of Chart.js ADR 0147.
 
-/// The inherited chart theme of Chart.js ADR 0050 (theming.md §5.1).
+/// The inherited chart theme of Chart.js ADR 0147 (theming.md §5.1).
 ///
 /// Not a pure layer: the file imports the widgets library. Ported files never
-/// import it (Chart.js ADR 0050, invariant 4).
+/// import it (Chart.js ADR 0147, invariant 4).
 library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 
-/// The chart theme of a subtree (Chart.js ADR 0050).
+/// The chart theme of a subtree (Chart.js ADR 0147).
 ///
 /// A chart below reads [maybeOf]: Dart `null` gives the Chart.js look.
 /// `const ChartThemeData()` themes nothing. The theme is not animated:

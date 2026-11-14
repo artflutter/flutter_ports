@@ -12,7 +12,7 @@
 ///   section 8).
 /// - The expected values come from a generator in
 ///   `tool/reference/scale_*_reference.mjs`. It runs a build of Chart.js at
-///   the pinned commit in the arm64 Node.js v24.22.1 (Chart.js ADR 0045),
+///   the pinned commit in the arm64 Node.js v24.22.1 (Chart.js ADR 0146),
 ///   with the same test controllers as `DatasetController` subclasses in
 ///   JavaScript (`tool/reference/scale_chart_common.mjs`).
 /// - Node.js has no canvas. The Node.js side measures text with the advance
@@ -927,7 +927,7 @@ typedef ScaleChartCase = ({
 typedef ScaleChartWidth = ({TextStyle font, String text, double width});
 
 /// A test that the reference comes from Node.js v24.22.1 on arm64
-/// (Chart.js ADR 0045) and from a build of the pinned Chart.js: [dist] is
+/// (Chart.js ADR 0146) and from a build of the pinned Chart.js: [dist] is
 /// [chartJsVersion], and [commit] is a full commit. For a commit pin, the
 /// commit starts with the sha8 of [chartJsVersion].
 void testReferenceOrigin({

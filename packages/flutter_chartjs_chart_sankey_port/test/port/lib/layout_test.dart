@@ -37,7 +37,7 @@ List<SankeyDataPoint> _cycleData() => [
 /// The column and the position of each node of [_cycleData] after `layout`
 /// of `src/lib/layout.ts` at the pin, with the height 480, the gap 10 before
 /// and after each node and the other options absent. The values come from
-/// Node.js v24.22.1 on arm64, the reference engine of Chart.js ADR 0045:
+/// Node.js v24.22.1 on arm64, the reference engine of Chart.js ADR 0146:
 /// `buildNodesFromData(data, {})`, then `layout(nodes, data, {priority:
 /// false, height: 480, nodePadding})`, which gives `{maxX: 4, maxY:
 /// 1721.25}`.

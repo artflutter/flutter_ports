@@ -176,7 +176,7 @@ Matcher _toBeCloseTo(num expected, [int precision = 2]) {
 }
 
 /// A case of `gridLineTests` with a line at 0: `roundToDouble()` places the
-/// line at -0.5, where upstream places it at 0.5 (Chart.js ADR 0138).
+/// line at -0.5, where upstream places it at 0.5 (Chart.js ADR 0146 §7).
 void _skipGridLineCase(String name) =>
     test(name, () {}, skip: 'diverges: adapt-dart-round');
 

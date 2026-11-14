@@ -30,7 +30,7 @@ import 'plugin_colors_reference.dart';
 //
 // The reference group compares real charts with the charts of
 // tool/reference/plugin_colors_reference.mjs: a build of the pinned Chart.js
-// in Node.js v24.22.1 on arm64 (Chart.js ADR 0045), with the seven plugins
+// in Node.js v24.22.1 on arm64 (Chart.js ADR 0146), with the seven plugins
 // registered and `colors.enabled: false` in the defaults. Each case except
 // `full: radar` is a unit case: the other plugins are `false` (Chart.js ADR
 // 0041, section 4). The full case has the default plugin options.
@@ -38,7 +38,7 @@ import 'plugin_colors_reference.dart';
 // dataset after `beforeLayout`), and the draw calls.
 //
 // The cases run two times: unthemed, and with the light preset (theming.md
-// section 8 test 3, Chart.js ADR 0050). In the themed run, hunk H5 takes the
+// section 8 test 3, Chart.js ADR 0147). In the themed run, hunk H5 takes the
 // palette of the light preset, and the colors compare in their parsed form.
 //
 // The groups `plugin object`, `theme palette` and

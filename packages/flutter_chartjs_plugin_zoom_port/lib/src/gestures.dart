@@ -17,7 +17,7 @@
 /// - The active pointers are a `Map<int, ActivePointer>`: a Dart `Map`
 ///   literal is a `LinkedHashMap`, which keeps the insertion order of a JS
 ///   `Map`, also when a write replaces the value of a key.
-/// - `Math.hypot(a, b)` is `math.sqrt(a * a + b * b)` (Chart.js ADR 0135):
+/// - `Math.hypot(a, b)` is `math.sqrt(a * a + b * b)` (Chart.js ADR 0146 §4):
 ///   for pointer distances, only the last bit can differ.
 /// - The `WeakMap` of the managers is an `Expando`.
 /// - A user callback has its typedef type and gets a direct call (Zoom ADR

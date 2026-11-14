@@ -297,7 +297,7 @@ Do these steps from `packages/flutter_chartjs_port`:
    OS in §2.
 
 The reference engine is Chrome, not V8. Thus section 2 of
-[Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) does not apply to this probe.
+[Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) does not apply to this probe.
 
 ## 7. Limits
 

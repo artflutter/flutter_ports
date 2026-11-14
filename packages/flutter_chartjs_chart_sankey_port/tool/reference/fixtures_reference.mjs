@@ -56,7 +56,7 @@
 // of Chart.js, the device pixel ratio 1 and the colors plugin off.
 //
 // Usage, from packages/flutter_chartjs_chart_sankey_port, with the
-// darwin-arm64 build of Node.js v24.22.1 (Chart.js ADR 0045) and the Dart
+// darwin-arm64 build of Node.js v24.22.1 (Chart.js ADR 0146) and the Dart
 // SDK on the PATH (the script formats the output with `dart format`):
 //
 //   node tool/reference/fixtures_reference.mjs

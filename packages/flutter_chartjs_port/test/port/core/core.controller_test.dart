@@ -1269,7 +1269,7 @@ void main() {
       // The inner List `[x]` reaches the registry of the plugins. Upstream
       // throws there for its missing `id` (core.typedRegistry.js:46), and the
       // port stops a debug build first: a plugin is a Plugin (Chart.js ADR
-      // 0126, core.registry.dart `_exec`).
+      // 0144, core.registry.dart `_exec`).
       port: const {'register forms': '_AssertionError'},
     );
   });

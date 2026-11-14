@@ -395,7 +395,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// A chart without a layout has no `chartArea`: the read of an edge
   /// throws a [TypeError], as in JavaScript. `Math.min` and `Math.max` are
-  /// `dart:math` `min` and `max` with `double` operands (Chart.js ADR 0134).
+  /// `dart:math` `min` and `max` with `double` operands (Chart.js ADR 0146 §4).
   /// The raw option `cutoutPercentage` takes
   /// `ToNumber` at the arithmetic.
   void _updateRadius() {

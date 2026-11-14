@@ -17,7 +17,7 @@
 //   run them.
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045):
+// Node.js v24.22.1 (Chart.js ADR 0146):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/controller_line_reference.mjs

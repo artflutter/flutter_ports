@@ -37,7 +37,7 @@
 // and 'MMM'.
 //
 // How to run a generator, from packages/flutter_chartjs_port, with the darwin-arm64
-// build of Node.js v24.22.1 (Chart.js ADR 0045) and the Dart SDK on the PATH:
+// build of Node.js v24.22.1 (Chart.js ADR 0146) and the Dart SDK on the PATH:
 //
 //   npm install --no-save --prefix <scratch> moment@2.29.4 \
 //     moment-timezone@0.5.42 chartjs-adapter-moment@1.0.1

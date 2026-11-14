@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the tokens of the light theme.
 
-/// The tokens of the light preset of Chart.js ADR 0050 (theming.md §5.1), a
+/// The tokens of the light preset of Chart.js ADR 0147 (theming.md §5.1), a
 /// pure layer.
 ///
 /// The public presets are `ChartThemeData.light()` and `.dark()` of
@@ -8,7 +8,7 @@
 /// [LightThemeTokens], and `.dark()` takes its fonts and its palette from
 /// it. The pure tests give the same tokens to `compileChartTheme` of
 /// `compile.dart`. The library exports no `LightThemeTokens`. Ported files
-/// never import this file (Chart.js ADR 0050, invariant 4).
+/// never import this file (Chart.js ADR 0147, invariant 4).
 library;
 
 import 'dart:ui' show Color, FontStyle;
@@ -79,7 +79,7 @@ abstract final class LightThemeTokens() {
 
   /// The 7 colors of `BORDER_COLORS` at alpha 1 (`plugin.colors.ts:14-22`).
   /// With [paletteBackgroundAlpha], the compiled background colors equal
-  /// `BACKGROUND_COLORS` (`plugin.colors.ts:25`), Chart.js ADR 0050.
+  /// `BACKGROUND_COLORS` (`plugin.colors.ts:25`), Chart.js ADR 0147.
   static const List<Color> palette = [
     Color.from(alpha: 1, red: 54 / 255, green: 162 / 255, blue: 235 / 255),
     Color.from(alpha: 1, red: 255 / 255, green: 99 / 255, blue: 132 / 255),

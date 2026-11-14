@@ -6,7 +6,7 @@ on:
     branches: [main]
   # A manual run: each job runs. With update_goldens, the job fixtures
   # writes the theme goldens on its pinned runner and uploads them as the
-  # artifact theme-goldens (Chart.js ADR 0050, "Goldens").
+  # artifact theme-goldens (Chart.js ADR 0147 §18).
   workflow_dispatch:
     inputs:
       update_goldens:
@@ -132,7 +132,7 @@ jobs:
     #
     # The job is also the pinned runner of the theme goldens of
     # packages/flutter_chartjs_port/doc/theming.md section 8 test 9 (Chart.js
-    # ADR 0050, "Goldens"). The font manager of the platform rasterizes the
+    # ADR 0147 §18). The font manager of the platform rasterizes the
     # text (FreeType on Linux), so the image is pinned: ubuntu-24.04, not
     # ubuntu-latest. CHART_GOLDENS=1 runs the goldens; elsewhere they skip.
     # Only a workflow_dispatch run with update_goldens writes the golden

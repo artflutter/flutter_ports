@@ -23,7 +23,7 @@
 //   plugin.legend_test.dart runs the legend with the light preset).
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045):
+// Node.js v24.22.1 (Chart.js ADR 0146):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/controller_doughnut_reference.mjs
@@ -124,7 +124,7 @@ const two = (extra1, extra2, options = undefined) => ({
  * The midpoint of opposite arc centers ties nearest distances; the center
  * of a hidden zero-circumference arc lies on the visible arcs' shared edge.
  * Move only those samples by a fraction of a pixel, keeping every hit query.
- * Native sin/cos/atan2 may differ in their last bits (Chart.js ADR 0122).
+ * Native sin/cos/atan2 may differ in their last bits (Chart.js ADR 0146 §3).
  */
 function stableTiePoints(chart) {
   const arcs = chart.getDatasetMeta(0).data;

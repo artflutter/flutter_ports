@@ -159,7 +159,7 @@ List<String>? _logarithmic(
   final significand = ticks[index].significand;
   final remain = jsTruthy(significand)
       ? significand!
-      // js-ok: double operands, dart:math pow (Chart.js ADR 0045).
+      // js-ok: double operands, dart:math pow (Chart.js ADR 0146).
       : (tickValue / (math.pow(10.0, log10(tickValue).floorToDouble())));
   if (const <double>[1, 2, 3, 5, 10, 15].contains(remain) ||
       index > 0.8 * ticks.length) {

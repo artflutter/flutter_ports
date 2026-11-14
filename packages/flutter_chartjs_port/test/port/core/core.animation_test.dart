@@ -29,7 +29,7 @@ import 'animation_reference.dart';
 // src/core/core.animation.js at v4.5.1, run with type stripping in Node.js.
 // animation_reference.dart has the scenarios and the color data, which
 // tool/reference/animation_reference.mjs writes on the reference engine
-// (Chart.js ADR 0045). The explicit cases below come from Node.js v24.12.0
+// (Chart.js ADR 0146). The explicit cases below come from Node.js v24.12.0
 // on x64.
 //
 // Each tick uses a date relative to `start` in whole milliseconds. Thus the

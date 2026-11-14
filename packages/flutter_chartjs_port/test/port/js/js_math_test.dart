@@ -120,7 +120,7 @@ void main() {
     }
   });
 
-  // Chart.js ADR 0134: ported code calls dart:math max and min with double
+  // Chart.js ADR 0146 §4: ported code calls dart:math max and min with double
   // operands for Math.max and Math.min. They give the JS results on the VM,
   // dart2js and dart2wasm.
   group('dart:math max and min', () {
@@ -187,8 +187,8 @@ void main() {
     });
   });
 
-  // Math.pow(x, 2) is dart:math pow (Chart.js ADR 0136). V8 gives the bits
-  // of x * x for it (Chart.js ADR 0045, section 4).
+  // Math.pow(x, 2) is dart:math pow (Chart.js ADR 0146 §4). V8 gives the bits
+  // of x * x for it (Chart.js ADR 0146, section 4).
   group('dart:math pow(x, 2.0)', () {
     // js-ok: the form of Math.pow(x, 2) under test.
     double square(double x) => math.pow(x, 2.0).toDouble();

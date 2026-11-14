@@ -403,7 +403,7 @@ short:
 - Dart `null` stands for both JS `null` and `undefined`. An absent key is a Map key that is not
   there. ECharts tests `== null` at 1,062 sites (876 ECharts, 186 zrender).
 - The `undefined` sentinel appears only at the six strict `undefined` sites and in specs that
-  assert `undefined`. This differs from Chart.js ADR 0006.
+  assert `undefined`. This differs from Chart.js ADR 0054 §1.
 - `zrender src/core/util.ts` ports line by line with these value rules. `HashMap` keeps SameValueZero
   keys.
 - zrender elements implement `JsObjectLike` for the by-name reads and writes of the animator,
@@ -512,7 +512,7 @@ short:
   as a JS `Date`.
 - `useUTC` is false by default (`echarts src/model/globalDefault.ts:127`). Thus the specs run in
   `Etc/UTC` and in `America/Los_Angeles`. The reference generators run with `TZ=UTC`.
-- ECharts builds its number and date text by hand with no `Intl`. Thus Chart.js ADR 0026 does not
+- ECharts builds its number and date text by hand with no `Intl`. Thus Chart.js ADR 0119 does not
   apply. `addCommas` (`echarts src/util/format.ts:32-39`) and `formatTpl` port line by line with
   a new `jsStringReplace`.
 - The 27 `src/i18n` locale files port as Dart data files: `langEN` and `langZH` in phase 4, the
@@ -538,7 +538,7 @@ In short:
   use `toImageSync`.
 - Phase 8 selects the XML parser of the SVG maps: a port-only parser or `package:xml`. The GeoJSON
   `new Function` fallback becomes a JSON decode (row `platform-geojson-function`).
-- The four theming invariants of Chart.js ADR 0001 carry over. ECharts themes are per instance
+- The four theming invariants of Chart.js ADR 0147 §19 carry over. ECharts themes are per instance
   (`init(dom, theme)`, `setTheme` at `echarts src/core/echarts.ts:826`). Thus the port needs no
   theme hunks and no `theme` category. `lib/src/theme/` maps a Flutter theme to an ECharts theme
   object.
@@ -551,7 +551,7 @@ In short:
 - The zrender canvas painter needs the full Canvas 2D surface: styles, text, transforms, clips,
   images, a retained bitmap and the device pixel ratio.
 - The Chart.js port has this layer in `packages/flutter_chartjs_port/lib/src/canvas/` (Chart.js ADRs
-  0013 and 0015). ADR 0008 item 1 forbids an import of it.
+  0055 and 0015). ADR 0008 item 1 forbids an import of it.
 - The D3 porting flow §5.1 keeps the deferred plan "A shared canvas layer". Its trigger is a caller
   that needs styles, text or transforms on a context. zrender is such a caller.
 - The Chart.js layer parses colors with its `@kurkle/color` port. `js_webidl` stays in

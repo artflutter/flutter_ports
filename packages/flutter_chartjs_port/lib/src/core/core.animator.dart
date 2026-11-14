@@ -4,7 +4,7 @@
 ///
 /// One module-level [Animator], [animator], ticks the animations of all the
 /// charts on [requestAnimFrame] (Chart.js ADR 0016, decision 6). `Date.now()`
-/// is `clock.now()` of package:clock (Chart.js ADR 0143). Inside
+/// is `clock.now()` of package:clock (Chart.js ADR 0146 §6). Inside
 /// `testWidgets`, `tester.pump` moves its clock.
 ///
 /// - The frame callback runs inside [jsRunWithMicrotaskCheckpoint]. Thus the

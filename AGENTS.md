@@ -103,7 +103,7 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     `lib/src/js/`, or `package:flutter_chartjs_port/js_semantics.dart` in an add-on. It resolves
     types with `package:analyzer` to find the interpolation of
     `double` and `num` values. It also fails on `DateTime.now(`: ported code reads the time with
-    `clock.now()` of package:clock (Chart.js ADR 0143).
+    `clock.now()` of package:clock (Chart.js ADR 0146 §6).
   - `port:next:check`: the check mode of tool 8 (`port:next`, below).
   - `parity:check`: the check mode of tool 6 (`parity`, below).
   - `check:typed-reads`: tool 9, the ratchet of the by-name forms (Chart.js ADR 0054). For each
@@ -173,7 +173,7 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   without it; the spec `defaults` expects the key. The CI job `fixtures` runs it with
   `FIXTURES_REQUIRED=1`.
 - `dart run melos run test:goldens`: the theme goldens of `flutter_chartjs_port`
-  (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md §8 test 9, Chart.js ADR 0050).
+  (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md §8 test 9, Chart.js ADR 0147).
   They skip unless `CHART_GOLDENS=1`. Their pinned runner is the CI job `fixtures` on
   `ubuntu-24.04`, because the font manager of the platform rasterizes the text. A local Mac never
   writes the golden files. Only a `workflow_dispatch` run of CI with the input `update_goldens`
@@ -309,7 +309,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     keys of Chart.js ADR 0051. The chart is a `ChartView.raw` with the config that the page makes
     once for each variant, and `onChartCreated` gives the chart to the page. The chart has the
     semantics label `<title> chart: <variant>`. The app follows the platform brightness: its builder puts a `ChartTheme` above each route, with the
-    light preset or the dark preset over the surface of the dark color scheme (Chart.js ADR 0050).
+    light preset or the dark preset over the surface of the dark color scheme (Chart.js ADR 0147).
     The host has no height: the platform gives the aspect of the docs (2, or 1 for doughnut, pie,
     polar area and radar). The page body caps its width at 600. The keys are
     `gallery.type.<stem>`, `type.<stem>.variant.<variant>`, `type.<stem>.host`,
@@ -910,7 +910,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
 - The module status values of the `parity.md` legend: `porting-flow.md` §1 step 7 (proposed).
 - `// DIVERGES(chartjs): <row id>, <reason>` markers and their `differences.md` rows:
   `porting-flow.md` §4 (proposed). `check:headers` already pairs markers with rows.
-- The JS numeric translation rules: Chart.js ADR 0045. Number formatting: Chart.js ADR 0119
+- The JS numeric translation rules: Chart.js ADR 0146. Number formatting: Chart.js ADR 0119
   (package:intl as it is, with no correction of its defects).
   Emulate JavaScript only where the result changes behavior (Chart.js ADR 0034): the ticks, the
   hit element, the item order, the resolved option, a throw, or a value that reaches a layout, a
@@ -938,12 +938,12 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   index throws a `RangeError`), `jsLessThan` (the operator `a < b` on raw values: two strings
   compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036) and the
   `undefined` sentinel (Chart.js ADR 0043). `Math.hypot(a, b)` has no runtime function: it is
-  `math.sqrt(a * a + b * b)` (Chart.js ADR 0135). `Math.round(x)` is `x.roundToDouble()` (Chart.js
-  ADR 0138), and `Math.pow(x, 2)` is `math.pow(x, 2.0)` (Chart.js ADR 0136). `Math.max` and
+  `math.sqrt(a * a + b * b)` (Chart.js ADR 0146 §4). `Math.round(x)` is `x.roundToDouble()` (Chart.js
+  ADR 0146 §7), and `Math.pow(x, 2)` is `math.pow(x, 2.0)` (Chart.js ADR 0146 §4). `Math.max` and
   `Math.min` have no
   runtime function: they are `dart:math` `max` and `min` with the type argument `double`, explicit
   or inferred (`math.max<double>(x, 0)`; a call in arithmetic infers `num`), and
-  `check:js-semantics` flags a `num` type argument (Chart.js ADR 0134). `lib/js_semantics.dart` exports each
+  `check:js-semantics` flags a `num` type argument (Chart.js ADR 0146 §4). `lib/js_semantics.dart` exports each
   name of `lib/src/js/` for add-on ports (Chart.js ADR 0132). `JsStringList` of `js_array.dart` is a string
   as an array-like value: the reads `s[i]` and `s.length`, and a `TypeError` for each write.
   `_dataCheck` keeps a string `data` in it.
@@ -979,7 +979,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   - `jsSplice` is `Array.prototype.splice`. `start` and `deleteCount` go through
     `ToIntegerOrInfinity`. Dart `null` stands for an absent `deleteCount`.
   - `Date.now()` has no runtime function: it is `clock.now().millisecondsSinceEpoch` of
-    package:clock, with `.toDouble()` where the code computes with doubles (Chart.js ADR 0143).
+    package:clock, with `.toDouble()` where the code computes with doubles (Chart.js ADR 0146 §6).
     Inside `testWidgets` and `withClock`, the fake clock moves it. Ported code never calls
     `DateTime.now()`. A `DateTime` is a JS `Date`: `jsToNumber` gives its time value (Chart.js ADR
     0024).
@@ -1020,15 +1020,15 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `packages/chartjs_test_utils`, not in `packages/flutter_chartjs_port/LICENSE` (Licensing item 1):
   Chart.js ADR 0035. `check:headers` reads the `LICENSE` of the package that contains
   the file.
-- The reference engine: Chart.js ADR 0045. Take JavaScript reference values only from the
+- The reference engine: Chart.js ADR 0146. Take JavaScript reference values only from the
   darwin-arm64 build of Node.js v24.22.1 (V8 13.6.233.17-node.58, ICU 78.3). Each test of a data
   file pins the Node.js version and the architecture of its data. Never take reference values
   from a browser. `sin`, `cos`, `atan2` and `log` are `dart:math` as it is, and `log10` gives the
-  exponent of an exact power of ten (Chart.js ADR 0122): the last bit can differ from V8, and a
+  exponent of an exact power of ten (Chart.js ADR 0146 §3): the last bit can differ from V8, and a
   reference test gives a tolerance there or lists a hit point on an arc border (`hitBorders`).
 - The four theming invariants (specs run unthemed, no forui or Material in `lib/`, no
   `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
-  0050. `check:lib-imports` already fails on the two import invariants.
+  0147 §19. `check:lib-imports` already fails on the two import invariants.
 
 The D3 port applies the rules above with these changes. The D3 ADRs are proposed. The doc paths
 are relative to `packages/flutter_d3_port/doc/`.
@@ -1050,7 +1050,7 @@ are relative to `packages/flutter_d3_port/doc/`.
   `// DIVERGES(d3): <row id>, <reason>` and a row in `differences.md`.
 - Number strings (D3 ADR 0003): when a string is the result of a module, its JS digits are
   behavior. Examples are d3-format, d3-path, d3-color and d3-time-format. The rules of Chart.js
-  ADR 0045 apply to them.
+  ADR 0146 apply to them.
 - No port depends on another port (ADR 0008). Thus D3 code never imports
   `package:flutter_chartjs_port`. In D3 phase 1, ADR 0008 copies the generic runtime of `lib/src/js/`
   into the shared package `js_semantics`.
@@ -1076,7 +1076,7 @@ doc paths are relative to `packages/flutter_echarts_port/doc/`.
 - `upstream-ledger.md` has one section for each repository. A difference carries
   `// DIVERGES(echarts): <row id>, <reason>`, also in a zrender file, and a row in
   `differences.md`.
-- Numbers and JS values follow ECharts ADRs 0003 and 0004 with the rules of Chart.js ADRs 0045
+- Numbers and JS values follow ECharts ADRs 0003 and 0004 with the rules of Chart.js ADRs 0146
   and 0034. No port depends on another port (ADR 0008). Thus ECharts code never imports
   `package:flutter_chartjs_port` or `package:flutter_d3_port`.
 
@@ -1108,7 +1108,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   use of the host with its state. A change that closes a seam updates its row.
 - A difference carries `// DIVERGES(zoom): <row id>, <reason>` and a row in `differences.md`.
   `check:headers` pairs the markers and the rows.
-- The JS numeric rules of Chart.js ADRs 0045 and 0034 apply. The zoom port takes the JS runtime
+- The JS numeric rules of Chart.js ADRs 0146 and 0034 apply. The zoom port takes the JS runtime
   from `package:flutter_chartjs_port/js_semantics.dart` (Chart.js ADR 0108, seam H13), and from the
   package `js_semantics` when ADR 0008 makes it. It does not copy `lib/src/js/` of the host.
 
@@ -1346,7 +1346,7 @@ sankey ADRs are proposed. The doc paths are relative to
   because a data file stays below 2,500,000 bytes),
   `test/port/platform/chart_host_input_reference.dart` (the input path of the legend and the
   tooltip, Chart.js ADR 0037 §17). The other generators run on the reference engine of Chart.js
-  ADR 0045.
+  ADR 0146.
   `controller_reference.mjs` registers the seven plugins of `src/plugins/index.js` by name (a
   module namespace registers nothing) and sets `defaults.plugins.colors.enabled = false`, as
   `flutter_test_config.dart` does. Each generator on the dist calls `registerBuiltins` of
@@ -1387,7 +1387,7 @@ sankey ADRs are proposed. The doc paths are relative to
   of the first event of each type (section 11). `test/port/platform/chart_host_input_test.dart`
   drives the same actions as Flutter pointer events through `ChartHost`, one pump for each step, and
   compares the DOM events of the host too. `tool/reference/text_metrics/` writes
-  `test/port/canvas/text_metrics_reference.dart` from headless Chrome. The engine rule of Chart.js ADR 0045
+  `test/port/canvas/text_metrics_reference.dart` from headless Chrome. The engine rule of Chart.js ADR 0146
   does not apply to it. Do not edit the generated files by hand.
 - The D3 tests use `package:test` (D3 ADR 0004). In phase 0, `test/upstream_test.dart` is the
   only D3 test. It has `@TestOn('vm')`. Thus `test:web` does not run the D3 package yet. The first

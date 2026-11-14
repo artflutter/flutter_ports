@@ -59,7 +59,7 @@ final class PointOptions extends ElementOptions implements DrawPointOptions {
       _borderColor = source._borderColor,
       super.copyFrom();
 
-  /// The known keys, in the key order of Chart.js ADR 0018 §3.
+  /// The known keys, in the key order of Chart.js ADR 0054 §17.
   static const List<String> knownKeys = [
     r'$shared',
     'borderWidth',
@@ -665,7 +665,7 @@ final class LineOptions extends ElementOptions {
       _segment = source._segment,
       super.copyFrom();
 
-  /// The known keys, in the key order of Chart.js ADR 0018 §3.
+  /// The known keys, in the key order of Chart.js ADR 0054 §17.
   static const List<String> knownKeys = [
     r'$shared',
     'borderCapStyle',
@@ -1449,7 +1449,7 @@ final class BarOptions extends ElementOptions {
       _borderColor = source._borderColor,
       super.copyFrom();
 
-  /// The known keys, in the key order of Chart.js ADR 0018 §3.
+  /// The known keys, in the key order of Chart.js ADR 0054 §17.
   static const List<String> knownKeys = [
     r'$shared',
     'borderSkipped',
@@ -1885,7 +1885,7 @@ final class ArcOptions extends ElementOptions {
       _backgroundColor = source._backgroundColor,
       super.copyFrom();
 
-  /// The known keys, in the key order of Chart.js ADR 0018 §3.
+  /// The known keys, in the key order of Chart.js ADR 0054 §17.
   static const List<String> knownKeys = [
     r'$shared',
     'borderAlign',

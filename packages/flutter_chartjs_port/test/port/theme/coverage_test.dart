@@ -23,7 +23,7 @@ import '../../support/color_json.dart';
 import '../../support/light_theme.dart';
 import '../../support/scale_border.dart';
 
-// theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0050,
+// theming.md §8 test 4, the coverage snapshot (Chart.js ADR 0147,
 // Consequences). The test compares the compiled light preset with the
 // defaults inventory that tool 4 records in doc/upstream/manifest.json
 // (`defaults.values.defaults`, porting-flow.md §4).
@@ -102,7 +102,7 @@ const Map<String, String> _notThemed = {
       '(core.scale.defaults.js:35)',
   'scale.ticks.textStrokeColor':
       "'': no text stroke by default (core.scale.defaults.js:67); "
-      'an app sets it in the chart options (Chart.js ADR 0050)',
+      'an app sets it in the chart options (Chart.js ADR 0147)',
   'scales.radialLinear.pointLabels.backdropColor':
       'undefined: no point-label backdrop by default '
       '(scale.radialLinear.js:374)',
@@ -127,7 +127,7 @@ const Map<String, String> _notThemed = {
   'plugins.tooltip.borderColor':
       "'rgba(0,0,0,0)': no tooltip border by default "
       '(plugin.tooltip.js:1308); an app sets it in the chart options '
-      '(Chart.js ADR 0050)',
+      '(Chart.js ADR 0147)',
   'plugins.tooltip.callbacks.labelColor':
       'a function that reads the style of the element '
       '(plugin.tooltip.js:404-415)',
@@ -159,7 +159,7 @@ const Map<String, Object?> _notThemedValues = {
 };
 
 /// The emitted paths that restate a module constant, not a default, each
-/// with the reason (Chart.js ADR 0050, Consequences). The manifest does not
+/// with the reason (Chart.js ADR 0147, Consequences). The manifest does not
 /// have them. Test 3 compares their values.
 const Map<String, String> _moduleConstants = {
   r'plugins.colors.$borderColors':
@@ -806,7 +806,7 @@ void main() {
 
     test('a module constant is not REMOVED', () {
       // plugin.colors.ts:14-25: the palette is a module constant, not a
-      // default. The manifest does not have it (Chart.js ADR 0050).
+      // default. The manifest does not have it (Chart.js ADR 0147).
       const palette = r'plugins.colors.$borderColors';
       final withPalette = <String, Object?>{
         ...emitted,

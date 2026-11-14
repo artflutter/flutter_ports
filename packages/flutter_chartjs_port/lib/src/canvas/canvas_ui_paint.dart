@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the dart:ui canvas styles.
 
-/// The styles of the `dart:ui` canvas context (Chart.js ADR 0013,
+/// The styles of the `dart:ui` canvas context (Chart.js ADR 0055,
 /// porting-flow.md 2.2): native colors, gradients, patterns, images,
 /// composite operations and line dashes.
 ///

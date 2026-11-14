@@ -33,15 +33,14 @@ import '../../support/font_record.dart';
 import '../../support/light_theme.dart';
 import '../../support/scale_border.dart';
 
-// theming.md §8 test 7 (Chart.js ADR 0050, "The public classes"): the value
+// theming.md §8 test 7 (Chart.js ADR 0147 §10): the value
 // equality, `copyWith`, `lerp` and the diagnostics of `ChartThemeData`, the
-// compile of its tokens (Chart.js ADR 0117), the oracle of test 3 and of
+// compile of its tokens, the oracle of test 3 and of
 // coverage_test.dart (the light preset compiles to the theme of the tokens
 // of `LightThemeTokens`), the presets (the mirror rule of the dark preset and
-// the contrast of the text pairs), the token allowlist of Chart.js ADR 0050
-// ("No public `raw` in 0.1.0", B3 of the design panel) and the hit element
-// of a theme ("No touch sizes", B11). The inherited `ChartTheme` is in
-// chart_theme_test.dart.
+// the contrast of the text pairs), the token allowlist of Chart.js ADR 0147
+// (§12, B3 of the design panel) and the hit element of a theme (§15, B11).
+// The inherited `ChartTheme` is in chart_theme_test.dart.
 //
 // VM only: theme_data.dart imports dart:ui and the painting library, and
 // the hit test of B11 runs on charts of `acquireChart`.
@@ -196,7 +195,7 @@ double _contrast(Color a, Color b) {
 }
 
 /// The paths of theming.md §4 for each public token alone (Chart.js ADR
-/// 0050, "No public `raw` in 0.1.0"). A font path names the font Map.
+/// 0147 §12). A font path names the font Map.
 const Map<String, Set<String>> _tokenPaths = {
   'color': {
     'color',
@@ -496,7 +495,7 @@ void main() {
   });
 
   group('the tokens reach the compiled theme as they are', () {
-    // Chart.js ADR 0117: compileThemeData gives the fields to
+    // Chart.js ADR 0147 §10: compileThemeData gives the fields to
     // compileChartTheme, with no conversion.
     Color? colorOf(Color color) =>
         (compileThemeData(ChartThemeData(color: color))!['color']!
@@ -724,9 +723,9 @@ void main() {
   });
 
   group('B3: the token allowlist', () {
-    // Chart.js ADR 0050, "No public `raw` in 0.1.0": the token emission is
+    // Chart.js ADR 0147 §12: the token emission is
     // the allowlist. Each public token alone emits exactly its paths of
-    // theming.md §4 (Chart.js ADR 0118: the compiler has no guard).
+    // theming.md §4 (Chart.js ADR 0147 §7: the compiler has no guard).
     for (final MapEntry(key: name, value: paths) in _tokenPaths.entries) {
       test('the token $name alone emits its paths of theming.md §4', () {
         final compiled = compileThemeData(_only(name, _full));
@@ -755,9 +754,9 @@ void main() {
   });
 
   group('B11: no touch sizes', () {
-    // Chart.js ADR 0050, "No touch sizes": the probe F-P1b. The theme never
-    // carries `hitRadius` or `hoverRadius`, so a theme leaves the hit
-    // element unchanged. The control: a theme scope with the key
+    // Chart.js ADR 0147 §15, and the probe F-P1b of Chart.js ADR 0050. The
+    // theme never carries `hitRadius` or `hoverRadius`, so a theme leaves the
+    // hit element unchanged. The control: a theme scope with the key
     // `elements.point.hitRadius: 8` changes the hit element (the guard
     // passes it, F-P1), so the event position is 6 px from a hit.
     testWidgets('the unthemed chart has no hit', (tester) async {
