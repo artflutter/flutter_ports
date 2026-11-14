@@ -8,7 +8,7 @@
   `Math.max` and `Math.min` with numbers in the translation table, the `_limitValue` form and the `max`/`min` item of
   the forbidden forms; in §8 the `max`/`min` item of tool 3; the `jsMax` and `jsMin` part of its test list; the
   alternative "`dart:math` `max` and `min` on every target"; and the consequence of the two code paths.
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0134-dart-math-max-min.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0134-dart-math-max-min.md`
 
 ## Summary
 

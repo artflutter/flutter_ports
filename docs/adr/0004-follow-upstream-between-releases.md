@@ -3,7 +3,7 @@
 - Status: accepted (2026-10-18)
 - Date: 2026-10-16
 - Superseded by: [ADR 0006](0006-follow-upstream-between-releases.md) (2026-10-19)
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:docs/adr/0004-follow-upstream-between-releases.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:docs/adr/0004-follow-upstream-between-releases.md`
 
 ## Summary
 

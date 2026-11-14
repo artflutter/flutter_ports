@@ -7,7 +7,7 @@
   (the switch, the D1 and D2 tests, `test:nofast`, the bench cells, the P3 page) stay until the
   ADR of the typed model decides on them.
 - Date: 2026-10-30
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0053-resolver-fast-paths.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0053-resolver-fast-paths.md`
 
 ## Summary
 

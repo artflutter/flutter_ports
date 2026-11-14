@@ -7,7 +7,7 @@
   §2 (`jsHypot`, `tool/reference/hypot_reference.mjs` and `test/port/js/hypot_reference.dart`),
   the `jsHypot` rows of its test list, and the rejected alternative "`math.sqrt(a * a + b * b)` for
   `Math.hypot`".
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0135-math-hypot-as-sqrt.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0135-math-hypot-as-sqrt.md`
 
 ## Summary
 

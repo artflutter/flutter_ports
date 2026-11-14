@@ -3,7 +3,7 @@
 - Status: accepted (2026-10-21)
 - Superseded by: [Chart.js ADR 0037](0037-legend-and-tooltip-input-path.md) (2026-10-29)
 - Date: 2026-10-19
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0014-input-events-and-chart-host.md`
 
 ## Summary
 

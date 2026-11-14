@@ -4,7 +4,7 @@
 - Superseded by: [Chart.js ADR 0113](0113-stroke-pieces-by-browser-system.md) (2026-11-10)
 - Date: 2026-11-06
 - Row of `differences.md`: `adapt-web-long-path-pieces`.
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0105-web-long-paths-in-pieces.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0105-web-long-paths-in-pieces.md`
 
 ## Summary
 

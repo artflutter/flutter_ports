@@ -5,7 +5,7 @@
 - Date: 2026-11-13
 - Supersedes: the `jsRound` parts of [Chart.js ADR 0045](0045-reference-engine-arm64.md): the
   `Math.round` rule, its table rows and its tests.
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0138-math-round-as-round-to-double.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0138-math-round-as-round-to-double.md`
 
 ## Summary
 

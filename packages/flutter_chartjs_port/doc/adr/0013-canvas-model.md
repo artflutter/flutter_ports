@@ -4,7 +4,7 @@
 - Superseded by: [Chart.js ADR 0055](0055-native-draw-path.md) (2026-10-31)
 - Superseded in part by: [Chart.js ADR 0066](0066-bounded-canvas-recordings.md)
 - Date: 2026-10-19
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0013-canvas-model.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0013-canvas-model.md`
 
 ## Summary
 

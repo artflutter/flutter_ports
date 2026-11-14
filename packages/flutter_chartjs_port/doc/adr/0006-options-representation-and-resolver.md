@@ -3,7 +3,7 @@
 - Status: accepted (2026-10-18)
 - Superseded by: [Chart.js ADR 0043](0043-options-representation-and-resolver.md) (2026-10-23)
 - Date: 2026-10-17
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0006-options-representation-and-resolver.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0006-options-representation-and-resolver.md`
 
 ## Summary
 

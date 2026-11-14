@@ -3,7 +3,7 @@
 - Status: accepted
 - Date: 2026-10-16
 - Superseded by: [ADR 0005](0005-pin-upstream-sources.md) (2026-10-19)
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:docs/adr/0002-pin-upstream-sources.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:docs/adr/0002-pin-upstream-sources.md`
 
 ## Summary
 

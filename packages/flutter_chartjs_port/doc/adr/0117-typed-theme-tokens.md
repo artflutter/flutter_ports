@@ -10,7 +10,7 @@
   presets `ChartThemes.light` and `ChartThemes.none` in "The presets", the form
   `palette: {colors: [...], backgroundAlpha: 0.5}` in "The palette token", and the sentence "The guard
   `themeNeverEmittedReason` keeps this list for the raw Map themes of the tests".
-- Full text: `git show ac269e6feef50e1b382722e1ff4c17f0079cb130:packages/flutter_chartjs_port/doc/adr/0117-typed-theme-tokens.md`
+- Full text: `git show 2ee913263ba0fad4d08b0e9744c3a86575286268:packages/flutter_chartjs_port/doc/adr/0117-typed-theme-tokens.md`
 
 ## Summary
 
