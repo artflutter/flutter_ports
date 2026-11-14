@@ -1045,7 +1045,7 @@ void main() {
         final plugins = chart.config.plugins! as List<Object?>;
         expect((plugins.first! as Plugin<Object?>).id, 'stressDrawStart');
         // The inline plugin of the widget comes after the plugins of the app
-        // (Chart.js ADR 0050). Its `afterDraw` (the focus ring of Chart.js ADR
+        // (Chart.js ADR 0147). Its `afterDraw` (the focus ring of Chart.js ADR
         // 0051) thus runs after the end of the draw meter.
         expect(
           (plugins[plugins.length - 2]! as Plugin<Object?>).id,

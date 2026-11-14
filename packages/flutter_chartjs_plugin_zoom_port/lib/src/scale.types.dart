@@ -7,11 +7,11 @@
 /// are the extension point of upstream: an app adds a function for a custom
 /// scale type. They keep the upstream key order.
 ///
-/// `Math.round` is `roundToDouble()` (Chart.js ADR 0138). `Math.min` and
+/// `Math.round` is `roundToDouble()` (Chart.js ADR 0146 §7). `Math.min` and
 /// `Math.max` are
-/// `dart:math` `min` and `max` with `double` operands (Chart.js ADR 0134).
+/// `dart:math` `min` and `max` with `double` operands (Chart.js ADR 0146 §4).
 /// `Math.log10` is `log10` of the helpers. `Math.pow(10, x)` is
-/// `dart:math` `pow` with double operands, the rule of Chart.js ADR 0045.
+/// `dart:math` `pow` with double operands, the rule of Chart.js ADR 0146.
 library;
 
 import 'dart:math' as math;
@@ -108,9 +108,9 @@ ScaleRange _logarithmicZoomRange(Scale scale, double zoom, Point center) {
   final delta = zoomDelta(logCenter, logMin, logRange, newLogRange);
 
   return (
-    // js-ok: Math.pow with double operands (Chart.js ADR 0045).
+    // js-ok: Math.pow with double operands (Chart.js ADR 0146).
     min: math.pow(10.0, logMin + delta.min).toDouble(),
-    // js-ok: Math.pow with double operands (Chart.js ADR 0045).
+    // js-ok: Math.pow with double operands (Chart.js ADR 0146).
     max: math.pow(10.0, logMax - delta.max).toDouble(),
   );
 }

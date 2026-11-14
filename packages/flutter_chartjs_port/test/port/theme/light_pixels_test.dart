@@ -17,7 +17,7 @@ import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// The light identity of Chart.js ADR 0050 ("The presets", "Goldens"): a
+// The light identity of Chart.js ADR 0147 §11 and §18: a
 // chart with `const ChartThemeData.light()` paints the bytes of the
 // unthemed chart. Test 3 compares the resolved options. This test compares
 // the bitmaps, so `const ChartThemeData()` (no theme) needs no golden file

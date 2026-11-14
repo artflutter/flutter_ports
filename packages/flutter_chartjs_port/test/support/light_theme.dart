@@ -1,9 +1,9 @@
 // Original code, not ported from Chart.js: the light preset of the tests.
 
 /// The compiled light preset of the tests: `compileChartTheme` of
-/// `compile.dart` with the tokens of `LightThemeTokens` (Chart.js ADR 0117),
-/// as `compileThemeData(const ChartThemeData.light())` gives it. A pure
-/// layer, for the tests of the web legs too.
+/// `compile.dart` with the tokens of `LightThemeTokens` (Chart.js ADR
+/// 0147 §11), as `compileThemeData(const ChartThemeData.light())` gives it.
+/// A pure layer, for the tests of the web legs too.
 library;
 
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'

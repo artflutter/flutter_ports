@@ -15,9 +15,9 @@ import 'package:test/test.dart';
 // of element.arc.dart (Chart.js ADR 0017). An object literal is a Dart Map
 // literal, and the constructor writes each number as a double. `Math` is
 // dart:math, with jsAtan2, jsSin and jsCos of the JS runtime for
-// Math.atan2, Math.sin and Math.cos (Chart.js ADR 0045: the inputs of
+// Math.atan2, Math.sin and Math.cos (Chart.js ADR 0146: the inputs of
 // inRange are a hit test), and Math.min is dart:math min on doubles
-// (Chart.js ADR 0134). `window.createMockContext()` is
+// (Chart.js ADR 0146 §4). `window.createMockContext()` is
 // createMockContext of chartjs_test_utils. A recorded call is a Map with the
 // keys 'name' and 'args'.
 

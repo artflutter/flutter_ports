@@ -39,12 +39,12 @@ import '../../support/light_theme.dart';
 import '../../support/mode_json.dart';
 import '../../support/scale_border.dart';
 
-// The theme compiler has no upstream counterpart (Chart.js ADR 0050). These
+// The theme compiler has no upstream counterpart (Chart.js ADR 0147). These
 // tests cover theming.md §3.3 (the emitted keys, only the token paths, the
-// deep freeze and no memo, Chart.js ADR 0118), §3.4 and §4 (the token
+// deep freeze and no memo, Chart.js ADR 0147 §10), §3.4 and §4 (the token
 // keys, the point-label font, the title, subtitle, legend and tooltip keys
-// and the palette of Chart.js ADR 0050, from typed tokens, Chart.js ADR
-// 0117), §8 test 1 (no token equals upstream, no extra scope, the
+// and the palette, from typed tokens, Chart.js ADR 0147 §8 and §10), §8
+// test 1 (no token equals upstream, no extra scope, the
 // scope position of a compiled theme, no dependence on the platform) and
 // the parts of §8 test 5 that need no chart. The expected scope lists follow
 // the hunks H0-H3 of core.config.dart and their tests in
@@ -184,7 +184,7 @@ const Map<String, Object?> _transitionLeaves = {
 };
 
 /// The six color tokens, each with the compiled theme of that token alone
-/// (Chart.js ADR 0117).
+/// (Chart.js ADR 0147 §7).
 final List<(String, ChartOptionsScope? Function(ui.Color))> _colorTokens = [
   ('color', (c) => compileChartTheme(color: c)),
   ('borderColor', (c) => compileChartTheme(borderColor: c)),
@@ -743,7 +743,7 @@ void main() {
   });
 
   group('the palette', () {
-    // Chart.js ADR 0050 and theming.md §4: the palette token emits the two
+    // Chart.js ADR 0147 and theming.md §4: the palette token emits the two
     // palette keys of plugins.colors. Hunk H5 of plugin.colors reads them
     // from the theme map of the chart.
     const border = r'plugins.colors.$borderColors';
@@ -943,7 +943,7 @@ void main() {
   });
 
   group('the subtitle and legend keys', () {
-    // theming.md §4 (Chart.js ADR 0050): the subtitle takes the color token
+    // theming.md §4 (Chart.js ADR 0147): the subtitle takes the color token
     // and the font token without weight, as the title. The legend takes the
     // whole font token into its two fonts and no color key.
     const serifBold = ChartTextStyle(
@@ -1050,7 +1050,7 @@ void main() {
   });
 
   group('the tooltip keys', () {
-    // theming.md §4 (Chart.js ADR 0050): the token inverseSurface gives the
+    // theming.md §4 (Chart.js ADR 0147): the token inverseSurface gives the
     // tooltip background, the token onInverseSurface the four tooltip text
     // and key colors. The tooltip body font is the whole font token. The
     // title and footer fonts are the font token without weight.

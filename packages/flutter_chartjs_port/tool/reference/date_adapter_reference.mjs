@@ -44,7 +44,7 @@
 // changes of each zone in 2010-2026 for the table zone.
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045), with the Dart
+// Node.js v24.22.1 (Chart.js ADR 0146), with the Dart
 // SDK on the PATH (the script formats the output with `dart format`) and
 // with the submodule third_party/Chart.js (`dart run melos run upstream`):
 //

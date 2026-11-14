@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: the dart:ui canvas paths.
 
 /// The current transform and the path builder of the `dart:ui` canvas
-/// context (Chart.js ADR 0013, porting-flow.md 2.2).
+/// context (Chart.js ADR 0055, porting-flow.md 2.2).
 ///
 /// Canvas 2D has path semantics that `dart:ui` lacks. This library keeps
 /// those that change behavior:

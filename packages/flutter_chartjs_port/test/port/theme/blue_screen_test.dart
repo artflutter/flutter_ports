@@ -29,8 +29,8 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/color_json.dart';
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
-// theming.md §8 test 6, the full blue screen (Chart.js ADR 0050, "The blue
-// screen"; Chart.js ADR 0030, section 11): a theme that sets each color
+// theming.md §8 test 6, the full blue screen (Chart.js ADR 0147 §17;
+// Chart.js ADR 0030, section 11): a theme that sets each color
 // token and the palette (alpha 1) to one blue, over a background of the
 // same blue, gives a bitmap with no other pixel. A pixel of another color
 // shows a color that the theme does not reach (a leak).
@@ -41,8 +41,8 @@ import '../scales/scale_chart_harness.dart' show drawCalls;
 // visible tooltip with a footer, and sets `plugins.colors.enabled` (on and
 // off). The 8 chart types with the colors plugin on and off are 16 cases.
 //
-// 16 more cases have an active element (Chart.js ADR 0050, "The blue
-// screen"): `chart.setActiveElements` for the element 0 of the dataset 0,
+// 16 more cases have an active element (Chart.js ADR 0147 §17):
+// `chart.setActiveElements` for the element 0 of the dataset 0,
 // the tooltip active at it, and `chart.update()`. The hover colors are the
 // root scriptables of core.defaults.js:62-64, `getHoverColor` of the themed
 // base color (helpers.color.ts:28-32). Thus the known active setters are
@@ -89,7 +89,7 @@ const native_ui.Color _blueColor = native_ui.Color(_blue);
 /// `borderColor`, `backgroundColor`, `surface`, `inverseSurface` and
 /// `onInverseSurface` (theming.md §4). The palette has
 /// `paletteBackgroundAlpha: 1`, so the background colors of the colors
-/// plugin are opaque (Chart.js ADR 0050, `plugin.colors.ts:25`).
+/// plugin are opaque (Chart.js ADR 0147, `plugin.colors.ts:25`).
 const ChartThemeData _blueTheme = ChartThemeData(
   color: _blueColor,
   borderColor: _blueColor,
@@ -124,7 +124,7 @@ const List<String> _palettePaths = [
 
 /// The known leaks of the 8 default charts: chart type to the leaking
 /// setter values (`<setter> <value>`), each with its upstream file:line.
-/// Empty (Chart.js ADR 0050). The test fails when a set changes in either
+/// Empty (Chart.js ADR 0147). The test fails when a set changes in either
 /// direction.
 const Map<String, Set<String>> knownLeaks = {};
 
@@ -156,7 +156,7 @@ Set<String> knownActiveSetters(String type) => {
 
 /// The largest distance from the segment of the blue to the hover color
 /// that the pixels of an active case can have, in 8-bit units for each
-/// channel (Chart.js ADR 0050, "The blue screen").
+/// channel (Chart.js ADR 0147 §17).
 const int _segmentUnits = 2;
 
 /// The 8 chart types, in code unit order.
@@ -553,7 +553,7 @@ void main() {
   for (final type in ['bar', 'doughnut']) {
     testWidgets('a $type chart with a legend item without fillStyle and '
         'strokeStyle paints the singleton defaults.color', (tester) async {
-      // The pin case of Chart.js ADR 0050: a user `generateLabels` gives an
+      // The pin case of Chart.js ADR 0147: a user `generateLabels` gives an
       // item without `fillStyle`, `strokeStyle` and `fontColor`.
       final chart = await _acquireWithTooltip(
         tester,

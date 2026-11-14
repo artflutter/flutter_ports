@@ -75,7 +75,7 @@
 // zone of the zoom tests (row harness-date-zone).
 //
 // Usage, from packages/flutter_chartjs_plugin_zoom_port, with the
-// darwin-arm64 build of Node.js v24.22.1 (Chart.js ADR 0045) and the Dart
+// darwin-arm64 build of Node.js v24.22.1 (Chart.js ADR 0146) and the Dart
 // SDK on the PATH (the script formats the output with `dart format`):
 //
 //   DATE_FNS_NODE_MODULES=<dir>/node_modules \

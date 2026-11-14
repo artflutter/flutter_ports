@@ -64,7 +64,7 @@ final class const RadialPositions({
       (reverse ? max - value : value - min) * scalingFactor;
 
   /// `getPointPosition(index, distance, additionalAngle)`. `Math.cos` and
-  /// `Math.sin` are `dart:math` (Chart.js ADR 0122).
+  /// `Math.sin` are `dart:math` (Chart.js ADR 0146 §3).
   @pragma('vm:prefer-inline')
   ({double x, double y, double angle}) positionAt(
     int index,

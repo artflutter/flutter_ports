@@ -60,7 +60,7 @@
 /// sentinel, as a JavaScript function without a `return` does.
 ///
 /// **Numbers.** Ported code passes each number as a `double` (Chart.js ADR
-/// 0045). Declare a numeric parameter as `double`, `num` or `Object?`. An
+/// 0146). Declare a numeric parameter as `double`, `num` or `Object?`. An
 /// `int` parameter throws a [TypeError] when it gets a `double`.
 ///
 /// **Limits.**

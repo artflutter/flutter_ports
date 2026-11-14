@@ -141,7 +141,7 @@ typedef _Options = ({JsObjectFace base, JsObjectFace active});
 ///
 /// Each element gets typed options with the same entries: a `BarOptions`,
 /// a `PointOptions`, a `LineOptions` and an `ArcOptions` (Chart.js ADR
-/// 0018). The keys that are not keys of `XElement.defaults`, for example the
+/// 0054). The keys that are not keys of `XElement.defaults`, for example the
 /// hover colors, go to the extra keys of these classes.
 ///
 /// The chart listens to [elementsDemoEvents]. Each event goes through the

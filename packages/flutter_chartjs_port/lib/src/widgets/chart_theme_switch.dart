@@ -1,11 +1,11 @@
 // Original code, not ported from Chart.js: the theme switch of ChartView.
 
-/// The runtime theme switch of `ChartView` (Chart.js ADR 0050, "Runtime
-/// switch"; theming.md §3.7).
+/// The runtime theme switch of `ChartView` (Chart.js ADR 0147 §13;
+/// theming.md §3.7).
 ///
 /// The widget runs the switch in its post-frame update callback (Chart.js
 /// ADR 0049, section 4). Not a pure layer: the file imports the theme data,
-/// which imports Flutter. Ported files never import it (Chart.js ADR 0050,
+/// which imports Flutter. Ported files never import it (Chart.js ADR 0147,
 /// invariant 4).
 library;
 
@@ -84,7 +84,7 @@ final class _Write(
   var Object? written,
 );
 
-/// The theme state of the chart of one `ChartView` (Chart.js ADR 0050,
+/// The theme state of the chart of one `ChartView` (Chart.js ADR 0147,
 /// "Runtime switch"). The widget and, later, the frameless benchmark use it.
 ///
 /// It keeps the effective theme of the last switch, the user `scales` object

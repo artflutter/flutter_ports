@@ -15,9 +15,9 @@
 /// `({String property, double start, double end})`, because ported code
 /// only reads them.
 ///
-/// Indices are `double` (Chart.js ADR 0045). A list read converts the index
-/// with `toInt()`. Each index comes from a list length or from a segment of
-/// the same points, so it is finite. JS `%` is Dart `remainder`.
+/// Indices are `double` (Chart.js ADR 0129, item 5). A list read converts the
+/// index with `toInt()`. Each index comes from a list length or from a
+/// segment of the same points, so it is finite. JS `%` is Dart `remainder`.
 ///
 /// `line.options` is an option value. Its reads go through [readOption] of
 /// `helpers.config` (Chart.js ADR 0054 §4): the typed read of a resolver

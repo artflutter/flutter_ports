@@ -16,7 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
-// theming.md §8 test 9 (Chart.js ADR 0050, "Goldens"): one golden file for
+// theming.md §8 test 9 (Chart.js ADR 0147 §18): one golden file for
 // each public preset on one bar chart. The pinned runner is `ubuntu-24.04`
 // in the CI job `fixtures`: the font manager of the platform rasterizes the
 // text (FreeType on Linux, CoreText on macOS), so a golden file of another
@@ -36,7 +36,7 @@ import '../scales/scale_chart_harness.dart' show drawCalls;
 
 /// The reason of the skip outside the pinned runner.
 const String _skipReason =
-    'the goldens run only on the pinned runner (Chart.js ADR 0050)';
+    'the goldens run only on the pinned runner (Chart.js ADR 0147)';
 
 /// Whether the goldens run: `CHART_GOLDENS=1`.
 final bool _goldens = Platform.environment['CHART_GOLDENS'] == '1';

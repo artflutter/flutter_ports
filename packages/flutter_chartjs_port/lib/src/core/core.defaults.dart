@@ -13,7 +13,7 @@
 /// not declare is an extra. The readers by name read the typed scopes
 /// through their face (Chart.js ADR 0054 §5). `undefined` is the
 /// [undefined] sentinel and `null` is Dart `null`. Numbers are `double`
-/// (Chart.js ADR 0045). A function value is a Dart closure
+/// (Chart.js ADR 0146). A function value is a Dart closure
 /// (`lib/src/js/js_function.dart`).
 ///
 /// `Object.defineProperties` has no Dart form. [Defaults.route] gives a typed

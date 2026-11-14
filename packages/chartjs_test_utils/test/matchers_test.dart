@@ -200,7 +200,7 @@ void main() {
       expect(const _Point(null, 0), toBeCloseToPoint({'x': 0, 'y': null}));
     });
 
-    test('rounds a half away from zero (Chart.js ADR 0138)', () {
+    test('rounds a half away from zero (Chart.js ADR 0146 §7)', () {
       // roundToDouble(-0.5) is -1, where Math.round(-0.5) is -0.
       expect({'x': -0.005, 'y': 0}, toBeCloseToPoint({'x': -0.01, 'y': 0}));
       expect({'x': 0.005, 'y': 0}, toBeCloseToPoint({'x': 0.01, 'y': 0}));

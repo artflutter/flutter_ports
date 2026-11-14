@@ -1,15 +1,15 @@
-// Original code, not ported from Chart.js: theme data of Chart.js ADR 0050.
+// Original code, not ported from Chart.js: theme data of Chart.js ADR 0147.
 
-/// The public theme data of Chart.js ADR 0050 (theming.md §4 and §5.1).
+/// The public theme data of Chart.js ADR 0147 (theming.md §4 and §5.1).
 ///
 /// [ChartThemeData] holds the tokens of a chart theme: 6 colors, 2 fonts and
 /// the palette of the colors plugin. It stores the values of the app and
 /// nothing derived. [compileThemeData] gives its fields to
-/// `compileChartTheme` of `compile.dart` (Chart.js ADR 0117). The chart
+/// `compileChartTheme` of `compile.dart` (Chart.js ADR 0147 §10). The chart
 /// reads the result under `themeConfigKey` of `core.config.dart`.
 ///
 /// Not a pure layer: the file imports `dart:ui` and the painting library.
-/// Ported files never import it (Chart.js ADR 0050, invariant 4).
+/// Ported files never import it (Chart.js ADR 0147, invariant 4).
 library;
 
 import 'dart:ui' show Color, lerpDouble;
@@ -21,7 +21,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
 import 'package:flutter_chartjs_port/src/theme/presets.dart';
 
-/// The tokens of a chart theme (Chart.js ADR 0050, theming.md §4).
+/// The tokens of a chart theme (Chart.js ADR 0147, theming.md §4).
 ///
 /// A null token themes nothing. The Chart.js options of a chart beat each
 /// key of the theme, key by key: the dataset, the user options and
@@ -314,7 +314,7 @@ List<Color>? _lerpPalette(List<Color>? a, List<Color>? b, double t) {
 
 /// The compiled theme scope of [data] for `themeConfigKey`: the fields of
 /// [data] given to `compileChartTheme` of `compile.dart` (Chart.js ADR
-/// 0117), or Dart `null`. Dart `null` and a theme without tokens, for
+/// 0147 §10), or Dart `null`. Dart `null` and a theme without tokens, for
 /// example `const ChartThemeData()`, give Dart `null`.
 ///
 /// Each call compiles [data]: no memo (judge-c §3.9, Chart.js ADR 0054 §4).

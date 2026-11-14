@@ -18,7 +18,7 @@
 /// field for a typed dataset scope, a write by name for a Map of the user
 /// (Chart.js ADR 0054 §5).
 ///
-/// Four marked hunks add the theme palette (Chart.js ADR 0050, theming.md
+/// Four marked hunks add the theme palette (Chart.js ADR 0147, theming.md
 /// §3.5): H4a (the palette keys, two library variables and their reader),
 /// H4b and H4c (a theme branch before the unchanged `return` line of each
 /// getter) and H5 (the palette of the chart theme before each colorizer
@@ -58,7 +58,7 @@ final List<ui.Color> _backgroundColors = [
 
 // DIVERGES(chartjs): theme-H4a, the theme palette keys, variables and reader.
 /// The key of the border palette under `plugins.colors` of a theme map
-/// (Chart.js ADR 0050, theming.md §3.5).
+/// (Chart.js ADR 0147, theming.md §3.5).
 @internal
 const String themeBorderColorsKey = r'$borderColors';
 

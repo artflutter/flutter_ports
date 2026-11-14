@@ -41,7 +41,7 @@
 // so the tooltip stays open. Its draw calls show it.
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045):
+// Node.js v24.22.1 (Chart.js ADR 0146):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/plugin_legend_reference.mjs

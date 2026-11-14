@@ -411,7 +411,7 @@ final class Kind(
   final Map<String, Shape> keys, {
 
   /// The known keys of the resolved options class of an element kind, in
-  /// the key order of Chart.js ADR 0018 §3, or null.
+  /// the key order of Chart.js ADR 0054 §17, or null.
   final List<String>? resolved,
 
   /// The interface of the resolved options class, or null.
@@ -766,7 +766,7 @@ String _resolved(Schema schema) {
     out
       ..write('      super.copyFrom();\n\n')
       ..write(
-        '  /// The known keys, in the key order of Chart.js ADR 0018 §3.\n'
+        '  /// The known keys, in the key order of Chart.js ADR 0054 §17.\n'
         '  static const List<String> knownKeys = [\n',
       );
     for (final key in resolved) {

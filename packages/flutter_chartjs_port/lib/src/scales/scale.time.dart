@@ -15,7 +15,7 @@
 ///   adapter gets the raw option values, as upstream gives them. A display
 ///   format of a unit that the scale computes reads with
 ///   [DisplayFormats.formatOf].
-/// - Numbers are `double` (Chart.js ADR 0045). `+value` of an adapter
+/// - Numbers are `double` (Chart.js ADR 0146). `+value` of an adapter
 ///   result is [jsToNumber]. `Date.now()` is `clock.now()`.
 /// - The value methods take any JS value (Chart.js ADR 0025).
 ///   [TimeScale.getDecimalForValue] starts with the port-only fast path for

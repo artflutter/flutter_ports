@@ -1,34 +1,35 @@
 // Original code, not ported from Chart.js: JS Math builtins with V8 semantics.
 
 /// `Math` and `Number` builtins for ported code, with the results of the
-/// reference engine of Chart.js ADR 0045: V8 13.6 in Node.js v24.22.1 on
+/// reference engine of Chart.js ADR 0146: V8 13.6 in Node.js v24.22.1 on
 /// arm64.
 ///
 /// Ported code calls these instead of the `dart:math` and `num` members whose
 /// results differ from JavaScript in a way that changes behavior. Numbers are
 /// `double`, as in JavaScript. `sin`, `cos`, `atan2` and `log` are `dart:math`
-/// as it is (Chart.js ADR 0122): their last bit can differ from V8.
+/// as it is (Chart.js ADR 0146 §3): their last bit can differ from V8.
 ///
 /// `Math.max` and `Math.min` have no port here. Ported code calls
 /// `dart:math` `max` and `min` with `double` operands, which give the JS
-/// results on every target (Chart.js ADR 0134). An `int` literal operand or
+/// results on every target (Chart.js ADR 0146 §4). An `int` literal operand or
 /// an arithmetic context makes the type argument `num`, which boxes on
 /// dart2wasm: write `math.max<double>(x, 0)`.
 ///
 /// `Math.hypot(a, b)` has no port here. Ported code writes
 /// `math.sqrt(a * a + b * b)`: only the last bit can differ (Chart.js ADR
-/// 0135).
+/// 0146 §4).
 ///
 /// `Math.round(x)` has no port here. Ported code calls `x.roundToDouble()`,
 /// which rounds a negative exact half away from zero, where JavaScript rounds
-/// it up (Chart.js ADR 0138).
+/// it up (Chart.js ADR 0146 §7).
 ///
 /// `Math.pow` has no port here. Ported code calls `dart:math` `pow` with
-/// double operands (Chart.js ADR 0045), also for `Math.pow(x, 2)` (Chart.js
-/// ADR 0136). `dart:math` `pow` gives 1 for
-/// `pow(1, NaN)` and `pow(+-1, +-Infinity)`, where JavaScript gives NaN. A
-/// `Math.sin` or `Math.cos` call whose result reaches only the canvas or an
-/// easing value calls `dart:math` with a `js-ok` comment (Chart.js ADR 0045).
+/// double operands, also for `Math.pow(x, 2)` (Chart.js ADR 0146 §3 and
+/// §4). `dart:math` `pow` gives 1 for
+/// `pow(1, NaN)` and `pow(+-1, +-Infinity)`, where JavaScript gives NaN.
+/// `Math.sin`, `Math.cos` and the other transcendental builtins are the
+/// `dart:math` functions as they are, with no `js-ok` comment (Chart.js ADR
+/// 0146 §3).
 library;
 
 /// `Number.EPSILON`: 2^-52, the gap between 1 and the next double.

@@ -19,7 +19,7 @@
 /// options. The cases of the modes `motion` and `theme` (phase 9) have the
 /// default animations on a `BasicPlatform` that keeps them. The cases of
 /// the mode `theme` switch the theme with the internal theme switch of
-/// `ChartView` (Chart.js ADR 0050). The cases of the mode `zoom` run the
+/// `ChartView` (Chart.js ADR 0147). The cases of the mode `zoom` run the
 /// plugin of chartjs-plugin-zoom on a line chart with visible scales: each
 /// step is one input event through `canvas.dispatchEvent` (Chart.js ADR
 /// 0108), or one call of the zoom API ([chartBenchZoomCases]). Only these
@@ -70,7 +70,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/core/core.plugins.dart'
     show FilterCallback;
 // Not public: ChartThemeSwitch, the theme switch of ChartView (Chart.js ADR
-// 0050), which the cases of the mode theme run without a widget.
+// 0147 §13), which the cases of the mode theme run without a widget.
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 
 /// The width of the bitmap of the benchmark canvas, in device pixels.
@@ -1237,14 +1237,14 @@ const List<String> chartBenchThemeTypes = [
 ];
 
 /// The themes of the cases of the mode `theme`, in turn: the two presets of
-/// Chart.js ADR 0050. A chart starts with the first one.
+/// Chart.js ADR 0147. A chart starts with the first one.
 const List<ChartThemeData> chartBenchThemes = [
   ChartThemeData.light(),
   ChartThemeData.dark(),
 ];
 
 /// The theme state of a chart of the mode `theme`: the `ChartThemeSwitch`
-/// of `ChartView` (Chart.js ADR 0050, "Runtime switch") on the root config
+/// of `ChartView` (Chart.js ADR 0147 §13) on the root config
 /// of the case, as the widget has it on its root Map.
 final class _BenchTheme(
   /// The root config of the chart.
@@ -1290,7 +1290,7 @@ final class _BenchTheme(
 }
 
 /// A case of the mode `theme` (the night record B-R1 of phase 9, Chart.js
-/// ADR 0050): a chart of [type] with 3 datasets (doughnut: 1) of N points
+/// ADR 0147): a chart of [type] with 3 datasets (doughnut: 1) of N points
 /// with no colors, the labels `Point <i>`, the default scales, the legend
 /// and a title, the default animations on the platform [_AnimatedPlatform],
 /// and the theme state [_BenchTheme] with the light preset. The colors
@@ -1432,7 +1432,7 @@ ChartBenchCase _themeEqualCase() => _themeCase(
           theme.switchTo(chart, chartBenchThemes.first.copyWith()),
 );
 
-/// The cases of the night record B-R1 of phase 9 (Chart.js ADR 0050), after
+/// The cases of the night record B-R1 of phase 9 (Chart.js ADR 0147), after
 /// the cases `motion.<type>`: `theme.switch` and `theme.anim` for each type
 /// of [chartBenchThemeTypes], then `theme.equal` of a line chart.
 final List<ChartBenchCase> _themeCases = [

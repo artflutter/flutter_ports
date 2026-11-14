@@ -5,9 +5,9 @@
 ///
 /// Each interface gets its members when a ported caller needs them. A
 /// TypeScript property becomes an abstract getter, and a setter is added when
-/// a ported caller assigns through the type. `number` is `double`, also for
-/// an index (Chart.js ADR 0045). An inline object type that ported code only
-/// reads is a record.
+/// a ported caller assigns through the type. `number` is `double` (Chart.js
+/// ADR 0146 §7), and an index is an `int` (Chart.js ADR 0129). An inline
+/// object type that ported code only reads is a record.
 ///
 /// `index.d.ts` also names classes of other modules: `Element`
 /// (core.element.ts), `PointElement` (element.point.ts) and the fields of
@@ -35,7 +35,7 @@ library;
 
 // The canvas interface and the native event stand in for lib.dom.d.ts, which
 // index.d.ts names without an import. Both are pure, port-only interface
-// libraries (Chart.js ADR 0013, Chart.js ADR 0037).
+// libraries (Chart.js ADR 0055, Chart.js ADR 0037).
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'

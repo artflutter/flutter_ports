@@ -11,7 +11,7 @@ resolution: workspace
 
 dependencies:
   # The benchmark reads the clock of the chart animations, clock.now()
-  # (Chart.js ADR 0143).
+  # (Chart.js ADR 0146 §6).
   clock: ^1.1.2
   flutter:
     sdk: flutter

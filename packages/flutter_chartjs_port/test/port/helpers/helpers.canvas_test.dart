@@ -30,7 +30,7 @@ import 'rounded_rect_upstream.dart';
 // lists of MockContext (harness-mock-optional-args). The drawPointLegend
 // sequences are in draw_point_reference.dart, which
 // tool/reference/draw_point_reference.mjs writes on the reference engine
-// (Chart.js ADR 0045). The tests compare every number with closeTo
+// (Chart.js ADR 0146). The tests compare every number with closeTo
 // (Chart.js ADR 0034).
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
@@ -470,7 +470,7 @@ void main() {
       expect(alignPixel(_Chart(1), 10.3, 4), 10);
     });
 
-    test('rounds a half away from zero (Chart.js ADR 0138)', () {
+    test('rounds a half away from zero (Chart.js ADR 0146 §7)', () {
       expect(alignPixel(_Chart(2), 10.25, 0), 10.5);
       // -20.5 rounds to -21, where Math.round gives -20.
       expect(alignPixel(_Chart(2), -10.25, 0), -10.5);

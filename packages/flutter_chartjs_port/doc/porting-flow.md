@@ -2,7 +2,7 @@
 
 - Status: proposed
 - Date: 2026-10-16
-- Related: [Chart.js ADR 0042](adr/0042-theming.md), [theming.md](theming.md),
+- Related: [Chart.js ADR 0147](adr/0147-public-theme-api.md), [theming.md](theming.md),
   [ADR 0006](../../../docs/adr/0006-follow-upstream-between-releases.md),
   [upstream-tracking.md](upstream-tracking.md)
 
@@ -207,19 +207,19 @@ subsections stay proposals in this document until their ADR files exist.
 | Subsection | ADR | Gate |
 |---|---|---|
 | 2.1 | [Chart.js ADR 0043: Options representation and resolver](adr/0043-options-representation-and-resolver.md), which supersedes Chart.js ADR 0006 | 2 |
-| 2.3 | [Chart.js ADR 0045: Reference engine on arm64](adr/0045-reference-engine-arm64.md), which supersedes Chart.js ADR 0032 | 1 |
+| 2.3 | [Chart.js ADR 0146: JS numeric semantics and the reference engine](adr/0146-js-numeric-semantics.md), which supersedes Chart.js ADR 0045 | 1 |
 | 2.4 | [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md) | 1 |
 | 2.5 | [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md), which supersedes Chart.js ADR 0004 | 1 |
 | 2.13 | [Chart.js ADR 0035: Third-party sources](adr/0035-third-party-sources.md), which supersedes Chart.js ADR 0011 | 1 |
-| 2.3, number formatting | [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md), which supersedes Chart.js ADR 0008 | 2 |
+| 2.3, number formatting | [Chart.js ADR 0119: The number format is package:intl as it is](adr/0119-plain-intl-number-format.md), which supersedes Chart.js ADR 0026 | 2 |
 | 2.2, 2.3, 2.6, 2.10 | [Chart.js ADR 0034: No display-only JS exactness](adr/0034-no-display-only-js-exactness.md), which supersedes Chart.js ADR 0009 | 2 |
-| 2.2 | [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) | 3 |
+| 2.2 | [Chart.js ADR 0055: The native draw path of the canvas layer](adr/0055-native-draw-path.md), which supersedes Chart.js ADR 0013 | 3 |
 | 2.7 | [Chart.js ADR 0037: Legend and tooltip input path](adr/0037-legend-and-tooltip-input-path.md), which supersedes Chart.js ADR 0014 | 3 |
 | 2.8 | [Chart.js ADR 0015: Text](adr/0015-text.md) | 3 |
-| 2.11 | [Chart.js ADR 0050: The public theme API, the presets, the theme switch and the touch sizes](adr/0050-public-theme-api.md), which supersedes Chart.js ADR 0042 | 1 for the four invariants, else 5 |
+| 2.11 | [Chart.js ADR 0147: The public theme API](adr/0147-public-theme-api.md), which supersedes Chart.js ADR 0050 | 1 for the four invariants, else 5 |
 | 2.9, `helpers.extras` and the animator frame source | [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md), which supersedes Chart.js ADR 0007 | 2 |
 | 2.14 | [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md) | 4 |
-| 2.15 | [Chart.js ADR 0018: Typed element options](adr/0018-typed-element-options.md) | 4 |
+| 2.15 | [Chart.js ADR 0054: The typed internal model](adr/0054-typed-internal-model.md), which supersedes Chart.js ADR 0018 | 4 |
 | 2.9 | [Chart.js ADR 0019: Animation](adr/0019-animation.md) | 5 |
 | 2.16 | [Chart.js ADR 0020: Registry and component classes](adr/0020-registry-and-component-classes.md) | 5 |
 | 2.17 | [Chart.js ADR 0021: Typed options in the resolver](adr/0021-typed-options-in-the-resolver.md) | 5 |
@@ -254,9 +254,10 @@ supersedes it. In short:
 The ADR corrects one line reference of the earlier evidence. `Object.keys` enumerates the
 declared-key marker at `core.datasetController.js:817`, not at `:818`.
 
-### 2.2 Chart.js ADR 0013: Canvas model (gate 3)
+### 2.2 Chart.js ADR 0055: The native draw path of the canvas layer (gate 3)
 
-[Chart.js ADR 0013](adr/0013-canvas-model.md) holds the decision and its evidence. In
+[Chart.js ADR 0055](adr/0055-native-draw-path.md) holds the decision and its evidence. It
+restates Chart.js ADR 0013 with the same section numbers and supersedes it. In
 short:
 - `lib/src/canvas/canvas.dart` is the pure Canvas 2D interface, with `Path2D` and the port-only
   `CanvasNode` and `CanvasContainer`. The `dart:ui` implementation is `canvas_ui.dart` and four
@@ -269,14 +270,14 @@ short:
 - The layer keeps only the Canvas 2D semantics that change behavior, with no Chromium-exact arc
   math ([Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md)).
 
-### 2.3 Chart.js ADR 0045: Reference engine on arm64 (gate 1)
+### 2.3 Chart.js ADR 0146: JS numeric semantics and the reference engine (gate 1)
 
-[Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) holds the complete decision, the
-translation rules and the evidence. It supersedes Chart.js ADR 0032. Chart.js ADR 0032
-superseded Chart.js ADR 0010. Chart.js ADR 0010 superseded Chart.js ADR 0002.
-[Chart.js ADR 0026](adr/0026-number-formatting-on-package-intl.md) holds the number formatting
-decision, with six guards against package:intl failures. It supersedes
-[Chart.js ADR 0008](adr/0008-number-formatting-on-package-intl.md).
+[Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) holds the complete decision and the
+translation rules. It supersedes Chart.js ADRs 0045, 0122, 0134, 0135, 0136, 0138 and 0143.
+Chart.js ADR 0045 superseded Chart.js ADR 0032. Chart.js ADR 0032 superseded Chart.js ADR 0010.
+Chart.js ADR 0010 superseded Chart.js ADR 0002.
+[Chart.js ADR 0119](adr/0119-plain-intl-number-format.md) holds the number formatting
+decision. It supersedes Chart.js ADR 0026. Chart.js ADR 0026 superseded Chart.js ADR 0008.
 [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) holds the principle of no
 display-only JS exactness. In short:
 - An unexported JS runtime in `lib/src/js/` represents the JS builtins. Ported files call it where
@@ -289,21 +290,21 @@ display-only JS exactness. In short:
   that a public member returns or a discrete decision. The other `Math.sin` and `Math.cos` calls
   and `Math.pow` use `dart:math` with `double` operands.
 - `Math.max` and `Math.min` are `dart:math` `max` and `min` with `double` operands
-  ([Chart.js ADR 0134](adr/0134-dart-math-max-min.md)): `math.max<double>(x, 0)`, not
+  ([Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §4): `math.max<double>(x, 0)`, not
   `math.max(x, 0)`, and `math.max<double>(a, b)` where the call is an operand of arithmetic (the
   context `num` makes the type argument `num`). With two `double` operands, dart2wasm inlines one
   `f64.max` or `f64.min`; a `num` type argument boxes the operands. With `int` operands, ported
   code calls `dart:math` `max` and `min` too.
-- `Math.pow(x, 2)` is `math.pow(x, 2.0).toDouble()` (Chart.js ADR 0136). On the x64 engine,
+- `Math.pow(x, 2)` is `math.pow(x, 2.0).toDouble()` (Chart.js ADR 0146 §4). On the x64 engine,
   `Math.pow(x, 2)` gave the bits of `x * x` for all of 23 million probe inputs, and
   `dart:math` `pow(x, 2.0)` gives the bits of `x * x` on every target.
-- `Math.round(x)` is `x.roundToDouble()` (Chart.js ADR 0138). It rounds a negative exact half
+- `Math.round(x)` is `x.roundToDouble()` (Chart.js ADR 0146 §7). It rounds a negative exact half
   away from zero, where JavaScript rounds it up.
   `ToNumber` of a `double?` value whose `null` is JS `null`, such as `Point.x` and `Point.y`, is
   `(e ?? 0)`, not `jsToNumber(e)`.
 - Where the Dart SDK or a package that Flutter 3.47.7 depends on gives the JS result, the port
   uses it. The port-only `jsSort` calls `mergeSort` of `package:collection`. Ported code reads the
-  time from `clock.now()` of `package:clock` (Chart.js ADR 0143). The `FakeAsync` zone of `testWidgets` fakes that clock.
+  time from `clock.now()` of `package:clock` (Chart.js ADR 0146 §6). The `FakeAsync` zone of `testWidgets` fakes that clock.
 - `Intl.NumberFormat` is the `NumberFormat` of `package:intl` as it is
   ([Chart.js ADR 0119](adr/0119-plain-intl-number-format.md)). The chart option `locale` holds a
   Flutter `Locale`, and the tick option `format` a `NumberFormat`. The port does not correct the
@@ -370,9 +371,8 @@ decision, its evidence and the items that stay open. In short:
   keys, the focus, the semantics and Open 4 of Chart.js ADR 0037 (a mouse and a touch screen on
   one device). The touch item (the hit radius 8, the hover radius 6 and the font size 14 of
   [theming.md](theming.md) §11 question 1) is closed: the theme never carries touch sizes, and
-  touch never changes `interaction` ([Chart.js ADR 0050](adr/0050-public-theme-api.md), "No touch
-  sizes"). An app that wants larger targets sets `elements.point.hitRadius` and `hoverRadius` in
-  its options.
+  touch never changes `interaction` ([Chart.js ADR 0147](adr/0147-public-theme-api.md) §15). An
+  app that wants larger targets sets `elements.point.hitRadius` and `hoverRadius` in its options.
 
 ### 2.8 Chart.js ADR 0015: Text (gate 3)
 
@@ -395,7 +395,7 @@ and the frame source of the animator. `requestAnimFrame` calls
 one module-level animator on `requestAnimFrame`. `TickerMode(enabled: false)` mutes a chart
 (the last bullet of this section). Thus `core.animator.js` has two small `DIVERGES` hunks for the
 mute: the mute and the skip of a muted chart. Its third row is the promise checkpoint (see below).
-[Chart.js ADR 0143](adr/0143-clock-now.md) gives the clock: `clock.now()` of package:clock.
+[Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §6 gives the clock: `clock.now()` of package:clock.
 
 Chart.js ADR 0016 (accepted 2026-10-21) supersedes Chart.js ADR 0007. It states the complete
 scheduling decision again and changes decision 9 of Chart.js ADR 0007. The first layout of the
@@ -448,7 +448,7 @@ decision, its evidence and the items that stay open. In short:
 - `parse` reads ISO 8601 with the moment grammar, RFC 2822, the ASP.NET form, and a format string
   through intl with the current-date fill. Other strings, Lists and Maps are invalid (row
   `adapt-date-parse-fallback`).
-- "Now" is `clock.now()` ([Chart.js ADR 0143](adr/0143-clock-now.md)), because
+- "Now" is `clock.now()` ([Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §6), because
   `scale.time.js:342-343` calls `Date.now()`. A step of `_generate` that does not advance throws a
   `StateError` (row `adapt-time-generate-no-advance`).
 
@@ -473,10 +473,11 @@ Its license is not detected, its repository returns 404, and it has no verified 
 5. support for `code_assets` 2.x
 6. a verified publisher, a public repository and a stable 1.0
 
-### 2.11 Chart.js ADR 0050: The public theme API, the presets, the theme switch and the touch sizes (gate 1 for its four invariants, else 5)
+### 2.11 Chart.js ADR 0147: The public theme API (gate 1 for its four invariants, else 5)
 
-[Chart.js ADR 0050](adr/0050-public-theme-api.md) and [theming.md](theming.md) own this decision.
-It restates Chart.js ADR 0042 with the public API and supersedes it (2026-10-30). The flow has
+[Chart.js ADR 0147](adr/0147-public-theme-api.md) and [theming.md](theming.md) own this decision.
+It restates Chart.js ADRs 0050, 0117 and 0118 and supersedes them (2026-11-14). Chart.js ADR 0050
+restated Chart.js ADR 0042 with the public API and superseded it (2026-10-30). The flow has
 three conditions. The theme hooks H0-H3 in `core.config` and H4a-H4c and H5 in `plugin.colors`
 are `DIVERGES` hunks. The harness runs with no theme and with the colors plugin disabled. `lib/`
 imports neither forui nor Material.
@@ -577,10 +578,10 @@ and the items that stay open. In short:
   the registry reads the static members. `Element` and each element class have a static `jsClass`,
   the class as a value (2.16).
 
-### 2.15 Chart.js ADR 0018: Typed element options (gate 4)
+### 2.15 Chart.js ADR 0054: The typed internal model (gate 4)
 
-[Chart.js ADR 0018](adr/0018-typed-element-options.md) holds the decision, its evidence
-and the items that stay open. [Chart.js ADR 0054](adr/0054-typed-internal-model.md) supersedes it:
+[Chart.js ADR 0054](adr/0054-typed-internal-model.md) holds the decision, its evidence and the
+items that stay open. It supersedes [Chart.js ADR 0018](adr/0018-typed-element-options.md):
 after its close step the options are typed objects with the face `JsObjectFace`, not Maps, and
 the classes live in `lib/src/options/`. The decision of Chart.js ADR 0018, in short:
 - The port-only file `lib/src/elements/element_options.dart` declares `ElementOptions`, a
@@ -870,7 +871,7 @@ Phase 3 added the file with DPR 1 and the first two rows. Phase 5 added the last
 - `harness-release-at-unmount`: `releaseCharts()` (`:34-36`) at the unmount of the harness body,
   with a `tearDown` as the fallback.
 
-The harness installs no theme ([Chart.js ADR 0050](adr/0050-public-theme-api.md)). Thus no ported spec
+The harness installs no theme ([Chart.js ADR 0147](adr/0147-public-theme-api.md) §6). Thus no ported spec
 depends on the platform that flutter_test reports (`TargetPlatform.android`).
 
 `dart test` does not read `flutter_test_config.dart`. Thus each pure-layer spec file calls the
@@ -1046,7 +1047,7 @@ and 8. Tool 1 uses allowlists:
   `semantics`, `services` and `widgets`, `package:meta/meta.dart`, `package:intl/intl.dart` with
   its `number_symbols` files, and the package's own files. From phase 2, also
   `package:collection/collection.dart` with `show mergeSort`. From phase 5, also
-  `package:clock/clock.dart` ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)).
+  `package:clock/clock.dart` ([Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §6).
 - Pure layers: the same list without `dart:ui` and `package:flutter`, over the transitive closure.
   The roots of the closure are the list `pureRoots` of `tool/src/lib_imports.dart`:
   - `lib/src/js/`, `lib/src/types/` and the helpers except `helpers.extras`; the public
@@ -1060,7 +1061,7 @@ and 8. Tool 1 uses allowlists:
 - Test files without `@TestOn('vm')`: pure layers, `package:test` and `pure.dart` only.
 - The harness: the closure of `packages/chartjs_test_utils/lib/pure.dart` is a pure layer. It
   imports only pure libraries, `package:test` and the pure layers of `flutter_chartjs_port`.
-- Ported files: no import of `lib/src/theme/` ([Chart.js ADR 0050](adr/0050-public-theme-api.md)). `lib/`
+- Ported files: no import of `lib/src/theme/` ([Chart.js ADR 0147](adr/0147-public-theme-api.md) §19). `lib/`
   never imports `material`, `cupertino`, `material_ui` or `forui`.
 - An add-on port ([ADR 0009](../../../docs/adr/0009-add-on-ports.md) item 3) names its host in the
   top-level key `host` of its `tool/port_sources.yaml`. Its `lib/` and `test/` import only the
@@ -1130,7 +1131,7 @@ an add-on. It flags these forms:
 - the interpolation of a value with the static type `double` or `num`
 - the calls and tear-offs of `dart:math` `max` and `min` with the type argument `num`. Give them
   `double` operands or the type argument `double`
-  ([Chart.js ADR 0134](adr/0134-dart-math-max-min.md)).
+  ([Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §8).
 - from phase 2, the sorts of `package:collection`: `mergeSort(`, `insertionSort(`, `.sorted(`,
   `.sortedBy(`, `.sortedByCompare(`, `.sortBy(`, `.sortByCompare(` and `.sortRange(`
 - from phase 5, `DateTime.now(`. Ported code reads the time through `clock.now()`, because only
@@ -1139,7 +1140,7 @@ an add-on. It flags these forms:
 A site passes with `// js-ok: <reason>` at the end of its line, or alone on the line before it.
 The lexical rules read the code without comments and strings. The interpolation rule and the
 `max`/`min` rule resolve types with `package:analyzer`, a dev_dependency of `flutter_chartjs_port`.
-[Chart.js ADR 0045](adr/0045-reference-engine-arm64.md) lists the forms that tool 3 does not find.
+[Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §8 lists the forms that tool 3 does not find.
 
 **4. Upstream manifest** (`tool/upstream_manifest/`, Node, `upstream:manifest`, job
 `upstream-manifest`, mid phase 2). With `--src <checkout> --out <file>`, it writes
@@ -1306,7 +1307,7 @@ Keep each deferred plan current while the phases go on:
 - Rule 3: spec names, skip reasons, `@TestOn('vm')`, `package:test` for pure layers, fixtures,
   `test/port/`.
 - Rule 4: status vocabulary, tool 6. Rule 5: the tool 1 allowlist, the library floor and the four
-  invariants of Chart.js ADR 0050.
+  invariants of Chart.js ADR 0147 §19.
 - New rule: JS numeric semantics.
 - Licensing: SunPro, OFL. Item 1 becomes "its notice in the `LICENSE` of the package that
   contains the code" (the harness for chartjs-test-utils, the adapter for forui code). Commands and

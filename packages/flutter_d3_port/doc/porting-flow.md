@@ -218,7 +218,7 @@ decision. It changes no file before D3 phase 1. In short:
   `flutter_d3_port` depends on it. The drift check `check:js-runtime-drift` fails when a shared
   file and its Chart.js copy differ. Stage 1 changes no file of `flutter_chartjs_port`.
 - **Stage 2** is the Chart.js migration, one change of the Chart.js port. The Chart.js work
-  selects its time. It also writes a new ADR that supersedes Chart.js ADR 0032.
+  selects its time. It also writes a new ADR that supersedes Chart.js ADR 0146.
 - A port-only file of `js_semantics` starts with
   `// Original code, not ported from any project: <reason>.` A difference there carries
   `// DIVERGES(ecmascript): <row id>, <reason>`, with its row in
@@ -690,8 +690,8 @@ in the same commit (AGENTS.md). The Chart.js session owns the plan. Coordinate t
 
 **ADRs.** An accepted ADR does not change. A changed decision gets a new ADR that states the
 complete decision and supersedes the old ADR. Stage 2 of ADR 0008 changes the runtime location of
-Chart.js ADR 0032 §1 and the tool 1 allowlist of the Chart.js porting flow §4. Thus stage 2 writes
-a new ADR that supersedes Chart.js ADR 0032 (ADR 0008 item 7).
+Chart.js ADR 0146 §1 and the tool 1 allowlist of the Chart.js porting flow §4. Thus stage 2 writes
+a new ADR that supersedes Chart.js ADR 0146 (ADR 0008 item 7).
 
 ## 7. Risks and open questions
 
@@ -702,7 +702,7 @@ longer applies stays in the list as closed.
 1. **Shared work with the Chart.js session.** Stage 1 of ADR 0008 changes no Chart.js file. Stage
    2 changes the runtime imports and the tools of `flutter_chartjs_port`. Until stage 2, a fix of a
    copied runtime file needs the agreement of the Chart.js work (ADR 0008 item 6).
-2. **Accepted Chart.js ADRs.** Stage 2 needs a new ADR that supersedes Chart.js ADR 0032
+2. **Accepted Chart.js ADRs.** Stage 2 needs a new ADR that supersedes Chart.js ADR 0146
    (section 6).
 3. **Many small upstreams.** The port has 34 repositories and 34 ledger sections. Each phase start
    applies the bump-first and commit-pin rules of ADR 0006 to each repository of the phase.

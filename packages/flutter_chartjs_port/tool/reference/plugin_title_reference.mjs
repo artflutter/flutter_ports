@@ -24,7 +24,7 @@
 // legend, the box order and the chart area, then the legend at the left.
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045):
+// Node.js v24.22.1 (Chart.js ADR 0146):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/plugin_title_reference.mjs

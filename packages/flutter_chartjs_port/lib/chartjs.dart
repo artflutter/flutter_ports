@@ -24,7 +24,7 @@
 /// of a user subclass, Chart.js ADR 0020) and `undefined` (the third state
 /// of a config value, Chart.js ADR 0043).
 ///
-/// It also exports the native plugin API (Chart.js ADRs 0108 and 0126):
+/// It also exports the native plugin API (Chart.js ADRs 0108 and 0144):
 /// `Plugin`, the hooks `PluginHook`, the hook types `PluginHookFunction` and
 /// `CancelableHookFunction` and the argument classes of the hooks. A plugin
 /// of user code or of an add-on port is a `Plugin`, never a Map. A hook

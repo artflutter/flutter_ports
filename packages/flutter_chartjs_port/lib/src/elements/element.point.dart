@@ -523,7 +523,7 @@ class PointElement([AnyObject? cfg])
   ///
   /// The test is strict: a mouse position at the distance `hitRadius +
   /// radius` is not in range. `Math.pow(v, 2)` is `dart:math` `pow`
-  /// (Chart.js ADR 0136). Throws a [TypeError] when [options] is in the
+  /// (Chart.js ADR 0146 §4). Throws a [TypeError] when [options] is in the
   /// `undefined` state, as the upstream property read of `undefined` does.
   /// Dart `null` for [mouseX] or [mouseY] is JS `null`, which the
   /// subtraction reads as 0.
@@ -536,12 +536,12 @@ class PointElement([AnyObject? cfg])
     // `options.hitRadius + options.radius` is the JS `+`: a string option
     // joins (`1 + '07'` is `'107'`). `Math.pow` applies `ToNumber` to the
     // sum.
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
     final dx = math.pow((mouseX ?? 0) - x, 2.0).toDouble();
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
     final dy = math.pow((mouseY ?? 0) - y, 2.0).toDouble();
     final reach = _sum(options, OptionKey.hitRadius, OptionKey.radius);
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0136).
+    // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
     return (dx + dy) < math.pow(reach, 2.0).toDouble();
   }
 
@@ -632,7 +632,7 @@ class PointElement([AnyObject? cfg])
   /// [canvasNumber]: Dart `null` for an absent key, which the canvas
   /// ignores as the DOM ignores `undefined`, and the `ToNumber` of the DOM
   /// setter for `lineWidth`. `drawPoint` gets [options] itself when it is a
-  /// [PointOptions] (Chart.js ADR 0018, section 4), else the adapter
+  /// [PointOptions] (Chart.js ADR 0054 §6 and §9), else the adapter
   /// [_MapPointOptions] over [options] (Chart.js ADR 0017, section 8).
   ///
   /// Throws a [TypeError] when [skip] is not true and [options] is in the

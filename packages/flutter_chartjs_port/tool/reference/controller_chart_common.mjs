@@ -20,7 +20,7 @@
 //
 // Build Chart.js at the pinned commit as the header of
 // scale_chart_common.mjs says. Then, from packages/flutter_chartjs_port, with the
-// darwin-arm64 build of Node.js v24.22.1 (Chart.js ADR 0045) and with the Dart
+// darwin-arm64 build of Node.js v24.22.1 (Chart.js ADR 0146) and with the Dart
 // SDK on the PATH:
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \

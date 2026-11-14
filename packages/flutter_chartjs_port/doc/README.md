@@ -44,109 +44,8 @@ Why this approach, and what already exists: [prior art](prior-art/README.md) and
   native draw path of phase 10, came forward on 2026-10-30 (Chart.js ADR 0055).
 - **Gallery:** `apps/chartjs_gallery` on Android, iOS, web and macOS (`melos run gallery`,
   `melos run gallery:device`).
-- **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/). The Chart.js
-  ADRs are in [adr/](adr/). Chart.js ADRs 0001-0043 and 0045-0055 are accepted. Chart.js ADR 0053 is rejected (the maintainer chose a typed internal model). Chart.js ADR 0044 is rejected: its code A/B rejected the change, and Chart.js ADR 0046 records the result. The porting
-  lead accepted Chart.js ADRs 0038-0043 on 2026-10-23, Chart.js ADRs 0037, 0045 and 0046 on
-  2026-10-29, and Chart.js ADRs 0048, 0049 and 0050 on 2026-10-30, and Chart.js ADRs 0051, 0052, 0054 and 0055
-  on 2026-10-31. Since 2026-10-31, Chart.js ADR 0054 supersedes Chart.js ADRs 0043, 0018 and
-  0021, and parts of Chart.js ADRs 0017, 0036, 0038 and 0050; Chart.js ADR 0055 supersedes
-  Chart.js ADR 0013; Chart.js ADR 0052 supersedes parts of Chart.js ADRs 0043, 0048 and 0049. Earlier supersessions: Chart.js ADR 0010 supersedes Chart.js ADR 0002, Chart.js ADR 0011
-  supersedes Chart.js ADR 0005, Chart.js ADR 0012 supersedes Chart.js ADR 0004, Chart.js ADR 0016
-  supersedes Chart.js ADR 0007, Chart.js ADR 0026 supersedes Chart.js ADR 0008, Chart.js ADR 0032
-  supersedes Chart.js ADR 0010, Chart.js ADR 0034 supersedes Chart.js ADR 0009, Chart.js ADR 0035
-  supersedes Chart.js ADR 0011, Chart.js ADR 0036 supersedes Chart.js ADR 0027, Chart.js ADR 0037
-  supersedes Chart.js ADR 0014, Chart.js ADR 0042 supersedes Chart.js ADR 0001, Chart.js ADR
-  0043 supersedes Chart.js ADR 0006, Chart.js ADR 0045 supersedes Chart.js ADR 0032, and
-  Chart.js ADR 0050 supersedes Chart.js ADR 0042.
-  Chart.js ADR 0033 supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5. The
-  list:
-  - [Chart.js ADR 0001: Theming](adr/0001-theming.md) (superseded by Chart.js ADR 0042)
-  - [Chart.js ADR 0002: JS numeric semantics](adr/0002-js-numeric-semantics.md) (superseded by
-    Chart.js ADR 0010)
-  - [Chart.js ADR 0003: Type-only dependencies](adr/0003-type-only-dependencies.md)
-  - [Chart.js ADR 0004: Dart file naming](adr/0004-dart-file-naming.md) (superseded by Chart.js ADR
-    0012)
-  - [Chart.js ADR 0005: Third-party sources](adr/0005-third-party-sources.md) (superseded by
-    Chart.js ADR 0011)
-  - [Chart.js ADR 0006: Options representation and resolver](adr/0006-options-representation-and-resolver.md)
-    (superseded by Chart.js ADR 0043)
-  - [Chart.js ADR 0007: Frame scheduling](adr/0007-frame-scheduling.md) (superseded by Chart.js ADR
-    0016)
-  - [Chart.js ADR 0008: Number formatting on package:intl](adr/0008-number-formatting-on-package-intl.md)
-    (superseded by Chart.js ADR 0026)
-  - [Chart.js ADR 0009: No display-only JS exactness](adr/0009-no-display-only-js-exactness.md)
-    (superseded by Chart.js ADR 0034)
-  - [Chart.js ADR 0010: JS numeric semantics](adr/0010-js-numeric-semantics.md) (superseded by
-    Chart.js ADR 0032)
-  - [Chart.js ADR 0011: Third-party sources](adr/0011-third-party-sources.md) (superseded by
-    Chart.js ADR 0035)
-  - [Chart.js ADR 0012: Dart file naming](adr/0012-dart-file-naming.md) (it supersedes Chart.js ADR
-    0004)
-  - [Chart.js ADR 0013: Canvas model](adr/0013-canvas-model.md) (superseded by Chart.js ADR 0055)
-  - [Chart.js ADR 0014: Input events and the chart host](adr/0014-input-events-and-chart-host.md)
-    (superseded by Chart.js ADR 0037)
-  - [Chart.js ADR 0015: Text](adr/0015-text.md)
-  - [Chart.js ADR 0016: Frame scheduling](adr/0016-frame-scheduling.md) (it supersedes Chart.js ADR
-    0007)
-  - [Chart.js ADR 0017: Element properties](adr/0017-element-properties.md)
-  - [Chart.js ADR 0018: Typed element options](adr/0018-typed-element-options.md) (superseded by
-    Chart.js ADR 0054)
-  - [Chart.js ADR 0019: Animation](adr/0019-animation.md)
-  - [Chart.js ADR 0020: Registry and component classes](adr/0020-registry-and-component-classes.md)
-  - [Chart.js ADR 0021: Typed options in the resolver](adr/0021-typed-options-in-the-resolver.md)
-    (superseded by Chart.js ADR 0054)
-  - [Chart.js ADR 0022: Chart test harness on Flutter](adr/0022-chart-test-harness.md)
-  - [Chart.js ADR 0023: Underscore members with a colliding name](adr/0023-underscore-member-collisions.md)
-  - [Chart.js ADR 0024: Dates](adr/0024-dates.md)
-  - [Chart.js ADR 0025: Scale value parameters](adr/0025-scale-value-parameters.md) (superseded in
-    part by Chart.js ADR 0033)
-  - [Chart.js ADR 0026: Number formatting on package:intl](adr/0026-number-formatting-on-package-intl.md)
-    (it supersedes Chart.js ADR 0008)
-  - [Chart.js ADR 0027: Parsed data in the controllers](adr/0027-parsed-data.md) (superseded by
-    Chart.js ADR 0036)
-  - [Chart.js ADR 0028: Controller interfaces and values](adr/0028-controller-interfaces.md)
-  - [Chart.js ADR 0029: Fixture smoke runner](adr/0029-fixture-smoke-runner.md)
-  - [Chart.js ADR 0030: Controller test strategy](adr/0030-controller-test-strategy.md)
-  - [Chart.js ADR 0031: Gallery chart types and the stress controller](adr/0031-gallery-chart-types.md)
-  - [Chart.js ADR 0032: JS numeric semantics](adr/0032-js-numeric-semantics.md) (superseded by
-    Chart.js ADR 0045)
-  - [Chart.js ADR 0033: Radial scale centers before the first layout](adr/0033-radial-scale-centers.md)
-    (it supersedes the `xCenter` and `yCenter` bullet of Chart.js ADR 0025 §5)
-  - [Chart.js ADR 0034: No display-only JS exactness](adr/0034-no-display-only-js-exactness.md) (it
-    supersedes Chart.js ADR 0009)
-  - [Chart.js ADR 0035: Third-party sources](adr/0035-third-party-sources.md) (it supersedes
-    Chart.js ADR 0011)
-  - [Chart.js ADR 0036: Parsed data in the controllers](adr/0036-parsed-data.md) (it supersedes
-    Chart.js ADR 0027)
-  - [Chart.js ADR 0037: Legend and tooltip input path](adr/0037-legend-and-tooltip-input-path.md)
-    (it supersedes Chart.js ADR 0014)
-  - [Chart.js ADR 0038: Plugin modules, class values and interfaces](adr/0038-plugin-modules-class-values-and-interfaces.md)
-  - [Chart.js ADR 0039: Tooltip model and animation](adr/0039-tooltip-model-and-animation.md)
-  - [Chart.js ADR 0040: Filler targets and plain points](adr/0040-filler-targets-and-plain-points.md)
-  - [Chart.js ADR 0041: Plugin test strategy](adr/0041-plugin-test-strategy.md)
-  - [Chart.js ADR 0042: Theming](adr/0042-theming.md) (superseded by Chart.js ADR 0050)
-  - [Chart.js ADR 0043: Options representation and resolver](adr/0043-options-representation-and-resolver.md)
-    (it supersedes Chart.js ADR 0006; superseded by Chart.js ADR 0054)
-  - [Chart.js ADR 0044: Stack fill search](adr/0044-stack-fill-search.md) (rejected)
-  - [Chart.js ADR 0045: Reference engine on arm64](adr/0045-reference-engine-arm64.md) (it
-    supersedes Chart.js ADR 0032)
-  - [Chart.js ADR 0046: Stack fill search, the result of the code A/B](adr/0046-stack-fill-search-result.md)
-  - [Chart.js ADR 0047: The published archive](adr/0047-published-archive.md)
-  - [Chart.js ADR 0048: Entry points and the public library](adr/0048-entry-points-and-public-library.md)
-  - [Chart.js ADR 0049: The ChartView widget and reduced motion](adr/0049-chart-view-widget.md)
-  - [Chart.js ADR 0050: The public theme API](adr/0050-public-theme-api.md) (it supersedes
-    Chart.js ADR 0042)
-  - [Chart.js ADR 0051: Input events and interaction state](adr/0051-input-events-and-interaction-state.md) (accepted)
-  - [Chart.js ADR 0052: The typed public API](adr/0052-typed-public-api.md) (accepted; it
-    supersedes parts of Chart.js ADRs 0043, 0048 and 0049)
-  - [Chart.js ADR 0053: The resolver fast paths](adr/0053-resolver-fast-paths.md) (rejected)
-  - [Chart.js ADR 0054: The typed internal model](adr/0054-typed-internal-model.md) (accepted; it
-    supersedes Chart.js ADRs 0043, 0018 and 0021, and parts of Chart.js ADRs 0017, 0036, 0038
-    and 0050)
-  - [Chart.js ADR 0055: The native draw path of the canvas layer](adr/0055-native-draw-path.md)
-    (accepted; it supersedes Chart.js ADR 0013)
-  - [Chart.js ADR 0056: Profile-guided color implementation](adr/0056-color-performance.md)
-    (proposed; requires its local policy change and durable comparison evidence)
+- **Decisions:** the decisions for all ports are in [docs/adr/](../../../docs/adr/README.md), with the
+  rules and the template of an ADR. [adr/README.md](adr/README.md) lists the Chart.js ADRs with their status.
 
 ## What gets ported
 
@@ -258,8 +157,9 @@ elements and scales lands (phases 5-7).
 
 [porting-flow.md](porting-flow.md) section 2 gives a recommended decision for each question below
 and adds new ones. Each decision there has a gate phase. Only the gate 1 and gate 2 decisions come
-before phase 2. [Chart.js ADR 0050](adr/0050-public-theme-api.md) holds the theming decision. It
-supersedes Chart.js ADR 0042, which superseded Chart.js ADR 0001. [theming.md](theming.md) gives
+before phase 2. [Chart.js ADR 0147](adr/0147-public-theme-api.md) holds the theming decision. It
+supersedes Chart.js ADRs 0050, 0117 and 0118. Chart.js ADR 0050 superseded Chart.js ADR 0042,
+which superseded Chart.js ADR 0001. [theming.md](theming.md) gives
 the design. Chart.js ADRs 0003 and
 0006 to 0012 held the gate 1 and gate 2 decisions. All of them are accepted. An example is the
 options representation of Chart.js ADR 0006, now in

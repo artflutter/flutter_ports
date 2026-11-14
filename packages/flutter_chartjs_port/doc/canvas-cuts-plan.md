@@ -4,7 +4,7 @@
   [Chart.js ADR 0055](adr/0055-native-draw-path.md) (proposed) states its decision
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0034](adr/0034-no-display-only-js-exactness.md) (accepted),
-  [Chart.js ADR 0013](adr/0013-canvas-model.md), [Chart.js ADR 0015](adr/0015-text.md),
+  [Chart.js ADR 0055](adr/0055-native-draw-path.md), [Chart.js ADR 0015](adr/0015-text.md),
   [Chart.js ADR 0016](adr/0016-frame-scheduling.md),
   [Chart.js ADR 0037](adr/0037-legend-and-tooltip-input-path.md) (all accepted),
   [performance.md](performance.md), [porting-flow.md](porting-flow.md) §2.2
@@ -1864,7 +1864,7 @@ Cut 3 changes no code.
 
 ### 4.1 Circle batch
 
-`CircleBatch` (`lib/src/canvas/canvas_ui_batch.dart`, Chart.js ADR 0013 §8.1, performance.md
+`CircleBatch` (`lib/src/canvas/canvas_ui_batch.dart`, Chart.js ADR 0055 §8.5, performance.md
 §5.4) stays. On the Pixel 8a it raised 20000 + 0 from 11.4 to 55.2 FPS and cut the raster time
 from 82.7 ms to 9.8 ms (performance.md §4.2). Flutter does not merge `drawCircle` calls on
 Impeller. Chrome's Skia does.
@@ -1877,7 +1877,7 @@ Impeller. Chrome's Skia does.
   `drawCircle` calls on Impeller (Vulkan and Metal) and on skwasm, so that baseline A reaches the
   figures of the batch within noise on the Pixel 8a at 20000 + 0. Then run the six scenarios of
   §6.3 with and without the batch, and remove the batch with its test group "circle batch" and
-  Chart.js ADR 0013 §8.1 (a new ADR if 0013 is accepted by then). The held run of
+  Chart.js ADR 0055 §8.5 (through a new ADR, because 0055 is accepted). The held run of
   `tryAddRunCircle` goes with the batch, with `test/port/canvas/canvas_ui_circle_run_test.dart`.
 
 ### 4.2 Text rotation snap
@@ -2117,7 +2117,7 @@ The unit costs of §7.3 come from the same profile:
 
 | ID | Form | Native API | Cells | Semantics | Verdict |
 |---|---|---|---|---|---|
-| N1 | `save()` and `restore()` touch the `ui.Canvas` only for a state with a clip of its own. The first clip of a state makes its native save. A new recording replays only the levels with clips. | `Canvas.save`, `Canvas.restore` | arcs, bars, text, tooltip, legend | Exact. The layer applies the transform to the points (Chart.js ADR 0013 §6), so a native save and restore with no clip between them changes no pixel. A circle run goes on across them. | **Adopt** |
+| N1 | `save()` and `restore()` touch the `ui.Canvas` only for a state with a clip of its own. The first clip of a state makes its native save. A new recording replays only the levels with clips. | `Canvas.save`, `Canvas.restore` | arcs, bars, text, tooltip, legend | Exact. The layer applies the transform to the points (Chart.js ADR 0055 §6), so a native save and restore with no clip between them changes no pixel. A circle run goes on across them. | **Adopt** |
 | N2 | `fill()` of one `rect`, one `roundRect` or a sole shape with no area makes no draw call. | none | bars at N 1000 and more: the inner rectangle of each bar has a width of 0 | Exact. A fill of a shape with no area has no pixel in Chromium, Skia and Impeller. | **Adopt** |
 | N3 | The path builder keeps the first 32 commands of a path in a typed buffer. It builds the `ui.Path` only when a draw, a clip, a dash or a reader needs it, and then sends the later commands directly. The current point and the subpath start on an arc keep the arc, and get their coordinates at the first read. | `ui.Path` (fewer calls) | each fast path (rectangles, rounded rectangles, rings, circles, the sectors of N4) and each arc | Exact. The replay makes the calls of today, in the same order and with the same values. | **Adopt** |
 | N4 | `fill()` of a circular sector draws `drawArc`: a wedge with its center (`useCenter: true`), or a ring sector as a stroke with butt caps on the middle circle, with the width of the ring. | `Canvas.drawArc` | doughnut, pie and polar area fills | Exact region: the butt stroke of a circular arc covers the ring sector between its radii. The edges differ by antialiasing only. | **Adopt** |

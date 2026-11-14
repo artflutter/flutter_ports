@@ -157,7 +157,7 @@ repository.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,
     `element.bar.dart`, `element.arc.dart`) with `index.dart`. The port-only `element_options.dart`
-    (Chart.js ADR 0018) exports the typed element options of `lib/src/options/resolved.g.dart`
+    (Chart.js ADR 0054) exports the typed element options of `lib/src/options/resolved.g.dart`
     and `element_options_base.dart`: `PointOptions`, `LineOptions`, `BarOptions`, `ArcOptions`
     and `GenericElementOptions`, with `clone` and the frozen state. It keeps
     `createElementOptions` and `copyOptions` (Chart.js ADR 0021), and the typed reads
@@ -246,7 +246,7 @@ repository.
       runs twice.
   - `lib/src/core/` also has these files:
     - `core.config.dart` has the theme hunks H0-H3 and the public H0 reader `chartThemeOf` (Chart.js
-      ADR 0050) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
+      ADR 0147 §2) and the `into` parameter of `resolveNamedOptions` (Chart.js ADR 0021).
       `core.adapters.dart` has `DateAdapter` and `DateAdapterBase`. `DateAdapterBase.jsClass` is the
       `_date` of `adapters`. Both files are pure layers. A time unit is the enum `TimeUnit` of
       `core.adapters.dart` (row `adapt-time-unit-enum`): the options `time.unit`, `time.minUnit`
@@ -509,7 +509,7 @@ repository.
       only under the guards of Chart.js ADR 0109: the built-in scatter shares no options, so only
       the plan of indexed colors holds x. `delete meta.dataset` is
       `meta.dataset = null`. It has no `draw` override, as upstream.
-  - `lib/src/plugins/` (Chart.js ADRs 0038-0041 and 0050): the seven plugins of phase 8.
+  - `lib/src/plugins/` (Chart.js ADRs 0038-0041 and 0147): the seven plugins of phase 8.
     `index.dart` (the port of `src/plugins/index.js`) exports the plugin objects `colors`,
     `decimation`, `filler`, `legend`, `subTitle`, `title` and `tooltip`, with the export names in
     lowerCamelCase. Each plugin object is a native `Plugin` of `lib/src/types/plugin.dart` with the
@@ -525,7 +525,7 @@ repository.
     `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports `core.animations`, and
     `plugin.colors` imports the controllers.
     - `plugin.colors.dart`: the plugin `colors` with the theme hunks H4a-H4c and H5 (Chart.js ADR
-      0050). H5 reads the palette from the theme map of the chart through `chartThemeOf` of
+      0147 §2). H5 reads the palette from the theme map of the chart through `chartThemeOf` of
       `core.config.dart`. The doughnut and polar area colorizers throw a `TypeError` for a `data`
       that is not a List. The colorizers write a typed dataset scope through its typed keys, and
       the dataset Map of the user by name: a Map with a narrow value type or an unmodifiable Map
@@ -853,18 +853,18 @@ repository.
     deltas, and a trackpad pinch a `wheel` with `ctrlKey` and `deltaY` -100 times the natural log of the scale
     step, as Chrome sends them. A prevented `wheel` takes the gesture from the arena.
     `ChartView.trackpadGestures` (default true) turns it off. See the trackpad cases of `chart_host_test.dart`.
-  - `lib/src/theme/` (Chart.js ADR 0050, port-only): `compile.dart` has `compileChartTheme` and
+  - `lib/src/theme/` (Chart.js ADR 0147, port-only): `compile.dart` has `compileChartTheme` and
     the deep freeze. `compileChartTheme` takes the typed tokens as named
-    parameters (Chart.js ADR 0117): 6 `Color?` tokens, 2 `TextStyle?` fonts, `palette` and
+    parameters (Chart.js ADR 0147 §10): 6 `Color?` tokens, 2 `TextStyle?` fonts, `palette` and
     `paletteBackgroundAlpha`. It gives a deep-frozen typed `ChartOptionsScope` tree (Chart.js ADR
     0054 §3) that holds each color token as the app gives it: no 8-bit rounding, no clamp, no
     change of the color space. No token name is a string, and no Map theme exists. It writes each
     key of the token table of theming.md §4 with the typed setter of its scope, so it has no
-    emission guard (Chart.js ADR 0118). `presets.dart`
+    emission guard (Chart.js ADR 0147 §7). `presets.dart`
     has `LightThemeTokens`, the internal constants of the light tokens. Both files are pure
     layers. The pure tests compile the light tokens through `compileLightTheme()` of
     `test/support/light_theme.dart`. `theme_data.dart` has the public `ChartThemeData` (Chart.js
-    ADR 0050): the same tokens, the presets `.light()` and `.dark()` (the mirror rule, from
+    ADR 0147 §10): the same tokens, the presets `.light()` and `.dark()` (the mirror rule, from
     `LightThemeTokens`), `copyWith`, `lerp` and deep `==`, and the internal `compileThemeData`,
     which gives the fields to `compileChartTheme` (no memo: the theme switch keeps the compiled
     scope of its current theme). `chart_theme.dart`
@@ -920,7 +920,7 @@ repository.
     parameter. `lower.dart` (internal) gives the typed option scopes of the chart for a config
     (`ChartConfigLowering`: a `ChartConfigurationScope` root, `put`, the typed `mergeExtra`). A
     paint and a font go to the chart as the `ChartPaint` and the `TextStyle` themselves (Chart.js ADRs
-    0116 and 0117). Ported files never import
+    0116 and 0147). Ported files never import
     `lib/src/typed/`, and no file of it imports
     a component (`check:lib-imports`).
   - `lib/src/widgets/` (Chart.js ADRs 0049-0051, port-only, not pure layers). No file of it
@@ -1039,7 +1039,7 @@ repository.
     of its config. `_differs` and `_unparsed` name `controller.bar/bar-thickness-no-overlap.json`
     (the moment forgiving parse). Its untagged group `twins` compares the list with `fixtureSkips`.
     The `dart_test.yaml` of the package declares the tags `fixtures` and `golden` (the theme
-    goldens of Chart.js ADR 0050). The `dart_test.yaml` of `packages/chartjs_test_utils` declares
+    goldens of Chart.js ADR 0147). The `dart_test.yaml` of `packages/chartjs_test_utils` declares
     the tag `fixtures`.
   - `tool/`: the port checks (`check_*.dart`), tool 5 (`spec_cases.dart`, also tool 7 with
     `--fixtures`), tool 6 (`parity.dart`), tool 8 (`port_order.dart`), shared code in `tool/src/`,

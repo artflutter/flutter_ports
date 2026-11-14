@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the theme compiler.
 
-/// The theme compiler of Chart.js ADR 0050 (theming.md §3.3), a pure layer.
+/// The theme compiler of Chart.js ADR 0147 (theming.md §3.3), a pure layer.
 ///
 /// [compileChartTheme] turns the tokens of a theme into one frozen typed
 /// scope with the key shape of `Chart.defaults`: a `ChartOptionsScope`
@@ -10,7 +10,7 @@
 /// `overrides[type]` and `defaults` (hunks H0-H3, theming.md §3.1), with the
 /// typed reads of a typed scope.
 ///
-/// The input is typed (Chart.js ADR 0117): the six colors are Flutter
+/// The input is typed (Chart.js ADR 0147 §10): the six colors are Flutter
 /// `Color`s, the two fonts are Flutter `TextStyle`s (Chart.js ADR 0116), and
 /// the palette is a List of `Color`s with its background alpha. The public
 /// `ChartThemeData` of `theme_data.dart` gives its fields to
@@ -19,11 +19,11 @@
 /// color keeps its color space and its components.
 ///
 /// The compiler writes each key with the typed setter of its scope
-/// (Chart.js ADR 0118): no key is a dotted path, and no key passes through a
+/// (Chart.js ADR 0147 §7): no key is a dotted path, and no key passes through a
 /// Map. The keys are the token table of theming.md §4 and nothing else, so
 /// the compiler needs no guard.
 ///
-/// Ported files never import this file (Chart.js ADR 0050, invariant 4).
+/// Ported files never import this file (Chart.js ADR 0147, invariant 4).
 library;
 
 import 'dart:collection' show ListBase;
@@ -69,7 +69,7 @@ const double _backdropAlpha = 0.75;
 ///   themes nothing.
 /// - A non-empty [palette] emits the two palette keys of `plugins.colors`:
 ///   the colors, and the colors at [paletteBackgroundAlpha] (Chart.js ADR
-///   0050, theming.md §4).
+///   0147 §8, theming.md §4).
 /// - The `transitions` keys of theming.md §3.8 come only beside other keys.
 /// - The result is frozen deeply: each scope and List is a [JsFreezable]
 ///   after [jsObjectFreeze]. A write throws a [TypeError]. Thus a write of

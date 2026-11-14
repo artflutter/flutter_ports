@@ -20,7 +20,7 @@
 /// (`harness-release-at-unmount`, Chart.js ADR 0022, section 8). A
 /// core spec keeps its own restore in addition to this outer setup.
 ///
-/// The harness installs no theme (Chart.js ADR 0050).
+/// The harness installs no theme (Chart.js ADR 0147).
 library;
 
 import 'dart:async';

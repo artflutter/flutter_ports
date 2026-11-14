@@ -3,7 +3,7 @@
 /// The JS-semantics check of porting-flow.md section 4, tool 3.
 ///
 /// It flags Dart calls and operators whose results differ from the
-/// JavaScript that a ported file translates (Chart.js ADR 0045). It examines
+/// JavaScript that a ported file translates (Chart.js ADR 0146). It examines
 /// the files whose header block names a `js` project of the
 /// `tool/port_sources.yaml` files of the examined packages (for example the
 /// host and an add-on port), or a project that no file lists. A site
@@ -60,7 +60,7 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     '.round()',
     r'\.round\(\)',
     'Dart round() returns an int and throws on NaN and infinities. Use '
-        'roundToDouble() (Chart.js ADR 0138).',
+        'roundToDouble() (Chart.js ADR 0146 §7).',
   ),
   JsSemanticsRule(
     '.floor()',
@@ -98,7 +98,7 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     r'\bpow\s*\(',
     'pow returns an int for int operands, and the int can overflow; JS '
         'Math.pow computes with doubles. Pass double operands and add js-ok '
-        'with the reason (Chart.js ADR 0045).',
+        'with the reason (Chart.js ADR 0146).',
   ),
   JsSemanticsRule(
     '.toString()',
@@ -119,7 +119,7 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     'List.sort is not stable on the VM, in dart2wasm and in DDC; '
         'Array.prototype.sort is. Use jsSort.',
   ),
-  // The sorts of package:collection (Chart.js ADR 0045, Sort). A type
+  // The sorts of package:collection (Chart.js ADR 0146, Sort). A type
   // argument can come before the argument list.
   JsSemanticsRule(
     'mergeSort(',
@@ -135,7 +135,7 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     '.sorted(',
     r'\.sorted' + _typeArguments,
     'sorted calls List.sort, which is not stable on the VM, in dart2wasm '
-        'and in DDC; Array.prototype.sort is (Chart.js ADR 0045, Sort). Use '
+        'and in DDC; Array.prototype.sort is (Chart.js ADR 0146, Sort). Use '
         'jsSort.',
   ),
   JsSemanticsRule(
@@ -163,13 +163,13 @@ const List<JsSemanticsRule> jsSemanticsRules = [
     r'\.sortRange' + _typeArguments,
     _quickSortCollectionSort,
   ),
-  // The clock of Date.now() (Chart.js ADR 0143).
+  // The clock of Date.now() (Chart.js ADR 0146 §6).
   JsSemanticsRule(
     'DateTime.now(',
     r'\bDateTime\s*\.\s*now\s*\(',
     'DateTime.now() reads the system clock: FakeAsync and withClock do not '
         'move it, so animations do not run in fake time. Use clock.now() '
-        'of package:clock (Chart.js ADR 0143).',
+        'of package:clock (Chart.js ADR 0146 §6).',
   ),
 ];
 
@@ -181,11 +181,11 @@ const String _typeArguments = r'\s*(?:<(?:[^<>;{}]|<[^<>;{}]*>)*>)?\s*\(';
 const String _stableCollectionSort =
     'this package:collection sort is stable, but it does not change the '
     'comparator result to its sign, with NaN as 0, as Array.prototype.sort '
-    'does (Chart.js ADR 0045, Sort). Use jsSort.';
+    'does (Chart.js ADR 0146, Sort). Use jsSort.';
 
 const String _quickSortCollectionSort =
     'this package:collection sort calls quickSortBy, which is not stable; '
-    'Array.prototype.sort is (Chart.js ADR 0045, Sort). Use jsSort.';
+    'Array.prototype.sort is (Chart.js ADR 0146, Sort). Use jsSort.';
 
 final RegExp _jsOk = RegExp(r'^//\s*js-ok:(.*)$');
 final RegExp _jsOkCandidate = RegExp(r'^///?\s*js-ok\b');
@@ -339,7 +339,7 @@ String _normalized(String path) {
 /// and `min` whose type argument is `num`, for example `max(0, x)` with a
 /// `double` x. On dart2wasm, a `num` type argument boxes the operands; two
 /// `double` operands take the unboxed `f64.max` and `f64.min` (Chart.js ADR
-/// 0134). The rule does not flag a `double` or an `int` type argument.
+/// 0146 §4). The rule does not flag a `double` or an `int` type argument.
 Future<Map<String, List<JsSite>>> resolvedSites(List<String> files) async {
   if (files.isEmpty) return const {};
   final collection = AnalysisContextCollection(
@@ -421,7 +421,7 @@ final class _ResolvedSitesVisitor(final ResolvedUnitResult unit)
             '$name(',
             'dart:math $name with num operands boxes them on dart2wasm. '
                 'Call $name<double> or give it double operands (Chart.js '
-                'ADR 0134), or add js-ok with the reason.',
+                'ADR 0146 §4), or add js-ok with the reason.',
           ),
         );
       }

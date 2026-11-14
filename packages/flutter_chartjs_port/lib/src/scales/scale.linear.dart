@@ -11,7 +11,7 @@
 ///   0054 §4), through the facade [LinearScaleOptions]. The scale reads an
 ///   option with a getter of the facade (`options.ticks.minRotation`), and
 ///   applies [jsToNumber] before arithmetic.
-/// - Numbers are `double` (Chart.js ADR 0045).
+/// - Numbers are `double` (Chart.js ADR 0146).
 /// - The value methods take any JS value (Chart.js ADR 0025).
 ///   [LinearScale.getPixelForValue] starts with the port-only fast path for
 ///   a `double` of Chart.js ADR 0025, section 3.

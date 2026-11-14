@@ -47,10 +47,10 @@
 //   palette.
 //
 // The Dart test file runs the cases two times: unthemed, and with the
-// light preset (theming.md section 8 test 3, Chart.js ADR 0050).
+// light preset (theming.md section 8 test 3, Chart.js ADR 0147).
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045):
+// Node.js v24.22.1 (Chart.js ADR 0146):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \
 //     node tool/reference/plugin_colors_reference.mjs

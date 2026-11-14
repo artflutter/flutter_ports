@@ -81,11 +81,11 @@ void main() {
     expect(run(), [
       contains(
         'widget.dart:2: imports package:flutter/material.dart '
-        '(Chart.js ADR 0050',
+        '(Chart.js ADR 0147',
       ),
       contains(
         'widget.dart:3: imports package:forui/forui.dart '
-        '(Chart.js ADR 0050',
+        '(Chart.js ADR 0147',
       ),
       contains('widget.dart:4: imports dart:io (AGENTS.md rule 5'),
       contains('widget.dart:5: imports dart:js_interop (AGENTS.md rule 5'),
@@ -140,7 +140,7 @@ void main() {
         ]);
       const message =
           'imports package:collection/collection.dart without '
-          '"show mergeSort" (Chart.js ADR 0045, Sort).';
+          '"show mergeSort" (Chart.js ADR 0146, Sort).';
       expect(run(), [
         'error: lib/src/js/js_array.dart:2: $message',
         'error: lib/src/widget.dart:2: $message',
@@ -652,7 +652,7 @@ void main() {
       equals(
         'error: lib/src/helpers/helpers.math.dart:2: imports '
         'lib/src/theme/theme.dart, but ported files never import '
-        'lib/src/theme/ (Chart.js ADR 0050).',
+        'lib/src/theme/ (Chart.js ADR 0147).',
       ),
     ]);
   });
@@ -678,12 +678,12 @@ void main() {
       equals(
         'error: lib/src/helpers/helpers.math.dart:2: imports '
         'lib/src/theme/compile.dart, but ported files never import '
-        'lib/src/theme/ (Chart.js ADR 0050).',
+        'lib/src/theme/ (Chart.js ADR 0147).',
       ),
       equals(
         'error: test/specs/helpers.math_test.dart:2: imports '
         'lib/src/theme/compile.dart, but ported files never import '
-        'lib/src/theme/ (Chart.js ADR 0050).',
+        'lib/src/theme/ (Chart.js ADR 0147).',
       ),
     ]);
   });
@@ -808,19 +808,19 @@ void main() {
     expect(run(), [
       contains(
         'chart_theme.dart:3: imports package:flutter/material.dart '
-        '(Chart.js ADR 0050: no Material in lib/).',
+        '(Chart.js ADR 0147: no Material in lib/).',
       ),
       contains(
         'chart_theme.dart:4: imports package:flutter/cupertino.dart '
-        '(Chart.js ADR 0050: no Cupertino in lib/).',
+        '(Chart.js ADR 0147: no Cupertino in lib/).',
       ),
       contains(
         'chart_theme.dart:5: imports package:material_ui/material_ui.dart '
-        '(Chart.js ADR 0050: no Material in lib/).',
+        '(Chart.js ADR 0147: no Material in lib/).',
       ),
       contains(
         'chart_theme.dart:6: imports package:forui/forui.dart '
-        '(Chart.js ADR 0050: no forui in lib/).',
+        '(Chart.js ADR 0147: no forui in lib/).',
       ),
     ]);
   });

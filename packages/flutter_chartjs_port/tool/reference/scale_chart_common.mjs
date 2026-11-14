@@ -12,7 +12,7 @@
 // class value in main(), before the snapshot of the defaults restore
 // (Chart.js ADR 0020, section 8, and Chart.js ADR 0022, section 8). The
 // expected values come from a build of the pinned Chart.js in the arm64 Node.js
-// (Chart.js ADR 0045), with the same test controllers as DatasetController
+// (Chart.js ADR 0146), with the same test controllers as DatasetController
 // subclasses in JavaScript. Node.js has no canvas. Thus the Node.js side uses
 // a mock context that measures text with the advance widths and the 'kern'
 // pairs of Liberation Sans 2.1.5, the test font of the harness
@@ -52,7 +52,7 @@
 //
 // The dist imports @kurkle/color from <build>/node_modules. Then, from
 // packages/flutter_chartjs_port, with the darwin-arm64 build of Node.js
-// v24.22.1 (Chart.js ADR 0045) and with the Dart SDK on the PATH (the
+// v24.22.1 (Chart.js ADR 0146) and with the Dart SDK on the PATH (the
 // generator formats its output with `dart format`):
 //
 //   CHARTJS_DIST=<build>/dist/chart.js \

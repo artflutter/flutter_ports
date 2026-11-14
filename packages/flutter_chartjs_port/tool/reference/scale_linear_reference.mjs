@@ -24,7 +24,7 @@
 // (runActionCase). The Dart test has the same actions, by the case name.
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045):
+// Node.js v24.22.1 (Chart.js ADR 0146):
 //
 //   node tool/reference/scale_linear_reference.mjs \
 //     <build>/dist/chart.js

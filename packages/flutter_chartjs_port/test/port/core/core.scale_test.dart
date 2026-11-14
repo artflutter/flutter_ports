@@ -48,7 +48,7 @@ import 'scale_reference.dart';
 //
 // The expected values are in scale_reference.dart, which
 // tool/reference/scale_reference.mjs writes from src/core/core.scale.js at
-// the pin in Node.js v24.22.1 on arm64 (Chart.js ADR 0045), with the mock
+// the pin in Node.js v24.22.1 on arm64 (Chart.js ADR 0146), with the mock
 // context of chartjs-test-utils. Both sides use a test subclass of Scale with
 // fixed ticks and a linear mapping, a fake chart, and options that resolve
 // through the user options, `defaults.scale` and `descriptors.scale`. Names

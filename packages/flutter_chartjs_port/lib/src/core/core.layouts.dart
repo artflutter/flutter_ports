@@ -14,8 +14,8 @@
 /// is a field with a start value that the readers treat as upstream treats
 /// `undefined`.
 ///
-/// The numbers are `double` (Chart.js ADR 0045). `Math.max` is `dart:math`
-/// `max` with `double` operands (Chart.js ADR 0134). The form `a || b` of
+/// The numbers are `double` (Chart.js ADR 0146). `Math.max` is `dart:math`
+/// `max` with `double` operands (Chart.js ADR 0146 §4). The form `a || b` of
 /// two numbers is [_or].
 ///
 /// This library is a pure layer. It imports `helpers.config.dart`
@@ -55,7 +55,7 @@ const List<ChartPosition> _staticPositions = [
 ];
 
 /// `a || b` for the numbers [a] and [b]: [a] when it is truthy, else [b]
-/// (Chart.js ADR 0045, "ToBoolean").
+/// (Chart.js ADR 0146, "ToBoolean").
 double _or(double a, double b) => a != 0 && !a.isNaN ? a : b;
 
 /// core.layouts.js:35-43 the wrapper `{index, box, pos, horizontal, weight,
@@ -329,7 +329,7 @@ List<_LayoutWrap> _filterDynamicPositionByAxis(
 /// core.layouts.js:18 `sortByWeight`.
 ///
 /// `array.sort` is [jsSort], the stable sort of JavaScript (Chart.js ADR
-/// 0045). The comparator compares the raw weights with `===`
+/// 0146). The comparator compares the raw weights with `===`
 /// ([_strictEquals]). Thus two `undefined` weights are equal, and a `null`
 /// weight is not equal to 0. The subtraction `v0.weight - v1.weight` is the
 /// difference of the two `ToNumber` values ([jsToNumber]). A NaN result

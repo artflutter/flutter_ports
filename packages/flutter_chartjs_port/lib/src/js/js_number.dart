@@ -4,7 +4,7 @@
 /// globals `parseFloat`, `isNaN` and `isFinite`, `Number::toString`, the
 /// form `value || 0`, the operator `+` and the relational comparison `a < b`
 /// ([jsLessThan], Chart.js ADR 0036) over the Dart values that stand for
-/// JavaScript values (Chart.js ADR 0045).
+/// JavaScript values (Chart.js ADR 0146).
 ///
 /// The value mapping: `null` is JS `null`, [undefined] is JS `undefined`
 /// (Chart.js ADR 0043), `bool` is a boolean, `num` is a number, `String` is a

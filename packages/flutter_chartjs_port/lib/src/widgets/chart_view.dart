@@ -13,7 +13,7 @@
 /// not `==` to the last one reconciles with the live scopes in the same
 /// post-frame callback. A raw config gives its top-level values to the root
 /// as they are: its `data` and `options` stay the Maps of the app. The
-/// theme of Chart.js ADR 0050 builds on the root and on that callback: the
+/// theme of Chart.js ADR 0147 builds on the root and on that callback: the
 /// widget writes the compiled theme under `$theme` of the root, and it
 /// switches the theme in the same callback
 /// (`chart_theme_switch.dart`) with its inline plugin `$chartView`
@@ -31,7 +31,7 @@
 /// The widget registers no component (Chart.js ADR 0048, section 3): no
 /// file of `lib/src/widgets/` imports a controller, a scale, an element, a
 /// plugin or an index of them. It never writes `defaults` or `overrides`,
-/// also not for the theme (Chart.js ADR 0050).
+/// also not for the theme (Chart.js ADR 0147).
 library;
 
 import 'dart:async';
@@ -143,7 +143,7 @@ import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 /// scheduled during frame.", and the chart does not start.
 ///
 /// Theme: [theme], or the [ChartTheme] above, themes the chart (Chart.js
-/// ADR 0050). Chart.js options beat each key of the theme. A new theme
+/// ADR 0147). Chart.js options beat each key of the theme. A new theme
 /// switches the chart after the frame: the element colors animate for
 /// 200 ms, and the scales, the legend, the title and the tooltip switch at
 /// once. A switch keeps the chart, its datasets, its hidden datasets and
@@ -439,10 +439,10 @@ class _ChartViewState() extends State<ChartView> {
   bool _updatePending = false;
 
   /// The effective theme of the last build: [ChartView.theme], else the
-  /// theme of the [ChartTheme] above (Chart.js ADR 0050, step 1).
+  /// theme of the [ChartTheme] above (Chart.js ADR 0147 §13 step 1).
   ChartThemeData? _theme;
 
-  /// The theme state of the chart (Chart.js ADR 0050, "Runtime switch").
+  /// The theme state of the chart (Chart.js ADR 0147 §13).
   final ChartThemeSwitch _themeSwitch = ChartThemeSwitch();
 
   /// The keyboard of the chart (Chart.js ADR 0051).
@@ -459,7 +459,7 @@ class _ChartViewState() extends State<ChartView> {
 
   /// The reduced-motion preference of the last build (Chart.js ADR 0049,
   /// section 7). A theme switch under it updates with `'themeFrame'`
-  /// (Chart.js ADR 0050, step 5).
+  /// (Chart.js ADR 0147 §13 step 5).
   bool _reducedMotion = false;
 
   /// Whether the preference turned on while the state had a chart: the
@@ -605,14 +605,14 @@ class _ChartViewState() extends State<ChartView> {
   }
 
   /// The debug checks of the app config [config]: no value under `$theme`
-  /// (row `theme-H0`, Chart.js ADR 0050, step 2) and a `plugins` value that
+  /// (row `theme-H0`, Chart.js ADR 0147 §13 step 2) and a `plugins` value that
   /// is a List, so that the widget plugin can join it.
   static void _debugCheckConfig(ChartConfigurationScope config) {
     assert(
       config.dollarThemeCell == null,
       'The key $themeConfigKey of a ChartView config belongs to the widget. '
       'Give the theme as ChartView.theme or with a ChartTheme above '
-      '(Chart.js ADR 0050).',
+      '(Chart.js ADR 0147).',
     );
     assert(
       config.pluginsCell?.raw == null || config.pluginsCell?.raw is List,
@@ -663,7 +663,7 @@ class _ChartViewState() extends State<ChartView> {
 
   /// The `plugins` of the root Map for the app value [app]: a new List with
   /// the inline plugins of the app (a List, else none) and the inline plugin
-  /// of the widget (Chart.js ADRs 0050 and 0051).
+  /// of the widget (Chart.js ADRs 0147 and 0051).
   List<Object?> _rootPlugins(Object? app) => [
     if (app is List) ...app,
     _viewPlugin,
@@ -712,7 +712,7 @@ class _ChartViewState() extends State<ChartView> {
 
   /// The update of Chart.js ADR 0049, section 4: the values of the last
   /// config that are new objects go to the chart, then the theme switch of
-  /// Chart.js ADR 0050 (steps 1 to 4), then one `chart.update`: with the
+  /// Chart.js ADR 0147 §13 (steps 1 to 4), then one `chart.update`: with the
   /// mode of the theme switch when the theme changed, else in the default
   /// mode when the reduced-motion preference turned on (section 7), else
   /// with [ChartView.updateMode]. It runs after the frame, so every hook of
@@ -750,7 +750,7 @@ class _ChartViewState() extends State<ChartView> {
     final config = configChanged ? _appConfig(fresh: false) : applied;
     final root = _root!;
     if (configChanged) _applyConfig(chart, root, config, applied);
-    // Chart.js ADR 0050, steps 1 to 4, also before a new chart of a new
+    // Chart.js ADR 0147 §13, steps 1 to 4, also before a new chart of a new
     // platform: the root, the user scales and the palette keys then have
     // the new theme.
     final themeMode = _themeSwitch.apply(
@@ -813,7 +813,7 @@ class _ChartViewState() extends State<ChartView> {
   /// Steps 1 to 4 of the update of Chart.js ADR 0049, section 4: the values
   /// of [config] that are not the values of [applied] go to [chart] and to
   /// [root]. A new options object records its user `scales` first (Chart.js
-  /// ADR 0050, step 3).
+  /// ADR 0147 §13 step 3).
   void _applyConfig(
     Chart chart,
     ChartConfigurationScope root,
@@ -876,7 +876,7 @@ class _ChartViewState() extends State<ChartView> {
     _reducedMotion = reduced;
     final theme = _theme = widget.theme ?? ChartTheme.maybeOf(context);
     // A new theme after the start switches in the update callback (Chart.js
-    // ADR 0050, step 1). The start reads the theme of the last build.
+    // ADR 0147 §13 step 1). The start reads the theme of the last build.
     if (_laidOut && theme != _themeSwitch.applied) _scheduleUpdate();
     // Chart.js ADR 0051, section 1: one focus stop with no Shortcuts and no
     // Actions, so that a key that the chart does not use goes on to the

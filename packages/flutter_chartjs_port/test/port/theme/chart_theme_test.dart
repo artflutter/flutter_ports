@@ -8,8 +8,8 @@ import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// theming.md §8 test 7, the inherited part (Chart.js ADR 0050, "The public
-// classes"): `ChartTheme` has a non-null `data`. `maybeOf` gives a chart
+// theming.md §8 test 7, the inherited part (Chart.js ADR 0147 §10):
+// `ChartTheme` has a non-null `data`. `maybeOf` gives a chart
 // Dart null with no theme (the Chart.js look), `of` gives the light preset
 // to other widgets, `updateShouldNotify` compares the data with `==`, and
 // `InheritedTheme.capture` brings the theme into a route of the Navigator.

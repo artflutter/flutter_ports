@@ -32,7 +32,7 @@ import 'point_reference.dart';
 // expected values are in point_reference.dart, which
 // tool/reference/point_reference.mjs writes from src/elements/element.point.ts
 // at v4.5.1 in Node.js v24.22.1 on arm64, with the mock context of
-// chartjs-test-utils (Chart.js ADR 0045). The hit tests, size and getRange
+// chartjs-test-utils (Chart.js ADR 0146). The hit tests, size and getRange
 // compare exactly. The draw calls compare the names exactly and each number
 // with closeTo (Chart.js ADR 0034).
 //

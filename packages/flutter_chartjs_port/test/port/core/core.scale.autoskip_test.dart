@@ -17,7 +17,7 @@ import 'scale_autoskip_reference.dart';
 // scale_autoskip_reference.dart, which
 // tool/reference/scale_autoskip_reference.mjs writes from
 // src/core/core.scale.autoskip.js at v4.5.1 in Node.js v24.22.1 on arm64
-// (Chart.js ADR 0045). core.scale.autoskip imports core.scale, which is not
+// (Chart.js ADR 0146). core.scale.autoskip imports core.scale, which is not
 // a pure layer. Thus this file runs on the VM only.
 
 /// The scale object `{options, _tickSize(), _length, _maxLength}` of a

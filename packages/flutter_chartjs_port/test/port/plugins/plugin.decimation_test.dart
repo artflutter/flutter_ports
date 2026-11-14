@@ -30,14 +30,14 @@ import 'plugin_decimation_reference.dart';
 //
 // The reference group compares real charts with the charts of
 // tool/reference/plugin_decimation_reference.mjs: a build of the pinned
-// Chart.js in Node.js v24.22.1 on arm64 (Chart.js ADR 0045), with the seven
+// Chart.js in Node.js v24.22.1 on arm64 (Chart.js ADR 0146), with the seven
 // plugins registered and `colors.enabled: false` in the defaults. Each case
 // is a unit case (the other plugins are `false`, Chart.js ADR 0041, section
 // 4), except the full cases (the names that start with `full:`), which have
 // the default plugin options (section 4 item 2). The observation has `boxes`
 // and `plugins.decimation` (the keys, the accessor state and the data of each
 // dataset), and the draw calls. The cases run two times: unthemed, and with the
-// light preset (theming.md section 8 test 3, Chart.js ADR 0050).
+// light preset (theming.md section 8 test 3, Chart.js ADR 0147).
 //
 // The group `adapt-decimation-data-accessor` pins the accessor of
 // plugin.decimation.js:249-265 on real charts (Chart.js ADR 0038, section

@@ -118,7 +118,7 @@ String getStyle(HTMLCanvasElement el, String property) {
 /// `y` of the chart event. Any other object throws a `TypeError`.
 ///
 /// For a [NativeEvent], the result keeps the `Math.round` of the
-/// coordinates (`roundToDouble()`, Chart.js ADR 0138). The canvas has no
+/// coordinates (`roundToDouble()`, Chart.js ADR 0146 §7). The canvas has no
 /// padding, border or `box-sizing`, and the event position is in the
 /// logical pixels of the chart. Thus the factor `/ width * canvas.width / currentDevicePixelRatio`
 /// of :128-129 has no port. `retinaScale` gives the canvas
@@ -272,7 +272,7 @@ int _toUint32(double value) {
 ///
 /// The `dart:ui` context paints its bitmap with
 /// `scale(1 / devicePixelRatio)`, so the `setTransform` of the pixel ratio
-/// gives the identity in logical pixels (Chart.js ADR 0013).
+/// gives the identity in logical pixels (Chart.js ADR 0055).
 bool retinaScale(Chart chart, double? forceRatio, [bool? forceStyle]) {
   final pixelRatio = jsTruthy(forceRatio) ? forceRatio! : 1.0;
   final deviceHeight = _round1(chart.height * pixelRatio);

@@ -21,7 +21,7 @@
 // `Date.now()` for all cases. The test file runs each case at that time.
 //
 // Usage, from packages/flutter_chartjs_port, with the darwin-arm64 build of
-// Node.js v24.22.1 (Chart.js ADR 0045):
+// Node.js v24.22.1 (Chart.js ADR 0146):
 //
 //   TZ=UTC CHARTJS_DIST=<build>/dist/chart.js \
 //   MOMENT_NODE_MODULES=<scratch>/node_modules \

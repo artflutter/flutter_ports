@@ -146,7 +146,7 @@ void main() {
       (state.arcs.first.options! as JsObjectFace)['borderColor'],
       const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
     );
-    // Each element has typed options (Chart.js ADR 0018).
+    // Each element has typed options (Chart.js ADR 0054).
     expect(state.bars.first.options, isA<BarOptions>());
     expect(state.points.first.options, isA<PointOptions>());
     expect(line.options, isA<LineOptions>());
