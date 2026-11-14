@@ -31,7 +31,8 @@ its own list.
 
 ## Template
 
-The target size is 600 words. The limit is 1,000 words.
+The target size is 600 words. The limit is 1,000 words. An ADR that merges several ADRs into one can
+have up to 2,000 words.
 
 ```markdown
 # Chart.js ADR NNNN: <title>
