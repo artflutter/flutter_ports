@@ -1,6 +1,7 @@
 # Chart.js ADR 0116: The font is a Flutter TextStyle
 
 - Status: accepted (2026-11-12): its code and the tests of section Tests pass.
+- Superseded in part by: [Chart.js ADR 0147](0147-public-theme-api.md) (2026-11-14)
 - Date: 2026-11-12
 - Supersedes: parts of [Chart.js ADR 0061](0061-native-flutter-colors.md) (the sentence "the framework-free
   core can import dart:ui, but cannot import package:flutter framework libraries", for `TextStyle`),

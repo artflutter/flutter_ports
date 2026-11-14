@@ -17,49 +17,49 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0012](0012-dart-file-naming.md) Dart file naming: accepted, supersedes 0004.
 - [0013](0013-canvas-model.md) Canvas model: accepted, superseded by 0055, superseded in part by 0066.
 - [0014](0014-input-events-and-chart-host.md) Input events and the chart host: accepted, superseded by 0037.
-- [0015](0015-text.md) Text: accepted, superseded in part by 0116.
+- [0015](0015-text.md) Text: accepted, superseded in part by 0116, 0145.
 - [0016](0016-frame-scheduling.md) Frame scheduling: accepted, supersedes 0007.
-- [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054.
+- [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054, 0145.
 - [0018](0018-typed-element-options.md) Typed element options: accepted, superseded by 0054.
-- [0019](0019-animation.md) Animation: accepted.
+- [0019](0019-animation.md) Animation: accepted, superseded in part by 0145.
 - [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted.
 - [0021](0021-typed-options-in-the-resolver.md) Typed options in the resolver: accepted, superseded by 0054.
 - [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108.
 - [0023](0023-underscore-member-collisions.md) Underscore members with a colliding name: accepted.
-- [0024](0024-dates.md) Dates: accepted, superseded in part by 0110.
+- [0024](0024-dates.md) Dates: accepted, superseded in part by 0110, 0145.
 - [0025](0025-scale-value-parameters.md) Scale value parameters: accepted, superseded in part by 0033.
 - [0026](0026-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, supersedes 0008, superseded by 0119.
 - [0027](0027-parsed-data.md) Parsed data in the controllers: accepted, superseded by 0036.
-- [0028](0028-controller-interfaces.md) Controller interfaces and values: accepted.
+- [0028](0028-controller-interfaces.md) Controller interfaces and values: accepted, superseded in part by 0145.
 - [0029](0029-fixture-smoke-runner.md) Fixture smoke runner: accepted, superseded in part by 0115.
 - [0030](0030-controller-test-strategy.md) Controller test strategy: accepted.
 - [0031](0031-gallery-chart-types.md) Gallery chart types and the stress controller: accepted, superseded in part by 0075.
 - [0032](0032-js-numeric-semantics.md) JS numeric semantics: accepted, supersedes 0010, superseded by 0045.
 - [0033](0033-radial-scale-centers.md) Radial scale centers before the first layout: accepted, supersedes 0025.
 - [0034](0034-no-display-only-js-exactness.md) No display-only JS exactness: accepted, supersedes 0009.
-- [0035](0035-third-party-sources.md) Third-party sources: accepted, supersedes 0011, superseded in part by 0122.
+- [0035](0035-third-party-sources.md) Third-party sources: accepted, supersedes 0011, superseded in part by 0122, 0146.
 - [0036](0036-parsed-data.md) Parsed data in the controllers: accepted, supersedes 0027, superseded in part by 0054, 0109.
 - [0037](0037-legend-and-tooltip-input-path.md) Legend and tooltip input path: accepted, supersedes 0014, superseded in part by 0108.
-- [0038](0038-plugin-modules-class-values-and-interfaces.md) Plugin modules, class values and interfaces: accepted, superseded in part by 0054.
-- [0039](0039-tooltip-model-and-animation.md) Tooltip model and animation: accepted.
+- [0038](0038-plugin-modules-class-values-and-interfaces.md) Plugin modules, class values and interfaces: accepted, superseded in part by 0054, 0145.
+- [0039](0039-tooltip-model-and-animation.md) Tooltip model and animation: accepted, superseded in part by 0145.
 - [0040](0040-filler-targets-and-plain-points.md) Filler targets and plain points: accepted, superseded in part by 0140.
 - [0041](0041-plugin-test-strategy.md) Plugin test strategy: accepted.
 - [0042](0042-theming.md) Theming: accepted, supersedes 0001, superseded by 0050.
 - [0043](0043-options-representation-and-resolver.md) Options representation and resolver: accepted, supersedes 0006, superseded by 0054, superseded in part by 0052.
 - [0044](0044-stack-fill-search.md) Stack fill search: rejected.
-- [0045](0045-reference-engine-arm64.md) Reference engine on arm64: accepted, supersedes 0032, superseded in part by 0122, 0134, 0136, 0138, 0143.
+- [0045](0045-reference-engine-arm64.md) Reference engine on arm64: accepted, supersedes 0032, superseded by 0146, superseded in part by 0122, 0134, 0136, 0138, 0143.
 - [0046](0046-stack-fill-search-result.md) Stack fill search, the result of the code A/B: accepted.
 - [0047](0047-published-archive.md) The published archive: accepted.
 - [0048](0048-entry-points-and-public-library.md) Entry points and the public library: accepted, superseded in part by 0052, 0108, 0120, 0132, 0133.
 - [0049](0049-chart-view-widget.md) The ChartView widget and reduced motion: accepted, superseded in part by 0052.
-- [0050](0050-public-theme-api.md) The public theme API, the presets, the theme switch and the touch sizes: accepted, supersedes 0042, superseded in part by 0054, 0057, 0116, 0117, 0118, 0141.
+- [0050](0050-public-theme-api.md) The public theme API, the presets, the theme switch and the touch sizes: accepted, supersedes 0042, superseded by 0147, superseded in part by 0054, 0057, 0116, 0117, 0118, 0141.
 - [0051](0051-input-events-and-interaction-state.md) Input events and interaction state: accepted, superseded in part by 0108.
-- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144.
+- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145.
 - [0053](0053-resolver-fast-paths.md) The resolver fast paths: rejected.
-- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144.
+- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147.
 - [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106.
 - [0056](0056-color-performance.md) Profile-guided color implementation: proposed.
-- [0057](0057-direct-typed-colors.md) Color-only inputs: implemented, supersedes 0050, 0052, 0054, superseded in part by 0061, 0128.
+- [0057](0057-direct-typed-colors.md) Color-only inputs: implemented, supersedes 0050, 0052, 0054, superseded in part by 0061, 0128, 0147.
 - [0058](0058-stack-exact-point-search.md) Exact-point search for stacked fills: implemented.
 - [0059](0059-boundary-exact-point-search.md) Exact endpoints of private fill boundaries: implemented.
 - [0060](0060-boundary-segment-search.md) Exact segment bounds on private fill boundaries: implemented.
@@ -110,7 +110,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0105](0105-web-long-paths-in-pieces.md) Long paths in pieces on the web: accepted, superseded by 0113.
 - [0106](0106-canvas-shadows.md) Canvas shadows: accepted, supersedes 0055, superseded in part by 0107.
 - [0107](0107-dataset-shadow.md) The dataset shadow: accepted, supersedes 0106, superseded in part by 0139.
-- [0108](0108-input-surface-and-exports-for-add-on-plugins.md) The input surface and exports for add-on plugins: accepted, supersedes 0022, 0037, 0048, 0051, 0054, superseded in part by 0132, 0135, 0144.
+- [0108](0108-input-surface-and-exports-for-add-on-plugins.md) The input surface and exports for add-on plugins: accepted, supersedes 0022, 0037, 0048, 0051, 0054, superseded in part by 0132, 0135, 0144, 0146.
 - [0109](0109-previous-x-of-the-gap-test.md) The previous x of the gap test in the line and scatter loops: accepted, supersedes 0036.
 - [0110](0110-local-zone-offset-cache.md) The local-zone offset cache: accepted, supersedes 0024.
 - [0111](0111-range-updates.md) An opt-in range update for scale range changes: accepted.
@@ -118,33 +118,36 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0113](0113-stroke-pieces-by-browser-system.md) Paths in pieces on the web, with a stroke rule for desktop browsers: accepted, supersedes 0105.
 - [0114](0114-dense-curve-merge.md) The merge of the narrow curves of a dense line: accepted, supersedes 0089.
 - [0115](0115-hand-ports-of-typed-data-fixtures.md) Hand ports of data fixtures with a class value: accepted, supersedes 0029.
-- [0116](0116-text-style-fonts.md) The font is a Flutter TextStyle: accepted, supersedes 0015, 0050, 0052, 0061.
-- [0117](0117-typed-theme-tokens.md) The theme compiles from typed tokens: accepted, supersedes 0050, superseded in part by 0118.
-- [0118](0118-theme-compile-typed-setters.md) The theme compile writes typed setters and has no guard: accepted, supersedes 0050, 0054, 0117, superseded in part by 0141.
+- [0116](0116-text-style-fonts.md) The font is a Flutter TextStyle: accepted, supersedes 0015, 0050, 0052, 0061, superseded in part by 0147.
+- [0117](0117-typed-theme-tokens.md) The theme compiles from typed tokens: accepted, supersedes 0050, superseded by 0147, superseded in part by 0118.
+- [0118](0118-theme-compile-typed-setters.md) The theme compile writes typed setters and has no guard: accepted, supersedes 0050, 0054, 0117, superseded by 0147, superseded in part by 0141.
 - [0119](0119-plain-intl-number-format.md) The number format is package:intl as it is: accepted, supersedes 0026.
 - [0120](0120-no-umd-entry.md) The port has no UMD entry: accepted, supersedes 0048.
 - [0121](0121-bool-options.md) An on/off option holds a bool: accepted, supersedes 0054.
-- [0122](0122-dart-math-without-fdlibm.md) `dart:math` without the fdlibm ports: accepted, supersedes 0035, 0045.
+- [0122](0122-dart-math-without-fdlibm.md) `dart:math` without the fdlibm ports: accepted, supersedes 0035, 0045, superseded by 0146.
 - [0123](0123-edge-insets-padding.md) Padding holds an EdgeInsets: accepted, supersedes 0052, 0054.
 - [0124](0124-native-text-direction.md) Native text direction and scoped restoration: accepted.
-- [0125](0125-native-tooltip-callbacks.md) Native TooltipCallbacks: accepted, superseded in part by 0128.
+- [0125](0125-native-tooltip-callbacks.md) Native TooltipCallbacks: accepted, superseded in part by 0128, 0145.
 - [0126](0126-native-plugin-contract.md) A native plugin contract: superseded, superseded by 0144.
-- [0127](0127-native-legend-labels.md) Native legend label generation: proposed.
-- [0128](0128-chart-paint-options.md) ChartPaint from options to canvas: accepted, supersedes 0057, 0061, 0125.
+- [0127](0127-native-legend-labels.md) Native legend label generation: superseded, superseded by 0145.
+- [0128](0128-chart-paint-options.md) ChartPaint from options to canvas: accepted, supersedes 0057, 0061, 0125, superseded in part by 0147.
 - [0129](0129-int-indexes.md) An index is an int: accepted.
 - [0130](0130-native-callback-options.md) Native callback options: accepted, supersedes 0052, 0095, superseded in part by 0131.
 - [0131](0131-native-point-labels.md) Native point labels: accepted, supersedes 0130.
 - [0132](0132-exports-for-add-on-chart-types.md) Exports for add-on chart types: accepted, supersedes 0048, 0108.
 - [0133](0133-construct-helpers-and-meta-for-add-on-chart-types.md) The construct helpers, the meta and a recording context for add-on chart types: accepted, supersedes 0048.
-- [0134](0134-dart-math-max-min.md) `Math.max` and `Math.min` are `dart:math` `max` and `min` on doubles: accepted, supersedes 0045.
-- [0135](0135-math-hypot-as-sqrt.md) `Math.hypot` is `math.sqrt(a * a + b * b)`: accepted, supersedes 0108.
-- [0136](0136-math-pow-square.md) `Math.pow(x, 2)` is `dart:math` `pow`: accepted, supersedes 0045.
+- [0134](0134-dart-math-max-min.md) `Math.max` and `Math.min` are `dart:math` `max` and `min` on doubles: accepted, supersedes 0045, superseded by 0146.
+- [0135](0135-math-hypot-as-sqrt.md) `Math.hypot` is `math.sqrt(a * a + b * b)`: accepted, supersedes 0108, superseded by 0146.
+- [0136](0136-math-pow-square.md) `Math.pow(x, 2)` is `dart:math` `pow`: accepted, supersedes 0045, superseded by 0146.
 - [0137](0137-trackpad-wheel-events.md) trackpad gestures as `wheel` events: accepted.
-- [0138](0138-math-round-as-round-to-double.md) `Math.round` is `roundToDouble()`: accepted, supersedes 0045.
+- [0138](0138-math-round-as-round-to-double.md) `Math.round` is `roundToDouble()`: accepted, supersedes 0045, superseded by 0146.
 - [0139](0139-typed-dataset-shadow.md) The dataset option `shadow` holds a `ChartShadow`: accepted, supersedes 0107.
 - [0140](0140-native-fill-target.md) The option `fill` holds a `FillTarget`: accepted, supersedes 0040, 0052.
-- [0141](0141-native-scale-border.md) The scale option `border` holds a `ScaleBorder`: accepted, supersedes 0050, 0054, 0118.
+- [0141](0141-native-scale-border.md) The scale option `border` holds a `ScaleBorder`: accepted, supersedes 0050, 0054, 0118, superseded in part by 0147.
 - [0142](0142-native-line-segment-style.md) The line option `segment` holds a `LineSegmentStyle`: accepted, supersedes 0054.
-- [0143](0143-clock-now.md) `Date.now()` is `clock.now()`: accepted, supersedes 0045.
+- [0143](0143-clock-now.md) `Date.now()` is `clock.now()`: accepted, supersedes 0045, superseded by 0146.
 - [0144](0144-native-plugins.md) Native plugins: accepted, supersedes 0052, 0054, 0108, 0126.
+- [0145](0145-native-option-types.md) Native option types with no earlier ADR: accepted, supersedes 0015, 0017, 0019, 0024, 0028, 0038, 0039, 0052, 0054, 0125, 0127.
+- [0146](0146-js-numeric-semantics.md) JS numeric semantics and the reference engine: accepted, supersedes 0035, 0045, 0108, 0122, 0134, 0135, 0136, 0138, 0143.
+- [0147](0147-public-theme-api.md) The public theme API: accepted, supersedes 0050, 0054, 0057, 0116, 0117, 0118, 0128, 0141.
 <!-- adr-index:end -->

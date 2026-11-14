@@ -1,7 +1,7 @@
 # Chart.js ADR 0125: Native TooltipCallbacks
 
 - Status: accepted (2026-11-13): native and browser tests, specs, fixtures, analysis and port checks pass.
-- Superseded in part by: [Chart.js ADR 0128](0128-chart-paint-options.md) (2026-11-13)
+- Superseded in part by: [Chart.js ADR 0128](0128-chart-paint-options.md) (2026-11-13); [Chart.js ADR 0145](0145-native-option-types.md) (2026-11-14)
 - Date: 2026-11-12
 - Revised: 2026-11-13
 

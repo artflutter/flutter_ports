@@ -1,6 +1,7 @@
 # Chart.js ADR 0128: ChartPaint from options to canvas
 
 - Status: accepted (2026-11-13): native/browser tests, fixtures, analysis and port checks pass.
+- Superseded in part by: [Chart.js ADR 0147](0147-public-theme-api.md) (2026-11-14)
 - Date: 2026-11-13
 - Supersedes: the direct option-color representation of Chart.js ADRs 0057 and 0061, and the gradient and
   pattern wrappers of Chart.js ADR 0125 (section Decision).

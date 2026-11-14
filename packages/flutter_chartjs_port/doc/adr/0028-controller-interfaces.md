@@ -1,6 +1,7 @@
 # Chart.js ADR 0028: Controller interfaces and values
 
 - Status: accepted (2026-10-21)
+- Superseded in part by: [Chart.js ADR 0145](0145-native-option-types.md) (2026-11-14)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, a member with its
   first ported caller, records for inline object types),
