@@ -1,8 +1,7 @@
-// Original code, not ported from Chart.js: linear scale base reference test.
+// Original code, not ported from Chart.js: linear scale base tests.
 @TestOn('vm')
 library;
 
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -23,33 +22,23 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/tick_label.dart';
 import 'scale_chart_harness.dart';
-import 'scale_linearbase_reference.dart';
 
-// The reference test of `LinearScaleBase` (scale.linearbase.js): real charts
-// against a build of the pinned Chart.js, with the method of
-// scale_chart_harness.dart and tool/reference/scale_chart_common.mjs. The
-// generator is tool/reference/scale_linearbase_reference.mjs.
+// The port-only tests of `LinearScaleBase` (scale.linearbase.js). Upstream
+// has no spec for this file, and the class has no reference test: the
+// linear and radial linear scale reference tests examine its two real
+// subclasses. These tests pin the class value, `prototypeParse` and the row
+// `adapt-linearbase-tick-bounds`.
 //
-// The dist does not export LinearScaleBase. The generator takes it as the
-// prototype of LinearScale. The test scales extend it on both sides:
-// `testLinearBase` (the data limits and the pixel mapping of the linear
-// scale, scale.linear.js:20-50, and the computeTickLimit of
-// LinearScaleBase) and `testLinearBaseLimit` (also the computeTickLimit of
-// the linear scale, scale.linear.js:34-41). The cartesian test controller
-// `linearBaseChart` puts testLinearBase on both axes. main() registers the
-// three classes through their class values, before the snapshot of the
-// defaults restore (Chart.js ADR 0020, section 8, and Chart.js ADR 0022,
-// section 8). lib/src/index.dart does not register the scales of phase 6
-// yet.
-//
-// Each case compares the observations of the harness and these
-// observations of each scale: start, end, startValue, endValue, valueRange,
-// getTickLimit(), the labels of getLabelForValue, the results of parse, and
-// the warnings of console.warn that name the scale, each as the list of its
-// words. console.warn is print in the port: the test collects the prints of
-// each case in a zone.
+// The test scales extend LinearScaleBase: `testLinearBase` (the data limits
+// and the pixel mapping of the linear scale, scale.linear.js:20-50, and the
+// computeTickLimit of LinearScaleBase) and `testLinearBaseLimit` (also the
+// computeTickLimit of the linear scale, scale.linear.js:34-41). The
+// cartesian test controller `linearBaseChart` puts testLinearBase on both
+// axes. main() registers the three classes through their class values,
+// before the snapshot of the defaults restore (Chart.js ADR 0020, section 8,
+// and Chart.js ADR 0022, section 8).
 
-/// The test scale `testLinearBase` of the generator: [LinearScaleBase] with
+/// The test scale `testLinearBase`: [LinearScaleBase] with
 /// the data limits and the pixel mapping of the linear scale
 /// (scale.linear.js:20-50).
 class _TestLinearBaseScale(super.cfg) extends LinearScaleBase {
@@ -74,7 +63,7 @@ class _TestLinearBaseScale(super.cfg) extends LinearScaleBase {
   }
 }
 
-/// `class TestLinearBaseScale extends LinearScaleBase` of the generator.
+/// The class value of `testLinearBase`.
 final JsClass _testLinearBaseScale = JsClass(
   'TestLinearBaseScale',
   superclass: LinearScaleBase.jsClass,
@@ -87,7 +76,7 @@ final JsClass _testLinearBaseScale = JsClass(
   construct: (newTarget, args) => _TestLinearBaseScale(scaleCfgArg(args)),
 );
 
-/// The test scale `testLinearBaseLimit` of the generator: `testLinearBase`
+/// The test scale `testLinearBaseLimit`: `testLinearBase`
 /// with the computeTickLimit of the linear scale (scale.linear.js:34-41).
 final class _TestLinearBaseLimitScale(super.cfg) extends _TestLinearBaseScale {
   @override
@@ -106,8 +95,7 @@ final class _TestLinearBaseLimitScale(super.cfg) extends _TestLinearBaseScale {
   }
 }
 
-/// `class TestLinearBaseLimitScale extends TestLinearBaseScale` of the
-/// generator.
+/// The class value of `testLinearBaseLimit`.
 final JsClass _testLinearBaseLimitScale = JsClass(
   'TestLinearBaseLimitScale',
   superclass: _testLinearBaseScale,
@@ -115,7 +103,7 @@ final JsClass _testLinearBaseLimitScale = JsClass(
   construct: (newTarget, args) => _TestLinearBaseLimitScale(scaleCfgArg(args)),
 );
 
-/// The cartesian test controller `linearBaseChart` of the generator.
+/// The cartesian test controller `linearBaseChart`.
 final JsClass _linearBaseChartController = cartesianTestController(
   'linearBaseChart',
   {
@@ -126,29 +114,7 @@ final JsClass _linearBaseChartController = cartesianTestController(
   },
 );
 
-/// The named functions of the configs of the generator.
-final Map<String, Object?> _functions = {
-  'withUnit': (Object? scale, double value, int index, Object? ticks) => [
-    '${jsNumberToString(value)} kg',
-  ],
-};
-
-/// The prints of the current case: the messages of `console.warn`.
-final List<String> _warnings = [];
-
-/// The values of the observation `labels` of the generator.
-List<Object?> _labelValues(Scale s) => [
-  s.min,
-  s.max,
-  1234.5,
-  -0.000125,
-  98765.4321,
-  null,
-  '7.5',
-  true,
-];
-
-/// The values of the observation `parsed` of the generator.
+/// The JS values of the parse tests.
 final List<Object?> _parseValues = [
   null,
   undefined,
@@ -168,25 +134,6 @@ final List<Object?> _parseValues = [
   <String, Object?>{},
 ];
 
-/// The observations of a test scale: `extra` of the generator.
-Map<String, Object?> _extra(Scale scale, Chart chart) {
-  final s = scale as LinearScaleBase;
-  return {
-    'warnings': [
-      for (final w in _warnings)
-        if (w.startsWith('scales.${s.id}.')) w.split(' '),
-    ],
-    'start': s.start,
-    'end': s.end,
-    'startValue': s.startValue,
-    'endValue': s.endValue,
-    'valueRange': s.valueRange,
-    'tickLimit': s.getTickLimit(),
-    'labels': [for (final v in _labelValues(s)) s.getLabelForValue(v)],
-    'parsed': [for (final v in _parseValues) s.parse(v, 0)],
-  };
-}
-
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
@@ -195,37 +142,6 @@ void main() {
     _testLinearBaseLimitScale,
     _linearBaseChartController,
   ]);
-
-  testReferenceOrigin(
-    node: scaleLinearBaseReferenceNode,
-    arch: scaleLinearBaseReferenceArch,
-    dist: scaleLinearBaseReferenceDist,
-    commit: scaleLinearBaseReferenceCommit,
-  );
-
-  group('linear scale base charts against upstream', () {
-    for (final c in scaleLinearBaseReference) {
-      testWidgets(c.name, (tester) async {
-        _warnings.clear();
-        runZoned(
-          () {
-            final chart = acquireChart(
-              copyReference(c.config, _functions)! as AnyObject,
-              copyReference(c.options)! as AnyObject,
-            );
-            expectScaleChart(chart, c.expected, extra: _extra);
-          },
-          zoneSpecification: ZoneSpecification(
-            print: (self, parent, zone, line) => _warnings.add(line),
-          ),
-        );
-      });
-    }
-  });
-
-  group('Liberation Sans widths of the generator', () {
-    testReferenceWidths(scaleLinearBaseReferenceWidths);
-  });
 
   group('the class value', () {
     test('LinearScaleBase.jsClass extends Scale.jsClass without statics', () {

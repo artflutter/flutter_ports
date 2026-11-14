@@ -881,7 +881,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
       whole border, and a scale calls it with each tick context. A Map stops a debug build in
       `CoreScaleOptions.border`. The typed API has `border` on the six axes. In the tests, the
       generators write the classes in the input configs, and an observed border compares in the
-      upstream form (`upstreamBorderOf`, `withPortBorders` of `test/support/scale_border.dart`).
+      upstream form (`upstreamBorderOf` of `test/support/scale_border.dart`).
     - The `align` of the legend, the title, the subtitle and an axis title, and the `position` of
       the legend title, hold the enum `ChartAlign` (`start`, `center`, `end`) of the pure
       `lib/src/types/align.dart` (row `adapt-chart-align-enum`), also in a raw config. The
@@ -1336,8 +1336,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     of the scale tests, not test files. `test/port/controllers/` has the controller reference tests
     and their harness `controller_chart_harness.dart` (a library). `controller.<name>_test.dart`
     compares the charts of `tool/reference/controller_<snake>_reference.mjs` (data
-    `controller_<snake>_reference.dart`; `<snake>` is `polar_area` for `polarArea`): the eight
-    controllers. Pie has no spec file. `test/port/plugins/` has the plugin reference tests and their
+    `controller_<snake>_reference.dart`; `<snake>` is `polar_area` for `polarArea`): each
+    controller except pie. Pie has no reference test and no spec file: it changes only the defaults
+    of the doughnut. `test/port/plugins/` has the plugin reference tests and their
     harness `plugin_chart_harness.dart` (a library). `plugin.<id>_test.dart` compares the charts of
     `tool/reference/plugin_<id>_reference.mjs`. The filler tests are in
     `test/port/plugins/plugin.filler/`. `test/port/plugins/index_test.dart` compares the hook
@@ -2538,10 +2539,10 @@ sankey ADRs are proposed. The doc paths are relative to
   `platform.flutter.dart`, which keeps the option, as the DOM platform does. Thus a controller
   generator with a case that needs the animation options (the doughnut and polar area `reset`
   cases) puts the no-op `updateConfig` of `BasePlatform` on `BasicPlatform` first.
-- The doughnut and pie test files map the expected JS `null` of `xAxisID` and `yAxisID` to
-  `undefined` (`_undefinedAxisIds`): their empty `linkScales` keeps the JS `null`, and the Dart
+- The doughnut test file maps the expected JS `null` of `xAxisID` and `yAxisID` to
+  `undefined` (`_undefinedAxisIds`): the empty `linkScales` keeps the JS `null`, and the Dart
   field `ChartMeta.xAxisID` (a `String?`) has Dart `null` for both.
-- The doughnut, pie and polar area generators have the `legend:` cases of Chart.js ADR 0041 §5: the
+- The doughnut and polar area generators have the `legend:` cases of Chart.js ADR 0041 §5: the
   real legend with the label options of the old test legend, and the step `clickLegend`. The probe
   `realLegend` reads `legendItems` through `types.LegendElement` and `legendHitBoxes` through a cast
   to `Legend`. The polar area case `legend: off` calls the override `generateLabels` without a
@@ -2606,28 +2607,21 @@ sankey ADRs are proposed. The doc paths are relative to
   controller, registry, controller, date adapter and the resolver trace, D2 of Chart.js ADR 0053,
   kept by Chart.js ADR 0054: `resolver_trace_reference.mjs` runs the dist with a fixed
   `Date.now()` and an animator frame that never runs; `test/port/core/resolver_trace_cases.dart`
-  has the user functions and the setups of its cases), `test/port/scales/*_reference.dart` (the scale
-  chart harness and the seven scales of phase 6), `test/port/theme/*_reference.dart` (light and
-  precedence), `test/port/controllers/controller_<snake>_reference.dart` (the eight controllers of
-  phase 7), `test/port/plugins/*_reference.dart` and
+  has the user functions and the setups of its cases), `test/port/scales/*_reference.dart` (the six
+  scales of `scales/index.dart`), `test/port/controllers/controller_<snake>_reference.dart` (the
+  controllers of phase 7 except pie), `test/port/plugins/*_reference.dart` and
   `test/port/plugins/plugin.filler/*_reference.dart` (the plugins of phase 8; the tooltip generator
   writes two files, `plugin_tooltip_reference.dart` and `plugin_tooltip_more_reference.dart`,
   because a data file stays below 2,500,000 bytes),
   `test/port/platform/chart_host_input_reference.dart` (the input path of the legend and the
   tooltip, Chart.js ADR 0037 §17). The other generators run on the reference engine of Chart.js
   ADR 0045.
-  `theme_precedence_reference.mjs` also registers the 8 pinned controllers, and adds a JavaScript
-  prototype of the hunks H4a-H5 to `plugin.colors.ts` in its prototype run. It and
-  `controller_reference.mjs` register the seven plugins of `src/plugins/index.js` by name (a module
-  namespace registers nothing) and set `defaults.plugins.colors.enabled = false`, as
+  `controller_reference.mjs` registers the seven plugins of `src/plugins/index.js` by name (a
+  module namespace registers nothing) and sets `defaults.plugins.colors.enabled = false`, as
   `flutter_test_config.dart` does. Each generator on the dist calls `registerBuiltins` of
   `scale_chart_common.mjs` (Chart.js ADR 0041 §1): it registers the four namespaces of
   `src/index.umd.ts:28` and sets `colors.enabled = false`. A future generator without plugins pairs
-  with `Chart.unregister([plugins])` in `main()` of its Dart file. `theme_precedence_reference.mjs`
-  stops unless `third_party/Chart.js`, `third_party/kurkle-color` and
-  `third_party/chartjs-test-utils` are at their commits of `tool/port_sources.yaml`, with no change
-  in `src/`. `theme_light_reference.mjs` stops unless `third_party/Chart.js` and
-  `third_party/kurkle-color` are at their commits, with no change in `src/`. The scale generators
+  with `Chart.unregister([plugins])` in `main()` of its Dart file. The scale generators
   run a build of Chart.js at the pinned commit (`dist/chart.js` of a clone outside the repository,
   the first argument or `CHARTJS_DIST`) through `scale_chart_common.mjs`. Its header gives the build
   steps. It stops unless the clone is at the `commit` of `tool/port_sources.yaml`. It also stops

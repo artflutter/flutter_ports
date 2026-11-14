@@ -31,7 +31,7 @@
 // line of more than 60 points has no `points`. The bundle does not export
 // `_getTarget`. Thus the generator imports the pinned source files
 // src/plugins/plugin.filler/filler.target.js and simpleArc.js with the type
-// stripping of Node.js, as theme_light_reference.mjs does: a resolve hook
+// stripping of Node.js, as filler_target_reference.mjs does: a resolve hook
 // maps the `./x.js` imports to the `.ts` files and `@kurkle/color` to
 // third_party/kurkle-color/src/index.esm.js. The source functions read the
 // chart of the bundle by name only. The Dart test calls `getTarget` of
@@ -116,7 +116,7 @@ const KURKLE = new URL('kurkle-color/src/index.esm.js', THIRD_PARTY);
  * Stops unless third_party/kurkle-color is at the `commit` of its entry in
  * tool/port_sources.yaml, with no change in src/. loadChartJs checks
  * third_party/Chart.js. The read of the commit is the one of checkPin in
- * theme_light_reference.mjs.
+ * scale_chart_common.mjs.
  */
 function checkKurklePin() {
   const sources = fileURLToPath(new URL('../port_sources.yaml', import.meta.url));
