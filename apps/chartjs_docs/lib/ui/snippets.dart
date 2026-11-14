@@ -5,6 +5,9 @@ import 'package:flutter/services.dart' show AssetManifest, rootBundle;
 /// The source file of the live charts of the line chart page.
 const String examplesAsset = 'lib/examples/line_examples.dart';
 
+/// The source file of the live charts of the bar chart page.
+const String barExamplesAsset = 'lib/examples/bar_examples.dart';
+
 /// The folders of the source files that the pages show. `pubspec.yaml` lists
 /// each folder as an asset folder.
 const List<String> snippetFolders = [
