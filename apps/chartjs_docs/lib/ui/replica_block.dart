@@ -79,7 +79,10 @@ DocPageContent migrationPage({
         'the original. Open **Code** to see the code of the replica.',
       ),
     ),
-    _OriginalLink(url: gallery, label: Text('The $library demos')),
+    Align(
+      alignment: Alignment.centerLeft,
+      child: _OriginalLink(url: gallery, label: Text('The $library demos')),
+    ),
   ],
   sections: [
     DocSection(
@@ -126,20 +129,17 @@ class const _OriginalLink({
   required final Widget label,
 }) extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => Align(
-    alignment: Alignment.centerLeft,
-    child: Link(
-      uri: Uri.parse(url),
-      target: LinkTarget.blank,
-      builder: (context, open) => TextButton.icon(
-        onPressed: open,
-        style: TextButton.styleFrom(
-          padding: const EdgeInsets.symmetric(horizontal: 8),
-          visualDensity: VisualDensity.compact,
-        ),
-        icon: const Icon(Icons.open_in_new, size: 16),
-        label: label,
+  Widget build(BuildContext context) => Link(
+    uri: Uri.parse(url),
+    target: LinkTarget.blank,
+    builder: (context, open) => TextButton.icon(
+      onPressed: open,
+      style: TextButton.styleFrom(
+        padding: const EdgeInsets.symmetric(horizontal: 8),
+        visualDensity: VisualDensity.compact,
       ),
+      icon: const Icon(Icons.open_in_new, size: 16),
+      label: label,
     ),
   );
 }
@@ -185,6 +185,7 @@ class const ReplicaBlock({
                 region: demo.region,
                 trailing: Wrap(
                   alignment: WrapAlignment.end,
+                  crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     DartPadLink(
                       demo.region.source,
