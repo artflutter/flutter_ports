@@ -1,5 +1,6 @@
 // Original code, not ported from Chart.js: the block of a migration replica.
 
+import 'package:chartjs_docs/ui/dartpad.dart';
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/snippets.dart';
@@ -184,9 +185,18 @@ class const ReplicaBlock({
                 region: demo.region,
                 trailing: Padding(
                   padding: const EdgeInsets.only(right: 6),
-                  child: _OriginalLink(
-                    url: demo.original,
-                    label: const Text('Original'),
+                  child: Wrap(
+                    alignment: WrapAlignment.end,
+                    children: [
+                      DartPadLink(
+                        demo.region.source,
+                        key: ValueKey('${demo.id}.dartpad'),
+                      ),
+                      _OriginalLink(
+                        url: demo.original,
+                        label: const Text('Original'),
+                      ),
+                    ],
                   ),
                 ),
               ),

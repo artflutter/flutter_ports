@@ -124,3 +124,19 @@ class const GraphicGroupInteractions({super.key}) extends StatelessWidget {
   );
 }
 // #enddocregion graphic-group-interactions
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: GraphicGroupInteractions(),
+        ),
+      ),
+    ),
+  );
+}

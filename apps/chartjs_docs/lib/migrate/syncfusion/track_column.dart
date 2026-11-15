@@ -56,3 +56,19 @@ class const SfTrackColumn({super.key}) extends StatelessWidget {
       SizedBox(height: 320, child: ChartView(config: _config));
 }
 // #enddocregion sf-track-column
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: SfTrackColumn(),
+        ),
+      ),
+    ),
+  );
+}

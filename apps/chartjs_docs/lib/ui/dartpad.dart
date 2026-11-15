@@ -5,24 +5,21 @@ import 'package:url_launcher/link.dart';
 
 /// The folder of the DartPad archives, next to the docs site. The workflow
 /// `pages` writes one archive for each sample with a `main` function, with
-/// `tool/dartpad_archives.sh`: `lib/examples/<path>.dart` becomes
-/// `<path>.tar.gz`, with the sample as `lib/main.dart` and a pubspec that
-/// gets `flutter_chartjs_port` from pub.dev.
+/// `tool/dartpad_archives.dart`: `lib/<path>.dart` becomes `<path>.tar.gz`,
+/// with the sample as one file `lib/main.dart` and a pubspec that gets the
+/// packages from pub.dev.
 const String dartPadArchives =
     'https://artflutter.github.io/flutter_ports/docs/dartpad';
-
-/// The folder of the samples, relative to the docs app.
-const String _examples = 'lib/examples/';
 
 /// The DartPad address that opens and runs the sample [file], relative to the
 /// docs app. DartPad runs `lib/main.dart` of the archive. The address
 /// collapses the file tree, so the page shows the code of the sample, its
 /// problems and its chart.
 Uri dartPadUri(String file) {
-  if (!file.startsWith(_examples) || !file.endsWith('.dart')) {
-    throw ArgumentError.value(file, 'file', 'not a file of $_examples');
+  if (!file.startsWith('lib/') || !file.endsWith('.dart')) {
+    throw ArgumentError.value(file, 'file', 'not a Dart file of lib/');
   }
-  final path = file.substring(_examples.length, file.length - '.dart'.length);
+  final path = file.substring('lib/'.length, file.length - '.dart'.length);
   return Uri.https('dartpad.dev', '/', {
     'url': '$dartPadArchives/$path.tar.gz',
     'panels': '-filetree',

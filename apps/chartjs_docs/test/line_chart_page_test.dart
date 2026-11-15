@@ -286,7 +286,7 @@ void main() {
     expect(
       dartPadUri('$lineExamples/basic.dart'),
       Uri.https('dartpad.dev', '/', {
-        'url': '$dartPadArchives/line/basic.tar.gz',
+        'url': '$dartPadArchives/examples/line/basic.tar.gz',
         'panels': '-filetree',
       }),
     );

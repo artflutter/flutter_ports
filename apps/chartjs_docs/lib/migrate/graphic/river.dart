@@ -136,3 +136,19 @@ class const GraphicRiver({super.key}) extends StatelessWidget {
   );
 }
 // #enddocregion graphic-river
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: GraphicRiver(),
+        ),
+      ),
+    ),
+  );
+}

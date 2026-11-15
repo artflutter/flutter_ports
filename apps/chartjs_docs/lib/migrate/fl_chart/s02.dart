@@ -144,3 +144,19 @@ class _Sample2State() extends State<Sample2> {
   );
 }
 // #enddocregion fl_chart-02
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Fl.item,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: ChartTheme(data: ChartThemeData.dark(), child: Sample2()),
+        ),
+      ),
+    ),
+  );
+}

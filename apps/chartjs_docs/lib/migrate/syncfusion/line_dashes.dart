@@ -159,3 +159,19 @@ class const SfLineDashes({super.key}) extends StatelessWidget {
       SizedBox(height: 320, child: ChartView(config: _config));
 }
 // #enddocregion sf-line-dashes
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: SfLineDashes(),
+        ),
+      ),
+    ),
+  );
+}

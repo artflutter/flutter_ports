@@ -202,3 +202,19 @@ class _ApexAreaDatetimeState() extends State<ApexAreaDatetime> {
   );
 }
 // #enddocregion apex-area-datetime
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: ApexAreaDatetime(),
+        ),
+      ),
+    ),
+  );
+}

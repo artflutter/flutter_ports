@@ -123,3 +123,19 @@ class const GraphicBarCustomLegend({super.key}) extends StatelessWidget {
   );
 }
 // #enddocregion graphic-bar-custom-legend
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: GraphicBarCustomLegend(),
+        ),
+      ),
+    ),
+  );
+}

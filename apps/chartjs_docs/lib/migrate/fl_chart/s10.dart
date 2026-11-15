@@ -115,3 +115,19 @@ class _Sample10State() extends State<Sample10> {
   }
 }
 // #enddocregion fl_chart-10
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Fl.item,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: ChartTheme(data: ChartThemeData.dark(), child: Sample10()),
+        ),
+      ),
+    ),
+  );
+}

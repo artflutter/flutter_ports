@@ -171,7 +171,8 @@ jobs:
           mkdir site
           cp -R apps/chartjs_docs/build/web site/docs
       - name: Pack the samples for the DartPad links
-        run: apps/chartjs_docs/tool/dartpad_archives.sh site/docs/dartpad
+        working-directory: apps/chartjs_docs
+        run: dart tool/dartpad_archives.dart ../../site/docs/dartpad
       - uses: actions/upload-artifact@v7
         with:
           name: docs

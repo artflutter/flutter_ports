@@ -183,3 +183,29 @@ class const _TransactionsIcon() extends StatelessWidget {
   );
 }
 // #enddocregion fl_chart-bar-02
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Fl.item,
+        body: SingleChildScrollView(
+          padding: const EdgeInsets.all(12),
+          child: ChartTheme(
+            data: const ChartThemeData.dark(),
+            // The fl_chart gallery shows each sample in a card of at most
+            // 600 pixels.
+            child: Center(
+              child: ConstrainedBox(
+                constraints: const BoxConstraints(maxWidth: 600),
+                child: const BarSample2(),
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}

@@ -51,3 +51,19 @@ class const ApexBarGrouped({super.key}) extends StatelessWidget {
   );
 }
 // #enddocregion apex-bar-grouped
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const MaterialApp(
+      debugShowCheckedModeBanner: false,
+      home: Scaffold(
+        backgroundColor: Colors.white,
+        body: SingleChildScrollView(
+          padding: EdgeInsets.all(12),
+          child: ApexBarGrouped(),
+        ),
+      ),
+    ),
+  );
+}

@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/main.dart';
 import 'package:chartjs_docs/ui/code_block.dart';
+import 'package:chartjs_docs/ui/dartpad.dart';
 import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -53,6 +54,15 @@ void main() {
             skipOffstage: false,
           );
           expect(replica, findsOneWidget, reason: section.id);
+          // The DartPad button opens the replica, which has a main function.
+          final link = tester.widget<DartPadLink>(
+            find.byKey(ValueKey('${section.id}.dartpad'), skipOffstage: false),
+          );
+          expect(
+            File(link.file).readAsStringSync(),
+            contains('\nvoid main() {'),
+            reason: section.id,
+          );
         }
       });
 

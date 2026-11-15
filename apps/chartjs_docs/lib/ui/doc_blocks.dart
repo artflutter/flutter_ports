@@ -335,8 +335,13 @@ class _CodeToggleState() extends State<CodeToggle> {
             icon: Icon(_open ? Icons.expand_less : Icons.code),
             label: Text(_open ? 'Hide code' : 'Code'),
           ),
-          const Spacer(),
-          ?widget.trailing,
+          // The rest of the row, so that a trailing Wrap can wrap.
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: widget.trailing,
+            ),
+          ),
         ],
       ),
       if (_open) ...[
