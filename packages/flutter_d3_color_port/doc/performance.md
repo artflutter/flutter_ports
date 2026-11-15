@@ -124,3 +124,51 @@ The figures: "base" is §2, "opt" is the code after the three changes, with the 
   JavaScript and WebAssembly. That case is `Hsl.rgb()` and `formatRgb()`.
 - The conversions through CIELAB are about as fast as upstream: `Math.pow`, `atan2`, `sin`
   and `cos` take most of their time, and the port keeps them as they are.
+
+## 4. Phones
+
+- Pixel 8a, Android 17, a release build of a Flutter app that runs `d3_color_bench.dart`
+  (`flutter build apk --release`, AOT), on USB power, screen on, battery at 26.5-27.5 °C.
+- Chrome 157 on the same Pixel: "chrome upstream" is upstream d3-color, "chrome-js" and
+  "chrome-wasm" are the port built with `dart compile js -O4` and `dart compile wasm -O2`, in
+  one page served from the Mac.
+- iPhone 17 Pro, iOS 27.2, a release build of the same app (`flutter build ios --release`).
+- The app and the page are scratch instruments outside the package. Each figure is the mean of two
+  runs, in nanoseconds for one operation. "base" is the code of §2, "r1" the code of §3, with the
+  ratio r1 / base.
+
+| Case | chrome upstream | pixel base | pixel r1 | chrome-js base | chrome-js r1 | chrome-wasm base | chrome-wasm r1 | iphone base | iphone r1 |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---:|
+| `parse.hex6` | 112 | 335 | 48 (0.14x) | 200 | 45 (0.23x) | 308 | 55 (0.18x) | 169 | 19 (0.11x) |
+| `parse.hex3` | 98 | 271 | 43 (0.16x) | 185 | 30 (0.16x) | 300 | 48 (0.16x) | 140 | 19 (0.14x) |
+| `parse.named` | 122 | 662 | 66 (0.10x) | 184 | 53 (0.29x) | 291 | 95 (0.33x) | 295 | 29 (0.10x) |
+| `parse.rgb` | 190 | 744 | 71 (0.10x) | 369 | 94 (0.25x) | 700 | 119 (0.17x) | 416 | 33 (0.08x) |
+| `parse.rgbaPercent` | 418 | 1502 | 90 (0.06x) | 656 | 161 (0.24x) | 1062 | 164 (0.15x) | 829 | 44 (0.05x) |
+| `parse.hsl` | 269 | 1315 | 67 (0.05x) | 482 | 108 (0.22x) | 801 | 112 (0.14x) | 729 | 33 (0.05x) |
+| `parse.invalid` | 122 | 836 | 36 (0.04x) | 196 | 51 (0.26x) | 283 | 56 (0.20x) | 413 | 17 (0.04x) |
+| `parse.mixed` | 217 | 857 | 66 (0.08x) | 388 | 98 (0.25x) | 610 | 108 (0.18x) | 468 | 33 (0.07x) |
+| `rgb.parse` | 226 | 872 | 68 (0.08x) | 395 | 105 (0.26x) | 616 | 105 (0.17x) | 471 | 33 (0.07x) |
+| `format.hex` | 73 | 347 | 32 (0.09x) | 85 | 31 (0.36x) | 111 | 55 (0.50x) | 136 | 13 (0.10x) |
+| `format.hex8` | 94 | 459 | 45 (0.10x) | 118 | 36 (0.31x) | 183 | 69 (0.38x) | 187 | 22 (0.12x) |
+| `format.rgb` | 69 | 274 | 42 (0.15x) | 76 | 56 (0.73x) | 205 | 90 (0.44x) | 143 | 18 (0.13x) |
+| `format.hsl` | 197 | 638 | 152 (0.24x) | 220 | 118 (0.54x) | 420 | 178 (0.42x) | 334 | 77 (0.23x) |
+| `format.rgbOfHsl` | 46 | 187 | 61 (0.33x) | 101 | 89 (0.87x) | 178 | 98 (0.55x) | 99 | 26 (0.26x) |
+| `convert.rgbToHsl` | 35 | 21 | 21 (1.00x) | 34 | 35 (1.03x) | 20 | 17 (0.83x) | 9 | 9 (0.97x) |
+| `convert.hslToRgb` | 28 | 33 | 20 (0.59x) | 34 | 32 (0.95x) | 67 | 30 (0.45x) | 19 | 9 (0.47x) |
+| `convert.rgbToLab` | 148 | 131 | 129 (0.99x) | 143 | 143 (1.00x) | 168 | 99 (0.59x) | 62 | 60 (0.97x) |
+| `convert.labToRgb` | 70 | 68 | 66 (0.97x) | 79 | 79 (1.00x) | 95 | 82 (0.86x) | 32 | 30 (0.94x) |
+| `convert.rgbToHcl` | 204 | 172 | 165 (0.96x) | 193 | 186 (0.96x) | 187 | 175 (0.93x) | 107 | 91 (0.85x) |
+| `convert.hclToRgb` | 105 | 94 | 87 (0.93x) | 111 | 109 (0.99x) | 118 | 109 (0.92x) | 51 | 42 (0.83x) |
+| `convert.rgbToCubehelix` | 74 | 52 | 50 (0.97x) | 68 | 68 (1.00x) | 21 | 19 (0.91x) | 15 | 15 (0.99x) |
+| `convert.cubehelixToRgb` | 45 | 37 | 36 (0.97x) | 55 | 55 (0.99x) | 67 | 41 (0.61x) | 20 | 19 (0.98x) |
+| `op.brighterRgb` | 19 | 15 | 14 (0.98x) | 22 | 22 (1.00x) | 16 | 16 (0.99x) | 8 | 8 (0.96x) |
+| `op.darkerHcl` | 17 | 14 | 14 (0.99x) | 23 | 23 (1.00x) | 16 | 15 (0.98x) | 8 | 8 (1.00x) |
+| `pipe.hclTick` | 247 | 257 | 133 (0.52x) | 150 | 174 (1.17x) | 278 | 180 (0.65x) | 154 | 64 (0.42x) |
+| `pipe.parseHex` | 278 | 1284 | 93 (0.07x) | 469 | 118 (0.25x) | 731 | 158 (0.22x) | 656 | 48 (0.07x) |
+
+- In AOT on the phones, each parse and format case is 3 to 25 times faster than before. On the
+  Pixel, the AOT port parses 1.8 to 4.6 times faster than upstream in Chrome on the same phone.
+- In Chrome on the Pixel, the dart2js build parses 2.0 to 3.3 times faster than upstream, and the
+  dart2wasm build 1.3 to 2.5 times. `format.rgbOfHsl` stays slower than upstream there (89 and
+  98 ns against 46 ns). `pipe.hclTick` in dart2js went from 150 to 174 ns, still faster than
+  upstream (247 ns).
