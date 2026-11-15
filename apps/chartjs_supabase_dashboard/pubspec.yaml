@@ -18,11 +18,17 @@ dependencies:
   flutter_chartjs_port:
     path: ../../packages/flutter_chartjs_port
   material_ui: ^1.10.0
-  supabase_flutter: ^2.18.3
+  # The pre-release of version 3: the typed queries of the generated schema
+  # (lib/supabase_schema.g.dart). A pre-release can break its API, so the
+  # version is exact.
+  supabase_flutter: 3.0.0-dev.17
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  # The generator of lib/supabase_schema.g.dart: the Supabase CLI runs it
+  # (README.md, "The typed schema").
+  supabase_typegen: 0.9.0
 
 flutter:
   uses-material-design: true

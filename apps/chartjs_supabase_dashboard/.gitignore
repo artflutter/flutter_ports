@@ -49,3 +49,8 @@ app.*.map.json
 
 # The Supabase URL and key of a local run (--dart-define-from-file).
 /supabase.json
+
+# The local state of the Supabase CLI: its version check and the linked
+# project.
+/supabase/.temp/
+/supabase/.branches/

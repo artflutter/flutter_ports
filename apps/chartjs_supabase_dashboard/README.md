@@ -21,6 +21,17 @@ A proof of concept of a live dashboard: one line chart of `flutter_chartjs_port`
 
 A session can read the shared rows and its own rows, and call `pump_metric`. No client can write the table directly.
 
+## The typed schema
+
+The app uses the pre-release `supabase_flutter` 3.0.0-dev.17 and its typed queries. `lib/supabase_schema.g.dart` holds the row type, the column constants and the typed call of each database function. The Supabase CLI (3.0.0 or newer) generates it from the database with the dev dependency `supabase_typegen`. Run this command in this folder after each change of `supabase/schema.sql`, and commit the file:
+
+```sh
+SUPABASE_DB_PASSWORD='<database password>' supabase gen types --lang dart --remote=<project ref> > lib/supabase_schema.g.dart
+dart format lib/supabase_schema.g.dart
+```
+
+Do not edit the file by hand. The password skips the temporary login role of the CLI, which the database of this project refuses (`DbConfigLoginRoleMissingPrivilegedRoleError`). On Flutter 3.50.0-0.4.pre, the `dart format` call inside the generator does not end: stop that process, and the generator formats with its own formatter. The `dart format` command above then gives the format of the SDK.
+
 ## Run
 
 ```sh
@@ -40,7 +51,8 @@ GitHub Pages cannot send the COOP and COEP headers that the WebAssembly renderer
 ## Code
 
 - `lib/src/metric_source.dart`: the row class and the interface of the table.
-- `lib/src/supabase_metric_source.dart`: the table on `supabase_flutter`. The pages go by `id`, the newest first.
+- `lib/supabase_schema.g.dart`: the generated typed schema (above).
+- `lib/src/supabase_metric_source.dart`: the table through the typed API: `selectOnly` of the columns `id`, `ts` and `value`, the realtime inserts of the same columns (`onTableChangesOnly`) and `rpc.pumpMetric()`. The pages go by `id`, the newest first.
 - `lib/src/live_series.dart`: the rows in memory, the pages, the realtime rows and the pump. A gap of more than 10 seconds between two rows breaks the line.
 - `lib/src/live_chart.dart`: the chart, the frame ticker of the live view, the pan, the zoom and the page loads.
 - `lib/src/dashboard_page.dart`: the app and the status bar.

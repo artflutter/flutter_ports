@@ -609,9 +609,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `LICENSE` of the app and `REUSE.toml` name their holders.
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
 - `apps/chartjs_supabase_dashboard`: a proof of concept of a live dashboard (web and macOS): one
-  typed `ChartView` line chart on a time axis, on the Supabase table `metric_points`, with
-  `supabase_flutter`. Each browser signs in as an anonymous Supabase user (`main.dart`;
-  "Allow anonymous sign-ins" is on in the Auth settings), and the status bar shows the session.
+  typed `ChartView` line chart on a time axis, on the Supabase table `metric_points`, with the
+  pre-release `supabase_flutter` 3.0.0-dev.17 (an exact pin) and its typed queries: the Supabase
+  CLI generates `lib/supabase_schema.g.dart` with the dev dependency `supabase_typegen` (the app
+  README, "The typed schema"); never edit it by hand. `lib/src/supabase_metric_source.dart` reads
+  the pages and the realtime inserts as partial rows of `id`, `ts` and `value`. Each browser
+  signs in as an anonymous Supabase user (`main.dart`; "Allow anonymous sign-ins" is on in the
+  Auth settings), and the status bar shows the session.
   `supabase/schema.sql` makes the table with the column `owner` (null for the shared history), the
   read policy `owner is null or owner = auth.uid()` for `authenticated` (Realtime applies it too;
   no client writes the table), the value generator `metric_value` (value noise of several time

@@ -13,14 +13,6 @@ final class const MetricPoint({
 }) {
   /// Creates a row.
   this;
-
-  /// Reads a row of PostgREST or of a realtime insert: `id` is a number,
-  /// `ts` an ISO 8601 text and `value` a number.
-  factory fromRow(Map<String, dynamic> row) => MetricPoint(
-    id: (row['id'] as num).toInt(),
-    ts: DateTime.parse(row['ts'] as String),
-    value: (row['value'] as num).toDouble(),
-  );
 }
 
 /// The state of the realtime channel.
