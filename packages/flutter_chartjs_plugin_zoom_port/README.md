@@ -11,7 +11,7 @@ access at runtime.
 > pan API, the wheel and drag zoom, the pointer pan and pinch, and the plugin object with its
 > entries. The upstream specs and fixtures pass, and tests drive a `ChartView` with real pointer
 > and key input. The gallery has a zoom page. Open: a device check of the touch input on Android
-> and iOS, and the theme extension of phase 5. It is not published. The plan, the roadmap and the
+> and iOS, and the theme extension of phase 5. It is on pub.dev as a beta. The plan, the roadmap and the
 > decisions are in
 > [doc/README.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_plugin_zoom_port/doc/README.md).
 

@@ -1,4 +1,7 @@
-## Unreleased
+## 0.1.0-beta.1
+
+- The first beta release, on `flutter_chartjs_port` 0.1.0-beta.2. The API can still change
+  before 0.1.0.
 
 - Ports each module of `src/` at 2.2.0+fb81d331: the zoom and pan API (`ZoomChart`), the wheel and
   drag zoom, the pointer pan and pinch, the scale limits and the plugin object `zoomPlugin`, on the

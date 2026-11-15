@@ -3,9 +3,7 @@ description: >-
   A native Dart port of chartjs-plugin-zoom for flutter_chartjs_port. Wheel,
   drag and pinch zoom and pan run as Dart code, with no WebView and no
   JavaScript. Work in progress.
-version: 0.0.1
-# Remove at the first release.
-publish_to: none
+version: 0.1.0-beta.1
 repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_chartjs_plugin_zoom_port
 issue_tracker: https://github.com/artflutter/flutter_ports/issues
 topics:
@@ -24,10 +22,10 @@ resolution: workspace
 dependencies:
   flutter:
     sdk: flutter
-  # The host port: upstream has the peer dependency chart.js (ADR 0009). A
-  # path dependency until both packages have a release (Zoom ADR 0001).
-  flutter_chartjs_port:
-    path: ../flutter_chartjs_port
+  # The host port: upstream has the peer dependency chart.js (ADR 0009). The
+  # workspace resolves it to packages/flutter_chartjs_port; a path dependency
+  # would keep this package from pub.dev.
+  flutter_chartjs_port: ^0.1.0-beta.2
 
 dev_dependencies:
   # The test harness of the host port (ADR 0009, item 7): the chart helpers

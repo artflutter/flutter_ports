@@ -14,7 +14,7 @@ next. Fifth port: chartjs-chart-sankey 0.19.1, an add-on of the Chart.js port an
 type of another package → `packages/flutter_chartjs_chart_sankey_port`, phases 0-4 done (each
 file of `src/` ported; the unit tests, the specs and the fixtures pass; a gallery page), phase 5
 next. Sixth port: @kurkle/color 0.3.2, the color library of the Chart.js port →
-`packages/flutter_kurkle_color_port`, a package of its own (version 0.1.0, on pub.dev), with no
+`packages/flutter_kurkle_color_port`, a package of its own (version 0.1.2, on pub.dev), with no
 import of another port.
 
 ## Commands
@@ -663,13 +663,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
     yet. `test --no-select` runs its tests.
 - `packages/flutter_chartjs_plugin_zoom_port`: the chartjs-plugin-zoom port (library,
-  `publish_to: none` until 0.1.0, MIT), the first add-on port (ADR 0009). Zoom phases 1-4 are
+  version 0.1.0-beta.1, on pub.dev as a beta, MIT), the first add-on port (ADR 0009). Zoom phases 1-4 are
   done (2026-11-10): each file of `src/` is ported, and the specs, the fixtures and the tests of
   real input pass. One item stays open: the device check of seam H8 on Android and iOS (Chart.js
   ADR 0108 Open 1). `doc/README.md` has the plan and the roadmap of phases 0-6. Phase 5 has the
   typed options slot (H18, done 2026-11-15 with Chart.js ADR 0148 and Zoom ADR 0005) and the theme
   extension (H19, after its Chart.js ADR).
-  - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
+  - It depends on `flutter_chartjs_port` with `^0.1.0-beta.2`, which the workspace resolves to the package, and imports only its public
     libraries, `js_semantics.dart` among them (Zoom ADR 0003, Chart.js ADR 0108).
   - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library (port-only): `zoomPlugin`, the
     functions `pan`, `zoom`, `zoomRect`, `zoomScale` and `resetZoom`, the extension `ZoomChart`
@@ -844,12 +844,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     item 6). `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
-- `packages/flutter_kurkle_color_port`: the @kurkle/color 0.3.2 port (library, version 0.1.0,
+- `packages/flutter_kurkle_color_port`: the @kurkle/color 0.3.2 port (library, version 0.1.2,
   MIT), the color library of the Chart.js port. Its pubspec has no `publish_to`: it is on pub.dev.
   It depends only on Flutter (`dart:ui`, for the Flutter `Color` input of the `Color`
   constructor) and imports no other port. `flutter_chartjs_port` depends on it with `^0.1.0`, which
   the workspace resolves to the package; `chartjs_test_utils` and the gallery name it as a path
-  dependency. Its `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive.
+  dependency. Its `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive, and
+  `example/main.dart` is the example of the archive.
   - `lib/flutter_kurkle_color_port.dart`: the public library (port-only). It exports
     `lib/src/index.esm.dart` (the names of `src/index.esm.js`: `Color`, `RGBA`, `color` and the
     functions of `byte`, `hex`, `hue`, `names` and `rgb`) and `lib/src/upstream.dart`
