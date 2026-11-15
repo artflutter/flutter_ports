@@ -1,6 +1,7 @@
 # D3 ADR 0004: Spec harness
 
 - Status: proposed
+- Superseded in part by: [D3 ADR 0009](0009-native-spec-harness.md) §1 to §5 (2026-11-15)
 - Date: 2026-10-20
 - Gate: D3 phase 1. The pilot ports the specs of d3-array `ticks.js`, `nice.js` and `range.js`,
   of d3-path and of d3-format. The rules for time zones, image snapshots and the DOM wait for the

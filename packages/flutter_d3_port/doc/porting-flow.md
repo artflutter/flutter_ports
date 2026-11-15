@@ -41,19 +41,20 @@ Terms:
    D3 docs site, in `third_party/d3/docs/`. D3 ADR 0001 gives the rule for doc text that the Dart
    file adapts.
 3. **Write the Dart file.**
-   - Map the path ([D3 ADR 0002](adr/0002-file-naming-and-layout.md)):
-     `third_party/<repo>/src/<path>.js` becomes `lib/src/<repo>/<path>.dart`.
+   - Map the path ([D3 ADR 0008](adr/0008-module-packages.md) §1):
+     `third_party/<repo>/src/<path>.js` becomes `lib/src/<path>.dart` of the package
+     `flutter_<repo>_port`.
    - Line 1 is the header of AGENTS.md rule 2. The project, the license and the holder come from
      `tool/port_sources.yaml`.
    - When the file name fails the `file_names` lint, add `// ignore_for_file: file_names` after
      the header lines.
    - Keep the upstream order and names. Use package imports only.
    - Give each public symbol a `///` line that names the upstream symbol and file:line.
-   - Call the JS runtime of `js_semantics` for JS builtins
-     ([ADR 0008](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md)).
-     [D3 ADR 0003](adr/0003-number-to-string.md) gives the number strings.
-     [D3 ADR 0006](adr/0006-generators-accessors-and-js-values.md) gives the accessors, the arity
-     of user functions, `this`, `undefined` and `null`.
+   - Write native Dart forms, with no JS runtime
+     ([D3 ADR 0007](adr/0007-native-dart-forms.md)). D3 ADR 0007 gives the number texts.
+     [D3 ADR 0010](adr/0010-native-values-and-factories.md) gives the values and the factories.
+     [D3 ADR 0006](adr/0006-generators-accessors-and-js-values.md) (proposed) gives the accessors,
+     the arity of user functions and `this`.
    - Mark each hunk that does not translate upstream lines with
      `// DIVERGES(d3): <row id>, <reason>` and a [differences.md](differences.md) row (section 4).
    - Start a port-only file with `// Original code, not ported from D3: <reason>.`
@@ -84,12 +85,12 @@ Terms:
 
    `src/fsum.js` of d3-array follows upstream. It gets no PSF notice (the decision of the
    maintainer in D3 ADR 0001).
-5. **Port the tests** ([D3 ADR 0004](adr/0004-spec-harness.md)).
-   - The Dart path of `<repo>/test/<path>-test.js` is `test/specs/<repo>/<path>_test.dart`. An
-     upstream test helper goes to `test/specs/<repo>/<helper>.dart`. The header names the
-     upstream test file.
-   - `test()` names equal the upstream `it()` and `test()` names. D3 ADR 0004 gives the rule for
-     duplicate names and for the names that loops make.
+5. **Port the tests** ([D3 ADR 0009](adr/0009-native-spec-harness.md)).
+   - The Dart path of `<repo>/test/<path>-test.js` is `test/<path>_test.dart` of the module
+     package. An upstream test helper goes to `test/<helper>.dart` (D3 ADR 0008 §1). The header
+     names the upstream test file.
+   - `test()` names equal the upstream `it()` and `test()` names. D3 ADR 0009 §1 gives the rule
+     for duplicate names and for the names that loops make.
    - Port the upstream assertions on the port-only stand-in of the Node `assert` module. Port the
      `test/asserts.js` helpers of the repository as ported files.
    - The skip reasons are `'blocked: <module>'`, `'n/a: <reason>'` and `'diverges: <row id>'`.
@@ -126,7 +127,7 @@ Terms:
 The performance rule of the Chart.js porting flow (§1.1) applies to the D3 port. When two or more
 Dart forms give the upstream behavior, choose the form with the larger measured performance gain.
 In D3, the upstream behavior includes the exact strings of the modules whose result is a string
-([D3 ADR 0003](adr/0003-number-to-string.md)).
+([D3 ADR 0007](adr/0007-native-dart-forms.md) §1).
 
 The order of priority is:
 1. The upstream behavior.
@@ -160,22 +161,26 @@ number, at its gate or before it. If a later port needs the same decision, the d
 The D3 ADRs take rules from three Chart.js ADRs. A Chart.js ADR binds only the Chart.js port.
 Thus each D3 ADR states the rules that it takes:
 - [Chart.js ADR 0034](../../flutter_chartjs_port/doc/adr/0034-no-display-only-js-exactness.md): no
-  display-only JS exactness. D3 ADR 0003 names the D3 results that are not display-only.
+  display-only JS exactness. D3 ADR 0007 §1 names the D3 results that are not display-only.
 - [Chart.js ADR 0032](../../flutter_chartjs_port/doc/adr/0032-js-numeric-semantics.md): the JS
-  numeric rules and the reference engine. D3 ADR 0003 and D3 ADR 0004 take them.
+  numeric rules and the reference engine. D3 ADR 0007 and D3 ADR 0009 state the native D3 forms.
 - [Chart.js ADR 0012](../../flutter_chartjs_port/doc/adr/0012-dart-file-naming.md): the upstream
-  spelling of file names. D3 ADR 0002 adapts it.
+  spelling of file names. D3 ADR 0008 §1 adapts it.
 
 | Subsection | Decision | Gate | Status |
 |---|---|---|---|
 | 2.1 | [ADR 0007: Package names](../../../docs/adr/0007-package-names.md) | 0 | accepted 2026-10-22. It supersedes ADR 0003 |
 | 2.2 | [ADR 0008: Shared JS runtime and port tools](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md) | 1 | proposed |
 | 2.3 | [D3 ADR 0001: Upstream sources](adr/0001-upstream-sources.md) | 0 | proposed |
-| 2.4 | [D3 ADR 0002: File naming and package layout](adr/0002-file-naming-and-layout.md) | 1 | proposed |
-| 2.5 | [D3 ADR 0003: Number to string and number formatting](adr/0003-number-to-string.md) | 1 | proposed |
-| 2.6 | [D3 ADR 0004: Spec harness](adr/0004-spec-harness.md) | 1 | proposed |
+| 2.4 | [D3 ADR 0002: File naming and package layout](adr/0002-file-naming-and-layout.md) | 1 | proposed; §1 and §6 superseded by D3 ADR 0008 |
+| 2.5 | [D3 ADR 0003: Number to string and number formatting](adr/0003-number-to-string.md) | 1 | superseded by D3 ADR 0007 |
+| 2.6 | [D3 ADR 0004: Spec harness](adr/0004-spec-harness.md) | 1 | proposed; §1 to §5 superseded by D3 ADR 0009 |
 | 2.7 | [D3 ADR 0005: Path context and drawing](adr/0005-path-context.md) | 1 for the pure interface, 4 for the `dart:ui` builder | proposed |
-| 2.8 | [D3 ADR 0006: Generators, accessors and JS values](adr/0006-generators-accessors-and-js-values.md) | 1 | proposed |
+| 2.8 | [D3 ADR 0006: Generators, accessors and JS values](adr/0006-generators-accessors-and-js-values.md) | 1 | proposed; §6 and a part of §2 superseded by D3 ADR 0010 |
+| — | [D3 ADR 0007: Native Dart forms, no JS runtime](adr/0007-native-dart-forms.md) | 1 | accepted 2026-11-15 |
+| — | [D3 ADR 0008: One package for each D3 module](adr/0008-module-packages.md) | 1 | accepted 2026-11-15 |
+| — | [D3 ADR 0009: Native spec harness](adr/0009-native-spec-harness.md) | 1 | accepted 2026-11-15 |
+| — | [D3 ADR 0010: Native values and factories](adr/0010-native-values-and-factories.md) | 1 | accepted 2026-11-15 |
 | 2.9 | Collections and iteration | 2 | no ADR file yet |
 | 2.10 | Locale data | 2 | no ADR file yet |
 | 2.11 | Dates and time zones | 3 | no ADR file yet |
@@ -247,7 +252,9 @@ decision. It changes no file before D3 phase 1. In short:
 
 ### 2.4 D3 ADR 0002: File naming and package layout (gate 1)
 
-[D3 ADR 0002](adr/0002-file-naming-and-layout.md) (proposed) adapts Chart.js ADR 0012. In short:
+[D3 ADR 0002](adr/0002-file-naming-and-layout.md) (proposed) adapts Chart.js ADR 0012. Its §1
+(the paths) and §6 (the indexes) are superseded by [D3 ADR 0008](adr/0008-module-packages.md): each
+module is a package of its own. In short:
 
 | Upstream | Dart (in `packages/flutter_d3_port/`) |
 |---|---|
@@ -275,7 +282,8 @@ decision. It changes no file before D3 phase 1. In short:
 
 ### 2.5 D3 ADR 0003: Number to string and number formatting (gate 1)
 
-[D3 ADR 0003](adr/0003-number-to-string.md) (proposed) holds the decision. In short:
+Superseded by [D3 ADR 0007](adr/0007-native-dart-forms.md): the port has no JS runtime. The text
+below is the history of [D3 ADR 0003](adr/0003-number-to-string.md). In short:
 - In some modules, a string is the result: d3-format, the path strings of d3-path and d3-geo,
   d3-color and d3-time-format. In these modules, JS-exact digits are behavior.
 - Thus the principle of Chart.js ADR 0034 does not exempt these strings. The ADR takes the rules
@@ -286,7 +294,9 @@ decision. It changes no file before D3 phase 1. In short:
 
 ### 2.6 D3 ADR 0004: Spec harness (gate 1)
 
-[D3 ADR 0004](adr/0004-spec-harness.md) (proposed) holds the decision. In short:
+[D3 ADR 0004](adr/0004-spec-harness.md) (proposed) holds the decision. Its §1 to §5 are
+superseded by [D3 ADR 0009](adr/0009-native-spec-harness.md): the specs use the matchers of
+`package:test`, and the reference engine is Node.js v24.22.1 on darwin-arm64. In short:
 - The specs use `package:test` with the upstream test names. A port-only stand-in of the Node
   `assert` module and the ported `test/asserts.js` helpers keep the upstream assertions.
 - Reference values come only from an x64 build of Node.js v24.12.0 (Chart.js ADR 0032).
@@ -312,8 +322,9 @@ decision. It changes no file before D3 phase 1. In short:
 
 ### 2.8 D3 ADR 0006: Generators, accessors and JS values (gate 1)
 
-[D3 ADR 0006](adr/0006-generators-accessors-and-js-values.md) (proposed) holds the decision. It
-covers:
+[D3 ADR 0006](adr/0006-generators-accessors-and-js-values.md) (proposed) holds the decision. Its
+§6 and the overloads of a factory of §2 are superseded by
+[D3 ADR 0010](adr/0010-native-values-and-factories.md). It covers:
 - callable classes for the D3 generators
 - getter and setter accessors, and cascades in place of the method chains
 - the arity of user functions
@@ -507,10 +518,9 @@ are per repository, for example `test/asserts.js`. Thus the ported helpers go un
 (2.11). The upstream scripts set `TZ`. No probe examined whether `TZ` sets the zone of Windows
 and of Chrome. Thus the harness installs the zone in the test.
 
-**Reference values.** Reference values come only from an x64 build of Node.js v24.12.0 (Chart.js
-ADR 0032, D3 ADR 0004). On Apple silicon, the darwin-x64 build runs under Rosetta. The D3 tests
-carry their expected values inline. Thus a reference generator is necessary only for port-only
-tests, for example the number strings of D3 ADR 0003.
+**Reference values.** Reference values come only from Node.js v24.22.1 on darwin-arm64 (D3 ADR
+0009 §5). The D3 tests carry their expected values inline. Thus a reference generator is necessary
+only for port-only tests, for example the texts of d3-color (D3 ADR 0007 §1).
 
 **Default locales.** d3-format and d3-time-format set a default locale when they load. The harness
 restores it after each test, as `setUpDefaultsRestore()` of the Chart.js harness does for
@@ -553,7 +563,7 @@ The roadmap gives tools 1-3 for both ports to phase 1, and tools 4-6 to phase 2 
 |---|---|---|---|
 | 1. Library import guard | `check:lib-imports` | 1 | The allowlists of `lib/`, of the pure layers and of the web tests of `flutter_d3_port`, with `package:js_semantics/`. The pure roots: the modules of phases 1-6 and the pure parts of phase 7. A test file without `@TestOn('vm')` imports only pure layers and `package:test` |
 | 2. Header check | `check:headers` | 1 | The 34 entries of `tool/port_sources.yaml` with their targets. The D3 port-only marker. `DIVERGES(d3)`. The backport lines of the four GitHub owners `d3`, `mbostock`, `mapbox` and `mourner`, from the `url` of each entry. The ignore line after the header lines. The gitlinks of the 34 submodules |
-| 3. JS-semantics check | `check:js-semantics` | 1 | The `js` projects of the D3 `port_sources.yaml`: all 34 repositories. D3 ADR 0003 and D3 ADR 0006 can add D3 forms |
+| 3. JS-semantics check | `check:js-semantics` | 1 | The `js` projects of the D3 `port_sources.yaml`: all 34 repositories. D3 ADR 0006 can add D3 forms |
 | 4. Upstream manifest | `upstream:manifest` | 2 | A D3 tool of its own (ADR 0008). It reads the test names of three runners: mocha `it`, vitest `test` and `node:test` `test`, with the names that loops make. Output: `packages/flutter_d3_port/doc/upstream/manifest.json` |
 | 5. Spec-case tracking | `test:cases` | 2 | The D3 spec paths `test/specs/<repo>/` and the manifest of tool 4. It moves to `port_tools` (ADR 0008) |
 | 6. Parity generator | `parity`, `parity:check` | 2 | One row for each source file, grouped by repository, from `doc/status.yaml`. It replaces the hand-written [parity.md](parity.md). It moves to `port_tools` (ADR 0008) |

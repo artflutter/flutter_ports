@@ -4,7 +4,7 @@
 ///
 /// The upstream factories `rgb`, `hsl`, `lab`, `hcl` and `cubehelix` are the
 /// classes `Rgb`, `Hsl`, `Lab`, `Hcl` and `Cubehelix` with their
-/// constructors (D3 ADR 0007). The factory `color` is the parser `color`
+/// constructors (D3 ADR 0010 §2). The factory `color` is the parser `color`
 /// and the base class `Color`.
 library;
 

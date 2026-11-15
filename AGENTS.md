@@ -5,7 +5,7 @@ libraries. First port: Chart.js v4.6.1 →
 `packages/flutter_chartjs_port`. Second port: D3 v7.9.0 →
 `packages/flutter_d3_port`, in phase 0 (scaffold and design). Each ported D3 module is a package
 of its own, as on npm (D3 ADR 0008): d3-color 3.1.0 → `packages/flutter_d3_color_port`, ported in
-native Dart forms (D3 ADR 0007). Third port: Apache
+native Dart forms (D3 ADRs 0007, 0009 and 0010). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
 (scaffold and design, no ported code). Fourth port: chartjs-plugin-zoom 2.2.0+fb81d331, an add-on
 of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`, phases 1-4 done
@@ -553,7 +553,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `publish_to: none` until its release, ISC), the first module package of the D3 port (D3 ADR
   0008), as `d3-color` on npm. It depends only on Flutter (`dart:ui`, for its Flutter layer) and
   imports no other port. `flutter_d3_port` depends on it with `^0.1.0`.
-  - The port uses no JS runtime (D3 ADR 0007): typed `double` channels, NaN for an undefined
+  - The port uses no JS runtime (D3 ADR 0007), and its values and factories are native (D3 ADR
+    0010): typed `double` channels, NaN for an undefined
     channel as upstream, and Dart constructors for the upstream arity overloads (`Rgb(r, g, b)`,
     `Rgb.from(color)`, `Rgb.parse('steelblue')`; the same for `Hsl`, `Lab`, `Hcl` and
     `Cubehelix`; `color`, `gray` and `lch` stay functions). A string or null channel does not
@@ -1084,7 +1085,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
   0147 §19. `check:lib-imports` already fails on the two import invariants.
 
-The D3 port applies the rules above with these changes. The D3 ADRs are proposed. The doc paths
+The D3 port applies the rules above with these changes. D3 ADRs 0001 to 0006 are proposed, and
+D3 ADRs 0007 to 0010 are accepted. The doc paths
 are relative to `packages/flutter_d3_port/doc/`.
 
 - Rule 1: read the upstream file in `third_party/<repo>`. Never port from `d4` or from another
@@ -1094,7 +1096,8 @@ are relative to `packages/flutter_d3_port/doc/`.
   `// Original code, not ported from D3: <reason>.` D3 ADR 0001 item 8 gives the holder strings.
   A file whose name fails the `file_names` lint has `// ignore_for_file: file_names` after its
   header lines (D3 ADR 0002).
-- Rules 3 and 4: port the specs by D3 ADR 0004. Update the row of the repository in `parity.md`
+- Rules 3 and 4: port the specs by D3 ADR 0009, and by D3 ADR 0004 §6 to §10. Update the row of
+  the repository in `parity.md`
   in the same change. From D3 phase 2, tool 6 writes `parity.md`.
 - Rule 6: a bump moves one repository. It changes the submodule, the entry in
   `tool/port_sources.yaml` and the headers of the files of that repository (D3 ADR 0001 item 7).
@@ -1105,7 +1108,7 @@ are relative to `packages/flutter_d3_port/doc/`.
   is the repository name, for example `// DIVERGES(d3-color): <row id>, <reason>`, and the row is
   in the `doc/differences.md` of the package. The port-only marker of a module package names the
   repository: `// Original code, not ported from d3-color: <reason>.`
-- Number strings (D3 ADR 0007 item 6): a number in a text of a module is `double.toString` with no
+- Number strings (D3 ADR 0007 §4): a number in a text of a module is `double.toString` with no
   `.0` for a whole number. A port-only test compares the texts with upstream in Node.js.
 - No port depends on another port (ADR 0008). Thus D3 code never imports
   `package:flutter_chartjs_port`. The D3 port uses no JS runtime (D3 ADR 0007): no `undefined`
@@ -1446,11 +1449,12 @@ sankey ADRs are proposed. The doc paths are relative to
   compares the DOM events of the host too. `tool/reference/text_metrics/` writes
   `test/port/canvas/text_metrics_reference.dart` from headless Chrome. The engine rule of Chart.js ADR 0146
   does not apply to it. Do not edit the generated files by hand.
-- The D3 tests use the matchers of `package:test` (D3 ADR 0007), with no Node `assert`
+- The D3 tests use the matchers of `package:test` (D3 ADR 0009 §2), with no Node `assert`
   stand-in. The d3-color specs are pure, and `test:web` runs them.
 - In a D3 test file with `// ignore_for_file: file_names`, `@TestOn('vm')` comes after the ignore
-  line (D3 ADR 0002 section 2). A D3 spec calls `setUpSpecs()` of `test/support/spec_setup.dart`
-  only when its module has module-level state (D3 ADR 0007). The D3 package has no
+  line (D3 ADR 0002 section 2). A D3 module whose specs change module-level state restores it
+  through a set-up function in the `test/support/` folder of its package (D3 ADR 0009 §4). The D3
+  package has no
   `flutter_test_config.dart`.
 - The ECharts tests use `package:test` (ECharts ADR 0005). In phase 0, `test/upstream_test.dart`
   is the only ECharts test. It has `@TestOn('vm')`. Thus `test:web` does not run the ECharts

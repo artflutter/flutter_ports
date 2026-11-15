@@ -1,72 +1,93 @@
 # D3 ADR 0007: Native Dart forms, no JS runtime
 
-- Status: proposed
+- Status: accepted (2026-11-15): its code and the tests of section Tests pass.
 - Date: 2026-11-15
-- Supersedes: [D3 ADR 0003](0003-number-to-string.md) §2, §3 and §5; [D3 ADR 0004](0004-spec-harness.md) §2 and §5; [D3 ADR 0006](0006-generators-accessors-and-js-values.md) §6
-- Related: [D3 ADR 0002](0002-file-naming-and-layout.md), [ADR 0008](../../../../docs/adr/0008-shared-js-runtime-and-port-tools.md), [Chart.js ADR 0146](../../../flutter_chartjs_port/doc/adr/0146-js-numeric-semantics.md)
+- Supersedes: [D3 ADR 0003](0003-number-to-string.md), whole
+- Related: [D3 ADR 0009](0009-native-spec-harness.md), [D3 ADR 0010](0010-native-values-and-factories.md), [Chart.js ADR 0146](../../../flutter_chartjs_port/doc/adr/0146-js-numeric-semantics.md)
 
 ## Context
 
-The proposed D3 ADRs 0003, 0004 and 0006 translate D3 through a JS runtime: the `undefined`
-sentinel, `jsCall`, JS number methods, `jsAtan2` and a Node `assert` stand-in. The maintainer
-decided on 2026-11-15 that the D3 port uses only native Dart and Flutter forms. d3-color is the
-first ported module. Its factories overload on their argument count, coerce each argument with
-`+x`, and print numbers into CSS texts.
+D3 ADR 0003 (proposed) translates the numbers and the number texts of D3 through a JS runtime:
+`jsNumberToString`, `jsToFixed`, `jsRound`, `jsAtan2` and the shared package `js_semantics`. On
+2026-11-15 the maintainer decided that the D3 port uses only native Dart and Flutter forms.
+d3-color 3.1.0 is the first ported module. This ADR keeps the section numbers of D3 ADR 0003.
 
 ## Decision
 
-1. Ported D3 code uses no JS runtime: no `undefined` sentinel, no `jsCall`, no `jsGet`, no JS
-   number methods and no emulated builtins. `package:flutter_d3_port` does not depend on
-   `js_semantics` or on `flutter_chartjs_port`.
-2. A value has its Dart type: `double` for a number, `String` for a text, a class for an object.
-   NaN stays NaN: it is an IEEE double, and D3 uses it as data (an undefined channel of
-   d3-color). Dart `null` is the absent value of a nullable parameter or result, for example the
-   `null` of `color('bostock')`.
-3. An upstream factory that overloads on its argument count becomes Dart constructors:
-   `Rgb(70, 130, 180)` for `rgb(70, 130, 180)`, `Rgb.from(color)` for `rgb(color)` and
-   `Rgb.parse('steelblue')` for `rgb('steelblue')`. A factory with no class keeps its name as a
-   function, for example `gray(50)` and `lch(74, 11, 252)`. An omitted optional argument is the
-   upstream default, for example the opacity 1.
-4. The `+x` coercion of an argument has no Dart form. A spec case that asserts such a coercion
-   keeps its upstream name and skips as `'diverges: <row id>'`.
-5. `Math` is `dart:math` as it is, also `pow`, `atan2`, `sin` and `cos`. JavaScript `%` is
-   `remainder`. A truthiness test of a number is written out, for example
-   `s != 0 && !s.isNaN` for `if (s)`.
-6. A number in a text of a module (for example `formatHsl`) is `double.toString`, with no `.0` for
-   a whole number and `0` for -0. For the value ranges of the module, this is the text of
-   JavaScript `String(x)`. A port-only test compares the texts with upstream in Node.js.
-7. Specs use the matchers of `package:test`. An expected NaN is `isNaN`. A ported helper keeps
-   its upstream checks with these matchers, for example
-   `packages/flutter_d3_color_port/test/asserts.dart`. A spec calls `setUpSpecs()` only when its
-   module has module-level state.
-8. Reference values come from the engine of Chart.js ADR 0146: Node.js v24.22.1 on darwin-arm64.
-   A generator in `tool/reference/` of a module package runs the pinned upstream source and stops
-   on another engine.
-9. A Flutter form of a D3 value is a port-only extension in `lib/src/ui/` of its module package,
-   for example `toUiColor()` and `toD3Rgb()` of d3-color. The pure library of a module package and
-   `package:flutter_d3_port/d3.dart` import no Flutter library. The main library of each package
-   adds the Flutter layer.
-10. A faster Dart form that keeps the results of the upstream form follows porting-flow.md §1.1:
-    it gets a `DIVERGES` marker, an `adapt` row and figures in `doc/performance.md` of its
-    package.
+### 1. Texts are behavior
+
+- A text that a public function of a D3 module returns is behavior. Examples are the texts of
+  d3-format, the path texts of d3-path, d3-geo and d3-delaunay, the color texts of d3-color, the
+  texts of d3-time-format, the string interpolators of d3-interpolate and the formatters of
+  d3-dsv. Its digits are the digits of upstream on the reference engine.
+- These results are behavior too: the tick values and the interval boundaries of d3-array,
+  d3-scale and d3-time, a containment or hit result, the item order and a throw.
+- A last-bit difference of a number that changes none of these results is display only. It needs
+  no fix.
+
+### 2. No JS runtime
+
+- No `js_semantics`: a D3 package depends on no JS runtime and on no other port. Ported code has
+  no `undefined` sentinel, no `jsCall`, no `jsGet` and no emulated builtin.
+- Where upstream relies on an implicit JS conversion, the ported line writes the native Dart form
+  of §4 at the site.
+
+### 3. Number methods
+
+- `x.toStringAsFixed(p)`, `x.toStringAsExponential(p)` and `x.toStringAsPrecision(p)` translate
+  `x.toFixed(p)`, `x.toExponential(p)` and `x.toPrecision(p)` at the call site.
+- `x.toInt().toRadixString(radix)` translates `x.toString(radix)` of a whole number.
+- A module whose texts differ from the reference engine through these methods, for example for
+  -0, writes the fix at the site. Its reference test finds the difference, and the fix gets a row
+  of `differences.md`.
+
+### 4. Translation rules
+
+- `${x}` and `x + ""` of a number: the shortest text of the double, as `double.toString` gives
+  it, with no `.0` for a whole number and `0` for -0.
+- `a > b ? 1 : 0` translates `+(a > b)`.
+- `x != 0 && !x.isNaN` translates the test `if (x)` of a number.
+- `x.isNaN || x == 0 ? 0.0 : x` translates `x || 0` of a number.
+- `x.remainder(y)` translates `x % y`.
+- `x.roundToDouble()` translates `Math.round(x)`. A negative half rounds away from zero, where
+  JavaScript rounds up. A site where this changes a result writes a form that gives the upstream
+  result, for example `clampi` of d3-color.
+- `math.max` and `math.min` of `dart:math`, with `double` operands, translate `Math.max` and
+  `Math.min` of two numbers.
+- `math.pow(10.0, d)` translates `10 ** d`.
+- `double.parse(text)` translates `+text` of a decimal number text.
+- `x is C` translates `x instanceof C`.
+- These translations need no `DIVERGES` marker and no row.
+
+### 5. Transcendental builtins
+
+- `math.sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`, `exp`, `log` and `pow` of
+  `dart:math`, with `double` operands, translate the `Math` functions of the same names.
+- `math.log(x) * math.log10e` translates `Math.log10(x)`, with the exponent itself for an exact
+  power of ten, so a tick choice stays the same.
+- The last bit of these results can differ from V8 and between platforms. A spec case that fails
+  only through such a bit skips as `'diverges: <row id>'`, with a `platform` row in
+  `differences.md`. A reference test compares these results with a tolerance.
 
 ## Rejected
 
-- The JS runtime of ADR 0008 for D3: it keeps the JS object model in Dart and costs speed.
-- One factory function `rgb(Object value)` that tests the type of its argument: a JS union in
-  Dart, with no static type check.
-- A Node `assert` stand-in: `package:test` gives the same checks with Dart types.
+- The JS runtime of the shared package `js_semantics`: it keeps the JS object model in Dart and
+  costs speed.
+- Copies of fdlibm for bit-exact transcendental results: in the specs of d3-color, the last bits
+  change no behavior of §1.
 
 ## Consequences
 
-- The d3-color API is Dart: a call with a string channel is a compile error, not NaN.
-- Each later module states its overloads as constructors or named parameters in its rows.
-- The D3 port needs no part of the shared runtime of ADR 0008.
-- The texts of a module can differ from upstream outside the value ranges that the reference
-  test covers. A difference that a test finds gets a row.
+- A D3 module needs no shared runtime package.
+- The reference test of each module compares its texts with upstream on the reference engine.
+- D3 ADR 0006 §1 to §5, §8 and §9 (proposed) still translate accessors, function values, `this`
+  and errors through the runtime. The port of the first module that needs them gets a new ADR with
+  native forms for them.
+- ECharts ADRs 0003 and 0004 (proposed) cite sections of D3 ADRs 0003 and 0006 that no longer
+  hold for the D3 port.
 
 ## Tests
 
-- `packages/flutter_d3_color_port/test/*_test.dart`
 - `packages/flutter_d3_color_port/test/port/reference_test.dart`
-- `packages/flutter_d3_color_port/test/port/ui_color_test.dart`
+- `packages/flutter_d3_color_port/test/port/number_text_test.dart`
+- `packages/flutter_d3_color_port/test/port/clamp_compare_test.dart`

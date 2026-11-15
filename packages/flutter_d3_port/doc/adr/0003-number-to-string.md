@@ -1,6 +1,7 @@
 # D3 ADR 0003: Number to string and number formatting
 
 - Status: proposed
+- Superseded by: [D3 ADR 0007](0007-native-dart-forms.md) (2026-11-15)
 - Date: 2026-10-20
 - Gate: D3 phase 1. The pilot ports d3-path and d3-format. d3-array `ticks.js` of the pilot calls
   `Math.log10`.

@@ -1,7 +1,7 @@
 // Original code, not ported from d3-color: the Flutter colors of d3-color.
 
 /// The conversions between the colors of d3-color and the Flutter
-/// [ui.Color] (D3 ADR 0007).
+/// [ui.Color] (D3 ADR 0008 §6).
 library;
 
 import 'dart:ui' as ui;

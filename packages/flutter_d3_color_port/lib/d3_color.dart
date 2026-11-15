@@ -1,5 +1,5 @@
 // Original code, not ported from d3-color: the pure library of the package.
-/// d3-color 3.1.0 in native Dart, with no Flutter import (D3 ADR 0008).
+/// d3-color 3.1.0 in native Dart, with no Flutter import (D3 ADR 0008 §6).
 ///
 /// Import it with a prefix, as `import
 /// 'package:flutter_d3_color_port/d3_color.dart' as d3;`. Then the code reads

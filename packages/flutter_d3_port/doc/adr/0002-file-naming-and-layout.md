@@ -1,6 +1,7 @@
 # D3 ADR 0002: File naming and package layout
 
 - Status: proposed
+- Superseded in part by: [D3 ADR 0008](0008-module-packages.md) §1 and §6 (2026-11-15)
 - Date: 2026-10-20
 - Gate: D3 phase 1. The first ported file of the pilot needs a Dart path.
 - Related: [Chart.js ADR 0012](../../../flutter_chartjs_port/doc/adr/0012-dart-file-naming.md) (the

@@ -1,6 +1,7 @@
 # D3 ADR 0006: Generators, accessors and JS values
 
 - Status: proposed
+- Superseded in part by: [D3 ADR 0010](0010-native-values-and-factories.md) §6 and a part of §2 (2026-11-15)
 - Date: 2026-10-20
 - Gate: D3 phase 1. The pilot needs the callable classes (the formats of d3-format), the
   `arguments.length` overloads (d3-array `range`), `instanceof` (d3-path) and the errors. The

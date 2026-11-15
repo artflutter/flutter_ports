@@ -3,10 +3,10 @@
 /// Port of `src/color.js` of d3-color 3.1.0: the base class [Color], the
 /// CSS parser [color], and the RGB and HSL color spaces [Rgb] and [Hsl].
 ///
-/// The port uses the native forms of D3 ADR 0007. A channel is a `double`
-/// field, and NaN marks an undefined channel, as upstream. The upstream
-/// factories `rgb` and `hsl` overload on their argument count. Here, the form
-/// with channels is the constructor of the class, `X.from` converts a
+/// The port uses the native forms of D3 ADRs 0007 and 0010. A channel is a
+/// `double` field, and NaN marks an undefined channel, as upstream. The
+/// upstream factories `rgb` and `hsl` overload on their argument count. Here,
+/// the form with channels is the constructor of the class, `X.from` converts a
 /// [Color], and `X.parse` reads a CSS text.
 library;
 

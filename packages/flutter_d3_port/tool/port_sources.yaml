@@ -33,19 +33,21 @@
 # - pin: the reference copy in this repository. kind "submodule" is a git
 #   submodule at the commit "commit" (tag "ref"). For an annotated tag,
 #   "commit" is the tagged commit, not the tag object.
-# - targets: the Dart path of a source path (D3 ADR 0002). A "source" that
+# - targets: the Dart path of a source path (D3 ADR 0008 §1). The targets of
+#   a repository that is not ported are placeholders: its port moves the entry
+#   into the tool/port_sources.yaml of its own package. A "source" that
 #   ends with "/" is a directory. Its files map into the "dart" directory.
 #   The map changes "-test.js" to "_test.dart" and ".js" to ".dart". Any
 #   other "source" is one file. Its "dart" is the Dart file. A file target
 #   applies before a directory target. Four test entries do not end with
-#   "-test.js". They have file targets (D3 ADR 0002 section 1).
+#   "-test.js". They have file targets (D3 ADR 0008 §1).
 # - files, file_index: the source paths that exist at the pin. Phase 0 ports
 #   no file. Thus no entry has these keys yet.
 #
 # All paths are relative to the repository root. Only "source" is relative
 # to the project root.
 #
-# Top-level keys before "sources" (check:headers, D3 ADR 0007):
+# Top-level keys before "sources" (check:headers, D3 ADR 0008 §8):
 # - marker: the tag of the DIVERGES markers, "// DIVERGES(d3): <row id>,
 #   <reason>". The rows are in doc/differences.md.
 # - project: the project name of the port-only marker, "// Original code,

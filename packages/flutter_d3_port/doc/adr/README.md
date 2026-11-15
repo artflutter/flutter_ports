@@ -4,11 +4,13 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 
 <!-- adr-index:start -->
 - [0001](0001-upstream-sources.md) Upstream sources: proposed.
-- [0002](0002-file-naming-and-layout.md) File naming and package layout: proposed.
-- [0003](0003-number-to-string.md) Number to string and number formatting: proposed.
-- [0004](0004-spec-harness.md) Spec harness: proposed.
+- [0002](0002-file-naming-and-layout.md) File naming and package layout: proposed, superseded in part by 0008.
+- [0003](0003-number-to-string.md) Number to string and number formatting: proposed, superseded by 0007.
+- [0004](0004-spec-harness.md) Spec harness: proposed, superseded in part by 0009.
 - [0005](0005-path-context.md) Path context and drawing: proposed.
-- [0006](0006-generators-accessors-and-js-values.md) Generators, accessors and JS values: proposed.
-- [0007](0007-native-dart-forms.md) Native Dart forms, no JS runtime: proposed, supersedes 0003, 0004, 0006.
-- [0008](0008-module-packages.md) One package for each D3 module: proposed, supersedes 0002.
+- [0006](0006-generators-accessors-and-js-values.md) Generators, accessors and JS values: proposed, superseded in part by 0010.
+- [0007](0007-native-dart-forms.md) Native Dart forms, no JS runtime: accepted, supersedes 0003.
+- [0008](0008-module-packages.md) One package for each D3 module: accepted, supersedes 0002.
+- [0009](0009-native-spec-harness.md) Native spec harness: accepted, supersedes 0004.
+- [0010](0010-native-values-and-factories.md) Native values and factories: accepted, supersedes 0006.
 <!-- adr-index:end -->

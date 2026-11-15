@@ -67,8 +67,8 @@ cases are static counts of the `it(` and `test(` calls. Loops make more cases at
      the header lines ([D3 ADR 0002](adr/0002-file-naming-and-layout.md)).
    - Code from another license component adds its notice to the package `LICENSE` and to
      `REUSE.toml` ([AGENTS.md](../../../AGENTS.md#licensing)).
-3. Port the upstream test file of the module to `test/specs/<repo>/`
-   ([D3 ADR 0004](adr/0004-spec-harness.md)).
+3. Port the upstream test files of the module to the `test/` folder of its package
+   ([D3 ADR 0008](adr/0008-module-packages.md) §1, [D3 ADR 0009](adr/0009-native-spec-harness.md)).
 4. Update the row of the repository in [parity.md](parity.md) in the same change. From phase 2,
    update `doc/status.yaml` and run tool 6. Tool 6 writes `parity.md`.
 
@@ -77,8 +77,9 @@ cases are static counts of the `it(` and `test(` calls. Loops make more cases at
 ## Roadmap
 
 **Status (2026-11-15).** Phase 0 is in progress. d3-color is ported ahead of phase 2, in the
-native Dart forms of [D3 ADR 0007](adr/0007-native-dart-forms.md): no JS runtime, typed `double`
-channels and Dart constructors. It is the package `flutter_d3_color_port`, as `d3-color` is a
+native Dart forms of [D3 ADR 0007](adr/0007-native-dart-forms.md) and
+[D3 ADR 0010](adr/0010-native-values-and-factories.md): no JS runtime, typed `double` channels and
+Dart constructors. It is the package `flutter_d3_color_port`, as `d3-color` is a
 package of its own on npm ([D3 ADR 0008](adr/0008-module-packages.md)). This package re-exports
 it.
 
@@ -116,7 +117,7 @@ Cross-port ADRs that apply to this port:
 - [ADR 0008: Shared JS runtime and port tools](../../../docs/adr/0008-shared-js-runtime-and-port-tools.md)
   (proposed)
 
-D3 ADRs (all proposed):
+D3 ADRs (0001 to 0006 proposed, 0007 to 0010 accepted):
 - [D3 ADR 0001: Upstream sources](adr/0001-upstream-sources.md) (gate 0)
 - [D3 ADR 0002: File naming and package layout](adr/0002-file-naming-and-layout.md) (gate 1)
 - [D3 ADR 0003: Number to string and number formatting](adr/0003-number-to-string.md) (gate 1)
@@ -125,10 +126,14 @@ D3 ADRs (all proposed):
   interface, gate 4 for the `dart:ui` builder)
 - [D3 ADR 0006: Generators, accessors and JS values](adr/0006-generators-accessors-and-js-values.md)
   (gate 1)
-- [D3 ADR 0007: Native Dart forms, no JS runtime](adr/0007-native-dart-forms.md) (it supersedes
-  parts of D3 ADRs 0003, 0004 and 0006)
-- [D3 ADR 0008: One package for each D3 module](adr/0008-module-packages.md) (it supersedes parts
-  of D3 ADR 0002)
+- [D3 ADR 0007: Native Dart forms, no JS runtime](adr/0007-native-dart-forms.md) (accepted
+  2026-11-15. It supersedes D3 ADR 0003)
+- [D3 ADR 0008: One package for each D3 module](adr/0008-module-packages.md) (accepted
+  2026-11-15. It supersedes D3 ADR 0002 §1 and §6)
+- [D3 ADR 0009: Native spec harness](adr/0009-native-spec-harness.md) (accepted 2026-11-15. It
+  supersedes D3 ADR 0004 §1 to §5)
+- [D3 ADR 0010: Native values and factories](adr/0010-native-values-and-factories.md) (accepted
+  2026-11-15. It supersedes D3 ADR 0006 §6 and a part of §2)
 
 Later decisions have no ADR file yet. [porting-flow.md](porting-flow.md) §2 gives the question,
 the facts and a proposal for each:

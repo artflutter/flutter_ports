@@ -1,7 +1,7 @@
 // Ported from d3-color v3.1.0 test/asserts.js (ISC, Mike Bostock).
 
 /// Port of `test/asserts.js` of d3-color 3.1.0: the channel assertions of
-/// the specs, with the matchers of `package:test` (D3 ADR 0007).
+/// the specs, with the matchers of `package:test` (D3 ADR 0009 §2).
 ///
 /// An expected NaN asks for a NaN channel. The other channels compare
 /// exactly, by `Math.round` or within 1e-6, as upstream.

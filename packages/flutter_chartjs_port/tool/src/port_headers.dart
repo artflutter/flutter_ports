@@ -157,7 +157,7 @@ final class const PortTarget(
     } else if (name.endsWith('.spec.js')) {
       dartName = '${name.substring(0, name.length - 8)}_test.dart';
     } else if (name.endsWith('-test.js')) {
-      // The D3 test files (D3 ADR 0002 section 1).
+      // The D3 test files (D3 ADR 0008 §1).
       dartName = '${name.substring(0, name.length - 8)}_test.dart';
     } else if (name.endsWith('.d.ts')) {
       dartName = '${name.substring(0, name.length - 5)}.dart';

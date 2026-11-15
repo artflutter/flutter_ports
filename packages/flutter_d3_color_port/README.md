@@ -48,7 +48,7 @@ the same name. The 8 upstream test files are in `test/`. The differences from up
 [doc/differences.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_d3_color_port/doc/differences.md),
 and the speed figures against upstream in Node.js are in
 [doc/performance.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_d3_color_port/doc/performance.md).
-The decisions are D3 ADRs 0007 and 0008 of `packages/flutter_d3_port/doc/adr/`.
+The decisions are D3 ADRs 0007 to 0010 of `packages/flutter_d3_port/doc/adr/`.
 
 ## License
 
