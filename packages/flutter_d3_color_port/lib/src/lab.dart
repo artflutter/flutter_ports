@@ -200,7 +200,7 @@ Hcl hclConvert(Color? o) {
     opacity = c.opacity;
   }
   if (a == 0.0 && b == 0.0) {
-    return Hcl(double.nan, 0.0 < l && l < 100.0 ? 0 : double.nan, l, opacity);
+    return Hcl(double.nan, 0.0 < l && l < 100.0 ? 0.0 : double.nan, l, opacity);
   }
   // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math atan2.
   final h = math.atan2(b, a) * degrees;

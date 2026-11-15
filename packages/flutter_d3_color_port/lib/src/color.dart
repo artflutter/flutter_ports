@@ -823,7 +823,7 @@ class Rgb(
       (-0.5 <= r && r < 255.5) &&
       (-0.5 <= g && g < 255.5) &&
       (-0.5 <= b && b < 255.5) &&
-      (0 <= opacity && opacity <= 1);
+      (0.0 <= opacity && opacity <= 1.0);
 
   /// color.js:275 `rgb_formatHex`.
   @override
@@ -838,13 +838,13 @@ class Rgb(
   String formatHex8() {
     if (_joinStrings) {
       return '#${hex2(r)}${hex2(g)}${hex2(b)}'
-          '${hex2((opacity.isNaN ? 1 : opacity) * 255)}';
+          '${hex2((opacity.isNaN ? 1.0 : opacity) * 255.0)}';
     }
     // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
     final x = clampi(r);
     final y = clampi(g);
     final z = clampi(b);
-    return _hexText(x, y, z, clampi((opacity.isNaN ? 1 : opacity) * 255));
+    return _hexText(x, y, z, clampi((opacity.isNaN ? 1.0 : opacity) * 255.0));
   }
 
   /// color.js:283 `rgb_formatRgb`.
@@ -899,7 +899,7 @@ String rgbText(double r, double g, double b, double opacity) {
 /// color.js:288 `clampa(opacity)`: an undefined opacity is 1, other values
 /// clamp to [0, 1].
 double clampa(double opacity) =>
-    opacity.isNaN ? 1 : math.max(0, math.min(1, opacity));
+    opacity.isNaN ? 1.0 : math.max(0, math.min(1, opacity));
 
 /// color.js:292 `clampi(value)`: [value] rounded and clamped to [0, 255]. An
 /// undefined value is 0.
@@ -1147,7 +1147,7 @@ Hsl hslConvert(Color? o) {
     s /= l < 0.5 ? max + min : 2.0 - max - min;
     h *= 60.0;
   } else {
-    s = l > 0.0 && l < 1.0 ? 0 : h;
+    s = l > 0.0 && l < 1.0 ? 0.0 : h;
   }
   return Hsl(h, s, l, c.opacity);
 }
@@ -1236,9 +1236,9 @@ class Hsl(
   /// color.js:370 `displayable()`.
   @override
   bool displayable() =>
-      (0 <= s && s <= 1 || s.isNaN) &&
-      (0 <= l && l <= 1) &&
-      (0 <= opacity && opacity <= 1);
+      (0.0 <= s && s <= 1.0 || s.isNaN) &&
+      (0.0 <= l && l <= 1.0) &&
+      (0.0 <= opacity && opacity <= 1.0);
 
   /// color.js:375 `formatHsl()`.
   @override
@@ -1293,15 +1293,19 @@ class Hsl(
 /// 0.
 double clamph(double value) {
   // DIVERGES(d3-color): adapt-color-clamp-compare, no % for a hue in (0, 360).
-  if (value > 0 && value < 360) return value;
+  if (value > 0.0 && value < 360.0) return value;
   // `value || 0`: NaN and -0 are 0.
-  final v = (value.isNaN || value == 0 ? 0.0 : value).remainder(360);
-  return v < 0 ? v + 360 : v;
+  final v = (value.isNaN || value == 0.0 ? 0.0 : value).remainder(360.0);
+  return v < 0.0 ? v + 360.0 : v;
 }
 
 /// color.js:386 `clampt(value)`: [value] in [0, 1]. An undefined value is 0.
+///
+/// `value || 0` is 0 for NaN and for -0. The test of NaN comes before the
+/// clamp, where `max` gives 0 for -0, so that the clamp reads [value] itself:
+/// dart2wasm boxed the value of a conditional there.
 double clampt(double value) =>
-    math.max(0, math.min(1, value.isNaN ? 0 : value));
+    value.isNaN ? 0.0 : math.max(0, math.min(1, value));
 
 /// color.js:391 `hsl2rgb(h, m1, m2)`: one RGB channel of an HSL color, from
 /// FvD 13.37, CSS Color Module Level 3.

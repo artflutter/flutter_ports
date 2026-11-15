@@ -3,7 +3,8 @@
 /// The twin test of the row `adapt-color-clamp-compare`: `clampi` without
 /// `Math.round` and `clamph` without `%` for a hue in (0, 360) give the
 /// results of the plain translations of color.js:292 and color.js:381, on a
-/// large set of generated values.
+/// large set of generated values. `clampt`, with its test of NaN before the
+/// clamp, gives the bits of color.js:386 too.
 library;
 
 import 'dart:math' as math;
@@ -26,6 +27,11 @@ double _clamphReference(double value) {
   final v = (value.isNaN || value == 0 ? 0.0 : value).remainder(360);
   return v < 0 ? v + 360 : v;
 }
+
+/// color.js:386 `Math.max(0, Math.min(1, value || 0))`: `value || 0` is 0
+/// for NaN and -0.
+double _clamptReference(double value) =>
+    math.max(0, math.min(1, value.isNaN || value == 0 ? 0.0 : value));
 
 /// The double next to [x] away from 0 ([step] 1) or toward 0 ([step] -1),
 /// through the two 32-bit halves of its bits, as on each platform.
@@ -120,6 +126,18 @@ void main() {
     }
     expect(mismatches, isEmpty);
     expect(values.length, greaterThan(25000));
+  });
+
+  test('clampt gives the bits of the plain translation', () {
+    final mismatches = <String>[];
+    for (final x in [...values, for (final x in values) x / 256]) {
+      final actual = clampt(x);
+      final expected = _clamptReference(x);
+      if (!_same(actual, expected)) {
+        mismatches.add('clampt($x): $actual, $expected');
+      }
+    }
+    expect(mismatches, isEmpty);
   });
 
   test('clamph gives the bits of the plain translation', () {
