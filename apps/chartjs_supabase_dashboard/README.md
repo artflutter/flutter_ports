@@ -1,0 +1,41 @@
+# chartjs_supabase_dashboard
+
+A proof of concept of a live dashboard: one line chart of `flutter_chartjs_port` on a Supabase table.
+
+- When the page opens, it loads the newest 1000 rows of the table `metric_points` and starts the realtime channel of the table.
+- The page sends one value to the table every 500 ms. The value is a function of the time, so the rows of several open pages give one line. Supabase Realtime sends each new row to each open page, also to the page that sent it.
+- The view scrolls with the clock in each frame. Its right edge is the newest time that all rows reached, so a new row comes in from the right. The y range eases to the values in view, and the time labels stay on fixed steps of time. Each frame changes only the ranges (`chart.updateRanges`), and a new row gives one full update. The points are in the internal form of Chart.js (`parsing: false`, `normalized: true`), and the live view gets only the rows of the last two widths of the view, so an update stays short with many rows in memory. The chart area keeps one size: the x axis adds no padding for its edge labels, and the y axis has a fixed width. Else the plot jumps each time a tick comes in at an edge.
+- A drag, a mouse wheel or a trackpad scroll pans the time axis. A pinch, or Ctrl and the wheel, zooms it (`flutter_chartjs_plugin_zoom_port`). When the left edge of the view comes near the oldest row in memory, the page loads the 1000 rows before it.
+- When the view is not at the newest row, the chart stays in place while rows arrive. The button **Live** moves it back.
+- The bar above the chart shows the realtime state, the rows in memory and the pages, the values sent and received, the time from an insert to its row in the realtime channel, and the frame rate.
+
+## Supabase set-up
+
+1. Open the SQL editor of the project and run [supabase/schema.sql](supabase/schema.sql). The script makes the table, the row level security policies and the realtime publication. It writes 6 hours of history (one value a second) into an empty table. It also schedules a `pg_cron` job that keeps the newest 200000 rows.
+2. Copy `supabase.example.json` to `supabase.json`, and write the project URL and the publishable key into it (Project Settings, API Keys). Git ignores `supabase.json`.
+
+The anon role can read the table and insert a value only: the database sets `id` and `ts`.
+
+## Run
+
+```sh
+dart run melos run dashboard
+```
+
+The script runs `flutter run -d chrome --dart-define-from-file=supabase.json` in this folder. A debug web build is slow: to judge the motion, add `--release`. The app also runs on macOS: `flutter run -d macos --dart-define-from-file=supabase.json`.
+
+## Deploy
+
+The workflow `pages` (`.github/workflows/pages.yaml`) builds the app on the newest stable, beta and master Flutter, each with WebAssembly and the JavaScript fallback. It deploys them at `https://artflutter.github.io/flutter_ports/dashboard/stable/` (also `beta/` and `master/`). The page `https://artflutter.github.io/flutter_ports/dashboard/` (`tool/pages/dashboard.html`) has one link for each build: `?build=wasm` or `?build=js` selects the build (`web/flutter_bootstrap.js`). The builds read the project URL and the publishable key from the repository variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`.
+
+GitHub Pages cannot send the COOP and COEP headers that the WebAssembly renderer needs. `web/isolate.js` adds them through a service worker, as in the lab. A local test of the WebAssembly build needs a server that sends them.
+
+## Code
+
+- `lib/src/metric_source.dart`: the row class and the interface of the table.
+- `lib/src/supabase_metric_source.dart`: the table on `supabase_flutter`. The pages go by `id`, the newest first.
+- `lib/src/live_series.dart`: the rows in memory, the pages, the realtime rows and the pump. A gap of more than 10 seconds between two rows breaks the line.
+- `lib/src/live_chart.dart`: the chart, the frame ticker of the live view, the pan, the zoom and the page loads.
+- `lib/src/dashboard_page.dart`: the app and the status bar.
+
+The tests use an in-memory table (`test/support/memory_metric_source.dart`) and need no network.

@@ -17,6 +17,7 @@ workspace:
   - apps/chartjs_gallery
   - apps/chart_benchmark_lab
   - apps/chartjs_docs
+  - apps/chartjs_supabase_dashboard
 
 dev_dependencies:
   commitlint_cli: ^0.8.1
@@ -40,6 +41,10 @@ melos:
       run: cd apps/chartjs_docs && flutter run -d chrome --web-browser-flag=--enable-blink-features=ExtendedTextMetrics
       stdio: inherit
       description: Run the documentation site in Chrome.
+    dashboard:
+      run: cd apps/chartjs_supabase_dashboard && flutter run -d chrome --dart-define-from-file=supabase.json
+      stdio: inherit
+      description: Run the live Supabase dashboard sample in Chrome (needs apps/chartjs_supabase_dashboard/supabase.json).
     docs:build:web:
       run: cd apps/chartjs_docs && flutter build web --wasm
       description: Build the documentation site for the web (WebAssembly with a JavaScript fallback).

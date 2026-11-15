@@ -210,6 +210,8 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   `port-checks` run it.
 - `dart run melos run docs` / `docs:build:web`: run the documentation site in Chrome / build it for the web
   with WebAssembly.
+- `dart run melos run dashboard`: run the live Supabase dashboard sample in Chrome. It needs
+  `apps/chartjs_supabase_dashboard/supabase.json` (git ignores it).
 - `dart run melos run upstream`: check out the pinned reference sources (every `third_party/`
   submodule, at depth 1). These are the three Chart.js submodules, the 34 D3 submodules, the
   two ECharts submodules, the chartjs-plugin-zoom submodule and the chartjs-chart-sankey submodule.
@@ -607,6 +609,29 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `lib/migrate/shadcn/shadcn_data.dart` are MIT copies: the
     `LICENSE` of the app and `REUSE.toml` name their holders.
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
+- `apps/chartjs_supabase_dashboard`: a proof of concept of a live dashboard (web and macOS): one
+  typed `ChartView` line chart on a time axis, on the Supabase table `metric_points`, with
+  `supabase_flutter`. `supabase/schema.sql` makes the table (anon reads and inserts only `value`),
+  the realtime publication, 6 hours of history and a `pg_cron` trim job. The run reads the URL and
+  the publishable key from `supabase.json` (`--dart-define-from-file`, git ignores it;
+  `supabase.example.json` has the form). `LiveSeries` (`lib/src/live_series.dart`) loads the
+  newest page of 1000 rows by `id`, merges the realtime inserts by id, loads the page before the
+  oldest row on demand, and inserts a value of the time every 500 ms. `LiveChart` moves the view
+  in a frame ticker: it writes `min` and `max` of the x and y scales through `scale.options` and
+  calls `chart.updateRanges` (Chart.js ADR 0111). The right edge is `now` minus the longest recent
+  realtime delay, the y range eases to the values in view, and a tick callback keeps the time
+  labels on fixed steps. A wheel or a trackpad scroll pans the x range (a canvas `wheel`
+  listener), a drag pans it and a pinch or Ctrl and the wheel zooms it (the zoom port with
+  `rangeOnlyUpdates: true`), and a left edge near the oldest row loads the next page. The config
+  is built once, and each build gives only a new dataset with a new data List: the options stay
+  `==`, so the chart keeps the ranges. The points have the time in milliseconds as x, in time
+  order, with `parsing: false` and `normalized: true`: an update parses no row. The live view gets
+  only the rows of the last two widths of the view, and the history view holds its List until a
+  page load. The chart area keeps one size: an `afterFit` hook sets the label padding of the x
+  axis to 0 (the chart padding on the right holds the last label), and another one gives the y
+  axis a fixed width (`test/live_chart_test.dart`). A `FrameTiming` readout in the status bar shows
+  the frame rate. The tests use `test/support/memory_metric_source.dart`, with no
+  network.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC), the
   bundle of the D3 modules, as the npm package `d3`. Phase 0 is in progress. Each ported module is
   a package of its own (D3 ADR 0008): the bundle depends on it, and `lib/src/d3/index.dart` (the
@@ -1695,7 +1720,15 @@ sankey ADRs are proposed. The doc paths are relative to
   lab resolves alone in these builds (the step deletes `resolution: workspace`), so that a dev dependency
   of the workspace cannot stop a page. The root `pubspec.lock` gives the first choice of versions. If a
   channel does not build, its page shows that result, and the other pages deploy. If no channel builds,
-  the deploy stops. The old address `lab/` goes to the root page. The job `version` computes the lab
+  the deploy stops. The old address `lab/` goes to the root page. The workflow also publishes
+  `apps/chartjs_supabase_dashboard` once for each channel, at `dashboard/stable/`,
+  `dashboard/beta/` and `dashboard/master/`, with its own page `dashboard/`
+  (`tool/pages/dashboard.html`, one WebAssembly and one JavaScript link for each channel), apart
+  from the root page. Its builds resolve the app alone, as the lab does, and read the Supabase URL
+  and the publishable key from the repository variables `SUPABASE_URL` and
+  `SUPABASE_PUBLISHABLE_KEY`. A dashboard build that fails does not stop the deploy: its channel
+  page says so. The app has the `web/isolate.js` and `web/flutter_bootstrap.js` of the lab; its
+  worker leaves the CORS requests to other origins (Supabase) alone. The job `version` computes the lab
   version with git-cliff (`cliff.toml`) from the commits after the last `lab/v*` tag. Only the paths of
   its `include_paths` count. The builds take it through `--build-name`, and the run number through
   `--build-number`. The bottom of the page shows both values (the key `lab.version`). The job `deploy`

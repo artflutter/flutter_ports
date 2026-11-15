@@ -1,0 +1,28 @@
+name: chartjs_supabase_dashboard
+description: A live dashboard sample of flutter_chartjs_port on Supabase.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  # The pan and the zoom of the time axis: the port of chartjs-plugin-zoom.
+  flutter_chartjs_plugin_zoom_port:
+    path: ../../packages/flutter_chartjs_plugin_zoom_port
+  flutter_chartjs_port:
+    path: ../../packages/flutter_chartjs_port
+  material_ui: ^1.10.0
+  supabase_flutter: ^2.18.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true

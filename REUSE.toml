@@ -108,6 +108,9 @@ path = [
   "apps/chartjs_gallery/ios/Runner/Assets.xcassets/AppIcon.appiconset/*.png",
   "apps/chartjs_gallery/ios/Runner/Assets.xcassets/LaunchImage.imageset/*.png",
   "apps/chartjs_gallery/android/app/src/main/res/mipmap-*/ic_launcher.png",
+  "apps/chartjs_supabase_dashboard/web/favicon.png",
+  "apps/chartjs_supabase_dashboard/web/icons/**",
+  "apps/chartjs_supabase_dashboard/macos/Runner/Assets.xcassets/AppIcon.appiconset/*.png",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2014 The Flutter Authors"

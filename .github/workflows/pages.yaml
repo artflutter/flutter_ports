@@ -8,6 +8,13 @@ name: pages
 #   https://artflutter.github.io/flutter_ports/lab-beta/
 #   https://artflutter.github.io/flutter_ports/lab-master/
 #
+# Deploys the live dashboard sample on the newest build of each Flutter channel,
+# with its own page (tool/pages/dashboard.html), apart from the root page:
+#   https://artflutter.github.io/flutter_ports/dashboard/
+#   https://artflutter.github.io/flutter_ports/dashboard/stable/ (also beta/ and master/)
+# Its build reads the URL and the publishable key of the Supabase project from
+# the repository variables SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY.
+#
 # These builds do not read .fvmrc. Each run takes the newest release of stable
 # and of beta, and the head of the branch master.
 #
@@ -38,6 +45,9 @@ on:
       - apps/chartjs_docs/pubspec.yaml
       - apps/chartjs_docs/tool/**
       - apps/chartjs_docs/web/**
+      - apps/chartjs_supabase_dashboard/lib/**
+      - apps/chartjs_supabase_dashboard/pubspec.yaml
+      - apps/chartjs_supabase_dashboard/web/**
       - packages/flutter_chartjs_chart_sankey_port/lib/**
       - packages/flutter_chartjs_chart_sankey_port/pubspec.yaml
       - packages/flutter_chartjs_plugin_zoom_port/lib/**
@@ -185,8 +195,63 @@ jobs:
           path: site
           if-no-files-found: error
 
+  build-dashboard:
+    runs-on: ubuntu-latest
+    strategy:
+      # A channel that fails does not stop the other channels.
+      fail-fast: false
+      matrix:
+        channel: [stable, beta, master]
+    steps:
+      - uses: actions/checkout@v7
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: ${{ matrix.channel }}
+          cache: ${{ matrix.channel != 'master' }}
+      - name: Resolve the dashboard alone
+        working-directory: apps/chartjs_supabase_dashboard
+        # For the same reason as the lab.
+        run: |
+          sed -i '/^resolution: workspace$/d' pubspec.yaml
+          # The zoom port names flutter_chartjs_port from pub.dev, and the app
+          # names it by path: the override keeps the path.
+          printf 'dependency_overrides:\n  flutter_chartjs_port:\n    path: ../../packages/flutter_chartjs_port\n' >> pubspec.yaml
+          cp ../../pubspec.lock pubspec.lock
+          flutter pub get
+      - name: Write the Supabase settings
+        working-directory: apps/chartjs_supabase_dashboard
+        # A publishable key is public: the page sends it with each request.
+        # The row level security of supabase/schema.sql limits what it can do.
+        env:
+          SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+          SUPABASE_PUBLISHABLE_KEY: ${{ vars.SUPABASE_PUBLISHABLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_URL" ] || [ -z "$SUPABASE_PUBLISHABLE_KEY" ]; then
+            echo '::error::Set the repository variables SUPABASE_URL and SUPABASE_PUBLISHABLE_KEY.'
+            exit 1
+          fi
+          jq -n --arg url "$SUPABASE_URL" --arg key "$SUPABASE_PUBLISHABLE_KEY" \
+            '{SUPABASE_URL: $url, SUPABASE_PUBLISHABLE_KEY: $key}' > supabase.json
+      - name: Build the dashboard for the web (WebAssembly + JavaScript fallback)
+        working-directory: apps/chartjs_supabase_dashboard
+        run: |
+          flutter build web --wasm \
+            --base-href /flutter_ports/dashboard/${{ matrix.channel }}/ \
+            --dart-define-from-file=supabase.json
+      - name: Put the build into its folder
+        run: |
+          mkdir -p site/dashboard
+          cp -R apps/chartjs_supabase_dashboard/build/web site/dashboard/${{ matrix.channel }}
+          # The dashboard page shows this version.
+          flutter --version --machine > site/dashboard/${{ matrix.channel }}/flutter.json
+      - uses: actions/upload-artifact@v7
+        with:
+          name: dashboard-${{ matrix.channel }}
+          path: site
+          if-no-files-found: error
+
   deploy:
-    needs: [version, build, build-docs]
+    needs: [version, build, build-docs, build-dashboard]
     # A build that failed does not stop the other pages.
     if: ${{ !cancelled() && needs.version.result == 'success' }}
     runs-on: ubuntu-latest
@@ -211,6 +276,13 @@ jobs:
         continue-on-error: true
         with:
           name: docs
+          path: site
+      - uses: actions/download-artifact@v8
+        # A channel that failed has no artifact. The next step says so.
+        continue-on-error: true
+        with:
+          pattern: dashboard-*
+          merge-multiple: true
           path: site
       - name: Assemble the site
         env:
@@ -247,6 +319,24 @@ jobs:
             printf '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<title>Chart.js for Flutter</title>\n<p>The docs did not build in this run. <a href="%s">Read the run</a>.</p>\n</html>\n' \
               "$RUN_URL" > site/docs/index.html
           fi
+          # The dashboard: its own page, and one folder for each channel. Its
+          # builds do not stop the deploy.
+          mkdir -p site/dashboard
+          sed "s|{{built}}|from ${GITHUB_SHA::8} in run $GITHUB_RUN_NUMBER|" \
+            tool/pages/dashboard.html > site/dashboard/index.html
+          for channel in stable beta master; do
+            if [ -d "site/dashboard/$channel" ]; then
+              version=$(jq -r '.frameworkVersion // "unknown"' "site/dashboard/$channel/flutter.json" 2>/dev/null) || version=unknown
+              status="Flutter $version"
+            else
+              echo "::warning::The dashboard did not build on $channel in this run."
+              status='Did not build in this run'
+              mkdir -p "site/dashboard/$channel"
+              printf '<!doctype html>\n<html lang="en">\n<meta charset="utf-8">\n<title>Live dashboard</title>\n<p>The dashboard did not build on the newest Flutter %s. <a href="%s">Read the run</a>.</p>\n</html>\n' \
+                "$channel" "$RUN_URL" > "site/dashboard/$channel/index.html"
+            fi
+            sed -i "s|{{$channel}}|$status|" site/dashboard/index.html
+          done
           # The old address of the lab goes to the root page.
           mkdir site/lab
           cat > site/lab/index.html <<'HTML'
