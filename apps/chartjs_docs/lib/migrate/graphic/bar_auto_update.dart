@@ -127,12 +127,12 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
   }
 
   @override
-  Widget build(BuildContext context) => graphicSizedBox(
-    ChartView(
+  Widget build(BuildContext context) => GraphicBox(
+    width: 650,
+    child: ChartView(
       config: _config,
       semanticLabel: 'Bar chart of random sales of five game genres',
     ),
-    width: 650,
   );
 }
 // #enddocregion graphic-bar-auto-update

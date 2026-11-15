@@ -169,7 +169,7 @@ class _BarSample8State() extends State<BarSample8> {
             ],
           ),
           const SizedBox(height: 32),
-          Expanded(child: overflowChart(_config)),
+          Expanded(child: OverflowChart(config: _config)),
         ],
       ),
     ),

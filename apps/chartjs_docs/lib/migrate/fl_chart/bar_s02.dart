@@ -148,8 +148,8 @@ class _BarSample2State() extends State<BarSample2> {
           const SizedBox(height: 38),
           // The labels of the tallest bars stand above the chart.
           Expanded(
-            child: overflowChart(
-              _config(),
+            child: OverflowChart(
+              config: _config(),
               overflow: const EdgeInsets.only(top: 24),
             ),
           ),

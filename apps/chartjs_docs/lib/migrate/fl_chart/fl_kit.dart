@@ -265,17 +265,6 @@ const noLegend = ChartLegend(display: false);
 
 const List<Plugin<Object?>> noPlugins = [];
 
-/// A chart that fills its box, as the fl_chart widget does.
-Widget flChart(
-  ChartConfig config, {
-  Object? updateMode,
-  ValueChanged<Chart>? onChartCreated,
-}) => ChartView(
-  config: config,
-  updateMode: updateMode as String?,
-  onChartCreated: onChartCreated,
-);
-
 /// The defaults of fl_chart. fl_chart draws the lines over the edges of the
 /// chart area (`FlClipData.none()`). Chart.js clips a dataset at an edge with
 /// a fixed `min` or `max`, which cuts thick lines at the edge. A sample that

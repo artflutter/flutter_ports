@@ -165,7 +165,7 @@ class const BarSample6({super.key}) extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 14),
-        AspectRatio(aspectRatio: 2, child: overflowChart(_config)),
+        AspectRatio(aspectRatio: 2, child: OverflowChart(config: _config)),
       ],
     ),
   );

@@ -116,8 +116,8 @@ class const GraphicGroupInteractions({super.key}) extends StatelessWidget {
   this;
 
   @override
-  Widget build(BuildContext context) => graphicBox(
-    ChartView(
+  Widget build(BuildContext context) => GraphicBox(
+    child: ChartView(
       config: _config,
       semanticLabel: 'Line chart of the points of four players by date',
     ),

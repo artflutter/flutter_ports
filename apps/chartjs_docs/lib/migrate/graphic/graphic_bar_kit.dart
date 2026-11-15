@@ -11,14 +11,6 @@ import 'package:material_ui/material_ui.dart';
 /// The width of a bar of an `IntervalMark`: `IntervalShape.defaultSize`.
 const double barSize = 15;
 
-/// A Graphic chart of [width] x 300.
-Widget graphicSizedBox(Widget chart, {required double width}) => Center(
-  child: ConstrainedBox(
-    constraints: BoxConstraints(maxWidth: width),
-    child: SizedBox(height: 300, child: chart),
-  ),
-);
-
 /// The font of the bar labels: the 10 px text of Graphic, in the font of the
 /// axis labels.
 const TextStyle labelFont = TextStyle(

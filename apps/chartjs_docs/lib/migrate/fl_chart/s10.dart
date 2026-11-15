@@ -20,6 +20,15 @@ LineDataset _line(List<DataPoint> points, Color color) => LineDataset(
   },
 );
 
+class const _Label(final String text, final Color color)
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Text(
+    text,
+    style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
+  );
+}
+
 class const Sample10({super.key}) extends StatefulWidget {
   @override
   State<Sample10> createState() => _Sample10State();
@@ -56,11 +65,6 @@ class _Sample10State() extends State<Sample10> {
     super.dispose();
   }
 
-  Widget _label(String text, Color color) => Text(
-    text,
-    style: TextStyle(color: color, fontSize: 18, fontWeight: FontWeight.bold),
-  );
-
   @override
   Widget build(BuildContext context) {
     if (_cos.isEmpty) return const SizedBox(height: 300);
@@ -68,9 +72,9 @@ class _Sample10State() extends State<Sample10> {
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
         const SizedBox(height: 12),
-        _label('x: ${_x.toStringAsFixed(1)}', Fl.white70),
-        _label('sin: ${(_sin.last.y!).toStringAsFixed(1)}', Fl.blue),
-        _label('cos: ${(_cos.last.y!).toStringAsFixed(1)}', Fl.pink),
+        _Label('x: ${_x.toStringAsFixed(1)}', Fl.white70),
+        _Label('sin: ${(_sin.last.y!).toStringAsFixed(1)}', Fl.blue),
+        _Label('cos: ${(_cos.last.y!).toStringAsFixed(1)}', Fl.pink),
         const SizedBox(height: 12),
         AspectRatio(
           aspectRatio: 1.5,

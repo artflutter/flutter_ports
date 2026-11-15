@@ -137,8 +137,8 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
   }
 
   @override
-  Widget build(BuildContext context) => graphicBox(
-    ChartView(
+  Widget build(BuildContext context) => GraphicBox(
+    child: ChartView(
       config: _config,
       semanticLabel: 'Bar chart of random sales of five game genres, by rank',
     ),

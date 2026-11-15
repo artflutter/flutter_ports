@@ -28,13 +28,20 @@ abstract final class Gx() {
   ];
 }
 
-/// A Graphic chart is 350 x 300 in the demos.
-Widget graphicBox(Widget chart) => Center(
-  child: ConstrainedBox(
-    constraints: const BoxConstraints(maxWidth: 350),
-    child: SizedBox(height: 300, child: chart),
-  ),
-);
+/// The box of a Graphic chart: [width] x 300, 350 x 300 in most demos.
+class const GraphicBox({
+  required final Widget child,
+  final double width = 350,
+  super.key,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Center(
+    child: ConstrainedBox(
+      constraints: BoxConstraints(maxWidth: width),
+      child: SizedBox(height: 300, child: child),
+    ),
+  );
+}
 
 /// The axis labels of Graphic: gray text of 10 px, 7.5 px from the axis.
 AxisTicks graphicTicks({

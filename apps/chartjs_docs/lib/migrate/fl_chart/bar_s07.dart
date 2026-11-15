@@ -194,7 +194,7 @@ class _BarSample7State() extends State<BarSample7> {
         const SizedBox(height: 18),
         AspectRatio(
           aspectRatio: 1.4,
-          child: overflowChart(_config(), updateMode: 'none'),
+          child: OverflowChart(config: _config(), updateMode: 'none'),
         ),
       ],
     ),

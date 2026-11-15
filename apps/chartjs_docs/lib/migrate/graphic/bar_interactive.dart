@@ -91,8 +91,8 @@ class const GraphicBarInteractive({super.key}) extends StatelessWidget {
   this;
 
   @override
-  Widget build(BuildContext context) => graphicBox(
-    ChartView(
+  Widget build(BuildContext context) => GraphicBox(
+    child: ChartView(
       config: _config,
       semanticLabel: 'Bar chart of the sales of five game genres',
     ),

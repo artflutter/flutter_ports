@@ -265,24 +265,28 @@ Plugin<Object?> flTouch(void Function(ActiveElement? bar) touched) => Plugin(
 /// fl_chart draws the titles and the labels over the edges of its box. The
 /// canvas of Chart.js clips them: the canvas takes [overflow] more on each
 /// side, and the chart takes it back as `padding`.
-Widget overflowChart(
-  ChartConfig config, {
-  EdgeInsets overflow = const EdgeInsets.all(16),
-  String? updateMode,
-}) => LayoutBuilder(
-  builder: (context, constraints) => OverflowBox(
-    alignment: Alignment.topLeft,
-    maxWidth: constraints.maxWidth + overflow.horizontal,
-    maxHeight: constraints.maxHeight + overflow.vertical,
-    child: Transform.translate(
-      offset: Offset(-overflow.left, -overflow.top),
-      child: ChartView(
-        config: config.copyWith(padding: overflow),
-        updateMode: updateMode,
+class const OverflowChart({
+  required final ChartConfig config,
+  final EdgeInsets overflow = const EdgeInsets.all(16),
+  final String? updateMode,
+  super.key,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => LayoutBuilder(
+    builder: (context, constraints) => OverflowBox(
+      alignment: Alignment.topLeft,
+      maxWidth: constraints.maxWidth + overflow.horizontal,
+      maxHeight: constraints.maxHeight + overflow.vertical,
+      child: Transform.translate(
+        offset: Offset(-overflow.left, -overflow.top),
+        child: ChartView(
+          config: config.copyWith(padding: overflow),
+          updateMode: updateMode,
+        ),
       ),
     ),
-  ),
-);
+  );
+}
 
 /// The defaults of fl_chart: the chart fills its box, no legend, and an
 /// animation of 150 milliseconds with a linear curve. Chart.js clips the
