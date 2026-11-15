@@ -495,7 +495,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `lib/pages/line_chart_page.dart` has the text and the table of options. `lib/examples/line_examples.dart`
   has the code of the charts. The app also loads this file as an asset, and a code panel shows the lines
   between `// #docregion <name>` and `// #enddocregion <name>`. Thus a panel shows the code that draws its
-  chart. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
+  chart. A `CodeRegion` names the source file and the region of a panel. Each code panel is closed at the
+  start: its **Code** button (`CodeToggle` of `lib/ui/doc_blocks.dart`) opens it. `CodeSources` reads a
+  source file at the first open of one of its panels, not at the start of the app.
+  `test/code_panels_test.dart` pins this. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
   - The bar chart page has the section structure of `docs/charts/bar.md`: `lib/pages/bar_chart_page.dart`
     has the text and the table, and `lib/examples/bar_examples.dart` has the code of the charts. Each region
@@ -510,8 +513,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - The line chart migration pages rebuild the line chart demos of fl_chart 1.3.0 (13), Graphic 2.7.0 and
     Syncfusion 35.1.43 with the port. `migrationPage` of `lib/ui/replica_block.dart` gives the intro, a
     table of the names that map and one section for each demo: notes, the live replica and its code on
-    a tap. Each replica is one file of `lib/migrate/<library>/` with one region. `Snippets.load` reads
-    the regions of each Dart file of `snippetFolders`, and `pubspec.yaml` lists each folder as assets.
+    a tap. Each replica is one file of `lib/migrate/<library>/` with one region. `pubspec.yaml` lists each
+    folder of `snippetFolders` as assets.
   - The bar chart migration pages (`lib/pages/migrate_bar_<library>_page.dart`) rebuild the 8 bar samples
     of fl_chart 1.3.0, the 8 rectangular bar demos of the Graphic 2.7.0 example app and the 14 column and
     bar demos of the Syncfusion gallery. Their replicas are in the same folders: `bar_s01.dart` to

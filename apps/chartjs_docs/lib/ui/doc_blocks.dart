@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: the blocks of a docs page.
 
+import 'dart:async';
+
 import 'package:chartjs_docs/ui/code_block.dart';
 import 'package:chartjs_docs/ui/docs_theme.dart';
 import 'package:chartjs_docs/ui/snippets.dart';
@@ -7,10 +9,11 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// What the blocks of a page read: the code regions and the section links.
+/// What the blocks of a page read: the source files of the code panels and
+/// the section links.
 class const DocScope({
-  /// The code regions.
-  required final Snippets snippets,
+  /// The source files of the code panels.
+  required final CodeSources sources,
 
   /// Scrolls to the section with an id.
   required final ValueChanged<String> jumpTo,
@@ -25,7 +28,7 @@ class const DocScope({
       context.dependOnInheritedWidgetOfExactType<DocScope>()!;
 
   @override
-  bool updateShouldNotify(DocScope oldWidget) => snippets != oldWidget.snippets;
+  bool updateShouldNotify(DocScope oldWidget) => sources != oldWidget.sources;
 }
 
 final RegExp _inline = RegExp(
@@ -210,10 +213,125 @@ Widget docPanel({required Widget child}) => Container(
   child: child,
 );
 
+/// The code of [region]. The first build loads its source file, and a text
+/// shows until the file loads.
+class const RegionCode(
+  /// The code region.
+  final CodeRegion region, {
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the code of [region].
+  this;
+
+  @override
+  State<RegionCode> createState() => _RegionCodeState();
+}
+
+class _RegionCodeState() extends State<RegionCode> {
+  bool _failed = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _load();
+  }
+
+  @override
+  void didUpdateWidget(RegionCode oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.region.source != widget.region.source) _load();
+  }
+
+  void _load() {
+    final sources = DocScope.of(context).sources;
+    final source = widget.region.source;
+    _failed = false;
+    if (sources.loaded(source) != null) return;
+    // A file that loads at once needs no new build: this build reads it.
+    var loading = true;
+    unawaited(
+      sources
+          .load(source)
+          .then<void>(
+            (_) {
+              if (mounted && !loading) setState(() {});
+            },
+            onError: (Object _) {
+              if (mounted) setState(() => _failed = true);
+            },
+          ),
+    );
+    loading = false;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final region = widget.region;
+    final snippets = DocScope.of(context).sources.loaded(region.source);
+    if (snippets != null) return CodeBlock(code: snippets[region.name]);
+    return ColoredBox(
+      color: DocColors.code,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+        child: Text(
+          _failed ? 'The code did not load.' : 'Loading the code…',
+          style: const TextStyle(color: DocColors.muted, fontSize: 12),
+        ),
+      ),
+    );
+  }
+}
+
+/// A **Code** button, and the code of [region] under it after a tap.
+class const CodeToggle({
+  /// The code region.
+  required final CodeRegion region,
+
+  /// The start of the key of the button, `<id>.code`.
+  required final String id,
+
+  /// The widget at the end of the row of the button.
+  final Widget? trailing,
+  super.key,
+}) extends StatefulWidget {
+  /// Creates the button of [region].
+  this;
+
+  @override
+  State<CodeToggle> createState() => _CodeToggleState();
+}
+
+class _CodeToggleState() extends State<CodeToggle> {
+  bool _open = false;
+
+  @override
+  Widget build(BuildContext context) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [
+      Row(
+        children: [
+          TextButton.icon(
+            key: ValueKey('${widget.id}.code'),
+            onPressed: () => setState(() => _open = !_open),
+            icon: Icon(_open ? Icons.expand_less : Icons.code),
+            label: Text(_open ? 'Hide code' : 'Code'),
+          ),
+          const Spacer(),
+          ?widget.trailing,
+        ],
+      ),
+      if (_open) ...[
+        const Divider(height: 1, color: DocColors.border),
+        RegionCode(widget.region),
+      ],
+    ],
+  );
+}
+
 /// A code panel of the region [region], with no chart.
 class const DocCode(
-  /// The name of the code region.
-  final String region, {
+  /// The code region.
+  final CodeRegion region, {
   super.key,
 }) extends StatelessWidget {
   /// Creates the panel.
@@ -221,10 +339,7 @@ class const DocCode(
 
   @override
   Widget build(BuildContext context) => docPanel(
-    child: SizedBox(
-      width: double.infinity,
-      child: CodeBlock(code: DocScope.of(context).snippets[region]),
-    ),
+    child: CodeToggle(id: region.name, region: region),
   );
 }
 
@@ -236,8 +351,8 @@ class const ExampleVariant({
   /// The chart of the form.
   required final ChartConfig config,
 
-  /// The name of the code region of the form.
-  required final String region,
+  /// The code region of the form.
+  required final CodeRegion region,
 }) {
   /// Creates a form with the name [label].
   this;
@@ -313,7 +428,7 @@ class _LiveExampleState() extends State<LiveExample> {
             ),
           ),
           const Divider(height: 1, color: DocColors.border),
-          CodeBlock(code: DocScope.of(context).snippets[variant.region]),
+          CodeToggle(id: widget.id, region: variant.region),
         ],
       ),
     );

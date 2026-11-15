@@ -6,21 +6,12 @@ import 'dart:io';
 
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/main.dart';
-import 'package:chartjs_docs/ui/replica_block.dart';
+import 'package:chartjs_docs/ui/code_block.dart';
 import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
-/// The regions of all the source files that the pages show, as
-/// `Snippets.load` reads them from the assets.
-final Snippets _snippets = Snippets.parseAll([
-  for (final folder in snippetFolders)
-    if (Directory(folder).existsSync())
-      for (final file
-          in Directory(folder).listSync().whereType<File>().toList()
-            ..sort((a, b) => a.path.compareTo(b.path)))
-        if (isSnippetSource(file.path)) file.readAsStringSync(),
-]);
+import 'support/file_sources.dart';
 
 Future<void> _open(
   WidgetTester tester,
@@ -31,7 +22,7 @@ Future<void> _open(
     ..physicalSize = Size(width, 1000)
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  await tester.pumpWidget(DocsApp(snippets: _snippets, initialRoute: route));
+  await tester.pumpWidget(DocsApp(sources: fileSources(), initialRoute: route));
   await tester.pump(const Duration(seconds: 1));
   await tester.pump(const Duration(seconds: 1));
 }
@@ -50,15 +41,6 @@ void main() {
     (page) => page.route.contains('/migrate/'),
   )) {
     group(page.route, () {
-      test('each demo has its code region', () {
-        final content = page.build();
-        for (final section in content.sections.skip(1)) {
-          if (section.id == 'kit') continue;
-          final region = (section.body.single as ReplicaBlock).demo.region;
-          expect(_snippets.names, contains(region), reason: section.id);
-        }
-      });
-
       testWidgets('the page builds, and each replica draws', (tester) async {
         await _open(tester, page.route);
         final content = page.build();
@@ -84,7 +66,9 @@ void main() {
         await tester.pump();
         await tester.tap(button);
         await tester.pump();
+        await tester.pump();
         expect(find.text('Hide code'), findsOneWidget);
+        expect(find.byType(CodeBlock), findsOneWidget);
         expect(tester.takeException(), isNull);
       });
 

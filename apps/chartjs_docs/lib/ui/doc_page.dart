@@ -88,8 +88,8 @@ class const DocPage({
   /// The content.
   required final DocPageContent content,
 
-  /// The code regions of the content.
-  required final Snippets snippets,
+  /// The source files of the code panels.
+  required final CodeSources sources,
 
   /// The pages of the site, in navigation order.
   final List<DocPageLink> pages = const [],
@@ -415,7 +415,7 @@ class _DocPageState() extends State<DocPage> {
   Widget build(BuildContext context) => Scaffold(
     body: SafeArea(
       child: DocScope(
-        snippets: widget.snippets,
+        sources: widget.sources,
         jumpTo: _jumpTo,
         child: LayoutBuilder(
           builder: (context, constraints) {

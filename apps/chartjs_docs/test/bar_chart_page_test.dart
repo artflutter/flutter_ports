@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'support/file_sources.dart';
+
 /// The page shows the region `register` of the line examples too.
 final Snippets _snippets = Snippets.parseAll([
   File(examplesAsset).readAsStringSync(),
@@ -48,7 +50,7 @@ Future<void> _show(WidgetTester tester, Size size) async {
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
   await tester.pumpWidget(
-    DocsApp(snippets: _snippets, initialRoute: '/charts/bar'),
+    DocsApp(sources: fileSources(), initialRoute: '/charts/bar'),
   );
   await tester.pump(const Duration(seconds: 2));
   await tester.pump(const Duration(seconds: 2));
@@ -124,7 +126,7 @@ void main() {
       ..physicalSize = const Size(1440, 900)
       ..devicePixelRatio = 1;
     addTearDown(tester.view.reset);
-    await tester.pumpWidget(DocsApp(snippets: _snippets));
+    await tester.pumpWidget(DocsApp(sources: fileSources()));
     await tester.pump(const Duration(seconds: 1));
     final link = find.byKey(const ValueKey('page./charts/bar'));
     await tester.ensureVisible(link);

@@ -10,6 +10,7 @@ import 'package:chartjs_docs/migrate/graphic/time_series.dart';
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/replica_block.dart';
+import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:material_ui/material_ui.dart';
 
 const String _gallery =
@@ -22,7 +23,7 @@ DocPageContent graphicMigrationPage() => migrationPage(
   version: '2.7.0',
   gallery: _gallery,
   icon: Icons.swap_horiz,
-  kit: 'graphic-kit',
+  kit: const CodeRegion('lib/migrate/graphic/graphic_kit.dart', 'graphic-kit'),
   frame: const ReplicaFrame(background: Colors.white),
   credit:
       'The demos and their data come from the Graphic example app (MIT, '
@@ -78,7 +79,10 @@ DocPageContent graphicMigrationPage() => migrationPage(
       id: 'graphic-time-series',
       title: 'Time series line chart',
       original: _gallery,
-      region: 'graphic-time-series',
+      region: const CodeRegion(
+        'lib/migrate/graphic/time_series.dart',
+        'graphic-time-series',
+      ),
       notes: const [
         'A `TimeScale` is a `TimeAxis` with `DataPoint.time` points. Graphic '
             'puts 5 ticks at equal steps from the min to the max. The '
@@ -95,7 +99,7 @@ DocPageContent graphicMigrationPage() => migrationPage(
       id: 'graphic-area',
       title: 'Area chart',
       original: _gallery,
-      region: 'graphic-area',
+      region: const CodeRegion('lib/migrate/graphic/area.dart', 'graphic-area'),
       notes: const [
         'The `AreaMark` and the `LineMark` are one `LineDataset` with '
             '`fill: .toStart`: the area goes down to the bottom of the axis.',
@@ -110,7 +114,10 @@ DocPageContent graphicMigrationPage() => migrationPage(
       id: 'graphic-group-interactions',
       title: 'Group interactions',
       original: _gallery,
-      region: 'graphic-group-interactions',
+      region: const CodeRegion(
+        'lib/migrate/graphic/group_interactions.dart',
+        'graphic-group-interactions',
+      ),
       notes: const [
         'Each name is one dataset. A name has no value on some dates: '
             '`spanGaps: true` joins its points.',
@@ -127,7 +134,10 @@ DocPageContent graphicMigrationPage() => migrationPage(
       id: 'graphic-river',
       title: 'River chart',
       original: _gallery,
-      region: 'graphic-river',
+      region: const CodeRegion(
+        'lib/migrate/graphic/river.dart',
+        'graphic-river',
+      ),
       notes: const [
         'Chart.js stacks negative and positive values apart. Thus the '
             'replica computes the edges of the stack, centered on 0, and '
@@ -142,7 +152,10 @@ DocPageContent graphicMigrationPage() => migrationPage(
       id: 'graphic-spider-net',
       title: 'Spider Net Chart',
       original: _gallery,
-      region: 'graphic-spider-net',
+      region: const CodeRegion(
+        'lib/migrate/graphic/spider_net.dart',
+        'graphic-spider-net',
+      ),
       notes: const [
         'A loop line in a `PolarCoord` is a `RadarDataset`. `startAngle` '
             'puts the first index in the middle of its band, as Graphic '

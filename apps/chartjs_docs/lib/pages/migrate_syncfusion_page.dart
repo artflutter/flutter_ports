@@ -11,6 +11,7 @@ import 'package:chartjs_docs/migrate/syncfusion/multi_colored_line.dart';
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/replica_block.dart';
+import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:material_ui/material_ui.dart';
 
 const String _demos =
@@ -77,7 +78,10 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       id: 'sf-default-line',
       title: 'Default line chart',
       original: _gallery,
-      region: 'sf-default-line',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/default_line.dart',
+        'sf-default-line',
+      ),
       notes: const [
         '`MarkerSettings(isVisible: true)` is `pointRadius` with a white '
             '`pointBackgroundColor` and the series color as '
@@ -95,7 +99,10 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       id: 'sf-line-dashes',
       title: 'Line with dashes',
       original: '${_demos}line-with-dashes',
-      region: 'sf-line-dashes',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/line_dashes.dart',
+        'sf-line-dashes',
+      ),
       notes: const [
         '`dashArray: [15, 3, 3, 3]` is `borderDash: [15, 3, 3, 3]`.',
         'The y axis keeps `minimum: 3`, `maximum: 21` and `interval: 3` as '
@@ -109,7 +116,10 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       id: 'sf-multi-colored-line',
       title: 'Multi-colored line',
       original: '${_demos}multi-colored-line',
-      region: 'sf-multi-colored-line',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/multi_colored_line.dart',
+        'sf-multi-colored-line',
+      ),
       notes: const [
         '`pointColorMapper` is the `borderColor` function of a '
             '`LineSegmentStyle` in `segment`. Each segment takes the color of '
@@ -126,7 +136,10 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       id: 'sf-line-zone',
       title: 'Line zone',
       original: '${_demos}line-zone',
-      region: 'sf-line-zone',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/line_zone.dart',
+        'sf-line-zone',
+      ),
       notes: const [
         '`onCreateShader` is a scriptable `borderColor`. It returns a canvas '
             'gradient with hard stops between the highest and the lowest '
@@ -142,7 +155,10 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       id: 'sf-customized-line',
       title: 'Customized line chart',
       original: '${_demos}customized-line-chart',
-      region: 'sf-customized-line',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/customized_line.dart',
+        'sf-customized-line',
+      ),
       notes: const [
         'The custom series renderer is an inline plugin. It draws the dashed '
             'high and low lines and their labels in `afterDatasetsDraw`.',
@@ -158,7 +174,10 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
       id: 'sf-animation-line',
       title: 'Dynamic update animation',
       original: '${_demos}dynamic-update-animation',
-      region: 'sf-animation-line',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/animation_line.dart',
+        'sf-animation-line',
+      ),
       notes: const [
         'A `Timer` gives a new data List every 2 seconds in `setState`. The '
             'chart animates each point to its new value.',

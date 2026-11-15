@@ -19,6 +19,7 @@ import 'package:chartjs_docs/migrate/syncfusion/track_column.dart';
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/replica_block.dart';
+import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:material_ui/material_ui.dart';
 
 const String _demos =
@@ -35,7 +36,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
   gallery: '${_columns}default-column-chart',
   icon: Icons.swap_horiz,
   frame: const ReplicaFrame(background: Colors.white),
-  kit: 'sf-bar-kit',
+  kit: const CodeRegion('lib/migrate/syncfusion/sf_bar_kit.dart', 'sf-bar-kit'),
   credit:
       'The demos come from the Syncfusion Flutter gallery. The replicas are '
       'new code, and they use no Syncfusion code.',
@@ -113,7 +114,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-column-default',
       title: 'Default Column chart',
       original: '${_columns}default-column-chart',
-      region: 'sf-default-column',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/default_column.dart',
+        'sf-default-column',
+      ),
       notes: const [
         '`ColumnSeries` is a `BarDataset`. Its default `width: 0.7` is '
             '`categoryPercentage: 0.7` with `barPercentage: 1`.',
@@ -129,7 +133,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-column-axis-base',
       title: 'Modified axis base',
       original: '${_columns}modified-axis-base',
-      region: 'sf-axis-base-column',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/axis_base_column.dart',
+        'sf-axis-base-column',
+      ),
       notes: const [
         '`crossesAt` of the x axis sets where the columns start. In the port, '
             'this is `base` in `extra` of the dataset. The x axis stays at the '
@@ -147,7 +154,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-column-rounded',
       title: 'Column with rounded corners',
       original: '${_columns}column-with-rounded-corners',
-      region: 'sf-rounded-column',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/rounded_column.dart',
+        'sf-rounded-column',
+      ),
       notes: const [
         '`borderRadius: BorderRadius.circular(10)` is `borderRadius: 10`. '
             '`borderSkipped: false` in `extra` also rounds the corners on the '
@@ -164,7 +174,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-column-back-to-back',
       title: 'Back to back column',
       original: '${_columns}back-to-back-column',
-      region: 'sf-back-to-back-column',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/back_to_back_column.dart',
+        'sf-back-to-back-column',
+      ),
       notes: const [
         '`enableSideBySideSeriesPlacement: false` is `grouped: false`. The '
             '`width` of each series is its `categoryPercentage`.',
@@ -180,7 +193,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-column-track',
       title: 'Column with track',
       original: '${_columns}column-with-track',
-      region: 'sf-track-column',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/track_column.dart',
+        'sf-track-column',
+      ),
       notes: const [
         'Chart.js has no track. An inline plugin draws a rounded gray bar '
             'behind each column, from the bottom to the top of the plot area.',
@@ -195,7 +211,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-column-spacing',
       title: 'Column width and spacing',
       original: '${_columns}column-width-and-spacing',
-      region: 'sf-spacing-column',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/spacing_column.dart',
+        'sf-spacing-column',
+      ),
       notes: const [
         '`width` is `categoryPercentage`: the part of the category that the '
             'group of columns takes. `spacing` is the gap in the place of each '
@@ -209,7 +228,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-column-customized',
       title: 'Customized column chart',
       original: '${_columns}customized-column-chart',
-      region: 'sf-customized-column',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/customized_column.dart',
+        'sf-customized-column',
+      ),
       notes: const [
         'The custom `ColumnSegment` is an inline plugin. Its '
             '`beforeDatasetDraw` hook draws each column with a point of 20 px '
@@ -225,7 +247,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-column-animation',
       title: 'Dynamic update animation (column)',
       original: '${_columns}dynamic-update-animation',
-      region: 'sf-animation-column',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/animation_column.dart',
+        'sf-animation-column',
+      ),
       notes: const [
         'A `Timer` gives a new data List every 2 seconds in `setState`. The '
             'columns move to the new values in 1.5 seconds, the default '
@@ -239,7 +264,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-bar-default',
       title: 'Default bar chart',
       original: '${_bars}default-bar-chart',
-      region: 'sf-default-bar',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/default_bar.dart',
+        'sf-default-bar',
+      ),
       notes: const [
         '`BarSeries` is a `BarDataset` in a chart with `indexAxis: YAxis()`. '
             'Syncfusion puts the first category at the bottom, so the y '
@@ -256,7 +284,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-bar-rounded',
       title: 'Bar with rounded corners',
       original: '${_bars}bar-with-rounded-corners',
-      region: 'sf-rounded-bar',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/rounded_bar.dart',
+        'sf-rounded-bar',
+      ),
       notes: const [
         '`borderRadius: 10` with `borderSkipped: false` rounds the four '
             'corners of each bar, also of a negative bar.',
@@ -269,7 +300,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-bar-spacing',
       title: 'Bar width and spacing',
       original: '${_bars}bar-width-and-spacing',
-      region: 'sf-spacing-bar',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/spacing_bar.dart',
+        'sf-spacing-bar',
+      ),
       notes: const [
         'The years are on a `NumericAxis`. The replica gives `points` with the '
             'value as `x` and the year as `y`, and a `LinearAxis` as the index '
@@ -283,7 +317,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-bar-track',
       title: 'Bar with track',
       original: '${_bars}bar-with-track',
-      region: 'sf-track-bar',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/track_bar.dart',
+        'sf-track-bar',
+      ),
       notes: const [
         'The track plugin draws a gray bar behind each bar, over the full '
             'value axis. Chart.js limits the corner radius to half of the bar '
@@ -296,7 +333,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-bar-customized',
       title: 'Customized bar chart',
       original: '${_bars}customized-bar-chart',
-      region: 'sf-customized-bar',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/customized_bar.dart',
+        'sf-customized-bar',
+      ),
       notes: const [
         'The custom `BarSegment` paints an image of orange dashes over each '
             'bar. The replica draws the dashes as lines in '
@@ -312,7 +352,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       id: 'sf-bar-animation',
       title: 'Dynamic update animation (bar)',
       original: '${_bars}dynamic-update-animation',
-      region: 'sf-animation-bar',
+      region: const CodeRegion(
+        'lib/migrate/syncfusion/animation_bar.dart',
+        'sf-animation-bar',
+      ),
       notes: const [
         'The same `Timer` as in the column demo gives 7 values from 10 to 94 '
             'every 2 seconds.',

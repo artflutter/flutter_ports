@@ -13,6 +13,7 @@ import 'package:chartjs_docs/migrate/graphic/bar_transposed.dart';
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/replica_block.dart';
+import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:material_ui/material_ui.dart';
 
 const String _pages =
@@ -31,7 +32,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
   version: '2.7.0',
   gallery: _interval,
   icon: Icons.swap_horiz,
-  kit: 'graphic-bar-kit',
+  kit: const CodeRegion(
+    'lib/migrate/graphic/graphic_bar_kit.dart',
+    'graphic-bar-kit',
+  ),
   frame: const ReplicaFrame(background: Colors.white),
   credit:
       'The demos and their data come from the Graphic example app (MIT, '
@@ -139,7 +143,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       id: 'graphic-bar-interactive',
       title: 'Interactive Bar Chart',
       original: _interval,
-      region: 'graphic-bar-interactive',
+      region: const CodeRegion(
+        'lib/migrate/graphic/bar_interactive.dart',
+        'graphic-bar-interactive',
+      ),
       notes: const [
         'A tap selects the bar nearest in x: the chart takes only the event '
             "`'click'`, and the `interaction` has the mode "
@@ -159,7 +166,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       id: 'graphic-bar-transposed',
       title: 'Transposed Bar Chart',
       original: _interval,
-      region: 'graphic-bar-transposed',
+      region: const CodeRegion(
+        'lib/migrate/graphic/bar_transposed.dart',
+        'graphic-bar-transposed',
+      ),
       notes: const [
         '`RectCoord(transposed: true)` is `indexAxis: YAxis()`. Graphic puts '
             'the first genre at the bottom: the y axis has `reverse: true`.',
@@ -176,7 +186,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       id: 'graphic-bar-interval',
       title: 'Interval Bar Chart',
       original: _interval,
-      region: 'graphic-bar-interval',
+      region: const CodeRegion(
+        'lib/migrate/graphic/bar_interval.dart',
+        'graphic-bar-interval',
+      ),
       notes: const [
         "`Varset('min') + Varset('max')` makes a floating bar: the pair "
             '`[min, max]` of each item. The typed `data` takes numbers, so '
@@ -191,7 +204,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       id: 'graphic-bar-stacked',
       title: 'Stacked Bar Chart',
       original: _interval,
-      region: 'graphic-bar-stacked',
+      region: const CodeRegion(
+        'lib/migrate/graphic/bar_stacked.dart',
+        'graphic-bar-stacked',
+      ),
       notes: const [
         '`StackModifier()` is `stacked: true` on both axes. Each type is a '
             'dataset in its color of `Defaults.colors10`. An inline plugin '
@@ -211,7 +227,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       id: 'graphic-bar-ranking',
       title: 'Auto Animated Ranking',
       original: _animation,
-      region: 'graphic-bar-ranking',
+      region: const CodeRegion(
+        'lib/migrate/graphic/bar_ranking.dart',
+        'graphic-bar-ranking',
+      ),
       notes: const [
         'A `Timer` gives new random data every 2 seconds. The `Sort` '
             'transform is a sort in Dart.',
@@ -228,7 +247,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       id: 'graphic-bar-auto-update',
       title: 'Auto update',
       original: _dynamic,
-      region: 'graphic-bar-auto-update',
+      region: const CodeRegion(
+        'lib/migrate/graphic/bar_auto_update.dart',
+        'graphic-bar-auto-update',
+      ),
       notes: const [
         'A `Timer` gives new data every second. `rebuild: false` with no '
             'transition is `ChartAnimation.none`: the bars change at once.',
@@ -244,7 +266,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       id: 'graphic-bar-custom-legend',
       title: 'Custom Legend',
       original: _custom,
-      region: 'graphic-bar-custom-legend',
+      region: const CodeRegion(
+        'lib/migrate/graphic/bar_custom_legend.dart',
+        'graphic-bar-custom-legend',
+      ),
       notes: const [
         'Graphic draws this legend with annotations. Chart.js has a legend: '
             '`ChartLegend` at the bottom with `usePointStyle: true`. A tap on '
@@ -261,7 +286,10 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
       id: 'graphic-bar-custom-modifier',
       title: 'Custom Modifier',
       original: _custom,
-      region: 'graphic-bar-custom-modifier',
+      region: const CodeRegion(
+        'lib/migrate/graphic/bar_custom_modifier.dart',
+        'graphic-bar-custom-modifier',
+      ),
       notes: const [
         'The `DodgeSizeModifier` of the demo fits the bars of a group in '
             'their band. Chart.js fits grouped bars this way by default: '

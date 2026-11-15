@@ -6,6 +6,7 @@ import 'package:chartjs_docs/examples/bar_examples.dart';
 import 'package:chartjs_docs/examples/line_examples.dart' show months;
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
+import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -214,12 +215,16 @@ DocPageContent barChartPage() => DocPageContent(
     const DocParagraph(
       'Register the chart components one time, before the first chart.',
     ),
-    const DocCode('register'),
+    const DocCode(CodeRegion(examplesAsset, 'register')),
     const LiveExample(
       id: 'basic',
       description: 'A bar chart of seven months',
       variants: [
-        ExampleVariant(label: 'Basic', config: basicBar, region: 'bar-basic'),
+        ExampleVariant(
+          label: 'Basic',
+          config: basicBar,
+          region: CodeRegion(barExamplesAsset, 'bar-basic'),
+        ),
       ],
     ),
   ],
@@ -248,7 +253,7 @@ DocPageContent barChartPage() => DocPageContent(
             ExampleVariant(
               label: 'Scopes',
               config: scopedBar,
-              region: 'bar-scopes',
+              region: CodeRegion(barExamplesAsset, 'bar-scopes'),
             ),
           ],
         ),
@@ -292,7 +297,7 @@ DocPageContent barChartPage() => DocPageContent(
                 ExampleVariant(
                   label: 'Thin bars',
                   config: thinBars,
-                  region: 'bar-dataset-config',
+                  region: CodeRegion(barExamplesAsset, 'bar-dataset-config'),
                 ),
               ],
             ),
@@ -361,22 +366,22 @@ DocPageContent barChartPage() => DocPageContent(
                 ExampleVariant(
                   label: 'grouped',
                   config: groupedBars,
-                  region: 'bar-grouped',
+                  region: CodeRegion(barExamplesAsset, 'bar-grouped'),
                 ),
                 ExampleVariant(
                   label: 'grouped: false',
                   config: ungroupedBars,
-                  region: 'bar-ungrouped',
+                  region: CodeRegion(barExamplesAsset, 'bar-ungrouped'),
                 ),
                 ExampleVariant(
                   label: 'skipNull',
                   config: skipNullBars,
-                  region: 'bar-skip-null',
+                  region: CodeRegion(barExamplesAsset, 'bar-skip-null'),
                 ),
                 ExampleVariant(
                   label: 'base',
                   config: baseBars,
-                  region: 'bar-base',
+                  region: CodeRegion(barExamplesAsset, 'bar-base'),
                 ),
               ],
             ),
@@ -421,17 +426,17 @@ DocPageContent barChartPage() => DocPageContent(
                 ExampleVariant(
                   label: 'Colors',
                   config: coloredBars,
-                  region: 'bar-colors',
+                  region: CodeRegion(barExamplesAsset, 'bar-colors'),
                 ),
                 ExampleVariant(
                   label: 'minBarLength',
                   config: minLengthBars,
-                  region: 'bar-min-length',
+                  region: CodeRegion(barExamplesAsset, 'bar-min-length'),
                 ),
                 ExampleVariant(
                   label: 'Shadow',
                   config: shadowBars,
-                  region: 'bar-shadow',
+                  region: CodeRegion(barExamplesAsset, 'bar-shadow'),
                 ),
               ],
             ),
@@ -483,7 +488,10 @@ DocPageContent barChartPage() => DocPageContent(
                   ExampleVariant(
                     label: label,
                     config: borderSkipped(value),
-                    region: 'bar-border-skipped',
+                    region: const CodeRegion(
+                      barExamplesAsset,
+                      'bar-border-skipped',
+                    ),
                   ),
               ],
             ),
@@ -507,12 +515,18 @@ DocPageContent barChartPage() => DocPageContent(
                 ExampleVariant(
                   label: 'Number',
                   config: _oneBar(sameBorders),
-                  region: 'bar-border-width',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-border-width',
+                  ),
                 ),
                 ExampleVariant(
                   label: 'Object',
                   config: _oneBar(sideBorders),
-                  region: 'bar-border-width-object',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-border-width-object',
+                  ),
                 ),
               ],
             ),
@@ -544,22 +558,34 @@ DocPageContent barChartPage() => DocPageContent(
                 ExampleVariant(
                   label: 'Number',
                   config: _oneBar(roundedBars),
-                  region: 'bar-border-radius',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-border-radius',
+                  ),
                 ),
                 ExampleVariant(
                   label: 'All corners',
                   config: _oneBar(roundBars),
-                  region: 'bar-border-radius-all',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-border-radius-all',
+                  ),
                 ),
                 ExampleVariant(
                   label: 'Object',
                   config: _oneBar(cornerBars),
-                  region: 'bar-border-radius-object',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-border-radius-object',
+                  ),
                 ),
                 const ExampleVariant(
                   label: 'Stacked',
                   config: roundedStack,
-                  region: 'bar-border-radius-stacked',
+                  region: CodeRegion(
+                    barExamplesAsset,
+                    'bar-border-radius-stacked',
+                  ),
                 ),
               ],
             ),
@@ -612,7 +638,10 @@ DocPageContent barChartPage() => DocPageContent(
                 ExampleVariant(
                   label: 'Hover',
                   config: _oneBar(hoverBars),
-                  region: 'bar-interactions',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-interactions',
+                  ),
                 ),
               ],
             ),
@@ -675,17 +704,26 @@ DocPageContent barChartPage() => DocPageContent(
                 ExampleVariant(
                   label: 'Not set',
                   config: fitBars,
-                  region: 'bar-thickness-default',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-thickness-default',
+                  ),
                 ),
                 ExampleVariant(
                   label: '12',
                   config: fixedBars,
-                  region: 'bar-thickness-number',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-thickness-number',
+                  ),
                 ),
                 ExampleVariant(
                   label: "'flex'",
                   config: flexBars,
-                  region: 'bar-thickness-flex',
+                  region: const CodeRegion(
+                    barExamplesAsset,
+                    'bar-thickness-flex',
+                  ),
                 ),
               ],
             ),
@@ -746,12 +784,12 @@ DocPageContent barChartPage() => DocPageContent(
                 ExampleVariant(
                   label: 'offset: true',
                   config: offsetGrid,
-                  region: 'bar-grid-offset',
+                  region: CodeRegion(barExamplesAsset, 'bar-grid-offset'),
                 ),
                 ExampleVariant(
                   label: 'offset: false',
                   config: centeredGrid,
-                  region: 'bar-grid-centered',
+                  region: CodeRegion(barExamplesAsset, 'bar-grid-centered'),
                 ),
               ],
             ),
@@ -772,7 +810,7 @@ DocPageContent barChartPage() => DocPageContent(
           'For example, this call sets `skipNull` to `true` for all bar '
           'charts:',
         ),
-        DocCode('bar-defaults'),
+        DocCode(CodeRegion(barExamplesAsset, 'bar-defaults')),
       ],
     ),
     DocSection(
@@ -798,7 +836,7 @@ DocPageContent barChartPage() => DocPageContent(
               ExampleVariant(
                 label: label,
                 config: percentages(category: category, bar: bar),
-                region: 'bar-percentages',
+                region: const CodeRegion(barExamplesAsset, 'bar-percentages'),
               ),
           ],
         ),
@@ -825,12 +863,12 @@ DocPageContent barChartPage() => DocPageContent(
             const ExampleVariant(
               label: 'data',
               config: valuesBar,
-              region: 'bar-data-values',
+              region: CodeRegion(barExamplesAsset, 'bar-data-values'),
             ),
             ExampleVariant(
               label: 'points',
               config: pointsBar,
-              region: 'bar-data-points',
+              region: const CodeRegion(barExamplesAsset, 'bar-data-points'),
             ),
           ],
         ),
@@ -861,12 +899,12 @@ DocPageContent barChartPage() => DocPageContent(
             ExampleVariant(
               label: 'Stacked',
               config: stackedBars,
-              region: 'bar-stacked',
+              region: CodeRegion(barExamplesAsset, 'bar-stacked'),
             ),
             ExampleVariant(
               label: 'Two stacks',
               config: groupedStacks,
-              region: 'bar-stack-groups',
+              region: CodeRegion(barExamplesAsset, 'bar-stack-groups'),
             ),
           ],
         ),
@@ -888,7 +926,7 @@ DocPageContent barChartPage() => DocPageContent(
             ExampleVariant(
               label: 'Horizontal',
               config: horizontalBar,
-              region: 'bar-horizontal',
+              region: CodeRegion(barExamplesAsset, 'bar-horizontal'),
             ),
           ],
         ),

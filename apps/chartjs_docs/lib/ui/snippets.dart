@@ -1,6 +1,8 @@
 // Original code, not ported from Chart.js: the code panels of the docs site.
 
-import 'package:flutter/services.dart' show AssetManifest, rootBundle;
+import 'dart:async';
+
+import 'package:flutter/services.dart' show rootBundle;
 
 /// The source file of the live charts of the line chart page.
 const String examplesAsset = 'lib/examples/line_examples.dart';
@@ -21,6 +23,55 @@ const List<String> snippetFolders = [
 bool isSnippetSource(String path) =>
     path.endsWith('.dart') &&
     snippetFolders.any((folder) => path.startsWith(folder));
+
+/// The region [name] of the source file [source].
+class const CodeRegion(
+  /// The asset path of the source file, in a folder of [snippetFolders].
+  final String source,
+
+  /// The name of the region: the lines between `// #docregion <name>` and
+  /// `// #enddocregion <name>`.
+  final String name,
+) {
+  /// Creates the region [name] of [source].
+  this;
+
+  @override
+  String toString() => '$source#$name';
+}
+
+/// The code regions of the source files. A file loads at the first request
+/// of one of its regions, and then stays in memory.
+class CodeSources(
+  /// Reads the text of the source file with an asset path.
+  final Future<String> Function(String path) _read,
+) {
+  /// Creates the source files that the function [_read] reads.
+  this;
+
+  /// The source files of the assets of the app.
+  factory assets() => CodeSources(rootBundle.loadString);
+
+  final Map<String, Future<Snippets>> _loads = {};
+  final Map<String, Snippets> _loaded = {};
+
+  /// The regions of [source], or null before its file loads.
+  Snippets? loaded(String source) => _loaded[source];
+
+  /// Loads the regions of [source] once. After an error, the next call reads
+  /// the file again.
+  Future<Snippets> load(String source) => _loads[source] ??= _parse(source);
+
+  Future<Snippets> _parse(String source) async {
+    try {
+      return _loaded[source] = Snippets.parse(await _read(source));
+    } on Object {
+      // The next call reads the file again.
+      unawaited(_loads.remove(source));
+      rethrow;
+    }
+  }
+}
 
 final RegExp _marker = RegExp(r'^\s*//\s*#(end)?docregion\s+(\S+)\s*$');
 
@@ -55,15 +106,6 @@ class const Snippets._(final Map<String, String> _regions) {
       }
     }
     return Snippets._(closed);
-  }
-
-  /// Loads the regions of the source files of [snippetFolders].
-  static Future<Snippets> load() async {
-    final manifest = await AssetManifest.loadFromAssetBundle(rootBundle);
-    final paths = manifest.listAssets().where(isSnippetSource).toList()..sort();
-    return Snippets.parseAll([
-      for (final path in paths) await rootBundle.loadString(path),
-    ]);
   }
 
   /// The names of the regions.

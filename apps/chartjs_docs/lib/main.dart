@@ -14,11 +14,9 @@ import 'package:chartjs_docs/ui/docs_theme.dart';
 import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:material_ui/material_ui.dart';
 
-Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+void main() {
   registerCharts();
-  final snippets = await Snippets.load();
-  runApp(DocsApp(snippets: snippets));
+  runApp(DocsApp(sources: CodeSources.assets()));
 }
 
 /// The pages of the site, in navigation order. Each chart type is a group:
@@ -93,14 +91,14 @@ const Map<String, String> movedRoutes = {
 
 /// The documentation site.
 class const DocsApp({
-  /// The code regions of the examples.
-  required final Snippets snippets,
+  /// The source files of the code panels.
+  required final CodeSources sources,
 
   /// The first route, or the route of the browser address.
   final String? initialRoute,
   super.key,
 }) extends StatelessWidget {
-  /// Creates the site with the code regions [snippets].
+  /// Creates the site with the source files [sources].
   this;
 
   Route<void> _route(RouteSettings settings) {
@@ -120,7 +118,7 @@ class const DocsApp({
         child: DocPage(
           key: ValueKey(page.route),
           content: content,
-          snippets: snippets,
+          sources: sources,
           pages: docPages,
           route: page.route,
         ),

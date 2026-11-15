@@ -1,0 +1,12 @@
+// Original code, not ported from Chart.js: the source files of the tests.
+
+import 'dart:io';
+
+import 'package:chartjs_docs/ui/snippets.dart';
+
+/// The source files of the code panels, read from the disk. Each read adds
+/// its path to [reads].
+CodeSources fileSources([List<String>? reads]) => CodeSources((path) async {
+  reads?.add(path);
+  return File(path).readAsStringSync();
+});

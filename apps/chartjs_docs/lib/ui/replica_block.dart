@@ -1,9 +1,8 @@
 // Original code, not ported from Chart.js: the block of a migration replica.
 
-import 'package:chartjs_docs/ui/code_block.dart';
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
-import 'package:chartjs_docs/ui/docs_theme.dart';
+import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/link.dart';
@@ -19,8 +18,8 @@ class const ReplicaDemo({
   /// The address of the original demo.
   required final String original,
 
-  /// The name of the code region of the replica.
-  required final String region,
+  /// The code region of the replica.
+  required final CodeRegion region,
 
   /// What maps to what, with the inline forms of [DocText].
   required final List<String> notes,
@@ -62,7 +61,7 @@ DocPageContent migrationPage({
   required List<ReplicaDemo> demos,
   required ReplicaFrame frame,
   required String credit,
-  String? kit,
+  CodeRegion? kit,
 }) => DocPageContent(
   title: 'Migrate $chart charts from $library',
   navLabel: 'From $library',
@@ -142,21 +141,12 @@ class const ReplicaBlock({
   /// The look of the frame of the replica.
   required final ReplicaFrame frame,
   super.key,
-}) extends StatefulWidget {
+}) extends StatelessWidget {
   /// Creates the block of [demo].
   this;
 
   @override
-  State<ReplicaBlock> createState() => _ReplicaBlockState();
-}
-
-class _ReplicaBlockState() extends State<ReplicaBlock> {
-  bool _code = false;
-
-  @override
   Widget build(BuildContext context) {
-    final demo = widget.demo;
-    final frame = widget.frame;
     Widget replica = Builder(builder: demo.replica);
     if (frame.dark) {
       replica = ChartTheme(data: const ChartThemeData.dark(), child: replica);
@@ -179,26 +169,14 @@ class _ReplicaBlockState() extends State<ReplicaBlock> {
                   ),
                 ),
               ),
-              ColoredBox(
-                color: Colors.white,
-                child: Row(
-                  children: [
-                    TextButton.icon(
-                      key: ValueKey('${demo.id}.code'),
-                      onPressed: () => setState(() => _code = !_code),
-                      icon: Icon(_code ? Icons.expand_less : Icons.code),
-                      label: Text(_code ? 'Hide code' : 'Code'),
-                    ),
-                    const Spacer(),
-                    _OriginalLink(url: demo.original, label: 'Original'),
-                    const SizedBox(width: 6),
-                  ],
+              CodeToggle(
+                id: demo.id,
+                region: demo.region,
+                trailing: Padding(
+                  padding: const EdgeInsets.only(right: 6),
+                  child: _OriginalLink(url: demo.original, label: 'Original'),
                 ),
               ),
-              if (_code) ...[
-                const Divider(height: 1, color: DocColors.border),
-                CodeBlock(code: DocScope.of(context).snippets[demo.region]),
-              ],
             ],
           ),
         ),

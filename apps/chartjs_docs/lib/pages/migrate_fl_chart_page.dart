@@ -19,6 +19,7 @@ import 'package:chartjs_docs/migrate/fl_chart/s13.dart';
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/replica_block.dart';
+import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:material_ui/material_ui.dart';
 
 const String _gallery = 'https://app.flchart.dev/#/line';
@@ -30,7 +31,7 @@ DocPageContent flChartMigrationPage() => migrationPage(
   version: '1.3.0',
   gallery: _gallery,
   icon: Icons.swap_horiz,
-  kit: 'fl_chart-kit',
+  kit: const CodeRegion('lib/migrate/fl_chart/fl_kit.dart', 'fl_chart-kit'),
   frame: const ReplicaFrame(background: Fl.item, dark: true),
   credit:
       'The demos and the data of samples 12 and 13 come from the fl_chart '
@@ -74,12 +75,19 @@ DocPageContent flChartMigrationPage() => migrationPage(
         id: 'fl-${index + 1}',
         title: 'Line Chart ${index + 1}',
         original: _gallery,
-        region: 'fl_chart-${(index + 1).toString().padLeft(2, '0')}',
+        region: CodeRegion(
+          'lib/migrate/fl_chart/s${_number(index)}.dart',
+          'fl_chart-${_number(index)}',
+        ),
         notes: notes,
         replica: (_) => sample,
       ),
   ],
 );
+
+/// The number of the sample [index] with two digits, as in the names of its
+/// file and its code region.
+String _number(int index) => (index + 1).toString().padLeft(2, '0');
 
 /// The notes and the replica of each sample, in the order of the gallery.
 const List<(List<String>, Widget)> _samples = [
