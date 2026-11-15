@@ -191,3 +191,12 @@ path = "apps/chartjs_gallery/lib/docs/sankey/**"
 precedence = "override"
 SPDX-FileCopyrightText = ["2019-2026 Jukka Kurkela", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "MIT"
+
+# The data of the datetime area demo of apexcharts_flutter on the docs site: a
+# copy of example/lib/area_datetime_data.dart of apexcharts_flutter 0.1.2 (MIT),
+# whose data comes from the ApexCharts demo (MIT).
+[[annotations]]
+path = "apps/chartjs_docs/lib/migrate/apexcharts/area_datetime_data.dart"
+precedence = "override"
+SPDX-FileCopyrightText = ["2018 ApexCharts", "2026 Eduardo H", "2026 Vasiliy Ditsyak"]
+SPDX-License-Identifier = "MIT"

@@ -3,6 +3,8 @@
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/pages/bar_chart_page.dart';
 import 'package:chartjs_docs/pages/line_chart_page.dart';
+import 'package:chartjs_docs/pages/migrate_apexcharts_page.dart';
+import 'package:chartjs_docs/pages/migrate_bar_apexcharts_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_fl_chart_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_graphic_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_syncfusion_page.dart';
@@ -52,6 +54,13 @@ final List<DocPageLink> docPages = [
     build: syncfusionMigrationPage,
   ),
   const DocPageLink(
+    route: '/charts/line/migrate/apexcharts',
+    group: 'Line chart',
+    navLabel: Text('From ApexCharts'),
+    icon: Icons.swap_horiz,
+    build: apexChartsMigrationPage,
+  ),
+  const DocPageLink(
     route: '/charts/bar',
     group: 'Bar chart',
     navLabel: Text('Bar chart'),
@@ -78,6 +87,13 @@ final List<DocPageLink> docPages = [
     navLabel: Text('From Syncfusion'),
     icon: Icons.swap_horiz,
     build: syncfusionBarMigrationPage,
+  ),
+  const DocPageLink(
+    route: '/charts/bar/migrate/apexcharts',
+    group: 'Bar chart',
+    navLabel: Text('From ApexCharts'),
+    icon: Icons.swap_horiz,
+    build: apexChartsBarMigrationPage,
   ),
 ];
 

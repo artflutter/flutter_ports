@@ -561,9 +561,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `graphic_bar_data.dart`, and `<demo>_column.dart`, `<demo>_bar.dart` and `sf_bar_kit.dart`. Three
     Graphic replicas zoom and pan the x axis through `flutter_chartjs_plugin_zoom_port`, a path dependency
     of the app.
-  - The replicas are new code. The Syncfusion replicas use no Syncfusion code. The data of the fl_chart
-    samples 12 and 13 (`assets/flchart/`), `lib/migrate/graphic/graphic_data.dart` and
-    `graphic_bar_data.dart` are MIT copies: the `LICENSE` of the app and `REUSE.toml` name their holders.
+  - The apexcharts_flutter pages (`lib/pages/migrate_apexcharts_page.dart` and
+    `migrate_bar_apexcharts_page.dart`, routes `/charts/<type>/migrate/apexcharts`) rebuild the 5 line and
+    area demos and the 3 bar demos of the example app of apexcharts_flutter 0.1.2. The sidebar names them
+    "From ApexCharts" (`navName` of `migrationPage`): the package name does not fit. The replicas are in
+    `lib/migrate/apexcharts/`. `apex_kit.dart` has the shared parts: the axes, the legend, the tooltip
+    with its title bar, the hover line and markers, the data labels and `ApexZoomChart`. `ApexZoomChart`
+    gives each line and area chart the zoom of `flutter_chartjs_plugin_zoom_port` and the zoom toolbar of
+    apexcharts_flutter. The stacked and the horizontal bar replicas show the chart of their options, not
+    the axis defects of apexcharts_flutter 0.1.2. Their notes state the difference.
+  - The replicas are new code. The Syncfusion replicas use no Syncfusion code, and the apexcharts_flutter
+    replicas use no apexcharts_flutter code. The data of the fl_chart
+    samples 12 and 13 (`assets/flchart/`), `lib/migrate/graphic/graphic_data.dart`,
+    `graphic_bar_data.dart` and `lib/migrate/apexcharts/area_datetime_data.dart` are MIT copies: the
+    `LICENSE` of the app and `REUSE.toml` name their holders.
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC), the
   bundle of the D3 modules, as the npm package `d3`. Phase 0 is in progress. Each ported module is

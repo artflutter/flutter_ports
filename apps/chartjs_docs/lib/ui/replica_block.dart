@@ -49,7 +49,8 @@ class const ReplicaFrame({
 /// The page of a migration of the [chart] charts of another library: an
 /// introduction, a table of the names that map, one section for each demo,
 /// and the code region [kit] of the shared helpers when the replicas have
-/// one.
+/// one. [navName] is the short name of the library in the navigation, by
+/// default [library].
 DocPageContent migrationPage({
   required String chart,
   required String library,
@@ -62,10 +63,11 @@ DocPageContent migrationPage({
   required ReplicaFrame frame,
   required Widget credit,
   CodeRegion? kit,
+  String? navName,
 }) => DocPageContent(
   tabTitle: 'Migrate $chart charts from $library',
   title: Text('Migrate $chart charts from $library'),
-  navLabel: Text('From $library'),
+  navLabel: Text('From ${navName ?? library}'),
   icon: icon,
   intro: [
     ...intro,
