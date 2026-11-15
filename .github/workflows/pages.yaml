@@ -115,6 +115,9 @@ jobs:
         # choice of versions, where the channel permits them.
         run: |
           sed -i '/^resolution: workspace$/d' pubspec.yaml
+          # The zoom port names flutter_chartjs_port from pub.dev, and the app
+          # names it by path: the override keeps the path.
+          printf 'dependency_overrides:\n  flutter_chartjs_port:\n    path: ../../packages/flutter_chartjs_port\n' >> pubspec.yaml
           cp ../../pubspec.lock pubspec.lock
           flutter pub get
       - name: Build the lab for the web (WebAssembly + JavaScript fallback)
@@ -161,6 +164,9 @@ jobs:
         # For the same reason as the lab.
         run: |
           sed -i '/^resolution: workspace$/d' pubspec.yaml
+          # The zoom port names flutter_chartjs_port from pub.dev, and the app
+          # names it by path: the override keeps the path.
+          printf 'dependency_overrides:\n  flutter_chartjs_port:\n    path: ../../packages/flutter_chartjs_port\n' >> pubspec.yaml
           cp ../../pubspec.lock pubspec.lock
           flutter pub get
       - name: Build the docs for the web (WebAssembly + JavaScript fallback)
