@@ -68,6 +68,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -834,7 +835,7 @@ Future<void> runStep(
     case ['update']:
       chart.update();
     case ['update', final String mode]:
-      chart.update(mode);
+      chart.update(UpdateMode(mode));
     case ['setDatasetVisibility', final num d, final bool v]:
       chart
         ..setDatasetVisibility(d.toInt(), v)

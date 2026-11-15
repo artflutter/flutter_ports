@@ -73,7 +73,11 @@ export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
 export 'package:flutter_chartjs_port/src/core/core.animation.dart'
     show Interpolator;
 export 'package:flutter_chartjs_port/src/core/core.controller.dart'
-    show AnimationEventHandler, ChartEventHandler, ChartResizeHandler;
+    show
+        AnimationEventHandler,
+        ChartEventHandler,
+        ChartPlugin,
+        ChartResizeHandler;
 export 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show controllerArgs;
 export 'package:flutter_chartjs_port/src/core/core.element.dart'
@@ -205,12 +209,16 @@ export 'package:flutter_chartjs_port/src/types/plugin.dart'
         DatasetUpdateHookArgs,
         EventHookArgs,
         Plugin,
+        PluginDefaults,
         PluginHook,
         PluginHookArgs,
         PluginHookFunction,
+        PluginOf,
+        PluginOptions,
         ResizeHookArgs,
         TooltipDrawHookArgs,
         UpdateHookArgs;
 export 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     hide tooltipCallbacksOf, tooltipCallbacksPresence;
+export 'package:flutter_chartjs_port/src/types/update_mode.dart';
 export 'package:flutter_chartjs_port/src/upstream.dart';

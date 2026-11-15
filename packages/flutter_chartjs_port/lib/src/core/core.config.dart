@@ -952,9 +952,26 @@ class Config([Object? config]) implements types.ChartConfiguration {
   }
 
   /// core.config.js:193 `get plugins()`: the inline plugins of the raw
-  /// configuration, or [undefined].
-  Object? get plugins {
-    return jsGet(_config, 'plugins');
+  /// configuration, a List of native plugins (Chart.js ADR 0148), or Dart
+  /// `null` for none. A value that is not a List and an empty List are
+  /// none, as `config.plugins || []` and its `length` read them upstream. A
+  /// List of another type stops a debug build, and a release build has no
+  /// inline plugin.
+  List<Plugin<Object?>>? get plugins => switch (jsGet(_config, 'plugins')) {
+    final List<Plugin<Object?>> list => list,
+    // An empty List of any type, for example `[]` of a raw config.
+    List<Object?>(isEmpty: true) => null,
+    final List<Object?> list => _foreignPlugins(list),
+    // A value that is not a List: upstream reads `length` of it, which is
+    // `undefined` for an object, so the loop runs no time.
+    _ => null,
+  };
+
+  /// The inline plugins of a List of another type: Dart `null`, after a
+  /// debug build stops.
+  static List<Plugin<Object?>>? _foreignPlugins(List<Object?> value) {
+    assert(false, 'config.plugins is a List of Plugin, not $value.');
+    return null;
   }
 
   /// core.config.js:197 `update()`.

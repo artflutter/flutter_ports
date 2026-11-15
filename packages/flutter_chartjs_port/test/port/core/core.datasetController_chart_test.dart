@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The typed element options of Chart.js ADR 0021, section 7, on real charts
@@ -355,7 +356,7 @@ void main() {
       expect(shared, isNot(same(source)));
       expect((shared as JsFreezable).isFrozen, isFalse);
       expect(jsObjectKeys(shared), jsObjectKeys(source));
-      chart.update('none');
+      chart.update(UpdateMode.none);
       final points = chart.getDatasetMeta(0).data;
       for (final point in points) {
         expect(point.options, same(controller.sharedOptions));

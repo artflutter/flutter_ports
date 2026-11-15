@@ -120,7 +120,7 @@ void main() {
         'once', (tester) async {
       var updates = 0;
       final config = _one(const <Object?>[1.0, 2.0, 3.0])
-        ..['plugins'] = <Object?>[
+        ..['plugins'] = <Plugin<Object?>>[
           Plugin<Object?>(
             id: 'countUpdates',
             afterUpdate: (chart, args, options) {

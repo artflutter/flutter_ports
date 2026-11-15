@@ -151,8 +151,23 @@ repository.
     through `Plugin<Object?>` fails the covariance check). `chart.notifyPlugins` takes a
     `PluginHook<A>` and an `A?`; a custom hook name has no form. A value that is not a `Plugin` in
     `config.plugins` or in `Chart.register` stops a debug build; a Map without an `id` stays a
-    container of `Chart.register`. A hook takes `types.Chart`: a named hook of an add-on takes
-    `Object chart` and casts it to `Chart`. `Element.markUndefined(AnimatedProp)` and
+    container of `Chart.register`. Chart.js ADR 0148 types the rest: the class is
+    `PluginOf<O, C>`, `Plugin<O>` is the alias with the core chart interface (built-in plugins,
+    tests) and `ChartPlugin<O>` of `core.controller.dart` the alias with the public `Chart`, which
+    `Plugin.notify` casts once. An add-on gives its options as one immutable `PluginOptions`
+    object (`pluginId`, `merge`): `_pluginOpts` of `core.plugins.dart` merges the objects of the
+    scopes from the defaults to the chart options in place of the resolver (upstream resolves
+    plugin options with `scriptable: false`), the registry writes the defaults object into
+    `defaults.plugins.<id>`, the schema has the typed atom `pluginOptions` for
+    `PluginOptionsByType`, and `ChartConfig.pluginOptions` writes each object under its id.
+    `defaults` is a `PluginDefaults` (a typed scope or a `PluginOptions`; a test plugin gives a
+    `GenericPluginOptionsScope` through `pluginDefaults` of `test/support/plugin_defaults.dart`),
+    `descriptors` a `DescriptorsScope`, and `Config.plugins` a `List<Plugin<Object?>>?`. The
+    update mode is the extension type `UpdateMode` of `lib/src/types/update_mode.dart` (row
+    `adapt-update-mode`): `chart.update(UpdateMode.none)`, a custom mode `const
+    UpdateMode('zoom')`, and the function form `chart.updateDatasets((i) => ...)`;
+    `ChartView.updateMode` and `UpdateHookArgs.mode` are `UpdateMode?`.
+    `Element.markUndefined(AnimatedProp)` and
     `isUndefined` are the typed property API of the elements.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
     `core.element.ts`, and the four elements (`element.point.dart`, `element.line.dart`,

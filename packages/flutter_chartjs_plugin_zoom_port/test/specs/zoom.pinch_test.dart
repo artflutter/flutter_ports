@@ -4,9 +4,8 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ZoomChartContext, ZoomStartContext;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show CanvasEventTarget, NativeEvent;
+    show Mode, PinchOptions, ZoomOptions, ZoomPluginOptions;
+import 'package:flutter_chartjs_port/chartjs.dart' show CanvasEventTarget;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart' show dispatchPointer, simulatePinch;
@@ -35,16 +34,16 @@ void main() {
             'data': data,
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'mode': Mode.xy,
-                    'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+                'zoom': ZoomPluginOptions(
+                  zoom: ZoomOptions(
+                    mode: Mode.xy,
+                    onZoomStart: (context) {
                       startSpy.call(context);
                       return true;
                     },
-                    'pinch': <String, Object?>{'enabled': true},
-                  },
-                },
+                    pinch: const PinchOptions(enabled: true),
+                  ),
+                ),
               },
             },
           });
@@ -71,14 +70,14 @@ void main() {
             'data': data,
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'mode': Mode.xy,
-                    'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
-                    'onZoomRejected': rejectSpy.call,
-                    'pinch': <String, Object?>{'enabled': true},
-                  },
-                },
+                'zoom': ZoomPluginOptions(
+                  zoom: ZoomOptions(
+                    mode: Mode.xy,
+                    onZoomStart: (_) => false,
+                    onZoomRejected: rejectSpy.call,
+                    pinch: const PinchOptions(enabled: true),
+                  ),
+                ),
               },
             },
           });
@@ -101,16 +100,16 @@ void main() {
             'data': data,
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'mode': Mode.xy,
-                    'onZoomComplete': (ZoomChartContext ctx) {
+                'zoom': ZoomPluginOptions(
+                  zoom: ZoomOptions(
+                    mode: Mode.xy,
+                    onZoomComplete: (ctx) {
                       expect(ctx.chart.scales['x']!.min, isNot(toBe(1)));
                       done();
                     },
-                    'pinch': <String, Object?>{'enabled': true},
-                  },
-                },
+                    pinch: const PinchOptions(enabled: true),
+                  ),
+                ),
               },
             },
           });
@@ -128,17 +127,17 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'mode': Mode.xy,
-                  'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+              'zoom': ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  mode: Mode.xy,
+                  onZoomStart: (context) {
                     startSpy.call(context);
                     return true;
                   },
-                  'onZoomComplete': completeSpy.call,
-                  'pinch': <String, Object?>{'enabled': true},
-                },
-              },
+                  onZoomComplete: completeSpy.call,
+                  pinch: const PinchOptions(enabled: true),
+                ),
+              ),
             },
           },
         });

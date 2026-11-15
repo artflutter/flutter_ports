@@ -30,8 +30,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsTruthy;
+import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
@@ -107,7 +106,9 @@ final class PluginService() {
     if (descriptors == null) return false;
     for (final descriptor in descriptors) {
       final options = descriptor.options;
-      if (options is! OptionView) return false;
+      if (options is! OptionView && options is! PluginOptions<Object?>) {
+        return false;
+      }
       if (!descriptor.plugin.allowsRangeUpdates(options)) return false;
     }
     return true;
@@ -135,12 +136,17 @@ final class PluginService() {
       for (final descriptor in cached)
         (
           plugin: descriptor.plugin,
-          options: attachContext(
-            (descriptor.options as OptionView).resolver,
-            context,
-            undefined,
-            _pluginDescriptorDefaults,
-          ),
+          // The options object of an add-on stays: the range update changes
+          // no plugin option (Chart.js ADR 0148).
+          options: switch (descriptor.options) {
+            final OptionView view => attachContext(
+              view.resolver,
+              context,
+              undefined,
+              _pluginDescriptorDefaults,
+            ),
+            final Object options => options,
+          },
         ),
     ];
   }
@@ -342,18 +348,9 @@ A _noArgs<A extends Object>(PluginHook<A> hook) =>
     plugins.add(registry.getPlugin(keys[i]) as Plugin<Object?>);
   }
 
-  // The inline plugins of the config of the user, read by index.
-  final local = _or(config.plugins, const <Object?>[]);
-  final length = jsToNumber(jsGet(local, 'length'));
-  for (var i = 0; i < length; i++) {
-    final plugin = jsGet(local, i);
-    // A JavaScript TypeError at `plugin.id` below for null.
-    if (plugin == null || identical(plugin, undefined)) throw TypeError();
-    if (plugin is! Plugin<Object?>) {
-      assert(false, 'An inline plugin is a Plugin, not $plugin.');
-      continue;
-    }
-
+  // The inline plugins of the config of the user: a List of native plugins
+  // (Chart.js ADR 0148).
+  for (final plugin in config.plugins ?? const <Plugin<Object?>>[]) {
     if (!plugins.any((p) => identical(p, plugin))) {
       plugins.add(plugin);
       localIds[plugin.id] = true;
@@ -430,6 +427,8 @@ Object _pluginOpts(
     // plugins
     scopes.add(plugin.defaults);
   }
+  // DIVERGES(chartjs): adapt-typed-plugins, the options object of an add-on.
+  if (plugin.defaults is PluginOptions<Object?>) return _mergeOptions(scopes);
   return config.createResolver(
     scopes,
     context,
@@ -439,12 +438,30 @@ Object _pluginOpts(
   );
 }
 
+/// The options object of an add-on plugin (Chart.js ADR 0148): the
+/// [PluginOptions] of [scopes], merged from the last scope (the defaults) to
+/// the first (the options of the chart). Upstream resolves these options
+/// with `scriptable: false` and `indexable: false` (core.plugins.js:182-187),
+/// so the merge gives the values of the resolver. The `{}` of the option
+/// `true` adds nothing. A value of another type stops a debug build.
+Object _mergeOptions(List<Object?> scopes) {
+  PluginOptions<Object?>? result;
+  for (final scope in scopes.reversed) {
+    switch (scope) {
+      case final PluginOptions<Object?> options:
+        result = result == null ? options : result.mergeOptions(options);
+      case Map<Object?, Object?>(isEmpty: true):
+        break;
+      default:
+        assert(false, 'The options of this plugin are its PluginOptions.');
+    }
+  }
+  return result!;
+}
+
 /// The descriptor defaults of `pluginOpts` (core.plugins.js:186-189).
 const DescriptorDefaults _pluginDescriptorDefaults = DescriptorDefaults(
   scriptable: false,
   indexable: false,
   allKeys: true,
 );
-
-/// `value || other`: [value] when it is truthy, else [other].
-Object? _or(Object? value, Object? other) => jsTruthy(value) ? value : other;

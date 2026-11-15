@@ -1,7 +1,7 @@
 # L4 allowlist (Chart.js ADR 0054 §5): the reads by name of objects of user
 # code. The plugins are native (Chart.js ADR 0144) and read no key by name.
-# jsGet 3: the length and the items of the inline plugins of the config, and
-# the plugin options of the user by plugin id. jsObjectKeys 1: the registry
+# jsGet 1: the plugin options of the user by plugin id. The inline plugins of
+# the config are a typed List (Chart.js ADR 0148). jsObjectKeys 1: the registry
 # items by plugin id, in the Object.keys order.
-jsGet 3
+jsGet 1
 jsObjectKeys 1

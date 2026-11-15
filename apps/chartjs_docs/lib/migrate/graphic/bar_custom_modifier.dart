@@ -80,8 +80,8 @@ final ChartConfig _config = ChartConfig(
     zoomPlugin,
     tapSelection(onDoubleTap: resetRange),
   ],
+  pluginOptions: const [horizontalRange],
   extra: const {
-    ...horizontalRange,
     'events': ['click'],
   },
 );

@@ -25,11 +25,12 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsDeleteKey, jsGet, jsHasOwn, jsIsObjectLike;
+    show jsDeleteKey, jsGet, jsHasOwn, jsIsObjectLike, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show Plugin, PluginOptions;
 
 /// core.typedRegistry.js:8 `TypedRegistry`, the default export.
 final class TypedRegistry(
@@ -174,6 +175,22 @@ void _registerDefaults(Object item, String scope, String? parentScope) {
   final pluginDefaults = item is Plugin<Object?>
       ? item.defaults
       : jsGet(item, 'defaults');
+  if (pluginDefaults is PluginOptions<Object?>) {
+    // The options object of an add-on (Chart.js ADR 0148): it merges over
+    // the options object of an earlier registration, and goes into its key.
+    final dot = scope.lastIndexOf('.');
+    final parent = defaults.get(scope.substring(0, dot));
+    final key = scope.substring(dot + 1);
+    final current = jsGet(parent, key);
+    jsSet(
+      parent,
+      key,
+      current is PluginOptions<Object?>
+          ? current.mergeOptions(pluginDefaults)
+          : pluginDefaults,
+    );
+    return;
+  }
   // Inherit the parent's defaults and keep existing defaults
   final sources = [
     if (jsTruthy(parentScope))

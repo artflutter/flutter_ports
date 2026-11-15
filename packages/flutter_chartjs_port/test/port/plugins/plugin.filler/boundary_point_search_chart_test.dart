@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../scales/scale_chart_harness.dart' show drawCalls;
@@ -158,7 +159,7 @@ void main() {
             final datasets = data['datasets']! as List<Object?>;
             final dataset = datasets.first! as Map<String, Object?>;
             (dataset['data']! as List<Object?>)[0] = 20;
-            chart.update('none');
+            chart.update(UpdateMode.none);
             boundaryPointSearchEnabled = false;
             final changed = drawCalls(chart);
             boundaryPointSearchEnabled = true;

@@ -117,7 +117,7 @@ final class State() {
   /// state.ts:34 `options`: the plugin options of the last `start` or
   /// `beforeUpdate` hook. The first value is the empty object `{}` of
   /// state.ts:52.
-  ZoomPluginOptions options = const ZoomPluginOptions(emptyObject);
+  ZoomPluginOptions options = const ZoomPluginOptions();
 
   /// state.ts:35 `dragStart`.
   NativeEvent? dragStart;

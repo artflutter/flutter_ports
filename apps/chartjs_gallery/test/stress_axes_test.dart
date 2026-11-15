@@ -218,7 +218,8 @@ void main() {
 
           await _frames(tester, 10);
           // A draw keeps the points. An update moves them through the data
-          // objects and update('none'): the y values. The x values stay
+          // objects and update(UpdateMode.none): the y values. The x values
+          // stay
           // sorted, as parsing: false needs (data-structures.md:74).
           expect(points.first.y != first.y, call == StressChartCall.update);
           expect(points.first.x, first.x);

@@ -19,7 +19,7 @@ import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_p
     as sk;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     as zp;
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, UpdateMode;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:material_ui/material_ui.dart';
 
@@ -156,35 +156,37 @@ class const BenchmarkChart({
     }
   }
 
-  /// The zoom options of the Chart.js port, for `plugins.zoom` of the port of
-  /// chartjs-plugin-zoom: pan with a drag, zoom with the wheel and a pinch,
-  /// both on x. The limits keep the original range, as the other libraries
-  /// do, and `minRange` gives the largest zoom. The drag zoom (a box) stays
-  /// off: fl_chart and Graphic have none.
-  Map<String, Object?> get _chartJsZoom => {
-    'pan': <String, Object?>{'enabled': true, 'mode': zp.Mode.x},
-    'zoom': <String, Object?>{
-      'wheel': <String, Object?>{'enabled': true},
-      'pinch': <String, Object?>{'enabled': true},
-      'mode': zp.Mode.x,
-    },
-    'limits': <String, Object?>{
-      'x': <String, Object?>{
-        'min': 'original',
-        'max': 'original',
+  /// The zoom options of the Chart.js port, a `ZoomPluginOptions` of the
+  /// port of chartjs-plugin-zoom (Chart.js ADR 0148): pan with a drag, zoom
+  /// with the wheel and a pinch, both on x. The limits keep the original
+  /// range, as the other libraries do, and `minRange` gives the largest
+  /// zoom. The drag zoom (a box) stays off: fl_chart and Graphic have none.
+  /// The object compares with `==`, so a rebuild with the same settings
+  /// gives an equal config.
+  zp.ZoomPluginOptions get _chartJsZoom => zp.ZoomPluginOptions(
+    pan: const zp.PanOptions(enabled: true, mode: zp.Mode.x),
+    zoom: const zp.ZoomOptions(
+      wheel: zp.WheelOptions(enabled: true),
+      pinch: zp.PinchOptions(enabled: true),
+      mode: zp.Mode.x,
+    ),
+    limits: {
+      'x': zp.ScaleLimits(
+        min: zp.ScaleLimit.original,
+        max: zp.ScaleLimit.original,
         // A category axis counts the bars from 0, a linear axis goes to 100,
         // and the hidden x scale of the sankey chart has its three columns
         // at 0, 1 and 2.
-        'minRange':
+        minRange:
             switch (config.type) {
               ChartType.bar => config.count - 1,
               ChartType.sankey => 2,
               _ => 100,
             } /
             chartMaxZoom,
-      },
+      ),
     },
-  };
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -295,7 +297,7 @@ class const BenchmarkChart({
               : <String>[],
         },
       },
-      updateMode: 'none',
+      updateMode: UpdateMode.none,
       theme: const cj.ChartThemeData(),
       excludeFromSemantics: true,
       trackpadGestures: config.trackpad,
@@ -507,6 +509,8 @@ class const BenchmarkChart({
         responsive: true,
         maintainAspectRatio: false,
         // A radial scale has no radius option: the padding gives its share.
+        // The options of the zoom plugin (Chart.js ADR 0148).
+        pluginOptions: config.zooms ? [_chartJsZoom] : null,
         padding: switch (config.type) {
           ChartType.polarArea => EdgeInsets.all(
             size.shortestSide * (1 - sliceExtent) / 2,
@@ -527,7 +531,6 @@ class const BenchmarkChart({
               config.type == ChartType.scatter ||
               config.type == ChartType.bubble)
             'parsing': false,
-          if (config.zooms) 'plugins': {'zoom': _chartJsZoom},
           'events': config.tooltips
               ? const [
                   'mousemove',
@@ -539,7 +542,7 @@ class const BenchmarkChart({
               : const <String>[],
         },
       ),
-      updateMode: 'none',
+      updateMode: UpdateMode.none,
       dataOnlyUpdates: chartJsDataOnlyUpdates,
       theme: const cj.ChartThemeData(),
       excludeFromSemantics: true,

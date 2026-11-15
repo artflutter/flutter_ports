@@ -63,6 +63,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show PluginHook, PluginHookArgs;
 import 'package:flutter_chartjs_port/src/types/tick.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/types/active_element.dart'
@@ -287,7 +288,12 @@ abstract interface class Chart() {
   abstract LayoutItem? titleBlock;
 
   /// index.d.ts:559 `update(mode?)`. controller.doughnut.js:127 calls it.
-  void update([Object? mode]);
+  /// Dart `null` is an update with no mode (Chart.js ADR 0148).
+  void update([UpdateMode? mode]);
+
+  /// index.d.ts:559 `update((ctx) => mode)`, the function form: [modeOf]
+  /// gives the mode of each dataset (Chart.js ADR 0148).
+  void updateDatasets(UpdateModeOf modeOf);
 
   /// Explicit data-only lifecycle; false means a full update was selected.
   /// Configuration, labels and dataset structure must stay unchanged.
@@ -296,7 +302,7 @@ abstract interface class Chart() {
   /// The range lifecycle of Chart.js ADR 0111: an update after a change of
   /// the `min` and `max` options of the scales only; false means `update`
   /// was selected.
-  bool updateRanges([Object? mode]);
+  bool updateRanges([UpdateMode? mode]);
 
   /// index.d.ts:568 `getVisibleDatasetCount()`.
   /// controller.polarArea.js:155 calls it.

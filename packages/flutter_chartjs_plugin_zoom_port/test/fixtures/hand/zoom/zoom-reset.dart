@@ -7,7 +7,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ZoomChart;
+    show Mode, WheelOptions, ZoomChart, ZoomOptions, ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 import 'package:flutter_chartjs_port/helpers.dart' show clearCanvas;
 
@@ -46,13 +46,14 @@ Map<String, Object?> fixture() {
         },
         'plugins': <String, Object?>{
           'legend': false,
-          'zoom': <String, Object?>{
-            'zoom': <String, Object?>{
-              'wheel': <String, Object?>{'enabled': true},
-              // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
-              'mode': Mode.x,
-            },
-          },
+          'zoom': const ZoomPluginOptions(
+            zoom: ZoomOptions(
+              wheel: WheelOptions(
+                enabled: true,
+              ), // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
+              mode: Mode.x,
+            ),
+          ),
         },
         'layout': <String, Object?>{'padding': const EdgeInsets.all(2)},
       },

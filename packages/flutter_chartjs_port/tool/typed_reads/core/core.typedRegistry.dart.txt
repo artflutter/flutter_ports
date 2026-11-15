@@ -2,7 +2,9 @@
 # component of user code (a class value) by name: id, overrides, defaults,
 # defaultRoutes and descriptors, and a route target of its defaultRoutes
 # (core.typedRegistry.js:41-118). A native Plugin gives its typed fields
-# (Chart.js ADR 0144). jsObjectKeys 1: the
+# (Chart.js ADR 0144). The options object of an add-on (Chart.js ADR 0148)
+# reads the earlier object in its parent scope by the plugin id, because the
+# scope of a plugin id is a key of the user. jsObjectKeys 1: the
 # keys of defaultRoutes in the Object.keys order.
-jsGet 7
+jsGet 8
 jsObjectKeys 1

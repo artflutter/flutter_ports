@@ -739,6 +739,7 @@ void main() {
         'elements',
         'onClick',
         'onHover',
+        'pluginOptions',
         'plugins',
         'extra',
       ]);

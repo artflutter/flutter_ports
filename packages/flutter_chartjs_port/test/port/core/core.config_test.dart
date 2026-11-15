@@ -47,6 +47,7 @@ import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
+import '../../support/plugin_defaults.dart';
 import '../../support/point_style_json.dart';
 import '../../support/scale_border.dart';
 
@@ -571,7 +572,7 @@ void main() {
       expect([config.type, raw['type']], ['line', 'line']);
       final none = Config(<String, Object?>{});
       expect(none.platform, same(undefined));
-      expect(none.plugins, same(undefined));
+      expect(none.plugins, isNull);
       expect(none.type, same(undefined));
     });
 
@@ -1410,7 +1411,7 @@ void main() {
       final c = Config(<String, Object?>{'type': 'tbar'});
       final plugin = Plugin<Object?>(
         id: 'local',
-        defaults: <String, Object?>{'p': 1.0},
+        defaults: pluginDefaults(<String, Object?>{'p': 1.0}),
       );
       final keys = c.pluginScopeKeys(plugin);
       final main = <String, Object?>{};

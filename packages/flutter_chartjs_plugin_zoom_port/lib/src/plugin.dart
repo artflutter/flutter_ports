@@ -4,13 +4,11 @@
 /// the listeners of a chart, cancel the chart events of a drag or a pan, and
 /// draw the drag rectangle.
 ///
-/// The plugin object is a typed `Plugin` of the host (Chart.js ADR 0108, Zoom
-/// ADR 0003 item 9), with the upstream keys in the upstream order. Each hook
-/// is a private function of the hook type `(chart, args, options)`: it takes
-/// the chart as an `Object`, because the hook type names the internal chart
-/// interface of the host, and narrows it once with `chart as Chart`. The
-/// options of a hook are the plugin options resolver of the host, read
-/// through the facade [ZoomPluginOptions].
+/// The plugin object is a native `ChartPlugin` of the host (Chart.js ADRs
+/// 0144 and 0148), with the upstream keys in the upstream order. Each hook
+/// is a private function of the hook type `(chart, args, options)`: it gets
+/// the public `Chart` of the host and the merged [ZoomPluginOptions] of the
+/// chart, with no cast and no read by name.
 library;
 
 import 'dart:ui' show Color;
@@ -23,17 +21,7 @@ import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/upstream.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        Chart,
-        EventHookArgs,
-        JsObjectFace,
-        Plugin,
-        PluginHookArgs,
-        UpdateHookArgs,
-        undefined;
-import 'package:flutter_chartjs_port/helpers.dart' show isNullOrUndef;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsToNumber, jsTruthy;
+    show Chart, ChartPlugin, EventHookArgs, PluginHookArgs, UpdateHookArgs;
 
 /// The CSS color `rgba(225,225,225,0.3)` of plugin.ts:40: the default fill
 /// of the drag rectangle.
@@ -48,49 +36,36 @@ const Color _defaultBorderColor = Color.fromRGBO(225, 225, 225, 1);
 /// [chart] when [caller] is the hook of the `drawTime` of the drag options
 /// and a drag runs.
 ///
-/// The colors pass to the canvas as they are: a CSS string or a `Color`.
-/// `lineWidth` takes the number of the border width (`jsToNumber`): the
-/// value reaches only the pixels (Chart.js ADR 0034).
+/// The colors are the `ChartPaint` values of the options, or the default
+/// `Color` values.
 void draw(Chart chart, DrawTime caller, ZoomPluginOptions options) {
-  // options.zoom?.drag
-  final zoomOptions = options.zoom;
-  final dragOptions = zoomOptions.isNullish
-      ? const DragOptions(undefined)
-      : zoomOptions.drag;
-  final state = getState(chart);
-  final dragStart = state.dragStart;
-  final dragEnd = state.dragEnd;
+  final dragOptions = options.zoom?.drag;
+  final State(:dragStart, :dragEnd) = getState(chart);
 
-  // dragOptions?.drawTime !== caller
-  // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
-  final drawTime = dragOptions.isNullish
-      ? null
-      : DrawTime.of(dragOptions.drawTime);
-  if (drawTime != caller || dragStart == null || dragEnd == null) {
+  if (dragOptions?.drawTime != caller || dragStart == null || dragEnd == null) {
     return;
   }
+  // `dragOptions` is not null: its drawTime is the caller.
+  final drag = dragOptions!;
   final DragRect(:left, :top, :width, :height) = computeDragRect(
     chart,
-    zoomOptions.isNullish ? undefined : zoomOptions.mode,
+    options.zoom?.mode,
     (dragStart: dragStart, dragEnd: dragEnd),
-    dragOptions.maintainAspectRatio,
+    drag.maintainAspectRatio,
   );
-  final ctx = chart.ctx!;
-
-  final backgroundColor = dragOptions.backgroundColor;
-  ctx
+  final ctx = chart.ctx!
     ..save()
     ..beginPath()
-    ..fillStyle = jsTruthy(backgroundColor)
-        ? backgroundColor
-        : _defaultBackgroundColor
+    ..fillStyle = drag.backgroundColor ?? _defaultBackgroundColor
     ..fillRect(left, top, width, height);
 
-  if (jsTruthy(dragOptions.borderWidth)) {
-    final borderColor = dragOptions.borderColor;
+  // `if (dragOptions.borderWidth)`: 0, NaN and an absent width draw no
+  // border.
+  final borderWidth = drag.borderWidth;
+  if (borderWidth != null && borderWidth != 0 && !borderWidth.isNaN) {
     ctx
-      ..lineWidth = jsToNumber(dragOptions.borderWidth)
-      ..strokeStyle = jsTruthy(borderColor) ? borderColor : _defaultBorderColor
+      ..lineWidth = borderWidth
+      ..strokeStyle = drag.borderColor ?? _defaultBorderColor
       ..strokeRect(left, top, width, height);
   }
   ctx.restore();
@@ -102,36 +77,22 @@ void draw(Chart chart, DrawTime caller, ZoomPluginOptions options) {
 // src/index.ts:19-34 types them.
 // DIVERGES(zoom): adapt-chart-methods-extension, an extension, no bindApi.
 
-/// `Object.prototype.hasOwnProperty.call(object, key)`: whether [object]
-/// owns the property [key]. A resolver and a typed object answer through
-/// their face. `null` and `undefined` throw the `TypeError` of `ToObject`,
-/// and another primitive owns no property.
-bool _hasOwnProperty(Object? object, String key) => switch (object) {
-  final JsObjectFace face => face.jsHas(key),
-  final Map<Object?, Object?> map => map.containsKey(key),
-  _ when isNullOrUndef(object) => throw TypeError(),
-  _ => false,
-};
-
 /// plugin.ts:71 `start(chart, _args, options)`: keeps the options in the
 /// state of [chart], warns about the removed options and starts the
 /// gestures.
-void _start(Object chart, PluginHookArgs _, ZoomPluginOptions pluginOptions) {
-  chart as Chart;
-  getState(chart).options = pluginOptions;
+void _start(Chart chart, PluginHookArgs _, ZoomPluginOptions options) {
+  getState(chart).options = options;
 
-  // console.warn of upstream: the host writes its warnings with print too
-  // (seam H12).
-  if (_hasOwnProperty(pluginOptions.zoom.raw, 'enabled')) {
-    // A warning to the developer, as console.warn.
-    // ignore: avoid_print
-    print(
-      'The option `zoom.enabled` is no longer supported. Please use '
-      '`zoom.wheel.enabled`, `zoom.drag.enabled`, or `zoom.pinch.enabled`.',
-    );
-  }
-  if (_hasOwnProperty(pluginOptions.zoom.raw, 'overScaleMode') ||
-      _hasOwnProperty(pluginOptions.pan.raw, 'overScaleMode')) {
+  // `Object.prototype.hasOwnProperty.call(options.zoom, 'enabled')`: the
+  // removed option `zoom.enabled` has no field of `ZoomOptions`, so a config
+  // cannot give it, and the warning of upstream never prints.
+  // DIVERGES(zoom): adapt-native-zoom-options, no field of a removed option.
+
+  // `hasOwnProperty(options.zoom, 'overScaleMode') ||
+  // hasOwnProperty(options.pan, 'overScaleMode')`: a set field. console.warn
+  // of upstream: the host writes its warnings with print too (seam H12).
+  if (options.zoom?.overScaleMode != null ||
+      options.pan?.overScaleMode != null) {
     // A warning to the developer, as console.warn.
     // ignore: avoid_print
     print(
@@ -140,7 +101,7 @@ void _start(Object chart, PluginHookArgs _, ZoomPluginOptions pluginOptions) {
     );
   }
 
-  startGestures(chart, pluginOptions);
+  startGestures(chart, options);
 
   // bindApi(chart): the extension ZoomChart of index.dart.
 }
@@ -149,7 +110,7 @@ void _start(Object chart, PluginHookArgs _, ZoomPluginOptions pluginOptions) {
 /// while a pan or a drag runs, and the next `click` or `mouseup` after a
 /// drag or a pan. The result `false` cancels the event, and `true` is the
 /// `undefined` of upstream: the event continues.
-bool _beforeEvent(Object chart, EventHookArgs args, ZoomPluginOptions _) {
+bool _beforeEvent(Chart chart, EventHookArgs args, ZoomPluginOptions _) {
   final event = args.event;
   final state = getState(chart);
   if (isZoomingOrPanningState(state)) {
@@ -169,60 +130,54 @@ bool _beforeEvent(Object chart, EventHookArgs args, ZoomPluginOptions _) {
 /// plugin.ts:112 `beforeUpdate(chart, _args, options)`: keeps the new
 /// options, restarts the gestures when their options changed, and adds the
 /// listeners.
-bool _beforeUpdate(
-  Object chart,
-  UpdateHookArgs _,
-  ZoomPluginOptions pluginOptions,
-) {
-  chart as Chart;
+bool _beforeUpdate(Chart chart, UpdateHookArgs _, ZoomPluginOptions options) {
   final state = getState(chart);
   final previousOptions = state.options;
-  state.options = pluginOptions;
+  state.options = options;
 
   // Gesture handling needs to be restarted when certain options change.
-  if (gestureOptionsChanged(previousOptions, pluginOptions)) {
+  if (gestureOptionsChanged(previousOptions, options)) {
     stopGestures(chart);
-    startGestures(chart, pluginOptions);
+    startGestures(chart, options);
   }
 
-  addListeners(chart, pluginOptions);
+  addListeners(chart, options);
   return true;
 }
 
 /// plugin.ts:126 `beforeDatasetsDraw(chart, _args, options)`.
 bool _beforeDatasetsDraw(
-  Object chart,
+  Chart chart,
   PluginHookArgs _,
   ZoomPluginOptions options,
 ) {
-  draw(chart as Chart, DrawTime.beforeDatasetsDraw, options);
+  draw(chart, DrawTime.beforeDatasetsDraw, options);
   return true;
 }
 
 /// plugin.ts:130 `afterDatasetsDraw(chart, _args, options)`.
 void _afterDatasetsDraw(
-  Object chart,
+  Chart chart,
   PluginHookArgs _,
   ZoomPluginOptions options,
 ) {
-  draw(chart as Chart, DrawTime.afterDatasetsDraw, options);
+  draw(chart, DrawTime.afterDatasetsDraw, options);
 }
 
 /// plugin.ts:134 `beforeDraw(chart, _args, options)`.
-bool _beforeDraw(Object chart, PluginHookArgs _, ZoomPluginOptions options) {
-  draw(chart as Chart, DrawTime.beforeDraw, options);
+bool _beforeDraw(Chart chart, PluginHookArgs _, ZoomPluginOptions options) {
+  draw(chart, DrawTime.beforeDraw, options);
   return true;
 }
 
 /// plugin.ts:138 `afterDraw(chart, _args, options)`.
-void _afterDraw(Object chart, PluginHookArgs _, ZoomPluginOptions options) {
-  draw(chart as Chart, DrawTime.afterDraw, options);
+void _afterDraw(Chart chart, PluginHookArgs _, ZoomPluginOptions options) {
+  draw(chart, DrawTime.afterDraw, options);
 }
 
 /// plugin.ts:142 `stop(chart)`: removes the listeners, the gestures and the
 /// state of [chart].
-void _stop(Object chart, PluginHookArgs _, ZoomPluginOptions _) {
-  chart as Chart;
+void _stop(Chart chart, PluginHookArgs _, ZoomPluginOptions _) {
   removeListeners(chart);
 
   stopGestures(chart);
@@ -232,21 +187,22 @@ void _stop(Object chart, PluginHookArgs _, ZoomPluginOptions _) {
 /// plugin.ts:64 the default export: the plugin `zoom`.
 ///
 /// Register it for all charts with `Chart.register([zoomPlugin])`, or give
-/// it to one chart in the `plugins` list of its raw config. The options of a
-/// chart are `options.plugins.zoom` ([ZoomPluginOptions]).
+/// it to one chart in `ChartConfig.plugins` or in the `plugins` list of a
+/// raw config. The options of a chart are a [ZoomPluginOptions] in
+/// `ChartConfig.pluginOptions`, or in `options.plugins.zoom` of a raw
+/// config.
 ///
-/// A native `Plugin` of the host (Chart.js ADR 0144) with the hooks of
-/// upstream, in the upstream order. Its hooks get the options through the
-/// facade [ZoomPluginOptions]. `defaults` is the mutable Map of the zoom
-/// defaults. The keys `version`, `panFunctions`, `zoomFunctions` and
-/// `zoomRectFunctions` of upstream are top-level names of the library:
-/// [chartjsPluginZoomPackageVersion] and the three function tables. The
-/// plugin opts into the data-only updates of the host
-/// (`supportsDataUpdates`): its hooks change no option and no data.
-// DIVERGES(zoom): adapt-typed-plugin-object, a native Plugin.
-final zoomPlugin = Plugin<ZoomPluginOptions>(
+/// A native `ChartPlugin` of the host (Chart.js ADRs 0144 and 0148) with
+/// the hooks of upstream, in the upstream order. Its hooks get the public
+/// `Chart` and the merged [ZoomPluginOptions]. `defaults` is the const
+/// [ZoomPluginOptions] of `lib/src/defaults.dart`. The keys `version`,
+/// `panFunctions`, `zoomFunctions` and `zoomRectFunctions` of upstream are
+/// top-level names of the library: [chartjsPluginZoomPackageVersion] and the
+/// three function tables. The plugin opts into the data-only updates of the
+/// host (`supportsDataUpdates`): its hooks change no option and no data.
+// DIVERGES(zoom): adapt-typed-plugin-object, a native ChartPlugin.
+final zoomPlugin = ChartPlugin<ZoomPluginOptions>(
   id: 'zoom',
-  options: ZoomPluginOptions.new,
   defaults: defaults,
   start: _start,
   beforeEvent: _beforeEvent,

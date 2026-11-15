@@ -173,9 +173,9 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   `fixtures` runs it with `FIXTURES_REQUIRED=1`. `test --no-select` excludes the tag.
 - `dart run melos run test:zoom:range-only`: the tests of `flutter_chartjs_plugin_zoom_port`, the
   fixtures among them, with `--dart-define=ZOOM_RANGE_ONLY_UPDATES=true`: `test/flutter_test_config.dart`
-  writes the zoom option `rangeOnlyUpdates: true` into `Chart.defaults.plugins.zoom`, so each zoom
-  and pan takes `chart.updateRanges` (Chart.js ADR 0111). The results are those of the run
-  without it; the spec `defaults` expects the key. The CI job `fixtures` runs it with
+  merges the zoom option `rangeOnlyUpdates: true` into the `ZoomPluginOptions` of
+  `Chart.defaults.plugins.zoom`, so each zoom and pan takes `chart.updateRanges` (Chart.js ADR
+  0111). The results are those of the run without it; the spec `defaults` expects the field. The CI job `fixtures` runs it with
   `FIXTURES_REQUIRED=1`.
 - `dart run melos run test:goldens`: the theme goldens of `flutter_chartjs_port`
   (`test/port/theme/goldens_test.dart`, the tag `golden`, theming.md §8 test 9, Chart.js ADR 0147).
@@ -633,44 +633,59 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `publish_to: none` until 0.1.0, MIT), the first add-on port (ADR 0009). Zoom phases 1-4 are
   done (2026-11-10): each file of `src/` is ported, and the specs, the fixtures and the tests of
   real input pass. One item stays open: the device check of seam H8 on Android and iOS (Chart.js
-  ADR 0108 Open 1). `doc/README.md` has the plan and the roadmap of phases 0-6. Phase 5, next, adds
-  the typed options slot (H18) and the theme extension (H19), each after its Chart.js ADR.
+  ADR 0108 Open 1). `doc/README.md` has the plan and the roadmap of phases 0-6. Phase 5 has the
+  typed options slot (H18, done 2026-11-15 with Chart.js ADR 0148 and Zoom ADR 0005) and the theme
+  extension (H19, after its Chart.js ADR).
   - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
     libraries, `js_semantics.dart` among them (Zoom ADR 0003, Chart.js ADR 0108).
   - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library (port-only): `zoomPlugin`, the
     functions `pan`, `zoom`, `zoomRect`, `zoomScale` and `resetZoom`, the extension `ZoomChart`
     (the ten chart methods of `bindApi`, row `adapt-chart-methods-extension`), `ZoomAmount` and
     `PanAmount` (row `adapt-amount-classes`, `chart.zoom(.all(1.5))`), `ScaleRange`, the option
-    facades, the enums `Mode`, `ModifierKey` and `DrawTime` (row `adapt-zoom-option-enums`; a
-    name in a raw config stops a debug build), `ZoomTrigger`, the callback contexts (records) and
-    typedefs, `GestureEvent`, `ActivePointer`, the three function tables and `lib/src/upstream.dart`.
+    classes (`ZoomPluginOptions`, `ZoomOptions`, `PanOptions`, `WheelOptions`, `DragOptions`,
+    `PinchOptions`, `ScaleLimits`, `ScaleLimit` and the typedef `LimitOptions`, row
+    `adapt-native-zoom-options`), the enums `Mode`, `ModifierKey` and `DrawTime` (row
+    `adapt-zoom-option-enums`), `ZoomTrigger`, the callback contexts (records) and typedefs,
+    `zoomUpdateMode` (the update mode `zoom`, an `UpdateMode` of the host), `GestureEvent`,
+    `ActivePointer`, the three function tables and `lib/src/upstream.dart`.
     `lib/src/upstream.dart` has `chartjsPluginZoomVersion` (`2.2.0+fb81d331`, a commit pin) and
-    `chartjsPluginZoomPackageVersion` (`2.2.0`), port-only. An app gives the options in
-    `ChartConfig.extra` as `{'plugins': {'zoom': {...}}}` or in a raw config, and registers the
-    plugin with `Chart.register([zoomPlugin])`, or gives it inline in `ChartConfig.plugins` or in
-    the `plugins` of a raw config (seam H18). The port-only zoom option `rangeOnlyUpdates: true` (no default) makes the
-    five update calls of `core.dart` (`_updateChart`) call `chart.updateRanges(transition)` of
-    Chart.js ADR 0111 in place of `chart.update(transition)`; the app keeps the contract of
-    `updateRanges` (row `adapt-range-only-updates`, seam H28).
+    `chartjsPluginZoomPackageVersion` (`2.2.0`), port-only. An app gives the options as one
+    immutable `ZoomPluginOptions` (Chart.js ADR 0148, Zoom ADR 0005): in `ChartConfig.pluginOptions`
+    of a typed config, or in `options.plugins.zoom` of a raw config (a Map there stops a debug
+    build); it registers the plugin with `Chart.register([zoomPlugin])`, or gives it inline in
+    `ChartConfig.plugins` or in the `plugins` of a raw config (seam H18). The port-only zoom option
+    `rangeOnlyUpdates: true` (a field, null is false) makes the five update calls of `core.dart`
+    (`_updateChart`) call `chart.updateRanges(transition)` of Chart.js ADR 0111 in place of
+    `chart.update(transition)`; the app keeps the contract of `updateRanges` (row
+    `adapt-range-only-updates`, seam H28).
   - `lib/src/`: the 12 files of `src/` at their mapped paths: `types`, `options`, `defaults`,
     `state`, `utils`, `scale.types`, `core`, `handlers`, `gestures`, `plugin` and `index`;
-    `src/index.umd.ts` has no Dart file (Zoom ADR 0002 item 8, Chart.js ADR 0120). `zoomPlugin` (`plugin.dart`) is a native `Plugin<ZoomPluginOptions>` of the host
-    (Chart.js ADR 0144) with the upstream hooks in order and `supportsDataUpdates: true` (row
-    `adapt-typed-plugin-object`, seam H25); its hooks get the facade `ZoomPluginOptions`, take
-    `Object chart` and narrow it with `chart as Chart`. The upstream keys `version`,
-    `panFunctions`, `zoomFunctions` and `zoomRectFunctions` are top-level names of the library. The options are extension-type facades
-    over the resolver of the host (`ZoomPluginOptions` of `options.dart`), read live. A callback
-    option (`onZoomStart`, `onZoom`, `onPanComplete`, ...) and a `ModeFn` hold the function of
-    their typedef, and the plugin calls them directly; a start callback returns `bool`, and a
-    function of another type stops a debug build (Zoom ADR 0004). The state of a chart
+    `src/index.umd.ts` has no Dart file (Zoom ADR 0002 item 8, Chart.js ADR 0120). `zoomPlugin` (`plugin.dart`) is a native `ChartPlugin<ZoomPluginOptions>` of the host
+    (Chart.js ADRs 0144 and 0148) with the upstream hooks in order, `defaults` (the const
+    `ZoomPluginOptions` of `defaults.dart`) and `supportsDataUpdates: true` (row
+    `adapt-typed-plugin-object`, seam H25); its hooks take the public `Chart` with no cast and get
+    the options of the defaults merged with those of the chart. The upstream keys `version`,
+    `panFunctions`, `zoomFunctions` and `zoomRectFunctions` are top-level names of the library. The
+    options are immutable final classes with one nullable field for each option of
+    `src/options.ts`, `merge` (a nested object merges its fields, `limits` by scale id), `==` and
+    `hashCode` (`options.dart`, row `adapt-native-zoom-options`): a null field is not set, a limit
+    is a `ScaleLimit` (`ScaleLimit(0)`, `ScaleLimit.original`), a drag color is a `ChartPaint`,
+    and the removed option `zoom.enabled` has no field. Getters such as `speedOrDefault` and
+    `limitsOrDefault` give the upstream defaults of a read. A callback field (`onZoomStart`,
+    `onZoom`, `onPanComplete`, ...) has its typedef type, and the plugin calls it directly; a start
+    callback returns `bool` (Zoom ADR 0004). A `mode`, `scaleMode` or `overScaleMode` field is an
+    `Object?` that holds a `Mode` or a `ModeFn`; its constructor asserts it. The update mode is an
+    `UpdateMode`: the transition parameters of the API are `UpdateMode` with the upstream defaults,
+    and the input zooms with `zoomUpdateMode`. The state of a chart
     is an `Expando<State>` (`state.dart`); the gesture managers are an `Expando` too. The listeners
     use `canvas.eventTarget` and `canvas.ownerDocument` of Chart.js ADR 0108 (row
     `adapt-canvas-event-target`): after a drag, the `keydown` listener stays on the document until
     `removeListeners` or the hook `stop`, as upstream. `debounce` runs on a `Timer`; each wheel zoom
     updates the chart, and `beforeUpdate` puts a new debounced handler into the state, so each
-    wheel event gives its own `onZoomComplete` 250 ms later, as upstream. A limit is a number
-    (`jsToNumber`, row `js-semantics-numeric-limits`). The default drag colors are `Color` values
-    (row `adapt-native-colors`).
+    wheel event gives its own `onZoomComplete` 250 ms later, as upstream. A user limit is a
+    double; the original option of a scale for `ScaleLimit.original` converts with `jsToNumber`
+    (row `js-semantics-numeric-limits`). The default drag colors are `Color` values (row
+    `adapt-native-colors`).
   - `test/flutter_test_config.dart` ports `test/index.js`: the set-up of the host tests (DPR 1 and
     800 x 600, the date zone UTC, the built-in components and `Chart.register([zoomPlugin])`, the
     colors plugin off, the defaults restore, the release of the charts and the test font) and the
@@ -682,14 +697,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the matchers of the specs, with the `toBeCloseTo` of jasmine-core 5.4.0.
   - `test/specs/`: the 8 specs of `test/specs/*.spec.js` (83 cases) and the 2 unit tests of
     `src/*.test.ts` (20 cases; the 4 category pan cases run on a real chart, row
-    `harness-category-scale-fake`), with no skip. `test/specs/fixtures_test.dart` runs the
+    `harness-category-scale-fake`), with no skip. The configs give the zoom options as
+    `ZoomPluginOptions` objects; the spec `defaults` compares the defaults object with `==`. `test/specs/fixtures_test.dart` runs the
     fixtures of `test/fixtures/`: the registry `index.dart`, `manifest.json`, the hand ports
     `hand/pan/*.dart` and `hand/zoom/*.dart` of the 12 fixture configs, and
     `fixtures_reference.dart`, written by `tool/reference/fixtures_reference.mjs` from the upstream
     fixtures (`test:fixtures:zoom`).
   - `test/port/` (port-only): `plugin_test.dart` (the range-only updates of Chart.js ADR 0111:
-    twins of each flow with and without the option; the data-only updates of a `ChartView`, the
-    warnings of `start`, the range in the scale options), `public_library_test.dart` (the zoom
+    twins of each flow with and without the option; the data-only updates of a `ChartView`, also
+    with a callback in the options; the warnings of `start`, whose two `zoom.enabled` cases skip
+    with `diverges: adapt-native-zoom-options`; the range in the scale options), `public_library_test.dart` (the zoom
     library next to the app library of the host and `material_ui.dart`), `handlers_smoke_test.dart`
     (the listeners with synthetic events) and the tests of real input. `handlers_test.dart`,
     `gestures_test.dart` and `index_test.dart` drive a `ChartView` with the pointer and key events

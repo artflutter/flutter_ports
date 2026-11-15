@@ -187,8 +187,8 @@ void main() {
                   .toDouble();
             }
           }
-          a.update('none');
-          b.update('none');
+          a.update(UpdateMode.none);
+          b.update(UpdateMode.none);
           for (var d = 0; d < 2; d++) {
             expect(_observe(a, d), _observe(b, d));
             expect(
@@ -284,7 +284,7 @@ void main() {
         final chart = _chart(cfg, reference: reference);
         final probes = _probes(chart);
         calls = 0;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         states.add(_observe(chart));
         counts.add(calls);
         expect(probes.every((p) => p.planReads == 0), isTrue);
@@ -393,7 +393,7 @@ void main() {
               data[3] = _ObservedMap({'x': 1.5, 'y': 2.0});
           }
         }
-        final mode = step == 5 ? 'reset' : 'none';
+        final mode = step == 5 ? UpdateMode.reset : UpdateMode.none;
         a.update(mode);
         b.update(mode);
         expect(_observe(a), _observe(b), reason: 'step $step');
@@ -427,8 +427,8 @@ void main() {
 
         ds['hoverBackgroundColor'] = hover;
         final chart = _chart(cfg, reference: reference)
-          ..update('none')
-          ..update('none');
+          ..update(UpdateMode.none)
+          ..update(UpdateMode.none);
         final meta = chart.getDatasetMeta(0);
         final point = (meta.data[4] as PointElement)..active = true;
         fail = true;
@@ -440,10 +440,10 @@ void main() {
         meta.controller!.updateElements(meta.data, 0, 8, 'none');
         states.add(_observe(chart));
         point.active = false;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         states.add(_observe(chart));
         ((ds['data']! as List<Object?>)[6]! as Map<String, Object?>)['y'] = 3.0;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         states.add(_observe(chart));
         logs.add(calls);
       }

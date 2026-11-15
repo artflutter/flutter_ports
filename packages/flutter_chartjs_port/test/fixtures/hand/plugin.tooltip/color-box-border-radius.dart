@@ -79,7 +79,7 @@ Map<String, Object?> fixture() => <String, Object?>{
 
       'layout': <String, Object?>{'padding': const EdgeInsets.all(15)},
     },
-    'plugins': <Object?>[
+    'plugins': <Plugin<Object?>>[
       // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
       Plugin<Object?>(
         id: 'inline',

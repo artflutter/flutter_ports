@@ -199,8 +199,8 @@ void main() {
                   .toDouble();
             }
           }
-          a.update('none');
-          b.update('none');
+          a.update(UpdateMode.none);
+          b.update(UpdateMode.none);
           for (var d = 0; d < 2; d++) {
             expect(_observe(a, d), _observe(b, d));
             expect(
@@ -322,7 +322,7 @@ void main() {
         final chart = _chart(cfg, reference: reference);
         final probes = _probes(chart);
         calls = 0;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         states.add(_observe(chart));
         counts.add(calls);
         expect(probes.every((p) => p.planReads == 0), isTrue);

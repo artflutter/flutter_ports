@@ -161,7 +161,7 @@ void main() {
         ((config['data']! as Map)['datasets']! as List).first as Map;
     dataset.remove('backgroundColor');
     final chart = Chart(canvas, config);
-    chart.update('none');
+    chart.update(UpdateMode.none);
     expect(chart.getDatasetMeta(0).data, hasLength(3));
     _destroy(chart, canvas);
   });

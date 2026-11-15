@@ -5,11 +5,14 @@ library;
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show
+        DragOptions,
         Mode,
         ModifierKey,
+        PanOptions,
         ZoomChart,
         ZoomChartContext,
-        ZoomStartContext,
+        ZoomOptions,
+        ZoomPluginOptions,
         ZoomTrigger;
 import 'package:flutter_chartjs_port/chartjs.dart'
     show CanvasEventTarget, Chart, NativeEvent, Scale, undefined;
@@ -51,12 +54,12 @@ void main() {
               'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
             },
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'drag': <String, Object?>{'enabled': true},
-                  'mode': Mode.x,
-                },
-              },
+              'zoom': const ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  drag: DragOptions(enabled: true),
+                  mode: Mode.x,
+                ),
+              ),
             },
           },
         });
@@ -91,14 +94,14 @@ void main() {
               'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
             },
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'drag': <String, Object?>{'enabled': true},
-                  'mode': (ZoomChartContext _) {
+              'zoom': ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  drag: const DragOptions(enabled: true),
+                  mode: (ZoomChartContext _) {
                     return Mode.x;
                   },
-                },
-              },
+                ),
+              ),
             },
           },
         });
@@ -131,12 +134,12 @@ void main() {
               'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
             },
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'drag': <String, Object?>{'enabled': true},
-                  'mode': Mode.y,
-                },
-              },
+              'zoom': const ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  drag: DragOptions(enabled: true),
+                  mode: Mode.y,
+                ),
+              ),
             },
           },
         });
@@ -171,14 +174,14 @@ void main() {
               'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
             },
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'drag': <String, Object?>{'enabled': true},
-                  'mode': (ZoomChartContext _) {
+              'zoom': ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  drag: const DragOptions(enabled: true),
+                  mode: (ZoomChartContext _) {
                     return Mode.y;
                   },
-                },
-              },
+                ),
+              ),
             },
           },
         });
@@ -213,12 +216,12 @@ void main() {
               'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
             },
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'drag': <String, Object?>{'enabled': true},
-                  'mode': Mode.xy,
-                },
-              },
+              'zoom': const ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  drag: DragOptions(enabled: true),
+                  mode: Mode.xy,
+                ),
+              ),
             },
           },
         });
@@ -262,16 +265,13 @@ void main() {
                   'y': <String, Object?>{'type': 'linear'},
                 },
                 'plugins': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'zoom': <String, Object?>{
-                      'drag': <String, Object?>{
-                        'enabled': true,
-                        'modifierKey': key,
-                      },
-                      'mode': Mode.x,
-                      'onZoomRejected': rejectedSpy.call,
-                    },
-                  },
+                  'zoom': ZoomPluginOptions(
+                    zoom: ZoomOptions(
+                      drag: DragOptions(enabled: true, modifierKey: key),
+                      mode: Mode.x,
+                      onZoomRejected: rejectedSpy.call,
+                    ),
+                  ),
                 },
               },
             });
@@ -328,17 +328,14 @@ void main() {
                   'y': <String, Object?>{'type': 'linear'},
                 },
                 'plugins': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'pan': <String, Object?>{
-                      'enabled': true,
-                      'modifierKey': key,
-                    },
-                    'zoom': <String, Object?>{
-                      'drag': <String, Object?>{'enabled': true},
-                      'mode': Mode.x,
-                      'onZoomRejected': rejectedSpy.call,
-                    },
-                  },
+                  'zoom': ZoomPluginOptions(
+                    pan: PanOptions(enabled: true, modifierKey: key),
+                    zoom: ZoomOptions(
+                      drag: const DragOptions(enabled: true),
+                      mode: Mode.x,
+                      onZoomRejected: rejectedSpy.call,
+                    ),
+                  ),
                 },
                 'onClick': clickSpy.call,
               },
@@ -404,12 +401,12 @@ void main() {
                 },
               },
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'drag': <String, Object?>{'enabled': true},
-                    'mode': Mode.xy,
-                  },
-                },
+                'zoom': const ZoomPluginOptions(
+                  zoom: ZoomOptions(
+                    drag: DragOptions(enabled: true),
+                    mode: Mode.xy,
+                  ),
+                ),
               },
             },
           },
@@ -461,12 +458,12 @@ void main() {
                 },
               },
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'drag': <String, Object?>{'enabled': true},
-                    'mode': Mode.xy,
-                  },
-                },
+                'zoom': const ZoomPluginOptions(
+                  zoom: ZoomOptions(
+                    drag: DragOptions(enabled: true),
+                    mode: Mode.xy,
+                  ),
+                ),
               },
             },
           },
@@ -523,18 +520,18 @@ void main() {
             'data': data(),
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'drag': <String, Object?>{'enabled': true},
-                    'mode': Mode.xy,
-                    'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+                'zoom': ZoomPluginOptions(
+                  zoom: ZoomOptions(
+                    drag: const DragOptions(enabled: true),
+                    mode: Mode.xy,
+                    onZoomStart: (context) {
                       startSpy.call(context);
                       return true;
                     },
-                    'onZoom': zoomSpy.call,
-                    'onZoomComplete': (ZoomChartContext _) => done(),
-                  },
-                },
+                    onZoom: zoomSpy.call,
+                    onZoomComplete: (_) => done(),
+                  ),
+                ),
               },
             },
           });
@@ -577,16 +574,16 @@ void main() {
           'data': data(),
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'drag': <String, Object?>{'enabled': true},
-                  'mode': Mode.xy,
-                  'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
-                  'onZoom': zoomSpy.call,
-                  'onZoomComplete': doneSpy.call,
-                  'onZoomRejected': rejectSpy.call,
-                },
-              },
+              'zoom': ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  drag: const DragOptions(enabled: true),
+                  mode: Mode.xy,
+                  onZoomStart: (_) => false,
+                  onZoom: zoomSpy.call,
+                  onZoomComplete: doneSpy.call,
+                  onZoomRejected: rejectSpy.call,
+                ),
+              ),
             },
           },
         });

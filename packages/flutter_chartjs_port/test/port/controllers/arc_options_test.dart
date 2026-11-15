@@ -318,7 +318,8 @@ final _rawConfig = Expando<Map<String, Object?>>();
 
 typedef _Step = void Function(Chart chart, Map<String, Object?> cfg);
 
-void _none(Chart chart, Map<String, Object?> cfg) => chart.update('none');
+void _none(Chart chart, Map<String, Object?> cfg) =>
+    chart.update(UpdateMode.none);
 
 void _newData(Chart chart, Map<String, Object?> cfg) {
   for (final dataset in _datasets(cfg)) {
@@ -326,7 +327,7 @@ void _newData(Chart chart, Map<String, Object?> cfg) {
       for (var i = 0; i < 8; i++) (i * 3 + 1).toDouble(),
     ];
   }
-  chart.update('none');
+  chart.update(UpdateMode.none);
 }
 
 // New data with two new arcs.
@@ -334,7 +335,7 @@ void _growData(Chart chart, Map<String, Object?> cfg) {
   _first(cfg)['data'] = <Object?>[
     for (var i = 0; i < 10; i++) (i * 5 + 2).toDouble(),
   ];
-  chart.update('none');
+  chart.update(UpdateMode.none);
 }
 
 // New data, and a `borderColor` that the hover default of an active arc cannot
@@ -344,7 +345,7 @@ void _throwInActiveResolve(Chart chart, Map<String, Object?> cfg) {
   _first(cfg)
     ..['data'] = <Object?>[for (var i = 0; i < 8; i++) (i * 7 + 3).toDouble()]
     ..['borderColor'] = null;
-  expect(() => chart.update('none'), throwsArgumentError);
+  expect(() => chart.update(UpdateMode.none), throwsArgumentError);
   _first(cfg).remove('borderColor');
 }
 
@@ -366,7 +367,8 @@ const List<_Step> _steps = [
 ];
 
 void _default(Chart chart, Map<String, Object?> cfg) => chart.update();
-void _reset(Chart chart, Map<String, Object?> cfg) => chart.update('reset');
+void _reset(Chart chart, Map<String, Object?> cfg) =>
+    chart.update(UpdateMode.reset);
 
 // The public calls of the scans outside `update`: each one refreshes each
 // context, as upstream.
@@ -608,19 +610,19 @@ void main() {
       _none,
       (chart, cfg) {
         (_first(cfg)['backgroundColor']! as List<ChartPaint>).add(green);
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
       (chart, cfg) {
         _first(cfg)['backgroundColor'] = <ChartPaint>[blue];
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
       (chart, cfg) {
         _first(cfg)['backgroundColor'] = green;
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
       (chart, cfg) {
         _first(cfg)['borderWidth'] = <double>[1, 2];
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
     ],
   );
@@ -957,7 +959,7 @@ void main() {
         }
         for (var step = 0; step < 3; step++) {
           for (final chart in charts) {
-            chart.update('none');
+            chart.update(UpdateMode.none);
           }
           expect(traces[0], traces[1], reason: 'step $step');
           expect(_observe(charts[0]), _observe(charts[1]));
@@ -992,7 +994,7 @@ void main() {
                 meta.controller!.options.jsWrite('circumference', 90.0);
               };
             meta.data[4] = user;
-            chart.update('none');
+            chart.update(UpdateMode.none);
             // `calculateTotal` reads the arcs first: arm the read of the loop.
             final controller = meta.controller! as DoughnutController;
             armed = false;
@@ -1035,8 +1037,8 @@ void main() {
             : _reference(cfg, _Reference.both);
         _rawConfig[chart] = cfg;
         chart
-          ..update('none')
-          ..update('none');
+          ..update(UpdateMode.none)
+          ..update(UpdateMode.none);
         traces.add(trace);
         results.add(_observe(chart));
       }
@@ -1068,7 +1070,7 @@ void main() {
         probes.add(probe);
         data[i] = probe;
       }
-      chart.update('none');
+      chart.update(UpdateMode.none);
       for (final probe in probes) {
         probe.contextReads = 0;
       }
@@ -1078,20 +1080,20 @@ void main() {
     for (final type in ['pie', 'doughnut']) {
       test('the scans of $type stop after a plan of native colors', () {
         final probes = <_ProbeArc>[];
-        probeChart(type, probes).update('none');
+        probeChart(type, probes).update(UpdateMode.none);
         // Scan one reads arcs 0 and 1, scan two arc 0, the shared check arc 0.
         expect(probes.map((p) => p.contextReads), [4, 2, 1, 1, 1, 1, 1, 1]);
       });
 
       test('the scans of a user subclass of $type read each arc', () {
         final probes = <_ProbeArc>[];
-        probeChart(_refType(type), probes).update('none');
+        probeChart(_refType(type), probes).update(UpdateMode.none);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
 
       test('the scans of $type in another mode read each arc', () {
         final probes = <_ProbeArc>[];
-        probeChart(type, probes).update('resize');
+        probeChart(type, probes).update(UpdateMode.resize);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
 
@@ -1101,7 +1103,7 @@ void main() {
           type,
           probes,
           fields: {'cutout': (Object? ctx) => const PercentRadius(30)},
-        ).update('none');
+        ).update(UpdateMode.none);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
 
@@ -1125,7 +1127,7 @@ void main() {
             data[i] = probe;
           }
         }
-        chart.update('none');
+        chart.update(UpdateMode.none);
         // Ring 0: its two scans, its loop, and the border scan of ring 1.
         expect(rings[0].map((p) => p.contextReads), [5, 4, 4, 4, 4, 4, 4, 4]);
         // Ring 1: its offset scan and its loop.
@@ -1137,7 +1139,7 @@ void main() {
         final chart = probeChart(type, probes);
         chart.getDatasetMeta(0).data[5] = _UserArc(<Object?>[]);
         probes.removeAt(5);
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3]);
       });
 
@@ -1145,7 +1147,7 @@ void main() {
         final probes = <_ProbeArc>[];
         final chart = probeChart(type, probes);
         (chart.getDatasetMeta(0).data[5] as ArcElement).active = true;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
 
@@ -1167,17 +1169,21 @@ void main() {
           probes.add(probe);
           data[i] = probe;
         }
-        chart.update('none');
+        chart.update(UpdateMode.none);
         for (final probe in probes) {
           probe.contextReads = 0;
         }
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
 
       test('parsing false keeps each scan of $type', () {
         final probes = <_ProbeArc>[];
-        probeChart(type, probes, fields: {'parsing': false}).update('none');
+        probeChart(
+          type,
+          probes,
+          fields: {'parsing': false},
+        ).update(UpdateMode.none);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
 
@@ -1246,7 +1252,7 @@ void main() {
               _first(cfg)['backgroundColor'] = <ChartPaint>[green];
               chart.config.clearCache();
             };
-          chart.update('none');
+          chart.update(UpdateMode.none);
           final arc = chart.getDatasetMeta(0).data[4] as ArcElement;
           expect(jsGet(arc.options, 'backgroundColor'), expected);
         });
@@ -1278,20 +1284,20 @@ void main() {
 
     test('the polar area loop refreshes each context once with a plan', () {
       final probes = <_ProbeArc>[];
-      probeChart('polarArea', probes).update('none');
+      probeChart('polarArea', probes).update(UpdateMode.none);
       // Arcs 0 and 1 warm the plan with two resolves each.
       expect(probes.map((p) => p.contextReads), [2, 2, 1, 1, 1, 1, 1, 1]);
     });
 
     test('a user subclass of the polar area refreshes each context twice', () {
       final probes = <_ProbeArc>[];
-      probeChart(_refType('polarArea'), probes).update('none');
+      probeChart(_refType('polarArea'), probes).update(UpdateMode.none);
       expect(probes.map((p) => p.contextReads), [2, 2, 2, 2, 2, 2, 2, 2]);
     });
 
     test('another mode refreshes each context of a polar area twice', () {
       final probes = <_ProbeArc>[];
-      probeChart('polarArea', probes).update('resize');
+      probeChart('polarArea', probes).update(UpdateMode.resize);
       expect(probes.map((p) => p.contextReads), [2, 2, 2, 2, 2, 2, 2, 2]);
     });
 
@@ -1317,7 +1323,7 @@ void main() {
         probes.add(probe);
         data[i] = probe;
       }
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(probes.map((p) => p.contextReads), [2, 2, 2, 2, 2, 2, 2, 2]);
     });
 
@@ -1326,7 +1332,7 @@ void main() {
       final chart = probeChart('polarArea', probes);
       chart.getDatasetMeta(0).data[3] = _UserArc(<Object?>[]);
       probes.removeAt(3);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(probes.map((p) => p.contextReads), [2, 2, 1, 2, 2, 2, 2]);
     });
 
@@ -1341,7 +1347,7 @@ void main() {
             for (var i = 0; i < 8; i++) <String, Object?>{'r': i.toDouble()},
           ],
         },
-      ).update('none');
+      ).update(UpdateMode.none);
       expect(probes.map((p) => p.contextReads), [2, 2, 2, 2, 2, 2, 2, 2]);
     });
 
@@ -1350,11 +1356,11 @@ void main() {
       final chart = probeChart('polarArea', probes)
         ..toggleDataVisibility(0)
         ..toggleDataVisibility(4)
-        ..update('none');
+        ..update(UpdateMode.none);
       for (final probe in probes) {
         probe.contextReads = 0;
       }
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(probes.map((p) => p.contextReads), [1, 2, 1, 1, 1, 1, 1, 1]);
     });
 
@@ -1362,7 +1368,7 @@ void main() {
       final probes = <_ProbeArc>[];
       final chart = probeChart('polarArea', probes);
       (chart.getDatasetMeta(0).data[3] as ArcElement).active = true;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(probes.map((p) => p.contextReads), [2, 2, 1, 2, 2, 2, 2, 2]);
     });
 
@@ -1418,11 +1424,11 @@ void main() {
             probes.add(probe);
             meta.data[i] = probe;
           }
-          chart.update('none');
+          chart.update(UpdateMode.none);
           for (final probe in probes) {
             probe.contextReads = 0;
           }
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expect(probes.map((p) => p.contextReads), expected[type]);
           final arc = meta.data[3] as ArcElement;
           expect(jsGet(arc.options, 'backgroundColor'), blue);
@@ -1453,7 +1459,7 @@ void main() {
                         'plugins': {'legend': false},
                       },
                     ),
-                    updateMode: 'none',
+                    updateMode: UpdateMode.none,
                     theme: const ChartThemeData(),
                     excludeFromSemantics: true,
                     onChartCreated: (value) => chart = value,
@@ -1470,11 +1476,11 @@ void main() {
             probes.add(probe);
             meta.data[i] = probe;
           }
-          chart.update('none');
+          chart.update(UpdateMode.none);
           for (final probe in probes) {
             probe.contextReads = 0;
           }
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expect(probes.map((p) => p.contextReads), expected[type]);
         });
       }

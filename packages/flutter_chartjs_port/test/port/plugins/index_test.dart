@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart';
@@ -120,7 +121,7 @@ String _detail(PluginHook<Object> hook, Object? args) {
       UpdateHookArgs(:final mode) || DatasetUpdateHookArgs(:final mode) => mode,
       _ => undefined,
     };
-    text.write(':${jsToString(mode)}');
+    text.write(':${jsToString(mode ?? undefined)}');
   }
   return text.toString();
 }
@@ -493,7 +494,7 @@ void main() {
             case ['update']:
               chart!.update();
             case ['update', final String mode]:
-              chart!.update(mode);
+              chart!.update(UpdateMode(mode));
             case ['hover', final num x, final num y]:
               // The point of the generator: the rounded position of the
               // data element 2 of the dataset 0.

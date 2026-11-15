@@ -8,7 +8,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/gallery_components.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, Plugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show ChartClip, CirclePointStyle;
 // Not public: jsToNumber of case (c), kept for the series before phase 9.
@@ -362,7 +362,7 @@ Map<String, Object?> stressChartConfig({
   bool showLine = false,
   bool animate = false,
   Map<String, Object?> options = const {},
-  List<Object?> plugins = const [],
+  List<Plugin<Object?>> plugins = const [],
 }) {
   if (indexed && scriptable) {
     throw ArgumentError('Choose indexed or scriptable colors, not both.');
@@ -409,6 +409,6 @@ Map<String, Object?> stressChartConfig({
       'scales': ?scales,
       ...options,
     },
-    'plugins': <Object?>[...plugins],
+    'plugins': <Plugin<Object?>>[...plugins],
   };
 }

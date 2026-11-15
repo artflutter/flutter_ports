@@ -4,16 +4,41 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/helpers.dart' show ContextResolver;
-import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-// The native plugin API of Chart.js ADRs 0108 and 0144 for a plugin of an
-// add-on port: this file imports only the public libraries of the package
-// and the harness. The plugin has the hooks of the plugin object of
+// The native plugin API of Chart.js ADRs 0108, 0144 and 0148 for a plugin of
+// an add-on port: this file imports only the public libraries of the
+// package and the harness. The plugin has the hooks of the plugin object of
 // chartjs-plugin-zoom (`src/plugin.ts:64-152` of chartjs-plugin-zoom) in its
-// order. Each hook declares its chart as `Object` and casts it to `Chart`
-// once, because the hook type names the internal chart interface.
+// order. It is a `ChartPlugin`: each hook gets the public `Chart`, with no
+// cast. Its options are one immutable `PluginOptions` object.
+
+/// The options of the test plugin: the defaults, then the options of the
+/// chart over them (Chart.js ADR 0148).
+final class const _ZoomLikeOptions({
+  final String? mode,
+  final double? speed,
+  final _Nested? nested,
+}) extends PluginOptions<_ZoomLikeOptions> {
+  @override
+  String get pluginId => 'zoomLike';
+
+  @override
+  _ZoomLikeOptions merge(_ZoomLikeOptions over) => _ZoomLikeOptions(
+    mode: over.mode ?? mode,
+    speed: over.speed ?? speed,
+    nested: switch ((nested, over.nested)) {
+      (final a?, final b?) => a.merge(b),
+      (final a, final b) => b ?? a,
+    },
+  );
+}
+
+/// A nested options object of [_ZoomLikeOptions].
+final class const _Nested({final bool? enabled}) {
+  /// These options with each field that [over] sets.
+  _Nested merge(_Nested over) => _Nested(enabled: over.enabled ?? enabled);
+}
 
 /// The hook calls of the plugins of this file, in call order.
 final List<String> _calls = <String>[];
@@ -22,12 +47,12 @@ final List<String> _calls = <String>[];
 final List<Chart> _charts = <Chart>[];
 
 /// The options of the hook calls, in call order.
-final List<Object> _options = <Object>[];
+final List<_ZoomLikeOptions> _options = <_ZoomLikeOptions>[];
 
 /// Records a call of [hook].
-void _record(String hook, Object chart, Object options) {
+void _record(String hook, Chart chart, _ZoomLikeOptions options) {
   _calls.add(hook);
-  _charts.add(chart as Chart);
+  _charts.add(chart);
   _options.add(options);
 }
 
@@ -37,60 +62,60 @@ bool _cancelEvents = false;
 /// The event types of the calls of [_beforeEvent].
 final List<String> _events = <String>[];
 
-void _start(Object chart, PluginHookArgs args, ContextResolver options) {
+void _start(Chart chart, PluginHookArgs args, _ZoomLikeOptions options) {
   _record('start', chart, options);
 }
 
-bool _beforeEvent(Object chart, EventHookArgs args, ContextResolver options) {
+bool _beforeEvent(Chart chart, EventHookArgs args, _ZoomLikeOptions options) {
   _record('beforeEvent', chart, options);
   _events.add(args.event.type);
   return !_cancelEvents;
 }
 
-bool _beforeUpdate(Object chart, UpdateHookArgs args, ContextResolver options) {
+bool _beforeUpdate(Chart chart, UpdateHookArgs args, _ZoomLikeOptions options) {
   _record('beforeUpdate ${args.mode}', chart, options);
   return true;
 }
 
 bool _beforeDatasetsDraw(
-  Object chart,
+  Chart chart,
   PluginHookArgs args,
-  ContextResolver options,
+  _ZoomLikeOptions options,
 ) {
   _record('beforeDatasetsDraw', chart, options);
   return true;
 }
 
 void _afterDatasetsDraw(
-  Object chart,
+  Chart chart,
   PluginHookArgs args,
-  ContextResolver options,
+  _ZoomLikeOptions options,
 ) {
   _record('afterDatasetsDraw', chart, options);
 }
 
-bool _beforeDraw(Object chart, PluginHookArgs args, ContextResolver options) {
+bool _beforeDraw(Chart chart, PluginHookArgs args, _ZoomLikeOptions options) {
   _record('beforeDraw', chart, options);
   return true;
 }
 
-void _afterDraw(Object chart, PluginHookArgs args, ContextResolver options) {
+void _afterDraw(Chart chart, PluginHookArgs args, _ZoomLikeOptions options) {
   _record('afterDraw', chart, options);
 }
 
-void _stop(Object chart, PluginHookArgs args, ContextResolver options) {
+void _stop(Chart chart, PluginHookArgs args, _ZoomLikeOptions options) {
   _record('stop', chart, options);
 }
 
 /// A plugin with the hooks of the zoom plugin object, in its order.
-Plugin<ContextResolver> _zoomLike({bool supportsDataUpdates = true}) =>
-    Plugin<ContextResolver>(
+ChartPlugin<_ZoomLikeOptions> _zoomLike({bool supportsDataUpdates = true}) =>
+    ChartPlugin<_ZoomLikeOptions>(
       id: 'zoomLike',
-      defaults: <String, Object?>{
-        'mode': 'xy',
-        'speed': 0.1,
-        'nested': <String, Object?>{'enabled': false},
-      },
+      defaults: const _ZoomLikeOptions(
+        mode: 'xy',
+        speed: 0.1,
+        nested: _Nested(enabled: false),
+      ),
       start: _start,
       beforeEvent: _beforeEvent,
       beforeUpdate: _beforeUpdate,
@@ -106,7 +131,7 @@ Plugin<ContextResolver> _zoomLike({bool supportsDataUpdates = true}) =>
 /// layout (Chart.js ADR 0074). [plugins] are the inline plugins, and
 /// [onHover] is the option `onHover`, when it is not Dart `null`.
 Map<String, Object?> _config({
-  List<Object?> plugins = const [],
+  List<Plugin<Object?>> plugins = const [],
   Object? onHover,
 }) => <String, Object?>{
   'type': 'line',
@@ -123,10 +148,10 @@ Map<String, Object?> _config({
   'options': <String, Object?>{
     'onHover': ?onHover,
     'plugins': <String, Object?>{
-      'zoomLike': <String, Object?>{
-        'speed': 0.5,
-        'nested': <String, Object?>{'enabled': true},
-      },
+      'zoomLike': const _ZoomLikeOptions(
+        speed: 0.5,
+        nested: _Nested(enabled: true),
+      ),
     },
     'scales': <String, Object?>{
       'y': <String, Object?>{'min': 0.0, 'max': 4.0},
@@ -149,15 +174,6 @@ void main() {
     test('keeps its id and its hooks in typed fields', () {
       final plugin = _zoomLike();
       expect(plugin.id, 'zoomLike');
-      // A hook declared with `Object chart` has the type of the hook.
-      expect(
-        _beforeEvent,
-        isA<CancelableHookFunction<EventHookArgs, ContextResolver>>(),
-      );
-      expect(
-        _afterDraw,
-        isA<PluginHookFunction<PluginHookArgs, ContextResolver>>(),
-      );
       expect(plugin.start, same(_start));
       expect(plugin.beforeEvent, same(_beforeEvent));
       expect(plugin.beforeUpdate, same(_beforeUpdate));
@@ -175,7 +191,7 @@ void main() {
       final chart = acquireChart(_config());
       expect(_calls, isNotEmpty);
       expect(_calls.first, 'start');
-      expect(_calls[1], 'beforeUpdate undefined');
+      expect(_calls[1], 'beforeUpdate null');
       final draw = [
         'beforeDraw',
         'beforeDatasetsDraw',
@@ -187,16 +203,14 @@ void main() {
         expect(hookChart, same(chart));
       }
 
-      // The options are the plugin options of the chart over the defaults
-      // of the plugin.
+      // The options of the chart merge over the defaults of the plugin.
       final options = _options.first;
-      expect(options, isA<JsObjectFace>());
-      expect(jsGet(options, 'mode'), 'xy');
-      expect(jsGet(options, 'speed'), 0.5);
-      expect(jsGet(jsGet(options, 'nested'), 'enabled'), isTrue);
+      expect(options.mode, 'xy');
+      expect(options.speed, 0.5);
+      expect(options.nested?.enabled, isTrue);
 
       _calls.clear();
-      chart.update('zoom');
+      chart.update(const UpdateMode('zoom'));
       expect(_calls.first, 'beforeUpdate zoom');
 
       _calls.clear();
@@ -247,7 +261,7 @@ void main() {
       plugin.beforeUpdate = original;
       _calls.clear();
       chart.update();
-      expect(_calls.first, 'beforeUpdate undefined');
+      expect(_calls.first, 'beforeUpdate null');
     });
 
     for (final approved in [false, true]) {

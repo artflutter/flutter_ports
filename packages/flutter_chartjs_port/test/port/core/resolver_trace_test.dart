@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart'
     show ElementPropertyRead;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The D2 reference trace of Chart.js ADR 0053: the charts of
@@ -35,7 +36,6 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
-
 import '../controllers/controller_chart_harness.dart' show ReferenceEvent;
 import '../scales/scale_chart_harness.dart'
     show copyReference, referenceMatcher, testReferenceOrigin;
@@ -161,7 +161,7 @@ Object? _applyStep(Chart chart, List<Object?> step) {
     case ['update']:
       chart.update();
     case ['update', final String mode]:
-      chart.update(mode);
+      chart.update(UpdateMode(mode));
     case ['setActive', final List<Object?> items]:
       chart
         ..setActiveElements([

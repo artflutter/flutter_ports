@@ -8,6 +8,10 @@
 /// and a Dart `Map` keeps the insertion order. The `min` and `max` options of
 /// a scale are written and deleted through the face of the scale options
 /// (`scale.options['min'] = value`, `jsDelete`, seam H14).
+///
+/// The update mode of each function is an `UpdateMode` of the host
+/// (Chart.js ADR 0148), with the defaults of upstream. [zoomUpdateMode] is
+/// the mode `zoom` that upstream adds to `UpdateModeEnum`.
 library;
 
 import 'dart:math' as math;
@@ -17,9 +21,9 @@ import 'package:flutter_chartjs_plugin_zoom_port/src/scale.types.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/utils.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart, Scale;
-import 'package:flutter_chartjs_port/helpers.dart'
-    show isNumber, sign, valueOrDefault;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show Chart, Scale, UpdateMode;
+import 'package:flutter_chartjs_port/helpers.dart' show isNumber, sign;
 import 'package:flutter_chartjs_port/js_semantics.dart'
     show jsObjectKeys, jsToNumber, jsTruthy;
 
@@ -82,17 +86,25 @@ OriginalScaleLimits _storeOriginalScaleLimits(Chart chart, State state) {
   return originalScaleLimits;
 }
 
+/// index.ts:15-17 `UpdateModeEnum.zoom`: the update mode `zoom` of the
+/// zoom and pan input (the wheel, a drag, a pinch). A transition of the
+/// chart options with the key `zoom` animates it, as upstream.
+///
+/// ```dart
+/// chart.zoom(const .all(1.5), zoomUpdateMode);
+/// ```
+const UpdateMode zoomUpdateMode = UpdateMode('zoom');
+
 /// `chart.update(transition)` of the five update calls of core.ts (:90,
 /// :120, :136, :156, :233): `chart.updateRanges(transition)` of the host when
 /// the option `rangeOnlyUpdates` is on (Chart.js ADR 0111). The zoom
 /// functions write only `min` and `max` through the views of the scale
 /// options, and the fields `min` and `max` of a category scale, which the
 /// layout of both paths computes again. The host takes `update` when one of
-/// its checks fails. [state] has the options of the last `beforeUpdate`: the
-/// read is a cache hit of the view.
+/// its checks fails. [state] has the options of the last `beforeUpdate`.
 // DIVERGES(zoom): adapt-range-only-updates, the opt-in range update.
-void _updateChart(Chart chart, State state, String transition) {
-  if (state.options.rangeOnlyUpdates) {
+void _updateChart(Chart chart, State state, UpdateMode transition) {
+  if (state.options.rangeOnlyUpdates ?? false) {
     chart.updateRanges(transition);
   } else {
     chart.update(transition);
@@ -123,7 +135,7 @@ Point _getCenter(Chart chart) {
 void zoom(
   Chart chart,
   ZoomAmount amount, [
-  String transition = 'none',
+  UpdateMode transition = UpdateMode.none,
   ZoomTrigger trigger = ZoomTrigger.api,
 ]) {
   // DIVERGES(zoom): adapt-amount-classes, no typeof amount === 'number'.
@@ -133,7 +145,7 @@ void zoom(
   final state = getState(chart);
   // const { options: { limits = {}, zoom: zoomOptions } } = state
   final options = state.options;
-  final limits = LimitOptions(valueOrDefault(options.limits.raw, emptyObject));
+  final limits = options.limitsOrDefault;
   final zoomOptions = options.zoom;
 
   _storeOriginalScaleLimits(chart, state);
@@ -152,10 +164,7 @@ void zoom(
 
   _updateChart(chart, state, transition);
 
-  // zoomOptions?.onZoom?.({ chart, trigger })
-  if (!zoomOptions.isNullish) {
-    zoomOptions.onZoom?.call((chart: chart, trigger: trigger));
-  }
+  zoomOptions?.onZoom?.call((chart: chart, trigger: trigger));
 }
 
 /// core.ts:95 `zoomRect(chart, p0, p1, transition, trigger)`: zooms the
@@ -164,18 +173,16 @@ void zoomRect(
   Chart chart,
   Point p0,
   Point p1, [
-  String transition = 'none',
+  UpdateMode transition = UpdateMode.none,
   ZoomTrigger trigger = ZoomTrigger.api,
 ]) {
   final state = getState(chart);
   // const { options: { limits = {}, zoom: zoomOptions = {} } } = state
   final options = state.options;
-  final limits = LimitOptions(valueOrDefault(options.limits.raw, emptyObject));
-  final zoomOptions = ZoomOptions(
-    valueOrDefault(options.zoom.raw, emptyObject),
-  );
+  final limits = options.limitsOrDefault;
+  final zoomOptions = options.zoom ?? const ZoomOptions();
   // const { mode = 'xy' } = zoomOptions
-  final mode = valueOrDefault<Object?>(zoomOptions.mode, Mode.xy);
+  final mode = zoomOptions.mode ?? Mode.xy;
 
   _storeOriginalScaleLimits(chart, state);
   final xEnabled = directionEnabled(mode, 'x', chart);
@@ -191,7 +198,6 @@ void zoomRect(
 
   _updateChart(chart, state, transition);
 
-  // zoomOptions.onZoom?.({ chart, trigger })
   zoomOptions.onZoom?.call((chart: chart, trigger: trigger));
 }
 
@@ -204,7 +210,7 @@ void zoomScale(
   Chart chart,
   String scaleId,
   ScaleRange range, [
-  String transition = 'none',
+  UpdateMode transition = UpdateMode.none,
   ZoomTrigger trigger = ZoomTrigger.api,
 ]) {
   final state = getState(chart);
@@ -213,16 +219,12 @@ void zoomScale(
   updateRange(scale, range, null, true);
   _updateChart(chart, state, transition);
 
-  // state.options.zoom?.onZoom?.({ chart, trigger })
-  final zoomOptions = state.options.zoom;
-  if (!zoomOptions.isNullish) {
-    zoomOptions.onZoom?.call((chart: chart, trigger: trigger));
-  }
+  state.options.zoom?.onZoom?.call((chart: chart, trigger: trigger));
 }
 
 /// core.ts:141 `resetZoom(chart, transition)`: puts back the original `min`
 /// and `max` options of each scale of [chart], then calls `onZoomComplete`.
-void resetZoom(Chart chart, [String transition = 'default']) {
+void resetZoom(Chart chart, [UpdateMode transition = UpdateMode.defaultMode]) {
   final state = getState(chart);
   final originalScaleLimits = _storeOriginalScaleLimits(chart, state);
 
@@ -241,11 +243,7 @@ void resetZoom(Chart chart, [String transition = 'default']) {
   }
   _updateChart(chart, state, transition);
 
-  // state.options.zoom?.onZoomComplete?.({ chart })
-  final zoomOptions = state.options.zoom;
-  if (!zoomOptions.isNullish) {
-    zoomOptions.onZoomComplete?.call((chart: chart));
-  }
+  state.options.zoom?.onZoomComplete?.call((chart: chart));
 }
 
 /// core.ts:161 `getOriginalRange(state, scaleId)`: the width of the original
@@ -311,7 +309,7 @@ void pan(
   Chart chart,
   PanAmount delta, [
   List<Scale>? enabledScales,
-  String transition = 'none',
+  UpdateMode transition = UpdateMode.none,
 ]) {
   // DIVERGES(zoom): adapt-amount-classes, no typeof delta === 'number'.
   final x = delta.x;
@@ -320,11 +318,9 @@ void pan(
   // const { options: { pan: panOptions, limits = {} } } = state
   final options = state.options;
   final panOptions = options.pan;
-  final limits = LimitOptions(valueOrDefault(options.limits.raw, emptyObject));
+  final limits = options.limitsOrDefault;
   // const { onPan } = panOptions || {}
-  final onPan = PanOptions(
-    jsTruthy(panOptions.raw) ? panOptions.raw : emptyObject,
-  ).onPan;
+  final onPan = panOptions?.onPan;
 
   _storeOriginalScaleLimits(chart, state);
 

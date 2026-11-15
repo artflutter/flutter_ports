@@ -8,6 +8,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,7 +22,7 @@ final class _Log() {
     draws = 0;
   }
 
-  late final List<Object?> plugins = <Object?>[
+  late final List<Plugin<Object?>> plugins = <Plugin<Object?>>[
     Plugin<Object?>(
       id: 'log',
       supportsDataUpdates: true,
@@ -64,7 +65,10 @@ Widget _view(_Log log, int step) => Directionality(
     child: SizedBox(
       width: 400,
       height: 300,
-      child: ChartView.raw(updateMode: 'none', config: _config(log, step)),
+      child: ChartView.raw(
+        updateMode: UpdateMode.none,
+        config: _config(log, step),
+      ),
     ),
   ),
 );

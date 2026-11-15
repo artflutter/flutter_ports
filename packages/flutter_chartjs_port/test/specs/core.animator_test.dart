@@ -67,7 +67,7 @@ void main() {
                 },
               },
             },
-            'plugins': <Object?>[
+            'plugins': <Plugin<Object?>>[
               Plugin<Object?>(
                 id: 'drawCount',
                 afterDraw: (_, _, _) {

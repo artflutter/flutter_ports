@@ -22,7 +22,7 @@ import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
     show RAxis, Scale, TimeUnit, XAxis, YAxis, undefined;
 import 'package:flutter_chartjs_port/helpers.dart'
-    show almostEquals, isNullOrUndef, isNumber, log10, valueOrDefault;
+    show almostEquals, isNullOrUndef, isNumber, log10;
 import 'package:flutter_chartjs_port/js_semantics.dart'
     show jsGet, jsToNumber, jsTruthy;
 
@@ -118,10 +118,6 @@ ScaleRange _logarithmicZoomRange(Scale scale, double zoom, Point center) {
 /// scale.types.ts:65 `getScaleLimits(scale, limits)`: the limits of the id
 /// of [scale], else of its axis, else `{}`.
 ScaleLimits _getScaleLimits(Scale scale, LimitOptions? limits) {
-  final byId = limits == null || limits.isNullish
-      ? undefined
-      : limits[scale.id].raw;
-  if (jsTruthy(byId)) return ScaleLimits(byId);
   // `limits[scale.axis]`: the key of the axis class of the host (row
   // `adapt-axis-classes`).
   final axisKey = switch (scale.axis) {
@@ -131,19 +127,18 @@ ScaleLimits _getScaleLimits(Scale scale, LimitOptions? limits) {
     _ => null,
   };
   // DIVERGES(zoom): adapt-axis-classes, the key of the axis class.
-  final byAxis = limits == null || limits.isNullish || axisKey == null
-      ? undefined
-      : limits[axisKey].raw;
-  if (jsTruthy(byAxis)) return ScaleLimits(byAxis);
-  return const ScaleLimits(emptyObject);
+  return limits?[scale.id] ??
+      (axisKey == null ? null : limits?[axisKey]) ??
+      const ScaleLimits();
 }
 
 /// scale.types.ts:69 `getLimit(state, scale, scaleLimits, prop, fallback)`:
 /// the limit [prop] (`'min'` or `'max'`) of [scaleLimits], the original
-/// limit for `'original'`, or [fallback].
+/// limit for [ScaleLimit.original], or [fallback].
 ///
-/// The result is a number: `jsToNumber` converts a numeric string, which
-/// upstream gives as it is.
+/// The result is a number. An original option that is not a number (a date
+/// string) gives its value of `scale.parse`; `jsToNumber` converts a
+/// numeric string option, which upstream gives as it is.
 // DIVERGES(zoom): js-semantics-numeric-limits, a double limit.
 double _getLimit(
   State state,
@@ -152,8 +147,8 @@ double _getLimit(
   String prop,
   double fallback,
 ) {
-  var limit = jsGet(scaleLimits.raw, prop);
-  if (limit == 'original') {
+  final limit = prop == 'min' ? scaleLimits.min : scaleLimits.max;
+  if (limit != null && limit.isOriginal) {
     final limits = state.originalScaleLimits[scale.id]!;
     final original = prop == 'min' ? limits.min : limits.max;
     if (isNumber(original.options)) {
@@ -168,9 +163,9 @@ double _getLimit(
     }
 
     // A null scale is the absent property of upstream: undefined.
-    limit = original.scale ?? undefined;
+    return original.scale ?? fallback;
   }
-  return jsToNumber(valueOrDefault(limit, fallback));
+  return limit?.value ?? fallback;
 }
 
 /// scale.types.ts:89 `linearRange(scale, pixel0, pixel1)`.
@@ -181,11 +176,11 @@ ScaleRange _linearRange(Scale scale, double pixel0, double pixel1) {
 }
 
 /// The limits `{ min: 'original', max: 'original' }` of
-/// scale.types.ts:109. Nothing writes into them.
-const ScaleLimits _origLimits = ScaleLimits(<String, Object?>{
-  'min': 'original',
-  'max': 'original',
-});
+/// scale.types.ts:109.
+const ScaleLimits _origLimits = ScaleLimits(
+  min: ScaleLimit.original,
+  max: ScaleLimit.original,
+);
 
 /// scale.types.ts:98 `fixRange(range, { min, max, minLimit, maxLimit },
 /// state, scale)`.
@@ -254,8 +249,7 @@ bool updateRange(
   final scaleOpts = scale.options;
 
   final scaleLimits = _getScaleLimits(scale, limits);
-  // DIVERGES(zoom): js-semantics-numeric-limits, a double minRange.
-  final minRange = jsToNumber(valueOrDefault(scaleLimits.minRange, 0.0));
+  final minRange = scaleLimits.minRangeOrDefault;
   final minLimit = _getLimit(
     state,
     scale,

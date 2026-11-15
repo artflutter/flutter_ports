@@ -9,8 +9,7 @@ import 'package:flutter/widgets.dart'
     show Align, Alignment, Directionality, SizedBox, TextDirection, Widget;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart' show getState;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Element, JsObjectFace, undefined;
+import 'package:flutter_chartjs_port/chartjs.dart' show Element, JsObjectFace;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -26,9 +25,9 @@ import '../support/jasmine.dart';
 //   last full update and runs the `beforeUpdate` hook of the plugin. The
 //   zoom range, the zoom state and the listeners must stay as a full update
 //   leaves them.
-// - Seam H17: `start` warns about the removed option `zoom.enabled` when the
-//   zoom options own it. The plugin options are a resolver of the host, and
-//   `hasOwnProperty` is its face `jsHas`.
+// - Seam H17: `start` warns about the deprecated option `overScaleMode`.
+//   The plugin options are one `ZoomPluginOptions` (Chart.js ADR 0148): the
+//   removed option `zoom.enabled` has no field, so its two cases skip.
 // - Seam H14: the zoom writes its range into the `min` and `max` options of
 //   the scale, and the next update keeps it.
 //
@@ -78,7 +77,7 @@ List<DataPoint> _points(int step) => <DataPoint>[
 /// zoom options [zoomOptions], in a box of 400 x 300.
 Widget _view(
   int step,
-  Map<String, Object?> zoomOptions, {
+  ZoomPluginOptions zoomOptions, {
   required bool dataOnly,
   required void Function(Chart chart) onChartCreated,
 }) => Directionality(
@@ -97,9 +96,9 @@ Widget _view(
             'y': LinearAxis(min: 0, max: 100),
           },
           animation: ChartAnimation.none,
-          extra: zoomOptions,
+          pluginOptions: [zoomOptions],
         ),
-        updateMode: 'none',
+        updateMode: UpdateMode.none,
         dataOnlyUpdates: dataOnly,
         onChartCreated: onChartCreated,
       ),
@@ -132,7 +131,7 @@ Object? _resolver(Chart chart) => chart.options.jsRead('_proxy');
 /// [rangeOnly]. The title text is scriptable: it reads the zoom level and
 /// adds each text to [titles].
 Map<String, Object?> _rangeConfig(
-  Map<String, Object?> zoom, {
+  ZoomPluginOptions zoom, {
   required bool rangeOnly,
   required List<String> titles,
 }) => <String, Object?>{
@@ -165,12 +164,9 @@ Map<String, Object?> _rangeConfig(
           return level;
         },
       },
-      'zoom': <String, Object?>{
-        ...zoom,
-        // An explicit false: the run with the option in the defaults keeps
-        // the full path for this chart.
-        'rangeOnlyUpdates': rangeOnly,
-      },
+      // An explicit false: the run with the option in the defaults keeps
+      // the full path for this chart.
+      'zoom': zoom.merge(ZoomPluginOptions(rangeOnlyUpdates: rangeOnly)),
     },
   },
 };
@@ -203,23 +199,19 @@ Object _rangeObserve(Chart chart) => [
 void main() {
   group('range-only updates (Chart.js ADR 0111)', () {
     /// The zoom options of the flows: each input on.
-    Map<String, Object?> zoomOptions({
+    ZoomPluginOptions zoomOptions({
       Object? mode = Mode.xy,
-      Object? onZoomComplete,
-    }) => <String, Object?>{
-      'zoom': <String, Object?>{
-        'wheel': <String, Object?>{'enabled': true},
-        'drag': <String, Object?>{'enabled': true},
-        'pinch': <String, Object?>{'enabled': true},
-        'mode': mode,
-        'onZoomComplete': ?onZoomComplete,
-      },
-      'pan': <String, Object?>{
-        'enabled': true,
-        'mode': Mode.xy,
-        'threshold': 0.0,
-      },
-    };
+      GenericEvent? onZoomComplete,
+    }) => ZoomPluginOptions(
+      zoom: ZoomOptions(
+        wheel: const WheelOptions(enabled: true),
+        drag: const DragOptions(enabled: true),
+        pinch: const PinchOptions(enabled: true),
+        mode: mode,
+        onZoomComplete: onZoomComplete,
+      ),
+      pan: const PanOptions(enabled: true, mode: Mode.xy, threshold: 0),
+    );
 
     /// The flows of the ADR: each runs on one chart.
     final flows = <String, void Function(Chart chart)>{
@@ -315,8 +307,7 @@ void main() {
           modes.add(context.chart);
           return Mode.x;
         },
-        onZoomComplete: (ZoomChartContext context) =>
-            completed.add(context.chart),
+        onZoomComplete: (context) => completed.add(context.chart),
       );
       final chart = acquireChart(
         _rangeConfig(options, rangeOnly: true, titles: <String>[]),
@@ -345,14 +336,15 @@ void main() {
       // The suite with --dart-define=ZOOM_RANGE_ONLY_UPDATES=true writes it
       // into Chart.defaults.plugins.zoom (flutter_test_config.dart).
       final chart = acquireChart(<String, Object?>{'type': 'line'});
-      expect(getState(chart).options.rangeOnlyUpdates, zoomRangeOnlyUpdates);
+      expect(
+        getState(chart).options.rangeOnlyUpdates ?? false,
+        zoomRangeOnlyUpdates,
+      );
     });
 
     testWidgets('with the option off, a zoom takes update', (tester) async {
-      expect(
-        const ZoomPluginOptions(<String, Object?>{}).rangeOnlyUpdates,
-        isFalse,
-      );
+      // A field that is not set: the update calls read it as false.
+      expect(const ZoomPluginOptions().rangeOnlyUpdates, isNull);
       final chart = acquireChart(
         _rangeConfig(zoomOptions(), rangeOnly: false, titles: <String>[]),
       );
@@ -364,16 +356,10 @@ void main() {
     testWidgets('a ChartView with dataOnlyUpdates takes updateData for the '
         'data tick after a zoom step', (tester) async {
       final spy = _spyOnCharts();
-      final zoom = <String, Object?>{
-        'plugins': <String, Object?>{
-          'zoom': <String, Object?>{
-            'zoom': <String, Object?>{
-              'wheel': <String, Object?>{'enabled': true},
-            },
-            'rangeOnlyUpdates': true,
-          },
-        },
-      };
+      const zoom = ZoomPluginOptions(
+        zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+        rangeOnlyUpdates: true,
+      );
       Chart? created;
       Widget view(int step) => _view(
         step,
@@ -410,18 +396,12 @@ void main() {
     testWidgets('a zoom, a pan, a wheel zoom and a reset stay through new '
         'data, as with a full update', (tester) async {
       final spy = _spyOnCharts();
-      // The options are one Map for the life of the view, as an app keeps
-      // them: a Map with other values is a full update.
-      final zoomOptions = <String, Object?>{
-        'plugins': <String, Object?>{
-          'zoom': <String, Object?>{
-            'pan': <String, Object?>{'enabled': true},
-            'zoom': <String, Object?>{
-              'wheel': <String, Object?>{'enabled': true},
-            },
-          },
-        },
-      };
+      // The options are one object for the life of the view, as an app
+      // keeps them: options with other values are a full update.
+      const zoomOptions = ZoomPluginOptions(
+        pan: PanOptions(enabled: true),
+        zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+      );
 
       Future<List<Object>> run({required bool dataOnly}) async {
         Chart? created;
@@ -498,25 +478,22 @@ void main() {
       expect(await run(dataOnly: true), await run(dataOnly: false));
     });
 
-    testWidgets('a function in the zoom options keeps the full update', (
+    testWidgets('a function in the zoom options keeps the data-only update', (
       tester,
     ) async {
-      // The data-only path of the host takes static user options only: a
-      // function of the options other than `onClick` and `onHover` makes each
-      // new config a full update (Chart.js ADR 0074). The range stays.
+      // The options are one immutable `ZoomPluginOptions` (Chart.js ADR
+      // 0148): the data-only check of the host takes it as a static value,
+      // also with a callback (Chart.js ADR 0074). The same options object
+      // with the same closure is `==`, so new data takes `updateData`. The
+      // range stays, and the callback runs.
       final spy = _spyOnCharts();
       final completed = <Chart>[];
-      final zoomOptions = <String, Object?>{
-        'plugins': <String, Object?>{
-          'zoom': <String, Object?>{
-            'zoom': <String, Object?>{
-              'wheel': <String, Object?>{'enabled': true},
-              'onZoomComplete': (ZoomChartContext context) =>
-                  completed.add(context.chart),
-            },
-          },
-        },
-      };
+      final zoomOptions = ZoomPluginOptions(
+        zoom: ZoomOptions(
+          wheel: const WheelOptions(enabled: true),
+          onZoomComplete: (context) => completed.add(context.chart),
+        ),
+      );
       Chart? created;
       Widget view(int step) => _view(
         step,
@@ -532,7 +509,7 @@ void main() {
       spy.clear();
       await tester.pumpWidget(view(2));
       expect(spy.updates, 1);
-      expect(spy.layouts, 1);
+      expect(spy.layouts, 0);
       expect(chart.scales['x']!.min, toBe(25));
       expect(chart.scales['x']!.max, toBe(75));
 
@@ -556,51 +533,36 @@ void main() {
     }
 
     /// A line chart with the zoom options [zoom].
-    Map<String, Object?> config(Map<String, Object?> zoom) => <String, Object?>{
+    Map<String, Object?> config(ZoomPluginOptions zoom) => <String, Object?>{
       'type': 'line',
       'options': <String, Object?>{
         'plugins': <String, Object?>{'zoom': zoom},
       },
     };
 
-    testWidgets('an own zoom.enabled prints the warning once', (tester) async {
-      final lines = printed(
-        () => acquireChart(
-          config(<String, Object?>{
-            'zoom': <String, Object?>{'enabled': true},
-          }),
-        ),
-      );
-      const warning =
-          'The option `zoom.enabled` is no longer supported. Please use '
-          '`zoom.wheel.enabled`, `zoom.drag.enabled`, or '
-          '`zoom.pinch.enabled`.';
-      expect(lines, [warning]);
-    });
+    // `start` warns about an own `zoom.enabled` (plugin.ts:75-79). The
+    // removed option has no field of `ZoomOptions`: a config cannot give it,
+    // and the two cases cannot exist.
+    test(
+      'an own zoom.enabled prints the warning once',
+      () {},
+      skip: 'diverges: adapt-native-zoom-options',
+    );
 
-    testWidgets('an own zoom.enabled of undefined prints the warning', (
-      tester,
-    ) async {
-      // `hasOwnProperty` tests the key, not its value.
-      final lines = printed(
-        () => acquireChart(
-          config(<String, Object?>{
-            'zoom': <String, Object?>{'enabled': undefined},
-          }),
-        ),
-      );
-      expect(lines, hasLength(1));
-      expect(lines.single, startsWith('The option `zoom.enabled`'));
-    });
+    test(
+      'an own zoom.enabled of undefined prints the warning',
+      () {},
+      skip: 'diverges: adapt-native-zoom-options',
+    );
 
     testWidgets('the default options print nothing', (tester) async {
       final lines = printed(
         () => acquireChart(
-          config(<String, Object?>{
-            'zoom': <String, Object?>{
-              'wheel': <String, Object?>{'enabled': true},
-            },
-          }),
+          config(
+            const ZoomPluginOptions(
+              zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+            ),
+          ),
         ),
       );
       expect(lines, isEmpty);
@@ -609,9 +571,9 @@ void main() {
     testWidgets('an own overScaleMode prints the deprecation', (tester) async {
       final lines = printed(
         () => acquireChart(
-          config(<String, Object?>{
-            'pan': <String, Object?>{'overScaleMode': Mode.y},
-          }),
+          config(
+            const ZoomPluginOptions(pan: PanOptions(overScaleMode: Mode.y)),
+          ),
         ),
       );
       const warning =

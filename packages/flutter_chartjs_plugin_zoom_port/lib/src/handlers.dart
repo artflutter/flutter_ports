@@ -32,17 +32,8 @@ import 'package:flutter_chartjs_port/chartjs.dart'
         NativeEvent,
         NativeEventTarget;
 import 'package:flutter_chartjs_port/helpers.dart'
-    show
-        getRelativePosition,
-        isNullOrUndef,
-        isPointInArea,
-        sign,
-        valueOrDefault;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsToNumber, jsTruthy;
-
-/// `value ?? {}`: [emptyObject] for `null` and `undefined`.
-Object? _orEmpty(Object? value) => isNullOrUndef(value) ? emptyObject : value;
+    show getRelativePosition, isPointInArea, sign;
+import 'package:flutter_chartjs_port/js_semantics.dart' show jsTruthy;
 
 /// handlers.ts:9 `clamp(x, from, to)`.
 double _clamp(double x, double from, double to) =>
@@ -178,9 +169,7 @@ void mouseDown(Chart chart, NativeEvent event) {
   final state = getState(chart);
   // const { pan: panOptions, zoom: zoomOptions = {} } = state.options
   final panOptions = state.options.pan;
-  final zoomOptions = ZoomOptions(
-    valueOrDefault<Object?>(state.options.zoom.raw, emptyObject),
-  );
+  final zoomOptions = state.options.zoom ?? const ZoomOptions();
   if (event.button != 0 ||
       keyPressed(getModifierKey(panOptions), event) ||
       keyNotPressed(getModifierKey(zoomOptions.drag), event)) {
@@ -333,13 +322,13 @@ final class const DragRect({
 /// of [chart].
 ///
 /// A direction that the [Mode] or the `ModeFn` [mode] does not enable spans
-/// the chart area. [maintainAspectRatio] keeps the aspect ratio of the chart
-/// area when both directions are enabled.
+/// the chart area; a null [mode] enables both. [maintainAspectRatio] keeps
+/// the aspect ratio of the chart area when both directions are enabled.
 DragRect computeDragRect(
   Chart chart,
   Object? mode,
   ({NativeEvent dragStart, NativeEvent dragEnd}) pointEvents,
-  Object? maintainAspectRatio,
+  bool? maintainAspectRatio,
 ) {
   final xEnabled = directionEnabled(mode, 'x', chart);
   final yEnabled = directionEnabled(mode, 'y', chart);
@@ -356,7 +345,7 @@ DragRect computeDragRect(
   final points = _getRelativePoints(
     chart,
     pointEvents,
-    jsTruthy(maintainAspectRatio) && xEnabled && yEnabled,
+    (maintainAspectRatio ?? false) && xEnabled && yEnabled,
   );
 
   if (xEnabled) {
@@ -398,13 +387,13 @@ void mouseUp(Chart chart, NativeEvent event) {
 
   _removeHandler(chart, HandlerName.mousemove);
   // const { mode, onZoomComplete, drag } = state.options.zoom ?? {}
-  final zoomOptions = ZoomOptions(_orEmpty(state.options.zoom.raw));
+  final zoomOptions = state.options.zoom ?? const ZoomOptions();
   final mode = zoomOptions.mode;
   final onZoomComplete = zoomOptions.onZoomComplete;
   final drag = zoomOptions.drag;
   // const { threshold = 0, maintainAspectRatio } = drag ?? {}
-  final dragOptions = DragOptions(_orEmpty(drag.raw));
-  final threshold = valueOrDefault<Object?>(dragOptions.threshold, 0);
+  final dragOptions = drag ?? const DragOptions();
+  final threshold = dragOptions.thresholdOrDefault;
   final maintainAspectRatio = dragOptions.maintainAspectRatio;
   final rect = computeDragRect(chart, mode, (
     dragStart: dragStart,
@@ -420,7 +409,7 @@ void mouseUp(Chart chart, NativeEvent event) {
     ..dragStart = null
     ..dragEnd = null;
 
-  if (distance <= jsToNumber(threshold)) {
+  if (distance <= threshold) {
     state.dragging = false;
     chart.draw();
     return;
@@ -430,7 +419,7 @@ void mouseUp(Chart chart, NativeEvent event) {
     chart,
     (x: rect.left, y: rect.top),
     (x: rect.right, y: rect.bottom),
-    'zoom',
+    zoomUpdateMode,
     ZoomTrigger.drag,
   );
 
@@ -490,9 +479,7 @@ void wheel(Chart chart, NativeEvent event) {
   //   = getState(chart)
   final state = getState(chart);
   final onZoomComplete = state.handlers[HandlerName.onZoomComplete];
-  final zoomOptions = ZoomOptions(
-    valueOrDefault<Object?>(state.options.zoom.raw, emptyObject),
-  );
+  final zoomOptions = state.options.zoom ?? const ZoomOptions();
 
   if (!_wheelPreconditions(chart, event, zoomOptions)) {
     return;
@@ -508,12 +495,8 @@ void wheel(Chart chart, NativeEvent event) {
   final delta =
       sign(event.deltaY) * math.min<double>(_maxDelta, event.deltaY.abs());
   // zoomOptions?.wheel?.speed ?? 0.1
-  final wheelOptions = zoomOptions.isNullish ? null : zoomOptions.wheel;
-  final speedOption = wheelOptions == null || wheelOptions.isNullish
-      ? null
-      : wheelOptions.speed;
   final speed =
-      jsToNumber(isNullOrUndef(speedOption) ? 0.1 : speedOption) *
+      (zoomOptions.wheel ?? const WheelOptions()).speedOrDefault *
       (delta.abs() / _maxDelta);
   final percentage = delta >= 0 ? 2 - 1 / (1 - speed) : 1 + speed;
   final amount = ZoomAmount(
@@ -522,7 +505,7 @@ void wheel(Chart chart, NativeEvent event) {
     focalPoint: (x: event.clientX - rect!.left, y: event.clientY - rect.top),
   );
 
-  zoom(chart, amount, 'zoom', ZoomTrigger.wheel);
+  zoom(chart, amount, zoomUpdateMode, ZoomTrigger.wheel);
 
   onZoomComplete?.call(event);
 }
@@ -550,7 +533,7 @@ void addListeners(Chart chart, ZoomPluginOptions options) {
   final canvas = chart.canvas;
   // const { wheel: wheelOptions, drag: dragOptions, onZoomComplete } =
   //   options.zoom ?? {}
-  final zoomOptions = ZoomOptions(_orEmpty(options.zoom.raw));
+  final zoomOptions = options.zoom ?? const ZoomOptions();
   final wheelOptions = zoomOptions.wheel;
   final dragOptions = zoomOptions.drag;
   final onZoomComplete = zoomOptions.onZoomComplete;
@@ -559,7 +542,7 @@ void addListeners(Chart chart, ZoomPluginOptions options) {
   // turn zoom on and off We also want to make sure listeners aren't always
   // on. E.g. if you're scrolling down a page and the mouse goes over a chart
   // you don't want it intercepted unless the plugin is enabled
-  if (!wheelOptions.isNullish && jsTruthy(wheelOptions.enabled)) {
+  if (wheelOptions?.enabled ?? false) {
     // DIVERGES(zoom): adapt-canvas-event-target, the canvas as a target.
     _addHandler(chart, canvas!.eventTarget, HandlerName.wheel, wheel);
     _addDebouncedHandler(
@@ -571,7 +554,7 @@ void addListeners(Chart chart, ZoomPluginOptions options) {
   } else {
     _removeHandler(chart, HandlerName.wheel);
   }
-  if (!dragOptions.isNullish && jsTruthy(dragOptions.enabled)) {
+  if (dragOptions?.enabled ?? false) {
     // DIVERGES(zoom): adapt-canvas-event-target, the canvas as a target.
     _addHandler(chart, canvas!.eventTarget, HandlerName.mousedown, mouseDown);
     _addHandler(chart, canvas.ownerDocument, HandlerName.mouseup, mouseUp);

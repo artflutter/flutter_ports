@@ -268,7 +268,7 @@ Plugin<Object?> flTouch(void Function(ActiveElement? bar) touched) => Plugin(
 class const OverflowChart({
   required final ChartConfig config,
   final EdgeInsets overflow = const EdgeInsets.all(16),
-  final String? updateMode,
+  final UpdateMode? updateMode,
   super.key,
 }) extends StatelessWidget {
   @override

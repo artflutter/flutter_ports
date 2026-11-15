@@ -121,7 +121,7 @@ void main() {
       final cfg = _ObservedConfig(config());
       final chart = _ConfigChart(UiCanvasElement(width: 400, height: 300), cfg);
       addTearDown(chart.destroy);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(cfg.ownedCalls, 0);
       expect(cfg.prefixesSeen.length, greaterThan(8));
       expect(cfg.prefixesSeen.toSet().length, cfg.prefixesSeen.length);

@@ -551,12 +551,12 @@ void main() {
       final chart = _chart(tester);
       final map = _dataset(chart, 0);
       expect(map['borderColor'], const ChartPaint.solid(_green));
-      expect(modes, [undefined]);
+      expect(modes, [null]);
 
       final data = [4, 5, 6];
       host.show(config(data), themeB);
       await tester.pump();
-      expect(modes, [undefined, 'theme']);
+      expect(modes, [null, 'theme']);
       expect(_dataset(chart, 0), same(map));
       expect(map['data'], same(data));
       expect(map['borderColor'], const ChartPaint.solid(_blue));
@@ -565,7 +565,7 @@ void main() {
       // switch restores only a value that the colors plugin wrote.
       host.show(config(data, borderColor: _red), themeA);
       await tester.pump();
-      expect(modes, [undefined, 'theme', 'theme']);
+      expect(modes, [null, 'theme', 'theme']);
       expect(map['borderColor'], const ChartPaint.solid(_red));
     });
   });

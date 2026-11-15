@@ -64,7 +64,7 @@ Map<String, Object?> fixture() {
           },
         },
       },
-      'plugins': <Object?>[
+      'plugins': <Plugin<Object?>>[
         // DIVERGES(chartjs): adapt-typed-plugins, a Plugin; upstream has no id.
         Plugin<Object?>(
           id: 'inline',

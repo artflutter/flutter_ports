@@ -42,9 +42,11 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/plugin_defaults.dart';
 import '../controllers/controller_chart_harness.dart';
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
@@ -223,7 +225,7 @@ Map<String, Object?> _config(
   Map<String, Object?> extra = const {},
 }) => <String, Object?>{
   'type': type,
-  'plugins': <Object?>[_recorder(log)],
+  'plugins': <Plugin<Object?>>[_recorder(log)],
   'data': data,
   'options': <String, Object?>{
     'animation': _animation(log, animated: animated),
@@ -302,12 +304,13 @@ final class const _Case(
 
 /// The modes of the steps: `'none'`, `'zoom'`, `'default'` and a function
 /// of `{datasetIndex}`.
-final List<Object?> _modes = <Object?>[
-  'none',
-  'zoom',
-  'default',
-  (Object? ctx) => jsGet(ctx, 'datasetIndex') == 0 ? 'zoom' : 'none',
-  undefined,
+// The function form of `update` has no range form: `updateRanges` takes
+// one mode (Chart.js ADR 0148).
+final List<UpdateMode?> _modes = <UpdateMode?>[
+  UpdateMode.none,
+  const UpdateMode('zoom'),
+  UpdateMode.defaultMode,
+  null,
 ];
 
 /// The hits on a grid of the canvas, for the modes of the interactions.
@@ -728,12 +731,12 @@ final List<_Case> _cases = [
 /// A small line chart with the recorder, on the axes x and y.
 Map<String, Object?> _small(
   _Log log, {
-  List<Object?> plugins = const [],
+  List<Plugin<Object?>> plugins = const [],
   Map<String, Object?> pluginOptions = const {},
   Map<String, Object?> extra = const {},
 }) => <String, Object?>{
   'type': 'line',
-  'plugins': <Object?>[_recorder(log), ...plugins],
+  'plugins': <Plugin<Object?>>[_recorder(log), ...plugins],
   'data': <String, Object?>{
     'datasets': <Object?>[
       <String, Object?>{'label': 'a', 'data': _points(8, 0)},
@@ -758,7 +761,7 @@ void _expectFallbackTwins(
   Chart ranges,
   _Log rangeLog, {
   required bool expected,
-  Object? mode = 'none',
+  UpdateMode? mode = UpdateMode.none,
   String reason = '',
 }) {
   _range('x', 2.0, 5.0)(full);
@@ -886,11 +889,11 @@ void main() {
       final chart = acquireChart(
         _small(
           log,
-          plugins: <Object?>[
+          plugins: <Plugin<Object?>>[
             Plugin<Object?>(
               id: 'withDefaults',
               supportsDataUpdates: true,
-              defaults: <String, Object?>{'size': 3.0},
+              defaults: pluginDefaults(<String, Object?>{'size': 3.0}),
               beforeDraw: (chart, args, options) {
                 log.add('size ${jsGet(options, 'size')}');
                 return true;
@@ -908,7 +911,7 @@ void main() {
       final length = scopes.length;
       for (var i = 0; i < 100; i++) {
         _range('x', i % 5 + 0.0, i % 5 + 3.0)(chart);
-        expect(chart.updateRanges('none'), isTrue);
+        expect(chart.updateRanges(UpdateMode.none), isTrue);
       }
       expect(config.debugCacheSizes, sizes);
       expect(
@@ -932,7 +935,7 @@ void main() {
         afterUpdate: (chart, args, options) {
           if (enabled) {
             enabled = false;
-            results.add((chart as Chart).updateRanges('none'));
+            results.add((chart as Chart).updateRanges(UpdateMode.none));
           }
         },
       );
@@ -943,10 +946,10 @@ void main() {
       _range('x', 2.0, 5.0)(full);
       _range('x', 2.0, 5.0)(ranges);
       enabled = true;
-      full.update('none');
+      full.update(UpdateMode.none);
       enabled = true;
-      expect(ranges.updateRanges('none'), isTrue);
-      // Both nested calls are `update('none')`.
+      expect(ranges.updateRanges(UpdateMode.none), isTrue);
+      // Both nested calls are `update(UpdateMode.none)`.
       expect(results, [false, false]);
       _expectTwins(full, fullLog, ranges, rangeLog, 'nested');
       // The nested update armed the range state.
@@ -977,8 +980,12 @@ void main() {
         final full = acquireChart(_small(fullLog, plugins: [canceller()]));
         final ranges = acquireChart(_small(rangeLog, plugins: [canceller()]));
         cancel = true;
-        full.update('none');
-        expect(ranges.updateRanges('none'), isTrue, reason: hook.jsName);
+        full.update(UpdateMode.none);
+        expect(
+          ranges.updateRanges(UpdateMode.none),
+          isTrue,
+          reason: hook.jsName,
+        );
         cancel = false;
         _expectFallbackTwins(
           full,
@@ -1207,7 +1214,7 @@ void main() {
         beforeDatasetsUpdate: (chart, args, opts) {
           if (!enabled) return true;
           enabled = false;
-          target!.update('none');
+          target!.update(UpdateMode.none);
           return true;
         },
       );
@@ -1218,13 +1225,13 @@ void main() {
       target = full;
       enabled = true;
       _range('x', 2.0, 5.0)(full);
-      full.update('none');
+      full.update(UpdateMode.none);
       target = ranges;
       enabled = true;
       _range('x', 2.0, 5.0)(ranges);
-      expect(ranges.updateRanges('none'), isTrue);
+      expect(ranges.updateRanges(UpdateMode.none), isTrue);
       _expectTwins(full, fullLog, ranges, rangeLog, 'nested update');
-      expect(ranges.updateRanges('none'), isTrue);
+      expect(ranges.updateRanges(UpdateMode.none), isTrue);
     });
 
     testWidgets('updateRanges from onHover of the replay delegates', (
@@ -1241,7 +1248,7 @@ void main() {
             'onHover': (Object? event, Object? active, Object? c) {
               if (enabled) {
                 enabled = false;
-                results.add(chart.updateRanges('none'));
+                results.add(chart.updateRanges(UpdateMode.none));
               }
             },
           },
@@ -1252,9 +1259,9 @@ void main() {
         'y': chart.chartArea!.top + 20,
       });
       enabled = true;
-      expect(chart.updateRanges('none'), isTrue);
+      expect(chart.updateRanges(UpdateMode.none), isTrue);
       expect(results, [false]);
-      expect(chart.updateRanges('none'), isTrue);
+      expect(chart.updateRanges(UpdateMode.none), isTrue);
     });
   });
 
@@ -1340,8 +1347,8 @@ void main() {
           )(chart);
           _range('x', 'L1', 'L${count - 2}')(chart);
         }
-        full.update('none');
-        expect(ranges.updateRanges('none'), isTrue);
+        full.update(UpdateMode.none);
+        expect(ranges.updateRanges(UpdateMode.none), isTrue);
         _expectTwins(full, fullLog, ranges, rangeLog, 'count $count');
       }
     });

@@ -3,6 +3,8 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show PanOptions, WheelOptions, ZoomOptions, ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show CssStyleProperties;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -29,9 +31,7 @@ void main() {
         'data': data,
         'options': <String, Object?>{
           'plugins': <String, Object?>{
-            'zoom': <String, Object?>{
-              'pan': <String, Object?>{'enabled': true},
-            },
+            'zoom': const ZoomPluginOptions(pan: PanOptions(enabled: true)),
           },
         },
       });
@@ -49,11 +49,9 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'wheel': <String, Object?>{'enabled': true},
-                },
-              },
+              'zoom': const ZoomPluginOptions(
+                zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+              ),
             },
           },
         });

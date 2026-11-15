@@ -1,6 +1,7 @@
 # Zoom ADR 0004: Native zoom and pan callbacks
 
 - Status: accepted (2026-11-13): the zoom tests, the fixtures, the range-only suite, analysis and port checks pass.
+- Superseded in part by: [Zoom ADR 0005](0005-typed-zoom-options.md) (2026-11-15), for item 1 and the foreign value of item 3
 - Date: 2026-11-13
 - Supersedes: of [Zoom ADR 0003](0003-host-connection.md) item 9, the bullet of the call of a user function.
 - Related: [Zoom ADR 0003](0003-host-connection.md) item 9 (the call of a user function),

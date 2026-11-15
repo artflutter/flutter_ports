@@ -4,8 +4,17 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ZoomChart, ZoomChartContext;
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+    show
+        Mode,
+        PanOptions,
+        PinchOptions,
+        ScaleLimit,
+        ScaleLimits,
+        WheelOptions,
+        ZoomChart,
+        ZoomOptions,
+        ZoomPluginOptions;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, UpdateMode;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show ActiveElement, Chart, ChartEvent, ChartPosition, JsObjectFace, Scale;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsNumberToString;
@@ -52,6 +61,10 @@ typedef ZoomDocsLog = void Function(String line);
 ///   datasets, and grey for the grid border. The colors are `Color` values
 ///   (Chart.js ADR 0061): `'rgba( 0, 0, 0, 0.1)'` of `:35` is
 ///   `Color.fromRGBO(0, 0, 0, 0.1)`.
+/// - The zoom options are one immutable `ZoomPluginOptions` (Chart.js ADR
+///   0148). A handler that writes `zoomOptions.pan.enabled` (`:108-118`)
+///   makes the merge with the new value and writes it into the config
+///   ([setZoomSampleOptions]) before `chart.update()`.
 /// - The options get the docs defaults (`setZoomDocsDefaults`).
 /// - `console.log(e.type)` of `onClick` (`:98-100`) writes into [log].
 ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
@@ -64,37 +77,43 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
   // </block:scales>
 
   // <block:zoom:0>
-  // `zoomOptions.pan`, `zoomOptions.zoom.wheel` and
-  // `zoomOptions.zoom.pinch` are locals, so that the actions read and write
-  // them as the upstream handlers do.
-  final pan = <String, Object?>{'enabled': true, 'mode': Mode.xy};
-  final wheel = <String, Object?>{'enabled': true};
-  final pinch = <String, Object?>{'enabled': true};
-  final zoomOptions = <String, Object?>{
-    'limits': <String, Object?>{
-      'x': <String, Object?>{'min': -200.0, 'max': 200.0, 'minRange': 50.0},
-      'y': <String, Object?>{'min': -200.0, 'max': 200.0, 'minRange': 50.0},
+  // `zoomOptions` is a local, so that the actions read it and write a new
+  // object, as the upstream handlers write into it.
+  var zoomOptions = ZoomPluginOptions(
+    limits: const {
+      'x': ScaleLimits(
+        min: ScaleLimit(-200),
+        max: ScaleLimit(200),
+        minRange: 50,
+      ),
+      'y': ScaleLimits(
+        min: ScaleLimit(-200),
+        max: ScaleLimit(200),
+        minRange: 50,
+      ),
     },
-    'pan': pan,
-    'zoom': <String, Object?>{
-      'wheel': wheel,
-      'pinch': pinch,
-      'mode': Mode.xy,
-      'onZoomComplete': (ZoomChartContext context) {
+    pan: const PanOptions(enabled: true, mode: Mode.xy),
+    zoom: ZoomOptions(
+      wheel: const WheelOptions(enabled: true),
+      pinch: const PinchOptions(enabled: true),
+      mode: Mode.xy,
+      onZoomComplete: (context) {
         // This update is needed to display up to date zoom level in the
         // title. Without this, previous zoom level is displayed. The reason
         // is: title uses the same beforeUpdate hook, and is evaluated before
         // zoom.
-        context.chart.update('none');
+        context.chart.update(UpdateMode.none);
       },
-    },
-  };
+    ),
+  );
   // </block:zoom>
 
-  String panStatus() => pan['enabled'] == true ? 'enabled' : 'disabled';
+  bool panEnabled() => zoomOptions.pan?.enabled ?? false;
+  bool wheelEnabled() => zoomOptions.zoom?.wheel?.enabled ?? false;
+  String panStatus() => panEnabled() ? 'enabled' : 'disabled';
   // The zoom level is a number in the text: its JS text, as `+` gives it.
   String zoomStatus(Chart chart) =>
-      '${wheel['enabled'] == true ? 'enabled' : 'disabled'} '
+      '${wheelEnabled() ? 'enabled' : 'disabled'} '
       '(${jsNumberToString(chart.getZoomLevel())}x)';
 
   // <block:config:1>
@@ -125,19 +144,30 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
     (
       name: 'Toggle zoom',
       handler: (chart) {
-        wheel['enabled'] = wheel['enabled'] != true;
-        pinch['enabled'] = pinch['enabled'] != true;
+        final pinch = zoomOptions.zoom?.pinch?.enabled ?? false;
+        zoomOptions = zoomOptions.merge(
+          ZoomPluginOptions(
+            zoom: ZoomOptions(
+              wheel: WheelOptions(enabled: !wheelEnabled()),
+              pinch: PinchOptions(enabled: !pinch),
+            ),
+          ),
+        );
+        setZoomSampleOptions(config, zoomOptions);
         chart.update();
       },
-      isOn: (_) => wheel['enabled'] == true,
+      isOn: (_) => wheelEnabled(),
     ),
     (
       name: 'Toggle pan',
       handler: (chart) {
-        pan['enabled'] = pan['enabled'] != true;
+        zoomOptions = zoomOptions.merge(
+          ZoomPluginOptions(pan: PanOptions(enabled: !panEnabled())),
+        );
+        setZoomSampleOptions(config, zoomOptions);
         chart.update();
       },
-      isOn: (_) => pan['enabled'] == true,
+      isOn: (_) => panEnabled(),
     ),
     (name: 'Reset zoom', handler: (chart) => chart.resetZoom(), isOn: null),
   ];
@@ -252,6 +282,18 @@ Map<String, Object?> zoomSampleScales() {
     (scale! as Map<String, Object?>).addAll(scaleOpts);
   }
   return scales;
+}
+
+/// `zoomOptions.<option> = value` of a handler of a sample: the new zoom
+/// options [options] in `options.plugins.zoom` of [config], the Map of the
+/// app that the chart reads. The options are immutable (Chart.js ADR 0148),
+/// so a handler writes a new object where upstream writes into the object.
+void setZoomSampleOptions(
+  Map<String, Object?> config,
+  ZoomPluginOptions options,
+) {
+  final chartOptions = config['options']! as Map<String, Object?>;
+  (chartOptions['plugins']! as Map<String, Object?>)['zoom'] = options;
 }
 
 /// `(ctx) => ctx.scale.axis + ' axis'`, the scale title of the samples. The

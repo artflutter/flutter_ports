@@ -3745,7 +3745,7 @@ enum ScopeKind(
       case ScopeKind.chartOptions:
         return 64;
       case ScopeKind.pluginOptionsByType:
-        return 34;
+        return 5538;
       case ScopeKind.elementOptionsByType:
         return 32;
       case ScopeKind.datasetOptionsByType:
@@ -3959,7 +3959,7 @@ enum ScopeKind(
       case ScopeKind.chartOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.pluginOptionsByType:
-        return classifyUnion(raw, 34);
+        return classifyUnion(raw, 5538);
       case ScopeKind.elementOptionsByType:
         return classifyScope<GenericElementOptionsScope>(raw);
       case ScopeKind.datasetOptionsByType:

@@ -187,8 +187,8 @@ void main() {
           expect(_fast(b, [1, -0.0, -2, 4]), isNull);
           expect(_observe(a), _observe(b));
           final old = List<Object?>.of(a.getDatasetMeta(0).parsed);
-          a.update('none');
-          b.update('none');
+          a.update(UpdateMode.none);
+          b.update(UpdateMode.none);
           expect(_observe(a), _observe(b));
           for (var i = 0; i < old.length; i++) {
             expect(identical(old[i], a.getDatasetMeta(0).parsed[i]), isFalse);
@@ -382,8 +382,8 @@ void main() {
       final dataset = (data['datasets']! as List).first as Map;
       dataset['data'] = <Object?>[9, 8, 7, 6];
     }
-    a.update('none');
-    b.update('none');
+    a.update(UpdateMode.none);
+    b.update(UpdateMode.none);
     expect(_observe(a), _observe(b));
     expect(_fast(a, [9, 8, 7, 6])!.last.x, isNull);
   });
@@ -392,8 +392,8 @@ void main() {
     final a = _chart(_config(stacked: true));
     final b = _chart(_config(stacked: true), reference: true);
     expect(_observe(a), _observe(b));
-    a.update('none');
-    b.update('none');
+    a.update(UpdateMode.none);
+    b.update(UpdateMode.none);
     expect(_observe(a), _observe(b));
   });
 }

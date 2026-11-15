@@ -299,8 +299,8 @@ void main() {
                 <String, Object?>{'x': i.toDouble(), 'y': step + i - 3.0},
             ];
           }
-          first.update('none');
-          second.update('none');
+          first.update(UpdateMode.none);
+          second.update(UpdateMode.none);
           expect(_observe(first), _observe(second));
           final points = first.getDatasetMeta(0).data;
           expect(identical(points[3].options, points[4].options), isFalse);
@@ -324,8 +324,8 @@ void main() {
                 <String, Object?>{'x': i.toDouble(), 'y': 1.0 + length},
             ];
           }
-          first.update('none');
-          second.update('none');
+          first.update(UpdateMode.none);
+          second.update(UpdateMode.none);
           expect(_observe(first), _observe(second));
         }
       }
@@ -495,7 +495,7 @@ void main() {
         final chart = _chart(
           _config(type: type, dataset: {'radius': radius}),
           reference: type != 'scatter',
-        )..update('none');
+        )..update(UpdateMode.none);
         logs.add(calls);
         states.add(_observe(chart));
       }
@@ -536,8 +536,8 @@ void main() {
         final b = _chart(other, reference: true);
         final probes = _probes(a);
         final others = _probes(b);
-        a.update('none');
-        b.update('none');
+        a.update(UpdateMode.none);
+        b.update(UpdateMode.none);
         expect(probes.any((p) => p.$context != null), isTrue);
         expect(others.any((p) => p.$context != null), isTrue);
         for (var i = 0; i < _length; i++) {
@@ -582,7 +582,7 @@ void main() {
       final points = chart.getDatasetMeta(0).data;
       (points[3].options! as ElementOptions).storeKey(OptionKey.radius, 77.0);
       expect((points[4].options! as ElementOptions).jsRead('radius'), 3);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect((points[3].options! as ElementOptions).jsRead('radius'), 3);
     });
   });

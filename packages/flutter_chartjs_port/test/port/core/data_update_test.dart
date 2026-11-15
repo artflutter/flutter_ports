@@ -133,7 +133,7 @@ Map<String, Object?> config(
   bool bounded = true,
   bool prepared = false,
   bool horizontal = false,
-  List<Object?> plugins = const [],
+  List<Plugin<Object?>> plugins = const [],
 }) {
   final radial = type == 'radar' || type == 'polarArea';
   final circle = type == 'doughnut' || type == 'pie';
@@ -292,7 +292,7 @@ void main() {
         change(ca, step);
         change(cb, step);
         expect(a.updateData(), isTrue, reason: type);
-        b.update('none');
+        b.update(UpdateMode.none);
         expect(observe(a), observe(b));
         expect(a.chartArea, same(area));
         for (final key in ticks.keys) {
@@ -309,7 +309,7 @@ void main() {
     change(ca, 0);
     change(cb, 0);
     expect(a.updateData(), isTrue);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(observe(a), observe(b));
     expect(a.getDatasetMeta(0).parsed, same(dataset(ca)['data']));
   });
@@ -322,7 +322,7 @@ void main() {
       dataset(cfg)['data'] = <Object?>[8.0, 7.0, 6.0, 5.0];
     }
     expect(a.updateData(), isTrue);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(observe(a), observe(b));
   });
   test('auto ranges fall back to a full update', () {
@@ -333,7 +333,7 @@ void main() {
     change(ca, 0);
     change(cb, 0);
     expect(a.updateData(), isFalse);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(observe(a), observe(b));
     expect(a.scales['y']!.max, b.scales['y']!.max);
   });
@@ -487,7 +487,7 @@ void main() {
       }
     }
     expect(a.updateData(), isTrue);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(observe(a), observe(b));
   });
   test('stacked numeric datasets refresh totals and geometry', () {
@@ -512,7 +512,7 @@ void main() {
     change(ca, 0);
     change(cb, 0);
     expect(a.updateData(), isTrue);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(observe(a), observe(b));
     for (var i = 0; i < 4; i++) {
       expect(a.getDatasetMeta(1).data[i].y, b.getDatasetMeta(1).data[i].y);
@@ -536,7 +536,7 @@ void main() {
       id: 'recursiveData',
       supportsDataUpdates: true,
       beforeUpdate: (c, args, o) {
-        if (enabled) a.update('none');
+        if (enabled) a.update(UpdateMode.none);
         return true;
       },
     );
@@ -567,7 +567,7 @@ void main() {
       void nested(Chart c) {
         if (armed) {
           armed = false;
-          c.update('none');
+          c.update(UpdateMode.none);
         }
       }
 
@@ -579,7 +579,7 @@ void main() {
       expect(a.updateData(), isTrue);
       expect(armed, isFalse, reason: 'the callback ran');
       armed = true;
-      b.update('none');
+      b.update(UpdateMode.none);
       expect(armed, isFalse, reason: 'the callback ran');
       expect(observe(a), observe(b));
 
@@ -587,7 +587,7 @@ void main() {
       change(ca, 1);
       change(cb, 1);
       expect(a.updateData(), isTrue);
-      b.update('none');
+      b.update(UpdateMode.none);
       expect(observe(a), observe(b));
     });
 
@@ -600,7 +600,7 @@ void main() {
         }
       });
       armed = true;
-      expect(() => a.update('none'), throwsStateError);
+      expect(() => a.update(UpdateMode.none), throwsStateError);
       expect(a.updateData(), isFalse, reason: 'the throw ended the plan');
 
       // A throw in the callback also ends the last event, as upstream.
@@ -622,7 +622,7 @@ void main() {
           if (armed) {
             armed = false;
             hooked = c as Chart;
-            hooked!.update('none');
+            hooked!.update(UpdateMode.none);
           }
         },
       );
@@ -657,7 +657,7 @@ void main() {
         expect(a.updateData(), isTrue);
         expect(top(a), start);
         cancel();
-        a.update('none');
+        a.update(UpdateMode.none);
         final moved = top(a);
         expect(moved, greaterThan(start), reason: 'as upstream: no fit ran');
         expect(a.updateData(), isFalse, reason: 'no layout ran');
@@ -735,7 +735,7 @@ void main() {
     );
     final a = chart(config('bar', plugins: [plugin]));
     expect(a.updateData(), isTrue);
-    expect(seen, [(UpdateHookArgs, undefined), (UpdateHookArgs, 'none')]);
+    expect(seen, [(UpdateHookArgs, null), (UpdateHookArgs, 'none')]);
   });
   test('a category scale with bounds data falls back', () {
     final cfg = config('bar');
@@ -763,7 +763,7 @@ void main() {
       3.0,
       4.0,
     ];
-    a.update('none');
+    a.update(UpdateMode.none);
     expect(labels, hasLength(5));
     dataset(cfg)['data'] = numbers;
     expect(a.updateData(), isFalse, reason: 'the added label needs an update');
@@ -791,7 +791,7 @@ void main() {
     change(ca, 0);
     change(cb, 0);
     expect(a.updateData(), isTrue);
-    b.update('none');
+    b.update(UpdateMode.none);
     Object active(Chart c) => [
       for (final e in c.getActiveElements()) [e.datasetIndex, e.index],
     ];
@@ -847,7 +847,7 @@ void main() {
     expect(a.updateData(), isTrue);
     expect(a.getDatasetMeta(0).parsed, same(next));
     final before = observe(a);
-    a.update('none');
+    a.update(UpdateMode.none);
     expect(observe(a), before);
   });
   test('nonfinite values and gaps match ordinary parsing', () {
@@ -859,7 +859,7 @@ void main() {
       dataset(c)['data'] = <Object?>[null, double.nan, double.infinity, 5.0];
     }
     expect(a.updateData(), isTrue);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(observe(a), observe(b));
   });
   test('custom scale and custom source containers retain full updates', () {
@@ -873,7 +873,7 @@ void main() {
     final b = chart(cb);
     la.reads = lb.reads = 0;
     expect(a.updateData(), isFalse);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(la.reads, lb.reads);
     expect(observe(a), observe(b));
     final cfg = config('line');
@@ -907,7 +907,7 @@ void main() {
     change(ca, 0);
     change(cb, 0);
     expect(a.updateData(), isTrue);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(observe(a), observe(b));
     expect(a.chartArea, same(area));
   });
@@ -923,7 +923,7 @@ void main() {
       values.setAll(0, [8, 7, 6, 5]);
       expect(a.updateData(), isTrue);
       final before = observe(a);
-      a.update('none');
+      a.update(UpdateMode.none);
       expect(observe(a), before);
     }
   });
@@ -960,7 +960,7 @@ void main() {
       ((dataset(cfg)['data']! as List)[0] as Map)['r'] = 20.0;
     }
     expect(a.updateData(), isTrue);
-    b.update('none');
+    b.update(UpdateMode.none);
     expect(observe(a), observe(b));
     expect(a.chartArea!.left, b.chartArea!.left);
     expect(a.chartArea!.right, b.chartArea!.right);
@@ -985,7 +985,7 @@ void main() {
       }
       expect(a.updateData(), isTrue);
       final before = observe(a);
-      a.update('none');
+      a.update(UpdateMode.none);
       expect(observe(a), before);
     },
   );
@@ -1065,7 +1065,8 @@ void main() {
     ];
 
     /// The twin of [make] over the data ticks: `updateData` with the path
-    /// [path], or with any path for Dart `null`, against `update('none')` with
+    /// [path], or with any path for Dart `null`, against
+    /// `update(UpdateMode.none)` with
     /// the same values.
     void expectTwin(
       Map<String, Object?> Function() make, {
@@ -1081,7 +1082,7 @@ void main() {
         change(cb, step);
         final selected = a.updateData();
         if (path != null) expect(selected, path, reason: 'tick $step');
-        b.update('none');
+        b.update(UpdateMode.none);
         expect(deep(a), deep(b), reason: 'tick $step');
       }
     }
@@ -1099,7 +1100,7 @@ void main() {
             change(ca, step);
             change(cb, step);
             expect(a.updateData(), isTrue, reason: 'tick $step');
-            b.update('none');
+            b.update(UpdateMode.none);
             expect(deep(a), deep(b), reason: 'tick $step');
             expect(a.chartArea, same(area));
           }
@@ -1115,7 +1116,7 @@ void main() {
             change(ca, 0);
             change(cb, 0);
             expect(a.updateData(), isTrue);
-            b.update('none');
+            b.update(UpdateMode.none);
             change(ca, 1);
             change(cb, 1);
             a.update();
@@ -1124,7 +1125,7 @@ void main() {
             change(ca, 2);
             change(cb, 2);
             expect(a.updateData(), isTrue);
-            b.update('none');
+            b.update(UpdateMode.none);
             expect(deep(a), deep(b));
           },
         );
@@ -1141,7 +1142,7 @@ void main() {
           change(ca, 0);
           change(cb, 0);
           expect(a.updateData(), isTrue);
-          b.update('none');
+          b.update(UpdateMode.none);
           expect(deep(a), deep(b));
           for (final c in [a, b]) {
             c.toggleDataVisibility(2);
@@ -1149,12 +1150,12 @@ void main() {
           change(ca, 1);
           change(cb, 1);
           expect(a.updateData(), isFalse, reason: 'no update after the toggle');
-          b.update('none');
+          b.update(UpdateMode.none);
           expect(deep(a), deep(b));
           change(ca, 2);
           change(cb, 2);
           expect(a.updateData(), isTrue);
-          b.update('none');
+          b.update(UpdateMode.none);
           expect(deep(a), deep(b));
         });
 
@@ -1172,7 +1173,7 @@ void main() {
           change(ca, 0);
           change(cb, 0);
           expect(a.updateData(), isTrue);
-          b.update('none');
+          b.update(UpdateMode.none);
           expect(deep(a), deep(b));
           expect((a.getDatasetMeta(0).data[1] as Element).active, isTrue);
           final point = a.getDatasetMeta(0).data[2];
@@ -1182,7 +1183,7 @@ void main() {
           change(ca, 1);
           change(cb, 1);
           expect(a.updateData(), isTrue);
-          b.update('none');
+          b.update(UpdateMode.none);
           expect(deep(a), deep(b));
           Object legend(Chart c) => [
             for (final item in c.legend!.legendItems ?? const <LegendItem>[])
@@ -1216,7 +1217,7 @@ void main() {
             change(ca, step);
             change(cb, step);
             a.updateData();
-            b.update('none');
+            b.update(UpdateMode.none);
             expect(deep(a), deep(b));
           }
         });
@@ -1421,7 +1422,7 @@ void main() {
           change(ca, 0);
           change(cb, 0);
           expect(a.updateData(), isTrue, reason: '$name, $type');
-          b.update('none');
+          b.update(UpdateMode.none);
           expect(deep(a), deep(b), reason: '$name, $type');
         }
       }
@@ -1665,7 +1666,7 @@ void main() {
         change(ca, 0);
         change(cb, 0);
         expect(a.updateData(), isFalse);
-        b.update('none');
+        b.update(UpdateMode.none);
         expect(deep(a), deep(b));
       });
 
@@ -1677,12 +1678,12 @@ void main() {
         for (final c in [a, b]) {
           final data = c.getDatasetMeta(0).data;
           data[1] = _UserArc()..options = data[1].options;
-          c.update('none');
+          c.update(UpdateMode.none);
         }
         change(ca, 0);
         change(cb, 0);
         expect(a.updateData(), isFalse);
-        b.update('none');
+        b.update(UpdateMode.none);
         expect(deep(a), deep(b));
       });
 
@@ -1731,7 +1732,7 @@ void main() {
           red,
           (Object? _) => blue,
         ];
-        a.update('none');
+        a.update(UpdateMode.none);
         expect(a.updateData(), isFalse);
       });
 
@@ -1741,7 +1742,7 @@ void main() {
         final a = chart(cfg);
         expect(a.updateData(), isTrue);
         dataset(cfg)['backgroundColor'] = <Object?>[green];
-        a.update('none');
+        a.update(UpdateMode.none);
         expect(a.updateData(), isTrue);
         final options = a.getDatasetMeta(0).data[1].options;
         expect(jsGet(options, 'backgroundColor'), green);
@@ -1793,7 +1794,7 @@ void main() {
             change(cfg, 0);
             expect(a.updateData(), isTrue);
             expect(calls, atStart);
-            a.update('none');
+            a.update(UpdateMode.none);
             expect(calls, greaterThan(atStart));
           });
         }
@@ -1820,7 +1821,7 @@ void main() {
         change(cfg, 0);
         expect(a.updateData(), isTrue);
         expect(calls, atStart);
-        a.update('none');
+        a.update(UpdateMode.none);
         expect(calls, greaterThan(atStart));
       });
     });
@@ -1847,12 +1848,12 @@ void main() {
         change(ca, 0);
         change(cb, 0);
         expect(a.updateData(), isFalse);
-        b.update('none');
+        b.update(UpdateMode.none);
         expect(deep(a), deep(b));
         change(ca, 1);
         change(cb, 1);
         a.updateData();
-        b.update('none');
+        b.update(UpdateMode.none);
         expect(deep(a), deep(b));
       }
 
@@ -2086,7 +2087,7 @@ void main() {
         }
         colors.add((Object? _) => red);
         expect(a.updateData(), isTrue);
-        a.update('none');
+        a.update(UpdateMode.none);
         expect(a.updateData(), isFalse);
       });
     });
@@ -2103,7 +2104,7 @@ void main() {
       );
       final ca = indexed('bubble');
       final cb = indexed('bubble');
-      (ca['plugins'] = <Object?>[plugin]) as List;
+      (ca['plugins'] = <Plugin<Object?>>[plugin]) as List;
       final a = chart(ca);
       final b = chart(cb);
       calls.clear();
@@ -2112,7 +2113,7 @@ void main() {
       }
       expect(a.updateData(), isTrue);
       expect(calls, ['beforeLayout']);
-      b.update('none');
+      b.update(UpdateMode.none);
       expect(deep(a), deep(b));
       expect(a.chartArea!.left, b.chartArea!.left);
       calls.clear();
@@ -2120,7 +2121,7 @@ void main() {
       change(cb, 0);
       expect(a.updateData(), isTrue);
       expect(calls, isEmpty, reason: 'the same overflow keeps the new layout');
-      b.update('none');
+      b.update(UpdateMode.none);
       expect(deep(a), deep(b));
     });
 
@@ -2179,15 +2180,15 @@ void main() {
               ..jsWrite('min', 2.0)
               ..jsWrite('max', 8.0);
           }
-          expect(a.updateRanges('none'), isTrue);
-          b.update('none');
+          expect(a.updateRanges(UpdateMode.none), isTrue);
+          b.update(UpdateMode.none);
           expect(a.scales[id]!.min, 2);
           expect(a.scales[id]!.max, 8);
           for (var step = 0; step < 2; step++) {
             change(ca, step);
             change(cb, step);
             expect(a.updateData(), isTrue, reason: type);
-            b.update('none');
+            b.update(UpdateMode.none);
             expect(observe(a), observe(b));
             expect(a.scales[id]!.min, 2);
             expect(a.scales[id]!.max, 8);
@@ -2202,7 +2203,7 @@ void main() {
       change(cfg, 0);
       expect(a.updateData(), isTrue);
       a.scales['y']!.options.jsWrite('max', 9.0);
-      expect(a.updateRanges('none'), isTrue);
+      expect(a.updateRanges(UpdateMode.none), isTrue);
       expect(a.scales['y']!.max, 9);
       change(cfg, 1);
       expect(a.updateData(), isTrue);

@@ -7,6 +7,8 @@ import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ColorsOptionsScope;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:test/test.dart';
 
@@ -89,7 +91,9 @@ void main() {
     final plugins = TypedRegistry(jsObjectClass, 'plugins');
     final colors = Plugin<Object?>(
       id: 'colors',
-      defaults: <String, Object?>{'enabled': true, 'forceOverride': false},
+      defaults: ColorsOptionsScope()
+        ..enabled = true
+        ..forceOverride = false,
     );
     setUpBuiltins(
       () => plugins.register(colors),

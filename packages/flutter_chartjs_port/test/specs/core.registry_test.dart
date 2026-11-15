@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
+import '../support/plugin_defaults.dart';
 
 // The registry spec has no chart: each case calls `Chart.register`,
 // `Chart.unregister` and the registry of `Chart.registry`. It runs on the
@@ -163,7 +164,9 @@ void main() {
       // (Chart.js ADR 0144).
       final customPlugin = Plugin<Object?>(
         id: 'custom',
-        defaults: customExtension['defaults'],
+        defaults: pluginDefaults(
+          customExtension['defaults']! as Map<String, Object?>,
+        ),
       );
 
       test('as controller', () {

@@ -32,7 +32,7 @@ class const LiveLineChart({required final List<DataPoint> points, super.key})
   @override
   Widget build(BuildContext context) => ChartView(
     config: liveLine(points),
-    updateMode: 'none',
+    updateMode: UpdateMode.none,
     dataOnlyUpdates: true,
   );
 }

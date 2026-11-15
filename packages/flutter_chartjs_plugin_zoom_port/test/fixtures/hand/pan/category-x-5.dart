@@ -8,7 +8,7 @@ import 'dart:math' as math;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode;
+    show Mode, PanOptions, ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 import 'package:flutter_chartjs_port/helpers.dart' show clearCanvas;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsToNumber;
@@ -56,10 +56,10 @@ Map<String, Object?> fixture() {
         'plugins': <String, Object?>{
           'legend': false,
           'tooltip': false,
-          'zoom': <String, Object?>{
+          'zoom': const ZoomPluginOptions(
             // DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
-            'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
-          },
+            pan: PanOptions(enabled: true, mode: Mode.x),
+          ),
         },
         'layout': <String, Object?>{'padding': const EdgeInsets.all(2)},
       },

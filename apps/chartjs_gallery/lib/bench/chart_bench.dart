@@ -25,14 +25,15 @@
 /// 0108), or one call of the zoom API ([chartBenchZoomCases]). Only these
 /// cases register the plugin, for their own runs. Each iteration calls the
 /// chart directly and times three parts on the UI thread:
-/// - update: `chart.update('none')` without its draw. Only the cases with
-///   [ChartBenchCall.update] have it. For [ChartBenchCall.frame], it is the
-///   frame without its draws: the event, the theme switch and its update,
+/// - update: `chart.update(UpdateMode.none)` without its draw. Only the cases
+///   with [ChartBenchCall.update] have it. For [ChartBenchCall.frame], it is
+///   the frame without its draws: the event, the theme switch and its update,
 ///   and the tick of the animator. For [ChartBenchCall.motion], it is
 ///   `chart.update()` and its render, which starts the animator and draws
 ///   nothing.
-/// - draw: `chart.draw()`, also the draw inside `chart.update('none')`, in
-///   an event or in a tick of the animator.
+/// - draw: `chart.draw()`, also the draw inside
+///   `chart.update(UpdateMode.none)`, in an event or in a tick of the
+///   animator.
 /// - end: the end of the recording. The context draws its picture into a
 ///   throwaway `ui.PictureRecorder`, as the paint of a chart host does, and
 ///   the recorder ends its picture and disposes of it. The end of the
@@ -64,7 +65,19 @@ import 'package:chartjs_gallery/demo/stress_timing.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, PanAmount, ScaleRange, ZoomAmount, ZoomChart, zoomPlugin;
+    show
+        DragOptions,
+        Mode,
+        PanAmount,
+        PanOptions,
+        PinchOptions,
+        ScaleRange,
+        WheelOptions,
+        ZoomAmount,
+        ZoomChart,
+        ZoomOptions,
+        ZoomPluginOptions,
+        zoomPlugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Not public: FilterCallback, the filter of the notifyPlugins override.
 import 'package:flutter_chartjs_port/src/core/core.plugins.dart'
@@ -111,7 +124,7 @@ enum ChartBenchCall() {
   /// `chart.draw()`. The data does not change.
   draw,
 
-  /// A change of the data (not timed), then `chart.update('none')`.
+  /// A change of the data (not timed), then `chart.update(UpdateMode.none)`.
   update,
 
   /// One frame of [ChartBenchScene.frame]: an event or a theme switch, a
@@ -458,12 +471,12 @@ Map<String, Object?> _benchConfig(
   _BenchSeries series, {
   required List<Object?> datasets,
   required Map<String, Object?> options,
-  List<Object?> plugins = const [],
+  List<Plugin<Object?>> plugins = const [],
 }) => <String, Object?>{
   'type': type,
   'data': <String, Object?>{'labels': series.labels(), 'datasets': datasets},
   'options': <String, Object?>{...chartBenchOptions, ...options},
-  'plugins': <Object?>[...plugins],
+  'plugins': <Plugin<Object?>>[...plugins],
 };
 
 /// The hidden category x axis and linear y axis of the plugin and fill
@@ -1199,7 +1212,7 @@ ChartBenchCase _primitiveCase() => ChartBenchCase(
         },
         ...chartBenchOptions,
       },
-      'plugins': <Object?>[timing.plugin],
+      'plugins': <Plugin<Object?>>[timing.plugin],
     };
     return ChartBenchScene(
       config: config,
@@ -1356,15 +1369,14 @@ ChartBenchCase _themeCase(
 }
 
 /// The case `theme.switch` (TS): each frame is one switch, from the light
-/// preset to the dark preset or back. The switch runs steps 1 to 4 with a
-/// new theme (the compile memo, the `$theme` write, the user scales and the
-/// palette records) and `chart.update('theme')`, which makes the
-/// animations of the element colors. Then the frame ends them: a tick of
-/// the animator one hour later gives each element its end value and draws
-/// the chart, as the last frame of the transition does, and a second tick
-/// removes the animations ([_benchFinishAnimations]). Thus `update` is the
-/// switch, the update and the ticks, and `draw` is the draw of the new
-/// theme.
+/// preset to the dark preset or back. The switch runs steps 1 to 4 with a new
+/// theme (the compile memo, the `$theme` write, the user scales and the palette
+/// records) and `chart.update(const UpdateMode('theme'))`, which makes the
+/// animations of the element colors. Then the frame ends them: a tick of the
+/// animator one hour later gives each element its end value and draws the
+/// chart, as the last frame of the transition does, and a second tick removes
+/// the animations ([_benchFinishAnimations]). Thus `update` is the switch, the
+/// update and the ticks, and `draw` is the draw of the new theme.
 ChartBenchCase _themeSwitchCase(String type) => _themeCase(
   'switch',
   type,
@@ -1384,8 +1396,8 @@ ChartBenchCase _themeSwitchCase(String type) => _themeCase(
 /// iteration is one frame: a tick of the animator at a date
 /// [chartBenchFrameMs] later than the frame before, and the draw of that
 /// tick. The first frame of each transition also switches the theme (light
-/// to dark, or back) with `chart.update('theme')`. A transition has
-/// [chartBenchFadeFrames] frames, and the last one ends it. Each
+/// to dark, or back) with `chart.update(const UpdateMode('theme'))`. A
+/// transition has [chartBenchFadeFrames] frames, and the last one ends it. Each
 /// transition moves the dates of its ticks by its phase
 /// ([chartBenchFadePhase]), as in a real frame loop.
 ///
@@ -1559,7 +1571,7 @@ void _benchEndRecording(Chart chart) {
 }
 
 /// Puts each scale of [chart] back to its range in [ranges] outside the
-/// timing: one call of the zoom API `chart.zoomScale(id, range, 'none')`
+/// timing: one call of the zoom API `chart.zoomScale(id, range, .none)`
 /// (core.ts:125) for each scale, as an app writes a range, then the end of
 /// the recording ([_benchEndRecording]). The parts of [timing] keep their
 /// values: the updates of the restore do not count.
@@ -1573,7 +1585,7 @@ void _benchRestoreRanges(
   final datasetsUpdate = timing.datasetsUpdateTicks;
   final datasetsDraw = timing.datasetsDrawTicks;
   for (final MapEntry(key: id, value: range) in ranges.entries) {
-    chart.zoomScale(id, range, 'none');
+    chart.zoomScale(id, range, UpdateMode.none);
   }
   _benchEndRecording(chart);
   timing
@@ -1747,12 +1759,13 @@ _ZoomInput _apiPanInput() => _ZoomInput(
 /// 100, `parsing: false`) with the line and the points of the defaults, on a
 /// visible x axis of the type of [scene] and a visible linear y axis. The
 /// chart has `animation: false`, `events: []` and no legend. [zoom] is
-/// `options.plugins.zoom`, or Dart `null` for the default options of the
-/// plugin. [plugins] are the inline plugins.
+/// `options.plugins.zoom`, a `ZoomPluginOptions` (Chart.js ADR 0148), or
+/// Dart `null` for the default options of the plugin. [plugins] are the
+/// inline plugins.
 Map<String, Object?> _zoomConfig(
   StressAxesScene scene, {
-  required Map<String, Object?>? zoom,
-  required List<Object?> plugins,
+  required ZoomPluginOptions? zoom,
+  required List<Plugin<Object?>> plugins,
 }) => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
@@ -1778,7 +1791,7 @@ Map<String, Object?> _zoomConfig(
       'y': <String, Object?>{'type': scene.y.name},
     },
   },
-  'plugins': <Object?>[...plugins],
+  'plugins': <Plugin<Object?>>[...plugins],
 };
 
 /// A case of the mode `zoom` with the name [name], the call [call] and an x
@@ -1788,7 +1801,8 @@ Map<String, Object?> _zoomConfig(
 /// With [plugin], the scene registers the zoom plugin for the run of the case
 /// and its dispose unregisters it ([_registerZoomPlugin]). Without it, the
 /// registry must not have the plugin. [zoom] makes `options.plugins.zoom`
-/// for each chart, or is Dart `null` for the default options.
+/// (a `ZoomPluginOptions`) for each chart, or is Dart `null` for the default
+/// options.
 /// [input] makes the input of a case with [ChartBenchCall.frame]: its setup
 /// runs in the preparation, its steps in the frames, and its restores in the
 /// changes before the frames.
@@ -1803,7 +1817,7 @@ ChartBenchCase _zoomCase(
   StressAxisType scale, {
   required bool rangeUpdates,
   bool plugin = true,
-  Map<String, Object?> Function()? zoom,
+  ZoomPluginOptions Function()? zoom,
   _ZoomInput Function()? input,
 }) => ChartBenchCase(
   mode: 'zoom',
@@ -1845,7 +1859,9 @@ ChartBenchCase _zoomCase(
         axes,
         // Chart.js ADR 0111: the input cases opt into the range updates.
         zoom: rangeUpdates && input != null
-            ? <String, Object?>{...?zoomOptions, 'rangeOnlyUpdates': true}
+            ? (zoomOptions ?? const ZoomPluginOptions()).merge(
+                const ZoomPluginOptions(rangeOnlyUpdates: true),
+              )
             : zoomOptions,
         plugins: [timing.plugin],
       ),
@@ -1880,8 +1896,8 @@ ChartBenchCase _zoomCase(
 /// ([ChartBenchCase.stepTimes]).
 ///
 /// - `zoom.base`: the chart without the zoom plugin, with `chart.draw()` and
-///   with `chart.update('none')` (no change of the data), for a linear and a
-///   time x axis.
+///   with `chart.update(UpdateMode.none)` (no change of the data), for a
+///   linear and a time x axis.
 /// - `zoom.idle`: the same chart and calls with the zoom plugin and its
 ///   default options (each input off). `zoom.idle` minus `zoom.base` is the
 ///   cost of the hooks of the plugin.
@@ -1902,7 +1918,8 @@ ChartBenchCase _zoomCase(
 /// - `zoom.wheel` (a linear and a time x axis): `wheel.enabled`. One `wheel`
 ///   event at the center of the chart area, `deltaY` -100 and +100 in turn.
 ///   The listener calls `zoom(chart, amount, 'zoom', 'wheel')`
-///   (handlers.ts:275), so the update has the mode `'zoom'`, and both axes
+///   (handlers.ts:275), so the update has the mode `zoom`
+///   (`zoomUpdateMode`), and both axes
 ///   zoom (the default mode `'xy'`).
 /// - `zoom.pan` (a linear and a time x axis): `pan: {enabled: true, mode:
 ///   'x'}`. The setup presses the mouse at the center (`pointerdown` and
@@ -1953,11 +1970,9 @@ List<ChartBenchCase> chartBenchZoomCasesWith({required bool rangeUpdates}) => [
       ChartBenchCall.frame,
       scale,
       rangeUpdates: rangeUpdates,
-      zoom: () => <String, Object?>{
-        'zoom': <String, Object?>{
-          'wheel': <String, Object?>{'enabled': true},
-        },
-      },
+      zoom: () => const ZoomPluginOptions(
+        zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+      ),
       input: _wheelInput,
     ),
   for (final scale in chartBenchZoomScales)
@@ -1966,9 +1981,8 @@ List<ChartBenchCase> chartBenchZoomCasesWith({required bool rangeUpdates}) => [
       ChartBenchCall.frame,
       scale,
       rangeUpdates: rangeUpdates,
-      zoom: () => <String, Object?>{
-        'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
-      },
+      zoom: () =>
+          const ZoomPluginOptions(pan: PanOptions(enabled: true, mode: Mode.x)),
       input: _panInput,
     ),
   _zoomCase(
@@ -1976,11 +1990,9 @@ List<ChartBenchCase> chartBenchZoomCasesWith({required bool rangeUpdates}) => [
     ChartBenchCall.frame,
     StressAxisType.linear,
     rangeUpdates: rangeUpdates,
-    zoom: () => <String, Object?>{
-      'zoom': <String, Object?>{
-        'drag': <String, Object?>{'enabled': true},
-      },
-    },
+    zoom: () => const ZoomPluginOptions(
+      zoom: ZoomOptions(drag: DragOptions(enabled: true)),
+    ),
     input: _dragInput,
   ),
   _zoomCase(
@@ -1988,11 +2000,9 @@ List<ChartBenchCase> chartBenchZoomCasesWith({required bool rangeUpdates}) => [
     ChartBenchCall.frame,
     StressAxisType.linear,
     rangeUpdates: rangeUpdates,
-    zoom: () => <String, Object?>{
-      'zoom': <String, Object?>{
-        'pinch': <String, Object?>{'enabled': true},
-      },
-    },
+    zoom: () => const ZoomPluginOptions(
+      zoom: ZoomOptions(pinch: PinchOptions(enabled: true)),
+    ),
     input: _pinchInput,
   ),
   _zoomCase(
@@ -2026,9 +2036,9 @@ final List<ChartBenchCase> chartBenchZoomCases = chartBenchZoomCasesWith(
 /// `scriptable`, and the parts `elements`, `layout`, `datasetsUpdate` and
 /// `datasetsDraw`.
 /// - `a`: `chart.draw()` of a `line` chart. The points do not move.
-/// - `b`: new positions in the data objects, then `chart.update('none')`,
-///   of a `line` chart (`enableOptionSharing` true) and of a `scatter`
-///   chart (false).
+/// - `b`: new positions in the data objects, then
+///   `chart.update(UpdateMode.none)`, of a `line` chart
+///   (`enableOptionSharing` true) and of a `scatter` chart (false).
 /// - `c`: as `b` with `line`, and a scriptable `backgroundColor`.
 ///
 /// The cases `a`, `b` and `c` keep the names and the keys of phase 5
@@ -2039,9 +2049,9 @@ final List<ChartBenchCase> chartBenchZoomCases = chartBenchZoomCasesWith(
 /// case `b` on real scales of phase 6. The name of a case is the scale type
 /// of its x axis: `linear`, `logarithmic`, `category` or `time`. Each name
 /// has two cases: `chart.draw()` (the scales and the points draw), and new
-/// values then `chart.update('none')` (the data limits, the ticks, the label
-/// sizes, the fit and `getPixelForValue` for each point). The y values
-/// move. The x values are fixed and sorted, as `parsing: false` needs
+/// values then `chart.update(UpdateMode.none)` (the data limits, the ticks,
+/// the label sizes, the fit and `getPixelForValue` for each point). The y
+/// values move. The x values are fixed and sorted, as `parsing: false` needs
 /// (`StressAxesScene`). The BENCH line has the four parts, and the keys
 /// `ticks` (the tick count after the auto skip) and `rotation` (the
 /// `labelRotation`) of the x axis after the last batch.
@@ -2049,11 +2059,11 @@ final List<ChartBenchCase> chartBenchZoomCases = chartBenchZoomCasesWith(
 /// After the `axes` cases, the mode `chart` has the cases of the six other
 /// types (Chart.js ADR 0031, sections 5 and 7): `chart.bar`, `chart.bubble`,
 /// `chart.doughnut`, `chart.pie`, `chart.polarArea` and `chart.radar`, each
-/// with `chart.draw()` and with new values then `chart.update('none')`.
-/// Each runs the counts of its type without the define `N`. Thus a default
-/// run times the cases of phase 5 and phase 6 first. The selector `chart`
-/// selects 16 cases; `CASES=a,b,c` selects the cases of Chart.js ADR 0021,
-/// section 8.
+/// with `chart.draw()` and with new values then
+/// `chart.update(UpdateMode.none)`. Each runs the counts of its type without
+/// the define `N`. Thus a default run times the cases of phase 5 and phase 6
+/// first. The selector `chart` selects 16 cases; `CASES=a,b,c` selects the
+/// cases of Chart.js ADR 0021, section 8.
 ///
 /// After them come the cases of the plugins of phase 8 ([_pluginCases]):
 /// the modes `plugins`, `tooltip`, `fill`, `legend` and `title`. Their
@@ -2208,7 +2218,7 @@ final class _Loop(
       case ChartBenchCall.draw:
         chart.draw();
       case ChartBenchCall.update:
-        chart.update('none');
+        chart.update(UpdateMode.none);
       case ChartBenchCall.frame:
         frame!(chart);
       case ChartBenchCall.motion:

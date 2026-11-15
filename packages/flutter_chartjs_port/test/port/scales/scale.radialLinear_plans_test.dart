@@ -40,6 +40,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The twins of Chart.js ADR 0095. Two forms of one chart go through the same
@@ -205,7 +206,7 @@ String _layoutWith(Chart chart, CanvasRenderingContext2D ctx) {
   final old = scale.ctx;
   scale.ctx = ctx;
   try {
-    chart.update('none');
+    chart.update(UpdateMode.none);
     return _layoutText(scale);
   } finally {
     scale.ctx = old;
@@ -783,8 +784,8 @@ void main() {
           if (c.hidden.isNotEmpty) {
             c.hidden.forEach(planned.toggleDataVisibility);
             c.hidden.forEach(ordinary.toggleDataVisibility);
-            planned.update('none');
-            ordinary.update('none');
+            planned.update(UpdateMode.none);
+            ordinary.update(UpdateMode.none);
           }
           expect(
             _layoutText(_scaleOf(planned)),
@@ -955,7 +956,7 @@ void main() {
           _config(scaleType: scaleType, n: n, callback: callback(calls)),
         );
         calls.add('update');
-        chart.update('none');
+        chart.update(UpdateMode.none);
         return [...calls, '${_scaleOf(chart).pointLabels}'];
       }
 
@@ -1119,7 +1120,7 @@ void main() {
                 )!
                 as JsObjectFace)
             .jsWrite('callback', first);
-        chart.update('none');
+        chart.update(UpdateMode.none);
         return [...calls, '${_scaleOf(chart).pointLabels}'];
       }
 
@@ -1144,7 +1145,7 @@ void main() {
               if (index == 4) chart.toggleDataVisibility(1);
               return label;
             });
-        chart.update('none');
+        chart.update(UpdateMode.none);
         return ['${_scaleOf(chart).pointLabels}'];
       }
 
@@ -1352,7 +1353,7 @@ void main() {
                 maintainAspectRatio: false,
                 extra: const {'events': <String>[]},
               ),
-              updateMode: 'none',
+              updateMode: UpdateMode.none,
               theme: const ChartThemeData(),
               excludeFromSemantics: true,
               onChartCreated: (created) => chart = created,

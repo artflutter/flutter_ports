@@ -1,8 +1,12 @@
 // Original code, not ported from Chart.js: tests of the native plugin objects.
 
+import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:test/test.dart';
+
+import '../../support/plugin_defaults.dart';
 
 /// A chart for the calls: each member throws.
 final class _Chart() implements types.Chart {
@@ -59,7 +63,7 @@ void main() {
         plugin.notify(
           PluginHook.afterUpdate,
           chart,
-          UpdateHookArgs(mode: 'm'),
+          UpdateHookArgs(mode: const UpdateMode('m')),
           'view',
         ),
         isTrue,
@@ -68,7 +72,7 @@ void main() {
         plugin.notify(
           PluginHook.beforeUpdate,
           chart,
-          UpdateHookArgs(mode: 'm'),
+          UpdateHookArgs(mode: const UpdateMode('m')),
           'view',
         ),
         isFalse,
@@ -137,13 +141,13 @@ void main() {
       final plugin = Plugin<Object?>(
         id: 'p',
         events: const ['click'],
-        defaults: const <String, Object?>{'a': 1.0},
+        defaults: pluginDefaults(<String, Object?>{'a': 1.0}),
         defaultRoutes: const {'color': 'color'},
         additionalOptionScopes: const ['interaction'],
       );
       expect(plugin.id, 'p');
       expect(plugin.events, ['click']);
-      expect(plugin.defaults, {'a': 1.0});
+      expect(jsGet(plugin.defaults, 'a'), 1.0);
       expect(plugin.defaultRoutes, {'color': 'color'});
       expect(plugin.additionalOptionScopes, ['interaction']);
       expect('$plugin', 'Plugin(p)');
@@ -161,8 +165,8 @@ void main() {
         ..changed = true;
       expect(event.inChartArea, isTrue);
       expect(event.changed, isTrue);
-      expect(UpdateHookArgs(mode: 'none').mode, 'none');
-      expect(UpdateHookArgs(mode: 'none').layoutKept, isFalse);
+      expect(UpdateHookArgs(mode: UpdateMode.none).mode, 'none');
+      expect(UpdateHookArgs(mode: UpdateMode.none).layoutKept, isFalse);
     });
   });
 }

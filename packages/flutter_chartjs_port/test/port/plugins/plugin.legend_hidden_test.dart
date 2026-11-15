@@ -46,6 +46,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/legend_item.dart';
@@ -74,7 +75,7 @@ Map<String, Object?> _config(
   Map<String, Object?> options = const {},
   Object? labelValues,
   Object? datasets,
-  List<Object?>? plugins,
+  List<Plugin<Object?>>? plugins,
 }) => <String, Object?>{
   'type': type,
   'data': <String, Object?>{
@@ -115,7 +116,7 @@ Map<String, Object?> _eager(
   Map<String, Object?> legend = const {},
   Map<String, Object?> dataset = const {},
   Map<String, Object?> options = const {},
-  List<Object?>? plugins,
+  List<Plugin<Object?>>? plugins,
 }) => _config(
   type,
   labels: {'filter': _keepItem, ...labels},
@@ -438,77 +439,77 @@ Map<String, Object?> _dataset0(Chart chart) =>
 /// The steps of the twins of Chart.js ADR 0099. Each one gives a chart an
 /// update of another state of the data or of the options.
 final Map<String, void Function(Chart chart)> _steps = {
-  'mode none': (chart) => chart.update('none'),
+  'mode none': (chart) => chart.update(UpdateMode.none),
   'mode default': (chart) => chart.update(),
-  'mode resize': (chart) => chart.update('resize'),
-  'mode active': (chart) => chart.update('active'),
+  'mode resize': (chart) => chart.update(UpdateMode.resize),
+  'mode active': (chart) => chart.update(UpdateMode.active),
   'a new data List': (chart) {
     _dataset0(chart)['data'] = <Object?>[4.0, 5.0, 6.0];
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'an in-place value': (chart) {
     (_dataset0(chart)['data']! as List<Object?>)[1] = 9.0;
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'more data and labels': (chart) {
     _labelsOf(chart).addAll(<Object?>['d', 'e']);
     _dataset0(chart)['data'] = <Object?>[1.0, 2.0, 3.0, 4.0, 5.0];
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'less data and labels': (chart) {
     _labelsOf(chart).removeRange(3, 5);
     _dataset0(chart)['data'] = <Object?>[3.0, 2.0, 1.0];
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'more labels than data': (chart) {
     _labelsOf(chart).addAll(<Object?>['d', 'e']);
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'fewer labels than data': (chart) {
     _labelsOf(chart).removeRange(1, 5);
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'the same labels again': (chart) {
     _labelsOf(chart).addAll(<Object?>['b', 'c']);
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'a hidden item': (chart) {
     chart
       ..toggleDataVisibility(1)
-      ..update('none');
+      ..update(UpdateMode.none);
   },
   'the item again': (chart) {
     chart
       ..toggleDataVisibility(1)
-      ..update('none');
+      ..update(UpdateMode.none);
   },
   'new colors': (chart) {
     _dataset0(chart)['backgroundColor'] = <Object?>[_blue, _red, _green];
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'a number that varies': (chart) {
     _dataset0(chart)['borderWidth'] = <Object?>[1.0, 2.0];
-    chart.update('none');
+    chart.update(UpdateMode.none);
   },
   'a hidden dataset': (chart) {
     chart
       ..hide(0)
-      ..update('none');
+      ..update(UpdateMode.none);
   },
   'the dataset again': (chart) {
     chart
       ..show(0)
-      ..update('none');
+      ..update(UpdateMode.none);
   },
   'an active arc': (chart) {
     chart
       ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)])
-      ..update('none');
+      ..update(UpdateMode.none);
   },
   'no active arc': (chart) {
     chart
       ..setActiveElements([])
-      ..update('none');
+      ..update(UpdateMode.none);
   },
 };
 
@@ -631,8 +632,8 @@ void main() {
         final chart = acquireChart(_config(type));
         final twin = acquireChart(_eager(type));
         for (final mode in ['none', 'resize', 'default', 'active', 'none']) {
-          chart.update(mode);
-          twin.update(mode);
+          chart.update(UpdateMode(mode));
+          twin.update(UpdateMode(mode));
           expect(
             _items(chart.legend!),
             legendObservationMatcher(_items(twin.legend!)),
@@ -818,7 +819,7 @@ void main() {
         change(twin);
         expect(chart.updateData(), isTrue);
         twin
-          ..update('none')
+          ..update(UpdateMode.none)
           ..legend!.legendItems;
         expect(legend.legendItemsPending, isTrue);
         final items = _items(legend);
@@ -836,11 +837,11 @@ void main() {
     ) async {
       final chart = acquireChart(_config('polarArea'));
       final controller = chart.getDatasetMeta(0).controller!;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(_legendOf(chart).legendItemsPending, isTrue);
       expect(controller.hasCachedDefaultDataOptions, isTrue);
       expect(controller.hasStaticDataUpdateOptions, isTrue);
-      final twin = acquireChart(_eager('polarArea'))..update('none');
+      final twin = acquireChart(_eager('polarArea'))..update(UpdateMode.none);
       expect(
         twin.getDatasetMeta(0).controller!.hasCachedDefaultDataOptions,
         isTrue,
@@ -867,8 +868,8 @@ void main() {
                 ],
               ),
             )
-            ..update('none')
-            ..update('none');
+            ..update(UpdateMode.none)
+            ..update(UpdateMode.none);
       expect(_legendOf(chart).legendItemsPending, isTrue);
       expect(pendingAfterLayout, isTrue);
     });
@@ -1222,8 +1223,8 @@ void main() {
           isNotNull,
         );
         for (final mode in ['none', 'default']) {
-          chart.update(mode);
-          exact.update(mode);
+          chart.update(UpdateMode(mode));
+          exact.update(UpdateMode(mode));
           expect(_legendOf(chart).legendItemsPending, isFalse);
           expect(_legendOf(exact).legendItemsPending, isTrue);
           expect(
@@ -1798,8 +1799,8 @@ void main() {
         final chart = acquireChart(_config(type, plugins: [reader()]));
         final twin = acquireChart(_eager(type, plugins: [reader()]));
         armed = true;
-        chart.update(mode);
-        twin.update(mode);
+        chart.update(UpdateMode(mode));
+        twin.update(UpdateMode(mode));
         Object? script(Object? context, Object? options) {
           calls++;
           return _black;
@@ -1807,12 +1808,12 @@ void main() {
 
         (_datasetsOf(chart)[0]! as Map<String, Object?>)['backgroundColor'] =
             script;
-        chart.update(mode);
+        chart.update(UpdateMode(mode));
         final seen = calls;
         calls = 0;
         (_datasetsOf(twin)[0]! as Map<String, Object?>)['backgroundColor'] =
             script;
-        twin.update(mode);
+        twin.update(UpdateMode(mode));
         expect(seen, calls);
         expect(seen, greaterThan(0));
         expect(
@@ -1843,14 +1844,14 @@ void main() {
       });
       final chart = acquireChart(_config('polarArea', plugins: [clear()]));
       final twin = acquireChart(_eager('polarArea', plugins: [clear()]));
-      chart.update('none');
-      twin.update('none');
+      chart.update(UpdateMode.none);
+      twin.update(UpdateMode.none);
       armed = true;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       final seen = calls;
       calls = 0;
       armed = true;
-      twin.update('none');
+      twin.update(UpdateMode.none);
       expect(seen, calls);
       expect(seen, 3);
       expect(
@@ -1888,13 +1889,13 @@ void main() {
                   : const {},
             );
             final chart = acquireChart(make(parent))
-              ..update(mode)
-              ..update(mode);
+              ..update(UpdateMode(mode))
+              ..update(UpdateMode(mode));
             final seen = calls;
             calls = 0;
             final twin = acquireChart(make(id))
-              ..update(mode)
-              ..update(mode);
+              ..update(UpdateMode(mode))
+              ..update(UpdateMode(mode));
             expect(seen, calls);
             expect(seen, greaterThan(0));
             expect(
@@ -2133,10 +2134,10 @@ void main() {
           ],
         );
         for (final mode in const ['default', 'none']) {
-          final chart = acquireChart(two())..update(mode);
+          final chart = acquireChart(two())..update(UpdateMode(mode));
           final expected = chart.legend!.legendItems![0].fillStyle;
           expect(expected, _blue);
-          chart.update(mode);
+          chart.update(UpdateMode(mode));
           expect(_legendOf(chart).legendItemsPending, isTrue);
           _datasetsOf(chart).removeAt(0);
           // The controller of the remaining dataset has another index: the
@@ -2144,7 +2145,7 @@ void main() {
           // color, and never a color of the dataset behind another index.
           expect(chart.legend!.legendItems![0].fillStyle, _blue);
           expect(_legendOf(chart).legendItemsPending, isTrue);
-          chart.update(mode);
+          chart.update(UpdateMode(mode));
           expect(chart.legend!.legendItems![0].fillStyle, _green);
           releaseChart(chart);
         }
@@ -2173,10 +2174,10 @@ void main() {
       });
       int callsOf(String type) {
         final chart = acquireChart(_config(type, plugins: [add()]))
-          ..update('none');
+          ..update(UpdateMode.none);
         calls = 0;
         armed = true;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         armed = false;
         jsDeleteKey(arc, 'pinned');
         final seen = calls;
@@ -2277,7 +2278,7 @@ void main() {
           child: SizedBox(
             width: 400,
             height: 300,
-            child: typed.ChartView(config: config, updateMode: 'none'),
+            child: typed.ChartView(config: config, updateMode: UpdateMode.none),
           ),
         ),
       );
@@ -2364,7 +2365,7 @@ void main() {
                     maintainAspectRatio: false,
                     extra: const {'events': <String>[]},
                   ),
-                  updateMode: 'none',
+                  updateMode: UpdateMode.none,
                   theme: const typed.ChartThemeData(),
                   excludeFromSemantics: true,
                 ),
@@ -2417,13 +2418,16 @@ void main() {
               child: SizedBox(
                 width: 400,
                 height: 300,
-                child: typed.ChartView.raw(config: config, updateMode: 'none'),
+                child: typed.ChartView.raw(
+                  config: config,
+                  updateMode: UpdateMode.none,
+                ),
               ),
             ),
           );
 
           await tester.pumpWidget(frame(rawConfig(3)));
-          final chart = chartOf(tester)..update('none');
+          final chart = chartOf(tester)..update(UpdateMode.none);
           expect(_legendOf(chart).legendItemsPending, isTrue);
           await tester.pumpWidget(frame(rawConfig(4)));
           await tester.pump();
@@ -2601,7 +2605,7 @@ void main() {
       testWidgets('$type: after an update in the mode none, an arc has the '
           'state of the last resolve of the build', (tester) async {
         final chart = acquireChart(_config(type, dataset: _indexedColors))
-          ..update('none');
+          ..update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isTrue);
         final arc = chart.getDatasetMeta(0).data[2] as ArcElement;
         final context = arc.$context!;
@@ -2634,7 +2638,7 @@ void main() {
         for (final each in [chart, twin]) {
           (_dataset0(each)['data']! as List<Object?>).add(4.0);
           _labelsOf(each).addAll(<Object?>['d', 'e', 'f']);
-          each.update('none');
+          each.update(UpdateMode.none);
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(log, legendObservationMatcher(twinLog));
@@ -2648,8 +2652,8 @@ void main() {
         final dataset = {..._indexedColors, 'data': <Object?>[]};
         final chart = acquireChart(_config(type, dataset: dataset));
         final twin = acquireChart(_eager(type, dataset: dataset));
-        chart.update('none');
-        twin.update('none');
+        chart.update(UpdateMode.none);
+        twin.update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_state(chart), _state(twin));
         expect(
@@ -2684,8 +2688,8 @@ void main() {
             labels: {'filter': _keepItem},
           ),
         );
-        chart.update('none');
-        twin.update('none');
+        chart.update(UpdateMode.none);
+        twin.update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(calls, twinCalls);
         expect(_state(chart), _state(twin));
@@ -2746,7 +2750,7 @@ void main() {
         expect(chart.getActiveElements(), hasLength(1));
         expect(_state(chart), _state(twin));
         for (final each in [chart, twin]) {
-          each.update('none');
+          each.update(UpdateMode.none);
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(calls, twinCalls);
@@ -2802,7 +2806,7 @@ void main() {
             'backgroundColor': <Object?>[_red, _green, _blue, _keepItem],
           },
         ),
-      )..update('none');
+      )..update(UpdateMode.none);
       expect(_legendOf(chart).legendItemsPending, isTrue);
       expect(chart.legend!.legendItems![2].fillStyle, _blue);
     });
@@ -2830,15 +2834,15 @@ void main() {
           _eager('pie', dataset: _indexedColors, plugins: [plugin(twinSeen)]),
         );
         armed = true;
-        chart.update('none');
-        twin.update('none');
+        chart.update(UpdateMode.none);
+        twin.update(UpdateMode.none);
         expect(seen, legendObservationMatcher(twinSeen));
         expect(_state(chart), _state(twin));
         final options = (chart.getDatasetMeta(0).data[1] as ArcElement).options;
         expect(jsGet(options, 'borderWidth'), 9);
         armed = false;
-        chart.update('none');
-        twin.update('none');
+        chart.update(UpdateMode.none);
+        twin.update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_state(chart), _state(twin));
         expect(
@@ -2867,10 +2871,10 @@ void main() {
           _eager('pie', dataset: _indexedColors, plugins: [plugin()]),
         );
         armed = true;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         final seen = calls;
         calls = 0;
-        twin.update('none');
+        twin.update(UpdateMode.none);
         expect(seen, greaterThan(0));
         expect(seen, calls);
         // The dataset update resolves the function: the last build is eager.
@@ -2902,8 +2906,8 @@ void main() {
         _eager('pie', dataset: _indexedColors, plugins: [plugin()]),
       );
       armed = true;
-      chart.update('none');
-      twin.update('none');
+      chart.update(UpdateMode.none);
+      twin.update(UpdateMode.none);
       expect(_state(chart), _state(twin));
       expect(
         jsGet(
@@ -2942,7 +2946,7 @@ void main() {
       expect(calls, 0);
       for (final each in [chart, twin]) {
         calls = 0;
-        each.update('none');
+        each.update(UpdateMode.none);
         expect(calls, greaterThan(0));
         if (identical(each, chart)) {
           expect(_legendOf(chart).legendItemsPending, isFalse);
@@ -2990,16 +2994,16 @@ void main() {
           );
           armed = true;
           for (final each in [chart, twin]) {
-            each.update('none');
+            each.update(UpdateMode.none);
             (_dataset0(each)['data']! as List<Object?>).add(4.0);
             _labelsOf(each).add('d');
             each
-              ..update('none')
+              ..update(UpdateMode.none)
               ..update()
               ..setActiveElements([
                 const ActiveElement(datasetIndex: 0, index: 1),
               ])
-              ..update('none')
+              ..update(UpdateMode.none)
               ..draw();
           }
           expect(log, isNotEmpty);
@@ -3037,7 +3041,7 @@ void main() {
         _labelOptionsOf(twin)['filter'] = _keepItem;
         for (final each in [chart, twin]) {
           (_dataset0(each)['data']! as List<Object?>)[0] = 5.0;
-          each.update('none');
+          each.update(UpdateMode.none);
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_legendOf(twin).legendItemsPending, isFalse);
@@ -3079,12 +3083,12 @@ void main() {
           }
 
           final chart = acquireChart(_config(type, dataset: build(function)))
-            ..update('none');
+            ..update(UpdateMode.none);
           final seen = calls;
           expect(_legendOf(chart).legendItemsPending, isFalse);
           calls = 0;
           final twin = acquireChart(_eager(type, dataset: build(function)))
-            ..update('none');
+            ..update(UpdateMode.none);
           expect(seen, greaterThan(0));
           expect(seen, calls);
           expect(_state(chart), _state(twin));
@@ -3104,12 +3108,12 @@ void main() {
           },
         });
         final chart = acquireChart(_config(type, dataset: _indexedColors))
-          ..update('none');
+          ..update(UpdateMode.none);
         final seen = calls;
         expect(_legendOf(chart).legendItemsPending, isFalse);
         calls = 0;
         final twin = acquireChart(_eager(type, dataset: _indexedColors))
-          ..update('none');
+          ..update(UpdateMode.none);
         expect(seen, calls);
         expect(seen, greaterThan(0));
         expect(_state(chart), _state(twin));
@@ -3128,12 +3132,12 @@ void main() {
               });
         addTearDown(() => arcDefaults.jsDelete('userKey'));
         final chart = acquireChart(_config(type, dataset: _indexedColors))
-          ..update('none');
+          ..update(UpdateMode.none);
         final seen = calls;
         expect(_legendOf(chart).legendItemsPending, isFalse);
         calls = 0;
         final twin = acquireChart(_eager(type, dataset: _indexedColors))
-          ..update('none');
+          ..update(UpdateMode.none);
         expect(seen, calls);
         expect(seen, greaterThan(0));
         expect(_state(chart), _state(twin));
@@ -3155,13 +3159,13 @@ void main() {
         };
         final chart = acquireChart(
           _config(type, dataset: _indexedColors, options: options()),
-        )..update('none');
+        )..update(UpdateMode.none);
         final seen = calls;
         expect(_legendOf(chart).legendItemsPending, isFalse);
         calls = 0;
         final twin = acquireChart(
           _eager(type, dataset: _indexedColors, options: options()),
-        )..update('none');
+        )..update(UpdateMode.none);
         expect(seen, calls);
         expect(seen, greaterThan(0));
         expect(_state(chart), _state(twin));
@@ -3200,7 +3204,7 @@ void main() {
             _config(type, dataset: _indexedColors, labels: each),
           );
           expect(_legendOf(chart).legendItemsPending, isFalse);
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expect(_legendOf(chart).legendItemsPending, isFalse);
         }
         expect(filters, 18, reason: 'each item of each of 6 builds');
@@ -3273,14 +3277,14 @@ void main() {
           },
         ]) {
           final chart = acquireChart(_config(type, dataset: dataset))
-            ..update('none');
+            ..update(UpdateMode.none);
           expect(
             _legendOf(chart).legendItemsPending,
             isFalse,
             reason: '$dataset',
           );
           final twin = acquireChart(_eager(type, dataset: dataset))
-            ..update('none');
+            ..update(UpdateMode.none);
           expect(_state(chart), _state(twin), reason: '$dataset');
           expect(
             _plain(_items(chart.legend!)),
@@ -3298,9 +3302,9 @@ void main() {
           '_indexable': false,
         };
         final chart = acquireChart(_config(type, dataset: dataset))
-          ..update('none');
+          ..update(UpdateMode.none);
         final twin = acquireChart(_eager(type, dataset: dataset))
-          ..update('none');
+          ..update(UpdateMode.none);
         expect(_state(chart), _state(twin));
         expect(
           _items(chart.legend!),
@@ -3316,7 +3320,7 @@ void main() {
           ..._indexedColors,
         });
         final chart = acquireChart(_config(type, datasets: <Object?>[dataset]))
-          ..update('none');
+          ..update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isFalse);
         final twin = acquireChart(
           _config(
@@ -3329,7 +3333,7 @@ void main() {
             ],
             labels: {'filter': _keepItem},
           ),
-        )..update('none');
+        )..update(UpdateMode.none);
         expect(_state(chart), _state(twin));
 
         final options = _ObservedMap({
@@ -3353,7 +3357,7 @@ void main() {
             ],
           },
           'options': options,
-        })..update('none');
+        })..update(UpdateMode.none);
         expect(_legendOf(other).legendItemsPending, isFalse);
       });
 
@@ -3364,7 +3368,7 @@ void main() {
           final meta = chart.getDatasetMeta(0);
           final arc = _UserArc(reads);
           meta.data[1] = arc;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expect(_legendOf(chart).legendItemsPending, isFalse);
           return reads;
         }
@@ -3395,7 +3399,7 @@ void main() {
           (data[2] as ArcElement).$context!
             ..jsWrite('index', -0.0)
             ..jsWrite('dataIndex', 7.0);
-          each.update('none');
+          each.update(UpdateMode.none);
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
         expect(_state(chart), _state(twin));
@@ -3408,7 +3412,7 @@ void main() {
           _config(type, dataset: _indexedColors),
         );
         addTearDown(chart.destroy);
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isFalse);
         final twin = acquireChart(_config(type, dataset: _indexedColors));
         expect(_legendOf(twin).legendItemsPending, isTrue);
@@ -3426,8 +3430,8 @@ void main() {
         final chart = acquireChart(_config(id, dataset: _indexedColors));
         final exact = acquireChart(_config(parent, dataset: _indexedColors));
         for (final mode in ['none', 'default']) {
-          chart.update(mode);
-          exact.update(mode);
+          chart.update(UpdateMode(mode));
+          exact.update(UpdateMode(mode));
           expect(_legendOf(chart).legendItemsPending, isFalse);
           expect(_legendOf(exact).legendItemsPending, isTrue);
           expect(_contexts(chart)[0], _contexts(exact)[0]);
@@ -3504,7 +3508,7 @@ void main() {
             expect(_legendOf(chart).legendItemsPending, exact);
             armed = true;
             _dataset0(chart)['data'] = <Object?>[...after];
-            chart.update('none');
+            chart.update(UpdateMode.none);
             expect(_legendOf(chart).legendItemsPending, exact);
             return [...log, _items(chart.legend!), _state(chart)];
           }
@@ -3548,7 +3552,7 @@ void main() {
             );
             armed = true;
             _dataset0(chart)['data'] = <Object?>[...after];
-            chart.update('none');
+            chart.update(UpdateMode.none);
             expect(_legendOf(chart).legendItemsPending, exact);
             return [...log, _items(chart.legend!), _state(chart)];
           }
@@ -3603,7 +3607,7 @@ void main() {
             armed = true;
             for (final step in steps) {
               step(chart);
-              chart.update('none');
+              chart.update(UpdateMode.none);
               expect(
                 _legendOf(chart).legendItemsPending,
                 exact && hook != 'afterUpdate',
@@ -3689,7 +3693,7 @@ void main() {
             );
             _changeFirstArc(chart);
             armed = true;
-            chart.update('none');
+            chart.update(UpdateMode.none);
             armed = false;
             return log;
           }
@@ -3722,7 +3726,7 @@ void main() {
             );
             _changeFirstArc(chart);
             armed = true;
-            expect(() => chart.update('none'), throwsStateError);
+            expect(() => chart.update(UpdateMode.none), throwsStateError);
             armed = false;
             return [_firstArcState(chart)];
           }
@@ -3757,7 +3761,7 @@ void main() {
             );
             _changeFirstArc(chart);
             armed = true;
-            chart.update('none');
+            chart.update(UpdateMode.none);
             armed = false;
             return log;
           }
@@ -3793,7 +3797,7 @@ void main() {
           );
           _changeFirstArc(chart);
           armed = true;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           armed = false;
           return [log, _state(chart)];
         }
@@ -3835,7 +3839,7 @@ void main() {
           );
           _changeFirstArc(chart);
           armed = true;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           armed = false;
           return [log, _state(chart)];
         }
@@ -3872,7 +3876,7 @@ void main() {
             if (armed) dataset['borderWidth'] = 9.0;
           });
           armed = true;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           armed = false;
           return [log, _arcs(chart)];
         }
@@ -3896,7 +3900,7 @@ void main() {
       for (final each in [chart, twin]) {
         final colors = <Object?>[_red, _green];
         _dataset0(each)['backgroundColor'] = colors;
-        each.update('none');
+        each.update(UpdateMode.none);
         colors[1] = _black;
       }
       // Upstream, and the twin: the snapshot of the last update.
@@ -3909,10 +3913,10 @@ void main() {
       final chart = acquireChart(_config('pie', dataset: _indexedColors));
       final colors = <Object?>[_red, _green];
       _dataset0(chart)['backgroundColor'] = colors;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       final built = _items(chart.legend!);
       colors[1] = _blue;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       colors[1] = <String, Object?>{'a': 1};
       // The read cannot run the build: it gives the last built items, and the
       // build still waits.
@@ -3990,7 +3994,7 @@ void main() {
             ..['backgroundColor'] = colors
             ..['borderWidth'] = widths
             ..['borderDash'] = dash;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           edit(colors, widths, dash);
           return (_fillAndWidth(chart), _legendOf(chart).legendItemsPending);
         }
@@ -4020,7 +4024,7 @@ void main() {
       final chart = acquireChart(_config('pie', dataset: _indexedColors));
       final twin = acquireChart(_eager('pie', dataset: _indexedColors));
       for (final each in [chart, twin]) {
-        each.update('none');
+        each.update(UpdateMode.none);
         _dataset0(each)['backgroundColor'] = <Object?>[_black];
         each.config.clearCache();
       }
@@ -4045,14 +4049,14 @@ void main() {
     testWidgets('a read with a new first dataset', (tester) async {
       final chart = acquireChart(_config('pie', dataset: _indexedColors));
       final built = _items(chart.legend!);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       _datasetsOf(chart)[0] = <String, Object?>{
         'data': <Object?>[9.0, 9.0, 9.0],
         'backgroundColor': _black,
       };
       expect(_items(chart.legend!), legendObservationMatcher(built));
       expect(_legendOf(chart).legendItemsPending, isTrue);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(chart.legend!.legendItems![0].fillStyle, _black);
     });
 
@@ -4062,10 +4066,10 @@ void main() {
       Object? mode(Chart chart) =>
           jsGet((chart.getDatasetMeta(0).data[1] as Element).$context, 'mode');
       final chart = acquireChart(_config('pie', dataset: _indexedColors))
-        ..update('none')
+        ..update(UpdateMode.none)
         ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)]);
       final twin = acquireChart(_eager('pie', dataset: _indexedColors))
-        ..update('none')
+        ..update(UpdateMode.none)
         ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)]);
       // The hover wrote the state of the mode `active` into the context.
       final hover = _contexts(chart);
@@ -4087,13 +4091,13 @@ void main() {
 
     testWidgets('the stop hook settles the pending items', (tester) async {
       final chart = acquireChart(_config('pie', dataset: _indexedColors))
-        ..update('none');
+        ..update(UpdateMode.none);
       final legend = _legendOf(chart);
       expect(legend.legendItemsPending, isTrue);
       (jsGet(chart.config.options, 'plugins')!
               as Map<String, Object?>)['legend'] =
           false;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       // The box left the chart, with the items of the last state.
       expect(chart.legend, isNull);
       expect(legend.legendItemsPending, isFalse);
@@ -4196,7 +4200,7 @@ void main() {
                             : <String>[],
                       },
                     ),
-                    updateMode: 'none',
+                    updateMode: UpdateMode.none,
                     theme: const typed.ChartThemeData(),
                     excludeFromSemantics: true,
                   ),

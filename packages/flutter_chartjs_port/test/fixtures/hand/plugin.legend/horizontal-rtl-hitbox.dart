@@ -49,7 +49,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         ),
       },
     },
-    'plugins': <Object?>[
+    'plugins': <Plugin<Object?>>[
       // DIVERGES(chartjs): adapt-typed-plugins, a native Plugin.
       Plugin<Object?>(
         id: 'legend-hit-box',

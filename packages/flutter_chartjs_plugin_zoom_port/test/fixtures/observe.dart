@@ -67,10 +67,10 @@ Map<String, Object?> observe(Chart chart) {
   if (state.dragStart case final dragStart?) {
     if (state.dragEnd case final dragEnd?) {
       final options = state.options;
-      final rect = computeDragRect(chart, options.zoom.mode, (
+      final rect = computeDragRect(chart, options.zoom?.mode, (
         dragStart: dragStart,
         dragEnd: dragEnd,
-      ), options.zoom.drag.maintainAspectRatio);
+      ), options.zoom?.drag?.maintainAspectRatio);
       dragRect = <Object?>[rect.left, rect.top, rect.width, rect.height];
     }
   }

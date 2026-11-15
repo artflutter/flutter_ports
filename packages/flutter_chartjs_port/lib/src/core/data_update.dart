@@ -25,6 +25,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
     show ChartShadow;
 import 'package:flutter_chartjs_port/src/types/data_item.dart';
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginOptions;
 import 'package:meta/meta.dart';
 
 final _maps = <Type>{
@@ -182,6 +183,9 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
             (node is! SplitFill ||
                 (_nativeFillPaint(node.above) &&
                     _nativeFillPaint(node.below)))) ||
+        // The options object of an add-on plugin is an immutable value; the
+        // plugin opts into the partial lifecycles itself (Chart.js ADR 0148).
+        node is PluginOptions<Object?> ||
         // The dataset shadow is an immutable value (Chart.js ADR 0139).
         (node.runtimeType == ChartShadow &&
             (node as ChartShadow).color.runtimeType == Color) ||

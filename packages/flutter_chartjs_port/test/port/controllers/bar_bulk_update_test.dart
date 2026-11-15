@@ -298,8 +298,8 @@ void main() {
             a.toggleDataVisibility(3);
             b.toggleDataVisibility(3);
           }
-          a.update('none');
-          b.update('none');
+          a.update(UpdateMode.none);
+          b.update(UpdateMode.none);
           expect(_observe(a), _observe(b));
           expect(_stylesAndContexts(a), _stylesAndContexts(b));
           expect(identical(probes[1].options, probes[2].options), isFalse);
@@ -336,8 +336,8 @@ void main() {
           (a.getDatasetMeta(0).data.last as BarElement).active = true;
           (b.getDatasetMeta(0).data.last as BarElement).active = true;
         }
-        a.update('none');
-        b.update('none');
+        a.update(UpdateMode.none);
+        b.update(UpdateMode.none);
         expect(probes.every((p) => p.bulkWrites == 0), isTrue);
         expect(_observe(a), _observe(b));
         expect(_stylesAndContexts(a), _stylesAndContexts(b));
@@ -364,8 +364,8 @@ void main() {
       final probes = _probes(a);
       da.reads.clear();
       db.reads.clear();
-      a.update('none');
-      b.update('none');
+      a.update(UpdateMode.none);
+      b.update(UpdateMode.none);
       expect(probes.every((p) => p.bulkWrites == 0), isTrue);
       expect(da.reads, db.reads);
       expect(_observe(a), _observe(b));
@@ -390,8 +390,8 @@ void main() {
             a.resize(420, 320);
             b.resize(420, 320);
           }
-          a.update('none');
-          b.update('none');
+          a.update(UpdateMode.none);
+          b.update(UpdateMode.none);
           expect(_observe(a), _observe(b));
         }
         expect(probes.first.bulkWrites, 0);
@@ -467,8 +467,8 @@ void main() {
           _axis(cb, horizontal ? 'x' : 'y')['reverse'] = true;
           final a = _chart(ca);
           final b = _chart(cb, reference: true);
-          a.update('none');
-          b.update('none');
+          a.update(UpdateMode.none);
+          b.update(UpdateMode.none);
           expect(_observe(a), _observe(b));
         }
       }
@@ -491,8 +491,8 @@ void main() {
           reference: true,
         );
         final probes = _probes(a);
-        a.update('none');
-        b.update('none');
+        a.update(UpdateMode.none);
+        b.update(UpdateMode.none);
         expect(probes.every((p) => p.bulkWrites == 0), isTrue);
         expect(_observe(a), _observe(b));
       }
@@ -507,8 +507,8 @@ void main() {
     final customB = _CustomBar();
     a.getDatasetMeta(0).data.last = customA;
     b.getDatasetMeta(0).data.last = customB;
-    a.update('none');
-    b.update('none');
+    a.update(UpdateMode.none);
+    b.update(UpdateMode.none);
     expect(probes.every((p) => p.bulkWrites == 0), isTrue);
     expect(customA.writes, customB.writes);
     expect(customA.writes, isNotEmpty);
@@ -545,7 +545,7 @@ void main() {
         final chart = _chart(cfg, reference: reference);
         if (!reference) probes = _probes(chart);
         calls.clear();
-        chart.update('none');
+        chart.update(UpdateMode.none);
         charts.add(chart);
         logs.add(calls);
       }
@@ -568,8 +568,8 @@ void main() {
     for (var i = 1; i < 4; i++) {
       expect((_observe(a) as List)[i], (_observe(b) as List)[i]);
     }
-    ma.controller!.update('reset');
-    mb.controller!.update('reset');
+    ma.controller!.update(UpdateMode.reset);
+    mb.controller!.update(UpdateMode.reset);
     expect(_observe(a), _observe(b));
     expect(probes.map((p) => p.bulkWrites).toList(), [0, 0, 1, 1, 0, 0]);
   });
@@ -586,8 +586,8 @@ void main() {
       final a = _chart(_config(extra: extra));
       final b = _chart(_config(extra: extra), reference: true);
       final probes = _probes(a);
-      a.update('none');
-      b.update('none');
+      a.update(UpdateMode.none);
+      b.update(UpdateMode.none);
       expect(probes.every((p) => p.bulkWrites == 0), isTrue, reason: '$extra');
       expect(_observe(a), _observe(b));
     }
@@ -627,8 +627,8 @@ void main() {
         (a.scales['y']! as _CustomLinear).projections = 0;
         (b.scales['y']! as _CustomLinear).projections = 0;
       }
-      a.update('none');
-      b.update('none');
+      a.update(UpdateMode.none);
+      b.update(UpdateMode.none);
       expect(probes.every((p) => p.bulkWrites == 0), isTrue);
       expect(_observe(a), _observe(b));
       if (customController) {
@@ -674,7 +674,7 @@ void main() {
             _dataset(cfg)['categoryPercentage'] = percentage;
           };
         chart.getDatasetMeta(0).data[0] = first;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(probes.every((p) => p.bulkWrites == 0), isTrue);
         charts.add(chart);
         counts.add(calls);

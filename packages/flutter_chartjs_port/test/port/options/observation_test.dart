@@ -49,6 +49,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show handFixtures;
@@ -396,7 +397,7 @@ String _run(_Case c, {required bool wrap}) {
 /// observation records the draw calls.
 final List<(String, void Function(Chart chart), bool)> _steps = [
   ('update', (chart) => chart.update(), false),
-  ('update none', (chart) => chart.update('none'), true),
+  ('update none', (chart) => chart.update(UpdateMode.none), true),
   ('hover', _hover, true),
   ('mouseout', (chart) => _event(chart, 'mouseout', -1, 0), false),
   ('reset', (chart) => chart.reset(), false),

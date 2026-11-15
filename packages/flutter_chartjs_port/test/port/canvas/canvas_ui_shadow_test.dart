@@ -335,7 +335,7 @@ void main() {
           },
           'plugins': <String, Object?>{'legend': false, 'title': false},
         },
-        'plugins': <Object?>[
+        'plugins': <Plugin<Object?>>[
           if (shadow)
             Plugin<Object?>(
               id: 'lineShadow',

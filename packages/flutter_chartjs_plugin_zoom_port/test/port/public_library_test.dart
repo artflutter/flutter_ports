@@ -37,6 +37,7 @@ const List<Type> _types = [
   PinchOptions,
   RejectEvent,
   RejectableStartEvent,
+  ScaleLimit,
   ScaleLimits,
   ScaleRange,
   WheelOptions,
@@ -67,6 +68,7 @@ final List<Object> _values = [
   zoomRect,
   zoomRectFunctions,
   zoomScale,
+  zoomUpdateMode,
 ];
 
 /// The components of a line chart on the default scales, and the plugin.
@@ -85,8 +87,8 @@ void main() {
   // The compile of this file is the check. A new export of the zoom library
   // gets a reference in a list, and the count here.
   test('the zoom library shares no name with the host and Material', () {
-    expect(_types, hasLength(29));
-    expect(_values, hasLength(11));
+    expect(_types, hasLength(30));
+    expect(_values, hasLength(12));
   });
 
   testWidgets('an app registers the plugin and zooms a ChartView', (
@@ -109,18 +111,18 @@ void main() {
               datasets: const [
                 LineDataset(data: [1, 3, 2]),
               ],
-              extra: {
-                'animation': false,
-                'plugins': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'zoom': <String, Object?>{
-                      'mode': Mode.y,
-                      'onZoom': (ZoomTriggerContext context) =>
-                          triggers.add(context.trigger),
-                    },
-                  },
-                },
-              },
+              animation: ChartAnimation.none,
+              // The typed options slot of an add-on plugin (Chart.js ADR
+              // 0148): the object goes to `options.plugins.zoom`.
+              pluginOptions: [
+                ZoomPluginOptions(
+                  zoom: ZoomOptions(
+                    mode: Mode.y,
+                    onZoom: (context) => triggers.add(context.trigger),
+                  ),
+                  limits: const {'y': ScaleLimits(min: ScaleLimit.original)},
+                ),
+              ],
             ),
             onChartCreated: (chart) => created = chart,
           ),

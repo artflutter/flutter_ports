@@ -327,11 +327,7 @@ void main() {
       // The probe beforeUpdateWithoutBlock.
       final chart = acquireChart(_line(false));
       expect(
-        () => title.beforeUpdate!(
-          chart,
-          UpdateHookArgs(mode: undefined),
-          chart.options,
-        ),
+        () => title.beforeUpdate!(chart, UpdateHookArgs(), chart.options),
         throwsA(isA<TypeError>()),
       );
     });

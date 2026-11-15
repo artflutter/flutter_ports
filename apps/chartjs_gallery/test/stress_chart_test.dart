@@ -218,7 +218,7 @@ void main() {
 
           await _frames(tester, 10);
           // Case (a) draws the same points. Case (b) moves them through the
-          // data objects and update('none').
+          // data objects and update(UpdateMode.none).
           final moved = points.first.x != first.x || points.first.y != first.y;
           expect(moved, call == StressChartCall.update);
           expect(identical(_points(tester).first, points.first), isTrue);
@@ -318,7 +318,7 @@ void main() {
         var bounds = 0;
         for (var frame = 0; frame < 600; frame++) {
           scene.write(field..step(n, 1 / 60));
-          chart.update('none');
+          chart.update(UpdateMode.none);
           _expectAllDrawn(chart, scene, n, 'frame $frame');
           for (var i = 0; i < n; i++) {
             if (field.x[i] == 0 || field.x[i] == 1) bounds++;
@@ -376,7 +376,7 @@ void main() {
       final chart = _framelessChart(scene);
       try {
         scene.write(field..step(100, 0.5));
-        chart.update('none');
+        chart.update(UpdateMode.none);
         final r = chart.scales['r']!;
         expect((r.min, r.max), (0, 1));
       } finally {
@@ -922,7 +922,8 @@ void main() {
         final stats = await run(tester, StressChartCall.update, type: type);
         expect(stats, isNotEmpty);
         final last = stats.last;
-        // update('none') draws: the draw inside it counts in drawMs, and the
+        // update(UpdateMode.none) draws: the draw inside it counts in drawMs,
+        // and the
         // rest in updateMs.
         expect(last.drawMs, greaterThan(0));
         expect(last.updateMs, greaterThan(0));

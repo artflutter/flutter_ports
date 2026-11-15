@@ -237,7 +237,7 @@ void main() {
       Widget view(List<double> data) => _box(
         ChartView(
           config: _line(data, shadow: _shadow),
-          updateMode: 'none',
+          updateMode: UpdateMode.none,
           dataOnlyUpdates: true,
         ),
       );

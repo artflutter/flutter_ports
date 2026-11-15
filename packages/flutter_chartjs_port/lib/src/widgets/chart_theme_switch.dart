@@ -19,6 +19,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 
 /// The value of an absent key in the records of [ChartThemeSwitch].
 const Object _absent = _Absent();
@@ -155,7 +156,7 @@ final class ChartThemeSwitch() {
   /// 5. The mode: `'default'` when the new theme compiles to Dart `null`,
   ///    else `'themeFrame'` with [reducedMotion], else `'theme'`. Never
   ///    `'none'` or `'resize'`.
-  String? apply(
+  UpdateMode? apply(
     types.Chart chart,
     Object root,
     ChartThemeData? theme, {
@@ -171,8 +172,10 @@ final class ChartThemeSwitch() {
     final options = _read(root, OptionKey.options);
     if (_isObject(options)) _write(options!, OptionKey.scales, _scales);
     _restorePalette(chart);
-    if (compiled == null) return 'default';
-    return reducedMotion ? 'themeFrame' : 'theme';
+    if (compiled == null) return UpdateMode.defaultMode;
+    return reducedMotion
+        ? const UpdateMode('themeFrame')
+        : const UpdateMode('theme');
   }
 
   /// The `beforeUpdate` hook of the widget plugin: the values of the two

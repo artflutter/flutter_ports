@@ -66,7 +66,7 @@ Map<String, Object?> fixture() {
           'filler': false,
         },
       },
-      'plugins': <Object?>[
+      'plugins': <Plugin<Object?>>[
         // DIVERGES(chartjs): adapt-typed-plugins, a native Plugin.
         Plugin<Object?>(
           id: 'hide',

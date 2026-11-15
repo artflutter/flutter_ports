@@ -42,7 +42,7 @@ final List<DataPoint> _points = [
 
 /// A scatter chart on the linear scales `x` and `y` from 0 to 100, with no
 /// animation and the zoom options [zoom], with a legend for [legend].
-ChartConfig _config(Map<String, Object?> zoom, {bool legend = false}) =>
+ChartConfig _config(ZoomPluginOptions zoom, {bool legend = false}) =>
     ChartConfig(
       type: .scatter,
       datasets: [ScatterDataset(points: _points, pointRadius: 4)],
@@ -53,15 +53,13 @@ ChartConfig _config(Map<String, Object?> zoom, {bool legend = false}) =>
       maintainAspectRatio: false,
       legend: ChartLegend(display: legend),
       animation: ChartAnimation.none,
-      extra: {
-        'plugins': <String, Object?>{'zoom': zoom},
-      },
+      pluginOptions: [zoom],
     );
 
 /// A `ChartView` of [_config] in a box of 400 x 300 at the top left of the
 /// view, so that the canvas pixels are the global logical pixels.
 Widget _view(
-  Map<String, Object?> zoom, {
+  ZoomPluginOptions zoom, {
   required ValueChanged<Chart> onChartCreated,
   FocusNode? focusNode,
   bool legend = false,
@@ -116,7 +114,7 @@ void main() {
     /// A `ChartView` of [zoom] at the top of a vertical `ListView` with
     /// [controller], above a box of 1000 px.
     Widget listed(
-      Map<String, Object?> zoom,
+      ZoomPluginOptions zoom,
       ScrollController controller,
       ValueChanged<Chart> onChartCreated,
     ) => Directionality(
@@ -142,12 +140,12 @@ void main() {
       addTearDown(controller.dispose);
       final completed = <ZoomChartContext>[];
       void onZoomComplete(ZoomChartContext context) => completed.add(context);
-      final zoom = <String, Object?>{
-        'zoom': <String, Object?>{
-          'wheel': <String, Object?>{'enabled': true},
-          'onZoomComplete': onZoomComplete,
-        },
-      };
+      final zoom = ZoomPluginOptions(
+        zoom: ZoomOptions(
+          wheel: const WheelOptions(enabled: true),
+          onZoomComplete: onZoomComplete,
+        ),
+      );
       final chart = await _start(
         tester,
         (onChartCreated) => listed(zoom, controller, onChartCreated),
@@ -202,11 +200,9 @@ void main() {
     ) async {
       final controller = ScrollController();
       addTearDown(controller.dispose);
-      final zoom = <String, Object?>{
-        'zoom': <String, Object?>{
-          'drag': <String, Object?>{'enabled': true},
-        },
-      };
+      const zoom = ZoomPluginOptions(
+        zoom: ZoomOptions(drag: DragOptions(enabled: true)),
+      );
       final chart = await _start(
         tester,
         (onChartCreated) => listed(zoom, controller, onChartCreated),
@@ -225,22 +221,19 @@ void main() {
   });
 
   group('drag', () {
-    final dragZoom = <String, Object?>{
-      'zoom': <String, Object?>{
-        'drag': <String, Object?>{'enabled': true},
-      },
-    };
+    const dragZoom = ZoomPluginOptions(
+      zoom: ZoomOptions(drag: DragOptions(enabled: true)),
+    );
 
     testWidgets('a mouse drag that leaves the box and lifts outside it zooms '
         'to the part of the drag in the chart area', (tester) async {
       final completed = <Chart>[];
-      final zoom = <String, Object?>{
-        'zoom': <String, Object?>{
-          'drag': <String, Object?>{'enabled': true},
-          'onZoomComplete': (ZoomChartContext context) =>
-              completed.add(context.chart),
-        },
-      };
+      final zoom = ZoomPluginOptions(
+        zoom: ZoomOptions(
+          drag: const DragOptions(enabled: true),
+          onZoomComplete: (context) => completed.add(context.chart),
+        ),
+      );
       final chart = await _start(
         tester,
         (onChartCreated) => _view(zoom, onChartCreated: onChartCreated),

@@ -221,7 +221,7 @@ void main() {
             },
           ],
         },
-        'plugins': <Object?>[
+        'plugins': <Plugin<Object?>>[
           Plugin<Object?>(
             id: 'noDraw',
             beforeDraw: (c, args, options) => false,
@@ -483,7 +483,7 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false},
         },
-        'plugins': <Object?>[
+        'plugins': <Plugin<Object?>>[
           Plugin<Object?>(
             id: 'noLayout',
             beforeLayout: (c, args, options) => false,

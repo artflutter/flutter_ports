@@ -33,7 +33,7 @@ final List<DataPoint> _points = [
 /// to 100, with no legend, no animation and the zoom options [zoom], at the
 /// top of a vertical `ListView` with [controller], above a box of 1000 px.
 Widget _listed(
-  Map<String, Object?> zoom,
+  ZoomPluginOptions zoom,
   ScrollController controller,
   ValueChanged<Chart> onChartCreated,
 ) => Directionality(
@@ -54,9 +54,7 @@ Widget _listed(
             maintainAspectRatio: false,
             legend: const ChartLegend(display: false),
             animation: ChartAnimation.none,
-            extra: {
-              'plugins': <String, Object?>{'zoom': zoom},
-            },
+            pluginOptions: [zoom],
           ),
           onChartCreated: onChartCreated,
         ),
@@ -69,7 +67,7 @@ Widget _listed(
 /// Pumps [_listed] and the frame of `onChartCreated`, and gives the chart.
 Future<Chart> _start(
   WidgetTester tester,
-  Map<String, Object?> zoom,
+  ZoomPluginOptions zoom,
   ScrollController controller,
 ) async {
   Chart? created;
@@ -106,13 +104,16 @@ void main() {
       'pans and does not scroll the list', (tester) async {
     final controller = _controller();
     final completed = <Chart>[];
-    final chart = await _start(tester, <String, Object?>{
-      'pan': <String, Object?>{
-        'enabled': true,
-        'onPanComplete': (ZoomChartContext context) =>
-            completed.add(context.chart),
-      },
-    }, controller);
+    final chart = await _start(
+      tester,
+      ZoomPluginOptions(
+        pan: PanOptions(
+          enabled: true,
+          onPanComplete: (context) => completed.add(context.chart),
+        ),
+      ),
+      controller,
+    );
     expect(chart.canvas!.style.touchAction, 'none');
     final y = chart.scales['y']!;
     final pixelsPerValue =
@@ -143,11 +144,13 @@ void main() {
     tester,
   ) async {
     final controller = _controller();
-    final chart = await _start(tester, <String, Object?>{
-      'zoom': <String, Object?>{
-        'wheel': <String, Object?>{'enabled': true},
-      },
-    }, controller);
+    final chart = await _start(
+      tester,
+      const ZoomPluginOptions(
+        zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+      ),
+      controller,
+    );
     expect(chart.canvas!.style.touchAction, isNot('none'));
     final gesture = await tester.startGesture(_center(chart));
     for (var i = 0; i < 5; i++) {
@@ -164,14 +167,17 @@ void main() {
     final controller = _controller();
     final triggers = <ZoomTrigger>[];
     final completed = <Chart>[];
-    final chart = await _start(tester, <String, Object?>{
-      'zoom': <String, Object?>{
-        'pinch': <String, Object?>{'enabled': true},
-        'onZoom': (ZoomTriggerContext context) => triggers.add(context.trigger),
-        'onZoomComplete': (ZoomChartContext context) =>
-            completed.add(context.chart),
-      },
-    }, controller);
+    final chart = await _start(
+      tester,
+      ZoomPluginOptions(
+        zoom: ZoomOptions(
+          pinch: const PinchOptions(enabled: true),
+          onZoom: (context) => triggers.add(context.trigger),
+          onZoomComplete: (context) => completed.add(context.chart),
+        ),
+      ),
+      controller,
+    );
     expect(chart.canvas!.style.touchAction, 'none');
     final center = _center(chart);
 
@@ -204,11 +210,13 @@ void main() {
 
   testWidgets('two fingers in a row zoom only x', (tester) async {
     final controller = _controller();
-    final chart = await _start(tester, <String, Object?>{
-      'zoom': <String, Object?>{
-        'pinch': <String, Object?>{'enabled': true},
-      },
-    }, controller);
+    final chart = await _start(
+      tester,
+      const ZoomPluginOptions(
+        zoom: ZoomOptions(pinch: PinchOptions(enabled: true)),
+      ),
+      controller,
+    );
     final center = _center(chart);
     final first = await tester.startGesture(center - const Offset(40, 0));
     final second = await tester.startGesture(center + const Offset(40, 0));

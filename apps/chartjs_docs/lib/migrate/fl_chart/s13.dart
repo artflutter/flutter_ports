@@ -113,7 +113,7 @@ class _Sample13State() extends State<Sample13> {
     final next = hits.isEmpty ? -1 : hits.first.index;
     if (next == _hovered) return;
     _hovered = next;
-    chart.update('none');
+    chart.update(UpdateMode.none);
   }
 
   ChartConfig _config() => fills(
@@ -245,7 +245,7 @@ class _Sample13State() extends State<Sample13> {
           padding: const EdgeInsets.only(right: 18),
           child: _months == null
               ? const Center(child: CircularProgressIndicator())
-              : ChartView(config: _config(), updateMode: 'none'),
+              : ChartView(config: _config(), updateMode: UpdateMode.none),
         ),
       ),
     ],

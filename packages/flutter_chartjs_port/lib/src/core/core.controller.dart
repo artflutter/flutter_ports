@@ -64,7 +64,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
         each,
         elementsEqual,
         isClickEvent,
-        isFunction,
         isNullOrUndef,
         setsEqual,
         uid,
@@ -86,7 +85,6 @@ import 'package:flutter_chartjs_port/src/helpers/index.dart'
         unclipArea;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet, jsGetIndex;
@@ -115,8 +113,10 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
         EventHookArgs,
         PluginHook,
         PluginHookArgs,
+        PluginOf,
         ResizeHookArgs,
         UpdateHookArgs;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_chartjs_port/src/upstream.dart'
     show chartJsPackageVersion;
 import 'package:meta/meta.dart';
@@ -156,6 +156,17 @@ num Function(T a, T b) _compare2Level<T>(
 ) {
   return (a, b) => l1(a) == l1(b) ? l2(a) - l2(b) : l1(a) - l1(b);
 }
+
+/// A plugin whose hooks get the public [Chart] (Chart.js ADR 0148): the
+/// plugin service casts the chart once, so a hook needs no cast.
+///
+/// ```dart
+/// final crosshair = ChartPlugin<Object?>(
+///   id: 'crosshair',
+///   afterDraw: (chart, args, options) => chart.getActiveElements(),
+/// );
+/// ```
+typedef ChartPlugin<O> = PluginOf<O, Chart>;
 
 /// The chart options `onClick` and `onHover` (index.d.ts:1728, :1733,
 /// core.controller.js:1222-1226): the chart event, the active elements of
@@ -419,7 +430,7 @@ class Chart(
     // :154-172: the fields with a start value get it before the body. The
     // reset of `$context` (:172) stays here: `getContext()` above made one.
     $context = null;
-    _doResize = debounce<Object?>(
+    _doResize = debounce<UpdateMode?>(
       update,
       jsOrZero(options.readKey(OptionKey.resizeDelay)),
     );
@@ -644,7 +655,7 @@ class Chart(
   ContextObject? $context;
 
   /// core.controller.js:173 `_doResize`: the debounced update of a resize.
-  late Debounced<Object?> _doResize;
+  late Debounced<UpdateMode?> _doResize;
 
   /// core.controller.js:174 `_dataChanges = []`. See
   /// `types.Chart.dataChanges`.
@@ -929,7 +940,9 @@ class Chart(
     final newRatio = jsTruthy(devicePixelRatio)
         ? jsToNumber(devicePixelRatio)
         : platform.getDevicePixelRatio();
-    final mode = jsTruthy(this.width) ? 'resize' : 'attach';
+    final mode = jsTruthy(this.width)
+        ? UpdateMode.resize
+        : const UpdateMode('attach');
 
     this.width = newSize.width;
     this.height = newSize.height;
@@ -1206,11 +1219,22 @@ class Chart(
 
   /// core.controller.js:475 `update(mode)`.
   ///
-  /// [mode] is an update mode `String`, a function of the context
-  /// `{datasetIndex}`, or [undefined] for an absent argument (index.d.ts:559).
-  /// The hooks get it as it is.
+  /// [mode] is an [UpdateMode], or Dart `null` for an absent argument
+  /// (index.d.ts:559, Chart.js ADR 0148). [updateDatasets] is the function
+  /// form. The hooks get the mode in [UpdateHookArgs].
   @override
-  void update([Object? mode = undefined]) {
+  // DIVERGES(chartjs): adapt-update-mode, the mode is an UpdateMode.
+  void update([UpdateMode? mode]) => _update(mode);
+
+  /// core.controller.js:475 `update(mode)` with a function of the context
+  /// `{datasetIndex}` (index.d.ts:559): [modeOf] gives the mode of each
+  /// dataset (Chart.js ADR 0148).
+  @override
+  void updateDatasets(UpdateModeOf modeOf) => _update(modeOf);
+
+  /// The body of `update(mode)`: [mode] is an [UpdateMode], an
+  /// [UpdateModeOf] or Dart `null`.
+  void _update(Object? mode) {
     if (_updatingData) {
       throw StateError('update cannot run inside updateData hooks');
     }
@@ -1243,8 +1267,7 @@ class Chart(
     // https://github.com/chartjs/Chart.js/issues/5111#issuecomment-355934167
     plugins.invalidate();
 
-    if (notifyPlugins(PluginHook.beforeUpdate, UpdateHookArgs(mode: mode)) ==
-        false) {
+    if (notifyPlugins(PluginHook.beforeUpdate, _updateArgs(mode)) == false) {
       return;
     }
 
@@ -1289,7 +1312,7 @@ class Chart(
 
     // Do this before render so that any plugins that need final scale
     // updates can use it
-    notifyPlugins(PluginHook.afterUpdate, UpdateHookArgs(mode: mode));
+    notifyPlugins(PluginHook.afterUpdate, _updateArgs(mode));
 
     jsSort(
       _layers,
@@ -1416,7 +1439,7 @@ class Chart(
     bool full() {
       _dataUpdateFallback = true;
       try {
-        update('none');
+        update(UpdateMode.none);
         return false;
       } finally {
         _dataUpdateFallback = false;
@@ -1496,7 +1519,7 @@ class Chart(
     try {
       if (notifyPlugins(
             PluginHook.beforeUpdate,
-            UpdateHookArgs(mode: 'none'),
+            UpdateHookArgs(mode: UpdateMode.none),
           ) ==
           false) {
         return true;
@@ -1533,7 +1556,7 @@ class Chart(
       if (!_updateDatasets('none', configure: false)) _invalidateDataUpdate();
       notifyPlugins(
         PluginHook.afterUpdate,
-        UpdateHookArgs(mode: 'none', layoutKept: reuseLayout),
+        UpdateHookArgs(mode: UpdateMode.none, layoutKept: reuseLayout),
       );
       // A layout gave the layers in the order of the boxes. The kept ones have
       // the order of the sort of the last update.
@@ -1613,7 +1636,7 @@ class Chart(
   /// it; false when the call delegated to [update].
   // DIVERGES(chartjs): adapt-range-updates, the range lifecycle.
   @override
-  bool updateRanges([Object? mode = undefined]) {
+  bool updateRanges([UpdateMode? mode]) {
     if (!_canUpdateRanges()) {
       update(mode);
       return false;
@@ -1688,8 +1711,7 @@ class Chart(
     // invalidates the descriptors.
     plugins.refreshDescriptorViews(this);
 
-    if (notifyPlugins(PluginHook.beforeUpdate, UpdateHookArgs(mode: mode)) ==
-        false) {
+    if (notifyPlugins(PluginHook.beforeUpdate, _updateArgs(mode)) == false) {
       return;
     }
 
@@ -1724,7 +1746,7 @@ class Chart(
 
     final datasetsUpdated = _updateDatasets(mode, keepResolvers: true);
 
-    notifyPlugins(PluginHook.afterUpdate, UpdateHookArgs(mode: mode));
+    notifyPlugins(PluginHook.afterUpdate, _updateArgs(mode));
 
     jsSort(
       _layers,
@@ -1915,16 +1937,14 @@ class Chart(
   /// on `afterDatasetsUpdate`.
   /// @private
   ///
-  /// `mode({datasetIndex: i})` is [jsCall] of the function value.
+  /// The mode is an [UpdateMode], or the [UpdateModeOf] of [updateDatasets],
+  /// which gets the dataset index in place of `{datasetIndex: i}`.
   bool _updateDatasets(
     Object? mode, {
     bool configure = true,
     bool keepResolvers = false,
   }) {
-    if (notifyPlugins(
-          PluginHook.beforeDatasetsUpdate,
-          UpdateHookArgs(mode: mode),
-        ) ==
+    if (notifyPlugins(PluginHook.beforeDatasetsUpdate, _updateArgs(mode)) ==
         false) {
       return false;
     }
@@ -1945,18 +1965,10 @@ class Chart(
     var completed = true;
     for (var i = 0, ilen = _datasets.length; i < ilen; ++i) {
       completed =
-          _updateDataset(
-            i,
-            isFunction(mode)
-                ? jsCall(mode, [
-                    <String, Object?>{'datasetIndex': i.toDouble()},
-                  ])
-                : mode,
-          ) &&
-          completed;
+          _updateDataset(i, mode is UpdateModeOf ? mode(i) : mode) && completed;
     }
 
-    notifyPlugins(PluginHook.afterDatasetsUpdate, UpdateHookArgs(mode: mode));
+    notifyPlugins(PluginHook.afterDatasetsUpdate, _updateArgs(mode));
     return completed;
   }
 
@@ -1971,7 +1983,11 @@ class Chart(
   /// takes a `String`: [_modeArg] gives the falsy modes as Dart `null`.
   bool _updateDataset(int index, Object? mode) {
     final meta = getDatasetMeta(index);
-    final args = DatasetUpdateHookArgs(meta: meta, index: index, mode: mode);
+    final args = DatasetUpdateHookArgs(
+      meta: meta,
+      index: index,
+      mode: mode is String ? UpdateMode(mode) : null,
+    );
 
     if (notifyPlugins(PluginHook.beforeDatasetUpdate, args) == false) {
       return false;
@@ -2315,7 +2331,7 @@ class Chart(
   /// is a write of [Element.hidden]. An index without an element throws
   /// a [TypeError], as in JavaScript.
   void _updateVisibility(int datasetIndex, int? dataIndex, bool visible) {
-    final mode = visible ? 'show' : 'hide';
+    final mode = visible ? UpdateMode.show : UpdateMode.hide;
     final meta = getDatasetMeta(datasetIndex);
     final anims = meta.controller!.resolveAnimations(null, mode);
 
@@ -2327,10 +2343,7 @@ class Chart(
       // Animate visible state, so hide animation can be seen. This could be
       // handled better if update / updateDataset returned a Promise.
       anims.update(meta, {'visible': visible});
-      update(
-        (Object? ctx) =>
-            jsGet(ctx, 'datasetIndex') == datasetIndex ? mode : undefined,
-      );
+      updateDatasets((i) => i == datasetIndex ? mode : null);
     }
   }
 
@@ -2969,6 +2982,14 @@ double? _numberOrNull(Object? value) => switch (value) {
   final num number => number.toDouble(),
   _ => jsToNumber(value),
 };
+
+/// The `{mode}` of the update hooks for the internal [mode]: an
+/// [UpdateMode], or the [UpdateModeOf] of `updateDatasets` (Chart.js ADR
+/// 0148).
+UpdateHookArgs _updateArgs(Object? mode) => UpdateHookArgs(
+  mode: mode is String ? UpdateMode(mode) : null,
+  modeOf: mode is UpdateModeOf ? mode : null,
+);
 
 /// The update mode of `DatasetController.update_`: a `String`, or Dart
 /// `null` for a falsy mode, which `_update` replaces with `'default'`

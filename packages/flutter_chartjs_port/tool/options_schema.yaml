@@ -201,7 +201,7 @@ kinds:
       cutoutPercentage: number
   PluginOptionsByType:
     doc: index.d.ts:3029 PluginOptionsByType, the scope `plugins` (by plugin id). A plugin entry can be `false` (the plugin is off).
-    others: bool | scope GenericPluginOptions
+    others: bool | scope GenericPluginOptions | pluginOptions
     keys:
       colors: bool | scope ColorsOptions
       decimation: bool | scope DecimationOptions

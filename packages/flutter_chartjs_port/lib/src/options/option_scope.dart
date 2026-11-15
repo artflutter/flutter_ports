@@ -36,6 +36,7 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 import 'package:flutter_chartjs_port/src/types/data_item.dart'
     show TypedDataItem;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginDefaults;
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/options/opt.dart';
@@ -49,7 +50,7 @@ export 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
 /// `operator []` gives [undefined] for a key that the scope does not own
 /// (Chart.js ADR 0054 §5). It is not a `Map`.
 abstract base class OptionScope()
-    implements OptionObject, JsObjectFace, JsFreezable {
+    implements OptionObject, JsObjectFace, JsFreezable, PluginDefaults {
   /// An empty scope.
   this;
 

@@ -34,18 +34,19 @@ final List<DataPoint> _points = [
   DataPoint(90, 30),
 ];
 
-/// New zoom options that enable the wheel.
-Map<String, Object?> _wheelZoom() => <String, Object?>{
-  'zoom': <String, Object?>{
-    'wheel': <String, Object?>{'enabled': true},
-  },
-};
+/// New zoom options that enable the wheel: a new object at each call, `==`
+/// to the object of another call.
+ZoomPluginOptions _wheelZoom() =>
+    // A new object at each call, as an app builds its config in `build`.
+    // ignore: prefer_const_constructors
+    ZoomPluginOptions(zoom: ZoomOptions(wheel: WheelOptions(enabled: true)));
 
 /// A new `ChartView` of a scatter chart on the linear scales `x` and `y`
 /// from 0 to 100, in a box of 400 x 300, with the theme [theme]. Each call
 /// makes new config objects; the configs of two calls with the same
-/// arguments are `==`. The zoom options enable the wheel: a Map of plain
-/// values, built in each call, as an app builds its config in `build`.
+/// arguments are `==`. The zoom options enable the wheel: a
+/// `ZoomPluginOptions` in `ChartConfig.pluginOptions`, built in each call,
+/// as an app builds its config in `build`.
 Widget _view({
   required ValueChanged<Chart> onChartCreated,
   List<DataPoint>? points,
@@ -69,9 +70,7 @@ Widget _view({
           maintainAspectRatio: false,
           title: title == null ? null : ChartTitle(display: true, text: title),
           animation: ChartAnimation.none,
-          extra: {
-            'plugins': <String, Object?>{'zoom': _wheelZoom()},
-          },
+          pluginOptions: [_wheelZoom()],
         ),
         theme: theme,
         onChartCreated: onChartCreated,

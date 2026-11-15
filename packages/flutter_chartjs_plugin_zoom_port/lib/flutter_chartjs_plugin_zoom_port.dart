@@ -10,16 +10,31 @@
 /// Chart.register([zoomPlugin]);
 /// ```
 ///
-/// Its options are `options.plugins.zoom` of a chart (`ZoomPluginOptions`):
-/// in the config of `ChartView.raw`, or in `ChartConfig.extra` as
-/// `{'plugins': {'zoom': {...}}}`. The methods of `ZoomChart` zoom and pan a
-/// chart from code, for example `chart.zoom(.all(1.5))` and
-/// `chart.resetZoom()`.
+/// The options of a chart are one immutable `ZoomPluginOptions`: in
+/// `ChartConfig.pluginOptions` of a typed config, or in
+/// `options.plugins.zoom` of the config of `ChartView.raw`:
+///
+/// ```dart
+/// ChartView(
+///   config: ChartConfig(
+///     type: .line,
+///     datasets: [LineDataset(data: values)],
+///     pluginOptions: const [
+///       ZoomPluginOptions(
+///         pan: PanOptions(enabled: true, mode: Mode.x),
+///         zoom: ZoomOptions(wheel: WheelOptions(enabled: true), mode: Mode.x),
+///         limits: {'x': ScaleLimits(min: ScaleLimit.original)},
+///       ),
+///     ],
+///   ),
+/// );
+/// ```
+///
+/// The methods of `ZoomChart` zoom and pan a chart from code, for example
+/// `chart.zoom(.all(1.5))` and `chart.resetZoom()`.
 ///
 /// The plugin takes part in the data-only updates of the host
-/// (`ChartView.dataOnlyUpdates`): new data keeps the zoom range. With a
-/// function in the zoom options, for example an `onZoomComplete` callback,
-/// new data takes a full update, which keeps the range too.
+/// (`ChartView.dataOnlyUpdates`): new data keeps the zoom range.
 ///
 /// The port follows the upstream modules file by file: each module of the
 /// pinned upstream `src/` folder is ported. The `doc/` folder of this
@@ -28,7 +43,15 @@ library;
 
 export 'src/gestures.dart' show ActivePointer, GestureEvent;
 export 'src/index.dart'
-    show ZoomChart, pan, resetZoom, zoom, zoomPlugin, zoomRect, zoomScale;
+    show
+        ZoomChart,
+        pan,
+        resetZoom,
+        zoom,
+        zoomPlugin,
+        zoomRect,
+        zoomScale,
+        zoomUpdateMode;
 export 'src/options.dart'
     show
         DragOptions,
@@ -42,6 +65,7 @@ export 'src/options.dart'
         PinchOptions,
         RejectEvent,
         RejectableStartEvent,
+        ScaleLimit,
         ScaleLimits,
         WheelOptions,
         ZoomCallback,

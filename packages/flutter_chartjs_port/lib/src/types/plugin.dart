@@ -21,7 +21,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableScaleContext;
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show DescriptorsScope;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:meta/meta.dart';
 
 /// The function of a hook that cannot cancel: `hook(chart, args, options)`.
@@ -202,12 +205,16 @@ base class const PluginHookArgs() {
 /// `:661`).
 ///
 /// ```dart
-/// beforeUpdate: (chart, args, options) => args.mode != 'resize',
+/// beforeUpdate: (chart, args, options) => args.mode != UpdateMode.resize,
 /// ```
 final class UpdateHookArgs({
-  /// `mode`: the update mode of `chart.update(mode)`, a string, a function
-  /// or `undefined`.
-  required final Object? mode,
+  /// `mode`: the mode of `chart.update(mode)`, or Dart `null` for the
+  /// `undefined` of an update with no mode or with the function form.
+  final UpdateMode? mode,
+
+  /// The function of `chart.updateDatasets(modeOf)`, the function form of
+  /// upstream `update((ctx) => mode)`, else Dart `null`.
+  final UpdateModeOf? modeOf,
 
   /// Whether this update kept the layout of the last update, so no box ran its
   /// `update`: the data-only lifecycle of Chart.js ADR 0074. It is not a key of
@@ -231,8 +238,8 @@ final class DatasetUpdateHookArgs({
   /// `index`: the index of the dataset.
   required final int index,
 
-  /// `mode`: the update mode, as in [UpdateHookArgs.mode].
-  required final Object? mode,
+  /// `mode`: the update mode of the dataset, or Dart `null` for none.
+  required final UpdateMode? mode,
 }) extends PluginHookArgs {
   /// The arguments of the update of one dataset.
   this;
@@ -308,23 +315,78 @@ final class TooltipDrawHookArgs({
   this;
 }
 
+/// A plugin whose hooks get the chart interface of the core layer: the
+/// built-in plugins, the plugins of the tests, and the type of any plugin.
+///
+/// ```dart
+/// final probe = Plugin<Object?>(id: 'probe', afterDraw: (chart, args, _) {});
+/// ```
+typedef Plugin<O> = PluginOf<O, types.Chart>;
+
+/// The defaults of a plugin: a typed scope of a built-in plugin, or the
+/// [PluginOptions] of an add-on (Chart.js ADR 0148).
+///
+/// ```dart
+/// defaults: LegendOptionsScope()..display = true,   // a built-in plugin
+/// defaults: const ZoomPluginOptions(...),           // an add-on
+/// ```
+abstract interface class PluginDefaults();
+
+/// The options of an add-on plugin as one immutable object (Chart.js ADR
+/// 0148). Upstream resolves plugin options with `scriptable: false` and
+/// `indexable: false` (U `core.plugins.js:182-187`): each option is a plain
+/// value, so a merge of the scopes gives the result of the resolver. The
+/// plugin service merges the scopes from the defaults to the options of the
+/// chart, and the hooks get the merged object.
+///
+/// ```dart
+/// final class ZoomPluginOptions({final PanOptions? pan})
+///     extends PluginOptions<ZoomPluginOptions> {
+///   @override
+///   String get pluginId => 'zoom';
+///   @override
+///   ZoomPluginOptions merge(ZoomPluginOptions over) =>
+///       ZoomPluginOptions(pan: PanOptions.mergeOf(pan, over.pan));
+/// }
+/// ```
+abstract class const PluginOptions<T extends PluginOptions<T>>()
+    implements PluginDefaults {
+  /// The options of a plugin.
+  this;
+
+  /// The id of the plugin: the key of the options in `options.plugins`.
+  String get pluginId;
+
+  /// These options with each field of [over] that [over] sets.
+  T merge(T over);
+
+  /// [merge] for options of any type: [over] of another class replaces these
+  /// options.
+  @internal
+  PluginOptions<Object?> mergeOptions(PluginOptions<Object?> over) =>
+      over is T ? merge(over) : over;
+}
+
 /// `Plugin` (U `index.d.ts:856`): a plugin with its `id`, its metadata and
 /// one field for each hook.
 ///
 /// [O] is the type of the options that the hooks get: [options] makes it
-/// from the resolved options of the plugin, a [ContextResolver]. A hook is a
-/// field, so a test can replace it at run time, as upstream code replaces
-/// `plugin[hook]`. A plugin is not a `Map`, and it has no key by name.
+/// from the resolved options of the plugin, a [ContextResolver], or the
+/// hooks get the merged [PluginOptions] of an add-on. [C] is the type of the
+/// chart of the hooks: the public `Chart` for `ChartPlugin`, the core
+/// interface for [Plugin]. A hook is a field, so a test can replace it at run
+/// time, as upstream code replaces `plugin[hook]`. A plugin is not a `Map`,
+/// and it has no key by name.
 ///
 /// ```dart
-/// final crosshair = Plugin<ContextResolver>(
+/// final crosshair = ChartPlugin<ContextResolver>(
 ///   id: 'crosshair',
 ///   afterDraw: (chart, args, options) => drawCrosshair(chart),
 ///   beforeEvent: (chart, args, options) => args.event.type != 'mouseout',
 /// );
 /// Chart.register([crosshair]);
 /// ```
-final class Plugin<O>({
+final class PluginOf<O, C extends types.Chart>({
   /// `id`: the id of the plugin, the key of its options in
   /// `options.plugins`.
   required final String id,
@@ -339,18 +401,18 @@ final class Plugin<O>({
   final List<String>? events,
 
   /// `defaults`: the default options, which the registry merges into
-  /// `defaults.plugins.<id>`. A built-in plugin gives a typed scope, and
-  /// another plugin a `Map<String, Object?>`.
-  final Object? defaults,
+  /// `defaults.plugins.<id>`: a typed scope of a built-in plugin, or the
+  /// [PluginOptions] of an add-on.
+  final PluginDefaults? defaults,
 
   /// `defaultRoutes`: a route of the defaults for each option key, for
   /// example `{'color': 'color'}` (`defaults.route`).
   final Map<String, String>? defaultRoutes,
 
-  /// `descriptors`: the `_scriptable` and `_indexable` rules of the options.
-  /// A built-in plugin gives a typed scope, and another plugin a
-  /// `Map<String, Object?>`.
-  final Object? descriptors,
+  /// `descriptors`: the `_scriptable` and `_indexable` rules of the options
+  /// of a built-in plugin. The options of an add-on are [PluginOptions], with
+  /// no rules.
+  final DescriptorsScope? descriptors,
 
   /// `additionalOptionScopes`: more scopes of the options after
   /// `plugins.<id>` (U `core.config.js:267-278`).
@@ -368,148 +430,164 @@ final class Plugin<O>({
 
   /// `install` (U `core.plugins.js:38`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? install,
+  var void Function(C chart, PluginHookArgs args, O options)? install,
 
   /// `start` (U `core.plugins.js:118`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? start,
+  var void Function(C chart, PluginHookArgs args, O options)? start,
 
   /// `stop` (U `core.plugins.js:117`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? stop,
+  var void Function(C chart, PluginHookArgs args, O options)? stop,
 
   /// `beforeInit` (U `core.controller.js:238`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? beforeInit,
+  var void Function(C chart, PluginHookArgs args, O options)? beforeInit,
 
   /// `afterInit` (U `core.controller.js:249`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? afterInit,
+  var void Function(C chart, PluginHookArgs args, O options)? afterInit,
 
   /// `beforeUpdate` (U `core.controller.js:490`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<UpdateHookArgs, O>? beforeUpdate,
+  var bool Function(C chart, UpdateHookArgs args, O options)? beforeUpdate,
 
   /// `afterUpdate` (U `core.controller.js:524`).
   /// It cannot cancel.
-  var PluginHookFunction<UpdateHookArgs, O>? afterUpdate,
+  var void Function(C chart, UpdateHookArgs args, O options)? afterUpdate,
 
   /// `beforeElementsUpdate` (U `core.controller.js:497`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? beforeElementsUpdate,
+  var void Function(C chart, PluginHookArgs args, O options)?
+  beforeElementsUpdate,
 
   /// `reset` (U `core.controller.js:472`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? reset,
+  var void Function(C chart, PluginHookArgs args, O options)? reset,
 
   /// `beforeDatasetsUpdate` (U `core.controller.js:649`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<UpdateHookArgs, O>? beforeDatasetsUpdate,
+  var bool Function(C chart, UpdateHookArgs args, O options)?
+  beforeDatasetsUpdate,
 
   /// `afterDatasetsUpdate` (U `core.controller.js:661`).
   /// It cannot cancel.
-  var PluginHookFunction<UpdateHookArgs, O>? afterDatasetsUpdate,
+  var void Function(C chart, UpdateHookArgs args, O options)?
+  afterDatasetsUpdate,
 
   /// `beforeDatasetUpdate` (U `core.controller.js:673`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<DatasetUpdateHookArgs, O>? beforeDatasetUpdate,
+  var bool Function(C chart, DatasetUpdateHookArgs args, O options)?
+  beforeDatasetUpdate,
 
   /// `afterDatasetUpdate` (U `core.controller.js:680`).
   /// It cannot cancel.
-  var PluginHookFunction<DatasetUpdateHookArgs, O>? afterDatasetUpdate,
+  var void Function(C chart, DatasetUpdateHookArgs args, O options)?
+  afterDatasetUpdate,
 
   /// `beforeLayout` (U `core.controller.js:612`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<PluginHookArgs, O>? beforeLayout,
+  var bool Function(C chart, PluginHookArgs args, O options)? beforeLayout,
 
   /// `beforeDataLimits` (U `core.scale.js:541`).
   /// It cannot cancel.
-  var PluginHookFunction<ScriptableScaleContext, O>? beforeDataLimits,
+  var void Function(C chart, ScriptableScaleContext args, O options)?
+  beforeDataLimits,
 
   /// `afterDataLimits` (U `core.scale.js:545`).
   /// It cannot cancel.
-  var PluginHookFunction<ScriptableScaleContext, O>? afterDataLimits,
+  var void Function(C chart, ScriptableScaleContext args, O options)?
+  afterDataLimits,
 
   /// `beforeBuildTicks` (U `core.scale.js:550`).
   /// It cannot cancel.
-  var PluginHookFunction<ScriptableScaleContext, O>? beforeBuildTicks,
+  var void Function(C chart, ScriptableScaleContext args, O options)?
+  beforeBuildTicks,
 
   /// `afterBuildTicks` (U `core.scale.js:559`).
   /// It cannot cancel.
-  var PluginHookFunction<ScriptableScaleContext, O>? afterBuildTicks,
+  var void Function(C chart, ScriptableScaleContext args, O options)?
+  afterBuildTicks,
 
   /// `afterLayout` (U `core.controller.js:640`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? afterLayout,
+  var void Function(C chart, PluginHookArgs args, O options)? afterLayout,
 
   /// `beforeRender` (U `core.controller.js:684`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<PluginHookArgs, O>? beforeRender,
+  var bool Function(C chart, PluginHookArgs args, O options)? beforeRender,
 
   /// `afterRender` (U `core.controller.js:37`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? afterRender,
+  var void Function(C chart, PluginHookArgs args, O options)? afterRender,
 
   /// `beforeDraw` (U `core.controller.js:712`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<PluginHookArgs, O>? beforeDraw,
+  var bool Function(C chart, PluginHookArgs args, O options)? beforeDraw,
 
   /// `afterDraw` (U `core.controller.js:731`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? afterDraw,
+  var void Function(C chart, PluginHookArgs args, O options)? afterDraw,
 
   /// `beforeDatasetsDraw` (U `core.controller.js:766`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<PluginHookArgs, O>? beforeDatasetsDraw,
+  var bool Function(C chart, PluginHookArgs args, O options)?
+  beforeDatasetsDraw,
 
   /// `afterDatasetsDraw` (U `core.controller.js:775`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? afterDatasetsDraw,
+  var void Function(C chart, PluginHookArgs args, O options)? afterDatasetsDraw,
 
   /// `beforeDatasetDraw` (U `core.controller.js:793`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<DatasetDrawHookArgs, O>? beforeDatasetDraw,
+  var bool Function(C chart, DatasetDrawHookArgs args, O options)?
+  beforeDatasetDraw,
 
   /// `afterDatasetDraw` (U `core.controller.js:808`).
   /// It cannot cancel.
-  var PluginHookFunction<DatasetDrawHookArgs, O>? afterDatasetDraw,
+  var void Function(C chart, DatasetDrawHookArgs args, O options)?
+  afterDatasetDraw,
 
   /// `beforeEvent` (U `core.controller.js:1172`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<EventHookArgs, O>? beforeEvent,
+  var bool Function(C chart, EventHookArgs args, O options)? beforeEvent,
 
   /// `afterEvent` (U `core.controller.js:1179`).
   /// It cannot cancel.
-  var PluginHookFunction<EventHookArgs, O>? afterEvent,
+  var void Function(C chart, EventHookArgs args, O options)? afterEvent,
 
   /// `resize` (U `core.controller.js:292`).
   /// It cannot cancel.
-  var PluginHookFunction<ResizeHookArgs, O>? resize,
+  var void Function(C chart, ResizeHookArgs args, O options)? resize,
 
   /// `beforeDestroy` (U `core.controller.js:938`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? beforeDestroy,
+  var void Function(C chart, PluginHookArgs args, O options)? beforeDestroy,
 
   /// `afterDestroy` (U `core.controller.js:954`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? afterDestroy,
+  var void Function(C chart, PluginHookArgs args, O options)? afterDestroy,
 
   /// `uninstall` (U `core.plugins.js:50`).
   /// It cannot cancel.
-  var PluginHookFunction<PluginHookArgs, O>? uninstall,
+  var void Function(C chart, PluginHookArgs args, O options)? uninstall,
 
   /// `beforeTooltipDraw` (U `plugin.tooltip.js:1254`).
   /// Cancelable: `false` cancels the step.
-  var CancelableHookFunction<TooltipDrawHookArgs, O>? beforeTooltipDraw,
+  var bool Function(C chart, TooltipDrawHookArgs args, O options)?
+  beforeTooltipDraw,
 
   /// `afterTooltipDraw` (U `plugin.tooltip.js:1260`).
   /// It cannot cancel.
-  var PluginHookFunction<TooltipDrawHookArgs, O>? afterTooltipDraw,
+  var void Function(C chart, TooltipDrawHookArgs args, O options)?
+  afterTooltipDraw,
 }) {
   /// A plugin with the given id, options and hooks.
   this {
     assert(
-      options != null || <ContextResolver>[] is List<O>,
+      options != null ||
+          defaults is PluginOptions<Object?> ||
+          <ContextResolver>[] is List<O>,
       'Plugin<$O> $id: give options, a function that makes a $O.',
     );
   }
@@ -745,22 +823,25 @@ final class Plugin<O>({
     return make == null ? view as O : make(view as ContextResolver);
   }
 
+  /// Calls the hook [function] that cannot cancel. The chart is a [C]: the
+  /// one checked cast of the chart.
   bool _call<A extends Object>(
-    PluginHookFunction<A, O>? function,
+    void Function(C chart, A args, O options)? function,
     types.Chart chart,
     A args,
     Object view,
   ) {
-    function?.call(chart, args, _optionsOf(view));
+    function?.call(chart as C, args, _optionsOf(view));
     return true;
   }
 
+  /// Calls the cancelable hook [function].
   bool _cancel<A extends Object>(
-    CancelableHookFunction<A, O>? function,
+    bool Function(C chart, A args, O options)? function,
     types.Chart chart,
     A args,
     Object view,
-  ) => function == null || function(chart, args, _optionsOf(view));
+  ) => function == null || function(chart as C, args, _optionsOf(view));
 
   @override
   String toString() => 'Plugin($id)';

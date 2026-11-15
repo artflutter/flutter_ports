@@ -180,7 +180,7 @@ void main() {
       final data = <num?>[4, 5, 6];
       parent.show(data: data);
       await tester.pump();
-      expect(modes, [undefined, undefined]);
+      expect(modes, [null, null]);
       expect(_chart(tester), same(chart));
       final dataset =
           ((chart.data as JsObjectFace)['datasets']! as List).first!

@@ -214,7 +214,7 @@ Widget _box(Widget child, {double width = 400, double height = 300}) =>
 Widget _view(
   ChartConfig config, {
   bool dataOnly = true,
-  String? updateMode = 'none',
+  UpdateMode? updateMode = UpdateMode.none,
   ChartThemeData? theme,
 }) => _box(
   ChartView(
@@ -582,8 +582,9 @@ void main() {
 
     testWidgets('a raw config', (tester) async {
       final spy = _spyOnChart();
-      Widget view(int step) =>
-          _box(ChartView.raw(config: _rawBars(step), updateMode: 'none'));
+      Widget view(int step) => _box(
+        ChartView.raw(config: _rawBars(step), updateMode: UpdateMode.none),
+      );
       await _warm(tester, view);
       spy.clear();
       await tester.pumpWidget(view(2));
@@ -602,7 +603,7 @@ void main() {
       await _warm(tester, (step) => _view(_bars(step, labels)));
       spy.clear();
       await tester.pumpWidget(
-        _box(ChartView.raw(config: _rawBars(0), updateMode: 'none')),
+        _box(ChartView.raw(config: _rawBars(0), updateMode: UpdateMode.none)),
       );
       expect(spy.layouts, 1);
       spy.clear();
@@ -836,7 +837,7 @@ void main() {
       for (var step = 2; step < 4; step++) {
         spy.clear();
         await tester.pumpWidget(view(step));
-        expect(spy.modes, [undefined], reason: 'step $step');
+        expect(spy.modes, [null], reason: 'step $step');
         expect(spy.layouts, 1, reason: 'step $step');
       }
     });
@@ -863,7 +864,7 @@ void main() {
         await _warm(tester, view);
         spy.clear();
         await tester.pumpWidget(view(2));
-        expect(spy.modes, [undefined]);
+        expect(spy.modes, [null]);
         final point =
             _chart(tester).getDatasetMeta(0).data[0]
                 as types.ElementPropertyRead;
@@ -883,7 +884,8 @@ void main() {
     testWidgets('a mode other than none', (tester) async {
       final spy = _spyOnChart();
       final labels = _newLabels();
-      Widget view(int step) => _view(_bars(step, labels), updateMode: 'resize');
+      Widget view(int step) =>
+          _view(_bars(step, labels), updateMode: UpdateMode.resize);
       await _warm(tester, view);
       spy.clear();
       await tester.pumpWidget(view(2));
@@ -980,7 +982,7 @@ void main() {
       expect(spy.layouts, 0);
       spy.clear();
       await tester.pumpWidget(view(3, reduced: true));
-      expect(spy.modes, [undefined]);
+      expect(spy.modes, [null]);
       expect(spy.layouts, 1);
       spy.clear();
       await tester.pumpWidget(view(4, reduced: true));
@@ -995,7 +997,7 @@ void main() {
         Widget view(int step, double width) => _box(
           ChartView(
             config: _bars(step, labels),
-            updateMode: 'none',
+            updateMode: UpdateMode.none,
             dataOnlyUpdates: dataOnly,
           ),
           width: width,
@@ -1153,7 +1155,7 @@ void main() {
               _box(
                 ChartView(
                   config: at(step, title),
-                  updateMode: 'none',
+                  updateMode: UpdateMode.none,
                   dataOnlyUpdates: dataOnly,
                 ),
                 width: width,
@@ -1781,7 +1783,7 @@ void main() {
         Widget view(int step) => _box(
           ChartView(
             config: legendBars(step, labels, ChartPosition.top),
-            updateMode: 'none',
+            updateMode: UpdateMode.none,
             dataOnlyUpdates: dataOnly,
             focusNode: node,
           ),
@@ -1914,7 +1916,7 @@ void main() {
           if (!armed) return;
           armed = false;
           nested++;
-          chart.update('none');
+          chart.update(UpdateMode.none);
         }
 
         Widget view(int step) => _view(

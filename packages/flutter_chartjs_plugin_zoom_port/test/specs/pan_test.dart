@@ -5,12 +5,13 @@ library;
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show
-        GestureEvent,
         Mode,
         ModifierKey,
+        PanOptions,
+        ScaleLimit,
+        ScaleLimits,
         ZoomChart,
-        ZoomChartContext,
-        ZoomStartContext;
+        ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show CanvasEventTarget;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -40,9 +41,9 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
-              },
+              'zoom': const ZoomPluginOptions(
+                pan: PanOptions(enabled: true, mode: Mode.x),
+              ),
             },
             'scales': <String, Object?>{
               'x': <String, Object?>{'min': 1, 'max': 2},
@@ -69,12 +70,10 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'limits': <String, Object?>{
-                  'x': <String, Object?>{'max': 4},
-                },
-                'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
-              },
+              'zoom': const ZoomPluginOptions(
+                limits: {'x': ScaleLimits(max: ScaleLimit(4))},
+                pan: PanOptions(enabled: true, mode: Mode.x),
+              ),
             },
             'scales': <String, Object?>{
               'x': <String, Object?>{'min': 1, 'max': 3},
@@ -101,9 +100,9 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'pan': <String, Object?>{'enabled': true, 'mode': Mode.y},
-              },
+              'zoom': const ZoomPluginOptions(
+                pan: PanOptions(enabled: true, mode: Mode.y),
+              ),
             },
             'scales': <String, Object?>{
               'y': <String, Object?>{'type': 'linear', 'min': 2, 'max': 2},
@@ -126,12 +125,15 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
-                'limits': <String, Object?>{
-                  'x': <String, Object?>{'min': 'original', 'max': 'original'},
+              'zoom': const ZoomPluginOptions(
+                pan: PanOptions(enabled: true, mode: Mode.x),
+                limits: {
+                  'x': ScaleLimits(
+                    min: ScaleLimit.original,
+                    max: ScaleLimit.original,
+                  ),
                 },
-              },
+              ),
             },
             'scales': <String, Object?>{
               'x': <String, Object?>{'min': 1, 'max': 2},
@@ -154,12 +156,15 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'pan': <String, Object?>{'enabled': true, 'mode': Mode.x},
-                'limits': <String, Object?>{
-                  'x': <String, Object?>{'min': 'original', 'max': 'original'},
+              'zoom': const ZoomPluginOptions(
+                pan: PanOptions(enabled: true, mode: Mode.x),
+                limits: {
+                  'x': ScaleLimits(
+                    min: ScaleLimit.original,
+                    max: ScaleLimit.original,
+                  ),
                 },
-              },
+              ),
             },
             'scales': <String, Object?>{
               'x': <String, Object?>{
@@ -188,16 +193,16 @@ void main() {
             'data': data,
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'pan': <String, Object?>{
-                    'enabled': true,
-                    'mode': Mode.xy,
-                    'onPanStart': (ZoomStartContext<GestureEvent> context) {
+                'zoom': ZoomPluginOptions(
+                  pan: PanOptions(
+                    enabled: true,
+                    mode: Mode.xy,
+                    onPanStart: (context) {
                       startSpy.call(context);
                       return true;
                     },
-                  },
-                },
+                  ),
+                ),
               },
             },
           });
@@ -224,14 +229,14 @@ void main() {
             'data': data,
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'pan': <String, Object?>{
-                    'enabled': true,
-                    'mode': Mode.xy,
-                    'onPanStart': (ZoomStartContext<GestureEvent> _) => false,
-                    'onPanRejected': rejectSpy.call,
-                  },
-                },
+                'zoom': ZoomPluginOptions(
+                  pan: PanOptions(
+                    enabled: true,
+                    mode: Mode.xy,
+                    onPanStart: (_) => false,
+                    onPanRejected: rejectSpy.call,
+                  ),
+                ),
               },
             },
           });
@@ -260,14 +265,14 @@ void main() {
               'data': data,
               'options': <String, Object?>{
                 'plugins': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'pan': <String, Object?>{
-                      'enabled': true,
-                      'mode': Mode.xy,
-                      'modifierKey': ModifierKey.ctrl,
-                      'onPanRejected': rejectSpy.call,
-                    },
-                  },
+                  'zoom': ZoomPluginOptions(
+                    pan: PanOptions(
+                      enabled: true,
+                      mode: Mode.xy,
+                      modifierKey: ModifierKey.ctrl,
+                      onPanRejected: rejectSpy.call,
+                    ),
+                  ),
                 },
               },
             });
@@ -304,9 +309,9 @@ void main() {
             'data': data,
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'pan': <String, Object?>{'enabled': true, 'mode': Mode.xy},
-                },
+                'zoom': const ZoomPluginOptions(
+                  pan: PanOptions(enabled: true, mode: Mode.xy),
+                ),
               },
             },
           });
@@ -330,16 +335,16 @@ void main() {
             'data': data,
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'pan': <String, Object?>{
-                    'enabled': true,
-                    'mode': Mode.xy,
-                    'onPanComplete': (ZoomChartContext ctx) {
+                'zoom': ZoomPluginOptions(
+                  pan: PanOptions(
+                    enabled: true,
+                    mode: Mode.xy,
+                    onPanComplete: (ctx) {
                       expect(ctx.chart.scales['x']!.min, isNot(toBe(1)));
                       done();
                     },
-                  },
-                },
+                  ),
+                ),
               },
             },
           });
@@ -356,13 +361,13 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'pan': <String, Object?>{
-                  'enabled': true,
-                  'mode': Mode.xy,
-                  'onPanComplete': completeSpy.call,
-                },
-              },
+              'zoom': ZoomPluginOptions(
+                pan: PanOptions(
+                  enabled: true,
+                  mode: Mode.xy,
+                  onPanComplete: completeSpy.call,
+                ),
+              ),
             },
           },
         });
@@ -401,13 +406,13 @@ void main() {
           'data': data,
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'pan': <String, Object?>{
-                  'enabled': true,
-                  'mode': Mode.xy,
-                  'onPanComplete': completeSpy.call,
-                },
-              },
+              'zoom': ZoomPluginOptions(
+                pan: PanOptions(
+                  enabled: true,
+                  mode: Mode.xy,
+                  onPanComplete: completeSpy.call,
+                ),
+              ),
             },
           },
         });

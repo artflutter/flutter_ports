@@ -45,6 +45,7 @@ import 'package:flutter_chartjs_port/src/types/chart_meta.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
@@ -243,14 +244,17 @@ String _argText(Object? value, Observations o) {
 List<(String, Object?)> _argEntries(PluginHook<Object> hook, Object args) {
   final before = hook.cancelable;
   return switch (args) {
-    UpdateHookArgs(:final mode) => [
-      ('mode', mode),
+    // A mode of Dart `null` with no function is the `undefined` of upstream
+    // (Chart.js ADR 0148).
+    UpdateHookArgs(:final mode, :final modeOf) => [
+      // The function of the function form prints as `<fn>`, as upstream.
+      ('mode', mode ?? modeOf ?? undefined),
       if (before) ('cancelable', true),
     ],
     DatasetUpdateHookArgs(:final meta, :final index, :final mode) => [
       ('meta', meta),
       ('index', index),
-      ('mode', mode),
+      ('mode', mode ?? undefined),
       ('cancelable', before),
     ],
     DatasetDrawHookArgs(:final meta, :final index) => [
@@ -345,7 +349,7 @@ Plugin<Object?> _spy(
 /// The config of a `test` chart with [datasets] on two `testlinear` scales.
 AnyObject _testConfig(
   List<Object?> datasets, {
-  List<Object?>? plugins,
+  List<Plugin<Object?>>? plugins,
   AnyObject? options,
 }) {
   return <String, Object?>{
@@ -600,11 +604,11 @@ void main() {
       );
       charts.add(chart);
       log.clear();
-      chart.update('none');
+      chart.update(UpdateMode.none);
       o.observe('none', log.join(' '));
       log.clear();
-      chart.update(
-        (Object? ctx) => jsGet(ctx, 'datasetIndex') == 0 ? 'resize' : 'active',
+      chart.updateDatasets(
+        (i) => i == 0 ? UpdateMode.resize : UpdateMode.active,
       );
       o.observe(
         'function',
@@ -667,10 +671,7 @@ void main() {
       // `afterRender`, which no built-in plugin has.
       o.observe(
         'notify',
-        chart.notifyPlugins(
-          PluginHook.beforeUpdate,
-          UpdateHookArgs(mode: undefined),
-        ),
+        chart.notifyPlugins(PluginHook.beforeUpdate, UpdateHookArgs()),
       );
       final falseLog = <String>[];
       final falsy = Chart(
@@ -690,10 +691,7 @@ void main() {
       o
         ..observe(
           'notify false cancelable',
-          falsy.notifyPlugins(
-            PluginHook.beforeUpdate,
-            UpdateHookArgs(mode: undefined),
-          ),
+          falsy.notifyPlugins(PluginHook.beforeUpdate, UpdateHookArgs()),
         )
         ..observe(
           'notify false',
@@ -710,10 +708,7 @@ void main() {
       o
         ..observe(
           'failed notify',
-          failed.notifyPlugins(
-                PluginHook.beforeUpdate,
-                UpdateHookArgs(mode: undefined),
-              ) ??
+          failed.notifyPlugins(PluginHook.beforeUpdate, UpdateHookArgs()) ??
               'undefined',
         )
         ..observe(

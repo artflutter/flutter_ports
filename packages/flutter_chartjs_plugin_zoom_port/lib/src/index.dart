@@ -6,21 +6,22 @@
 /// `declare module 'chart.js'` (index.ts:9-35) adds three things to the
 /// types of Chart.js:
 ///
-/// - `PluginOptionsByType.zoom` (:10-12) has no Dart form yet: the host has
-///   no typed options slot for a plugin of another package. An app gives the
-///   options in the raw config, or in `ChartConfig.extra` as
-///   `{'plugins': {'zoom': {...}}}`.
-/// - `UpdateModeEnum.zoom` (:15-17): the update mode is the String `'zoom'`
-///   (`chart.update('zoom')`), which the host takes as any other mode.
+/// - `PluginOptionsByType.zoom` (:10-12): the options are a
+///   `ZoomPluginOptions`, a `PluginOptions` of the host (Chart.js ADR
+///   0148). A typed config gives them in `ChartConfig.pluginOptions`, and a
+///   raw config holds the object in `options.plugins.zoom`.
+/// - `UpdateModeEnum.zoom` (:15-17): the constant [core.zoomUpdateMode], an
+///   `UpdateMode` of the host (`chart.update(zoomUpdateMode)`).
 /// - The methods of `interface Chart` (:19-34): the extension [ZoomChart].
 library;
 
 import 'package:flutter_chartjs_plugin_zoom_port/src/core.dart' as core;
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart, Scale;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show Chart, Scale, UpdateMode;
 
 export 'package:flutter_chartjs_plugin_zoom_port/src/core.dart'
-    show pan, resetZoom, zoom, zoomRect, zoomScale;
+    show pan, resetZoom, zoom, zoomRect, zoomScale, zoomUpdateMode;
 export 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart'
     show zoomPlugin;
 
@@ -36,7 +37,7 @@ export 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart'
 extension ZoomChart on Chart {
   /// index.ts:24 `pan(pan, scales, mode)`: pans the [scales] of the chart
   /// (each scale for `null`) by [pan] pixels. See [core.pan].
-  void pan(PanAmount pan, [List<Scale>? scales, String? mode]) {
+  void pan(PanAmount pan, [List<Scale>? scales, UpdateMode? mode]) {
     if (mode == null) {
       core.pan(this, pan, scales);
     } else {
@@ -46,7 +47,7 @@ extension ZoomChart on Chart {
 
   /// index.ts:25 `zoom(zoom, mode)`: zooms the enabled scales of the chart
   /// by [zoom]. See [core.zoom].
-  void zoom(ZoomAmount zoom, [String? mode]) {
+  void zoom(ZoomAmount zoom, [UpdateMode? mode]) {
     if (mode == null) {
       core.zoom(this, zoom);
     } else {
@@ -56,7 +57,7 @@ extension ZoomChart on Chart {
 
   /// index.ts:26 `zoomRect(p0, p1, mode)`: zooms the scales of the chart to
   /// the rectangle of the pixels [p0] and [p1]. See [core.zoomRect].
-  void zoomRect(Point p0, Point p1, [String? mode]) {
+  void zoomRect(Point p0, Point p1, [UpdateMode? mode]) {
     if (mode == null) {
       core.zoomRect(this, p0, p1);
     } else {
@@ -66,7 +67,7 @@ extension ZoomChart on Chart {
 
   /// index.ts:27 `zoomScale(id, range, mode)`: zooms the scale [id] of the
   /// chart to [range]. See [core.zoomScale].
-  void zoomScale(String id, ScaleRange range, [String? mode]) {
+  void zoomScale(String id, ScaleRange range, [UpdateMode? mode]) {
     if (mode == null) {
       core.zoomScale(this, id, range);
     } else {
@@ -76,7 +77,7 @@ extension ZoomChart on Chart {
 
   /// index.ts:28 `resetZoom(mode)`: puts back the original range of each
   /// scale of the chart. See [core.resetZoom].
-  void resetZoom([String? mode]) {
+  void resetZoom([UpdateMode? mode]) {
     if (mode == null) {
       core.resetZoom(this);
     } else {

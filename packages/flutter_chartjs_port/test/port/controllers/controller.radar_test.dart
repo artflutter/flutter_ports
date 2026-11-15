@@ -325,7 +325,7 @@ void main() {
               labels: const ['a', 'b', 'c', 'd'],
               options: <String, Object?>{'animation': <String, Object?>{}},
             )
-            ..['plugins'] = <Object?>[
+            ..['plugins'] = <Plugin<Object?>>[
               Plugin<Object?>(
                 id: 'probeLayout',
                 beforeLayout: (chart, args, options) {

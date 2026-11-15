@@ -21,6 +21,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/plugin_defaults.dart';
 import 'registry_observe.dart';
 import 'registry_reference.dart' as frozen show registryReference;
 import 'registry_reference.dart' hide registryReference;
@@ -314,7 +315,10 @@ void main() {
     // The plugin of the class `RExt` is a native plugin (Chart.js ADR 0144)
     // with the same id and defaults.
     final rExtPlugin = o.label(
-      Plugin<Object?>(id: 'rext', defaults: <String, Object?>{'prop': true}),
+      Plugin<Object?>(
+        id: 'rext',
+        defaults: pluginDefaults(<String, Object?>{'prop': true}),
+      ),
       'RExt',
     );
     for (final (name, item, add, get, remove) in [

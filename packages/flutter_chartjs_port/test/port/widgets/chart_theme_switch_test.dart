@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show ChartConfigurationScope;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -26,6 +25,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
@@ -94,7 +94,7 @@ Map<String, Object?> _config({
   String type = 'bar',
   int datasets = 2,
   bool animated = false,
-  List<Object?>? plugins,
+  List<Plugin<Object?>>? plugins,
 }) => <String, Object?>{
   'type': type,
   'data': <String, Object?>{
@@ -129,7 +129,7 @@ Widget _box(Widget child) => Directionality(
 Widget _view(
   Map<String, Object?> config, {
   ChartThemeData? theme,
-  String? updateMode,
+  UpdateMode? updateMode,
   Key? key,
 }) => _box(
   ChartView.raw(config: config, theme: theme, updateMode: updateMode, key: key),
@@ -308,12 +308,12 @@ class const _Host({
 class _HostState() extends State<_Host> {
   late Map<String, Object?> config = widget.config;
   late ChartThemeData? theme = widget.theme;
-  String? updateMode;
+  UpdateMode? updateMode;
 
   void show(
     Map<String, Object?> nextConfig,
     ChartThemeData? nextTheme, {
-    String? mode,
+    UpdateMode? mode,
   }) => setState(() {
     config = nextConfig;
     theme = nextTheme;
@@ -337,7 +337,7 @@ void main() {
       expect(_formState(chart), _formCreated);
       _formEdits(chart, options);
       config[themeConfigKey] = compileThemeData(_themeB);
-      chart.update('theme');
+      chart.update(const UpdateMode('theme'));
       await tester.pump();
       expect(_formState(chart), _formEdited);
     });
@@ -355,7 +355,7 @@ void main() {
       config[themeConfigKey] = compileThemeData(_themeB);
       chart.options = _copy(config['options']);
       _restorePalette(chart, palette);
-      chart.update('theme');
+      chart.update(const UpdateMode('theme'));
       await tester.pump();
       expect(
         _formState(chart),
@@ -400,7 +400,7 @@ void main() {
       config[themeConfigKey] = compileThemeData(_themeB);
       chart.options = _copy(pristine);
       _restorePalette(chart, [<String, Object?>{}, <String, Object?>{}]);
-      chart.update('theme');
+      chart.update(const UpdateMode('theme'));
       await tester.pump();
       expect(
         _formState(chart),
@@ -553,9 +553,9 @@ void main() {
       final config = _config();
       await tester.pumpWidget(_view(config, theme: _themeA));
       final chart = _chart(tester);
-      expect(modes, [undefined]);
+      expect(modes, [null]);
       await tester.pumpWidget(_view(config));
-      expect(modes, [undefined, 'default']);
+      expect(modes, [null, 'default']);
       expect(chartThemeOf(chart.config), isNull);
       // The first color of BORDER_COLORS (plugin.colors.ts:14-22).
       expect(
@@ -615,7 +615,7 @@ void main() {
       final modes = _spyOnUpdates();
       final config = _config();
       await tester.pumpWidget(_view(config, theme: _themeA));
-      expect(modes, [undefined]);
+      expect(modes, [null]);
       // A new instance with equal tokens.
       final equal = ChartThemeData(
         color: _red,
@@ -626,12 +626,12 @@ void main() {
       expect(equal, _themeA);
       await tester.pumpWidget(_view(config, theme: equal));
       await tester.pump();
-      expect(modes, [undefined]);
+      expect(modes, [null]);
 
       // A new chart without a theme, then the empty theme.
       final other = _config();
       await tester.pumpWidget(_view(other, key: const ValueKey('none')));
-      expect(modes, [undefined, undefined]);
+      expect(modes, [null, null]);
       await tester.pumpWidget(
         _view(
           other,
@@ -640,7 +640,7 @@ void main() {
         ),
       );
       await tester.pump();
-      expect(modes, [undefined, undefined]);
+      expect(modes, [null, null]);
       expect(chartThemeOf(_chart(tester).config), isNull);
     });
 
@@ -769,7 +769,7 @@ void main() {
       await tester.pumpWidget(_Host(config: config, theme: _themeA));
       final host = tester.state<_HostState>(find.byType(_Host));
       final chart = _chart(tester);
-      expect(modes, [undefined]);
+      expect(modes, [null]);
       final next = <String, Object?>{
         ...config,
         'data': <String, Object?>{
@@ -781,15 +781,15 @@ void main() {
           ],
         },
       };
-      host.show(next, _themeB, mode: 'none');
+      host.show(next, _themeB, mode: UpdateMode.none);
       await tester.pump();
-      expect(modes, [undefined, 'theme']);
+      expect(modes, [null, 'theme']);
       expect(chart.data, same(next['data']));
       expect(_dataset(chart, 0)['borderColor'], ChartPaint.solid(_rgba(_blue)));
       // A config change alone takes updateMode.
-      host.show({...next}, _themeB, mode: 'none');
+      host.show({...next}, _themeB, mode: UpdateMode.none);
       await tester.pump();
-      expect(modes, [undefined, 'theme', 'none']);
+      expect(modes, [null, 'theme', 'none']);
     });
 
     testWidgets('the inherited theme: ChartTheme above, ChartView.theme '
@@ -905,7 +905,9 @@ void main() {
       expect(switcher.applied, const ChartThemeData());
     });
 
-    testWidgets("an update('themeFrame') ends in one frame", (tester) async {
+    testWidgets("an update(const UpdateMode('themeFrame')) ends in one frame", (
+      tester,
+    ) async {
       final config = _config(animated: true);
       (config['options']! as AnyObject)['animation'] = <String, Object?>{};
       config[themeConfigKey] = compileThemeData(_themeA);
@@ -916,7 +918,7 @@ void main() {
       // Steps 2 and 3 of the switch: the config had no user scales.
       config[themeConfigKey] = compileThemeData(_themeB);
       (config['options']! as AnyObject).remove('scales');
-      chart.update('themeFrame');
+      chart.update(const UpdateMode('themeFrame'));
       expect(animator.has(chart), isFalse);
       await tester.pump();
       expect(animator.running(chart), isFalse);
@@ -945,7 +947,7 @@ void main() {
         await tester.pumpWidget(build(null));
         await tester.pump();
         expect(animator.running(chart), isFalse);
-        expect(modes, [undefined, 'themeFrame', 'default']);
+        expect(modes, [null, 'themeFrame', 'default']);
       });
     });
   });

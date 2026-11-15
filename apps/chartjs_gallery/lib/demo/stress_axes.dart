@@ -18,7 +18,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, Plugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, ChartClip, CirclePointStyle;
 
@@ -152,7 +152,7 @@ Map<String, Object?> stressAxesConfig({
   required StressAxesScene scene,
   required bool autoSkip,
   Map<String, Object?> options = const {},
-  List<Object?> plugins = const [],
+  List<Plugin<Object?>> plugins = const [],
 }) => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
@@ -186,7 +186,7 @@ Map<String, Object?> stressAxesConfig({
       'y': <String, Object?>{'type': scene.y.name},
     },
   },
-  'plugins': <Object?>[...plugins],
+  'plugins': <Plugin<Object?>>[...plugins],
 };
 
 /// The tick count after the auto skip and the `labelRotation` of the x scale

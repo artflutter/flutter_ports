@@ -14,7 +14,7 @@ import 'package:flutter_test/flutter_test.dart';
 /// legend. The zoom plugin is not registered: each test sets the state
 /// options and adds the listeners itself, and removes them at its end (the
 /// document of the canvas outlives the chart).
-Chart _acquireChart(Map<String, Object?> zoomOptions) {
+Chart _acquireChart(ZoomPluginOptions options) {
   final chart = acquireChart(<String, Object?>{
     'type': 'scatter',
     'data': <String, Object?>{
@@ -37,7 +37,6 @@ Chart _acquireChart(Map<String, Object?> zoomOptions) {
       },
     },
   });
-  final options = ZoomPluginOptions(zoomOptions);
   getState(chart).options = options;
   addListeners(chart, options);
   addTearDown(() => removeListeners(chart));
@@ -69,7 +68,7 @@ void main() {
   testWidgets('computeDragRect clamps the drag to the enabled directions', (
     tester,
   ) async {
-    final chart = _acquireChart(<String, Object?>{});
+    final chart = _acquireChart(const ZoomPluginOptions());
     final area = chart.chartArea!;
     final left = area.left.ceilToDouble() + 10;
     final top = area.top.ceilToDouble() + 10;
@@ -105,12 +104,14 @@ void main() {
     tester,
   ) async {
     final calls = <ZoomChartContext>[];
-    final chart = _acquireChart(<String, Object?>{
-      'zoom': <String, Object?>{
-        'drag': <String, Object?>{'enabled': true},
-        'onZoomComplete': calls.add,
-      },
-    });
+    final chart = _acquireChart(
+      ZoomPluginOptions(
+        zoom: ZoomOptions(
+          drag: const DragOptions(enabled: true),
+          onZoomComplete: calls.add,
+        ),
+      ),
+    );
     final area = chart.chartArea!;
     final left = area.left.ceilToDouble() + 10;
     final top = area.top.ceilToDouble() + 10;
@@ -135,11 +136,11 @@ void main() {
   });
 
   testWidgets('Escape on the document cancels a drag', (tester) async {
-    final chart = _acquireChart(<String, Object?>{
-      'zoom': <String, Object?>{
-        'drag': <String, Object?>{'enabled': true},
-      },
-    });
+    final chart = _acquireChart(
+      const ZoomPluginOptions(
+        zoom: ZoomOptions(drag: DragOptions(enabled: true)),
+      ),
+    );
     final area = chart.chartArea!;
     final canvas = chart.canvas!;
     final document = canvas.ownerDocument;
@@ -167,15 +168,17 @@ void main() {
     tester,
   ) async {
     final rejected = <ZoomEventContext<NativeEvent>>[];
-    final chart = _acquireChart(<String, Object?>{
-      'zoom': <String, Object?>{
-        'drag': <String, Object?>{
-          'enabled': true,
-          'modifierKey': ModifierKey.shift,
-        },
-        'onZoomRejected': rejected.add,
-      },
-    });
+    final chart = _acquireChart(
+      ZoomPluginOptions(
+        zoom: ZoomOptions(
+          drag: const DragOptions(
+            enabled: true,
+            modifierKey: ModifierKey.shift,
+          ),
+          onZoomRejected: rejected.add,
+        ),
+      ),
+    );
     final area = chart.chartArea!;
     final event = _mouse(chart, 'mousedown', area.left + 10, area.top + 10);
     chart.canvas!.dispatchEvent(event);
@@ -192,11 +195,11 @@ void main() {
   testWidgets('a wheel notch up zooms in and cancels the event', (
     tester,
   ) async {
-    final chart = _acquireChart(<String, Object?>{
-      'zoom': <String, Object?>{
-        'wheel': <String, Object?>{'enabled': true},
-      },
-    });
+    final chart = _acquireChart(
+      const ZoomPluginOptions(
+        zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+      ),
+    );
     final area = chart.chartArea!;
     final rect = chart.canvas!.getBoundingClientRect();
     final x = area.left + area.width / 2;
@@ -223,12 +226,14 @@ void main() {
   testWidgets('removeListeners removes the listeners of addListeners', (
     tester,
   ) async {
-    final chart = _acquireChart(<String, Object?>{
-      'zoom': <String, Object?>{
-        'wheel': <String, Object?>{'enabled': true},
-        'drag': <String, Object?>{'enabled': true},
-      },
-    });
+    final chart = _acquireChart(
+      const ZoomPluginOptions(
+        zoom: ZoomOptions(
+          wheel: WheelOptions(enabled: true),
+          drag: DragOptions(enabled: true),
+        ),
+      ),
+    );
     final state = getState(chart);
     expect(state.handlers.keys, [
       HandlerName.wheel,

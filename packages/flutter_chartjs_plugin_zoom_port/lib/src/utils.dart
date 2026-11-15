@@ -12,67 +12,53 @@ import 'dart:async';
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        CartesianAxis,
-        Chart,
-        NativeEvent,
-        Scale,
-        ScaleAxis,
-        XAxis,
-        YAxis,
-        undefined;
-import 'package:flutter_chartjs_port/helpers.dart'
-    show isNullOrUndef, valueOrDefault;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsObjectKeys, jsTruthy;
+    show CartesianAxis, Chart, NativeEvent, Scale, ScaleAxis, XAxis, YAxis;
+import 'package:flutter_chartjs_port/js_semantics.dart' show jsObjectKeys;
 
-/// utils.ts:5 `eventKey(key)`: the flag ``event[`${key}Key`]`` of the
-/// modifier [key] of [event]: the field of the [ModifierKey].
-///
-/// Another value names no property of the event: its `undefined` is false.
-// DIVERGES(zoom): adapt-zoom-option-enums, the enum value.
-bool _eventKey(Object? key, NativeEvent event) =>
-    ModifierKey.of(key)?.pressedIn(event) ?? false;
+// utils.ts:5 `eventKey(key)`: the flag ``event[`${key}Key`]`` of a modifier
+// key is `ModifierKey.pressedIn`, the field of the enum value.
 
-/// utils.ts:7 `getModifierKey(opts)`: the `modifierKey` of the drag or pan
-/// options [opts] when they are enabled, else `undefined`.
-Object? getModifierKey(Object? opts) =>
-    !isNullOrUndef(opts) &&
-        jsTruthy(jsGet(opts, 'enabled')) &&
-        jsTruthy(jsGet(opts, 'modifierKey'))
-    ? jsGet(opts, 'modifierKey')
-    : undefined;
+/// utils.ts:7 `getModifierKey(opts)`: the `modifierKey` of the wheel, drag
+/// or pan options [opts] when they are enabled, else `undefined` (Dart
+/// `null`).
+ModifierKey? getModifierKey(ModifierKeyOptions? opts) =>
+    (opts?.enabled ?? false) ? opts!.modifierKey : null;
 
 /// utils.ts:9 `keyPressed(key, event)`: whether a modifier [key] is set and
 /// pressed in [event].
 ///
 /// Upstream gives `key && event[...]`, and each caller tests its truthiness.
-bool keyPressed(Object? key, NativeEvent event) =>
-    jsTruthy(key) && _eventKey(key, event);
+// DIVERGES(zoom): adapt-zoom-option-enums, the field of the enum value.
+bool keyPressed(ModifierKey? key, NativeEvent event) =>
+    key != null && key.pressedIn(event);
 
 /// utils.ts:11 `keyNotPressed(key, event)`: whether a modifier [key] is set
 /// and not pressed in [event].
 ///
 /// Upstream gives `key && !event[...]`, and each caller tests its
 /// truthiness.
-bool keyNotPressed(Object? key, NativeEvent event) =>
-    jsTruthy(key) && !_eventKey(key, event);
+bool keyNotPressed(ModifierKey? key, NativeEvent event) =>
+    key != null && !key.pressedIn(event);
 
 /// utils.ts:14 `directionEnabled(mode, dir, chart)`: whether the [Mode] or
 /// the `ModeFn` [mode] has the direction [dir] (`'x'` or `'y'`).
 ///
-/// `undefined` enables each direction. A [ModeFn] gets `{ chart }` and
-/// gives a [Mode] (Zoom ADR 0004). Another value of [mode] enables nothing.
+/// Null (the `undefined` of an option that is not set) enables each
+/// direction. A [ModeFn] gets `{ chart }` and gives a [Mode] (Zoom ADR
+/// 0004). Another value of [mode] enables nothing.
 // DIVERGES(zoom): adapt-zoom-option-enums, the fields of the mode.
 bool directionEnabled(Object? mode, String dir, Chart chart) {
-  if (identical(mode, undefined)) {
-    return true;
-  } else if (mode is ModeFn) {
-    // DIVERGES(zoom): adapt-native-callbacks, a direct call of the ModeFn.
-    return mode((chart: chart)).hasAxis(dir);
+  switch (mode) {
+    case null:
+      return true;
+    case final Mode mode:
+      return mode.hasAxis(dir);
+    case final ModeFn mode:
+      // DIVERGES(zoom): adapt-native-callbacks, a direct call of the ModeFn.
+      return mode((chart: chart)).hasAxis(dir);
   }
 
-  return Mode.of(mode)?.hasAxis(dir) ?? false;
+  return false;
 }
 
 /// utils.ts:58 `EnabledDirections`: the enabled state of the `x` and `y`
@@ -102,7 +88,11 @@ final class _Directions({required var bool x, required var bool y}) {
 // DIVERGES(zoom): adapt-zoom-option-enums, the fields of the mode.
 _Directions _directionsEnabled(Object? mode, Chart chart) {
   // DIVERGES(zoom): adapt-native-callbacks, a direct call of the ModeFn.
-  final value = mode is ModeFn ? mode((chart: chart)) : Mode.of(mode);
+  final value = switch (mode) {
+    final ModeFn mode => mode((chart: chart)),
+    final Mode mode => mode,
+    _ => null,
+  };
   if (value != null) {
     return _Directions(x: value.usesX, y: value.usesY);
   }
@@ -160,7 +150,7 @@ void _convertOverScaleMode(
   _Directions scaleEnabled,
   _Directions enabled,
 ) {
-  if (!jsTruthy(overScaleMode)) {
+  if (overScaleMode == null) {
     return;
   }
 
@@ -197,13 +187,16 @@ List<Scale> _getEnabledScales(Chart chart, _Directions enabled) {
 /// options.overScaleMode can be a function if user want zoom only one scale
 /// of many for example.
 ///
-/// [options] is the raw value of the zoom or the pan options.
-List<Scale> getEnabledScalesByPoint(Object? options, Point point, Chart chart) {
+/// [options] are the zoom or the pan options.
+List<Scale> getEnabledScalesByPoint(
+  ScaleModeOptions? options,
+  Point point,
+  Chart chart,
+) {
   // const { mode = 'xy', scaleMode, overScaleMode } = options || {}
-  final object = jsTruthy(options) ? options : emptyObject;
-  final mode = valueOrDefault<Object?>(jsGet(object, 'mode'), Mode.xy);
-  final scaleMode = jsGet(object, 'scaleMode');
-  final overScaleMode = jsGet(object, 'overScaleMode');
+  final mode = options?.mode ?? Mode.xy;
+  final scaleMode = options?.scaleMode;
+  final overScaleMode = options?.overScaleMode;
   final scale = getScaleUnderPoint(point, chart);
 
   final enabled = _directionsEnabled(mode, chart);

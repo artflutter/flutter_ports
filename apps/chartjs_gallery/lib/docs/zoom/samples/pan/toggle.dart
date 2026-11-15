@@ -5,7 +5,17 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ZoomChart;
+    show
+        Mode,
+        PanOptions,
+        PinchOptions,
+        ScaleLimit,
+        ScaleLimits,
+        WheelOptions,
+        ZoomChart,
+        ZoomOptions,
+        ZoomPluginOptions,
+        zoomUpdateMode;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, ChartPosition, JsObjectFace;
@@ -21,6 +31,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 /// - `Utils.randomColor(1)` of the grid border (`:32`) is the grey of the
 ///   Chart.js docs, and `'rgba( 0, 0, 0, 0.1)'` (`:33`) is
 ///   `Color.fromRGBO(0, 0, 0, 0.1)` (Chart.js ADR 0061).
+/// - The zoom options are one immutable `ZoomPluginOptions` (Chart.js ADR
+///   0148). The handler of `Toggle pan` (`:88-91`) reads them through the
+///   options of the chart and writes the merge with the new `pan.enabled`
+///   back before `chart.update()`.
+/// - `chart.resetZoom('zoom')` (`:96`) gives the update mode
+///   `zoomUpdateMode`.
 /// - The options get the docs defaults (`setZoomDocsDefaults`).
 ///
 /// The sample has no `console.log`: [log] gets no line.
@@ -49,17 +65,25 @@ ZoomDocsSample zoomPanToggleSample(ZoomDocsLog log) {
   // </block:scales>
 
   // <block:zoom:0>
-  final zoomOptions = <String, Object?>{
-    'limits': <String, Object?>{
-      'x': <String, Object?>{'min': -200.0, 'max': 200.0, 'minRange': 50.0},
-      'y': <String, Object?>{'min': -200.0, 'max': 200.0, 'minRange': 50.0},
+  const zoomOptions = ZoomPluginOptions(
+    limits: {
+      'x': ScaleLimits(
+        min: ScaleLimit(-200),
+        max: ScaleLimit(200),
+        minRange: 50,
+      ),
+      'y': ScaleLimits(
+        min: ScaleLimit(-200),
+        max: ScaleLimit(200),
+        minRange: 50,
+      ),
     },
-    'pan': <String, Object?>{'enabled': false, 'mode': Mode.xy},
-    'zoom': <String, Object?>{
-      'wheel': <String, Object?>{'enabled': false},
-      'pinch': <String, Object?>{'enabled': true},
-    },
-  };
+    pan: PanOptions(enabled: false, mode: Mode.xy),
+    zoom: ZoomOptions(
+      wheel: WheelOptions(enabled: false),
+      pinch: PinchOptions(enabled: true),
+    ),
+  );
   // </block:zoom>
 
   // <block:config:1>
@@ -78,15 +102,19 @@ ZoomDocsSample zoomPanToggleSample(ZoomDocsLog log) {
     (
       name: 'Toggle pan',
       handler: (chart) {
-        final pan = _panOptions(chart);
-        pan['enabled'] = pan['enabled'] != true;
+        final zoom = _zoomOptions(chart);
+        _plugins(chart)['zoom'] = zoom.merge(
+          ZoomPluginOptions(
+            pan: PanOptions(enabled: !(zoom.pan?.enabled ?? false)),
+          ),
+        );
         chart.update();
       },
-      isOn: (chart) => _panOptions(chart)['enabled'] == true,
+      isOn: (chart) => _zoomOptions(chart).pan?.enabled ?? false,
     ),
     (
       name: 'Reset zoom',
-      handler: (chart) => chart.resetZoom('zoom'),
+      handler: (chart) => chart.resetZoom(zoomUpdateMode),
       isOn: null,
     ),
   ];
@@ -94,12 +122,13 @@ ZoomDocsSample zoomPanToggleSample(ZoomDocsLog log) {
   return (actions: actions, config: config, output: null);
 }
 
-/// `chart.options.plugins.zoom.pan` (`:89`): the resolved options of the
-/// chart, read by name through their face. A write through it goes into
-/// the options of the user, as the `set` traps of the Proxies of upstream do
+/// `chart.options.plugins` (`:89`): the resolved options of the chart, read
+/// by name through their face. A write through it goes into the options of
+/// the user, as the `set` traps of the Proxies of upstream do
 /// (src/helpers/helpers.config.ts:189-193 and :101-106 of Chart.js v4.6.1).
-JsObjectFace _panOptions(Chart chart) {
-  final plugins = chart.options['plugins']! as JsObjectFace;
-  final zoom = plugins['zoom']! as JsObjectFace;
-  return zoom['pan']! as JsObjectFace;
-}
+JsObjectFace _plugins(Chart chart) => chart.options['plugins']! as JsObjectFace;
+
+/// `chart.options.plugins.zoom` (`:89`): the `ZoomPluginOptions` of the
+/// user, the first scope that has the key.
+ZoomPluginOptions _zoomOptions(Chart chart) =>
+    _plugins(chart)['zoom']! as ZoomPluginOptions;

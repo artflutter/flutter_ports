@@ -377,7 +377,7 @@ void main() {
     ) async {
       var updates = 0;
       final config = _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]);
-      config['plugins'] = <Object?>[
+      config['plugins'] = <Plugin<Object?>>[
         Plugin<Object?>(
           id: 'countUpdates',
           afterUpdate: (chart, args, options) {
@@ -490,7 +490,7 @@ void main() {
         <Object?>[1.0, 2.0, 3.0],
       );
       config['options'] = <String, Object?>{'animation': <String, Object?>{}};
-      config['plugins'] = <Object?>[
+      config['plugins'] = <Plugin<Object?>>[
         Plugin<Object?>(
           id: 'probeLayout',
           beforeLayout: (chart, args, options) {

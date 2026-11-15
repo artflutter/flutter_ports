@@ -284,7 +284,10 @@ class _Sample12State() extends State<Sample12> {
                   },
                   child: _history == null
                       ? const SizedBox.expand()
-                      : ChartView(config: _config(), updateMode: 'none'),
+                      : ChartView(
+                          config: _config(),
+                          updateMode: UpdateMode.none,
+                        ),
                 ),
               ),
             ),

@@ -214,7 +214,8 @@ final bool stressLine = _flag(
 /// The call of each frame in the modes `chart`, `axes` and `plugins`
 /// (Chart.js ADR 0021, section 8): `--dart-define=CALL=draw` (the default
 /// of the modes chart and axes) gives case (a), `chart.draw()`.
-/// `--dart-define=CALL=update` gives case (b), `chart.update('none')` after
+/// `--dart-define=CALL=update` gives case (b),
+/// `chart.update(UpdateMode.none)` after
 /// new positions in the data objects. `--dart-define=CALL=animate` gives
 /// the animation cost: a looping animation of the N points, which the
 /// animator ticks in each frame. `--dart-define=CALL=frame` is the call of

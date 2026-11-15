@@ -12,10 +12,12 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/plugin_defaults.dart';
 import 'registry_observe.dart';
 import 'registry_reference.dart' as frozen show registryReference;
 import 'registry_reference.dart' hide registryReference;
@@ -115,7 +117,7 @@ Plugin<Object?> _logPlugin(
 }) {
   final plugin = Plugin<Object?>(
     id: id,
-    defaults: defaults,
+    defaults: defaults == null ? null : pluginDefaults(defaults),
     additionalOptionScopes: scopes,
   );
   for (final hook in hooks) {
@@ -383,8 +385,10 @@ void main() {
   });
 
   test('the errors of the inline plugins', () {
-    // `number: ok` upstream: a number has no hook. A value that is not a
-    // Plugin stops a debug build (Chart.js ADR 0144).
+    // Upstream reads each item: `null` and `undefined` throw the TypeError
+    // of `plugin.id`, and a number has no hook. The inline plugins are a
+    // List of Plugin: a List of another type stops a debug build (Chart.js
+    // ADR 0148).
     final o = Observations();
     for (final (name, value) in <(String, List<Object?>)>[
       ('null', [null]),
@@ -398,13 +402,14 @@ void main() {
         error(() => service.notify(chart, PluginHook.beforeInit)),
       );
     }
-    expect(
-      o.text,
-      registryReference['plugins local errors']!.replaceFirst(
-        'number: ok',
-        'number: _AssertionError',
-      ),
-    );
+    expect(registryReference['plugins local errors'], '''
+null: TypeError
+undefined: TypeError
+number: ok''');
+    expect(o.text, '''
+null: _AssertionError
+undefined: _AssertionError
+number: _AssertionError''');
   });
 
   test('the descriptors of a notify before install', () {
@@ -488,7 +493,7 @@ null calls: 0''');
         service.notify(
           chart,
           PluginHook.beforeUpdate,
-          UpdateHookArgs(mode: 'resize'),
+          UpdateHookArgs(mode: UpdateMode.resize),
         ),
         isFalse,
       );
@@ -526,7 +531,7 @@ null calls: 0''');
       ];
       final chart = _Chart(<String, Object?>{'plugins': plugins});
       final service = PluginService()..notify(chart, PluginHook.beforeInit);
-      final args = UpdateHookArgs(mode: 'user');
+      final args = UpdateHookArgs(mode: const UpdateMode('user'));
       expect(service.notify(chart, PluginHook.afterUpdate, args), isTrue);
       expect(seen, [same(args), same(args)]);
     });

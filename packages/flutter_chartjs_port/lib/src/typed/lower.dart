@@ -72,6 +72,7 @@ import 'package:flutter_chartjs_port/src/typed/groups.dart'
 import 'package:flutter_chartjs_port/src/typed/props.dart' show byEntries;
 import 'package:flutter_chartjs_port/src/types/legend_callbacks.dart'
     show LegendEventHandler;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginOptions;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
@@ -292,6 +293,12 @@ final class ChartConfigLowering(
       plugins.tooltip = lowerTooltip(tooltip, this);
     }
     if (config.filler case final filler?) plugins.filler = lowerFiller(filler);
+    // The options objects of add-on plugins, each under its plugin id
+    // (Chart.js ADR 0148).
+    for (final options
+        in config.pluginOptions ?? const <PluginOptions<Object?>>[]) {
+      plugins.jsWrite(options.pluginId, options);
+    }
     final options = ChartOptionsScope();
     if (config.scales case final scales?) {
       final byId = ScaleOptionsByIdScope();

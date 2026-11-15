@@ -60,6 +60,7 @@ import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartConfig;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
@@ -251,13 +252,13 @@ class ChartView extends StatefulWidget {
   /// inside `chart.options.scales`.
   ///
   /// The key `$theme` belongs to the widget: in debug mode, a config with
-  /// it fails an assert. A `plugins` value is a List.
+  /// it fails an assert. A `plugins` value is a `List<Plugin<Object?>>`.
   final Map<String, Object?>? rawConfig;
 
   /// The mode of the `chart.update` call for a new [config] or
   /// [rawConfig]. Null is the default mode. When the same frame also
   /// switches the theme, the one update takes the mode of the theme switch.
-  final String? updateMode;
+  final UpdateMode? updateMode;
 
   /// Whether a new [config] that differs from the last one only in its
   /// dataset data Lists calls `chart.updateData()` in place of `chart.update`
@@ -355,7 +356,7 @@ class ChartView extends StatefulWidget {
       ..add(
         DiagnosticsProperty<ChartThemeData>('theme', theme, defaultValue: null),
       )
-      ..add(StringProperty('updateMode', updateMode, defaultValue: null))
+      ..add(StringProperty('updateMode', updateMode?.name, defaultValue: null))
       ..add(
         FlagProperty(
           'dataOnlyUpdates',
@@ -615,9 +616,12 @@ class _ChartViewState() extends State<ChartView> {
       '(Chart.js ADR 0147).',
     );
     assert(
-      config.pluginsCell?.raw == null || config.pluginsCell?.raw is List,
-      'The plugins of a ChartView config are a List of plugin Maps, not '
-      '${config.pluginsCell?.raw.runtimeType}.',
+      switch (config.pluginsCell?.raw) {
+        null || List<Plugin<Object?>>() || List(isEmpty: true) => true,
+        _ => false,
+      },
+      'The plugins of a ChartView config are a List<Plugin<Object?>> '
+      '(Chart.js ADR 0148), not ${config.pluginsCell?.raw.runtimeType}.',
     );
   }
 
@@ -664,8 +668,8 @@ class _ChartViewState() extends State<ChartView> {
   /// The `plugins` of the root Map for the app value [app]: a new List with
   /// the inline plugins of the app (a List, else none) and the inline plugin
   /// of the widget (Chart.js ADRs 0147 and 0051).
-  List<Object?> _rootPlugins(Object? app) => [
-    if (app is List) ...app,
+  List<Plugin<Object?>> _rootPlugins(Object? app) => [
+    if (app is List<Plugin<Object?>>) ...app,
     _viewPlugin,
   ];
 
@@ -801,10 +805,10 @@ class _ChartViewState() extends State<ChartView> {
   /// `updateData` always updates in the mode `'none'`: another mode, also the
   /// default mode of a null [mode], keeps its value in the hooks and in the
   /// context of a scriptable option.
-  bool _dataOnly(String? mode) {
+  bool _dataOnly(UpdateMode? mode) {
     final lowering = _lowering;
     return widget.dataOnlyUpdates &&
-        mode == 'none' &&
+        mode == UpdateMode.none &&
         lowering != null &&
         lowering.lastApplyDataOnly &&
         lowering.animationOff;

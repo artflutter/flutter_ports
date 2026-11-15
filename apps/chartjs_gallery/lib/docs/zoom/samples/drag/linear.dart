@@ -5,7 +5,14 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ModifierKey, ZoomChart;
+    show
+        DragOptions,
+        Mode,
+        ModifierKey,
+        PanOptions,
+        ZoomChart,
+        ZoomOptions,
+        ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show ChartPosition;
@@ -22,6 +29,10 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 /// - The colors of the drag rectangle (`:66-68`) are `Color` values
 ///   (Chart.js ADR 0061): `'rgb(54, 162, 235)'` is
 ///   `Color.fromRGBO(54, 162, 235, 1)`.
+/// - The zoom options are one immutable `ZoomPluginOptions` (Chart.js ADR
+///   0148). The handler that writes `zoomOptions.zoom.drag.enabled`
+///   (`:97-100`) makes the merge with the new value and writes it into the
+///   config (`setZoomSampleOptions`) before `chart.update()`.
 /// - The options get the docs defaults (`setZoomDocsDefaults`).
 ///
 /// The sample has no `console.log`: [log] gets no line.
@@ -35,27 +46,28 @@ ZoomDocsSample zoomDragLinearSample(ZoomDocsLog log) {
   // </block:scales>
 
   // <block:zoom:0>
-  // `zoomOptions.zoom.drag` is a local, so that the actions read and write
-  // it as the upstream handlers do.
-  final drag = <String, Object?>{
-    'enabled': true,
-    'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 1)),
-    'borderWidth': 1.0,
-    'backgroundColor': const ChartPaint.solid(
-      ui.Color.fromRGBO(54, 162, 235, 0.3),
+  // `zoomOptions` is a local, so that the actions read it and write a new
+  // object, as the upstream handlers write into it.
+  var zoomOptions = const ZoomPluginOptions(
+    pan: PanOptions(
+      enabled: true,
+      mode: Mode.xy,
+      modifierKey: ModifierKey.ctrl,
     ),
-  };
-  final zoomOptions = <String, Object?>{
-    'pan': <String, Object?>{
-      'enabled': true,
-      'mode': Mode.xy,
-      'modifierKey': ModifierKey.ctrl,
-    },
-    'zoom': <String, Object?>{'mode': Mode.xy, 'drag': drag},
-  };
+    zoom: ZoomOptions(
+      mode: Mode.xy,
+      drag: DragOptions(
+        enabled: true,
+        borderColor: ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 1)),
+        borderWidth: 1,
+        backgroundColor: ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 0.3)),
+      ),
+    ),
+  );
   // </block:zoom>
 
-  String zoomStatus() => drag['enabled'] == true ? 'enabled' : 'disabled';
+  bool dragEnabled() => zoomOptions.zoom?.drag?.enabled ?? false;
+  String zoomStatus() => dragEnabled() ? 'enabled' : 'disabled';
 
   // <block:config:1>
   final config = <String, Object?>{
@@ -80,10 +92,15 @@ ZoomDocsSample zoomDragLinearSample(ZoomDocsLog log) {
     (
       name: 'Toggle zoom',
       handler: (chart) {
-        drag['enabled'] = drag['enabled'] != true;
+        zoomOptions = zoomOptions.merge(
+          ZoomPluginOptions(
+            zoom: ZoomOptions(drag: DragOptions(enabled: !dragEnabled())),
+          ),
+        );
+        setZoomSampleOptions(config, zoomOptions);
         chart.update();
       },
-      isOn: (_) => drag['enabled'] == true,
+      isOn: (_) => dragEnabled(),
     ),
     (name: 'Reset zoom', handler: (chart) => chart.resetZoom(), isOn: null),
   ];

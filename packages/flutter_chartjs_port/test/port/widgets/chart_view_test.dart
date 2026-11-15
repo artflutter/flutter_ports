@@ -13,7 +13,6 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
 import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
@@ -21,6 +20,7 @@ import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -36,7 +36,7 @@ import 'package:flutter_test/flutter_test.dart';
 Map<String, Object?> _config({
   String type = 'bar',
   Map<String, Object?> options = const {},
-  List<Object?>? plugins,
+  List<Plugin<Object?>>? plugins,
   List<Object?>? data,
 }) => <String, Object?>{
   'type': type,
@@ -123,9 +123,9 @@ class const _Parent({required final Map<String, Object?> config})
 class _ParentState() extends State<_Parent> {
   late Map<String, Object?> config = widget.config;
   String label = '';
-  String? updateMode;
+  UpdateMode? updateMode;
 
-  void show(Map<String, Object?> next, {String? mode}) => setState(() {
+  void show(Map<String, Object?> next, {UpdateMode? mode}) => setState(() {
     config = next;
     updateMode = mode;
   });
@@ -502,7 +502,7 @@ void main() {
         'config', (tester) async {
       final widget = ChartView.raw(
         config: _config(),
-        updateMode: 'none',
+        updateMode: UpdateMode.none,
         onChartCreated: (chart) {},
       );
       expect(_properties(widget), [
@@ -540,7 +540,7 @@ void main() {
       tester,
     ) async {
       final phases = <SchedulerPhase>[];
-      final plugins = <Object?>[
+      final plugins = <Plugin<Object?>>[
         Plugin<Object?>(
           id: 'update',
           beforeUpdate: (chart, args, options) {
@@ -568,7 +568,9 @@ void main() {
       tester,
     ) async {
       final counts = <String, int>{};
-      final plugins = <Object?>[_counter('update', 'beforeUpdate', counts)];
+      final plugins = <Plugin<Object?>>[
+        _counter('update', 'beforeUpdate', counts),
+      ];
       await tester.pumpWidget(_Parent(config: _config(plugins: plugins)));
       final parent = tester.state<_ParentState>(find.byType(_Parent));
       final chart = _chart(tester)!;
@@ -716,11 +718,11 @@ void main() {
       );
       await tester.pumpWidget(_Parent(config: config));
       final parent = tester.state<_ParentState>(find.byType(_Parent))
-        ..show(Map.of(config), mode: 'none');
+        ..show(Map.of(config), mode: UpdateMode.none);
       await tester.pump();
       parent.show(Map.of(config));
       await tester.pump();
-      expect(modes, [undefined, 'none', undefined]);
+      expect(modes, [null, 'none', null]);
     });
 
     testWidgets('notifyArrayListeners after a push animates the insert', (

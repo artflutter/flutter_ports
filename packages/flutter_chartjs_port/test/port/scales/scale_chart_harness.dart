@@ -80,6 +80,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:flutter_chartjs_port/src/upstream.dart' show chartJsVersion;
 import 'package:flutter_test/flutter_test.dart';
@@ -778,16 +779,14 @@ Object? copyReference(
           nativeSegmentStyle(
             copyReference(segment, functions)! as Map<String, Object?>,
           ),
-        // The inline plugins of a config: a native Plugin for each plugin
-        // Map (Chart.js ADR 0144). `options.plugins` is a Map and stays.
-        final List<Object?> plugins when key == 'plugins' => <Object?>[
+        // The inline plugins of a config: a List of native plugins, one for
+        // each plugin Map (Chart.js ADRs 0144 and 0148). `options.plugins` is
+        // a Map and stays.
+        final List<Object?> plugins when key == 'plugins' => <Plugin<Object?>>[
           for (final item in plugins)
-            if (item is Map<String, Object?>)
-              nativePlugin(
-                copyReference(item, functions)! as Map<String, Object?>,
-              )
-            else
-              copyReference(item, functions),
+            nativePlugin(
+              copyReference(item, functions)! as Map<String, Object?>,
+            ),
         ],
         _ => copyReference(value, functions),
       },

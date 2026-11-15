@@ -27,7 +27,8 @@ import 'package:flutter_chartjs_port/src/typed/groups.dart'
 import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, XAxis, YAxis;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show Plugin, PluginOptions;
 import 'package:meta/meta.dart' show internal;
 
 /// The config of a chart: the chart type, the data and the options of a
@@ -167,6 +168,14 @@ final class const ChartConfig({
   /// The function of a pointer move on the chart: `options.onHover`.
   final ChartEventHandler? onHover,
 
+  /// The options of add-on plugins: each goes to
+  /// `options.plugins.<pluginId>` (Chart.js ADR 0148). A plugin and its
+  /// options come apart: a plugin that `Chart.register` adds for all charts
+  /// takes the options of each chart here.
+  ///
+  /// `==` compares the options one by one with `==`.
+  final List<PluginOptions<Object?>>? pluginOptions,
+
   /// The inline plugins of the chart: `plugins`, each a [Plugin] with an
   /// `id` and its hooks (`docs/developers/plugins.md`, Chart.js ADR 0144).
   /// The List goes to the chart by reference.
@@ -212,6 +221,7 @@ final class const ChartConfig({
     ChartElements? elements,
     ChartEventHandler? onClick,
     ChartEventHandler? onHover,
+    List<PluginOptions<Object?>>? pluginOptions,
     List<Plugin<Object?>>? plugins,
     Map<String, Object?>? extra,
   }) => ChartConfig(
@@ -236,6 +246,7 @@ final class const ChartConfig({
     elements: elements ?? this.elements,
     onClick: onClick ?? this.onClick,
     onHover: onHover ?? this.onHover,
+    pluginOptions: pluginOptions ?? this.pluginOptions,
     plugins: plugins ?? this.plugins,
     extra: extra ?? this.extra,
   );
@@ -270,6 +281,7 @@ final class const ChartConfig({
     ('elements', elements),
     ('onClick', byPresence(onClick)),
     ('onHover', byPresence(onHover)),
+    ('pluginOptions', byItems(pluginOptions)),
   ];
 
   /// The property of [plugins].

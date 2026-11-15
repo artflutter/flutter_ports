@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _n = 1000;
@@ -170,8 +171,8 @@ final class _Pair() {
   final oracle = _FreshContext();
 
   void update() {
-    fast.update('none');
-    reference.update('none');
+    fast.update(UpdateMode.none);
+    reference.update(UpdateMode.none);
     expect(_snapshot(fast), _snapshot(reference));
   }
 

@@ -90,7 +90,7 @@ class _Sample11State() extends State<Sample11> {
                 ),
                 Expanded(
                   child: ChartView(
-                    updateMode: 'none',
+                    updateMode: UpdateMode.none,
                     config: fills(
                       ChartConfig(
                         type: .line,

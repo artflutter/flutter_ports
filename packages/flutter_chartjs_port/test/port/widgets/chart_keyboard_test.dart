@@ -75,7 +75,7 @@ Map<String, Object?> _config(
   List<String>? log,
   Map<String, Object?> options = const {},
   Map<String, Object?> legend = const {},
-  List<Object?>? plugins,
+  List<Plugin<Object?>>? plugins,
 }) {
   void entry(String name, Object? e, Object? item) {
     log?.add(

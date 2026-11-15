@@ -122,7 +122,7 @@ class ChartTypePageState() extends State<ChartTypePage> {
     final options =
         (config['options'] ??= <String, Object?>{}) as Map<String, Object?>;
     options['onHover'] = (event, active, chart) => _readout.value++;
-    config['plugins'] = <Object?>[_mouseoutPlugin];
+    config['plugins'] = <Plugin<Object?>>[_mouseoutPlugin];
     return config;
   }
 

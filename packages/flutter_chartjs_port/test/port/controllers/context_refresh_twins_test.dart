@@ -313,7 +313,7 @@ List<Object?> _items(String type, int round, int length) => [
 Map<String, Object?> _config(
   String type, {
   required String id,
-  List<Object?> plugins = const [],
+  List<Plugin<Object?>> plugins = const [],
   Map<String, Object?> dataset = const {},
   Map<String, Object?> options = const {},
   List<String>? Function(Object?, double, int, Object?)? tickCallback,
@@ -492,16 +492,16 @@ List<String> _run(
 void _rounds(Chart chart, Map<String, Object?> cfg, String type) {
   for (var round = 1; round <= 3; round++) {
     _replaceData(cfg, type, round);
-    chart.update('none');
+    chart.update(UpdateMode.none);
   }
   _replaceData(cfg, type, 4, length: _length - 2);
-  chart.update('none');
+  chart.update(UpdateMode.none);
   _replaceData(cfg, type, 5, length: _length + 3);
   chart
-    ..update('none')
+    ..update(UpdateMode.none)
     ..update();
   _replaceData(cfg, type, 6);
-  chart.update('none');
+  chart.update(UpdateMode.none);
 }
 
 void _expectTwin(
@@ -594,7 +594,7 @@ void main() {
       final config = _config('scatter', id: 'scatter');
       final chart = _chart(config);
       final probes = _probes(chart);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       for (final probe in probes) {
         probe.contextReads = 0;
       }
@@ -616,9 +616,9 @@ void main() {
       final config = _config('scatter', id: 'scatter');
       final chart = _chart(config);
       final probes = _probes(chart);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       final meta = chart.getDatasetMeta(0);
-      meta.controller!.update('none');
+      meta.controller!.update(UpdateMode.none);
       for (var i = 0; i < _length; i++) {
         expect(probes[i].$context!.jsRead('mode'), 'none', reason: 'item $i');
       }
@@ -659,7 +659,7 @@ void main() {
         );
         chart = _chart(config);
         active = true;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         seen.add(_state(chart));
         return seen;
       }
@@ -710,13 +710,13 @@ void main() {
           armed = false;
           ran = true;
           final meta = chart.getDatasetMeta(0);
-          meta.controller!.update('none');
+          meta.controller!.update(UpdateMode.none);
           seen.add([
             for (final point in meta.data)
               (point as Element).$context?.jsRead('mode'),
           ]);
         };
-        chart.update('none');
+        chart.update(UpdateMode.none);
         return seen
           ..add(ran)
           ..add(_results(chart));
@@ -751,7 +751,7 @@ void main() {
         ready = true;
         for (var round = 1; round <= 3; round++) {
           _replaceData(config, 'scatter', round);
-          chart.update('none');
+          chart.update(UpdateMode.none);
         }
         return seen..add(_results(chart));
       }
@@ -785,7 +785,7 @@ void main() {
         (data['datasets']! as List<Object?>)[0] = observed;
         final chart = _chart(config);
         observed.onRead = () => count++;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         reads.add(count);
       }
       expect(reads[0], greaterThan(0));
@@ -802,9 +802,9 @@ void main() {
           final user = _UserPoint();
           points[at] = user;
           user.onUser = () => seen.add(_state(chart));
-          chart.update('none');
+          chart.update(UpdateMode.none);
           _replaceData(config, 'scatter', 1);
-          chart.update('none');
+          chart.update(UpdateMode.none);
           seen
             ..add('end ${_state(chart)}')
             ..add(_results(chart));
@@ -839,9 +839,9 @@ void main() {
             chart = _chart(config);
             (chart.getDatasetMeta(0).data[at] as PointElement).active = true;
             ready = true;
-            chart.update('none');
+            chart.update(UpdateMode.none);
             _replaceData(config, 'scatter', 1);
-            chart.update('none');
+            chart.update(UpdateMode.none);
             seen
               ..add('end ${_state(chart)}')
               ..add(_results(chart));
@@ -870,7 +870,7 @@ void main() {
         );
         items[8] = observed;
         dataset['data'] = items;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         var busy = false;
         observed.onRead = () {
           if (busy) return;
@@ -878,7 +878,7 @@ void main() {
           seen.add(_state(chart));
           busy = false;
         };
-        chart.update('none');
+        chart.update(UpdateMode.none);
         seen
           ..add('end ${_state(chart)}')
           ..add(_results(chart));
@@ -894,7 +894,7 @@ void main() {
     test('a partial loop keeps its writes: the visible range', () {
       void steps(Chart chart, Map<String, Object?> cfg, String type) {
         for (var round = 1; round <= 3; round++) {
-          chart.update('none');
+          chart.update(UpdateMode.none);
         }
       }
 
@@ -935,11 +935,11 @@ void main() {
           final chart = _chart(config);
           final user = _UserPoint();
           chart.getDatasetMeta(0).data[11] = user;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           user.onUser = () => seen.add(_state(chart));
           chart
-            ..update('none')
-            ..update('none');
+            ..update(UpdateMode.none)
+            ..update(UpdateMode.none);
           return seen
             ..add('end ${_state(chart)}')
             ..add(_results(chart));
@@ -955,7 +955,7 @@ void main() {
       final config = _config('scatter', id: 'reading-scatter');
       final chart = _chart(config);
       _ReadingScatter.reads = 0;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       // Each of the three passes refreshes each context, and the first resolve
       // of the loop reads the context of its item once more, as upstream.
       expect(_ReadingScatter.reads, _length * 3 + 1);
@@ -965,7 +965,7 @@ void main() {
       void steps(Chart chart, Map<String, Object?> cfg, String type) {
         for (final mode in ['default', 'resize', 'show', 'reset']) {
           _replaceData(cfg, type, mode.length);
-          chart.update(mode);
+          chart.update(UpdateMode(mode));
         }
       }
 
@@ -987,7 +987,7 @@ void main() {
       final config = _config('scatter', id: 'scatter');
       final chart = _chart(config);
       final probes = _probes(chart);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       final old = probes[7].$context;
       probes[7].$context = null;
       chart.getDatasetMeta(0).controller!.update_('none');
@@ -1003,11 +1003,11 @@ void main() {
       final config = _config('line', id: 'line');
       final chart = _chart(config);
       final probes = _probes(chart);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       for (final probe in probes) {
         probe.contextReads = 0;
       }
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(probes[6].contextReads, 1);
       expect(probes[6].$context!.jsRead('mode'), 'none');
     });
@@ -1016,7 +1016,7 @@ void main() {
       final config = _config('bubble', id: 'bubble');
       final chart = _chart(config);
       final probes = _probes(chart);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(probes[6].$context!.jsRead('mode'), 'default');
       expect(probes[6].$context!.jsRead('index'), 6);
     });
@@ -1028,7 +1028,7 @@ void main() {
       final probes = <_ProbeBar>[
         for (var i = 0; i < data.length; i++) data[i] = _ProbeBar(),
       ];
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(probes[6].bulkWrites, greaterThan(0));
       expect(probes[6].$context!.jsRead('mode'), 'none');
       expect(probes[6].$context!.jsRead('index'), 6);

@@ -1,35 +1,43 @@
 // Ported from chartjs-plugin-zoom v2.2.0+fb81d331 src/options.ts (MIT, chartjs-plugin-zoom contributors).
 
 /// The option types of the plugin: the string unions, the callback types and
-/// the option facades (Zoom ADR 0003, item 9).
+/// the option classes.
 ///
 /// - A union of string literals is an enum ([Mode], [ModifierKey],
 ///   [DrawTime], row `adapt-zoom-option-enums`): the name of each value is
-///   the upstream string. A raw config holds the enum value too; a name is
-///   a foreign value, and a debug build stops on it.
+///   the upstream string.
 /// - [ZoomTrigger] is a value that only the plugin makes: an enum. Its
 ///   `name` is the upstream string.
 /// - The callback contexts are records: they compare by value in a spec. A
-///   callback getter gives the function of its typedef type, or Dart `null`
-///   for `null` and `undefined`, and the plugin calls it directly (Zoom ADR
-///   0004). A value of another type is a foreign value: a debug build stops
-///   on it, and a release build makes no call.
-/// - The options of a hook are a resolver of the host, read by name. A
-///   facade is an extension type over the raw value (the resolver, a nested
-///   resolver, a Map of a spec, or `undefined`), with no cost. Each getter
-///   reads one key with `jsGet`, the plain read `o.k` of upstream: it throws
-///   a `TypeError` for `null` and `undefined`, and gives `undefined` for a
-///   primitive. A call site of the optional read `o?.k` tests
-///   `isNullish` first. The getters give the raw JavaScript value, and the
-///   JavaScript operators stay at the upstream read sites. No value is
-///   copied: each read is live, as upstream reads the resolver at each use.
+///   callback option holds the function of its typedef, and the plugin calls
+///   it directly (Zoom ADR 0004).
+/// - Each interface of options is an immutable class with one nullable field
+///   for each option (row `adapt-native-zoom-options`, Chart.js ADR 0148). A
+///   field that is null is not set. [ZoomPluginOptions] is the
+///   `PluginOptions` of the host: the plugin service merges the options of
+///   the defaults and of the chart with [ZoomPluginOptions.merge], as the
+///   resolver of upstream reads them with `scriptable: false` and
+///   `indexable: false`. A hook gets the merged object, with no read by
+///   name.
+///
+/// ```dart
+/// ChartConfig(
+///   type: .line,
+///   pluginOptions: const [
+///     ZoomPluginOptions(
+///       pan: PanOptions(enabled: true, mode: Mode.x),
+///       zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+///     ),
+///   ],
+/// );
+/// ```
 library;
 
+import 'package:flutter/foundation.dart' show immutable;
 import 'package:flutter_chartjs_plugin_zoom_port/src/gestures.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart, NativeEvent;
-import 'package:flutter_chartjs_port/helpers.dart' show isNullOrUndef;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsTruthy;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show Chart, ChartPaint, NativeEvent, PluginOptions;
 
 /// options.ts:5 `Mode = 'x' | 'y' | 'xy'`: the zoom or pan directions.
 ///
@@ -59,30 +67,17 @@ enum Mode({
     'y' => usesY,
     _ => false,
   };
-
-  /// The value of [value], a `mode`, `scaleMode` or `overScaleMode` option
-  /// that is not a [ModeFn], or Dart `null` for a value that is not a
-  /// [Mode]. An upstream name and a function of another type are not values:
-  /// a debug build stops on them.
-  static Mode? of(Object? value) {
-    assert(
-      value is! String,
-      'A zoom mode takes a Mode, not the name "$value".',
-    );
-    assert(
-      value is! Function,
-      'A zoom mode function is a ModeFn, not ${value.runtimeType}.',
-    );
-    return value is Mode ? value : null;
-  }
 }
 
 /// options.ts:6 `ModeFn`: a function that gives the [Mode] when the user
 /// zooms or pans.
-///
-/// options.ts:7 `ModeOption = Mode | ModeFn` has no Dart type: the option is
-/// the raw value of the getter.
 typedef ModeFn = Mode Function(ZoomChartContext context);
+
+// options.ts:7 `ModeOption = Mode | ModeFn`: Dart has no union of an enum
+// and a function type. A `mode`, `scaleMode` or `overScaleMode` field is an
+// `Object?`, and the constructor of its class asserts that it holds a [Mode],
+// a [ModeFn] or null. A value of another type, for example a function with
+// no parameter, stops a debug build.
 
 /// options.ts:8 `ModifierKey = 'ctrl' | 'alt' | 'shift' | 'meta'`: a
 /// modifier key of an event.
@@ -110,17 +105,6 @@ enum ModifierKey() {
     shift => event.shiftKey,
     meta => event.metaKey,
   };
-
-  /// The value of [value], a `modifierKey` option, or Dart `null` for a
-  /// value that is not a [ModifierKey]. An upstream name is not a value: a
-  /// debug build stops on it.
-  static ModifierKey? of(Object? value) {
-    assert(
-      value is! String,
-      'A modifier key takes a ModifierKey, not the name "$value".',
-    );
-    return value is ModifierKey ? value : null;
-  }
 }
 
 /// options.ts:9 `DrawTime`: the plugin hook that draws the drag rectangle.
@@ -136,18 +120,7 @@ enum DrawTime() {
   beforeDraw,
 
   /// `'beforeDatasetsDraw'`.
-  beforeDatasetsDraw;
-
-  /// The value of [value], a `drawTime` option, or Dart `null` for a value
-  /// that is not a [DrawTime]: the plugin then draws in no hook. An upstream
-  /// name is not a value: a debug build stops on it.
-  static DrawTime? of(Object? value) {
-    assert(
-      value is! String,
-      'The drag drawTime takes a DrawTime, not the name "$value".',
-    );
-    return value is DrawTime ? value : null;
-  }
+  beforeDatasetsDraw,
 }
 
 /// options.ts:10 `ZoomTrigger = 'api' | 'drag' | 'wheel' | 'pinch'`: what
@@ -202,227 +175,608 @@ typedef GenericEvent = void Function(ZoomChartContext context);
 /// and the [ZoomTrigger].
 typedef ZoomCallback = void Function(ZoomTriggerContext context);
 
-/// The callback of the option [name] in [value]: [value] when it has the
-/// type [F], else Dart `null`. `null` and `undefined` mean no callback; a
-/// value of another type stops a debug build (Zoom ADR 0004).
-// DIVERGES(zoom): adapt-native-callbacks, the typed callback of an option.
-F? _callbackOf<F extends Function>(Object? value, String name) {
-  if (value is F) return value;
-  assert(
-    isNullOrUndef(value),
-    'The zoom option $name takes a $F, not ${value.runtimeType}.',
-  );
-  return null;
+/// The options with `enabled` and `modifierKey` that `getModifierKey` of
+/// `utils.dart` reads (utils.ts:7): [WheelOptions], [DragOptions] and
+/// [PanOptions].
+abstract interface class ModifierKeyOptions() {
+  /// `enabled`: whether the input is on. Null is not set.
+  bool? get enabled;
+
+  /// `modifierKey`: the modifier key that the input needs. Null is not set.
+  ModifierKey? get modifierKey;
 }
 
-/// `{}`: the empty object of a destructuring default (`{ zoom = {} }`) or of
-/// `options || {}`. Nothing writes into it.
-const Map<String, Object?> emptyObject = <String, Object?>{};
+/// The options with `mode`, `scaleMode` and `overScaleMode` that
+/// `getEnabledScalesByPoint` of `utils.dart` reads (utils.ts:96):
+/// [ZoomOptions] and [PanOptions]. Each is a [Mode], a [ModeFn] or null.
+abstract interface class ScaleModeOptions() {
+  /// `mode`: the directions. Null is not set.
+  Object? get mode;
+
+  /// `scaleMode`: the directions over a scale. Null is not set.
+  Object? get scaleMode;
+
+  /// `overScaleMode`, deprecated. Null is not set.
+  Object? get overScaleMode;
+}
+
+/// `a?.merge(b) ?? b`: the merge of two nested option objects, where null
+/// is not set.
+T? _mergeNullable<T extends Object>(T? a, T? b, T Function(T a, T b) merge) =>
+    a == null ? b : (b == null ? a : merge(a, b));
 
 /// options.ts:21 `WheelOptions`: the options of the mouse wheel zoom.
-extension type const WheelOptions(Object? raw) {
-  /// Whether [raw] is `null` or `undefined`: the test of `?.`.
-  bool get isNullish => isNullOrUndef(raw);
-
-  /// options.ts:25 `enabled`: enable the zoom via mouse wheel.
-  Object? get enabled => jsGet(raw, 'enabled');
+///
+/// ```dart
+/// const WheelOptions(enabled: true, modifierKey: ModifierKey.ctrl);
+/// ```
+@immutable
+final class const WheelOptions({
+  /// options.ts:25 `enabled`: enable the zoom via mouse wheel. The default
+  /// is `false`.
+  @override final bool? enabled,
 
   /// options.ts:32 `speed`: the speed of the zoom via mouse wheel, the
-  /// fraction of zoom per notch of a mouse wheel.
-  Object? get speed => jsGet(raw, 'speed');
+  /// fraction of zoom per notch of a mouse wheel. The default is 0.1.
+  final double? speed,
 
-  /// options.ts:37 `modifierKey`: the modifier key that the wheel zoom needs.
-  Object? get modifierKey => jsGet(raw, 'modifierKey');
+  /// options.ts:37 `modifierKey`: the modifier key that the wheel zoom
+  /// needs. The default is none.
+  @override final ModifierKey? modifierKey,
+}) implements ModifierKeyOptions {
+  /// The options of the wheel zoom.
+  this;
+
+  /// Whether the wheel zoom is on: [enabled], else `false`.
+  bool get isEnabled => enabled ?? false;
+
+  /// The speed of a wheel zoom: [speed], else 0.1 (handlers.ts:270
+  /// `zoomOptions?.wheel?.speed ?? 0.1`).
+  double get speedOrDefault => speed ?? 0.1;
+
+  /// These options with each field that [over] sets.
+  WheelOptions merge(WheelOptions over) => WheelOptions(
+    enabled: over.enabled ?? enabled,
+    speed: over.speed ?? speed,
+    modifierKey: over.modifierKey ?? modifierKey,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is WheelOptions &&
+          other.enabled == enabled &&
+          other.speed == speed &&
+          other.modifierKey == modifierKey;
+
+  @override
+  int get hashCode => Object.hash(enabled, speed, modifierKey);
+
+  @override
+  String toString() =>
+      // js-ok: the debug text of toString.
+      'WheelOptions(enabled: $enabled, speed: $speed, '
+      'modifierKey: $modifierKey)';
 }
 
 /// options.ts:40 `DragOptions`: the options of the drag-to-zoom mode.
-extension type const DragOptions(Object? raw) {
-  /// Whether [raw] is `null` or `undefined`: the test of `?.`.
-  bool get isNullish => isNullOrUndef(raw);
+///
+/// ```dart
+/// const DragOptions(enabled: true, borderWidth: 1);
+/// ```
+@immutable
+final class const DragOptions({
+  /// options.ts:44 `enabled`: enable the zoom via drag. The default is
+  /// `false`.
+  @override final bool? enabled,
 
-  /// options.ts:44 `enabled`: enable the zoom via drag.
-  Object? get enabled => jsGet(raw, 'enabled');
+  /// options.ts:49 `threshold`: the minimal drag distance of a zoom, in
+  /// pixels. The default is 0.
+  final double? threshold,
 
-  /// options.ts:49 `threshold`: the minimal drag distance of a zoom.
-  Object? get threshold => jsGet(raw, 'threshold');
+  /// options.ts:54 `borderColor`: the border color of the drag area. The
+  /// default is `Color.fromRGBO(225, 225, 225, 1)`.
+  final ChartPaint? borderColor,
 
-  /// options.ts:54 `borderColor`: the border color of the drag area.
-  Object? get borderColor => jsGet(raw, 'borderColor');
-
-  /// options.ts:59 `borderWidth`: the border width of the drag area.
-  Object? get borderWidth => jsGet(raw, 'borderWidth');
+  /// options.ts:59 `borderWidth`: the border width of the drag area. The
+  /// default is no border.
+  final double? borderWidth,
 
   /// options.ts:64 `backgroundColor`: the background color of the drag
-  /// area.
-  Object? get backgroundColor => jsGet(raw, 'backgroundColor');
+  /// area. The default is `Color.fromRGBO(225, 225, 225, 0.3)`.
+  final ChartPaint? backgroundColor,
 
   /// options.ts:69 `modifierKey`: the modifier key that drag-to-zoom needs.
-  Object? get modifierKey => jsGet(raw, 'modifierKey');
+  /// The default is none.
+  @override final ModifierKey? modifierKey,
 
-  /// options.ts:74 `drawTime`: the [DrawTime] of the drag area.
-  Object? get drawTime => jsGet(raw, 'drawTime');
+  /// options.ts:74 `drawTime`: the [DrawTime] of the drag area. The default
+  /// is [DrawTime.beforeDatasetsDraw].
+  final DrawTime? drawTime,
 
   /// options.ts:79 `maintainAspectRatio`: keep the aspect ratio of the drag
-  /// rectangle.
-  Object? get maintainAspectRatio => jsGet(raw, 'maintainAspectRatio');
+  /// rectangle. The default is `false`.
+  final bool? maintainAspectRatio,
+}) implements ModifierKeyOptions {
+  /// The options of the drag zoom.
+  this;
+
+  /// Whether the drag zoom is on: [enabled], else `false`.
+  bool get isEnabled => enabled ?? false;
+
+  /// The minimal drag distance: [threshold], else 0 (handlers.ts:200
+  /// `const { threshold = 0 } = drag ?? {}`).
+  double get thresholdOrDefault => threshold ?? 0;
+
+  /// These options with each field that [over] sets.
+  DragOptions merge(DragOptions over) => DragOptions(
+    enabled: over.enabled ?? enabled,
+    threshold: over.threshold ?? threshold,
+    borderColor: over.borderColor ?? borderColor,
+    borderWidth: over.borderWidth ?? borderWidth,
+    backgroundColor: over.backgroundColor ?? backgroundColor,
+    modifierKey: over.modifierKey ?? modifierKey,
+    drawTime: over.drawTime ?? drawTime,
+    maintainAspectRatio: over.maintainAspectRatio ?? maintainAspectRatio,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is DragOptions &&
+          other.enabled == enabled &&
+          other.threshold == threshold &&
+          other.borderColor == borderColor &&
+          other.borderWidth == borderWidth &&
+          other.backgroundColor == backgroundColor &&
+          other.modifierKey == modifierKey &&
+          other.drawTime == drawTime &&
+          other.maintainAspectRatio == maintainAspectRatio;
+
+  @override
+  int get hashCode => Object.hash(
+    enabled,
+    threshold,
+    borderColor,
+    borderWidth,
+    backgroundColor,
+    modifierKey,
+    drawTime,
+    maintainAspectRatio,
+  );
+
+  @override
+  String toString() =>
+      // js-ok: the debug text of toString.
+      'DragOptions(enabled: $enabled, threshold: $threshold, '
+      // js-ok: the debug text of toString.
+      'borderColor: $borderColor, borderWidth: $borderWidth, '
+      'backgroundColor: $backgroundColor, modifierKey: $modifierKey, '
+      'drawTime: $drawTime, maintainAspectRatio: $maintainAspectRatio)';
 }
 
 /// options.ts:82 `PinchOptions`: the options of the pinch zoom.
-extension type const PinchOptions(Object? raw) {
-  /// Whether [raw] is `null` or `undefined`: the test of `?.`.
-  bool get isNullish => isNullOrUndef(raw);
+///
+/// ```dart
+/// const PinchOptions(enabled: true);
+/// ```
+@immutable
+final class const PinchOptions({
+  /// options.ts:86 `enabled`: enable the zoom via pinch. The default is
+  /// `false`.
+  final bool? enabled,
+}) {
+  /// The options of the pinch zoom.
+  this;
 
-  /// options.ts:86 `enabled`: enable the zoom via pinch.
-  Object? get enabled => jsGet(raw, 'enabled');
+  /// Whether the pinch zoom is on: [enabled], else `false`.
+  bool get isEnabled => enabled ?? false;
+
+  /// These options with each field that [over] sets.
+  PinchOptions merge(PinchOptions over) =>
+      PinchOptions(enabled: over.enabled ?? enabled);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PinchOptions && other.enabled == enabled;
+
+  @override
+  int get hashCode => enabled.hashCode;
+
+  @override
+  String toString() => 'PinchOptions(enabled: $enabled)';
 }
 
 /// options.ts:92 `ZoomOptions`: the container of the zoom options.
-extension type const ZoomOptions(Object? raw) {
-  /// Whether [raw] is `null` or `undefined`: the test of `?.`.
-  bool get isNullish => isNullOrUndef(raw);
-
+///
+/// A callback compares by identity (the `==` of a function: the same
+/// closure, or a tear-off of the same function).
+///
+/// ```dart
+/// ZoomOptions(
+///   wheel: const WheelOptions(enabled: true),
+///   mode: Mode.x,
+///   onZoomComplete: (context) => print(context.chart.getZoomLevel()),
+/// );
+/// ```
+@immutable
+final class const ZoomOptions({
   /// options.ts:102 `mode`: the zoom directions, a [Mode] or a [ModeFn].
-  Object? get mode => jsGet(raw, 'mode');
+  /// The default is [Mode.xy].
+  @override final Object? mode,
 
   /// options.ts:107 `wheel`: the options of the mouse wheel mode.
-  WheelOptions get wheel => WheelOptions(jsGet(raw, 'wheel'));
+  final WheelOptions? wheel,
 
   /// options.ts:112 `drag`: the options of the drag-to-zoom mode.
-  DragOptions get drag => DragOptions(jsGet(raw, 'drag'));
+  final DragOptions? drag,
 
   /// options.ts:117 `pinch`: the options of the pinch mode.
-  PinchOptions get pinch => PinchOptions(jsGet(raw, 'pinch'));
+  final PinchOptions? pinch,
 
   /// options.ts:119 `scaleMode`: the directions of a zoom over a scale, a
-  /// [Mode] or a [ModeFn].
-  Object? get scaleMode => jsGet(raw, 'scaleMode');
+  /// [Mode] or a [ModeFn]. The default is none.
+  @override final Object? scaleMode,
 
   /// options.ts:121 `overScaleMode`, deprecated: use [scaleMode] instead.
-  Object? get overScaleMode => jsGet(raw, 'overScaleMode');
+  @override final Object? overScaleMode,
 
-  /// options.ts:126 `onZoom`: a [ZoomCallback], called while the user is
-  /// zooming.
-  ZoomCallback? get onZoom =>
-      _callbackOf<ZoomCallback>(jsGet(raw, 'onZoom'), 'onZoom');
+  /// options.ts:126 `onZoom`: called while the user is zooming.
+  final ZoomCallback? onZoom,
 
-  /// options.ts:131 `onZoomComplete`: a [GenericEvent], called once zooming
-  /// is completed.
-  GenericEvent? get onZoomComplete =>
-      _callbackOf<GenericEvent>(jsGet(raw, 'onZoomComplete'), 'onZoomComplete');
+  /// options.ts:131 `onZoomComplete`: called once zooming is completed.
+  final GenericEvent? onZoomComplete,
 
-  /// options.ts:136 `onZoomRejected`: a [RejectEvent] of the native event,
-  /// called when wheel input occurs without the modifier key.
-  RejectEvent<NativeEvent>? get onZoomRejected =>
-      _callbackOf<RejectEvent<NativeEvent>>(
-        jsGet(raw, 'onZoomRejected'),
-        'onZoomRejected',
+  /// options.ts:136 `onZoomRejected`: called when wheel input occurs
+  /// without the modifier key, or when [onZoomStart] gives `false`.
+  final RejectEvent<NativeEvent>? onZoomRejected,
+
+  /// options.ts:138 `onZoomStart`: called at the start of a zoom by the
+  /// wheel, a drag or a pinch: `false` rejects the zoom.
+  final RejectableStartEvent<NativeEvent>? onZoomStart,
+}) implements ScaleModeOptions {
+  /// The zoom options.
+  this
+    : assert(
+        mode == null || mode is Mode || mode is ModeFn,
+        'The zoom mode is a Mode or a ModeFn.',
+      ),
+      assert(
+        scaleMode == null || scaleMode is Mode || scaleMode is ModeFn,
+        'The zoom scaleMode is a Mode or a ModeFn.',
+      ),
+      assert(
+        overScaleMode == null ||
+            overScaleMode is Mode ||
+            overScaleMode is ModeFn,
+        'The zoom overScaleMode is a Mode or a ModeFn.',
       );
 
-  /// options.ts:138 `onZoomStart`: a [RejectableStartEvent] of the native
-  /// event.
-  RejectableStartEvent<NativeEvent>? get onZoomStart =>
-      _callbackOf<RejectableStartEvent<NativeEvent>>(
-        jsGet(raw, 'onZoomStart'),
-        'onZoomStart',
-      );
+  /// These options with each field that [over] sets. A nested object merges
+  /// its own fields.
+  ZoomOptions merge(ZoomOptions over) => ZoomOptions(
+    mode: over.mode ?? mode,
+    wheel: _mergeNullable(wheel, over.wheel, (a, b) => a.merge(b)),
+    drag: _mergeNullable(drag, over.drag, (a, b) => a.merge(b)),
+    pinch: _mergeNullable(pinch, over.pinch, (a, b) => a.merge(b)),
+    scaleMode: over.scaleMode ?? scaleMode,
+    overScaleMode: over.overScaleMode ?? overScaleMode,
+    onZoom: over.onZoom ?? onZoom,
+    onZoomComplete: over.onZoomComplete ?? onZoomComplete,
+    onZoomRejected: over.onZoomRejected ?? onZoomRejected,
+    onZoomStart: over.onZoomStart ?? onZoomStart,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ZoomOptions &&
+          other.mode == mode &&
+          other.wheel == wheel &&
+          other.drag == drag &&
+          other.pinch == pinch &&
+          other.scaleMode == scaleMode &&
+          other.overScaleMode == overScaleMode &&
+          other.onZoom == onZoom &&
+          other.onZoomComplete == onZoomComplete &&
+          other.onZoomRejected == onZoomRejected &&
+          other.onZoomStart == onZoomStart;
+
+  @override
+  int get hashCode => Object.hash(
+    mode,
+    wheel,
+    drag,
+    pinch,
+    scaleMode,
+    overScaleMode,
+    onZoom,
+    onZoomComplete,
+    onZoomRejected,
+    onZoomStart,
+  );
+
+  @override
+  String toString() =>
+      'ZoomOptions(mode: $mode, wheel: $wheel, drag: $drag, pinch: $pinch, '
+      'scaleMode: $scaleMode, overScaleMode: $overScaleMode)';
 }
 
 /// options.ts:144 `PanOptions`: the container of the pan options.
-extension type const PanOptions(Object? raw) {
-  /// Whether [raw] is `null` or `undefined`: the test of `?.`.
-  bool get isNullish => isNullOrUndef(raw);
-
-  /// options.ts:148 `enabled`: enable panning.
-  Object? get enabled => jsGet(raw, 'enabled');
+///
+/// A callback compares by identity (the `==` of a function).
+///
+/// ```dart
+/// const PanOptions(enabled: true, mode: Mode.x, threshold: 5);
+/// ```
+@immutable
+final class const PanOptions({
+  /// options.ts:148 `enabled`: enable panning. The default is `false`.
+  @override final bool? enabled,
 
   /// options.ts:159 `mode`: the pan directions, a [Mode] or a [ModeFn].
-  Object? get mode => jsGet(raw, 'mode');
+  /// The default is [Mode.xy].
+  @override final Object? mode,
 
   /// options.ts:164 `modifierKey`: the modifier key that a mouse pan needs.
-  Object? get modifierKey => jsGet(raw, 'modifierKey');
+  /// The default is none.
+  @override final ModifierKey? modifierKey,
 
   /// options.ts:166 `scaleMode`: the directions of a pan over a scale, a
-  /// [Mode] or a [ModeFn].
-  Object? get scaleMode => jsGet(raw, 'scaleMode');
+  /// [Mode] or a [ModeFn]. The default is none.
+  @override final Object? scaleMode,
 
   /// options.ts:168 `overScaleMode`, deprecated: use [scaleMode] instead.
-  Object? get overScaleMode => jsGet(raw, 'overScaleMode');
+  @override final Object? overScaleMode,
 
-  /// options.ts:173 `threshold`: the minimal pan distance of a pan.
-  Object? get threshold => jsGet(raw, 'threshold');
+  /// options.ts:173 `threshold`: the minimal pan distance of a pan, in
+  /// pixels. The default is 10.
+  final double? threshold,
 
-  /// options.ts:178 `onPan`: a [GenericEvent], called while the user is
-  /// panning.
-  GenericEvent? get onPan =>
-      _callbackOf<GenericEvent>(jsGet(raw, 'onPan'), 'onPan');
+  /// options.ts:178 `onPan`: called while the user is panning.
+  final GenericEvent? onPan,
 
-  /// options.ts:183 `onPanComplete`: a [GenericEvent], called once panning
-  /// is completed.
-  GenericEvent? get onPanComplete =>
-      _callbackOf<GenericEvent>(jsGet(raw, 'onPanComplete'), 'onPanComplete');
+  /// options.ts:183 `onPanComplete`: called once panning is completed.
+  final GenericEvent? onPanComplete,
 
-  /// options.ts:189 `onPanRejected`: a [RejectEvent] of the [GestureEvent],
-  /// called when a pan fails because the modifier key was not pressed.
-  RejectEvent<GestureEvent>? get onPanRejected =>
-      _callbackOf<RejectEvent<GestureEvent>>(
-        jsGet(raw, 'onPanRejected'),
-        'onPanRejected',
+  /// options.ts:189 `onPanRejected`: called when a pan fails because the
+  /// modifier key was not pressed, or when [onPanStart] gives `false`.
+  final RejectEvent<GestureEvent>? onPanRejected,
+
+  /// options.ts:191 `onPanStart`: called at the start of a pan: `false`
+  /// rejects the pan.
+  final RejectableStartEvent<GestureEvent>? onPanStart,
+}) implements ModifierKeyOptions, ScaleModeOptions {
+  /// The pan options.
+  this
+    : assert(
+        mode == null || mode is Mode || mode is ModeFn,
+        'The pan mode is a Mode or a ModeFn.',
+      ),
+      assert(
+        scaleMode == null || scaleMode is Mode || scaleMode is ModeFn,
+        'The pan scaleMode is a Mode or a ModeFn.',
+      ),
+      assert(
+        overScaleMode == null ||
+            overScaleMode is Mode ||
+            overScaleMode is ModeFn,
+        'The pan overScaleMode is a Mode or a ModeFn.',
       );
 
-  /// options.ts:191 `onPanStart`: a [RejectableStartEvent] of the
-  /// [GestureEvent].
-  RejectableStartEvent<GestureEvent>? get onPanStart =>
-      _callbackOf<RejectableStartEvent<GestureEvent>>(
-        jsGet(raw, 'onPanStart'),
-        'onPanStart',
-      );
+  /// Whether the pan is on: [enabled], else `false`.
+  bool get isEnabled => enabled ?? false;
+
+  /// These options with each field that [over] sets.
+  PanOptions merge(PanOptions over) => PanOptions(
+    enabled: over.enabled ?? enabled,
+    mode: over.mode ?? mode,
+    modifierKey: over.modifierKey ?? modifierKey,
+    scaleMode: over.scaleMode ?? scaleMode,
+    overScaleMode: over.overScaleMode ?? overScaleMode,
+    threshold: over.threshold ?? threshold,
+    onPan: over.onPan ?? onPan,
+    onPanComplete: over.onPanComplete ?? onPanComplete,
+    onPanRejected: over.onPanRejected ?? onPanRejected,
+    onPanStart: over.onPanStart ?? onPanStart,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PanOptions &&
+          other.enabled == enabled &&
+          other.mode == mode &&
+          other.modifierKey == modifierKey &&
+          other.scaleMode == scaleMode &&
+          other.overScaleMode == overScaleMode &&
+          other.threshold == threshold &&
+          other.onPan == onPan &&
+          other.onPanComplete == onPanComplete &&
+          other.onPanRejected == onPanRejected &&
+          other.onPanStart == onPanStart;
+
+  @override
+  int get hashCode => Object.hash(
+    enabled,
+    mode,
+    modifierKey,
+    scaleMode,
+    overScaleMode,
+    threshold,
+    onPan,
+    onPanComplete,
+    onPanRejected,
+    onPanStart,
+  );
+
+  @override
+  String toString() =>
+      'PanOptions(enabled: $enabled, mode: $mode, modifierKey: $modifierKey, '
+      'scaleMode: $scaleMode, overScaleMode: $overScaleMode, '
+      // js-ok: the debug text of toString.
+      'threshold: $threshold)';
+}
+
+/// options.ts:195 `number | 'original'`: the `min` or the `max` limit of a
+/// scale.
+///
+/// A limit is a number, or [original]: the limit that the scale had when
+/// the chart was first displayed.
+///
+/// ```dart
+/// const ScaleLimits(min: ScaleLimit(0), max: ScaleLimit.original);
+/// ```
+// DIVERGES(zoom): adapt-native-zoom-options, a class for number | 'original'.
+@immutable
+final class const ScaleLimit._(
+  /// The number of the limit, or null for [original].
+  final double? value,
+) {
+  /// The limit [value].
+  const new(double value) : this._(value);
+
+  /// `'original'`: the limit of the scale when the chart was first
+  /// displayed.
+  static const ScaleLimit original = ScaleLimit._(null);
+
+  /// Whether this limit is [original].
+  bool get isOriginal => value == null;
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) || other is ScaleLimit && other.value == value;
+
+  @override
+  int get hashCode => value.hashCode;
+
+  @override
+  String toString() =>
+      // js-ok: the debug text of toString.
+      isOriginal ? 'ScaleLimit.original' : 'ScaleLimit($value)';
 }
 
 /// options.ts:194 `ScaleLimits`: the limits of one scale.
-extension type const ScaleLimits(Object? raw) {
-  /// Whether [raw] is `null` or `undefined`: the test of `?.`.
-  bool get isNullish => isNullOrUndef(raw);
+///
+/// ```dart
+/// const ScaleLimits(min: ScaleLimit(0), max: ScaleLimit(100), minRange: 10);
+/// ```
+@immutable
+final class const ScaleLimits({
+  /// options.ts:195 `min`: the smallest value of `scale.min`.
+  final ScaleLimit? min,
 
-  /// options.ts:195 `min`: a number or `'original'`.
-  Object? get min => jsGet(raw, 'min');
+  /// options.ts:196 `max`: the largest value of `scale.max`.
+  final ScaleLimit? max,
 
-  /// options.ts:196 `max`: a number or `'original'`.
-  Object? get max => jsGet(raw, 'max');
+  /// options.ts:197 `minRange`: the smallest range (`max - min`) of a zoom.
+  /// The default is 0.
+  final double? minRange,
+}) {
+  /// The limits of a scale.
+  this;
 
-  /// options.ts:197 `minRange`: the smallest range of a zoom.
-  Object? get minRange => jsGet(raw, 'minRange');
+  /// The smallest range of a zoom: [minRange], else 0 (scale.types.ts:144
+  /// `valueOrDefault(scaleLimits.minRange, 0)`).
+  double get minRangeOrDefault => minRange ?? 0;
+
+  /// These limits with each field that [over] sets.
+  ScaleLimits merge(ScaleLimits over) => ScaleLimits(
+    min: over.min ?? min,
+    max: over.max ?? max,
+    minRange: over.minRange ?? minRange,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ScaleLimits &&
+          other.min == min &&
+          other.max == max &&
+          other.minRange == minRange;
+
+  @override
+  int get hashCode => Object.hash(min, max, minRange);
+
+  @override
+  // js-ok: the debug text of toString.
+  String toString() => 'ScaleLimits(min: $min, max: $max, minRange: $minRange)';
 }
 
 /// options.ts:200 `LimitOptions`: the [ScaleLimits] by the id of a scale or
 /// by its axis (`x` or `y`).
-extension type const LimitOptions(Object? raw) {
-  /// Whether [raw] is `null` or `undefined`: the test of `?.`.
-  bool get isNullish => isNullOrUndef(raw);
+///
+/// ```dart
+/// const LimitOptions limits = {'x': ScaleLimits(min: ScaleLimit(0))};
+/// ```
+typedef LimitOptions = Map<String, ScaleLimits>;
 
-  /// options.ts:202 `[axisId: string]: ScaleLimits`: the limits of the
-  /// scale id or the axis [axisId].
-  ScaleLimits operator [](String axisId) => ScaleLimits(jsGet(raw, axisId));
+/// The limits [a] with the limits of [over]: the limits of each scale id
+/// merge (`ScaleLimits.merge`).
+LimitOptions _mergeLimits(LimitOptions a, LimitOptions over) => {
+  ...a,
+  for (final MapEntry(:key, :value) in over.entries)
+    key: a[key]?.merge(value) ?? value,
+};
+
+/// Whether the limits [a] and [b] have the same scale ids and equal limits.
+bool _limitsEqual(LimitOptions? a, LimitOptions? b) {
+  if (identical(a, b)) return true;
+  if (a == null || b == null || a.length != b.length) return false;
+  for (final MapEntry(:key, :value) in a.entries) {
+    if (!b.containsKey(key) || b[key] != value) return false;
+  }
+  return true;
 }
 
+/// The hash of the limits [limits], from their entries in any order.
+int _limitsHash(LimitOptions? limits) => limits == null
+    ? null.hashCode
+    : Object.hashAllUnordered([
+        for (final MapEntry(:key, :value) in limits.entries)
+          Object.hash(key, value),
+      ]);
+
 /// options.ts:205 `ZoomPluginOptions`: the options of the plugin,
-/// `options.plugins.zoom`.
-extension type const ZoomPluginOptions(Object? raw) {
-  /// Whether [raw] is `null` or `undefined`: the test of `?.`.
-  bool get isNullish => isNullOrUndef(raw);
-
+/// `options.plugins.zoom` (Chart.js ADR 0148).
+///
+/// A field that is null is not set: the plugin takes the field of the
+/// defaults (`lib/src/defaults.dart`). The hooks get the options of the
+/// defaults merged with the options of the chart ([merge]). A typed config
+/// gives the options in `ChartConfig.pluginOptions`, and a raw config holds
+/// the object itself:
+///
+/// ```dart
+/// ChartConfig(
+///   type: .line,
+///   pluginOptions: const [
+///     ZoomPluginOptions(pan: PanOptions(enabled: true)),
+///   ],
+/// );
+/// <String, Object?>{
+///   'type': 'line',
+///   'options': {
+///     'plugins': {'zoom': ZoomPluginOptions(pan: PanOptions(enabled: true))},
+///   },
+/// };
+/// ```
+// DIVERGES(zoom): adapt-native-zoom-options, a PluginOptions of the host.
+@immutable
+final class const ZoomPluginOptions({
   /// options.ts:206 `pan`: the pan options.
-  PanOptions get pan => PanOptions(jsGet(raw, 'pan'));
+  final PanOptions? pan,
 
-  /// options.ts:207 `limits`: the scale limits.
-  LimitOptions get limits => LimitOptions(jsGet(raw, 'limits'));
+  /// options.ts:207 `limits`: the scale limits. The default is none.
+  final LimitOptions? limits,
 
   /// options.ts:208 `zoom`: the zoom options.
-  ZoomOptions get zoom => ZoomOptions(jsGet(raw, 'zoom'));
+  final ZoomOptions? zoom,
 
   /// `rangeOnlyUpdates`, a port-only option with no default: whether each
   /// zoom and pan updates the chart with `chart.updateRanges(transition)` of
-  /// the host in place of `chart.update(transition)` (Chart.js ADR 0111). The
-  /// ToBoolean of the read: an absent key is false.
+  /// the host in place of `chart.update(transition)` (Chart.js ADR 0111).
+  /// Null is `false`.
   ///
   /// The app keeps the contract of `updateRanges`: between the full updates
   /// of the chart, nothing changes an option, a default, the theme, a
@@ -430,5 +784,42 @@ extension type const ZoomPluginOptions(Object? raw) {
   /// the plugin writes. New data values, data Lists and labels are allowed.
   /// The host takes `update` when one of its checks fails.
   // DIVERGES(zoom): adapt-range-only-updates, the port-only opt-in.
-  bool get rangeOnlyUpdates => jsTruthy(jsGet(raw, 'rangeOnlyUpdates'));
+  final bool? rangeOnlyUpdates,
+}) extends PluginOptions<ZoomPluginOptions> {
+  /// The options of the zoom plugin.
+  this;
+
+  @override
+  String get pluginId => 'zoom';
+
+  /// The limits: [limits], else `{}` (core.ts:73 `limits = {}`).
+  LimitOptions get limitsOrDefault => limits ?? const {};
+
+  /// These options with each field that [over] sets. A nested object merges
+  /// its own fields, and [limits] merges the limits of each scale id.
+  @override
+  ZoomPluginOptions merge(ZoomPluginOptions over) => ZoomPluginOptions(
+    pan: _mergeNullable(pan, over.pan, (a, b) => a.merge(b)),
+    limits: _mergeNullable(limits, over.limits, _mergeLimits),
+    zoom: _mergeNullable(zoom, over.zoom, (a, b) => a.merge(b)),
+    rangeOnlyUpdates: over.rangeOnlyUpdates ?? rangeOnlyUpdates,
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ZoomPluginOptions &&
+          other.pan == pan &&
+          _limitsEqual(other.limits, limits) &&
+          other.zoom == zoom &&
+          other.rangeOnlyUpdates == rangeOnlyUpdates;
+
+  @override
+  int get hashCode =>
+      Object.hash(pan, _limitsHash(limits), zoom, rangeOnlyUpdates);
+
+  @override
+  String toString() =>
+      'ZoomPluginOptions(pan: $pan, limits: $limits, zoom: $zoom, '
+      'rangeOnlyUpdates: $rangeOnlyUpdates)';
 }

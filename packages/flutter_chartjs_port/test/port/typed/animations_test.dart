@@ -344,7 +344,7 @@ void main() {
       List<PropertyAnimation>? animations,
     }) => _box(
       ChartView(
-        updateMode: 'active',
+        updateMode: UpdateMode.active,
         config: ChartConfig(
           type: .line,
           labels: const ['a', 'b', 'c'],

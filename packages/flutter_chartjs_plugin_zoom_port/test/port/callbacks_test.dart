@@ -10,7 +10,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../flutter_test_config.dart';
 
 /// A scatter chart from 0 to 100 on both axes with the zoom options [zoom].
-Chart _chart(Map<String, Object?> zoom) => acquireChart(<String, Object?>{
+Chart _chart(ZoomOptions zoom) => acquireChart(<String, Object?>{
   'type': 'scatter',
   'data': <String, Object?>{
     'datasets': <Object?>[
@@ -23,9 +23,7 @@ Chart _chart(Map<String, Object?> zoom) => acquireChart(<String, Object?>{
     ],
   },
   'options': <String, Object?>{
-    'plugins': <String, Object?>{
-      'zoom': <String, Object?>{'zoom': zoom},
-    },
+    'plugins': <String, Object?>{'zoom': ZoomPluginOptions(zoom: zoom)},
   },
 });
 
@@ -46,14 +44,16 @@ void main() {
       tester,
     ) async {
       final starts = <ZoomStartContext<NativeEvent>>[];
-      final chart = _chart(<String, Object?>{
-        'wheel': <String, Object?>{'enabled': true},
-        'mode': Mode.x,
-        'onZoomStart': (ZoomStartContext<NativeEvent> context) {
-          starts.add(context);
-          return true;
-        },
-      });
+      final chart = _chart(
+        ZoomOptions(
+          wheel: const WheelOptions(enabled: true),
+          mode: Mode.x,
+          onZoomStart: (context) {
+            starts.add(context);
+            return true;
+          },
+        ),
+      );
 
       _wheel(chart);
 
@@ -67,12 +67,14 @@ void main() {
       tester,
     ) async {
       final rejected = <ZoomEventContext<NativeEvent>>[];
-      final chart = _chart(<String, Object?>{
-        'wheel': <String, Object?>{'enabled': true},
-        'mode': Mode.x,
-        'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
-        'onZoomRejected': rejected.add,
-      });
+      final chart = _chart(
+        ZoomOptions(
+          wheel: const WheelOptions(enabled: true),
+          mode: Mode.x,
+          onZoomStart: (_) => false,
+          onZoomRejected: rejected.add,
+        ),
+      );
 
       _wheel(chart);
 
@@ -83,12 +85,14 @@ void main() {
 
     testWidgets('a ModeFn selects the zoom directions', (tester) async {
       final calls = <Chart>[];
-      final chart = _chart(<String, Object?>{
-        'mode': (ZoomChartContext context) {
-          calls.add(context.chart);
-          return Mode.y;
-        },
-      })..zoom(const .all(2));
+      final chart = _chart(
+        ZoomOptions(
+          mode: (ZoomChartContext context) {
+            calls.add(context.chart);
+            return Mode.y;
+          },
+        ),
+      )..zoom(const .all(2));
 
       expect(calls, isNotEmpty);
       expect(calls.every((value) => identical(value, chart)), isTrue);
@@ -96,20 +100,26 @@ void main() {
       expect(chart.scales['y']!.min, greaterThan(0));
     });
 
-    testWidgets('a callback of another type stops a debug build', (
-      tester,
-    ) async {
-      final chart = _chart(<String, Object?>{'onZoom': () {}});
+    // A callback field has the type of its callback (Chart.js ADR 0148): a
+    // function of another type does not compile, so the case cannot exist.
+    test(
+      'a callback of another type stops a debug build',
+      () {},
+      skip: 'diverges: adapt-native-zoom-options',
+    );
 
-      expect(() => chart.zoom(const .all(2)), throwsA(isA<AssertionError>()));
-    });
-
-    testWidgets('a mode function of another type stops a debug build', (
-      tester,
-    ) async {
-      final chart = _chart(<String, Object?>{'mode': () => Mode.x});
-
-      expect(() => chart.zoom(const .all(2)), throwsA(isA<AssertionError>()));
+    test('a mode function of another type stops a debug build', () {
+      // `mode` is a Mode or a ModeFn (an Object? field): the constructor
+      // asserts it.
+      Object? noParameter() => Mode.x;
+      expect(
+        () => ZoomOptions(mode: noParameter),
+        throwsA(isA<AssertionError>()),
+      );
+      expect(
+        () => PanOptions(scaleMode: noParameter),
+        throwsA(isA<AssertionError>()),
+      );
     });
   });
 }

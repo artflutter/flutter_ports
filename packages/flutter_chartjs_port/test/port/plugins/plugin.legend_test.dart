@@ -35,7 +35,7 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show PluginHookArgs, UpdateHookArgs;
+    show Plugin, PluginHookArgs, UpdateHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -286,7 +286,7 @@ const List<String> _upstreamDefaultsKeys = [
 Object? _construct(List<Object?> args) => jsConstruct(Legend.jsClass, args);
 
 /// A line chart with two datasets and the legend options [legendOptions].
-AnyObject _line(Object? legendOptions, {List<Object?>? plugins}) =>
+AnyObject _line(Object? legendOptions, {List<Plugin<Object?>>? plugins}) =>
     <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
@@ -566,21 +566,13 @@ void main() {
       // section 6.
       final chart = acquireChart(_line(false))..legend = _ForeignLegend();
       expect(
-        () => legend.beforeUpdate!(
-          chart,
-          UpdateHookArgs(mode: undefined),
-          chart.options,
-        ),
+        () => legend.beforeUpdate!(chart, UpdateHookArgs(), chart.options),
         throwsA(isA<TypeError>()),
       );
       // The typed hook takes `(chart, args, options)` (Chart.js ADR 0054
       // §12): the TypeError comes from the cast of the legend.
       expect(
-        () => legend.afterUpdate!(
-          chart,
-          UpdateHookArgs(mode: undefined),
-          chart.options,
-        ),
+        () => legend.afterUpdate!(chart, UpdateHookArgs(), chart.options),
         throwsA(isA<TypeError>()),
       );
       chart.legend = null;

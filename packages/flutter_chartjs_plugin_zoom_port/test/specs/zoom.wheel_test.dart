@@ -5,14 +5,16 @@ library;
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show
+        DragOptions,
         Mode,
         ModifierKey,
+        WheelOptions,
         ZoomChart,
-        ZoomChartContext,
-        ZoomStartContext,
+        ZoomOptions,
+        ZoomPluginOptions,
         ZoomTrigger;
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, JsObjectFace, NativeEvent, Scale;
+    show Chart, JsObjectFace, Scale;
 
 import 'package:flutter_test/flutter_test.dart';
 
@@ -57,16 +59,13 @@ void main() {
                   'y': <String, Object?>{'type': 'linear'},
                 },
                 'plugins': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'zoom': <String, Object?>{
-                      'wheel': <String, Object?>{
-                        'enabled': true,
-                        'modifierKey': key,
-                      },
-                      'mode': Mode.x,
-                      'onZoomRejected': rejectedSpy.call,
-                    },
-                  },
+                  'zoom': ZoomPluginOptions(
+                    zoom: ZoomOptions(
+                      wheel: WheelOptions(enabled: true, modifierKey: key),
+                      mode: Mode.x,
+                      onZoomRejected: rejectedSpy.call,
+                    ),
+                  ),
                 },
               },
             });
@@ -119,13 +118,13 @@ void main() {
             'y': <String, Object?>{'type': 'linear'},
           },
           'plugins': <String, Object?>{
-            'zoom': <String, Object?>{
-              'zoom': <String, Object?>{
-                'wheel': <String, Object?>{'enabled': true},
-                'mode': Mode.xy,
-                'overScaleMode': Mode.y,
-              },
-            },
+            'zoom': const ZoomPluginOptions(
+              zoom: ZoomOptions(
+                wheel: WheelOptions(enabled: true),
+                mode: Mode.xy,
+                overScaleMode: Mode.y,
+              ),
+            ),
           },
         },
       };
@@ -210,13 +209,13 @@ void main() {
             'y': <String, Object?>{'type': 'linear'},
           },
           'plugins': <String, Object?>{
-            'zoom': <String, Object?>{
-              'zoom': <String, Object?>{
-                'wheel': <String, Object?>{'enabled': true},
-                'mode': Mode.xy,
-                'scaleMode': Mode.y,
-              },
-            },
+            'zoom': const ZoomPluginOptions(
+              zoom: ZoomOptions(
+                wheel: WheelOptions(enabled: true),
+                mode: Mode.xy,
+                scaleMode: Mode.y,
+              ),
+            ),
           },
         },
       };
@@ -306,12 +305,12 @@ void main() {
               'y': <String, Object?>{'type': 'logarithmic'},
             },
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'mode': Mode.y,
-                  'wheel': <String, Object?>{'enabled': true},
-                },
-              },
+              'zoom': const ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  mode: Mode.y,
+                  wheel: WheelOptions(enabled: true),
+                ),
+              ),
             },
           },
         };
@@ -404,15 +403,12 @@ void main() {
           'plugins': <String, Object?>{
             'legend': false,
             'title': false,
-            'zoom': <String, Object?>{
-              'zoom': <String, Object?>{
-                'drag': <String, Object?>{
-                  'enabled': true,
-                  'maintainAspectRatio': true,
-                },
-                'mode': Mode.xy,
-              },
-            },
+            'zoom': const ZoomPluginOptions(
+              zoom: ZoomOptions(
+                drag: DragOptions(enabled: true, maintainAspectRatio: true),
+                mode: Mode.xy,
+              ),
+            ),
           },
         },
       });
@@ -447,18 +443,18 @@ void main() {
             'data': data(),
             'options': <String, Object?>{
               'plugins': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'zoom': <String, Object?>{
-                    'wheel': <String, Object?>{'enabled': true},
-                    'mode': Mode.xy,
-                    'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+                'zoom': ZoomPluginOptions(
+                  zoom: ZoomOptions(
+                    wheel: const WheelOptions(enabled: true),
+                    mode: Mode.xy,
+                    onZoomStart: (context) {
                       startSpy.call(context);
                       return true;
                     },
-                    'onZoom': zoomSpy.call,
-                    'onZoomComplete': (ZoomChartContext _) => done(),
-                  },
-                },
+                    onZoom: zoomSpy.call,
+                    onZoomComplete: (_) => done(),
+                  ),
+                ),
               },
             },
           });
@@ -491,16 +487,16 @@ void main() {
           'data': data(),
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'wheel': <String, Object?>{'enabled': false},
-                  'mode': Mode.xy,
-                  'onZoomStart': (ZoomStartContext<NativeEvent> context) {
+              'zoom': ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  wheel: const WheelOptions(enabled: false),
+                  mode: Mode.xy,
+                  onZoomStart: (context) {
                     startSpy.call(context);
                     return true;
                   },
-                },
-              },
+                ),
+              ),
             },
           },
         });
@@ -518,12 +514,17 @@ void main() {
         expect(startSpy, isNot(toHaveBeenCalled()));
         expect(chart.scales['x']!.min, toBe(1));
 
-        // chart.options.plugins.zoom.zoom.wheel.enabled = true: each read
-        // through the face of the options of the chart.
+        // chart.options.plugins.zoom.zoom.wheel.enabled = true: the options
+        // are one immutable object (Chart.js ADR 0148), so the write gives
+        // the plugins scope of the chart a new object, through the face of
+        // the options of the chart.
+        // DIVERGES(zoom): adapt-native-zoom-options, a new options object.
         final plugins = chart.options['plugins']! as JsObjectFace;
-        final pluginOptions = plugins['zoom']! as JsObjectFace;
-        final zoomOptions = pluginOptions['zoom']! as JsObjectFace;
-        (zoomOptions['wheel']! as JsObjectFace)['enabled'] = true;
+        plugins['zoom'] = (plugins['zoom']! as ZoomPluginOptions).merge(
+          const ZoomPluginOptions(
+            zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
+          ),
+        );
         chart.update();
 
         triggerWheelEvent(
@@ -545,14 +546,14 @@ void main() {
           'data': data(),
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{
-                  'wheel': <String, Object?>{'enabled': true},
-                  'mode': Mode.xy,
-                  'onZoomStart': (ZoomStartContext<NativeEvent> _) => false,
-                  'onZoomRejected': rejectSpy.call,
-                },
-              },
+              'zoom': ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  wheel: const WheelOptions(enabled: true),
+                  mode: Mode.xy,
+                  onZoomStart: (_) => false,
+                  onZoomRejected: rejectSpy.call,
+                ),
+              ),
             },
           },
         });

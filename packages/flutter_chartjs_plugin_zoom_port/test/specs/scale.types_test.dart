@@ -212,7 +212,7 @@ void main() {
             width: 400,
           );
 
-          panFunctions['category']!(scale, 25, const LimitOptions(emptyObject));
+          panFunctions['category']!(scale, 25, const <String, ScaleLimits>{});
 
           expect(scale.options.min, toBe(39));
           expect(scale.options.max, toBe(58));
@@ -233,7 +233,7 @@ void main() {
             width: 400,
           );
 
-          panFunctions['category']!(scale, 10, const LimitOptions(emptyObject));
+          panFunctions['category']!(scale, 10, const <String, ScaleLimits>{});
 
           expect(scale.options.min, toBe(3875));
           expect(scale.options.max, toBe(8874));
@@ -248,7 +248,7 @@ void main() {
           width: 400,
         );
 
-        panFunctions['category']!(scale, 10, const LimitOptions(emptyObject));
+        panFunctions['category']!(scale, 10, const <String, ScaleLimits>{});
 
         expect(scale.options.min, toBe(0));
         expect(scale.options.max, toBe(4999));
@@ -262,7 +262,7 @@ void main() {
           width: 400,
         );
 
-        panFunctions['category']!(scale, -10, const LimitOptions(emptyObject));
+        panFunctions['category']!(scale, -10, const <String, ScaleLimits>{});
 
         expect(scale.options.min, toBe(5000));
         expect(scale.options.max, toBe(9999));

@@ -14,6 +14,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     as zp;
+import 'package:flutter_chartjs_port/chartjs.dart' show UpdateMode;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:graphic/graphic.dart' as gr;
@@ -70,7 +71,7 @@ Future<void> _end(WidgetTester tester) async {
 /// picture comes after one update.
 Future<Uint8List> _baseline(WidgetTester tester, ChartLibrary library) async {
   if (library == ChartLibrary.chartjs) {
-    _chart().update('none');
+    _chart().update(UpdateMode.none);
     await tester.pump(const Duration(milliseconds: 20));
   }
   return await _pixels(tester);
@@ -231,15 +232,15 @@ void main() {
                 find.byType(cj.ChartView),
               );
               // The sankey chart is a ChartView.raw: its zoom options are in
-              // `options.plugins` of the raw config.
-              final plugins = view.rawConfig != null
-                  ? (view.rawConfig!['options']! as Map)['plugins']
-                  : view.config!.extra!['plugins'];
-              expect(
-                plugins is Map && plugins['zoom'] is Map,
-                zoom,
-                reason: reason,
-              );
+              // `options.plugins` of the raw config. A typed config gives
+              // them in `pluginOptions` (Chart.js ADR 0148).
+              final options = view.rawConfig != null
+                  ? ((view.rawConfig!['options']! as Map)['plugins']
+                        as Map)['zoom']
+                  : view.config!.pluginOptions
+                        ?.whereType<zp.ZoomPluginOptions>()
+                        .firstOrNull;
+              expect(options is zp.ZoomPluginOptions, zoom, reason: reason);
               expect(_zoomRegistered, zoom, reason: reason);
               expect(_chart().isPluginEnabled('zoom'), zoom, reason: reason);
             case ChartLibrary.flChart:

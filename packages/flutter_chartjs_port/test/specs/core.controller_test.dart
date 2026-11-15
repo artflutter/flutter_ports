@@ -2404,7 +2404,7 @@ void main() {
               'data': <String, Object?>{
                 'datasets': <Object?>[<String, Object?>{}],
               },
-              'plugins': <Object?>[plugin],
+              'plugins': <Plugin<Object?>>[plugin],
               'options': <String, Object?>{'responsive': true},
             },
             <String, Object?>{
@@ -2450,7 +2450,7 @@ void main() {
           'data': <String, Object?>{
             'datasets': <Object?>[<String, Object?>{}],
           },
-          'plugins': <Object?>[plugin],
+          'plugins': <Plugin<Object?>>[plugin],
           'options': <String, Object?>{
             'plugins': <String, Object?>{'plugin': false},
           },
@@ -2507,7 +2507,7 @@ void main() {
                 <String, Object?>{},
               ],
             },
-            'plugins': <Object?>[plugin],
+            'plugins': <Plugin<Object?>>[plugin],
           });
 
           expect(
@@ -2540,7 +2540,7 @@ void main() {
             'data': <String, Object?>{
               'datasets': <Object?>[<String, Object?>{}],
             },
-            'plugins': <Object?>[Plugin<Object?>(id: 'blank')],
+            'plugins': <Plugin<Object?>>[Plugin<Object?>(id: 'blank')],
           });
 
           void iterateOptions() {

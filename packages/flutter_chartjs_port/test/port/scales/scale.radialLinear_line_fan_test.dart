@@ -30,6 +30,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/line_fan_engine.dart';
@@ -575,7 +576,7 @@ void main() {
                   maintainAspectRatio: false,
                   extra: const {'events': <String>[]},
                 ),
-                updateMode: 'none',
+                updateMode: UpdateMode.none,
                 theme: const ChartThemeData(),
                 excludeFromSemantics: true,
                 onChartCreated: (created) => chart = created,

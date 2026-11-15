@@ -86,14 +86,15 @@ String _sizeText(({double width, double height}) size) =>
 
 /// An inline plugin that logs into [log] the hook `resize` with the size
 /// and `chart.attached`, and the mode of `beforeUpdate`. It is a native
-/// plugin (Chart.js ADR 0144).
-Plugin<Object?> _resizeLog(List<String> log) => Plugin<Object?>(
+/// plugin (Chart.js ADRs 0144 and 0148). An absent mode is Dart `null`: the
+/// log writes the upstream `undefined`.
+Plugin<Object?> _resizeLog(List<String> log) => ChartPlugin<Object?>(
   id: 'resizeLog',
   resize: (chart, args, _) {
-    log.add('resize ${(chart as Chart).attached} ${_sizeText(args.size)}');
+    log.add('resize ${chart.attached} ${_sizeText(args.size)}');
   },
   beforeUpdate: (chart, args, _) {
-    log.add('update ${jsToString(args.mode)}');
+    log.add('update ${jsToString(args.mode ?? undefined)}');
     return true;
   },
 );
@@ -666,7 +667,7 @@ void main() {
   // 11). Each test ports one case of core.controller.tests.js line by line,
   // as a check of the harness: the spec file ports the case itself.
   group('the host changes, on the shapes of core.controller.tests.js', () {
-    Map<String, Object?> responsive([List<Object?>? plugins]) =>
+    Map<String, Object?> responsive([List<Plugin<Object?>>? plugins]) =>
         <String, Object?>{
           'options': <String, Object?>{
             'responsive': true,

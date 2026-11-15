@@ -7,7 +7,8 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart, YAxis;
+import 'package:flutter_chartjs_port/chartjs.dart'
+    show Chart, UpdateMode, YAxis;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -26,6 +27,9 @@ import '../support/jasmine.dart';
 //   with no zoom in `getZoomedScaleBounds()` is Dart `null`.
 // - `chart.data.datasets[0].data[0].x = -100` writes the data object of the
 //   config, which the chart reads (`_firstPoint`).
+// - The zoom options are a `ZoomPluginOptions` in `options.plugins.zoom`
+//   (Chart.js ADR 0148), and a limit is a `ScaleLimit`. The update mode
+//   `'default'` is `UpdateMode.defaultMode`.
 
 /// `chart.scales[id].min`.
 double _min(Chart chart, String id) => chart.scales[id]!.min;
@@ -42,7 +46,7 @@ Map<String, Object?> _firstPoint(Chart chart) {
 
 /// The options of a scatter chart with the scales `x` and `y` from 0 to 100,
 /// and the zoom options [zoom], if any.
-Map<String, Object?> _scatter0to100([Map<String, Object?>? zoom]) =>
+Map<String, Object?> _scatter0to100([ZoomPluginOptions? zoom]) =>
     <String, Object?>{
       'type': 'scatter',
       'options': <String, Object?>{
@@ -157,11 +161,17 @@ void main() {
 
       testWidgets('should no-op with fully constrained limits', (tester) async {
         final chart = acquireChart(
-          _scatter0to100(<String, Object?>{
-            'limits': <String, Object?>{
-              'x': <String, Object?>{'min': 0, 'max': 100, 'minRange': 100},
-            },
-          }),
+          _scatter0to100(
+            const ZoomPluginOptions(
+              limits: {
+                'x': ScaleLimits(
+                  min: ScaleLimit(0),
+                  max: ScaleLimit(100),
+                  minRange: 100,
+                ),
+              },
+            ),
+          ),
         );
 
         chart.zoom(const .all(1.5));
@@ -171,12 +181,20 @@ void main() {
 
       testWidgets('should no-op whan laready at limit', (tester) async {
         final chart = acquireChart(
-          _scatter0to100(<String, Object?>{
-            'mode': Mode.x,
-            'limits': <String, Object?>{
-              'x': <String, Object?>{'min': 0, 'max': 100, 'minRange': 50},
-            },
-          }),
+          // The upstream options give `mode: 'x'` at the top level, where
+          // `ZoomPluginOptions` has no `mode`: no code reads it.
+          // DIVERGES(zoom): adapt-native-zoom-options, no extra key.
+          _scatter0to100(
+            const ZoomPluginOptions(
+              limits: {
+                'x': ScaleLimits(
+                  min: ScaleLimit(0),
+                  max: ScaleLimit(100),
+                  minRange: 50,
+                ),
+              },
+            ),
+          ),
         );
 
         // The focal point `{ x }` has no `y`: its `undefined` is NaN in the
@@ -205,11 +223,13 @@ void main() {
 
       testWidgets('should honor zoom changes against a limit', (tester) async {
         final chart = acquireChart(
-          _scatter0to100(<String, Object?>{
-            'limits': <String, Object?>{
-              'x': <String, Object?>{'min': 0, 'max': 100},
-            },
-          }),
+          _scatter0to100(
+            const ZoomPluginOptions(
+              limits: {
+                'x': ScaleLimits(min: ScaleLimit(0), max: ScaleLimit(100)),
+              },
+            ),
+          ),
         );
         chart.zoom(
           ZoomAmount(
@@ -256,14 +276,14 @@ void main() {
           },
           'options': <String, Object?>{
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'zoom': <String, Object?>{'onZoom': zoomSpy.call},
-              },
+              'zoom': ZoomPluginOptions(
+                zoom: ZoomOptions(onZoom: zoomSpy.call),
+              ),
             },
           },
         });
 
-        chart.zoomScale('x', (min: 2, max: 10), 'default');
+        chart.zoomScale('x', (min: 2, max: 10), UpdateMode.defaultMode);
 
         expect(
           zoomSpy,
@@ -438,15 +458,19 @@ void main() {
               'y': <String, Object?>{'min': 2, 'max': 4},
             },
             'plugins': <String, Object?>{
-              'zoom': <String, Object?>{
-                'limits': <String, Object?>{
-                  'y': <String, Object?>{'min': 1, 'max': 5, 'minRange': 1},
+              'zoom': const ZoomPluginOptions(
+                limits: {
+                  'y': ScaleLimits(
+                    min: ScaleLimit(1),
+                    max: ScaleLimit(5),
+                    minRange: 1,
+                  ),
                 },
-                'zoom': <String, Object?>{
-                  'wheel': <String, Object?>{'enabled': true},
-                  'mode': Mode.y,
-                },
-              },
+                zoom: ZoomOptions(
+                  wheel: WheelOptions(enabled: true),
+                  mode: Mode.y,
+                ),
+              ),
             },
           },
         });

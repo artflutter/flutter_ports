@@ -109,15 +109,16 @@ const Map<String, ({String key, IconData icon, String text})> _actionSegments =
 /// Each variant is a sample of the docs of chartjs-plugin-zoom: its config
 /// and its actions, with the changes that the sample file states. The
 /// page registers the zoom plugin for all charts at its first build, as the
-/// docs do (`registerZoomComponents`), and each sample gives its options in
-/// `options.plugins.zoom`. The chart is a `ChartView.raw`: the typed
-/// `ChartConfig` has no slot for the options of a plugin of another package
-/// yet (`doc/host-seams.md` of the zoom port).
+/// docs do (`registerZoomComponents`), and each sample gives its
+/// `ZoomPluginOptions` in `options.plugins.zoom`. The chart is a
+/// `ChartView.raw`: each sample is the config of a docs page, a raw Chart.js
+/// config. A typed config gives the same object in
+/// `ChartConfig.pluginOptions` (Chart.js ADR 0148).
 ///
 /// The page makes the sample once for each variant, so that a rebuild of
 /// the page gives the `ChartView` the same Map: no update, and the zoom
-/// range stays. An action changes the options of the sample and
-/// updates the chart itself, as the docs do. The action line has one
+/// range stays. An action writes new zoom options into the config of the
+/// sample and updates the chart itself, as the docs do. The action line has one
 /// segment for each action of the sample: a toggle shows the state of its
 /// option, and `reset` (`Reset zoom`) puts back the first range.
 ///
@@ -168,7 +169,7 @@ class ZoomPageState() extends State<ZoomPage> {
   ZoomDocsSample _makeSample() {
     registerZoomComponents();
     final sample = _current.sample(_log);
-    sample.config['plugins'] = <Object?>[_readoutPlugin];
+    sample.config['plugins'] = <Plugin<Object?>>[_readoutPlugin];
     _output = sample.output;
     return sample;
   }

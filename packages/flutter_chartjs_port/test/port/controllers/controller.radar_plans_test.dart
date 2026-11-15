@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The twins of Chart.js ADR 0095: the exact controller takes the typed writes
@@ -191,7 +192,7 @@ void _expectTwin(
       step(chart);
       points.addAll(_pointsText(chart));
     }
-    chart.update('none');
+    chart.update(UpdateMode.none);
     points.addAll(_pointsText(chart));
     return (points: points, calls: [...?calls]);
   }
@@ -222,11 +223,11 @@ void main() {
         steps: [
           (chart) {
             setData(chart, <Object?>[for (var i = 0; i < 20; i++) i * 3.0]);
-            chart.update('none');
+            chart.update(UpdateMode.none);
           },
           (chart) {
             setData(chart, <Object?>[1.0, 2.0, 3.0]);
-            chart.update('none');
+            chart.update(UpdateMode.none);
           },
         ],
       );
@@ -324,7 +325,7 @@ void main() {
             chart
               ..toggleDataVisibility(1)
               ..toggleDataVisibility(4)
-              ..update('none');
+              ..update(UpdateMode.none);
           },
         ],
       );
@@ -336,10 +337,10 @@ void main() {
         steps: [
           (chart) => chart
             ..setDatasetVisibility(0, false)
-            ..update('none'),
+            ..update(UpdateMode.none),
           (chart) => chart
             ..setDatasetVisibility(0, true)
-            ..update('none'),
+            ..update(UpdateMode.none),
         ],
       );
     });
@@ -364,12 +365,12 @@ void main() {
             ..setActiveElements([
               const ActiveElement(datasetIndex: 0, index: 3),
             ])
-            ..update('none'),
+            ..update(UpdateMode.none),
           (chart) => chart
             ..setActiveElements([
               const ActiveElement(datasetIndex: 0, index: 0),
             ])
-            ..update('none'),
+            ..update(UpdateMode.none),
         ],
       );
     });
@@ -378,9 +379,9 @@ void main() {
       _expectTwin(
         _config,
         steps: [
-          (chart) => chart.update('reset'),
-          (chart) => chart.update('none'),
-          (chart) => chart.update('resize'),
+          (chart) => chart.update(UpdateMode.reset),
+          (chart) => chart.update(UpdateMode.none),
+          (chart) => chart.update(UpdateMode.resize),
           (chart) {
             chart.getDatasetMeta(0).controller!.reset();
           },
@@ -397,7 +398,10 @@ void main() {
             'animation': <String, Object?>{'duration': 1000.0},
           },
         ),
-        steps: [(chart) => chart.update(), (chart) => chart.update('none')],
+        steps: [
+          (chart) => chart.update(),
+          (chart) => chart.update(UpdateMode.none),
+        ],
       );
     });
 
@@ -455,7 +459,7 @@ void main() {
       _ObservedRadar.updates.clear();
       final chart = acquireChart(_config('observedRadar', n: 4));
       _ObservedRadar.updates.clear();
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(_ObservedRadar.updates, [
         'null none',
         '0 none',
@@ -474,7 +478,7 @@ void main() {
         ..[0] = _ObservedPoint()
         ..[3] = _ObservedPoint();
       _ObservedPoint.writes.clear();
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(_ObservedPoint.writes, [
         for (var i = 0; i < 2; i++) ...['x', 'y', 'angle', 'skip', 'options'],
       ]);
@@ -484,7 +488,7 @@ void main() {
       twin.getDatasetMeta(0).data
         ..[0] = _ObservedPoint()
         ..[3] = _ObservedPoint();
-      twin.update('none');
+      twin.update(UpdateMode.none);
       expect(_pointsText(chart), _pointsText(twin));
     });
 
@@ -513,10 +517,10 @@ void main() {
       final chart = acquireChart(_config('radar', n: 4));
       final controller = chart.getDatasetMeta(0).controller!;
       controller.enableOptionSharing = true;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       final twin = acquireChart(_config('ordinaryRadar', n: 4));
       (twin.getDatasetMeta(0).controller!).enableOptionSharing = true;
-      twin.update('none');
+      twin.update(UpdateMode.none);
       expect(_pointsText(chart), _pointsText(twin));
     });
 
@@ -526,7 +530,7 @@ void main() {
       final chart = acquireChart(_config('radar', n: 2));
       final scale = chart.scales['r']! as types.RadialLinearScale;
       expect(scale.xCenter, isNotNull);
-      chart.update('reset');
+      chart.update(UpdateMode.reset);
       final point = chart.getDatasetMeta(0).data.first as PointElement;
       expect(point.x, scale.xCenter);
       expect(point.y, scale.yCenter);
@@ -537,7 +541,7 @@ void main() {
     ) async {
       final chart = acquireChart(_config('radar', n: 4));
       final controller = chart.getDatasetMeta(0).controller!;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       final cached = controller.cachedPointNoneOptions;
       expect(cached, isNotNull);
       expect(cached!.isFrozen, isTrue);

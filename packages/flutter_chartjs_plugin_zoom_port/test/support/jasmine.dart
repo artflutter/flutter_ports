@@ -15,7 +15,7 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart'
-    show JsObjectFace, Plugin, undefined;
+    show ChartPlugin, JsObjectFace, undefined;
 import 'package:flutter_chartjs_port/js_semantics.dart'
     show jsGet, jsObjectKeys;
 import 'package:flutter_test/flutter_test.dart';
@@ -89,7 +89,7 @@ Spy createSpy([String name = 'unknown']) => Spy(name);
 /// The spy is written into the hook field of the native plugin (Chart.js ADR
 /// 0144), as a JavaScript spy replaces the property. The hook continues the
 /// update, as the `undefined` result of a JavaScript spy does.
-Spy spyOnBeforeUpdate(Plugin<ZoomPluginOptions> plugin) {
+Spy spyOnBeforeUpdate(ChartPlugin<ZoomPluginOptions> plugin) {
   final previous = plugin.beforeUpdate;
   final spy = Spy('beforeUpdate');
   plugin.beforeUpdate = (chart, args, options) {

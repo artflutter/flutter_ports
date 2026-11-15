@@ -322,6 +322,7 @@ export 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     hide tooltipCallbacksOf, tooltipCallbacksPresence;
 export 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
     hide dataLabelLinesOf;
+export 'package:flutter_chartjs_port/src/types/update_mode.dart';
 export 'package:flutter_chartjs_port/src/upstream.dart';
 export 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart'
     hide ChartKeyboard;

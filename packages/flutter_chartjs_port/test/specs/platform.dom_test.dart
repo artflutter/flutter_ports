@@ -461,7 +461,7 @@ void main() {
             ],
           },
           'options': <String, Object?>{'responsive': true},
-          'plugins': <Object?>[plugin],
+          'plugins': <Plugin<Object?>>[plugin],
         });
 
         await triggerMouseEvent(chart, 'click', <String, Object?>{

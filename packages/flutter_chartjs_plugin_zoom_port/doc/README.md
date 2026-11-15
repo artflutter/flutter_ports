@@ -26,7 +26,10 @@ and the public API of the Chart.js port.
   the tests that pin it. At the end of zoom phase 4 (2026-11-10), 18 seams connect, 6 need only a
   Dart form in the zoom port and 3 wait for later host decisions (H18, H19, and H27, the trackpad
   of a native desktop app). H28, the range update of Chart.js ADR 0111, connects since the same
-  day.
+  day. Since 2026-11-15,
+  [Chart.js ADR 0148](../../flutter_chartjs_port/doc/adr/0148-plugin-typing.md) connects H18: the
+  options are one immutable `ZoomPluginOptions` in `ChartConfig.pluginOptions`
+  ([Zoom ADR 0005](adr/0005-typed-zoom-options.md)). H19 waits.
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.
 - **Upstream after the pin:** [upstream-ledger.md](upstream-ledger.md).
@@ -39,10 +42,43 @@ and the public API of the Chart.js port.
 - **Gallery:** the zoom page of `apps/chartjs_gallery` (phase 4, ADR 0009 item 8).
 - **License:** MIT, as upstream ([LICENSE](../LICENSE)).
 
+## The options
+
+The options of a chart are one immutable `ZoomPluginOptions`
+([Zoom ADR 0005](adr/0005-typed-zoom-options.md), row `adapt-native-zoom-options`), with one class
+for each interface of `src/options.ts`: `ZoomOptions`, `PanOptions`, `WheelOptions`, `DragOptions`,
+`PinchOptions` and `ScaleLimits`. A field that is null is not set, and the hooks get the defaults
+merged with the options of the chart. A typed config gives the object in
+`ChartConfig.pluginOptions`; a raw config holds it in `options.plugins.zoom`:
+
+```dart
+ChartView(
+  config: ChartConfig(
+    type: .line,
+    datasets: [LineDataset(data: values)],
+    pluginOptions: [
+      ZoomPluginOptions(
+        pan: const PanOptions(enabled: true, mode: Mode.x),
+        zoom: ZoomOptions(
+          wheel: const WheelOptions(enabled: true, modifierKey: ModifierKey.ctrl),
+          mode: Mode.x,
+          onZoomComplete: (context) => print(context.chart.getZoomLevel()),
+        ),
+        limits: const {'x': ScaleLimits(min: ScaleLimit.original, minRange: 10)},
+      ),
+    ],
+  ),
+);
+```
+
+A limit is a `ScaleLimit`: a number (`ScaleLimit(0)`) or the limit of the scale when the chart was
+first displayed (`ScaleLimit.original`). The update mode of the zoom and pan input is the constant
+`zoomUpdateMode`, an `UpdateMode` of the host: `chart.resetZoom(zoomUpdateMode)`.
+
 ## The option `rangeOnlyUpdates`
 
-The port has one option that upstream does not have: `plugins.zoom.rangeOnlyUpdates`, a `bool` with
-no default (an absent key is `false`). With `true`, each zoom and pan step updates the chart with
+The port has one option that upstream does not have: the field `rangeOnlyUpdates` of
+`ZoomPluginOptions`, a `bool?` with no default (null is `false`). With `true`, each zoom and pan step updates the chart with
 `chart.updateRanges(transition)` of the host
 ([Chart.js ADR 0111](../../flutter_chartjs_port/doc/adr/0111-range-updates.md)) in place of
 `chart.update(transition)`. The range update keeps the configuration of the last full update and
@@ -55,15 +91,16 @@ pixels are those of `update`. The options that only the skipped steps read (`res
 ChartView(
   config: ChartConfig(
     // ...
-    extra: {
-      'plugins': {
-        'zoom': {
-          'zoom': {'wheel': {'enabled': true}, 'pinch': {'enabled': true}},
-          'pan': {'enabled': true},
-          'rangeOnlyUpdates': true,
-        },
-      },
-    },
+    pluginOptions: const [
+      ZoomPluginOptions(
+        zoom: ZoomOptions(
+          wheel: WheelOptions(enabled: true),
+          pinch: PinchOptions(enabled: true),
+        ),
+        pan: PanOptions(enabled: true),
+        rangeOnlyUpdates: true,
+      ),
+    ],
   ),
 )
 ```
@@ -104,10 +141,16 @@ in a spec can make more cases than its `it` calls.
 - [Zoom ADR 0004: Native zoom and pan callbacks](adr/0004-native-zoom-pan-callbacks.md) (accepted):
   the callback options and the `ModeFn` hold typed functions, a start callback returns `bool`, and
   the plugin calls them directly.
+- [Zoom ADR 0005: Typed zoom options](adr/0005-typed-zoom-options.md) (proposed): the options are
+  immutable classes with nullable fields and `merge`, the defaults a `const ZoomPluginOptions`, the
+  plugin a `ChartPlugin` with no cast, the update mode an `UpdateMode`.
 - [ADR 0009: Ports of add-on libraries](../../../docs/adr/0009-add-on-ports.md) (proposed): the
   rule for all add-on ports.
 - [Chart.js ADR 0108: The input surface and exports for add-on plugins](../../flutter_chartjs_port/doc/adr/0108-input-surface-and-exports-for-add-on-plugins.md)
   (accepted 2026-11-10): the host change of zoom phase 1.
+- [Chart.js ADR 0148: Typed plugin chart, options and update mode](../../flutter_chartjs_port/doc/adr/0148-plugin-typing.md):
+  the host change of the typed options slot (H18): `ChartPlugin`, `PluginOptions`,
+  `ChartConfig.pluginOptions` and `UpdateMode`.
 
 The rules of the Chart.js port (AGENTS.md) apply, with the changes of these ADRs. The porting
 flow of the Chart.js port applies to each module: `packages/flutter_chartjs_port/doc/porting-flow.md`
@@ -129,5 +172,5 @@ is next.
 | 2 | The pure modules: `types`, `options`, `defaults`, `state`, `utils`, `scale.types`, `core`, with `src/*.test.ts`, and the base of the set-up `test/flutter_test_config.dart`. | `utils_test.dart` and `scale.types_test.dart` pass. | Done 2026-11-10. |
 | 3 | The input modules `handlers` and `gestures`, the plugin `plugin`, `index` and `index.umd` (the input specs need the registered plugin), the helpers of the set-up (H23), the specs `api`, `defaults`, `module`, `zoom.wheel`, `zoom.drag`, `pan`, `zoom.pinch` and `gestures`, the check of H17 and the test of the data-only opt-in (H25). | The specs pass or have a reason. | Done 2026-11-10: the 83 cases of the 8 specs pass, with no skip. |
 | 4 | The fixtures: the 12 hand fixtures with the comparison of the scale ranges (H24). The zoom page of the gallery (H20). The tests of real input on a `ChartView`. A device check of H8 on Android and iOS. | All upstream cases pass or have a reason. | Done 2026-11-10: the fixtures, the gallery page and the tests of real input (`test/port/handlers_test.dart`, `gestures_test.dart`, `index_test.dart`). The device check of H8 is open. |
-| 5 | The app surface: the typed options slot (H18), with the typed plugin in the inline plugins of a typed config, and the theme extension (H19), each after its Chart.js ADR. | The README shows the typed form. | Open. |
+| 5 | The app surface: the typed options slot (H18), with the typed plugin in the inline plugins of a typed config, and the theme extension (H19), each after its Chart.js ADR. | The README shows the typed form. | Open. The typed options slot (H18): done 2026-11-15 with Chart.js ADR 0148 and Zoom ADR 0005. The theme extension (H19) is open. |
 | 6 | Release 0.1.0, after the release of `flutter_chartjs_port`, and the bump to the upstream tag of the next release (Zoom ADR 0001 item 7). | — | Open. |

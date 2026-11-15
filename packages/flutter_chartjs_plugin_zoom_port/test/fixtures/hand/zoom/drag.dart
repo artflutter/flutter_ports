@@ -4,7 +4,10 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    show DragOptions, ZoomOptions, ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
 
 import '../../../flutter_test_config.dart' show triggerMouseEvent;
@@ -32,16 +35,17 @@ Map<String, Object?> fixture() {
         },
         'plugins': <String, Object?>{
           'legend': false,
-          'zoom': <String, Object?>{
-            'zoom': <String, Object?>{
-              'drag': <String, Object?>{
-                'enabled': true,
-                'backgroundColor': 'yellow',
-                'borderColor': 'black',
-                'borderWidth': 1,
-              },
-            },
-          },
+          'zoom': ZoomPluginOptions(
+            zoom: ZoomOptions(
+              drag: DragOptions(
+                enabled: true,
+                // The CSS color of a native option: a paint of the harness.
+                backgroundColor: nativeFixturePaint('yellow'),
+                borderColor: nativeFixturePaint('black'),
+                borderWidth: 1,
+              ),
+            ),
+          ),
         },
         'layout': <String, Object?>{'padding': const EdgeInsets.all(2)},
       },

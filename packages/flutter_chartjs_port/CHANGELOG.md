@@ -1,5 +1,14 @@
 ## 0.1.0
 
+- The update mode is the extension type `UpdateMode`: `chart.update(UpdateMode.none)`, a custom
+  mode `const UpdateMode('zoom')`, and `chart.updateDatasets((i) => ...)` for the function form.
+  `ChartView.updateMode` takes an `UpdateMode` (Chart.js ADR 0148).
+
+- `ChartPlugin<O>` gives the hooks the public `Chart`, with no cast. An add-on gives its options
+  as one immutable `PluginOptions` object, and `ChartConfig.pluginOptions` sets the options of a
+  chart: `ChartConfig(pluginOptions: [ZoomPluginOptions(...)])`. `Plugin.defaults` is a
+  `PluginDefaults`, and the inline plugins of a raw config are a `List<Plugin<Object?>>`.
+
 - A plugin is a native `Plugin<O>` with one typed field for each hook (Chart.js
   ADR 0144). A plugin Map is no longer a plugin: a Map in `plugins` or in
   `Chart.register` stops a debug build. A cancelable hook (`beforeUpdate`,

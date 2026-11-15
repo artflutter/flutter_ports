@@ -11,7 +11,13 @@ import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode;
+    show
+        Mode,
+        PanOptions,
+        PinchOptions,
+        WheelOptions,
+        ZoomOptions,
+        ZoomPluginOptions;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -383,17 +389,17 @@ Map<String, Object?> inputProbeConfig(int points, Plugin<Object?> plugin) =>
           },
         },
         'plugins': <String, Object?>{
-          'zoom': <String, Object?>{
-            'pan': <String, Object?>{'enabled': true, 'mode': Mode.xy},
-            'zoom': <String, Object?>{
-              'wheel': <String, Object?>{'enabled': true},
-              'pinch': <String, Object?>{'enabled': true},
-              'mode': Mode.xy,
-            },
-          },
+          'zoom': const ZoomPluginOptions(
+            pan: PanOptions(enabled: true, mode: Mode.xy),
+            zoom: ZoomOptions(
+              wheel: WheelOptions(enabled: true),
+              pinch: PinchOptions(enabled: true),
+              mode: Mode.xy,
+            ),
+          ),
         },
       },
-      'plugins': <Object?>[plugin],
+      'plugins': <Plugin<Object?>>[plugin],
     };
 
 /// The app of the probe.

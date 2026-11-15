@@ -88,7 +88,7 @@ List<bool?> _stops(Chart chart) => [
 
 /// The twins of a config: one chart with the gap reads and one with each
 /// read of `prevParsed[iAxis]`. [config] makes new objects at each call.
-/// Each chart runs its construction and one `update('none')`; [before]
+/// Each chart runs its construction and one `update(UpdateMode.none)`; [before]
 /// runs before that update. The result has the observations of the chart
 /// with the gap reads, and the number of gap tests that took a held x in
 /// its update.
@@ -107,7 +107,7 @@ List<bool?> _stops(Chart chart) => [
     addTearDown(chart.destroy);
     before?.call(chart);
     final start = nativeGapReadsTaken;
-    chart.update('none');
+    chart.update(UpdateMode.none);
     if (enabled) {
       takes = nativeGapReadsTaken - start;
     } else {
@@ -387,7 +387,7 @@ void main() {
           addTearDown(chart.destroy);
           log.clear();
           final start = nativeGapReadsTaken;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expect(nativeGapReadsTaken, start);
           expect(_stops(chart), stopsOf1_5);
           logs.add(List.of(log));
@@ -428,7 +428,7 @@ void main() {
           addTearDown(chart.destroy);
           calls = 0;
           final start = nativeGapReadsTaken;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expect(nativeGapReadsTaken, start);
           expect(_stops(chart), stopsOf1_5);
           counts.add(calls);

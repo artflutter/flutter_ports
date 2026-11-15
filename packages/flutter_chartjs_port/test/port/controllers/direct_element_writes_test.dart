@@ -450,52 +450,52 @@ void _setData(Map<String, Object?> cfg, double step, int length) {
 /// The steps of a twin: each mode, and each change of the task.
 final Map<String, void Function(Chart chart, Map<String, Object?> cfg)> _steps =
     {
-      'none': (chart, cfg) => chart.update('none'),
+      'none': (chart, cfg) => chart.update(UpdateMode.none),
       'new data': (chart, cfg) {
         _setData(cfg, 2, 8);
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
       'default': (chart, cfg) => chart.update(),
-      'reset': (chart, cfg) => chart.update('reset'),
-      'after reset': (chart, cfg) => chart.update('none'),
+      'reset': (chart, cfg) => chart.update(UpdateMode.reset),
+      'after reset': (chart, cfg) => chart.update(UpdateMode.none),
       'chart.reset': (chart, cfg) => chart.reset(),
-      'active mode': (chart, cfg) => chart.update('active'),
-      'resize mode': (chart, cfg) => chart.update('resize'),
+      'active mode': (chart, cfg) => chart.update(UpdateMode.active),
+      'resize mode': (chart, cfg) => chart.update(UpdateMode.resize),
       'resize': (chart, cfg) => chart.resize(400, 300),
       'an item hidden': (chart, cfg) {
         chart
           ..toggleDataVisibility(2)
-          ..update('none');
+          ..update(UpdateMode.none);
       },
       'an element hidden': (chart, cfg) {
         (chart.getDatasetMeta(0).data[3] as Element).hidden = true;
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
       'visible again': (chart, cfg) {
         (chart.getDatasetMeta(0).data[3] as Element).hidden = false;
         chart
           ..toggleDataVisibility(2)
-          ..update('none');
+          ..update(UpdateMode.none);
       },
       'hide a dataset item': (chart, cfg) => chart.hide(0, 1),
       'show a dataset item': (chart, cfg) => chart.show(0, 1),
       'an active element': (chart, cfg) {
         chart
           ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)])
-          ..update('none');
+          ..update(UpdateMode.none);
       },
       'no active element': (chart, cfg) {
         chart
           ..setActiveElements([])
-          ..update('none');
+          ..update(UpdateMode.none);
       },
       'growing data': (chart, cfg) {
         _setData(cfg, 3, 10);
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
       'shrinking data': (chart, cfg) {
         _setData(cfg, 4, 5);
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
       'a NaN and a null value': (chart, cfg) {
         final data = _data(_baseType(cfg), 5);
@@ -507,12 +507,12 @@ final Map<String, void Function(Chart chart, Map<String, Object?> cfg)> _steps =
           data[5] = null;
         }
         _first(cfg)['data'] = data;
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
-      'reset of a NaN value': (chart, cfg) => chart.update('reset'),
+      'reset of a NaN value': (chart, cfg) => chart.update(UpdateMode.reset),
       'back to numbers': (chart, cfg) {
         _setData(cfg, 6, 8);
-        chart.update('none');
+        chart.update(UpdateMode.none);
       },
     };
 
@@ -746,7 +746,7 @@ void main() {
           final chart = _chart(cfg);
           _setData(cfg, 2, 8);
           armed = true;
-          expect(() => chart.update('none'), throwsStateError);
+          expect(() => chart.update(UpdateMode.none), throwsStateError);
           armed = false;
           results.add(_observe(chart, cfg));
         }
@@ -766,7 +766,7 @@ void main() {
           final chart = _chart(cfg);
           final data = chart.getDatasetMeta(0).data;
           (data[2] as Element)['extra'] = 7.0;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expect((data[2] as Element)['extra'], 7.0);
           results.add(_observe(chart, cfg));
         }
@@ -803,8 +803,8 @@ void main() {
           for (final cfg in configs) {
             _setData(cfg, 3, 8);
           }
-          charts[0].update('none');
-          charts[1].update('none');
+          charts[0].update(UpdateMode.none);
+          charts[1].update(UpdateMode.none);
           expect(
             _observe(charts[0], configs[0]),
             _observe(charts[1], configs[1]),
@@ -918,12 +918,12 @@ void main() {
 
       test('$type writes with the typed setters in the mode none', () {
         final probes = <_ProbeArc>[];
-        final chart = probed(type, probes)..update('none');
+        final chart = probed(type, probes)..update(UpdateMode.none);
         for (final probe in probes) {
           expect(probe.assigns, 0);
           expect(probe.startAngleWrites, 1);
         }
-        chart.update('reset');
+        chart.update(UpdateMode.reset);
         for (final probe in probes) {
           expect(probe.assigns, 0);
           expect(probe.startAngleWrites, 2);
@@ -932,7 +932,7 @@ void main() {
 
       test('a user subclass of $type takes updateElement', () {
         final probes = <_ProbeArc>[];
-        probed(_refType(type), probes).update('none');
+        probed(_refType(type), probes).update(UpdateMode.none);
         for (final probe in probes) {
           expect(probe.assigns, 1);
         }
@@ -978,7 +978,7 @@ void main() {
             (index) => index == 4 ? _UserArc(writes) : ArcElement(),
           );
           writes.clear();
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expect(writes.sublist(writes.length - expected.length), expected);
           results.add(writes);
         }
@@ -994,7 +994,7 @@ void main() {
         }),
       );
       final before = _CountingPie.updates;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(_CountingPie.updates - before, 8);
     });
 
@@ -1007,12 +1007,12 @@ void main() {
           probes.add(probe);
           return probe;
         },
-      )..update('none');
+      )..update(UpdateMode.none);
       for (final probe in probes) {
         expect(probe.assigns, 0);
         expect(probe.skipWrites, 1);
       }
-      chart.update('reset');
+      chart.update(UpdateMode.reset);
       for (final probe in probes) {
         expect(probe.assigns, 0);
         expect(probe.skipWrites, 2);
@@ -1030,7 +1030,7 @@ void main() {
           probes.add(probe);
           return probe;
         },
-      ).update('none');
+      ).update(UpdateMode.none);
       for (final probe in probes) {
         expect(probe.assigns, 1);
       }
@@ -1045,7 +1045,7 @@ void main() {
           (index) => index == 4 ? _UserPoint(writes) : PointElement(),
         );
         writes.clear();
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(writes, ['x', 'y', 'skip', 'options']);
         results.add(writes);
       }
@@ -1112,9 +1112,9 @@ void main() {
         }
         meta.data[i] = probe;
       }
-      chart.update('none');
+      chart.update(UpdateMode.none);
       armed = true;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       return [
         for (final arc in meta.data.cast<ArcElement>())
           (arc.options! as ArcOptions).valueOf(key),
@@ -1171,7 +1171,7 @@ void main() {
         armed = false;
         meta.controller!.options.jsWrite('spacing', 9.0);
       };
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(armed, isFalse);
       for (final probe in probes) {
         expect((probe.options! as ArcOptions).spacing, 0.0);
@@ -1244,7 +1244,7 @@ void main() {
       };
       final arcs = _CustomList([...meta.data])..[5] = probe;
       // The list of the loop is not the list of the meta: no plan either.
-      meta.controller!.update('none');
+      meta.controller!.update(UpdateMode.none);
       meta.data[5] = probe;
       armed = true;
       meta.controller!.updateElements(arcs, 0, 8, 'none');
@@ -1277,7 +1277,7 @@ void main() {
           _config(kind, {'backgroundColor': const ChartPaint.solid(red)}),
         );
         chart.getDatasetMeta(0).controller!.enableOptionSharing = true;
-        expect(() => chart.update('none'), throwsA(isA<TypeError>()));
+        expect(() => chart.update(UpdateMode.none), throwsA(isA<TypeError>()));
       }
     });
 
@@ -1295,7 +1295,7 @@ void main() {
           }),
         );
         calls.clear();
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(calls, isNotEmpty);
         results.add(calls);
       }
@@ -1313,7 +1313,7 @@ void main() {
           }),
         );
         calls.clear();
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(calls, isNotEmpty);
         results.add(calls.length);
       }
@@ -1329,7 +1329,7 @@ void main() {
         });
         final chart = _chart(cfg)
           ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)])
-          ..update('none');
+          ..update(UpdateMode.none);
         results.add(_observe(chart, cfg));
       }
       expect(results[0], results[1]);
@@ -1348,7 +1348,7 @@ void main() {
           },
           options: {'parsing': false},
         );
-        final chart = _chart(cfg)..update('none');
+        final chart = _chart(cfg)..update(UpdateMode.none);
         results.add(_observe(chart, cfg));
       }
       expect(results[0], results[1]);
@@ -1360,7 +1360,7 @@ void main() {
           _config(kind, {
             'backgroundColor': const ChartPaint.solid(red),
           }, options: _maskedSpacing()),
-        )..update('none');
+        )..update(UpdateMode.none);
         final arcs = chart.getDatasetMeta(0).data.cast<ArcElement>();
         for (final arc in arcs) {
           final options = arc.options! as ArcOptions;
@@ -1394,7 +1394,7 @@ void main() {
         });
         final chart = _chart(cfg);
         chart.getDatasetMeta(0).controller!.enableOptionSharing = true;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expectShared(chart);
         results.add(_observe(chart, cfg));
       }
@@ -1541,10 +1541,10 @@ void main() {
         meta.controller!.options.jsWrite('spacing', 9.0);
       };
       meta.data[5] = probe;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(meta.parsed, isA<_CustomParsed>());
       armed = true;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(armed, isFalse);
       expect(
         [
@@ -1582,7 +1582,7 @@ void main() {
             const ActiveElement(datasetIndex: 0, index: 2),
           ]);
         armed = true;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(armed, isFalse);
         results.add([
           for (final arc in chart.getDatasetMeta(0).data.cast<ArcElement>())
@@ -1622,7 +1622,7 @@ void main() {
               ...own,
             });
             final dataset = _first(cfg);
-            cfg['plugins'] = <Object?>[
+            cfg['plugins'] = <Plugin<Object?>>[
               Plugin<Object?>(
                 id: 'writes-read-back',
                 afterDatasetUpdate: (chart, args, options) {
@@ -1642,9 +1642,9 @@ void main() {
             ];
             final chart = _chart(cfg);
             value = 20.0;
-            chart.update('none');
+            chart.update(UpdateMode.none);
             value = 30.0;
-            chart.update('reset');
+            chart.update(UpdateMode.reset);
             results.add(trace);
           }
           expect(results[0], results[1]);
@@ -1674,7 +1674,7 @@ void main() {
           probes.add(probe);
           meta.data[i] = probe;
         }
-        chart.update('none');
+        chart.update(UpdateMode.none);
         var armed = false;
         var written = 9.0;
         probes[5].onActive = () {
@@ -1836,7 +1836,7 @@ void main() {
         },
         prepare: (chart) => chart
           ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)])
-          ..update('none'),
+          ..update(UpdateMode.none),
       );
       dataOnlyTwin(
         'a shared result',
@@ -1847,7 +1847,7 @@ void main() {
         },
         prepare: (chart) {
           chart.getDatasetMeta(0).controller!.enableOptionSharing = true;
-          chart.update('none');
+          chart.update(UpdateMode.none);
           expectShared(chart);
         },
       );
@@ -1888,7 +1888,7 @@ void main() {
         final cfg = _config(kind, {
           'backgroundColor': const ChartPaint.solid(red),
         });
-        final chart = _chart(cfg)..update('none');
+        final chart = _chart(cfg)..update(UpdateMode.none);
         final data = chart.getDatasetMeta(0).data.cast<ArcElement>();
         final seen = <Object?>{};
         for (final arc in data) {
@@ -1902,7 +1902,7 @@ void main() {
         }
         (data[3].options! as ArcOptions).storeKey(OptionKey.spacing, 4.0);
         results.add(_observe(chart, cfg));
-        chart.update('none');
+        chart.update(UpdateMode.none);
         results.add(_observe(chart, cfg));
       }
       expect(results[0], results[2]);

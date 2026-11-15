@@ -214,7 +214,10 @@ final class DemoChart(
   /// core.controller.js:475 `update(mode)`. core.controller.js:536: an
   /// update ends with a render. The demo chart has only the render.
   @override
-  void update([Object? mode]) => render();
+  void update([UpdateMode? mode]) => render();
+
+  @override
+  void updateDatasets(UpdateModeOf modeOf) => render();
 
   @override
   bool updateData() {

@@ -314,8 +314,8 @@ void main() {
             for (final cfg in configs) {
               _dataset(cfg)['data'] = data.value(step: step.toDouble());
             }
-            a.update('none');
-            b.update('none');
+            a.update(UpdateMode.none);
+            b.update(UpdateMode.none);
             expect(_observe(a), _observe(b));
             final points = a.getDatasetMeta(0).data;
             final first = points[3] as PointElement;
@@ -356,8 +356,8 @@ void main() {
         for (final cfg in configs) {
           _dataset(cfg)['data'] = data(length, step: length.toDouble());
         }
-        a.update('none');
-        b.update('none');
+        a.update(UpdateMode.none);
+        b.update(UpdateMode.none);
         expect(_observe(a), _observe(b));
       }
     });
@@ -377,8 +377,8 @@ void main() {
     });
     final a = _chart(configs[0]);
     final b = _chart(configs[1], reference: true);
-    a.update('none');
-    b.update('none');
+    a.update(UpdateMode.none);
+    b.update(UpdateMode.none);
     expect(_observe(a), _observe(b));
     final second = a.getDatasetMeta(1);
     final other = b.getDatasetMeta(1);
@@ -682,7 +682,7 @@ void main() {
         final cfg = _config(type: type, dataset: {'radius': radius});
         final chart = _chart(cfg, reference: type != 'bubble');
         _dataset(cfg)['data'] = _maps(step: 1);
-        chart.update('none');
+        chart.update(UpdateMode.none);
         logs.add(calls);
         states.add(_observe(chart));
       }
@@ -789,11 +789,11 @@ void main() {
         final cfg = _config(type: type, dataset: {'radius': custom});
         final chart = _chart(cfg, reference: type != 'bubble');
         final created = custom.calls;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         final kept = custom.calls - created;
         // A new data List drops the old parsed items: each resolve converts.
         _dataset(cfg)['data'] = _maps(step: 1);
-        chart.update('none');
+        chart.update(UpdateMode.none);
         counts.add([created, kept, custom.calls - created - kept]);
         results.add(radii(chart));
       }
@@ -812,7 +812,7 @@ void main() {
         final cfg = _config(type: type, data: arrays(custom));
         final chart = _chart(cfg, reference: type != 'bubble');
         final created = custom.calls;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         counts.add([created, custom.calls - created]);
         results.add(radii(chart));
       }
@@ -972,7 +972,7 @@ void main() {
       expect(created, greaterThanOrEqualTo(_length * 3));
       _CountingBubble.resolves = 0;
       _dataset(cfg)['data'] = _maps(step: 1);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(_CountingBubble.resolves, _length * 4 + 1);
     });
 
@@ -1034,8 +1034,8 @@ void main() {
         for (final cfg in configs) {
           _dataset(cfg)['data'] = _maps(step: 1);
         }
-        a.update('none');
-        b.update('none');
+        a.update(UpdateMode.none);
+        b.update(UpdateMode.none);
         expect(_observe(a), _observe(b));
         expect(probes.every((p) => p.planReads == 0), isTrue);
       }
@@ -1127,8 +1127,8 @@ void main() {
         addTearDown(() => foreignAudit = saved);
         foreignAudit = (_, _, _) {};
         expect(_observe(a), _observe(b));
-        a.update('none');
-        b.update('none');
+        a.update(UpdateMode.none);
+        b.update(UpdateMode.none);
         expect(_observe(a), _observe(b));
         foreignAudit = saved;
       }
@@ -1193,8 +1193,8 @@ void main() {
       for (final cfg in configs) {
         _dataset(cfg)['data'] = List<Object?>.of(data);
       }
-      a.update('none');
-      b.update('none');
+      a.update(UpdateMode.none);
+      b.update(UpdateMode.none);
       expect(_observe(a), _observe(b));
       final parsed = a.getDatasetMeta(0).parsed.cast<ParsedItem>();
       expect(parsed[3].custom, isNull);
@@ -1270,8 +1270,8 @@ void main() {
               );
               final a = _chart(configs[0]);
               final b = _chart(configs[1], reference: true);
-              a.update('none');
-              b.update('none');
+              a.update(UpdateMode.none);
+              b.update(UpdateMode.none);
               expect(_observe(a), _observe(b), reason: '$options, $parsing');
             }
           }
@@ -1300,7 +1300,7 @@ void main() {
         foreignAudit = (_, _, _) {};
         final chart = _chart(cfg, reference: type != 'bubble');
         log.clear();
-        chart.update('none');
+        chart.update(UpdateMode.none);
         foreignAudit = saved;
         logs.add(log);
       }
@@ -1322,7 +1322,7 @@ void main() {
             width: 400,
             height: 300,
             child: ChartView(
-              updateMode: 'none',
+              updateMode: UpdateMode.none,
               theme: const ChartThemeData(),
               excludeFromSemantics: true,
               onChartCreated: (created) => chart = created,
@@ -1348,7 +1348,7 @@ void main() {
       final live = chart!;
       final meta = live.getDatasetMeta(0);
       final probes = _probes(live);
-      live.update('none');
+      live.update(UpdateMode.none);
       expect(probes.every((p) => p.planReads > 0), isTrue);
       // Only its draw: neither overflow pass called `size` on this point.
       expect(probes[0].sizeCalls, 1);

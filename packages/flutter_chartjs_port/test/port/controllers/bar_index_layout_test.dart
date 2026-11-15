@@ -217,8 +217,8 @@ void main() {
             a.toggleDataVisibility(1);
             b.toggleDataVisibility(1);
           }
-          a.update('none');
-          b.update('none');
+          a.update(UpdateMode.none);
+          b.update(UpdateMode.none);
           expect(_observe(a, 1), _observe(b, 1), reason: 'step $step');
         }
         for (final cfg in [ca, cb]) {
@@ -226,15 +226,15 @@ void main() {
             'data': <double>[2, 4, 1, 3],
           });
         }
-        a.update('none');
-        b.update('none');
+        a.update(UpdateMode.none);
+        b.update(UpdateMode.none);
         expect(_eligible(a), isFalse);
         expect(_observe(a, 2), _observe(b, 2));
         for (final cfg in [ca, cb]) {
           _datasets(cfg).removeLast();
         }
-        a.update('none');
-        b.update('none');
+        a.update(UpdateMode.none);
+        b.update(UpdateMode.none);
         expect(_eligible(a), isTrue);
         expect(_observe(a, 1), _observe(b, 1));
       },
@@ -332,8 +332,8 @@ void main() {
     final sb = b.scales['x']! as _ObservedCategory;
     sa.matches = 0;
     sb.matches = 0;
-    a.update('none');
-    b.update('none');
+    a.update(UpdateMode.none);
+    b.update(UpdateMode.none);
     expect(sa.matches, greaterThan(0));
     expect(sa.matches, sb.matches);
     expect(_observe(a, 1), _observe(b, 1));
@@ -389,7 +389,7 @@ void main() {
         _dataset(cfg)['maxBarThickness'] = maxBarThickness;
         final chart = _chart(cfg, reference: reference);
         armed = true;
-        chart.update('none');
+        chart.update(UpdateMode.none);
         expect(_datasets(cfg), hasLength(2));
         charts.add(chart);
         logs.add(log);
@@ -417,7 +417,7 @@ void main() {
             log.add('reenter');
             final chart = jsGet(context, 'chart')! as Chart;
             _dataset(cfg)['data'] = <double>[4, 3, 2, 1];
-            chart.update('none');
+            chart.update(UpdateMode.none);
             busy = false;
           }
         }
@@ -442,7 +442,7 @@ void main() {
       _dataset(cfg)['maxBarThickness'] = maxBarThickness;
       final chart = _chart(cfg, reference: reference);
       armed = true;
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(log, contains('reenter'));
       charts.add(chart);
       logs.add(log);
@@ -460,7 +460,7 @@ void main() {
       _datasets(cfg)[0] = _ReadMap(_dataset(cfg), reads);
       final chart = _chart(cfg, reference: reference);
       reads.clear();
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(_eligible(chart), isFalse);
       charts.add(chart);
       traces.add(reads);

@@ -5,7 +5,14 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ZoomChart;
+    show
+        Mode,
+        PanOptions,
+        PinchOptions,
+        WheelOptions,
+        ZoomChart,
+        ZoomOptions,
+        ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 
 /// The sample `Category Scale` of `docs/samples/wheel/category.md:3-93`: a
@@ -22,6 +29,7 @@ import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 ///   with that alpha: the red, the blue and the teal of the Chart.js docs
 ///   for the datasets, and grey for the grid border. The colors are `Color`
 ///   values (Chart.js ADR 0061).
+/// - The zoom options are one `ZoomPluginOptions` (Chart.js ADR 0148).
 /// - The options get the docs defaults (`setZoomDocsDefaults`).
 ///
 /// The sample has no `console.log`: [log] gets no line.
@@ -160,18 +168,14 @@ ZoomDocsSample zoomWheelCategorySample(ZoomDocsLog log) {
     'options': <String, Object?>{
       'scales': scales,
       'plugins': <String, Object?>{
-        'zoom': <String, Object?>{
-          'pan': <String, Object?>{
-            'enabled': true,
-            'mode': Mode.xy,
-            'threshold': 5.0,
-          },
-          'zoom': <String, Object?>{
-            'wheel': <String, Object?>{'enabled': true},
-            'pinch': <String, Object?>{'enabled': true},
-            'mode': Mode.xy,
-          },
-        },
+        'zoom': const ZoomPluginOptions(
+          pan: PanOptions(enabled: true, mode: Mode.xy, threshold: 5),
+          zoom: ZoomOptions(
+            wheel: WheelOptions(enabled: true),
+            pinch: PinchOptions(enabled: true),
+            mode: Mode.xy,
+          ),
+        ),
       },
     },
   };

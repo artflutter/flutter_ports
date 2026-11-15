@@ -1621,7 +1621,7 @@ void main() {
       final order = <String>[];
       final chart = acquireChart(<String, Object?>{
         ..._probeChart(),
-        'plugins': <Object?>[
+        'plugins': <Plugin<Object?>>[
           // The keys of the arguments of upstream are `tooltip` and, before
           // the draw, `cancelable`: the native arguments (Chart.js ADR 0144)
           // have the field `tooltip`, and the kind of the hook is the

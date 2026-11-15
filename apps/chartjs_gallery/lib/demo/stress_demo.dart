@@ -122,7 +122,8 @@ enum StressChartCall() {
   draw,
 
   /// Case (b): new positions in the data objects, then
-  /// `chart.update('none')`. With a scriptable `backgroundColor`, this is
+  /// `chart.update(UpdateMode.none)`. With a scriptable `backgroundColor`,
+  /// this is
   /// case (c).
   update,
 
@@ -539,14 +540,16 @@ const StressStats _noStats = StressStats(
 /// - [StressMode.arcs]: N `ArcElement` objects with angles that move.
 /// - [StressMode.chart]: a real `Chart` of N items of a [StressChartType].
 ///   Each frame calls `chart.draw()`, or writes the moving values into the
-///   data and calls `chart.update('none')` ([StressChartCall]). An inline
+///   data and calls `chart.update(UpdateMode.none)` ([StressChartCall]). An
+///   inline
 ///   plugin draws the labels and the title in its `afterDraw` hook.
 /// - [StressMode.axes]: the chart of [StressMode.chart] on real scales. An
 ///   update gives the scales new data limits, ticks, label sizes and a
 ///   rotation, and maps each point with `getPixelForValue`.
 /// - [StressMode.plugins]: the chart of a plugin case of the frameless
 ///   benchmark ([StressPluginScene]). Each frame calls `chart.draw()`, or
-///   changes the data and calls `chart.update('none')`, or sends the event
+///   changes the data and calls `chart.update(UpdateMode.none)`, or sends the
+///   event
 ///   of a tooltip scene to the chart ([StressChartCall.frame]).
 ///
 /// The element modes make their elements once for each mode and N. Each
@@ -1152,9 +1155,9 @@ class StressDemoState() extends State<StressDemo> {
       _call,
     ).scene(_n);
     final config = stressHostConfig(scene.config);
-    config['plugins'] = <Object?>[
+    config['plugins'] = <Plugin<Object?>>[
       _labelsPlugin,
-      ...config['plugins']! as List<Object?>,
+      ...config['plugins']! as List<Plugin<Object?>>,
     ];
     _chartData = const [];
     return config;
@@ -1187,9 +1190,9 @@ class StressDemoState() extends State<StressDemo> {
     if (_viewKey != viewKey || _viewConfig == null) {
       final meter = _viewMeter = _PluginMeter();
       final viewConfig = _viewConfig = config();
-      viewConfig['plugins'] = <Object?>[
+      viewConfig['plugins'] = <Plugin<Object?>>[
         meter.first,
-        ...viewConfig['plugins']! as List<Object?>,
+        ...viewConfig['plugins']! as List<Plugin<Object?>>,
         meter.last,
       ];
       _viewKey = viewKey;
@@ -1373,7 +1376,7 @@ class StressDemoState() extends State<StressDemo> {
       case StressChartCall.draw:
         chart.draw();
       case StressChartCall.update:
-        chart.update('none');
+        chart.update(UpdateMode.none);
       case StressChartCall.data:
         _lastDataUpdateFast = chart.updateData();
       case StressChartCall.animate || StressChartCall.frame:
@@ -1430,7 +1433,7 @@ class StressDemoState() extends State<StressDemo> {
   ///
   /// - [StressChartCall.draw]: `chart.draw()`.
   /// - [StressChartCall.update]: the change of the data of the benchmark
-  ///   scene (not timed), then `chart.update('none')`.
+  ///   scene (not timed), then `chart.update(UpdateMode.none)`.
   /// - [StressChartCall.frame], scene [StressPluginScene.hover]: a
   ///   `mousemove` over the next point of dataset 0 directly to the event
   ///   handler of the chart, around the host input path
@@ -1466,7 +1469,7 @@ class StressDemoState() extends State<StressDemo> {
       case StressChartCall.draw:
         chart.draw();
       case StressChartCall.update:
-        chart.update('none');
+        chart.update(UpdateMode.none);
       case StressChartCall.frame:
         if (event != null) _sendPluginEvent(chart, event);
       case StressChartCall.data || StressChartCall.animate:
@@ -2356,7 +2359,7 @@ class StressDemoState() extends State<StressDemo> {
   }
 
   /// The call of case (b), for the card.
-  static const String _updateCall = "chart.update('none')";
+  static const String _updateCall = 'chart.update(UpdateMode.none)';
 
   /// The call of each frame of the mode [StressMode.plugins], for the card.
   String get _pluginCallText => switch (_call) {

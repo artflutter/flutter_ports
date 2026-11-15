@@ -81,7 +81,7 @@ Map<String, Object?> _ruleNone() {
 }
 
 Map<String, Object?> _ruleInstance() {
-  final config = _config({'plugins': <Object?>[]});
+  final config = _config({'plugins': <Plugin<Object?>>[]});
   return _fixture(config, (Chart chart) {
     // The runner did not write false. initOptions of the config wrote
     // `{}` (core.config.js:118).

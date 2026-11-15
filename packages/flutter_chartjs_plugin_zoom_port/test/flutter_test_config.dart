@@ -44,7 +44,7 @@ import 'package:chartjs_test_utils/flutter.dart'
 import 'package:chartjs_test_utils/pure.dart'
     show setUpBuiltins, setUpDefaultsRestore;
 import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart'
-    show ModifierKey;
+    show ModifierKey, ZoomPluginOptions;
 import 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart'
     show zoomPlugin;
 import 'package:flutter_chartjs_port/chartjs.dart'
@@ -146,12 +146,15 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // Chart.js ADR 0111, section 9: with the define, each test runs with the
   // port-only option `rangeOnlyUpdates` in `Chart.defaults.plugins.zoom`, so
   // each zoom and pan takes `chart.updateRanges` of the host. The results
-  // are those of the run without it. It runs before the snapshot of the
-  // restore, so the restore keeps it.
+  // are those of the run without it. The defaults are one immutable
+  // `ZoomPluginOptions` (Chart.js ADR 0148): the line writes the merge with
+  // the option. It runs before the snapshot of the restore, so the restore
+  // keeps it.
   if (zoomRangeOnlyUpdates) {
-    ((defaults['plugins']! as JsObjectFace)['zoom']!
-            as JsObjectFace)['rangeOnlyUpdates'] =
-        true;
+    final plugins = defaults['plugins']! as JsObjectFace;
+    plugins['zoom'] = (plugins['zoom']! as ZoomPluginOptions).merge(
+      const ZoomPluginOptions(rangeOnlyUpdates: true),
+    );
   }
 
   // Upstream restores nothing. The restore keeps the order of the test

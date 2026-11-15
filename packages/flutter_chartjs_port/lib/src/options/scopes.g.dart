@@ -62,6 +62,7 @@ import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
 import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
     show LineSegmentStyle;
+import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginOptions;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     show TooltipCallbacks;
 import 'package:intl/intl.dart' show NumberFormat;

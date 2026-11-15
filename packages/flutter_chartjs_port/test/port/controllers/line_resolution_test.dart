@@ -270,7 +270,7 @@ void main() {
         meta = chart.getDatasetMeta(0);
         points = [for (var i = 0; i < 8; i++) meta.data[i] = _Probe()];
         try {
-          chart.update('none');
+          chart.update(UpdateMode.none);
           for (final point in points) {
             point.reads = 0;
           }

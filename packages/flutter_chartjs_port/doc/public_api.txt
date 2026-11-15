@@ -37,6 +37,7 @@ ChartGradient
 ChartMeta
 ChartPaint
 ChartPattern
+ChartPlugin
 ChartPosition
 ChartResizeHandler
 ChartShaderPaint
@@ -112,9 +113,12 @@ PercentRadius
 PieController
 PixelRadius
 Plugin
+PluginDefaults
 PluginHook
 PluginHookArgs
 PluginHookFunction
+PluginOf
+PluginOptions
 Point
 PointElement
 PointInteractionMode
@@ -185,6 +189,8 @@ TrianglePointStyle
 UnchangedChartPaint
 Undefined
 UpdateHookArgs
+UpdateMode
+UpdateModeOf
 ValueFill
 ValueGrace
 VisualElement
@@ -339,6 +345,7 @@ ChartMeta
 ChartOptionsScope
 ChartPaint
 ChartPattern
+ChartPlugin
 ChartPosition
 ChartResizeHandler
 ChartResolver
@@ -557,10 +564,13 @@ PieController
 PieDataset
 PixelRadius
 Plugin
+PluginDefaults
 PluginDescriptor
 PluginHook
 PluginHookArgs
 PluginHookFunction
+PluginOf
+PluginOptions
 PluginOptionsByTypeScope
 PluginService
 Point
@@ -728,6 +738,8 @@ UiTransform
 UnchangedChartPaint
 Undefined
 UpdateHookArgs
+UpdateMode
+UpdateModeOf
 ValueFill
 ValueGrace
 VisibleAnimation

@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The calls of each hook of the counting plugin, and of the callbacks.
@@ -68,7 +69,7 @@ Chart _chart(
   Map<String, Object?>? plugins,
 }) => acquireChart(<String, Object?>{
   'type': 'line',
-  'plugins': <Object?>[_counting(counts)],
+  'plugins': <Plugin<Object?>>[_counting(counts)],
   'data': <String, Object?>{
     'labels': <Object?>['a', 'b', 'c'],
     'datasets': <Object?>[
@@ -128,7 +129,7 @@ void main() {
       final chart = _chart(counts);
       await _hover(chart, counts);
 
-      chart.update('none');
+      chart.update(UpdateMode.none);
 
       expect(counts['beforeEvent'], 1);
       expect(counts['afterEvent'], 1);
@@ -147,7 +148,7 @@ void main() {
       final counts = _Counts();
       final chart = _chart(counts);
       await _hover(chart, counts);
-      chart.update('none');
+      chart.update(UpdateMode.none);
       counts.clear();
 
       expect(chart.updateData(), isTrue);
@@ -182,7 +183,7 @@ void main() {
       );
       await _hover(chart, counts);
 
-      chart.update('none');
+      chart.update(UpdateMode.none);
 
       expect(counts['afterEvent'], 1);
       expect(counts['afterDraw'], 1);
@@ -228,7 +229,7 @@ void main() {
       final chart =
           _chart(counts, animation: <String, Object?>{'duration': 1000})
             ..stop()
-            ..update('none');
+            ..update(UpdateMode.none);
       await _hover(chart, counts);
 
       chart.update();
@@ -248,7 +249,7 @@ void main() {
       final chart = _chart(counts);
       await _hover(chart, counts);
 
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(counts['afterDraw'], 1);
       final one = await tester.runAsync(() => _pixels(chart));
 
@@ -296,7 +297,7 @@ void main() {
       expect(counts.events, isEmpty);
       expect(chart.getActiveElements(), isEmpty);
 
-      chart.update('none');
+      chart.update(UpdateMode.none);
 
       expect(counts.events, ['mousemove replay']);
       expect(counts['beforeRender'], 1);
@@ -358,7 +359,7 @@ void main() {
       final chart =
           heldChart(counts, animation: <String, Object?>{'duration': 1000})
             ..stop()
-            ..update('none')
+            ..update(UpdateMode.none)
             ..update();
       counts.clear();
 
@@ -381,7 +382,7 @@ void main() {
       expect(tooltip.getActiveElements().single.index, 0);
 
       await send(tester, chart, 'mousemove', 2);
-      chart.update('none');
+      chart.update(UpdateMode.none);
 
       expect(tooltip.getActiveElements().single.index, 2);
     });

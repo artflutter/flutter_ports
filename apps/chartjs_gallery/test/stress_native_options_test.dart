@@ -51,7 +51,7 @@ void main() {
         elements[i] = point;
         probes.add(point);
       }
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(
         probes.any((point) => point.nativeReads > 0),
         isTrue,

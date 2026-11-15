@@ -4,7 +4,15 @@
 import 'package:chartjs_docs/migrate/graphic/graphic_kit.dart';
 import 'package:flutter/gestures.dart' show kDoubleTapTimeout;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, ModifierKey, ZoomChart;
+    show
+        Mode,
+        ModifierKey,
+        PanOptions,
+        PinchOptions,
+        WheelOptions,
+        ZoomChart,
+        ZoomOptions,
+        ZoomPluginOptions;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -240,27 +248,24 @@ Plugin<Object?> tapSelection({
     final selection = chart.getActiveElements();
     if (refresh && !_sameSelection(_selections[chart], selection)) {
       _selections[chart] = selection;
-      chart.update('none');
+      chart.update(UpdateMode.none);
     }
   },
 );
 
 /// `RectCoord(horizontalRangeUpdater: Defaults.horizontalRangeEvent)`: the
 /// zoom and the pan of the x axis, with the port of chartjs-plugin-zoom. A
-/// chart gives `zoomPlugin` in `plugins` and these options in `extra`. The
-/// wheel zooms with the Ctrl key, so that the wheel still scrolls the page.
-const Map<String, Object?> horizontalRange = {
-  'plugins': {
-    'zoom': {
-      'zoom': {
-        'wheel': {'enabled': true, 'modifierKey': ModifierKey.ctrl},
-        'pinch': {'enabled': true},
-        'mode': Mode.x,
-      },
-      'pan': {'enabled': true, 'mode': Mode.x},
-    },
-  },
-};
+/// chart gives `zoomPlugin` in `plugins` and these options in
+/// `pluginOptions`. The wheel zooms with the Ctrl key, so that the wheel
+/// still scrolls the page.
+const ZoomPluginOptions horizontalRange = ZoomPluginOptions(
+  zoom: ZoomOptions(
+    wheel: WheelOptions(enabled: true, modifierKey: ModifierKey.ctrl),
+    pinch: PinchOptions(enabled: true),
+    mode: Mode.x,
+  ),
+  pan: PanOptions(enabled: true, mode: Mode.x),
+);
 
 /// A double tap puts back the first range, as in Graphic.
 void resetRange(Chart chart) => chart.resetZoom();

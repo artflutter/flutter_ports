@@ -8,6 +8,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
     show ActiveElement, Chart, ChartPaint, SolidChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart' show UpdateMode;
 import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor;
 import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
 import 'package:flutter_test/flutter_test.dart';
@@ -84,7 +85,7 @@ void main() {
       expect(colorCalls, greaterThanOrEqualTo(3));
       expect(hoverCalls, 0);
 
-      chart.update('none');
+      chart.update(UpdateMode.none);
       expect(hoverCalls, 0);
 
       // The active mode reads the key as `colorFrom`, which is scriptable.
@@ -104,7 +105,7 @@ void main() {
       final flow = chart.getDatasetMeta(0).data.first as Flow;
       chart
         ..setActiveElements(const [ActiveElement(datasetIndex: 0, index: 0)])
-        ..update('none');
+        ..update(UpdateMode.none);
 
       expect(flow.active, isTrue);
       expect(_colorOf(jsGet(flow.options, 'colorFrom')), _colorOf(_orange));

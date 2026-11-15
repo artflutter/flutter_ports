@@ -38,12 +38,9 @@ import 'package:flutter_chartjs_port/chartjs.dart'
         CssStyleProperties,
         HTMLCanvasElement,
         NativeEvent,
-        NativeEventTarget,
-        undefined;
-import 'package:flutter_chartjs_port/helpers.dart'
-    show getRelativePosition, isNullOrUndef, valueOrDefault;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsToNumber, jsTruthy;
+        NativeEventTarget;
+import 'package:flutter_chartjs_port/helpers.dart' show getRelativePosition;
+import 'package:flutter_chartjs_port/js_semantics.dart' show jsTruthy;
 
 /// gestures.ts:13 `GestureEvent`: the normalized gesture event of the pan
 /// and pinch callbacks (`onPanStart`, `onPanRejected`).
@@ -95,22 +92,6 @@ final class const GestureEvent({
 /// so we keep the same default when the option is left unset.
 const double _defaultPanThreshold = 10;
 
-/// The optional read `pan?.enabled` of the pan options [pan].
-Object? _enabledOf(PanOptions pan) => pan.isNullish ? undefined : pan.enabled;
-
-/// The optional read `pan?.threshold` of the pan options [pan].
-Object? _thresholdOf(PanOptions pan) =>
-    pan.isNullish ? undefined : pan.threshold;
-
-/// The optional read `zoom?.pinch?.enabled` of the zoom options [zoom].
-Object? _pinchEnabledOf(ZoomOptions zoom) {
-  if (zoom.isNullish) {
-    return undefined;
-  }
-  final pinch = zoom.pinch;
-  return pinch.isNullish ? undefined : pinch.enabled;
-}
-
 /// gestures.ts:37 `distance(a, b)`: the distance of two pointers.
 double _distance(ActivePointer a, ActivePointer b) {
   final dx = a.clientX - b.clientX;
@@ -128,10 +109,8 @@ bool Function(GestureEvent) _createEnabler(Chart chart, State state) {
     // const { pan: panOptions, zoom: zoomOptions = {} } = state.options
     final options = state.options;
     final panOptions = options.pan;
-    final zoomOptions = ZoomOptions(
-      valueOrDefault(options.zoom.raw, emptyObject),
-    );
-    if (!jsTruthy(panOptions.raw) || !jsTruthy(panOptions.enabled)) {
+    final zoomOptions = options.zoom ?? const ZoomOptions();
+    if (panOptions == null || !panOptions.isEnabled) {
       return false;
     }
     // `const srcEvent = event && event.srcEvent` and `if (!srcEvent) return
@@ -139,8 +118,8 @@ bool Function(GestureEvent) _createEnabler(Chart chart, State state) {
     final srcEvent = event.srcEvent;
     if (!state.panning &&
         event.pointerType == 'mouse' &&
-        (keyNotPressed(getModifierKey(panOptions.raw), srcEvent) ||
-            keyPressed(getModifierKey(zoomOptions.drag.raw), srcEvent))) {
+        (keyNotPressed(getModifierKey(panOptions), srcEvent) ||
+            keyPressed(getModifierKey(zoomOptions.drag), srcEvent))) {
       panOptions.onPanRejected?.call((chart: chart, event: event));
       return false;
     }
@@ -181,15 +160,14 @@ void _handlePinch(Chart chart, State state, GestureEvent e) {
     final zoomPercent = (1 / state.scale!) * e.scale;
     final rect = e.target.getBoundingClientRect();
     final pinch = _pinchAxes(pointers[0], pointers[1]);
-    final zoomOptions = state.options.zoom;
-    final mode = zoomOptions.isNullish ? undefined : zoomOptions.mode;
+    final mode = state.options.zoom?.mode;
     final amount = ZoomAmount(
       x: pinch.x && directionEnabled(mode, 'x', chart) ? zoomPercent : 1,
       y: pinch.y && directionEnabled(mode, 'y', chart) ? zoomPercent : 1,
       focalPoint: (x: center.x - rect.left, y: center.y - rect.top),
     );
 
-    zoom(chart, amount, 'zoom', ZoomTrigger.pinch);
+    zoom(chart, amount, zoomUpdateMode, ZoomTrigger.pinch);
 
     // Keep track of overall scale
     state.scale = e.scale;
@@ -199,20 +177,19 @@ void _handlePinch(Chart chart, State state, GestureEvent e) {
 /// gestures.ts:105 `startPinch(chart, state, e)`: the start of a pinch
 /// zoom. A result `false` of `onZoomStart` rejects it.
 void _startPinch(Chart chart, State state, GestureEvent e) {
-  if (jsTruthy(_pinchEnabledOf(state.options.zoom))) {
+  if (state.options.zoom?.pinch?.enabled ?? false) {
     // The host `Point` of a native event has two numbers. `?? 0` is the
     // ToNumber of a JS `null`.
     final position = getRelativePosition(e.srcEvent, chart);
     final point = (x: position.x ?? 0, y: position.y ?? 0);
-    // state.options.zoom?.onZoomStart?.({ chart, event: e.srcEvent, point })
-    final startOptions = state.options.zoom;
-    final started = (startOptions.isNullish ? null : startOptions.onZoomStart)
-        ?.call((chart: chart, event: e.srcEvent, point: point));
+    final started = state.options.zoom?.onZoomStart?.call((
+      chart: chart,
+      event: e.srcEvent,
+      point: point,
+    ));
     if (started == false) {
       state.scale = null;
-      // state.options.zoom?.onZoomRejected?.({ chart, event: e.srcEvent })
-      final rejectOptions = state.options.zoom;
-      (rejectOptions.isNullish ? null : rejectOptions.onZoomRejected)?.call((
+      state.options.zoom?.onZoomRejected?.call((
         chart: chart,
         event: e.srcEvent,
       ));
@@ -228,10 +205,7 @@ void _endPinch(Chart chart, State state, GestureEvent e) {
   if (jsTruthy(state.scale)) {
     _handlePinch(chart, state, e);
     state.scale = null; // reset
-    final zoomOptions = state.options.zoom;
-    (zoomOptions.isNullish ? null : zoomOptions.onZoomComplete)?.call((
-      chart: chart,
-    ));
+    state.options.zoom?.onZoomComplete?.call((chart: chart));
   }
 }
 
@@ -256,14 +230,11 @@ void _handlePan(Chart chart, State state, GestureEvent e) {
 /// result `false` of `onPanStart` rejects it and calls `onPanRejected`.
 void _startPan(Chart chart, State state, GestureEvent event) {
   // const { enabled, onPanStart, onPanRejected } = state.options.pan ?? {}
-  final panOptions = state.options.pan;
-  final options = panOptions.isNullish
-      ? const PanOptions(emptyObject)
-      : panOptions;
-  final enabled = options.enabled;
+  final options = state.options.pan ?? const PanOptions();
+  final enabled = options.isEnabled;
   final onPanStart = options.onPanStart;
   final onPanRejected = options.onPanRejected;
-  if (!jsTruthy(enabled)) {
+  if (!enabled) {
     return;
   }
   final rect = event.target.getBoundingClientRect();
@@ -277,11 +248,7 @@ void _startPan(Chart chart, State state, GestureEvent event) {
   }
 
   state.panScales = [
-    for (final i in getEnabledScalesByPoint(
-      state.options.pan.raw,
-      point,
-      chart,
-    ))
+    for (final i in getEnabledScalesByPoint(state.options.pan, point, chart))
       i.id,
   ];
   state.delta = (x: 0, y: 0);
@@ -296,10 +263,7 @@ void _endPan(Chart chart, State state) {
     state
       ..panning = false
       ..filterNextClick = true;
-    final panOptions = state.options.pan;
-    (panOptions.isNullish ? null : panOptions.onPanComplete)?.call((
-      chart: chart,
-    ));
+    state.options.pan?.onPanComplete?.call((chart: chart));
   }
 }
 
@@ -466,12 +430,12 @@ final class _GestureManager(
       _endPan(_chart, _state);
       _panStart = null;
 
-      if (jsTruthy(_pinchEnabledOf(zoomOptions))) {
+      if (zoomOptions?.pinch?.enabled ?? false) {
         final pts = _pointerList();
         _pinchStartDistance = _distance(pts[0], pts[1]);
         _startPinch(_chart, _state, _buildEvent(event));
       }
-    } else if (jsTruthy(_enabledOf(panOptions))) {
+    } else if (panOptions?.enabled ?? false) {
       // Begin tracking a possible pan; it is only recognized once it passes
       // the threshold (see onPointerMove).
       _panStart = (x: event.clientX, y: event.clientY);
@@ -530,7 +494,7 @@ final class _GestureManager(
       // One pointer is left, either from a pinch or from a pan that the
       // lifted pointer ended: let it start a fresh pan from where it is now.
       final remaining = _pointerList()[0];
-      _panStart = jsTruthy(_enabledOf(_state.options.pan))
+      _panStart = (_state.options.pan?.enabled ?? false)
           ? (x: remaining.clientX, y: remaining.clientY)
           : null;
     }
@@ -546,16 +510,8 @@ final class _GestureManager(
 
   /// gestures.ts:357 `panThreshold()`: the `threshold` of the pan options,
   /// else the default of Hammer.
-  ///
-  /// Upstream gives the raw option, and its one reader compares
-  /// `gesture.distance >= threshold`, which converts the option with
-  /// ToNumber. The port gives that number ([jsToNumber]).
   double _panThreshold() {
-    // this.state.options.pan?.threshold ?? DEFAULT_PAN_THRESHOLD
-    final threshold = _thresholdOf(_state.options.pan);
-    return isNullOrUndef(threshold)
-        ? _defaultPanThreshold
-        : jsToNumber(threshold);
+    return _state.options.pan?.threshold ?? _defaultPanThreshold;
   }
 }
 
@@ -573,8 +529,8 @@ void startGestures(Chart chart, ZoomPluginOptions options) {
   // const { pan: panOptions, zoom: zoomOptions } = options
   final panOptions = options.pan;
   final zoomOptions = options.zoom;
-  if (!jsTruthy(_enabledOf(panOptions)) &&
-      !jsTruthy(_pinchEnabledOf(zoomOptions))) {
+  if (!(panOptions?.enabled ?? false) &&
+      !(zoomOptions?.pinch?.enabled ?? false)) {
     return;
   }
   _managers[chart] = _GestureManager(chart);
@@ -595,8 +551,9 @@ void stopGestures(Chart chart) {
 /// the options that the gestures read at their start changed: the pinch
 /// `enabled`, the pan `enabled` or the pan `threshold`.
 ///
-/// The compares take the raw values: `!=` gives the result of `!==` for
-/// them, also for `undefined`, NaN and the two zeros.
+/// The compares take the typed fields, with null for an option that is not
+/// set: `!=` gives the result of `!==` for them, also for NaN and the two
+/// zeros.
 bool gestureOptionsChanged(
   ZoomPluginOptions oldOptions,
   ZoomPluginOptions newOptions,
@@ -608,13 +565,13 @@ bool gestureOptionsChanged(
   final newPan = newOptions.pan;
   final newZoom = newOptions.zoom;
 
-  if (_pinchEnabledOf(oldZoom) != _pinchEnabledOf(newZoom)) {
+  if (oldZoom?.pinch?.enabled != newZoom?.pinch?.enabled) {
     return true;
   }
-  if (_enabledOf(oldPan) != _enabledOf(newPan)) {
+  if (oldPan?.enabled != newPan?.enabled) {
     return true;
   }
-  if (_thresholdOf(oldPan) != _thresholdOf(newPan)) {
+  if (oldPan?.threshold != newPan?.threshold) {
     return true;
   }
 

@@ -378,7 +378,7 @@ class AxesDemoState() extends State<AxesDemo> {
     'type': 'line',
     'data': _data,
     'options': _options,
-    'plugins': <Object?>[_pointerPlugin],
+    'plugins': <Plugin<Object?>>[_pointerPlugin],
   };
 
   void _onChart(Chart chart) {

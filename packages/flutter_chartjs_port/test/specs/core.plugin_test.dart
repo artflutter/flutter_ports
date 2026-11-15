@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
+import '../support/plugin_defaults.dart';
 
 // Each case builds a chart with `acquireChart` (Chart.js ADR 0022): a chart
 // without a type and without datasets, with inline or registered plugins.
@@ -368,7 +369,7 @@ void main() {
           Chart.register([plugins['a']]);
 
           final chart = acquireChart(<String, Object?>{
-            'plugins': [plugins['b'], plugins['c']],
+            'plugins': <Plugin<Object?>>[plugins['b']!, plugins['c']!],
             'options': <String, Object?>{
               'plugins': <String, Object?>{
                 'a': <String, Object?>{'a': '123'},
@@ -416,7 +417,7 @@ void main() {
           Chart.register([plugins['a']]);
 
           final chart = acquireChart(<String, Object?>{
-            'plugins': [plugins['b'], plugins['c']],
+            'plugins': <Plugin<Object?>>[plugins['b']!, plugins['c']!],
             'options': <String, Object?>{
               'plugins': <String, Object?>{'a': false, 'b': false},
             },
@@ -442,7 +443,7 @@ void main() {
           final plugin = Plugin<Object?>(
             id: 'a',
             reset: (_, _, _) {},
-            defaults: <String, Object?>{'a': 42},
+            defaults: pluginDefaults(<String, Object?>{'a': 42}),
           );
 
           Chart.register([plugin]);
@@ -476,7 +477,7 @@ void main() {
           final plugin = Plugin<Object?>(
             id: 'a',
             reset: (_, _, _) {},
-            defaults: <String, Object?>{'a': 'foobar'},
+            defaults: pluginDefaults(<String, Object?>{'a': 'foobar'}),
           );
 
           Chart.register([plugin]);
@@ -499,7 +500,7 @@ void main() {
         final plugin = Plugin<Object?>(
           id: 'a',
           reset: (_, _, _) {},
-          defaults: <String, Object?>{'bar': 'bar'},
+          defaults: pluginDefaults(<String, Object?>{'bar': 'bar'}),
         );
         final chart = acquireChart(<String, Object?>{
           'plugins': [plugin],
@@ -572,13 +573,13 @@ void main() {
                   true;
               runtimeOptions = options;
             },
-            defaults: <String, Object?>{
+            defaults: pluginDefaults(<String, Object?>{
               'l1': <String, Object?>{
                 'l2': <String, Object?>{
                   'l3': <String, Object?>{'display': false},
                 },
               },
-            },
+            }),
           );
           acquireChart(<String, Object?>{
             'plugins': [plugin],

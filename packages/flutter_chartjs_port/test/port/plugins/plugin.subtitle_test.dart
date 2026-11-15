@@ -14,7 +14,6 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.subtitle.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
@@ -163,9 +162,7 @@ void _hook(String hook, Chart chart, [AnyObject? options]) {
           as void Function(types.Chart, Object, Object);
   function(
     chart,
-    hook == 'beforeUpdate'
-        ? UpdateHookArgs(mode: undefined)
-        : const PluginHookArgs(),
+    hook == 'beforeUpdate' ? UpdateHookArgs() : const PluginHookArgs(),
     options ?? <String, Object?>{},
   );
 }

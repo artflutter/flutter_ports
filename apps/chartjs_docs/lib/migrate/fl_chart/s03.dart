@@ -57,7 +57,7 @@ class _Sample3State() extends State<Sample3> {
     final next = index == 0 || index == 6 ? -1 : index;
     if (next == _touched) return;
     _touched = next;
-    chart.update('none');
+    chart.update(UpdateMode.none);
   }
 
   ChartPaint _bottomColor(JsObjectFace c) =>
@@ -190,7 +190,7 @@ class _Sample3State() extends State<Sample3> {
         aspectRatio: 2,
         child: Padding(
           padding: const EdgeInsets.only(right: 20, left: 12),
-          child: ChartView(config: _config(), updateMode: 'none'),
+          child: ChartView(config: _config(), updateMode: UpdateMode.none),
         ),
       ),
       const Text(

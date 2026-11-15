@@ -81,7 +81,7 @@ class _Sample10State() extends State<Sample10> {
           child: Padding(
             padding: const EdgeInsets.only(bottom: 24),
             child: ChartView(
-              updateMode: 'none',
+              updateMode: UpdateMode.none,
               config: fills(
                 ChartConfig(
                   type: .line,
