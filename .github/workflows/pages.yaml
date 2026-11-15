@@ -235,16 +235,10 @@ jobs:
       - name: Build the dashboard for the web (WebAssembly + JavaScript fallback)
         working-directory: apps/chartjs_supabase_dashboard
         # --web-content-hash puts a content hash into the file names of the
-        # bundle and the assets (main.dart.<hash>.js) and into the build config,
-        # so a new build misses the browser cache. A Flutter without the flag
-        # builds plain names, and the page works.
+        # bundle and the assets (main.dart.<hash>.js), so a new build misses
+        # the browser cache.
         run: |
-          hashed=()
-          root=$(dirname "$(dirname "$(command -v flutter)")")
-          if grep -rq -- web-content-hash "$root/packages/flutter_tools/lib"; then
-            hashed=(--web-content-hash)
-          fi
-          flutter build web --wasm "${hashed[@]}" \
+          flutter build web --wasm --web-content-hash \
             --base-href /flutter_ports/dashboard/${{ matrix.channel }}/ \
             --dart-define-from-file=supabase.json
       - name: Put the build into its folder

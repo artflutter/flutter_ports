@@ -1737,7 +1737,7 @@ sankey ADRs are proposed. The doc paths are relative to
   from the root page. Its builds resolve the app alone, as the lab does, and read the Supabase URL
   and the publishable key from the repository variables `SUPABASE_URL` and
   `SUPABASE_PUBLISHABLE_KEY`. A dashboard build that fails does not stop the deploy: its channel
-  page says so. The build has `--web-content-hash` (when the Flutter of the channel has it): the
+  page says so. The build has `--web-content-hash`: the
   bundle and asset file names get a content hash, so a new build misses the browser cache. The app has the `web/isolate.js` and `web/flutter_bootstrap.js` of the lab; its
   worker leaves the CORS requests to other origins (Supabase) alone. The job `version` computes the lab
   version with git-cliff (`cliff.toml`) from the commits after the last `lab/v*` tag. Only the paths of
