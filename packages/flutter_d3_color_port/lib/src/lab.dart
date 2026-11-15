@@ -115,17 +115,26 @@ class Lab(
 /// The lines lab.js:53-63 of `Lab.rgb()`: the [Rgb] of the Lab channels [l],
 /// [a] and [b] and the opacity [opacity], with no [Lab] object.
 Rgb _lab2rgb(double l, double a, double b, double opacity) {
+  final (r, g, bb) = _lab2channels(l, a, b);
+  return Rgb(r, g, bb, opacity);
+}
+
+/// The lines lab.js:53-62 of `Lab.rgb()`: the RGB channels `(r, g, b)` of
+/// the Lab channels [l], [a] and [b], for [_lab2rgb] and [Hcl.formatRgb].
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+(double, double, double) _lab2channels(double l, double a, double b) {
   var y = (l + 16.0) / 116.0;
   var x = a.isNaN ? y : y + a / 500.0;
   var z = b.isNaN ? y : y - b / 200.0;
   x = _xn * lab2xyz(x);
   y = _yn * lab2xyz(y);
   z = _zn * lab2xyz(z);
-  return Rgb(
+  return (
     lrgb2rgb(3.1338561 * x - 1.6168667 * y - 0.4906146 * z),
     lrgb2rgb(-0.9787684 * x + 1.9161415 * y + 0.0334540 * z),
     lrgb2rgb(0.0719453 * x - 0.2289914 * y + 1.4052427 * z),
-    opacity,
   );
 }
 
@@ -251,6 +260,27 @@ class Hcl(
     final h = this.h * radians;
     // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math cos, sin.
     return _lab2rgb(l, math.cos(h) * c, math.sin(h) * c, opacity);
+  }
+
+  /// color.js:181 `formatRgb()`: `this.rgb().formatRgb()`, with the lines
+  /// of lab.js:120 `rgb()`.
+  @override
+  String formatRgb() {
+    if (!formatRgbInLocals) return rgb().formatRgb();
+    // DIVERGES(d3-color): adapt-color-format-locals, no temporary Rgb.
+    double a;
+    double b;
+    if (h.isNaN) {
+      a = 0;
+      b = 0;
+    } else {
+      final h = this.h * radians;
+      // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math cos, sin.
+      a = math.cos(h) * c;
+      b = math.sin(h) * c;
+    }
+    final (r, g, bb) = _lab2channels(l, a, b);
+    return rgbText(r, g, bb, opacity);
   }
 }
 

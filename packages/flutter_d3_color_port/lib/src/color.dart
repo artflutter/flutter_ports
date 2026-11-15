@@ -849,26 +849,51 @@ class Rgb(
 
   /// color.js:283 `rgb_formatRgb`.
   @override
-  String formatRgb() {
-    final a = clampa(opacity);
-    final x = clampi(r);
-    final y = clampi(g);
-    final z = clampi(b);
-    if (_joinRgbTexts) {
-      // DIVERGES(d3-color): adapt-color-format-units, three or four texts.
-      if (a == 1) return _rgbTexts[x] + _commaTexts[y] + _closeTexts[z];
-      return _rgbaTexts[x] + _commaTexts[y] + _commaTexts[z] + _alphaText(a);
-    }
-    // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
-    final units = _units;
-    var p = _putOpen(units, 0x72, 0x67, 0x62, alpha: a != 1); // rgb( or rgba(
-    p = _putInteger(units, p, x);
-    p = _putInteger(units, _putSeparator(units, p), y);
-    p = _putInteger(units, _putSeparator(units, p), z);
-    if (a != 1) p = _putNumber(units, _putSeparator(units, p), a);
-    units[p++] = 0x29; // )
-    return String.fromCharCodes(units, 0, p);
+  String formatRgb() =>
+      _rgbText(clampa(opacity), clampi(r), clampi(g), clampi(b));
+}
+
+/// The lines of color.js:283 `rgb_formatRgb` after the clamps: the text of
+/// the opacity [a] in [0, 1] and the channels [x], [y] and [z] in [0, 255].
+///
+/// In WebAssembly, the function is not inlined, so that one function reads
+/// the lazy table [_rgbTexts], with its test of the first read inlined.
+@pragma('vm:prefer-inline')
+@pragma('wasm:never-inline')
+String _rgbText(double a, int x, int y, int z) {
+  if (_joinRgbTexts) {
+    // DIVERGES(d3-color): adapt-color-format-units, three or four texts.
+    final texts = _rgbTexts;
+    if (a == 1) return texts[x] + texts[256 + y] + texts[512 + z];
+    return texts[768 + x] + texts[256 + y] + texts[256 + z] + _alphaText(a);
   }
+  // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
+  final units = _units;
+  var p = _putOpen(units, 0x72, 0x67, 0x62, alpha: a != 1); // rgb( or rgba(
+  p = _putInteger(units, p, x);
+  p = _putInteger(units, _putSeparator(units, p), y);
+  p = _putInteger(units, _putSeparator(units, p), z);
+  if (a != 1) p = _putNumber(units, _putSeparator(units, p), a);
+  units[p++] = 0x29; // )
+  return String.fromCharCodes(units, 0, p);
+}
+
+/// Whether [Hsl.formatRgb] and `Hcl.formatRgb` keep the RGB channels in
+/// locals and give them to [rgbText], with no [Rgb] object: on the VM and in
+/// WebAssembly. In JavaScript, they take `rgb().formatRgb()`, as upstream:
+/// there, the form in locals was not faster.
+const bool formatRgbInLocals = !_joinStrings;
+
+/// The text of `Rgb(r, g, b, opacity).formatRgb()` with no [Rgb] object:
+/// the text of the RGB channels [r], [g] and [b] and the opacity [opacity].
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+String rgbText(double r, double g, double b, double opacity) {
+  final x = clampi(r);
+  final y = clampi(g);
+  final z = clampi(b);
+  return _rgbText(clampa(opacity), x, y, z);
 }
 
 /// color.js:288 `clampa(opacity)`: an undefined opacity is 1, other values
@@ -963,23 +988,20 @@ const bool _joinStrings =
 const bool _wasm = bool.fromEnvironment('dart.tool.dart2wasm');
 
 /// Whether [Rgb.formatRgb] joins three or four texts of the tables
-/// [_rgbTexts], [_rgbaTexts], [_commaTexts], [_closeTexts] and [_alphaText]:
+/// [_rgbTexts] and [_alphaText]:
 /// in JavaScript and in WebAssembly, where each join makes a JavaScript
 /// string, and three joins of whole texts are faster than six joins or the
 /// code units. On the VM, it writes code units into [_units].
 const bool _joinRgbTexts = _joinStrings || _wasm;
 
-/// The texts `rgb(v, ` of [Rgb.formatRgb] for v in [0, 255].
-final List<String> _rgbTexts = [for (var v = 0; v < 256; v++) 'rgb($v, '];
-
-/// The texts `rgba(v, ` of [Rgb.formatRgb] for v in [0, 255].
-final List<String> _rgbaTexts = [for (var v = 0; v < 256; v++) 'rgba($v, '];
-
-/// The texts `v, ` of [Rgb.formatRgb] for v in [0, 255].
-final List<String> _commaTexts = [for (var v = 0; v < 256; v++) '$v, '];
-
-/// The texts `v)` of [Rgb.formatRgb] for v in [0, 255].
-final List<String> _closeTexts = [for (var v = 0; v < 256; v++) '$v)'];
+/// The texts of [Rgb.formatRgb] for v in [0, 255], in four rows of 256:
+/// `rgb(v, `, `v, `, `v)` and `rgba(v, `.
+final List<String> _rgbTexts = [
+  for (var v = 0; v < 256; v++) 'rgb($v, ',
+  for (var v = 0; v < 256; v++) '$v, ',
+  for (var v = 0; v < 256; v++) '$v)',
+  for (var v = 0; v < 256; v++) 'rgba($v, ',
+];
 
 /// The text `a)` at the end of [Rgb.formatRgb] for the opacity [a] in
 /// [0, 1]: from a table for a = k / 100, else [numberText].
@@ -1198,6 +1220,15 @@ class Hsl(
     );
   }
 
+  /// color.js:181 `formatRgb()`: `this.rgb().formatRgb()`.
+  @override
+  String formatRgb() {
+    if (!formatRgbInLocals) return rgb().formatRgb();
+    // DIVERGES(d3-color): adapt-color-format-locals, no temporary Rgb.
+    final (r, g, b) = _hsl2rgb(h, s, l);
+    return rgbText(r, g, b, opacity);
+  }
+
   /// color.js:367 `clamp()`: a copy with the hue in [0, 360), the saturation
   /// and the lightness in [0, 1], and the opacity in [0, 1].
   Hsl clamp() => Hsl(clamph(h), clampt(s), clampt(l), clampa(opacity));
@@ -1233,6 +1264,29 @@ class Hsl(
     units[p++] = 0x29; // )
     return String.fromCharCodes(units, 0, p);
   }
+}
+
+/// The lines color.js:355-364 of [Hsl.rgb]: the RGB channels `(r, g, b)` of
+/// the hue [h0], the saturation [s0] and the lightness [l], for
+/// [Hsl.formatRgb]. [Hsl.rgb] keeps its own lines, which measured faster
+/// in WebAssembly than a call of this function.
+@pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+(double, double, double) _hsl2rgb(double h0, double s0, double l) {
+  // JavaScript `%` is the truncated remainder: Dart `remainder`.
+  // DIVERGES(d3-color): adapt-color-hsl-hue-wrap, no remainder below 360.
+  final h =
+      (h0 > -360.0 && h0 < 360.0 ? h0 : h0.remainder(360.0)) +
+      (h0 < 0.0 ? 360.0 : 0.0);
+  final s = h.isNaN || s0.isNaN ? 0.0 : s0;
+  final m2 = l + (l < 0.5 ? l : 1.0 - l) * s;
+  final m1 = 2.0 * l - m2;
+  return (
+    hsl2rgb(h >= 240.0 ? h - 240.0 : h + 120.0, m1, m2),
+    hsl2rgb(h, m1, m2),
+    hsl2rgb(h < 120.0 ? h + 240.0 : h - 120.0, m1, m2),
+  );
 }
 
 /// color.js:381 `clamph(value)`: [value] in [0, 360). An undefined value is
