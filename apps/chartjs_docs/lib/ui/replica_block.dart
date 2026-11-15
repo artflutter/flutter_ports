@@ -12,8 +12,8 @@ class const ReplicaDemo({
   /// The id of the section of the demo, unique on the site.
   required final String id,
 
-  /// The name of the demo in the other library.
-  required final String title,
+  /// The name of the demo in the other library, the heading of its section.
+  required final Widget title,
 
   /// The address of the original demo.
   required final String original,
@@ -21,8 +21,8 @@ class const ReplicaDemo({
   /// The code region of the replica.
   required final CodeRegion region,
 
-  /// What maps to what, with the inline forms of [DocText].
-  required final List<String> notes,
+  /// What maps to what, one widget for each bullet, usually a [DocText].
+  required final List<Widget> notes,
 
   /// Builds the live replica.
   required final WidgetBuilder replica,
@@ -60,29 +60,34 @@ DocPageContent migrationPage({
   required List<DocRow> mapping,
   required List<ReplicaDemo> demos,
   required ReplicaFrame frame,
-  required String credit,
+  required Widget credit,
   CodeRegion? kit,
 }) => DocPageContent(
-  title: 'Migrate $chart charts from $library',
-  navLabel: 'From $library',
+  tabTitle: 'Migrate $chart charts from $library',
+  title: Text('Migrate $chart charts from $library'),
+  navLabel: Text('From $library'),
   icon: icon,
   intro: [
     ...intro,
     DocParagraph(
-      'Each section below rebuilds one $chart chart demo of $library $version '
-      'with the port. The chart is live: hover and tap work as in the '
-      'original. Open **Code** to see the code of the replica.',
+      DocText(
+        'Each section below rebuilds one $chart chart demo of $library '
+        '$version with the port. The chart is live: hover and tap work as in '
+        'the original. Open **Code** to see the code of the replica.',
+      ),
     ),
-    _OriginalLink(url: gallery, label: 'The $library demos'),
+    _OriginalLink(url: gallery, label: Text('The $library demos')),
   ],
   sections: [
     DocSection(
       id: 'mapping',
-      title: 'Names that map',
+      title: const Text('Names that map'),
       body: [
         DocParagraph(
-          'The left column is the $library name, the right column is the '
-          'port.',
+          DocText(
+            'The left column is the $library name, the right column is the '
+            'port.',
+          ),
         ),
         DocTable(mapping, nameWidth: 280),
       ],
@@ -96,11 +101,13 @@ DocPageContent migrationPage({
     if (kit != null)
       DocSection(
         id: 'kit',
-        title: 'Shared code',
+        title: const Text('Shared code'),
         body: [
           const DocParagraph(
-            'The replicas share these helpers: the colors, the axis look and '
-            'the small plugins.',
+            DocText(
+              'The replicas share these helpers: the colors, the axis look '
+              'and the small plugins.',
+            ),
           ),
           DocCode(kit),
         ],
@@ -109,10 +116,11 @@ DocPageContent migrationPage({
   credit: credit,
 );
 
-/// A link that opens [url] in a new tab.
+/// A link that opens [url] in a new tab. The button gives [label] its text
+/// style.
 class const _OriginalLink({
   required final String url,
-  required final String label,
+  required final Widget label,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Align(
@@ -127,7 +135,7 @@ class const _OriginalLink({
           visualDensity: VisualDensity.compact,
         ),
         icon: const Icon(Icons.open_in_new, size: 16),
-        label: Text(label),
+        label: label,
       ),
     ),
   );
@@ -174,7 +182,10 @@ class const ReplicaBlock({
                 region: demo.region,
                 trailing: Padding(
                   padding: const EdgeInsets.only(right: 6),
-                  child: _OriginalLink(url: demo.original, label: 'Original'),
+                  child: _OriginalLink(
+                    url: demo.original,
+                    label: const Text('Original'),
+                  ),
                 ),
               ),
             ],

@@ -500,6 +500,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   source file at the first open of one of its panels, not at the start of the app.
   `test/code_panels_test.dart` pins this. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
+  - The UI of the site is widget classes, with no function that returns a widget (the Flutter guidance
+    "prefer a widget over a helper method"). A docs block takes each text as a widget: a `DocText` for a
+    text with the inline forms `` `code` ``, `**bold**` and `[text](#id)`, and a `Text` for a label. The
+    block gives the text its style through `DefaultTextStyle`, for example
+    `DocParagraph(DocText('Set **stepped** to true.'))` or `DocSection(title: Text('Gaps'), ...)`. A
+    `String` field stays only where the code uses the text as a value: the end of a key and the screen
+    reader text (`ExampleVariant.name`, `LiveExample.description`), the browser tab title
+    (`DocPageContent.tabTitle`), the group of a page and the table data that the tests compare
+    (`DocProperty`).
   - The bar chart page has the section structure of `docs/charts/bar.md`: `lib/pages/bar_chart_page.dart`
     has the text and the table, and `lib/examples/bar_examples.dart` has the code of the charts. Each region
     name of that file starts with `bar-`, because a region name is unique over all the source files.

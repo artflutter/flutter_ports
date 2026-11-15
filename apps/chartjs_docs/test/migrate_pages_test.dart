@@ -44,7 +44,7 @@ void main() {
       testWidgets('the page builds, and each replica draws', (tester) async {
         await _open(tester, page.route);
         final content = page.build();
-        expect(find.text(content.title), findsOneWidget);
+        expect(find.text(content.tabTitle), findsOneWidget);
         expect(tester.takeException(), isNull);
         for (final section in content.sections.skip(1)) {
           if (section.id == 'kit') continue;
@@ -104,7 +104,7 @@ void main() {
     testWidgets('the old address $old opens $route', (tester) async {
       await _open(tester, old);
       final page = docPages.firstWhere((page) => page.route == route);
-      expect(find.text(page.build().title), findsOneWidget);
+      expect(find.text(page.build().tabTitle), findsOneWidget);
     });
   }
 

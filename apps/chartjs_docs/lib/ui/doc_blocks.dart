@@ -40,7 +40,8 @@ class const DocText(
   /// The text with its inline forms.
   final String text, {
 
-  /// The style of the plain text.
+  /// The style of the plain text. The style of the nearest
+  /// [DefaultTextStyle] fills the fields that it does not set.
   final TextStyle? style,
   super.key,
 }) extends StatefulWidget {
@@ -76,16 +77,7 @@ class _DocTextState() extends State<DocText> {
       }
       end = match.end;
       if (match.namedGroup('code') case final code?) {
-        spans.add(
-          TextSpan(
-            text: code,
-            style: const TextStyle(
-              fontFamily: monoFont,
-              fontSize: 12.5,
-              backgroundColor: DocColors.primarySoft,
-            ),
-          ),
-        );
+        spans.add(TextSpan(text: code, style: _code));
       } else if (match.namedGroup('bold') case final bold?) {
         spans.add(
           TextSpan(
@@ -116,30 +108,41 @@ class _DocTextState() extends State<DocText> {
   }
 
   @override
-  Widget build(BuildContext context) => Text.rich(
-    TextSpan(children: _spans()),
-    style: widget.style ?? const TextStyle(fontSize: 15, height: 1.6),
-  );
+  Widget build(BuildContext context) =>
+      Text.rich(TextSpan(children: _spans()), style: widget.style);
 }
 
-/// A paragraph.
+/// The style of the inline form `` `code` ``.
+const TextStyle _code = TextStyle(
+  fontFamily: monoFont,
+  fontSize: 12.5,
+  backgroundColor: DocColors.primarySoft,
+);
+
+/// The style of the body text: paragraphs and bullets.
+const TextStyle _body = TextStyle(fontSize: 15, height: 1.6);
+
+/// A paragraph. The paragraph gives [child] the style of the body text.
 class const DocParagraph(
-  /// The text with its inline forms.
-  final String text, {
+  /// The text of the paragraph, usually a [DocText].
+  final Widget child, {
   super.key,
 }) extends StatelessWidget {
-  /// Creates a paragraph of [text].
+  /// Creates a paragraph of [child].
   this;
 
   @override
-  Widget build(BuildContext context) =>
-      Padding(padding: const EdgeInsets.only(bottom: 12), child: DocText(text));
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(bottom: 12),
+    child: DefaultTextStyle.merge(style: _body, child: child),
+  );
 }
 
-/// A list with bullets.
+/// A list with bullets. The list gives each item the style of the body
+/// text.
 class const DocBullets(
-  /// The items with their inline forms.
-  final List<String> items, {
+  /// The items, usually [DocText] widgets.
+  final List<Widget> items, {
   super.key,
 }) extends StatelessWidget {
   /// Creates a list of [items].
@@ -164,7 +167,9 @@ class const DocBullets(
                     backgroundColor: DocColors.primary,
                   ),
                 ),
-                Expanded(child: DocText(item)),
+                Expanded(
+                  child: DefaultTextStyle.merge(style: _body, child: item),
+                ),
               ],
             ),
           ),
@@ -173,13 +178,13 @@ class const DocBullets(
   );
 }
 
-/// A tip in a tinted box.
+/// A tip in a tinted box. The box gives [child] its text style.
 class const DocTip(
-  /// The text with its inline forms.
-  final String text, {
+  /// The text of the tip, usually a [DocText].
+  final Widget child, {
   super.key,
 }) extends StatelessWidget {
-  /// Creates a tip with [text].
+  /// Creates a tip with [child].
   this;
 
   @override
@@ -190,7 +195,10 @@ class const DocTip(
       color: DocColors.primarySoft,
       borderRadius: BorderRadius.circular(10),
     ),
-    child: DocText(text, style: const TextStyle(fontSize: 14, height: 1.55)),
+    child: DefaultTextStyle.merge(
+      style: const TextStyle(fontSize: 14, height: 1.55),
+      child: child,
+    ),
   );
 }
 
@@ -355,8 +363,12 @@ class const DocCode(
 
 /// One form of a live example.
 class const ExampleVariant({
-  /// The name of the form.
-  required final String label,
+  /// The name of the form: the end of the key of its chip and of the text
+  /// of the chart for a screen reader.
+  required final String name,
+
+  /// The label of the chip of the form. The chip gives it its text style.
+  required final Widget label,
 
   /// The chart of the form.
   required final ChartConfig config,
@@ -364,7 +376,7 @@ class const ExampleVariant({
   /// The code region of the form.
   required final CodeRegion region,
 }) {
-  /// Creates a form with the name [label].
+  /// Creates a form with the name [name].
   this;
 }
 
@@ -379,8 +391,9 @@ class const LiveExample({
   /// The forms of the example.
   required final List<ExampleVariant> variants,
 
-  /// A short instruction above the chart.
-  final String? hint,
+  /// A short instruction above the chart. The example gives it a small
+  /// muted text style.
+  final Widget? hint,
   super.key,
 }) extends StatefulWidget {
   /// Creates the example.
@@ -409,8 +422,8 @@ class _LiveExampleState() extends State<LiveExample> {
                 children: [
                   for (final (index, item) in widget.variants.indexed)
                     ChoiceChip(
-                      key: ValueKey('${widget.id}.${item.label}'),
-                      label: Text(item.label),
+                      key: ValueKey('${widget.id}.${item.name}'),
+                      label: item.label,
                       visualDensity: VisualDensity.compact,
                       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
                       selected: index == _selected,
@@ -422,9 +435,9 @@ class _LiveExampleState() extends State<LiveExample> {
           if (widget.hint case final hint?)
             Padding(
               padding: const EdgeInsets.fromLTRB(14, 12, 14, 0),
-              child: Text(
-                hint,
+              child: DefaultTextStyle.merge(
                 style: const TextStyle(color: DocColors.muted, fontSize: 12),
+                child: hint,
               ),
             ),
           Padding(
@@ -433,7 +446,7 @@ class _LiveExampleState() extends State<LiveExample> {
               child: ChartView(
                 key: ValueKey('${widget.id}.chart'),
                 config: variant.config,
-                semanticLabel: '${widget.description}: ${variant.label}',
+                semanticLabel: '${widget.description}: ${variant.name}',
               ),
             ),
           ),
@@ -445,12 +458,14 @@ class _LiveExampleState() extends State<LiveExample> {
   }
 }
 
-/// One row of a description table.
-typedef DocRow = (String name, String description);
+/// One row of a description table: the name, usually a [Text], and the
+/// description, usually a [DocText].
+typedef DocRow = (Widget name, Widget description);
 
-/// A table of option names and their descriptions.
+/// A table of option names and their descriptions. The table gives a name
+/// the style of the inline form `` `code` ``.
 class const DocTable(
-  /// The rows, with the inline forms in the cells.
+  /// The rows.
   final List<DocRow> rows, {
 
   /// The width of the column of the names on a wide screen.
@@ -475,8 +490,14 @@ class const DocTable(
                   ),
             child: LayoutBuilder(
               builder: (context, constraints) {
-                final nameCell = DocText('`$name`', style: _cell);
-                final textCell = DocText(description, style: _cell);
+                final nameCell = DefaultTextStyle.merge(
+                  style: _nameCell,
+                  child: name,
+                );
+                final textCell = DefaultTextStyle.merge(
+                  style: _cell,
+                  child: description,
+                );
                 if (constraints.maxWidth < 560) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
@@ -500,6 +521,14 @@ class const DocTable(
 }
 
 const TextStyle _cell = TextStyle(fontSize: 13.5, height: 1.5);
+
+/// The style of a name of a description table: [_code] in a cell.
+const TextStyle _nameCell = TextStyle(
+  fontFamily: monoFont,
+  fontSize: 12.5,
+  height: 1.5,
+  backgroundColor: DocColors.primarySoft,
+);
 
 /// One row of the table of dataset properties.
 class const DocProperty(

@@ -1,6 +1,5 @@
 // Ported from Chart.js v4.6.1 docs/charts/line.md (MIT, Chart.js Contributors).
 // The adjacent strings keep the lines of the prose short.
-// ignore_for_file: no_adjacent_strings_in_list
 
 import 'dart:async';
 import 'dart:math' as math;
@@ -309,28 +308,36 @@ const List<DocProperty> lineProperties = [
 
 /// The content of the line chart page.
 DocPageContent lineChartPage() => DocPageContent(
-  title: 'Line Chart',
-  navLabel: 'Line chart',
+  tabTitle: 'Line Chart',
+  title: const Text('Line Chart'),
+  navLabel: const Text('Line chart'),
   icon: Icons.show_chart,
   intro: [
     const DocParagraph(
-      'A line chart shows data points on a line. '
-      'Use a line chart to show a trend or to compare two datasets.',
+      DocText(
+        'A line chart shows data points on a line. '
+        'Use a line chart to show a trend or to compare two datasets.',
+      ),
     ),
     const DocParagraph(
-      'Register the chart components one time, before the first chart.',
+      DocText(
+        'Register the chart components one time, before the first chart.',
+      ),
     ),
     const DocCode(CodeRegion(examplesAsset, 'register')),
     const DocParagraph(
-      'Then give a `ChartConfig` to a `ChartView`. '
-      'The chart below is a live widget.',
+      DocText(
+        'Then give a `ChartConfig` to a `ChartView`. '
+        'The chart below is a live widget.',
+      ),
     ),
     const LiveExample(
       id: 'basic',
       description: 'A line chart of seven months',
       variants: [
         ExampleVariant(
-          label: 'Basic',
+          name: 'Basic',
+          label: Text('Basic'),
           config: basicLine,
           region: CodeRegion(examplesAsset, 'basic'),
         ),
@@ -340,153 +347,217 @@ DocPageContent lineChartPage() => DocPageContent(
   sections: [
     DocSection(
       id: 'dataset-properties',
-      title: 'Dataset Properties',
+      title: const Text('Dataset Properties'),
       body: [
-        const DocParagraph('The chart reads an option from these scopes:'),
+        const DocParagraph(
+          DocText('The chart reads an option from these scopes:'),
+        ),
         const DocTable([
-          ('LineDataset(...)', 'The options of this dataset only.'),
           (
-            "extra: {'datasets': {'line': ...}}",
-            'The options of all line datasets, in `ChartConfig.extra`.',
+            Text('LineDataset(...)'),
+            DocText('The options of this dataset only.'),
           ),
           (
-            'ChartElements(line: ...)',
-            'The options of all line elements, in `ChartConfig.elements`.',
+            Text("extra: {'datasets': {'line': ...}}"),
+            DocText(
+              'The options of all line datasets, in `ChartConfig.extra`.',
+            ),
           ),
           (
-            'ChartElements(point: ...)',
-            'The options of all point elements, in `ChartConfig.elements`.',
+            Text('ChartElements(line: ...)'),
+            DocText(
+              'The options of all line elements, in `ChartConfig.elements`.',
+            ),
           ),
-          ('ChartConfig(...)', 'The options of the whole chart.'),
+          (
+            Text('ChartElements(point: ...)'),
+            DocText(
+              'The options of all point elements, in `ChartConfig.elements`.',
+            ),
+          ),
+          (
+            Text('ChartConfig(...)'),
+            DocText('The options of the whole chart.'),
+          ),
         ]),
         const LiveExample(
           id: 'scopes',
           description: 'A line chart with options in three scopes',
           variants: [
             ExampleVariant(
-              label: 'Scopes',
+              name: 'Scopes',
+              label: Text('Scopes'),
               config: scopedLine,
               region: CodeRegion(examplesAsset, 'scopes'),
             ),
           ],
         ),
         const DocParagraph(
-          'Each dataset has properties. These properties set the look of '
-          'that dataset. For example, a dataset usually sets the color of '
-          'its line.',
+          DocText(
+            'Each dataset has properties. These properties set the look of '
+            'that dataset. For example, a dataset usually sets the color of '
+            'its line.',
+          ),
         ),
         const DocParagraph(
-          'The column **Set with** gives the place of the option in Dart. '
-          'A **Parameter** is a named parameter of `LineDataset`. An option '
-          'with no parameter goes in the `extra` Map of the dataset, under '
-          'its Chart.js name.',
+          DocText(
+            'The column **Set with** gives the place of the option in Dart. '
+            'A **Parameter** is a named parameter of `LineDataset`. An option '
+            'with no parameter goes in the `extra` Map of the dataset, under '
+            'its Chart.js name.',
+          ),
         ),
         const DocPropertyTable(lineProperties),
         const DocParagraph(
-          'If a dataset does not set a value, the chart reads the next '
-          'scope. A `null` parameter writes no key.',
+          DocText(
+            'If a dataset does not set a value, the chart reads the next '
+            'scope. A `null` parameter writes no key.',
+          ),
         ),
       ],
       subsections: [
         DocSection(
           id: 'scriptable-indexable',
-          title: 'Scriptable and Indexable Values',
+          title: const Text('Scriptable and Indexable Values'),
           body: [
             const DocParagraph(
-              'A scriptable option takes a function. The chart calls the '
-              'function for each data item. An indexable option takes a '
-              'list, with one value for each data item.',
+              DocText(
+                'A scriptable option takes a function. The chart calls the '
+                'function for each data item. An indexable option takes a '
+                'list, with one value for each data item.',
+              ),
             ),
             const DocParagraph(
-              '`backgroundColor` and `borderColor` take a `ChartValue`: '
-              '`.constant`, `.indexed` or `.resolver`. Each other parameter '
-              'takes one fixed value. For a function or a list on another '
-              'option, use `extra` with the Chart.js name.',
+              DocText(
+                '`backgroundColor` and `borderColor` take a `ChartValue`: '
+                '`.constant`, `.indexed` or `.resolver`. Each other parameter '
+                'takes one fixed value. For a function or a list on another '
+                'option, use `extra` with the Chart.js name.',
+              ),
             ),
             LiveExample(
               id: 'scriptable',
               description: 'A line chart with a color for each point',
               variants: [
                 ExampleVariant(
-                  label: 'Scriptable',
+                  name: 'Scriptable',
+                  label: const Text('Scriptable'),
                   config: oneLine(scriptableLine),
                   region: const CodeRegion(examplesAsset, 'scriptable'),
                 ),
               ],
             ),
             const DocTip(
-              'Use a top-level function or a method tear-off. A new closure '
-              'in each build is a new value, and the chart updates again.',
+              DocText(
+                'Use a top-level function or a method tear-off. A new closure '
+                'in each build is a new value, and the chart updates again.',
+              ),
             ),
           ],
         ),
         const DocSection(
           id: 'general',
-          title: 'General',
+          title: Text('General'),
           body: [
             DocTable([
               (
-                'clip',
-                'How the chart clips the dataset at the chart area. A '
-                    'positive value permits overflow. A negative value clips '
-                    'that number of pixels inside the chart area. '
-                    '`ChartClip.all(0)` clips at the chart area, and '
-                    '`ChartClip.none` draws with no clip. `ChartClip` also '
-                    'sets each side, for example '
-                    '`ChartClip(left: 5, right: -2, bottom: 0)`: a side with '
-                    'no value has no clip.',
+                Text('clip'),
+                DocText(
+                  'How the chart clips the dataset at the chart area. A '
+                  'positive value permits overflow. A negative value clips '
+                  'that number of pixels inside the chart area. '
+                  '`ChartClip.all(0)` clips at the chart area, and '
+                  '`ChartClip.none` draws with no clip. `ChartClip` also '
+                  'sets each side, for example '
+                  '`ChartClip(left: 5, right: -2, bottom: 0)`: a side with '
+                  'no value has no clip.',
+                ),
               ),
               (
-                'drawActiveElementsOnTop',
-                'Draws the active points of a dataset over the other points '
-                    'of that dataset.',
+                Text('drawActiveElementsOnTop'),
+                DocText(
+                  'Draws the active points of a dataset over the other points '
+                  'of that dataset.',
+                ),
               ),
               (
-                'indexAxis',
-                'The base axis of the dataset. `XAxis()` gives horizontal '
-                    'lines. `YAxis()` gives vertical lines.',
+                Text('indexAxis'),
+                DocText(
+                  'The base axis of the dataset. `XAxis()` gives horizontal '
+                  'lines. `YAxis()` gives vertical lines.',
+                ),
               ),
               (
-                'label',
-                'The name of the dataset in the legend and in the tooltip.',
+                Text('label'),
+                DocText(
+                  'The name of the dataset in the legend and in the tooltip.',
+                ),
               ),
               (
-                'order',
-                'The draw order of the dataset. The value also sets the '
-                    'order of the stacks, of the tooltip and of the legend.',
+                Text('order'),
+                DocText(
+                  'The draw order of the dataset. The value also sets the '
+                  'order of the stacks, of the tooltip and of the legend.',
+                ),
               ),
               (
-                'stack',
-                'The ID of the group of the dataset. On a stacked axis, each '
-                    'group is a separate stack. See '
-                    '[Stacked Area Chart](#stacked-area-chart).',
+                Text('stack'),
+                DocText(
+                  'The ID of the group of the dataset. On a stacked axis, each '
+                  'group is a separate stack. See '
+                  '[Stacked Area Chart](#stacked-area-chart).',
+                ),
               ),
-              ('xAxisID', 'The ID of the x axis of this dataset.'),
-              ('yAxisID', 'The ID of the y axis of this dataset.'),
+              (
+                Text('xAxisID'),
+                DocText('The ID of the x axis of this dataset.'),
+              ),
+              (
+                Text('yAxisID'),
+                DocText('The ID of the y axis of this dataset.'),
+              ),
             ]),
           ],
         ),
         DocSection(
           id: 'point-styling',
-          title: 'Point Styling',
+          title: const Text('Point Styling'),
           body: [
-            const DocParagraph('These properties set the style of each point.'),
+            const DocParagraph(
+              DocText('These properties set the style of each point.'),
+            ),
             const DocTable([
-              ('pointBackgroundColor', 'The fill color of the points.'),
-              ('pointBorderColor', 'The border color of the points.'),
-              ('pointBorderWidth', 'The width of the point border in pixels.'),
               (
-                'pointHitRadius',
-                'The size in pixels of the invisible area that reacts to '
-                    'the pointer.',
+                Text('pointBackgroundColor'),
+                DocText('The fill color of the points.'),
               ),
               (
-                'pointRadius',
-                'The radius of the point shape. The chart does not draw a '
-                    'point with the radius `0`.',
+                Text('pointBorderColor'),
+                DocText('The border color of the points.'),
               ),
-              ('pointRotation', 'The rotation of the point in degrees.'),
-              ('pointStyle', 'The shape of the point.'),
+              (
+                Text('pointBorderWidth'),
+                DocText('The width of the point border in pixels.'),
+              ),
+              (
+                Text('pointHitRadius'),
+                DocText(
+                  'The size in pixels of the invisible area that reacts to '
+                  'the pointer.',
+                ),
+              ),
+              (
+                Text('pointRadius'),
+                DocText(
+                  'The radius of the point shape. The chart does not draw a '
+                  'point with the radius `0`.',
+                ),
+              ),
+              (
+                Text('pointRotation'),
+                DocText('The rotation of the point in degrees.'),
+              ),
+              (Text('pointStyle'), DocText('The shape of the point.')),
             ]),
             LiveExample(
               id: 'point-styling',
@@ -501,65 +572,91 @@ DocPageContent lineChartPage() => DocPageContent(
                   ('cross', CrossPointStyle()),
                 ])
                   ExampleVariant(
-                    label: label,
+                    name: label,
+                    label: Text(label),
                     config: pointStyling(style),
                     region: const CodeRegion(examplesAsset, 'point-styling'),
                   ),
               ],
             ),
             const DocParagraph(
-              'If a value is not set, the chart reads the dataset options, '
-              'and then the options of the point elements.',
+              DocText(
+                'If a value is not set, the chart reads the dataset options, '
+                'and then the options of the point elements.',
+              ),
             ),
           ],
         ),
         const DocSection(
           id: 'line-styling',
-          title: 'Line Styling',
+          title: Text('Line Styling'),
           body: [
-            DocParagraph('These properties set the style of the line.'),
+            DocParagraph(
+              DocText('These properties set the style of the line.'),
+            ),
             DocTable([
-              ('backgroundColor', 'The fill color of the line.'),
+              (Text('backgroundColor'), DocText('The fill color of the line.')),
               (
-                'borderCapStyle',
-                'The cap style of the line: a Flutter `StrokeCap` (`butt`, '
-                    '`round` or `square`).',
+                Text('borderCapStyle'),
+                DocText(
+                  'The cap style of the line: a Flutter `StrokeCap` (`butt`, '
+                  '`round` or `square`).',
+                ),
               ),
-              ('borderColor', 'The color of the line.'),
+              (Text('borderColor'), DocText('The color of the line.')),
               (
-                'borderDash',
-                'The lengths of the dashes and the gaps, in pixels.',
-              ),
-              ('borderDashOffset', 'The offset of the dashes, in pixels.'),
-              (
-                'borderJoinStyle',
-                'The style of the line joints: a Flutter `StrokeJoin` '
-                    '(`round`, `bevel` or `miter`).',
-              ),
-              ('borderWidth', 'The width of the line in pixels.'),
-              ('fill', 'How the chart fills the area under the line.'),
-              (
-                'tension',
-                'The Bézier curve tension of the line. The value `0` draws '
-                    'straight lines. The monotone mode ignores this option.',
+                Text('borderDash'),
+                DocText('The lengths of the dashes and the gaps, in pixels.'),
               ),
               (
-                'shadow',
-                'The shadow of the line and its points: a `ChartShadow` with '
-                    'a color, a blur and an offset. The area fill has no '
-                    'shadow. The shadow is not a Chart.js option.',
+                Text('borderDashOffset'),
+                DocText('The offset of the dashes, in pixels.'),
               ),
               (
-                'showLine',
-                'If `false`, the chart does not draw the line of this '
-                    'dataset.',
+                Text('borderJoinStyle'),
+                DocText(
+                  'The style of the line joints: a Flutter `StrokeJoin` '
+                  '(`round`, `bevel` or `miter`).',
+                ),
               ),
               (
-                'spanGaps',
-                'If `true`, the chart draws the line across `null` values. '
-                    'If `false`, a `null` value breaks the line. A number '
-                    'gives the maximum gap to span, in the unit of the '
-                    "scale. A number goes through `extra: {'spanGaps': 2}`.",
+                Text('borderWidth'),
+                DocText('The width of the line in pixels.'),
+              ),
+              (
+                Text('fill'),
+                DocText('How the chart fills the area under the line.'),
+              ),
+              (
+                Text('tension'),
+                DocText(
+                  'The Bézier curve tension of the line. The value `0` draws '
+                  'straight lines. The monotone mode ignores this option.',
+                ),
+              ),
+              (
+                Text('shadow'),
+                DocText(
+                  'The shadow of the line and its points: a `ChartShadow` with '
+                  'a color, a blur and an offset. The area fill has no '
+                  'shadow. The shadow is not a Chart.js option.',
+                ),
+              ),
+              (
+                Text('showLine'),
+                DocText(
+                  'If `false`, the chart does not draw the line of this '
+                  'dataset.',
+                ),
+              ),
+              (
+                Text('spanGaps'),
+                DocText(
+                  'If `true`, the chart draws the line across `null` values. '
+                  'If `false`, a `null` value breaks the line. A number '
+                  'gives the maximum gap to span, in the unit of the '
+                  "scale. A number goes through `extra: {'spanGaps': 2}`.",
+                ),
               ),
             ]),
             LiveExample(
@@ -567,7 +664,8 @@ DocPageContent lineChartPage() => DocPageContent(
               description: 'A line chart with a line style',
               variants: [
                 ExampleVariant(
-                  label: 'Solid',
+                  name: 'Solid',
+                  label: Text('Solid'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -576,7 +674,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'line-solid'),
                 ),
                 ExampleVariant(
-                  label: 'Dashed',
+                  name: 'Dashed',
+                  label: Text('Dashed'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -585,7 +684,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'line-dashed'),
                 ),
                 ExampleVariant(
-                  label: 'Filled',
+                  name: 'Filled',
+                  label: Text('Filled'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -594,7 +694,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'line-filled'),
                 ),
                 ExampleVariant(
-                  label: 'Points only',
+                  name: 'Points only',
+                  label: Text('Points only'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -603,7 +704,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'line-points-only'),
                 ),
                 ExampleVariant(
-                  label: 'Shadow',
+                  name: 'Shadow',
+                  label: Text('Shadow'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -618,7 +720,8 @@ DocPageContent lineChartPage() => DocPageContent(
               description: 'A line chart with null values',
               variants: [
                 ExampleVariant(
-                  label: 'spanGaps: false',
+                  name: 'spanGaps: false',
+                  label: Text('spanGaps: false'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -627,7 +730,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'gaps-break'),
                 ),
                 ExampleVariant(
-                  label: 'spanGaps: true',
+                  name: 'spanGaps: true',
+                  label: Text('spanGaps: true'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -638,40 +742,48 @@ DocPageContent lineChartPage() => DocPageContent(
               ],
             ),
             DocParagraph(
-              'If a value is not set, the chart reads the options of the '
-              'line elements.',
+              DocText(
+                'If a value is not set, the chart reads the options of the '
+                'line elements.',
+              ),
             ),
           ],
         ),
         const DocSection(
           id: 'interactions',
-          title: 'Interactions',
+          title: Text('Interactions'),
           body: [
             DocParagraph(
-              'These properties set the look of a point under the pointer.',
+              DocText(
+                'These properties set the look of a point under the pointer.',
+              ),
             ),
             DocTable([
               (
-                'pointHoverBackgroundColor',
-                'The fill color of a point under the pointer.',
+                Text('pointHoverBackgroundColor'),
+                DocText('The fill color of a point under the pointer.'),
               ),
               (
-                'pointHoverBorderColor',
-                'The border color of a point under the pointer.',
+                Text('pointHoverBorderColor'),
+                DocText('The border color of a point under the pointer.'),
               ),
               (
-                'pointHoverBorderWidth',
-                'The border width of a point under the pointer.',
+                Text('pointHoverBorderWidth'),
+                DocText('The border width of a point under the pointer.'),
               ),
-              ('pointHoverRadius', 'The radius of a point under the pointer.'),
+              (
+                Text('pointHoverRadius'),
+                DocText('The radius of a point under the pointer.'),
+              ),
             ]),
             LiveExample(
               id: 'interactions',
               description: 'A line chart with hover styles',
-              hint: 'Move the pointer over a point, or tap a point.',
+              hint: Text('Move the pointer over a point, or tap a point.'),
               variants: [
                 ExampleVariant(
-                  label: 'Hover',
+                  name: 'Hover',
+                  label: Text('Hover'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -685,32 +797,41 @@ DocPageContent lineChartPage() => DocPageContent(
         ),
         const DocSection(
           id: 'cubic-interpolation-mode',
-          title: 'cubicInterpolationMode',
+          title: Text('cubicInterpolationMode'),
           body: [
-            DocParagraph('The chart has these interpolation modes:'),
+            DocParagraph(DocText('The chart has these interpolation modes:')),
             DocBullets([
-              '`DefaultCubicInterpolationMode()` uses a weighted cubic '
-                  'interpolation. This mode gives smooth curves for all '
-                  'types of datasets.',
-              '`MonotoneCubicInterpolationMode()` is better for `y = f(x)` '
-                  'datasets. This mode keeps the monotonicity of the data. '
-                  'A local extreme stays at a data point.',
+              DocText(
+                '`DefaultCubicInterpolationMode()` uses a weighted cubic '
+                'interpolation. This mode gives smooth curves for all '
+                'types of datasets.',
+              ),
+              DocText(
+                '`MonotoneCubicInterpolationMode()` is better for `y = f(x)` '
+                'datasets. This mode keeps the monotonicity of the data. '
+                'A local extreme stays at a data point.',
+              ),
             ]),
             DocParagraph(
-              'If the dataset does not set the mode, the chart uses '
-              '`cubicInterpolationMode` of the line elements.',
+              DocText(
+                'If the dataset does not set the mode, the chart uses '
+                '`cubicInterpolationMode` of the line elements.',
+              ),
             ),
             DocParagraph(
-              'An app or a plugin can give its own mode: a subclass of '
-              '`CubicInterpolationMode` with the methods `drawsCurves` and '
-              '`updateControlPoints`.',
+              DocText(
+                'An app or a plugin can give its own mode: a subclass of '
+                '`CubicInterpolationMode` with the methods `drawsCurves` and '
+                '`updateControlPoints`.',
+              ),
             ),
             LiveExample(
               id: 'cubic',
               description: 'A line chart of two interpolation modes',
               variants: [
                 ExampleVariant(
-                  label: 'Modes',
+                  name: 'Modes',
+                  label: Text('Modes'),
                   config: cubicLines,
                   region: CodeRegion(examplesAsset, 'cubic'),
                 ),
@@ -720,37 +841,50 @@ DocPageContent lineChartPage() => DocPageContent(
         ),
         const DocSection(
           id: 'segment',
-          title: 'Segment',
+          title: Text('Segment'),
           body: [
             DocParagraph(
-              'The functions of a `LineSegmentStyle` in `segment` change the '
-              'style of a part of the line. It has a function for each '
-              '`border*` option and for `backgroundColor`. The chart calls '
-              'them for each part of the line between two points. A '
-              'function that returns `null` keeps the style of the line.',
+              DocText(
+                'The functions of a `LineSegmentStyle` in `segment` change the '
+                'style of a part of the line. It has a function for each '
+                '`border*` option and for `backgroundColor`. The chart calls '
+                'them for each part of the line between two points. A '
+                'function that returns `null` keeps the style of the line.',
+              ),
             ),
-            DocTip('To style a gap, set `spanGaps` to `true`.'),
+            DocTip(DocText('To style a gap, set `spanGaps` to `true`.')),
             DocParagraph(
-              'A segment function takes a `ScriptableLineSegmentContext`, '
-              'with these fields:',
+              DocText(
+                'A segment function takes a `ScriptableLineSegmentContext`, '
+                'with these fields:',
+              ),
             ),
             DocTable([
-              ('p0', 'The first point element.'),
-              ('p1', 'The second point element.'),
-              ('p0DataIndex', 'The index of the first point in the data.'),
-              ('p1DataIndex', 'The index of the second point in the data.'),
-              ('datasetIndex', 'The index of the dataset.'),
+              (Text('p0'), DocText('The first point element.')),
+              (Text('p1'), DocText('The second point element.')),
+              (
+                Text('p0DataIndex'),
+                DocText('The index of the first point in the data.'),
+              ),
+              (
+                Text('p1DataIndex'),
+                DocText('The index of the second point in the data.'),
+              ),
+              (Text('datasetIndex'), DocText('The index of the dataset.')),
             ]),
             DocParagraph(
-              'This example draws a falling part in red. It draws a gap '
-              'with a dashed gray line.',
+              DocText(
+                'This example draws a falling part in red. It draws a gap '
+                'with a dashed gray line.',
+              ),
             ),
             LiveExample(
               id: 'segment',
               description: 'A line chart with styled segments',
               variants: [
                 ExampleVariant(
-                  label: 'Segments',
+                  name: 'Segments',
+                  label: Text('Segments'),
                   config: segmentLine,
                   region: CodeRegion(examplesAsset, 'segment'),
                 ),
@@ -760,28 +894,35 @@ DocPageContent lineChartPage() => DocPageContent(
         ),
         const DocSection(
           id: 'stepped',
-          title: 'Stepped',
+          title: Text('Stepped'),
           body: [
-            DocParagraph('`stepped` takes these values:'),
+            DocParagraph(DocText('`stepped` takes these values:')),
             DocBullets([
-              '`false`: no step interpolation. This value is the default.',
-              '`true`: step-before interpolation. It is the same as '
-                  '`SteppedLine.before`.',
-              '`SteppedLine.before`: step-before interpolation.',
-              '`SteppedLine.after`: step-after interpolation.',
-              '`SteppedLine.middle`: step-middle interpolation.',
+              DocText(
+                '`false`: no step interpolation. This value is the default.',
+              ),
+              DocText(
+                '`true`: step-before interpolation. It is the same as '
+                '`SteppedLine.before`.',
+              ),
+              DocText('`SteppedLine.before`: step-before interpolation.'),
+              DocText('`SteppedLine.after`: step-after interpolation.'),
+              DocText('`SteppedLine.middle`: step-middle interpolation.'),
             ]),
             DocParagraph(
-              'The parameter `stepped` takes a `SteppedLine`. The value '
-              '`true` goes through `extra`. If `stepped` is not `false`, the '
-              'chart ignores `tension`.',
+              DocText(
+                'The parameter `stepped` takes a `SteppedLine`. The value '
+                '`true` goes through `extra`. If `stepped` is not `false`, the '
+                'chart ignores `tension`.',
+              ),
             ),
             LiveExample(
               id: 'stepped',
               description: 'A stepped line chart',
               variants: [
                 ExampleVariant(
-                  label: 'false',
+                  name: 'false',
+                  label: Text('false'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -790,7 +931,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'stepped-false'),
                 ),
                 ExampleVariant(
-                  label: 'true',
+                  name: 'true',
+                  label: Text('true'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -799,7 +941,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'stepped-true'),
                 ),
                 ExampleVariant(
-                  label: '.before',
+                  name: '.before',
+                  label: Text('.before'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -808,7 +951,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'stepped-before'),
                 ),
                 ExampleVariant(
-                  label: '.after',
+                  name: '.after',
+                  label: Text('.after'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -817,7 +961,8 @@ DocPageContent lineChartPage() => DocPageContent(
                   region: CodeRegion(examplesAsset, 'stepped-after'),
                 ),
                 ExampleVariant(
-                  label: '.middle',
+                  name: '.middle',
+                  label: Text('.middle'),
                   config: ChartConfig(
                     type: .line,
                     labels: months,
@@ -833,75 +978,92 @@ DocPageContent lineChartPage() => DocPageContent(
     ),
     const DocSection(
       id: 'default-options',
-      title: 'Default Options',
+      title: Text('Default Options'),
       body: [
         DocParagraph(
-          'To apply a setting to all line charts, change the global line '
-          'chart settings. A change has an effect only on the charts that '
-          'the app creates after the change. Existing charts do not change.',
+          DocText(
+            'To apply a setting to all line charts, change the global line '
+            'chart settings. A change has an effect only on the charts that '
+            'the app creates after the change. Existing charts do not change.',
+          ),
         ),
         DocParagraph(
-          'For example, this call sets `spanGaps` to `true` for all line '
-          'charts:',
+          DocText(
+            'For example, this call sets `spanGaps` to `true` for all line '
+            'charts:',
+          ),
         ),
         DocCode(CodeRegion(examplesAsset, 'defaults')),
       ],
     ),
     DocSection(
       id: 'data-structure',
-      title: 'Data Structure',
+      title: const Text('Data Structure'),
       body: [
         const DocParagraph(
-          'A `LineDataset` takes `data` or `points`, not both. The parameter '
-          '`data` holds one value for each label. A `null` value is a gap.',
+          DocText(
+            'A `LineDataset` takes `data` or `points`, not both. The parameter '
+            '`data` holds one value for each label. A `null` value is a gap.',
+          ),
         ),
         const DocParagraph(
-          'The parameter `points` holds `DataPoint` items. Use `DataPoint` '
-          'with a number on a `LinearAxis`, `DataPoint.time` with a '
-          '`DateTime` on a time axis, and `DataPoint.label` with a '
-          'category.',
+          DocText(
+            'The parameter `points` holds `DataPoint` items. Use `DataPoint` '
+            'with a number on a `LinearAxis`, `DataPoint.time` with a '
+            '`DateTime` on a time axis, and `DataPoint.label` with a '
+            'category.',
+          ),
         ),
         const DocParagraph(
-          'The chart reads the List of the app with no copy. For new values, '
-          'give a new List in a new `ChartConfig`.',
+          DocText(
+            'The chart reads the List of the app with no copy. For new values, '
+            'give a new List in a new `ChartConfig`.',
+          ),
         ),
         LiveExample(
           id: 'data',
           description: 'A line chart of two data forms',
           variants: [
             const ExampleVariant(
-              label: 'data',
+              name: 'data',
+              label: Text('data'),
               config: valuesLine,
               region: CodeRegion(examplesAsset, 'data-values'),
             ),
             ExampleVariant(
-              label: 'points',
+              name: 'points',
+              label: const Text('points'),
               config: pointsLine,
               region: const CodeRegion(examplesAsset, 'data-points'),
             ),
           ],
         ),
         const DocParagraph(
-          'For the other Chart.js data forms, use `ChartView.raw` with the '
-          'config as a Dart `Map`.',
+          DocText(
+            'For the other Chart.js data forms, use `ChartView.raw` with the '
+            'config as a Dart `Map`.',
+          ),
         ),
       ],
     ),
     const DocSection(
       id: 'stacked-area-chart',
-      title: 'Stacked Area Chart',
+      title: Text('Stacked Area Chart'),
       body: [
         DocParagraph(
-          'To make a stacked area chart, set `stacked` on the y axis. A '
-          'stacked area chart shows how a number of smaller parts make one '
-          'trend.',
+          DocText(
+            'To make a stacked area chart, set `stacked` on the y axis. A '
+            'stacked area chart shows how a number of smaller parts make one '
+            'trend.',
+          ),
         ),
         LiveExample(
           id: 'stacked',
           description: 'A stacked area chart of three datasets',
           variants: [
             ExampleVariant(
-              label: 'Stacked',
+              name: 'Stacked',
+              label: Text('Stacked'),
               config: stackedLines,
               region: CodeRegion(examplesAsset, 'stacked'),
             ),
@@ -911,19 +1073,23 @@ DocPageContent lineChartPage() => DocPageContent(
     ),
     const DocSection(
       id: 'vertical-line-chart',
-      title: 'Vertical Line Chart',
+      title: Text('Vertical Line Chart'),
       body: [
         DocParagraph(
-          'A vertical line chart is a variation of the horizontal line '
-          'chart. To make a vertical line chart, set `indexAxis` to '
-          '`YAxis()`. The default is `XAxis()`, which gives horizontal lines.',
+          DocText(
+            'A vertical line chart is a variation of the horizontal line '
+            'chart. To make a vertical line chart, set `indexAxis` to '
+            '`YAxis()`. The default is `XAxis()`, which gives horizontal '
+            'lines.',
+          ),
         ),
         LiveExample(
           id: 'vertical',
           description: 'A vertical line chart',
           variants: [
             ExampleVariant(
-              label: 'Vertical',
+              name: 'Vertical',
+              label: Text('Vertical'),
               config: verticalLine,
               region: CodeRegion(examplesAsset, 'vertical'),
             ),
@@ -933,12 +1099,14 @@ DocPageContent lineChartPage() => DocPageContent(
       subsections: [
         DocSection(
           id: 'config-options',
-          title: 'Config Options',
+          title: Text('Config Options'),
           body: [
             DocParagraph(
-              'A vertical line chart has the options of a line chart. '
-              'But an option of the x axis in a line chart applies to the '
-              'y axis in a vertical line chart.',
+              DocText(
+                'A vertical line chart has the options of a line chart. '
+                'But an option of the x axis in a line chart applies to the '
+                'y axis in a vertical line chart.',
+              ),
             ),
           ],
         ),
@@ -946,30 +1114,36 @@ DocPageContent lineChartPage() => DocPageContent(
     ),
     const DocSection(
       id: 'internal-data-format',
-      title: 'Internal Data Format',
+      title: Text('Internal Data Format'),
       body: [
         DocParagraph(
-          'The chart keeps each parsed item as `{x, y}`. If the data is '
-          'already in this form and sorted, set `parsing` to `false`. The '
-          'chart then skips the parse step.',
+          DocText(
+            'The chart keeps each parsed item as `{x, y}`. If the data is '
+            'already in this form and sorted, set `parsing` to `false`. The '
+            'chart then skips the parse step.',
+          ),
         ),
         DocCode(CodeRegion(examplesAsset, 'internal-format')),
       ],
     ),
     const DocSection(
       id: 'live-data',
-      title: 'Live Data',
+      title: Text('Live Data'),
       body: [
         DocParagraph(
-          'This section has no Chart.js counterpart. A chart that gets new '
-          'data in each frame can skip the layout. Set `dataOnlyUpdates` to '
-          "`true`, `updateMode` to `'none'` and `animation` to "
-          '`ChartAnimation.none`. Give fixed `min` and `max` values to the '
-          'axes.',
+          DocText(
+            'This section has no Chart.js counterpart. A chart that gets new '
+            'data in each frame can skip the layout. Set `dataOnlyUpdates` to '
+            "`true`, `updateMode` to `'none'` and `animation` to "
+            '`ChartAnimation.none`. Give fixed `min` and `max` values to the '
+            'axes.',
+          ),
         ),
         DocParagraph(
-          'The chart then does a data-only update when only the data Lists '
-          'of the new config change. Another change does a full update.',
+          DocText(
+            'The chart then does a data-only update when only the data Lists '
+            'of the new config change. Another change does a full update.',
+          ),
         ),
         LiveLineDemo(),
       ],

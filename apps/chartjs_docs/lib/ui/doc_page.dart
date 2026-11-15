@@ -16,8 +16,9 @@ class const DocSection({
   /// The id of the links to the section.
   required final String id,
 
-  /// The heading.
-  required final String title,
+  /// The heading, usually a [Text]. The page gives it the heading style, and
+  /// the outline shows it as a link.
+  required final Widget title,
 
   /// The blocks of the section.
   required final List<Widget> body,
@@ -31,11 +32,15 @@ class const DocSection({
 
 /// The content of a page.
 class const DocPageContent({
-  /// The heading of the page.
-  required final String title,
+  /// The title of the browser tab: the text of [title].
+  required final String tabTitle,
 
-  /// The name of the page in the navigation.
-  required final String navLabel,
+  /// The heading of the page, usually a [Text]. The page gives it the style
+  /// of the page heading.
+  required final Widget title,
+
+  /// The name of the page in the navigation, usually a [Text].
+  required final Widget navLabel,
 
   /// The icon of the page in the navigation.
   required final IconData icon,
@@ -46,8 +51,11 @@ class const DocPageContent({
   /// The sections after the first card.
   required final List<DocSection> sections,
 
-  /// The line below the last card: the source of the text.
-  final String credit = 'The text follows the Chart.js documentation (MIT).',
+  /// The line below the last card: the source of the text. The page gives it
+  /// a small muted text style.
+  final Widget credit = const Text(
+    'The text follows the Chart.js documentation (MIT).',
+  ),
 }) {
   /// Creates a page.
   this;
@@ -59,11 +67,12 @@ class const DocPageLink({
   /// The route name of the page, for example `/migrate/fl_chart`.
   required final String route,
 
-  /// The heading of the group of the page in the navigation.
+  /// The group of the page in the navigation. The pages with equal groups
+  /// share one heading, the group in capitals.
   required final String group,
 
-  /// The name of the page in the navigation.
-  required final String navLabel,
+  /// The name of the page in the navigation, usually a [Text].
+  required final Widget navLabel,
 
   /// The icon of the page in the navigation.
   required final IconData icon,
@@ -237,7 +246,7 @@ class _DocPageState() extends State<DocPage> {
 }
 
 /// The sections of a page in page order: the id, the heading and the level.
-typedef _Outline = List<(String id, String title, int level)>;
+typedef _Outline = List<(String id, Widget title, int level)>;
 
 /// The heading of [section], larger at the top of a card.
 class const _Heading({
@@ -250,11 +259,11 @@ class const _Heading({
     final text = Theme.of(context).textTheme;
     return Padding(
       padding: const EdgeInsets.only(bottom: 10),
-      child: Text(
-        section.title,
+      child: DefaultTextStyle.merge(
         style: (top ? text.headlineSmall : text.titleMedium)?.copyWith(
           fontWeight: FontWeight.w700,
         ),
+        child: section.title,
       ),
     );
   }
@@ -304,11 +313,11 @@ class const _Content({
               _Card(
                 pad: pad,
                 children: [
-                  Text(
-                    content.title,
+                  DefaultTextStyle.merge(
                     key: const ValueKey('page.title'),
                     style: Theme.of(context).textTheme.headlineMedium
                         ?.copyWith(fontWeight: FontWeight.w700),
+                    child: content.title,
                   ),
                   const SizedBox(height: 12),
                   ...content.intro,
@@ -334,9 +343,9 @@ class const _Content({
                 ),
               ],
               const SizedBox(height: 14),
-              Text(
-                content.credit,
+              DefaultTextStyle.merge(
                 style: const TextStyle(color: DocColors.muted, fontSize: 11),
+                child: content.credit,
               ),
               const SizedBox(height: 8),
             ],
@@ -351,7 +360,7 @@ class const _Content({
 /// the section.
 class const _OutlineLink({
   required final String id,
-  required final String title,
+  required final Widget title,
   required final int level,
   required final ValueListenable<String> active,
 }) extends StatelessWidget {
@@ -370,13 +379,13 @@ class const _OutlineLink({
             color: selected ? DocColors.primarySoft : null,
             borderRadius: BorderRadius.circular(8),
           ),
-          child: Text(
-            title,
+          child: DefaultTextStyle.merge(
             style: TextStyle(
               fontSize: level == 2 ? 13.5 : 12.5,
               fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
               color: selected ? DocColors.primary : DocColors.ink,
             ),
+            child: title,
           ),
         ),
       );
@@ -387,7 +396,7 @@ class const _OutlineLink({
 /// The tile of this page in the navigation.
 class const _PageTile({
   required final IconData icon,
-  required final String label,
+  required final Widget label,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Container(
@@ -400,12 +409,12 @@ class const _PageTile({
       children: [
         Icon(icon, size: 18, color: Colors.white),
         const SizedBox(width: 8),
-        Text(
-          label,
+        DefaultTextStyle.merge(
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.w700,
           ),
+          child: label,
         ),
       ],
     ),
@@ -425,9 +434,9 @@ class const _PageLink(final DocPageLink page) extends StatelessWidget {
         children: [
           Icon(page.icon, size: 18, color: DocColors.muted),
           const SizedBox(width: 8),
-          Text(
-            page.navLabel,
+          DefaultTextStyle.merge(
             style: const TextStyle(fontWeight: FontWeight.w600),
+            child: page.navLabel,
           ),
         ],
       ),
@@ -514,7 +523,7 @@ class const _PhoneOutline({
       shape: const Border(),
       collapsedShape: const Border(),
       leading: Icon(content.icon, color: DocColors.primary),
-      title: Text(content.navLabel),
+      title: content.navLabel,
       subtitle: const Text('On this page'),
       childrenPadding: const EdgeInsets.fromLTRB(8, 0, 8, 10),
       expandedCrossAxisAlignment: CrossAxisAlignment.stretch,

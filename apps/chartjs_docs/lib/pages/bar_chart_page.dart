@@ -1,6 +1,5 @@
 // Ported from Chart.js v4.6.1 docs/charts/bar.md (MIT, Chart.js Contributors).
 // The adjacent strings keep the lines of the prose short.
-// ignore_for_file: no_adjacent_strings_in_list
 
 import 'package:chartjs_docs/examples/bar_examples.dart';
 import 'package:chartjs_docs/examples/line_examples.dart' show months;
@@ -203,17 +202,22 @@ ChartConfig _oneBar(BarDataset dataset) =>
 
 /// The content of the bar chart page.
 DocPageContent barChartPage() => DocPageContent(
-  title: 'Bar Chart',
-  navLabel: 'Bar chart',
+  tabTitle: 'Bar Chart',
+  title: const Text('Bar Chart'),
+  navLabel: const Text('Bar chart'),
   icon: Icons.bar_chart,
   intro: [
     const DocParagraph(
-      'A bar chart shows data values as vertical bars. '
-      'Use a bar chart to show trend data, or to compare several datasets '
-      'side by side.',
+      DocText(
+        'A bar chart shows data values as vertical bars. '
+        'Use a bar chart to show trend data, or to compare several datasets '
+        'side by side.',
+      ),
     ),
     const DocParagraph(
-      'Register the chart components one time, before the first chart.',
+      DocText(
+        'Register the chart components one time, before the first chart.',
+      ),
     ),
     const DocCode(CodeRegion(examplesAsset, 'register')),
     const LiveExample(
@@ -221,7 +225,8 @@ DocPageContent barChartPage() => DocPageContent(
       description: 'A bar chart of seven months',
       variants: [
         ExampleVariant(
-          label: 'Basic',
+          name: 'Basic',
+          label: Text('Basic'),
           config: basicBar,
           region: CodeRegion(barExamplesAsset, 'bar-basic'),
         ),
@@ -231,71 +236,94 @@ DocPageContent barChartPage() => DocPageContent(
   sections: [
     DocSection(
       id: 'dataset-properties',
-      title: 'Dataset Properties',
+      title: const Text('Dataset Properties'),
       body: [
-        const DocParagraph('The chart reads an option from these scopes:'),
+        const DocParagraph(
+          DocText('The chart reads an option from these scopes:'),
+        ),
         const DocTable([
-          ('BarDataset(...)', 'The options of this dataset only.'),
           (
-            "extra: {'datasets': {'bar': ...}}",
-            'The options of all bar datasets, in `ChartConfig.extra`.',
+            Text('BarDataset(...)'),
+            DocText('The options of this dataset only.'),
           ),
           (
-            'ChartElements(bar: ...)',
-            'The options of all bar elements, in `ChartConfig.elements`.',
+            Text("extra: {'datasets': {'bar': ...}}"),
+            DocText('The options of all bar datasets, in `ChartConfig.extra`.'),
           ),
-          ('ChartConfig(...)', 'The options of the whole chart.'),
+          (
+            Text('ChartElements(bar: ...)'),
+            DocText(
+              'The options of all bar elements, in `ChartConfig.elements`.',
+            ),
+          ),
+          (
+            Text('ChartConfig(...)'),
+            DocText('The options of the whole chart.'),
+          ),
         ]),
         const LiveExample(
           id: 'scopes',
           description: 'A bar chart with options in three scopes',
           variants: [
             ExampleVariant(
-              label: 'Scopes',
+              name: 'Scopes',
+              label: Text('Scopes'),
               config: scopedBar,
               region: CodeRegion(barExamplesAsset, 'bar-scopes'),
             ),
           ],
         ),
         const DocParagraph(
-          'Each dataset has properties. These properties set the look of '
-          'that dataset. For example, a dataset usually sets the color of '
-          'its bars. Only `data` or `points` must be in the dataset.',
+          DocText(
+            'Each dataset has properties. These properties set the look of '
+            'that dataset. For example, a dataset usually sets the color of '
+            'its bars. Only `data` or `points` must be in the dataset.',
+          ),
         ),
         const DocParagraph(
-          'The column **Set with** gives the place of the option in Dart. '
-          'A **Parameter** is a named parameter of `BarDataset`. An option '
-          'with no parameter goes in the `extra` Map of the dataset, under '
-          'its Chart.js name.',
+          DocText(
+            'The column **Set with** gives the place of the option in Dart. '
+            'A **Parameter** is a named parameter of `BarDataset`. An option '
+            'with no parameter goes in the `extra` Map of the dataset, under '
+            'its Chart.js name.',
+          ),
         ),
         const DocPropertyTable(barProperties),
         const DocParagraph(
-          'If a dataset does not set a value, the chart reads the next '
-          'scope. A `null` parameter writes no key.',
+          DocText(
+            'If a dataset does not set a value, the chart reads the next '
+            'scope. A `null` parameter writes no key.',
+          ),
         ),
         const DocTip(
-          'A scriptable option takes a function, and an indexable option '
-          'takes a list. `backgroundColor`, `borderColor`, '
-          '`hoverBackgroundColor` and `hoverBorderColor` take a `ChartValue`: '
-          '`.constant`, `.indexed` or `.resolver`. For a function or a list '
-          'on another option, use `extra` with the Chart.js name.',
+          DocText(
+            'A scriptable option takes a function, and an indexable option '
+            'takes a list. `backgroundColor`, `borderColor`, '
+            '`hoverBackgroundColor` and `hoverBorderColor` take a '
+            '`ChartValue`: `.constant`, `.indexed` or `.resolver`. For a '
+            'function or a list on another option, use `extra` with the '
+            'Chart.js name.',
+          ),
         ),
       ],
       subsections: [
         const DocSection(
           id: 'example-dataset-configuration',
-          title: 'Example Dataset Configuration',
+          title: Text('Example Dataset Configuration'),
           body: [
             DocParagraph(
-              'This dataset sets the size of its bars. The bars are 6 pixels '
-              'wide, and each bar is at least 2 pixels long.',
+              DocText(
+                'This dataset sets the size of its bars. The bars are 6 pixels '
+                'wide, and each bar is at least 2 pixels long.',
+              ),
             ),
             LiveExample(
               id: 'dataset-config',
               description: 'A bar chart with thin bars',
               variants: [
                 ExampleVariant(
-                  label: 'Thin bars',
+                  name: 'Thin bars',
+                  label: Text('Thin bars'),
                   config: thinBars,
                   region: CodeRegion(barExamplesAsset, 'bar-dataset-config'),
                 ),
@@ -305,81 +333,107 @@ DocPageContent barChartPage() => DocPageContent(
         ),
         const DocSection(
           id: 'general',
-          title: 'General',
+          title: Text('General'),
           body: [
             DocTable([
               (
-                'base',
-                'The base value of the bar, in the units of the value axis. '
-                    'If this value is not set, the bar starts at the base '
-                    'value of the value axis.',
+                Text('base'),
+                DocText(
+                  'The base value of the bar, in the units of the value axis. '
+                  'If this value is not set, the bar starts at the base '
+                  'value of the value axis.',
+                ),
               ),
               (
-                'clip',
-                'How the chart clips the dataset at the chart area. A '
-                    'positive value permits overflow. A negative value clips '
-                    'that number of pixels inside the chart area. '
-                    '`ChartClip.all(0)` clips at the chart area, and '
-                    '`ChartClip.none` draws with no clip. `ChartClip` also '
-                    'sets each side, for example '
-                    '`ChartClip(left: 5, right: -2, bottom: 0)`: a side with '
-                    'no value has no clip.',
+                Text('clip'),
+                DocText(
+                  'How the chart clips the dataset at the chart area. A '
+                  'positive value permits overflow. A negative value clips '
+                  'that number of pixels inside the chart area. '
+                  '`ChartClip.all(0)` clips at the chart area, and '
+                  '`ChartClip.none` draws with no clip. `ChartClip` also '
+                  'sets each side, for example '
+                  '`ChartClip(left: 5, right: -2, bottom: 0)`: a side with '
+                  'no value has no clip.',
+                ),
               ),
               (
-                'grouped',
-                'If `true`, the chart puts the bars of all datasets at one '
-                    'index next to each other, around the index value. If '
-                    '`false`, the chart puts each bar at its index value.',
+                Text('grouped'),
+                DocText(
+                  'If `true`, the chart puts the bars of all datasets at one '
+                  'index next to each other, around the index value. If '
+                  '`false`, the chart puts each bar at its index value.',
+                ),
               ),
               (
-                'indexAxis',
-                'The base axis of the dataset. `XAxis()` gives vertical '
-                    'bars. `YAxis()` gives horizontal bars.',
+                Text('indexAxis'),
+                DocText(
+                  'The base axis of the dataset. `XAxis()` gives vertical '
+                  'bars. `YAxis()` gives horizontal bars.',
+                ),
               ),
               (
-                'label',
-                'The name of the dataset in the legend and in the tooltip.',
+                Text('label'),
+                DocText(
+                  'The name of the dataset in the legend and in the tooltip.',
+                ),
               ),
               (
-                'order',
-                'The draw order of the dataset. The value also sets the '
-                    'order of the stacks, of the tooltip and of the legend.',
+                Text('order'),
+                DocText(
+                  'The draw order of the dataset. The value also sets the '
+                  'order of the stacks, of the tooltip and of the legend.',
+                ),
               ),
               (
-                'skipNull',
-                'If `true`, the chart does not keep space for the `null` '
-                    'values when it calculates the size of the bars.',
+                Text('skipNull'),
+                DocText(
+                  'If `true`, the chart does not keep space for the `null` '
+                  'values when it calculates the size of the bars.',
+                ),
               ),
               (
-                'stack',
-                'The ID of the group of the dataset. On a stacked axis, each '
-                    'group is a separate stack. See '
-                    '[Stacked Bar Chart](#stacked-bar-chart).',
+                Text('stack'),
+                DocText(
+                  'The ID of the group of the dataset. On a stacked axis, each '
+                  'group is a separate stack. See '
+                  '[Stacked Bar Chart](#stacked-bar-chart).',
+                ),
               ),
-              ('xAxisID', 'The ID of the x axis of this dataset.'),
-              ('yAxisID', 'The ID of the y axis of this dataset.'),
+              (
+                Text('xAxisID'),
+                DocText('The ID of the x axis of this dataset.'),
+              ),
+              (
+                Text('yAxisID'),
+                DocText('The ID of the y axis of this dataset.'),
+              ),
             ]),
             LiveExample(
               id: 'general',
               description: 'A bar chart with general options',
               variants: [
                 ExampleVariant(
-                  label: 'grouped',
+                  name: 'grouped',
+                  label: Text('grouped'),
                   config: groupedBars,
                   region: CodeRegion(barExamplesAsset, 'bar-grouped'),
                 ),
                 ExampleVariant(
-                  label: 'grouped: false',
+                  name: 'grouped: false',
+                  label: Text('grouped: false'),
                   config: ungroupedBars,
                   region: CodeRegion(barExamplesAsset, 'bar-ungrouped'),
                 ),
                 ExampleVariant(
-                  label: 'skipNull',
+                  name: 'skipNull',
+                  label: Text('skipNull'),
                   config: skipNullBars,
                   region: CodeRegion(barExamplesAsset, 'bar-skip-null'),
                 ),
                 ExampleVariant(
-                  label: 'base',
+                  name: 'base',
+                  label: Text('base'),
                   config: baseBars,
                   region: CodeRegion(barExamplesAsset, 'bar-base'),
                 ),
@@ -389,34 +443,50 @@ DocPageContent barChartPage() => DocPageContent(
         ),
         const DocSection(
           id: 'styling',
-          title: 'Styling',
+          title: Text('Styling'),
           body: [
-            DocParagraph('These properties set the style of each bar.'),
+            DocParagraph(
+              DocText('These properties set the style of each bar.'),
+            ),
             DocTable([
-              ('backgroundColor', 'The fill color of the bar.'),
-              ('borderColor', 'The border color of the bar.'),
+              (Text('backgroundColor'), DocText('The fill color of the bar.')),
+              (Text('borderColor'), DocText('The border color of the bar.')),
               (
-                'borderSkipped',
-                'The edge of the bar with no border. See '
-                    '[borderSkipped](#borderskipped).',
+                Text('borderSkipped'),
+                DocText(
+                  'The edge of the bar with no border. See '
+                  '[borderSkipped](#borderskipped).',
+                ),
               ),
               (
-                'borderWidth',
-                'The border width of the bar in pixels. See '
-                    '[borderWidth](#borderwidth).',
+                Text('borderWidth'),
+                DocText(
+                  'The border width of the bar in pixels. See '
+                  '[borderWidth](#borderwidth).',
+                ),
               ),
               (
-                'borderRadius',
-                'The border radius of the bar in pixels. See '
-                    '[borderRadius](#borderradius).',
+                Text('borderRadius'),
+                DocText(
+                  'The border radius of the bar in pixels. See '
+                  '[borderRadius](#borderradius).',
+                ),
               ),
-              ('minBarLength', 'The minimum length of a bar in pixels.'),
-              ('pointStyle', 'The style of the point of the legend item.'),
               (
-                'shadow',
-                'The shadow of the bars: a `ChartShadow` with a color, a '
-                    'blur and an offset. The shadow is not a Chart.js '
-                    'option.',
+                Text('minBarLength'),
+                DocText('The minimum length of a bar in pixels.'),
+              ),
+              (
+                Text('pointStyle'),
+                DocText('The style of the point of the legend item.'),
+              ),
+              (
+                Text('shadow'),
+                DocText(
+                  'The shadow of the bars: a `ChartShadow` with a color, a '
+                  'blur and an offset. The shadow is not a Chart.js '
+                  'option.',
+                ),
               ),
             ]),
             LiveExample(
@@ -424,56 +494,67 @@ DocPageContent barChartPage() => DocPageContent(
               description: 'A bar chart with a bar style',
               variants: [
                 ExampleVariant(
-                  label: 'Colors',
+                  name: 'Colors',
+                  label: Text('Colors'),
                   config: coloredBars,
                   region: CodeRegion(barExamplesAsset, 'bar-colors'),
                 ),
                 ExampleVariant(
-                  label: 'minBarLength',
+                  name: 'minBarLength',
+                  label: Text('minBarLength'),
                   config: minLengthBars,
                   region: CodeRegion(barExamplesAsset, 'bar-min-length'),
                 ),
                 ExampleVariant(
-                  label: 'Shadow',
+                  name: 'Shadow',
+                  label: Text('Shadow'),
                   config: shadowBars,
                   region: CodeRegion(barExamplesAsset, 'bar-shadow'),
                 ),
               ],
             ),
             DocParagraph(
-              'If a value is not set, the chart reads the options of the bar '
-              'elements.',
+              DocText(
+                'If a value is not set, the chart reads the options of the bar '
+                'elements.',
+              ),
             ),
           ],
         ),
         DocSection(
           id: 'borderskipped',
-          title: 'borderSkipped',
+          title: const Text('borderSkipped'),
           body: [
             const DocParagraph(
-              'This option removes the border at the base of the bar, or '
-              'removes the border radius. Usually, only a chart type that '
-              'extends the bar chart changes it.',
+              DocText(
+                'This option removes the border at the base of the bar, or '
+                'removes the border radius. Usually, only a chart type that '
+                'extends the bar chart changes it.',
+              ),
             ),
             const DocTip(
-              'For a negative bar in a vertical chart, `top` and `bottom` '
-              'change places. For a negative bar in a horizontal chart, '
-              '`left` and `right` change places.',
+              DocText(
+                'For a negative bar in a vertical chart, `top` and `bottom` '
+                'change places. For a negative bar in a horizontal chart, '
+                '`left` and `right` change places.',
+              ),
             ),
             const DocParagraph(
-              '`borderSkipped` takes these values, through `extra`:',
+              DocText('`borderSkipped` takes these values, through `extra`:'),
             ),
             const DocBullets([
-              '`BorderSkippedEdge.start`',
-              '`BorderSkippedEdge.end`',
-              '`BorderSkippedEdge.middle`: only on stacked bars. The chart '
-                  'skips the borders between the bars.',
-              '`BorderSkippedEdge.bottom`',
-              '`BorderSkippedEdge.left`',
-              '`BorderSkippedEdge.top`',
-              '`BorderSkippedEdge.right`',
-              '`false`: the chart skips no border.',
-              '`true`: the chart skips all borders.',
+              DocText('`BorderSkippedEdge.start`'),
+              DocText('`BorderSkippedEdge.end`'),
+              DocText(
+                '`BorderSkippedEdge.middle`: only on stacked bars. The chart '
+                'skips the borders between the bars.',
+              ),
+              DocText('`BorderSkippedEdge.bottom`'),
+              DocText('`BorderSkippedEdge.left`'),
+              DocText('`BorderSkippedEdge.top`'),
+              DocText('`BorderSkippedEdge.right`'),
+              DocText('`false`: the chart skips no border.'),
+              DocText('`true`: the chart skips all borders.'),
             ]),
             LiveExample(
               id: 'border-skipped',
@@ -486,7 +567,8 @@ DocPageContent barChartPage() => DocPageContent(
                   ('true', true),
                 ])
                   ExampleVariant(
-                    label: label,
+                    name: label,
+                    label: Text(label),
                     config: borderSkipped(value),
                     region: const CodeRegion(
                       barExamplesAsset,
@@ -499,21 +581,24 @@ DocPageContent barChartPage() => DocPageContent(
         ),
         DocSection(
           id: 'borderwidth',
-          title: 'borderWidth',
+          title: const Text('borderWidth'),
           body: [
             const DocParagraph(
-              'A number applies to the four sides of the bar, except the '
-              '[borderSkipped](#borderskipped) side. The object form sets '
-              'each side: the keys `left`, `top`, `right` and `bottom`. The '
-              'object form goes through `extra`. The chart skips an omitted '
-              'side and the `borderSkipped` side.',
+              DocText(
+                'A number applies to the four sides of the bar, except the '
+                '[borderSkipped](#borderskipped) side. The object form sets '
+                'each side: the keys `left`, `top`, `right` and `bottom`. The '
+                'object form goes through `extra`. The chart skips an omitted '
+                'side and the `borderSkipped` side.',
+              ),
             ),
             LiveExample(
               id: 'border-width',
               description: 'A bar chart with a border width',
               variants: [
                 ExampleVariant(
-                  label: 'Number',
+                  name: 'Number',
+                  label: const Text('Number'),
                   config: _oneBar(sameBorders),
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -521,7 +606,8 @@ DocPageContent barChartPage() => DocPageContent(
                   ),
                 ),
                 ExampleVariant(
-                  label: 'Object',
+                  name: 'Object',
+                  label: const Text('Object'),
                   config: _oneBar(sideBorders),
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -534,29 +620,34 @@ DocPageContent barChartPage() => DocPageContent(
         ),
         DocSection(
           id: 'borderradius',
-          title: 'borderRadius',
+          title: const Text('borderRadius'),
           body: [
             const DocParagraph(
-              'A number applies to the four corners of the bar, except the '
-              'corners at the [borderSkipped](#borderskipped) edge. The '
-              'object form sets each corner: the keys `topLeft`, `topRight`, '
-              '`bottomLeft` and `bottomRight`. The object form goes through '
-              '`extra`. The chart skips an omitted corner and the corners at '
-              'the `borderSkipped` edge. For example, if the chart skips the '
-              '`top` border, it also skips the corners `topLeft` and '
-              '`topRight`.',
+              DocText(
+                'A number applies to the four corners of the bar, except the '
+                'corners at the [borderSkipped](#borderskipped) edge. The '
+                'object form sets each corner: the keys `topLeft`, `topRight`, '
+                '`bottomLeft` and `bottomRight`. The object form goes through '
+                '`extra`. The chart skips an omitted corner and the corners at '
+                'the `borderSkipped` edge. For example, if the chart skips the '
+                '`top` border, it also skips the corners `topLeft` and '
+                '`topRight`.',
+              ),
             ),
             const DocTip(
-              'In a stacked chart, a number rounds only the bars at the ends '
-              'of a stack and the floating bars. To round other bars, use '
-              'the object form.',
+              DocText(
+                'In a stacked chart, a number rounds only the bars at the ends '
+                'of a stack and the floating bars. To round other bars, use '
+                'the object form.',
+              ),
             ),
             LiveExample(
               id: 'border-radius',
               description: 'A bar chart with rounded corners',
               variants: [
                 ExampleVariant(
-                  label: 'Number',
+                  name: 'Number',
+                  label: const Text('Number'),
                   config: _oneBar(roundedBars),
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -564,7 +655,8 @@ DocPageContent barChartPage() => DocPageContent(
                   ),
                 ),
                 ExampleVariant(
-                  label: 'All corners',
+                  name: 'All corners',
+                  label: const Text('All corners'),
                   config: _oneBar(roundBars),
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -572,7 +664,8 @@ DocPageContent barChartPage() => DocPageContent(
                   ),
                 ),
                 ExampleVariant(
-                  label: 'Object',
+                  name: 'Object',
+                  label: const Text('Object'),
                   config: _oneBar(cornerBars),
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -580,7 +673,8 @@ DocPageContent barChartPage() => DocPageContent(
                   ),
                 ),
                 const ExampleVariant(
-                  label: 'Stacked',
+                  name: 'Stacked',
+                  label: Text('Stacked'),
                   config: roundedStack,
                   region: CodeRegion(
                     barExamplesAsset,
@@ -593,50 +687,59 @@ DocPageContent barChartPage() => DocPageContent(
         ),
         const DocSection(
           id: 'inflateamount',
-          title: 'inflateAmount',
+          title: Text('inflateAmount'),
           body: [
             DocParagraph(
-              'This option makes the rectangles of the bars larger, in '
-              'pixels. It hides the thin gaps between the bars when '
-              '[barPercentage](#barpercentage) multiplied by '
-              '[categoryPercentage](#categorypercentage) is 1. The default '
-              "value `'auto'` is correct for most charts. A number goes "
-              "through `extra: {'inflateAmount': 0.5}`.",
+              DocText(
+                'This option makes the rectangles of the bars larger, in '
+                'pixels. It hides the thin gaps between the bars when '
+                '[barPercentage](#barpercentage) multiplied by '
+                '[categoryPercentage](#categorypercentage) is 1. The default '
+                "value `'auto'` is correct for most charts. A number goes "
+                "through `extra: {'inflateAmount': 0.5}`.",
+              ),
             ),
           ],
         ),
         DocSection(
           id: 'interactions',
-          title: 'Interactions',
+          title: const Text('Interactions'),
           body: [
             const DocParagraph(
-              'These properties set the look of a bar under the pointer.',
+              DocText(
+                'These properties set the look of a bar under the pointer.',
+              ),
             ),
             const DocTable([
               (
-                'hoverBackgroundColor',
-                'The fill color of a bar under the pointer.',
+                Text('hoverBackgroundColor'),
+                DocText('The fill color of a bar under the pointer.'),
               ),
               (
-                'hoverBorderColor',
-                'The border color of a bar under the pointer.',
+                Text('hoverBorderColor'),
+                DocText('The border color of a bar under the pointer.'),
               ),
               (
-                'hoverBorderWidth',
-                'The border width of a bar under the pointer, in pixels.',
+                Text('hoverBorderWidth'),
+                DocText(
+                  'The border width of a bar under the pointer, in pixels.',
+                ),
               ),
               (
-                'hoverBorderRadius',
-                'The border radius of a bar under the pointer, in pixels.',
+                Text('hoverBorderRadius'),
+                DocText(
+                  'The border radius of a bar under the pointer, in pixels.',
+                ),
               ),
             ]),
             LiveExample(
               id: 'interactions',
               description: 'A bar chart with hover styles',
-              hint: 'Move the pointer over a bar, or tap a bar.',
+              hint: const Text('Move the pointer over a bar, or tap a bar.'),
               variants: [
                 ExampleVariant(
-                  label: 'Hover',
+                  name: 'Hover',
+                  label: const Text('Hover'),
                   config: _oneBar(hoverBars),
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -646,63 +749,76 @@ DocPageContent barChartPage() => DocPageContent(
               ],
             ),
             const DocParagraph(
-              'If a value is not set, the chart reads the options of the bar '
-              'elements.',
+              DocText(
+                'If a value is not set, the chart reads the options of the bar '
+                'elements.',
+              ),
             ),
           ],
         ),
         const DocSection(
           id: 'barpercentage',
-          title: 'barPercentage',
+          title: Text('barPercentage'),
           body: [
             DocParagraph(
-              'The part of the category width that each bar takes, from 0 to '
-              '1. The value 1 gives the whole category width to the bars. The '
-              'bars then touch. See '
-              '[the two percentages](#barpercentage-vs-categorypercentage).',
+              DocText(
+                'The part of the category width that each bar takes, from 0 to '
+                '1. The value 1 gives the whole category width to the bars. '
+                'The bars then touch. See '
+                '[the two percentages](#barpercentage-vs-categorypercentage).',
+              ),
             ),
           ],
         ),
         const DocSection(
           id: 'categorypercentage',
-          title: 'categoryPercentage',
+          title: Text('categoryPercentage'),
           body: [
             DocParagraph(
-              'The part of the sample width that each category takes, from 0 '
-              'to 1. See '
-              '[the two percentages](#barpercentage-vs-categorypercentage).',
+              DocText(
+                'The part of the sample width that each category takes, from 0 '
+                'to 1. See [the two '
+                'percentages](#barpercentage-vs-categorypercentage).',
+              ),
             ),
           ],
         ),
         DocSection(
           id: 'barthickness',
-          title: 'barThickness',
+          title: const Text('barThickness'),
           body: [
             const DocParagraph(
-              'A number sets the width of each bar, in pixels. The chart '
-              'then ignores `barPercentage` and `categoryPercentage`.',
+              DocText(
+                'A number sets the width of each bar, in pixels. The chart '
+                'then ignores `barPercentage` and `categoryPercentage`.',
+              ),
             ),
             const DocParagraph(
-              "The value `'flex'` goes through `extra`. The chart then "
-              'calculates the width of each sample from the samples before '
-              'and after it, so that the bars fill the space with no '
-              'overlap. Then `barPercentage` and `categoryPercentage` set the '
-              'size of the bars. If the two percentages are 1, the bars have '
-              'no gap. If the data is not evenly spaced, the bars have '
-              'different widths.',
+              DocText(
+                "The value `'flex'` goes through `extra`. The chart then "
+                'calculates the width of each sample from the samples before '
+                'and after it, so that the bars fill the space with no '
+                'overlap. Then `barPercentage` and `categoryPercentage` set '
+                'the size of the bars. If the two percentages are 1, the bars '
+                'have no gap. If the data is not evenly spaced, the bars have '
+                'different widths.',
+              ),
             ),
             const DocParagraph(
-              'If the value is not set, the chart calculates the width of the '
-              'samples from the smallest interval with no overlap. Then '
-              '`barPercentage` and `categoryPercentage` set the size of the '
-              'bars. All bars have the same width.',
+              DocText(
+                'If the value is not set, the chart calculates the width of '
+                'the samples from the smallest interval with no overlap. Then '
+                '`barPercentage` and `categoryPercentage` set the size of the '
+                'bars. All bars have the same width.',
+              ),
             ),
             LiveExample(
               id: 'bar-thickness',
               description: 'A bar chart of unevenly spaced data',
               variants: [
                 ExampleVariant(
-                  label: 'Not set',
+                  name: 'Not set',
+                  label: const Text('Not set'),
                   config: fitBars,
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -710,7 +826,8 @@ DocPageContent barChartPage() => DocPageContent(
                   ),
                 ),
                 ExampleVariant(
-                  label: '12',
+                  name: '12',
+                  label: const Text('12'),
                   config: fixedBars,
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -718,7 +835,8 @@ DocPageContent barChartPage() => DocPageContent(
                   ),
                 ),
                 ExampleVariant(
-                  label: "'flex'",
+                  name: "'flex'",
+                  label: const Text("'flex'"),
                   config: flexBars,
                   region: const CodeRegion(
                     barExamplesAsset,
@@ -731,11 +849,13 @@ DocPageContent barChartPage() => DocPageContent(
         ),
         const DocSection(
           id: 'maxbarthickness',
-          title: 'maxBarThickness',
+          title: Text('maxBarThickness'),
           body: [
             DocParagraph(
-              'The maximum width of a bar, in pixels. A bar is never wider '
-              'than this value.',
+              DocText(
+                'The maximum width of a bar, in pixels. A bar is never wider '
+                'than this value.',
+              ),
             ),
           ],
         ),
@@ -743,51 +863,61 @@ DocPageContent barChartPage() => DocPageContent(
     ),
     const DocSection(
       id: 'scale-configuration',
-      title: 'Scale Configuration',
+      title: Text('Scale Configuration'),
       body: [
         DocParagraph(
-          'The bar chart sets its own default values for these options of '
-          'the index axis:',
+          DocText(
+            'The bar chart sets its own default values for these options of '
+            'the index axis:',
+          ),
         ),
         DocTable([
           (
-            'offset',
-            'Default `true`. If `true`, the chart adds space at the two '
-                'edges, and the axis fits in the chart area. A '
-                "`CategoryAxis` takes it through `extra: {'offset': false}`.",
+            Text('offset'),
+            DocText(
+              'Default `true`. If `true`, the chart adds space at the two '
+              'edges, and the axis fits in the chart area. A '
+              "`CategoryAxis` takes it through `extra: {'offset': false}`.",
+            ),
           ),
           (
-            'grid.offset',
-            'Default `true`. If `true`, the bars of a data point are between '
-                'the grid lines. Set it with `AxisGrid(offset: ...)`. See '
-                '[Offset Grid Lines](#offset-grid-lines).',
+            Text('grid.offset'),
+            DocText(
+              'Default `true`. If `true`, the bars of a data point are between '
+              'the grid lines. Set it with `AxisGrid(offset: ...)`. See '
+              '[Offset Grid Lines](#offset-grid-lines).',
+            ),
           ),
         ]),
       ],
       subsections: [
         DocSection(
           id: 'offset-grid-lines',
-          title: 'Offset Grid Lines',
+          title: Text('Offset Grid Lines'),
           body: [
             DocParagraph(
-              'If `true`, the bars of a data point are between the grid '
-              'lines. The grid line moves to the left by one half of the '
-              'tick interval, that is the space between the grid lines. If '
-              '`false`, the grid line goes through the middle of the bars. '
-              'The default is `true` for a category axis in a bar chart. It '
-              'is `false` for other axes and for other chart types.',
+              DocText(
+                'If `true`, the bars of a data point are between the grid '
+                'lines. The grid line moves to the left by one half of the '
+                'tick interval, that is the space between the grid lines. If '
+                '`false`, the grid line goes through the middle of the bars. '
+                'The default is `true` for a category axis in a bar chart. It '
+                'is `false` for other axes and for other chart types.',
+              ),
             ),
             LiveExample(
               id: 'grid-offset',
               description: 'A bar chart with grid lines',
               variants: [
                 ExampleVariant(
-                  label: 'offset: true',
+                  name: 'offset: true',
+                  label: Text('offset: true'),
                   config: offsetGrid,
                   region: CodeRegion(barExamplesAsset, 'bar-grid-offset'),
                 ),
                 ExampleVariant(
-                  label: 'offset: false',
+                  name: 'offset: false',
+                  label: Text('offset: false'),
                   config: centeredGrid,
                   region: CodeRegion(barExamplesAsset, 'bar-grid-centered'),
                 ),
@@ -799,30 +929,36 @@ DocPageContent barChartPage() => DocPageContent(
     ),
     const DocSection(
       id: 'default-options',
-      title: 'Default Options',
+      title: Text('Default Options'),
       body: [
         DocParagraph(
-          'To apply a setting to all bar charts, change the global bar chart '
-          'settings. A change has an effect only on the charts that the app '
-          'creates after the change. Existing charts do not change.',
+          DocText(
+            'To apply a setting to all bar charts, change the global bar chart '
+            'settings. A change has an effect only on the charts that the app '
+            'creates after the change. Existing charts do not change.',
+          ),
         ),
         DocParagraph(
-          'For example, this call sets `skipNull` to `true` for all bar '
-          'charts:',
+          DocText(
+            'For example, this call sets `skipNull` to `true` for all bar '
+            'charts:',
+          ),
         ),
         DocCode(CodeRegion(barExamplesAsset, 'bar-defaults')),
       ],
     ),
     DocSection(
       id: 'barpercentage-vs-categorypercentage',
-      title: 'barPercentage vs categoryPercentage',
+      title: const Text('barPercentage vs categoryPercentage'),
       body: [
         const DocParagraph(
-          'The sample is the space of one index on the axis. '
-          '`categoryPercentage` gives the part of the sample that the '
-          'category takes. `barPercentage` gives the part of the category '
-          'that the bars take. This chart has two datasets: each category '
-          'has two bars.',
+          DocText(
+            'The sample is the space of one index on the axis. '
+            '`categoryPercentage` gives the part of the sample that the '
+            'category takes. `barPercentage` gives the part of the category '
+            'that the bars take. This chart has two datasets: each category '
+            'has two bars.',
+          ),
         ),
         LiveExample(
           id: 'percentages',
@@ -834,7 +970,8 @@ DocPageContent barChartPage() => DocPageContent(
               ('category 0.5 · bar 1.0', 0.5, 1.0),
             ])
               ExampleVariant(
-                label: label,
+                name: label,
+                label: Text(label),
                 config: percentages(category: category, bar: bar),
                 region: const CodeRegion(barExamplesAsset, 'bar-percentages'),
               ),
@@ -844,65 +981,79 @@ DocPageContent barChartPage() => DocPageContent(
     ),
     DocSection(
       id: 'data-structure',
-      title: 'Data Structure',
+      title: const Text('Data Structure'),
       body: [
         const DocParagraph(
-          'A `BarDataset` takes `data` or `points`, not both. The parameter '
-          '`data` holds one value for each label. A `null` value is a gap.',
+          DocText(
+            'A `BarDataset` takes `data` or `points`, not both. The parameter '
+            '`data` holds one value for each label. A `null` value is a gap.',
+          ),
         ),
         const DocParagraph(
-          'The parameter `points` holds `DataPoint` items. Use '
-          '`DataPoint.label` with a category, `DataPoint` with a number on a '
-          '`LinearAxis`, and `DataPoint.time` with a `DateTime` on a time '
-          'axis.',
+          DocText(
+            'The parameter `points` holds `DataPoint` items. Use '
+            '`DataPoint.label` with a category, `DataPoint` with a number on a '
+            '`LinearAxis`, and `DataPoint.time` with a `DateTime` on a time '
+            'axis.',
+          ),
         ),
         LiveExample(
           id: 'data',
           description: 'A bar chart of two data forms',
           variants: [
             const ExampleVariant(
-              label: 'data',
+              name: 'data',
+              label: Text('data'),
               config: valuesBar,
               region: CodeRegion(barExamplesAsset, 'bar-data-values'),
             ),
             ExampleVariant(
-              label: 'points',
+              name: 'points',
+              label: const Text('points'),
               config: pointsBar,
               region: const CodeRegion(barExamplesAsset, 'bar-data-points'),
             ),
           ],
         ),
         const DocParagraph(
-          'A floating bar takes a pair `[start, end]` for each label. For '
-          'this form and for the other Chart.js data forms, use '
-          '`ChartView.raw` with the config as a Dart `Map`.',
+          DocText(
+            'A floating bar takes a pair `[start, end]` for each label. For '
+            'this form and for the other Chart.js data forms, use '
+            '`ChartView.raw` with the config as a Dart `Map`.',
+          ),
         ),
       ],
     ),
     const DocSection(
       id: 'stacked-bar-chart',
-      title: 'Stacked Bar Chart',
+      title: Text('Stacked Bar Chart'),
       body: [
         DocParagraph(
-          'To make a stacked bar chart, set `stacked` on the x axis and on '
-          'the y axis. A stacked bar chart shows how a number of smaller '
-          'parts make one data series.',
+          DocText(
+            'To make a stacked bar chart, set `stacked` on the x axis and on '
+            'the y axis. A stacked bar chart shows how a number of smaller '
+            'parts make one data series.',
+          ),
         ),
         DocParagraph(
-          'The datasets with the same `stack` make one stack. The second '
-          'form has two stacks at each label.',
+          DocText(
+            'The datasets with the same `stack` make one stack. The second '
+            'form has two stacks at each label.',
+          ),
         ),
         LiveExample(
           id: 'stacked',
           description: 'A stacked bar chart',
           variants: [
             ExampleVariant(
-              label: 'Stacked',
+              name: 'Stacked',
+              label: Text('Stacked'),
               config: stackedBars,
               region: CodeRegion(barExamplesAsset, 'bar-stacked'),
             ),
             ExampleVariant(
-              label: 'Two stacks',
+              name: 'Two stacks',
+              label: Text('Two stacks'),
               config: groupedStacks,
               region: CodeRegion(barExamplesAsset, 'bar-stack-groups'),
             ),
@@ -912,19 +1063,22 @@ DocPageContent barChartPage() => DocPageContent(
     ),
     const DocSection(
       id: 'horizontal-bar-chart',
-      title: 'Horizontal Bar Chart',
+      title: Text('Horizontal Bar Chart'),
       body: [
         DocParagraph(
-          'A horizontal bar chart is a variation of the vertical bar chart. '
-          'To make a horizontal bar chart, set `indexAxis` to `YAxis()`. '
-          'The default is `XAxis()`, which gives vertical bars.',
+          DocText(
+            'A horizontal bar chart is a variation of the vertical bar chart. '
+            'To make a horizontal bar chart, set `indexAxis` to `YAxis()`. '
+            'The default is `XAxis()`, which gives vertical bars.',
+          ),
         ),
         LiveExample(
           id: 'horizontal',
           description: 'A horizontal bar chart',
           variants: [
             ExampleVariant(
-              label: 'Horizontal',
+              name: 'Horizontal',
+              label: Text('Horizontal'),
               config: horizontalBar,
               region: CodeRegion(barExamplesAsset, 'bar-horizontal'),
             ),
@@ -934,13 +1088,15 @@ DocPageContent barChartPage() => DocPageContent(
       subsections: [
         DocSection(
           id: 'horizontal-config-options',
-          title: 'Horizontal Bar Chart Config Options',
+          title: Text('Horizontal Bar Chart Config Options'),
           body: [
             DocParagraph(
-              'A horizontal bar chart has the options of a '
-              '[bar chart](#scale-configuration). But an option of the x axis '
-              'in a bar chart applies to the y axis in a horizontal bar '
-              'chart.',
+              DocText(
+                'A horizontal bar chart has the options of a '
+                '[bar chart](#scale-configuration). But an option of the x '
+                'axis in a bar chart applies to the y axis in a horizontal bar '
+                'chart.',
+              ),
             ),
           ],
         ),
@@ -948,17 +1104,21 @@ DocPageContent barChartPage() => DocPageContent(
     ),
     const DocSection(
       id: 'internal-data-format',
-      title: 'Internal Data Format',
+      title: Text('Internal Data Format'),
       body: [
         DocParagraph(
-          'The chart keeps each parsed item as `{x, y, _custom}`. `_custom` '
-          'is an optional object with the properties of a floating or a '
-          'stacked bar: `{start, end, barStart, barEnd, min, max}`.',
+          DocText(
+            'The chart keeps each parsed item as `{x, y, _custom}`. `_custom` '
+            'is an optional object with the properties of a floating or a '
+            'stacked bar: `{start, end, barStart, barEnd, min, max}`.',
+          ),
         ),
         DocParagraph(
-          '`start` and `end` are the input values. The chart copies them to '
-          '`barStart` (nearer to the origin), `barEnd` (farther from the '
-          'origin), `min` and `max`.',
+          DocText(
+            '`start` and `end` are the input values. The chart copies them to '
+            '`barStart` (nearer to the origin), `barEnd` (farther from the '
+            'origin), `min` and `max`.',
+          ),
         ),
       ],
     ),
