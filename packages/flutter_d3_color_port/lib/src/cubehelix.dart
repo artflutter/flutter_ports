@@ -43,19 +43,22 @@ const double _bcDa = _b * _c - _d * _a;
 /// undefined opacity.
 Cubehelix cubehelixConvert(Color? o) {
   if (o is Cubehelix) return Cubehelix(o.h, o.s, o.l, o.opacity);
-  final c = o is Rgb ? o : rgbConvert(o);
-  final r = c.r / 255;
-  final g = c.g / 255;
-  final b = c.b / 255;
+  // DIVERGES(d3-color): adapt-color-convert-locals, o.rgb() with no copy.
+  final c = o is Rgb ? o : (o == null ? rgbConvert(o) : o.rgb());
+  final r = c.r / 255.0;
+  final g = c.g / 255.0;
+  final b = c.b / 255.0;
   final l = (_bcDa * b + _ed * r - _eb * g) / (_bcDa + _ed - _eb);
   final bl = b - l;
   final k = (_e * (g - l) - _c * bl) / _d;
   // NaN if l = 0 or l = 1.
-  final s = math.sqrt(k * k + bl * bl) / (_e * l * (1 - l));
+  final s = math.sqrt(k * k + bl * bl) / (_e * l * (1.0 - l));
   // `s ? … : NaN`: s is neither 0 nor NaN.
   // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math atan2.
-  final h = s != 0 && !s.isNaN ? math.atan2(k, bl) * degrees - 120 : double.nan;
-  return Cubehelix(h < 0 ? h + 360 : h, s, l, c.opacity);
+  final h = s != 0.0 && !s.isNaN
+      ? math.atan2(k, bl) * degrees - 120.0
+      : double.nan;
+  return Cubehelix(h < 0.0 ? h + 360.0 : h, s, l, c.opacity);
 }
 
 /// cubehelix.js:32 `Cubehelix` and the factory `cubehelix` (cubehelix.js:28):
@@ -105,16 +108,16 @@ class Cubehelix(
   /// cubehelix.js:48 `rgb()`.
   @override
   Rgb rgb() {
-    final h = this.h.isNaN ? 0.0 : (this.h + 120) * radians;
+    final h = this.h.isNaN ? 0.0 : (this.h + 120.0) * radians;
     final l = this.l;
-    final a = s.isNaN ? 0.0 : s * l * (1 - l);
+    final a = s.isNaN ? 0.0 : s * l * (1.0 - l);
     // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math cos, sin.
     final cosh = math.cos(h);
     final sinh = math.sin(h);
     return Rgb(
-      255 * (l + a * (_a * cosh + _b * sinh)),
-      255 * (l + a * (_c * cosh + _d * sinh)),
-      255 * (l + a * (_e * cosh)),
+      255.0 * (l + a * (_a * cosh + _b * sinh)),
+      255.0 * (l + a * (_c * cosh + _d * sinh)),
+      255.0 * (l + a * (_e * cosh)),
       opacity,
     );
   }

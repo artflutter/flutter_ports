@@ -1075,27 +1075,27 @@ Hsl hslConvert(Color? o) {
   if (o is Hsl) return Hsl(o.h, o.s, o.l, o.opacity);
   if (o == null) return Hsl(double.nan, double.nan, double.nan, double.nan);
   final c = o.rgb();
-  final r = c.r / 255;
-  final g = c.g / 255;
-  final b = c.b / 255;
+  final r = c.r / 255.0;
+  final g = c.g / 255.0;
+  final b = c.b / 255.0;
   final min = math.min(r, math.min(g, b));
   final max = math.max(r, math.max(g, b));
   var h = double.nan;
   var s = max - min;
-  final l = (max + min) / 2;
+  final l = (max + min) / 2.0;
   // `if (s)`: s is neither 0 nor NaN.
-  if (s != 0 && !s.isNaN) {
+  if (s != 0.0 && !s.isNaN) {
     if (r == max) {
-      h = (g - b) / s + (g < b ? 6 : 0);
+      h = (g - b) / s + (g < b ? 6.0 : 0.0);
     } else if (g == max) {
-      h = (b - r) / s + 2;
+      h = (b - r) / s + 2.0;
     } else {
-      h = (r - g) / s + 4;
+      h = (r - g) / s + 4.0;
     }
-    s /= l < 0.5 ? max + min : 2 - max - min;
-    h *= 60;
+    s /= l < 0.5 ? max + min : 2.0 - max - min;
+    h *= 60.0;
   } else {
-    s = l > 0 && l < 1 ? 0 : h;
+    s = l > 0.0 && l < 1.0 ? 0 : h;
   }
   return Hsl(h, s, l, c.opacity);
 }
@@ -1151,15 +1151,19 @@ class Hsl(
   @override
   Rgb rgb() {
     // JavaScript `%` is the truncated remainder: Dart `remainder`.
-    final h = this.h.remainder(360) + (this.h < 0 ? 360 : 0);
-    final s = h.isNaN || this.s.isNaN ? 0 : this.s;
+    final h0 = this.h;
+    // DIVERGES(d3-color): adapt-color-hsl-hue-wrap, no remainder below 360.
+    final h =
+        (h0 > -360.0 && h0 < 360.0 ? h0 : h0.remainder(360.0)) +
+        (h0 < 0.0 ? 360.0 : 0.0);
+    final s = h.isNaN || this.s.isNaN ? 0.0 : this.s;
     final l = this.l;
-    final m2 = l + (l < 0.5 ? l : 1 - l) * s;
-    final m1 = 2 * l - m2;
+    final m2 = l + (l < 0.5 ? l : 1.0 - l) * s;
+    final m1 = 2.0 * l - m2;
     return Rgb(
-      hsl2rgb(h >= 240 ? h - 240 : h + 120, m1, m2),
+      hsl2rgb(h >= 240.0 ? h - 240.0 : h + 120.0, m1, m2),
       hsl2rgb(h, m1, m2),
-      hsl2rgb(h < 120 ? h + 240 : h - 120, m1, m2),
+      hsl2rgb(h < 120.0 ? h + 240.0 : h - 120.0, m1, m2),
       opacity,
     );
   }
@@ -1218,11 +1222,11 @@ double clampt(double value) =>
 /// color.js:391 `hsl2rgb(h, m1, m2)`: one RGB channel of an HSL color, from
 /// FvD 13.37, CSS Color Module Level 3.
 double hsl2rgb(double h, double m1, double m2) =>
-    (h < 60
-        ? m1 + (m2 - m1) * h / 60
-        : h < 180
+    (h < 60.0
+        ? m1 + (m2 - m1) * h / 60.0
+        : h < 180.0
         ? m2
-        : h < 240
-        ? m1 + (m2 - m1) * (240 - h) / 60
+        : h < 240.0
+        ? m1 + (m2 - m1) * (240.0 - h) / 60.0
         : m1) *
-    255;
+    255.0;
