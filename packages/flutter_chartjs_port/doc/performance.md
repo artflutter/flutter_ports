@@ -8579,3 +8579,32 @@ of the update times fell 6.9% and the sum of the draw times 7.2%. The macOS cell
 not cost on native builds. A CPU profile of the Chrome cell scatter, 20,000 items, full preset, shows the context refresh at 365 ms of 8 s after the change (553 before, 403
 at `5c445bca`), and the idle time at 1126 ms (318 before, 792 at `5c445bca`). The raw data is in
 `.handover/drift-2026-11-14/`.
+
+## 75. The ticks with no label: one pass
+
+The live dashboard sample (`apps/chartjs_supabase_dashboard`) had a tick callback that gave null for each tick off a
+grid of time. A time axis makes one tick for each unit of its range. On a chart 1,664 pixels wide, the label capacity
+of the axis was 33 with a label of seconds and 53 with a label of minutes: the axis made a tick for each millisecond
+of a range below 33 seconds, and a tick for each second of a range below about 53 minutes. `_convertTicksToLabels`
+removed each tick with no label with one `removeAt`, as upstream removes it with one `splice`
+(`core.scale.js:780-788`): the loop is quadratic in the tick count. A CPU profile of the range of 30 seconds had
+98-100% of its samples in `Scale.update`: the loop and `Lists.copy`.
+
+**The change.** The loop moves each tick with a label down in the list in one pass, and then cuts the length of the
+list (row `adapt-tick-label-removal`). The list, the ticks and their order are those of upstream.
+`test/port/core/tick_label_removal_test.dart` pins them.
+
+**The figures.** The time of one chart update (`beforeUpdate` to `afterUpdate`, the mean of a phase of 4 seconds) of
+the sample: a macOS profile build on a MacBook Pro M3 Max, a chart of 1,664 x 822 at the pixel ratio 2, one run for
+each side (ms):
+
+| Range of the x axis | Ticks that the axis makes | Before | After |
+| --- | ---: | ---: | ---: |
+| 30 seconds | 30,000 | 1,259 | 11.0 |
+| 15 seconds | 15,000 | 224 | 4.86 |
+| 7.5 seconds | 7,500 | 57.4 | 3.70 |
+| a trackpad zoom between 27 and 60 minutes | up to 3,180 | 4.89 | 0.92 |
+
+After the change, an update at 30 seconds is the 30,000 tick objects and the 30,000 calls of the tick callback. The
+sample then got `time.minUnit` `TimeUnit.second` and an `afterBuildTicks` hook that gives the axis only the ticks of
+its grid: 0.59 ms. The raw data and the probe are in `.handover/dashboard-zoom-2026-11-15/`.

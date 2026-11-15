@@ -1728,13 +1728,17 @@ class Scale(AnyObject cfg)
 
     // Ticks should be skipped when callback returns null or undef, so lets
     // remove those.
+    // DIVERGES(chartjs): adapt-tick-label-removal, one pass that moves each
+    // kept tick down, in place of one splice for each removed tick.
+    var kept = 0;
     for (var i = 0, ilen = ticks.length; i < ilen; i++) {
-      if (ticks[i].label == null) {
-        ticks.removeAt(i);
-        ilen--;
-        i--;
+      final tick = ticks[i];
+      if (tick.label != null) {
+        if (kept != i) ticks[kept] = tick;
+        kept++;
       }
     }
+    if (kept != ticks.length) ticks.length = kept;
 
     afterTickToLabelConversion();
   }

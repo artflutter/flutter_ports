@@ -322,7 +322,9 @@ repository.
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
       `Scale` implements `MinMax`. Its value methods take `Object?` (Chart.js ADR 0025).
       `Scale._alignToPixels` is a `bool`, the `ToBoolean` of the option at its write in
-      `configure` (row `adapt-loop-invariant-truthiness`).
+      `configure` (row `adapt-loop-invariant-truthiness`). `_convertTicksToLabels` removes the
+      ticks with no label in one pass, where upstream does one `splice` for each (row
+      `adapt-tick-label-removal`, performance.md §75).
     - [Chart.js ADR 0064](doc/adr/0064-axis-label-plan.md): the exact category scale reuses its string-label
       measurements. See `test/port/core/axis_label_plan_test.dart` and `category_label_source_test.dart`. Tick
       objects, contexts, callbacks and the fit stay live. A Flutter font notification (`canvas_font_tracking.dart`)
