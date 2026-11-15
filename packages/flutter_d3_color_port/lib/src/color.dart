@@ -857,16 +857,28 @@ class Rgb(
 /// the opacity [a] in [0, 1] and the channels [x], [y] and [z] in [0, 255].
 ///
 /// In WebAssembly, the function is not inlined, so that one function reads
-/// the lazy table [_rgbTexts], with its test of the first read inlined.
+/// the lazy table [_rgbTexts], with its test of the first read inlined. In
+/// JavaScript, dart2js inlines it: it has one return.
 @pragma('vm:prefer-inline')
+@pragma('dart2js:prefer-inline')
 @pragma('wasm:never-inline')
-String _rgbText(double a, int x, int y, int z) {
-  if (_joinRgbTexts) {
-    // DIVERGES(d3-color): adapt-color-format-units, three or four texts.
-    final texts = _rgbTexts;
-    if (a == 1) return texts[x] + texts[256 + y] + texts[512 + z];
-    return texts[768 + x] + texts[256 + y] + texts[256 + z] + _alphaText(a);
-  }
+String _rgbText(double a, int x, int y, int z) =>
+    _joinRgbTexts ? _joinedRgbText(a, x, y, z) : _unitsRgbText(a, x, y, z);
+
+/// [_rgbText] in JavaScript and in WebAssembly ([_joinRgbTexts]).
+@pragma('dart2js:prefer-inline')
+@pragma('wasm:prefer-inline')
+String _joinedRgbText(double a, int x, int y, int z) {
+  // DIVERGES(d3-color): adapt-color-format-units, three or four texts.
+  final texts = _rgbTexts;
+  return a == 1
+      ? texts[x] + texts[256 + y] + texts[512 + z]
+      : texts[768 + x] + texts[256 + y] + texts[256 + z] + _alphaText(a);
+}
+
+/// [_rgbText] on the VM: the code units of the text in [_units].
+@pragma('vm:prefer-inline')
+String _unitsRgbText(double a, int x, int y, int z) {
   // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
   final units = _units;
   var p = _putOpen(units, 0x72, 0x67, 0x62, alpha: a != 1); // rgb( or rgba(
