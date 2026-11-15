@@ -602,7 +602,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `doc/adr/`: the D3 ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:headers`, `test:web` and `test --no-select` examine the package. `check:lib-imports`,
     `check:js-semantics`, `test:cases`, `parity` and `port:next` do not examine it yet.
-- `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.0, on pub.dev,
+- `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.1, on pub.dev,
   ISC), the first module package of the D3 port (D3 ADR 0008), as `d3-color` on npm. Its
   `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive, its `analysis_options.yaml`
   includes the rules of the root file, and `example/main.dart` is the example of the archive. Its

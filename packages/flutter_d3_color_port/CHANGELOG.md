@@ -1,3 +1,7 @@
+## 0.1.1
+
+- pubspec: a shorter description (151 characters), in the 60 to 180 characters of pub.dev.
+
 ## 0.1.0
 
 - A native Dart port of d3-color 3.1.0: `color`, `Rgb`, `Hsl`, `Lab`, `Hcl`, `Cubehelix`, `gray`
