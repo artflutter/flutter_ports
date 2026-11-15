@@ -3,9 +3,14 @@
 // The doc comments would show in the code panels.
 // ignore_for_file: public_member_api_docs
 
-import 'package:chartjs_docs/examples/line_data.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+
+/// The line color of the examples.
+const Color teal = Color.fromRGBO(75, 192, 192, 1);
+
+/// The second line color of the examples.
+const Color red = Color.fromRGBO(255, 99, 132, 1);
 
 // #docregion segment
 const trend = <num?>[65, 59, 80, 81, null, 55, 40, 62];
@@ -43,3 +48,19 @@ List<double>? segmentDash(ScriptableLineSegmentContext segment) =>
     ? const [6, 6]
     : null;
 // #enddocregion segment
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const Directionality(
+      textDirection: TextDirection.ltr,
+      child: ColoredBox(
+        color: Color(0xFFFFFFFF),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: ChartView(config: segmentLine)),
+        ),
+      ),
+    ),
+  );
+}

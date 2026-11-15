@@ -3,8 +3,14 @@
 // The doc comments would show in the code panels.
 // ignore_for_file: public_member_api_docs
 
-import 'package:chartjs_docs/examples/line_data.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+
+/// The second line color of the examples.
+const Color red = Color.fromRGBO(255, 99, 132, 1);
+
+/// The third line color of the examples.
+const Color blue = Color.fromRGBO(54, 162, 235, 1);
 
 // #docregion cubic
 const cubicLines = ChartConfig(
@@ -27,3 +33,19 @@ const cubicLines = ChartConfig(
   ],
 );
 // #enddocregion cubic
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const Directionality(
+      textDirection: TextDirection.ltr,
+      child: ColoredBox(
+        color: Color(0xFFFFFFFF),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: ChartView(config: cubicLines)),
+        ),
+      ),
+    ),
+  );
+}

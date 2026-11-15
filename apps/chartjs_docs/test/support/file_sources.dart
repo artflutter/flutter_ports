@@ -24,3 +24,11 @@ List<String> sourceFiles([List<String> folders = snippetFolders]) => [
 Snippets regionsOf(List<String> folders) => Snippets.parseAll([
   for (final path in sourceFiles(folders)) File(path).readAsStringSync(),
 ]);
+
+/// The sample files of [folder] with a `main` function: the files that the
+/// **Try in DartPad** buttons open. Each one is the whole sample: it imports
+/// no other file of the docs app.
+Set<String> dartPadSamples(String folder) => {
+  for (final path in sourceFiles(['$folder/']))
+    if (File(path).readAsStringSync().contains('\nvoid main() {')) path,
+};

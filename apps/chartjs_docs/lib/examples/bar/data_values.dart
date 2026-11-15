@@ -2,6 +2,7 @@
 // The doc comments would show in the code panels.
 // ignore_for_file: public_member_api_docs
 
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion bar-data-values
@@ -13,3 +14,19 @@ const valuesBar = ChartConfig(
   ],
 );
 // #enddocregion bar-data-values
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const Directionality(
+      textDirection: TextDirection.ltr,
+      child: ColoredBox(
+        color: Color(0xFFFFFFFF),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: ChartView(config: valuesBar)),
+        ),
+      ),
+    ),
+  );
+}

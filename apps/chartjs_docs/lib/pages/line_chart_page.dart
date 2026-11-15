@@ -5,6 +5,7 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:chartjs_docs/examples/line_examples.dart';
+import 'package:chartjs_docs/ui/dartpad.dart';
 import 'package:chartjs_docs/ui/doc_blocks.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/docs_theme.dart';
@@ -340,7 +341,6 @@ DocPageContent lineChartPage() => DocPageContent(
           label: Text('Basic'),
           config: basicLine,
           region: CodeRegion('$lineExamples/basic.dart', 'basic'),
-          dartPad: true,
         ),
       ],
     ),
@@ -1282,6 +1282,10 @@ class _LiveLineDemoState() extends State<LiveLineDemo> {
         const CodeToggle(
           id: 'live',
           region: CodeRegion('$lineExamples/live.dart', 'live'),
+          trailing: DartPadLink(
+            '$lineExamples/live.dart',
+            key: ValueKey('live.dartpad'),
+          ),
         ),
       ],
     ),

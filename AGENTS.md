@@ -504,22 +504,27 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 - `apps/chartjs_docs`: the documentation site of the Chart.js port (web). The line chart page has the
   section structure of `docs/charts/line.md`, with Dart text and live charts.
   `lib/pages/line_chart_page.dart` has the text and the table of options. `lib/examples/line/` has the code
-  of the charts, one file for each code panel, and `lib/examples/line_data.dart` has the data that the
-  files share. `lib/examples/line_examples.dart` exports them. The app also loads each file of
+  of the charts, one file for each code panel. `lib/examples/line_data.dart` has the data that the page
+  uses in the configs that it builds. `lib/examples/line_examples.dart` exports them. The app also loads each file of
   `lib/examples/line/` as an asset, and a code panel shows the lines between `// #docregion <name>` and
   `// #enddocregion <name>`. Thus a panel shows the code that draws its chart. Each source file of a code
   panel has one region. A `CodeRegion` names the source file and the region of a panel. Each code panel
   is closed at the start: its **Code** button (`CodeToggle` of `lib/ui/doc_blocks.dart`) opens it.
   `CodeSources` reads the file of a panel at its first open, not at the start of the app.
-  `test/code_panels_test.dart` pins this. An example form with `dartPad: true` has a **Try in DartPad**
-  button (`lib/ui/dartpad.dart`). Its sample file is one file: a `main()` after the region runs the chart,
-  it imports no other file of the app, and the export of `line_examples.dart` or `bar_examples.dart` hides
-  `main`. The workflow `pages` writes one archive for each sample with a `main()`
-  (`tool/dartpad_archives.sh`): `lib/examples/<path>.dart` becomes `dartpad/<path>.tar.gz` of the docs site,
-  with the sample as `lib/main.dart` (line 1 of the header, no region markers) and a `pubspec.yaml` that names
+  `test/code_panels_test.dart` pins this. Each form of a `LiveExample` and the live chart have a
+  **Try in DartPad** button (`lib/ui/dartpad.dart`). A code panel with no chart (`DocCode`) has none.
+  The sample file of a button is the whole sample: it has the data that it uses, a `main()` after the
+  region builds the config of the page and runs it, and it imports no other file of the app. A form of a
+  loop (point styles, skipped borders, percentages) opens the sample with the arguments of the first
+  form. The export of each sample in `line_examples.dart` or `bar_examples.dart` shows only the names
+  that the file declared before its data, so the data and `main` do not collide. The workflow `pages`
+  writes one archive for each sample with a `main()` (`tool/dartpad_archives.sh`):
+  `lib/examples/<path>.dart` becomes `dartpad/<path>.tar.gz` of the docs site, with the sample as
+  `lib/main.dart` (line 1 of the header, no region markers) and a `pubspec.yaml` that names
   `flutter_chartjs_port` from pub.dev at the version of its pubspec or later. The link opens the archive
   with the file tree collapsed. A sample that needs an API of a later release fails in DartPad until that
-  release is on pub.dev. Only the basic line chart has the button now. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
+  release is on pub.dev. The page tests tap each form and compare the files of the buttons with the
+  samples that have a `main()`. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
   - The UI of the site is widget classes, with no function that returns a widget (the Flutter guidance
     "prefer a widget over a helper method"). A docs block takes each text as a widget: a `DocText` for a
@@ -532,8 +537,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (`DocProperty`).
   - The bar chart page has the section structure of `docs/charts/bar.md`: `lib/pages/bar_chart_page.dart`
     has the text and the table. `lib/examples/bar/` has the code of the charts, one file for each code
-    panel, `lib/examples/bar_data.dart` has the shared data, and `lib/examples/bar_examples.dart` exports
-    them. Each region name of these files starts with `bar-`, because a region name is unique over all the
+    panel, and `lib/examples/bar_examples.dart` exports them. Each region name of these files starts with `bar-`, because a region name is unique over all the
     source files.
     `test/bar_chart_page_test.dart` compares the table with the chart defaults and the parameters of
     `BarDataset`.

@@ -3,8 +3,22 @@
 // The doc comments would show in the code panels.
 // ignore_for_file: public_member_api_docs
 
-import 'package:chartjs_docs/examples/line_data.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+
+/// The labels of `Utils.months({count: 7})`.
+const List<Object> months = [
+  'January',
+  'February',
+  'March',
+  'April',
+  'May',
+  'June',
+  'July',
+];
+
+/// The line color of the examples.
+const Color teal = Color.fromRGBO(75, 192, 192, 1);
 
 // #docregion gaps-break
 const brokenLine = LineDataset(
@@ -13,3 +27,27 @@ const brokenLine = LineDataset(
   borderColor: .constant(.solid(teal)),
 );
 // #enddocregion gaps-break
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const Directionality(
+      textDirection: TextDirection.ltr,
+      child: ColoredBox(
+        color: Color(0xFFFFFFFF),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(
+            child: ChartView(
+              config: ChartConfig(
+                type: .line,
+                labels: months,
+                datasets: [brokenLine],
+              ),
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}

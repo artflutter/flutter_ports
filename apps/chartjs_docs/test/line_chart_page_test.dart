@@ -5,6 +5,7 @@ library;
 import 'dart:io';
 
 import 'package:chartjs_docs/examples/line/basic.dart' as basic;
+import 'package:chartjs_docs/examples/line/live.dart' as live;
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/main.dart';
 import 'package:chartjs_docs/pages/line_chart_page.dart';
@@ -15,6 +16,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'support/dartpad_links.dart';
 import 'support/file_sources.dart';
 
 final Snippets _snippets = regionsOf(const ['$lineExamples/']);
@@ -272,23 +274,22 @@ void main() {
     expect(line['spanGaps'], isTrue);
   });
 
-  testWidgets('the basic example opens its sample in DartPad', (tester) async {
+  testWidgets('each live chart opens its sample in DartPad', (tester) async {
     await _show(tester, const Size(1440, 900));
-    final link = tester.widget<DartPadLink>(
-      find.byKey(const ValueKey('basic.dartpad')),
-    );
-    expect(link.file, '$lineExamples/basic.dart');
+    // One button for each sample with a main function, and no other.
+    expect(await dartPadFiles(tester), dartPadSamples(lineExamples));
+    // tool/dartpad_archives.sh packs each sample alone as lib/main.dart.
+    for (final file in dartPadSamples(lineExamples)) {
+      final sample = File(file).readAsStringSync();
+      expect(sample, isNot(contains('package:chartjs_docs/')), reason: file);
+    }
     expect(
-      dartPadUri(link.file),
+      dartPadUri('$lineExamples/basic.dart'),
       Uri.https('dartpad.dev', '/', {
         'url': '$dartPadArchives/line/basic.tar.gz',
         'panels': '-filetree',
       }),
     );
-    // tool/dartpad_archives.sh packs the sample alone as lib/main.dart.
-    final sample = File(link.file).readAsStringSync();
-    expect(sample, contains('\nvoid main() {'));
-    expect(sample, isNot(contains('package:chartjs_docs/')));
   });
 
   testWidgets('the DartPad app of the basic example runs', (tester) async {
@@ -299,6 +300,17 @@ void main() {
       tester.widget<ChartView>(find.byType(ChartView)).config,
       same(basicLine),
     );
+  });
+
+  testWidgets('the DartPad app of the live example runs', (tester) async {
+    live.main();
+    await tester.pump();
+    final first = tester.widget<LiveLineChart>(find.byType(LiveLineChart));
+    await tester.pump(const Duration(milliseconds: 16));
+    final next = tester.widget<LiveLineChart>(find.byType(LiveLineChart));
+    expect(tester.takeException(), isNull);
+    expect(next.points, hasLength(1000));
+    expect(next.points, isNot(same(first.points)));
   });
 
   test('the regions have no markers and no common indent', () {

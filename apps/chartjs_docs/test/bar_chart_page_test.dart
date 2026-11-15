@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:io';
+
 import 'package:chartjs_docs/examples/bar_examples.dart';
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/main.dart';
@@ -11,6 +13,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
+import 'support/dartpad_links.dart';
 import 'support/file_sources.dart';
 
 /// The page shows the region `register` of the line examples too.
@@ -213,6 +216,17 @@ void main() {
     addTearDown(() => bar['skipNull'] = undefined);
     skipNullInAllBarCharts();
     expect(bar['skipNull'], isTrue);
+  });
+
+  testWidgets('each live chart opens its sample in DartPad', (tester) async {
+    await _show(tester, const Size(1440, 900));
+    // One button for each sample with a main function, and no other.
+    expect(await dartPadFiles(tester), dartPadSamples(barExamples));
+    // tool/dartpad_archives.sh packs each sample alone as lib/main.dart.
+    for (final file in dartPadSamples(barExamples)) {
+      final sample = File(file).readAsStringSync();
+      expect(sample, isNot(contains('package:chartjs_docs/')), reason: file);
+    }
   });
 
   test('the region names are unique over the source files', () {
