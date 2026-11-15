@@ -21,7 +21,7 @@ class const DocCommand(
 
 /// A row of link buttons under a block.
 class const DocLinks(
-  /// The buttons, usually [DocPageButton] and [DocUrlButton].
+  /// The buttons, for example [DocUrlButton].
   final List<Widget> children, {
   super.key,
 }) extends StatelessWidget {
@@ -32,26 +32,6 @@ class const DocLinks(
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.only(bottom: 14),
     child: Wrap(spacing: 8, runSpacing: 8, children: children),
-  );
-}
-
-/// A button that opens the page [route] of the site.
-class const DocPageButton({
-  /// The route of the page, for example `/plugins/zoom`.
-  required final String route,
-
-  /// The label of the button. The button gives it its text style.
-  required final Widget label,
-  super.key,
-}) extends StatelessWidget {
-  /// Creates the button of [route].
-  this;
-
-  @override
-  Widget build(BuildContext context) => FilledButton.tonalIcon(
-    onPressed: () => Navigator.of(context).pushReplacementNamed(route),
-    icon: const Icon(Icons.menu_book, size: 16),
-    label: label,
   );
 }
 

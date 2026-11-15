@@ -30,24 +30,18 @@ Future<void> _open(
 void main() {
   setUpAll(registerCharts);
 
-  for (final route in ['/plugins', '/plugins/zoom']) {
-    for (final width in [1400.0, 390.0]) {
-      testWidgets('$route builds at the width $width', (tester) async {
-        await _open(tester, route, width: width);
-        expect(tester.takeException(), isNull);
-      });
-    }
+  for (final width in [1400.0, 390.0]) {
+    testWidgets('/plugins/zoom builds at the width $width', (tester) async {
+      await _open(tester, '/plugins/zoom', width: width);
+      expect(tester.takeException(), isNull);
+    });
   }
 
-  testWidgets('the overview opens the docs of the zoom plugin', (tester) async {
-    await _open(tester, '/plugins');
-    final button = find.text('Read the docs');
-    await tester.ensureVisible(button);
-    await tester.pump();
-    await tester.tap(button);
-    await tester.pumpAndSettle();
-    expect(find.text('Installation'), findsWidgets);
-    expect(tester.takeException(), isNull);
+  testWidgets('the plugin group has no overview page', (tester) async {
+    await _open(tester, '/plugins/zoom');
+    expect(find.text('AWESOME PLUGINS'), findsOneWidget);
+    expect(find.text('Overview'), findsNothing);
+    expect(find.byKey(const ValueKey('page./plugins')), findsNothing);
   });
 
   testWidgets('the zoom example opens in DartPad and resets', (tester) async {

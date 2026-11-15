@@ -559,15 +559,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (`/charts/<type>/migrate/<library>`). The browser address `#/<route>` opens a page. `movedRoutes` sends
     the old addresses `/migrate/<library>` to the line chart pages. `test/migrate_pages_test.dart` runs on
     the pages with `/migrate/` in their route.
-  - The last group, "Awesome plugins", lists the plugins of the port. Its overview page
-    (`lib/pages/plugins_page.dart`, `/plugins`) has one section for each plugin: what it does, its package,
-    its registration and the buttons to its docs page and to pub.dev. The zoom page
-    (`lib/pages/zoom_plugin_page.dart`, `/plugins/zoom`) ports the pages Getting Started, Integration and
-    Usage of the guide of chartjs-plugin-zoom, and links to its options. Its code panels are in
+  - The last group, "Awesome plugins", has one page for each plugin of the port, with no overview page.
+    The zoom page (`lib/pages/zoom_plugin_page.dart`, `/plugins/zoom`) ports the pages Getting Started,
+    Integration and Usage of the guide of chartjs-plugin-zoom, and links to its options. Its code panels are in
     `lib/examples/zoom/`, and its live chart has the action **Reset zoom** (`ExampleAction` of
     `LiveExample`). The docs app registers no plugin: the page gives the zoom plugin to its chart in
     `ChartConfig.plugins`. `lib/ui/doc_links.dart` has the link buttons and the command panel, and
-    `test/plugins_pages_test.dart` pins the two pages.
+    `test/plugins_pages_test.dart` pins the zoom page.
   - The line chart migration pages rebuild the line chart demos of fl_chart 1.3.0 (13), Graphic 2.7.0 and
     Syncfusion 35.1.43 with the port. `migrationPage` of `lib/ui/replica_block.dart` gives the intro, a
     table of the names that map and one section for each demo: notes, the live replica and its code on
