@@ -1,3 +1,9 @@
+## 0.1.0-beta.3
+
+- A scale removes the ticks with no label in one pass. Before, the removal took a time
+  quadratic in the tick count: a time axis of 30,000 ticks whose `ticks.callback` kept 6 of them
+  took 1,259 ms for each update, and now takes 11 ms. The ticks and their order do not change.
+
 ## 0.1.0-beta.2
 
 - The update mode is the extension type `UpdateMode`: `chart.update(UpdateMode.none)`, a custom
