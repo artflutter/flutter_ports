@@ -76,7 +76,8 @@ void main() {
         await tester.pump();
         await tester.tap(button);
         await tester.pump();
-        await tester.pump();
+        // The skeleton time and the grow.
+        await tester.pump(const Duration(seconds: 1));
         expect(find.text('Hide code'), findsOneWidget);
         expect(find.byType(CodeBlock), findsOneWidget);
         expect(tester.takeException(), isNull);

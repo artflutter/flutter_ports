@@ -36,7 +36,8 @@ Future<void> _tap(WidgetTester tester, String key) async {
   await tester.pump();
   await tester.tap(button);
   await tester.pump();
-  await tester.pump();
+  // The skeleton time, the grow and the close.
+  await tester.pump(const Duration(seconds: 1));
 }
 
 Finder _code(String code) => find.byWidgetPredicate(
@@ -119,6 +120,49 @@ void main() {
     await _tap(tester, 'basic.code');
     expect(basicCode, findsOneWidget);
     expect(reads, [basic, scopes, register]);
+  });
+
+  testWidgets('the skeleton shows for the shortest load time, and a file '
+      'that loaded before opens at once', (tester) async {
+    final semantics = tester.ensureSemantics();
+    await _open(tester, '/charts/bar', fileSources());
+    final basicCode = _code(_regionsOf('$barExamples/basic.dart')['bar-basic']);
+    final skeleton = find.bySemanticsLabel('Loading the code');
+    final button = find.byKey(const ValueKey('basic.code'));
+    await tester.ensureVisible(button);
+    await tester.pump();
+
+    await tester.tap(button);
+    await tester.pump();
+    expect(find.text('Hide code'), findsOneWidget);
+    // At the start of the grow, the opacity is 0 and the skeleton has no
+    // semantics.
+    const grow = Duration(milliseconds: 200);
+    await tester.pump(grow);
+    expect(skeleton, findsOneWidget);
+    expect(basicCode, findsNothing);
+    await tester.pump(
+      CodeToggle.minLoading - grow - const Duration(milliseconds: 1),
+    );
+    expect(basicCode, findsNothing);
+    await tester.pump(const Duration(milliseconds: 1));
+    expect(basicCode, findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    expect(skeleton, findsNothing);
+
+    // The close keeps the code in view until the panel shrinks.
+    await tester.tap(button);
+    await tester.pump();
+    expect(basicCode, findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    expect(basicCode, findsNothing);
+
+    await tester.tap(button);
+    await tester.pump();
+    expect(skeleton, findsNothing);
+    expect(basicCode, findsOneWidget);
+    await tester.pump(const Duration(seconds: 1));
+    semantics.dispose();
   });
 
   testWidgets('a file that does not load shows a text, and the next open '

@@ -288,20 +288,134 @@ class _RegionCodeState() extends State<RegionCode> {
     final region = widget.region;
     final snippets = DocScope.of(context).sources.loaded(region.source);
     if (snippets != null) return CodeBlock(code: snippets[region.name]);
-    return ColoredBox(
-      color: DocColors.code,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
-        child: Text(
-          _failed ? 'The code did not load.' : 'Loading the code…',
-          style: const TextStyle(color: DocColors.muted, fontSize: 12),
-        ),
-      ),
+    return _CodeMessage(
+      _failed ? 'The code did not load.' : 'Loading the code…',
     );
   }
 }
 
+/// A short muted text on the background of a code panel.
+class const _CodeMessage(final String text) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => ColoredBox(
+    color: DocColors.code,
+    child: Padding(
+      padding: const EdgeInsets.fromLTRB(16, 14, 16, 14),
+      child: Text(
+        text,
+        style: const TextStyle(color: DocColors.muted, fontSize: 12),
+      ),
+    ),
+  );
+}
+
+/// The lines of the skeleton of a code panel: the indent and the width of
+/// each line, as a fraction of the panel width.
+const List<(double, double)> _skeletonLines = [
+  (0, 0.46),
+  (1, 0.62),
+  (1, 0.38),
+  (0, 0.18),
+];
+
+/// The color of the light that sweeps across the skeleton lines.
+const Color _sweepColor = Color(0xffc7d2fe);
+
+/// The skeleton of a code panel while its file loads: lines of code with a
+/// light that sweeps across them.
+class const _CodeSkeleton() extends StatefulWidget {
+  @override
+  State<_CodeSkeleton> createState() => _CodeSkeletonState();
+}
+
+class _CodeSkeletonState()
+    extends State<_CodeSkeleton>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _sweep = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 1100),
+  );
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (MediaQuery.disableAnimationsOf(context)) {
+      _sweep.stop();
+    } else if (!_sweep.isAnimating) {
+      _sweep.repeat();
+    }
+  }
+
+  @override
+  void dispose() {
+    _sweep.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Semantics(
+    container: true,
+    label: 'Loading the code',
+    child: ColoredBox(
+      color: DocColors.code,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 16, 16, 12),
+        child: AnimatedBuilder(
+          animation: _sweep,
+          builder: (context, child) => ShaderMask(
+            blendMode: BlendMode.srcATop,
+            shaderCallback: (bounds) => LinearGradient(
+              colors: const [DocColors.border, _sweepColor, DocColors.border],
+              stops: const [0.3, 0.5, 0.7],
+              transform: _Sweep(_sweep.value),
+            ).createShader(bounds),
+            child: child,
+          ),
+          child: LayoutBuilder(
+            builder: (context, constraints) => Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                for (final (indent, width) in _skeletonLines)
+                  Padding(
+                    padding: EdgeInsets.only(left: indent * 18, bottom: 10),
+                    child: Container(
+                      width: constraints.maxWidth * width,
+                      height: 9,
+                      decoration: BoxDecoration(
+                        color: DocColors.border,
+                        borderRadius: BorderRadius.circular(5),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    ),
+  );
+}
+
+/// Moves a gradient from the left of its box, out of view, to the right of
+/// its box, out of view, as [progress] goes from 0 to 1.
+class const _Sweep(final double progress) extends GradientTransform {
+  @override
+  Matrix4 transform(Rect bounds, {TextDirection? textDirection}) =>
+      Matrix4.translationValues(bounds.width * (progress * 2 - 1), 0, 0);
+}
+
+/// The state of the code under a [CodeToggle].
+enum _CodeState() {
+  loading,
+  loaded,
+  failed,
+}
+
 /// A **Code** button, and the code of [region] under it after a tap.
+///
+/// The first tap loads the source file of [region]. A skeleton of the code
+/// shows for at least [minLoading], and the panel then grows to the code. A
+/// file that loaded before opens at once.
 class const CodeToggle({
   /// The code region.
   required final CodeRegion region,
@@ -316,43 +430,165 @@ class const CodeToggle({
   /// Creates the button of [region].
   this;
 
+  /// The shortest time that the skeleton shows, so that it does not flash.
+  static const Duration minLoading = Duration(milliseconds: 500);
+
   @override
   State<CodeToggle> createState() => _CodeToggleState();
 }
 
-class _CodeToggleState() extends State<CodeToggle> {
+class _CodeToggleState()
+    extends State<CodeToggle>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _expand = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 320),
+    reverseDuration: const Duration(milliseconds: 240),
+  )..addStatusListener(_closed);
+  late final CurvedAnimation _curve = CurvedAnimation(
+    parent: _expand,
+    curve: Curves.easeOutCubic,
+    reverseCurve: Curves.easeInCubic,
+  );
   bool _open = false;
+  _CodeState _state = _CodeState.loading;
+
+  /// The number of the last load: a load with an older number has no
+  /// effect.
+  int _request = 0;
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.stretch,
-    children: [
-      Padding(
-        padding: const EdgeInsets.all(4),
-        child: Row(
-          children: [
-            TextButton.icon(
-              key: ValueKey('${widget.id}.code'),
-              onPressed: () => setState(() => _open = !_open),
-              icon: Icon(_open ? Icons.expand_less : Icons.code),
-              label: Text(_open ? 'Hide code' : 'Code'),
-            ),
-            // The rest of the row, so that a trailing Wrap can wrap.
-            Expanded(
-              child: Align(
-                alignment: Alignment.centerRight,
-                child: widget.trailing,
+  void didUpdateWidget(CodeToggle oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (_open && oldWidget.region.source != widget.region.source) _load();
+  }
+
+  @override
+  void dispose() {
+    _curve.dispose();
+    _expand.dispose();
+    super.dispose();
+  }
+
+  /// Removes the code from the tree at the end of the close.
+  void _closed(AnimationStatus status) {
+    if (status.isDismissed && mounted) setState(() {});
+  }
+
+  void _toggle() {
+    _request++;
+    if (_open) {
+      setState(() => _open = false);
+      _expand.reverse();
+      return;
+    }
+    setState(() {
+      _open = true;
+      _load();
+    });
+    _expand.forward();
+  }
+
+  /// Loads the source file of the region, and shows the skeleton for at
+  /// least [CodeToggle.minLoading]. The caller builds next.
+  void _load() {
+    final sources = context.getInheritedWidgetOfExactType<DocScope>()!.sources;
+    final source = widget.region.source;
+    if (sources.loaded(source) != null) {
+      _state = _CodeState.loaded;
+      return;
+    }
+    _state = _CodeState.loading;
+    final request = ++_request;
+    void finish(_CodeState state) {
+      if (mounted && request == _request) setState(() => _state = state);
+    }
+
+    unawaited(
+      Future.wait<Object?>([
+        sources.load(source),
+        Future<void>.delayed(CodeToggle.minLoading),
+      ]).then<void>(
+        (_) => finish(_CodeState.loaded),
+        onError: (Object _) => finish(_CodeState.failed),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final code = switch (_state) {
+      _CodeState.loading => const _CodeSkeleton(),
+      _CodeState.failed => const _CodeMessage('The code did not load.'),
+      _CodeState.loaded => RegionCode(
+        widget.region,
+        key: ValueKey(widget.region),
+      ),
+    };
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(4),
+          child: Row(
+            children: [
+              TextButton.icon(
+                key: ValueKey('${widget.id}.code'),
+                onPressed: _toggle,
+                icon: AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (child, animation) => ScaleTransition(
+                    scale: animation,
+                    child: FadeTransition(opacity: animation, child: child),
+                  ),
+                  child: Icon(
+                    _open ? Icons.expand_less : Icons.code,
+                    key: ValueKey(_open),
+                  ),
+                ),
+                label: Text(_open ? 'Hide code' : 'Code'),
+              ),
+              // The rest of the row, so that a trailing Wrap can wrap.
+              Expanded(
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: widget.trailing,
+                ),
+              ),
+            ],
+          ),
+        ),
+        if (_open || !_expand.isDismissed)
+          SizeTransition(
+            sizeFactor: _curve,
+            alignment: Alignment.topCenter,
+            child: FadeTransition(
+              opacity: _curve,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const Divider(height: 1, color: DocColors.border),
+                  AnimatedSize(
+                    duration: const Duration(milliseconds: 360),
+                    curve: Curves.easeOutCubic,
+                    alignment: Alignment.topCenter,
+                    child: AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 260),
+                      layoutBuilder: (current, previous) => Stack(
+                        alignment: Alignment.topCenter,
+                        fit: StackFit.passthrough,
+                        children: [...previous, ?current],
+                      ),
+                      child: code,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-        ),
-      ),
-      if (_open) ...[
-        const Divider(height: 1, color: DocColors.border),
-        RegionCode(widget.region),
+          ),
       ],
-    ],
-  );
+    );
+  }
 }
 
 /// A code panel of the region [region], with no chart.
