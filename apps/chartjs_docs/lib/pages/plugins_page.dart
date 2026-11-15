@@ -32,7 +32,7 @@ DocPageContent awesomePluginsPage() => const DocPageContent(
   sections: [
     DocSection(
       id: 'zoom',
-      title: Text('Zoom and pan'),
+      title: Text('chartjs-plugin-zoom'),
       body: [
         DocParagraph(
           DocText(
