@@ -8,3 +8,6 @@ coverage/
 
 # Agent worktrees
 .claude/worktrees/
+
+# Playwright MCP output
+.playwright-mcp/
