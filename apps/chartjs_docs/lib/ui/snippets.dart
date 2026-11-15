@@ -21,6 +21,7 @@ const List<String> snippetFolders = [
   'lib/migrate/graphic/',
   'lib/migrate/syncfusion/',
   'lib/migrate/apexcharts/',
+  'lib/migrate/shadcn/',
 ];
 
 /// Whether the asset [path] is a source file of [snippetFolders].

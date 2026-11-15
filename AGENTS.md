@@ -580,10 +580,24 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     gives each line and area chart the zoom of `flutter_chartjs_plugin_zoom_port` and the zoom toolbar of
     apexcharts_flutter. The stacked and the horizontal bar replicas show the chart of their options, not
     the axis defects of apexcharts_flutter 0.1.2. Their notes state the difference.
-  - The replicas are new code. The Syncfusion replicas use no Syncfusion code, and the apexcharts_flutter
-    replicas use no apexcharts_flutter code. The data of the fl_chart
+  - The shadcn/ui pages (`lib/pages/migrate_shadcn_page.dart` and `migrate_bar_shadcn_page.dart`, routes
+    `/charts/<type>/migrate/shadcn`) rebuild the 10 line and the 10 bar chart blocks of shadcn/ui at commit
+    `e62c9435` (Recharts 3.8.0). The replica of the block `chart-<name>` is
+    `lib/migrate/shadcn/<name with _>.dart`, and its **Original** link is
+    `https://ui.shadcn.com/view/new-york-v4/chart-<name>`. `shadcn_kit.dart` has the shared parts. These are
+    the colors of the shadcn/ui site, the card, the axes and the value range of Recharts (`rechartsRange`).
+    It also has the curves `NaturalCurve` and `MonotoneXCurve` (subclasses of `CubicInterpolationMode`),
+    the `LabelList` plugin and the cursor plugin. `ShadcnChart` puts the tooltip of `ChartTooltipContent` as a
+    Flutter widget over a `ChartView`: the chart tooltip has `enabled: false`, and its `external` callback
+    gives each change to the widget. A private name of the kit must not be a name of a replica: the DartPad
+    archive puts both into one file. `test/shadcn_replicas_test.dart` pins the tooltip widget, the series
+    buttons of the interactive line and `rechartsRange`.
+  - The replicas are new code. The Syncfusion replicas use no Syncfusion code, the apexcharts_flutter
+    replicas use no apexcharts_flutter code, and the shadcn/ui replicas use no shadcn/ui or Recharts code.
+    The data of the fl_chart
     samples 12 and 13 (`assets/flchart/`), `lib/migrate/graphic/graphic_data.dart`,
-    `graphic_bar_data.dart` and `lib/migrate/apexcharts/area_datetime_data.dart` are MIT copies: the
+    `graphic_bar_data.dart`, `lib/migrate/apexcharts/area_datetime_data.dart` and
+    `lib/migrate/shadcn/shadcn_data.dart` are MIT copies: the
     `LICENSE` of the app and `REUSE.toml` name their holders.
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
 - `packages/flutter_d3_port`: the D3 port (library, `publish_to: none` until 0.1.0, ISC), the

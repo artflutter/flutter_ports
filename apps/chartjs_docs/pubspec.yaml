@@ -35,6 +35,7 @@ flutter:
     - lib/migrate/graphic/
     - lib/migrate/syncfusion/
     - lib/migrate/apexcharts/
+    - lib/migrate/shadcn/
     # The data of the fl_chart samples 12 and 13 (fl_chart example app, MIT).
     - assets/flchart/
   fonts:

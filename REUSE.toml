@@ -200,3 +200,12 @@ path = "apps/chartjs_docs/lib/migrate/apexcharts/area_datetime_data.dart"
 precedence = "override"
 SPDX-FileCopyrightText = ["2018 ApexCharts", "2026 Eduardo H", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "MIT"
+
+# The data of the interactive line and bar demos of shadcn/ui on the docs site:
+# a copy of chartData of apps/v4/registry/new-york-v4/charts/
+# chart-line-interactive.tsx of shadcn/ui at e62c9435 (MIT).
+[[annotations]]
+path = "apps/chartjs_docs/lib/migrate/shadcn/shadcn_data.dart"
+precedence = "override"
+SPDX-FileCopyrightText = ["2023 shadcn", "2026 Vasiliy Ditsyak"]
+SPDX-License-Identifier = "MIT"

@@ -7,9 +7,11 @@ import 'package:chartjs_docs/pages/migrate_apexcharts_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_apexcharts_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_fl_chart_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_graphic_page.dart';
+import 'package:chartjs_docs/pages/migrate_bar_shadcn_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_syncfusion_page.dart';
 import 'package:chartjs_docs/pages/migrate_fl_chart_page.dart';
 import 'package:chartjs_docs/pages/migrate_graphic_page.dart';
+import 'package:chartjs_docs/pages/migrate_shadcn_page.dart';
 import 'package:chartjs_docs/pages/migrate_syncfusion_page.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/docs_theme.dart';
@@ -61,6 +63,13 @@ final List<DocPageLink> docPages = [
     build: apexChartsMigrationPage,
   ),
   const DocPageLink(
+    route: '/charts/line/migrate/shadcn',
+    group: 'Line chart',
+    navLabel: Text('From shadcn/ui'),
+    icon: Icons.swap_horiz,
+    build: shadcnMigrationPage,
+  ),
+  const DocPageLink(
     route: '/charts/bar',
     group: 'Bar chart',
     navLabel: Text('Bar chart'),
@@ -94,6 +103,13 @@ final List<DocPageLink> docPages = [
     navLabel: Text('From ApexCharts'),
     icon: Icons.swap_horiz,
     build: apexChartsBarMigrationPage,
+  ),
+  const DocPageLink(
+    route: '/charts/bar/migrate/shadcn',
+    group: 'Bar chart',
+    navLabel: Text('From shadcn/ui'),
+    icon: Icons.swap_horiz,
+    build: shadcnBarMigrationPage,
   ),
 ];
 
