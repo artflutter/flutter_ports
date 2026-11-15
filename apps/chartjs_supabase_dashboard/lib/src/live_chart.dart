@@ -191,9 +191,10 @@ class _LiveChartState()
         ticks: AxisTicks(maxRotation: 0, callback: _timeLabel),
         extra: {'afterFit': _noLabelPadding},
       ),
-      // No tick at the eased bounds: only the round values.
+      // No tick at the eased bounds, and whole numbers only (precision 0
+      // rounds the step to an integer).
       'y': LinearAxis(
-        ticks: AxisTicks(extra: {'includeBounds': false}),
+        ticks: AxisTicks(extra: {'includeBounds': false, 'precision': 0}),
         extra: {'afterFit': _fixedWidth},
       ),
     },
@@ -388,7 +389,8 @@ class _LiveChartState()
         (toXMin - xMin).abs() + (toXMax - xMax).abs() < _window * 1e-4;
     final extent = _series.extent(xMin, xMax);
     if (extent != null) {
-      final pad = math.max((extent.max - extent.min) * 0.1, 0.5);
+      // At least 1 on each side: the range holds two whole numbers.
+      final pad = math.max<double>((extent.max - extent.min) * 0.1, 1);
       final toYMin = extent.min - pad;
       final toYMax = extent.max + pad;
       final yMin = _yMin == null ? toYMin : _yMin! + (toYMin - _yMin!) * ease;

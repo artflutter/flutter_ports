@@ -5,15 +5,23 @@ import 'dart:async';
 import 'package:chartjs_supabase_dashboard/src/metric_source.dart';
 
 /// The table `metric_points` in memory: row `id` has the time [start] plus
-/// `id` seconds and the value `id % 100`. An insert gives the next id and
-/// sends the row to the watcher in a microtask, as a realtime channel.
-final class MemoryMetricSource({int rows = 0}) implements MetricSource {
+/// `id` seconds and the value `valueOf(id)`, by default `id % 100`. A pump
+/// gives the next id and sends the row to the watcher in a microtask, as a
+/// realtime channel.
+final class MemoryMetricSource({
+  int rows = 0,
+
+  /// The value of the row `id`.
+  final double Function(int id) valueOf = _defaultValue,
+}) implements MetricSource {
   /// Creates a table with the rows 1 to [rows].
   this {
     for (var id = 1; id <= rows; id++) {
-      _rows.add(_row(id, (id % 100).toDouble()));
+      _rows.add(_row(id, valueOf(id)));
     }
   }
+
+  static double _defaultValue(int id) => (id % 100).toDouble();
 
   /// The time of row 0.
   static final DateTime start = DateTime.utc(2026, 11, 15, 12);
@@ -58,7 +66,7 @@ final class MemoryMetricSource({int rows = 0}) implements MetricSource {
   @override
   Future<int?> pump() async {
     final id = _rows.isEmpty ? 1 : _rows.last.id + 1;
-    final row = _row(id, (id % 100).toDouble());
+    final row = _row(id, valueOf(id));
     _rows.add(row);
     scheduleMicrotask(() => _onInsert?.call(row));
     return id;

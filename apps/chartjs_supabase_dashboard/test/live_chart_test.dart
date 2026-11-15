@@ -12,12 +12,15 @@ import 'support/memory_metric_source.dart';
 /// A live chart of 2000 rows, one a second, in a view of 1000 x 500, after
 /// 20 frames. The series has no realtime row: the live edge is the time of
 /// the newest row.
-Future<(LiveSeries, Chart Function())> showChart(WidgetTester tester) async {
+Future<(LiveSeries, Chart Function())> showChart(
+  WidgetTester tester, {
+  MemoryMetricSource? source,
+}) async {
   tester.view
     ..physicalSize = const Size(1000, 500)
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  final series = LiveSeries(MemoryMetricSource(rows: 2000));
+  final series = LiveSeries(source ?? MemoryMetricSource(rows: 2000));
   Chart? chart;
   await tester.pumpWidget(
     MaterialApp(
@@ -159,6 +162,26 @@ void main() {
     expect(ticks.length, greaterThanOrEqualTo(2));
     for (var i = 1; i < ticks.length; i++) {
       expect(ticks[i].value - ticks[i - 1].value, greaterThanOrEqualTo(5000));
+    }
+
+    await close(tester, series);
+  });
+
+  testWidgets('the y labels are whole numbers', (tester) async {
+    // A flat line from 50.0 to 50.3: without precision 0, the axis takes
+    // steps of 0.2 or 0.5.
+    final (series, chart) = await showChart(
+      tester,
+      source: MemoryMetricSource(
+        rows: 2000,
+        valueOf: (id) => 50 + (id % 4) * 0.1,
+      ),
+    );
+
+    final ticks = chart().scales['y']!.ticks!;
+    expect(ticks.length, greaterThanOrEqualTo(2));
+    for (final tick in ticks) {
+      expect(tick.value, tick.value.roundToDouble());
     }
 
     await close(tester, series);
