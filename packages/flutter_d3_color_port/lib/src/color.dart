@@ -268,7 +268,380 @@ abstract class Color() {
 /// `rgba(…)`, `hsl(…)` or `hsla(…)` function, a CSS color name or
 /// `transparent`. The case and the white space around the text do not
 /// count. The result is an [Rgb] or an [Hsl].
+///
+/// The port reads a text of ASCII code units in one pass, with the grammar of
+/// the upstream patterns. A text with another code unit takes the upstream
+/// lines, so that the Unicode rules of `trim()`, `toLowerCase()` and `\s`
+/// stay those of upstream.
 Color? color(String specifier) {
+  // DIVERGES(d3-color): adapt-color-parse-scan, one pass over ASCII texts.
+  final s = specifier;
+  var i = 0;
+  var end = s.length;
+  // trim(): the ASCII white space of String.prototype.trim.
+  while (i < end && _isSpace(s.codeUnitAt(i))) {
+    i++;
+  }
+  while (end > i && _isSpace(s.codeUnitAt(end - 1))) {
+    end--;
+  }
+  if (i == end) return null;
+  final first = s.codeUnitAt(i);
+  // Another character can be white space of trim() or of `\s`, or change in
+  // toLowerCase(): the upstream lines read the text.
+  if (first >= 0x80 || s.codeUnitAt(end - 1) >= 0x80) return _colorRegExp(s);
+  if (first == 0x23) return _scanHex(s, i + 1, end); // #
+  final f = first | 0x20;
+  if ((f == 0x72 || f == 0x68) && end - i >= 5) {
+    // rgb( rgba( hsl( hsla(
+    final c1 = s.codeUnitAt(i + 1) | 0x20;
+    final c2 = s.codeUnitAt(i + 2) | 0x20;
+    if (f == 0x72 ? c1 == 0x67 && c2 == 0x62 : c1 == 0x73 && c2 == 0x6c) {
+      final c3 = s.codeUnitAt(i + 3);
+      if (c3 == 0x28) {
+        return f == 0x72
+            ? _scanRgb(s, i + 4, end, false)
+            : _scanHsl(s, i + 4, end, false);
+      }
+      if ((c3 | 0x20) == 0x61 && s.codeUnitAt(i + 4) == 0x28) {
+        return f == 0x72
+            ? _scanRgb(s, i + 5, end, true)
+            : _scanHsl(s, i + 5, end, true);
+      }
+    }
+  }
+  return _scanNamed(s, i, end);
+}
+
+/// Whether the code unit [c] is ASCII white space of `trim()` and of the
+/// RegExp class `\s`: U+0009 to U+000D and U+0020.
+bool _isSpace(int c) => c <= 0x20 && (c == 0x20 || c >= 0x09 && c <= 0x0d);
+
+/// The result of [color] for a text that failed the grammar at the code unit
+/// [_at] of [s]: null when that code unit is ASCII, because each code unit
+/// before it is ASCII, so no upstream pattern can match. Else the upstream
+/// lines decide.
+Color? _failed(String s) => s.codeUnitAt(_at) >= 0x80 ? _colorRegExp(s) : null;
+
+/// `reHex` and the hexadecimal branch of [color]: the digits of `#` from [p]
+/// to [end], read as nibbles.
+Color? _scanHex(String s, int p, int end) {
+  // `[0-9a-f]{3,8}`: a ninth digit fails too.
+  final l = end - p;
+  final stop = l < 9 ? end : p + 9;
+  var n = 0;
+  for (var k = p; k < stop; k++) {
+    final c = s.codeUnitAt(k);
+    var d = c - 0x30;
+    if (d < 0 || d > 9) {
+      d = (c | 0x20) - 0x57;
+      if (d < 10 || d > 15) return c >= 0x80 ? _colorRegExp(s) : null;
+    }
+    n = n * 16 + d;
+  }
+  return l == 6
+      ? rgbn(n) // #ff0000
+      : l == 3
+      ? Rgb(
+          ((n >> 8 & 0xf) | (n >> 4 & 0xf0)).toDouble(),
+          ((n >> 4 & 0xf) | (n & 0xf0)).toDouble(),
+          (((n & 0xf) << 4) | (n & 0xf)).toDouble(),
+        ) // #f00
+      : l == 8
+      ? rgba(
+          (n >> 24 & 0xff).toDouble(),
+          (n >> 16 & 0xff).toDouble(),
+          (n >> 8 & 0xff).toDouble(),
+          (n & 0xff) / 0xff,
+        ) // #ff000000
+      : l == 4
+      ? rgba(
+          ((n >> 12 & 0xf) | (n >> 8 & 0xf0)).toDouble(),
+          ((n >> 8 & 0xf) | (n >> 4 & 0xf0)).toDouble(),
+          ((n >> 4 & 0xf) | (n & 0xf0)).toDouble(),
+          (((n & 0xf) << 4) | (n & 0xf)) / 0xff,
+        ) // #f000
+      : null; // invalid hex
+}
+
+/// `reRgbInteger`, `reRgbPercent`, `reRgbaInteger` and `reRgbaPercent`: the
+/// arguments of `rgb(` or `rgba(` (with [alpha]) from [p], and `)` at
+/// [end] - 1.
+Color? _scanRgb(String s, int p, int end, bool alpha) {
+  final last = end - 1;
+  if (s.codeUnitAt(last) != 0x29) return null; // )
+  final r = _arg(s, p);
+  if (r.isNaN) return _failed(s);
+  final form = _form;
+  if (form == _formNumber || s.codeUnitAt(_at) != 0x2c) return null;
+  final g = _arg(s, _at + 1);
+  if (g.isNaN) return _failed(s);
+  if (_form != form || s.codeUnitAt(_at) != 0x2c) return null;
+  final b = _arg(s, _at + 1);
+  if (b.isNaN) return _failed(s);
+  if (_form != form) return null;
+  if (!alpha) {
+    if (_at != last) return null;
+    // rgb(255, 0, 0) and rgb(100%, 0%, 0%)
+    return form == _formInteger
+        ? Rgb(r, g, b)
+        : Rgb(r * 255 / 100, g * 255 / 100, b * 255 / 100);
+  }
+  if (s.codeUnitAt(_at) != 0x2c) return null;
+  final a = _arg(s, _at + 1);
+  if (a.isNaN) return _failed(s);
+  if (_form == _formPercent || _at != last) return null;
+  // rgba(255, 0, 0, 1) and rgb(100%, 0%, 0%, 1)
+  return form == _formInteger
+      ? rgba(r, g, b, a)
+      : rgba(r * 255 / 100, g * 255 / 100, b * 255 / 100, a);
+}
+
+/// `reHslPercent` and `reHslaPercent`: the arguments of `hsl(` or `hsla(`
+/// (with [alpha]) from [p], and `)` at [end] - 1.
+Color? _scanHsl(String s, int p, int end, bool alpha) {
+  final last = end - 1;
+  if (s.codeUnitAt(last) != 0x29) return null; // )
+  final h = _arg(s, p);
+  if (h.isNaN) return _failed(s);
+  if (_form == _formPercent || s.codeUnitAt(_at) != 0x2c) return null;
+  final sat = _arg(s, _at + 1);
+  if (sat.isNaN) return _failed(s);
+  if (_form != _formPercent || s.codeUnitAt(_at) != 0x2c) return null;
+  final l = _arg(s, _at + 1);
+  if (l.isNaN) return _failed(s);
+  if (_form != _formPercent) return null;
+  if (!alpha) {
+    if (_at != last) return null;
+    return hsla(h, sat / 100, l / 100, 1); // hsl(120, 50%, 50%)
+  }
+  if (s.codeUnitAt(_at) != 0x2c) return null;
+  final a = _arg(s, _at + 1);
+  if (a.isNaN) return _failed(s);
+  if (_form == _formPercent || _at != last) return null;
+  return hsla(h, sat / 100, l / 100, a); // hsla(120, 50%, 50%, 1)
+}
+
+/// The form of the last argument of [_arg]: `[+-]?\d+` (of `reI`).
+const int _formInteger = 0;
+
+/// The form of the last argument of [_arg]: another number of `reN`.
+const int _formNumber = 1;
+
+/// The form of the last argument of [_arg]: a number with `%` (of `reP`).
+const int _formPercent = 2;
+
+/// The position where the last [_arg] stopped: the first code unit after its
+/// white space, or the code unit where it failed.
+int _at = 0;
+
+/// The form of the last argument of [_arg]: [_formInteger], [_formNumber] or
+/// [_formPercent].
+int _form = _formInteger;
+
+/// The exact powers of ten of a double: 1e0 to 1e22.
+const List<double> _pow10 = [
+  1e0, 1e1, 1e2, 1e3, 1e4, 1e5, 1e6, 1e7, 1e8, 1e9, 1e10, 1e11, 1e12, //
+  1e13, 1e14, 1e15, 1e16, 1e17, 1e18, 1e19, 1e20, 1e21, 1e22,
+];
+
+/// One argument of a functional form from [from]: `\s*`, a number of `reN`,
+/// an optional `%` and `\s*`. Gives the number, with [_at] at the code unit
+/// after it and [_form]. Gives NaN with [_at] at the code unit that fails the
+/// grammar, or at a code unit outside ASCII after the number. The `)` at the
+/// end of the text ends each loop, so no loop tests the length.
+///
+/// A number with at most 15 significant digits and a power of ten up to 22
+/// is one IEEE multiplication or division of two exact doubles, which rounds
+/// correctly, as [double.parse] does. Each other number is [double.parse].
+double _arg(String s, int from) {
+  var p = from;
+  var c = s.codeUnitAt(p);
+  while (_isSpace(c)) {
+    c = s.codeUnitAt(++p);
+  }
+  final start = p;
+  final negative = c == 0x2d;
+  if (negative || c == 0x2b) c = s.codeUnitAt(++p); // - +
+  // The digits as an integer, where the leading zeros add nothing. Below
+  // 1e15, it has at most 15 significant digits and is exact; a 16th digit
+  // makes it 1e15 or more, and then it takes no more digits.
+  var m = 0;
+  final whole = p;
+  var d = c - 0x30;
+  while (d >= 0 && d <= 9) {
+    if (m < 1000000000000000) m = m * 10 + d;
+    d = (c = s.codeUnitAt(++p)) - 0x30;
+  }
+  var form = _formInteger;
+  var frac = 0;
+  if (c == 0x2e) {
+    // (?:\d*\.)?\d+
+    form = _formNumber;
+    final point = ++p;
+    d = (c = s.codeUnitAt(p)) - 0x30;
+    while (d >= 0 && d <= 9) {
+      if (m < 1000000000000000) {
+        m = m * 10 + d;
+        frac++;
+      }
+      d = (c = s.codeUnitAt(++p)) - 0x30;
+    }
+    if (p == point) {
+      _at = p;
+      return double.nan;
+    }
+  } else if (p == whole) {
+    _at = p;
+    return double.nan;
+  }
+  var exponent = 0;
+  var huge = false;
+  if ((c | 0x20) == 0x65) {
+    // (?:[eE][+-]?\d+)?
+    form = _formNumber;
+    c = s.codeUnitAt(++p);
+    final down = c == 0x2d;
+    if (down || c == 0x2b) c = s.codeUnitAt(++p);
+    final digits = p;
+    d = c - 0x30;
+    while (d >= 0 && d <= 9) {
+      if (exponent < 100000) {
+        exponent = exponent * 10 + d;
+      } else {
+        huge = true;
+      }
+      d = (c = s.codeUnitAt(++p)) - 0x30;
+    }
+    if (p == digits) {
+      _at = p;
+      return double.nan;
+    }
+    if (down) exponent = -exponent;
+  }
+  final stop = p;
+  if (c == 0x25) {
+    form = _formPercent;
+    c = s.codeUnitAt(++p);
+  }
+  while (_isSpace(c)) {
+    c = s.codeUnitAt(++p);
+  }
+  _at = p;
+  if (c >= 0x80) return double.nan;
+  _form = form;
+  // DIVERGES(d3-color): adapt-color-parse-number, exact path of double.parse.
+  if (m == 0) return negative ? -0.0 : 0.0;
+  if (m < 1000000000000000 && !huge) {
+    final e = exponent - frac;
+    if (e == 0) return negative ? -m.toDouble() : m.toDouble();
+    if (e > 0 && e <= 22) {
+      final v = m.toDouble() * _pow10[e];
+      return negative ? -v : v;
+    }
+    if (e < 0 && e >= -22) {
+      final v = m.toDouble() / _pow10[-e];
+      return negative ? -v : v;
+    }
+  }
+  return double.parse(s.substring(start, stop));
+}
+
+/// The names of [_named] and `transparent` in a table of open addressing by
+/// a hash of the lowercase code units, so that a name of any case needs no
+/// lowercase copy.
+final class _NamedTable() {
+  /// Puts each name into the table.
+  this {
+    final names = [..._named.keys, 'transparent'];
+    for (var e = 0; e < names.length; e++) {
+      final name = names[e];
+      final h = _hash(name, 0, name.length);
+      var slot = h & _mask;
+      while (slots[slot] != 0) {
+        slot = (slot + 1) & _mask;
+      }
+      slots[slot] = e + 1;
+      keys.add(name);
+      hashes.add(h);
+      final value = _named[name];
+      colors.add(
+        value == null
+            ? Rgb(double.nan, double.nan, double.nan, 0)
+            : rgbn(value),
+      );
+    }
+  }
+
+  static const int _mask = 1023;
+
+  /// The entry of each slot plus one: 0 is an empty slot.
+  final List<int> slots = List<int>.filled(_mask + 1, 0);
+
+  /// The name of each entry, in lowercase.
+  final List<String> keys = [];
+
+  /// The hash of each entry.
+  final List<int> hashes = [];
+
+  /// The color of each entry, which [color] copies.
+  final List<Rgb> colors = [];
+
+  /// The hash of the code units of [s] from [p] to [end], each lowercase.
+  static int _hash(String s, int p, int end) {
+    var h = 0;
+    for (var k = p; k < end; k++) {
+      h = (h * 31 + (s.codeUnitAt(k) | 0x20)) & 0x3fffffff;
+    }
+    return h;
+  }
+
+  /// The entry of the letters of [s] from [p] to [end] with the hash [h], or
+  /// -1.
+  int find(String s, int p, int end, int h) {
+    final l = end - p;
+    var slot = h & _mask;
+    for (;;) {
+      final e = slots[slot] - 1;
+      if (e < 0) return -1;
+      if (hashes[e] == h) {
+        final key = keys[e];
+        if (key.length == l) {
+          var k = 0;
+          while (k < l && (s.codeUnitAt(p + k) | 0x20) == key.codeUnitAt(k)) {
+            k++;
+          }
+          if (k == l) return e;
+        }
+      }
+      slot = (slot + 1) & _mask;
+    }
+  }
+}
+
+/// The table of [_named], made at its first use.
+final _NamedTable _namedTable = _NamedTable();
+
+/// `named` and `transparent`: the name from [p] to [end], in any case.
+Color? _scanNamed(String s, int p, int end) {
+  // DIVERGES(d3-color): adapt-color-named-table, names with no lowercase copy.
+  var h = 0;
+  for (var k = p; k < end; k++) {
+    final c = s.codeUnitAt(k);
+    final l = c | 0x20;
+    if (l < 0x61 || l > 0x7a) return c >= 0x80 ? _colorRegExp(s) : null;
+    h = (h * 31 + l) & 0x3fffffff;
+  }
+  final table = _namedTable;
+  final e = table.find(s, p, end, h);
+  if (e < 0) return null;
+  final c = table.colors[e];
+  return Rgb(c.r, c.g, c.b, c.opacity);
+}
+
+/// The upstream lines of color.js:201 `color(format)`, for a text with a
+/// code unit outside ASCII.
+Color? _colorRegExp(String specifier) {
   // DIVERGES(d3-color): platform-color-trim-lowercase, U+0085 and U+0130.
   if (_trimLowercaseDiffers(specifier)) return null;
   RegExpMatch? m;
