@@ -503,8 +503,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `test/code_panels_test.dart` pins this. A live example with a `dartPadEntry` has a **Try in DartPad**
   button (`lib/ui/dartpad.dart`). The button opens the sample file and its app in `lib/dartpad/` in DartPad.
   The address loads `chartjs_samples.tar.gz` of the docs site. The workflow `pages` writes that archive with
-  `tool/dartpad_archive.sh`: `lib/examples`, `lib/dartpad` and a copy of the port, because the port is not on
-  pub.dev. Only the basic line chart has the button now. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
+  `tool/dartpad_archive.sh`: `lib/examples` and `lib/dartpad`, with a pubspec that names `flutter_chartjs_port`
+  from pub.dev at the version of its pubspec or later. A sample that needs an API of a later release fails in
+  DartPad until that release is on pub.dev. Only the basic line chart has the button now. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
   - The UI of the site is widget classes, with no function that returns a widget (the Flutter guidance
     "prefer a widget over a helper method"). A docs block takes each text as a widget: a `DocText` for a

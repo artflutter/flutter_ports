@@ -5,7 +5,7 @@ import 'package:url_launcher/link.dart';
 
 /// The archive of the samples, next to the docs site. The workflow `pages`
 /// writes it with `tool/dartpad_archive.sh`: the folder `chartjs_docs` with
-/// the samples, and the folder `flutter_chartjs_port` with the port.
+/// the samples. DartPad gets `flutter_chartjs_port` from pub.dev.
 const String dartPadArchive =
     'https://artflutter.github.io/flutter_ports/docs/dartpad/chartjs_samples.tar.gz';
 
