@@ -1018,14 +1018,7 @@ class _LiveLineDemoState() extends State<LiveLineDemo> {
   }
 
   @override
-  Widget build(BuildContext context) => Container(
-    margin: const EdgeInsets.only(bottom: 14),
-    clipBehavior: Clip.antiAlias,
-    decoration: BoxDecoration(
-      color: Colors.white,
-      borderRadius: BorderRadius.circular(12),
-      border: Border.all(color: DocColors.border),
-    ),
+  Widget build(BuildContext context) => docPanel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [

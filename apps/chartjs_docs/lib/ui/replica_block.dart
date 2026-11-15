@@ -165,13 +165,7 @@ class _ReplicaBlockState() extends State<ReplicaBlock> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DocBullets(demo.notes),
-        Container(
-          margin: const EdgeInsets.only(bottom: 14),
-          clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(color: DocColors.border),
-          ),
+        docPanel(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

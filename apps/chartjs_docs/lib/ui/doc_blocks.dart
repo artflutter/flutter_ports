@@ -191,11 +191,19 @@ class const DocTip(
   );
 }
 
-Widget _panel({required Widget child}) => Container(
+/// A white panel with a rounded border around [child].
+///
+/// The border paints over the child: a child with an opaque color fills the
+/// whole rounded box, and the clip at the outer edge does not cut the arc of
+/// a border that the child covers.
+Widget docPanel({required Widget child}) => Container(
   margin: const EdgeInsets.only(bottom: 14),
   clipBehavior: Clip.antiAlias,
   decoration: BoxDecoration(
     color: Colors.white,
+    borderRadius: BorderRadius.circular(12),
+  ),
+  foregroundDecoration: BoxDecoration(
     borderRadius: BorderRadius.circular(12),
     border: Border.all(color: DocColors.border),
   ),
@@ -212,7 +220,7 @@ class const DocCode(
   this;
 
   @override
-  Widget build(BuildContext context) => _panel(
+  Widget build(BuildContext context) => docPanel(
     child: SizedBox(
       width: double.infinity,
       child: CodeBlock(code: DocScope.of(context).snippets[region]),
@@ -263,7 +271,7 @@ class _LiveExampleState() extends State<LiveExample> {
   @override
   Widget build(BuildContext context) {
     final variant = widget.variants[_selected];
-    return _panel(
+    return docPanel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -328,7 +336,7 @@ class const DocTable(
   this;
 
   @override
-  Widget build(BuildContext context) => _panel(
+  Widget build(BuildContext context) => docPanel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -483,7 +491,7 @@ class const DocPropertyTable(
   );
 
   @override
-  Widget build(BuildContext context) => _panel(
+  Widget build(BuildContext context) => docPanel(
     child: LayoutBuilder(
       builder: (context, constraints) =>
           constraints.maxWidth < 720 ? _narrow() : _wide(),
