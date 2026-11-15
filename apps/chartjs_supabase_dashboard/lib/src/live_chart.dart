@@ -539,6 +539,9 @@ class _LiveChartState()
           borderWidth: 2,
           pointRadius: 0,
           pointHoverRadius: 4,
+          // Smooth curves that do not overshoot the values, so the y range
+          // of the values in view still holds the line.
+          cubicInterpolationMode: const MonotoneCubicInterpolationMode(),
           // The points are in the internal form of Chart.js, in the order
           // of x: an update reads no row (Chart.js performance docs).
           extra: const {'parsing': false, 'normalized': true},

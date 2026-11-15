@@ -3,7 +3,8 @@
 A proof of concept of a live dashboard: one line chart of `flutter_chartjs_port` on a Supabase table.
 
 - When the page opens, it loads the newest 1000 rows of the table `metric_points` and starts the realtime channel of the table.
-- The page sends one value to the table every 500 ms. The value is a function of the time, so the rows of several open pages give one line. Supabase Realtime sends each new row to each open page, also to the page that sent it.
+- The page asks the table for a new row every 500 ms, through the database function `pump_metric`. The database makes each value (`metric_value`: smooth value noise of several time scales, with calm and busy periods, that never repeats), so the rows of all open pages give one line. The function inserts at most 40 rows a second over all clients. Supabase Realtime sends each new row to each open page, also to the page that sent it.
+- The line has monotone cubic curves (`MonotoneCubicInterpolationMode`): smooth, with no overshoot of the values.
 - The view scrolls with the clock in each frame. Its right edge is the newest time that all rows reached, so a new row comes in from the right. The y range eases to the values in view, and the time labels stay on fixed steps of time. Each frame changes only the ranges (`chart.updateRanges`), and a new row gives one full update. The points are in the internal form of Chart.js (`parsing: false`, `normalized: true`), and the live view gets only the rows of the last two widths of the view, so an update stays short with many rows in memory. The chart area keeps one size: the x axis adds no padding for its edge labels, and the y axis has a fixed width. Else the plot jumps each time a tick comes in at an edge.
 - A drag, a mouse wheel or a trackpad scroll pans the time axis. A pinch, or Ctrl and the wheel, zooms it (`flutter_chartjs_plugin_zoom_port`). When the left edge of the view comes near the oldest row in memory, the page loads the 1000 rows before it.
 - The toolbar above the chart zooms the time axis: zoom out, the widths 30 s, 2 min, 10 min and 1 h (on a wide chart), and zoom in. The live view keeps its right edge on the newest time, and the history view keeps its center.
@@ -15,7 +16,7 @@ A proof of concept of a live dashboard: one line chart of `flutter_chartjs_port`
 1. Open the SQL editor of the project and run [supabase/schema.sql](supabase/schema.sql). The script makes the table, the row level security policies and the realtime publication. It writes 6 hours of history (one value a second) into an empty table. It also schedules a `pg_cron` job that keeps the newest 200000 rows.
 2. Copy `supabase.example.json` to `supabase.json`, and write the project URL and the publishable key into it (Project Settings, API Keys). Git ignores `supabase.json`.
 
-The anon role can read the table and insert a value only: the database sets `id` and `ts`.
+The anon role can read the table and call `pump_metric`. It cannot write the table.
 
 ## Run
 

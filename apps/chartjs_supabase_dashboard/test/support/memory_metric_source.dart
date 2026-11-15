@@ -56,9 +56,9 @@ final class MemoryMetricSource({int rows = 0}) implements MetricSource {
   }
 
   @override
-  Future<int> insert(double value) async {
+  Future<int?> pump() async {
     final id = _rows.isEmpty ? 1 : _rows.last.id + 1;
-    final row = _row(id, value);
+    final row = _row(id, (id % 100).toDouble());
     _rows.add(row);
     scheduleMicrotask(() => _onInsert?.call(row));
     return id;

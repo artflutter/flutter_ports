@@ -8,8 +8,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The rows of the chart: the newest page first, the older pages on demand,
-/// and each insert of the realtime channel. It also sends a value to the
-/// table at each [pumpInterval] while [pumping] is true.
+/// and each insert of the realtime channel. It also asks the table for a
+/// new row at each [pumpInterval] while [pumping] is true: the database
+/// makes the value (`MetricSource.pump`).
 ///
 /// A gap of more than [gapThreshold] between two rows breaks the line: the
 /// chart data has a point with no value there.
@@ -25,12 +26,9 @@ final class LiveSeries(
 
   /// The longest time between two rows that the line joins.
   final Duration gapThreshold = const Duration(seconds: 10),
-  math.Random? random,
 }) extends ChangeNotifier {
   /// Creates the series of [source].
   this;
-
-  final math.Random _random = random ?? math.Random();
 
   /// The rows in the order of their ids.
   final List<MetricPoint> _rows = [];
@@ -186,24 +184,14 @@ final class LiveSeries(
     _changed();
   }
 
-  /// The value of the pump at [time]: two sine waves of the time and a
-  /// small noise. The value depends on the time, not on the last row, so
-  /// that the rows of several clients give one smooth line.
-  double nextValue([DateTime? time]) {
-    final t = (time ?? DateTime.now()).millisecondsSinceEpoch / 1000;
-    final noise = (_random.nextDouble() + _random.nextDouble() - 1) * 0.6;
-    final value = 50 + 15 * math.sin(t / 90) + 6 * math.sin(t / 13) + noise;
-    return (value * 100).roundToDouble() / 100;
-  }
-
   Future<void> _send() async {
     // A slow network gets at most 4 inserts at a time.
     if (_inFlight >= 4) return;
     _inFlight++;
     final start = DateTime.now();
     try {
-      final id = await source.insert(nextValue());
-      if (_disposed) return;
+      final id = await source.pump();
+      if (_disposed || id == null) return;
       _sent++;
       final arrived = _arrivedAt.remove(id);
       if (arrived != null) {

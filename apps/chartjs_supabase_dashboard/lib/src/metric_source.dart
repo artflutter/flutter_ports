@@ -48,8 +48,11 @@ abstract interface class MetricSource() {
   /// is the start of the data.
   Future<List<MetricPoint>> olderThan(int id, int limit);
 
-  /// Inserts [value] and gives the id of the new row.
-  Future<int> insert(double value);
+  /// Asks the table for its next row: the database makes the value, so
+  /// that the rows of all clients give one line. Gives the id of the new
+  /// row, or Dart `null` when the database skipped it (its limit of rows a
+  /// second over all clients).
+  Future<int?> pump();
 
   /// Starts the realtime channel. [onInsert] gets each new row of each
   /// client, also of this one, and [onStatus] each state of the channel.

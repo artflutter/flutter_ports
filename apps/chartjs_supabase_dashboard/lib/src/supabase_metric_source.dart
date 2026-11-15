@@ -40,13 +40,10 @@ final class SupabaseMetricSource(
   }
 
   @override
-  Future<int> insert(double value) async {
-    final row = await client
-        .from(_table)
-        .insert({'value': value})
-        .select('id')
-        .single();
-    return (row['id'] as num).toInt();
+  Future<int?> pump() async {
+    // The function of supabase/schema.sql makes the value of the row.
+    final id = await client.rpc<Object?>('pump_metric');
+    return (id as num?)?.toInt();
   }
 
   @override

@@ -611,12 +611,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
 - `apps/chartjs_supabase_dashboard`: a proof of concept of a live dashboard (web and macOS): one
   typed `ChartView` line chart on a time axis, on the Supabase table `metric_points`, with
-  `supabase_flutter`. `supabase/schema.sql` makes the table (anon reads and inserts only `value`),
-  the realtime publication, 6 hours of history and a `pg_cron` trim job. The run reads the URL and
+  `supabase_flutter`. `supabase/schema.sql` makes the table (anon reads it and writes nothing), the
+  value generator `metric_value` (value noise of several time scales, from `hashint8`), the RPC
+  `pump_metric` (inserts a row of `metric_value(now())`, at most 40 rows a second), the realtime
+  publication, 6 hours of history and a `pg_cron` trim job. The run reads the URL and
   the publishable key from `supabase.json` (`--dart-define-from-file`, git ignores it;
   `supabase.example.json` has the form). `LiveSeries` (`lib/src/live_series.dart`) loads the
   newest page of 1000 rows by `id`, merges the realtime inserts by id, loads the page before the
-  oldest row on demand, and inserts a value of the time every 500 ms. `LiveChart` moves the view
+  oldest row on demand, and calls `pump_metric` every 500 ms. `LiveChart` moves the view
   in a frame ticker: it writes `min` and `max` of the x and y scales through `scale.options` and
   calls `chart.updateRanges` (Chart.js ADR 0111). The right edge is `now` minus the longest recent
   realtime delay, the y range eases to the values in view, and a tick callback keeps the time
@@ -624,7 +626,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   listener), a drag pans it and a pinch or Ctrl and the wheel zooms it (the zoom port with
   `rangeOnlyUpdates: true`), and a left edge near the oldest row loads the next page. The config
   is built once, and each build gives only a new dataset with a new data List: the options stay
-  `==`, so the chart keeps the ranges. The points have the time in milliseconds as x, in time
+  `==`, so the chart keeps the ranges. The line has `MonotoneCubicInterpolationMode`. The points have the time in milliseconds as x, in time
   order, with `parsing: false` and `normalized: true`: an update parses no row. The live view gets
   only the rows of the last two widths of the view, and the history view holds its List until a
   page load. The toolbar above the chart (fixed height) has the note, the button Live and the zoom
