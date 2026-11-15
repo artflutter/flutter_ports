@@ -89,6 +89,21 @@ class _LiveChartState()
   /// The wheel pan of the next frame, in pixels: positive goes back.
   double _wheel = 0;
 
+  /// A timed move of the x range on an ease-in-out curve, for the button
+  /// "Live" and the zoom buttons: `from` is the range at the start, `to` the
+  /// end range, or Dart `null` for the moving live range of the width
+  /// `_window`, `ms` the duration and `start` the ticker time of the first
+  /// frame. Dart `null` with no move.
+  ({ScaleRange from, ScaleRange? to, double ms, Duration? start})? _move;
+
+  /// The fixed widths of the zoom buttons.
+  static const List<(String, double)> _ranges = [
+    ('30s', 30 * 1000),
+    ('2m', 2 * 60 * 1000),
+    ('10m', 10 * 60 * 1000),
+    ('1h', 60 * 60 * 1000),
+  ];
+
   LiveSeries get _series => widget.series;
 
   /// The data List of the chart, and the state it comes from: the List of
@@ -109,7 +124,11 @@ class _LiveChartState()
   /// does no update.
   List<DataPoint> _chartPoints() {
     final all = _series.points;
-    if (_follow) {
+    final live = _follow && _move == null;
+    if (_move != null) {
+      // The move to the live edge crosses the rows between: all of them.
+      _shown = all;
+    } else if (live) {
       if (_shownFollow == true &&
           identical(all, _shownFrom) &&
           _shownWindow == _window) {
@@ -125,7 +144,7 @@ class _LiveChartState()
       _shown = all;
     }
     _shownFrom = all;
-    _shownFollow = _follow;
+    _shownFollow = live;
     _shownPages = _series.pages;
     _shownWindow = _window;
     return _shown;
@@ -333,7 +352,29 @@ class _LiveChartState()
       toXMax = edge;
       toXMin = edge - _window;
     }
-    if ((toXMax - xMax).abs() > 2 * _window) {
+    final move = _move;
+    if (move != null) {
+      // Each frame puts the range on the curve between the start range and
+      // the end range of this frame: the live range moves with the clock.
+      final start = move.start ?? elapsed;
+      final t = ((elapsed - start).inMicroseconds / 1000 / move.ms).clamp(
+        0.0,
+        1.0,
+      );
+      final k = Curves.easeInOutCubic.transform(t);
+      if (move.to case final to?) {
+        toXMin = to.min;
+        toXMax = to.max;
+      }
+      xMin = move.from.min + (toXMin - move.from.min) * k;
+      xMax = move.from.max + (toXMax - move.from.max) * k;
+      if (t >= 1) {
+        // The live view takes its short data List again.
+        setState(() => _move = null);
+      } else {
+        _move = (from: move.from, to: move.to, ms: move.ms, start: start);
+      }
+    } else if ((toXMax - xMax).abs() > 2 * _window) {
       // A long way: no easing through the hours between.
       xMin = toXMin;
       xMax = toXMax;
@@ -377,6 +418,7 @@ class _LiveChartState()
   void _onWheel(NativeEvent event) {
     if (event.ctrlKey) return;
     event.preventDefault();
+    _stopMove();
     // deltaMode 1 counts lines, 2 pages: about 16 and 400 pixels.
     final unit = switch (event.deltaMode) {
       1 => 16.0,
@@ -395,6 +437,7 @@ class _LiveChartState()
   /// is, and follows the clock again when the right edge reaches the live
   /// edge.
   void _userPanned() {
+    _stopMove();
     final scale = _chart?.scales['x'];
     final edge = _edge();
     if (scale == null || edge == null) return;
@@ -408,6 +451,7 @@ class _LiveChartState()
   /// A pinch or Ctrl and the wheel zoomed the x range. A live view keeps its
   /// right edge on the live edge.
   void _userZoomed() {
+    _stopMove();
     final scale = _chart?.scales['x'];
     if (scale == null) return;
     final width = (scale.max - scale.min).clamp(_minWindow, _maxWindow);
@@ -436,10 +480,50 @@ class _LiveChartState()
     }
   }
 
+  /// The button "Live": a move to the live edge with the width of the
+  /// view, from 500 ms for a short way to 1400 ms for hours.
   void _backToLive() {
-    _window = _startWindow;
-    _setFollow(true);
+    final edge = _edge();
+    final xMin = _xMin;
+    final xMax = _xMax;
+    if (edge == null || xMin == null || xMax == null) return;
+    final widths = (edge - xMax).abs() / _window;
+    final ms = (500 + 300 * math.log(1 + widths) / math.ln2).clamp(
+      500.0,
+      1400.0,
+    );
+    setState(() {
+      _follow = true;
+      _move = (from: (min: xMin, max: xMax), to: null, ms: ms, start: null);
+    });
     _run();
+  }
+
+  /// Zooms the x range to [width] in 350 ms: the live view keeps its right
+  /// edge on the live edge, and the history view keeps its center.
+  void _zoomTo(double width) {
+    final xMin = _xMin;
+    final xMax = _xMax;
+    if (xMin == null || xMax == null) return;
+    final w = width.clamp(_minWindow, _maxWindow);
+    if ((w - _window).abs() < 1) return;
+    final middle = (xMin + xMax) / 2;
+    setState(() {
+      _window = w;
+      _move = (
+        from: (min: xMin, max: xMax),
+        to: _follow ? null : (min: middle - w / 2, max: middle + w / 2),
+        ms: 350,
+        start: null,
+      );
+    });
+    _run();
+  }
+
+  /// A drag, a wheel or a pinch of the user ends a move where it is.
+  void _stopMove() {
+    if (_move == null) return;
+    setState(() => _move = null);
   }
 
   @override
@@ -461,9 +545,83 @@ class _LiveChartState()
         ),
       ],
     );
-    return Stack(
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Positioned.fill(
+        // One height: the chart area does not move when "Live" shows.
+        SizedBox(
+          height: 40,
+          child: LayoutBuilder(
+            builder: (context, constraints) => Row(
+              children: [
+                Expanded(
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: _ChartNote(series: _series),
+                  ),
+                ),
+                AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 200),
+                  transitionBuilder: (child, animation) => FadeTransition(
+                    opacity: animation,
+                    child: ScaleTransition(scale: animation, child: child),
+                  ),
+                  child: _follow
+                      ? const SizedBox.shrink()
+                      : FilledButton.icon(
+                          key: const ValueKey('dashboard.live'),
+                          onPressed: _backToLive,
+                          icon: const Icon(Icons.fast_forward),
+                          label: const Text('Live'),
+                        ),
+                ),
+                const SizedBox(width: 8),
+                IconButton(
+                  key: const ValueKey('dashboard.zoom.out'),
+                  tooltip: 'Zoom out',
+                  onPressed: () => _zoomTo(_window * 2),
+                  icon: const Icon(Icons.zoom_out),
+                ),
+                // The fixed widths fit a wide chart only.
+                if (constraints.maxWidth >= 560)
+                  SegmentedButton<double>(
+                    key: const ValueKey('dashboard.ranges'),
+                    segments: [
+                      for (final (label, width) in _ranges)
+                        ButtonSegment(
+                          value: width,
+                          label: Text(
+                            label,
+                            key: ValueKey('dashboard.range.$label'),
+                          ),
+                        ),
+                    ],
+                    selected: {
+                      for (final (_, width) in _ranges)
+                        if ((width - _window).abs() < width * 0.01) width,
+                    },
+                    emptySelectionAllowed: true,
+                    showSelectedIcon: false,
+                    style: const ButtonStyle(
+                      visualDensity: VisualDensity.compact,
+                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                    ),
+                    onSelectionChanged: (selection) {
+                      if (selection.isNotEmpty) _zoomTo(selection.first);
+                    },
+                  ),
+                IconButton(
+                  key: const ValueKey('dashboard.zoom.in'),
+                  tooltip: 'Zoom in',
+                  onPressed: () => _zoomTo(_window / 2),
+                  icon: const Icon(Icons.zoom_in),
+                ),
+              ],
+            ),
+          ),
+        ),
+        const SizedBox(height: 8),
+        Expanded(
           child: ChartView(
             key: const ValueKey('dashboard.chart'),
             config: config,
@@ -472,24 +630,12 @@ class _LiveChartState()
             onChartCreated: _onChartCreated,
           ),
         ),
-        Positioned(top: 8, left: 8, child: _ChartNote(series: _series)),
-        if (!_follow)
-          Positioned(
-            top: 8,
-            right: 8,
-            child: FilledButton.icon(
-              key: const ValueKey('dashboard.live'),
-              onPressed: _backToLive,
-              icon: const Icon(Icons.fast_forward),
-              label: const Text('Live'),
-            ),
-          ),
       ],
     );
   }
 }
 
-/// The state of the history in the top left corner of the chart.
+/// The state of the history, at the left of the toolbar.
 class const _ChartNote({required final LiveSeries series})
     extends StatelessWidget {
   @override

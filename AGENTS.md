@@ -627,7 +627,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `==`, so the chart keeps the ranges. The points have the time in milliseconds as x, in time
   order, with `parsing: false` and `normalized: true`: an update parses no row. The live view gets
   only the rows of the last two widths of the view, and the history view holds its List until a
-  page load. The chart area keeps one size: an `afterFit` hook sets the label padding of the x
+  page load. The toolbar above the chart (fixed height) has the note, the button Live and the zoom
+  buttons (zoom out, 30s, 2m, 10m and 1h on a chart of 560 px or more, zoom in). Live and the
+  zoom buttons start a timed move on `Curves.easeInOutCubic` toward a fixed range or the moving
+  live range; the chart gets all rows during a move, and a drag, a wheel or a pinch stops it.
+  The chart area keeps one size: an `afterFit` hook sets the label padding of the x
   axis to 0 (the chart padding on the right holds the last label), and another one gives the y
   axis a fixed width (`test/live_chart_test.dart`). A `FrameTiming` readout in the status bar shows
   the frame rate. The tests use `test/support/memory_metric_source.dart`, with no

@@ -118,8 +118,8 @@ class _DashboardPageState() extends State<DashboardPage> {
             const SizedBox(height: 8),
             Text(
               'Drag, scroll or swipe the chart to go back in time: the '
-              'older rows load from Supabase one page at a time. Pinch, or '
-              'hold Ctrl and scroll, to zoom.',
+              'older rows load from Supabase one page at a time. Zoom with '
+              'the buttons, a pinch, or Ctrl and the wheel.',
               key: const ValueKey('dashboard.help'),
               style: Theme.of(context).textTheme.bodySmall,
             ),
