@@ -244,11 +244,13 @@ String bundle(Directory docs, String path) {
     }
   }
   // DartPad has no asset files, and `dart:io` does not run on the web: a
-  // sample that reads an asset reads it from the docs site with `http`.
+  // sample that reads an asset reads it from the docs site with `http`, and
+  // finds its content-hashed file name in `precache_manifest.json`.
   final assets = used.contains('rootBundle');
   if (assets) {
     imports
       ..remove("import 'package:flutter/services.dart';")
+      ..add("import 'dart:convert';")
       ..add("import 'package:http/http.dart' as http;");
   }
   final dartImports = imports.where((i) => i.contains("'dart:")).toList()
@@ -281,9 +283,22 @@ String bundle(Directory docs, String path) {
     out.write('''
 
 
-// DartPad has no asset files: the sample reads them from the docs site.
-Future<String> _loadAsset(String key) async =>
-    (await http.get(Uri.parse('$docsSite/assets/\$key'))).body;''');
+// DartPad has no asset files: the sample reads them from the docs site. The
+// site has content-hashed file names (--web-content-hash): the sample finds
+// the file of the key in the precache_manifest.json of the site.
+Future<String> _loadAsset(String key) async {
+  final manifest = jsonDecode(
+    (await http.get(Uri.parse('$docsSite/precache_manifest.json'))).body,
+  ) as Map<String, Object?>;
+  final hash = RegExp(r'\\.[0-9a-f]{8}(?=\\.[^./]+\$|\$)');
+  for (final entry in manifest['entries']! as List<Object?>) {
+    final url = (entry! as Map<String, Object?>)['url']! as String;
+    if (url.replaceFirst(hash, '') == 'assets/\$key') {
+      return (await http.get(Uri.parse('$docsSite/\$url'))).body;
+    }
+  }
+  throw StateError('The docs site has no file of the asset \$key.');
+}''');
   }
   out.writeln();
   return out

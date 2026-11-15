@@ -209,7 +209,9 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   `parity.md` status. It also fails when an import does not resolve. `check:port` and the CI job
   `port-checks` run it.
 - `dart run melos run docs` / `docs:build:web`: run the documentation site in Chrome / build it for the web
-  with WebAssembly.
+  with WebAssembly. Each web build (the melos scripts and the workflow `pages`) passes
+  `--web-content-hash`: the bundle and asset files get a content hash in their names, so a new build
+  misses the browser cache. No app has a deferred import: the flag does not support one.
 - `dart run melos run dashboard`: run the live Supabase dashboard sample in Chrome. It needs
   `apps/chartjs_supabase_dashboard/supabase.json` (git ignores it).
 - `dart run melos run upstream`: check out the pinned reference sources (every `third_party/`
@@ -488,15 +490,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   Shared seeded data and controls live in `lib/benchmark`, adapters in
   `lib/charts`, dashboard in `lib/ui`. One engine is mounted at a time.
   `chart_adapter.dart` imports the adapters of fl_chart, Graphic,
-  Syncfusion and apexcharts_flutter (`*_adapter.dart`) as deferred libraries.
+  Syncfusion and apexcharts_flutter (`*_adapter.dart`) as plain libraries.
   The apexcharts_flutter adapter builds the typed `ApexOptions` with its
   constructor, and its bars take a numeric x axis (a category axis draws one
-  label for each bar). The controller loads
-  one (`BenchmarkChart.load`) before its chart shows or a run starts, never
-  in a timed window. A test that draws them calls `BenchmarkChart.loadAll` in
-  `setUpAll`. The workflow `pages` and `benchmark:build:web` build with
-  `--enable-wasm-deferred-loading` when the Flutter has the flag. `web/index.html`
-  preloads the font files that the engine reads before the first frame.
+  label for each bar). `web/index.html` preloads Roboto, the fallback font
+  that the engine reads before the first frame.
   Preserve warmup/timestamp filtering, viewport/visibility cancellation and
   comparable-run keys. Engine build timing excludes some deferred work: retain
   frame-interval metrics and full-window FPS. Do not silently downsample an engine.
@@ -535,7 +533,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `flutter_chartjs_plugin_zoom_port` and `material_ui`). The tool stops on a top-level extension and on
   two declarations with one name. DartPad has no asset files: a `rootBundle.loadString` of the archive
   reads the asset from the docs site with `package:http`, because `dart:io` does not run on the
-  web. The link opens the archive with the file
+  web. It finds the content-hashed file name of the asset key in the `precache_manifest.json` of
+  the site. The link opens the archive with the file
   tree collapsed. A sample that needs an API of a later release fails in DartPad until that release is
   on pub.dev. The page tests tap each form and compare the files of the buttons with the samples that
   have a `main()`. `test/migrate_pages_test.dart` finds the button of each replica, and

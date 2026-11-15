@@ -132,18 +132,10 @@ jobs:
           flutter pub get
       - name: Build the lab for the web (WebAssembly + JavaScript fallback)
         working-directory: apps/chart_benchmark_lab
-        # With deferred loading, the code of fl_chart, Graphic and Syncfusion
-        # goes into WebAssembly modules of its own, and the page fetches each
-        # one only when it needs it. The JavaScript build always splits. The
-        # help text does not list the flag, so the step reads the tool source.
-        # A Flutter without the flag builds one module, and the page works.
+        # --web-content-hash puts a content hash into the file names of the
+        # bundle and the assets, so a new build misses the browser cache.
         run: |
-          deferred=()
-          root=$(dirname "$(dirname "$(command -v flutter)")")
-          if grep -rq -- enable-wasm-deferred-loading "$root/packages/flutter_tools/lib"; then
-            deferred=(--enable-wasm-deferred-loading)
-          fi
-          flutter build web --wasm "${deferred[@]}" \
+          flutter build web --wasm --web-content-hash \
             --base-href /flutter_ports/lab-${{ matrix.channel }}/ \
             --build-name ${{ needs.version.outputs.version }} \
             --build-number ${{ github.run_number }}
@@ -181,7 +173,7 @@ jobs:
           flutter pub get
       - name: Build the docs for the web (WebAssembly + JavaScript fallback)
         working-directory: apps/chartjs_docs
-        run: flutter build web --wasm --base-href /flutter_ports/docs/
+        run: flutter build web --wasm --web-content-hash --base-href /flutter_ports/docs/
       - name: Put the build into its folder
         run: |
           mkdir site

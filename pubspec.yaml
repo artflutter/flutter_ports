@@ -35,8 +35,8 @@ melos:
       stdio: inherit
       description: Preview the cross-library chart benchmark in Chrome.
     benchmark:build:web:
-      run: cd apps/chart_benchmark_lab && flutter build web --wasm --enable-wasm-deferred-loading
-      description: Build the chart benchmark for web with a JavaScript fallback.
+      run: cd apps/chart_benchmark_lab && flutter build web --wasm --web-content-hash
+      description: Build the chart benchmark for web with a JavaScript fallback and content-hashed file names.
     docs:
       run: cd apps/chartjs_docs && flutter run -d chrome --web-browser-flag=--enable-blink-features=ExtendedTextMetrics
       stdio: inherit
@@ -46,8 +46,8 @@ melos:
       stdio: inherit
       description: Run the live Supabase dashboard sample in Chrome (needs apps/chartjs_supabase_dashboard/supabase.json).
     docs:build:web:
-      run: cd apps/chartjs_docs && flutter build web --wasm
-      description: Build the documentation site for the web (WebAssembly with a JavaScript fallback).
+      run: cd apps/chartjs_docs && flutter build web --wasm --web-content-hash
+      description: Build the documentation site for the web (WebAssembly with a JavaScript fallback, content-hashed file names).
     format:
       run: dart format .
       description: Format all Dart code.
@@ -161,8 +161,8 @@ melos:
       stdio: inherit
       description: Run the Chart.js gallery on a connected Android/iOS device, emulator or simulator (flutter asks when there are several).
     gallery:build:web:
-      run: cd apps/chartjs_gallery && flutter build web --wasm
-      description: Build the gallery for the web (WebAssembly with a JavaScript fallback).
+      run: cd apps/chartjs_gallery && flutter build web --wasm --web-content-hash
+      description: Build the gallery for the web (WebAssembly with a JavaScript fallback, content-hashed file names).
     gallery:build:android:
       run: cd apps/chartjs_gallery && flutter build apk --debug
       description: Build a debug APK of the gallery.
