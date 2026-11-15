@@ -252,7 +252,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 
 ## Layout
 
-- `packages/flutter_chartjs_port`: the Chart.js port (library, version 0.1.0-beta.2, on pub.dev as a beta). Its layout, its internal
+- `packages/flutter_chartjs_port`: the Chart.js port (library, version 0.1.0-beta.3, on pub.dev as a beta). Its layout, its internal
   rules, its tests and its docs are in `packages/flutter_chartjs_port/AGENTS.md`. Read that file before a
   change in the package, in `packages/chartjs_test_utils`, in an add-on port or in an app that uses the
   port.
@@ -737,7 +737,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
     yet. `test --no-select` runs its tests.
 - `packages/flutter_chartjs_plugin_zoom_port`: the chartjs-plugin-zoom port (library,
-  version 0.1.0-beta.1, on pub.dev as a beta, MIT), the first add-on port (ADR 0009). Zoom phases 1-4 are
+  version 0.1.0-beta.2, on pub.dev as a beta, MIT), the first add-on port (ADR 0009). Zoom phases 1-4 are
   done (2026-11-10): each file of `src/` is ported, and the specs, the fixtures and the tests of
   real input pass. One item stays open: the device check of seam H8 on Android and iOS (Chart.js
   ADR 0108 Open 1). `doc/README.md` has the plan and the roadmap of phases 0-6. Phase 5 has the

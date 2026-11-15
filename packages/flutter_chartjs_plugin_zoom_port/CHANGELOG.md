@@ -1,3 +1,8 @@
+## 0.1.0-beta.2
+
+- README: remove the status note of the port phases.
+- pubspec: remove "Work in progress." from the description.
+
 ## 0.1.0-beta.1
 
 - The first beta release, on `flutter_chartjs_port` 0.1.0-beta.2. The API can still change
