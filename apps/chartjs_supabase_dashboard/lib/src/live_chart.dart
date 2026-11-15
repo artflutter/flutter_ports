@@ -241,11 +241,12 @@ class _LiveChartState()
     return [if (step < 60000) '$hm:${two(time.second)}' else hm];
   }
 
-  /// The time between two labels: about one label for each 100 pixels.
+  /// The time between two labels: about one label for each 100 pixels, and
+  /// at least 5 seconds.
   static double _timeStep(double range, double width) {
-    // 1, 2, 5, 10, 15 and 30 seconds, 1, 2, 5, 10, 15 and 30 minutes, 1 hour.
+    // 5, 10, 15 and 30 seconds, 1, 2, 5, 10, 15 and 30 minutes, 1 hour.
     const steps = <double>[
-      1000, 2000, 5000, 10000, 15000, 30000, 60000, //
+      5000, 10000, 15000, 30000, 60000, //
       120000, 300000, 600000, 900000, 1800000, 3600000,
     ];
     final labels = math.max(2, (width > 0 ? width : 800) / 100);

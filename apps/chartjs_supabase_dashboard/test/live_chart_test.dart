@@ -145,6 +145,25 @@ void main() {
     await close(tester, series);
   });
 
+  testWidgets('the time labels are at least 5 seconds apart', (tester) async {
+    final (series, chart) = await showChart(tester);
+
+    await tester.tap(find.byKey(const ValueKey('dashboard.range.30s')));
+    await frames(tester, 40);
+    await tester.tap(find.byKey(const ValueKey('dashboard.zoom.in')));
+    await frames(tester, 40);
+
+    final x = chart().scales['x']!;
+    expect(x.max - x.min, closeTo(15 * 1000, 1));
+    final ticks = x.ticks!;
+    expect(ticks.length, greaterThanOrEqualTo(2));
+    for (var i = 1; i < ticks.length; i++) {
+      expect(ticks[i].value - ticks[i - 1].value, greaterThanOrEqualTo(5000));
+    }
+
+    await close(tester, series);
+  });
+
   testWidgets('a range button sets the width', (tester) async {
     final (series, chart) = await showChart(tester);
 
