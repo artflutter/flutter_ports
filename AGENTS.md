@@ -681,6 +681,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   extension (H19, after its Chart.js ADR).
   - It depends on `flutter_chartjs_port` with `^0.1.0-beta.2`, which the workspace resolves to the package, and imports only its public
     libraries, `js_semantics.dart` among them (Zoom ADR 0003, Chart.js ADR 0108).
+  - Its `.pubignore` keeps `doc/`, `test/`, `tool/` and `build/` out of the archive, and
+    `example/main.dart` (a line chart that zooms and pans) is the example of the archive.
   - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library (port-only): `zoomPlugin`, the
     functions `pan`, `zoom`, `zoomRect`, `zoomScale` and `resetZoom`, the extension `ZoomChart`
     (the ten chart methods of `bindApi`, row `adapt-chart-methods-extension`), `ZoomAmount` and
