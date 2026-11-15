@@ -113,6 +113,10 @@ final class PackageVersions._({
 
   /// The lower bound of `material_ui` in the pubspec of the docs app.
   required final String materialUi,
+
+  /// The version of `http` in the lock file of the workspace: a sample that
+  /// reads an asset reads it with `http`.
+  required final String http,
 }) {
   /// The versions of the pubspecs of the repository around [docs].
   factory read(Directory docs) {
@@ -124,11 +128,19 @@ final class PackageVersions._({
       r'^  material_ui: \^(\S+)$',
       multiLine: true,
     ).firstMatch(File('${docs.path}/pubspec.yaml').readAsStringSync())![1]!;
+    final http =
+        RegExp(
+          r'^  http:\n(?:    .*\n)*?    version: "(\S+)"$',
+          multiLine: true,
+        ).firstMatch(
+          File('${docs.path}/../../pubspec.lock').readAsStringSync(),
+        )![1]!;
     final packages = '${docs.path}/../../packages';
     return PackageVersions._(
       port: version('$packages/flutter_chartjs_port/pubspec.yaml'),
       zoom: version('$packages/flutter_chartjs_plugin_zoom_port/pubspec.yaml'),
       materialUi: materialUi,
+      http: http,
     );
   }
 
@@ -137,6 +149,7 @@ final class PackageVersions._({
     'flutter_chartjs_port' => port,
     'flutter_chartjs_plugin_zoom_port' => zoom,
     'material_ui' => materialUi,
+    'http' => http,
     _ => null,
   };
 }
@@ -229,6 +242,14 @@ String bundle(Directory docs, String path) {
       if (needed) imports.add(directive);
     }
   }
+  // DartPad has no asset files, and `dart:io` does not run on the web: a
+  // sample that reads an asset reads it from the docs site with `http`.
+  final assets = used.contains('rootBundle');
+  if (assets) {
+    imports
+      ..remove("import 'package:flutter/services.dart';")
+      ..add("import 'package:http/http.dart' as http;");
+  }
   final dartImports = imports.where((i) => i.contains("'dart:")).toList()
     ..sort();
   final packageImports = imports.where((i) => !i.contains("'dart:")).toList()
@@ -255,13 +276,18 @@ String bundle(Directory docs, String path) {
       out.write(unit.cleanText);
     }
   }
+  if (assets) {
+    out.write('''
+
+
+// DartPad has no asset files: the sample reads them from the docs site.
+Future<String> _loadAsset(String key) async =>
+    (await http.get(Uri.parse('$docsSite/assets/\$key'))).body;''');
+  }
   out.writeln();
   return out
       .toString()
-      .replaceAll(
-        'rootBundle.loadString(',
-        "NetworkAssetBundle(Uri.parse('$docsSite/assets/')).loadString(",
-      )
+      .replaceAll('rootBundle.loadString(', '_loadAsset(')
       .replaceAll(RegExp(r'\n{3,}'), '\n\n');
 }
 

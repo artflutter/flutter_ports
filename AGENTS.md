@@ -532,7 +532,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   at the version of its pubspec in the repository or later (`flutter_chartjs_port`,
   `flutter_chartjs_plugin_zoom_port` and `material_ui`). The tool stops on a top-level extension and on
   two declarations with one name. DartPad has no asset files: a `rootBundle.loadString` of the archive
-  reads the asset from the docs site (`NetworkAssetBundle`). The link opens the archive with the file
+  reads the asset from the docs site with `package:http`, because `dart:io` does not run on the
+  web. The link opens the archive with the file
   tree collapsed. A sample that needs an API of a later release fails in DartPad until that release is
   on pub.dev. The page tests tap each form and compare the files of the buttons with the samples that
   have a `main()`. `test/migrate_pages_test.dart` finds the button of each replica, and

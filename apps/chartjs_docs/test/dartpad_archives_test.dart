@@ -50,7 +50,8 @@ void main() {
   test('a replica that reads an asset reads it from the docs site', () {
     final source = archives.bundle(docs, 'lib/migrate/fl_chart/s12.dart');
     expect(source, isNot(contains('rootBundle')));
-    expect(source, contains("Uri.parse('${archives.docsSite}/assets/')"));
+    expect(source, contains("import 'package:http/http.dart' as http;"));
+    expect(source, contains("Uri.parse('${archives.docsSite}/assets/\$key')"));
   });
 
   test('a unit ends at its semicolon or at the brace of its body', () {
