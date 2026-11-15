@@ -549,9 +549,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `doc/adr/`: the D3 ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:headers`, `test:web` and `test --no-select` examine the package. `check:lib-imports`,
     `check:js-semantics`, `test:cases`, `parity` and `port:next` do not examine it yet.
-- `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.0,
-  `publish_to: none` until its release, ISC), the first module package of the D3 port (D3 ADR
-  0008), as `d3-color` on npm. It depends only on Flutter (`dart:ui`, for its Flutter layer) and
+- `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.0, on pub.dev,
+  ISC), the first module package of the D3 port (D3 ADR 0008), as `d3-color` on npm. Its
+  `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive, its `analysis_options.yaml`
+  includes the rules of the root file, and `example/main.dart` is the example of the archive. Its
+  `README.md` is the README of upstream d3-color with the Dart forms, with no links, and with the
+  speed tables of `doc/performance.md`. It depends only on Flutter (`dart:ui`, for its Flutter layer) and
   imports no other port. `flutter_d3_port` depends on it with `^0.1.0`.
   - The port uses no JS runtime (D3 ADR 0007), and its values and factories are native (D3 ADR
     0010): typed `double` channels, NaN for an undefined

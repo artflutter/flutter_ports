@@ -4,8 +4,6 @@ description: >-
   CIELAB, HCL and Cubehelix color spaces of D3, with conversions to and from
   the Flutter Color. No WebView and no JavaScript.
 version: 0.1.0
-# Remove at the first release.
-publish_to: none
 repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_color_port
 issue_tracker: https://github.com/artflutter/flutter_ports/issues
 topics:
@@ -31,3 +29,6 @@ dev_dependencies:
   # The tests use package:test; flutter test runs them on the VM and in
   # Chrome. The constraint is the test constraint of flutter_chartjs_port.
   test: ^1.32.0
+  # analysis_options.yaml includes its rules, as the root file does. The
+  # constraint is the constraint of the root pubspec.
+  very_good_analysis: ^11.0.0
