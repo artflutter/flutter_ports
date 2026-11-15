@@ -155,7 +155,7 @@ class const ReplicaBlock({
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         DocBullets(demo.notes),
-        docPanel(
+        DocPanel(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [

@@ -463,9 +463,13 @@ ChartConfig liveLine(List<DataPoint> points) => ChartConfig(
 );
 
 // Give a new List in each frame:
-Widget liveLineChart(List<DataPoint> points) => ChartView(
-  config: liveLine(points),
-  updateMode: 'none',
-  dataOnlyUpdates: true,
-);
+class const LiveLineChart({required final List<DataPoint> points, super.key})
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => ChartView(
+    config: liveLine(points),
+    updateMode: 'none',
+    dataOnlyUpdates: true,
+  );
+}
 // #enddocregion live

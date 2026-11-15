@@ -199,19 +199,29 @@ class const DocTip(
 /// The border paints over the child: a child with an opaque color fills the
 /// whole rounded box, and the clip at the outer edge does not cut the arc of
 /// a border that the child covers.
-Widget docPanel({required Widget child}) => Container(
-  margin: const EdgeInsets.only(bottom: 14),
-  clipBehavior: Clip.antiAlias,
-  decoration: BoxDecoration(
-    color: Colors.white,
-    borderRadius: BorderRadius.circular(12),
-  ),
-  foregroundDecoration: BoxDecoration(
-    borderRadius: BorderRadius.circular(12),
-    border: Border.all(color: DocColors.border),
-  ),
-  child: child,
-);
+class const DocPanel({
+  /// The content of the panel.
+  required final Widget child,
+  super.key,
+}) extends StatelessWidget {
+  /// Creates a panel around [child].
+  this;
+
+  @override
+  Widget build(BuildContext context) => Container(
+    margin: const EdgeInsets.only(bottom: 14),
+    clipBehavior: Clip.antiAlias,
+    decoration: BoxDecoration(
+      color: Colors.white,
+      borderRadius: BorderRadius.circular(12),
+    ),
+    foregroundDecoration: BoxDecoration(
+      borderRadius: BorderRadius.circular(12),
+      border: Border.all(color: DocColors.border),
+    ),
+    child: child,
+  );
+}
 
 /// The code of [region]. The first build loads its source file, and a text
 /// shows until the file loads.
@@ -338,7 +348,7 @@ class const DocCode(
   this;
 
   @override
-  Widget build(BuildContext context) => docPanel(
+  Widget build(BuildContext context) => DocPanel(
     child: CodeToggle(id: region.name, region: region),
   );
 }
@@ -386,7 +396,7 @@ class _LiveExampleState() extends State<LiveExample> {
   @override
   Widget build(BuildContext context) {
     final variant = widget.variants[_selected];
-    return docPanel(
+    return DocPanel(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -451,7 +461,7 @@ class const DocTable(
   this;
 
   @override
-  Widget build(BuildContext context) => docPanel(
+  Widget build(BuildContext context) => DocPanel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -537,15 +547,33 @@ class const DocPropertyTable(
     'Default',
   ];
 
-  Widget _name(DocProperty row) => DocText(
+  @override
+  Widget build(BuildContext context) => DocPanel(
+    child: LayoutBuilder(
+      builder: (context, constraints) => constraints.maxWidth < 720
+          ? _NarrowPropertyTable(rows)
+          : _WidePropertyTable(rows),
+    ),
+  );
+}
+
+/// The name of the option of [row], a link when a section describes it.
+class const _PropertyName(final DocProperty row) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => DocText(
     row.section == null ? '`${row.name}`' : '[${row.name}](#${row.section})',
     style: const TextStyle(fontFamily: monoFont, fontSize: 12.5, height: 1.5),
   );
+}
 
-  Widget _wide() => Table(
+/// The property table on a wide screen: one column for each field.
+class const _WidePropertyTable(final List<DocProperty> rows)
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Table(
     defaultVerticalAlignment: TableCellVerticalAlignment.middle,
     columnWidths: {
-      for (final (index, flex) in _flex.indexed)
+      for (final (index, flex) in DocPropertyTable._flex.indexed)
         index: FlexColumnWidth(flex.toDouble()),
     },
     border: const TableBorder(
@@ -555,7 +583,7 @@ class const DocPropertyTable(
       TableRow(
         decoration: const BoxDecoration(color: DocColors.code),
         children: [
-          for (final header in _headers)
+          for (final header in DocPropertyTable._headers)
             Padding(
               padding: const EdgeInsets.all(10),
               child: Text(header.toUpperCase(), style: eyebrow),
@@ -565,18 +593,23 @@ class const DocPropertyTable(
       for (final row in rows)
         TableRow(
           children: [
-            _pad(_name(row)),
-            _pad(DocText(row.extra ? '`extra`' : 'Parameter', style: _small)),
-            _pad(DocText('`${row.type}`', style: _small)),
-            _pad(Text(row.scriptable ? 'Yes' : '–', style: _small)),
-            _pad(Text(row.indexable ? 'Yes' : '–', style: _small)),
-            _pad(DocText('`${row.fallback}`', style: _small)),
+            _Pad(_PropertyName(row)),
+            _Pad(DocText(row.extra ? '`extra`' : 'Parameter', style: _small)),
+            _Pad(DocText('`${row.type}`', style: _small)),
+            _Pad(Text(row.scriptable ? 'Yes' : '–', style: _small)),
+            _Pad(Text(row.indexable ? 'Yes' : '–', style: _small)),
+            _Pad(DocText('`${row.fallback}`', style: _small)),
           ],
         ),
     ],
   );
+}
 
-  Widget _narrow() => Column(
+/// The property table on a narrow screen: one block for each row.
+class const _NarrowPropertyTable(final List<DocProperty> rows)
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
       for (final (index, row) in rows.indexed)
@@ -590,7 +623,7 @@ class const DocPropertyTable(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              _name(row),
+              _PropertyName(row),
               const SizedBox(height: 4),
               DocText(
                 '`${row.type}` · ${row.extra ? 'through `extra`' : 'parameter'}'
@@ -604,19 +637,15 @@ class const DocPropertyTable(
         ),
     ],
   );
-
-  @override
-  Widget build(BuildContext context) => docPanel(
-    child: LayoutBuilder(
-      builder: (context, constraints) =>
-          constraints.maxWidth < 720 ? _narrow() : _wide(),
-    ),
-  );
 }
 
-Widget _pad(Widget child) => Padding(
-  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
-  child: child,
-);
+/// The space around a cell of the wide property table.
+class const _Pad(final Widget child) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 7),
+    child: child,
+  );
+}
 
 const TextStyle _small = TextStyle(fontSize: 12.5, height: 1.45);

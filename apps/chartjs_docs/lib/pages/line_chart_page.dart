@@ -1022,7 +1022,7 @@ class _LiveLineDemoState() extends State<LiveLineDemo> {
   }
 
   @override
-  Widget build(BuildContext context) => docPanel(
+  Widget build(BuildContext context) => DocPanel(
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -1048,7 +1048,7 @@ class _LiveLineDemoState() extends State<LiveLineDemo> {
         ),
         Padding(
           padding: const EdgeInsets.all(12),
-          child: RepaintBoundary(child: liveLineChart(_current)),
+          child: RepaintBoundary(child: LiveLineChart(points: _current)),
         ),
         const Divider(height: 1, color: DocColors.border),
         const CodeToggle(id: 'live', region: CodeRegion(examplesAsset, 'live')),

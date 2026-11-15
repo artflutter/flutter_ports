@@ -139,9 +139,9 @@ void main() {
     addTearDown(() => Chart.unregister([spy]));
     Widget view(int step) => Directionality(
       textDirection: TextDirection.ltr,
-      child: liveLineChart([
-        for (var x = 0; x < 100; x++) DataPoint(x, (x + step) % 3),
-      ]),
+      child: LiveLineChart(
+        points: [for (var x = 0; x < 100; x++) DataPoint(x, (x + step) % 3)],
+      ),
     );
     for (var step = 0; step < 3; step++) {
       await tester.pumpWidget(view(step));
