@@ -55,10 +55,11 @@ $$;
 
 -- The value at ts: noise of 40 minutes, 9 minutes, 2 minutes, 29 seconds
 -- and 7 seconds around 50, and a slow noise that makes the two fast parts
--- calm or busy. The values stay in about 20 to 80.
+-- calm or busy. The values stay in about 20 to 80. It depends on ts only,
+-- so the rows of all clients lie on one curve.
 create or replace function public.metric_value(ts timestamptz)
 returns double precision
-language sql volatile set search_path = '' as $$
+language sql immutable parallel safe set search_path = '' as $$
   select round((
       50
       + 20 * public.metric_noise(e, 2400, 101)
@@ -67,7 +68,6 @@ language sql volatile set search_path = '' as $$
       + (1 + 0.8 * public.metric_noise(e, 900, 401))
         * (2.5 * public.metric_noise(e, 29, 503)
            + 1.0 * public.metric_noise(e, 7, 601))
-      + (random() - 0.5) * 0.6
     )::numeric, 2)::double precision
   from (select extract(epoch from ts)::double precision as e) as t
 $$;
