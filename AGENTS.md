@@ -248,7 +248,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
 
 ## Layout
 
-- `packages/flutter_chartjs_port`: the Chart.js port (library, version 0.1.0). Its layout, its internal
+- `packages/flutter_chartjs_port`: the Chart.js port (library, version 0.1.0-beta.1, on pub.dev as a beta). Its layout, its internal
   rules, its tests and its docs are in `packages/flutter_chartjs_port/AGENTS.md`. Read that file before a
   change in the package, in `packages/chartjs_test_utils`, in an add-on port or in an app that uses the
   port.

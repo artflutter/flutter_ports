@@ -1,4 +1,6 @@
-## 0.1.0
+## 0.1.0-beta.1
+
+- The first beta release. The API can still change before 0.1.0.
 
 - The update mode is the extension type `UpdateMode`: `chart.update(UpdateMode.none)`, a custom
   mode `const UpdateMode('zoom')`, and `chart.updateDatasets((i) => ...)` for the function form.
