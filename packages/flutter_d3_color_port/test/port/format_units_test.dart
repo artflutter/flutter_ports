@@ -3,8 +3,9 @@
 /// The twin test of the row `adapt-color-format-units`: `formatHex`,
 /// `formatHex8`, `formatRgb`, `formatHsl` and `toString` write the code
 /// units of the text into one buffer (on the VM and in WebAssembly) or join
-/// the strings with tables (in JavaScript), and give the text of the plain
-/// translations of color.js on a large set of generated colors.
+/// the strings with tables (in JavaScript, and `formatRgb` in WebAssembly),
+/// and give the text of the plain translations of color.js on a large set
+/// of generated colors.
 library;
 
 import 'dart:math' as math;

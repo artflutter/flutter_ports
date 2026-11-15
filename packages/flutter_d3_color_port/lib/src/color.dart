@@ -851,16 +851,15 @@ class Rgb(
   @override
   String formatRgb() {
     final a = clampa(opacity);
-    if (_joinStrings) {
-      // DIVERGES(d3-color): adapt-color-format-units, the texts of 0 to 255.
-      return '${a == 1 ? 'rgb(' : 'rgba('}${_decimalTexts[clampi(r)]}, '
-          '${_decimalTexts[clampi(g)]}, ${_decimalTexts[clampi(b)]}'
-          '${a == 1 ? ')' : ', ${numberText(a)})'}';
-    }
-    // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
     final x = clampi(r);
     final y = clampi(g);
     final z = clampi(b);
+    if (_joinRgbTexts) {
+      // DIVERGES(d3-color): adapt-color-format-units, three or four texts.
+      if (a == 1) return _rgbTexts[x] + _commaTexts[y] + _closeTexts[z];
+      return _rgbaTexts[x] + _commaTexts[y] + _commaTexts[z] + _alphaText(a);
+    }
+    // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
     final units = _units;
     var p = _putOpen(units, 0x72, 0x67, 0x62, alpha: a != 1); // rgb( or rgba(
     p = _putInteger(units, p, x);
@@ -943,8 +942,7 @@ int _hundredths(double x) {
   return -1;
 }
 
-/// The decimal texts of 0 to 360: the whole part of [numberText], and the
-/// channels of [Rgb.formatRgb] in JavaScript.
+/// The decimal texts of 0 to 360: the whole part of [numberText].
 final List<String> _decimalTexts = [for (var v = 0; v <= 360; v++) '$v'];
 
 /// The texts of the fraction f / 100 for f in [1, 99], with no trailing
@@ -956,12 +954,44 @@ final List<String> _fractionTexts = [
 
 /// Whether the code runs as JavaScript (dart2js or DDC). There, the formats
 /// join strings, as upstream: the JavaScript engine joins them fast. On the
-/// VM and in WebAssembly, the formats write code units into [_units].
+/// VM and in WebAssembly, the formats write code units into [_units], except
+/// [Rgb.formatRgb] in WebAssembly ([_joinRgbTexts]).
 const bool _joinStrings =
     bool.fromEnvironment('dart.library.js_interop') && !_wasm;
 
 /// Whether the code runs as WebAssembly (dart2wasm).
 const bool _wasm = bool.fromEnvironment('dart.tool.dart2wasm');
+
+/// Whether [Rgb.formatRgb] joins three or four texts of the tables
+/// [_rgbTexts], [_rgbaTexts], [_commaTexts], [_closeTexts] and [_alphaText]:
+/// in JavaScript and in WebAssembly, where each join makes a JavaScript
+/// string, and three joins of whole texts are faster than six joins or the
+/// code units. On the VM, it writes code units into [_units].
+const bool _joinRgbTexts = _joinStrings || _wasm;
+
+/// The texts `rgb(v, ` of [Rgb.formatRgb] for v in [0, 255].
+final List<String> _rgbTexts = [for (var v = 0; v < 256; v++) 'rgb($v, '];
+
+/// The texts `rgba(v, ` of [Rgb.formatRgb] for v in [0, 255].
+final List<String> _rgbaTexts = [for (var v = 0; v < 256; v++) 'rgba($v, '];
+
+/// The texts `v, ` of [Rgb.formatRgb] for v in [0, 255].
+final List<String> _commaTexts = [for (var v = 0; v < 256; v++) '$v, '];
+
+/// The texts `v)` of [Rgb.formatRgb] for v in [0, 255].
+final List<String> _closeTexts = [for (var v = 0; v < 256; v++) '$v)'];
+
+/// The text `a)` at the end of [Rgb.formatRgb] for the opacity [a] in
+/// [0, 1]: from a table for a = k / 100, else [numberText].
+String _alphaText(double a) {
+  final k = _hundredths(a);
+  return k >= 0 && k <= 100 ? _alphaTexts[k] : '${numberText(a)})';
+}
+
+/// The texts of [_alphaText] for k / 100, k in [0, 100].
+final List<String> _alphaTexts = [
+  for (var k = 0; k <= 100; k++) '${numberText(k / 100)})',
+];
 
 /// The code units of the text of a format, before [String.fromCharCodes]
 /// makes the string: one byte each on the VM (a one-byte string), two bytes
