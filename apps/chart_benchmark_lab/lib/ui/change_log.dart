@@ -19,6 +19,16 @@ class const ChangeLogEntry(
 /// when a change of the library or of the lab moves a figure. The full records
 /// are in `doc/performance.md` of the Chart.js port.
 const List<ChangeLogEntry> changeLog = [
+  ChangeLogEntry('2026-11-15', [
+    'Lab: a fifth library, apexcharts_flutter 0.1.2, a native port of '
+        'ApexCharts 4.7.0. It has no polar area, sankey, shadow or pinch '
+        'zoom. It always draws the axis labels and the grid of a line, bar, '
+        'scatter or bubble chart, and the rings, the markers and the fill of '
+        'a radar: it runs these charts only with those features on, so that '
+        'it does not do more work than the other libraries. It alternates '
+        'only the colors of slices. A batch skips it where it cannot run the '
+        'setup.',
+  ]),
   ChangeLogEntry('2026-11-14', [
     'Web: the page fetches the code of fl_chart, Graphic and Syncfusion only '
         'when a person selects the library or a run needs it, and never '

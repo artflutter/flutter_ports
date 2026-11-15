@@ -91,6 +91,7 @@ void main() {
           reason: reason,
         );
         expect(ChartLibrary.syncfusion.runs(config), isFalse, reason: reason);
+        expect(ChartLibrary.apexCharts.runs(config), isFalse, reason: reason);
         // A sankey chart has no shadow: the setting does not apply.
         expect(config.shadows, type != ChartType.sankey, reason: reason);
       }
@@ -120,13 +121,29 @@ void main() {
         _ => false,
       };
       expect(type.hasZoom, xAxis, reason: type.name);
-      final config = BenchmarkConfig(type: type, zoom: true);
+      // The features that apexcharts_flutter always draws are on, so that
+      // only the zoom decides.
+      final config = BenchmarkConfig(
+        type: type,
+        zoom: true,
+        axes: true,
+        grid: true,
+        markers: true,
+        fill: true,
+      );
       expect(config.zooms, xAxis, reason: type.name);
       for (final library in ChartLibrary.values) {
         final reason = '${library.name} ${type.name}';
-        expect(library.zoomsWith(type), xAxis, reason: reason);
-        // Zoom stops no library: each has it on each type with an x axis.
-        expect(library.runs(config), library.supports(type), reason: reason);
+        // apexcharts_flutter has no pinch zoom, so it has no zoom here.
+        final zooms = xAxis && library != ChartLibrary.apexCharts;
+        expect(library.zoomsWith(type), zooms, reason: reason);
+        // Zoom stops only apexcharts_flutter: each other library has it on
+        // each type with an x axis.
+        expect(
+          library.runs(config),
+          library.supports(type) && (zooms || !xAxis),
+          reason: reason,
+        );
       }
     }
   });
@@ -159,11 +176,67 @@ void main() {
       'Graphic 2.7.0 has no sharp shadow on a bar chart.',
     );
     expect(ChartLibrary.graphic.runs(bar.copyWith(shadowBlur: true)), isTrue);
-    // A zoom stops no library.
+    // A zoom does not stop Syncfusion.
     expect(
       ChartLibrary.syncfusion.runs(line.copyWith(shadow: false, zoom: true)),
       isTrue,
     );
+    // apexcharts_flutter always draws the axis labels and the grid of a
+    // cartesian chart, and the rings, the markers and the fill of a radar.
+    const apex = ChartLibrary.apexCharts;
+    const plain = BenchmarkConfig();
+    expect(apex.runs(plain), isFalse);
+    expect(apex.fixedFeatures(plain), ['axes', 'grid']);
+    expect(
+      apex.reasonFor(plain),
+      'apexcharts_flutter 0.1.2 always draws the axis labels and the grid of '
+      'a line chart.',
+    );
+    expect(apex.shortReasonFor(plain), 'Always draws axes');
+    expect(
+      apex.reasonFor(plain.copyWith(axes: true)),
+      'apexcharts_flutter 0.1.2 always draws the grid of a line chart.',
+    );
+    const lined = BenchmarkConfig(axes: true, grid: true);
+    expect(apex.runs(lined), isTrue);
+    expect(
+      apex.reasonFor(radar),
+      'apexcharts_flutter 0.1.2 always draws the axis labels, the grid, the '
+      'markers and the fill of a radar chart.',
+    );
+    expect(
+      apex.runs(radar.copyWith(axes: true, grid: true, markers: true)),
+      isFalse,
+    );
+    expect(
+      apex.runs(
+        radar.copyWith(axes: true, grid: true, markers: true, fill: true),
+      ),
+      isTrue,
+    );
+    // Only its slices take alternating colors.
+    final bars = lined.copyWith(type: ChartType.bar, alternateColors: true);
+    expect(apex.runs(bars), isFalse);
+    expect(
+      apex.reasonFor(bars),
+      'apexcharts_flutter 0.1.2 has no alternating item colors on a bar '
+      'chart.',
+    );
+    expect(apex.shortReasonFor(bars), 'No item colors');
+    expect(apex.runs(bars.copyWith(type: ChartType.pie)), isTrue);
+    // It has no pinch zoom.
+    expect(apex.runs(lined.copyWith(zoom: true)), isFalse);
+    expect(
+      apex.reasonFor(lined.copyWith(zoom: true)),
+      'apexcharts_flutter 0.1.2 has no zoom and pan on a line chart.',
+    );
+    expect(apex.shortReasonFor(lined.copyWith(zoom: true)), 'No zoom here');
+    // The other libraries turn each feature off.
+    for (final library in ChartLibrary.values) {
+      if (library == apex) continue;
+      expect(library.fixedFeatures(plain), isEmpty, reason: library.name);
+      expect(library.fixedFeatures(radar), isEmpty, reason: library.name);
+    }
   });
   test('a set zoom adds a key, so earlier saved runs keep theirs', () {
     const off = BenchmarkConfig();
@@ -221,18 +294,17 @@ void main() {
     );
     expect(engineOptions(ChartLibrary.flChart, on)['zoomPlugin'], isNull);
   });
-  test('only the radar of Syncfusion has no public chart, and only the '
-      'Chart.js port has a sankey chart', () {
+  test('only the radar of Syncfusion and the polar area of '
+      'apexcharts_flutter have no public chart, and only the Chart.js port '
+      'has a sankey chart', () {
     for (final library in ChartLibrary.values) {
       for (final type in ChartType.values) {
-        expect(
-          library.supports(type),
-          type == ChartType.sankey
-              ? library == ChartLibrary.chartjs
-              : !(library == ChartLibrary.syncfusion &&
-                    type == ChartType.radar),
-          reason: '${library.name} ${type.name}',
-        );
+        expect(library.supports(type), switch (type) {
+          ChartType.sankey => library == ChartLibrary.chartjs,
+          ChartType.radar => library != ChartLibrary.syncfusion,
+          ChartType.polarArea => library != ChartLibrary.apexCharts,
+          _ => true,
+        }, reason: '${library.name} ${type.name}');
       }
     }
     const sankey = BenchmarkConfig(type: ChartType.sankey);

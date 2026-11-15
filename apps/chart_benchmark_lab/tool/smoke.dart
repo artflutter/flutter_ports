@@ -44,20 +44,20 @@ Future<void> main() async {
       for (final engine in ChartLibrary.values) {
         controller.selectLibrary(engine);
         for (final type in ChartType.values) {
-          if (!engine.supports(type)) continue;
-          visualCases++;
-          controller.configure(
-            BenchmarkConfig(
-              type: type,
-              count: 100,
-              axes: true,
-              grid: true,
-              markers: true,
-              curved: true,
-              fill: true,
-              alternateColors: true,
-            ),
+          final config = BenchmarkConfig(
+            type: type,
+            count: 100,
+            axes: true,
+            grid: true,
+            markers: true,
+            curved: true,
+            fill: true,
+            // apexcharts_flutter alternates only the colors of slices.
+            alternateColors: engine.colorsItems(type),
           );
+          if (!engine.runs(config)) continue;
+          visualCases++;
+          controller.configure(config);
           await Future<void>.delayed(const Duration(milliseconds: 400));
           if (type != ChartType.bar && type != ChartType.scatter) {
             await screenshot('${engine.name}-${type.name}');
@@ -65,9 +65,14 @@ Future<void> main() async {
         }
       }
       for (final engine in ChartLibrary.values) {
+        // apexcharts_flutter always draws the axis labels and the grid of a
+        // line chart (ChartLibrary.fixedFeatures).
+        const plain = BenchmarkConfig(count: 20000);
         controller
           ..selectLibrary(engine)
-          ..configure(const BenchmarkConfig(count: 20000));
+          ..configure(
+            engine.runs(plain) ? plain : plain.copyWith(axes: true, grid: true),
+          );
         await Future<void>.delayed(const Duration(milliseconds: 700));
         final before = controller.results.length;
         controller.start(capture: true);

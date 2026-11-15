@@ -447,9 +447,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - Each control has a `ValueKey`. A test finds a segment by its key.
 - `apps/chart_benchmark_lab`: the independent cross-library public-widget test
   bed (the eight Chart.js types and the sankey chart of chartjs-chart-sankey; Chart.js
-  port, fl_chart, Graphic and Syncfusion).
-  `ChartLibrary.supports` excludes the Syncfusion radar: that package has no radar
-  series, so the lab shows a message and a batch skips it. Do not draw a stand-in.
+  port, fl_chart, Graphic, Syncfusion and apexcharts_flutter).
+  `ChartLibrary.supports` excludes the Syncfusion radar and the apexcharts_flutter
+  polar area: these packages have no such chart, so the lab shows a message and a
+  batch skips it. Do not draw a stand-in.
   Only the Chart.js port has the sankey chart, through
   `flutter_chartjs_chart_sankey_port`: `sankeyFlows` of `lib/benchmark/data.dart` gives
   one flow for each item between nodes in three columns, and `_chartJsSankey` of the
@@ -459,13 +460,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `BenchmarkConfig.shadows`); its zoom and pan act on its hidden x scale, the node columns.
   `ChartLibrary.runs` applies the same rule to the series shadow: fl_chart draws it
   only on a line chart, Graphic only as a blurred Material elevation of a filled
-  mark, and Syncfusion not at all. The settings hide a feature that the chart type
-  does not have. A run disables the features that the settings show.
+  mark, and Syncfusion and apexcharts_flutter not at all. The settings hide a
+  feature that the chart type does not have. A run disables the features that the
+  settings show. The reverse rule: `ChartLibrary.fixedFeatures` lists the features
+  that are off in the setup and that a library still draws, and `runs` is false
+  when the list is not empty. apexcharts_flutter always draws the axis labels and
+  the grid of a cartesian chart, and the rings, the markers and the fill of a radar.
+  `ChartLibrary.colorsItems` is false where a library cannot alternate the item
+  colors: apexcharts_flutter alternates only slices.
   `ChartLibrary.zoomsWith` gives the zoom and pan of the x axis (line, bar, scatter
   and bubble): the Chart.js port through the zoom port, which the adapter registers
   only for a chart with zoom, fl_chart
   `transformationConfig`, Graphic `RectCoord.horizontalRangeUpdater` and Syncfusion
-  `ZoomPanBehavior`, each inside the data and at most `chartMaxZoom` times. The
+  `ZoomPanBehavior`, each inside the data and at most `chartMaxZoom` times.
+  apexcharts_flutter has no pinch zoom, so it has no zoom here. The
   adapter claims each wheel over a chart with zoom, so the page does not scroll
   and a test goes on. A desktop trackpad differs by library (the host of the
   Chart.js port maps it to `wheel` events while the toggle "Trackpad gestures",
@@ -474,8 +482,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   are pinned; Syncfusion is included under the owner's confirmed eligible license.
   Shared seeded data and controls live in `lib/benchmark`, adapters in
   `lib/charts`, dashboard in `lib/ui`. One engine is mounted at a time.
-  `chart_adapter.dart` imports the adapters of fl_chart, Graphic and
-  Syncfusion (`*_adapter.dart`) as deferred libraries. The controller loads
+  `chart_adapter.dart` imports the adapters of fl_chart, Graphic,
+  Syncfusion and apexcharts_flutter (`*_adapter.dart`) as deferred libraries.
+  The apexcharts_flutter adapter builds the typed `ApexOptions` with its
+  constructor, and its bars take a numeric x axis (a category axis draws one
+  label for each bar). The controller loads
   one (`BenchmarkChart.load`) before its chart shows or a run starts, never
   in a timed window. A test that draws them calls `BenchmarkChart.loadAll` in
   `setUpAll`. The workflow `pages` and `benchmark:build:web` build with

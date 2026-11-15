@@ -3,6 +3,7 @@
 // the input of a person. The input tests compare the picture of the chart
 // before and after a gesture, through the public render tree, and read the
 // scales of the Chart.js port.
+import 'package:apexcharts_flutter/apexcharts_flutter.dart' as apex;
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
@@ -29,6 +30,13 @@ final GlobalKey _boundary = GlobalKey();
 final List<ChartType> _zoomTypes = [
   for (final type in ChartType.values)
     if (type.hasZoom) type,
+];
+
+/// The libraries that zoom and pan here: apexcharts_flutter has no pinch zoom
+/// (ChartLibrary.zoomsWith).
+final List<ChartLibrary> _zoomLibraries = [
+  for (final library in ChartLibrary.values)
+    if (library.zoomsWith(ChartType.line)) library,
 ];
 
 /// [library] with [config] in a box of [_size], below a repaint boundary,
@@ -204,12 +212,16 @@ bool get _zoomRegistered => cj.registry.plugins.get(zp.zoomPlugin.id) != null;
 
 void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
-  // The code of fl_chart, Graphic and Syncfusion is deferred.
+  // The code of fl_chart, Graphic, Syncfusion and apexcharts_flutter is
+  // deferred.
   setUpAll(BenchmarkChart.loadAll);
 
   for (final library in ChartLibrary.values) {
-    // Only the Chart.js port has the sankey chart (ChartLibrary.supports).
-    for (final type in _zoomTypes.where(library.supports)) {
+    // Only the Chart.js port has the sankey chart (ChartLibrary.supports),
+    // and apexcharts_flutter has no zoom here (ChartLibrary.zoomsWith).
+    for (final type in _zoomTypes.where(
+      (type) => library.supports(type) && library.zoomsWith(type),
+    )) {
       testWidgets('${library.name} ${type.name} builds with zoom on and off', (
         tester,
       ) async {
@@ -291,6 +303,8 @@ void main() {
               } else {
                 expect(behavior, isNull, reason: reason);
               }
+            case ChartLibrary.apexCharts:
+              fail('apexcharts_flutter has no zoom here.');
           }
         }
         await _end(tester);
@@ -298,6 +312,27 @@ void main() {
       });
     }
   }
+
+  testWidgets('apexcharts_flutter shows why it has no zoom, and keeps the '
+      'zoom of the package off', (tester) async {
+    const config = BenchmarkConfig(count: 100, axes: true, grid: true);
+    await _pump(
+      tester,
+      _scene(ChartLibrary.apexCharts, config.copyWith(zoom: true)),
+    );
+    expect(find.byKey(const ValueKey('chart.unsupported')), findsOneWidget);
+    expect(find.byType(apex.ApexChart), findsNothing);
+    for (final type in _zoomTypes.where(ChartLibrary.apexCharts.supports)) {
+      await _pump(
+        tester,
+        _scene(ChartLibrary.apexCharts, config.copyWith(type: type)),
+      );
+      expect(tester.takeException(), isNull);
+      final chart = tester.widget<apex.ApexChart>(find.byType(apex.ApexChart));
+      expect(chart.options.zoom.enabled, isFalse, reason: type.name);
+    }
+    await _end(tester);
+  });
 
   testWidgets('the Chart.js port has the zoom plugin only with the toggle', (
     tester,
@@ -394,7 +429,7 @@ void main() {
 
   // The same gestures on each library, by the picture of the chart. Without
   // the toggle, the same gesture leaves the picture alone.
-  for (final library in ChartLibrary.values) {
+  for (final library in _zoomLibraries) {
     testWidgets('${library.name}: the wheel zooms only with the toggle', (
       tester,
     ) async {
@@ -457,7 +492,7 @@ void main() {
     });
   }
 
-  for (final library in ChartLibrary.values) {
+  for (final library in _zoomLibraries) {
     testWidgets('${library.name}: a wheel zoom does not scroll the page', (
       tester,
     ) async {
@@ -496,7 +531,7 @@ void main() {
   // A desktop trackpad sends pan-zoom events, not a wheel (see
   // ChartLibrary.zoomsWith): a pinch zooms fl_chart and Graphic, a vertical
   // two-finger scroll zooms Syncfusion, and the Chart.js port gets neither.
-  for (final library in ChartLibrary.values) {
+  for (final library in _zoomLibraries) {
     testWidgets('${library.name}: a trackpad pinch and scroll', (tester) async {
       const config = BenchmarkConfig(count: 100, axes: true, zoom: true);
       Future<bool> changes(Future<void> Function() gesture) async {
@@ -566,7 +601,7 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 20));
     c.configure(c.config.copyWith(zoom: true));
-    for (final library in ChartLibrary.values) {
+    for (final library in _zoomLibraries) {
       c.selectLibrary(library);
       await tester.pump(const Duration(milliseconds: 20));
       await tester.pump(const Duration(milliseconds: 20));

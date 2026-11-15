@@ -980,7 +980,13 @@ class _BenchmarkPageState()
 
   Widget _librarySelector() => LayoutBuilder(
     builder: (context, constraints) {
-      final columns = constraints.maxWidth < 620 ? 2 : 4;
+      // One row of five buttons when each label fits: the longest label is
+      // apexcharts_flutter.
+      final columns = switch (constraints.maxWidth) {
+        < 620 => 2,
+        < 860 => 3,
+        _ => ChartLibrary.values.length,
+      };
       return Wrap(
         spacing: 8,
         runSpacing: 8,
@@ -1020,6 +1026,7 @@ class _BenchmarkPageState()
                             Text(
                               engine.label,
                               maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                               style: const TextStyle(
                                 fontWeight: FontWeight.w600,
                                 color: Color(0xff17243b),

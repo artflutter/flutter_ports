@@ -14,7 +14,8 @@ import 'package:material_ui/material_ui.dart';
 
 void main() {
   setUpAll(() => cj.Chart.register(cj.registerables));
-  // The code of fl_chart, Graphic and Syncfusion is deferred.
+  // The code of fl_chart, Graphic, Syncfusion and apexcharts_flutter is
+  // deferred.
   setUpAll(BenchmarkChart.loadAll);
   for (final library in ChartLibrary.values) {
     for (final type in ChartType.values) {
@@ -30,7 +31,8 @@ void main() {
             markers: true,
             curved: true,
             fill: true,
-            alternateColors: true,
+            // apexcharts_flutter alternates only the colors of slices.
+            alternateColors: library.colorsItems(type),
             tooltips: true,
           );
           Widget scene(int step) => MaterialApp(
@@ -480,10 +482,16 @@ void main() {
     await tester.tap(feature('shadow'));
     await tester.pump(const Duration(milliseconds: 20));
     expect(feature('shadowBlur'), findsOneWidget);
-    expect(find.text('Not on fl_chart, Graphic, Syncfusion'), findsOneWidget);
+    expect(
+      find.text('Not on fl_chart, Graphic, Syncfusion, apexcharts_flutter'),
+      findsOneWidget,
+    );
     await tester.tap(feature('shadowBlur'));
     await tester.pump(const Duration(milliseconds: 20));
-    expect(find.text('Not on fl_chart, Syncfusion'), findsOneWidget);
+    expect(
+      find.text('Not on fl_chart, Syncfusion, apexcharts_flutter'),
+      findsOneWidget,
+    );
     expect(tester.takeException(), isNull);
     await tester.pumpWidget(const SizedBox());
     await tester.pump(const Duration(milliseconds: 20));
@@ -503,7 +511,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 20));
     const zoom = ValueKey('feature.zoom');
     expect(
-      find.text('X axis: touch pinch or mouse wheel zooms, drag pans'),
+      find.text(
+        'X axis: touch pinch or mouse wheel zooms, drag pans · not on '
+        'apexcharts_flutter',
+      ),
       findsOneWidget,
     );
     await tester.ensureVisible(find.byKey(zoom));

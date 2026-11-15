@@ -22,6 +22,11 @@ void _report(WidgetTester tester, List<int> timestamps) {
 
 const _seed = 7;
 
+/// A setup that each library runs. apexcharts_flutter always draws the axis
+/// labels and the grid of a line chart (ChartLibrary.fixedFeatures), so a
+/// batch without them skips it.
+const _everyLibrary = BenchmarkConfig(count: 100, axes: true, grid: true);
+
 /// The order that a controller with this random source gives to its next pass.
 List<ChartLibrary> _shuffled(Random random) =>
     ChartLibrary.values.toList()..shuffle(random);
@@ -51,7 +56,7 @@ void main() {
     try {
       c
         ..setViewport(const Size(600, 400), 2, 120)
-        ..configure(const BenchmarkConfig(count: 100));
+        ..configure(_everyLibrary);
       for (final order in [first, second]) {
         c.captureAll();
         for (final engine in order) {
@@ -78,7 +83,15 @@ void main() {
       c
         ..setViewport(const Size(600, 400), 2, 120)
         ..selectLibrary(ChartLibrary.syncfusion)
-        ..configure(const BenchmarkConfig(type: ChartType.radar, count: 100));
+        // apexcharts_flutter runs a radar only with the features that it
+        // always draws (ChartLibrary.fixedFeatures).
+        ..configure(
+          _everyLibrary.copyWith(
+            type: ChartType.radar,
+            markers: true,
+            fill: true,
+          ),
+        );
       expect(c.canRun, isFalse);
       expect(c.message, contains('has no radar chart'));
       c.start(capture: true);
@@ -87,8 +100,8 @@ void main() {
       expect(c.message, contains('has no radar chart'));
       c.captureAll();
       expect(c.batchCapturing, isTrue);
-      expect(c.batchTotal, 3);
-      for (var i = 0; i < 3; i++) {
+      expect(c.batchTotal, 4);
+      for (var i = 0; i < 4; i++) {
         expect(c.library, isNot(ChartLibrary.syncfusion));
         expect(c.batchPosition, i + 1);
         await _captureOne(tester);
@@ -100,9 +113,10 @@ void main() {
           ChartLibrary.chartjs,
           ChartLibrary.flChart,
           ChartLibrary.graphic,
+          ChartLibrary.apexCharts,
         ]),
       );
-      expect(c.message, contains('3 captures saved'));
+      expect(c.message, contains('4 captures saved'));
     } finally {
       c.dispose();
     }
@@ -116,7 +130,7 @@ void main() {
     try {
       c
         ..setViewport(const Size(600, 400), 2, 120)
-        ..configure(const BenchmarkConfig(count: 100, markers: true))
+        ..configure(_everyLibrary.copyWith(markers: true))
         ..selectLibrary(ChartLibrary.graphic)
         ..captureAll();
       int? stale;
@@ -175,7 +189,7 @@ void main() {
       try {
         c
           ..setViewport(const Size(600, 400), 2, 120)
-          ..configure(const BenchmarkConfig(count: 100))
+          ..configure(_everyLibrary)
           ..captureAll();
         await tester.pump();
         await tester.pump(const Duration(seconds: 3));
@@ -216,7 +230,7 @@ void main() {
     try {
       c
         ..setViewport(const Size(600, 400), 2, 120)
-        ..configure(const BenchmarkConfig(count: 100))
+        ..configure(_everyLibrary)
         ..captureAll();
       await tester.pump();
       await tester.pump(const Duration(seconds: 12));

@@ -33,6 +33,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.3.2+1"
+  apexcharts_flutter:
+    dependency: transitive
+    description:
+      name: apexcharts_flutter
+      sha256: "189ac3f4c69260e432fb3c299718db3d6245375c871ecd642946861db77ba90f"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.1.2"
   args:
     dependency: transitive
     description:

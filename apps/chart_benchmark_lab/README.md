@@ -1,7 +1,7 @@
 # Chart benchmark lab
 
-A separate Flutter app for comparing **Chart.js port, fl_chart, Graphic and
-Syncfusion** through their public widget APIs. It is part of the root Dart pub
+A separate Flutter app for comparing **Chart.js port, fl_chart, Graphic,
+Syncfusion and apexcharts_flutter** through their public widget APIs. It is part of the root Dart pub
 workspace and does not modify the chart library or the existing gallery.
 
 ## Run
@@ -127,13 +127,16 @@ Two tools measure this:
   changing engines resets data to the same seed/step and clears live metrics.
 - **Chart type:** the eight Chart.js types: line, vertical bar, scatter, bubble,
   pie, doughnut, polar area and radar. Each library draws each type through its
-  public API, with one exception. Syncfusion 35.1.43 has no radar or polar series.
+  public API, with two exceptions. Syncfusion 35.1.43 has no radar or polar series.
   Thus its radar shows a message, and Run and Capture are not available for it.
+  apexcharts_flutter 0.1.2 has no polar area chart. Thus its polar area shows a
+  message.
   The harness does not draw a stand-in, because that would measure the stand-in.
   A ninth type is the sankey chart of chartjs-chart-sankey, with one flow for each
   item between nodes in three columns. Only the Chart.js port has it, through
-  `flutter_chartjs_chart_sankey_port`. fl_chart 1.3.0, Graphic 2.7.0 and Syncfusion
-  35.1.43 have no sankey chart, so they show a message for it. The sankey chart takes
+  `flutter_chartjs_chart_sankey_port`. fl_chart 1.3.0, Graphic 2.7.0, Syncfusion
+  35.1.43 and apexcharts_flutter 0.1.2 have no sankey chart, so they show a message
+  for it. The sankey chart takes
   the raw config of the port: each tick of new data is a full update. It has no
   visible axes and no shadow. Zoom and pan act on its hidden x scale, the scale of the
   node columns. The option `priority` gives each node a fixed place in its
@@ -149,7 +152,14 @@ Two tools measure this:
   rotation. The settings hide a control that does not apply; its value is
   excluded from the effective configuration exported with a result. A library
   that cannot draw the shadow of a chart type shows the reason, and a batch
-  skips it.
+  skips it. The same rule applies in the other direction: a library that cannot
+  turn a feature off shows the reason, and a batch skips it. apexcharts_flutter
+  0.1.2 has no option for the axis labels and the grid of a line, bar, scatter or
+  bubble chart. It always draws both. Its radar always draws the rings, the spokes,
+  the value labels on the first spoke, a marker on each point and the fill. Thus it
+  runs these charts only with those features on. It alternates only the colors of
+  slices, so a bar, scatter or bubble chart with alternating colors does not run
+  on it (`ChartLibrary.colorsItems` and `ChartLibrary.fixedFeatures`).
 - **Zoom and pan** (line, bar, scatter, bubble and sankey; the settings hide it for
   the other types): each library zooms and pans only the x axis, through its public
   API. A touch pinch or the mouse wheel zooms, and a drag pans a zoomed chart.
@@ -161,7 +171,10 @@ Two tools measure this:
   `transformationConfig` with `FlScaleAxis.horizontal`, Graphic the
   `horizontalRangeUpdater` of `RectCoord` from `Defaults.horizontalRangeEvent`,
   with the same bounds and without its double-tap reset, and Syncfusion
-  `ZoomPanBehavior` with `ZoomMode.x`. The lab claims each wheel over a chart
+  `ZoomPanBehavior` with `ZoomMode.x`. apexcharts_flutter 0.1.2 has no pinch
+  zoom: its wheel zooms, and a drag selects a range to zoom. A drag pans only after
+  a tap on the pan tool of its toolbar. Thus it has no zoom and pan here, and it
+  shows the reason. The lab claims each wheel over a chart
   with zoom, so a wheel zoom does not scroll the page and does not stop a test:
   only the Chart.js port claims it by itself. Each test starts with a new chart
   at the full range; a zoom stays through the ticks of a live run, and a
@@ -192,9 +205,9 @@ Two tools measure this:
   Cancelling a capture saves no result. Settings are locked during captures.
 - **Capture all 10s/30s:** run every library sequentially with the same setup.
   Duration is per library; each gets its own two-second warmup and timing drain
-  (about 53 seconds total at 10s). Progress names the active engine and shows
-  1/4 through 4/4. A batch skips a library that does not have the selected type,
-  so a radar batch shows 1/3 through 3/3. Cancel, hide, scroll or resize stops the
+  (about 66 seconds total at 10s). Progress names the active engine and shows
+  1/5 through 5/5. A batch skips a library that cannot run the setup, so a radar
+  batch with the default features shows 1/3 through 3/3. Cancel, hide, scroll or resize stops the
   whole batch; already completed rows remain. Missing engine timings stop the batch
   without fake rows.
 - **Saved comparisons:** filter by matching effective configuration and capture
@@ -240,7 +253,12 @@ falling outside the engine's reported build-duration phase.
 Measurements include common data generation, public-widget data adaptation,
 layout, chart work and the small shared readout overhead. No backend is given
 an internal imperative renderer shortcut. Chart.js uses its typed `ChartView`;
-FL Chart, Graphic and Syncfusion use their public chart widgets. Chart.js
+FL Chart, Graphic and Syncfusion use their public chart widgets.
+apexcharts_flutter uses `ApexChart` with the public typed `ApexOptions`
+constructor, the model that `ApexOptions.fromJson` gives, so a tick does not
+parse a JSON Map. Its bars take a numeric x axis, with the index of each bar as
+its x value: a category axis draws one label for each bar, also at 20,000 bars.
+Each capture records this as `xAxisType` in its `engineOptions`. Chart.js
 line/scatter/bubble use `parsing: false`: the generator already supplies sorted,
 finite numeric XY points, and each `DataPoint.bubble` gives its radius as a typed
 field. This is recorded in each capture's `engineOptions`; the other types retain
@@ -269,12 +287,12 @@ interchangeable with the gallery's imperative/core-only stress timings.
 Bubble radii come from one shared formula: 2 px at the value 0 and 8 px at 100.
 The four types after the first set use these public forms:
 
-| Type | Chart.js port | fl_chart | Graphic | Syncfusion |
-| --- | --- | --- | --- | --- |
-| Bubble | `BubbleDataset` | `ScatterChart`, a radius for each spot | `PointMark`, a size for each tuple | `BubbleSeries` |
-| Doughnut | `DoughnutDataset` | `PieChart` with a center space | `IntervalMark`, a polar radius range | `DoughnutSeries` |
-| Polar area | `PolarAreaDataset` | `PieChart`, equal values, a radius for each section | `IntervalMark` in a polar coordinate (rose) | `PieSeries`, equal values, `pointRadiusMapper` |
-| Radar | `RadarDataset` | `RadarChart` | `LineMark` in a polar coordinate, `loop: true` | none |
+| Type | Chart.js port | fl_chart | Graphic | Syncfusion | apexcharts_flutter |
+| --- | --- | --- | --- | --- | --- |
+| Bubble | `BubbleDataset` | `ScatterChart`, a radius for each spot | `PointMark`, a size for each tuple | `BubbleSeries` | `ApexChartType.bubble`, the radius as `z`, `zScaling: false` |
+| Doughnut | `DoughnutDataset` | `PieChart` with a center space | `IntervalMark`, a polar radius range | `DoughnutSeries` | `ApexChartType.donut` |
+| Polar area | `PolarAreaDataset` | `PieChart`, equal values, a radius for each section | `IntervalMark` in a polar coordinate (rose) | `PieSeries`, equal values, `pointRadiusMapper` | none |
+| Radar | `RadarDataset` | `RadarChart` | `LineMark` in a polar coordinate, `loop: true` | none | `ApexChartType.radar` |
 
 Slices fill 90% of half of the short side. A doughnut has its hole at 50% of its
 outer radius. A radar fills 80%, because fl_chart fixes that share. A radar has one
@@ -290,6 +308,12 @@ spoke per item, at most 8 labels around it and circular rings at 25, 50, 75 and
   Thus its grid and markers off are transparent or zero-size draws, not fewer calls.
 - `RadarChart` of fl_chart scans all entries again for each entry that it places,
   so its work grows with the square of the item count.
+- apexcharts_flutter 0.1.2 has no option for these parts of its geometry. Its y
+  axis has no `min` or `max`: a nice scale fits the axis to the data. A scatter
+  marker has a radius of 5 px and a white border of 1 px. A slice has a white
+  border of 2 px, and a pie fills about 97% of half of the short side. A doughnut
+  draws its hole as a white circle over a pie. A radar takes the radius that its
+  labels leave, and it fills its area at an alpha of 0.2.
 
 Debug mode is visibly identified. Use profile/release builds for comparisons.
 Browser engine timing availability varies; absent timings display dashes and
@@ -305,6 +329,7 @@ Dependencies are pinned in this app and the root `pubspec.lock`:
 | fl_chart | 1.3.0 |
 | graphic | 2.7.0 |
 | syncfusion_flutter_charts | 35.1.43 |
+| apexcharts_flutter | 0.1.2 |
 
 Syncfusion is included with the project owner's confirmation of an eligible
 license. Running/distributing it requires a valid Syncfusion community or
@@ -321,7 +346,7 @@ cd apps/chart_benchmark_lab
 flutter run --profile -d macos -t tool/smoke.dart
 ```
 
-The smoke driver renders all 31 library/type combinations that have a public
+The smoke driver renders all 39 library/type combinations that have a public
 chart, saves native screenshots, and captures a 20k-item line run for each
 library. It exits with a JSON success/failure result. By default it uses the app-accessible temporary
 directory printed to stdout. `BENCH_OUTPUT` selects another output directory. The
@@ -333,5 +358,6 @@ not a published performance ranking.
 
 Tests cover deterministic full-size data, warmup/stale/end-window filtering,
 frame-gap accounting, effective comparison keys, all adapters, the missing radar
-of Syncfusion, phone/desktop layouts, library-switch persistence, capture locks and
+of Syncfusion, the missing polar area and the fixed features of apexcharts_flutter,
+phone/desktop layouts, library-switch persistence, capture locks and
 cancellation boundaries.

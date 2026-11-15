@@ -137,6 +137,10 @@ class BenchmarkResult({
       // The pin of the port of chartjs-plugin-zoom, which zooms this chart.
       if (library == ChartLibrary.chartjs && config.zooms)
         'zoomPlugin': chartjsPluginZoomVersion,
+      // The bars of apexcharts_flutter take a numeric x axis: a category
+      // axis draws one label for each bar.
+      if (library == ChartLibrary.apexCharts && config.type == ChartType.bar)
+        'xAxisType': 'numeric',
     },
     'settings': config.toJson(),
     'viewport': {'width': viewport.width, 'height': viewport.height},

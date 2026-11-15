@@ -21,19 +21,25 @@ enum ChartLibrary(
   graphic('Graphic', '2.7.0', Color(0xffb45309)),
 
   /// Syncfusion's native Flutter charts.
-  syncfusion('Syncfusion', '35.1.43', Color(0xffbe185d));
+  syncfusion('Syncfusion', '35.1.43', Color(0xffbe185d)),
+
+  /// apexcharts_flutter, a native port of ApexCharts v4.7.0 on a
+  /// `CustomPainter`.
+  apexCharts('apexcharts_flutter', '0.1.2', Color(0xff15803d));
 
   /// Whether the public API of this library can draw [type].
   ///
-  /// Syncfusion 35.1.43 has no radar or polar series. Only the Chart.js port
-  /// has a sankey chart, through `flutter_chartjs_chart_sankey_port`, the port
-  /// of chartjs-chart-sankey: fl_chart 1.3.0, Graphic 2.7.0 and Syncfusion
-  /// 35.1.43 have none. The harness does not stand in another drawing for a
-  /// missing chart, because that would measure the stand-in and not the
-  /// library.
+  /// Syncfusion 35.1.43 has no radar or polar series. apexcharts_flutter
+  /// 0.1.2 has no polar area chart. Only the Chart.js port has a sankey chart,
+  /// through `flutter_chartjs_chart_sankey_port`, the port of
+  /// chartjs-chart-sankey: fl_chart 1.3.0, Graphic 2.7.0, Syncfusion 35.1.43
+  /// and apexcharts_flutter 0.1.2 have none. The harness does not stand in
+  /// another drawing for a missing chart, because that would measure the
+  /// stand-in and not the library.
   bool supports(ChartType type) => switch (type) {
     ChartType.sankey => this == chartjs,
     ChartType.radar => this != syncfusion,
+    ChartType.polarArea => this != apexCharts,
     _ => true,
   };
 
@@ -46,13 +52,44 @@ enum ChartLibrary(
   ///
   /// fl_chart has a shadow only on the line of a line chart. Graphic has
   /// only Material elevation: it always blurs, and on a line it shadows the
-  /// filled polygon and not the stroke. Syncfusion has no public shadow.
+  /// filled polygon and not the stroke. Syncfusion and apexcharts_flutter
+  /// have no public shadow.
   bool drawsShadow(ChartType type, {required bool blur}) => switch (this) {
     chartjs => true,
     flChart => type == ChartType.line,
     graphic => blur && !type.drawsLine,
-    syncfusion => false,
+    syncfusion || apexCharts => false,
   };
+
+  /// Whether the public API of this library draws the alternating item colors
+  /// of a chart of [type] ([BenchmarkConfig.alternateColors]).
+  ///
+  /// apexcharts_flutter 0.1.2 takes one color for each series of a bar,
+  /// scatter or bubble chart, and one color for each slice of a pie or a
+  /// doughnut: only its slices alternate.
+  bool colorsItems(ChartType type) =>
+      this != apexCharts || type == ChartType.pie || type == ChartType.doughnut;
+
+  /// The features of [config] that this library cannot turn off: each one is
+  /// off in [config], and the public API of this library still draws it. The
+  /// names are short, for the reasons of [reasonFor] and [shortReasonFor].
+  ///
+  /// apexcharts_flutter 0.1.2 has no option for the axis labels and the grid
+  /// of a line, bar, scatter or bubble chart: it always draws both. Its radar
+  /// always draws the rings and the spokes, the value labels on the first
+  /// spoke, a marker on each point and the fill. A setup with such a feature
+  /// off does not run on it, because it would measure more work on this
+  /// library than on the others. This is the reverse of [drawsShadow].
+  List<String> fixedFeatures(BenchmarkConfig config) {
+    if (this != apexCharts) return const [];
+    final type = config.type;
+    return [
+      if ((type.hasAxes || type == ChartType.radar) && !config.axes) 'axes',
+      if ((type.hasAxes || type == ChartType.radar) && !config.grid) 'grid',
+      if (type == ChartType.radar && !config.markers) 'markers',
+      if (type == ChartType.radar && !config.fill) 'fill',
+    ];
+  }
 
   /// Whether the public API of this library zooms and pans the x axis of a
   /// chart of [type], with the y axis fixed.
@@ -69,6 +106,10 @@ enum ChartLibrary(
   /// - Syncfusion through `ZoomPanBehavior` of `SfCartesianChart`, with
   ///   `ZoomMode.x`.
   ///
+  /// apexcharts_flutter 0.1.2 has no pinch zoom. Its wheel zooms the x axis,
+  /// and a drag selects a range to zoom: a drag pans only after a tap on the
+  /// pan tool of its toolbar. Thus it has no zoom and pan here.
+  ///
   /// The sankey chart of the Chart.js port zooms and pans its hidden x
   /// scale, the scale of the node columns, in the same way.
   ///
@@ -84,12 +125,21 @@ enum ChartLibrary(
   /// - the host of the Chart.js port gives a trackpad scroll and pinch as
   ///   `wheel` events, as Chrome does (Chart.js ADR 0137), while
   ///   [BenchmarkConfig.trackpad] is on: a scroll and a pinch zoom it.
-  bool zoomsWith(ChartType type) => type.hasZoom;
+  bool zoomsWith(ChartType type) => this != apexCharts && type.hasZoom;
+
+  /// Whether [config] asks for alternating item colors that this library
+  /// cannot draw.
+  bool _lacksItemColors(BenchmarkConfig config) =>
+      config.alternateColors &&
+      config.type.hasItemColors &&
+      !colorsItems(config.type);
 
   /// Whether this library can run [config] with its public API.
   bool runs(BenchmarkConfig config) =>
       supports(config.type) &&
       (!config.shadows || drawsShadow(config.type, blur: config.shadowBlur)) &&
+      !_lacksItemColors(config) &&
+      fixedFeatures(config).isEmpty &&
       (!config.zooms || zoomsWith(config.type));
 
   /// The reason that [config] does not run on this library.
@@ -100,6 +150,19 @@ enum ChartLibrary(
       return '$label $version has no '
           '${config.shadowBlur ? 'blurred' : 'sharp'} shadow on a $type chart.';
     }
+    if (_lacksItemColors(config)) {
+      return '$label $version has no alternating item colors on a $type '
+          'chart.';
+    }
+    final fixed = [
+      for (final feature in fixedFeatures(config))
+        'the ${feature == 'axes' ? 'axis labels' : feature}',
+    ];
+    if (fixed.isNotEmpty) {
+      final last = fixed.removeLast();
+      final features = fixed.isEmpty ? last : '${fixed.join(', ')} and $last';
+      return '$label $version always draws $features of a $type chart.';
+    }
     return '$label $version has no zoom and pan on a $type chart.';
   }
 
@@ -108,9 +171,12 @@ enum ChartLibrary(
     if (!supports(config.type)) {
       return 'No ${config.type.label.toLowerCase()} chart';
     }
-    return config.shadows && !drawsShadow(config.type, blur: config.shadowBlur)
-        ? 'No shadow here'
-        : 'No zoom here';
+    if (config.shadows && !drawsShadow(config.type, blur: config.shadowBlur)) {
+      return 'No shadow here';
+    }
+    if (_lacksItemColors(config)) return 'No item colors';
+    final fixed = fixedFeatures(config);
+    return fixed.isNotEmpty ? 'Always draws ${fixed.first}' : 'No zoom here';
   }
 }
 

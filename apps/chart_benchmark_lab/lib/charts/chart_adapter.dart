@@ -5,9 +5,11 @@ import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart'
     show chartJsDataOnlyUpdates;
 import 'package:chart_benchmark_lab/benchmark/data.dart';
-// The three libraries other than the Chart.js port are deferred: a web build
+// The four libraries other than the Chart.js port are deferred: a web build
 // with deferred loading fetches the code of each one only when a person
 // selects it or a run needs it (BenchmarkChart.load).
+import 'package:chart_benchmark_lab/charts/apexcharts_adapter.dart'
+    deferred as apexcharts_adapter;
 import 'package:chart_benchmark_lab/charts/fl_chart_adapter.dart'
     deferred as fl_chart_adapter;
 import 'package:chart_benchmark_lab/charts/graphic_adapter.dart'
@@ -68,6 +70,7 @@ class const BenchmarkChart({
       ChartLibrary.flChart => fl_chart_adapter.loadLibrary(),
       ChartLibrary.graphic => graphic_adapter.loadLibrary(),
       ChartLibrary.syncfusion => syncfusion_adapter.loadLibrary(),
+      ChartLibrary.apexCharts => apexcharts_adapter.loadLibrary(),
     };
     _ready.add(library);
   }
@@ -121,6 +124,7 @@ class const BenchmarkChart({
   // The mouse wheel zooms on each library too. The listener of the zoom port
   // prevents the default of the wheel, and its host then claims the pointer
   // signal; fl_chart, Graphic and Syncfusion read the wheel and claim nothing.
+  // apexcharts_flutter has no zoom here (ChartLibrary.zoomsWith).
   // Thus [_claimWheel] claims each wheel over a chart with zoom: the page does
   // not scroll under a wheel zoom, and that scroll does not stop a test.
   //
@@ -215,6 +219,7 @@ class const BenchmarkChart({
       ChartLibrary.flChart => fl_chart_adapter.flChart(this),
       ChartLibrary.graphic => graphic_adapter.graphicChart(this),
       ChartLibrary.syncfusion => syncfusion_adapter.syncfusionChart(this),
+      ChartLibrary.apexCharts => apexcharts_adapter.apexChart(this),
     };
     return config.zooms
         ? Listener(onPointerSignal: _claimWheel, child: chart)
