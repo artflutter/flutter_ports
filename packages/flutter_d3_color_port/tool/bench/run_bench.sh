@@ -26,7 +26,12 @@ for t in $targets; do
     jit) "$DART" run "$here/d3_color_bench.dart" --target=jit "$@" > "$out/jit.txt" ;;
     js)
       "$DART" compile js -O4 -o "$out/build/bench.js" "$here/d3_color_bench.dart" > /dev/null
-      node -e "globalThis.self = globalThis; require('$out/build/bench.js')" -- --target=js "$@" > "$out/js.txt" ;;
+      # dart2js gives main no arguments in Node.js: dartMainRunner passes them.
+      node -e "
+        globalThis.self = globalThis;
+        globalThis.dartMainRunner = (main) => main(process.argv.slice(1));
+        require('$out/build/bench.js');
+      " -- --target=js "$@" > "$out/js.txt" ;;
     wasm)
       "$DART" compile wasm -O2 -o "$out/build/bench.wasm" "$here/d3_color_bench.dart" > /dev/null
       node --input-type=module -e "
