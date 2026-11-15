@@ -238,6 +238,31 @@ jobs:
           flutter build web --wasm \
             --base-href /flutter_ports/dashboard/${{ matrix.channel }}/ \
             --dart-define-from-file=supabase.json
+      - name: Stamp the bundle URLs with the build hash
+        working-directory: apps/chartjs_supabase_dashboard/build/web
+        # GitHub Pages lets a browser keep each file for 10 minutes. The query
+        # ?v=<hash> on the bundle URLs (the paths in the build config of
+        # flutter_bootstrap.js, and flutter_bootstrap.js in index.html) gives
+        # each new build new URLs, so the browser fetches them. The hash is the
+        # content of the bundle files: an unchanged build keeps the cache. The
+        # loader joins each path with new URL(path, document.baseURI), which
+        # keeps the query.
+        run: |
+          hash=$(cat main.dart.js main.dart.mjs main.dart.wasm | sha256sum | cut -c1-12)
+          sed -E -i \
+            -e "s/(\"mainJsPath\": ?\"main\.dart\.js)\"/\1?v=$hash\"/" \
+            -e "s/(\"mainWasmPath\": ?\"main\.dart\.wasm)\"/\1?v=$hash\"/" \
+            -e "s/(\"jsSupportRuntimePath\": ?\"main\.dart\.mjs)\"/\1?v=$hash\"/" \
+            flutter_bootstrap.js
+          sed -i "s|src=\"flutter_bootstrap.js\"|src=\"flutter_bootstrap.js?v=$hash\"|" index.html
+          # A loader of another format keeps its URLs: the build still works.
+          for url in "main.dart.js?v=$hash" "main.dart.wasm?v=$hash" "main.dart.mjs?v=$hash"; do
+            grep -qF "$url" flutter_bootstrap.js ||
+              echo "::warning::flutter_bootstrap.js has no $url: the bundle URL has no build hash."
+          done
+          grep -qF "flutter_bootstrap.js?v=$hash" index.html ||
+            echo '::warning::index.html loads flutter_bootstrap.js with no build hash.'
+          echo "Build hash: $hash"
       - name: Put the build into its folder
         run: |
           mkdir -p site/dashboard

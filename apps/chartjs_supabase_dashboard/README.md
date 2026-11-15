@@ -33,6 +33,8 @@ The script runs `flutter run -d chrome --dart-define-from-file=supabase.json` in
 
 The workflow `pages` (`.github/workflows/pages.yaml`) builds the app on the newest stable, beta and master Flutter, each with WebAssembly and the JavaScript fallback. It deploys them at `https://artflutter.github.io/flutter_ports/dashboard/stable/` (also `beta/` and `master/`). The page `https://artflutter.github.io/flutter_ports/dashboard/` (`tool/pages/dashboard.html`) has one link for each build: `?build=wasm` or `?build=js` selects the build (`web/flutter_bootstrap.js`). The builds read the project URL and the publishable key from the repository variables `SUPABASE_URL` and `SUPABASE_PUBLISHABLE_KEY`.
 
+After the build, the workflow adds `?v=<hash>` to the bundle URLs: `main.dart.js`, `main.dart.mjs` and `main.dart.wasm` in the build config of `flutter_bootstrap.js`, and `flutter_bootstrap.js` in `index.html`. The hash is the content of the bundle files, so a new build misses the cache of the browser, and an unchanged build keeps it. GitHub Pages lets a browser keep `index.html` for up to 10 minutes too, so a deploy can take that long to reach an open browser.
+
 GitHub Pages cannot send the COOP and COEP headers that the WebAssembly renderer needs. `web/isolate.js` adds them through a service worker, as in the lab. A local test of the WebAssembly build needs a server that sends them.
 
 ## Code
