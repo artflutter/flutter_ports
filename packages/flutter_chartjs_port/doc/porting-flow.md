@@ -1062,7 +1062,7 @@ and 8. Tool 1 uses allowlists:
 - The harness: the closure of `packages/chartjs_test_utils/lib/pure.dart` is a pure layer. It
   imports only pure libraries, `package:test` and the pure layers of `flutter_chartjs_port`.
 - Ported files: no import of `lib/src/theme/` ([Chart.js ADR 0147](adr/0147-public-theme-api.md) §19). `lib/`
-  never imports `material`, `cupertino`, `material_ui` or `forui`.
+  never imports `material`, `cupertino`, `material_ui`, `cupertino_ui` or `forui`.
 - An add-on port ([ADR 0009](../../../docs/adr/0009-add-on-ports.md) item 3) names its host in the
   top-level key `host` of its `tool/port_sources.yaml`. Its `lib/` and `test/` import only the
   libraries directly in the `lib/` of the host (`package:<host>/<name>.dart`), never

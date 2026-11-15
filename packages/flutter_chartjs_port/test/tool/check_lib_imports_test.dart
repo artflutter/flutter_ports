@@ -803,6 +803,7 @@ void main() {
       "import 'package:flutter/material.dart';",
       "import 'package:flutter/cupertino.dart';",
       "import 'package:material_ui/material_ui.dart';",
+      "import 'package:cupertino_ui/cupertino_ui.dart';",
       "import 'package:forui/forui.dart';",
     ]);
     expect(run(), [
@@ -819,7 +820,11 @@ void main() {
         '(Chart.js ADR 0147: no Material in lib/).',
       ),
       contains(
-        'chart_theme.dart:6: imports package:forui/forui.dart '
+        'chart_theme.dart:6: imports package:cupertino_ui/cupertino_ui.dart '
+        '(Chart.js ADR 0147: no Cupertino in lib/).',
+      ),
+      contains(
+        'chart_theme.dart:7: imports package:forui/forui.dart '
         '(Chart.js ADR 0147: no forui in lib/).',
       ),
     ]);

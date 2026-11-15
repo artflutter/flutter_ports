@@ -617,7 +617,7 @@ specs such as `controller.line.tests.js:784-799` thus run unthemed. Theme tests 
   theme row has the category `theme`. It names its section 8 test. The H4b and H4c rows say
   "added lines".
 - The import guard (porting-flow.md, tool 1) must reject an import of `src/theme/` in a ported
-  file. It keeps `lib/` free of `material`, `cupertino`, `material_ui` and `forui`. The forui
+  file. It keeps `lib/` free of `material`, `cupertino`, `material_ui`, `cupertino_ui` and `forui`. The forui
   adapter is its own package. The Material snippet lives in the gallery.
 - `dart run melos run parity` writes the `differences.md` row count by category into the `core.config` and
   `plugin.colors` rows of `parity.md`. Nobody edits these notes by hand. The status texts of these

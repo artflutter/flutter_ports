@@ -110,6 +110,7 @@ const Map<String, String> forbiddenInLib = {
   'package:flutter/material.dart': 'Chart.js ADR 0147: no Material in lib/',
   'package:flutter/cupertino.dart': 'Chart.js ADR 0147: no Cupertino in lib/',
   'package:material_ui/': 'Chart.js ADR 0147: no Material in lib/',
+  'package:cupertino_ui/': 'Chart.js ADR 0147: no Cupertino in lib/',
   'package:forui/': 'Chart.js ADR 0147: no forui in lib/',
   'dart:io': 'AGENTS.md rule 5: lib/ compiles for every platform',
   'dart:html': 'AGENTS.md rule 5: no JavaScript at runtime',
