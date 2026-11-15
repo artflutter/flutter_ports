@@ -7,14 +7,6 @@ API, the wheel and drag zoom, the pointer pan and pinch, and the scale limits. T
 the Dart chart of `flutter_chartjs_port`. The package uses no WebView, no JavaScript and no network
 access at runtime.
 
-> **Status:** phase 4 done, work in progress. Each module of the plugin is ported: the zoom and
-> pan API, the wheel and drag zoom, the pointer pan and pinch, and the plugin object with its
-> entries. The upstream specs and fixtures pass, and tests drive a `ChartView` with real pointer
-> and key input. The gallery has a zoom page. Open: a device check of the touch input on Android
-> and iOS, and the theme extension of phase 5. It is on pub.dev as a beta. The plan, the roadmap and the
-> decisions are in
-> [doc/README.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_plugin_zoom_port/doc/README.md).
-
 The port also tests the connection between a third-party plugin and the Chart.js port. The plugin
 uses only the public libraries of `flutter_chartjs_port`.
 [doc/host-seams.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_plugin_zoom_port/doc/host-seams.md)

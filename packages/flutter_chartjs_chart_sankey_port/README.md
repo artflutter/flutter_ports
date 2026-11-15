@@ -6,10 +6,6 @@ the native Dart port of Chart.js. The port translates the sankey controller, the
 the node layout to Dart. The chart runs on the Dart chart of `flutter_chartjs_port`. The package
 uses no WebView, no JavaScript and no network access at runtime.
 
-> **Status:** work in progress. Each module of the chart type is ported, and the upstream unit
-> tests and specs pass. It is not published. The plan, the roadmap and the decisions are in
-> [doc/README.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_chart_sankey_port/doc/README.md).
-
 The port also tests the public API of the Chart.js port for a chart type of another package. The
 controller and the element use only the public libraries of `flutter_chartjs_port`.
 [doc/host-seams.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_chart_sankey_port/doc/host-seams.md)

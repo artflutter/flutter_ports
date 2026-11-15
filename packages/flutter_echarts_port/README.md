@@ -7,10 +7,6 @@ layouts. Flutter draws the charts with its own canvas. The package uses no WebVi
 and no network access at runtime. The goal is one code base for every Flutter platform, also for
 web builds that compile to WebAssembly.
 
-> **Status:** phase 0, scaffold and design. The package has no ported code. It is not published.
-> The plan, the roadmap and the decisions are in
-> [doc/README.md](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_echarts_port/doc/README.md).
-
 This package is not [`flutter_echarts`](https://pub.dev/packages/flutter_echarts). That package
 runs the JavaScript ECharts in a WebView. For the ECharts packages that exist now and how they
 work, see the
