@@ -330,9 +330,6 @@ Future<void> _run(BenchmarkController c) async {
       if (!engine.supports(type)) continue;
       for (final count in counts) {
         for (final preset in presets) {
-          // A library that cannot draw the features of the preset as they
-          // are (ChartLibrary.runs) has no cell for it.
-          if (!engine.runs(_config(type, int.parse(count), preset))) continue;
           final row = await _cell(
             c,
             engine,

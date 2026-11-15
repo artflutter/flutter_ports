@@ -152,14 +152,16 @@ Two tools measure this:
   rotation. The settings hide a control that does not apply; its value is
   excluded from the effective configuration exported with a result. A library
   that cannot draw the shadow of a chart type shows the reason, and a batch
-  skips it. The same rule applies in the other direction: a library that cannot
-  turn a feature off shows the reason, and a batch skips it. apexcharts_flutter
-  0.1.2 has no option for the axis labels and the grid of a line, bar, scatter or
-  bubble chart. It always draws both. Its radar always draws the rings, the spokes,
-  the value labels on the first spoke, a marker on each point and the fill. Thus it
-  runs these charts only with those features on. It alternates only the colors of
-  slices, so a bar, scatter or bubble chart with alternating colors does not run
-  on it (`ChartLibrary.colorsItems` and `ChartLibrary.fixedFeatures`).
+  skips it. apexcharts_flutter is the exception: it runs each setup of a chart
+  type that it has, so it takes part in each batch. It draws the features that it
+  cannot turn off: the axis labels and the grid of a line, bar, scatter or bubble
+  chart, and the rings, the spokes, the value labels on the first spoke, a marker
+  on each point and the fill of a radar. It leaves out the features that it does
+  not have: the alternating colors of a bar, scatter or bubble chart (only its
+  slices alternate), the shadow and the pinch zoom. Each capture records both
+  lists in its `engineOptions`, as `alwaysDraws` and `leavesOut`
+  (`ChartLibrary.fixedFeatures` and `ChartLibrary.missingFeatures`). Where a list
+  is not empty, its row measures a different chart than the other rows.
 - **Zoom and pan** (line, bar, scatter, bubble and sankey; the settings hide it for
   the other types): each library zooms and pans only the x axis, through its public
   API. A touch pinch or the mouse wheel zooms, and a drag pans a zoomed chart.
@@ -172,9 +174,9 @@ Two tools measure this:
   `horizontalRangeUpdater` of `RectCoord` from `Defaults.horizontalRangeEvent`,
   with the same bounds and without its double-tap reset, and Syncfusion
   `ZoomPanBehavior` with `ZoomMode.x`. apexcharts_flutter 0.1.2 has no pinch
-  zoom: its wheel zooms, and a drag selects a range to zoom. A drag pans only after
-  a tap on the pan tool of its toolbar. Thus it has no zoom and pan here, and it
-  shows the reason. The lab claims each wheel over a chart
+  zoom. With the setting on, it runs with its own zoom: the wheel zooms, and a drag
+  selects a range to zoom. A drag pans only after a tap on the pan tool of its
+  toolbar. The lab claims each wheel over a chart
   with zoom, so a wheel zoom does not scroll the page and does not stop a test:
   only the Chart.js port claims it by itself. Each test starts with a new chart
   at the full range; a zoom stays through the ticks of a live run, and a
@@ -206,8 +208,8 @@ Two tools measure this:
 - **Capture all 10s/30s:** run every library sequentially with the same setup.
   Duration is per library; each gets its own two-second warmup and timing drain
   (about 66 seconds total at 10s). Progress names the active engine and shows
-  1/5 through 5/5. A batch skips a library that cannot run the setup, so a radar
-  batch with the default features shows 1/3 through 3/3. Cancel, hide, scroll or resize stops the
+  1/5 through 5/5. A batch skips a library that does not have the selected type,
+  so a radar batch shows 1/4 through 4/4. Cancel, hide, scroll or resize stops the
   whole batch; already completed rows remain. Missing engine timings stop the batch
   without fake rows.
 - **Saved comparisons:** filter by matching effective configuration and capture

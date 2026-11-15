@@ -21,13 +21,13 @@ class const ChangeLogEntry(
 const List<ChangeLogEntry> changeLog = [
   ChangeLogEntry('2026-11-15', [
     'Lab: a fifth library, apexcharts_flutter 0.1.2, a native port of '
-        'ApexCharts 4.7.0. It has no polar area, sankey, shadow or pinch '
-        'zoom. It always draws the axis labels and the grid of a line, bar, '
-        'scatter or bubble chart, and the rings, the markers and the fill of '
-        'a radar: it runs these charts only with those features on, so that '
-        'it does not do more work than the other libraries. It alternates '
-        'only the colors of slices. A batch skips it where it cannot run the '
-        'setup.',
+        'ApexCharts 4.7.0. It has no polar area or sankey chart. It runs each '
+        'other setup, so it takes part in each batch. It always draws the '
+        'axis labels and the grid of a line, bar, scatter or bubble chart, '
+        'and the rings, the markers and the fill of a radar, also when they '
+        'are off. It has no shadow and no pinch zoom, and it alternates only '
+        'the colors of slices. Each capture records these differences, so '
+        'its rows can measure a different chart than the other rows.',
   ]),
   ChangeLogEntry('2026-11-14', [
     'Web: the page fetches the code of fl_chart, Graphic and Syncfusion only '

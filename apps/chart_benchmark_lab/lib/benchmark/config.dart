@@ -70,16 +70,15 @@ enum ChartLibrary(
   bool colorsItems(ChartType type) =>
       this != apexCharts || type == ChartType.pie || type == ChartType.doughnut;
 
-  /// The features of [config] that this library cannot turn off: each one is
-  /// off in [config], and the public API of this library still draws it. The
-  /// names are short, for the reasons of [reasonFor] and [shortReasonFor].
+  /// The features that are off in [config] and that this library still
+  /// draws, because its public API cannot turn them off.
   ///
   /// apexcharts_flutter 0.1.2 has no option for the axis labels and the grid
   /// of a line, bar, scatter or bubble chart: it always draws both. Its radar
   /// always draws the rings and the spokes, the value labels on the first
-  /// spoke, a marker on each point and the fill. A setup with such a feature
-  /// off does not run on it, because it would measure more work on this
-  /// library than on the others. This is the reverse of [drawsShadow].
+  /// spoke, a marker on each point and the fill. It still runs such a setup
+  /// ([runs]), and a capture records the list (`alwaysDraws` of the
+  /// `engineOptions`).
   List<String> fixedFeatures(BenchmarkConfig config) {
     if (this != apexCharts) return const [];
     final type = config.type;
@@ -88,6 +87,24 @@ enum ChartLibrary(
       if ((type.hasAxes || type == ChartType.radar) && !config.grid) 'grid',
       if (type == ChartType.radar && !config.markers) 'markers',
       if (type == ChartType.radar && !config.fill) 'fill',
+    ];
+  }
+
+  /// The features that are on in [config] and that apexcharts_flutter leaves
+  /// out, because its public API has no such feature: the alternating colors
+  /// of a bar, scatter or bubble chart, the shadow and the pinch zoom. It
+  /// still runs such a setup ([runs]), and a capture records the list
+  /// (`leavesOut` of the `engineOptions`). Another library does not run such
+  /// a setup, so its list is always empty.
+  List<String> missingFeatures(BenchmarkConfig config) {
+    if (this != apexCharts) return const [];
+    return [
+      if (config.alternateColors &&
+          config.type.hasItemColors &&
+          !colorsItems(config.type))
+        'alternateColors',
+      if (config.shadows) 'shadow',
+      if (config.zooms) 'pinchZoom',
     ];
   }
 
@@ -108,7 +125,8 @@ enum ChartLibrary(
   ///
   /// apexcharts_flutter 0.1.2 has no pinch zoom. Its wheel zooms the x axis,
   /// and a drag selects a range to zoom: a drag pans only after a tap on the
-  /// pan tool of its toolbar. Thus it has no zoom and pan here.
+  /// pan tool of its toolbar. Thus this is false for it. It still runs a setup
+  /// with zoom, with that zoom of its own ([runs]).
   ///
   /// The sankey chart of the Chart.js port zooms and pans its hidden x
   /// scale, the scale of the node columns, in the same way.
@@ -127,20 +145,19 @@ enum ChartLibrary(
   ///   [BenchmarkConfig.trackpad] is on: a scroll and a pinch zoom it.
   bool zoomsWith(ChartType type) => this != apexCharts && type.hasZoom;
 
-  /// Whether [config] asks for alternating item colors that this library
-  /// cannot draw.
-  bool _lacksItemColors(BenchmarkConfig config) =>
-      config.alternateColors &&
-      config.type.hasItemColors &&
-      !colorsItems(config.type);
-
   /// Whether this library can run [config] with its public API.
+  ///
+  /// apexcharts_flutter runs each setup of a chart type that it has, so that
+  /// it takes part in each batch: it draws the features that it cannot turn
+  /// off ([fixedFeatures]) and leaves out the features that it has not
+  /// ([missingFeatures]). Another library does not run a setup with a shadow
+  /// or a zoom that it cannot draw.
   bool runs(BenchmarkConfig config) =>
       supports(config.type) &&
-      (!config.shadows || drawsShadow(config.type, blur: config.shadowBlur)) &&
-      !_lacksItemColors(config) &&
-      fixedFeatures(config).isEmpty &&
-      (!config.zooms || zoomsWith(config.type));
+      (this == apexCharts ||
+          (!config.shadows ||
+                  drawsShadow(config.type, blur: config.shadowBlur)) &&
+              (!config.zooms || zoomsWith(config.type)));
 
   /// The reason that [config] does not run on this library.
   String reasonFor(BenchmarkConfig config) {
@@ -150,19 +167,6 @@ enum ChartLibrary(
       return '$label $version has no '
           '${config.shadowBlur ? 'blurred' : 'sharp'} shadow on a $type chart.';
     }
-    if (_lacksItemColors(config)) {
-      return '$label $version has no alternating item colors on a $type '
-          'chart.';
-    }
-    final fixed = [
-      for (final feature in fixedFeatures(config))
-        'the ${feature == 'axes' ? 'axis labels' : feature}',
-    ];
-    if (fixed.isNotEmpty) {
-      final last = fixed.removeLast();
-      final features = fixed.isEmpty ? last : '${fixed.join(', ')} and $last';
-      return '$label $version always draws $features of a $type chart.';
-    }
     return '$label $version has no zoom and pan on a $type chart.';
   }
 
@@ -171,12 +175,9 @@ enum ChartLibrary(
     if (!supports(config.type)) {
       return 'No ${config.type.label.toLowerCase()} chart';
     }
-    if (config.shadows && !drawsShadow(config.type, blur: config.shadowBlur)) {
-      return 'No shadow here';
-    }
-    if (_lacksItemColors(config)) return 'No item colors';
-    final fixed = fixedFeatures(config);
-    return fixed.isNotEmpty ? 'Always draws ${fixed.first}' : 'No zoom here';
+    return config.shadows && !drawsShadow(config.type, blur: config.shadowBlur)
+        ? 'No shadow here'
+        : 'No zoom here';
   }
 }
 

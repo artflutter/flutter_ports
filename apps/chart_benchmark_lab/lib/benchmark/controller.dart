@@ -141,6 +141,14 @@ class BenchmarkResult({
       // axis draws one label for each bar.
       if (library == ChartLibrary.apexCharts && config.type == ChartType.bar)
         'xAxisType': 'numeric',
+      // apexcharts_flutter runs each setup: the features that it draws
+      // although they are off, and the features that it leaves out although
+      // they are on.
+      if (library.fixedFeatures(config) case final fixed when fixed.isNotEmpty)
+        'alwaysDraws': fixed,
+      if (library.missingFeatures(config) case final missing
+          when missing.isNotEmpty)
+        'leavesOut': missing,
     },
     'settings': config.toJson(),
     'viewport': {'width': viewport.width, 'height': viewport.height},

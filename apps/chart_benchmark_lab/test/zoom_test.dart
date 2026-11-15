@@ -32,7 +32,8 @@ final List<ChartType> _zoomTypes = [
     if (type.hasZoom) type,
 ];
 
-/// The libraries that zoom and pan here: apexcharts_flutter has no pinch zoom
+/// The libraries with the pinch zoom and the drag pan of the lab:
+/// apexcharts_flutter has no pinch zoom, and its drag selects a range
 /// (ChartLibrary.zoomsWith).
 final List<ChartLibrary> _zoomLibraries = [
   for (final library in ChartLibrary.values)
@@ -313,23 +314,24 @@ void main() {
     }
   }
 
-  testWidgets('apexcharts_flutter shows why it has no zoom, and keeps the '
-      'zoom of the package off', (tester) async {
-    const config = BenchmarkConfig(count: 100, axes: true, grid: true);
-    await _pump(
-      tester,
-      _scene(ChartLibrary.apexCharts, config.copyWith(zoom: true)),
-    );
-    expect(find.byKey(const ValueKey('chart.unsupported')), findsOneWidget);
-    expect(find.byType(apex.ApexChart), findsNothing);
+  testWidgets('apexcharts_flutter runs with its own zoom only with the '
+      'toggle', (tester) async {
     for (final type in _zoomTypes.where(ChartLibrary.apexCharts.supports)) {
-      await _pump(
-        tester,
-        _scene(ChartLibrary.apexCharts, config.copyWith(type: type)),
-      );
-      expect(tester.takeException(), isNull);
-      final chart = tester.widget<apex.ApexChart>(find.byType(apex.ApexChart));
-      expect(chart.options.zoom.enabled, isFalse, reason: type.name);
+      for (final zoom in [true, false]) {
+        await _pump(
+          tester,
+          _scene(
+            ChartLibrary.apexCharts,
+            BenchmarkConfig(type: type, count: 100, zoom: zoom),
+          ),
+        );
+        expect(tester.takeException(), isNull);
+        expect(find.byKey(const ValueKey('chart.unsupported')), findsNothing);
+        final chart = tester.widget<apex.ApexChart>(
+          find.byType(apex.ApexChart),
+        );
+        expect(chart.options.zoom.enabled, zoom, reason: '${type.name} $zoom');
+      }
     }
     await _end(tester);
   });
@@ -601,7 +603,7 @@ void main() {
     );
     await tester.pump(const Duration(milliseconds: 20));
     c.configure(c.config.copyWith(zoom: true));
-    for (final library in _zoomLibraries) {
+    for (final library in ChartLibrary.values) {
       c.selectLibrary(library);
       await tester.pump(const Duration(milliseconds: 20));
       await tester.pump(const Duration(milliseconds: 20));

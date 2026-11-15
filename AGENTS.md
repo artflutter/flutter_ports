@@ -462,18 +462,21 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   only on a line chart, Graphic only as a blurred Material elevation of a filled
   mark, and Syncfusion and apexcharts_flutter not at all. The settings hide a
   feature that the chart type does not have. A run disables the features that the
-  settings show. The reverse rule: `ChartLibrary.fixedFeatures` lists the features
-  that are off in the setup and that a library still draws, and `runs` is false
-  when the list is not empty. apexcharts_flutter always draws the axis labels and
-  the grid of a cartesian chart, and the rings, the markers and the fill of a radar.
-  `ChartLibrary.colorsItems` is false where a library cannot alternate the item
-  colors: apexcharts_flutter alternates only slices.
+  settings show. apexcharts_flutter is the exception: `runs` is true for each setup
+  of a type that it has, so it takes part in each batch. `ChartLibrary.fixedFeatures`
+  lists the features that are off and that it still draws (the axis labels and the
+  grid of a cartesian chart, and the rings, the markers and the fill of a radar).
+  `ChartLibrary.missingFeatures` lists the features that are on and that it leaves
+  out (the alternating colors of a bar, scatter or bubble chart, the shadow and the
+  pinch zoom). Each capture records them as `alwaysDraws` and `leavesOut` in its
+  `engineOptions`.
   `ChartLibrary.zoomsWith` gives the zoom and pan of the x axis (line, bar, scatter
   and bubble): the Chart.js port through the zoom port, which the adapter registers
   only for a chart with zoom, fl_chart
   `transformationConfig`, Graphic `RectCoord.horizontalRangeUpdater` and Syncfusion
   `ZoomPanBehavior`, each inside the data and at most `chartMaxZoom` times.
-  apexcharts_flutter has no pinch zoom, so it has no zoom here. The
+  apexcharts_flutter has no pinch zoom, so `zoomsWith` is false for it: with zoom
+  on, it runs with its own wheel zoom and drag selection. The
   adapter claims each wheel over a chart with zoom, so the page does not scroll
   and a test goes on. A desktop trackpad differs by library (the host of the
   Chart.js port maps it to `wheel` events while the toggle "Trackpad gestures",

@@ -31,8 +31,7 @@ void main() {
             markers: true,
             curved: true,
             fill: true,
-            // apexcharts_flutter alternates only the colors of slices.
-            alternateColors: library.colorsItems(type),
+            alternateColors: true,
             tooltips: true,
           );
           Widget scene(int step) => MaterialApp(
@@ -376,7 +375,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('capture.all')));
     await tester.pump(const Duration(milliseconds: 20));
     expect(c.library, isNot(ChartLibrary.syncfusion));
-    expect(find.text('Cancel all (1/3)'), findsOneWidget);
+    expect(find.text('Cancel all (1/4)'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('capture.all')));
     await tester.pump(const Duration(milliseconds: 20));
     expect(c.batchCapturing, isFalse);
@@ -631,7 +630,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('capture.all')));
     await tester.pump(const Duration(milliseconds: 20));
     expect(c.batchCapturing, isTrue);
-    expect(find.text('Cancel all (1/4)'), findsOneWidget);
+    expect(find.text('Cancel all (1/5)'), findsOneWidget);
     expect(
       tester
           .widget<OutlinedButton>(find.byKey(const ValueKey('library.flChart')))

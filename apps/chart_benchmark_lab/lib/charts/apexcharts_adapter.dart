@@ -40,6 +40,12 @@ extension on BenchmarkChart {
   /// constructor, so that each tick pays for no parse of a JSON Map: the
   /// other libraries also get typed objects.
   ///
+  /// The chart runs each setup ([ChartLibrary.runs]). It leaves out what the
+  /// package has not ([ChartLibrary.missingFeatures]): the alternating colors
+  /// of a bar, scatter or bubble chart, the shadow and the pinch zoom. With
+  /// zoom on, it has the zoom of the package: the wheel and a drag that
+  /// selects a range.
+  ///
   /// The package draws with its own geometry, and some of it has no option:
   /// - it always draws the grid and the axis labels of a line, bar, scatter
   ///   or bubble chart, and the rings, the spokes, the markers and the fill
@@ -134,6 +140,9 @@ extension on BenchmarkChart {
         bar: const apex.ApexBarOptions(columnWidthFraction: .8),
         // The radius of each bubble is its z value, with no scale.
         bubble: const apex.ApexBubbleOptions(zScaling: false),
+        // Its own zoom: the wheel zooms, a drag selects a range to zoom, and
+        // the toolbar has a pan tool. It has no pinch zoom.
+        zoom: apex.ApexZoom(enabled: config.zooms),
         legend: const apex.ApexLegend(position: apex.ApexLegendPosition.none),
         animations: const apex.ApexAnimations(enabled: false),
       ),

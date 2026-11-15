@@ -22,11 +22,6 @@ void _report(WidgetTester tester, List<int> timestamps) {
 
 const _seed = 7;
 
-/// A setup that each library runs. apexcharts_flutter always draws the axis
-/// labels and the grid of a line chart (ChartLibrary.fixedFeatures), so a
-/// batch without them skips it.
-const _everyLibrary = BenchmarkConfig(count: 100, axes: true, grid: true);
-
 /// The order that a controller with this random source gives to its next pass.
 List<ChartLibrary> _shuffled(Random random) =>
     ChartLibrary.values.toList()..shuffle(random);
@@ -56,7 +51,7 @@ void main() {
     try {
       c
         ..setViewport(const Size(600, 400), 2, 120)
-        ..configure(_everyLibrary);
+        ..configure(const BenchmarkConfig(count: 100));
       for (final order in [first, second]) {
         c.captureAll();
         for (final engine in order) {
@@ -83,15 +78,7 @@ void main() {
       c
         ..setViewport(const Size(600, 400), 2, 120)
         ..selectLibrary(ChartLibrary.syncfusion)
-        // apexcharts_flutter runs a radar only with the features that it
-        // always draws (ChartLibrary.fixedFeatures).
-        ..configure(
-          _everyLibrary.copyWith(
-            type: ChartType.radar,
-            markers: true,
-            fill: true,
-          ),
-        );
+        ..configure(const BenchmarkConfig(type: ChartType.radar, count: 100));
       expect(c.canRun, isFalse);
       expect(c.message, contains('has no radar chart'));
       c.start(capture: true);
@@ -130,7 +117,7 @@ void main() {
     try {
       c
         ..setViewport(const Size(600, 400), 2, 120)
-        ..configure(_everyLibrary.copyWith(markers: true))
+        ..configure(const BenchmarkConfig(count: 100, markers: true))
         ..selectLibrary(ChartLibrary.graphic)
         ..captureAll();
       int? stale;
@@ -189,7 +176,7 @@ void main() {
       try {
         c
           ..setViewport(const Size(600, 400), 2, 120)
-          ..configure(_everyLibrary)
+          ..configure(const BenchmarkConfig(count: 100))
           ..captureAll();
         await tester.pump();
         await tester.pump(const Duration(seconds: 3));
@@ -230,7 +217,7 @@ void main() {
     try {
       c
         ..setViewport(const Size(600, 400), 2, 120)
-        ..configure(_everyLibrary)
+        ..configure(const BenchmarkConfig(count: 100))
         ..captureAll();
       await tester.pump();
       await tester.pump(const Duration(seconds: 12));

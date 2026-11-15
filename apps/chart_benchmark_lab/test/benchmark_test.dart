@@ -91,7 +91,12 @@ void main() {
           reason: reason,
         );
         expect(ChartLibrary.syncfusion.runs(config), isFalse, reason: reason);
-        expect(ChartLibrary.apexCharts.runs(config), isFalse, reason: reason);
+        // apexcharts_flutter runs each setup, with no shadow.
+        expect(
+          ChartLibrary.apexCharts.runs(config),
+          ChartLibrary.apexCharts.supports(type),
+          reason: reason,
+        );
         // A sankey chart has no shadow: the setting does not apply.
         expect(config.shadows, type != ChartType.sankey, reason: reason);
       }
@@ -137,13 +142,8 @@ void main() {
         // apexcharts_flutter has no pinch zoom, so it has no zoom here.
         final zooms = xAxis && library != ChartLibrary.apexCharts;
         expect(library.zoomsWith(type), zooms, reason: reason);
-        // Zoom stops only apexcharts_flutter: each other library has it on
-        // each type with an x axis.
-        expect(
-          library.runs(config),
-          library.supports(type) && (zooms || !xAxis),
-          reason: reason,
-        );
+        // Zoom stops no library: apexcharts_flutter runs with its own zoom.
+        expect(library.runs(config), library.supports(type), reason: reason);
       }
     }
   });
@@ -181,61 +181,48 @@ void main() {
       ChartLibrary.syncfusion.runs(line.copyWith(shadow: false, zoom: true)),
       isTrue,
     );
-    // apexcharts_flutter always draws the axis labels and the grid of a
-    // cartesian chart, and the rings, the markers and the fill of a radar.
+    // apexcharts_flutter runs each setup of a type that it has. It lists
+    // the features that it draws although they are off, and the features
+    // that it leaves out although they are on.
     const apex = ChartLibrary.apexCharts;
     const plain = BenchmarkConfig();
-    expect(apex.runs(plain), isFalse);
+    expect(apex.runs(plain), isTrue);
     expect(apex.fixedFeatures(plain), ['axes', 'grid']);
-    expect(
-      apex.reasonFor(plain),
-      'apexcharts_flutter 0.1.2 always draws the axis labels and the grid of '
-      'a line chart.',
+    expect(apex.missingFeatures(plain), isEmpty);
+    expect(apex.fixedFeatures(plain.copyWith(axes: true, grid: true)), isEmpty);
+    expect(apex.runs(radar), isTrue);
+    expect(apex.fixedFeatures(radar), ['axes', 'grid', 'markers', 'fill']);
+    expect(apex.fixedFeatures(radar.copyWith(type: ChartType.pie)), isEmpty);
+    final every = plain.copyWith(
+      type: ChartType.bar,
+      alternateColors: true,
+      shadow: true,
+      zoom: true,
     );
-    expect(apex.shortReasonFor(plain), 'Always draws axes');
+    expect(apex.runs(every), isTrue);
+    expect(apex.missingFeatures(every), [
+      'alternateColors',
+      'shadow',
+      'pinchZoom',
+    ]);
+    // Its slices alternate.
     expect(
-      apex.reasonFor(plain.copyWith(axes: true)),
-      'apexcharts_flutter 0.1.2 always draws the grid of a line chart.',
+      apex.missingFeatures(
+        const BenchmarkConfig(type: ChartType.pie, alternateColors: true),
+      ),
+      isEmpty,
     );
-    const lined = BenchmarkConfig(axes: true, grid: true);
-    expect(apex.runs(lined), isTrue);
     expect(
-      apex.reasonFor(radar),
-      'apexcharts_flutter 0.1.2 always draws the axis labels, the grid, the '
-      'markers and the fill of a radar chart.',
-    );
-    expect(
-      apex.runs(radar.copyWith(axes: true, grid: true, markers: true)),
+      apex.runs(const BenchmarkConfig(type: ChartType.polarArea)),
       isFalse,
     );
-    expect(
-      apex.runs(
-        radar.copyWith(axes: true, grid: true, markers: true, fill: true),
-      ),
-      isTrue,
-    );
-    // Only its slices take alternating colors.
-    final bars = lined.copyWith(type: ChartType.bar, alternateColors: true);
-    expect(apex.runs(bars), isFalse);
-    expect(
-      apex.reasonFor(bars),
-      'apexcharts_flutter 0.1.2 has no alternating item colors on a bar '
-      'chart.',
-    );
-    expect(apex.shortReasonFor(bars), 'No item colors');
-    expect(apex.runs(bars.copyWith(type: ChartType.pie)), isTrue);
-    // It has no pinch zoom.
-    expect(apex.runs(lined.copyWith(zoom: true)), isFalse);
-    expect(
-      apex.reasonFor(lined.copyWith(zoom: true)),
-      'apexcharts_flutter 0.1.2 has no zoom and pan on a line chart.',
-    );
-    expect(apex.shortReasonFor(lined.copyWith(zoom: true)), 'No zoom here');
-    // The other libraries turn each feature off.
+    // The other libraries draw each setup that they run as it is.
     for (final library in ChartLibrary.values) {
       if (library == apex) continue;
-      expect(library.fixedFeatures(plain), isEmpty, reason: library.name);
-      expect(library.fixedFeatures(radar), isEmpty, reason: library.name);
+      for (final config in [plain, radar, every]) {
+        expect(library.fixedFeatures(config), isEmpty, reason: library.name);
+        expect(library.missingFeatures(config), isEmpty, reason: library.name);
+      }
     }
   });
   test('a set zoom adds a key, so earlier saved runs keep theirs', () {
@@ -293,6 +280,20 @@ void main() {
       isNull,
     );
     expect(engineOptions(ChartLibrary.flChart, on)['zoomPlugin'], isNull);
+    // A capture of apexcharts_flutter records how its chart differs from the
+    // setup.
+    expect(engineOptions(ChartLibrary.apexCharts, on), {
+      'alwaysDraws': ['axes', 'grid'],
+      'leavesOut': ['pinchZoom'],
+    });
+    expect(
+      engineOptions(
+        ChartLibrary.apexCharts,
+        const BenchmarkConfig(type: ChartType.bar, axes: true, grid: true),
+      ),
+      {'xAxisType': 'numeric'},
+    );
+    expect(engineOptions(ChartLibrary.chartjs, off)['alwaysDraws'], isNull);
   });
   test('only the radar of Syncfusion and the polar area of '
       'apexcharts_flutter have no public chart, and only the Chart.js port '
