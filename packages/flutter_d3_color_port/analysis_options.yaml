@@ -10,3 +10,7 @@ analyzer:
 linter:
   rules:
     use_primary_constructors: true
+    # Upstream d3-color 3.1.0 keeps the deprecated color.hex(), so the port
+    # keeps Color.hex() in each version. An ignore comment on it fails pana
+    # with unnecessary_ignore in a version where the lint does not fire.
+    remove_deprecations_in_breaking_versions: false

@@ -230,7 +230,6 @@ abstract class Color() {
 
   /// color.js:177 `hex()`, deprecated upstream: [formatHex].
   // Upstream keeps the deprecated alias in 3.1.0, so the port keeps it too.
-  // ignore: remove_deprecations_in_breaking_versions
   @Deprecated('Use formatHex.')
   String hex() => formatHex();
 

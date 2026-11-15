@@ -1,3 +1,7 @@
+## 0.1.2
+
+- Remove an ignore comment that pana reports as `unnecessary_ignore` in a version that is not breaking.
+
 ## 0.1.1
 
 - pubspec: a shorter description (151 characters), in the 60 to 180 characters of pub.dev.

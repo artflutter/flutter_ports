@@ -520,14 +520,23 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   region builds the config of the page and runs it, and it imports no other file of the app. A form of a
   loop (point styles, skipped borders, percentages) opens the sample with the arguments of the first
   form. The export of each sample in `line_examples.dart` or `bar_examples.dart` shows only the names
-  that the file declared before its data, so the data and `main` do not collide. The workflow `pages`
-  writes one archive for each sample with a `main()` (`tool/dartpad_archives.sh`):
-  `lib/examples/<path>.dart` becomes `dartpad/<path>.tar.gz` of the docs site, with the sample as
-  `lib/main.dart` (line 1 of the header, no region markers) and a `pubspec.yaml` that names
-  `flutter_chartjs_port` from pub.dev at the version of its pubspec or later. The link opens the archive
-  with the file tree collapsed. A sample that needs an API of a later release fails in DartPad until that
-  release is on pub.dev. The page tests tap each form and compare the files of the buttons with the
-  samples that have a `main()`. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
+  that the file declared before its data, so the data and `main` do not collide. Each replica of a
+  migration page has the button next to **Original** (`ReplicaBlock`). Its file has a `main()` after the
+  region that shows the replica in the frame of its page: the background, the dark chart theme of
+  fl_chart, and the card of at most 600 pixels of the fl_chart bar page. A replica keeps its imports of
+  the shared kits and data files. The workflow `pages` writes one archive for each file of `lib/examples`
+  and `lib/migrate` with a `main()` (`tool/dartpad_archives.dart`): `lib/<path>.dart` becomes
+  `dartpad/<path>.tar.gz` of the docs site. The archive has the sample as one file `lib/main.dart` (line 1
+  of the header, no region markers), then the declarations of the docs files that it imports and uses,
+  with the imports that they need, and a `pubspec.yaml` with each package that it imports, from pub.dev
+  at the version of its pubspec in the repository or later (`flutter_chartjs_port`,
+  `flutter_chartjs_plugin_zoom_port` and `material_ui`). The tool stops on a top-level extension and on
+  two declarations with one name. DartPad has no asset files: a `rootBundle.loadString` of the archive
+  reads the asset from the docs site (`NetworkAssetBundle`). The link opens the archive with the file
+  tree collapsed. A sample that needs an API of a later release fails in DartPad until that release is
+  on pub.dev. The page tests tap each form and compare the files of the buttons with the samples that
+  have a `main()`. `test/migrate_pages_test.dart` finds the button of each replica, and
+  `test/dartpad_archives_test.dart` bundles each sample. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
   - The UI of the site is widget classes, with no function that returns a widget (the Flutter guidance
     "prefer a widget over a helper method"). A docs block takes each text as a widget: a `DocText` for a
@@ -602,7 +611,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     - `doc/adr/`: the D3 ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:headers`, `test:web` and `test --no-select` examine the package. `check:lib-imports`,
     `check:js-semantics`, `test:cases`, `parity` and `port:next` do not examine it yet.
-- `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.1, on pub.dev,
+- `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.2, on pub.dev,
   ISC), the first module package of the D3 port (D3 ADR 0008), as `d3-color` on npm. Its
   `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive, its `analysis_options.yaml`
   includes the rules of the root file, and `example/main.dart` is the example of the archive. Its
