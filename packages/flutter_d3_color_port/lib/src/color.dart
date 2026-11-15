@@ -11,6 +11,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 /// color.js:5 `darker`: the default factor of `darker()` in RGB, HSL and
 /// Cubehelix.
@@ -826,20 +827,48 @@ class Rgb(
 
   /// color.js:275 `rgb_formatHex`.
   @override
-  String formatHex() => '#${hex2(r)}${hex2(g)}${hex2(b)}';
+  String formatHex() {
+    if (_joinStrings) return '#${hex2(r)}${hex2(g)}${hex2(b)}';
+    // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
+    return _hexText(clampi(r), clampi(g), clampi(b), -1);
+  }
 
   /// color.js:279 `rgb_formatHex8`.
   @override
-  String formatHex8() =>
-      '#${hex2(r)}${hex2(g)}${hex2(b)}'
-      '${hex2((opacity.isNaN ? 1 : opacity) * 255)}';
+  String formatHex8() {
+    if (_joinStrings) {
+      return '#${hex2(r)}${hex2(g)}${hex2(b)}'
+          '${hex2((opacity.isNaN ? 1 : opacity) * 255)}';
+    }
+    // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
+    final x = clampi(r);
+    final y = clampi(g);
+    final z = clampi(b);
+    return _hexText(x, y, z, clampi((opacity.isNaN ? 1 : opacity) * 255));
+  }
 
   /// color.js:283 `rgb_formatRgb`.
   @override
   String formatRgb() {
     final a = clampa(opacity);
-    return '${a == 1 ? 'rgb(' : 'rgba('}${clampi(r)}, ${clampi(g)}, '
-        '${clampi(b)}${a == 1 ? ')' : ', ${numberText(a)})'}';
+    if (_joinStrings) {
+      // DIVERGES(d3-color): adapt-color-format-units, the texts of 0 to 255.
+      return '${a == 1 ? 'rgb(' : 'rgba('}${_decimalTexts[clampi(r)]}, '
+          '${_decimalTexts[clampi(g)]}, ${_decimalTexts[clampi(b)]}'
+          '${a == 1 ? ')' : ', ${numberText(a)})'}';
+    }
+    // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
+    final x = clampi(r);
+    final y = clampi(g);
+    final z = clampi(b);
+    final units = _units;
+    var p = _putOpen(units, 0x72, 0x67, 0x62, alpha: a != 1); // rgb( or rgba(
+    p = _putInteger(units, p, x);
+    p = _putInteger(units, _putSeparator(units, p), y);
+    p = _putInteger(units, _putSeparator(units, p), z);
+    if (a != 1) p = _putNumber(units, _putSeparator(units, p), a);
+    units[p++] = 0x29; // )
+    return String.fromCharCodes(units, 0, p);
   }
 }
 
@@ -851,25 +880,182 @@ double clampa(double opacity) =>
 /// color.js:292 `clampi(value)`: [value] rounded and clamped to [0, 255]. An
 /// undefined value is 0.
 ///
-/// `Math.round` rounds a half up and `roundToDouble` rounds it away from 0.
-/// The two differ only below 0, where the clamp gives 0.
+/// `Math.round(value) || 0` is 0 for a value below 0.5, NaN included, and
+/// 255 or more for a value from 254.5. In between, `Math.round(value)` is
+/// the floor of `value + 0.5`, and the double sum `value + 0.5` never rounds
+/// across a whole number for a value from 0.5, so its truncation is the
+/// result.
 int clampi(double value) {
-  final v = value.roundToDouble();
-  return v > 0 ? (v < 255 ? v.toInt() : 255) : 0;
+  // DIVERGES(d3-color): adapt-color-clamp-compare, compares, no Math.round.
+  if (!(value >= 0.5)) return 0;
+  if (value >= 254.5) return 255;
+  return (value + 0.5).toInt();
 }
 
 /// color.js:296 `hex(value)`: [value] as two lowercase hexadecimal digits,
 /// after [clampi].
 String hex2(double value) {
-  final v = clampi(value);
-  return (v < 16 ? '0' : '') + v.toRadixString(16);
+  // DIVERGES(d3-color): adapt-color-hex-table, the 256 texts in a table.
+  return _hexTexts[clampi(value)];
 }
+
+/// The texts of [hex2]: `00` to `ff`.
+final List<String> _hexTexts = [
+  for (var v = 0; v < 256; v++) _hexDigits[v >> 4] + _hexDigits[v & 15],
+];
+
+/// The lowercase hexadecimal digits.
+const String _hexDigits = '0123456789abcdef';
 
 /// The text of the number [x] in a CSS text of a color: a whole number with
 /// no fraction (`0` also for -0), any other number as [double.toString].
 /// The color formats give only numbers in [0, 360] to it.
-String numberText(double x) =>
-    x == x.truncateToDouble() ? x.toInt().toString() : x.toString();
+///
+/// The text of a number k / 100 comes from the digits of k, with no
+/// conversion of the double ([_hundredths]).
+String numberText(double x) {
+  // DIVERGES(d3-color): adapt-color-number-text, the digits of k / 100.
+  final k = _hundredths(x);
+  if (k >= 0) {
+    final whole = k ~/ 100;
+    final fraction = k - whole * 100;
+    return fraction == 0
+        ? _decimalTexts[whole]
+        : '${_decimalTexts[whole]}${_fractionTexts[fraction]}';
+  }
+  return x == x.truncateToDouble() ? x.toInt().toString() : x.toString();
+}
+
+/// The whole number k in [0, 36000] when [x] is the double nearest to
+/// k / 100, else -1.
+///
+/// The double division `k / 100` gives the double nearest to k / 100, so
+/// the test is exact. Such an [x] has the text of the decimal k / 100 with
+/// no trailing zero: that decimal reads back as [x], and each other decimal
+/// with as few digits is a multiple of 0.01 away from it, much more than the
+/// gap of two doubles below 360. Thus it is the shortest text of [x], the
+/// text of JavaScript and of [double.toString].
+int _hundredths(double x) {
+  if (x >= 0 && x <= 360) {
+    final k = (x * 100 + 0.5).toInt();
+    if (k / 100 == x) return k;
+  }
+  return -1;
+}
+
+/// The decimal texts of 0 to 360: the whole part of [numberText], and the
+/// channels of [Rgb.formatRgb] in JavaScript.
+final List<String> _decimalTexts = [for (var v = 0; v <= 360; v++) '$v'];
+
+/// The texts of the fraction f / 100 for f in [1, 99], with no trailing
+/// zero: `.01` to `.99`, and `.1` for 10. The item 0 is not read.
+final List<String> _fractionTexts = [
+  for (var f = 0; f < 100; f++)
+    if (f % 10 == 0) '.${f ~/ 10}' else '.${f ~/ 10}${f % 10}',
+];
+
+/// Whether the code runs as JavaScript (dart2js or DDC). There, the formats
+/// join strings, as upstream: the JavaScript engine joins them fast. On the
+/// VM and in WebAssembly, the formats write code units into [_units].
+const bool _joinStrings =
+    bool.fromEnvironment('dart.library.js_interop') && !_wasm;
+
+/// Whether the code runs as WebAssembly (dart2wasm).
+const bool _wasm = bool.fromEnvironment('dart.tool.dart2wasm');
+
+/// The code units of the text of a format, before [String.fromCharCodes]
+/// makes the string: one byte each on the VM (a one-byte string), two bytes
+/// in WebAssembly (a JavaScript string).
+///
+/// A format reads each channel before it writes into the buffer, so no code
+/// of a subclass runs between the writes. 128 code units hold the longest
+/// text: `hsla(` with four numbers of at most 24 characters.
+final List<int> _units = _wasm ? Uint16List(128) : Uint8List(128);
+
+/// Writes `#` and the hexadecimal digits of the channels [r], [g], [b] in
+/// [0, 255] into [_units], and of [a] unless it is -1, and gives the text.
+String _hexText(int r, int g, int b, int a) {
+  final units = _units;
+  units[0] = 0x23; // #
+  _putHex(units, 1, r);
+  _putHex(units, 3, g);
+  _putHex(units, 5, b);
+  if (a < 0) return String.fromCharCodes(units, 0, 7);
+  _putHex(units, 7, a);
+  return String.fromCharCodes(units, 0, 9);
+}
+
+/// Writes the two hexadecimal digits of [v] in [0, 255] at [p] of [units].
+void _putHex(List<int> units, int p, int v) {
+  units[p] = _hexDigits.codeUnitAt(v >> 4);
+  units[p + 1] = _hexDigits.codeUnitAt(v & 15);
+}
+
+/// Writes the three letters [c0], [c1] and [c2] of a function name, `a` when
+/// [alpha], and `(` at the start of [units], and gives the next position.
+int _putOpen(List<int> units, int c0, int c1, int c2, {required bool alpha}) {
+  units[0] = c0;
+  units[1] = c1;
+  units[2] = c2;
+  if (!alpha) {
+    units[3] = 0x28; // (
+    return 4;
+  }
+  units[3] = 0x61; // a
+  units[4] = 0x28; // (
+  return 5;
+}
+
+/// Writes `, ` at [p] of [units] and gives the next position.
+int _putSeparator(List<int> units, int p) {
+  units[p] = 0x2c; // ,
+  units[p + 1] = 0x20; // space
+  return p + 2;
+}
+
+/// Writes the decimal digits of [v] in [0, 999] at [p] of [units] and gives
+/// the next position.
+int _putInteger(List<int> units, int p, int v) {
+  if (v < 10) {
+    units[p] = 0x30 + v;
+    return p + 1;
+  }
+  var q = p;
+  var rest = v;
+  if (v >= 100) {
+    final hundreds = v ~/ 100;
+    units[q++] = 0x30 + hundreds;
+    rest -= hundreds * 100;
+  }
+  final tens = rest ~/ 10;
+  units[q] = 0x30 + tens;
+  units[q + 1] = 0x30 + rest - tens * 10;
+  return q + 2;
+}
+
+/// Writes [numberText] of [x] at [p] of [units] and gives the next position.
+int _putNumber(List<int> units, int p, double x) {
+  final k = _hundredths(x);
+  if (k < 0) {
+    final text = numberText(x);
+    final n = text.length;
+    for (var i = 0; i < n; i++) {
+      units[p + i] = text.codeUnitAt(i);
+    }
+    return p + n;
+  }
+  final whole = k ~/ 100;
+  final fraction = k - whole * 100;
+  final q = _putInteger(units, p, whole);
+  if (fraction == 0) return q;
+  final tenths = fraction ~/ 10;
+  final hundredths = fraction - tenths * 10;
+  units[q] = 0x2e; // .
+  units[q + 1] = 0x30 + tenths;
+  if (hundredths == 0) return q + 2;
+  units[q + 2] = 0x30 + hundredths;
+  return q + 3;
+}
 
 /// color.js:301 `hsla(h, s, l, a)`: the [Hsl] of a parsed CSS text. An
 /// opacity at or below 0 makes the channels undefined, a lightness outside
@@ -993,15 +1179,33 @@ class Hsl(
   @override
   String formatHsl() {
     final a = clampa(opacity);
-    return '${a == 1 ? 'hsl(' : 'hsla('}${numberText(clamph(h))}, '
-        '${numberText(clampt(s) * 100)}%, ${numberText(clampt(l) * 100)}%'
-        '${a == 1 ? ')' : ', ${numberText(a)})'}';
+    if (_joinStrings) {
+      return '${a == 1 ? 'hsl(' : 'hsla('}${numberText(clamph(h))}, '
+          '${numberText(clampt(s) * 100)}%, ${numberText(clampt(l) * 100)}%'
+          '${a == 1 ? ')' : ', ${numberText(a)})'}';
+    }
+    // DIVERGES(d3-color): adapt-color-format-units, the code units of the text.
+    final hue = clamph(h);
+    final saturation = clampt(s) * 100;
+    final lightness = clampt(l) * 100;
+    final units = _units;
+    var p = _putOpen(units, 0x68, 0x73, 0x6c, alpha: a != 1); // hsl( or hsla(
+    p = _putNumber(units, p, hue);
+    p = _putNumber(units, _putSeparator(units, p), saturation);
+    units[p++] = 0x25; // %
+    p = _putNumber(units, _putSeparator(units, p), lightness);
+    units[p++] = 0x25; // %
+    if (a != 1) p = _putNumber(units, _putSeparator(units, p), a);
+    units[p++] = 0x29; // )
+    return String.fromCharCodes(units, 0, p);
   }
 }
 
 /// color.js:381 `clamph(value)`: [value] in [0, 360). An undefined value is
 /// 0.
 double clamph(double value) {
+  // DIVERGES(d3-color): adapt-color-clamp-compare, no % for a hue in (0, 360).
+  if (value > 0 && value < 360) return value;
   // `value || 0`: NaN and -0 are 0.
   final v = (value.isNaN || value == 0 ? 0.0 : value).remainder(360);
   return v < 0 ? v + 360 : v;
