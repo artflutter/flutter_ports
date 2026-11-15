@@ -1,21 +1,17 @@
-import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/controller.dart'
     show chartJsDataOnlyUpdates;
 import 'package:chart_benchmark_lab/benchmark/data.dart';
-// The four libraries other than the Chart.js port are deferred: a web build
-// with deferred loading fetches the code of each one only when a person
-// selects it or a run needs it (BenchmarkChart.load).
 import 'package:chart_benchmark_lab/charts/apexcharts_adapter.dart'
-    deferred as apexcharts_adapter;
+    as apexcharts_adapter;
 import 'package:chart_benchmark_lab/charts/fl_chart_adapter.dart'
-    deferred as fl_chart_adapter;
+    as fl_chart_adapter;
 import 'package:chart_benchmark_lab/charts/graphic_adapter.dart'
-    deferred as graphic_adapter;
+    as graphic_adapter;
 import 'package:chart_benchmark_lab/charts/syncfusion_adapter.dart'
-    deferred as syncfusion_adapter;
+    as syncfusion_adapter;
 import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
     as sk;
@@ -42,43 +38,6 @@ class const BenchmarkChart({
 }) extends StatelessWidget {
   /// All engines receive the same immutable source values and feature settings.
   this;
-
-  /// The libraries whose code is ready. The Chart.js port is part of the main
-  /// module of the app.
-  static final Set<ChartLibrary> _ready = {ChartLibrary.chartjs};
-
-  /// The loads in progress, one for each library.
-  static final Map<ChartLibrary, Future<void>> _loads = {};
-
-  /// Whether the code of [library] is ready.
-  static bool isReady(ChartLibrary library) => _ready.contains(library);
-
-  /// Loads the code of [library]. It gives `null` when the code is ready, else
-  /// a future that completes when the code is ready. A failed load can start
-  /// again.
-  static Future<void>? load(ChartLibrary library) => _ready.contains(library)
-      ? null
-      : _loads[library] ??= _load(library).whenComplete(() {
-          // The caller holds this future. Its entry goes, so that a failed
-          // load can start again.
-          unawaited(_loads.remove(library));
-        });
-
-  static Future<void> _load(ChartLibrary library) async {
-    await switch (library) {
-      ChartLibrary.chartjs => Future<void>.value(),
-      ChartLibrary.flChart => fl_chart_adapter.loadLibrary(),
-      ChartLibrary.graphic => graphic_adapter.loadLibrary(),
-      ChartLibrary.syncfusion => syncfusion_adapter.loadLibrary(),
-      ChartLibrary.apexCharts => apexcharts_adapter.loadLibrary(),
-    };
-    _ready.add(library);
-  }
-
-  /// Loads the code of each library. The tests and a native app use it: a
-  /// native build has no deferred module, so the load costs nothing there.
-  static Future<void> loadAll() =>
-      Future.wait([for (final library in ChartLibrary.values) ?load(library)]);
 
   /// The outer radius of a pie, doughnut or polar area, as a share of half of
   /// the short side.
@@ -199,16 +158,6 @@ class const BenchmarkChart({
         key: const ValueKey('chart.unsupported'),
         child: Text(
           library.reasonFor(config),
-          textAlign: TextAlign.center,
-          style: const TextStyle(color: Color(0xff64748b)),
-        ),
-      );
-    }
-    if (!isReady(library)) {
-      return Center(
-        key: const ValueKey('chart.loading'),
-        child: Text(
-          'Loading ${library.label}…',
           textAlign: TextAlign.center,
           style: const TextStyle(color: Color(0xff64748b)),
         ),

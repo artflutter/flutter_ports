@@ -1,6 +1,4 @@
-/// The adapter of Syncfusion. The page imports this library as a deferred
-/// library, so that a web build fetches Syncfusion only when a person selects
-/// it or a run needs it.
+/// The adapter of Syncfusion.
 library;
 
 import 'dart:math' as math;

@@ -82,11 +82,7 @@ class _BenchmarkPageState()
   @override
   void initState() {
     super.initState();
-    // A web build fetches the code of a library other than the Chart.js port
-    // only when a person selects it or a run needs it. A native build has all
-    // code in one binary, so it loads each library at once.
-    if (!kIsWeb) unawaited(BenchmarkChart.loadAll());
-    controller = BenchmarkController(this, loadCode: BenchmarkChart.load);
+    controller = BenchmarkController(this);
     widget.onControllerReady?.call(controller);
     controller
       ..addListener(_scheduleViewportSync)
@@ -1057,12 +1053,7 @@ class _BenchmarkPageState()
   /// time that the chart below it builds.
   late final Widget _plotSection = _Selected(
     listenable: controller,
-    select: () => (
-      controller.library,
-      controller.revision,
-      controller.config,
-      controller.loadingLibrary,
-    ),
+    select: () => (controller.library, controller.revision, controller.config),
     builder: (context) => SizedBox(
       height: _PageValue.of<double>(context),
       child: RepaintBoundary(

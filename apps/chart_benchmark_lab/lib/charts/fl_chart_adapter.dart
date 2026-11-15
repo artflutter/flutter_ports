@@ -1,6 +1,4 @@
-/// The adapter of fl_chart. The page imports this library as a deferred
-/// library, so that a web build fetches fl_chart only when a person selects it
-/// or a run needs it.
+/// The adapter of fl_chart.
 library;
 
 import 'dart:math' as math;

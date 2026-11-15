@@ -1,6 +1,4 @@
-/// The adapter of apexcharts_flutter. The page imports this library as a
-/// deferred library, so that a web build fetches apexcharts_flutter only when
-/// a person selects it or a run needs it.
+/// The adapter of apexcharts_flutter.
 library;
 
 import 'package:apexcharts_flutter/apexcharts_flutter.dart' as apex;
