@@ -4,7 +4,7 @@
 /// `lib/examples/line/` for each code panel, and the shared data.
 library;
 
-export 'package:chartjs_docs/examples/line/basic.dart';
+export 'package:chartjs_docs/examples/line/basic.dart' hide main;
 export 'package:chartjs_docs/examples/line/cubic.dart';
 export 'package:chartjs_docs/examples/line/data_points.dart';
 export 'package:chartjs_docs/examples/line/data_values.dart';

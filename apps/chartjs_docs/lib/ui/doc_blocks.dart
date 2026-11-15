@@ -377,10 +377,9 @@ class const ExampleVariant({
   /// The code region of the form.
   required final CodeRegion region,
 
-  /// The file with the `main` function that runs [config] in DartPad,
-  /// relative to the docs app. With a file, the panel has a
-  /// **Try in DartPad** button.
-  final String? dartPadEntry,
+  /// Whether the panel has a **Try in DartPad** button. The source file of
+  /// [region] then has a `main` function that runs [config] alone.
+  final bool dartPad = false,
 }) {
   /// Creates a form with the name [name].
   this;
@@ -460,14 +459,12 @@ class _LiveExampleState() extends State<LiveExample> {
           CodeToggle(
             id: widget.id,
             region: variant.region,
-            trailing: switch (variant.dartPadEntry) {
-              final entry? => DartPadLink(
-                key: ValueKey('${widget.id}.dartpad'),
-                file: variant.region.source,
-                entrypoint: entry,
-              ),
-              null => null,
-            },
+            trailing: variant.dartPad
+                ? DartPadLink(
+                    variant.region.source,
+                    key: ValueKey('${widget.id}.dartpad'),
+                  )
+                : null,
           ),
         ],
       ),

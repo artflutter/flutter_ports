@@ -4,6 +4,7 @@ library;
 
 import 'dart:io';
 
+import 'package:chartjs_docs/examples/line/basic.dart' as basic;
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/main.dart';
 import 'package:chartjs_docs/pages/line_chart_page.dart';
@@ -276,25 +277,28 @@ void main() {
     final link = tester.widget<DartPadLink>(
       find.byKey(const ValueKey('basic.dartpad')),
     );
-    final uri = dartPadUri(file: link.file, entrypoint: link.entrypoint);
-    expect(uri.host, 'dartpad.dev');
-    expect(uri.queryParameters['url'], dartPadArchive);
-    expect(uri.queryParametersAll['file'], [
-      'chartjs_docs/$lineExamples/basic.dart',
-      'chartjs_docs/lib/dartpad/line_basic.dart',
-    ]);
+    expect(link.file, '$lineExamples/basic.dart');
     expect(
-      uri.queryParameters['entrypoint'],
-      'chartjs_docs/lib/dartpad/line_basic.dart',
+      dartPadUri(link.file),
+      Uri.https('dartpad.dev', '/', {
+        'url': '$dartPadArchives/line/basic.tar.gz',
+        'panels': '-filetree',
+      }),
     );
-    // tool/dartpad_archive.sh packs lib/examples and lib/dartpad. The app
-    // that DartPad runs imports the sample and has a main function.
-    final entry = File(link.entrypoint).readAsStringSync();
-    final library = link.file.replaceFirst('lib/', 'package:chartjs_docs/');
-    expect(link.file, startsWith('$lineExamples/'));
-    expect(link.entrypoint, startsWith('lib/dartpad/'));
-    expect(entry, contains("import '$library';"));
-    expect(entry, contains('void main()'));
+    // tool/dartpad_archives.sh packs the sample alone as lib/main.dart.
+    final sample = File(link.file).readAsStringSync();
+    expect(sample, contains('\nvoid main() {'));
+    expect(sample, isNot(contains('package:chartjs_docs/')));
+  });
+
+  testWidgets('the DartPad app of the basic example runs', (tester) async {
+    basic.main();
+    await tester.pump(const Duration(seconds: 2));
+    expect(tester.takeException(), isNull);
+    expect(
+      tester.widget<ChartView>(find.byType(ChartView)).config,
+      same(basicLine),
+    );
   });
 
   test('the regions have no markers and no common indent', () {

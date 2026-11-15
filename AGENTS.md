@@ -500,12 +500,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   panel has one region. A `CodeRegion` names the source file and the region of a panel. Each code panel
   is closed at the start: its **Code** button (`CodeToggle` of `lib/ui/doc_blocks.dart`) opens it.
   `CodeSources` reads the file of a panel at its first open, not at the start of the app.
-  `test/code_panels_test.dart` pins this. A live example with a `dartPadEntry` has a **Try in DartPad**
-  button (`lib/ui/dartpad.dart`). The button opens the sample file and its app in `lib/dartpad/` in DartPad.
-  The address loads `chartjs_samples.tar.gz` of the docs site. The workflow `pages` writes that archive with
-  `tool/dartpad_archive.sh`: `lib/examples` and `lib/dartpad`, with a pubspec that names `flutter_chartjs_port`
-  from pub.dev at the version of its pubspec or later. A sample that needs an API of a later release fails in
-  DartPad until that release is on pub.dev. Only the basic line chart has the button now. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
+  `test/code_panels_test.dart` pins this. An example form with `dartPad: true` has a **Try in DartPad**
+  button (`lib/ui/dartpad.dart`). Its sample file is one file: a `main()` after the region runs the chart,
+  it imports no other file of the app, and the export of `line_examples.dart` or `bar_examples.dart` hides
+  `main`. The workflow `pages` writes one archive for each sample with a `main()`
+  (`tool/dartpad_archives.sh`): `lib/examples/<path>.dart` becomes `dartpad/<path>.tar.gz` of the docs site,
+  with the sample as `lib/main.dart` (line 1 of the header, no region markers) and a `pubspec.yaml` that names
+  `flutter_chartjs_port` from pub.dev at the version of its pubspec or later. The link opens the archive
+  with the file tree collapsed. A sample that needs an API of a later release fails in DartPad until that
+  release is on pub.dev. Only the basic line chart has the button now. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
   - The UI of the site is widget classes, with no function that returns a widget (the Flutter guidance
     "prefer a widget over a helper method"). A docs block takes each text as a widget: a `DocText` for a

@@ -21,3 +21,19 @@ const basicLine = ChartConfig(
   ],
 );
 // #enddocregion basic
+
+void main() {
+  Chart.register(registerables);
+  runApp(
+    const Directionality(
+      textDirection: TextDirection.ltr,
+      child: ColoredBox(
+        color: Color(0xFFFFFFFF),
+        child: Padding(
+          padding: EdgeInsets.all(16),
+          child: Center(child: ChartView(config: basicLine)),
+        ),
+      ),
+    ),
+  );
+}

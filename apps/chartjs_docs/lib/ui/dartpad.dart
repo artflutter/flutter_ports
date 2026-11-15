@@ -3,31 +3,37 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:url_launcher/link.dart';
 
-/// The archive of the samples, next to the docs site. The workflow `pages`
-/// writes it with `tool/dartpad_archive.sh`: the folder `chartjs_docs` with
-/// the samples. DartPad gets `flutter_chartjs_port` from pub.dev.
-const String dartPadArchive =
-    'https://artflutter.github.io/flutter_ports/docs/dartpad/chartjs_samples.tar.gz';
+/// The folder of the DartPad archives, next to the docs site. The workflow
+/// `pages` writes one archive for each sample with a `main` function, with
+/// `tool/dartpad_archives.sh`: `lib/examples/<path>.dart` becomes
+/// `<path>.tar.gz`, with the sample as `lib/main.dart` and a pubspec that
+/// gets `flutter_chartjs_port` from pub.dev.
+const String dartPadArchives =
+    'https://artflutter.github.io/flutter_ports/docs/dartpad';
 
-/// The DartPad address that opens the sample [file] and the app [entrypoint]
-/// of the archive, and runs [entrypoint]. Both paths are relative to the
-/// docs app.
-Uri dartPadUri({required String file, required String entrypoint}) =>
-    Uri.https('dartpad.dev', '/', {
-      'url': dartPadArchive,
-      'file': ['chartjs_docs/$file', 'chartjs_docs/$entrypoint'],
-      'entrypoint': 'chartjs_docs/$entrypoint',
-    });
+/// The folder of the samples, relative to the docs app.
+const String _examples = 'lib/examples/';
 
-/// A **Try in DartPad** button that opens [file] and [entrypoint] in DartPad,
-/// in a new tab.
-class const DartPadLink({
-  /// The sample file, relative to the docs app.
-  required final String file,
+/// The DartPad address that opens and runs the sample [file], relative to the
+/// docs app. DartPad runs `lib/main.dart` of the archive. The address
+/// collapses the file tree, so the page shows the code of the sample, its
+/// problems and its chart.
+Uri dartPadUri(String file) {
+  if (!file.startsWith(_examples) || !file.endsWith('.dart')) {
+    throw ArgumentError.value(file, 'file', 'not a file of $_examples');
+  }
+  final path = file.substring(_examples.length, file.length - '.dart'.length);
+  return Uri.https('dartpad.dev', '/', {
+    'url': '$dartPadArchives/$path.tar.gz',
+    'panels': '-filetree',
+  });
+}
 
-  /// The file with the `main` function of the sample, relative to the docs
-  /// app.
-  required final String entrypoint,
+/// A **Try in DartPad** button that opens the sample [file] in DartPad, in a
+/// new tab.
+class const DartPadLink(
+  /// The sample file, relative to the docs app. It has a `main` function.
+  final String file, {
   super.key,
 }) extends StatelessWidget {
   /// Creates the button of [file].
@@ -35,7 +41,7 @@ class const DartPadLink({
 
   @override
   Widget build(BuildContext context) => Link(
-    uri: dartPadUri(file: file, entrypoint: entrypoint),
+    uri: dartPadUri(file),
     target: LinkTarget.blank,
     builder: (context, open) => TextButton.icon(
       onPressed: open,
