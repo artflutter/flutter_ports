@@ -29,7 +29,8 @@ flutter:
   uses-material-design: true
   assets:
     # The pages show the code of their live charts from these source files.
-    - lib/examples/
+    - lib/examples/line/
+    - lib/examples/bar/
     - lib/migrate/fl_chart/
     - lib/migrate/graphic/
     - lib/migrate/syncfusion/

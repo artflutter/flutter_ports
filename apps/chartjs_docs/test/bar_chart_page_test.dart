@@ -2,8 +2,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:io';
-
 import 'package:chartjs_docs/examples/bar_examples.dart';
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/main.dart';
@@ -16,10 +14,7 @@ import 'package:material_ui/material_ui.dart';
 import 'support/file_sources.dart';
 
 /// The page shows the region `register` of the line examples too.
-final Snippets _snippets = Snippets.parseAll([
-  File(examplesAsset).readAsStringSync(),
-  File(barExamplesAsset).readAsStringSync(),
-]);
+final Snippets _snippets = regionsOf(const ['$lineExamples/', '$barExamples/']);
 
 /// Each form of the examples with more than one form.
 const List<String> _variants = [

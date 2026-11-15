@@ -324,7 +324,7 @@ DocPageContent lineChartPage() => DocPageContent(
         'Register the chart components one time, before the first chart.',
       ),
     ),
-    const DocCode(CodeRegion(examplesAsset, 'register')),
+    const DocCode(CodeRegion('$lineExamples/register.dart', 'register')),
     const DocParagraph(
       DocText(
         'Then give a `ChartConfig` to a `ChartView`. '
@@ -339,7 +339,7 @@ DocPageContent lineChartPage() => DocPageContent(
           name: 'Basic',
           label: Text('Basic'),
           config: basicLine,
-          region: CodeRegion(examplesAsset, 'basic'),
+          region: CodeRegion('$lineExamples/basic.dart', 'basic'),
         ),
       ],
     ),
@@ -388,7 +388,7 @@ DocPageContent lineChartPage() => DocPageContent(
               name: 'Scopes',
               label: Text('Scopes'),
               config: scopedLine,
-              region: CodeRegion(examplesAsset, 'scopes'),
+              region: CodeRegion('$lineExamples/scopes.dart', 'scopes'),
             ),
           ],
         ),
@@ -443,7 +443,10 @@ DocPageContent lineChartPage() => DocPageContent(
                   name: 'Scriptable',
                   label: const Text('Scriptable'),
                   config: oneLine(scriptableLine),
-                  region: const CodeRegion(examplesAsset, 'scriptable'),
+                  region: const CodeRegion(
+                    '$lineExamples/scriptable.dart',
+                    'scriptable',
+                  ),
                 ),
               ],
             ),
@@ -575,7 +578,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     name: label,
                     label: Text(label),
                     config: pointStyling(style),
-                    region: const CodeRegion(examplesAsset, 'point-styling'),
+                    region: const CodeRegion(
+                      '$lineExamples/point_styling.dart',
+                      'point-styling',
+                    ),
                   ),
               ],
             ),
@@ -671,7 +677,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [solidLine],
                   ),
-                  region: CodeRegion(examplesAsset, 'line-solid'),
+                  region: CodeRegion(
+                    '$lineExamples/line_solid.dart',
+                    'line-solid',
+                  ),
                 ),
                 ExampleVariant(
                   name: 'Dashed',
@@ -681,7 +690,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [dashedLine],
                   ),
-                  region: CodeRegion(examplesAsset, 'line-dashed'),
+                  region: CodeRegion(
+                    '$lineExamples/line_dashed.dart',
+                    'line-dashed',
+                  ),
                 ),
                 ExampleVariant(
                   name: 'Filled',
@@ -691,7 +703,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [filledLine],
                   ),
-                  region: CodeRegion(examplesAsset, 'line-filled'),
+                  region: CodeRegion(
+                    '$lineExamples/line_filled.dart',
+                    'line-filled',
+                  ),
                 ),
                 ExampleVariant(
                   name: 'Points only',
@@ -701,7 +716,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [pointsOnlyLine],
                   ),
-                  region: CodeRegion(examplesAsset, 'line-points-only'),
+                  region: CodeRegion(
+                    '$lineExamples/line_points_only.dart',
+                    'line-points-only',
+                  ),
                 ),
                 ExampleVariant(
                   name: 'Shadow',
@@ -711,7 +729,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [shadowLine],
                   ),
-                  region: CodeRegion(examplesAsset, 'line-shadow'),
+                  region: CodeRegion(
+                    '$lineExamples/line_shadow.dart',
+                    'line-shadow',
+                  ),
                 ),
               ],
             ),
@@ -727,7 +748,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [brokenLine],
                   ),
-                  region: CodeRegion(examplesAsset, 'gaps-break'),
+                  region: CodeRegion(
+                    '$lineExamples/gaps_break.dart',
+                    'gaps-break',
+                  ),
                 ),
                 ExampleVariant(
                   name: 'spanGaps: true',
@@ -737,7 +761,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [spannedLine],
                   ),
-                  region: CodeRegion(examplesAsset, 'gaps-span'),
+                  region: CodeRegion(
+                    '$lineExamples/gaps_span.dart',
+                    'gaps-span',
+                  ),
                 ),
               ],
             ),
@@ -789,7 +816,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [hoverLine],
                   ),
-                  region: CodeRegion(examplesAsset, 'interactions'),
+                  region: CodeRegion(
+                    '$lineExamples/interactions.dart',
+                    'interactions',
+                  ),
                 ),
               ],
             ),
@@ -833,7 +863,7 @@ DocPageContent lineChartPage() => DocPageContent(
                   name: 'Modes',
                   label: Text('Modes'),
                   config: cubicLines,
-                  region: CodeRegion(examplesAsset, 'cubic'),
+                  region: CodeRegion('$lineExamples/cubic.dart', 'cubic'),
                 ),
               ],
             ),
@@ -886,7 +916,7 @@ DocPageContent lineChartPage() => DocPageContent(
                   name: 'Segments',
                   label: Text('Segments'),
                   config: segmentLine,
-                  region: CodeRegion(examplesAsset, 'segment'),
+                  region: CodeRegion('$lineExamples/segment.dart', 'segment'),
                 ),
               ],
             ),
@@ -928,7 +958,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [noStep],
                   ),
-                  region: CodeRegion(examplesAsset, 'stepped-false'),
+                  region: CodeRegion(
+                    '$lineExamples/stepped_false.dart',
+                    'stepped-false',
+                  ),
                 ),
                 ExampleVariant(
                   name: 'true',
@@ -938,7 +971,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [stepTrue],
                   ),
-                  region: CodeRegion(examplesAsset, 'stepped-true'),
+                  region: CodeRegion(
+                    '$lineExamples/stepped_true.dart',
+                    'stepped-true',
+                  ),
                 ),
                 ExampleVariant(
                   name: '.before',
@@ -948,7 +984,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [stepBefore],
                   ),
-                  region: CodeRegion(examplesAsset, 'stepped-before'),
+                  region: CodeRegion(
+                    '$lineExamples/stepped_before.dart',
+                    'stepped-before',
+                  ),
                 ),
                 ExampleVariant(
                   name: '.after',
@@ -958,7 +997,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [stepAfter],
                   ),
-                  region: CodeRegion(examplesAsset, 'stepped-after'),
+                  region: CodeRegion(
+                    '$lineExamples/stepped_after.dart',
+                    'stepped-after',
+                  ),
                 ),
                 ExampleVariant(
                   name: '.middle',
@@ -968,7 +1010,10 @@ DocPageContent lineChartPage() => DocPageContent(
                     labels: months,
                     datasets: [stepMiddle],
                   ),
-                  region: CodeRegion(examplesAsset, 'stepped-middle'),
+                  region: CodeRegion(
+                    '$lineExamples/stepped_middle.dart',
+                    'stepped-middle',
+                  ),
                 ),
               ],
             ),
@@ -993,7 +1038,7 @@ DocPageContent lineChartPage() => DocPageContent(
             'charts:',
           ),
         ),
-        DocCode(CodeRegion(examplesAsset, 'defaults')),
+        DocCode(CodeRegion('$lineExamples/defaults.dart', 'defaults')),
       ],
     ),
     DocSection(
@@ -1028,13 +1073,19 @@ DocPageContent lineChartPage() => DocPageContent(
               name: 'data',
               label: Text('data'),
               config: valuesLine,
-              region: CodeRegion(examplesAsset, 'data-values'),
+              region: CodeRegion(
+                '$lineExamples/data_values.dart',
+                'data-values',
+              ),
             ),
             ExampleVariant(
               name: 'points',
               label: const Text('points'),
               config: pointsLine,
-              region: const CodeRegion(examplesAsset, 'data-points'),
+              region: const CodeRegion(
+                '$lineExamples/data_points.dart',
+                'data-points',
+              ),
             ),
           ],
         ),
@@ -1065,7 +1116,7 @@ DocPageContent lineChartPage() => DocPageContent(
               name: 'Stacked',
               label: Text('Stacked'),
               config: stackedLines,
-              region: CodeRegion(examplesAsset, 'stacked'),
+              region: CodeRegion('$lineExamples/stacked.dart', 'stacked'),
             ),
           ],
         ),
@@ -1091,7 +1142,7 @@ DocPageContent lineChartPage() => DocPageContent(
               name: 'Vertical',
               label: Text('Vertical'),
               config: verticalLine,
-              region: CodeRegion(examplesAsset, 'vertical'),
+              region: CodeRegion('$lineExamples/vertical.dart', 'vertical'),
             ),
           ],
         ),
@@ -1123,7 +1174,9 @@ DocPageContent lineChartPage() => DocPageContent(
             'chart then skips the parse step.',
           ),
         ),
-        DocCode(CodeRegion(examplesAsset, 'internal-format')),
+        DocCode(
+          CodeRegion('$lineExamples/internal_format.dart', 'internal-format'),
+        ),
       ],
     ),
     const DocSection(
@@ -1225,7 +1278,10 @@ class _LiveLineDemoState() extends State<LiveLineDemo> {
           child: RepaintBoundary(child: LiveLineChart(points: _current)),
         ),
         const Divider(height: 1, color: DocColors.border),
-        const CodeToggle(id: 'live', region: CodeRegion(examplesAsset, 'live')),
+        const CodeToggle(
+          id: 'live',
+          region: CodeRegion('$lineExamples/live.dart', 'live'),
+        ),
       ],
     ),
   );

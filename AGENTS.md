@@ -492,12 +492,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   mounted, except a Graphic bar chart. Each test still starts with a new chart.
 - `apps/chartjs_docs`: the documentation site of the Chart.js port (web). The line chart page has the
   section structure of `docs/charts/line.md`, with Dart text and live charts.
-  `lib/pages/line_chart_page.dart` has the text and the table of options. `lib/examples/line_examples.dart`
-  has the code of the charts. The app also loads this file as an asset, and a code panel shows the lines
-  between `// #docregion <name>` and `// #enddocregion <name>`. Thus a panel shows the code that draws its
-  chart. A `CodeRegion` names the source file and the region of a panel. Each code panel is closed at the
-  start: its **Code** button (`CodeToggle` of `lib/ui/doc_blocks.dart`) opens it. `CodeSources` reads a
-  source file at the first open of one of its panels, not at the start of the app.
+  `lib/pages/line_chart_page.dart` has the text and the table of options. `lib/examples/line/` has the code
+  of the charts, one file for each code panel, and `lib/examples/line_data.dart` has the data that the
+  files share. `lib/examples/line_examples.dart` exports them. The app also loads each file of
+  `lib/examples/line/` as an asset, and a code panel shows the lines between `// #docregion <name>` and
+  `// #enddocregion <name>`. Thus a panel shows the code that draws its chart. Each source file of a code
+  panel has one region. A `CodeRegion` names the source file and the region of a panel. Each code panel
+  is closed at the start: its **Code** button (`CodeToggle` of `lib/ui/doc_blocks.dart`) opens it.
+  `CodeSources` reads the file of a panel at its first open, not at the start of the app.
   `test/code_panels_test.dart` pins this. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
   - The UI of the site is widget classes, with no function that returns a widget (the Flutter guidance
@@ -510,8 +512,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (`DocPageContent.tabTitle`), the group of a page and the table data that the tests compare
     (`DocProperty`).
   - The bar chart page has the section structure of `docs/charts/bar.md`: `lib/pages/bar_chart_page.dart`
-    has the text and the table, and `lib/examples/bar_examples.dart` has the code of the charts. Each region
-    name of that file starts with `bar-`, because a region name is unique over all the source files.
+    has the text and the table. `lib/examples/bar/` has the code of the charts, one file for each code
+    panel, `lib/examples/bar_data.dart` has the shared data, and `lib/examples/bar_examples.dart` exports
+    them. Each region name of these files starts with `bar-`, because a region name is unique over all the
+    source files.
     `test/bar_chart_page_test.dart` compares the table with the chart defaults and the parameters of
     `BarDataset`.
   - `docPages` of `lib/main.dart` lists the pages with their routes and their groups in the sidebar. Each

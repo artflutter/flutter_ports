@@ -47,15 +47,14 @@ void main() {
   setUpAll(registerCharts);
 
   test('the region names are unique over the source files', () {
-    final sources = [
-      for (final folder in snippetFolders)
-        for (final file
-            in Directory(folder).listSync().whereType<File>().toList()
-              ..sort((a, b) => a.path.compareTo(b.path)))
-          if (isSnippetSource(file.path)) file.readAsStringSync(),
-    ];
-    expect(sources, isNotEmpty);
-    expect(() => Snippets.parseAll(sources), returnsNormally);
+    expect(sourceFiles(), isNotEmpty);
+    expect(() => regionsOf(snippetFolders), returnsNormally);
+  });
+
+  test('each source file of the code panels has one region', () {
+    for (final path in sourceFiles()) {
+      expect(_regionsOf(path).names, hasLength(1), reason: path);
+    }
   });
 
   for (final page in docPages) {
@@ -98,21 +97,28 @@ void main() {
     final reads = <String>[];
     await _open(tester, '/charts/bar', fileSources(reads));
 
+    const basic = '$barExamples/basic.dart';
+    const scopes = '$barExamples/scopes.dart';
+    const register = '$lineExamples/register.dart';
+    final basicCode = _code(_regionsOf(basic)['bar-basic']);
+
     await _tap(tester, 'basic.code');
-    expect(reads, [barExamplesAsset]);
-    expect(_code(_regionsOf(barExamplesAsset)['bar-basic']), findsOneWidget);
+    expect(reads, [basic]);
+    expect(basicCode, findsOneWidget);
 
     await _tap(tester, 'scopes.code');
-    expect(reads, [barExamplesAsset]);
-    expect(_code(_regionsOf(barExamplesAsset)['bar-scopes']), findsOneWidget);
+    expect(reads, [basic, scopes]);
+    expect(_code(_regionsOf(scopes)['bar-scopes']), findsOneWidget);
 
     await _tap(tester, 'register.code');
-    expect(reads, [barExamplesAsset, examplesAsset]);
-    expect(_code(_regionsOf(examplesAsset)['register']), findsOneWidget);
+    expect(reads, [basic, scopes, register]);
+    expect(_code(_regionsOf(register)['register']), findsOneWidget);
 
     await _tap(tester, 'basic.code');
-    expect(find.byKey(const ValueKey('basic.code')), findsOneWidget);
-    expect(_code(_regionsOf(barExamplesAsset)['bar-basic']), findsNothing);
+    expect(basicCode, findsNothing);
+    await _tap(tester, 'basic.code');
+    expect(basicCode, findsOneWidget);
+    expect(reads, [basic, scopes, register]);
   });
 
   testWidgets('a file that does not load shows a text, and the next open '
