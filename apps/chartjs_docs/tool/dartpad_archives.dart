@@ -89,7 +89,8 @@ Future<void> _run(
 }
 
 /// The sample files of [docs], relative to it and sorted: each file of
-/// `lib/examples` and `lib/migrate` with a `main` function.
+/// `lib/examples` and `lib/migrate` with a `main` function. Each path has
+/// `/` between its parts, also on Windows.
 List<String> samplePaths(Directory docs) => [
   for (final folder in ['lib/examples', 'lib/migrate'])
     for (final file
@@ -100,7 +101,7 @@ List<String> samplePaths(Directory docs) => [
             .toList()
           ..sort((a, b) => a.path.compareTo(b.path)))
       if (file.readAsStringSync().contains('\nvoid main() {'))
-        file.path.substring(docs.path.length + 1),
+        file.path.substring(docs.path.length + 1).replaceAll(r'\', '/'),
 ];
 
 /// The versions of the packages that a sample can import.
