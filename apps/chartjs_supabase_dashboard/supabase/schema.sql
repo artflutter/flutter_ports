@@ -1,5 +1,7 @@
 -- The database of the live dashboard sample: one table of time-stamped
--- values. The anon role reads the table and asks for a new row through the
+-- values. Each browser signs in as an anonymous user (turn on "Allow
+-- anonymous sign-ins" in the Auth settings). A session reads the shared
+-- history and its own rows, and asks for a new row of its own through the
 -- function pump_metric; the database makes each value. Run it in the SQL
 -- editor of the Supabase project. It is idempotent.
 
@@ -9,20 +11,29 @@ create table if not exists public.metric_points (
   value double precision not null check (value between -1000 and 1000)
 );
 
+-- The session of a row: null for the shared history.
+alter table public.metric_points add column if not exists owner uuid;
+create index if not exists metric_points_owner_id_idx
+  on public.metric_points (owner, id desc);
+
 -- The chart loads its pages by id, the newest rows first: the primary key
 -- is the index of the pages, and the ids grow with ts.
 
 alter table public.metric_points enable row level security;
 
+-- A session reads the shared history and its own rows. Realtime applies
+-- the same policy: each session gets its own inserts only.
 drop policy if exists "metric_points read" on public.metric_points;
 create policy "metric_points read" on public.metric_points
-  for select to anon, authenticated using (true);
+  for select to authenticated
+  using (owner is null or owner = (select auth.uid()));
 
 -- No client writes the table: pump_metric inserts the rows.
 drop policy if exists "metric_points insert" on public.metric_points;
+revoke all on public.metric_points from anon;
 revoke insert, update, delete, truncate on public.metric_points
-  from anon, authenticated;
-grant select on public.metric_points to anon, authenticated;
+  from authenticated;
+grant select on public.metric_points to authenticated;
 
 -- Realtime sends each insert to the subscribers of the table.
 do $$
@@ -72,31 +83,40 @@ language sql immutable parallel safe set search_path = '' as $$
   from (select extract(epoch from ts)::double precision as e) as t
 $$;
 
--- Inserts the next row: the database makes the value. At most 40 rows a
--- second over all clients: the 40th newest row must be 1 second old.
+-- Inserts the next row of the session: the database makes the value. At
+-- most 40 rows a second over all sessions and 4 for one session.
 create or replace function public.pump_metric()
 returns bigint
 language plpgsql volatile security definer set search_path = '' as $$
 declare
+  me uuid := auth.uid();
   recent timestamptz;
   new_id bigint;
 begin
+  if me is null then
+    return null;
+  end if;
   select ts into recent from public.metric_points
     order by id desc offset 39 limit 1;
   if recent is not null and recent > now() - interval '1 second' then
     return null;
   end if;
-  insert into public.metric_points (value)
-    values (public.metric_value(now()))
+  select ts into recent from public.metric_points
+    where owner = me order by id desc offset 3 limit 1;
+  if recent is not null and recent > now() - interval '1 second' then
+    return null;
+  end if;
+  insert into public.metric_points (owner, value)
+    values (me, public.metric_value(now()))
     returning id into new_id;
   return new_id;
 end $$;
 
-revoke all on function public.pump_metric() from public;
-grant execute on function public.pump_metric() to anon, authenticated;
+revoke all on function public.pump_metric() from public, anon;
+grant execute on function public.pump_metric() to authenticated;
 
--- The history: one value a second for the last 6 hours, when the table is
--- empty, in the order of the time (the ids grow with ts).
+-- The shared history (no owner): one value a second for the last 6 hours,
+-- when the table is empty, in the order of the time (the ids grow with ts).
 insert into public.metric_points (ts, value)
 select t, public.metric_value(t)
 from (
@@ -106,13 +126,13 @@ from (
 where not exists (select 1 from public.metric_points)
 order by t;
 
--- The free plan has 500 MB: a job keeps the newest 200000 rows.
+-- The free plan has 500 MB: a job deletes the rows of a session after one
+-- day. The shared history stays.
 create extension if not exists pg_cron;
 
 select cron.schedule(
   'metric_points_trim',
   '*/10 * * * *',
   $$delete from public.metric_points
-    where id < (select id from public.metric_points
-                order by id desc offset 200000 limit 1)$$
+    where owner is not null and ts < now() - interval '1 day'$$
 );

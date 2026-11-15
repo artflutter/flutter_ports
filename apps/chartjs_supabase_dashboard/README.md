@@ -2,7 +2,9 @@
 
 A proof of concept of a live dashboard: one line chart of `flutter_chartjs_port` on a Supabase table.
 
-- When the page opens, it loads the newest 1000 rows of the table `metric_points` and starts the realtime channel of the table.
+- When the page opens, it signs in as an anonymous Supabase user. The session stays in the storage of the browser, so a reload keeps it. The status bar shows the start of its id.
+- Each session sees the shared 6-hour history and its own rows only, and writes its own rows only. Row level security does this in the database, also for Realtime. A job deletes the rows of a session after one day.
+- The page loads the newest 1000 rows that it can see and starts the realtime channel of the table.
 - The page asks the table for a new row every 500 ms, through the database function `pump_metric`. The database makes each value (`metric_value`: smooth value noise of several time scales, with calm and busy periods, that never repeats), so the rows of all open pages give one line. The function inserts at most 40 rows a second over all clients. Supabase Realtime sends each new row to each open page, also to the page that sent it.
 - The line has monotone cubic curves (`MonotoneCubicInterpolationMode`): smooth, with no overshoot of the values.
 - The view scrolls with the clock in each frame. Its right edge is the newest time that all rows reached, so a new row comes in from the right. The y range eases to the values in view, and the time labels stay on fixed steps of time. Each frame changes only the ranges (`chart.updateRanges`), and a new row gives one full update. The points are in the internal form of Chart.js (`parsing: false`, `normalized: true`), and the live view gets only the rows of the last two widths of the view, so an update stays short with many rows in memory. The chart area keeps one size: the x axis adds no padding for its edge labels, and the y axis has a fixed width. Else the plot jumps each time a tick comes in at an edge.
@@ -13,10 +15,11 @@ A proof of concept of a live dashboard: one line chart of `flutter_chartjs_port`
 
 ## Supabase set-up
 
-1. Open the SQL editor of the project and run [supabase/schema.sql](supabase/schema.sql). The script makes the table, the row level security policies and the realtime publication. It writes 6 hours of history (one value a second) into an empty table. It also schedules a `pg_cron` job that keeps the newest 200000 rows.
-2. Copy `supabase.example.json` to `supabase.json`, and write the project URL and the publishable key into it (Project Settings, API Keys). Git ignores `supabase.json`.
+1. Turn on "Allow anonymous sign-ins" in Authentication, Sign In / Providers.
+2. Open the SQL editor of the project and run [supabase/schema.sql](supabase/schema.sql). The script makes the table, the row level security policies, the functions and the realtime publication. It writes 6 hours of shared history (one value a second) into an empty table. It also schedules a `pg_cron` job that deletes the rows of a session after one day.
+3. Copy `supabase.example.json` to `supabase.json`, and write the project URL and the publishable key into it (Project Settings, API Keys). Git ignores `supabase.json`.
 
-The anon role can read the table and call `pump_metric`. It cannot write the table.
+A session can read the shared rows and its own rows, and call `pump_metric`. No client can write the table directly.
 
 ## Run
 

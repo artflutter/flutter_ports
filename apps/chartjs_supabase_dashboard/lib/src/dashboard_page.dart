@@ -18,6 +18,9 @@ class const DashboardApp({
 
   /// Whether the pump starts with the page.
   final bool pump = true,
+
+  /// The id of the anonymous session, or Dart `null` with no session.
+  final String? session,
   super.key,
 }) extends StatelessWidget {
   /// Creates the app.
@@ -43,7 +46,7 @@ class const DashboardApp({
           : const ChartThemeData.light(),
       child: child!,
     ),
-    home: DashboardPage(source: source, pump: pump),
+    home: DashboardPage(source: source, pump: pump, session: session),
   );
 }
 
@@ -54,6 +57,9 @@ class const DashboardPage({
 
   /// Whether the pump starts with the page.
   final bool pump = true,
+
+  /// The id of the anonymous session, or Dart `null` with no session.
+  final String? session,
   super.key,
 }) extends StatefulWidget {
   /// Creates the page.
@@ -103,7 +109,8 @@ class _DashboardPageState() extends State<DashboardPage> {
           children: [
             ListenableBuilder(
               listenable: _series,
-              builder: (context, _) => _StatusBar(series: _series),
+              builder: (context, _) =>
+                  _StatusBar(series: _series, session: widget.session),
             ),
             const SizedBox(height: 12),
             Expanded(
@@ -132,8 +139,10 @@ class _DashboardPageState() extends State<DashboardPage> {
 
 /// The status of the series: the realtime channel, the rows in memory, the
 /// inserts of this client and the time from an insert to its row.
-class const _StatusBar({required final LiveSeries series})
-    extends StatelessWidget {
+class const _StatusBar({
+  required final LiveSeries series,
+  final String? session,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
@@ -152,6 +161,12 @@ class const _StatusBar({required final LiveSeries series})
           spacing: 8,
           runSpacing: 8,
           children: [
+            if (session case final session?)
+              _Stat(
+                key: const ValueKey('dashboard.session'),
+                icon: Icons.person_outline,
+                label: 'Session ${session.substring(0, 8)}',
+              ),
             _Stat(
               icon: Icons.circle,
               iconColor: statusColor,
@@ -198,6 +213,7 @@ class const _Stat({
   required final IconData icon,
   required final String label,
   final Color? iconColor,
+  super.key,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Chip(

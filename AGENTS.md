@@ -611,10 +611,14 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
 - `apps/chartjs_supabase_dashboard`: a proof of concept of a live dashboard (web and macOS): one
   typed `ChartView` line chart on a time axis, on the Supabase table `metric_points`, with
-  `supabase_flutter`. `supabase/schema.sql` makes the table (anon reads it and writes nothing), the
-  value generator `metric_value` (value noise of several time scales, from `hashint8`), the RPC
-  `pump_metric` (inserts a row of `metric_value(now())`, at most 40 rows a second), the realtime
-  publication, 6 hours of history and a `pg_cron` trim job. The run reads the URL and
+  `supabase_flutter`. Each browser signs in as an anonymous Supabase user (`main.dart`;
+  "Allow anonymous sign-ins" is on in the Auth settings), and the status bar shows the session.
+  `supabase/schema.sql` makes the table with the column `owner` (null for the shared history), the
+  read policy `owner is null or owner = auth.uid()` for `authenticated` (Realtime applies it too;
+  no client writes the table), the value generator `metric_value` (value noise of several time
+  scales, from `hashint8`), the RPC `pump_metric` (a row of `metric_value(now())` for
+  `auth.uid()`, at most 40 rows a second and 4 for one session), the realtime publication, 6 hours
+  of shared history and a `pg_cron` job that deletes the rows of a session after one day. The run reads the URL and
   the publishable key from `supabase.json` (`--dart-define-from-file`, git ignores it;
   `supabase.example.json` has the form). `LiveSeries` (`lib/src/live_series.dart`) loads the
   newest page of 1000 rows by `id`, merges the realtime inserts by id, loads the page before the

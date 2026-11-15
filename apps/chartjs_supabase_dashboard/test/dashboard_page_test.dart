@@ -40,6 +40,23 @@ void main() {
     expect(find.byKey(const ValueKey('dashboard.live')), findsNothing);
   });
 
+  testWidgets('the status bar shows the anonymous session', (tester) async {
+    tester.view
+      ..physicalSize = const Size(1200, 800)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(
+      DashboardApp(
+        source: MemoryMetricSource(rows: 10),
+        pump: false,
+        session: '3f2a91c4-0000-4000-8000-000000000000',
+      ),
+    );
+    await frames(tester, 3);
+
+    expect(find.text('Session 3f2a91c4'), findsOneWidget);
+  });
+
   testWidgets('the pump button starts and stops the inserts', (tester) async {
     final source = MemoryMetricSource(rows: 100);
     await showPage(tester, source);
