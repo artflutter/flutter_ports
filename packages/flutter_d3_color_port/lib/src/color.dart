@@ -1233,9 +1233,12 @@ class Hsl(
   }
 
   /// color.js:181 `formatRgb()`: `this.rgb().formatRgb()`.
+  ///
+  /// A subclass can override [rgb], so only an [Hsl] of this exact class
+  /// takes the form in locals.
   @override
   String formatRgb() {
-    if (!formatRgbInLocals) return rgb().formatRgb();
+    if (!formatRgbInLocals || runtimeType != Hsl) return rgb().formatRgb();
     // DIVERGES(d3-color): adapt-color-format-locals, no temporary Rgb.
     final (r, g, b) = _hsl2rgb(h, s, l);
     return rgbText(r, g, b, opacity);

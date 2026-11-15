@@ -264,9 +264,12 @@ class Hcl(
 
   /// color.js:181 `formatRgb()`: `this.rgb().formatRgb()`, with the lines
   /// of lab.js:120 `rgb()`.
+  ///
+  /// A subclass can override [rgb], so only an [Hcl] of this exact class
+  /// takes the form in locals.
   @override
   String formatRgb() {
-    if (!formatRgbInLocals) return rgb().formatRgb();
+    if (!formatRgbInLocals || runtimeType != Hcl) return rgb().formatRgb();
     // DIVERGES(d3-color): adapt-color-format-locals, no temporary Rgb.
     double a;
     double b;

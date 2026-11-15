@@ -213,4 +213,23 @@ void main() {
       expect(above.formatRgb(), _plain(above));
     }
   });
+
+  test('a subclass formats the result of its own rgb()', () {
+    // Upstream formatRgb() is this.rgb().formatRgb(): an override of rgb()
+    // decides the text.
+    expect(_GrayHsl(120, 0.5, 0.5).toString(), 'rgb(7, 7, 7)');
+    expect(_GrayHcl(120, 30, 50).toString(), 'rgb(7, 7, 7)');
+  });
+}
+
+/// An [Hsl] whose rgb() gives a fixed gray.
+final class _GrayHsl(super.h, super.s, super.l) extends Hsl {
+  @override
+  Rgb rgb() => Rgb(7, 7, 7);
+}
+
+/// An [Hcl] whose rgb() gives a fixed gray.
+final class _GrayHcl(super.h, super.c, super.l) extends Hcl {
+  @override
+  Rgb rgb() => Rgb(7, 7, 7);
 }
