@@ -327,22 +327,25 @@ class _CodeToggleState() extends State<CodeToggle> {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.stretch,
     children: [
-      Row(
-        children: [
-          TextButton.icon(
-            key: ValueKey('${widget.id}.code'),
-            onPressed: () => setState(() => _open = !_open),
-            icon: Icon(_open ? Icons.expand_less : Icons.code),
-            label: Text(_open ? 'Hide code' : 'Code'),
-          ),
-          // The rest of the row, so that a trailing Wrap can wrap.
-          Expanded(
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: widget.trailing,
+      Padding(
+        padding: const EdgeInsets.all(4),
+        child: Row(
+          children: [
+            TextButton.icon(
+              key: ValueKey('${widget.id}.code'),
+              onPressed: () => setState(() => _open = !_open),
+              icon: Icon(_open ? Icons.expand_less : Icons.code),
+              label: Text(_open ? 'Hide code' : 'Code'),
             ),
-          ),
-        ],
+            // The rest of the row, so that a trailing Wrap can wrap.
+            Expanded(
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: widget.trailing,
+              ),
+            ),
+          ],
+        ),
       ),
       if (_open) ...[
         const Divider(height: 1, color: DocColors.border),

@@ -183,21 +183,18 @@ class const ReplicaBlock({
               CodeToggle(
                 id: demo.id,
                 region: demo.region,
-                trailing: Padding(
-                  padding: const EdgeInsets.only(right: 6),
-                  child: Wrap(
-                    alignment: WrapAlignment.end,
-                    children: [
-                      DartPadLink(
-                        demo.region.source,
-                        key: ValueKey('${demo.id}.dartpad'),
-                      ),
-                      _OriginalLink(
-                        url: demo.original,
-                        label: const Text('Original'),
-                      ),
-                    ],
-                  ),
+                trailing: Wrap(
+                  alignment: WrapAlignment.end,
+                  children: [
+                    DartPadLink(
+                      demo.region.source,
+                      key: ValueKey('${demo.id}.dartpad'),
+                    ),
+                    _OriginalLink(
+                      url: demo.original,
+                      label: const Text('Original'),
+                    ),
+                  ],
                 ),
               ),
             ],
