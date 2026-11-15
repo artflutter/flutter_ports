@@ -16,15 +16,18 @@ import 'package:material_ui/material_ui.dart';
 /// that all rows reached (`now - lagMs` of the series), so a new row comes
 /// in from the right. The y range eases to the values in view.
 ///
-/// A wheel or a trackpad scroll pans the x range (eased), a drag pans it,
-/// and a pinch or Ctrl and the wheel zoom it (chartjs-plugin-zoom). The view
-/// then stays where the user left it, until the right edge reaches the
-/// newest time again or the button "Live" brings it back. When the left
-/// edge comes near the oldest row, the series loads the page before it.
+/// A wheel or a trackpad scroll pans the x range (eased), and Ctrl and the
+/// wheel or a trackpad pinch zoom it around the pointer: the ticker applies
+/// both in its next frame. A drag pans the range and a touch pinch zooms it
+/// (chartjs-plugin-zoom). The view then stays where the user left it, until
+/// the right edge reaches the newest time again or the button "Live" brings
+/// it back. When the left edge comes near the oldest row, the series loads
+/// the page before it.
 ///
 /// Each frame writes `min` and `max` of the two scales and calls
-/// `chart.updateRanges`: the chart does no full update for a move. A new
-/// row gives a new data List, and the `ChartView` updates the chart.
+/// `chart.updateRanges`: the chart does no full update for a move, and one
+/// update in a frame for a wheel pan or a wheel zoom. A new row gives a new
+/// data List, and the `ChartView` updates the chart.
 class const LiveChart({
   /// The rows of the chart.
   required final LiveSeries series,
@@ -89,6 +92,16 @@ class _LiveChartState()
   /// The wheel pan of the next frame, in pixels: positive goes back.
   double _wheel = 0;
 
+  /// The wheel zoom of the next frame: the factor of the width of the x
+  /// range (below 1 zooms in), and the x of the pointer on the canvas.
+  double _zoomBy = 1;
+  double _zoomAt = 0;
+
+  /// The wheel zoom of chartjs-plugin-zoom (`wheel.speed`, `MAX_DELTA`): a
+  /// step of [_zoomNotch] pixels or more changes the width by [_zoomSpeed].
+  static const double _zoomSpeed = 0.1;
+  static const double _zoomNotch = 24;
+
   /// A timed move of the x range on an ease-in-out curve, for the button
   /// "Live" and the zoom buttons: `from` is the range at the start, `to` the
   /// end range, or Dart `null` for the moving live range of the width
@@ -114,6 +127,10 @@ class _LiveChartState()
   int _shownPages = 0;
   double _shownWindow = 0;
 
+  /// The time of the first row of the List of the live view, or negative
+  /// infinity when the List has all rows.
+  double _shownStart = double.negativeInfinity;
+
   /// The data List of the chart. A full update of the chart reads each row
   /// of its List, so the List stays short where it can:
   /// - The live view gets the rows of the last two widths of the view.
@@ -121,7 +138,10 @@ class _LiveChartState()
   ///   view. A new page gives it all rows.
   ///
   /// A notice of the series with no new row keeps the List: the chart then
-  /// does no update.
+  /// does no update. A zoom of the live view also keeps it, while it holds
+  /// the view and is not too long for it: each step of a zoom changes the
+  /// width, and a new List for each step is a full update of the chart for
+  /// each step.
   List<DataPoint> _chartPoints() {
     final all = _series.points;
     final live = _follow && _move == null;
@@ -129,16 +149,24 @@ class _LiveChartState()
       // The move to the live edge crosses the rows between: all of them.
       _shown = all;
     } else if (live) {
-      if (_shownFollow == true &&
-          identical(all, _shownFrom) &&
-          _shownWindow == _window) {
-        return _shown;
-      }
       final edge = _edge();
+      if (_shownFollow == true && identical(all, _shownFrom)) {
+        if (_shownWindow == _window) return _shown;
+        // The List has the rows from the left edge of the view, and the
+        // view is not below a quarter of the width that the List is for.
+        if (edge != null &&
+            _shownStart <= edge - _window &&
+            _window >= _shownWindow / 4) {
+          return _shown;
+        }
+      }
       final start = edge == null
           ? 0
           : math.max(0, _series.pointIndexAt(edge - 2 * _window) - 1);
       _shown = start == 0 ? all : all.sublist(start);
+      _shownStart = start == 0
+          ? double.negativeInfinity
+          : _shown.first.x as double;
     } else {
       if (_shownFollow == false && _shownPages == _series.pages) return _shown;
       _shown = all;
@@ -160,7 +188,9 @@ class _LiveChartState()
       onPanComplete: (_) => _userPanned(),
     ),
     zoom: ZoomOptions(
-      wheel: const WheelOptions(enabled: true, modifierKey: ModifierKey.ctrl),
+      // A touch pinch. The wheel zoom is in [_onWheel]: the plugin does a
+      // chart update for each wheel event, and the ticker then does one
+      // more in the same frame.
       pinch: const PinchOptions(enabled: true),
       mode: Mode.x,
       onZoom: (_) => _userZoomed(),
@@ -189,7 +219,12 @@ class _LiveChartState()
       'x': TimeAxis(
         tooltipFormat: 'HH:mm:ss',
         ticks: AxisTicks(maxRotation: 0, callback: _timeLabel),
-        extra: {'afterFit': _noLabelPadding},
+        extra: {
+          // No tick for each millisecond of a range of some seconds.
+          'time': {'minUnit': TimeUnit.second},
+          'afterBuildTicks': _gridTicks,
+          'afterFit': _noLabelPadding,
+        },
       ),
       // No tick at the eased bounds, and whole numbers only (precision 0
       // rounds the step to an integer).
@@ -223,10 +258,26 @@ class _LiveChartState()
   /// move when the width of the labels changes.
   static void _fixedWidth(Scale scale) => scale.width = _yAxisWidth;
 
-  /// The label of a time tick, or Dart `null` for a tick off the grid of
-  /// [_timeStep]. The scale makes a tick each second (or minute), so the
-  /// ticks on the grid stay on the same times while the range moves: no
-  /// label jumps from one second to the next.
+  /// The `afterBuildTicks` hook of the x axis: the ticks of the grid of
+  /// [_timeStep], in place of the ticks of the scale. The scale makes a
+  /// tick for each second or minute of the range, up to some thousands in
+  /// each update. The grid has about one tick for each 100 pixels, and its
+  /// ticks stay on the same times while the range moves: no label jumps
+  /// from one second to the next.
+  static void _gridTicks(Scale scale) {
+    final step = _timeStep(scale.max - scale.min, scale.width);
+    scale.ticks = [
+      for (
+        var value = (scale.min / step).ceilToDouble() * step;
+        value <= scale.max;
+        value += step
+      )
+        Tick(value: value),
+    ];
+  }
+
+  /// The label of a time tick: the seconds show while the grid of
+  /// [_timeStep] is narrower than a minute.
   static List<String>? _timeLabel(
     Scale scale,
     double value,
@@ -234,8 +285,6 @@ class _LiveChartState()
     List<Tick> ticks,
   ) {
     final step = _timeStep(scale.max - scale.min, scale.width);
-    // A call with one tick measures the label size: it gets a label.
-    if (ticks.length > 1 && value % step != 0) return null;
     final time = DateTime.fromMillisecondsSinceEpoch(value.round());
     String two(int part) => part.toString().padLeft(2, '0');
     final hm = '${two(time.hour)}:${two(time.minute)}';
@@ -350,6 +399,22 @@ class _LiveChartState()
       toXMax -= shift;
       _setFollow(toXMax >= edge);
     }
+    var zoomed = false;
+    if (_zoomBy != 1) {
+      // The time at the pointer keeps its place. A live view keeps its
+      // right edge on the live edge (below).
+      final width = ((xMax - xMin) * _zoomBy).clamp(_minWindow, _maxWindow);
+      final at = ((_zoomAt - x.left) / math.max(1, x.width)).clamp(0.0, 1.0);
+      final time = xMin + (xMax - xMin) * at;
+      _zoomBy = 1;
+      toXMin = time - width * at;
+      toXMax = toXMin + width;
+      zoomed = true;
+      if (width != _window) {
+        // The toolbar shows the width, and the data List follows it.
+        setState(() => _window = width);
+      }
+    }
     if (_follow) {
       toXMax = edge;
       toXMin = edge - _window;
@@ -376,8 +441,9 @@ class _LiveChartState()
       } else {
         _move = (from: move.from, to: move.to, ms: move.ms, start: start);
       }
-    } else if ((toXMax - xMax).abs() > 2 * _window) {
-      // A long way: no easing through the hours between.
+    } else if (zoomed || (toXMax - xMax).abs() > 2 * _window) {
+      // A zoom step follows the fingers, and a long way has no easing
+      // through the hours between.
       xMin = toXMin;
       xMax = toXMax;
     } else {
@@ -417,11 +483,24 @@ class _LiveChartState()
   }
 
   /// A wheel or a trackpad scroll without Ctrl pans the x range: down and
-  /// right go back in time. With Ctrl, the zoom plugin zooms.
+  /// right go back in time. With Ctrl, which a trackpad pinch also gives,
+  /// it zooms the x range around the pointer, by the step of the wheel zoom
+  /// of chartjs-plugin-zoom. The next frame of the ticker applies both: an
+  /// event does no chart update of its own.
   void _onWheel(NativeEvent event) {
-    if (event.ctrlKey) return;
     event.preventDefault();
     _stopMove();
+    if (event.ctrlKey) {
+      final amount =
+          _zoomSpeed * math.min(event.deltaY.abs(), _zoomNotch) / _zoomNotch;
+      _zoomBy *= event.deltaY < 0 ? 1 - amount : 1 / (1 - amount);
+      final canvas = _chart?.canvas;
+      if (canvas != null) {
+        _zoomAt = event.clientX - canvas.getBoundingClientRect().left;
+      }
+      _run();
+      return;
+    }
     // deltaMode 1 counts lines, 2 pages: about 16 and 400 pixels.
     final unit = switch (event.deltaMode) {
       1 => 16.0,
@@ -451,8 +530,8 @@ class _LiveChartState()
     _run();
   }
 
-  /// A pinch or Ctrl and the wheel zoomed the x range. A live view keeps its
-  /// right edge on the live edge.
+  /// A touch pinch of the zoom plugin zoomed the x range. A live view keeps
+  /// its right edge on the live edge.
   void _userZoomed() {
     _stopMove();
     final scale = _chart?.scales['x'];

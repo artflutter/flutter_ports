@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: the tests of the live chart.
 
+import 'dart:math' as math;
+
 import 'package:chartjs_supabase_dashboard/src/live_chart.dart';
 import 'package:chartjs_supabase_dashboard/src/live_series.dart';
 import 'package:flutter/gestures.dart';
@@ -50,8 +52,60 @@ Future<void> close(WidgetTester tester, LiveSeries series) async {
 double edgeOf(LiveSeries series) =>
     series.newest!.millisecondsSinceEpoch.toDouble();
 
+/// The count of chart updates since the last reset.
+int updates = 0;
+
+/// A plugin of all charts of this file: it counts the chart updates. It
+/// keeps the range updates of the chart (`supportsDataUpdates`).
+final Plugin<Object?> updateCounter = Plugin(
+  id: 'liveChartTest',
+  supportsDataUpdates: true,
+  afterUpdate: (chart, args, options) => updates++,
+);
+
+/// The factor of the width of the x range for one wheel step of [deltaY]
+/// with Ctrl: the step of the wheel zoom of chartjs-plugin-zoom.
+double zoomFactor(double deltaY) {
+  final amount = 0.1 * math.min(deltaY.abs(), 24) / 24;
+  return deltaY < 0 ? 1 - amount : 1 / (1 - amount);
+}
+
+/// A trackpad pinch at [position]: [steps] frames, each with one step of
+/// the scale by [step]. The host gives the chart one `wheel` with Ctrl and
+/// the `deltaY` -100 ln([step]) for each step.
+Future<void> pinch(
+  WidgetTester tester,
+  Offset position, {
+  required int steps,
+  required double step,
+}) async {
+  const pointer = 7;
+  tester.binding.handlePointerEvent(
+    PointerPanZoomStartEvent(pointer: pointer, position: position),
+  );
+  var scale = 1.0;
+  for (var i = 0; i < steps; i++) {
+    scale *= step;
+    tester.binding.handlePointerEvent(
+      PointerPanZoomUpdateEvent(
+        pointer: pointer,
+        position: position,
+        scale: scale,
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 16));
+  }
+  tester.binding.handlePointerEvent(
+    PointerPanZoomEndEvent(pointer: pointer, position: position),
+  );
+}
+
 void main() {
-  setUpAll(() => Chart.register(registerables));
+  setUpAll(() {
+    Chart.register(registerables);
+    Chart.register([updateCounter]);
+  });
+  tearDownAll(() => Chart.unregister([updateCounter]));
 
   testWidgets('the chart area keeps its size while ticks pass the edges', (
     tester,
@@ -163,6 +217,120 @@ void main() {
     for (var i = 1; i < ticks.length; i++) {
       expect(ticks[i].value - ticks[i - 1].value, greaterThanOrEqualTo(5000));
     }
+
+    await close(tester, series);
+  });
+
+  testWidgets('the x axis makes only the ticks of its grid', (tester) async {
+    final (series, chart) = await showChart(tester);
+
+    // 30 seconds, then 15 seconds: the ticks are those of the grid of 5
+    // seconds, each with a label.
+    for (final key in ['dashboard.range.30s', 'dashboard.zoom.in']) {
+      await tester.tap(find.byKey(ValueKey(key)));
+      await frames(tester, 40);
+      final x = chart().scales['x']!;
+      final grid = [
+        for (
+          var value = (x.min / 5000).ceilToDouble() * 5000;
+          value <= x.max;
+          value += 5000
+        )
+          value,
+      ];
+      expect([for (final tick in x.ticks!) tick.value], grid, reason: key);
+      for (final tick in x.ticks!) {
+        expect(tick.label, hasLength(1), reason: key);
+      }
+    }
+
+    await close(tester, series);
+  });
+
+  testWidgets('a pinch in the live view does one chart update in a frame', (
+    tester,
+  ) async {
+    final (series, chart) = await showChart(tester);
+    final x = chart().scales['x']!;
+    final center = tester.getCenter(
+      find.byKey(const ValueKey('dashboard.chart')),
+    );
+    final before = x.max - x.min;
+    final points = chart().getDatasetMeta(0).data.length;
+
+    updates = 0;
+    await pinch(tester, center, steps: 10, step: 1.1);
+
+    // The ticker applies the zoom: the zoom plugin does no update of its
+    // own, and the chart keeps its data List, so the widget does none.
+    expect(updates, 10);
+    final factor = zoomFactor(-100 * math.log(1.1));
+    expect(x.max - x.min, closeTo(before * math.pow(factor, 10), 1));
+    expect(x.max, closeTo(edgeOf(series), 1), reason: 'the live edge stays');
+    expect(chart().getDatasetMeta(0).data.length, points);
+
+    await close(tester, series);
+  });
+
+  testWidgets('a pinch in the history view keeps the time at the pointer', (
+    tester,
+  ) async {
+    final (series, chart) = await showChart(tester);
+    final box = find.byKey(const ValueKey('dashboard.chart'));
+    final center = tester.getCenter(box);
+    for (var i = 0; i < 10; i++) {
+      tester.binding.handlePointerEvent(
+        PointerScrollEvent(position: center, scrollDelta: const Offset(0, 300)),
+      );
+      await tester.pump(const Duration(milliseconds: 16));
+    }
+    await frames(tester, 60);
+    expect(find.byKey(const ValueKey('dashboard.live')), findsOneWidget);
+
+    final x = chart().scales['x']!;
+    final at = center + const Offset(200, 0);
+    final pixel = at.dx - tester.getTopLeft(box).dx;
+    final time = x.getValueForPixel(pixel)!;
+    final before = x.max - x.min;
+
+    updates = 0;
+    await pinch(tester, at, steps: 5, step: 1 / 1.1);
+
+    expect(updates, 5);
+    final factor = zoomFactor(100 * math.log(1.1));
+    expect(x.max - x.min, closeTo(before * math.pow(factor, 5), 1));
+    expect(x.getValueForPixel(pixel), closeTo(time, 1));
+    expect(find.byKey(const ValueKey('dashboard.live')), findsOneWidget);
+
+    await close(tester, series);
+  });
+
+  testWidgets('a zoom changes the data List only when the view needs it', (
+    tester,
+  ) async {
+    final (series, chart) = await showChart(tester);
+    final x = chart().scales['x']!;
+    final center = tester.getCenter(
+      find.byKey(const ValueKey('dashboard.chart')),
+    );
+    int points() => chart().getDatasetMeta(0).data.length;
+    int rowsInView() => ((x.max - x.min) / 1000).floor();
+    final start = points();
+    expect(start, greaterThanOrEqualTo(2 * rowsInView()));
+
+    // Out to more than two widths: the List of two widths does not hold the
+    // view, and the chart gets the older rows.
+    await pinch(tester, center, steps: 40, step: 1 / 1.1);
+    await frames(tester, 5);
+    expect(rowsInView(), greaterThan(start));
+    expect(points(), greaterThanOrEqualTo(rowsInView()));
+
+    // In to less than a quarter of the width of the List: a shorter List.
+    final wide = points();
+    await pinch(tester, center, steps: 80, step: 1.1);
+    await frames(tester, 5);
+    expect(points(), lessThan(wide / 4));
+    expect(points(), greaterThanOrEqualTo(rowsInView()));
 
     await close(tester, series);
   });

@@ -624,15 +624,20 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   oldest row on demand, and calls `pump_metric` every 500 ms. `LiveChart` moves the view
   in a frame ticker: it writes `min` and `max` of the x and y scales through `scale.options` and
   calls `chart.updateRanges` (Chart.js ADR 0111). The right edge is `now` minus the longest recent
-  realtime delay, the y range eases to the values in view, and a tick callback keeps the time
-  labels on fixed steps. A wheel or a trackpad scroll pans the x range (a canvas `wheel`
-  listener), a drag pans it and a pinch or Ctrl and the wheel zooms it (the zoom port with
-  `rangeOnlyUpdates: true`), and a left edge near the oldest row loads the next page. The config
+  realtime delay, and the y range eases to the values in view. The x axis has `time.minUnit`
+  `TimeUnit.second`, and its `afterBuildTicks` hook gives it only the ticks of a fixed grid of
+  time, about one for each 100 pixels: the axis makes no tick that its callback removes. A wheel
+  or a trackpad scroll pans the x range, and Ctrl and the wheel or a trackpad pinch zooms it
+  around the pointer (a canvas `wheel` listener): the next frame of the ticker applies both, so
+  such a frame has one chart update. A drag pans the range and a touch pinch zooms it (the zoom
+  port with `rangeOnlyUpdates: true`, with no wheel zoom), and a left edge near the oldest row
+  loads the next page. The config
   is built once, and each build gives only a new dataset with a new data List: the options stay
   `==`, so the chart keeps the ranges. The line has `MonotoneCubicInterpolationMode`. The points have the time in milliseconds as x, in time
   order, with `parsing: false` and `normalized: true`: an update parses no row. The live view gets
-  only the rows of the last two widths of the view, and the history view holds its List until a
-  page load. The toolbar above the chart (fixed height) has the note, the button Live and the zoom
+  only the rows of the last two widths of the view, and a zoom keeps that List while it holds the
+  view and the view is not below a quarter of its width, so a zoom step is no full update. The
+  history view holds its List until a page load. The toolbar above the chart (fixed height) has the note, the button Live and the zoom
   buttons (zoom out, 30s, 2m, 10m and 1h on a chart of 560 px or more, zoom in). Live and the
   zoom buttons start a timed move on `Curves.easeInOutCubic` toward a fixed range or the moving
   live range; the chart gets all rows during a move, and a drag, a wheel or a pinch stops it.
