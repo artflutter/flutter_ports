@@ -340,6 +340,7 @@ DocPageContent lineChartPage() => DocPageContent(
           label: Text('Basic'),
           config: basicLine,
           region: CodeRegion('$lineExamples/basic.dart', 'basic'),
+          dartPadEntry: 'lib/dartpad/line_basic.dart',
         ),
       ],
     ),

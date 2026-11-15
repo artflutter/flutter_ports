@@ -500,7 +500,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   panel has one region. A `CodeRegion` names the source file and the region of a panel. Each code panel
   is closed at the start: its **Code** button (`CodeToggle` of `lib/ui/doc_blocks.dart`) opens it.
   `CodeSources` reads the file of a panel at its first open, not at the start of the app.
-  `test/code_panels_test.dart` pins this. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
+  `test/code_panels_test.dart` pins this. A live example with a `dartPadEntry` has a **Try in DartPad**
+  button (`lib/ui/dartpad.dart`). The button opens the sample file and its app in `lib/dartpad/` in DartPad.
+  The address loads `chartjs_samples.tar.gz` of the docs site. The workflow `pages` writes that archive with
+  `tool/dartpad_archive.sh`: `lib/examples`, `lib/dartpad` and a copy of the port, because the port is not on
+  pub.dev. Only the basic line chart has the button now. `test/line_chart_page_test.dart` compares the table with the chart defaults and the parameters of
   `LineDataset`. The workflow `pages` deploys the site.
   - The UI of the site is widget classes, with no function that returns a widget (the Flutter guidance
     "prefer a widget over a helper method"). A docs block takes each text as a widget: a `DocText` for a

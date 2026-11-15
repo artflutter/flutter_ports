@@ -2,9 +2,12 @@
 @TestOn('vm')
 library;
 
+import 'dart:io';
+
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/main.dart';
 import 'package:chartjs_docs/pages/line_chart_page.dart';
+import 'package:chartjs_docs/ui/dartpad.dart';
 import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -266,6 +269,32 @@ void main() {
     addTearDown(() => line['spanGaps'] = undefined);
     spanGapsInAllLineCharts();
     expect(line['spanGaps'], isTrue);
+  });
+
+  testWidgets('the basic example opens its sample in DartPad', (tester) async {
+    await _show(tester, const Size(1440, 900));
+    final link = tester.widget<DartPadLink>(
+      find.byKey(const ValueKey('basic.dartpad')),
+    );
+    final uri = dartPadUri(file: link.file, entrypoint: link.entrypoint);
+    expect(uri.host, 'dartpad.dev');
+    expect(uri.queryParameters['url'], dartPadArchive);
+    expect(uri.queryParametersAll['file'], [
+      'chartjs_docs/$lineExamples/basic.dart',
+      'chartjs_docs/lib/dartpad/line_basic.dart',
+    ]);
+    expect(
+      uri.queryParameters['entrypoint'],
+      'chartjs_docs/lib/dartpad/line_basic.dart',
+    );
+    // tool/dartpad_archive.sh packs lib/examples and lib/dartpad. The app
+    // that DartPad runs imports the sample and has a main function.
+    final entry = File(link.entrypoint).readAsStringSync();
+    final library = link.file.replaceFirst('lib/', 'package:chartjs_docs/');
+    expect(link.file, startsWith('$lineExamples/'));
+    expect(link.entrypoint, startsWith('lib/dartpad/'));
+    expect(entry, contains("import '$library';"));
+    expect(entry, contains('void main()'));
   });
 
   test('the regions have no markers and no common indent', () {

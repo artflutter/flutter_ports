@@ -36,6 +36,7 @@ on:
       - apps/chartjs_docs/assets/**
       - apps/chartjs_docs/lib/**
       - apps/chartjs_docs/pubspec.yaml
+      - apps/chartjs_docs/tool/**
       - apps/chartjs_docs/web/**
       - packages/flutter_chartjs_chart_sankey_port/lib/**
       - packages/flutter_chartjs_chart_sankey_port/pubspec.yaml
@@ -169,6 +170,8 @@ jobs:
         run: |
           mkdir site
           cp -R apps/chartjs_docs/build/web site/docs
+      - name: Pack the samples for the DartPad links
+        run: apps/chartjs_docs/tool/dartpad_archive.sh site/docs/dartpad/chartjs_samples.tar.gz
       - uses: actions/upload-artifact@v7
         with:
           name: docs

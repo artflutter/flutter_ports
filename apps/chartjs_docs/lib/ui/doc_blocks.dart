@@ -3,6 +3,7 @@
 import 'dart:async';
 
 import 'package:chartjs_docs/ui/code_block.dart';
+import 'package:chartjs_docs/ui/dartpad.dart';
 import 'package:chartjs_docs/ui/docs_theme.dart';
 import 'package:chartjs_docs/ui/snippets.dart';
 import 'package:flutter/gestures.dart';
@@ -375,6 +376,11 @@ class const ExampleVariant({
 
   /// The code region of the form.
   required final CodeRegion region,
+
+  /// The file with the `main` function that runs [config] in DartPad,
+  /// relative to the docs app. With a file, the panel has a
+  /// **Try in DartPad** button.
+  final String? dartPadEntry,
 }) {
   /// Creates a form with the name [name].
   this;
@@ -451,7 +457,18 @@ class _LiveExampleState() extends State<LiveExample> {
             ),
           ),
           const Divider(height: 1, color: DocColors.border),
-          CodeToggle(id: widget.id, region: variant.region),
+          CodeToggle(
+            id: widget.id,
+            region: variant.region,
+            trailing: switch (variant.dartPadEntry) {
+              final entry? => DartPadLink(
+                key: ValueKey('${widget.id}.dartpad'),
+                file: variant.region.source,
+                entrypoint: entry,
+              ),
+              null => null,
+            },
+          ),
         ],
       ),
     );
