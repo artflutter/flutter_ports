@@ -1,6 +1,4 @@
-## 0.1.0-beta.1
-
-- The first beta release. The API can still change before 0.1.0.
+## 0.1.0-beta.2
 
 - The update mode is the extension type `UpdateMode`: `chart.update(UpdateMode.none)`, a custom
   mode `const UpdateMode('zoom')`, and `chart.updateDatasets((i) => ...)` for the function form.
@@ -10,6 +8,10 @@
   as one immutable `PluginOptions` object, and `ChartConfig.pluginOptions` sets the options of a
   chart: `ChartConfig(pluginOptions: [ZoomPluginOptions(...)])`. `Plugin.defaults` is a
   `PluginDefaults`, and the inline plugins of a raw config are a `List<Plugin<Object?>>`.
+
+## 0.1.0-beta.1
+
+- The first beta release. The API can still change before 0.1.0.
 
 - A plugin is a native `Plugin<O>` with one typed field for each hook (Chart.js
   ADR 0144). A plugin Map is no longer a plugin: a Map in `plugins` or in
