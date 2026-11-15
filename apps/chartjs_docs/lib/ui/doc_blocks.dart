@@ -390,6 +390,19 @@ class const ExampleVariant({
   this;
 }
 
+/// A button under a live chart: an action on the chart, as an action of a
+/// `chart-editor` block of the Chart.js docs.
+class const ExampleAction({
+  /// The label of the button. The button gives it its text style.
+  required final Widget label,
+
+  /// What the button does with the chart.
+  required final void Function(Chart chart) onPressed,
+}) {
+  /// Creates an action.
+  this;
+}
+
 /// A live chart with its code, and a choice of forms when it has several.
 class const LiveExample({
   /// The start of the keys of the example.
@@ -404,6 +417,9 @@ class const LiveExample({
   /// A short instruction above the chart. The example gives it a small
   /// muted text style.
   final Widget? hint,
+
+  /// The buttons under the chart.
+  final List<ExampleAction> actions = const [],
   super.key,
 }) extends StatefulWidget {
   /// Creates the example.
@@ -415,6 +431,9 @@ class const LiveExample({
 
 class _LiveExampleState() extends State<LiveExample> {
   int _selected = 0;
+
+  /// The chart of the example, for the actions.
+  Chart? _chart;
 
   @override
   Widget build(BuildContext context) {
@@ -457,9 +476,28 @@ class _LiveExampleState() extends State<LiveExample> {
                 key: ValueKey('${widget.id}.chart'),
                 config: variant.config,
                 semanticLabel: '${widget.description}: ${variant.name}',
+                onChartCreated: (chart) => _chart = chart,
               ),
             ),
           ),
+          if (widget.actions.isNotEmpty)
+            Padding(
+              padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
+              child: Wrap(
+                spacing: 6,
+                runSpacing: 4,
+                children: [
+                  for (final (index, action) in widget.actions.indexed)
+                    OutlinedButton(
+                      key: ValueKey('${widget.id}.action.$index'),
+                      onPressed: () {
+                        if (_chart case final chart?) action.onPressed(chart);
+                      },
+                      child: action.label,
+                    ),
+                ],
+              ),
+            ),
           const Divider(height: 1, color: DocColors.border),
           CodeToggle(
             id: widget.id,

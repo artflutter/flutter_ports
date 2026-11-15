@@ -31,6 +31,7 @@ flutter:
     # The pages show the code of their live charts from these source files.
     - lib/examples/line/
     - lib/examples/bar/
+    - lib/examples/zoom/
     - lib/migrate/fl_chart/
     - lib/migrate/graphic/
     - lib/migrate/syncfusion/

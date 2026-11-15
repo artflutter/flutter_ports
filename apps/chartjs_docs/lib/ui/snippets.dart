@@ -12,11 +12,16 @@ const String lineExamples = 'lib/examples/line';
 /// panel.
 const String barExamples = 'lib/examples/bar';
 
+/// The folder of the code panels of the zoom plugin page, one file for each
+/// panel.
+const String zoomExamples = 'lib/examples/zoom';
+
 /// The folders of the source files that the pages show. `pubspec.yaml` lists
 /// each folder as an asset folder.
 const List<String> snippetFolders = [
   '$lineExamples/',
   '$barExamples/',
+  '$zoomExamples/',
   'lib/migrate/fl_chart/',
   'lib/migrate/graphic/',
   'lib/migrate/syncfusion/',

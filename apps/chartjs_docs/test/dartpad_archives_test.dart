@@ -16,7 +16,7 @@ void main() {
     final paths = archives.samplePaths(docs);
     expect(
       paths.where((path) => path.startsWith('lib/examples/')),
-      hasLength(53),
+      hasLength(54),
     );
     expect(
       paths.where((path) => path.startsWith('lib/migrate/')),

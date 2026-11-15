@@ -209,3 +209,12 @@ path = "apps/chartjs_docs/lib/migrate/shadcn/shadcn_data.dart"
 precedence = "override"
 SPDX-FileCopyrightText = ["2023 shadcn", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "MIT"
+
+# The zoom plugin page of the docs site and its code panels: Dart ports of
+# docs/guide of chartjs-plugin-zoom 2.2.0+fb81d331 (MIT), so the upstream
+# notice is kept alongside ours. They port no Chart.js code.
+[[annotations]]
+path = ["apps/chartjs_docs/lib/examples/zoom/**", "apps/chartjs_docs/lib/pages/zoom_plugin_page.dart"]
+precedence = "override"
+SPDX-FileCopyrightText = ["2013-2024 chartjs-plugin-zoom contributors", "2026 Vasiliy Ditsyak"]
+SPDX-License-Identifier = "MIT"

@@ -13,6 +13,8 @@ import 'package:chartjs_docs/pages/migrate_fl_chart_page.dart';
 import 'package:chartjs_docs/pages/migrate_graphic_page.dart';
 import 'package:chartjs_docs/pages/migrate_shadcn_page.dart';
 import 'package:chartjs_docs/pages/migrate_syncfusion_page.dart';
+import 'package:chartjs_docs/pages/plugins_page.dart';
+import 'package:chartjs_docs/pages/zoom_plugin_page.dart';
 import 'package:chartjs_docs/ui/doc_page.dart';
 import 'package:chartjs_docs/ui/docs_theme.dart';
 import 'package:chartjs_docs/ui/snippets.dart';
@@ -110,6 +112,20 @@ final List<DocPageLink> docPages = [
     navLabel: Text('From shadcn/ui'),
     icon: Icons.swap_horiz,
     build: shadcnBarMigrationPage,
+  ),
+  const DocPageLink(
+    route: '/plugins',
+    group: 'Awesome plugins',
+    navLabel: Text('Overview'),
+    icon: Icons.extension,
+    build: awesomePluginsPage,
+  ),
+  const DocPageLink(
+    route: '/plugins/zoom',
+    group: 'Awesome plugins',
+    navLabel: Text('Zoom and pan'),
+    icon: Icons.zoom_in,
+    build: zoomPluginPage,
   ),
 ];
 
