@@ -24,7 +24,9 @@ and in [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md).
 - **Modules:** each ported module is a package of its own, as on npm
   ([D3 ADR 0008](adr/0008-module-packages.md)): d3-color is
   [`flutter_d3_color_port`](../../flutter_d3_color_port/README.md), with its differences and its
-  speed figures in its `doc/` folder.
+  speed figures in its `doc/` folder, and d3-interpolate is
+  [`flutter_d3_interpolate_port`](../../flutter_d3_interpolate_port/README.md), with its
+  differences in its `doc/` folder.
 - **Upstream after the pins:** [upstream-ledger.md](upstream-ledger.md) lists the upstream commits
   after each pinned tag, with one section for each repository.
 - **Porting flow:** [porting-flow.md](porting-flow.md) (proposed) gives the life cycle of one
@@ -76,12 +78,15 @@ cases are static counts of the `it(` and `test(` calls. Loops make more cases at
 
 ## Roadmap
 
-**Status (2026-11-15).** Phase 0 is in progress. d3-color is ported ahead of phase 2, in the
+**Status (2026-11-16).** Phase 0 is in progress. d3-color is ported ahead of phase 2, in the
 native Dart forms of [D3 ADR 0007](adr/0007-native-dart-forms.md) and
 [D3 ADR 0010](adr/0010-native-values-and-factories.md): no JS runtime, typed `double` channels and
 Dart constructors. It is the package `flutter_d3_color_port`, as `d3-color` is a
-package of its own on npm ([D3 ADR 0008](adr/0008-module-packages.md)). This package re-exports
-it.
+package of its own on npm ([D3 ADR 0008](adr/0008-module-packages.md)). d3-interpolate is ported
+ahead of phases 2, 6 and 7, also `zoom.js` and `transform/`, in the native forms of
+[D3 ADR 0011](adr/0011-interpolate-native-forms.md): typed values, color objects as results, and
+the parts of a `Matrix4` in place of the transform texts. It is the package
+`flutter_d3_interpolate_port`. This package re-exports both.
 
 | Phase | Scope | Exit criteria |
 |---|---|---|

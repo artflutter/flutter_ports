@@ -5,7 +5,8 @@ libraries. First port: Chart.js v4.6.1 →
 `packages/flutter_chartjs_port`. Second port: D3 v7.9.0 →
 `packages/flutter_d3_port`, in phase 0 (scaffold and design). Each ported D3 module is a package
 of its own, as on npm (D3 ADR 0008): d3-color 3.1.0 → `packages/flutter_d3_color_port`, ported in
-native Dart forms (D3 ADRs 0007, 0009 and 0010). Third port: Apache
+native Dart forms (D3 ADRs 0007, 0009 and 0010), and d3-interpolate 3.0.1 →
+`packages/flutter_d3_interpolate_port` (D3 ADR 0011). Third port: Apache
 ECharts 6.1.0 with its renderer zrender 6.1.0 → `packages/flutter_echarts_port`, in phase 0
 (scaffold and design, no ported code). Fourth port: chartjs-plugin-zoom 2.2.0+fb81d331, an add-on
 of the Chart.js port (ADR 0009) → `packages/flutter_chartjs_plugin_zoom_port`, phases 1-4 done
@@ -46,12 +47,14 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   them. Delete these folders before `format:check`. package:test puts a part of the tests of each
   file in each shard, in the order of the file ([Tests](#tests)). A shard with no tests fails. On
   ubuntu, CI also fetches the three Chart.js submodules, `third_party/d3`, `third_party/d3-color`,
-  the two ECharts submodules, `third_party/chartjs-plugin-zoom` and
+  `third_party/d3-interpolate`, the two ECharts submodules, `third_party/chartjs-plugin-zoom` and
   `third_party/chartjs-chart-sankey` by path in each shard, for the `test/upstream_test.dart` of
-  `flutter_chartjs_port`, `flutter_d3_port`, `flutter_d3_color_port`, `flutter_echarts_port`,
-  `flutter_chartjs_plugin_zoom_port` and `flutter_chartjs_chart_sankey_port`.
+  `flutter_chartjs_port`, `flutter_d3_port`, `flutter_d3_color_port`,
+  `flutter_d3_interpolate_port`, `flutter_echarts_port`, `flutter_chartjs_plugin_zoom_port` and
+  `flutter_chartjs_chart_sankey_port`.
 - `dart run melos run test:web`: the `flutter_chartjs_port`, `chartjs_test_utils`,
-  `flutter_kurkle_color_port`, `flutter_d3_port` and `flutter_d3_color_port` tests without
+  `flutter_kurkle_color_port`, `flutter_d3_port`, `flutter_d3_color_port` and
+  `flutter_d3_interpolate_port` tests without
   `@TestOn('vm')`, in Chrome through Flutter (JavaScript/DDC and WebAssembly). `tool/test_web.dart`
   selects browser-capable files before compilation. A leg fails when it ends by a signal or exits
   with 0 without the summary of a run that passed: `flutter test` exits with 0 when a SIGTERM stops
@@ -83,13 +86,14 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     with the host only.
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of the home
     package and of each package that a `dart` target of its `tool/port_sources.yaml` names. The
-    script runs it six times: `flutter_chartjs_port` with `chartjs_test_utils`, then
+    script runs it seven times: `flutter_chartjs_port` with `chartjs_test_utils`, then
     `packages/flutter_chartjs_plugin_zoom_port` alone, then
     `packages/flutter_chartjs_chart_sankey_port` alone, then `packages/flutter_kurkle_color_port`
-    alone, then `packages/flutter_d3_port` alone, then `packages/flutter_d3_color_port` alone. The
+    alone, then `packages/flutter_d3_port` alone, then `packages/flutter_d3_color_port` alone, then
+    `packages/flutter_d3_interpolate_port` alone. The
     primary project of the home is the
     entry whose `version_source` is `<constant> in <home>/lib/src/upstream.dart` (Chart.js,
-    chartjs-plugin-zoom, chartjs-chart-sankey, @kurkle/color, d3, d3-color). Its `version` is `v<constant value>`, the port-only marker names it, and
+    chartjs-plugin-zoom, chartjs-chart-sankey, @kurkle/color, d3, d3-color, d3-interpolate). Its `version` is `v<constant value>`, the port-only marker names it, and
     a backport line names the `<owner>/<repo>` of its `url`. The top-level key `marker` of the file
     gives the tag of the `DIVERGES(<tag>)` markers (default `chartjs`). The top-level key `project`
     gives the project name of the port-only marker when it is not the `header` of the primary
@@ -235,7 +239,9 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   `third_party/chartjs-chart-sankey` is at the release tag `v<chartjsChartSankeyVersion>` and
   equals the `commit` in `packages/flutter_chartjs_chart_sankey_port/tool/port_sources.yaml`. It
   also fails unless `third_party/d3-color` is at the release tag `v<d3ColorVersion>` and equals
-  the `commit` in `packages/flutter_d3_color_port/tool/port_sources.yaml`. The
+  the `commit` in `packages/flutter_d3_color_port/tool/port_sources.yaml`. It also fails unless
+  `third_party/d3-interpolate` is at the release tag `v<d3InterpolateVersion>` and equals the
+  `commit` in `packages/flutter_d3_interpolate_port/tool/port_sources.yaml`. The
   script reads the gitlinks from the
   index and the tags with `git ls-remote`. It needs no submodule checkout. It also fails on a submodule of `.gitmodules` that no entry of a
   `packages/*/tool/port_sources.yaml` pins. The pin readers (the script and the
@@ -658,14 +664,16 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `lib/d3.dart` (port-only): the pure library, with no Flutter import. It exports
     `lib/src/d3/index.dart` and `lib/src/upstream.dart` (`d3Version`, `7.9.0`).
     `lib/flutter_d3_port.dart` (port-only) exports it and the Flutter layer of each module
-    package. `test/port/d3/index_test.dart` reads the names of d3-color through the bundle.
+    package. `test/port/d3/index_test.dart` reads the names of d3-color and d3-interpolate through
+    the bundle.
   - `test/upstream_test.dart` (`@TestOn('vm')`) compares `d3Version` with
     `third_party/d3/package.json`. It also compares each D3 gitlink with its `commit`. It fails
-    on a submodule of `.gitmodules` that no entry of the two `tool/port_sources.yaml` files pins.
-  - `tool/port_sources.yaml`: 33 pins in the schema of the Chart.js file (D3 ADR 0001), with the
+    on a submodule of `.gitmodules` that no entry of a `packages/*/tool/port_sources.yaml` file
+    pins.
+  - `tool/port_sources.yaml`: 32 pins in the schema of the Chart.js file (D3 ADR 0001), with the
     top-level keys `marker: d3` and `project: D3`. Each entry gives the tag, the commit, the
     license and the holder of one repository. The pin of a ported module moves to the
-    `tool/port_sources.yaml` of its package (d3-color).
+    `tool/port_sources.yaml` of its package (d3-color, d3-interpolate).
   - Paths (D3 ADR 0008): in the module package `flutter_<repo>_port`, `third_party/<repo>/src/<path>.js`
     becomes `lib/src/<path>.dart`.
     `<repo>` keeps its hyphens. A spec `<repo>/test/<path>-test.js` becomes
@@ -710,6 +718,52 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `tool/bench/`: the benchmark (`d3_color_bench.dart`, `d3_color_bench.mjs` with the same cases
     on the upstream source, and `run_bench.sh` for Node.js, AOT, JIT, dart2js and dart2wasm, both
     web targets run in Node.js).
+  - `check:headers`, `test:web` and `test --no-select` examine the package.
+- `packages/flutter_d3_interpolate_port`: the d3-interpolate 3.0.1 port (library, version 0.1.0,
+  ISC), the second module package of the D3 port (D3 ADR 0008), as `d3-interpolate` on npm. Its
+  pubspec has no `publish_to`. Its `.pubignore` keeps `doc/`, `tool/` and `build/` out of the
+  archive, its `analysis_options.yaml` includes the rules of the root file, and `example/main.dart`
+  is the example of the archive. Its `README.md` is the README of upstream d3-interpolate with the
+  Dart forms, with no links. It depends on Flutter, on `flutter_d3_color_port` (as d3-interpolate
+  depends on d3-color) and on `vector_math` (the `Matrix4` of Flutter), and imports no package
+  of another port.
+  `flutter_d3_port` depends on it with `^0.1.0`.
+  - The port uses no JS runtime (D3 ADR 0007), and its values are native (D3 ADR 0011). A color
+    interpolator takes two d3-color `Color` values and returns a new color of its space at each
+    call; its `toString()` is the upstream text. `interpolate<T>(a, b)` takes typed values only
+    (`double`, `Color`, `DateTime`, a `typed_data` list of numbers, a `List`, `bool`, `null`) and
+    throws an `ArgumentError` for another type: `src/string.js` and `src/object.js` have no Dart
+    file. `interpolateDate` returns a new `DateTime`, and the array interpolators reuse their
+    result list, as upstream. `interpolateRgb`, `interpolateCubehelix`, `interpolateCubehelixLong`
+    and `interpolateZoom` are const objects of callable classes with `gamma` or `rho`
+    (`interpolateRgb.gamma(2.2)(a, b)`); a function of two colors is the tear-off
+    `interpolateRgb.call`. A zoom view is the record `ZoomView`, `(double, double, double)`.
+  - `lib/d3_interpolate.dart` (port-only): the pure library, with no Flutter import:
+    `lib/src/index.dart` and `lib/src/upstream.dart` (`d3InterpolateVersion`).
+    `lib/flutter_d3_interpolate_port.dart` (port-only) exports it and the Flutter layer
+    `lib/src/ui/transform_matrix.dart` (`toTransformParts()` on a `Matrix4`, `toMatrix4()` on a
+    `TransformParts`).
+  - `lib/src/`: the files of `src/` at their mapped paths, `transform/` too. `src/transform/parse.js`
+    has no Dart file: `decompose` returns a `TransformParts`, and `interpolateTransform(a, b)`
+    interpolates two of them. A name that `index.js` renames (`hslLong as interpolateHslLong`) is
+    a constant of `lib/src/index.dart` (D3 ADR 0008 §6). `exp`, `log`, `pow`, `atan2` and `atan`
+    are `dart:math` (row `platform-interpolate-math-last-bit`).
+  - `test/`: the 21 specs of `test/*-test.js` and `asserts.dart` (`package:test`, no `@TestOn`).
+    `test/transformCss-test.js` has its one case in a comment and no Dart file.
+    `test/port/reference_test.dart` compares the port with upstream d3-interpolate in Node.js
+    v24.22.1 arm64 (`tool/reference/d3_interpolate_reference.mjs` writes
+    `test/port/d3_interpolate_reference.dart`). `test/port/transform_test.dart` and
+    `test/port/transform_matrix_test.dart` test the transforms and the Flutter layer.
+    `test/port/native_numbers_test.dart` pins the results that differ by platform: on the VM and
+    with dart2wasm, `pow(1, y)` of `dart:math` is 1 for a NaN or infinite y, `toInt()` saturates
+    at 64 bits and an `int` is not a `double`; with DDC and dart2js each result is the upstream
+    one. `test/port/color_values_test.dart` pins a new color at each call, and
+    `test/port/rounding_and_dates_test.dart` pins `Math.round` and the date truncation.
+    `test/upstream_test.dart` (`@TestOn('vm')`) compares `d3InterpolateVersion`, the entry and the
+    gitlink.
+  - `tool/port_sources.yaml`: the pin of `third_party/d3-interpolate`, with the top-level key
+    `marker: d3-interpolate` (the tag of `DIVERGES(d3-interpolate)`) and a `files` list.
+    `doc/differences.md` has its rows.
   - `check:headers`, `test:web` and `test --no-select` examine the package.
 - `packages/flutter_echarts_port`: the Apache ECharts port (library, `publish_to: none` until
   0.1.0, Apache-2.0). Phase 0 has no ported code. `doc/README.md` has the plan and the roadmap of
@@ -957,7 +1011,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - The 34 D3 submodules, also shallow at release tags (D3 ADR 0001): `d3` (`v7.9.0`), the 30
     `d3-*` modules, `internmap`, `delaunator` (`v5.1.0`) and `robust-predicates` (`v3.0.3`).
     `packages/flutter_d3_port/tool/port_sources.yaml` gives the tag and the commit of each, except
-    `d3-color`, whose pin is in `packages/flutter_d3_color_port/tool/port_sources.yaml`.
+    `d3-color` and `d3-interpolate`, whose pins are in the `tool/port_sources.yaml` of
+    `packages/flutter_d3_color_port` and `packages/flutter_d3_interpolate_port`.
   - The 2 ECharts submodules, also shallow at release tags (ECharts ADR 0001): `echarts`
     (`6.1.0`) and `zrender` (`6.1.0`, the exact version that the ECharts `package.json` requires).
     The tags have no `v` prefix. `packages/flutter_echarts_port/tool/port_sources.yaml` gives the
@@ -1235,8 +1290,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
   0147 §19. `check:lib-imports` already fails on the two import invariants.
 
-The D3 port applies the rules above with these changes. D3 ADRs 0001 to 0006 are proposed, and
-D3 ADRs 0007 to 0010 are accepted. The doc paths
+The D3 port applies the rules above with these changes. D3 ADRs 0001 to 0006 are proposed, D3
+ADRs 0007 to 0011 are accepted. The doc paths
 are relative to `packages/flutter_d3_port/doc/`.
 
 - Rule 1: read the upstream file in `third_party/<repo>`. Never port from `d4` or from another
@@ -1600,7 +1655,8 @@ sankey ADRs are proposed. The doc paths are relative to
   `test/port/canvas/text_metrics_reference.dart` from headless Chrome. The engine rule of Chart.js ADR 0146
   does not apply to it. Do not edit the generated files by hand.
 - The D3 tests use the matchers of `package:test` (D3 ADR 0009 §2), with no Node `assert`
-  stand-in. The d3-color specs are pure, and `test:web` runs them.
+  stand-in. The d3-color and d3-interpolate specs are pure, and `test:web` runs them. DDC makes a
+  constant `-0.0` a 0: a web test that needs -0 makes it at run time, with `double.parse('-0')`.
 - In a D3 test file with `// ignore_for_file: file_names`, `@TestOn('vm')` comes after the ignore
   line (D3 ADR 0002 section 2). A D3 module whose specs change module-level state restores it
   through a set-up function in the `test/support/` folder of its package (D3 ADR 0009 §4). The D3
@@ -1642,6 +1698,10 @@ sankey ADRs are proposed. The doc paths are relative to
   `Copyright 2010-2022 Mike Bostock` (the `LICENSE` of `third_party/d3-color` at `v3.1.0`) and
   `Copyright 2026 Vasiliy Ditsyak`. The `packages/flutter_d3_color_port/**` table of `REUSE.toml`
   comes after the kurkle table.
+- d3-interpolate is ISC. `packages/flutter_d3_interpolate_port/LICENSE` is the ISC text with
+  `Copyright 2010-2021 Mike Bostock` (the `LICENSE` of `third_party/d3-interpolate` at `v3.0.1`)
+  and `Copyright 2026 Vasiliy Ditsyak`. The `packages/flutter_d3_interpolate_port/**` table of
+  `REUSE.toml` comes after the d3-color table.
 - Apache ECharts is Apache-2.0. The code of the ECharts port is Apache-2.0 too.
   `packages/flutter_echarts_port/LICENSE` is the plain Apache-2.0 text, and
   `packages/flutter_echarts_port/NOTICE` keeps the notice of Apache ECharts unchanged.
@@ -1698,7 +1758,8 @@ sankey ADRs are proposed. The doc paths are relative to
 - Package names: ADR 0007. The library package of a port has the name `flutter_<library>_port`,
   with the suffix `_port`: `flutter_chartjs_port`, `flutter_d3_port`, `flutter_echarts_port` and
   `flutter_chartjs_plugin_zoom_port`, `flutter_chartjs_chart_sankey_port`,
-  `flutter_kurkle_color_port` and `flutter_d3_color_port`. A D3 module package is
+  `flutter_kurkle_color_port`, `flutter_d3_color_port` and `flutter_d3_interpolate_port`. A D3
+  module package is
   `flutter_<repo>_port` (D3 ADR 0008). A later port uses
   the same form. An add-on port takes the
   npm name of the add-on (ADR 0009 item 5). A harness package is `<library>_test_utils`, or the npm name
@@ -1718,7 +1779,8 @@ sankey ADRs are proposed. The doc paths are relative to
   The scope of the ECharts port is `flutter_echarts_port`. The scope of the zoom port is
   `flutter_chartjs_plugin_zoom_port`. The scope of the sankey port is
   `flutter_chartjs_chart_sankey_port`. The scope of the color port is
-  `flutter_kurkle_color_port`. The scope of the d3-color port is `flutter_d3_color_port`. Checks:
+  `flutter_kurkle_color_port`. The scope of the d3-color port is `flutter_d3_color_port`. The
+  scope of the d3-interpolate port is `flutter_d3_interpolate_port`. Checks:
   - lefthook ≥ 1.0 `commit-msg` hook (`lefthook install`): `commitlint_cli` checks the type, and
     the scope when one is given, against the list in `commitlint.yaml`; a second command requires a
     `Signed-off-by` trailer;

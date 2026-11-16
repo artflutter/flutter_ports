@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-11-15): its code and the tests of section Tests pass.
 - Date: 2026-11-15
+- Superseded in part by: [D3 ADR 0011](0011-interpolate-native-forms.md) for §6, the bullet of the parameter types, in d3-interpolate (2026-11-16)
 - Supersedes: [D3 ADR 0006](0006-generators-accessors-and-js-values.md) §6, and the bullet "Keyed accessors and other overloads" of §2 for the factories of a class
 - Related: [D3 ADR 0007](0007-native-dart-forms.md), [D3 ADR 0009](0009-native-spec-harness.md)
 

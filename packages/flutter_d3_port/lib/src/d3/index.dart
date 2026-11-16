@@ -8,3 +8,5 @@
 library;
 
 export 'package:flutter_d3_color_port/d3_color.dart' hide d3ColorVersion;
+export 'package:flutter_d3_interpolate_port/d3_interpolate.dart'
+    hide d3InterpolateVersion;

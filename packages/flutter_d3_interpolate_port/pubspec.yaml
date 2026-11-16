@@ -1,0 +1,38 @@
+name: flutter_d3_interpolate_port
+description: >-
+  A native Dart port of d3-interpolate 3.0.1: numbers, colors, dates, arrays,
+  splines, zoom and 2D transforms of D3, with Flutter Matrix4 conversions.
+version: 0.1.0
+repository: https://github.com/artflutter/flutter_ports/tree/main/packages/flutter_d3_interpolate_port
+issue_tracker: https://github.com/artflutter/flutter_ports/issues
+topics:
+  - d3
+  - interpolation
+  - animation
+  - color
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  # The Flutter layer (lib/src/ui/) converts a Flutter Matrix4.
+  # lib/d3_interpolate.dart imports no Flutter library.
+  flutter:
+    sdk: flutter
+  # d3-interpolate depends on d3-color (its package.json), so the port depends
+  # on the port of d3-color (D3 ADR 0008).
+  flutter_d3_color_port: ^0.1.0
+  # The Matrix4 of the Flutter Transform widget. Flutter depends on it; the
+  # constraint is the range of the Flutter SDK.
+  vector_math: ^2.1.4
+
+dev_dependencies:
+  # The tests use package:test; flutter test runs them on the VM and in
+  # Chrome. The constraint is the test constraint of flutter_chartjs_port.
+  test: ^1.32.0
+  # analysis_options.yaml includes its rules, as the root file does. The
+  # constraint is the constraint of the root pubspec.
+  very_good_analysis: ^11.0.0

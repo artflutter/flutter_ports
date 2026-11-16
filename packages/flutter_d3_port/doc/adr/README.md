@@ -12,5 +12,6 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0007](0007-native-dart-forms.md) Native Dart forms, no JS runtime: accepted, supersedes 0003.
 - [0008](0008-module-packages.md) One package for each D3 module: accepted, supersedes 0002.
 - [0009](0009-native-spec-harness.md) Native spec harness: accepted, supersedes 0004.
-- [0010](0010-native-values-and-factories.md) Native values and factories: accepted, supersedes 0006.
+- [0010](0010-native-values-and-factories.md) Native values and factories: accepted, supersedes 0006, superseded in part by 0011.
+- [0011](0011-interpolate-native-forms.md) Native forms of d3-interpolate: accepted, supersedes 0010.
 <!-- adr-index:end -->
