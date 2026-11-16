@@ -13,9 +13,9 @@
 /// args, TitleOptions options)` (Chart.js ADR 0150, in place of the
 /// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
 /// class of its hook, and the facade `TitleOptions` of `plugin_options.dart`.
-/// The box keeps the resolved options and reads them through the facade. `chart.titleBlock` is a field of `types.Chart`:
-/// Dart `null` stands for JS `undefined` and for the `delete` of
-/// `plugin.title.js:136`.
+/// The box keeps the resolved options and reads them through the facade.
+/// `chart.titleBlock` is a field of `types.Chart`: Dart `null` stands for JS
+/// `undefined` and for the `delete` of `plugin.title.js:136`.
 ///
 /// The fields of the box start as the fields of `Scale` start: NaN for the
 /// edges, the `undefined` sentinel for `position` and `weight`, and `false`
@@ -339,8 +339,8 @@ bool _beforeUpdate(types.Chart chart, UpdateHookArgs _, TitleOptions options) {
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
 /// upstream order. Each hook is a private function of the hook type
 /// `(chart, args, options)` with the argument class of its hook and the
-/// facade [TitleOptions] (Chart.js ADR 0150). The key `_element: Title` of plugin.title.js:127 is
-/// for the tests: they read `Title.jsClass`.
+/// facade [TitleOptions] (Chart.js ADR 0150). The key `_element: Title` of
+/// plugin.title.js:127 is for the tests: they read `Title.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
 final title = Plugin<TitleOptions>(
   id: 'title',

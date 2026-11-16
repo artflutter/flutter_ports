@@ -13,8 +13,9 @@
 /// args, LegendOptions options)` (Chart.js ADR 0150, in place of the
 /// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
 /// class of its hook, and the facade [LegendOptions] of the resolved
-/// options. The box keeps the resolved options themselves. `chart.legend` is a field of `types.Chart`: Dart `null`
-/// stands for JS `undefined` and for the `delete` of `plugin.legend.js:609`.
+/// options. The box keeps the resolved options themselves. `chart.legend`
+/// is a field of `types.Chart`: Dart `null` stands for JS `undefined` and
+/// for the `delete` of `plugin.legend.js:609`.
 ///
 /// The box reads its options through the facades [LegendOptions],
 /// [LegendLabelOptions] and `LegendTitleOptions` of `plugin_options.dart`
