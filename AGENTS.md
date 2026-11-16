@@ -773,10 +773,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `doc/differences.md` has its rows, and `doc/performance.md` its figures.
   - `tool/bench/`: the benchmark (`d3_interpolate_bench.dart`, `d3_interpolate_bench.mjs` with the
     same 37 cases on the upstream source, and `run_bench.sh` for Node.js, AOT, JIT, dart2js and
-    dart2wasm, both web targets run in Node.js). Typed lists, fields of an object and constants of
-    the creation took the place of closures, records and `List<num>` reads: the transform and the
-    number lists are 4 to 50 times faster on the VM (rows `adapt-interpolate-typed-loops` and
-    `adapt-interpolate-zoom-constants`).
+    dart2wasm, both web targets run in Node.js). Typed lists, fields of an object, one class for
+    the channels of a color and constants of the creation took the place of closures, records and
+    `List<num>` reads: the transform and the number lists are 4 to 50 times faster on the VM, and
+    a color call 40% (rows `adapt-interpolate-typed-loops`, `adapt-interpolate-zoom-constants` and
+    `adapt-interpolate-channel-objects`).
   - `check:headers`, `test:web` and `test --no-select` examine the package.
 - `packages/flutter_echarts_port`: the Apache ECharts port (library, `publish_to: none` until
   0.1.0, Apache-2.0). Phase 0 has no ported code. `doc/README.md` has the plan and the roadmap of

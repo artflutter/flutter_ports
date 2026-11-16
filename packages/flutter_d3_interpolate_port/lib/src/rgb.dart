@@ -17,12 +17,12 @@ import 'package:flutter_d3_interpolate_port/src/basis.dart'
     show interpolateBasis;
 import 'package:flutter_d3_interpolate_port/src/basisClosed.dart'
     show interpolateBasisClosed;
-import 'package:flutter_d3_interpolate_port/src/color.dart' show gamma, nogamma;
+import 'package:flutter_d3_interpolate_port/src/color.dart'
+    show Channel, gamma, nogamma;
 
 // The method `gamma` of [InterpolateRgb] hides the function `gamma` of
 // color.dart in the class body. The class reads it through this name.
-const double Function(double t) Function(double a, double b) Function(double y)
-_gamma = gamma;
+const Channel Function(double a, double b) Function(double y) _gamma = gamma;
 
 /// rgb.js:6 the function `rgb` of `rgbGamma(y)`, with its property `gamma`:
 /// an RGB interpolator factory with the gamma of its creation.

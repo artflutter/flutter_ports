@@ -1,7 +1,8 @@
 // Original code, not ported from d3-interpolate: the pins of the faster forms.
 
 /// Pins the faster forms of `doc/performance.md` (the rows
-/// `adapt-interpolate-typed-loops` and `adapt-interpolate-zoom-constants`):
+/// `adapt-interpolate-typed-loops`, `adapt-interpolate-zoom-constants` and
+/// `adapt-interpolate-channel-objects`):
 /// each form gives the bits of the upstream lines, which the tests write
 /// out here, and keeps the reads of upstream (a live read of a list, or a
 /// copy at the creation).
@@ -11,6 +12,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 
 import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
+import 'package:flutter_d3_interpolate_port/src/color.dart' as color;
 import 'package:test/test.dart';
 
 /// The values of `t` of the tests, also outside [0, 1].
@@ -268,6 +270,71 @@ void main() {
 
       for (final t in [..._ts, -0.999999, 0.999999999, -1e-300]) {
         _expectSame(closed(t), withRemainder(t), 't $t');
+      }
+    });
+  });
+  group('color.js', () {
+    /// Pairs of channels: equal, NaN on one side or both, -0.0, and hue
+    /// differences of more than 180 degrees.
+    const pairs = <(double, double)>[
+      (0, 255),
+      (255, 0),
+      (12.5, 12.5),
+      (double.nan, 30),
+      (30, double.nan),
+      (double.nan, double.nan),
+      (-0.0, -0.0),
+      (-0.0, 5),
+      (350, 10),
+      (10, 350),
+      (540, 0),
+      (-540, 0),
+      (1, 1e300),
+    ];
+
+    test('nogamma gives the lines of linear and constant', () {
+      for (final (a, b) in pairs) {
+        final i = color.nogamma(a, b);
+        final d = b - a;
+        for (final t in [..._ts, double.nan, double.infinity]) {
+          final expected = d != 0 && !d.isNaN ? a + t * d : (a.isNaN ? b : a);
+          _expectSame(i(t), expected, '$a $b $t');
+        }
+      }
+    });
+
+    test('hue gives the lines of linear and constant', () {
+      for (final (a, b) in pairs) {
+        final i = color.hue(a, b);
+        var d = b - a;
+        if (d > 180 || d < -180) {
+          // Math.round of d / 360: a negative half rounds up.
+          final x = d / 360;
+          final r = x.roundToDouble();
+          d -= 360 * (r - x == -0.5 ? r + 1 : r);
+        }
+        for (final t in [..._ts, double.nan]) {
+          final expected = b - a != 0 && !(b - a).isNaN
+              ? a + t * d
+              : (a.isNaN ? b : a);
+          _expectSame(i(t), expected, '$a $b $t');
+        }
+      }
+    });
+
+    test('gamma gives the lines of exponential and constant', () {
+      for (final y in [2.2, 0.5, 3.0]) {
+        for (final (a, b) in pairs) {
+          final i = color.gamma(y)(a, b);
+          final a1 = math.pow(a, y).toDouble();
+          final b1 = math.pow(b, y).toDouble() - a1;
+          for (final t in _ts) {
+            final expected = b - a != 0 && !(b - a).isNaN
+                ? math.pow(a1 + t * b1, 1 / y).toDouble()
+                : (a.isNaN ? b : a);
+            _expectSame(i(t), expected, '$y $a $b $t');
+          }
+        }
       }
     });
   });

@@ -10,7 +10,8 @@
 library;
 
 import 'package:flutter_d3_color_port/d3_color.dart' show Color, Hsl;
-import 'package:flutter_d3_interpolate_port/src/color.dart' show hue, nogamma;
+import 'package:flutter_d3_interpolate_port/src/color.dart'
+    show Channel, hue, nogamma;
 
 /// hsl.js:4 `hsl(hue)`: the HSL interpolator from [start] to [end] with the
 /// hue interpolation [hue].
@@ -18,7 +19,7 @@ import 'package:flutter_d3_interpolate_port/src/color.dart' show hue, nogamma;
 /// Upstream returns the function of `start` and `end`; here they are the
 /// second and third parameters of the same function.
 Hsl Function(double t) _hsl(
-  double Function(double t) Function(double a, double b) hue,
+  Channel Function(double a, double b) hue,
   Color start,
   Color end,
 ) {

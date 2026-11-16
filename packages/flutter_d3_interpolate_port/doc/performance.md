@@ -112,54 +112,62 @@ upstream lines and compares the bits, also for `t` outside [0, 1].
    the VM) for `t` in (-1, 1), where the remainder is `t`: `call.basisClosed` 21 to 19 ns. Both use
    `toInt()` for `Math.floor` of a value that is not negative. `%` of an int was slower than
    `remainder` with dart2js (a helper call), so the port keeps `remainder`.
+6. The channels of a color (`color.js`, row `adapt-interpolate-channel-objects`). `nogamma`,
+   `hue` and `gamma` returned a closure for each channel (`linear`, `exponential` or `constant`),
+   so each call of a color interpolator made four indirect calls. They now return a `Channel`, one
+   final class with `call(t)`: a direct call that the compilers inline. `call.rgb`: 23 to 14 ns on
+   the VM and 29 to 17 ns in WebAssembly. `create.rgb`: 77 to 54 ns on the VM and 70 to 39 ns in
+   WebAssembly. With dart2js the calls are 6 to 12% slower (`call.rgb` 15 to 17 ns), and
+   `create.rgb` 21% slower (44 to 53 ns): V8 inlines the closures well. The gains on the VM and in
+   WebAssembly are larger, so the port keeps the class.
 
 ## 4. Result (2026-11-16)
 
 | Case | node | aot | js | wasm |
 |---|---:|---:|---:|---:|
-| `call.number` | 8 | 8 | 5 | 15 |
+| `call.number` | 8 | 8 | 5 | 16 |
 | `call.round` | 21 | 9 | 17 | 16 |
-| `call.hue` | 24 | 14 | 21 | 20 |
-| `call.basis` | 20 | 22 | 21 | 54 |
-| `call.basisClosed` | 18 | 19 | 22 | 51 |
-| `call.discrete` | 13 | 12 | 16 | 22 |
-| `call.date` | 25 | 19 | 84 | 30 |
-| `call.numberArray` | 36 | 38 | 27 | 253 |
-| `call.array` | 71 | 61 | 27 | 173 |
-| `call.rgb` | 120 | 24 | 15 | 28 |
-| `call.rgbGamma` | 165 | 49 | 44 | 69 |
-| `call.rgbBasis` | 132 | 36 | 46 | 155 |
-| `call.hsl` | 139 | 23 | 15 | 28 |
-| `call.hslLong` | 139 | 23 | 16 | 28 |
-| `call.lab` | 155 | 22 | 15 | 28 |
-| `call.hcl` | 194 | 22 | 15 | 28 |
-| `call.hclLong` | 198 | 22 | 15 | 29 |
-| `call.cubehelix` | 169 | 23 | 29 | 42 |
-| `call.cubehelixGamma` | 173 | 23 | 29 | 42 |
-| `call.piecewise` | 150 | 51 | 27 | 59 |
-| `call.zoom` | 41 | 28 | 38 | 41 |
-| `call.transform` | 424 | 15 | 22 | 28 |
-| `text.rgb` | 119 | 51 | 35 | 54 |
-| `text.hsl` | 141 | 63 | 58 | 74 |
-| `text.lab` | 154 | 97 | 88 | 102 |
-| `text.hcl` | 193 | 118 | 122 | 140 |
-| `text.cubehelix` | 170 | 82 | 84 | 104 |
+| `call.hue` | 24 | 11 | 22 | 17 |
+| `call.basis` | 20 | 23 | 21 | 55 |
+| `call.basisClosed` | 18 | 20 | 22 | 52 |
+| `call.discrete` | 13 | 12 | 17 | 23 |
+| `call.date` | 25 | 20 | 82 | 30 |
+| `call.numberArray` | 36 | 38 | 26 | 249 |
+| `call.array` | 71 | 62 | 26 | 173 |
+| `call.rgb` | 120 | 14 | 17 | 17 |
+| `call.rgbGamma` | 165 | 39 | 44 | 45 |
+| `call.rgbBasis` | 132 | 35 | 52 | 156 |
+| `call.hsl` | 139 | 14 | 16 | 17 |
+| `call.hslLong` | 139 | 14 | 17 | 17 |
+| `call.lab` | 155 | 13 | 17 | 17 |
+| `call.hcl` | 194 | 13 | 17 | 17 |
+| `call.hclLong` | 198 | 13 | 16 | 17 |
+| `call.cubehelix` | 169 | 14 | 29 | 30 |
+| `call.cubehelixGamma` | 173 | 14 | 30 | 30 |
+| `call.piecewise` | 150 | 29 | 30 | 41 |
+| `call.zoom` | 41 | 29 | 38 | 43 |
+| `call.transform` | 424 | 15 | 21 | 29 |
+| `text.rgb` | 119 | 42 | 36 | 40 |
+| `text.hsl` | 141 | 56 | 61 | 60 |
+| `text.lab` | 154 | 90 | 93 | 91 |
+| `text.hcl` | 193 | 110 | 122 | 126 |
+| `text.cubehelix` | 170 | 77 | 88 | 90 |
 | `create.number` | 13 | 4 | 12 | 13 |
-| `create.rgb` | 158 | 77 | 45 | 70 |
-| `create.hcl` | 480 | 244 | 206 | 211 |
-| `create.valueNumber` | 13 | 13 | 27 | 28 |
-| `create.valueColor` | 175 | 81 | 76 | 84 |
-| `create.valueArray` | 335 | 164 | 290 | 340 |
-| `create.zoom` | 82 | 82 | 101 | 91 |
-| `create.transform` | 2328 | 29 | 45 | 54 |
-| `decompose` | 30 | 40 | 47 | 51 |
-| `quantize.rgb` | 908 | 205 | 113 | 263 |
+| `create.rgb` | 158 | 54 | 53 | 39 |
+| `create.hcl` | 480 | 223 | 221 | 187 |
+| `create.valueNumber` | 13 | 13 | 27 | 29 |
+| `create.valueColor` | 175 | 60 | 88 | 54 |
+| `create.valueArray` | 335 | 165 | 275 | 346 |
+| `create.zoom` | 82 | 82 | 103 | 92 |
+| `create.transform` | 2328 | 28 | 46 | 54 |
+| `decompose` | 30 | 39 | 47 | 52 |
+| `quantize.rgb` | 908 | 139 | 122 | 108 |
 
-On the VM, the port is more than 10% faster than upstream in 29 of the 37 cases. Seven cases are
-within 10% (`call.number`, `call.basis`, `call.basisClosed`, `call.discrete`, `call.numberArray`,
-`create.valueNumber` and `create.zoom`), and `decompose` is slower. The color interpolators are 5
-to 9 times faster on the VM: they return a d3-color color, not a CSS text. With the text
-(`text.*`), they are 1.6 to 2.3 times faster.
+On the VM, the port is more than 10% faster than upstream in 29 of the 37 cases. Six cases are
+within 10% (`call.number`, `call.basisClosed`, `call.discrete`, `call.numberArray`,
+`create.valueNumber` and `create.zoom`), and two are slower: `call.basis` (13%) and `decompose`
+(33%). The color interpolators are 9 to 15 times faster on the VM: they return a d3-color color,
+not a CSS text. With the text (`text.*`), they are 1.7 to 2.8 times faster.
 
 ## 5. Open items
 
@@ -167,8 +175,9 @@ to 9 times faster on the VM: they return a d3-color color, not a CSS text. With 
   calls into the C library on the VM. D3 ADR 0007 keeps `dart:math` as it is.
 - `call.basis` and `call.basisClosed` read a growable `List<double>` at each call, as upstream: each
   read on the VM unboxes a double. A `Float64List` of values takes the typed path.
+- dart2js: the `Channel` objects of the colors are 6 to 21% slower than the closures (item 6).
 - WebAssembly: a read or a write of a typed list is a dispatch over the classes of `Float64List`
-  in dart2wasm, so `call.numberArray` stays at 253 ns (16 items). The typed RGB channels are about
+  in dart2wasm, so `call.numberArray` stays at 249 ns (16 items). The typed RGB channels are about
   10% slower there than a `List<double>` (155 against 142 ns), and 32% faster on the VM. The VM
   gain is larger, so the port keeps them.
 - `call.date` in JavaScript: 84 ns against 25 ns in Node.js. The `DateTime` of dart2js checks its

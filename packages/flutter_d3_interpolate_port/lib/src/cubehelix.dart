@@ -13,7 +13,8 @@ library;
 import 'dart:math' as math;
 
 import 'package:flutter_d3_color_port/d3_color.dart' show Color, Cubehelix;
-import 'package:flutter_d3_interpolate_port/src/color.dart' show hue, nogamma;
+import 'package:flutter_d3_interpolate_port/src/color.dart'
+    show Channel, hue, nogamma;
 
 /// cubehelix.js:4 `cubehelix(hue)` with cubehelix.js:5 `cubehelixGamma(y)`:
 /// a Cubehelix interpolator factory with the hue interpolation of its kind
@@ -25,7 +26,7 @@ import 'package:flutter_d3_interpolate_port/src/color.dart' show hue, nogamma;
 /// [cubehelixLong].
 // DIVERGES(d3-interpolate): adapt-interpolate-function-properties, a class.
 final class const InterpolateCubehelix._(
-  final double Function(double t) Function(double a, double b) _hue,
+  final Channel Function(double a, double b) _hue,
   final double _y,
 ) {
   /// cubehelix.js:8 `cubehelix(start, end)`: the interpolator from [start]
