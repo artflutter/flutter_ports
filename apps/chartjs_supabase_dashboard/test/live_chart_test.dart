@@ -496,54 +496,6 @@ void main() {
     await close(tester, series);
   });
 
-  testWidgets('the line grows to a new row of the live view', (tester) async {
-    final source = MemoryMetricSource(rows: 2000, valueOf: (_) => 50);
-    final (series, chart) = await showChart(tester, source: source);
-    final ts = MemoryMetricSource.start.add(const Duration(seconds: 2001));
-    final newX = ts.millisecondsSinceEpoch.toDouble();
-    final oldX = newX - 1000;
-
-    // The realtime row with the value 70: the x range moves to the new
-    // edge, and the y range eases to the new value, while the point moves.
-    source.addRow(2001, ts, 70);
-    final offsets = <double>[];
-    var started = false;
-    for (var i = 0; i < 45; i++) {
-      await tester.pump(const Duration(milliseconds: 16));
-      final point = chart().getDatasetMeta(0).data.last;
-      final x = chart().scales['x']!;
-      final y = chart().scales['y']!;
-      final from = x.getPixelForValue(oldX);
-      final to = x.getPixelForValue(newX);
-      if (i == 0) {
-        // The first frame of the move: near the point before it.
-        expect(point.x, lessThan(from + (to - from) / 2));
-        expect(to - from, greaterThan(2), reason: 'a segment that grows');
-        started = true;
-      }
-      if (i == 15) {
-        expect(point.x, inExclusiveRange(from, to), reason: 'on its way');
-      }
-      offsets.add(
-        (point.x - to).abs() + (point.y - y.getPixelForValue(70.0)).abs(),
-      );
-    }
-    expect(started, isTrue);
-    // The point comes closer in each frame, and it ends at its place with
-    // no jump: the frames of the move give it each new target.
-    for (var i = 1; i < offsets.length; i++) {
-      expect(
-        offsets[i],
-        lessThanOrEqualTo(offsets[i - 1] + 0.01),
-        reason: 'frame $i',
-      );
-    }
-    expect(offsets.last, lessThan(0.01));
-    expect(offsets[offsets.length - 10], lessThan(0.5), reason: 'no jump');
-
-    await close(tester, series);
-  });
-
   testWidgets('a range button sets the width', (tester) async {
     final (series, chart) = await showChart(tester);
 

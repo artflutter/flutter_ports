@@ -4,7 +4,6 @@ import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:chartjs_supabase_dashboard/src/live_series.dart';
-import 'package:clock/clock.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -38,15 +37,6 @@ import 'package:material_ui/material_ui.dart';
 /// A vertical amber line with the page number marks the start of each page
 /// of the history. The pages are the cells of a grid of time (`pageSpan` of
 /// the series), so the lines are at uniform distances.
-///
-/// In the live view, the line grows to a new row: the chart update of the
-/// row runs in the mode `grow`, whose animations move the new point from
-/// the point before it to its place (the scriptable `from` of `x` and `y`).
-/// While the point moves, the frames update the ranges in the mode `scroll`
-/// with the duration 0: the other points go to their places at once, and
-/// the animation of the new point takes the new place as its target
-/// (core.animations.js:90-93). The update mode `none` writes the places
-/// directly, and the animation then keeps the target of its start.
 class const LiveChart({
   /// The rows of the chart.
   required final LiveSeries series,
@@ -94,37 +84,8 @@ class _LiveChartState()
   static const double _dash = 4;
   static const double _dashSpace = 4;
 
-  /// The update mode of the chart update that adds a new row in the live
-  /// view: its point moves from the point before it to its place.
-  static const UpdateMode _growMode = UpdateMode('grow');
-
-  /// The update mode of the frames while the new point moves. Its duration
-  /// is the base duration 0: a point with no animation goes to its place at
-  /// once, and the running animation takes the new place as its target.
-  static const UpdateMode _scrollMode = UpdateMode('scroll');
-
-  /// The time in which the line grows to a new row.
-  static const Duration _growTime = Duration(milliseconds: 500);
-
-  /// The shortest new segment that grows, in pixels. A shorter segment, in
-  /// a wide view, shows at once: the update of the mode `grow` resolves the
-  /// animation options of each point in view.
-  static const double _growMinPixels = 2;
-
   late final Ticker _ticker = createTicker(_onFrame);
   Duration _lastFrame = Duration.zero;
-
-  /// The new row of the next chart update, which grows: its x, and the x
-  /// and the y of the row before it. Dart `null` when the update adds no
-  /// such row.
-  ({double x, double fromX, double fromY})? _grow;
-
-  /// The x of the last point of the data List of the last build.
-  double? _lastX;
-
-  /// The end of the move of the new point: until then the frames update
-  /// the ranges in [_scrollMode].
-  DateTime? _growEnd;
 
   Chart? _chart;
   bool _follow = true;
@@ -414,44 +375,14 @@ class _LiveChartState()
     maintainAspectRatio: false,
     // The room of the last time label: the x axis adds no padding for it.
     padding: const EdgeInsets.only(right: _labelRoom),
-    // The animations run, with the duration 0: only the new point of the
-    // mode `grow` moves (its transition below).
-    animation: const ChartAnimation(duration: Duration.zero),
-    transitions: const [HoverTransition.off()],
+    animation: ChartAnimation.none,
     legend: const ChartLegend(display: false),
-    // The tooltip shows at once, as with no animation.
-    tooltip: const ChartTooltip(
-      extra: {
-        'animations': {
-          'numbers': {'duration': 0},
-          'opacity': {'duration': 0},
-        },
-      },
-    ),
     interaction: const ChartInteraction(
       mode: IndexInteractionMode(),
       intersect: false,
     ),
     plugins: [zoomPlugin, _pageSplits, _gaps],
     pluginOptions: [_zoom],
-    extra: {
-      'transitions': {
-        'grow': {
-          'animations': {
-            'x': {
-              'from': _growFromX,
-              'duration': _growDuration,
-              'easing': Curves.easeOutCubic,
-            },
-            'y': {
-              'from': _growFromY,
-              'duration': _growDuration,
-              'easing': Curves.easeOutCubic,
-            },
-          },
-        },
-      },
-    },
     scales: const {
       'x': TimeAxis(
         tooltipFormat: 'HH:mm:ss',
@@ -471,59 +402,6 @@ class _LiveChartState()
       ),
     },
   );
-
-  /// Whether [context] is the context of the point of the new row of
-  /// [_grow].
-  bool _isGrowPoint(Object? context) {
-    final grow = _grow;
-    if (grow == null || context is! ScriptableContext) return false;
-    final raw = context.raw;
-    return raw is DataPoint && raw.x == grow.x;
-  }
-
-  /// The scriptable `from` of `x` in the mode `grow`: the x pixel of the
-  /// row before the new row for the new point, else `undefined`, which
-  /// starts an animation at the current value.
-  Object? _growFromX(Object? context) => _isGrowPoint(context)
-      ? _chart?.scales['x']?.getPixelForValue(_grow!.fromX) ?? undefined
-      : undefined;
-
-  /// The scriptable `from` of `y` in the mode `grow`, as [_growFromX].
-  Object? _growFromY(Object? context) => _isGrowPoint(context)
-      ? _chart?.scales['y']?.getPixelForValue(_grow!.fromY) ?? undefined
-      : undefined;
-
-  /// The scriptable `duration` of `x` and `y` in the mode `grow`, in
-  /// milliseconds: [_growTime] for the new point, else 0, so that each other
-  /// point goes to its place at once.
-  Object? _growDuration(Object? context) =>
-      _isGrowPoint(context) ? _growTime.inMilliseconds : 0;
-
-  /// The growth of the new row of [points], the data List of this build:
-  /// in the live view, when the List adds one row after the last row of the
-  /// List of the last build, and the new segment is at least
-  /// [_growMinPixels] wide. Else Dart `null`.
-  ({double x, double fromX, double fromY})? _growOf(List<DataPoint> points) {
-    final previous = _lastX;
-    final last = points.isEmpty ? null : points.last;
-    final x = last?.x;
-    _lastX = x is double ? x : null;
-    if (previous == null || last == null || x is! double || x <= previous) {
-      return null;
-    }
-    if (!_follow || _move != null || points.length < 2) return null;
-    final before = points[points.length - 2];
-    final fromY = before.y;
-    if (before.x != previous || fromY == null || last.y == null) return null;
-    final scale = _chart?.scales['x'];
-    if (scale == null ||
-        scale.getPixelForValue(x) - scale.getPixelForValue(previous) <
-            _growMinPixels) {
-      return null;
-    }
-    _growEnd = clock.now().add(_growTime + const Duration(milliseconds: 100));
-    return (x: x, fromX: previous, fromY: fromY);
-  }
 
   /// Half the width of a time label, in pixels.
   static const double _labelRoom = 28;
@@ -766,10 +644,7 @@ class _LiveChartState()
     _toXMax = toXMax;
     x.options['min'] = xMin;
     x.options['max'] = xMax;
-    final growEnd = _growEnd;
-    final growing = growEnd != null && clock.now().isBefore(growEnd);
-    if (!growing) _growEnd = null;
-    chart.updateRanges(growing ? _scrollMode : UpdateMode.none);
+    chart.updateRanges(UpdateMode.none);
     _loadOlderIfNear();
 
     if (!_follow && settled) _ticker.stop();
@@ -903,13 +778,11 @@ class _LiveChartState()
 
   @override
   Widget build(BuildContext context) {
-    final points = _chartPoints();
-    _grow = _growOf(points);
     final config = _config.copyWith(
       datasets: [
         LineDataset(
           label: 'value',
-          points: points,
+          points: _chartPoints(),
           borderColor: const .constant(.solid(_lineColor)),
           backgroundColor: const .constant(.solid(Color(0x263ECF8E))),
           fill: FillTarget.toStart,
@@ -1005,7 +878,7 @@ class _LiveChartState()
           child: ChartView(
             key: const ValueKey('dashboard.chart'),
             config: config,
-            updateMode: _grow == null ? UpdateMode.none : _growMode,
+            updateMode: UpdateMode.none,
             semanticLabel: 'Line chart of the live values of metric_points',
             onChartCreated: _onChartCreated,
           ),

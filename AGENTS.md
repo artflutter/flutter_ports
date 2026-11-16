@@ -649,14 +649,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   port with `rangeOnlyUpdates: true`, with no wheel zoom), and a left edge near the oldest row
   loads the next page. The config
   is built once, and each build gives only a new dataset with a new data List: the options stay
-  `==`, so the chart keeps the ranges. The line has `MonotoneCubicInterpolationMode`. In the live
-  view, the line grows to a new row in 500 ms with the animations of Chart.js: the base animation
-  has the duration 0, and `extra` has the transition `grow` with a scriptable `from` and
-  `duration` of `x` and `y` for the new point only. `ChartView` updates the new data in the mode
-  `grow`. While the point moves, the ticker calls `updateRanges` in the mode `scroll`, so the
-  running animation takes each new place as its target (in the mode `none` it keeps the target of
-  its start). A new segment below 2 pixels shows at once, and the hover and the tooltip have no
-  animation (`test/live_chart_test.dart`). The solid
+  `==`, so the chart keeps the ranges. The line has `MonotoneCubicInterpolationMode`. The solid
   line joins rows at most 1 hour apart (`LiveSeries.gapThreshold`). The inline plugin
   `liveChartGaps` joins two rows that are more than 1 hour and at most 2 hours apart
   (`dashThreshold`) with a dashed line. Rows more than 2 hours apart have no line between them.
