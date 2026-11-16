@@ -182,7 +182,7 @@ class const _StatusBar({
               icon: Icons.upload,
               label: series.pumping
                   ? '${series.sent} sent · every '
-                        '${series.pumpInterval.inMilliseconds} ms'
+                        '${series.pumpInterval.inSeconds} s'
                   : '${series.sent} sent · paused',
             ),
             _Stat(icon: Icons.download, label: '${series.received} received'),

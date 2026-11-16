@@ -35,23 +35,28 @@ final class SupabaseMetricSource(
   final List<StreamSubscription<Object?>> _subscriptions = [];
 
   @override
-  Future<List<MetricPoint>> newest(int limit) async {
-    final rows = await client
-        .table(MetricPoints.table)
-        .selectOnly(_columns)
-        .order(MetricPoints.id.desc())
-        .limit(limit);
-    return [for (final row in rows) _point(row)];
+  Future<DateTime?> newestBefore(DateTime? before) async {
+    final query = client.table(MetricPoints.table).selectOnly(const [
+      MetricPoints.ts,
+    ]);
+    final rows =
+        await (before == null ? query : query.where(MetricPoints.ts.lt(before)))
+            .order(MetricPoints.ts.desc())
+            .limit(1);
+    return rows.isEmpty ? null : rows.first.ts;
   }
 
+  /// A page has at most 1000 rows, the largest response of the API: one
+  /// row in each slot of 5 seconds of a page of 5000 seconds.
   @override
-  Future<List<MetricPoint>> olderThan(int id, int limit) async {
+  Future<List<MetricPoint>> between(DateTime from, DateTime? before) async {
+    var filter = MetricPoints.ts.gte(from);
+    if (before != null) filter = filter & MetricPoints.ts.lt(before);
     final rows = await client
         .table(MetricPoints.table)
         .selectOnly(_columns)
-        .where(MetricPoints.id.lt(id))
-        .order(MetricPoints.id.desc())
-        .limit(limit);
+        .where(filter)
+        .order(MetricPoints.ts.asc());
     return [for (final row in rows) _point(row)];
   }
 

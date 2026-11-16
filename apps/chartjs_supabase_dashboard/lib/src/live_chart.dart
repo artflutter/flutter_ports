@@ -34,8 +34,9 @@ import 'package:material_ui/material_ui.dart';
 /// of at most `dashThreshold` (2 hours). Rows farther apart have no line
 /// between them.
 ///
-/// A vertical amber line with the page number marks the oldest row of each
-/// page of the history.
+/// A vertical amber line with the page number marks the start of each page
+/// of the history. The pages are the cells of a grid of time (`pageSpan` of
+/// the series), so the lines are at uniform distances.
 class const LiveChart({
   /// The rows of the chart.
   required final LiveSeries series,
@@ -325,7 +326,7 @@ class _LiveChartState()
     },
   );
 
-  /// Draws a vertical line at the oldest row of each page in view, with the
+  /// Draws a vertical line at the start of each page in view, with the
   /// number of the page at the top, on the right of the line: the rows from
   /// the line to the next line on the right came in that page. Page 1 is the
   /// newest page, and the realtime rows follow it.

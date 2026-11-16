@@ -6,22 +6,27 @@ import 'package:flutter_test/flutter_test.dart';
 
 import 'support/memory_metric_source.dart';
 
+/// Pages of 100 seconds: [MemoryMetricSource.start] is on their grid.
+const span = Duration(seconds: 100);
+
+/// The time [seconds] after [MemoryMetricSource.start], of the row with
+/// that id.
+DateTime at(int seconds) =>
+    MemoryMetricSource.start.add(Duration(seconds: seconds));
+
 void main() {
-  test('start loads the newest page in the order of the ids', () async {
+  test('start loads the cell of the newest row', () async {
     final source = MemoryMetricSource(rows: 250);
-    final series = LiveSeries(source, pageSize: 100);
+    final series = LiveSeries(source, pageSpan: span);
     addTearDown(series.dispose);
 
     await series.start(pump: false);
 
     expect(series.ready, isTrue);
     expect(series.pages, 1);
-    expect(series.rowCount, 100);
+    expect(series.rowCount, 51);
     expect(series.reachedStart, isFalse);
-    expect(
-      series.oldest,
-      MemoryMetricSource.start.add(const Duration(seconds: 151)),
-    );
+    expect(series.oldest, at(200));
     expect(
       series.newest,
       MemoryMetricSource.start.add(const Duration(seconds: 250)),
@@ -36,76 +41,83 @@ void main() {
     );
   });
 
-  test('loadOlder loads the pages before the oldest row', () async {
+  test('loadOlder loads the cells before the oldest page', () async {
     final source = MemoryMetricSource(rows: 250);
-    final series = LiveSeries(source, pageSize: 100);
+    final series = LiveSeries(source, pageSpan: span);
     addTearDown(series.dispose);
     await series.start(pump: false);
 
     await series.loadOlder();
     expect(series.pages, 2);
-    expect(series.rowCount, 200);
+    expect(series.rowCount, 151);
     expect(series.reachedStart, isFalse);
 
     await series.loadOlder();
     expect(series.pages, 3);
     expect(series.rowCount, 250);
+    expect(series.oldest, at(1));
+
+    // No row is before the third page: the start of the data.
+    await series.loadOlder();
+    expect(series.pages, 3);
     expect(series.reachedStart, isTrue);
-    expect(
-      series.oldest,
-      MemoryMetricSource.start.add(const Duration(seconds: 1)),
-    );
 
     final calls = source.pageCalls;
     await series.loadOlder();
     expect(source.pageCalls, calls, reason: 'no page after the start');
   });
 
-  test('pageStarts has the oldest row of each page', () async {
+  test('pageStarts has the grid time of each page', () async {
     final source = MemoryMetricSource(rows: 250);
-    final series = LiveSeries(source, pageSize: 100);
+    final series = LiveSeries(source, pageSpan: span);
     addTearDown(series.dispose);
-    DateTime at(int seconds) =>
-        MemoryMetricSource.start.add(Duration(seconds: seconds));
 
     await series.start(pump: false);
-    expect(series.pageStarts, [at(151)]);
+    expect(series.pageStarts, [at(200)]);
 
     await series.loadOlder();
     await series.loadOlder();
-    expect(series.pageStarts, [at(151), at(51), at(1)]);
+    expect(series.pageStarts, [at(200), at(100), at(0)]);
 
-    // An empty page at the start of the data adds no split.
-    final empty = LiveSeries(MemoryMetricSource(), pageSize: 100);
+    // An empty table has no page.
+    final empty = LiveSeries(MemoryMetricSource(), pageSpan: span);
     addTearDown(empty.dispose);
     await empty.start(pump: false);
     expect(empty.pageStarts, isEmpty);
+    expect(empty.reachedStart, isTrue);
+  });
+
+  test('a cell with no row gives no page', () async {
+    // The rows 1 to 50, and row 51 at 1000 s: the cells from 100 s to
+    // 1000 s are empty.
+    final source = MemoryMetricSource(rows: 50)..addRow(51, at(1000), 1);
+    final series = LiveSeries(source, pageSpan: span);
+    addTearDown(series.dispose);
+
+    await series.start(pump: false);
+    await series.loadOlder();
+
+    expect(series.pageStarts, [at(1000), at(0)]);
+    expect(series.rowCount, 51);
+    expect(source.pageCalls, 2);
   });
 
   test('a page joins the points in the order of the time', () async {
     final source = MemoryMetricSource(rows: 250);
-    final series = LiveSeries(source, pageSize: 100);
+    final series = LiveSeries(source, pageSpan: span);
     addTearDown(series.dispose);
     await series.start(pump: false);
     await series.loadOlder();
 
     final times = [for (final point in series.points) point.x as double];
-    expect(times, hasLength(200));
+    expect(times, hasLength(151));
     expect(times, orderedEquals([...times]..sort()));
-    expect(
-      series.pointIndexAt(
-        MemoryMetricSource.start
-            .add(const Duration(seconds: 151))
-            .millisecondsSinceEpoch
-            .toDouble(),
-      ),
-      100,
-    );
+    expect(series.pointIndexAt(at(151).millisecondsSinceEpoch.toDouble()), 51);
   });
 
   test('a page that is on its way blocks a second one', () async {
     final source = MemoryMetricSource(rows: 500);
-    final series = LiveSeries(source, pageSize: 100);
+    final series = LiveSeries(source, pageSpan: span);
     addTearDown(series.dispose);
     await series.start(pump: false);
 
@@ -117,7 +129,7 @@ void main() {
 
   test('a realtime row joins the series once', () async {
     final source = MemoryMetricSource(rows: 10);
-    final series = LiveSeries(source, pageSize: 100);
+    final series = LiveSeries(source, pageSpan: span);
     addTearDown(series.dispose);
     await series.start(pump: false);
     await Future<void>.delayed(Duration.zero);
@@ -152,7 +164,7 @@ void main() {
 
   test('a gap longer than gapThreshold breaks the line', () async {
     final source = MemoryMetricSource(rows: 3);
-    final series = LiveSeries(source, pageSize: 100);
+    final series = LiveSeries(source, pageSpan: span);
     addTearDown(series.dispose);
     await series.start(pump: false);
     expect(series.gapThreshold, const Duration(hours: 1));
@@ -176,13 +188,14 @@ void main() {
 
   testWidgets('the pump inserts values and gets them back', (tester) async {
     final source = MemoryMetricSource(rows: 5);
-    final series = LiveSeries(source, pageSize: 100);
+    final series = LiveSeries(source, pageSpan: span);
     await series.start();
     expect(series.pumping, isTrue);
 
-    await tester.pump(const Duration(milliseconds: 500));
-    await tester.pump(const Duration(milliseconds: 500));
-    await tester.pump(const Duration(milliseconds: 500));
+    // One insert in the middle of each slot of 5 s.
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(seconds: 5));
 
     expect(series.sent, 3);
     expect(series.received, 3);
@@ -191,7 +204,7 @@ void main() {
     expect(series.error, isNull);
 
     series.pumping = false;
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(seconds: 10));
     expect(series.sent, 3);
 
     series.dispose();

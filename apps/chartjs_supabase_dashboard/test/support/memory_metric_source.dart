@@ -29,7 +29,7 @@ final class MemoryMetricSource({
   final List<MetricPoint> _rows = [];
   void Function(MetricPoint point)? _onInsert;
 
-  /// The number of calls of [newest] and [olderThan].
+  /// The number of calls of [between]: one for each page.
   int pageCalls = 0;
 
   /// Whether [dispose] ran.
@@ -52,15 +52,24 @@ final class MemoryMetricSource({
   }
 
   @override
-  Future<List<MetricPoint>> newest(int limit) async {
-    pageCalls++;
-    return _rows.reversed.take(limit).toList();
+  Future<DateTime?> newestBefore(DateTime? before) async {
+    DateTime? newest;
+    for (final row in _rows) {
+      if (before != null && !row.ts.isBefore(before)) continue;
+      if (newest == null || row.ts.isAfter(newest)) newest = row.ts;
+    }
+    return newest;
   }
 
   @override
-  Future<List<MetricPoint>> olderThan(int id, int limit) async {
+  Future<List<MetricPoint>> between(DateTime from, DateTime? before) async {
     pageCalls++;
-    return _rows.reversed.where((row) => row.id < id).take(limit).toList();
+    return [
+      for (final row in _rows)
+        if (!row.ts.isBefore(from) &&
+            (before == null || row.ts.isBefore(before)))
+          row,
+    ];
   }
 
   @override

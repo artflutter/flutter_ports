@@ -18,7 +18,7 @@ import 'support/memory_metric_source.dart';
 Future<(LiveSeries, Chart Function())> showChart(
   WidgetTester tester, {
   MemoryMetricSource? source,
-  int pageSize = 1000,
+  Duration pageSpan = const Duration(seconds: 5000),
 }) async {
   tester.view
     ..physicalSize = const Size(1000, 500)
@@ -26,7 +26,7 @@ Future<(LiveSeries, Chart Function())> showChart(
   addTearDown(tester.view.reset);
   final series = LiveSeries(
     source ?? MemoryMetricSource(rows: 2000),
-    pageSize: pageSize,
+    pageSpan: pageSpan,
   );
   Chart? chart;
   await tester.pumpWidget(
@@ -460,22 +460,20 @@ void main() {
     ));
   });
 
-  testWidgets('a vertical line marks the oldest row of each page', (
-    tester,
-  ) async {
-    // Pages of 60 rows in a view of 120 rows: the view loads the pages
-    // before it, and the splits of page 1 (row 1941) and page 2 (row 1881)
-    // are in view. A flat line at 50 keeps the line and its fill below the
-    // pixels of the test.
+  testWidgets('a vertical line marks the start of each page', (tester) async {
+    // Pages of 60 s in a view of 120 s: the view loads the pages before it,
+    // and the splits of page 1 (1980 s) and page 2 (1920 s) are in view. A
+    // flat line at 50 keeps the line and its fill below the pixels of the
+    // test.
     final source = MemoryMetricSource(rows: 2000, valueOf: (_) => 50);
     final (series, chart) = await showChart(
       tester,
       source: source,
-      pageSize: 60,
+      pageSpan: const Duration(seconds: 60),
     );
     DateTime at(int seconds) =>
         MemoryMetricSource.start.add(Duration(seconds: seconds));
-    expect(series.pageStarts.take(2), [at(1941), at(1881)]);
+    expect(series.pageStarts.take(2), [at(1980), at(1920)]);
 
     final x = chart().scales['x']!;
     final area = chart().chartArea!;

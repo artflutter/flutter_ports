@@ -35,7 +35,8 @@ void main() {
 
     expect(find.byKey(const ValueKey('dashboard.chart')), findsOneWidget);
     expect(find.text('Realtime on'), findsOneWidget);
-    expect(find.text('1000 rows · 1 page'), findsOneWidget);
+    // The cell of the newest row on the grid of 5000 s: the rows 1000 to 2500.
+    expect(find.text('1501 rows · 1 page'), findsOneWidget);
     expect(find.text('0 sent · paused'), findsOneWidget);
     expect(find.byKey(const ValueKey('dashboard.live')), findsNothing);
   });
@@ -62,14 +63,14 @@ void main() {
     await showPage(tester, source);
 
     await tester.tap(find.byKey(const ValueKey('dashboard.pump')));
-    await tester.pump(const Duration(milliseconds: 500));
-    await tester.pump(const Duration(milliseconds: 500));
-    expect(find.text('2 sent · every 500 ms'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
+    await tester.pump(const Duration(seconds: 5));
+    expect(find.text('2 sent · every 5 s'), findsOneWidget);
     expect(find.text('2 received'), findsOneWidget);
     expect(find.text('102 rows · 1 page'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('dashboard.pump')));
-    await tester.pump(const Duration(seconds: 2));
+    await tester.pump(const Duration(seconds: 10));
     expect(find.text('2 sent · paused'), findsOneWidget);
   });
 
@@ -92,7 +93,7 @@ void main() {
 
     expect(find.byKey(const ValueKey('dashboard.live')), findsOneWidget);
     expect(source.pageCalls, greaterThan(1));
-    expect(find.textContaining('2000 rows · 2 pages'), findsOneWidget);
+    expect(find.textContaining('2500 rows · 2 pages'), findsOneWidget);
 
     await tester.tap(find.byKey(const ValueKey('dashboard.live')));
     await frames(tester, 30);

@@ -10,6 +10,8 @@ environment:
 resolution: workspace
 
 dependencies:
+  # The clock of the pump slots, which a test moves.
+  clock: ^1.1.2
   flutter:
     sdk: flutter
   # The pan and the zoom of the time axis: the port of chartjs-plugin-zoom.

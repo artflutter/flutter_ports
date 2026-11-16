@@ -625,13 +625,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `supabase/schema.sql` makes the table with the column `owner` (null for the shared history), the
   read policy `owner is null or owner = auth.uid()` for `authenticated` (Realtime applies it too;
   no client writes the table), the value generator `metric_value` (value noise of several time
-  scales, from `hashint8`), the RPC `pump_metric` (a row of `metric_value(now())` for
-  `auth.uid()`, at most 40 rows a second and 4 for one session), the realtime publication, 6 hours
-  of shared history and a `pg_cron` job that deletes the rows of a session after one day. The run reads the URL and
+  scales, from `hashint8`), the RPC `pump_metric` (the row of `auth.uid()` for the current
+  slot of 5 seconds, with the start of the slot as its `ts`; the unique index on `owner` and `ts`
+  gives a session one row in a slot, and all sessions get at most 200 rows in a slot), the realtime
+  publication, 6 hours of shared history (one row each 5 seconds) and a `pg_cron` job that deletes
+  the rows of a session after one day. A table with a `ts` off the slots of 5 seconds (an earlier
+  version of the script) loses all its rows when the script runs. The run reads the URL and
   the publishable key from `supabase.json` (`--dart-define-from-file`, git ignores it;
-  `supabase.example.json` has the form). `LiveSeries` (`lib/src/live_series.dart`) loads the
-  newest page of 1000 rows by `id`, merges the realtime inserts by id, loads the page before the
-  oldest row on demand, and calls `pump_metric` every 500 ms. `LiveChart` moves the view
+  `supabase.example.json` has the form). `LiveSeries` (`lib/src/live_series.dart`) loads its
+  pages by `ts`: a page is the rows of one cell of a grid of `pageSpan` (5000 seconds, 1000 slots,
+  the largest response of the API), the cell of the newest row before the oldest page, so a cell
+  with no row gives no page. It merges the realtime inserts by id, loads the page before the oldest
+  page on demand, and calls `pump_metric` in the middle of each slot of 5 seconds of the device
+  clock (`clock.now()`). `LiveChart` moves the view
   in a frame ticker: it writes `min` and `max` of the x and y scales through `scale.options` and
   calls `chart.updateRanges` (Chart.js ADR 0111). The right edge is `now` minus the longest recent
   realtime delay, and the y range eases to the values in view. The x axis has `time.minUnit`
@@ -649,8 +655,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   (`dashThreshold`) with a dashed line. Rows more than 2 hours apart have no line between them.
   The plugin makes each dash as a line of its own, for the part in view only: a line dash of the
   canvas cuts the whole line, also the part out of view. The inline plugin `liveChartPages` draws
-  an amber vertical line with the label `page <n>` at the oldest row of each page
-  (`LiveSeries.pageStarts`, the newest page first), before the datasets. The points have the time in milliseconds as x, in time
+  an amber vertical line with the label `page <n>` at the start of each page on the grid
+  (`LiveSeries.pageStarts`, the newest page first), before the datasets: the lines are at uniform
+  distances. The points have the time in milliseconds as x, in time
   order, with `parsing: false` and `normalized: true`: an update parses no row. The live view gets
   only the rows of the last two widths of the view, and a zoom keeps that List while it holds the
   view and the view is not below a quarter of its width, so a zoom step is no full update. The

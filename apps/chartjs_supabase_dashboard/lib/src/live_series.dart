@@ -5,13 +5,18 @@ import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:chartjs_supabase_dashboard/src/metric_source.dart';
+import 'package:clock/clock.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The rows of the chart: the newest page first, the older pages on demand,
 /// and each insert of the realtime channel. It also asks the table for a
-/// new row at each [pumpInterval] while [pumping] is true: the database
-/// makes the value (`MetricSource.pump`).
+/// new row in each slot of [pumpInterval] while [pumping] is true: the
+/// database makes the value (`MetricSource.pump`).
+///
+/// A page is the rows of one cell of a grid of [pageSpan] in the time since
+/// the epoch, so the page splits are at uniform times. A cell with no row
+/// gives no page: the next page is the cell of the newest row before it.
 ///
 /// A gap of more than [gapThreshold] between two rows breaks the line: the
 /// chart data has a point with no value there. The chart joins the two rows
@@ -20,11 +25,18 @@ final class LiveSeries(
   /// The table.
   final MetricSource source, {
 
-  /// The number of rows of a page.
-  final int pageSize = 1000,
+  /// The span of a page, the step of the grid of the pages. The default is
+  /// 1000 slots of 5 seconds: the shared history and the rows of one
+  /// session have at most one row in a slot, so a page has at most 1000
+  /// rows, the largest response of the Supabase API.
+  final Duration pageSpan = const Duration(seconds: 5000),
 
-  /// The time between two inserts of the pump.
-  final Duration pumpInterval = const Duration(milliseconds: 500),
+  /// The slot of the pump: `pump_metric` of `supabase/schema.sql` gives a
+  /// session at most one row in each slot of 5 seconds. The pump sends in
+  /// the middle of each slot of the clock of this device, so that a small
+  /// offset from the clock of the database still gives one row in each
+  /// slot.
+  final Duration pumpInterval = const Duration(seconds: 5),
 
   /// The longest time between two rows that the line joins.
   final Duration gapThreshold = const Duration(hours: 1),
@@ -92,18 +104,36 @@ final class LiveSeries(
   }
 
   /// The number of pages of the history that the series loaded.
-  int get pages => _pages;
-  int _pages = 0;
+  int get pages => _pageStarts.length;
 
-  /// The time of the oldest row of each page, the newest page first: the
-  /// split between that page and the page before it. An empty page has no
-  /// entry.
+  /// The start of each page, the newest page first: a time of the grid of
+  /// [pageSpan]. The rows from a page start to the next page start on its
+  /// right came in that page.
   List<DateTime> get pageStarts => UnmodifiableListView(_pageStarts);
   final List<DateTime> _pageStarts = [];
 
-  void _addPageStart(List<MetricPoint> page) {
-    if (page.isEmpty) return;
-    _pageStarts.add(page.reduce((a, b) => a.id < b.id ? a : b).ts);
+  /// The start of the cell of the grid of [pageSpan] that holds [ts].
+  DateTime _pageOf(DateTime ts) {
+    final span = pageSpan.inMicroseconds;
+    final time = ts.microsecondsSinceEpoch;
+    return DateTime.fromMicrosecondsSinceEpoch(time - time % span, isUtc: true);
+  }
+
+  /// Loads the page of the newest row before [before], or of the newest row
+  /// of the table when [before] is Dart `null`. Sets [reachedStart] when no
+  /// row is before [before].
+  Future<void> _loadPage(DateTime? before) async {
+    final newest = await source.newestBefore(before);
+    if (_disposed) return;
+    if (newest == null) {
+      _reachedStart = true;
+      return;
+    }
+    final from = _pageOf(newest);
+    final page = await source.between(from, before);
+    if (_disposed) return;
+    _pageStarts.add(from);
+    _merge(page);
   }
 
   /// Whether the first page came.
@@ -154,12 +184,8 @@ final class LiveSeries(
   Future<void> start({bool pump = true}) async {
     source.watch(onInsert: _onInsert, onStatus: _onStatus);
     try {
-      final page = await source.newest(pageSize);
+      await _loadPage(null);
       if (_disposed) return;
-      _pages = 1;
-      _reachedStart = page.length < pageSize;
-      _addPageStart(page);
-      _merge(page);
       _ready = true;
       _error = null;
     } on Object catch (error) {
@@ -170,19 +196,17 @@ final class LiveSeries(
     if (pump) pumping = true;
   }
 
-  /// Loads the page before the oldest row. It does nothing while a page is
+  /// Loads the page before the oldest page. It does nothing while a page is
   /// on its way and after the start of the data.
   Future<void> loadOlder() async {
-    if (_loadingOlder || _reachedStart || !_ready || _rows.isEmpty) return;
+    if (_loadingOlder || _reachedStart || !_ready || _pageStarts.isEmpty) {
+      return;
+    }
     _loadingOlder = true;
     _changed();
     try {
-      final page = await source.olderThan(_rows.first.id, pageSize);
+      await _loadPage(_pageStarts.last);
       if (_disposed) return;
-      _pages++;
-      if (page.length < pageSize) _reachedStart = true;
-      _addPageStart(page);
-      _merge(page);
       _error = null;
     } on Object catch (error) {
       _error = 'A page of the history failed: $error';
@@ -196,12 +220,24 @@ final class LiveSeries(
   set pumping(bool on) {
     if (on == pumping || _disposed) return;
     if (on) {
-      _pump = Timer.periodic(pumpInterval, (_) => _send());
+      _schedulePump();
     } else {
       _pump?.cancel();
       _pump = null;
     }
     _changed();
+  }
+
+  /// Sends in the middle of the next slot of [pumpInterval] of the clock of
+  /// this device.
+  void _schedulePump() {
+    final slot = pumpInterval.inMicroseconds;
+    var wait = slot ~/ 2 - clock.now().microsecondsSinceEpoch % slot;
+    if (wait <= 0) wait += slot;
+    _pump = Timer(Duration(microseconds: wait), () {
+      _schedulePump();
+      unawaited(_send());
+    });
   }
 
   Future<void> _send() async {

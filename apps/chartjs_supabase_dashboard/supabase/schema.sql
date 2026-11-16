@@ -1,9 +1,10 @@
 -- The database of the live dashboard sample: one table of time-stamped
--- values. Each browser signs in as an anonymous user (turn on "Allow
--- anonymous sign-ins" in the Auth settings). A session reads the shared
--- history and its own rows, and asks for a new row of its own through the
--- function pump_metric; the database makes each value. Run it in the SQL
--- editor of the Supabase project. It is idempotent.
+-- values, at most one value in each slot of 5 seconds for each session.
+-- Each browser signs in as an anonymous user (turn on "Allow anonymous
+-- sign-ins" in the Auth settings). A session reads the shared history and
+-- its own rows, and asks for a new row of its own through the function
+-- pump_metric; the database makes each value. Run it in the SQL editor of
+-- the Supabase project. It is idempotent.
 
 create table if not exists public.metric_points (
   id bigint generated always as identity primary key,
@@ -13,11 +14,27 @@ create table if not exists public.metric_points (
 
 -- The session of a row: null for the shared history.
 alter table public.metric_points add column if not exists owner uuid;
-create index if not exists metric_points_owner_id_idx
-  on public.metric_points (owner, id desc);
 
--- The chart loads its pages by id, the newest rows first: the primary key
--- is the index of the pages, and the ids grow with ts.
+-- Each ts is the start of a slot of 5 seconds. A table of an earlier
+-- version of this script has rows with other times: the script deletes all
+-- rows, and writes the shared history again below.
+do $$
+begin
+  if exists (
+    select 1 from public.metric_points
+    where mod(extract(epoch from ts), 5) <> 0
+  ) then
+    truncate public.metric_points restart identity;
+  end if;
+end $$;
+
+-- The chart loads its pages by time: a page is the rows of one cell of a
+-- grid of 5000 seconds (1000 slots). This index serves the pages, and it
+-- holds one row of a session (or of the shared history) in each slot. The
+-- ids grow with ts.
+drop index if exists public.metric_points_owner_id_idx;
+create unique index if not exists metric_points_owner_ts_idx
+  on public.metric_points (owner, ts) nulls not distinct;
 
 alter table public.metric_points enable row level security;
 
@@ -83,13 +100,17 @@ language sql immutable parallel safe set search_path = '' as $$
   from (select extract(epoch from ts)::double precision as e) as t
 $$;
 
--- Inserts the next row of the session: the database makes the value. At
--- most 40 rows a second over all sessions and 4 for one session.
+-- Inserts the row of the session for the current slot of 5 seconds, with
+-- the start of the slot as its ts: the database makes the value. A session
+-- gets at most one row in a slot (the unique index), and all sessions get
+-- at most 200 rows in a slot (40 a second). Gives null for a skipped row.
 create or replace function public.pump_metric()
 returns bigint
 language plpgsql volatile security definer set search_path = '' as $$
 declare
   me uuid := auth.uid();
+  slot timestamptz :=
+    to_timestamp(floor(extract(epoch from now()) / 5)::double precision * 5);
   recent timestamptz;
   new_id bigint;
 begin
@@ -97,17 +118,13 @@ begin
     return null;
   end if;
   select ts into recent from public.metric_points
-    order by id desc offset 39 limit 1;
-  if recent is not null and recent > now() - interval '1 second' then
+    order by id desc offset 199 limit 1;
+  if recent is not null and recent >= slot then
     return null;
   end if;
-  select ts into recent from public.metric_points
-    where owner = me order by id desc offset 3 limit 1;
-  if recent is not null and recent > now() - interval '1 second' then
-    return null;
-  end if;
-  insert into public.metric_points (owner, value)
-    values (me, public.metric_value(now()))
+  insert into public.metric_points (owner, ts, value)
+    values (me, slot, public.metric_value(slot))
+    on conflict do nothing
     returning id into new_id;
   return new_id;
 end $$;
@@ -115,13 +132,15 @@ end $$;
 revoke all on function public.pump_metric() from public, anon;
 grant execute on function public.pump_metric() to authenticated;
 
--- The shared history (no owner): one value a second for the last 6 hours,
--- when the table is empty, in the order of the time (the ids grow with ts).
+-- The shared history (no owner): one value in each slot of 5 seconds of
+-- the last 6 hours, when the table is empty, in the order of the time (the
+-- ids grow with ts).
 insert into public.metric_points (ts, value)
 select t, public.metric_value(t)
 from (
-  select date_trunc('second', now()) - make_interval(secs => g) as t
-  from generate_series(21600, 1, -1) as g
+  select to_timestamp(floor(extract(epoch from now()) / 5)::double precision * 5)
+    - make_interval(secs => g * 5) as t
+  from generate_series(4320, 1, -1) as g
 ) as history
 where not exists (select 1 from public.metric_points)
 order by t;
