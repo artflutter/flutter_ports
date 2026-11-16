@@ -1,6 +1,7 @@
 // Original code, not ported from Chart.js: the live series of the dashboard.
 
 import 'dart:async';
+import 'dart:collection';
 import 'dart:math' as math;
 
 import 'package:chartjs_supabase_dashboard/src/metric_source.dart';
@@ -94,6 +95,17 @@ final class LiveSeries(
   int get pages => _pages;
   int _pages = 0;
 
+  /// The time of the oldest row of each page, the newest page first: the
+  /// split between that page and the page before it. An empty page has no
+  /// entry.
+  List<DateTime> get pageStarts => UnmodifiableListView(_pageStarts);
+  final List<DateTime> _pageStarts = [];
+
+  void _addPageStart(List<MetricPoint> page) {
+    if (page.isEmpty) return;
+    _pageStarts.add(page.reduce((a, b) => a.id < b.id ? a : b).ts);
+  }
+
   /// Whether the first page came.
   bool get ready => _ready;
   bool _ready = false;
@@ -146,6 +158,7 @@ final class LiveSeries(
       if (_disposed) return;
       _pages = 1;
       _reachedStart = page.length < pageSize;
+      _addPageStart(page);
       _merge(page);
       _ready = true;
       _error = null;
@@ -168,6 +181,7 @@ final class LiveSeries(
       if (_disposed) return;
       _pages++;
       if (page.length < pageSize) _reachedStart = true;
+      _addPageStart(page);
       _merge(page);
       _error = null;
     } on Object catch (error) {

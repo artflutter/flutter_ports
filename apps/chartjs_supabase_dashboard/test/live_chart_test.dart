@@ -18,12 +18,16 @@ import 'support/memory_metric_source.dart';
 Future<(LiveSeries, Chart Function())> showChart(
   WidgetTester tester, {
   MemoryMetricSource? source,
+  int pageSize = 1000,
 }) async {
   tester.view
     ..physicalSize = const Size(1000, 500)
     ..devicePixelRatio = 1;
   addTearDown(tester.view.reset);
-  final series = LiveSeries(source ?? MemoryMetricSource(rows: 2000));
+  final series = LiveSeries(
+    source ?? MemoryMetricSource(rows: 2000),
+    pageSize: pageSize,
+  );
   Chart? chart;
   await tester.pumpWidget(
     MaterialApp(
@@ -454,6 +458,44 @@ void main() {
       false,
       false,
     ));
+  });
+
+  testWidgets('a vertical line marks the oldest row of each page', (
+    tester,
+  ) async {
+    // Pages of 60 rows in a view of 120 rows: the view loads the pages
+    // before it, and the splits of page 1 (row 1941) and page 2 (row 1881)
+    // are in view. A flat line at 50 keeps the line and its fill below the
+    // pixels of the test.
+    final source = MemoryMetricSource(rows: 2000, valueOf: (_) => 50);
+    final (series, chart) = await showChart(
+      tester,
+      source: source,
+      pageSize: 60,
+    );
+    DateTime at(int seconds) =>
+        MemoryMetricSource.start.add(Duration(seconds: seconds));
+    expect(series.pageStarts.take(2), [at(1941), at(1881)]);
+
+    final x = chart().scales['x']!;
+    final area = chart().chartArea!;
+    final origin = tester.getTopLeft(
+      find.byKey(const ValueKey('dashboard.chart')),
+    );
+    final y = area.top + area.height / 4;
+    for (final start in series.pageStarts.take(2)) {
+      final pixel = x
+          .getPixelForValue(start.millisecondsSinceEpoch.toDouble())
+          .floorToDouble();
+      expect(pixel, inInclusiveRange(area.left, area.right));
+      expect(
+        await colorAt(tester, origin + Offset(pixel, y)),
+        isNot(await colorAt(tester, origin + Offset(pixel + 10, y))),
+        reason: 'the split of $start',
+      );
+    }
+
+    await close(tester, series);
   });
 
   testWidgets('a range button sets the width', (tester) async {

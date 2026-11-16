@@ -61,6 +61,27 @@ void main() {
     expect(source.pageCalls, calls, reason: 'no page after the start');
   });
 
+  test('pageStarts has the oldest row of each page', () async {
+    final source = MemoryMetricSource(rows: 250);
+    final series = LiveSeries(source, pageSize: 100);
+    addTearDown(series.dispose);
+    DateTime at(int seconds) =>
+        MemoryMetricSource.start.add(Duration(seconds: seconds));
+
+    await series.start(pump: false);
+    expect(series.pageStarts, [at(151)]);
+
+    await series.loadOlder();
+    await series.loadOlder();
+    expect(series.pageStarts, [at(151), at(51), at(1)]);
+
+    // An empty page at the start of the data adds no split.
+    final empty = LiveSeries(MemoryMetricSource(), pageSize: 100);
+    addTearDown(empty.dispose);
+    await empty.start(pump: false);
+    expect(empty.pageStarts, isEmpty);
+  });
+
   test('a page joins the points in the order of the time', () async {
     final source = MemoryMetricSource(rows: 250);
     final series = LiveSeries(source, pageSize: 100);

@@ -33,6 +33,9 @@ import 'package:material_ui/material_ui.dart';
 /// series apart (1 hour). A dashed line joins two rows across a longer gap
 /// of at most `dashThreshold` (2 hours). Rows farther apart have no line
 /// between them.
+///
+/// A vertical amber line with the page number marks the oldest row of each
+/// page of the history.
 class const LiveChart({
   /// The rows of the chart.
   required final LiveSeries series,
@@ -306,6 +309,62 @@ class _LiveChartState()
     }
   }
 
+  /// The color of the page splits: amber, apart from the green line and the
+  /// gray grid in the light and the dark theme.
+  static const Color _pageColor = Color(0xFFF5A623);
+
+  /// Draws the page splits before the line, so that the line stays on top.
+  /// It has a draw hook only, so the chart keeps its range updates
+  /// (`supportsDataUpdates`).
+  late final ChartPlugin<Object?> _pageSplits = ChartPlugin(
+    id: 'liveChartPages',
+    supportsDataUpdates: true,
+    beforeDatasetsDraw: (chart, args, options) {
+      _drawPageSplits(chart);
+      return true;
+    },
+  );
+
+  /// Draws a vertical line at the oldest row of each page in view, with the
+  /// number of the page at the top, on the right of the line: the rows from
+  /// the line to the next line on the right came in that page. Page 1 is the
+  /// newest page, and the realtime rows follow it.
+  void _drawPageSplits(Chart chart) {
+    final x = chart.scales['x'];
+    final area = chart.chartArea;
+    final ctx = chart.ctx;
+    if (x == null || area == null || ctx == null) return;
+    final starts = _series.pageStarts;
+    var drawn = false;
+    for (var i = 0; i < starts.length; i++) {
+      final ms = starts[i].millisecondsSinceEpoch.toDouble();
+      if (ms < x.min || ms > x.max) continue;
+      final at = x.getPixelForValue(ms);
+      if (!drawn) {
+        drawn = true;
+        ctx
+          ..save()
+          ..beginPath()
+          ..rect(area.left, area.top, area.width, area.height)
+          ..clip()
+          ..strokeStyle = _pageColor
+          ..fillStyle = _pageColor
+          ..lineWidth = 1
+          ..setLineDash(const [])
+          ..font = toFont(const TextStyle(fontSize: 11))
+          ..textAlign = TextAlign.left
+          ..textBaseline = CanvasTextBaseline.top;
+      }
+      ctx
+        ..beginPath()
+        ..moveTo(at, area.top)
+        ..lineTo(at, area.bottom)
+        ..stroke()
+        ..fillText('page ${i + 1}', at + 4, area.top + 4);
+    }
+    if (drawn) ctx.restore();
+  }
+
   /// The config without the data. Each build gives it a new dataset with
   /// the data List of the series: the options stay `==`, so the chart keeps
   /// the ranges that the frames write into them.
@@ -321,7 +380,7 @@ class _LiveChartState()
       mode: IndexInteractionMode(),
       intersect: false,
     ),
-    plugins: [zoomPlugin, _gaps],
+    plugins: [zoomPlugin, _pageSplits, _gaps],
     pluginOptions: [_zoom],
     scales: const {
       'x': TimeAxis(

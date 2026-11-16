@@ -648,7 +648,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   `liveChartGaps` joins two rows that are more than 1 hour and at most 2 hours apart
   (`dashThreshold`) with a dashed line. Rows more than 2 hours apart have no line between them.
   The plugin makes each dash as a line of its own, for the part in view only: a line dash of the
-  canvas cuts the whole line, also the part out of view. The points have the time in milliseconds as x, in time
+  canvas cuts the whole line, also the part out of view. The inline plugin `liveChartPages` draws
+  an amber vertical line with the label `page <n>` at the oldest row of each page
+  (`LiveSeries.pageStarts`, the newest page first), before the datasets. The points have the time in milliseconds as x, in time
   order, with `parsing: false` and `normalized: true`: an update parses no row. The live view gets
   only the rows of the last two widths of the view, and a zoom keeps that List while it holds the
   view and the view is not below a quarter of its width, so a zoom step is no full update. The
