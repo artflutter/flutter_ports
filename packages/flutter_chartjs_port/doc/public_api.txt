@@ -734,6 +734,7 @@ UiImageSource
 UiPathBuilder
 UiPathPieces
 UiSector
+UiShadowKit
 UiTransform
 UnchangedChartPaint
 Undefined

@@ -1133,7 +1133,7 @@ the cut inventory describe their original review snapshots.
 | The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:838-843`, `:853-883` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:1637-1748` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
 | N3 of §7: the deferred commands of the path builder (`deferredPathCommands`, the command codes, `_codes`, `_numbers`, `_rrects`, `path`, `debugBuilt`, `_build`, `_replay`, `_direct` and the `_path` writers) | `canvas_ui_path.dart:272-300`, `:411-816` | ~220 | None. `ui.Path` builds each command at once. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
-| N4 of §7: the sector fill (`UiSector`, the tolerances, `_sameAngle`, `singleSector`, `_near`, `_nearEnd`, `_nearStart` and the item buffers; in the context `_sectorPaint`, the sector branch of `fill` and `_fillSector`) | `canvas_ui_path.dart:302-335`, `:428-455`, `:891-1065`; `canvas_ui.dart:526-528`, `:1393-1398`, `:1405-1437` | ~250 | `Canvas.drawArc` draws the sector; no `dart:ui` API tells the sector of a path. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
+| N4 of §7: the sector fill (`UiSector`, the tolerances, `_sameAngle`, `singleSector`, `_near`, `_nearEnd`, `_nearStart` and the item buffers; in the context `_sectorPaint`, `_shaderSectorPaint` (Chart.js ADR 0149), the sector branch of `fill` and `_fillSector`) | `canvas_ui_path.dart:302-335`, `:428-455`, `:891-1065`; `canvas_ui.dart:526-528`, `:1393-1398`, `:1405-1437` | ~250 | `Canvas.drawArc` draws the sector; no `dart:ui` API tells the sector of a path. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:184-196`, `:199-345`, `:1008-1023`, `:1321-1343` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:407-414`, `:571-622`, `:1312-1314`, `:1373-1400`, `:1438-1472`, `:1514-1518` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:566-569`, `:700-723`, `:1017-1040`, `:1522-1529` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
@@ -2374,6 +2374,13 @@ reopening R6's atlas/triangle approximations. Pixel/state regressions are in
 `test/port/canvas/canvas_rect_bar_test.dart`; measurements are in performance.md
 §37 and benchmarks/bar-native/. ADR 0066's recording limit remains unchanged.
 
+[Chart.js ADR 0149](adr/0149-bar-chart-small-costs.md) (2026-11-16) adds three forms to this operation. The
+operation maps one rectangle for a bar with no border. It keeps the identity of four colors that passed its full
+test. It also takes a bar with a shadow when the bar has no border and its rectangle has an area in 32-bit numbers:
+the shadow is one `drawRect` with a kept paint (`_castShadowRect`). A bar with a border under a shadow keeps the
+Canvas 2D sequence. The twins are in `test/port/canvas/canvas_ui_solid_paint_test.dart` and
+`test/port/canvas/canvas_ui_shadow_rect_test.dart`; the figures are in performance.md §76.
+
 ### 7.13 Numeric category parsing before geometry
 
 ADR 0071 reduces repeated label-source reads during primitive parsing in the bar
@@ -2729,3 +2736,34 @@ claim and does not change the deferred work-package estimates. The pinning
 checks remain the canvas/element pixel twins; `canvas_ui_test.dart` additionally
 checks native paint identity, gradient stop validation, cache retry after a
 failed build and invalidation after a gradient-list change.
+
+## Four small costs of a bar chart, 2026-11-16
+
+[Chart.js ADR 0149](adr/0149-bar-chart-small-costs.md) (the rows `adapt-solid-paint-split`, `adapt-bar-draw-reads`
+and `adapt-rect-shadow-ops`) changes `lib/src/canvas/canvas_ui.dart` (2848 to 3010 lines) and adds
+`lib/src/canvas/canvas_ui_shadow.dart` (97 lines), which `canvas_ui.dart` imports and the app library exports. No
+other file of `lib/src/canvas/`, of the host or of `helpers.dom.dart` changes.
+
+- The paints. `_fillPaint` and `_strokePaint` name the paint of the last setup: `_solidFillPaint` or
+  `_shaderFillPaint`, `_solidStrokePaint` or `_shaderStrokePaint`. `_setupPaint` selects the paint by the style, so a
+  solid paint gets no `shader` write. The solid fill paint keeps its color (`_solidFillColor`, `_solidFillBlend`,
+  `debugKeptFillPaints`). The sector fill has `_sectorPaint` and `_shaderSectorPaint` (the row of N4 in §1.1 names
+  both).
+- The fused bar (`tryDrawRectBar`, §7.12). It maps one rectangle for a bar with no border, keeps two more tested
+  colors, and takes a bar with a shadow and no border.
+- The shadows. `UiShadowKit` of the new file holds one `MaskFilter` for equal blur values in a row and the kept paint
+  of the shadow of a rectangle. `_castShadow` takes its filter from the kit. `_castShadowRect` draws the shadow of a
+  `fill()` of a path that is one rectangle with a solid color, and of the fused bar. `fillRect` and each other shape
+  keep `_castShadow`.
+
+The new code is outside this plan's cuts: no arc, transform, host size, circle batch or text rotation code changes.
+The line references of `canvas_ui.dart` in §1.1, §2.3 and §2.5 do not move in this entry: use the named anchors
+above and those of the ChartPaint migration. The first change is at line 60 (the import), and the lines after 550
+move by 1 to 162. Historical line counts and measurements stay tied to their recorded revisions.
+
+Tests: `test/port/canvas/canvas_ui_solid_paint_test.dart` (new), `test/port/canvas/canvas_ui_shadow_rect_test.dart`
+(new; the CI job `test-impeller` also runs it) and `test/port/canvas/canvas_ui_shadow_test.dart` (372 to 389 lines:
+the fused bar with no border draws under a shadow). The tests of §2.6 and §3.5 and the estimates do not change.
+`doc/status.yaml` names the new files, and tool 6 writes `doc/parity.md` from it. `doc/performance.md` gets section
+76 at its end; this plan cites its sections, and no cited section number changes. No deferred cut changes. No
+trigger occurred.

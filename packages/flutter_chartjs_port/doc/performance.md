@@ -8608,3 +8608,163 @@ each side (ms):
 After the change, an update at 30 seconds is the 30,000 tick objects and the 30,000 calls of the tick callback. The
 sample then got `time.minUnit` `TimeUnit.second` and an `afterBuildTicks` hook that gives the axis only the ticks of
 its grid: 0.59 ms. The raw data and the probe are in `.handover/dashboard-zoom-2026-11-15/`.
+
+## 76. Four small costs of a bar chart
+
+**What was slow.** A campaign on 2026-11-16 profiled the bar chart of the benchmark lab and read the code of the bar
+path (`.handover/bar-perf-2026-11-16/report.md`). Four costs repeat for each bar, and each one has a form with the
+same result:
+
+- The draw. `_setupPaint` wrote `shader = null` into the fill paint for each solid color. That write makes the object
+  list of a paint, and each later native draw with the paint decodes the list. `BarElement.draw` tested the class of
+  its options for each read and read each color through `rawOption`. The native context mapped two rectangles for a
+  bar with no border, and ran its full color test for each bar of a chart with two colors in turn.
+- The hover search. With the axis `xy`, the binary search gives the whole dataset. The chart searches one time for
+  each event, and the tooltip searches again. For each bar, a search read `skip` by name, called the handler and
+  `inRange`, and made a record of four bounds.
+- The easing. `Curve.transform` of a `Cubic` solves the curve by bisection, about 35 ns for each call. Each animation
+  of a frame made its own call. The animations of one update share the curve and the duration, and most share the
+  start, so most ticks of one frame ask for the same input.
+- The shadow. A bar with a shadow made 12 `dart:ui` calls. The fused bar of Chart.js ADR 0070 declined, and the shadow
+  drew the path of the rectangle with a closure, a color and a new `MaskFilter` for each bar.
+
+**The change.** Chart.js ADR 0149 has the decision. Each form applies only where its guard holds. Each other case
+takes the code of before.
+
+| Form | Row of differences.md | What it does | Guard |
+| --- | --- | --- | --- |
+| The draw | `adapt-solid-paint-split`, `adapt-bar-draw-reads` | A fill, a stroke and a ring sector have a paint for solid colors and a paint for shaders, so a solid paint gets no `shader` write. The solid fill paint keeps its color for the next fused bar. `BarElement.draw` tests the class of its options one time and reads each color from the typed field first. The native context maps one rectangle for a bar with no border and keeps two more colors that passed its full test. | The paint split needs none: the style selects the paint. The kept color: a fused bar, the identical color object of the class `ui.Color` itself, a global alpha of 1 and the same blend mode. The typed read: a paint in the field; an empty field takes the generated getter. One rectangle: equal sizes at equal positions. A validated color: the identity of an object that passed the full test on the same context. |
+| The hover search | `adapt-bar-hover-scan` | `getIntersectItems` and `getNearestCartesianItems` with `intersect` run a typed scan. For a bar it reads no `skip` by name, and it tests the bounds as scalars before the handler call. The scan has no window on the index axis and keeps no result between two searches. | The first element of the dataset and the element are of the class `BarElement` itself. The bar has no extra property; else the scan reads `skip` by name. The bar has no `$animations` under `useFinalPosition`. A NaN pixel goes to the handler. |
+| The easing | `adapt-animation-ease-table` | While `Animator.update` runs, a table of 256 entries gives the result of `Curve.transform` for a curve object and an input that an earlier tick of the same call asked for. | The curve is of the class `Cubic` itself. The input is above 0 and below 1. The entry has the identical curve object and the equal input. The end of the last running `Animator.update` call removes each entry. |
+| The shadow | `adapt-rect-shadow-ops` | The shadow of a `fill()` of a path that is one rectangle with a solid color is one `drawRect` with a kept paint. `fillRect` keeps the shadow of the path. The fused bar takes a bar with a shadow and no border: 5 `dart:ui` calls. One `MaskFilter` object serves equal blur values in a row. | The bar has no border. The rectangle has an area in 32-bit numbers. The fill is a solid color. The path is one `rect` under an axis-aligned transform. The guards of the fused bar stay. The kept color needs colors of the class `Color` itself. |
+
+**The figures.** Each timing below is of the prototype form behind a switch, at the base `47e571d9`, on the Mac on
+2026-11-16 (`.handover/bar-perf-2026-11-16/proto/measure-mac.md`): an Apple M3 Max in use by day, profile builds of
+Flutter 3.50.0-0.4.pre, Chrome 157. No run timed the production forms. They differ from the prototypes in their
+guards: the kept color only for the class `ui.Color` itself, a class test of the first element of each dataset in the
+hover scan, another slot scale and a count of the running calls in the ease table, and the test of the 32-bit area for
+each bar with a shadow.
+
+The frameless benchmark of the gallery in the macOS app (ms, one window for each side; two values are two windows):
+
+| Form | Window | Value | Before | After |
+| --- | --- | --- | ---: | ---: |
+| The draw | `draw_n20000` | draw | 7.758, 7.786 | 5.524 |
+| The draw | `draw_n20000` | step P50 | 9.977, 10.018 | 7.746 |
+| The draw | `draw_n1000` | draw | 0.400, 0.407 | 0.300 |
+| The hover search | `hover_n20000` | the two searches of a step | 1.617 | 0.203 |
+| The hover search | `hover_n20000` | step P50 | 11.785 | 10.580 |
+| The hover search | `hover_n1000` | the two searches of a step | 0.096 | 0.024 |
+| The easing | `animframe_n20000` | animator update | 2.321 | 1.467 |
+| The easing | `animframe_n20000` | step P50 | 12.721 | 11.906 |
+| The easing | `animframe_n1000` | animator update | 0.097 | 0.044 |
+
+The benchmark lab, the draw time of the chart for each frame at 20,000 bars (ms, two cells of 5 seconds for each side
+in the order before, after, after, before):
+
+| Form | Target | Cell | Before | After |
+| --- | --- | --- | ---: | ---: |
+| The draw | macOS app | one color | 8.13, 9.02 | 6.13, 5.92 |
+| The draw | macOS app | two colors in turn | 9.27, 9.30 | 7.43, 7.39 |
+| The draw | Chrome, dart2wasm | one color | 8.37, 7.41 | 7.24, 7.74 |
+| The draw | Chrome, dart2js | one color | 33.51, 33.21 | 33.40, 32.57 |
+| The shadow | macOS app | sharp shadow | 21.92, 21.63 | 15.15, 15.17 |
+| The shadow | macOS app | blurred shadow | 24.35, 24.29 | 16.32, 16.07 |
+| The shadow | Chrome, dart2wasm | sharp shadow | 32.52, 35.35 | 14.21, 15.21 |
+| The shadow | Chrome, dart2wasm | blurred shadow | 50.12, 44.88 | 18.01, 18.07 |
+| The shadow | Chrome, dart2js | sharp shadow | 108.44, 111.07 | 73.91, 73.14 |
+| The shadow | Chrome, dart2js | blurred shadow | 136.59, 136.50 | 78.70, 75.89 |
+
+- The draw. In the macOS app the draw of 20,000 bars falls by 2.2 ms (29%) in the benchmark and by 1.9 to 2.5 ms in
+  the lab. The second base cell of the first lab row was disturbed (9.02 ms at 49.8 FPS). The frame rate and the
+  raster time stay inside the spread, because the raster thread is the limit. With dart2wasm the change is inside the
+  spread of the two base cells: that run does not resolve it. With dart2js the draw does not change.
+- The hover search. The two searches of a hover step fall from 1.62 to 0.20 ms at 20,000 bars. The step stays near
+  10 ms, because a hover change draws all bars again (7.8 to 8.0 ms). The prototype also had a window on the index
+  axis (0.057 ms for the two searches). The port does not have it: it keeps a walk of the bars between two searches.
+- The easing. The animator update of 20,000 bars falls by 0.85 ms. At 1,000 bars the gain is 0.05 ms, below the 0.1 ms
+  rule of Chart.js ADR 0020 §13.
+- The shadow. The draw falls by 30 to 33% in the macOS app, by 57 to 62% with dart2wasm and by 33 to 43% with dart2js.
+  The raster time does not change, because the operations are the same. The frame rate rises only where the main
+  thread is the limit: with dart2js from 7.0 to 9.4 FPS (sharp) and from 4.4 to 6.4 FPS (blurred), and with dart2wasm
+  from 6.4 to 7.8 FPS (blurred). The frameless benchmark has no figure: its windows draw no shadow.
+The raw data of the Mac runs is in `.handover/bar-perf-2026-11-16/proto/runs/`.
+
+**The phones.** The same prototype forms ran one time on an iPhone 17 Pro (120 Hz, Impeller on Metal) and on a
+Pixel 8a (120 Hz, Impeller on Vulkan), on 2026-11-16: one run of the lab and one run of the frameless benchmark for
+each phone, profile builds, with no repeat. The Pixel got hot in both runs: the hover windows ran with a capped big
+core. The iPhone got slower during its lab run. These are also timings of the prototype forms: no run timed a
+production form on a phone.
+
+The frameless benchmark (ms, one window for each side; two values are two windows). The hover rows are those of the
+scan with no window:
+
+| Form | Window | Value | iPhone before | iPhone after | Pixel before | Pixel after |
+| --- | --- | --- | ---: | ---: | ---: | ---: |
+| The draw | `draw_n20000` | draw | 6.730, 6.795 | 5.200 | 17.417, 17.199 | 14.085 |
+| The draw | `draw_n20000` | step P50 | 9.031, 9.138 | 7.485 | 21.142, 20.929 | 17.813 |
+| The draw | `draw_n1000` | draw | 0.352, 0.353 | 0.277 | 0.914, 0.918 | 0.760 |
+| The hover search | `hover_n20000` | the search of a step | 1.585 | 0.132 | 3.785 | 0.517 |
+| The hover search | `hover_n20000` | step P50 | 10.677 | 9.272 | 29.041 | 25.851 |
+| The hover search | `hover_n1000` | the search of a step | 0.094 | 0.021 | 0.241 | 0.088 |
+| The easing | `animframe_n20000` | animator update | 1.818 | 0.961 | 3.124 | 1.752 |
+| The easing | `animframe_n20000` | step P50 | 11.135 | 10.253 | 24.802 | 23.534 |
+| The easing | `animframe_n1000` | animator update | 0.090 | 0.047 | 0.154 | 0.074 |
+
+The benchmark lab at 20,000 bars on the iPhone 17 Pro (two cells of 5 seconds for each side, in the order before,
+after, after, before):
+
+| Form | Cell | Value | Before | After |
+| --- | --- | --- | ---: | ---: |
+| The draw | one color | draw, ms | 8.11, 7.82 | 6.03, 6.10 |
+| The draw | one color | FPS | 60.0, 60.0 | 61.4, 61.8 |
+| The draw | two colors in turn | draw, ms | 12.08, 12.33 | 10.71, 10.37 |
+| The draw | two colors in turn | FPS | 34.4, 33.6 | 36.2, 37.4 |
+| The shadow | sharp shadow | draw, ms | 33.61, 32.84 | 24.86, 24.29 |
+| The shadow | sharp shadow | raster, ms | 26.48, 26.05 | 31.32, 30.98 |
+| The shadow | sharp shadow | FPS | 23.8, 24.2 | 26.8, 28.0 |
+| The shadow | blurred shadow | draw, ms | 51.46, 52.05 | 34.20, 32.74 |
+| The shadow | blurred shadow | raster, ms | 86.96, 86.13 | 81.90, 79.79 |
+| The shadow | blurred shadow | FPS | 11.2, 11.6 | 12.2, 12.4 |
+
+The benchmark lab at 20,000 bars on the Pixel 8a (two cells before, one cell after):
+
+| Form | Cell | Value | Before | After |
+| --- | --- | --- | ---: | ---: |
+| The draw | one color | draw, ms | 24.62, 25.21 | 20.54 |
+| The draw | one color | FPS | 27.8, 27.8 | 30.6 |
+| The shadow | sharp shadow | draw, ms | 66.81, 73.89 | 50.98 |
+| The shadow | sharp shadow | raster, ms | 110.09, 96.03 | 67.23 |
+| The shadow | sharp shadow | FPS | 8.8, 9.8 | 15.0 |
+| The shadow | blurred shadow | draw, ms | 74.34, 80.48 | 40.94 |
+| The shadow | blurred shadow | raster, ms | 118.07, 118.78 | 110.50 |
+| The shadow | blurred shadow | FPS | 8.2, 8.4 | 9.0 |
+
+- The draw of 20,000 bars falls by 23% on the iPhone and by 19% on the Pixel in the benchmark, and by 1.9 and 4.4 ms
+  in the lab.
+- The search of a hover step over 20,000 bars falls from 1.59 to 0.13 ms on the iPhone and from 3.79 to 0.52 ms on the
+  Pixel.
+- The animator update of 20,000 bars falls by 0.86 ms on the iPhone and by 1.37 ms on the Pixel. At 1,000 bars the
+  gain is 0.04 and 0.08 ms.
+- The draw with a shadow falls by 26% (sharp) and 35% (blurred) on the iPhone, and by 28% and 47% on the Pixel. The
+  second base cell of the blurred shadow on the Pixel ran hot.
+- The raw data is in `.handover/bar-perf-2026-11-16/proto/measure-phones.md`, a folder outside the repository.
+
+**Open.**
+
+- No run timed a production form, on the Mac or on a phone. Each figure of this section is of a prototype form.
+- With the shadow form, the raster time of a sharp shadow on the iPhone read 19% higher (26.3 to 31.2 ms at 20,000
+  bars, the mean of two cells for each side), while the frame rate rose from 24.0 to 27.4 FPS. The two base cells
+  differ by 0.4 ms. The Mac showed no raster change, and the Pixel showed a fall. The recorded operations are those
+  of before. No raster profile ran, so the cause is not known.
+
+**Not in the port: an index of the `skipNull` search.** With `skipNull`, `_getStacks` runs two times for each bar,
+and each run searches the parsed list of each bar dataset from its start, so the count of the visits grows with the
+square of the bar count. A prototype read one item of a list that a walk proved positional. On the Pixel 8a, one
+full update of 3 datasets of 5,000 bars took 2,991 ms before and 115 ms with the prototype (one window for each side,
+with a capped big core). The form is not in the port: its guards did not prove the upstream result. Code of a program
+that runs between two bars of one update can replace an earlier slot of a parsed List, and the upstream search then
+finds another item than the index. The guard that it needs is a proof that no code of a program runs between two
+bars: the exact classes of the chart, the controllers, the scales and the elements, each option that the loop reads
+(a function in a dataset option, in `grid.lineWidth` or in `stacked` runs there), and data objects of the SDK
+classes. The patch and its notes are in `.handover/bar-perf-2026-11-16/impl/` (`skipnull.diff`, `skipnull.md`).

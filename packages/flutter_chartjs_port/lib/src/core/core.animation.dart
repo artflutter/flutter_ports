@@ -18,8 +18,9 @@
 /// §10): `Animations` gives the key of its typed table, and the public
 /// constructor maps the name with [AnimatedProp.of].
 ///
-/// The port has three hunks for performance (Chart.js ADR 0019, sections 5
-/// and 6, with Chart.js ADR 0054 §10):
+/// The port has four hunks for performance (Chart.js ADR 0019, sections 5
+/// and 6, with Chart.js ADR 0054 §10; the last one is of Chart.js ADR
+/// 0149):
 /// - An animation with the built-in `number` interpolator and two `double`
 ///   values ticks on two `double` fields (`adapt-animation-number-path`).
 ///   It writes an `Element` through `Element.writeNumber`, the typed setter
@@ -29,6 +30,9 @@
 /// - The constructor resolves the interpolator one time, with no list and
 ///   no lookup by name. A user `fn` is an [Interpolator], called directly
 ///   (Chart.js ADR 0130).
+/// - While `Animator.update` runs, the ticks with the same `Cubic` object
+///   and the same factor share one curve call (Chart.js ADR 0149,
+///   `adapt-animation-ease-table`, `animation_ease.dart`).
 ///
 /// The promises of [Animation.wait] settle in a job of `js_promise.dart`
 /// (`platform-animation-promise-checkpoint`, Chart.js ADR 0019, section 7).
@@ -46,6 +50,7 @@ import 'dart:ui' as ui;
 
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curve, Curves;
+import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
@@ -388,8 +393,16 @@ class Animation.typed(
   /// [factor] is in the range 0 to 1, or NaN for a loop with the duration
   /// 0. `Curve.transform` takes only the range, so NaN stays NaN, as each
   /// formula of `helpers.easing.ts` gives.
-  double _ease(double factor) =>
-      factor >= 0 ? _easing.transform(factor) : factor;
+  ///
+  /// While `Animator.update` runs, the ticks with the same curve object and
+  /// the same factor share one curve call: [easeTableAt] gives the result of
+  /// `Curve.transform`, bit for bit, and only for a `Cubic`.
+  double _ease(double factor) => factor >= 0
+      // DIVERGES(chartjs): adapt-animation-ease-table, one solve for an input.
+      ? (easeTableActive
+            ? easeTableAt(_easing, factor)
+            : _easing.transform(factor))
+      : factor;
 
   /// core.animation.js:42 `_from`, the start value.
   @internal

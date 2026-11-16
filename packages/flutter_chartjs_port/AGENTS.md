@@ -220,6 +220,9 @@ repository.
       ordinary bar take one bulk numeric update (`core/bar_bulk_update.dart`). See
       `test/port/controllers/bar_bulk_update_test.dart`. The preflight ends before the first bulk write. A failed
       preflight runs the ordinary loop, with no partial bulk write.
+    - [Chart.js ADR 0149](doc/adr/0149-bar-chart-small-costs.md): `BarElement.draw` tests the class of its options
+      one time and reads each color from the typed field first (row `adapt-bar-draw-reads`). See
+      `test/port/elements/element.bar_draw_reads_test.dart`, a core test that `test:web` also runs.
     - [Chart.js ADR 0078](doc/adr/0078-prepared-indexed-options.md): native indexed point and bar options copy a
       private static template, and the bulk bar update also takes indexed colors. See
       `test/port/core/indexed_element_options_test.dart`. Each result is a fresh, unfrozen copy. No plan lives
@@ -303,6 +306,10 @@ repository.
       `center`, `chartArea`) or, for a scale and the legend, `ScaleValuePosition(scaleId, value)`
       for the object form `{x: 0}`; also in a raw config.
       `layouts.removeBox` takes a `LayoutItem?` (Dart `null` is the JS `undefined` of a stop hook).
+    - [Chart.js ADR 0149](doc/adr/0149-bar-chart-small-costs.md): `getIntersectItems`, and `getNearestCartesianItems`
+      with `intersect`, search the bars with the typed scan of the port-only `bar_hover_scan.dart`, a pure layer
+      (row `adapt-bar-hover-scan`). The scan keeps no result between two searches. The public
+      `Interaction.evaluateInteractionItems` is the upstream loop. See `test/port/core/bar_hover_scan_test.dart`.
     - `core.animation.dart` and the port-only `animation_spec.dart` (`AnimationSpec`, the typed
       animation config) are pure layers. `core.animations.dart` and `core.animator.dart` are not:
       `core.animator` imports `helpers.extras` (Chart.js ADR 0019). `Animations` keeps
@@ -310,7 +317,10 @@ repository.
       specs at each read. A property object animates by its typed keys, and the number path of
       an `Animation` writes an element through `Element.writeNumber` (Chart.js ADR 0054 §10). `core.animator.dart` has
       `getAnims`, `update`, the `@internal` class `Anims` and the field `refresh` (Chart.js ADR
-      0029 §6). A fixture replaces `refresh` on the singleton (`harness-method-fields`).
+      0029 §6). A fixture replaces `refresh` on the singleton (`harness-method-fields`). While
+      `Animator.update` runs, the ticks with one `Cubic` object and one input share one curve call through
+      the port-only `animation_ease.dart`, a pure layer (Chart.js ADR 0149, row `adapt-animation-ease-table`). See
+      `test/port/core/animation_ease_test.dart` and `test/port/core/animation_ease_animator_test.dart`.
     - The port-only `reduced_motion.dart` (a pure layer) has the reduced-motion flag of a canvas,
       an `Expando` (Chart.js ADR 0049 §7). Only `ChartView` sets it, from
       `MediaQuery.maybeDisableAnimationsOf`. `_createAnimations` of `core.animations.dart` reads
@@ -764,9 +774,10 @@ repository.
     `adapters._date` (Chart.js ADR 0024). A category `parse` of a value that is not a String skips
     the label scan for a native `List<String>` (row `adapt-category-string-labels`).
   - `lib/src/canvas/`: the port-only canvas layer (Chart.js ADRs 0055 and 0015). `canvas.dart` is
-    the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its four parts
-    (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart` and
-    `canvas_ui_batch.dart`, the circle batch) are the `dart:ui` implementation. No helper imports
+    the Canvas 2D interface, a pure layer. `canvas_ui.dart` and its five parts
+    (`canvas_ui_path.dart`, `canvas_ui_paint.dart`, `canvas_ui_text.dart`,
+    `canvas_ui_batch.dart`, the circle batch, and `canvas_ui_shadow.dart`, the kept shadow objects) are the
+    `dart:ui` implementation. No helper imports
     them. `canvas_ui.dart` reflects the `style` attribute of the canvas. Other attributes keep their
     values as strings (Chart.js ADR 0022). The canvas `textBaseline` holds the enum
     `CanvasTextBaseline` of `canvas.dart` (row `adapt-canvas-text-baseline-enum`), also in a label
@@ -775,6 +786,14 @@ repository.
       the optional `RectBarCanvas` operation of the native context. See
       `test/port/canvas/canvas_rect_bar_test.dart`. A declined call changes no canvas state. The current path stays
       the inner rectangle.
+    - [Chart.js ADR 0149](doc/adr/0149-bar-chart-small-costs.md): a fill, a stroke and a ring sector each have a solid
+      paint and a shader paint (row `adapt-solid-paint-split`). Only `_setupPaint` writes the color and the blend
+      mode of the solid fill paint, the one paint that keeps a color. The stroke paint has a second writer,
+      `_tryStrokeInPieces`, and `_drawSector` writes the two sector paints. The shadow of a `fill()` of a path that
+      is one rectangle with a solid color is one `drawRect` with the kept paint of `UiShadowKit` (row
+      `adapt-rect-shadow-ops`), and the fused bar takes a bar with a shadow and no border. `fillRect` keeps the
+      shadow of the path. See `test/port/canvas/canvas_ui_solid_paint_test.dart` and
+      `test/port/canvas/canvas_ui_shadow_rect_test.dart`, which the CI job `test-impeller` also runs.
     - [Chart.js ADR 0084](doc/adr/0084-scalar-circles-and-compact-paths.md): the native context reads a full
       circle as scalars, and `Path2D` packs unread move, line and close commands. See
       `test/port/canvas/canvas_test.dart` (group `compact native Path2D`). The first read of `commands` makes one
@@ -785,8 +804,8 @@ repository.
     - [Chart.js ADR 0106](doc/adr/0106-canvas-shadows.md): the canvas has `shadowBlur`, `shadowColor`,
       `shadowOffsetX` and `shadowOffsetY`, for plugins: no ported caller reads them. `_castShadow` of
       `canvas_ui.dart` draws the shape with a blur mask filter before the shape. Each fast path declines while
-      `_State.shadowOn` is true. See `test/port/canvas/canvas_ui_shadow_test.dart`, which the CI job
-      `test-impeller` also runs.
+      `_State.shadowOn` is true, except the fused bar with no border (Chart.js ADR 0149). See
+      `test/port/canvas/canvas_ui_shadow_test.dart`, which the CI job `test-impeller` also runs.
     - Chart.js ADRs 0107 and 0139: each typed dataset has `shadow`, a `ChartShadow` of the core file
       `lib/src/types/chart_shadow.dart` (exported by `chartjs.dart`). The dataset option `shadow` (the
       typed atom `chartShadow` of the schema, port-only) holds the `ChartShadow` itself, in typed and raw

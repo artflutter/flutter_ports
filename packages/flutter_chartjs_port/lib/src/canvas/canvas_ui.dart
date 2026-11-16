@@ -60,6 +60,7 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_rect_bar.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_ui_shadow.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:meta/meta.dart';
@@ -550,11 +551,16 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   final ui.Path _scratch = ui.Path();
   final Float64List _m4 = Float64List(16);
 
-  final ui.Paint _fillPaint = ui.Paint();
-  final ui.Paint _strokePaint = ui.Paint()..style = ui.PaintingStyle.stroke;
+  // The paint of the last fill setup and of the last stroke setup: the
+  // solid paint or the shader paint of its kind ([_setupPaint]). Only a
+  // setup changes these two fields, so a draw has the paint of its setup.
+  late ui.Paint _fillPaint = _solidFillPaint;
+  late ui.Paint _strokePaint = _solidStrokePaint;
   // The fill of a ring sector: the stroke of its middle circle with butt
   // caps ([_fillSector]).
   final ui.Paint _sectorPaint = ui.Paint()..style = ui.PaintingStyle.stroke;
+  final ui.Paint _shaderSectorPaint = ui.Paint()
+    ..style = ui.PaintingStyle.stroke;
   final ui.Paint _imagePaint = ui.Paint()..filterQuality = ui.FilterQuality.low;
   final ui.Paint _clearPaint = ui.Paint()..blendMode = ui.BlendMode.clear;
   final ui.Paint _layerPaint = ui.Paint();
@@ -738,6 +744,9 @@ final class UiCanvasContext._(final UiCanvasElement _element)
     _onChanged = null;
     _rectBarBorder = null;
     _rectBarBackground = null;
+    _validColorA = null;
+    _validColorB = null;
+    _solidFillColor = null;
     _arcBorder = null;
     _arcBackground = null;
     _partitionedFillPath = null;
@@ -983,32 +992,93 @@ final class UiCanvasContext._(final UiCanvasElement _element)
     return t.writeMatrix4(_m4);
   }
 
-  /// Sets [paint] for the color or the shader of a style. `false` when the
-  /// draw paints nothing. A [mapped] draw is in bitmap space: the shader
-  /// gets the current transform. Else the draw is in user space.
+  // The two paints of a fill and the two paints of a stroke. A solid paint
+  // never gets a write of `shader`: `Paint.shader = null` makes the object
+  // list of a paint, and each later native draw with that paint then decodes
+  // the list through the Dart API. Only [_setupPaint] writes the color and
+  // the blend mode of [_solidFillPaint], the one paint that keeps a color
+  // ([_solidFillColor]). The stroke paint has a second writer of its color,
+  // [_tryStrokeInPieces], so a stroke paint keeps no color.
+  final ui.Paint _solidFillPaint = ui.Paint();
+  final ui.Paint _shaderFillPaint = ui.Paint();
+  final ui.Paint _solidStrokePaint = ui.Paint()
+    ..style = ui.PaintingStyle.stroke;
+  final ui.Paint _shaderStrokePaint = ui.Paint()
+    ..style = ui.PaintingStyle.stroke;
+  // The color object that [_solidFillPaint] has, when its last setup had an
+  // exact color and a global alpha of 1, and the blend mode of that setup.
+  ui.Color? _solidFillColor;
+  ui.BlendMode _solidFillBlend = ui.BlendMode.srcOver;
+
+  /// The count of the setups of the solid fill paint that wrote nothing,
+  /// because the paint had the color and the blend mode, for the tests. Only
+  /// a debug build counts.
+  @visibleForTesting
+  int debugKeptFillPaints = 0;
+
+  /// Sets the paint of a fill or of a stroke for the color or the shader of
+  /// a style. [paint] is [_fillPaint] or [_strokePaint]: it names the kind,
+  /// and the field then holds the paint with the values, the solid paint or
+  /// the shader paint of that kind. `false` when the draw paints nothing. A
+  /// [mapped] draw is in bitmap space: the shader gets the current
+  /// transform. Else the draw is in user space.
+  ///
+  /// With [exact], the caller checked that [color] has the class `ui.Color`
+  /// itself ([_rectBarColor]). Such a color is immutable. So the solid fill
+  /// paint keeps its color and its blend mode when its last setup wrote the
+  /// identical color object with a global alpha of 1 and the same blend
+  /// mode.
+  // DIVERGES(chartjs): adapt-solid-paint-split, solid and shader paints.
   bool _setupPaint(
     ui.Paint paint,
     ui.Color? color,
     ChartShaderPaint? source, {
     required bool mapped,
+    bool exact = false,
   }) {
     final s = _s;
     final alpha = s.globalAlpha;
-    if (alpha == 0 && s.blendMode == ui.BlendMode.srcOver) return false;
+    final blend = s.blendMode;
+    if (alpha == 0 && blend == ui.BlendMode.srcOver) return false;
+    final stroke = identical(paint, _strokePaint);
+    final ui.Paint target;
     if (source != null) {
       final shader = shaderFor(source, mapped ? _shaderMatrix() : null);
       if (shader == null) return false;
-      paint
-        ..shader = shader
-        ..color = alpha == 1 ? _black : _black.withValues(alpha: alpha);
+      target =
+          (stroke
+                ? _strokePaint = _shaderStrokePaint
+                : _fillPaint = _shaderFillPaint)
+            ..shader = shader
+            ..color = alpha == 1 ? _black : _black.withValues(alpha: alpha);
     } else {
       final c = color!;
-      paint
-        ..shader = null
-        ..color = alpha == 1 ? c : c.withValues(alpha: c.a * alpha);
+      if (stroke) {
+        target = _strokePaint = _solidStrokePaint;
+      } else {
+        target = _fillPaint = _solidFillPaint;
+        if (exact &&
+            alpha == 1 &&
+            identical(c, _solidFillColor) &&
+            blend == _solidFillBlend) {
+          assert(
+            target.color == (ui.Paint()..color = c).color &&
+                target.blendMode == blend,
+            'only a setup writes the solid fill paint',
+          );
+          assert(++debugKeptFillPaints > 0, 'a count');
+          if (blend != ui.BlendMode.srcOver) _needsLayer = true;
+          return true;
+        }
+        // Before the writes: a color of another class can throw in the
+        // middle of the color write, and the paint then has no kept color.
+        _solidFillColor = exact && alpha == 1 ? c : null;
+        _solidFillBlend = blend;
+      }
+      target.color = alpha == 1 ? c : c.withValues(alpha: c.a * alpha);
     }
-    if (s.blendMode != ui.BlendMode.srcOver) _needsLayer = true;
-    paint.blendMode = s.blendMode;
+    if (blend != ui.BlendMode.srcOver) _needsLayer = true;
+    target.blendMode = blend;
     return true;
   }
 
@@ -1056,9 +1126,7 @@ final class UiCanvasContext._(final UiCanvasElement _element)
       ..strokeJoin = source.strokeJoin
       ..strokeMiterLimit = source.strokeMiterLimit
       ..blendMode = source.blendMode
-      ..maskFilter = sigma > 0
-          ? ui.MaskFilter.blur(ui.BlurStyle.normal, sigma)
-          : null;
+      ..maskFilter = sigma > 0 ? _shadows.filter(sigma) : null;
     if (source.shader == null) {
       paint
         ..shader = null
@@ -1079,6 +1147,51 @@ final class UiCanvasContext._(final UiCanvasElement _element)
     if (user) canvas.transform(s.transform.writeMatrix4(_m4));
     draw(paint);
     canvas.restore();
+  }
+
+  /// The kept objects of the shadows: one mask filter for equal blur values,
+  /// and the paint of [_castShadowRect].
+  final UiShadowKit _shadows = UiShadowKit();
+
+  /// The kept objects of the shadows, for tests.
+  @visibleForTesting
+  UiShadowKit get debugShadows => _shadows;
+
+  /// Draws the shadow of the fill of [rect], in bitmap space, with the solid
+  /// color [fill] that [_fillPaint] holds after its setup. [rect] has an area
+  /// ([UiShadowKit.hasFloat32Area]).
+  ///
+  /// It records the operations of [_castShadow] for the path of the
+  /// rectangle: `save`, `translate`, the rectangle with the paint of the
+  /// shadow, and `restore`. The paint has the values of the shadow paint of
+  /// a solid fill. It keeps its color while the fill color, the shadow color
+  /// and the global alpha stay, and its mask filter while the blur stays.
+  // DIVERGES(chartjs): adapt-rect-shadow-ops, the shadow of a rectangle is one
+  // rectangle draw with a kept paint, with no path.
+  void _castShadowRect(ui.Rect rect, ui.Color fill) {
+    final s = _s;
+    final kit = _shadows;
+    final paint = kit.rectPaint;
+    final shadow = s.shadowColor;
+    if (!identical(fill, kit.rectFill) ||
+        !identical(shadow, kit.rectShadow) ||
+        s.globalAlpha != kit.rectAlpha) {
+      paint.color = shadow.withValues(alpha: shadow.a * _fillPaint.color.a);
+      kit.keepRectColor(fill, shadow, s.globalAlpha);
+    }
+    final sigma = s.shadowBlur / 2;
+    if (sigma != kit.rectSigma) {
+      kit.rectSigma = sigma;
+      paint.maskFilter = sigma > 0 ? kit.filter(sigma) : null;
+    }
+    if (s.blendMode != kit.rectBlend) {
+      paint.blendMode = kit.rectBlend = s.blendMode;
+    }
+    _c
+      ..save()
+      ..translate(s.shadowOffsetX, s.shadowOffsetY)
+      ..drawRect(rect, paint)
+      ..restore();
   }
 
   /// Strokes [path], in bitmap space, for a similarity transform of
@@ -1491,23 +1604,39 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   // Only exact immutable sRGB colors qualify. Cache that validation by
   // identity; gradients, unusual color objects and non-finite channels keep
   // their ordinary setters and possible errors at the original point.
-  static bool _rectBarColor(Object? input, ui.Color? validated) {
+  bool _rectBarColor(Object? input, ui.Color? validated) {
     final value = input is SolidChartPaint ? input.color : input;
     if (validated != null && identical(value, validated)) return true;
+    if (value != null &&
+        (identical(value, _validColorA) || identical(value, _validColorB))) {
+      return true;
+    }
     if (value is! ui.Color ||
         value.runtimeType != ui.Color ||
         value.colorSpace != ui.ColorSpace.sRGB) {
       return false;
     }
-    return value.a >= 0 &&
+    if (!(value.a >= 0 &&
         value.a <= 1 &&
         value.r >= 0 &&
         value.r <= 1 &&
         value.g >= 0 &&
         value.g <= 1 &&
         value.b >= 0 &&
-        value.b <= 1;
+        value.b <= 1)) {
+      return false;
+    }
+    _validColorB = _validColorA;
+    _validColorA = value;
+    return true;
   }
+
+  // The last two colors that passed the full test of [_rectBarColor] on
+  // this context. A color of the class `ui.Color` itself is immutable, so
+  // it stays valid. With two colors in turn, the one color of the caller
+  // misses for each bar.
+  ui.Color? _validColorA;
+  ui.Color? _validColorB;
 
   /// Fused ordinary bars (ADR 0070). The logical style stack is untouched;
   /// the final inner path and each successful fill's recording count remain.
@@ -1528,7 +1657,6 @@ final class UiCanvasContext._(final UiCanvasElement _element)
     // A callback can inspect or mutate the temporary style/path/save state.
     // Let the original sequence handle any draw that can notify user code.
     if (_disposed ||
-        _s.shadowOn ||
         (!_notified && _onChanged != null) ||
         ui.Picture.onCreate != null ||
         ui.Picture.onDispose != null ||
@@ -1547,10 +1675,17 @@ final class UiCanvasContext._(final UiCanvasElement _element)
         !_rectBarColor(backgroundColor, _rectBarBackground)) {
       return false;
     }
-    final outer = _mappedRect(outerX, outerY, outerWidth, outerHeight);
     final inner = _mappedRect(innerX, innerY, innerWidth, innerHeight);
-    if (!outer.isFinite || !inner.isFinite) return false;
     final hasBorder = outerWidth != innerWidth || outerHeight != innerHeight;
+    // DIVERGES(chartjs): adapt-bar-draw-reads, one rectangle for no border.
+    // A bar with no border has two equal rectangles, and only the finite
+    // test reads the outer one.
+    final outer = hasBorder || outerX != innerX || outerY != innerY
+        ? _mappedRect(outerX, outerY, outerWidth, outerHeight)
+        : inner;
+    if (!inner.isFinite || (!identical(outer, inner) && !outer.isFinite)) {
+      return false;
+    }
     ({ui.RRect outer, ui.RRect inner})? ring;
     if (hasBorder && !inner.isEmpty) {
       ring = _ring((
@@ -1565,9 +1700,21 @@ final class UiCanvasContext._(final UiCanvasElement _element)
     final background = (backgroundColor is SolidChartPaint
         ? backgroundColor.color
         : backgroundColor! as ui.Color);
+    if (_s.shadowOn) {
+      // Under a shadow, only a bar with no border and with an area is fused
+      // (Chart.js ADR 0149): the ring of a border casts the shadow of a path
+      // of two contours, in the ordinary sequence. Nothing drew yet.
+      if (hasBorder || !UiShadowKit.hasFloat32Area(inner)) return false;
+      // The shadow of the fill, before the fill. A fill that paints nothing
+      // casts no shadow.
+      if (_setupPaint(_fillPaint, background, null, mapped: true)) {
+        _castShadowRect(inner, background);
+      }
+    }
     _rectBarBorder = border;
     _rectBarBackground = background;
-    if (hasBorder && _setupPaint(_fillPaint, border, null, mapped: true)) {
+    if (hasBorder &&
+        _setupPaint(_fillPaint, border, null, mapped: true, exact: true)) {
       final canvas = _c; // Flush pending circles in their original order.
       if (ring != null) {
         canvas.drawDRRect(ring.outer, ring.inner, _fillPaint);
@@ -1589,7 +1736,13 @@ final class UiCanvasContext._(final UiCanvasElement _element)
         _c;
         _drew();
       }
-    } else if (_setupPaint(_fillPaint, background, null, mapped: true)) {
+    } else if (_setupPaint(
+      _fillPaint,
+      background,
+      null,
+      mapped: true,
+      exact: true,
+    )) {
       _c.drawRect(inner, _fillPaint);
       _drew();
     }
@@ -2109,10 +2262,17 @@ final class UiCanvasContext._(final UiCanvasElement _element)
         return;
       }
       if (s.shadowOn) {
-        _castShadow(
-          _fillPaint,
-          (p) => _c.drawPath(_path.path..fillType = fillType, p),
-        );
+        // One rectangle with a solid color and an area casts the shadow of
+        // a rectangle. Each other path keeps the shadow of the path.
+        final shadowRect = s.fillShader == null ? _path.singleRect : null;
+        if (shadowRect != null && UiShadowKit.hasFloat32Area(shadowRect)) {
+          _castShadowRect(shadowRect, s.fillColor!);
+        } else {
+          _castShadow(
+            _fillPaint,
+            (p) => _c.drawPath(_path.path..fillType = fillType, p),
+          );
+        }
       }
       final canvas = _c;
       final rect = _path.singleRect;
@@ -2190,11 +2350,13 @@ final class UiCanvasContext._(final UiCanvasElement _element)
       );
       return;
     }
-    final paint = _sectorPaint
-      ..color = fill.color
-      ..shader = fill.shader
-      ..blendMode = fill.blendMode
-      ..strokeWidth = radius - inner;
+    // A solid paint and a shader paint, as for a fill ([_setupPaint]).
+    final shader = fill.shader;
+    final paint =
+        (shader == null ? _sectorPaint : (_shaderSectorPaint..shader = shader))
+          ..color = fill.color
+          ..blendMode = fill.blendMode
+          ..strokeWidth = radius - inner;
     final middle = (radius + inner) / 2;
     canvas.drawArc(
       ui.Rect.fromLTRB(x - middle, y - middle, x + middle, y + middle),

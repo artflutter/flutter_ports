@@ -297,9 +297,26 @@ void main() {
       });
     }
 
-    test('decline while a shadow is on', () {
+    // A bar with no border and with a shadow is fused: the shadow of its
+    // fill is one rectangle (differences.md row `adapt-rect-shadow-ops`).
+    // A bar with a border still declines.
+    bool plainBar() => ctx.tryDrawRectBar(
+      outerX: 40,
+      outerY: 10,
+      outerWidth: 20,
+      outerHeight: 20,
+      innerX: 40,
+      innerY: 10,
+      innerWidth: 20,
+      innerHeight: 20,
+      borderColor: _black,
+      backgroundColor: _red,
+    );
+
+    test('decline while a shadow is on, except a bar with no border', () {
       _red20(ctx, blur: 4);
       expect(bar(), isFalse);
+      expect(plainBar(), isTrue);
       expect(sector(), isFalse);
       expect(circles(), isFalse);
       expect(fan(), isFalse);

@@ -18,12 +18,13 @@
 /// [TRBLCorners].
 ///
 /// The options of a bar are a [BarOptions] or a plain Map of user code or of
-/// a spec. Each option read goes through one small function for each
-/// option, for example `_borderWidth`, which gives the typed field of a
-/// [BarOptions] with its presence bit (`rawOption`, Chart.js ADR 0054 §6) or
-/// the read by name of a plain Map (`_byName`). Both give JS `undefined` for
-/// an absent key, and the read by name throws the [TypeError] of a property
-/// read of `undefined` options.
+/// a spec. Each option read of the geometry goes through one small function
+/// for each option, for example `_borderWidth`, which gives the typed field
+/// of a [BarOptions] with its presence bit (`rawOption`, Chart.js ADR 0054
+/// §6) or the read by name of a plain Map (`_byName`). Both give JS
+/// `undefined` for an absent key, and the read by name throws the
+/// [TypeError] of a property read of `undefined` options. [BarElement.draw]
+/// reads its two colors itself, with the same results.
 ///
 /// The skipped edges of a bar are a [BorderSkipped] of the bar controller,
 /// read through its typed fields, or a plain object, read by name
@@ -94,18 +95,6 @@ Object? _borderWidth(Object? options) => options is BarOptions
 Object? _borderRadius(Object? options) => options is BarOptions
     ? rawOption(options, OptionKey.borderRadius, options.borderRadius)
     : _byName(options, 'borderRadius');
-
-/// The option `borderColor` of [options], as [_borderWidth] reads
-/// `borderWidth`.
-Object? _borderColor(Object? options) => options is BarOptions
-    ? rawOption(options, OptionKey.borderColor, options.borderColor)
-    : _byName(options, 'borderColor');
-
-/// The option `backgroundColor` of [options], as [_borderWidth] reads
-/// `borderWidth`.
-Object? _backgroundColor(Object? options) => options is BarOptions
-    ? rawOption(options, OptionKey.backgroundColor, options.backgroundColor)
-    : _byName(options, 'backgroundColor');
 
 /// The `ToBoolean` of the edges `skip.top`, `skip.right`, `skip.bottom` and
 /// `skip.left` of the skipped edges [skip] (element.bar.js:43-50, :59-63).
@@ -749,12 +738,19 @@ class BarElement([AnyObject? cfg])
   ///
   /// Upstream `draw` takes only the context. Thus the port ignores [area],
   /// as JavaScript ignores an extra argument (Chart.js ADR 0017, section 1).
-  /// The colors are property reads of `options` ([_borderColor] and
-  /// [_backgroundColor], in the order of the upstream destructuring). An
-  /// element without `options` throws a [TypeError], as the upstream
-  /// destructuring does. `ctx.fillStyle` gets a color through
-  /// [canvasStyle]: an absent color gives Dart `null`, which the canvas
-  /// ignores, as the DOM ignores `undefined`.
+  /// The colors are property reads of `options`, in the order of the
+  /// upstream destructuring. An element without `options` throws a
+  /// [TypeError], as the upstream destructuring does. `ctx.fillStyle` gets a
+  /// color through [canvasStyle]: an absent color gives Dart `null`, which
+  /// the canvas ignores, as the DOM ignores `undefined`.
+  ///
+  /// The draw tests the class of the options one time. A [BarOptions] gives
+  /// each color from its typed field first: a paint in the field is present
+  /// and not foreign, so it is the raw value, and only an empty field takes
+  /// the two bit tests of the generated getter, which gives JS `undefined`
+  /// for an absent key and a foreign value as it is (`rawOption`, Chart.js
+  /// ADR 0054 §6). dart2wasm keeps the two switches of `rawOption` as calls
+  /// (differences.md `adapt-bar-draw-reads`).
   ///
   /// When [inflateAmount] is 0, the port does not call `ctx.clip()` (the
   /// performance rule of porting-flow.md §1.1, differences.md
@@ -767,28 +763,38 @@ class BarElement([AnyObject? cfg])
   void draw(CanvasRenderingContext2D ctx, [ChartArea? area]) {
     final inflateAmount = this.inflateAmount;
     final options = this.options;
-    final borderColor = _borderColor(options);
-    final backgroundColor = _backgroundColor(options);
-    if (_builtIn &&
-        inflateAmount == 0 &&
-        !inflateAmount.isNegative &&
-        options is BarOptions) {
-      final radius = options.borderRadiusValue;
-      final borderWidth = options.borderWidthValue;
-      final skipped = _borderSkipped;
-      if (radius is num &&
-          radius == 0 &&
-          borderWidth is num &&
-          skipped is BorderSkipped &&
-          _drawRectangular(
-            ctx,
-            borderWidth.toDouble(),
-            skipped,
-            borderColor,
-            backgroundColor,
-          )) {
-        return;
+    final Object? borderColor;
+    final Object? backgroundColor;
+    if (options is BarOptions) {
+      // DIVERGES(chartjs): adapt-bar-draw-reads, the typed color field first.
+      borderColor = options.borderColor ?? options.borderColorValue;
+      backgroundColor = options.backgroundColor ?? options.backgroundColorValue;
+      if (_builtIn && inflateAmount == 0 && !inflateAmount.isNegative) {
+        final radius = options.borderRadiusValue;
+        final borderWidth = options.borderWidthValue;
+        final skipped = _borderSkipped;
+        // The `double` test is first, so the common case has no call of
+        // `num`. A width that is not a number is NaN here, and
+        // [_drawRectangular] declines a width that is not finite.
+        if ((radius is double ? radius == 0 : radius is num && radius == 0) &&
+            skipped is BorderSkipped &&
+            _drawRectangular(
+              ctx,
+              borderWidth is double
+                  ? borderWidth
+                  : borderWidth is num
+                  ? borderWidth.toDouble()
+                  : double.nan,
+              skipped,
+              borderColor,
+              backgroundColor,
+            )) {
+          return;
+        }
       }
+    } else {
+      borderColor = _byName(options, 'borderColor');
+      backgroundColor = _byName(options, 'backgroundColor');
     }
     final (:inner, :outer) = _boundingRects(this);
     final addRectPath = _hasRadius(outer.radius)

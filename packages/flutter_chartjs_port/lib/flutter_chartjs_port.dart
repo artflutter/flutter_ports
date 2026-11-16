@@ -38,6 +38,7 @@ export 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 export 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
 export 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
 export 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_ui_shadow.dart';
 export 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
 export 'package:flutter_chartjs_port/src/controllers/controller.bar.dart';
 export 'package:flutter_chartjs_port/src/controllers/controller.bubble.dart';

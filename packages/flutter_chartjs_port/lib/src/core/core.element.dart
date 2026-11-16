@@ -629,6 +629,12 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
         _ => throw ArgumentError.value(value, prop, 'Not a $T or undefined'),
       };
 
+  /// Whether the element has a Map of extra properties: the properties
+  /// that its class does not declare, for example `skip` of a bar. The typed
+  /// hover scan of `bar_hover_scan.dart` reads `skip` by name only then.
+  @internal
+  bool get hasExtras => _extras != null;
+
   /// The read of the extra property [prop]: its value, or [undefined] when
   /// the element does not have it.
   Object? _extra(String prop) {

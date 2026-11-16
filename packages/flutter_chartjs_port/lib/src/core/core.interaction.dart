@@ -33,6 +33,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_port/src/core/bar_hover_scan.dart'
+    show scanBarInteractionItems;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
@@ -321,7 +323,21 @@ List<types.ActiveElement> _getIntersectItems(
     }
   }
 
-  _evaluateInteractionItems(chart, axis, position, evaluationFunc, true);
+  // The handler does nothing for a miss, so the typed scan of the bars
+  // gives the same items: it calls the handler only for a bar that its own
+  // bounds test does not reject. Each other element takes the calls of
+  // `evaluateInteractionItems` (core.interaction.js:130).
+  // DIVERGES(chartjs): adapt-bar-hover-scan, a typed scan of the bars.
+  scanBarInteractionItems(
+    chart,
+    axis,
+    position,
+    evaluationFunc,
+    intersect: true,
+    useFinalPosition: useFinalPosition,
+    search: _binarySearch,
+    skipped: _skipped,
+  );
   return items;
 }
 
@@ -445,6 +461,22 @@ List<types.ActiveElement> _getNearestCartesianItems(
     }
   }
 
+  // With `intersect`, the handler returns at once for a miss, so the typed
+  // scan of the bars gives the same items (core.interaction.js:195).
+  // DIVERGES(chartjs): adapt-bar-hover-scan, a typed scan of the bars.
+  if (intersect) {
+    scanBarInteractionItems(
+      chart,
+      axis,
+      position,
+      evaluationFunc,
+      intersect: null,
+      useFinalPosition: useFinalPosition,
+      search: _binarySearch,
+      skipped: _skipped,
+    );
+    return items;
+  }
   _evaluateInteractionItems(chart, axis, position, evaluationFunc);
   return items;
 }

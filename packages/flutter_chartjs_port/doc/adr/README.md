@@ -151,4 +151,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0146](0146-js-numeric-semantics.md) JS numeric semantics and the reference engine: accepted, supersedes 0035, 0045, 0108, 0122, 0134, 0135, 0136, 0138, 0143.
 - [0147](0147-public-theme-api.md) The public theme API: accepted, supersedes 0050, 0054, 0057, 0116, 0117, 0118, 0128, 0141.
 - [0148](0148-plugin-typing.md) Typed plugin chart, options and update mode: accepted, supersedes 0144.
+- [0149](0149-bar-chart-small-costs.md) Four small costs of a bar chart: proposed, supersedes 0054, 0070, 0106.
 <!-- adr-index:end -->

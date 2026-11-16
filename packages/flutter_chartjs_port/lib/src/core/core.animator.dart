@@ -20,6 +20,10 @@
 ///   `platform-animator-mute` and `platform-animator-skip-muted`). The chart
 ///   host reports the ticker state through `ChartHost.onTickerModeChanged`,
 ///   and the owner of the chart makes the calls.
+/// - While [Animator.update] runs, the ticks with the same `Cubic` curve
+///   object and the same eased input share one curve call, with the same
+///   result (Chart.js ADR 0149, `adapt-animation-ease-table`,
+///   `animation_ease.dart`).
 /// - `_getAnims` and `_update` are [Animator.getAnims] and [Animator.update],
 ///   and `_Anims` is [Anims]: the fixtures of Chart.js read them (Chart.js ADR
 ///   0029, section 6, and Chart.js ADR 0012). `_refresh` is the field
@@ -32,6 +36,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:clock/clock.dart';
+import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show requestAnimFrame;
@@ -207,6 +212,8 @@ class Animator() {
     // DIVERGES(chartjs): adapt-animator-chart-list, a copy of the chart list.
     final outerAdded = _added;
     final added = _added = <types.Chart>[];
+    // DIVERGES(chartjs): adapt-animation-ease-table, one solve for an input.
+    easeTableBegin();
     try {
       for (final chart in _charts.keys.toList(growable: false)) {
         final anims = _charts[chart];
@@ -258,6 +265,7 @@ class Animator() {
       }
     } finally {
       _added = outerAdded;
+      easeTableEnd();
     }
     // A chart that a listener started in the loop: its visit waits for the
     // next frame, and it keeps the loop running.
