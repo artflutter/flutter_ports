@@ -24,13 +24,16 @@ double Function(double t) interpolateBasisClosed(List<double> values) {
   // DIVERGES(d3-interpolate): adapt-interpolate-typed-values, NaN reads.
   if (n == 0) return (t) => double.nan;
   return (t) {
-    // `t %= 1` (D3 ADR 0007 §4), then `++t` for a negative remainder.
-    var x = t.remainder(1);
+    // `t %= 1` (D3 ADR 0007 §4), then `++t` for a negative remainder. For
+    // t in (-1, 1) the remainder is t itself (also -0.0): the test skips the
+    // call of fmod, the slow part of the call on the VM.
+    var x = t > -1 && t < 1 ? t : t.remainder(1);
     if (x < 0) ++x;
     // A NaN x (a NaN or infinite t): Math.floor(NaN) is NaN upstream, so
     // each value is NaN.
     if (x.isNaN) return double.nan;
-    final i = (x * n).floor();
+    // x is in [0, 1], so x * n is not negative: toInt() is Math.floor.
+    final i = (x * n).toInt();
     final v0 = values[(i + n - 1).remainder(n)];
     final v1 = values[i.remainder(n)];
     final v2 = values[(i + 1).remainder(n)];

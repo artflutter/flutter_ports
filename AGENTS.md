@@ -729,9 +729,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   pubspec has no `publish_to`. Its `.pubignore` keeps `doc/`, `tool/` and `build/` out of the
   archive, its `analysis_options.yaml` includes the rules of the root file, and `example/main.dart`
   is the example of the archive. Its `README.md` is the README of upstream d3-interpolate with the
-  Dart forms, with no links. It depends on Flutter, on `flutter_d3_color_port` (as d3-interpolate
-  depends on d3-color) and on `vector_math` (the `Matrix4` of Flutter), and imports no package
-  of another port.
+  Dart forms, with no links, and with the speed table of `doc/performance.md`. It depends on
+  Flutter, on `flutter_d3_color_port` (as d3-interpolate depends on d3-color) and on `vector_math`
+  (the `Matrix4` of Flutter), and imports no package of another port.
   `flutter_d3_port` depends on it with `^0.1.0`.
   - The port uses no JS runtime (D3 ADR 0007), and its values are native (D3 ADR 0011). A color
     interpolator takes two d3-color `Color` values and returns a new color of its space at each
@@ -764,11 +764,19 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     at 64 bits and an `int` is not a `double`; with DDC and dart2js each result is the upstream
     one. `test/port/color_values_test.dart` pins a new color at each call, and
     `test/port/rounding_and_dates_test.dart` pins `Math.round` and the date truncation.
+    `test/port/faster_forms_test.dart` pins the faster forms of `doc/performance.md` against the
+    upstream lines.
     `test/upstream_test.dart` (`@TestOn('vm')`) compares `d3InterpolateVersion`, the entry and the
     gitlink.
   - `tool/port_sources.yaml`: the pin of `third_party/d3-interpolate`, with the top-level key
     `marker: d3-interpolate` (the tag of `DIVERGES(d3-interpolate)`) and a `files` list.
-    `doc/differences.md` has its rows.
+    `doc/differences.md` has its rows, and `doc/performance.md` its figures.
+  - `tool/bench/`: the benchmark (`d3_interpolate_bench.dart`, `d3_interpolate_bench.mjs` with the
+    same 37 cases on the upstream source, and `run_bench.sh` for Node.js, AOT, JIT, dart2js and
+    dart2wasm, both web targets run in Node.js). Typed lists, fields of an object and constants of
+    the creation took the place of closures, records and `List<num>` reads: the transform and the
+    number lists are 4 to 50 times faster on the VM (rows `adapt-interpolate-typed-loops` and
+    `adapt-interpolate-zoom-constants`).
   - `check:headers`, `test:web` and `test --no-select` examine the package.
 - `packages/flutter_echarts_port`: the Apache ECharts port (library, `publish_to: none` until
   0.1.0, Apache-2.0). Phase 0 has no ported code. `doc/README.md` has the plan and the roadmap of

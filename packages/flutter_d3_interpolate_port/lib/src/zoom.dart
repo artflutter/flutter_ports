@@ -118,11 +118,18 @@ final class const InterpolateZoom._(
       final r0 = math.log(math.sqrt(b0 * b0 + 1) - b0);
       final r1 = math.log(math.sqrt(b1 * b1 + 1) - b1);
       S = (r1 - r0) / rho;
+      // DIVERGES(d3-interpolate): adapt-interpolate-zoom-constants, once.
+      // Upstream computes cosh(r0), sinh(r0), w0 / (rho2 * d1) and
+      // w0 * coshr0 at each call: they do not depend on t. The values and
+      // the order of the operations are those of zoom.js:50-55.
+      final coshr0 = _cosh(r0);
+      final sinhr0 = _sinh(r0);
+      final k = w0 / (rho2 * d1);
+      final w0coshr0 = w0 * coshr0;
       i = (t) {
         final s = t * S;
-        final coshr0 = _cosh(r0);
-        final u = w0 / (rho2 * d1) * (coshr0 * _tanh(rho * s + r0) - _sinh(r0));
-        return (ux0 + u * dx, uy0 + u * dy, w0 * coshr0 / _cosh(rho * s + r0));
+        final u = k * (coshr0 * _tanh(rho * s + r0) - sinhr0);
+        return (ux0 + u * dx, uy0 + u * dy, w0coshr0 / _cosh(rho * s + r0));
       };
     }
 

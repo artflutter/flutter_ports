@@ -26,6 +26,37 @@ R Function(double t) numberArray<R>(List<num> a, List<num> b) {
   final n = math.min(b.length, a.length);
   final c = b.sublist(0);
   final result = c as R;
+  // DIVERGES(d3-interpolate): adapt-interpolate-typed-loops, typed reads.
+  // The same loop with the static types of the lists: the reads and the
+  // writes of a Float64List or a Float32List take no box and no dispatch.
+  if (c is Float64List && b is Float64List) {
+    final bf = b;
+    if (a is Float64List) {
+      final af = a;
+      return (t) {
+        for (var i = 0; i < n; ++i) {
+          c[i] = af[i] * (1 - t) + bf[i] * t;
+        }
+        return result;
+      };
+    }
+    return (t) {
+      for (var i = 0; i < n; ++i) {
+        c[i] = a[i].toDouble() * (1 - t) + bf[i] * t;
+      }
+      return result;
+    };
+  }
+  if (c is Float32List && b is Float32List && a is Float32List) {
+    final af = a;
+    final bf = b;
+    return (t) {
+      for (var i = 0; i < n; ++i) {
+        c[i] = af[i] * (1 - t) + bf[i] * t;
+      }
+      return result;
+    };
+  }
   if (c is List<int>) {
     final ints = c;
     return (t) {

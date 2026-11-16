@@ -10,6 +10,8 @@
 /// text (decisions 1 and 2 of the design).
 library;
 
+import 'dart:typed_data';
+
 import 'package:flutter_d3_color_port/d3_color.dart' show Color, Rgb;
 import 'package:flutter_d3_interpolate_port/src/basis.dart'
     show interpolateBasis;
@@ -87,9 +89,10 @@ Rgb Function(double t) _rgbSpline(
   final n = colors.length;
   // DIVERGES(d3-interpolate): adapt-interpolate-color-values, no last color.
   if (n == 0) throw ArgumentError.value(colors, 'colors', 'is empty');
-  final r = List<double>.filled(n, 0);
-  final g = List<double>.filled(n, 0);
-  final b = List<double>.filled(n, 0);
+  // DIVERGES(d3-interpolate): adapt-interpolate-typed-loops, typed channels.
+  final r = Float64List(n);
+  final g = Float64List(n);
+  final b = Float64List(n);
   for (var i = 0; i < n; ++i) {
     final color = Rgb.from(colors[i]);
     final cr = color.r;

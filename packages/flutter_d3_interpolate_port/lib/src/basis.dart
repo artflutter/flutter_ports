@@ -4,6 +4,8 @@
 /// B-spline through a list of numbers.
 library;
 
+import 'dart:typed_data';
+
 /// basis.js:1 `basis(t1, v0, v1, v2, v3)`: the uniform cubic B-spline of the
 /// four control values [v0] to [v3] at [t1] in [0, 1].
 ///
@@ -35,6 +37,31 @@ double Function(double t) interpolateBasis(List<double> values) {
   final n = values.length - 1;
   // DIVERGES(d3-interpolate): adapt-interpolate-typed-values, NaN reads.
   if (n < 1) return (t) => double.nan;
+  // DIVERGES(d3-interpolate): adapt-interpolate-typed-loops, typed reads.
+  if (values is Float64List) {
+    final v = values;
+    return (t) {
+      double x;
+      int i;
+      if (t <= 0) {
+        x = 0;
+        i = 0;
+      } else if (t >= 1) {
+        x = 1;
+        i = n - 1;
+      } else if (t > 0) {
+        x = t;
+        i = (t * n).toInt();
+      } else {
+        return double.nan;
+      }
+      final v1 = v[i];
+      final v2 = v[i + 1];
+      final v0 = i > 0 ? v[i - 1] : 2 * v1 - v2;
+      final v3 = i < n - 1 ? v[i + 2] : 2 * v2 - v1;
+      return basis((x - i / n) * n, v0, v1, v2, v3);
+    };
+  }
   return (t) {
     double x;
     int i;
@@ -46,7 +73,8 @@ double Function(double t) interpolateBasis(List<double> values) {
       i = n - 1;
     } else if (t > 0) {
       x = t;
-      i = (t * n).floor();
+      // Math.floor of t * n in (0, n): toInt() truncates to the same int.
+      i = (t * n).toInt();
     } else {
       // A NaN t: Math.floor(NaN) is NaN, so each value upstream is NaN.
       return double.nan;

@@ -5,6 +5,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:typed_data';
 
 import 'package:flutter_d3_interpolate_port/src/numberArray.dart';
 import 'package:flutter_d3_interpolate_port/src/value.dart';
@@ -46,6 +47,26 @@ R Function(double t) genericArray<R>(List<Object?> a, List<Object?> b) {
   // DIVERGES(d3-interpolate): adapt-interpolate-typed-values, no undefined.
   final nb = b.length;
   final na = math.min(nb, a.length);
+  if (a is List<double> && b is List<double>) {
+    // DIVERGES(d3-interpolate): adapt-interpolate-typed-loops, no closures.
+    // Each item interpolator is `interpolateNumber(a[i], b[i])` (value.js
+    // gives a number pair to number.js), which keeps its two numbers: one
+    // Float64List keeps the pairs here, and the loop has the line of
+    // number.js.
+    final x = Float64List(2 * na);
+    for (var i = 0; i < na; ++i) {
+      x[2 * i] = a[i];
+      x[2 * i + 1] = b[i];
+    }
+    final c = b.toList();
+    final result = c as R;
+    return (t) {
+      for (var i = 0; i < na; ++i) {
+        c[i] = x[2 * i] * (1 - t) + x[2 * i + 1] * t;
+      }
+      return result;
+    };
+  }
   final x = List<Object? Function(double t)>.generate(
     na,
     (i) => interpolate<Object?>(a[i], b[i]),

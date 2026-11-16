@@ -419,6 +419,66 @@ count. `toMatrix4()` composes the parts in the order translate, rotate, skewX, s
   `rgb(1, 1, 1)` for `rgb(0, 0, 0)`, and the Cubehelix lightness of a gamma of NaN or ±Infinity is
   the end lightness at t = 1, where d3-interpolate gives NaN.
 
+## Performance
+
+The figures are the time of one operation in nanoseconds, the mean of two runs. A lower number is
+faster. The benchmark runs the same 37 cases on d3-interpolate 3.0.1 and on this package, with the
+same inputs. "AOT" is a compiled Dart executable or a release build of a Flutter app. "dart2js" and
+"dart2wasm" are the JavaScript and WebAssembly builds of this package.
+
+Apple M3 Max, macOS 27. d3-interpolate, dart2js and dart2wasm run in Node.js v24.22.1.
+
+| Case | d3-interpolate in Node.js | Port, AOT | Port, dart2js | Port, dart2wasm |
+|---|---:|---:|---:|---:|
+| `call.number` | 8 | 8 | 5 | 15 |
+| `call.round` | 21 | 9 | 17 | 16 |
+| `call.hue` | 24 | 14 | 21 | 20 |
+| `call.basis` | 20 | 22 | 21 | 54 |
+| `call.basisClosed` | 18 | 19 | 22 | 51 |
+| `call.discrete` | 13 | 12 | 16 | 22 |
+| `call.date` | 25 | 19 | 84 | 30 |
+| `call.numberArray` | 36 | 38 | 27 | 253 |
+| `call.array` | 71 | 61 | 27 | 173 |
+| `call.rgb` | 120 | 24 | 15 | 28 |
+| `call.rgbGamma` | 165 | 49 | 44 | 69 |
+| `call.rgbBasis` | 132 | 36 | 46 | 155 |
+| `call.hsl` | 139 | 23 | 15 | 28 |
+| `call.hslLong` | 139 | 23 | 16 | 28 |
+| `call.lab` | 155 | 22 | 15 | 28 |
+| `call.hcl` | 194 | 22 | 15 | 28 |
+| `call.hclLong` | 198 | 22 | 15 | 29 |
+| `call.cubehelix` | 169 | 23 | 29 | 42 |
+| `call.cubehelixGamma` | 173 | 23 | 29 | 42 |
+| `call.piecewise` | 150 | 51 | 27 | 59 |
+| `call.zoom` | 41 | 28 | 38 | 41 |
+| `call.transform` | 424 | 15 | 22 | 28 |
+| `text.rgb` | 119 | 51 | 35 | 54 |
+| `text.hsl` | 141 | 63 | 58 | 74 |
+| `text.lab` | 154 | 97 | 88 | 102 |
+| `text.hcl` | 193 | 118 | 122 | 140 |
+| `text.cubehelix` | 170 | 82 | 84 | 104 |
+| `create.number` | 13 | 4 | 12 | 13 |
+| `create.rgb` | 158 | 77 | 45 | 70 |
+| `create.hcl` | 480 | 244 | 206 | 211 |
+| `create.valueNumber` | 13 | 13 | 27 | 28 |
+| `create.valueColor` | 175 | 81 | 76 | 84 |
+| `create.valueArray` | 335 | 164 | 290 | 340 |
+| `create.zoom` | 82 | 82 | 101 | 91 |
+| `create.transform` | 2328 | 29 | 45 | 54 |
+| `decompose` | 30 | 40 | 47 | 51 |
+| `quantize.rgb` | 908 | 205 | 113 | 263 |
+
+- `call.*`: one call of an interpolator that exists, at another `t` each time. A color
+  interpolator of d3-interpolate returns a CSS text. Here it returns a color.
+- `text.*`: one call of a color interpolator and `toString()` of the color: the CSS text, as in
+  d3-interpolate.
+- `create.*`: a new interpolator and one call. `create.value*` use `interpolate(a, b)` with
+  numbers, colors and lists of 16 numbers.
+- `call.numberArray` and `call.array`: lists of 16 numbers (`Float64List` and `List<double>`).
+- `call.transform` and `create.transform`: `interpolateTransformCss` of two `matrix(...)` texts in
+  d3-interpolate, and `interpolateTransform` of two `TransformParts` here.
+- `decompose`: `decompose(a, b, c, d, e, f)`. `quantize.rgb`: eight colors of an RGB interpolator.
+
 ## License
 
 ISC, the license of d3-interpolate. The `LICENSE` file keeps the notice of Mike Bostock. This
