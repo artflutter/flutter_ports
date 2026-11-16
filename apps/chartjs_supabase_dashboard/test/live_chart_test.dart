@@ -5,6 +5,7 @@ import 'dart:math' as math;
 import 'package:chartjs_supabase_dashboard/src/live_chart.dart';
 import 'package:chartjs_supabase_dashboard/src/live_series.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
@@ -26,8 +27,11 @@ Future<(LiveSeries, Chart Function())> showChart(
   Chart? chart;
   await tester.pumpWidget(
     MaterialApp(
-      home: Scaffold(
-        body: LiveChart(series: series, onChartCreated: (c) => chart = c),
+      home: RepaintBoundary(
+        key: const ValueKey('test.view'),
+        child: Scaffold(
+          body: LiveChart(series: series, onChartCreated: (c) => chart = c),
+        ),
       ),
     ),
   );
@@ -47,6 +51,27 @@ Future<void> frames(WidgetTester tester, int count) async {
 Future<void> close(WidgetTester tester, LiveSeries series) async {
   await tester.pumpWidget(const SizedBox());
   series.dispose();
+}
+
+/// The color of the pixel at [position] of the view.
+Future<Color> colorAt(WidgetTester tester, Offset position) async {
+  final view = tester.renderObject<RenderRepaintBoundary>(
+    find.byKey(const ValueKey('test.view')),
+  );
+  final bytes = (await tester.runAsync(() async {
+    final image = await view.toImage();
+    final data = await image.toByteData();
+    image.dispose();
+    return data;
+  }))!;
+  final at =
+      4 * (position.dy.floor() * view.size.width.toInt() + position.dx.floor());
+  return Color.fromARGB(
+    bytes.getUint8(at + 3),
+    bytes.getUint8(at),
+    bytes.getUint8(at + 1),
+    bytes.getUint8(at + 2),
+  );
 }
 
 double edgeOf(LiveSeries series) =>
@@ -353,6 +378,82 @@ void main() {
     }
 
     await close(tester, series);
+  });
+
+  /// Shows a chart of 100 rows a second apart, then no row for [gap], then
+  /// 21 rows a second apart at the live edge, each with the value 50. The
+  /// view is the 2 minutes before the newest row, so the line between the
+  /// two rows of the gap crosses its left part.
+  ///
+  /// The result tells whether two pixels near the left edge have the color
+  /// of the line: the place of a dash and the place of the space after it,
+  /// for dashes of 4 pixels and spaces of 4 pixels from the row before the
+  /// gap.
+  Future<(bool dash, bool space)> lineAcross(
+    WidgetTester tester,
+    Duration gap,
+  ) async {
+    const line = Color(0xFF3ECF8E);
+    final source = MemoryMetricSource(rows: 100, valueOf: (_) => 50);
+    final after = MemoryMetricSource.start.add(
+      const Duration(seconds: 100) + gap,
+    );
+    for (var i = 0; i <= 20; i++) {
+      source.addRow(101 + i, after.add(Duration(seconds: i)), 50);
+    }
+    final (series, chart) = await showChart(tester, source: source);
+
+    final x = chart().scales['x']!;
+    final from = x.getPixelForValue(
+      source.rows[99].ts.millisecondsSinceEpoch.toDouble(),
+    );
+    final left = chart().chartArea!.left;
+    expect(from, lessThan(left - 1000), reason: 'far before the view');
+    expect(
+      chart().getDatasetMeta(0).data.length,
+      lessThan(series.points.length),
+      reason: 'the chart has the rows of the live view only',
+    );
+    expect(
+      chart().updateRanges(UpdateMode.none),
+      isTrue,
+      reason: 'the plugin of the dashed lines keeps the range updates',
+    );
+
+    final origin = tester.getTopLeft(
+      find.byKey(const ValueKey('dashboard.chart')),
+    );
+    final y = chart().scales['y']!.getPixelForValue(50.0);
+    final dash = from + ((left + 20 - from) / 8).ceil() * 8;
+    final result = (
+      await colorAt(tester, origin + Offset(dash + 2, y)) == line,
+      await colorAt(tester, origin + Offset(dash + 6, y)) == line,
+    );
+    await close(tester, series);
+    return result;
+  }
+
+  testWidgets('the solid line joins rows at most 1 hour apart', (tester) async {
+    expect(await lineAcross(tester, const Duration(hours: 1)), (true, true));
+  });
+
+  testWidgets('a dashed line joins rows from 1 hour to 2 hours apart', (
+    tester,
+  ) async {
+    expect(await lineAcross(tester, const Duration(hours: 1, seconds: 1)), (
+      true,
+      false,
+    ));
+    expect(await lineAcross(tester, const Duration(hours: 2)), (true, false));
+  });
+
+  testWidgets('rows more than 2 hours apart have no line between them', (
+    tester,
+  ) async {
+    expect(await lineAcross(tester, const Duration(hours: 2, seconds: 1)), (
+      false,
+      false,
+    ));
   });
 
   testWidgets('a range button sets the width', (tester) async {

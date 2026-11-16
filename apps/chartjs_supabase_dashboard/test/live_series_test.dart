@@ -134,17 +134,23 @@ void main() {
     final series = LiveSeries(source, pageSize: 100);
     addTearDown(series.dispose);
     await series.start(pump: false);
+    expect(series.gapThreshold, const Duration(hours: 1));
+    expect(series.dashThreshold, const Duration(hours: 2));
 
-    source.addRow(
-      4,
-      MemoryMetricSource.start.add(const Duration(minutes: 5)),
-      7,
+    // 1 hour after row 3: the line joins the two rows.
+    final joined = MemoryMetricSource.start.add(
+      const Duration(hours: 1, seconds: 3),
     );
+    source.addRow(4, joined, 6);
+    expect(series.points, hasLength(4));
+    expect(series.points[3].y, 6);
 
-    expect(series.rowCount, 4);
-    expect(series.points, hasLength(5));
-    expect(series.points[3].y, isNull);
-    expect(series.points[4].y, 7);
+    // One second more than 1 hour after row 4: a point with no value.
+    source.addRow(5, joined.add(const Duration(hours: 1, seconds: 1)), 7);
+    expect(series.rowCount, 5);
+    expect(series.points, hasLength(6));
+    expect(series.points[4].y, isNull);
+    expect(series.points[5].y, 7);
   });
 
   testWidgets('the pump inserts values and gets them back', (tester) async {

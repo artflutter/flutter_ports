@@ -28,6 +28,11 @@ import 'package:material_ui/material_ui.dart';
 /// `chart.updateRanges`: the chart does no full update for a move, and one
 /// update in a frame for a wheel pan or a wheel zoom. A new row gives a new
 /// data List, and the `ChartView` updates the chart.
+///
+/// The solid line joins the rows that are at most `gapThreshold` of the
+/// series apart (1 hour). A dashed line joins two rows across a longer gap
+/// of at most `dashThreshold` (2 hours). Rows farther apart have no line
+/// between them.
 class const LiveChart({
   /// The rows of the chart.
   required final LiveSeries series,
@@ -66,6 +71,14 @@ class _LiveChartState()
   static const double _lagMarginMs = 150;
 
   static const Color _lineColor = Color(0xFF3ECF8E);
+
+  /// The width of the line, in pixels.
+  static const double _lineWidth = 2;
+
+  /// The dashed line across a gap: the length of a dash and of the space
+  /// after it, in pixels.
+  static const double _dash = 4;
+  static const double _dashSpace = 4;
 
   late final Ticker _ticker = createTicker(_onFrame);
   Duration _lastFrame = Duration.zero;
@@ -160,9 +173,12 @@ class _LiveChartState()
           return _shown;
         }
       }
-      final start = edge == null
+      var start = edge == null
           ? 0
           : math.max(0, _series.pointIndexAt(edge - 2 * _window) - 1);
+      // Not a gap point first: the dashed line of the gap needs the row
+      // before it.
+      if (start > 0 && all[start].y == null) start--;
       _shown = start == 0 ? all : all.sublist(start);
       _shownStart = start == 0
           ? double.negativeInfinity
@@ -198,6 +214,98 @@ class _LiveChartState()
     limits: const {'x': ScaleLimits(minRange: _minWindow)},
   );
 
+  /// Draws the dashed lines after the line. It has a draw hook only, so the
+  /// chart keeps its range updates (`supportsDataUpdates`).
+  late final ChartPlugin<Object?> _gaps = ChartPlugin(
+    id: 'liveChartGaps',
+    supportsDataUpdates: true,
+    afterDatasetsDraw: (chart, args, options) => _drawGaps(chart),
+  );
+
+  /// Draws a dashed line across each gap in view of at most
+  /// `dashThreshold` of the series: from the row before a point with no
+  /// value to the row after it.
+  ///
+  /// It makes each dash as a line of its own, for the part in view only,
+  /// and counts the dashes from the row before the gap: they stay on their
+  /// times while the view moves. A line dash of the canvas cuts the whole
+  /// line, also the part out of view: a gap of hours in a view of seconds
+  /// is millions of pixels long.
+  void _drawGaps(Chart chart) {
+    final x = chart.scales['x'];
+    final y = chart.scales['y'];
+    final area = chart.chartArea;
+    final ctx = chart.ctx;
+    if (x == null || y == null || area == null || ctx == null) return;
+    final points = _shown;
+    // The first point at or after the left edge.
+    var low = 0;
+    var high = points.length;
+    while (low < high) {
+      final mid = (low + high) >> 1;
+      if ((points[mid].x as double) < x.min) {
+        low = mid + 1;
+      } else {
+        high = mid;
+      }
+    }
+    const period = _dash + _dashSpace;
+    final longest = _series.dashThreshold.inMilliseconds;
+    var dashes = false;
+    // The point before the left edge is the gap point of a gap that starts
+    // before the view and ends in it or after it.
+    for (var i = math.max(1, low - 1); i < points.length - 1; i++) {
+      final gap = points[i];
+      if ((gap.x as double) > x.max) break;
+      if (gap.y != null) continue;
+      final from = points[i - 1];
+      final to = points[i + 1];
+      final fromValue = from.y;
+      final toValue = to.y;
+      if (fromValue == null || toValue == null) continue;
+      if ((to.x as double) - (from.x as double) > longest) continue;
+      final x0 = x.getPixelForValue(from.x);
+      final y0 = y.getPixelForValue(fromValue);
+      final dx = x.getPixelForValue(to.x) - x0;
+      final dy = y.getPixelForValue(toValue) - y0;
+      final length = math.sqrt(dx * dx + dy * dy);
+      if (dx <= 0 || !length.isFinite) continue;
+      // The part between the left and the right edge, as distances from
+      // the row before the gap.
+      final start = math.max<double>(0, (area.left - x0) / dx) * length;
+      final end = math.min<double>(1, (area.right - x0) / dx) * length;
+      for (
+        var dash = (start / period).floorToDouble() * period;
+        dash < end;
+        dash += period
+      ) {
+        final a = math.max(dash, start);
+        final b = math.min(dash + _dash, end);
+        if (b <= a) continue;
+        if (!dashes) {
+          dashes = true;
+          ctx
+            ..save()
+            ..beginPath()
+            ..rect(area.left, area.top, area.width, area.height)
+            ..clip()
+            ..strokeStyle = _lineColor
+            ..lineWidth = _lineWidth
+            ..setLineDash(const [])
+            ..beginPath();
+        }
+        ctx
+          ..moveTo(x0 + dx * a / length, y0 + dy * a / length)
+          ..lineTo(x0 + dx * b / length, y0 + dy * b / length);
+      }
+    }
+    if (dashes) {
+      ctx
+        ..stroke()
+        ..restore();
+    }
+  }
+
   /// The config without the data. Each build gives it a new dataset with
   /// the data List of the series: the options stay `==`, so the chart keeps
   /// the ranges that the frames write into them.
@@ -213,7 +321,7 @@ class _LiveChartState()
       mode: IndexInteractionMode(),
       intersect: false,
     ),
-    plugins: [zoomPlugin],
+    plugins: [zoomPlugin, _gaps],
     pluginOptions: [_zoom],
     scales: const {
       'x': TimeAxis(
@@ -618,7 +726,7 @@ class _LiveChartState()
           borderColor: const .constant(.solid(_lineColor)),
           backgroundColor: const .constant(.solid(Color(0x263ECF8E))),
           fill: FillTarget.toStart,
-          borderWidth: 2,
+          borderWidth: _lineWidth,
           pointRadius: 0,
           pointHoverRadius: 4,
           // Smooth curves that do not overshoot the values, so the y range

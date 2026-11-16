@@ -13,7 +13,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// makes the value (`MetricSource.pump`).
 ///
 /// A gap of more than [gapThreshold] between two rows breaks the line: the
-/// chart data has a point with no value there.
+/// chart data has a point with no value there. The chart joins the two rows
+/// with a dashed line when the gap is at most [dashThreshold].
 final class LiveSeries(
   /// The table.
   final MetricSource source, {
@@ -25,7 +26,12 @@ final class LiveSeries(
   final Duration pumpInterval = const Duration(milliseconds: 500),
 
   /// The longest time between two rows that the line joins.
-  final Duration gapThreshold = const Duration(seconds: 10),
+  final Duration gapThreshold = const Duration(hours: 1),
+
+  /// The longest time between two rows that a dashed line joins, across a
+  /// gap of more than [gapThreshold]. Rows farther apart have no line
+  /// between them.
+  final Duration dashThreshold = const Duration(hours: 2),
 }) extends ChangeNotifier {
   /// Creates the series of [source].
   this;

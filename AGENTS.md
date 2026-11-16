@@ -643,7 +643,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   port with `rangeOnlyUpdates: true`, with no wheel zoom), and a left edge near the oldest row
   loads the next page. The config
   is built once, and each build gives only a new dataset with a new data List: the options stay
-  `==`, so the chart keeps the ranges. The line has `MonotoneCubicInterpolationMode`. The points have the time in milliseconds as x, in time
+  `==`, so the chart keeps the ranges. The line has `MonotoneCubicInterpolationMode`. The solid
+  line joins rows at most 1 hour apart (`LiveSeries.gapThreshold`). The inline plugin
+  `liveChartGaps` joins two rows that are more than 1 hour and at most 2 hours apart
+  (`dashThreshold`) with a dashed line. Rows more than 2 hours apart have no line between them.
+  The plugin makes each dash as a line of its own, for the part in view only: a line dash of the
+  canvas cuts the whole line, also the part out of view. The points have the time in milliseconds as x, in time
   order, with `parsing: false` and `normalized: true`: an update parses no row. The live view gets
   only the rows of the last two widths of the view, and a zoom keeps that List while it holds the
   view and the view is not below a quarter of its width, so a zoom step is no full update. The

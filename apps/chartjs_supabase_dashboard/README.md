@@ -53,7 +53,7 @@ GitHub Pages cannot send the COOP and COEP headers that the WebAssembly renderer
 - `lib/src/metric_source.dart`: the row class and the interface of the table.
 - `lib/supabase_schema.g.dart`: the generated typed schema (above).
 - `lib/src/supabase_metric_source.dart`: the table through the typed API: `selectOnly` of the columns `id`, `ts` and `value`, the realtime inserts of the same columns (`onTableChangesOnly`) and `rpc.pumpMetric()`. The pages go by `id`, the newest first.
-- `lib/src/live_series.dart`: the rows in memory, the pages, the realtime rows and the pump. A gap of more than 10 seconds between two rows breaks the line.
+- `lib/src/live_series.dart`: the rows in memory, the pages, the realtime rows and the pump. The line joins two rows that are at most 1 hour apart (`gapThreshold`). A dashed line joins two rows that are more than 1 hour and at most 2 hours apart (`dashThreshold`, `_drawGaps` of `lib/src/live_chart.dart`). Rows more than 2 hours apart have no line between them.
 - `lib/src/live_chart.dart`: the chart, the frame ticker of the live view, the pan, the zoom and the page loads.
 - `lib/src/dashboard_page.dart`: the app and the status bar.
 
