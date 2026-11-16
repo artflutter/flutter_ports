@@ -123,7 +123,10 @@ function cases(p) {
   const transform = make((i) => d3.interpolateTransformCss(css(p.matricesA[i]), css(p.matricesB[i])));
   const textsA = make((i) => css(p.matricesA[i]));
   const textsB = make((i) => css(p.matricesB[i]));
-  const decomp = (m) => decompose(m[0], m[1], m[2], m[3], m[4], m[5]);
+  // The six numbers of each matrix in one typed array, as the Dart file
+  // does: decompose reads them.
+  const flat = new Float64Array(6 * POOL);
+  for (let i = 0; i < POOL; i++) flat.set(p.matricesA[i], 6 * i);
 
   return [
     ["call.number", (i) => sink += number[i & M](t(i))],
@@ -161,7 +164,10 @@ function cases(p) {
     ["create.valueArray", (i) => sink += d3.interpolate(p.arraysA[i & M], p.arraysB[i & M])(0.5)[3]],
     ["create.zoom", (i) => sink += d3.interpolateZoom(p.zoomsA[i & M], p.zoomsB[i & M])(0.5)[2]],
     ["create.transform", (i) => sink += d3.interpolateTransformCss(textsA[i & M], textsB[i & M])(0.5).length],
-    ["decompose", (i) => sink += decomp(p.matricesA[i & M]).rotate],
+    ["decompose", (i) => {
+      const k = 6 * (i & M);
+      sink += decompose(flat[k], flat[k + 1], flat[k + 2], flat[k + 3], flat[k + 4], flat[k + 5]).rotate;
+    }],
     ["quantize.rgb", (i) => sink += d3.quantize(d3.interpolateRgb(p.colorsA[i & M], p.colorsB[i & M]), 8).length],
   ];
 }

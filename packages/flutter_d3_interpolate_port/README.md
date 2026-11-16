@@ -465,7 +465,7 @@ Apple M3 Max, macOS 27. d3-interpolate, dart2js and dart2wasm run in Node.js v24
 | `create.valueArray` | 335 | 165 | 275 | 346 |
 | `create.zoom` | 82 | 82 | 103 | 92 |
 | `create.transform` | 2328 | 28 | 46 | 54 |
-| `decompose` | 30 | 39 | 47 | 52 |
+| `decompose` | 22 | 22 | 25 | 22 |
 | `quantize.rgb` | 908 | 139 | 122 | 108 |
 
 - `call.*`: one call of an interpolator that exists, at another `t` each time. A color

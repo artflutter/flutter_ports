@@ -215,6 +215,12 @@ List<Case> cases(Inputs p) {
   final transform = make(
     (i) => interpolateTransform(_parts(p.matricesA[i]), _parts(p.matricesB[i])),
   );
+  // The six numbers of each matrix in one typed list, as the .mjs file
+  // does: `decompose` reads them, not the growable lists.
+  final flat = Float64List(6 * _pool);
+  for (var i = 0; i < _pool; i++) {
+    flat.setAll(6 * i, p.matricesA[i]);
+  }
   final partsA = make((i) => _parts(p.matricesA[i]));
   final partsB = make((i) => _parts(p.matricesB[i]));
 
@@ -297,7 +303,20 @@ List<Case> cases(Inputs p) {
           sink += interpolateTransform(partsA[i & _m], partsB[i & _m])(0.5)
               .rotate,
     ),
-    ('decompose', (i) => sink += _parts(p.matricesA[i & _m]).rotate),
+    (
+      'decompose',
+      (i) {
+        final k = 6 * (i & _m);
+        sink += decompose(
+          flat[k],
+          flat[k + 1],
+          flat[k + 2],
+          flat[k + 3],
+          flat[k + 4],
+          flat[k + 5],
+        ).rotate;
+      },
+    ),
     (
       'quantize.rgb',
       (i) => sink += quantize(

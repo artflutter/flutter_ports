@@ -26,10 +26,11 @@ in [differences.md](differences.md).
   `create.*` make an interpolator and call it once. `text.*` call a color interpolator and write
   the color as CSS text (`toString()` of d3-color), the result of upstream. A color interpolator
   of upstream returns that text, so its `call.*` and `text.*` figures are the same work.
-- The number lists have 16 items, the splines 8 values, the palettes 8 colors and the piecewise
-  interpolator 4 colors. `call.transform` and `create.transform` time `interpolateTransformCss`
-  upstream, with a small `DOMMatrix` of the text `matrix(a, b, c, d, e, f)` (Node.js has none): the
-  parse of the text runs only at the creation. The port takes the `TransformParts` of `decompose`.
+- `decompose` reads its six numbers from one typed array on both sides. The number lists have 16
+  items, the splines 8 values, the palettes 8 colors and the piecewise interpolator 4 colors.
+  `call.transform` and `create.transform` time `interpolateTransformCss` upstream, with a small
+  `DOMMatrix` of the text `matrix(a, b, c, d, e, f)` (Node.js has none): the parse of the text runs
+  only at the creation. The port takes the `TransformParts` of `decompose`.
 
 ## 2. Baseline: the translation of the upstream lines (2026-11-16)
 
@@ -160,19 +161,22 @@ upstream lines and compares the bits, also for `t` outside [0, 1].
 | `create.valueArray` | 335 | 165 | 275 | 346 |
 | `create.zoom` | 82 | 82 | 103 | 92 |
 | `create.transform` | 2328 | 28 | 46 | 54 |
-| `decompose` | 30 | 39 | 47 | 52 |
+| `decompose` | 22 | 22 | 25 | 22 |
 | `quantize.rgb` | 908 | 139 | 122 | 108 |
 
-On the VM, the port is more than 10% faster than upstream in 29 of the 37 cases. Six cases are
+On the VM, the port is more than 10% faster than upstream in 29 of the 37 cases. Seven cases are
 within 10% (`call.number`, `call.basisClosed`, `call.discrete`, `call.numberArray`,
-`create.valueNumber` and `create.zoom`), and two are slower: `call.basis` (13%) and `decompose`
-(33%). The color interpolators are 9 to 15 times faster on the VM: they return a d3-color color,
-not a CSS text. With the text (`text.*`), they are 1.7 to 2.8 times faster.
+`create.valueNumber`, `create.zoom` and `decompose`), and `call.basis` is 13% slower. The color
+interpolators are 9 to 15 times faster on the VM: they return a d3-color color, not a CSS text. With
+the text (`text.*`), they are 1.7 to 2.8 times faster.
 
 ## 5. Open items
 
-- `decompose`: 40 ns on the VM against 30 ns in Node.js. `atan2` and `atan` of `dart:math` are
-  calls into the C library on the VM. D3 ADR 0007 keeps `dart:math` as it is.
+- `decompose`: the case first read its six numbers from a growable `List<double>`, and took 39 ns
+  on the VM against 30 ns in Node.js. On the VM each read of such a list unboxes a double: the
+  reads took 14 ns, and `atan2` and `atan` of `dart:math` are faster than those of V8. Both sides
+  now read one typed array, and the row of section 4 has the new figures. The baseline row of
+  section 2 has the old case.
 - `call.basis` and `call.basisClosed` read a growable `List<double>` at each call, as upstream: each
   read on the VM unboxes a double. A `Float64List` of values takes the typed path.
 - dart2js: the `Channel` objects of the colors are 6 to 21% slower than the closures (item 6).
