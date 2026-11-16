@@ -94,6 +94,8 @@ function inputs() {
 }
 
 let sink = 0;
+// The last interpolator of create.number: it escapes, as in the Dart file.
+let keep = null;
 const css = (m) => `matrix(${m.join(", ")})`;
 
 function cases(p) {
@@ -156,7 +158,7 @@ function cases(p) {
     ["text.lab", (i) => sink += lab[i & M](t(i)).length],
     ["text.hcl", (i) => sink += hcl[i & M](t(i)).length],
     ["text.cubehelix", (i) => sink += cubehelix[i & M](t(i)).length],
-    ["create.number", (i) => sink += d3.interpolateNumber(p.numbersA[i & M], p.numbersB[i & M])(0.5)],
+    ["create.number", (i) => { const f = d3.interpolateNumber(p.numbersA[i & M], p.numbersB[i & M]); keep = f; sink += f(0.5); }],
     ["create.rgb", (i) => sink += d3.interpolateRgb(p.colorsA[i & M], p.colorsB[i & M])(0.5).length],
     ["create.hcl", (i) => sink += d3.interpolateHcl(p.colorsA[i & M], p.colorsB[i & M])(0.5).length],
     ["create.valueNumber", (i) => sink += d3.interpolate(p.numbersA[i & M], p.numbersB[i & M])(0.5)],

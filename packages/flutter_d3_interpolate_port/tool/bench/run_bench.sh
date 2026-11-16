@@ -1,16 +1,17 @@
 #!/usr/bin/env bash
 # Original code, not ported from d3-interpolate: the runner of the benchmark.
 #
-# Usage: tool/bench/run_bench.sh <out dir> [targets] [-- bench arguments]
-# Targets (default "node aot js wasm"): node (upstream d3-interpolate in Node.js),
-# aot (dart compile exe), jit (dart run), js (dart compile js -O4, run in
-# Node.js) and wasm (dart compile wasm -O2, run in Node.js). Each target
-# writes <out dir>/<target>.txt with the BENCH lines. DART is the dart
-# command (default: the pinned beta SDK of .fvmrc).
+# Usage: tool/bench/run_bench.sh <out dir> ["targets"] [-- bench arguments]
+# The targets are one quoted list with spaces (default "node aot js wasm"):
+# node (upstream d3-interpolate in Node.js), aot (dart compile exe), jit (dart
+# run), js (dart compile js -O4, run in Node.js) and wasm (dart compile wasm
+# -O2, run in Node.js). Each target writes <out dir>/<target>.txt with the
+# BENCH lines. DART is the dart command (default: the beta SDK of fvm at
+# /Users/vasilich/fvm/versions/beta, the version of .fvmrc).
 set -euo pipefail
 here="$(cd "$(dirname "$0")" && pwd)"
 pkg="$(cd "$here/../.." && pwd)"
-out="$1"; shift
+out="$(mkdir -p "$1/build" && cd "$1" && pwd)"; shift
 targets="node aot js wasm"
 if [[ $# -gt 0 && "$1" != "--" ]]; then targets="$1"; shift; fi
 [[ $# -gt 0 && "$1" == "--" ]] && shift
@@ -29,6 +30,9 @@ for t in $targets; do
       # dart2js gives main no arguments in Node.js: dartMainRunner passes them.
       node -e "
         globalThis.self = globalThis;
+        // dart2js reads window.performance for a timer in microseconds, else
+        // Date.now() in whole milliseconds.
+        globalThis.window = globalThis;
         globalThis.dartMainRunner = (main) => main(process.argv.slice(1));
         require('$out/build/bench.js');
       " -- --target=js "$@" > "$out/js.txt" ;;

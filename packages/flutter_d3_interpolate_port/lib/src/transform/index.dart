@@ -15,7 +15,7 @@ import 'package:flutter_d3_interpolate_port/src/number.dart'
     show interpolateNumber;
 import 'package:flutter_d3_interpolate_port/src/transform/decompose.dart';
 
-/// The list `s` of index.js:55: the six parts of the result. A part that no
+/// The list `s` of index.js:46: the six parts of the result. A part that no
 /// item of `q` writes keeps the part of the identity or of `b`.
 // DIVERGES(d3-interpolate): adapt-interpolate-typed-transform, typed parts.
 final class _Parts() {
@@ -38,7 +38,7 @@ final class _Parts() {
   double scaleY = identity.scaleY;
 }
 
-/// The list `q` of index.js:56: each item `{i, x}` is the part `i` of `s`
+/// The list `q` of index.js:47: each item `{i, x}` is the part `i` of `s`
 /// that the number interpolator `x` writes.
 ///
 /// An item keeps the two numbers of `x = number(a, b)` in the fields of its
@@ -89,7 +89,7 @@ final class _Steps() {
   /// The end of the scale on y.
   double scaleY1 = 0;
 
-  /// index.js:63 `s[(o = q[i]).i] = o.x(t)` for each item.
+  /// index.js:56 `s[(o = q[i]).i] = o.x(t)` for each item.
   void interpolate(double t, _Parts s) {
     final m = mask;
     if (m & 1 != 0) s.translateX = translateX0 * (1 - t) + translateX1 * t;

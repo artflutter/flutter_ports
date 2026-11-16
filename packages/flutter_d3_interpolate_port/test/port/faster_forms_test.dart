@@ -15,12 +15,15 @@ import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 import 'package:flutter_d3_interpolate_port/src/color.dart' as color;
 import 'package:test/test.dart';
 
+/// A negative zero made at run time: DDC folds the constant `-0.0` to 0.
+final double _negativeZero = double.parse('-0');
+
 /// The values of `t` of the tests, also outside [0, 1].
-const List<double> _ts = [
+final List<double> _ts = [
   -1.5,
   -1,
   -0.75,
-  -0.0,
+  _negativeZero,
   0,
   1e-9,
   0.1,
@@ -100,6 +103,22 @@ void main() {
       a64[0] = 100;
       b64[1] = 40;
       expect(i(0.5), [55, 25]);
+
+      final ints = <int>[0, 10];
+      final b2 = Float64List.fromList([10, 20]);
+      final j = interpolateNumberArray(ints, b2);
+      expect(j(0.5), [5, 15]);
+      ints[0] = 100;
+      b2[1] = 40;
+      expect(j(0.5), [55, 25]);
+
+      final a32 = Float32List.fromList([0, 10]);
+      final b32 = Float32List.fromList([10, 20]);
+      final k = interpolateNumberArray(a32, b32);
+      expect(k(0.5), [5, 15]);
+      a32[0] = 100;
+      b32[1] = 40;
+      expect(k(0.5), [55, 25]);
     });
   });
 
@@ -250,15 +269,17 @@ void main() {
       expect(i(0.5), isNot(before));
     });
 
-    test('the closed spline gives the remainder of t for t in (-1, 1)', () {
-      final closed = interpolateBasisClosed(values);
-      double withRemainder(double t) {
-        var x = t.remainder(1);
-        if (x < 0) ++x;
+    test('the closed spline gives the lines of basisClosed.js', () {
+      /// basisClosed.js:5-12 and basis.js:1-7 with the double `i` of
+      /// `Math.floor`.
+      double upstream(List<double> values, double t0) {
         final n = values.length;
-        final i = (x * n).floor();
-        double v(int k) => values[k.remainder(n)];
-        final t1 = (x - i / n) * n;
+        var t = t0.remainder(1);
+        if (t < 0) ++t;
+        final i = (t * n).floorToDouble();
+        if (i.isNaN) return double.nan;
+        double v(double k) => values[(k % n).toInt()];
+        final t1 = (t - i / n) * n;
         final t2 = t1 * t1;
         final t3 = t2 * t1;
         return ((1 - 3 * t1 + 3 * t2 - t3) * v(i + n - 1) +
@@ -268,23 +289,51 @@ void main() {
             6;
       }
 
-      for (final t in [..._ts, -0.999999, 0.999999999, -1e-300]) {
-        _expectSame(closed(t), withRemainder(t), 't $t');
+      final z = _negativeZero;
+      for (final v in <List<double>>[
+        values,
+        [z, z, 5, z],
+        [z, z, z, z],
+        [z],
+      ]) {
+        final closed = interpolateBasisClosed(v);
+        for (final t in <double>[
+          ..._ts,
+          -0.999999,
+          0.999999999,
+          -1e-300,
+          -2,
+          -1e300,
+          double.nan,
+        ]) {
+          _expectSame(closed(t), upstream(v, t), '$v t $t');
+        }
+      }
+    });
+
+    test('a floor of -0 gives +0 as upstream', () {
+      // Node.js v24.22.1: interpolateBasisClosed([-0, -0, 5, -0])(-0) is 0,
+      // and interpolateBasisClosed([-0])(-1) is -0.
+      final z = _negativeZero;
+      for (final t in [z, -1.0, -2.0]) {
+        _expectSame(interpolateBasisClosed([z, z, 5, z])(t), 0, 't $t');
+        _expectSame(interpolateBasisClosed([z])(t), z, 't $t');
       }
     });
   });
+
   group('color.js', () {
     /// Pairs of channels: equal, NaN on one side or both, -0.0, and hue
     /// differences of more than 180 degrees.
-    const pairs = <(double, double)>[
+    final pairs = <(double, double)>[
       (0, 255),
       (255, 0),
       (12.5, 12.5),
       (double.nan, 30),
       (30, double.nan),
       (double.nan, double.nan),
-      (-0.0, -0.0),
-      (-0.0, 5),
+      (_negativeZero, _negativeZero),
+      (_negativeZero, 5),
       (350, 10),
       (10, 350),
       (540, 0),

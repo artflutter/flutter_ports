@@ -16,9 +16,11 @@
 /// interpolator and write the color as CSS text, the upstream result.
 ///
 /// Arguments: `--filter=<text>` runs the cases whose name contains the
-/// text, `--batches=<n>` (default 9), `--batch-ms=<n>` (default 60),
-/// `--warm-ms=<n>` (default 300) and `--target=<name>` (written into each
-/// line).
+/// text, `--batches=<n>` (default 9), `--batch-ms=<n>` (default 60: the
+/// warm-up doubles the operations of a batch until a batch takes a quarter
+/// of it, so a batch takes 15 to 30 ms), `--warm-ms=<n>` (default 300) and
+/// `--target=<name>` (written into each line). A run with `--filter` is not
+/// comparable with a full run on V8: the JIT of a case alone differs.
 library;
 
 // The benchmark prints its results.
@@ -154,6 +156,10 @@ final class Inputs() {
 /// A value that the cases write, so that no compiler removes their work.
 double sink = 0;
 
+/// The last interpolator of `create.number`: it escapes, so that no
+/// compiler removes its creation.
+Object? keep;
+
 /// One case: its name, and a function that does one operation on the input
 /// `i` of a pool.
 typedef Case = (String, void Function(int i));
@@ -257,9 +263,11 @@ List<Case> cases(Inputs p) {
     ),
     (
       'create.number',
-      (i) => sink += interpolateNumber(p.numbersA[i & _m], p.numbersB[i & _m])(
-        0.5,
-      ),
+      (i) {
+        final f = interpolateNumber(p.numbersA[i & _m], p.numbersB[i & _m]);
+        keep = f;
+        sink += f(0.5);
+      },
     ),
     (
       'create.rgb',

@@ -421,52 +421,98 @@ count. `toMatrix4()` composes the parts in the order translate, rotate, skewX, s
 
 ## Performance
 
-The figures are the time of one operation in nanoseconds, the mean of two runs. A lower number is
-faster. The benchmark runs the same 37 cases on d3-interpolate 3.0.1 and on this package, with the
-same inputs. "AOT" is a compiled Dart executable or a release build of a Flutter app. "dart2js" and
-"dart2wasm" are the JavaScript and WebAssembly builds of this package.
+The figures are the time of one operation in nanoseconds. A lower number is faster. On the Mac,
+each figure is the mean of two runs. The benchmark runs the same 37 cases on d3-interpolate 3.0.1
+and on this package, with the same inputs. "AOT" is a compiled Dart executable or a release build
+of a Flutter app. "dart2js" and "dart2wasm" are the JavaScript and WebAssembly builds of this
+package.
 
 Apple M3 Max, macOS 27. d3-interpolate, dart2js and dart2wasm run in Node.js v24.22.1.
 
 | Case | d3-interpolate in Node.js | Port, AOT | Port, dart2js | Port, dart2wasm |
 |---|---:|---:|---:|---:|
-| `call.number` | 8 | 8 | 5 | 16 |
-| `call.round` | 21 | 9 | 17 | 16 |
-| `call.hue` | 24 | 11 | 22 | 17 |
-| `call.basis` | 20 | 23 | 21 | 55 |
-| `call.basisClosed` | 18 | 20 | 22 | 52 |
-| `call.discrete` | 13 | 12 | 17 | 23 |
-| `call.date` | 25 | 20 | 82 | 30 |
-| `call.numberArray` | 36 | 38 | 26 | 249 |
-| `call.array` | 71 | 62 | 26 | 173 |
-| `call.rgb` | 120 | 14 | 17 | 17 |
-| `call.rgbGamma` | 165 | 39 | 44 | 45 |
-| `call.rgbBasis` | 132 | 35 | 52 | 156 |
-| `call.hsl` | 139 | 14 | 16 | 17 |
-| `call.hslLong` | 139 | 14 | 17 | 17 |
-| `call.lab` | 155 | 13 | 17 | 17 |
-| `call.hcl` | 194 | 13 | 17 | 17 |
-| `call.hclLong` | 198 | 13 | 16 | 17 |
-| `call.cubehelix` | 169 | 14 | 29 | 30 |
-| `call.cubehelixGamma` | 173 | 14 | 30 | 30 |
-| `call.piecewise` | 150 | 29 | 30 | 41 |
-| `call.zoom` | 41 | 29 | 38 | 43 |
-| `call.transform` | 424 | 15 | 21 | 29 |
-| `text.rgb` | 119 | 42 | 36 | 40 |
-| `text.hsl` | 141 | 56 | 61 | 60 |
-| `text.lab` | 154 | 90 | 93 | 91 |
-| `text.hcl` | 193 | 110 | 122 | 126 |
-| `text.cubehelix` | 170 | 77 | 88 | 90 |
-| `create.number` | 13 | 4 | 12 | 13 |
-| `create.rgb` | 158 | 54 | 53 | 39 |
-| `create.hcl` | 480 | 223 | 221 | 187 |
-| `create.valueNumber` | 13 | 13 | 27 | 29 |
-| `create.valueColor` | 175 | 60 | 88 | 54 |
-| `create.valueArray` | 335 | 165 | 275 | 346 |
-| `create.zoom` | 82 | 82 | 103 | 92 |
-| `create.transform` | 2328 | 28 | 46 | 54 |
-| `decompose` | 22 | 22 | 25 | 22 |
-| `quantize.rgb` | 908 | 139 | 122 | 108 |
+| `call.number` | 7.9 | 7.5 | 4.7 | 15 |
+| `call.round` | 20 | 8.7 | 17 | 16 |
+| `call.hue` | 24 | 9.9 | 21 | 17 |
+| `call.basis` | 20 | 21 | 20 | 54 |
+| `call.basisClosed` | 18 | 18 | 20 | 52 |
+| `call.discrete` | 12 | 11 | 16 | 21 |
+| `call.date` | 24 | 18 | 80 | 29 |
+| `call.numberArray` | 34 | 34 | 25 | 239 |
+| `call.array` | 64 | 57 | 26 | 166 |
+| `call.rgb` | 112 | 13 | 17 | 16 |
+| `call.rgbGamma` | 155 | 37 | 43 | 43 |
+| `call.rgbBasis` | 123 | 32 | 53 | 148 |
+| `call.hsl` | 134 | 13 | 16 | 16 |
+| `call.hslLong` | 130 | 13 | 16 | 16 |
+| `call.lab` | 148 | 13 | 16 | 17 |
+| `call.hcl` | 181 | 13 | 16 | 16 |
+| `call.hclLong` | 189 | 13 | 16 | 16 |
+| `call.cubehelix` | 159 | 14 | 28 | 28 |
+| `call.cubehelixGamma` | 162 | 14 | 29 | 28 |
+| `call.piecewise` | 139 | 26 | 28 | 37 |
+| `call.zoom` | 41 | 27 | 37 | 42 |
+| `call.transform` | 395 | 14 | 21 | 27 |
+| `text.rgb` | 112 | 40 | 34 | 39 |
+| `text.hsl` | 131 | 55 | 60 | 58 |
+| `text.lab` | 148 | 86 | 89 | 86 |
+| `text.hcl` | 180 | 108 | 118 | 116 |
+| `text.cubehelix` | 158 | 76 | 83 | 86 |
+| `create.number` | 14 | 3.6 | 11 | 11 |
+| `create.rgb` | 141 | 55 | 52 | 39 |
+| `create.hcl` | 452 | 219 | 216 | 177 |
+| `create.valueNumber` | 12 | 13 | 27 | 28 |
+| `create.valueColor` | 164 | 60 | 82 | 54 |
+| `create.valueArray` | 305 | 154 | 235 | 316 |
+| `create.zoom` | 77 | 81 | 99 | 88 |
+| `create.transform` | 2070 | 27 | 42 | 52 |
+| `decompose` | 26 | 22 | 41 | 22 |
+| `quantize.rgb` | 852 | 139 | 112 | 105 |
+
+Pixel 8a (Android 17) and iPhone 17 Pro (iOS 27). The browser builds run in Chrome 157 on the
+Pixel. A phone does background work, so these figures are the lower result of two or three runs.
+
+| Case | Pixel 8a: d3-interpolate in Chrome | Pixel 8a: port, AOT | Pixel 8a: port, dart2js in Chrome | Pixel 8a: port, dart2wasm in Chrome | iPhone 17 Pro: port, AOT |
+|---|---:|---:|---:|---:|---:|
+| `call.number` | 15 | 15 | 15 | 21 | 7.4 |
+| `call.round` | 22 | 18 | 22 | 23 | 9.4 |
+| `call.hue` | 30 | 19 | 27 | 24 | 11 |
+| `call.basis` | 30 | 41 | 30 | 68 | 19 |
+| `call.basisClosed` | 32 | 42 | 35 | 70 | 19 |
+| `call.discrete` | 22 | 21 | 27 | 31 | 12 |
+| `call.date` | 80 | 95 | 59 | 48 | 20 |
+| `call.numberArray` | 64 | 63 | 42 | 157 | 36 |
+| `call.array` | 97 | 123 | 43 | 423 | 64 |
+| `call.rgb` | 173 | 26 | 30 | 24 | 13 |
+| `call.rgbGamma` | 235 | 68 | 77 | 69 | 31 |
+| `call.rgbBasis` | 199 | 63 | 71 | 154 | 33 |
+| `call.hsl` | 195 | 26 | 29 | 24 | 13 |
+| `call.hslLong` | 198 | 26 | 29 | 24 | 13 |
+| `call.lab` | 237 | 26 | 29 | 24 | 14 |
+| `call.hcl` | 276 | 26 | 29 | 24 | 14 |
+| `call.hclLong` | 279 | 25 | 29 | 23 | 13 |
+| `call.cubehelix` | 227 | 27 | 48 | 40 | 14 |
+| `call.cubehelixGamma` | 235 | 27 | 49 | 39 | 14 |
+| `call.piecewise` | 209 | 46 | 43 | 56 | 25 |
+| `call.zoom` | 64 | 42 | 57 | 62 | 28 |
+| `call.transform` | 513 | 31 | 36 | 44 | 15 |
+| `text.rgb` | 175 | 64 | 53 | 60 | 39 |
+| `text.hsl` | 219 | 81 | 78 | 78 | 49 |
+| `text.lab` | 243 | 142 | 136 | 138 | 74 |
+| `text.hcl` | 285 | 155 | 172 | 179 | 92 |
+| `text.cubehelix` | 236 | 103 | 116 | 125 | 63 |
+| `create.number` | 26 | 7.4 | 22 | 19 | 3.9 |
+| `create.rgb` | 225 | 109 | 90 | 62 | 71 |
+| `create.hcl` | 696 | 324 | 339 | 278 | 206 |
+| `create.valueNumber` | 30 | 26 | 51 | 46 | 16 |
+| `create.valueColor` | 279 | 118 | 160 | 88 | 73 |
+| `create.valueArray` | 577 | 305 | 800 | 409 | 153 |
+| `create.zoom` | 106 | 111 | 138 | 117 | 65 |
+| `create.transform` | 3613 | 57 | 70 | 80 | 33 |
+| `decompose` | 80 | 54 | 62 | 38 | 21 |
+| `quantize.rgb` | 1233 | 261 | 205 | 185 | 151 |
+
+The cases:
 
 - `call.*`: one call of an interpolator that exists, at another `t` each time. A color
   interpolator of d3-interpolate returns a CSS text. Here it returns a color.
@@ -476,7 +522,9 @@ Apple M3 Max, macOS 27. d3-interpolate, dart2js and dart2wasm run in Node.js v24
   numbers, colors and lists of 16 numbers.
 - `call.numberArray` and `call.array`: lists of 16 numbers (`Float64List` and `List<double>`).
 - `call.transform` and `create.transform`: `interpolateTransformCss` of two `matrix(...)` texts in
-  d3-interpolate, and `interpolateTransform` of two `TransformParts` here.
+  d3-interpolate, and `interpolateTransform` of two `TransformParts` here. d3-interpolate parses
+  and decomposes the two texts at the creation and returns a CSS text at each call. This package
+  takes and returns `TransformParts`, so these rows are not the same work.
 - `decompose`: `decompose(a, b, c, d, e, f)`. `quantize.rgb`: eight colors of an RGB interpolator.
 
 ## License
