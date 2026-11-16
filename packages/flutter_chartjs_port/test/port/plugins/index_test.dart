@@ -146,7 +146,6 @@ List<String> _nativeKeys<O>(Plugin<O> plugin) => [
   if (plugin.defaultRoutes != null) 'defaultRoutes',
   if (plugin.descriptors != null) 'descriptors',
   if (plugin.additionalOptionScopes != null) 'additionalOptionScopes',
-  if (plugin.events != null) 'events',
 ]..sort();
 
 /// [f] of the plugin object [plugin] of the namespace `plugins`, with the

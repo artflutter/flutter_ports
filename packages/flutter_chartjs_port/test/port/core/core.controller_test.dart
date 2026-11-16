@@ -697,7 +697,7 @@ void main() {
           'notify false',
           falsy.notifyPlugins(
             PluginHook.resize,
-            ResizeHookArgs(size: (width: 0, height: 0)),
+            ResizeHookArgs(size: ui.Size.zero),
           ),
         )
         ..observe('notify no args', falsy.notifyPlugins(PluginHook.afterRender))

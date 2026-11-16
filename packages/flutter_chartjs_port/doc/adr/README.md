@@ -146,10 +146,11 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0141](0141-native-scale-border.md) The scale option `border` holds a `ScaleBorder`: accepted, supersedes 0050, 0054, 0118, superseded in part by 0147.
 - [0142](0142-native-line-segment-style.md) The line option `segment` holds a `LineSegmentStyle`: accepted, supersedes 0054.
 - [0143](0143-clock-now.md) `Date.now()` is `clock.now()`: accepted, supersedes 0045, superseded by 0146.
-- [0144](0144-native-plugins.md) Native plugins: accepted, supersedes 0052, 0054, 0108, 0126, superseded in part by 0148.
+- [0144](0144-native-plugins.md) Native plugins: accepted, supersedes 0052, 0054, 0108, 0126, superseded in part by 0148, 0150.
 - [0145](0145-native-option-types.md) Native option types with no earlier ADR: accepted, supersedes 0015, 0017, 0019, 0024, 0028, 0038, 0039, 0052, 0054, 0125, 0127.
 - [0146](0146-js-numeric-semantics.md) JS numeric semantics and the reference engine: accepted, supersedes 0035, 0045, 0108, 0122, 0134, 0135, 0136, 0138, 0143.
 - [0147](0147-public-theme-api.md) The public theme API: accepted, supersedes 0050, 0054, 0057, 0116, 0117, 0118, 0128, 0141.
-- [0148](0148-plugin-typing.md) Typed plugin chart, options and update mode: accepted, supersedes 0144.
+- [0148](0148-plugin-typing.md) Typed plugin chart, options and update mode: accepted, supersedes 0144, superseded in part by 0150.
 - [0149](0149-bar-chart-small-costs.md) Four small costs of a bar chart: proposed, supersedes 0054, 0070, 0106.
+- [0150](0150-typed-plugin-options.md) Typed plugin options: accepted, supersedes 0144, 0148.
 <!-- adr-index:end -->

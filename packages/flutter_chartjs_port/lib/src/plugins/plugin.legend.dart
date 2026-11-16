@@ -10,15 +10,15 @@
 /// `afterEvent`, `defaults` and `descriptors`.
 ///
 /// Each hook is a private function of the hook type `(types.Chart chart,
-/// args, AnyObject options)` (Chart.js ADR 0054 §12, in place of the
-/// upstream parameter counts of Chart.js ADR 0038, section 3): `afterEvent`
-/// takes the typed [EventHookArgs], the other hooks read no args and take
-/// any args object. `chart.legend` is a field of `types.Chart`: Dart `null`
+/// args, LegendOptions options)` (Chart.js ADR 0150, in place of the
+/// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
+/// class of its hook, and the facade [LegendOptions] of the resolved
+/// options. The box keeps the resolved options themselves. `chart.legend` is a field of `types.Chart`: Dart `null`
 /// stands for JS `undefined` and for the `delete` of `plugin.legend.js:609`.
 ///
 /// The box reads its options through the facades [LegendOptions],
 /// [LegendLabelOptions] and `LegendTitleOptions` of `plugin_options.dart`
-/// (Chart.js ADR 0054 §4), in the upstream order of the reads.
+/// (Chart.js ADR 0150), in the upstream order of the reads.
 ///
 /// The fields of the box start as the fields of `Scale` start: NaN for the
 /// edges, `maxWidth` and `maxHeight`, the `undefined` sentinel for
@@ -77,12 +77,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isBetween;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show
-        ScriptableChartContext,
-        ScriptableContext,
-        toFont,
-        toPadding,
-        toTRBLCorners;
+    show ScriptableChartContext, ScriptableContext, toPadding, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
     show getRtlAdapter, overrideTextDirection, restoreTextDirection;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
@@ -120,7 +115,7 @@ import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show EventHookArgs, Plugin, UpdateHookArgs;
+    show EventHookArgs, Plugin, PluginHookArgs, UpdateHookArgs;
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/types/legend_callbacks.dart';
@@ -148,21 +143,12 @@ const double _sqrt2 = 1.4142135623730951;
   double fontSize,
 ) {
   // DIVERGES(chartjs): adapt-legend-number-options, a box size is a number.
-  final rawHeight = labelOpts.boxHeight;
-  final rawWidth = labelOpts.boxWidth;
-  var boxHeight = identical(rawHeight, undefined)
-      ? fontSize
-      : jsToNumber(rawHeight);
-  var boxWidth = identical(rawWidth, undefined)
-      ? fontSize
-      : jsToNumber(rawWidth);
+  var boxHeight = labelOpts.boxHeight ?? fontSize;
+  var boxWidth = labelOpts.boxWidth ?? fontSize;
 
   if (labelOpts.usePointStyle) {
     boxHeight = math.min(boxHeight, fontSize);
-    final pointStyleWidth = labelOpts.pointStyleWidth;
-    boxWidth = jsTruthy(pointStyleWidth)
-        ? jsToNumber(pointStyleWidth)
-        : math.min(boxWidth, fontSize);
+    boxWidth = labelOpts.pointStyleWidth ?? math.min(boxWidth, fontSize);
   }
 
   return (
@@ -189,7 +175,7 @@ bool _itemsEqual(LegendItem? a, LegendItem? b) =>
 /// (differences.md `adapt-legend-number-options`).
 double _labelPadding(LegendLabelOptions labelOpts) =>
     // DIVERGES(chartjs): adapt-legend-number-options, the padding is a number.
-    jsToNumber(labelOpts.padding);
+    labelOpts.padding;
 
 /// The JS operator `===` on two raw values: two numbers compare by value
 /// (NaN is not equal to itself, and -0 equals +0), two strings by their code
@@ -659,7 +645,7 @@ class Legend(
     }
 
     final labelOpts = options.labels;
-    final labelFont = toFont(labelOpts.font);
+    final labelFont = labelOpts.font;
     final fontSize = labelFont.fontSize!;
     final titleHeight = _computeTitleHeight();
     final (:boxWidth, :boxHeight, :itemHeight) = _getBoxSize(
@@ -680,16 +666,8 @@ class Legend(
       width = _fitCols(titleHeight, labelFont, boxWidth, itemHeight) + 10;
     }
 
-    final maxWidthOption = options.maxWidth;
-    final maxHeightOption = options.maxHeight;
-    this.width = math.min(
-      width,
-      jsTruthy(maxWidthOption) ? jsToNumber(maxWidthOption) : maxWidth,
-    );
-    this.height = math.min(
-      height,
-      jsTruthy(maxHeightOption) ? jsToNumber(maxHeightOption) : maxHeight,
-    );
+    this.width = math.min(width, options.maxWidth ?? maxWidth);
+    this.height = math.min(height, options.maxHeight ?? maxHeight);
   }
 
   /// plugin.legend.js:160 `_fitRows(titleHeight, fontSize, boxWidth,
@@ -944,7 +922,7 @@ class Legend(
     // key, with the result of the Map read of the defaults.
     final defaultColor = defaults.lookup(OptionKey.color)?.raw;
     final rtlHelper = getRtlAdapter(opts.rtl, left, width);
-    final labelFont = toFont(labelOpts.font);
+    final labelFont = labelOpts.font;
     final padding = _labelPadding(labelOpts);
     final fontSize = labelFont.fontSize!;
     final halfFontSize = fontSize / 2;
@@ -1014,7 +992,7 @@ class Legend(
           centerY,
           // `labelOpts.pointStyleWidth && boxWidth`: a falsy value draws the
           // style with the radius alone, as Dart `null` does.
-          jsTruthy(labelOpts.pointStyleWidth) ? boxWidth : null,
+          labelOpts.pointStyleWidth != null ? boxWidth : null,
         );
       } else {
         // Draw box as legend symbol
@@ -1116,7 +1094,7 @@ class Legend(
         final textWidth = ctx.measureText(jsToString(legendItem.text)).width;
         var itemAlign = legendItem.textAlign;
         if (!jsTruthy(itemAlign)) {
-          itemAlign = canvasTextAlign(labelOpts.textAlign);
+          itemAlign = labelOpts.textAlign;
           legendItem.textAlign = itemAlign;
         }
         // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
@@ -1194,7 +1172,7 @@ class Legend(
   void drawTitle() {
     final opts = LegendOptions(options);
     final titleOpts = opts.title;
-    final titleFont = toFont(titleOpts.font);
+    final titleFont = titleOpts.font;
     final titlePadding = titleOpts.padding;
 
     if (!titleOpts.display) {
@@ -1231,10 +1209,7 @@ class Legend(
           alignStartEnd(
             opts.align,
             top,
-            bottom -
-                maxHeight -
-                jsToNumber(opts.labels.padding) -
-                _computeTitleHeight(),
+            bottom - maxHeight - opts.labels.padding - _computeTitleHeight(),
           );
     }
 
@@ -1258,7 +1233,7 @@ class Legend(
   /// plugin.legend.js:493 `_computeTitleHeight()`.
   double _computeTitleHeight() {
     final titleOpts = LegendOptions(options).title;
-    final titleFont = toFont(titleOpts.font);
+    final titleFont = titleOpts.font;
     final titlePadding = titleOpts.padding;
     return titleOpts.display
         ? titleFont.lineHeight! + titlePadding.vertical
@@ -1757,19 +1732,21 @@ LegendItem _datasetItem(
   );
 }
 
-/// plugin.legend.js:601 `start(chart, _args, options)`.
-void _start(types.Chart chart, Object _, Object options) {
-  final legend = Legend((ctx: chart.ctx, options: options, chart: chart));
+/// plugin.legend.js:601 `start(chart, _args, options)`. The box keeps the
+/// resolved options of the facade.
+void _start(types.Chart chart, PluginHookArgs _, LegendOptions options) {
+  final resolved = options.object!;
+  final legend = Legend((ctx: chart.ctx, options: resolved, chart: chart));
   chart.legend = legend;
   layouts
-    ..configure(chart, legend, options)
+    ..configure(chart, legend, resolved)
     ..addBox(chart, legend);
 }
 
 /// plugin.legend.js:607 `stop(chart)`. core.layouts.js:318-323 compares
 /// identities only. A value that is not a LayoutItem is never in
 /// chart.boxes. `delete chart.legend` is the write of Dart `null`.
-void _stop(types.Chart chart, Object _, Object _) {
+void _stop(types.Chart chart, PluginHookArgs _, LegendOptions _) {
   final legend = chart.legend;
   // DIVERGES(chartjs): adapt-hidden-legend-items, before the box goes.
   if (legend is Legend) legend._settleItems();
@@ -1792,10 +1769,11 @@ void _stop(types.Chart chart, Object _, Object _) {
 ///
 /// The hook continues the update: `true` is the `undefined` result of
 /// upstream.
-bool _beforeUpdate(types.Chart chart, Object _, Object options) {
+bool _beforeUpdate(types.Chart chart, UpdateHookArgs _, LegendOptions options) {
   final legend = chart.legend! as Legend;
-  layouts.configure(chart, legend, options);
-  legend.options = options;
+  final resolved = options.object!;
+  layouts.configure(chart, legend, resolved);
+  legend.options = resolved;
   return true;
 }
 
@@ -1806,12 +1784,12 @@ bool _beforeUpdate(types.Chart chart, Object _, Object options) {
 /// `adjustHitBoxes` adds the position of the legend to the hit boxes of the
 /// last `fit`. A data update that keeps the layout runs no `fit`, so its hit
 /// boxes already have that position.
-void _afterUpdate(types.Chart chart, Object args, Object _) {
+void _afterUpdate(types.Chart chart, UpdateHookArgs args, LegendOptions _) {
   final legend = chart.legend! as Legend
     // DIVERGES(chartjs): adapt-hidden-legend-items, the first read builds.
     .._buildLabelsOrMark(datasetsUpdated: true);
   // DIVERGES(chartjs): adapt-incremental-data-update, no `fit` in this update.
-  if (args case UpdateHookArgs(layoutKept: true)) return;
+  if (args.layoutKept) return;
   legend.adjustHitBoxes();
 }
 
@@ -1819,7 +1797,7 @@ void _afterUpdate(types.Chart chart, Object args, Object _) {
 /// `event` of [EventHookArgs]. An event of Dart `null` throws the
 /// [TypeError] of the null check, as `handleEvent` throws at `e.type` of
 /// `undefined` upstream.
-void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
+void _afterEvent(types.Chart chart, EventHookArgs args, LegendOptions _) {
   if (!args.replay) {
     (chart.legend! as Legend).handleEvent(args.event);
   }
@@ -1832,8 +1810,10 @@ void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
 /// ADR 0144). The key `_element: Legend` of plugin.legend.js:599 is for the
 /// tests: they read `Legend.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
-final legend = Plugin<OptionView>(
+final legend = Plugin<LegendOptions>(
   id: 'legend',
+  // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+  options: LegendOptions.new,
   start: _start,
   stop: _stop,
   beforeUpdate: _beforeUpdate,

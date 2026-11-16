@@ -33,7 +33,7 @@
 /// ```
 library;
 
-import 'package:flutter/foundation.dart' show immutable;
+import 'package:flutter/foundation.dart' show immutable, listEquals;
 import 'package:flutter_chartjs_plugin_zoom_port/src/gestures.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
@@ -785,6 +785,12 @@ final class const ZoomPluginOptions({
   /// The host takes `update` when one of its checks fails.
   // DIVERGES(zoom): adapt-range-only-updates, the port-only opt-in.
   final bool? rangeOnlyUpdates,
+
+  /// `events`: the event types of the plugin, the option that the event
+  /// filter of Chart.js reads for each plugin (`core.controller.js:1170`,
+  /// Chart.js ADR 0150). Null gives the `events` of the chart. The listeners
+  /// of the plugin on the canvas do not read it, as upstream.
+  @override final List<String>? events,
 }) extends PluginOptions<ZoomPluginOptions> {
   /// The options of the zoom plugin.
   this;
@@ -803,6 +809,7 @@ final class const ZoomPluginOptions({
     limits: _mergeNullable(limits, over.limits, _mergeLimits),
     zoom: _mergeNullable(zoom, over.zoom, (a, b) => a.merge(b)),
     rangeOnlyUpdates: over.rangeOnlyUpdates ?? rangeOnlyUpdates,
+    events: over.events ?? events,
   );
 
   @override
@@ -812,14 +819,20 @@ final class const ZoomPluginOptions({
           other.pan == pan &&
           _limitsEqual(other.limits, limits) &&
           other.zoom == zoom &&
-          other.rangeOnlyUpdates == rangeOnlyUpdates;
+          other.rangeOnlyUpdates == rangeOnlyUpdates &&
+          listEquals(other.events, events);
 
   @override
-  int get hashCode =>
-      Object.hash(pan, _limitsHash(limits), zoom, rangeOnlyUpdates);
+  int get hashCode => Object.hash(
+    pan,
+    _limitsHash(limits),
+    zoom,
+    rangeOnlyUpdates,
+    events == null ? null : Object.hashAll(events!),
+  );
 
   @override
   String toString() =>
       'ZoomPluginOptions(pan: $pan, limits: $limits, zoom: $zoom, '
-      'rangeOnlyUpdates: $rangeOnlyUpdates)';
+      'rangeOnlyUpdates: $rangeOnlyUpdates, events: $events)';
 }

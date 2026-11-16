@@ -114,6 +114,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
         PluginHook,
         PluginHookArgs,
         PluginOf,
+        PluginOptions,
         ResizeHookArgs,
         UpdateHookArgs;
 import 'package:flutter_chartjs_port/src/types/update_mode.dart';
@@ -922,7 +923,8 @@ class Chart(
   ///
   /// `options.maintainAspectRatio && this.aspectRatio` gives Dart `null`
   /// for a falsy option. `newSize` is the record of `getMaximumSize`. The
-  /// hook `resize` and `onResize` get it as `size`.
+  /// hook `resize` and `onResize` get it as one Flutter [Size] (Chart.js ADR
+  /// 0150).
   void _resize(double? width, double? height) {
     _invalidateDataUpdate();
     final options = _options;
@@ -951,14 +953,15 @@ class Chart(
       return;
     }
 
+    final size = Size(newSize.width, newSize.height);
     // DIVERGES(chartjs): adapt-typed-plugins, the typed hook arguments.
-    notifyPlugins(PluginHook.resize, ResizeHookArgs(size: newSize));
+    notifyPlugins(PluginHook.resize, ResizeHookArgs(size: size));
 
     // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
     functionOption<ChartResizeHandler>(
       options.readKey(OptionKey.onResize),
       OptionKey.onResize,
-    )?.call(this, Size(newSize.width, newSize.height));
+    )?.call(this, size);
 
     if (attached) {
       if (_doResize(mode) != 0) {
@@ -2735,20 +2738,23 @@ class Chart(
   /// The upstream body of `_eventHandler` (core.controller.js:1163-1186).
   ///
   /// The event filter reads `plugin.options.events || this.options.events`
-  /// and `includes` the type of the native event. Upstream returns `this`.
+  /// and `includes` the type of the native event: the options of an add-on
+  /// give their `events` field (Chart.js ADR 0150). Upstream returns `this`.
   void _eventHandlerMethod(types.ChartEvent e, [bool? replay]) {
     final args = EventHookArgs(
       event: e,
       replay: replay ?? false,
       inChartArea: isPointInArea(e),
     );
-    bool eventFilter(PluginDescriptor plugin) => _includes(
-      _or(
-        readOption(plugin.options, OptionKey.events),
-        _options.readKey(OptionKey.events),
-      ),
-      e.native!.type,
-    );
+    bool eventFilter(PluginDescriptor plugin) =>
+        _includes(switch (plugin.options) {
+          final PluginOptions<Object?> options =>
+            options.events ?? _options.readKey(OptionKey.events),
+          final view => _or(
+            readOption(view, OptionKey.events),
+            _options.readKey(OptionKey.events),
+          ),
+        }, e.native!.type);
 
     if (notifyPlugins(PluginHook.beforeEvent, args, eventFilter) == false) {
       return;

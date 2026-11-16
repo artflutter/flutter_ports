@@ -19,6 +19,7 @@ final class const _ZoomLikeOptions({
   final String? mode,
   final double? speed,
   final _Nested? nested,
+  @override final List<String>? events,
 }) extends PluginOptions<_ZoomLikeOptions> {
   @override
   String get pluginId => 'zoomLike';
@@ -31,6 +32,7 @@ final class const _ZoomLikeOptions({
       (final a?, final b?) => a.merge(b),
       (final a, final b) => b ?? a,
     },
+    events: over.events ?? events,
   );
 }
 
@@ -129,10 +131,12 @@ ChartPlugin<_ZoomLikeOptions> _zoomLike({bool supportsDataUpdates = true}) =>
 
 /// A line chart with fixed value bounds, so that `updateData` can keep the
 /// layout (Chart.js ADR 0074). [plugins] are the inline plugins, and
-/// [onHover] is the option `onHover`, when it is not Dart `null`.
+/// [onHover] is the option `onHover`, when it is not Dart `null`. [events]
+/// is the option `events` of the plugin (Chart.js ADR 0150).
 Map<String, Object?> _config({
   List<Plugin<Object?>> plugins = const [],
   Object? onHover,
+  List<String>? events,
 }) => <String, Object?>{
   'type': 'line',
   'plugins': plugins,
@@ -148,9 +152,10 @@ Map<String, Object?> _config({
   'options': <String, Object?>{
     'onHover': ?onHover,
     'plugins': <String, Object?>{
-      'zoomLike': const _ZoomLikeOptions(
+      'zoomLike': _ZoomLikeOptions(
         speed: 0.5,
-        nested: _Nested(enabled: true),
+        nested: const _Nested(enabled: true),
+        events: events,
       ),
     },
     'scales': <String, Object?>{
@@ -240,6 +245,24 @@ void main() {
       });
       expect(_events, hasLength(2));
       expect(hovers, 1);
+    });
+
+    testWidgets('gets only the events of its events option', (tester) async {
+      // `(plugin.options.events || this.options.events).includes(type)`
+      // (core.controller.js:1170): the field of the options object.
+      final chart = acquireChart(
+        _config(plugins: [_zoomLike()], events: const ['click']),
+      );
+      await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
+        'x': 256,
+        'y': 256,
+      });
+      expect(_events, isEmpty);
+      await triggerMouseEvent(chart, 'click', <String, Object?>{
+        'x': 256,
+        'y': 256,
+      });
+      expect(_events, ['click']);
     });
 
     testWidgets('calls a hook that a field write replaces', (tester) async {

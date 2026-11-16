@@ -2,6 +2,8 @@
 @TestOn('vm')
 library;
 
+import 'dart:ui' show Size;
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/core/core.plugins.dart';
@@ -501,7 +503,7 @@ null calls: 0''');
         service.notify(
           chart,
           PluginHook.resize,
-          ResizeHookArgs(size: (width: 2.0, height: 3.0)),
+          ResizeHookArgs(size: const Size(2, 3)),
         ),
         isTrue,
       );

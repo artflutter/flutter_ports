@@ -844,7 +844,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `rangeOnlyUpdates: true` (a field, null is false) makes the five update calls of `core.dart`
     (`_updateChart`) call `chart.updateRanges(transition)` of Chart.js ADR 0111 in place of
     `chart.update(transition)`; the app keeps the contract of `updateRanges` (row
-    `adapt-range-only-updates`, seam H28).
+    `adapt-range-only-updates`, seam H28). The field `events` is the plugin option `events` of
+    Chart.js: the event filter of the host reads it (Chart.js ADR 0150).
   - `lib/src/`: the 12 files of `src/` at their mapped paths: `types`, `options`, `defaults`,
     `state`, `utils`, `scale.types`, `core`, `handlers`, `gestures`, `plugin` and `index`;
     `src/index.umd.ts` has no Dart file (Zoom ADR 0002 item 8, Chart.js ADR 0120). `zoomPlugin` (`plugin.dart`) is a native `ChartPlugin<ZoomPluginOptions>` of the host

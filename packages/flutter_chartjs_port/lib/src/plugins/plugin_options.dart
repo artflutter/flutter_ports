@@ -8,23 +8,25 @@
 /// `Legend`, `Tooltip`) are the options of its last hook, or the object that
 /// a spec gives to the constructor. A facade is an extension type over that
 /// object, with no cost: each getter reads one option key with [optionOf],
-/// the typed read `readKey` of a resolver. The getters give the resolved JS
-/// value, as upstream gives it: the readers keep the JS operators of
-/// upstream (`jsTruthy`, `jsToNumber`, `toFont`, ...) at their upstream
-/// places, and the reads keep their upstream order. Thus the user calls of a
-/// scriptable option keep their order.
+/// the typed read `readKey` of a resolver. A getter gives the type of its
+/// key in the schema (Chart.js ADR 0150): it applies the conversion that
+/// each reader applied at the read (`jsToNumber`, `toFont`,
+/// `canvasTextAlign`, ...). Each reader reads the getter at the upstream
+/// place of the read, so the reads keep their upstream order. Thus the user
+/// calls of a scriptable option keep their order. A getter that still gives
+/// the raw value says why.
 ///
 /// A facade takes the name of its `index.d.ts` interface (`LegendOptions`,
 /// `TitleOptions`, `TooltipOptions`, `TooltipCallbacks`, `FillerOptions`,
 /// `DecimationOptions`) or a port-only name for an inline type of
 /// `index.d.ts` (`LegendLabelOptions`, `LegendTitleOptions`,
-/// `ColorsPluginOptions` of `plugin.colors.ts:4`). The
-/// facades are internal: no public library exports them.
+/// `ColorsPluginOptions` of `plugin.colors.ts:4`). The app library
+/// exports them: they are the `O` of the hooks of the built-in plugins.
 ///
 /// This library is a pure layer.
 library;
 
-import 'dart:ui' show TextDirection;
+import 'dart:ui' show TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
@@ -36,13 +38,28 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
         paddingOption,
         readOption,
         textDirectionOption;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isArray;
+import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
+    show toFont;
+import 'package:flutter_chartjs_port/src/js/js_number.dart'
+    show jsToNumber, jsToString, jsTruthy;
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
+    show canvasNumber, canvasTextAlign;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
+    show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
     show TooltipPositioner;
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show ChartAlign, TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, chartPaintOf;
+import 'package:flutter_chartjs_port/src/types/chart_text_style.dart'
+    show ChartTextStyle;
+import 'package:flutter_chartjs_port/src/types/layout.dart'
+    show ChartPosition, LayoutPosition;
 import 'package:flutter_chartjs_port/src/types/legend_callbacks.dart';
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 
@@ -60,6 +77,33 @@ import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 @pragma('wasm:prefer-inline')
 Object? optionOf(Object? options, OptionKey key) => readOption(options, key);
 
+/// The number of the option value [value] for a test `value ? value : x`
+/// of upstream: the `ToNumber` of a truthy value, else Dart `null`.
+double? _truthyNumber(Object? value) =>
+    jsTruthy(value) ? jsToNumber(value) : null;
+
+/// The number of the option value [value] for a destructuring default of
+/// upstream: Dart `null` for [undefined], else its `ToNumber`.
+double? _definedNumber(Object? value) =>
+    identical(value, undefined) ? null : jsToNumber(value);
+
+/// The lines of the text option [value], as `renderText` draws them
+/// (`helpers.canvas.ts:457`): each item of a List, else the value itself,
+/// as a `ToString`.
+List<String> _textLines(Object? value) => isArray(value)
+    ? [for (final line in value! as List<Object?>) jsToString(line)]
+    : [jsToString(value)];
+
+/// The [LayoutPosition] of a `position` option value, or Dart `null` for a
+/// value that is not one. A keyword of Chart.js stops a debug build.
+LayoutPosition? _layoutPosition(Object? value) {
+  assert(
+    value is! String,
+    'A position takes a LayoutPosition, not the name "$value".',
+  );
+  return value is LayoutPosition ? value : null;
+}
+
 /// `TitleOptions` (`index.d.ts`): the options of the title and the subtitle
 /// plugins (`plugin.title.js:145-156`, `plugin.subtitle.js:32-43`).
 extension type const TitleOptions(Object? object) {
@@ -74,17 +118,18 @@ extension type const TitleOptions(Object? object) {
   bool get display =>
       boolOption(optionOf(object, OptionKey.display), OptionKey.display);
 
-  /// `font`.
-  Object? get font => optionOf(object, OptionKey.font);
+  /// `font`: the [toFont] of the option value.
+  ChartTextStyle get font => toFont(optionOf(object, OptionKey.font));
 
   /// `padding`.
   EdgeInsets get padding => paddingOption(optionOf(object, OptionKey.padding));
 
-  /// `position`.
-  Object? get position => optionOf(object, OptionKey.position);
+  /// `position`, a [ChartPosition] (row `adapt-chart-position-enum`).
+  ChartPosition? get position =>
+      ChartPosition.of(optionOf(object, OptionKey.position));
 
-  /// `text`.
-  Object? get text => optionOf(object, OptionKey.text);
+  /// `text`: its lines, a String is one line.
+  List<String> get text => _textLines(optionOf(object, OptionKey.text));
 }
 
 /// `LegendOptions` (`index.d.ts`): the options of the legend plugin
@@ -105,11 +150,13 @@ extension type const LegendOptions(Object? object) {
   /// (`plugin.legend.js:105`).
   Object? get labelsValue => optionOf(object, OptionKey.labels);
 
-  /// `maxHeight`.
-  Object? get maxHeight => optionOf(object, OptionKey.maxHeight);
+  /// `maxHeight`: the number of a truthy value, else Dart `null`
+  /// (`plugin.legend.js:154`).
+  double? get maxHeight => _truthyNumber(optionOf(object, OptionKey.maxHeight));
 
-  /// `maxWidth`.
-  Object? get maxWidth => optionOf(object, OptionKey.maxWidth);
+  /// `maxWidth`: the number of a truthy value, else Dart `null`
+  /// (`plugin.legend.js:153`).
+  double? get maxWidth => _truthyNumber(optionOf(object, OptionKey.maxWidth));
 
   /// `onClick`: the function itself, or Dart `null` for no function (Chart.js
   /// ADR 0130).
@@ -132,8 +179,9 @@ extension type const LegendOptions(Object? object) {
     OptionKey.onLeave,
   );
 
-  /// `position`.
-  Object? get position => optionOf(object, OptionKey.position);
+  /// `position`, a [LayoutPosition] (row `adapt-chart-position-enum`).
+  LayoutPosition? get position =>
+      _layoutPosition(optionOf(object, OptionKey.position));
 
   /// `reverse`.
   bool get reverse =>
@@ -154,16 +202,20 @@ extension type const LegendOptions(Object? object) {
 /// The `labels` of `LegendOptions` (`index.d.ts`, an inline type): the
 /// label options of the legend (`plugin.legend.js:664-705`).
 extension type const LegendLabelOptions(Object? object) {
-  /// `borderRadius`.
+  /// `borderRadius`, the raw value: the legend item keeps it.
   Object? get borderRadius => optionOf(object, OptionKey.borderRadius);
 
-  /// `boxHeight`.
-  Object? get boxHeight => optionOf(object, OptionKey.boxHeight);
+  /// `boxHeight`: Dart `null` for an absent value, else its number
+  /// (`plugin.legend.js:25`, row `adapt-legend-number-options`).
+  double? get boxHeight =>
+      _definedNumber(optionOf(object, OptionKey.boxHeight));
 
-  /// `boxWidth`.
-  Object? get boxWidth => optionOf(object, OptionKey.boxWidth);
+  /// `boxWidth`: Dart `null` for an absent value, else its number
+  /// (`plugin.legend.js:25`, row `adapt-legend-number-options`).
+  double? get boxWidth => _definedNumber(optionOf(object, OptionKey.boxWidth));
 
-  /// `color`.
+  /// `color`, the raw value: the legend item and the canvas take a paint or
+  /// a Flutter `Color`.
   Object? get color => optionOf(object, OptionKey.color);
 
   /// `filter`: the function itself, or Dart `null` for no function (Chart.js
@@ -173,21 +225,24 @@ extension type const LegendLabelOptions(Object? object) {
     OptionKey.filter,
   );
 
-  /// `font`.
-  Object? get font => optionOf(object, OptionKey.font);
+  /// `font`: the [toFont] of the option value.
+  ChartTextStyle get font => toFont(optionOf(object, OptionKey.font));
 
   /// `generateLabels`, the raw value: `plugin.legend.dart` reads it as a
   /// `LegendLabelsGenerator`, which takes the chart class.
   Object? get generateLabels => optionOf(object, OptionKey.generateLabels);
 
-  /// `padding`.
-  Object? get padding => optionOf(object, OptionKey.padding);
+  /// `padding`: its number (row `adapt-legend-number-options`).
+  double get padding => jsToNumber(optionOf(object, OptionKey.padding));
 
-  /// `pointStyle`.
+  /// `pointStyle`, the raw value: a `PointStyle` or a boolean, which the
+  /// legend item keeps.
   Object? get pointStyle => optionOf(object, OptionKey.pointStyle);
 
-  /// `pointStyleWidth`.
-  Object? get pointStyleWidth => optionOf(object, OptionKey.pointStyleWidth);
+  /// `pointStyleWidth`: the number of a truthy value, else Dart `null`
+  /// (`plugin.legend.js:29`, `:336`).
+  double? get pointStyleWidth =>
+      _truthyNumber(optionOf(object, OptionKey.pointStyleWidth));
 
   /// `sort`: the function itself, or Dart `null` for no function (Chart.js
   /// ADR 0130).
@@ -196,8 +251,9 @@ extension type const LegendLabelOptions(Object? object) {
     OptionKey.sort,
   );
 
-  /// `textAlign`.
-  Object? get textAlign => optionOf(object, OptionKey.textAlign);
+  /// `textAlign`, a Flutter [TextAlign] (row `adapt-flutter-text-align`).
+  TextAlign? get textAlign =>
+      canvasTextAlign(optionOf(object, OptionKey.textAlign));
 
   /// `useBorderRadius`.
   bool get useBorderRadius => boolOption(
@@ -215,15 +271,15 @@ extension type const LegendLabelOptions(Object? object) {
 /// The `title` of `LegendOptions` (`index.d.ts`, an inline type): the title
 /// options of the legend (`plugin.legend.js:706-711`).
 extension type const LegendTitleOptions(Object? object) {
-  /// `color`.
+  /// `color`, the raw value: the canvas takes a paint or a Flutter `Color`.
   Object? get color => optionOf(object, OptionKey.color);
 
   /// `display`.
   bool get display =>
       boolOption(optionOf(object, OptionKey.display), OptionKey.display);
 
-  /// `font`.
-  Object? get font => optionOf(object, OptionKey.font);
+  /// `font`: the [toFont] of the option value.
+  ChartTextStyle get font => toFont(optionOf(object, OptionKey.font));
 
   /// `padding`.
   EdgeInsets get padding => paddingOption(optionOf(object, OptionKey.padding));
@@ -232,58 +288,65 @@ extension type const LegendTitleOptions(Object? object) {
   ChartAlign? get position =>
       ChartAlign.of(optionOf(object, OptionKey.position));
 
-  /// `text`.
-  Object? get text => optionOf(object, OptionKey.text);
+  /// `text`: its lines, a String is one line.
+  List<String> get text => _textLines(optionOf(object, OptionKey.text));
 }
 
 /// `TooltipOptions` (`index.d.ts`): the options of the tooltip plugin
 /// (`plugin.tooltip.js:1275-1325`), with the keys of the `interaction`
 /// scope that the tooltip reads (`mode`, `reverse`).
 extension type const TooltipOptions(Object? object) {
-  /// `animations`.
+  /// `animations`, the raw value: `false` or the scope of the animations.
   Object? get animations => optionOf(object, OptionKey.animations);
 
-  /// `backgroundColor`.
+  /// `backgroundColor`, the raw value: the canvas takes a paint or a Flutter
+  /// `Color`.
   Object? get backgroundColor => optionOf(object, OptionKey.backgroundColor);
 
-  /// `bodyAlign`.
-  Object? get bodyAlign => optionOf(object, OptionKey.bodyAlign);
+  /// `bodyAlign`, a Flutter [TextAlign] (row `adapt-flutter-text-align`).
+  TextAlign? get bodyAlign =>
+      canvasTextAlign(optionOf(object, OptionKey.bodyAlign));
 
-  /// `bodyColor`.
+  /// `bodyColor`, the raw value: the canvas takes a paint or a Flutter `Color`.
   Object? get bodyColor => optionOf(object, OptionKey.bodyColor);
 
-  /// `bodyFont`.
-  Object? get bodyFont => optionOf(object, OptionKey.bodyFont);
+  /// `bodyFont`: the [toFont] of the option value.
+  ChartTextStyle get bodyFont => toFont(optionOf(object, OptionKey.bodyFont));
 
-  /// `bodySpacing`.
-  Object? get bodySpacing => optionOf(object, OptionKey.bodySpacing);
+  /// `bodySpacing`: its number.
+  double get bodySpacing => jsToNumber(optionOf(object, OptionKey.bodySpacing));
 
-  /// `borderColor`.
+  /// `borderColor`, the raw value: the canvas takes a paint or a Flutter
+  /// `Color`.
   Object? get borderColor => optionOf(object, OptionKey.borderColor);
 
-  /// `borderWidth`.
-  Object? get borderWidth => optionOf(object, OptionKey.borderWidth);
+  /// `borderWidth`: Dart `null` for an absent value, else its number, as the
+  /// canvas setter `lineWidth` takes it ([canvasNumber]).
+  double? get borderWidth =>
+      canvasNumber(optionOf(object, OptionKey.borderWidth));
 
-  /// `boxHeight`.
-  Object? get boxHeight => optionOf(object, OptionKey.boxHeight);
+  /// `boxHeight`: its number.
+  double get boxHeight => jsToNumber(optionOf(object, OptionKey.boxHeight));
 
-  /// `boxPadding`.
-  Object? get boxPadding => optionOf(object, OptionKey.boxPadding);
+  /// `boxPadding`: its number.
+  double get boxPadding => jsToNumber(optionOf(object, OptionKey.boxPadding));
 
-  /// `boxWidth`.
-  Object? get boxWidth => optionOf(object, OptionKey.boxWidth);
+  /// `boxWidth`: its number.
+  double get boxWidth => jsToNumber(optionOf(object, OptionKey.boxWidth));
 
   /// `callbacks`.
   TooltipCallbacks get callbacks =>
       tooltipCallbacksOf(optionOf(object, OptionKey.callbacks));
 
-  /// `caretPadding`.
-  Object? get caretPadding => optionOf(object, OptionKey.caretPadding);
+  /// `caretPadding`: its number.
+  double get caretPadding =>
+      jsToNumber(optionOf(object, OptionKey.caretPadding));
 
-  /// `caretSize`.
-  Object? get caretSize => optionOf(object, OptionKey.caretSize);
+  /// `caretSize`: its number.
+  double get caretSize => jsToNumber(optionOf(object, OptionKey.caretSize));
 
-  /// `cornerRadius`.
+  /// `cornerRadius`, the raw value: a number or the corners, which
+  /// `toTRBLCorners` reads.
   Object? get cornerRadius => optionOf(object, OptionKey.cornerRadius);
 
   /// `displayColors`.
@@ -310,20 +373,25 @@ extension type const TooltipOptions(Object? object) {
     OptionKey.filter,
   );
 
-  /// `footerAlign`.
-  Object? get footerAlign => optionOf(object, OptionKey.footerAlign);
+  /// `footerAlign`, a Flutter [TextAlign] (row `adapt-flutter-text-align`).
+  TextAlign? get footerAlign =>
+      canvasTextAlign(optionOf(object, OptionKey.footerAlign));
 
-  /// `footerColor`.
+  /// `footerColor`, the raw value: the canvas takes a paint or a Flutter
+  /// `Color`.
   Object? get footerColor => optionOf(object, OptionKey.footerColor);
 
-  /// `footerFont`.
-  Object? get footerFont => optionOf(object, OptionKey.footerFont);
+  /// `footerFont`: the [toFont] of the option value.
+  ChartTextStyle get footerFont =>
+      toFont(optionOf(object, OptionKey.footerFont));
 
-  /// `footerMarginTop`.
-  Object? get footerMarginTop => optionOf(object, OptionKey.footerMarginTop);
+  /// `footerMarginTop`: its number.
+  double get footerMarginTop =>
+      jsToNumber(optionOf(object, OptionKey.footerMarginTop));
 
-  /// `footerSpacing`.
-  Object? get footerSpacing => optionOf(object, OptionKey.footerSpacing);
+  /// `footerSpacing`: its number.
+  double get footerSpacing =>
+      jsToNumber(optionOf(object, OptionKey.footerSpacing));
 
   /// `itemSort`: the function itself, or Dart `null` for no function (row
   /// `adapt-native-tooltip-item`).
@@ -337,7 +405,8 @@ extension type const TooltipOptions(Object? object) {
   InteractionMode? get mode =>
       InteractionMode.of(optionOf(object, OptionKey.mode));
 
-  /// `multiKeyBackground`.
+  /// `multiKeyBackground`, the raw value: the canvas takes a paint or a
+  /// Flutter `Color`.
   Object? get multiKeyBackground =>
       optionOf(object, OptionKey.multiKeyBackground);
 
@@ -360,21 +429,24 @@ extension type const TooltipOptions(Object? object) {
   TextDirection? get textDirection =>
       textDirectionOption(optionOf(object, OptionKey.textDirection));
 
-  /// `titleAlign`.
-  Object? get titleAlign => optionOf(object, OptionKey.titleAlign);
+  /// `titleAlign`, a Flutter [TextAlign] (row `adapt-flutter-text-align`).
+  TextAlign? get titleAlign =>
+      canvasTextAlign(optionOf(object, OptionKey.titleAlign));
 
-  /// `titleColor`.
+  /// `titleColor`, the raw value: the canvas takes a paint or a Flutter
+  /// `Color`.
   Object? get titleColor => optionOf(object, OptionKey.titleColor);
 
-  /// `titleFont`.
-  Object? get titleFont => optionOf(object, OptionKey.titleFont);
+  /// `titleFont`: the [toFont] of the option value.
+  ChartTextStyle get titleFont => toFont(optionOf(object, OptionKey.titleFont));
 
-  /// `titleMarginBottom`.
-  Object? get titleMarginBottom =>
-      optionOf(object, OptionKey.titleMarginBottom);
+  /// `titleMarginBottom`: its number.
+  double get titleMarginBottom =>
+      jsToNumber(optionOf(object, OptionKey.titleMarginBottom));
 
-  /// `titleSpacing`.
-  Object? get titleSpacing => optionOf(object, OptionKey.titleSpacing);
+  /// `titleSpacing`: its number.
+  double get titleSpacing =>
+      jsToNumber(optionOf(object, OptionKey.titleSpacing));
 
   /// `usePointStyle`.
   bool get usePointStyle => boolOption(
@@ -394,8 +466,9 @@ extension type const TooltipOptions(Object? object) {
 /// `FillerOptions` (`index.d.ts`): the options of the filler plugin
 /// (`plugin.filler/index.js:146-149`).
 extension type const FillerOptions(Object? object) {
-  /// `drawTime`.
-  Object? get drawTime => optionOf(object, OptionKey.drawTime);
+  /// `drawTime`, a [FillerDrawTime] (row `adapt-filler-draw-time-enum`).
+  FillerDrawTime? get drawTime =>
+      FillerDrawTime.of(optionOf(object, OptionKey.drawTime));
 
   /// `propagate`.
   bool get propagate =>
@@ -413,11 +486,13 @@ extension type const DecimationOptions(Object? object) {
   bool get enabled =>
       boolOption(optionOf(object, OptionKey.enabled), OptionKey.enabled);
 
-  /// `samples`.
-  Object? get samples => optionOf(object, OptionKey.samples);
+  /// `samples`: the number of a truthy value, else Dart `null`
+  /// (`plugin.decimation.js:12`).
+  double? get samples => _truthyNumber(optionOf(object, OptionKey.samples));
 
-  /// `threshold`.
-  Object? get threshold => optionOf(object, OptionKey.threshold);
+  /// `threshold`: the number of a truthy value, else Dart `null`
+  /// (`plugin.decimation.js:242`).
+  double? get threshold => _truthyNumber(optionOf(object, OptionKey.threshold));
 }
 
 /// `ColorsPluginOptions` (`plugin.colors.ts:4-7`): the options of the colors

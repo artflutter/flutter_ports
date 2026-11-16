@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: tests of the native plugin objects.
 
+import 'dart:ui' show Size;
+
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
@@ -81,7 +83,7 @@ void main() {
         plugin.notify(
           PluginHook.resize,
           chart,
-          ResizeHookArgs(size: (width: 4.0, height: 5.0)),
+          ResizeHookArgs(size: const Size(4, 5)),
           'view',
         ),
         isTrue,
@@ -140,13 +142,11 @@ void main() {
     test('keeps its metadata', () {
       final plugin = Plugin<Object?>(
         id: 'p',
-        events: const ['click'],
         defaults: pluginDefaults(<String, Object?>{'a': 1.0}),
         defaultRoutes: const {'color': 'color'},
         additionalOptionScopes: const ['interaction'],
       );
       expect(plugin.id, 'p');
-      expect(plugin.events, ['click']);
       expect(jsGet(plugin.defaults, 'a'), 1.0);
       expect(plugin.defaultRoutes, {'color': 'color'});
       expect(plugin.additionalOptionScopes, ['interaction']);

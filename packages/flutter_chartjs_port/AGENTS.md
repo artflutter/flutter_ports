@@ -155,7 +155,8 @@ repository.
     `PluginOf<O, C>`, `Plugin<O>` is the alias with the core chart interface (built-in plugins,
     tests) and `ChartPlugin<O>` of `core.controller.dart` the alias with the public `Chart`, which
     `Plugin.notify` casts once. An add-on gives its options as one immutable `PluginOptions`
-    object (`pluginId`, `merge`): `_pluginOpts` of `core.plugins.dart` merges the objects of the
+    object (`pluginId`, `merge`, and `events`, the option of the event filter, Chart.js ADR 0150):
+    `_pluginOpts` of `core.plugins.dart` merges the objects of the
     scopes from the defaults to the chart options in place of the resolver (upstream resolves
     plugin options with `scriptable: false`), the registry writes the defaults object into
     `defaults.plugins.<id>`, the schema has the typed atom `pluginOptions` for
@@ -166,7 +167,9 @@ repository.
     update mode is the extension type `UpdateMode` of `lib/src/types/update_mode.dart` (row
     `adapt-update-mode`): `chart.update(UpdateMode.none)`, a custom mode `const
     UpdateMode('zoom')`, and the function form `chart.updateDatasets((i) => ...)`;
-    `ChartView.updateMode` and `UpdateHookArgs.mode` are `UpdateMode?`.
+    `ChartView.updateMode` and `UpdateHookArgs.mode` are `UpdateMode?`. A plugin has no field
+    `events`: its events are its option `events`. `ResizeHookArgs.size` is the Flutter `Size`
+    that `onResize` also gets (Chart.js ADR 0150).
     `Element.markUndefined(AnimatedProp)` and
     `isUndefined` are the typed property API of the elements.
   - `lib/src/core/core.element.dart` and `lib/src/elements/` (Chart.js ADR 0017): the port of
@@ -541,12 +544,18 @@ repository.
     `decimation`, `filler`, `legend`, `subTitle`, `title` and `tooltip`, with the export names in
     lowerCamelCase. Each plugin object is a native `Plugin` of `lib/src/types/plugin.dart` with the
     upstream keys in the upstream order (Chart.js ADR 0144); its hooks are private functions of
-    the hook type `(chart, args, options)`. `filler`, `decimation` and `colors` are
-    `Plugin<FillerOptions>`, `Plugin<DecimationOptions>` and `Plugin<ColorsPluginOptions>`: their
-    hooks get the facade. `legend`, `title`, `subTitle` and `tooltip` are `Plugin<OptionView>`. The
+    the hook type `(chart, args, options)`. Each plugin gets the facade of its options: `filler`,
+    `decimation` and `colors` are `Plugin<FillerOptions>`, `Plugin<DecimationOptions>` and
+    `Plugin<ColorsPluginOptions>`. `legend` is a `Plugin<LegendOptions>`, `title` and `subTitle`
+    are `Plugin<TitleOptions>`, and `tooltip` is a `Plugin<TooltipOptions>`. A box keeps the
+    resolved options (Chart.js ADR 0150). The
     key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
     `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The plugins read their options through the facades of
-    the port-only pure `plugin_options.dart`. The library exports no class `Title`, `Legend` or
+    the port-only pure `plugin_options.dart`. A getter gives the type of its key in the schema
+    (Chart.js ADR 0150): a number, a `ChartTextStyle`, a `TextAlign`, an enum or the lines of a
+    text, with the conversion that each reader applied before. The colors, the tooltip
+    `cornerRadius` and `animations`, the legend label `borderRadius`, `pointStyle` and
+    `generateLabels`, `LegendOptions.labelsValue` and the decimation `algorithm` stay raw values. The library exports no class `Title`, `Legend` or
     `Tooltip`. `plugin.decimation.dart`, `plugin_options.dart` and the files of `plugin.filler/` are
     pure layers. The other plugin files are not: `plugin.title`, `plugin.legend` and
     `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports `core.animations`, and

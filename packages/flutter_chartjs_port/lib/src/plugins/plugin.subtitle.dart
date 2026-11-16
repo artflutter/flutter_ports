@@ -9,9 +9,10 @@
 /// `defaults`, `defaultRoutes` and `descriptors`. It has no `_element`.
 ///
 /// The subtitle box is a [Title] of `plugin.title.dart`. Each hook is a
-/// private function of the hook type `(types.Chart chart, AnyObject args,
-/// AnyObject options)` (Chart.js ADR 0054 §12, in place of the upstream
-/// parameter counts of Chart.js ADR 0038, section 3).
+/// private function of the hook type `(types.Chart chart, args,
+/// TitleOptions options)` (Chart.js ADR 0150, in place of the upstream
+/// parameter counts of Chart.js ADR 0038, section 3): the argument class of
+/// its hook, and the facade of the resolved options.
 ///
 /// The `WeakMap` of `plugin.subtitle.js:4` is the file-private `Expando`
 /// [_map] (Chart.js ADR 0038, section 5). An `Expando` holds its key
@@ -26,16 +27,17 @@ import 'dart:ui' show FontWeight;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
     show DescriptorsScope, TitleOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show TitleOptions;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show Plugin, PluginHookArgs, UpdateHookArgs;
 
 /// plugin.subtitle.js:4 `const map = new WeakMap()`.
 ///
@@ -43,12 +45,14 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 /// of `map.get` without an entry.
 final Expando<Title> _map = Expando<Title>('subtitle');
 
-/// plugin.subtitle.js:9 `start(chart, _args, options)`.
-void _start(types.Chart chart, Object _, Object options) {
-  final title = Title((ctx: chart.ctx, options: options, chart: chart));
+/// plugin.subtitle.js:9 `start(chart, _args, options)`. The box keeps the
+/// resolved options of the facade.
+void _start(types.Chart chart, PluginHookArgs _, TitleOptions options) {
+  final resolved = options.object!;
+  final title = Title((ctx: chart.ctx, options: resolved, chart: chart));
 
   layouts
-    ..configure(chart, title, options)
+    ..configure(chart, title, resolved)
     ..addBox(chart, title);
   _map[chart] = title;
 }
@@ -57,7 +61,7 @@ void _start(types.Chart chart, Object _, Object options) {
 /// `undefined` of `map.get` on a chart without a subtitle: `removeBox` then
 /// changes nothing (core.layouts.js:318-323). `map.delete(chart)` is the
 /// write of Dart `null`.
-void _stop(types.Chart chart, Object _, Object _) {
+void _stop(types.Chart chart, PluginHookArgs _, TitleOptions _) {
   layouts.removeBox(chart, _map[chart]);
   _map[chart] = null;
 }
@@ -65,10 +69,11 @@ void _stop(types.Chart chart, Object _, Object _) {
 /// plugin.subtitle.js:26 `beforeUpdate(chart, _args, options)`. Without a
 /// subtitle, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-bool _beforeUpdate(types.Chart chart, Object _, Object options) {
+bool _beforeUpdate(types.Chart chart, UpdateHookArgs _, TitleOptions options) {
   final title = _map[chart]!;
-  layouts.configure(chart, title, options);
-  title.options = options;
+  final resolved = options.object!;
+  layouts.configure(chart, title, resolved);
+  title.options = resolved;
   return true;
 }
 
@@ -76,9 +81,12 @@ bool _beforeUpdate(types.Chart chart, Object _, Object options) {
 /// `src/plugins/index.js:5` (Chart.js ADR 0038, section 1).
 ///
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
-/// upstream order. The hooks read no args, so they take any args object.
-final subTitle = Plugin<OptionView>(
+/// upstream order. The hooks get the facade [TitleOptions] (Chart.js ADR
+/// 0150).
+final subTitle = Plugin<TitleOptions>(
   id: 'subtitle',
+  // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+  options: TitleOptions.new,
   start: _start,
   stop: _stop,
   beforeUpdate: _beforeUpdate,

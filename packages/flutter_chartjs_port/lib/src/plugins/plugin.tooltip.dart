@@ -16,10 +16,10 @@
 /// is a class ([TooltipPositioner], row `adapt-tooltip-positioner-objects`).
 ///
 /// Each hook is a private function of the hook type `(types.Chart chart,
-/// args, AnyObject options)` (Chart.js ADR 0054 §12, in place of the
-/// upstream parameter counts of Chart.js ADR 0038, section 3): `afterEvent`
-/// takes the typed [EventHookArgs], the other hooks read no args and take
-/// any args object. The draw hooks of the tooltip get a
+/// args, TooltipOptions options)` (Chart.js ADR 0150, in place of the
+/// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
+/// class of its hook, and the facade [TooltipOptions] of the resolved
+/// options. The draw hooks of the tooltip get a
 /// [TooltipDrawHookArgs]. `chart.tooltip` is a field of `types.Chart` with
 /// the type `types.TooltipModel?`: Dart `null` stands for JS `undefined`.
 /// The hooks cast it to [Tooltip], the class of this library (Chart.js ADR
@@ -64,7 +64,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show distanceBetweenPoints, limitValue;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, createContext, toFont, toTRBLCorners;
+    show ContextObject, createContext, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
     show RTLAdapter, getRtlAdapter, overrideTextDirection, restoreTextDirection;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
@@ -77,8 +77,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsIsObjectLike, jsObjectFreeze, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
-    show canvasNumber, canvasStyle, canvasTextAlign;
+import 'package:flutter_chartjs_port/src/js/js_webidl.dart' show canvasStyle;
 import 'package:flutter_chartjs_port/src/options/opt.dart'
     show OptFunction, optNull;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -99,7 +98,13 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show EventHookArgs, Plugin, PluginHook, TooltipDrawHookArgs;
+    show
+        EventHookArgs,
+        Plugin,
+        PluginHook,
+        PluginHookArgs,
+        TooltipDrawHookArgs,
+        UpdateHookArgs;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart';
 
@@ -309,11 +314,11 @@ types.TooltipItem _createTooltipItem(
 ) {
   final ctx = tooltip.chart.ctx!;
   final Tooltip(:body, :footer, :title) = tooltip;
-  final boxWidth = jsToNumber(options.boxWidth);
-  final boxHeight = jsToNumber(options.boxHeight);
-  final bodyFont = toFont(options.bodyFont);
-  final titleFont = toFont(options.titleFont);
-  final footerFont = toFont(options.footerFont);
+  final boxWidth = options.boxWidth;
+  final boxHeight = options.boxHeight;
+  final bodyFont = options.bodyFont;
+  final titleFont = options.titleFont;
+  final footerFont = options.footerFont;
   final titleLineCount = title!.length;
   final footerLineCount = footer!.length;
   final bodyLineItemCount = body!.length;
@@ -336,8 +341,8 @@ types.TooltipItem _createTooltipItem(
   if (titleLineCount != 0) {
     height +=
         titleLineCount * titleFont.lineHeight! +
-        (titleLineCount - 1) * jsToNumber(options.titleSpacing) +
-        jsToNumber(options.titleMarginBottom);
+        (titleLineCount - 1) * options.titleSpacing +
+        options.titleMarginBottom;
   }
   if (jsTruthy(combinedBodyLength)) {
     // Body lines may include some extra height depending on boxHeight
@@ -347,13 +352,13 @@ types.TooltipItem _createTooltipItem(
     height +=
         bodyLineItemCount * bodyLineHeight +
         (combinedBodyLength - bodyLineItemCount) * bodyFont.lineHeight! +
-        (combinedBodyLength - 1) * jsToNumber(options.bodySpacing);
+        (combinedBodyLength - 1) * options.bodySpacing;
   }
   if (footerLineCount != 0) {
     height +=
-        jsToNumber(options.footerMarginTop) +
+        options.footerMarginTop +
         footerLineCount * footerFont.lineHeight! +
-        (footerLineCount - 1) * jsToNumber(options.footerSpacing);
+        (footerLineCount - 1) * options.footerSpacing;
   }
 
   // Title width
@@ -374,7 +379,7 @@ types.TooltipItem _createTooltipItem(
 
   // Body lines may include some extra width due to the color box
   widthPadding = options.displayColors
-      ? (boxWidth + 2 + jsToNumber(options.boxPadding))
+      ? (boxWidth + 2 + options.boxPadding)
       : 0;
   for (final bodyItem in body) {
     bodyItem.before.forEach(maxLineWidth);
@@ -474,8 +479,7 @@ bool _doesNotFitWithAlign(
   _PositionAndSize size,
 ) {
   final (:x, :width, y: _, height: _, xAlign: _, yAlign: _) = size;
-  final caret =
-      jsToNumber(options.caretSize) + jsToNumber(options.caretPadding);
+  final caret = options.caretSize + options.caretPadding;
   if (xAlign == TooltipXAlign.left && x + width + caret > chart.width) {
     return true;
   }
@@ -580,8 +584,8 @@ double _alignY(
   ({TooltipXAlign xAlign, TooltipYAlign yAlign}) alignment,
   types.Chart chart,
 ) {
-  final caretSize = jsToNumber(options.caretSize);
-  final caretPadding = jsToNumber(options.caretPadding);
+  final caretSize = options.caretSize;
+  final caretPadding = options.caretPadding;
   final cornerRadius = options.cornerRadius;
   final (:xAlign, :yAlign) = alignment;
   final paddingAndSize = caretSize + caretPadding;
@@ -1400,7 +1404,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
     TooltipOptions options,
   ) {
     final Tooltip(:xAlign, :yAlign) = this;
-    final caretSize = jsToNumber(options.caretSize);
+    final caretSize = options.caretSize;
     final cornerRadius = options.cornerRadius;
     final TRBLCorners(:topLeft, :topRight, :bottomLeft, :bottomRight) =
         toTRBLCorners(cornerRadius);
@@ -1477,7 +1481,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
       final rtlHelper = getRtlAdapter(options.rtl, x, width);
 
       // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-      final titleAlign = canvasTextAlign(options.titleAlign);
+      final titleAlign = options.titleAlign;
       pt.x = _getAlignedX(this, titleAlign, options);
 
       ctx
@@ -1485,8 +1489,8 @@ class Tooltip(({types.Chart chart, Object? options}) config)
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
         ..textBaseline = CanvasTextBaseline.middle;
 
-      final titleFont = toFont(options.titleFont);
-      final titleSpacing = jsToNumber(options.titleSpacing);
+      final titleFont = options.titleFont;
+      final titleSpacing = options.titleSpacing;
 
       ctx
         ..fillStyle = canvasStyle(options.titleColor)
@@ -1502,7 +1506,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
 
         if (i + 1 == length) {
           // If Last, add margin, remove spacing
-          pt.y += jsToNumber(options.titleMarginBottom) - titleSpacing;
+          pt.y += options.titleMarginBottom - titleSpacing;
         }
       }
     }
@@ -1518,9 +1522,9 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   ) {
     final labelColor = _labelColors![i]! as TooltipLabelStyle;
     final labelPointStyle = _labelPointStyles![i]! as TooltipLabelPointStyle;
-    final boxHeight = jsToNumber(options.boxHeight);
-    final boxWidth = jsToNumber(options.boxWidth);
-    final bodyFont = toFont(options.bodyFont);
+    final boxHeight = options.boxHeight;
+    final boxWidth = options.boxWidth;
+    final bodyFont = options.bodyFont;
     final colorX = _getAlignedX(this, TextAlign.left, options);
     final rtlColorX = rtlHelper.x(colorX);
     final yOffSet = boxHeight < bodyFont.lineHeight!
@@ -1644,14 +1648,14 @@ class Tooltip(({types.Chart chart, Object? options}) config)
     TooltipOptions options,
   ) {
     final body = this.body;
-    final bodySpacing = jsToNumber(options.bodySpacing);
+    final bodySpacing = options.bodySpacing;
     // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-    final bodyAlign = canvasTextAlign(options.bodyAlign);
+    final bodyAlign = options.bodyAlign;
     final displayColors = options.displayColors;
-    final boxHeight = jsToNumber(options.boxHeight);
-    final boxWidth = jsToNumber(options.boxWidth);
-    final boxPadding = jsToNumber(options.boxPadding);
-    final bodyFont = toFont(options.bodyFont);
+    final boxHeight = options.boxHeight;
+    final boxWidth = options.boxWidth;
+    final boxPadding = options.boxPadding;
+    final bodyFont = options.bodyFont;
     var bodyLineHeight = bodyFont.lineHeight!;
     var xLinePadding = 0.0;
 
@@ -1736,17 +1740,17 @@ class Tooltip(({types.Chart chart, Object? options}) config)
       final rtlHelper = getRtlAdapter(options.rtl, x, width);
 
       // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-      final footerAlign = canvasTextAlign(options.footerAlign);
+      final footerAlign = options.footerAlign;
       pt
         ..x = _getAlignedX(this, footerAlign, options)
-        ..y += jsToNumber(options.footerMarginTop);
+        ..y += options.footerMarginTop;
 
       ctx
         ..textAlign = rtlHelper.textAlign(footerAlign)
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
         ..textBaseline = CanvasTextBaseline.middle;
 
-      final footerFont = toFont(options.footerFont);
+      final footerFont = options.footerFont;
 
       ctx
         ..fillStyle = canvasStyle(options.footerColor)
@@ -1758,7 +1762,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
           rtlHelper.x(pt.x),
           pt.y + footerFont.lineHeight! / 2,
         );
-        pt.y += footerFont.lineHeight! + jsToNumber(options.footerSpacing);
+        pt.y += footerFont.lineHeight! + options.footerSpacing;
       }
     }
   }
@@ -1781,7 +1785,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
     ctx
       ..fillStyle = canvasStyle(options.backgroundColor)
       ..strokeStyle = canvasStyle(options.borderColor)
-      ..lineWidth = canvasNumber(options.borderWidth)
+      ..lineWidth = options.borderWidth
       ..beginPath()
       ..moveTo(x + topLeft, y);
     if (yAlign == TooltipYAlign.top) {
@@ -1816,7 +1820,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
       ..closePath()
       ..fill();
 
-    if (jsLessThan(0, options.borderWidth)) {
+    if ((options.borderWidth ?? 0) > 0) {
       ctx.stroke();
     }
   }
@@ -2272,7 +2276,8 @@ Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 /// `fontSize`.
 // DIVERGES(chartjs): adapt-text-style-fonts, the size of a TextStyle.
 Object? _bodyFontSize(Object? ctx, Object? opts) {
-  final font = TooltipOptions(opts).bodyFont;
+  // The raw font of upstream `opts.bodyFont.size`: no `toFont`.
+  final font = optionOf(opts, OptionKey.bodyFont);
   return font is TextStyle ? font.fontSize ?? undefined : undefined;
 }
 
@@ -2281,25 +2286,29 @@ bool _scriptableDescriptor(String name) =>
     name != 'filter' && name != 'itemSort' && name != 'external';
 
 /// plugin.tooltip.js:1228 `afterInit(chart, _args, options)`.
-void _afterInit(types.Chart chart, Object _, Object options) {
-  if (jsTruthy(options)) {
-    chart.tooltip = Tooltip((chart: chart, options: options));
+void _afterInit(types.Chart chart, PluginHookArgs _, TooltipOptions options) {
+  if (jsTruthy(options.object)) {
+    chart.tooltip = Tooltip((chart: chart, options: options.object));
   }
 }
 
 /// plugin.tooltip.js:1234 `beforeUpdate(chart, _args, options)`. The hook
 /// continues the update: `true` is the `undefined` result of upstream.
-bool _beforeUpdate(types.Chart chart, Object _, Object options) {
+bool _beforeUpdate(
+  types.Chart chart,
+  UpdateHookArgs _,
+  TooltipOptions options,
+) {
   if (chart.tooltip != null) {
-    (chart.tooltip! as Tooltip).initialize(options);
+    (chart.tooltip! as Tooltip).initialize(options.object);
   }
   return true;
 }
 
 /// plugin.tooltip.js:1240 `reset(chart, _args, options)`.
-void _reset(types.Chart chart, Object _, Object options) {
+void _reset(types.Chart chart, PluginHookArgs _, TooltipOptions options) {
   if (chart.tooltip != null) {
-    (chart.tooltip! as Tooltip).initialize(options);
+    (chart.tooltip! as Tooltip).initialize(options.object);
   }
 }
 
@@ -2308,7 +2317,7 @@ void _reset(types.Chart chart, Object _, Object options) {
 /// are [TooltipDrawHookArgs]: `{...args, cancelable: true}` is a new object
 /// with the keys of `args` and `cancelable`, and `afterTooltipDraw` gets
 /// `args` itself.
-void _afterDraw(types.Chart chart, Object _, Object _) {
+void _afterDraw(types.Chart chart, PluginHookArgs _, TooltipOptions _) {
   final tooltip = chart.tooltip as Tooltip?;
 
   if (tooltip != null && tooltip._willRender()) {
@@ -2331,7 +2340,7 @@ void _afterDraw(types.Chart chart, Object _, Object _) {
 /// plugin.tooltip.js:1264 `afterEvent(chart, args)`: the typed `replay`,
 /// `event` and `inChartArea` of [EventHookArgs], and the typed write of
 /// `changed`.
-void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
+void _afterEvent(types.Chart chart, EventHookArgs args, TooltipOptions _) {
   if (chart.tooltip != null) {
     // If the event is replayed from `update`, we should evaluate with the
     // final positions.
@@ -2354,8 +2363,10 @@ void _afterEvent(types.Chart chart, EventHookArgs args, Object _) {
 /// upstream order. The key `_element: Tooltip` of plugin.tooltip.js:1225 is
 /// for the tests: they read `Tooltip.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
-final tooltip = Plugin<OptionView>(
+final tooltip = Plugin<TooltipOptions>(
   id: 'tooltip',
+  // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+  options: TooltipOptions.new,
   afterInit: _afterInit,
   beforeUpdate: _beforeUpdate,
   reset: _reset,

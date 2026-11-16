@@ -876,7 +876,6 @@ Object? _wrapped(Object? value, String path, List<String> trace) {
     return Plugin<Object?>(
       id: value.id,
       options: value.options,
-      events: value.events,
       defaults: value.defaults,
       defaultRoutes: value.defaultRoutes,
       descriptors: value.descriptors,

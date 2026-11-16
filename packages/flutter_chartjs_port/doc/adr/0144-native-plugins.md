@@ -1,7 +1,7 @@
 # Chart.js ADR 0144: Native plugins
 
 - Status: accepted (2026-11-14): its code and the tests of section Tests pass.
-- Superseded in part by: [Chart.js ADR 0148](0148-plugin-typing.md) (2026-11-15), for item 4, item 6, item 10 and Open 1 and 2
+- Superseded in part by: [Chart.js ADR 0148](0148-plugin-typing.md) (2026-11-15), for item 4, item 6, item 10 and Open 1 and 2; [Chart.js ADR 0150](0150-typed-plugin-options.md) (2026-11-16), for item 4 (`ResizeHookArgs.size`), item 5 and item 6 (`events`)
 - Date: 2026-11-14
 - Supersedes: [Chart.js ADR 0126](0126-native-plugin-contract.md) (proposed, no code) as a whole.
   The plugin parts of [Chart.js ADR 0054](0054-typed-internal-model.md) §12 (the face, the extras

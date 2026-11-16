@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show TitleOptions;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
@@ -317,7 +319,7 @@ void main() {
       // The probe stopWithoutBlock: no throw, the boxes stay.
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
-      title.stop!(chart, const PluginHookArgs(), chart.options);
+      title.stop!(chart, const PluginHookArgs(), TitleOptions(chart.options));
       expect(chart.titleBlock, isNull);
       expect(chart.boxes, boxes);
     });
@@ -327,7 +329,11 @@ void main() {
       // The probe beforeUpdateWithoutBlock.
       final chart = acquireChart(_line(false));
       expect(
-        () => title.beforeUpdate!(chart, UpdateHookArgs(), chart.options),
+        () => title.beforeUpdate!(
+          chart,
+          UpdateHookArgs(),
+          TitleOptions(chart.options),
+        ),
         throwsA(isA<TypeError>()),
       );
     });
@@ -339,7 +345,7 @@ void main() {
       final box = chart.titleBlock;
       expect(box, isA<Title>());
       expect(chart.boxes, contains(same(box)));
-      title.stop!(chart, const PluginHookArgs(), chart.options);
+      title.stop!(chart, const PluginHookArgs(), TitleOptions(chart.options));
       expect(chart.titleBlock, isNull);
       expect(chart.boxes.where((b) => identical(b, box)), isEmpty);
     });

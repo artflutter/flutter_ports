@@ -10,10 +10,10 @@
 /// `defaultRoutes` and `descriptors`.
 ///
 /// Each hook is a private function of the hook type `(types.Chart chart,
-/// AnyObject args, AnyObject options)` (Chart.js ADR 0054 §12, in place of
-/// the upstream parameter counts of Chart.js ADR 0038, section 3). The box
-/// reads its options through the facade `TitleOptions` of
-/// `plugin_options.dart`. `chart.titleBlock` is a field of `types.Chart`:
+/// args, TitleOptions options)` (Chart.js ADR 0150, in place of the
+/// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
+/// class of its hook, and the facade `TitleOptions` of `plugin_options.dart`.
+/// The box keeps the resolved options and reads them through the facade. `chart.titleBlock` is a field of `types.Chart`:
 /// Dart `null` stands for JS `undefined` and for the `delete` of
 /// `plugin.title.js:136`.
 ///
@@ -32,15 +32,9 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show renderText;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show alignStartEnd, toLeftRightCenter;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show pi;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show toFont;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsObjectOrNull;
@@ -55,7 +49,8 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/plugin.dart'
+    show Plugin, PluginHookArgs, UpdateHookArgs;
 import 'package:meta/meta.dart' show internal;
 
 /// plugin.title.js:7 `class Title extends Element`.
@@ -176,11 +171,11 @@ class Title(
     width = right = maxWidth;
     height = bottom = maxHeight;
 
-    final text = opts.text;
-    final lineCount = isArray(text) ? (text! as List<Object?>).length : 1;
+    // The lines of `opts.text` (Chart.js ADR 0150): `isArray(text) ?
+    // text.length : 1`.
+    final lineCount = opts.text.length;
     final padding = _padding = opts.padding;
-    final textSize =
-        lineCount * toFont(opts.font).lineHeight! + padding.vertical;
+    final textSize = lineCount * opts.font.lineHeight! + padding.vertical;
 
     if (isHorizontal()) {
       height = textSize;
@@ -256,7 +251,7 @@ class Title(
       return;
     }
 
-    final fontOpts = toFont(opts.font);
+    final fontOpts = opts.font;
     final lineHeight = fontOpts.lineHeight!;
     final offset = lineHeight / 2 + _padding!.top;
     final (:titleX, :titleY, :maxWidth, :rotation) = _drawArgs(offset);
@@ -311,16 +306,17 @@ void _createTitle(types.Chart chart, Object titleOpts) {
   chart.titleBlock = title;
 }
 
-/// plugin.title.js:129 `start(chart, _args, options)`.
-void _start(types.Chart chart, Object _, Object options) {
-  _createTitle(chart, options);
+/// plugin.title.js:129 `start(chart, _args, options)`. The box keeps the
+/// resolved options of the facade.
+void _start(types.Chart chart, PluginHookArgs _, TitleOptions options) {
+  _createTitle(chart, options.object!);
 }
 
 /// plugin.title.js:133 `stop(chart)`. Dart `null` stands for the
 /// `undefined` of a chart without a title block: `removeBox` then changes
 /// nothing (core.layouts.js:318-323). `delete chart.titleBlock` is the write
 /// of Dart `null`.
-void _stop(types.Chart chart, Object _, Object _) {
+void _stop(types.Chart chart, PluginHookArgs _, TitleOptions _) {
   final titleBlock = chart.titleBlock;
   layouts.removeBox(chart, titleBlock);
   chart.titleBlock = null;
@@ -329,10 +325,11 @@ void _stop(types.Chart chart, Object _, Object _) {
 /// plugin.title.js:139 `beforeUpdate(chart, _args, options)`. Without a
 /// title block, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-bool _beforeUpdate(types.Chart chart, Object _, Object options) {
+bool _beforeUpdate(types.Chart chart, UpdateHookArgs _, TitleOptions options) {
   final title = chart.titleBlock! as Title;
-  layouts.configure(chart, title, options);
-  title.options = options;
+  final resolved = options.object!;
+  layouts.configure(chart, title, resolved);
+  title.options = resolved;
   return true;
 }
 
@@ -341,12 +338,14 @@ bool _beforeUpdate(types.Chart chart, Object _, Object options) {
 ///
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
 /// upstream order. Each hook is a private function of the hook type
-/// `(chart, args, options)`: the hooks of the title read no args, so they
-/// take any args object. The key `_element: Title` of plugin.title.js:127 is
+/// `(chart, args, options)` with the argument class of its hook and the
+/// facade [TitleOptions] (Chart.js ADR 0150). The key `_element: Title` of plugin.title.js:127 is
 /// for the tests: they read `Title.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
-final title = Plugin<OptionView>(
+final title = Plugin<TitleOptions>(
   id: 'title',
+  // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+  options: TitleOptions.new,
   start: _start,
   stop: _stop,
   beforeUpdate: _beforeUpdate,

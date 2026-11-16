@@ -16,6 +16,8 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.subtitle.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show TitleOptions;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
@@ -149,22 +151,21 @@ AnyObject _startOptions(String text) => <String, Object?>{
 
 /// `plugin.<hook>(chart, args, options)`: the hook field [hook] of the
 /// native plugin (Chart.js ADR 0144) with the arguments of its hook. The
-/// hooks of the subtitle take any options object, so the call gives them
-/// the option values [options] of a Map, as the probe did.
+/// hooks of the subtitle take the facade [TitleOptions] (Chart.js ADR 0150),
+/// so the call gives them the facade over the option values [options] of a
+/// Map, as the probe gave the Map.
 void _hook(String hook, Chart chart, [AnyObject? options]) {
-  final function =
-      switch (hook) {
-            'start' => subTitle.start,
-            'stop' => subTitle.stop,
-            'beforeUpdate' => subTitle.beforeUpdate,
-            _ => throw ArgumentError.value(hook, 'hook'),
-          }!
-          as void Function(types.Chart, Object, Object);
-  function(
-    chart,
-    hook == 'beforeUpdate' ? UpdateHookArgs() : const PluginHookArgs(),
-    options ?? <String, Object?>{},
-  );
+  final view = TitleOptions(options ?? <String, Object?>{});
+  switch (hook) {
+    case 'start':
+      subTitle.start!(chart, const PluginHookArgs(), view);
+    case 'stop':
+      subTitle.stop!(chart, const PluginHookArgs(), view);
+    case 'beforeUpdate':
+      subTitle.beforeUpdate!(chart, UpdateHookArgs(), view);
+    default:
+      throw ArgumentError.value(hook, 'hook');
+  }
 }
 
 /// `chart.options.plugins` of [chart], the option resolver of the plugins.
@@ -234,28 +235,35 @@ void main() {
 
     test('the hooks are typed hook functions', () {
       // The probe output `hookLengths`: start 3, stop 1, beforeUpdate 3.
-      // Chart.js ADR 0054 §12 makes each hook a function of the hook type
-      // `(chart, args, options)`, in place of the upstream parameter counts
-      // of Chart.js ADR 0038, section 3: `fn.length` of a hook changes no
-      // behavior of Chart.js. The hooks of the subtitle read no args, so
-      // they take any args object. The `Never` parameter type of the
-      // `isNot` matcher rejects each function with one more parameter.
+      // Each hook is a function of the hook type `(chart, args, options)`,
+      // in place of the upstream parameter counts of Chart.js ADR 0038,
+      // section 3: `fn.length` of a hook changes no behavior of Chart.js.
+      // A hook takes the argument class of its hook and the facade
+      // [TitleOptions] (Chart.js ADR 0150). The `Never` parameter type of
+      // the `isNot` matcher rejects each function with one more parameter.
       for (final (hook, function) in <(String, Function?)>[
         ('start', subTitle.start),
         ('stop', subTitle.stop),
-        ('beforeUpdate', subTitle.beforeUpdate),
       ]) {
         expect(
           function,
-          isA<void Function(types.Chart, AnyObject, AnyObject)>(),
+          isA<void Function(types.Chart, PluginHookArgs, TitleOptions)>(),
           reason: hook,
         );
         expect(
           function,
-          isNot(isA<void Function(types.Chart, AnyObject, AnyObject, Never)>()),
+          isNot(
+            isA<
+              void Function(types.Chart, PluginHookArgs, TitleOptions, Never)
+            >(),
+          ),
           reason: hook,
         );
       }
+      expect(
+        subTitle.beforeUpdate,
+        isA<bool Function(types.Chart, UpdateHookArgs, TitleOptions)>(),
+      );
     });
 
     test('the defaults have the upstream keys and values', () {

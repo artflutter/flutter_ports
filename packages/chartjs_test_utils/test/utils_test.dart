@@ -81,7 +81,7 @@ void _forceRatio() {
 }
 
 /// The size of a `resize` hook, the record of `getMaximumSize`, as text.
-String _sizeText(({double width, double height}) size) =>
+String _sizeText(Size size) =>
     '${jsToString(size.width)}x${jsToString(size.height)}';
 
 /// An inline plugin that logs into [log] the hook `resize` with the size

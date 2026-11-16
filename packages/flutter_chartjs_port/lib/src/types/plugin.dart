@@ -17,6 +17,8 @@
 /// This library is a core layer.
 library;
 
+import 'dart:ui' show Size;
+
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -288,14 +290,15 @@ final class EventHookArgs({
   this;
 }
 
-/// `{size}` of `resize` (U `core.controller.js:292`).
+/// `{size}` of `resize` (U `core.controller.js:292`), with the Flutter [Size]
+/// that the option `onResize` also gets (Chart.js ADR 0150).
 ///
 /// ```dart
 /// resize: (chart, args, options) => layoutFor(args.size.width),
 /// ```
 final class ResizeHookArgs({
   /// `size`: the new size of the chart in logical pixels.
-  required final ({double width, double height}) size,
+  required final Size size,
 }) extends PluginHookArgs {
   /// The arguments of a resize.
   this;
@@ -360,6 +363,13 @@ abstract class const PluginOptions<T extends PluginOptions<T>>()
   /// These options with each field of [over] that [over] sets.
   T merge(T over);
 
+  /// `events`: the event types of the plugin, the option
+  /// `options.plugins.<id>.events` that the event filter of the chart reads
+  /// (U `core.controller.js:1170`). Dart `null` gives the `events` of the
+  /// chart. An add-on with the option overrides it with a field (Chart.js
+  /// ADR 0150).
+  List<String>? get events => null;
+
   /// [merge] for options of any type: [over] of another class replaces these
   /// options.
   @internal
@@ -396,9 +406,6 @@ final class PluginOf<O, C extends types.Chart>({
   /// Dart `null` gives the resolved options themselves: then [O] must be
   /// [ContextResolver], `Object` or `Object?`.
   final O Function(ContextResolver options)? options,
-
-  /// `events`: the event types of the plugin.
-  final List<String>? events,
 
   /// `defaults`: the default options, which the registry merges into
   /// `defaults.plugins.<id>`: a typed scope of a built-in plugin, or the

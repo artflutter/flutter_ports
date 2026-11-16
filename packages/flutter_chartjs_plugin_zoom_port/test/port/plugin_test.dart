@@ -628,4 +628,23 @@ void main() {
       expect(y.options.max, same(undefined));
     });
   });
+
+  group('the option events (Chart.js ADR 0150)', () {
+    test('merges, compares and reaches the host as a field', () {
+      const base = ZoomPluginOptions(events: ['click']);
+      expect(base.merge(const ZoomPluginOptions()).events, ['click']);
+      expect(base.merge(const ZoomPluginOptions(events: ['wheel'])).events, [
+        'wheel',
+      ]);
+      expect(base, const ZoomPluginOptions(events: ['click']));
+      expect(
+        base.hashCode,
+        const ZoomPluginOptions(events: ['click']).hashCode,
+      );
+      expect(base == const ZoomPluginOptions(), isFalse);
+      // The event filter of the chart reads the field of PluginOptions.
+      const PluginOptions<Object?> options = base;
+      expect(options.events, ['click']);
+    });
+  });
 }

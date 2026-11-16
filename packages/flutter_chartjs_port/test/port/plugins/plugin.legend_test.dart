@@ -25,6 +25,8 @@ import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show dispatchCanvasEvent;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
+    show LegendOptions;
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -491,7 +493,9 @@ void main() {
     test('draw() with display true before update throws a TypeError', () {
       // The probes drawBeforeUpdateMock and drawBeforeUpdateTop: the read
       // `columnSizes[0]` or `lineWidths[0]` of undefined.
-      for (final position in <Object?>[undefined, 'top']) {
+      // The probe drawBeforeUpdateTop gives `'top'`: the position is the
+      // enum value (row `adapt-chart-position-enum`).
+      for (final position in <Object?>[undefined, ChartPosition.top]) {
         final box = Legend((
           chart: _FakeChart(),
           options: <String, Object?>{
@@ -552,7 +556,7 @@ void main() {
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
       chart.legend = _ForeignLegend();
-      legend.stop!(chart, const PluginHookArgs(), chart.options);
+      legend.stop!(chart, const PluginHookArgs(), LegendOptions(chart.options));
       expect(chart.legend, isNull);
       expect(chart.boxes, boxes);
     });
@@ -566,13 +570,21 @@ void main() {
       // section 6.
       final chart = acquireChart(_line(false))..legend = _ForeignLegend();
       expect(
-        () => legend.beforeUpdate!(chart, UpdateHookArgs(), chart.options),
+        () => legend.beforeUpdate!(
+          chart,
+          UpdateHookArgs(),
+          LegendOptions(chart.options),
+        ),
         throwsA(isA<TypeError>()),
       );
       // The typed hook takes `(chart, args, options)` (Chart.js ADR 0054
       // §12): the TypeError comes from the cast of the legend.
       expect(
-        () => legend.afterUpdate!(chart, UpdateHookArgs(), chart.options),
+        () => legend.afterUpdate!(
+          chart,
+          UpdateHookArgs(),
+          LegendOptions(chart.options),
+        ),
         throwsA(isA<TypeError>()),
       );
       chart.legend = null;
@@ -582,7 +594,7 @@ void main() {
       // The probe stopWithoutLegend.
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
-      legend.stop!(chart, const PluginHookArgs(), chart.options);
+      legend.stop!(chart, const PluginHookArgs(), LegendOptions(chart.options));
       expect(chart.legend, isNull);
       expect(chart.boxes, boxes);
     });
@@ -592,7 +604,7 @@ void main() {
       final box = chart.legend;
       expect(box, isA<Legend>());
       expect(chart.boxes, contains(same(box)));
-      legend.stop!(chart, const PluginHookArgs(), chart.options);
+      legend.stop!(chart, const PluginHookArgs(), LegendOptions(chart.options));
       expect(chart.legend, isNull);
       expect(chart.boxes.where((b) => identical(b, box)), isEmpty);
     });
