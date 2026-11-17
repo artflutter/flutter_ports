@@ -306,6 +306,21 @@ _CategoryTraits _computeFlexCategoryTraits(
 void _parseFloatBar(Object? entry, ParsedItem item, types.Scale vScale, int i) {
   final startValue = vScale.parse(jsGetIndex(entry, 0), i);
   final endValue = vScale.parse(jsGetIndex(entry, 1), i);
+  final custom = _floatingBarOf(startValue, endValue);
+
+  // Store `barEnd` (furthest away from origin) as parsed value,
+  // to make stacking straight forward
+  item
+    ..setValue(vScale.axis, custom.barEnd)
+    ..custom = custom;
+}
+
+/// controller.bar.js:120-141, the body of `parseFloatBar` after its two
+/// parse calls: the `_custom` object of the parse results [startValue] and
+/// [endValue]. Its `barEnd` is the parsed value of the item. The native
+/// parse of a pair of numbers (Chart.js ADR 0157) calls it too.
+// DIVERGES(chartjs): adapt-native-floating-parse, one body for both parses.
+FloatingBar _floatingBarOf(Object? startValue, Object? endValue) {
   final min = math.min(jsToNumber(startValue), jsToNumber(endValue));
   final max = math.max(jsToNumber(startValue), jsToNumber(endValue));
   var barStart = min;
@@ -316,18 +331,14 @@ void _parseFloatBar(Object? entry, ParsedItem item, types.Scale vScale, int i) {
     barEnd = min;
   }
 
-  // Store `barEnd` (furthest away from origin) as parsed value,
-  // to make stacking straight forward
-  item
-    ..setValue(vScale.axis, barEnd)
-    ..custom = FloatingBar(
-      barStart: barStart,
-      barEnd: barEnd,
-      start: startValue,
-      end: endValue,
-      min: min,
-      max: max,
-    );
+  return FloatingBar(
+    barStart: barStart,
+    barEnd: barEnd,
+    start: startValue,
+    end: endValue,
+    min: min,
+    max: max,
+  );
 }
 
 /// controller.bar.js:144 `parseValue(entry, item, vScale, i)`.
@@ -359,6 +370,7 @@ List<ParsedItem> _parseArrayOrPrimitive(
   final vScale = meta.vScale;
   final labels = iScale!.getLabels();
   // DIVERGES(chartjs): adapt-numeric-category-parse, guarded native range.
+  // DIVERGES(chartjs): adapt-native-floating-parse, pairs of numbers too.
   final numeric = tryParseNumericCategories(
     iScale,
     vScale,
@@ -366,6 +378,7 @@ List<ParsedItem> _parseArrayOrPrimitive(
     data,
     start,
     count,
+    floatingBar: _floatingBarOf,
   );
   if (numeric != null) return numeric;
   final singleScale = identical(iScale, vScale);
@@ -1274,6 +1287,9 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     final begin = first;
     final stop = end;
     final values = Float64List(stop - begin);
+    // The `barStart` of each floating bar, NaN for a bar with no `_custom`.
+    // DIVERGES(chartjs): adapt-native-floating-bars, typed floating bars.
+    Float64List? starts;
     for (var i = begin; i < stop; i++) {
       final element = bars[i];
       final item = parsed[i];
@@ -1283,7 +1299,25 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       }
       if (individualOptions && element.active) return false;
       if (item is ParsedItem) {
-        if (item.hasForeign || item.hasSlot(3) || item.hasSlot(4)) return false;
+        if (item.hasForeign || item.hasSlot(4)) return false;
+        if (item.hasSlot(3)) {
+          // A floating bar of the parse, with no key that user code wrote:
+          // its two typed ends are finite, so `isFloatBar` is true.
+          final custom = item.custom;
+          if (custom is! FloatingBar || custom.hasForeign) return false;
+          final barStart = custom.barStart;
+          final barEnd = custom.barEnd;
+          if (!barStart.isFinite || !barEnd.isFinite) return false;
+          // The parsed value must still be a number: its null test comes
+          // first in the ordinary loop.
+          final value = item.valueOf(valueAxis);
+          if (value is! double || !value.isFinite) return false;
+          (starts ??= Float64List(stop - begin)
+                ..fillRange(0, stop - begin, double.nan))[i - begin] =
+              barStart;
+          values[i - begin] = barEnd;
+          continue;
+        }
       } else if (!updatingData ||
           jsTruthy(_customOf(item)) ||
           jsTruthy(stacksOf(item))) {
@@ -1331,9 +1365,23 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         : prepareNativePointContexts(this, mode);
     for (var i = begin; i < stop; i++) {
       var base = basePixel;
-      final head = chart.getDataVisibility(i)
-          ? valueScale.getPixelForValue(0.0 + values[i - begin])
-          : base;
+      final double head;
+      final barStart = starts?[i - begin] ?? double.nan;
+      if (barStart.isNaN) {
+        head = chart.getDataVisibility(i)
+            ? valueScale.getPixelForValue(0.0 + values[i - begin])
+            : base;
+      } else {
+        // controller.bar.js:582-596 for a floating bar that is not stacked:
+        // the start is `0 + barStart`, the length `barEnd - barStart`, and
+        // the `base` option does not apply.
+        final start = 0.0 + barStart;
+        final length = values[i - begin] - barStart;
+        base = valueScale.getPixelForValue(start);
+        head = chart.getDataVisibility(i)
+            ? valueScale.getPixelForValue(start + length)
+            : base;
+      }
       var length = head - base;
       if (base == actualBasePixel) {
         // Preserve the first tick-context creation at the original point.

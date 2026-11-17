@@ -429,6 +429,7 @@ FillerOptions
 FillerOptionsScope
 FillerSource
 FloatingBar
+FloatingBarOf
 FlutterPlatform
 GenericDatasetOptionsScope
 GenericElementOptions

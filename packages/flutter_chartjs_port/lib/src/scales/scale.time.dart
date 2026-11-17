@@ -462,6 +462,14 @@ class TimeScale(super.cfg) extends Scale {
     construct: (newTarget, args) => TimeScale(scaleCfgArg(args)),
   );
 
+  /// This exact built-in scale has ordinary axis and metadata reads.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
+  bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
+
+  late final bool _nativeBarIndexReads = runtimeType == TimeScale;
+
   /// The options of the scale, through the facade of the time scale options
   /// (index.d.ts:3484).
   @override

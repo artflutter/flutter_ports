@@ -127,6 +127,14 @@ class TimeSeriesScale(super.cfg) extends TimeScale {
     construct: (newTarget, args) => TimeSeriesScale(scaleCfgArg(args)),
   );
 
+  /// This exact built-in scale has ordinary axis and metadata reads.
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
+  bool get supportsNativeBarIndexReads => _nativeSeriesBarIndexReads;
+
+  late final bool _nativeSeriesBarIndexReads = runtimeType == TimeSeriesScale;
+
   /// scale.timeseries.js:50 `_table`, the lookup table.
   List<_TableEntry> _table = [];
 

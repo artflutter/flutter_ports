@@ -479,29 +479,42 @@ void main() {
     }
   });
 
-  test(
-    'preflight rejects late null/NaN/floating values without bulk writes',
-    () {
-      for (final bad in <Object?>[
-        null,
-        double.nan,
-        double.infinity,
-        <double>[1, 3],
-      ]) {
-        final values = <Object?>[1.0, 2.0, 3.0, 4.0, 5.0, bad];
-        final a = _chart(_config(values: values));
-        final b = _chart(
-          _config(values: List<Object?>.of(values)),
-          reference: true,
-        );
-        final probes = _probes(a);
-        a.update(UpdateMode.none);
-        b.update(UpdateMode.none);
-        expect(probes.every((p) => p.bulkWrites == 0), isTrue);
-        expect(_observe(a), _observe(b));
-      }
-    },
-  );
+  test('preflight rejects late null/NaN values without bulk writes', () {
+    for (final bad in <Object?>[null, double.nan, double.infinity]) {
+      final values = <Object?>[1.0, 2.0, 3.0, 4.0, 5.0, bad];
+      final a = _chart(_config(values: values));
+      final b = _chart(
+        _config(values: List<Object?>.of(values)),
+        reference: true,
+      );
+      final probes = _probes(a);
+      a.update(UpdateMode.none);
+      b.update(UpdateMode.none);
+      expect(probes.every((p) => p.bulkWrites == 0), isTrue);
+      expect(_observe(a), _observe(b));
+    }
+  });
+
+  test('a late floating value takes the bulk writes (Chart.js ADR 0157)', () {
+    final values = <Object?>[
+      1.0,
+      2.0,
+      3.0,
+      4.0,
+      5.0,
+      <double>[1, 3],
+    ];
+    final a = _chart(_config(values: values));
+    final b = _chart(
+      _config(values: List<Object?>.of(values)),
+      reference: true,
+    );
+    final probes = _probes(a);
+    a.update(UpdateMode.none);
+    b.update(UpdateMode.none);
+    expect(probes.skip(1).every((p) => p.bulkWrites == 1), isTrue);
+    expect(_observe(a), _observe(b));
+  });
 
   test('late custom element keeps all ordinary property interceptions', () {
     final a = _chart(_config());
