@@ -394,8 +394,12 @@ void main() {
           b.update(UpdateMode.none);
           expect(_observe(a), _observe(b));
         }
+        // Three updates in the mode `none` and the update of the resize in
+        // the mode `resize`: with `animation: false` each takes the fast
+        // loop (Chart.js ADR 0152). The count is an internal detail; the
+        // geometry above is the behavior.
         expect(probes.first.bulkWrites, 0);
-        expect(probes.skip(1).every((p) => p.bulkWrites == 3), isTrue);
+        expect(probes.skip(1).every((p) => p.bulkWrites == 4), isTrue);
         expect(
           identical(probes[1].borderSkipped, probes[2].borderSkipped),
           isFalse,

@@ -1,0 +1,3 @@
+# jsObjectKeys: the scale ids of the user need the JS key order of
+# getFirstScaleIdForIndexAxis; the guard reads a native scale map.
+jsObjectKeys 1

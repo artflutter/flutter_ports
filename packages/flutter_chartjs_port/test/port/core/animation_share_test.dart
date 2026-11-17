@@ -405,7 +405,9 @@ void main() {
       final chart = acquireChart(config);
       final hits = debugSharedBarAnimationHits;
       _newData(chart);
-      expect(debugSharedBarAnimationHits - hits, _count - 1);
+      // With `animation: false`, the fast loop of Chart.js ADR 0152 writes
+      // each bar after the first one, so the shared plan gives no bar.
+      expect(debugSharedBarAnimationHits - hits, 0);
       expect(animator.running(chart), isFalse);
       final twin = acquireChart(_bar()(log, twin: false))
         ..update(UpdateMode.none);

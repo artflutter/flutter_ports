@@ -47,6 +47,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
 import 'package:flutter_chartjs_port/src/core/animation_share.dart'
     show SharedBarAnimations;
+import 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart'
+    show fastStackLoopIsNative;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
@@ -328,6 +330,45 @@ StackEntry _getOrCreateStack(
   return subStack[key] ??= StackEntry();
 }
 
+/// The sub-stack of [stackKey] in [stacks], as `getOrCreateStack` reads
+/// it (core.datasetController.js:137-138).
+Map<String, StackEntry> _subStackOf(AnyObject stacks, String stackKey) =>
+    switch (stacks[stackKey]) {
+      final Map<String, StackEntry> sub => sub,
+      _ => stacks[stackKey] = <String, StackEntry>{},
+    };
+
+/// The stack object of [indexValue] in the sub-stack [subStack], as
+/// `getOrCreateStack` makes it (core.datasetController.js:139-140).
+StackEntry _getOrCreateSubStackEntry(
+  Map<String, StackEntry> subStack,
+  Object? indexValue,
+) {
+  final key = indexValue is double
+      ? _numberKey(indexValue)
+      : jsToString(indexValue);
+  return subStack[key] ??= StackEntry();
+}
+
+/// The dataset indexes of `vScale.getMatchingVisibleMetas(type).reverse()`
+/// of `getLastIndexInStack`.
+List<int> _reversedVisibleIndices(types.Scale vScale, String type) => [
+  for (final meta in vScale.getMatchingVisibleMetas(type).reversed) meta.index,
+];
+
+/// `getLastIndexInStack` over the dataset indexes [reversed] of
+/// [_reversedVisibleIndices], read one time for the loop of `updateStacks`.
+int? _lastIndexIn(StackEntry stack, List<int> reversed, bool positive) {
+  for (var i = 0; i < reversed.length; i++) {
+    final index = reversed[i];
+    final value = jsToNumber(_indexValueOf(stack.datasetValues, index));
+    if ((positive && value > 0) || (!positive && value < 0)) {
+      return index;
+    }
+  }
+  return null;
+}
+
 /// core.datasetController.js:141 `getLastIndexInStack`.
 ///
 /// `value > 0` and `value < 0` compare the `ToNumber` of the stack value
@@ -512,13 +553,27 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
   final vAxis = vScale.axis;
   final key = _getStackKey(iScale, vScale, meta);
   final ilen = parsed.length;
+  // DIVERGES(chartjs): adapt-dense-index-values, one read of the visible
+  // metas and of the sub-stack when no user code runs in the loop. A branch
+  // that can run user code drops both: the next item reads them again.
+  var visible = ilen > 0 && fastStackLoopIsNative(controller, parsed)
+      ? _reversedVisibleIndices(vScale, meta.type)
+      : null;
+  // The sub-stack is read at the first item, as `getOrCreateStack` does:
+  // a dataset with no item makes no sub-stack.
+  Map<String, StackEntry>? subStack;
 
   for (var i = 0; i < ilen; ++i) {
     final item = parsed[i];
     final index = parsedValueOf(item, iAxis);
     final value = parsedValueOf(item, vAxis);
     final itemStacks = _itemStacksOf(item);
-    final stack = _getOrCreateStack(stacks, key, index);
+    final stack = visible != null
+        ? _getOrCreateSubStackEntry(
+            subStack ??= _subStackOf(stacks, key),
+            index,
+          )
+        : _getOrCreateStack(stacks, key, index);
     if (itemStacks is ItemStacks) {
       itemStacks.setEntry(vAxis, stack);
     } else {
@@ -530,9 +585,15 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
     }
     _setIndexValue(stack.datasetValues, datasetIndex, value);
 
-    stack
-      ..top = _getLastIndexInStack(stack, vScale, true, meta.type)
-      ..bottom = _getLastIndexInStack(stack, vScale, false, meta.type);
+    if (visible != null) {
+      stack
+        ..top = _lastIndexIn(stack, visible, true)
+        ..bottom = _lastIndexIn(stack, visible, false);
+    } else {
+      stack
+        ..top = _getLastIndexInStack(stack, vScale, true, meta.type)
+        ..bottom = _getLastIndexInStack(stack, vScale, false, meta.type);
+    }
 
     // `stack._visualValues || (stack._visualValues = {})`.
     final visualValues = stack.visualValues;
@@ -543,6 +604,9 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
       // write by name, as upstream.
       final other = stack.jsRead('_visualValues');
       if (jsTruthy(other)) {
+        // The write into an object of the user can run user code.
+        visible = null;
+        subStack = null;
         setStackValue(other, datasetIndex, value);
       } else {
         _setIndexValue(stack.visualValues = IndexValues(), datasetIndex, value);
@@ -1737,6 +1801,33 @@ class DatasetController(
     return _applyStack(stack, value, meta.index, mode: mode);
   }
 
+  /// The dataset indexes of the visible metas in their sorted order: the
+  /// `getSortedDatasetIndices(chart, true)` of [applyStack].
+  @internal
+  List<int> sortedVisibleDatasetIndices() =>
+      _getSortedDatasetIndices(chart, true);
+
+  /// [applyStack] with the dataset indexes [indexes] of
+  /// [sortedVisibleDatasetIndices], read one time for a loop that runs no
+  /// user code (Chart.js ADR 0152). The result is the result of
+  /// [applyStack].
+  // DIVERGES(chartjs): adapt-bulk-bar-update, the sorted indexes read once.
+  @internal
+  Object? applyStackWith(
+    types.Scale scale,
+    Object? parsed,
+    types.StackMode? mode,
+    List<int> indexes,
+  ) {
+    final axis = scale.axis;
+    final value = parsedValueOf(parsed, axis);
+    final stack = DatasetStack(
+      indexes,
+      visualValuesOf(axisStackOf(stacksOf(parsed), axis)),
+    );
+    return _applyStack(stack, value, cachedMeta.index, mode: mode);
+  }
+
   /// core.datasetController.js:607 `updateRangeFromParsed(range, scale,
   /// parsed, stack)`.
   /// @protected
@@ -2362,6 +2453,13 @@ class DatasetController(
     }
     return animations;
   }
+
+  /// Whether [resolveAnimations] holds no animations of [transition]. Then,
+  /// with the chart option `animation` equal to `false`, it gives a new empty
+  /// `Animations` at each call (Chart.js ADR 0152).
+  @internal
+  bool hasNoCachedAnimations(String transition) =>
+      !_cachedAnimations.containsKey(transition);
 
   /// core.datasetController.js:867 `getSharedOptions(options)`.
   ///

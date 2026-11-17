@@ -154,4 +154,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0149](0149-bar-chart-small-costs.md) Four small costs of a bar chart: proposed, supersedes 0054, 0070, 0106.
 - [0150](0150-typed-plugin-options.md) Typed plugin options: accepted, supersedes 0144, 0148.
 - [0151](0151-shared-bar-animation-options.md) Shared animation options of a bar update: proposed, supersedes 0053, 0054, 0149.
+- [0152](0152-fast-bar-loop-modes-datasets-stacks.md) The fast bar loop for update modes, several datasets and stacks: proposed, supersedes 0054, 0068, 0069, 0074.
 <!-- adr-index:end -->

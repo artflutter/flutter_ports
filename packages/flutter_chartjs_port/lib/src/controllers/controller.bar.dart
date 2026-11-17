@@ -46,6 +46,7 @@ import 'dart:typed_data';
 import 'package:flutter_chartjs_port/src/core/animation_share.dart'
     show SharedBarAnimations;
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+import 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
@@ -123,6 +124,12 @@ typedef _Ruler = ({
   Object? grouped,
   double ratio,
 });
+
+/// The result of the search of `_calculateBarIndexPixels` for the axes and
+/// the stacks of a dataset, when the search reads no data index: the axis
+/// count and the stack index with the axis number. `multi` is false for the
+/// proof of one dataset (Chart.js ADRs 0068 and 0152).
+typedef _SearchPlan = ({double axisCount, double stackIndex, bool multi});
 
 /// controller.bar.js:76-80 and :110-114 the object `{chunk, ratio, start}`
 /// of `computeFitCategoryTraits` and `computeFlexCategoryTraits`.
@@ -925,13 +932,18 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     final ruler = _getRuler();
     final (:sharedOptions, :includeOptions) = getSharedOptions_(start, mode);
     final vAxis = vScale.axis;
+    // DIVERGES(chartjs): adapt-bulk-bar-update, one search for the loop.
+    _SearchPlan? plan;
+    // The sorted visible dataset indexes of `applyStack`, read one time with
+    // the plan for a stacked dataset.
+    List<int>? stackIndexes;
 
     for (var i = start; i < start + count; i++) {
       final parsed = getParsed(i);
       final vpixels = reset || isNullOrUndef(parsedValueOf(parsed, vAxis))
           ? (size: double.nan, base: base, head: base, center: double.nan)
-          : _calculateBarValuePixels(i);
-      final ipixels = _calculateBarIndexPixels(i, ruler);
+          : _calculateBarValuePixels(i, stackIndexes);
+      final ipixels = _calculateBarIndexPixels(i, ruler, plan);
       final itemStacks = stacksOf(parsed);
       // `(parsed._stacks || {})[vScale.axis]`: the read of the empty object
       // gives `undefined` (Chart.js ADR 0036, section 8).
@@ -971,7 +983,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       // Qualification for the remainder runs no user code and writes nothing.
       // DIVERGES(chartjs): adapt-bulk-bar-update, guarded numeric remainder.
       if (i == start &&
-          mode == 'none' &&
+          _writesDirectly(mode) &&
           includeOptions &&
           sharedOptions is BarOptions &&
           _updateBulk(
@@ -983,13 +995,14 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
             vAxis,
             horizontal,
             sharedOptions,
+            mode: mode,
           )) {
         return;
       }
       // DIVERGES(chartjs): adapt-prepared-indexed-options, varying colors do
       // not prevent native geometry when every remaining read is effect-free.
       if (i == start &&
-          mode == 'none' &&
+          _writesDirectly(mode) &&
           includeOptions &&
           sharedOptions == null &&
           options is BarOptions &&
@@ -1003,8 +1016,24 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
             horizontal,
             options,
             individualOptions: true,
+            mode: mode,
           )) {
         return;
+      }
+      // The rest keeps the ordinary loop, with one search of the axes and
+      // the stacks when no user code runs until the last bar (Chart.js ADR
+      // 0152), for example for stacked datasets.
+      if (i == start &&
+          includeOptions &&
+          sharedOptions is BarOptions &&
+          _writesDirectly(mode)) {
+        plan = _searchPlan(bars, i + 1, start + count, ruler, vScale);
+        if (plan != null) {
+          fastBarPlansTaken++;
+          if (cachedMeta.stacked != types.StackMode.off) {
+            stackIndexes = sortedVisibleDatasetIndices();
+          }
+        }
       }
     }
   }
@@ -1021,6 +1050,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     bool horizontal,
     BarOptions shared, {
     bool individualOptions = false,
+    String mode = 'none',
   }) {
     if (super.runtimeType != BarController) return false;
     final elementClass = dataElementType;
@@ -1042,13 +1072,15 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         !sameAxis(valueScale.axis, valueAxis) ||
         !(valueAxis is XAxis || valueAxis is YAxis) ||
         cachedMeta.stacked != types.StackMode.off ||
-        !identical(ruler.grouped, true) ||
-        !(owner as SingleBarIndexSource).hasSingleBarIndexLayout(
-          this,
-          ruler.scale,
-        )) {
+        !identical(ruler.grouped, true)) {
       return false;
     }
+    final layout = _fastLayout(
+      owner as SingleBarIndexSource,
+      ruler,
+      individualOptions,
+    );
+    if (layout == null) return false;
     final settings = options.cachedBulkBarOptions;
     if (settings == null ||
         !(valueScale as BulkBarScale).hasStaticBulkBarGrid) {
@@ -1123,7 +1155,9 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       if (value is! int) return false;
       values[i - begin] = value * 1.0;
     }
-    final stacks = ruler.stackCount;
+    // DIVERGES(chartjs): adapt-bulk-bar-update, one axis and stack search.
+    final stackIndex = layout.stackIndex;
+    final stacks = ruler.stackCount * layout.axisCount;
     if (!stacks.isFinite || stacks <= 0) return false;
     final double size;
     final double ratio;
@@ -1147,7 +1181,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     // DIVERGES(chartjs): adapt-context-bulk-refresh, the data chain read once.
     final contexts = resolveColors == null || !identical(bars, cachedMeta.data)
         ? null
-        : prepareNativePointContexts(this, 'none');
+        : prepareNativePointContexts(this, mode);
     for (var i = begin; i < stop; i++) {
       var base = basePixel;
       final head = chart.getDataVisibility(i)
@@ -1161,16 +1195,16 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         base += halfGrid;
         length -= halfGrid;
       }
-      // Keep upstream operation order, including the zero stack-index term.
+      // Keep upstream operation order, including a zero stack-index term.
       final rangeStart = ruler.pixels[i] - size / 2;
-      final center = rangeStart + chunk * 0.0 + chunk / 2;
+      final center = rangeStart + chunk * stackIndex + chunk / 2;
       // Context refresh remains after geometry and before the option stores.
       // Eligibility proved native config/data/element reads and no callbacks.
       final BarOptions elementOptions;
       if (resolveColors != null) {
         // The preflight of this loop read the capability of each bar.
         if (contexts?.readQualified(bars[i], i) == null) {
-          getContext(i, false, 'none');
+          getContext(i, false, mode);
         }
         elementOptions = resolveColors(i);
       } else {
@@ -1205,7 +1239,108 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         inflate: inflate,
       );
     }
+    if (mode != 'none') fastBarModesTaken++;
+    if (layout.multi) fastBarMultiTaken++;
     return true;
+  }
+
+  /// Whether [updateElement] writes the properties of a bar directly in the
+  /// update mode [mode]: the mode `none`, or another mode with the chart
+  /// option `animation` equal to `false` (Chart.js ADR 0152).
+  bool _writesDirectly(String mode) =>
+      mode == 'none' ||
+      (hasNoCachedAnimations(mode) && fastBarModeWritesDirectly(chart, mode));
+
+  /// The layout proof of the fast loop. The proof of one dataset comes first
+  /// (Chart.js ADR 0068): it gives the axis count 1 and the stack index 0. A
+  /// chart with several datasets passes when the search of
+  /// [_calculateBarIndexPixels] for the axes and the stacks runs no user code
+  /// ([fastBarSearchIsNative]): then this function runs that search one time.
+  /// The caller runs no user code until its last bar, so the search of each
+  /// bar would get the same result (Chart.js ADR 0152). Dart `null` declines.
+  _SearchPlan? _fastLayout(
+    SingleBarIndexSource source,
+    _Ruler ruler,
+    bool individualOptions,
+  ) {
+    if (source.hasSingleBarIndexLayout(this, ruler.scale)) {
+      return (axisCount: 1.0, stackIndex: 0.0, multi: false);
+    }
+    if (individualOptions || !fastBarSearchIsNative(this, ruler.scale)) {
+      return null;
+    }
+    // The lines of `_calculateBarIndexPixels`, with no data index.
+    final axisCount = _getAxisCount();
+    final axisID = _indexAxisIdOf(getDataset());
+    final axes = _getAxis();
+    final axisKey = valueOrDefault(
+      axisID,
+      getFirstScaleIdForIndexAxis() ?? undefined,
+    );
+    final axisNumber = axes.indexWhere((key) => key == axisKey);
+    final stackIndex =
+        getStackIndex(index, cachedMeta.stack ?? undefined) + axisNumber;
+    if (!axisCount.isFinite || axisCount < 1 || !stackIndex.isFinite) {
+      return null;
+    }
+    return (axisCount: axisCount, stackIndex: stackIndex, multi: true);
+  }
+
+  /// The search plan of the ordinary loop for the bars [first] to [end] of
+  /// a chart with several datasets, for example stacked datasets: the result
+  /// of [_fastLayout], or Dart `null`.
+  ///
+  /// The caller gives each bar the shared options of the update, and the mode
+  /// writes the properties directly ([_writesDirectly]). This guard proves
+  /// that no user code runs in the rest of the ordinary loop: the chart, the
+  /// value scale and the elements are the built-in classes, the dataset
+  /// options and the grid are cached plain values, each item is a typed
+  /// parsed item with no foreign key and no floating bar, and the dataset
+  /// objects are native containers. Then the visible datasets, the stacks and
+  /// the axes do not change until the last bar.
+  _SearchPlan? _searchPlan(
+    List<types.Element> bars,
+    int first,
+    int end,
+    _Ruler ruler,
+    types.Scale valueScale,
+  ) {
+    if (super.runtimeType != BarController || first >= end) return null;
+    final owner = chart;
+    if (owner is! BulkBarChart ||
+        !(owner as BulkBarChart).supportsBulkBarUpdate ||
+        owner is! SingleBarIndexSource ||
+        valueScale is! BulkBarScale ||
+        !(valueScale as BulkBarScale).supportsBulkBarUpdate ||
+        !(valueScale as BulkBarScale).hasStaticBulkBarGrid ||
+        !identical(valueScale.chart, owner) ||
+        !identical(cachedMeta.vScale, valueScale) ||
+        !identical(ruler.grouped, true) ||
+        options.runtimeType != OptionView ||
+        options.cachedBulkBarOptions == null) {
+      return null;
+    }
+    final parsed = cachedMeta.parsed;
+    if (!nativeBulkBarLists(bars, parsed) ||
+        end > bars.length ||
+        end > parsed.length) {
+      return null;
+    }
+    for (var i = first; i < end; i++) {
+      final element = bars[i];
+      final item = parsed[i];
+      if (element is! BulkBarElement ||
+          !(element as BulkBarElement).supportsBulkBarWrites ||
+          item is! ParsedItem ||
+          item.hasForeign ||
+          item.hasSlot(3)) {
+        return null;
+      }
+    }
+    // `applyStack` reads the option `hidden` of each dataset object.
+    if (!fastBarHiddenReadsAreNative(chart)) return null;
+    final plan = _fastLayout(owner as SingleBarIndexSource, ruler, false);
+    return plan != null && plan.multi ? plan : null;
   }
 
   /// controller.bar.js:434 `_getStacks(last, dataIndex)`.
@@ -1475,7 +1610,11 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// `getValueForPixel` gives Dart `null` for the JS `undefined` of the
   /// base scale: the subtraction gives NaN.
-  _BarPixels _calculateBarValuePixels(int index) {
+  ///
+  /// [stackIndexes] are the sorted visible dataset indexes of [applyStack],
+  /// read one time for the loop of [updateElements] with the search plan
+  /// (Chart.js ADR 0152): no user code runs between two bars there.
+  _BarPixels _calculateBarValuePixels(int index, [List<int>? stackIndexes]) {
     final vScale = cachedMeta.vScale;
     final stacked = cachedMeta.stacked;
     final datasetIndex = cachedMeta.index;
@@ -1489,7 +1628,9 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     var value = parsedValueOf(parsed, vAxis);
     Object? start = 0.0;
     var length = stacked != types.StackMode.off
-        ? applyStack(vScale, parsed, stacked)
+        ? (stackIndexes != null
+              ? applyStackWith(vScale, parsed, stacked, stackIndexes)
+              : applyStack(vScale, parsed, stacked))
         : value;
     double head;
     double size;
@@ -1580,7 +1721,15 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// `ToNumber` once, at the read: both `Math.min` calls apply it. `indexOf`
   /// on the axis keys compares with `===`: a key equals only the same
   /// string.
-  _BarPixels _calculateBarIndexPixels(int index, _Ruler ruler) {
+  ///
+  /// [plan] is the result of the search for the axes and the stacks of the
+  /// update, from [_searchPlan]: the search of this bar gives the same result
+  /// (Chart.js ADR 0152).
+  _BarPixels _calculateBarIndexPixels(
+    int index,
+    _Ruler ruler, [
+    _SearchPlan? plan,
+  ]) {
     final scale = ruler.scale;
     final options = this.options;
     final skipNull = options.readKey(OptionKey.skipNull);
@@ -1600,7 +1749,11 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         !jsTruthy(skipNull) &&
         source != null &&
         source.hasSingleBarIndexLayout(this, scale);
-    final axisCount = direct ? 1.0 : _getAxisCount();
+    final axisCount = plan != null
+        ? plan.axisCount
+        : direct
+        ? 1.0
+        : _getAxisCount();
     final pureTraits =
         direct &&
         options.runtimeType == OptionView &&
@@ -1625,7 +1778,9 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       final double stackIndex;
       // Range options may run user callbacks and mutate axes or datasets.
       // Observe the topology again exactly where the original does.
-      if (!jsTruthy(skipNull) &&
+      if (plan != null) {
+        stackIndex = plan.stackIndex;
+      } else if (!jsTruthy(skipNull) &&
           source != null &&
           (pureTraits || source.hasSingleBarIndexLayout(this, scale))) {
         stackIndex = 0;

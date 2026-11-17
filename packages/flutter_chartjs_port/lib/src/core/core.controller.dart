@@ -39,6 +39,8 @@ import 'dart:ui' show Size;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
+import 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart'
+    show fastBarKeepsRulers;
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
@@ -1551,10 +1553,12 @@ class Chart(
       for (final scale in scales.values) {
         scale.cache = types.ScaleCache();
       }
+      final keepRulers = reuseLayout && fastBarKeepsRulers(controllers);
       for (final controller in controllers) {
         controller
           ..updatingData = true
-          ..reuseDataLayout = reuseLayout && controllers.length == 1;
+          ..reuseDataLayout =
+              reuseLayout && (controllers.length == 1 || keepRulers);
       }
       if (!_updateDatasets('none', configure: false)) _invalidateDataUpdate();
       notifyPlugins(

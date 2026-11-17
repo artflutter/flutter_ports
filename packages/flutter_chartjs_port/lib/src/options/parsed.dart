@@ -23,6 +23,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/typed_record.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:meta/meta.dart' show internal;
 
 /// One parsed item of a dataset (U `core.datasetController.js:502-578`):
 /// the object that `getParsed(index)` gives each time, and that a
@@ -410,32 +411,116 @@ final class IndexValues() implements JsObjectFace {
   /// An object without own keys.
   this;
 
-  final SplayTreeMap<int, Object?> _values = SplayTreeMap<int, Object?>();
+  // DIVERGES(chartjs): adapt-dense-index-values, a dense list by index.
+  // The keys are dataset indexes: small and dense. [_dense] holds the value
+  // of each index below its length, or [_absent]; it is null until the
+  // first write. A negative key, a key past [_denseLimit], or a key far past
+  // the count of the own indices ([_fitsDense]) moves all values into
+  // [_sparse], which keeps the ascending key order of `Object.keys` too.
+  List<Object?>? _dense;
+  SplayTreeMap<int, Object?>? _sparse;
+  int _count = 0;
 
   Map<String, Object?>? _named;
 
+  /// The largest index that the dense list takes.
+  static const int _denseLimit = 1024;
+
+  /// Whether the dense list grows to take the index [index] past its end.
+  /// The list stays at most about two slots for each own index: a stack that
+  /// few datasets with high indexes share keeps the tree.
+  bool _fitsDense(int index) =>
+      index >= 0 && index <= _denseLimit && index <= 2 * _count + 16;
+
   /// Whether the object owns the index [index].
-  bool hasIndex(int index) => _values.containsKey(index);
+  bool hasIndex(int index) {
+    final sparse = _sparse;
+    if (sparse != null) return sparse.containsKey(index);
+    final dense = _dense;
+    return dense != null &&
+        index >= 0 &&
+        index < dense.length &&
+        !identical(dense[index], _absent);
+  }
 
   /// `object[index]`, or [undefined] when absent.
-  Object? valueAt(int index) =>
-      _values.containsKey(index) ? _values[index] : undefined;
+  Object? valueAt(int index) {
+    final sparse = _sparse;
+    if (sparse != null) {
+      return sparse.containsKey(index) ? sparse[index] : undefined;
+    }
+    final dense = _dense;
+    if (dense == null || index < 0 || index >= dense.length) return undefined;
+    final value = dense[index];
+    return identical(value, _absent) ? undefined : value;
+  }
 
   /// `object[index] = value`.
-  void setAt(int index, Object? value) => _values[index] = value;
+  void setAt(int index, Object? value) {
+    final sparse = _sparse;
+    if (sparse != null) {
+      sparse[index] = value;
+      return;
+    }
+    final dense = _dense;
+    if (dense != null && index >= 0 && index < dense.length) {
+      if (identical(dense[index], _absent)) _count++;
+      dense[index] = value;
+      return;
+    }
+    if (_fitsDense(index)) {
+      final list = dense ?? (_dense = <Object?>[]);
+      while (list.length < index) {
+        list.add(_absent);
+      }
+      list.add(value);
+      _count++;
+      return;
+    }
+    // A negative, a large or a far index: the tree keeps each key.
+    final tree = _sparse = SplayTreeMap<int, Object?>();
+    if (dense != null) {
+      for (var i = 0; i < dense.length; i++) {
+        if (!identical(dense[i], _absent)) tree[i] = dense[i];
+      }
+    }
+    tree[index] = value;
+    _dense = null;
+    _count = 0;
+  }
 
   /// `delete object[index]`. Returns whether the object owned [index].
   bool removeAt(int index) {
-    if (!_values.containsKey(index)) return false;
-    _values.remove(index);
+    final sparse = _sparse;
+    if (sparse != null) {
+      if (!sparse.containsKey(index)) return false;
+      sparse.remove(index);
+      return true;
+    }
+    if (!hasIndex(index)) return false;
+    _dense![index] = _absent;
+    _count--;
     return true;
   }
 
+  /// The slots of the dense list, 0 in the tree form. For tests.
+  @internal
+  int get denseSlots => _dense?.length ?? 0;
+
   /// The owned indices in ascending order.
-  Iterable<int> get indices => _values.keys;
+  Iterable<int> get indices {
+    final sparse = _sparse;
+    if (sparse != null) return sparse.keys;
+    final dense = _dense;
+    if (dense == null) return const <int>[];
+    return [
+      for (var i = 0; i < dense.length; i++)
+        if (!identical(dense[i], _absent)) i,
+    ];
+  }
 
   /// The count of the own keys.
-  int get ownKeyCount => _values.length + (_named?.length ?? 0);
+  int get ownKeyCount => (_sparse?.length ?? _count) + (_named?.length ?? 0);
 
   @override
   Object? jsRead(String name) {
@@ -449,7 +534,7 @@ final class IndexValues() implements JsObjectFace {
   void jsWrite(String name, Object? value) {
     final index = jsArrayIndex(name);
     if (index != null) {
-      _values[index] = value;
+      setAt(index, value);
     } else {
       (_named ??= <String, Object?>{})[name] = value;
     }
@@ -463,7 +548,7 @@ final class IndexValues() implements JsObjectFace {
 
   @override
   List<String> jsKeys() => [
-    for (final index in _values.keys) '$index',
+    for (final index in indices) '$index',
     ...?_named?.keys,
   ];
 
@@ -471,7 +556,7 @@ final class IndexValues() implements JsObjectFace {
   bool jsHas(String name) {
     final index = jsArrayIndex(name);
     return index != null
-        ? _values.containsKey(index)
+        ? hasIndex(index)
         : (_named?.containsKey(name) ?? false);
   }
 
@@ -480,13 +565,18 @@ final class IndexValues() implements JsObjectFace {
     if (!jsHas(name)) return false;
     final index = jsArrayIndex(name);
     if (index != null) {
-      _values.remove(index);
+      removeAt(index);
     } else {
       _named!.remove(name);
     }
     return true;
   }
 }
+
+/// The marker of an absent index in the dense list of [IndexValues].
+const Object _absent = _AbsentIndex();
+
+final class const _AbsentIndex();
 
 /// `item._custom` of a floating bar (U `controller.bar.js:117-142`):
 /// `{barStart, barEnd, start, end, min, max}` in this key order.
