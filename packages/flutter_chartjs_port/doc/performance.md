@@ -8758,16 +8758,7 @@ The benchmark lab at 20,000 bars on the Pixel 8a (two cells before, one cell aft
   differ by 0.4 ms. The Mac showed no raster change, and the Pixel showed a fall. The recorded operations are those
   of before. No raster profile ran, so the cause is not known.
 
-**Not in the port: an index of the `skipNull` search.** With `skipNull`, `_getStacks` runs two times for each bar,
-and each run searches the parsed list of each bar dataset from its start, so the count of the visits grows with the
-square of the bar count. A prototype read one item of a list that a walk proved positional. On the Pixel 8a, one
-full update of 3 datasets of 5,000 bars took 2,991 ms before and 115 ms with the prototype (one window for each side,
-with a capped big core). The form is not in the port: its guards did not prove the upstream result. Code of a program
-that runs between two bars of one update can replace an earlier slot of a parsed List, and the upstream search then
-finds another item than the index. The guard that it needs is a proof that no code of a program runs between two
-bars: the exact classes of the chart, the controllers, the scales and the elements, each option that the loop reads
-(a function in a dataset option, in `grid.lineWidth` or in `stacked` runs there), and data objects of the SDK
-classes. The patch and its notes are in `.handover/bar-perf-2026-11-16/impl/` (`skipnull.diff`, `skipnull.md`).
+**The index of the `skipNull` search.** §78 has it, with the guard of Chart.js ADR 0153.
 
 ## 77. The animation options of a bar update: one resolution for each update
 
@@ -8805,3 +8796,27 @@ value is an object (`Animations.holdsPlainValues`). The modes `reset` and `none`
 - No run timed the production form. The night run of 2026-11-17 measures it with the bench windows
   `barchart.motion_n1000`, `barchart.motion_n20000` and `barchart.animframe_n1000` (a control: the animator tick
   does not change), and the lab cells `1000:n` and `20000:n`.
+
+## 78. The skipNull search in one pass
+
+**What was slow.** With `skipNull`, each bar calls `_getStacks` two times, and each call searches the parsed list of
+each bar dataset from its start (controller.bar.js:443-450). The count of the visits grows with the square of the
+bar count. Upstream has the same search.
+
+**The form.** Chart.js ADR 0153: one index for each `update` call proves each parsed list positional in one walk, and
+then reads one item for each search. A test of the chart at the first proof, a proof of each bar list and its items
+(no `parsing: false`, no Map of the app, no object value), and the count of the calls of the JS runtime
+(`JsFunction.calls`) prove that no code of the app writes a parsed List while the index lives. Each other
+case keeps the upstream search. Row `adapt-bar-skip-null-index`.
+
+**Visits.** One `update('none')` of 3 datasets with `skipNull: true` and one null value in ten, typed config, hidden
+scales. The debug build counts each parsed item that the search or the index reads
+(`BarSkipNullIndex.debugVisits`).
+
+- 3 x 1,000 bars: 7,657,000 visits with the upstream search, 24,300 with the index.
+- 3 x 5,000 bars: 191,285,000 visits with the upstream search, 121,500 with the index.
+
+**Time.** No bench window ran on the production form yet. The host test run (JIT, debug, asserts on) took 1,330 ms
+for the update of 3 x 5,000 bars with the search and 50 ms with the index; these are not frame figures. The
+prototype on the Pixel 8a: 2,991 to 115 ms for one full update of 3 x 5,000 bars (§76). The figures of the
+production form wait for a run of the bench window `skipnull`.

@@ -48,6 +48,7 @@ import 'package:flutter_chartjs_port/src/core/animation_share.dart'
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
+import 'package:flutter_chartjs_port/src/core/bar_skip_null.dart';
 import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
@@ -65,12 +66,12 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
         stacksOf,
         visualValuesOf;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeDataUpdateList;
+    show nativeDataUpdateList, nativeDataUpdateObject;
 import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'
     show prepareNativePointContexts;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show BarOptions;
+    show BarOptions, ElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show arrayUnique;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -88,6 +89,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
+import 'package:flutter_chartjs_port/src/options/option_scope.dart'
+    show OptionScope;
 import 'package:flutter_chartjs_port/src/options/parsed.dart'
     show FloatingBar, ParsedItem, StackEntry;
 import 'package:flutter_chartjs_port/src/options/props.dart'
@@ -899,16 +902,160 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       mode,
       exactClass: _nativeBarIndexReads,
     );
-    if (shared == null) {
+    // DIVERGES(chartjs): adapt-bar-skip-null-index, one index of the
+    // `skipNull` search for this update. Each other case has no index.
+    final skipNullIndex =
+        _nativeBarIndexReads &&
+        BarSkipNullIndex.applies(mode, meta.iScale, meta.vScale);
+    if (shared == null && !skipNullIndex) {
       updateElements(meta.data, 0, meta.data.length, mode);
       return;
     }
     sharedAnimations = shared;
+    if (skipNullIndex) {
+      _skipNullIndex = BarSkipNullIndex(_skipNullIndexQualifies);
+    }
     try {
       updateElements(meta.data, 0, meta.data.length, mode);
     } finally {
       sharedAnimations = null;
+      _skipNullIndex = null;
     }
+  }
+
+  /// The index of the `skipNull` search of the running [update], else Dart
+  /// `null`.
+  BarSkipNullIndex? _skipNullIndex;
+
+  /// The resolve of the options of a bar can run code of the app, which can
+  /// write a parsed list. So it ends the proofs of [_skipNullIndex] before
+  /// the resolve: the upstream search takes the rest of the update.
+  @override
+  ElementOptions resolveDataElementOptions(int index, [String? mode]) {
+    _skipNullIndex?.optionRead();
+    return super.resolveDataElementOptions(index, mode);
+  }
+
+  /// The option keys of this controller that the bar loop of [update] reads
+  /// (controller.bar.js:563-660).
+  static const List<OptionKey> _skipNullLoopKeys = [
+    OptionKey.base,
+    OptionKey.minBarLength,
+    OptionKey.skipNull,
+    OptionKey.maxBarThickness,
+    OptionKey.barThickness,
+    OptionKey.categoryPercentage,
+    OptionKey.barPercentage,
+    OptionKey.grouped,
+  ];
+
+  /// Whether no code of the app can run between two bars of this update,
+  /// except a function value through the JS runtime ([BarSkipNullIndex]
+  /// counts it) and the resolve of the options of one bar (it ends the
+  /// index). It tests each class, container and option scope that the bar
+  /// loop reaches: the chart, its configuration, the data object, the
+  /// dataset objects and their List, each scale, each bar controller and its
+  /// options, the chart options, the grid options of the value scale and the
+  /// elements of this dataset. Last, it proves the parsed list of each bar
+  /// dataset, with each item and its values ([BarSkipNullIndex.proveAll]).
+  /// It runs no code of the app.
+  bool _skipNullIndexQualifies() {
+    final chart = this.chart;
+    final meta = cachedMeta;
+    final vScale = meta.vScale;
+    final iScale = meta.iScale;
+    // The chart reads of the loop (data, config, options, scales, metas,
+    // visibility, contexts) have the behavior of the exact chart.
+    if (chart is! NativeBarIndexReads ||
+        !(chart as NativeBarIndexReads).supportsNativeBarIndexReads ||
+        chart is! BulkBarChart ||
+        !(chart as BulkBarChart).supportsBulkBarUpdate) {
+      return false;
+    }
+    final config = chart.config;
+    if (config is! Config || !config.supportsDataUpdates) return false;
+    // The data object, the dataset List and each dataset object: `_getAxis`,
+    // `getDataset` and `isDatasetVisible` read them by name.
+    final data = chart.data;
+    if (!nativeDataUpdateObject(data) ||
+        (data is OptionScope && data.routeOf('datasets') != null)) {
+      return false;
+    }
+    final datasets = readOption(data, OptionKey.datasets);
+    if (datasets is! List<Object?> || !nativeDataUpdateList(datasets)) {
+      return false;
+    }
+    for (final dataset in datasets) {
+      if (dataset == null) continue;
+      if (!nativeDataUpdateObject(dataset)) return false;
+      if (dataset is OptionScope &&
+          (dataset.routeOf('xAxisID') != null ||
+              dataset.routeOf('yAxisID') != null ||
+              dataset.routeOf('hidden') != null)) {
+        return false;
+      }
+    }
+    // Each scale: `_getAxis` reads the axis of each one.
+    for (final scale in chart.scales.values) {
+      if (!BarSkipNullIndex.exactScale(scale)) return false;
+    }
+    if (!BarSkipNullIndex.exactScale(iScale) ||
+        !BarSkipNullIndex.exactScale(vScale)) {
+      return false;
+    }
+    // Each bar controller: `_getStacks` reads its options and its meta.
+    final barMetas = <types.ChartMeta>[];
+    for (final other in chart.getSortedDatasetMetas(false)) {
+      final controller = other.controller;
+      if (controller == null) return false;
+      if (other.type != meta.type) continue;
+      barMetas.add(other);
+      if (controller.runtimeType != BarController) return false;
+      final options = controller.options;
+      if (options is! OptionView ||
+          !options.rawOptionsAreScalar(const [OptionKey.grouped])) {
+        return false;
+      }
+    }
+    if (!options.rawOptionsAreScalar(_skipNullLoopKeys)) return false;
+    final chartOptions = chart.options;
+    if (chartOptions is! OptionView ||
+        !chartOptions.rawOptionsAreScalar(const [OptionKey.indexAxis])) {
+      return false;
+    }
+    final indexOptions = iScale!.options;
+    if (indexOptions is! OptionView ||
+        !indexOptions.rawOptionsAreScalar(const [OptionKey.stacked])) {
+      return false;
+    }
+    // `getLineWidthForValue` of the value scale reads `display`, `grid`,
+    // `grid.display` and `grid.setContext(...).lineWidth`.
+    final scaleOptions = vScale!.options;
+    if (scaleOptions is! OptionView) return false;
+    final grid = scaleOptions.cachedSubView(OptionKey.grid);
+    if (!scaleOptions.rawOptionsAreScalar(const [OptionKey.display]) ||
+        grid == null ||
+        !grid.rawOptionsAreScalar(const [
+          OptionKey.display,
+          OptionKey.lineWidth,
+        ])) {
+      return false;
+    }
+    // The elements: `updateElement` writes the properties of each one.
+    final bars = meta.data;
+    if (!nativeBulkBarElements(bars)) return false;
+    for (final bar in bars) {
+      if (bar is! BulkBarElement ||
+          !(bar as BulkBarElement).supportsBulkBarWrites) {
+        return false;
+      }
+    }
+    // The parsed lists: the search of `skipNull` reads the list of each bar
+    // dataset, and `getParsed` the list of this one. A list whose read can
+    // run code of the app (`parsing: false`, an item that is not a
+    // `ParsedItem`, a value that is an object) declines the index: such code
+    // could write a list of an earlier proof between two bars.
+    return _skipNullIndex!.proveAll(barMetas, iScale.axis);
   }
 
   /// controller.bar.js:393 `updateElements(bars, start, count, mode)`.
@@ -1379,10 +1526,17 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     // :443-450: `true`, or Dart `null` for the JS `undefined` of no return.
     bool? skipNull(types.ChartMeta meta) {
       // `Array.prototype.find` gives `undefined` when no item matches.
-      final parsed = meta.parsed.firstWhere(
-        (item) => _strictEquals(parsedValueOf(item, iAxis), iScaleValue),
-        orElse: () => undefined,
-      );
+      // DIVERGES(chartjs): adapt-bar-skip-null-index, the item of a proven
+      // positional list, else the upstream search.
+      final found =
+          _skipNullIndex?.find(meta, iAxis, iScaleValue) ??
+          BarSkipNullIndex.scan;
+      final parsed = !identical(found, BarSkipNullIndex.scan)
+          ? found
+          : meta.parsed.firstWhere((item) {
+              assert(BarSkipNullIndex.debugCountVisit(), 'counts the visit');
+              return _strictEquals(parsedValueOf(item, iAxis), iScaleValue);
+            }, orElse: () => undefined);
       final val = jsTruthy(parsed)
           ? _axisValueOf(parsed, meta.vScale!)
           : parsed;

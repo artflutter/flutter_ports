@@ -82,6 +82,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:meta/meta.dart';
 
 /// A JavaScript function that reads `this`.
 ///
@@ -93,6 +94,14 @@ final class const JsFunction(
 ) {
   /// Wraps [function], whose first parameter receives `this`.
   this;
+
+  /// The count of the calls of [jsCall] and [jsCall1]: each call of a
+  /// function value of the app or of the options through the JS runtime
+  /// adds at least one. An equal count at two moments proves that no such
+  /// call ran between them. The index of the `skipNull` search of a bar
+  /// update reads it (row `adapt-bar-skip-null-index`).
+  @internal
+  static int calls = 0;
 }
 
 /// The largest count of positional parameters that [jsCall] tests: 8.
@@ -131,6 +140,7 @@ Object? jsCall(
   List<Object?> args, {
   Object? thisArg = undefined,
 }) {
+  JsFunction.calls++;
   return switch (function) {
     final JsFunction f =>
       _web
@@ -153,6 +163,7 @@ Object? jsCall(
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
 Object? jsCall1(Object? function, Object? arg, {Object? thisArg = undefined}) {
+  JsFunction.calls++;
   if (!_web && function is Function && _takes(function, 1)) {
     // The dynamic call of [_invoke] for one argument: [_apply] gives this
     // closure [arg] alone.

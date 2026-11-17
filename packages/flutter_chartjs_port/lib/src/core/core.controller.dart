@@ -358,6 +358,7 @@ class Chart(
     types.Chart,
     CategoryLabelSource,
     SingleBarIndexSource,
+    NativeBarIndexReads,
     BulkBarChart,
     NativePointChart,
     DatasetMetaSource,
@@ -737,6 +738,7 @@ class Chart(
 
   /// Timing wrappers may opt in only when config/options/scales/metas and
   /// their virtual enumeration methods retain Chart's ordinary behavior.
+  @override
   @internal
   bool get supportsNativeBarIndexReads => runtimeType == Chart;
 

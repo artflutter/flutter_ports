@@ -1974,6 +1974,16 @@ final class OptionView._(
   bool get hasCachedBarGrouping =>
       runtimeType == OptionView && _cache.get(OptionKey.grouped) is bool;
 
+  /// The view of the sub resolver of [key] that an earlier read of this view
+  /// stored in its cache, else Dart `null`. It reads nothing else and runs
+  /// no code of the app.
+  @internal
+  // DIVERGES(chartjs): adapt-bar-skip-null-index, inspect only a cached view.
+  OptionView? cachedSubView(OptionKey key) {
+    final value = _cache.get(key);
+    return value is OptionView ? value : null;
+  }
+
   /// Whether the normal stacked read is cached and cannot call user code.
   @internal
   bool get hasCachedBarStacking {
