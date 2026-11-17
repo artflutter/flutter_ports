@@ -202,6 +202,17 @@ final class AnimationSpec() implements JsObjectFace {
     }
   }
 
+  /// Whether [test] is true for each present value: the eight fields, then
+  /// the extra keys (Chart.js ADR 0151).
+  bool everyValue(bool Function(Object? value) test) {
+    for (final raw in [_delay, _duration, _easing, _fn, _from, _loop, _to]) {
+      if (!identical(raw, _absent) && !test(raw)) return false;
+    }
+    if (!identical(_type, _absent) && !test(_type)) return false;
+    final extra = _extra;
+    return extra == null || extra.values.every(test);
+  }
+
   @override
   Object? jsRead(String name) {
     final raw = _rawOf(name);

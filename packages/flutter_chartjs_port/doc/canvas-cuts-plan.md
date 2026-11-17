@@ -2767,3 +2767,18 @@ the fused bar with no border draws under a shadow). The tests of §2.6 and §3.5
 `doc/status.yaml` names the new files, and tool 6 writes `doc/parity.md` from it. `doc/performance.md` gets section
 76 at its end; this plan cites its sections, and no cited section number changes. No deferred cut changes. No
 trigger occurred.
+
+## Shared animation options of a bar update, 2026-11-17
+
+[Chart.js ADR 0151](adr/0151-shared-bar-animation-options.md) (the row `adapt-shared-bar-animations`) adds
+`lib/src/core/animation_share.dart` and `lib/src/core/option_call_epoch.dart`. It edits
+`lib/src/controllers/controller.bar.dart` (`BarController.update`), `lib/src/core/core.datasetController.dart` (one
+branch in `updateElement` and the internal field `sharedAnimations`), `lib/src/core/core.animation.dart` (one count
+line in `Animation.cancel`), `lib/src/core/core.animations.dart` (`holdsPlainValues`),
+`lib/src/core/animation_spec.dart` (`everyValue`) and `lib/src/helpers/helpers.config.dart` (one count line in
+`_resolveScriptable` and one in `_resolveArray`). The lines of these files move. This plan cites
+`core.datasetController.dart` and `core.animation.dart` only by name, in the entries of earlier changes, and cites no
+line of them. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart` or `helpers.dom.dart`
+changes, and no canvas operation or drawing cut changes. `doc/performance.md` gets section 77 at its end; no cited
+section number changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not
+change. Test: `test/port/core/animation_share_test.dart` (new). No trigger occurred.

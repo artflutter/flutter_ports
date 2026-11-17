@@ -69,6 +69,7 @@ import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show nativeOptionScope;
+import 'package:flutter_chartjs_port/src/core/option_call_epoch.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
@@ -2420,6 +2421,8 @@ Object? _resolveScriptable(
   }
   stack.add(prop);
   final options = jsTruthy(subProxy) ? subProxy : receiver;
+  // DIVERGES(chartjs): adapt-shared-bar-animations, the count of the calls.
+  optionCallEpoch++;
   final value = jsCall(getValue, [context, options]);
   stack.remove(prop);
   return _resolveScriptableReturn(prop, value, proxy);
@@ -2465,6 +2468,8 @@ Object? _resolveArray(
 
   final index = jsGet(context, 'index');
   if (!identical(index, undefined) && isIndexable(prop)) {
+    // DIVERGES(chartjs): adapt-shared-bar-animations, a read by the index.
+    optionCallEpoch++;
     final remainder = jsToNumber(index).remainder(value.length);
     return jsGet(value, jsNumberToString(remainder));
   } else if (isObject(value[0])) {

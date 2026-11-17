@@ -53,6 +53,7 @@ import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
+import 'package:flutter_chartjs_port/src/core/option_call_epoch.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show color, isPatternOrGradient;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -473,6 +474,8 @@ class Animation.typed(
   /// core.animation.js:67 `cancel()`.
   void cancel() {
     if (_active) {
+      // DIVERGES(chartjs): adapt-shared-bar-animations, the tick runs app code.
+      optionCallEpoch++;
       // update current evaluated value, for smoother animations
       tick(clock.now().millisecondsSinceEpoch.toDouble());
       _active = false;

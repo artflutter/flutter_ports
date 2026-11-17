@@ -45,6 +45,8 @@ import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasRenderingContext2D;
+import 'package:flutter_chartjs_port/src/core/animation_share.dart'
+    show SharedBarAnimations;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.animations.dart';
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
@@ -2437,9 +2439,23 @@ class DatasetController(
       // addElements and _insertElements (row adapt-component-class-role).
       (element as Element).assign(properties);
     } else {
+      // DIVERGES(chartjs): adapt-shared-bar-animations, one resolution for
+      // the bars of one update, under the guard of animation_share.dart.
+      final shared = sharedAnimations;
+      if (shared != null && index != null && shared.mode == mode) {
+        shared.updateElement(element, index, properties);
+        return;
+      }
       resolveAnimations(index, mode).update(element, properties);
     }
   }
+
+  /// The kept animation options of the `BarController.update` call that runs
+  /// now, or Dart `null` (Chart.js ADR 0151). Only `BarController.update`
+  /// writes it, and it clears it at the end of its loop.
+  @internal
+  // DIVERGES(chartjs): adapt-shared-bar-animations, it lives for one loop.
+  SharedBarAnimations? sharedAnimations;
 
   /// core.datasetController.js:910 `updateSharedOptions(sharedOptions, mode,
   /// newOptions)`.

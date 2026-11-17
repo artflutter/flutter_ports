@@ -119,6 +119,26 @@ class Animations(
       key is AnimatedProp ? key.name : key: value,
   };
 
+  /// Whether this object can serve each element of one update: each key of
+  /// [_properties] is a property name, and no option value is an object or
+  /// holds one (a resolver of an object keeps the context of the element
+  /// that read it).
+  /// The items of the app are immutable objects (Chart.js ADR 0151).
+  // DIVERGES(chartjs): adapt-shared-bar-animations, no value with a context.
+  @internal
+  bool get holdsPlainValues {
+    for (final MapEntry(:key, :value) in _properties.entries) {
+      if (key is! AnimatedProp || !value.everyValue(_isPlain)) return false;
+    }
+    return true;
+  }
+
+  /// Whether [value] is no object and no array with an object: a resolver
+  /// gives a resolver with the context for each of them
+  /// (`_resolveWithContext` and `_resolveArray` of helpers.config.ts).
+  static bool _isPlain(Object? value) =>
+      !isObject(value) && !(value is List<Object?> && value.any(isObject));
+
   /// The items of the transition of the update mode
   /// (`ChartTransition.animations`), or Dart `null`.
   List<PropertyAnimation>? _modeItems;

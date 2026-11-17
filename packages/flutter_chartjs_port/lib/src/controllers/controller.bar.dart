@@ -43,6 +43,8 @@ library;
 import 'dart:math' as math;
 import 'dart:typed_data';
 
+import 'package:flutter_chartjs_port/src/core/animation_share.dart'
+    show SharedBarAnimations;
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
@@ -883,7 +885,23 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void update(String mode) {
     final meta = cachedMeta;
-    updateElements(meta.data, 0, meta.data.length, mode);
+    // DIVERGES(chartjs): adapt-shared-bar-animations, one resolution of the
+    // animation options for the bars of this call, under a guard.
+    final shared = SharedBarAnimations.begin(
+      this,
+      mode,
+      exactClass: _nativeBarIndexReads,
+    );
+    if (shared == null) {
+      updateElements(meta.data, 0, meta.data.length, mode);
+      return;
+    }
+    sharedAnimations = shared;
+    try {
+      updateElements(meta.data, 0, meta.data.length, mode);
+    } finally {
+      sharedAnimations = null;
+    }
   }
 
   /// controller.bar.js:393 `updateElements(bars, start, count, mode)`.

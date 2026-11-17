@@ -153,4 +153,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0148](0148-plugin-typing.md) Typed plugin chart, options and update mode: accepted, supersedes 0144, superseded in part by 0150.
 - [0149](0149-bar-chart-small-costs.md) Four small costs of a bar chart: proposed, supersedes 0054, 0070, 0106.
 - [0150](0150-typed-plugin-options.md) Typed plugin options: accepted, supersedes 0144, 0148.
+- [0151](0151-shared-bar-animation-options.md) Shared animation options of a bar update: proposed, supersedes 0053, 0054, 0149.
 <!-- adr-index:end -->

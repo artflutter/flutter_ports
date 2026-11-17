@@ -8768,3 +8768,40 @@ finds another item than the index. The guard that it needs is a proof that no co
 bars: the exact classes of the chart, the controllers, the scales and the elements, each option that the loop reads
 (a function in a dataset option, in `grid.lineWidth` or in `stacked` runs there), and data objects of the SDK
 classes. The patch and its notes are in `.handover/bar-perf-2026-11-16/impl/` (`skipnull.diff`, `skipnull.md`).
+
+## 77. The animation options of a bar update: one resolution for each update
+
+**What was slow.** A bar chart animates by default, so each data change of an app is an animated update. Upstream
+resolves the animation options again for each bar (`core.datasetController.js:841-861` and `:898-908`): a resolver
+with a context is never cacheable (`helpers.config.ts:128`). In the macOS profile of 2026-11-16,
+`DatasetController.resolveAnimations` took 4.4 to 4.5 µs for each bar, 64% to 67% of the animated update of 1,000
+bars (`barchart.motion_n1000`).
+
+**The change.** Chart.js ADR 0151 has the decision, and the row `adapt-shared-bar-animations` has the form.
+`BarController.update` keeps the `Animations` object of one ordinary resolution for the next bars of the same call.
+The guard is in the library doc of `lib/src/core/animation_share.dart`. A bar that fails the guard takes the ordinary
+resolution. Nothing stays after the update call.
+
+**The figures.** Each timing below is of the prototype `animshare` behind a switch, at the base `47e571d9`, on
+2026-11-16 (`.handover/bar-perf-2026-11-16/proto/measure-mac.md` and `measure-phones.md`, a folder outside the
+repository). One window for each side. The step is the whole step of the frameless benchmark; the update is the
+`chart.update()` part.
+
+| Device | Window | Value | Before | After |
+| --- | --- | --- | ---: | ---: |
+| Mac (M3 Max, macOS app, profile) | `motion_n1000` | step | 7.458 | 2.699 |
+| Mac (M3 Max, macOS app, profile) | `motion_n1000` | update | 7.038 | 2.273 |
+| iPhone 17 Pro (profile) | `motion_n1000` | step | 6.717 | 2.451 |
+| iPhone 17 Pro (profile) | `motion_n1000` | update | 6.339 | 2.049 |
+| Pixel 8a (profile) | `motion_n1000` | step | 17.565 | 6.258 |
+| Pixel 8a (profile) | `motion_n1000` | update | 15.977 | 6.305 |
+
+The production form differs from the prototype in its guard: it has no test of `element.active` (the context of
+`updateElement` has `active: false`), no count for a function `_indexable` descriptor, and a new test that no kept
+value is an object (`Animations.holdsPlainValues`). The modes `reset` and `none` make no plan.
+
+**Open.**
+
+- No run timed the production form. The night run of 2026-11-17 measures it with the bench windows
+  `barchart.motion_n1000`, `barchart.motion_n20000` and `barchart.animframe_n1000` (a control: the animator tick
+  does not change), and the lab cells `1000:n` and `20000:n`.
