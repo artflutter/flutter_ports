@@ -776,20 +776,33 @@ class BarElement([AnyObject? cfg])
         // The `double` test is first, so the common case has no call of
         // `num`. A width that is not a number is NaN here, and
         // [_drawRectangular] declines a width that is not finite.
-        if ((radius is double ? radius == 0 : radius is num && radius == 0) &&
-            skipped is BorderSkipped &&
-            _drawRectangular(
+        if (skipped is BorderSkipped) {
+          final width = borderWidth is double
+              ? borderWidth
+              : borderWidth is num
+              ? borderWidth.toDouble()
+              : double.nan;
+          if (radius is double ? radius == 0 : radius is num && radius == 0) {
+            if (_drawRectangular(
               ctx,
-              borderWidth is double
-                  ? borderWidth
-                  : borderWidth is num
-                  ? borderWidth.toDouble()
-                  : double.nan,
+              width,
               skipped,
               borderColor,
               backgroundColor,
             )) {
-          return;
+              return;
+            }
+          } else if (radius is num &&
+              _drawRounded(
+                ctx,
+                radius.toDouble(),
+                width,
+                skipped,
+                borderColor,
+                backgroundColor,
+              )) {
+            return;
+          }
         }
       }
     } else {
@@ -903,6 +916,114 @@ class BarElement([AnyObject? cfg])
       ..fill()
       ..restore();
     return true;
+  }
+
+  /// The numeric case of `boundingRects` and `draw` with a border radius
+  /// that is a number other than 0 (Chart.js ADR 0158). Only the exact
+  /// built-in element with [BarOptions], a [BorderSkipped] and an
+  /// `inflateAmount` of 0 enters here. It computes the numbers of
+  /// `boundingRects` (element.bar.js:73-101) as scalars, with the same
+  /// expressions as [_getBarBounds], [_parseBorderWidth],
+  /// [_parseBorderRadius] and [_boundingRects].
+  ///
+  /// When each corner radius is 0 (`hasRadius` is false, element.bar.js:114),
+  /// upstream adds plain rectangles, so [_drawRectangular] draws the bar. Else
+  /// a [RectBarCanvas] gets the rounded rectangles. Each other case gives
+  /// false, and [draw] runs the ordinary sequence with the same numbers.
+  bool _drawRounded(
+    CanvasRenderingContext2D ctx,
+    double radius,
+    double borderWidth,
+    BorderSkipped skipped,
+    Object? borderColor,
+    Object? backgroundColor,
+  ) {
+    // `isObject(value)` is false for a number, so only the property
+    // `enableBorderRadius` enables the corners (element.bar.js:63).
+    if (enableBorderRadius != true) {
+      // Each corner is `skipOrLimit(true, ...)`: 0.
+      return _drawRectangular(
+        ctx,
+        borderWidth,
+        skipped,
+        borderColor,
+        backgroundColor,
+      );
+    }
+    if (ctx is! RectBarCanvas || !borderWidth.isFinite) return false;
+    final x = this.x;
+    final y = this.y;
+    final base = _base;
+    final horizontal = _horizontal == true;
+    final half = (horizontal ? _height : _width) / 2;
+    final left = horizontal ? math.min(x, base) : x - half;
+    final right = horizontal ? math.max(x, base) : x + half;
+    final top = horizontal ? y - half : math.min(y, base);
+    final bottom = horizontal ? y + half : math.max(y, base);
+    final width = right - left;
+    final height = bottom - top;
+    if (!left.isFinite ||
+        !top.isFinite ||
+        !width.isFinite ||
+        !height.isFinite ||
+        width <= 0 ||
+        height <= 0) {
+      return false;
+    }
+    final maxW = width / 2;
+    final maxH = height / 2;
+    // parseBorderWidth (element.bar.js:41-52).
+    final bw = limitValue(borderWidth, 0, maxW);
+    final bh = limitValue(borderWidth, 0, maxH);
+    final l = skipped.left ? 0.0 : bw;
+    final r = skipped.right ? 0.0 : bw;
+    final t = skipped.top ? 0.0 : bh;
+    final b = skipped.bottom ? 0.0 : bh;
+    // parseBorderRadius (element.bar.js:54-71): `toTRBLCorners` of a number
+    // gives `+value || 0` for each corner.
+    final o = radius != 0 && !radius.isNaN ? radius : 0.0;
+    final corner = limitValue(o, 0, math.min(maxW, maxH));
+    final topLeft = skipped.top || skipped.left ? 0.0 : corner;
+    final topRight = skipped.top || skipped.right ? 0.0 : corner;
+    final bottomLeft = skipped.bottom || skipped.left ? 0.0 : corner;
+    final bottomRight = skipped.bottom || skipped.right ? 0.0 : corner;
+    // hasRadius (element.bar.js:114): no corner is NaN here.
+    if (topLeft == 0 && topRight == 0 && bottomLeft == 0 && bottomRight == 0) {
+      return _drawRectangular(
+        ctx,
+        borderWidth,
+        skipped,
+        borderColor,
+        backgroundColor,
+      );
+    }
+    final innerX = left + l;
+    final innerY = top + t;
+    final innerWidth = width - l - r;
+    final innerHeight = height - t - b;
+
+    // DIVERGES(chartjs): adapt-native-rounded-bar, fused rounded bar.
+    return (ctx as RectBarCanvas).tryDrawRoundedBar(
+      border: width != innerWidth || height != innerHeight,
+      outerX: left + (left != innerX ? -0.0 : 0.0),
+      outerY: top + (top != innerY ? -0.0 : 0.0),
+      outerWidth: width,
+      outerHeight: height,
+      outerUpperLeft: topLeft,
+      outerUpperRight: topRight,
+      outerLowerRight: bottomRight,
+      outerLowerLeft: bottomLeft,
+      innerX: innerX,
+      innerY: innerY,
+      innerWidth: innerWidth,
+      innerHeight: innerHeight,
+      innerUpperLeft: math.max(0, topLeft - math.max<double>(t, l)),
+      innerUpperRight: math.max(0, topRight - math.max<double>(t, r)),
+      innerLowerRight: math.max(0, bottomRight - math.max<double>(b, r)),
+      innerLowerLeft: math.max(0, bottomLeft - math.max<double>(b, l)),
+      borderColor: borderColor,
+      backgroundColor: backgroundColor,
+    );
   }
 
   /// element.bar.js:203 `inRange(mouseX, mouseY, useFinalPosition)`.

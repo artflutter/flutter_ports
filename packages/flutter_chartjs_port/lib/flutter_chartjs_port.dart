@@ -25,7 +25,8 @@
 library;
 
 export 'package:flutter_chartjs_port/chartjs.dart' hide Animation, Element;
-export 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
+    hide roundRectCornersGeometry, roundRectRadiusScale;
 export 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
 export 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
 export 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';

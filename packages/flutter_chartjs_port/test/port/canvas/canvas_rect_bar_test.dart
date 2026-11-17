@@ -39,6 +39,29 @@ class _Probe() extends MockContext implements RectBarCanvas {
     probes++;
     return false;
   }
+
+  @override
+  bool tryDrawRoundedBar({
+    required bool border,
+    required double outerX,
+    required double outerY,
+    required double outerWidth,
+    required double outerHeight,
+    required double outerUpperLeft,
+    required double outerUpperRight,
+    required double outerLowerRight,
+    required double outerLowerLeft,
+    required double innerX,
+    required double innerY,
+    required double innerWidth,
+    required double innerHeight,
+    required double innerUpperLeft,
+    required double innerUpperRight,
+    required double innerLowerRight,
+    required double innerLowerLeft,
+    required Object? borderColor,
+    required Object? backgroundColor,
+  }) => false;
 }
 
 const _border = ui.Color(0xB04488CC);

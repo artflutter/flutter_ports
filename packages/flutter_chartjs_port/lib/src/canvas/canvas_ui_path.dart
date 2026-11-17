@@ -1402,9 +1402,21 @@ final class UiPathBuilder(
     final g = roundRectGeometry(x, y, w, h, radii);
     final t = transform;
     if (g == null || !t.isInvertible) return;
-    ui.RRect? rrect;
-    if (t.isAxisAligned) {
-      rrect = _mappedRRect(g);
+    addRoundRect(x, y, g, t.isAxisAligned ? mappedRRect(g) : null);
+  }
+
+  /// The second part of [roundRect], after its geometry [g] of the
+  /// arguments [x] and [y]: [rrect] is [mappedRRect] of [g] under an
+  /// axis-aligned transform, else null. The transform is invertible.
+  ///
+  /// The fused rounded bar of the context (Chart.js ADR 0158) calls it with
+  /// the rounded rectangle that it drew, so that its final path equals the
+  /// path of [roundRect].
+  @internal
+  void addRoundRect(double x, double y, RoundRectGeometry g, ui.RRect? rrect) {
+    if (_sector) _materializeSector();
+    final t = transform;
+    if (rrect != null) {
       if (g.clockwise != t.isReflected) {
         _pathAddRRect(rrect);
       } else {
@@ -1420,32 +1432,68 @@ final class UiPathBuilder(
     _ops++;
   }
 
+  /// [addRoundRect] of a geometry that goes clockwise (a width and a height
+  /// of 0 or more) under an axis-aligned transform that is not reflected,
+  /// with its mapped rounded rectangle [rrect]: the path gets [rrect]. The
+  /// fused rounded bar (Chart.js ADR 0158) calls it, so that it makes no
+  /// geometry record.
+  @internal
+  void addClockwiseRRect(double x, double y, ui.RRect rrect) {
+    if (_sector) _materializeSector();
+    final t = transform;
+    assert(t.isAxisAligned && !t.isReflected, 'a clockwise addRRect');
+    _pathAddRRect(rrect);
+    _moveToMapped(t.mapX(x, y), t.mapY(x, y));
+    _rect = null;
+    _rrect = rrect;
+    _trackShape(rrect);
+    _ops++;
+  }
+
   /// The rounded rectangle of [g] in bitmap space, for an axis-aligned
   /// transform. A mirror moves each radius to the mirrored corner, and a
   /// scale makes it elliptical.
-  ui.RRect _mappedRRect(RoundRectGeometry g) {
+  @internal
+  ui.RRect mappedRRect(RoundRectGeometry g) => mappedRRectOf(
+    g.left,
+    g.top,
+    g.width,
+    g.height,
+    g.upperLeft,
+    g.upperRight,
+    g.lowerRight,
+    g.lowerLeft,
+  );
+
+  /// [mappedRRect] of the geometry with the rectangle [left], [top], [width]
+  /// and [height] and the radii [ul], [ur], [lr] and [ll] of its upper-left,
+  /// upper-right, lower-right and lower-left corners, with no record. The
+  /// fused rounded bar (Chart.js ADR 0158) calls it.
+  @internal
+  ui.RRect mappedRRectOf(
+    double left,
+    double top,
+    double width,
+    double height,
+    double ul,
+    double ur,
+    double lr,
+    double ll,
+  ) {
     final t = transform;
-    final x0 = t.mapX(g.left, g.top);
-    final y0 = t.mapY(g.left, g.top);
-    final x1 = t.mapX(g.left + g.width, g.top + g.height);
-    final y1 = t.mapY(g.left + g.width, g.top + g.height);
+    final x0 = t.mapX(left, top);
+    final y0 = t.mapY(left, top);
+    final x1 = t.mapX(left + width, top + height);
+    final y1 = t.mapY(left + width, top + height);
     final sx = t.a.abs();
     final sy = t.d.abs();
     final flipX = t.a < 0;
     final flipY = t.d < 0;
     // The user corner at each bitmap corner.
-    final tl = flipY
-        ? (flipX ? g.lowerRight : g.lowerLeft)
-        : (flipX ? g.upperRight : g.upperLeft);
-    final tr = flipY
-        ? (flipX ? g.lowerLeft : g.lowerRight)
-        : (flipX ? g.upperLeft : g.upperRight);
-    final br = flipY
-        ? (flipX ? g.upperLeft : g.upperRight)
-        : (flipX ? g.lowerLeft : g.lowerRight);
-    final bl = flipY
-        ? (flipX ? g.upperRight : g.upperLeft)
-        : (flipX ? g.lowerRight : g.lowerLeft);
+    final tl = flipY ? (flipX ? lr : ll) : (flipX ? ur : ul);
+    final tr = flipY ? (flipX ? ll : lr) : (flipX ? ul : ur);
+    final br = flipY ? (flipX ? ul : ur) : (flipX ? ll : lr);
+    final bl = flipY ? (flipX ? ur : ul) : (flipX ? lr : ll);
     return ui.RRect.fromLTRBAndCorners(
       math.min(x0, x1),
       math.min(y0, y1),

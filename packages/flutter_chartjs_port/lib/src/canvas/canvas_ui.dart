@@ -1749,6 +1749,233 @@ final class UiCanvasContext._(final UiCanvasElement _element)
     return true;
   }
 
+  /// A fused bar with rounded corners (Chart.js ADR 0158): the native calls
+  /// of the ordinary sequence of element.bar.js:184-199 with an
+  /// `inflateAmount` of 0 and `addRoundedRectPath`, which are `save`,
+  /// `roundRect` of the outer and the inner rectangle, `fill('evenodd')`,
+  /// `roundRect` of the inner rectangle, `fill` and `restore`. It makes the
+  /// rounded rectangles of [roundRect] with its code, but with no record
+  /// ([roundRectRadiusScale] and [UiPathBuilder.mappedRRectOf]), and selects
+  /// the draw call of [fill]: the
+  /// sole shape ([_soleShape]) or the ring ([_ring]) for the border, and
+  /// `drawRRect` for the fill. Thus the engine gets the same calls with the
+  /// same values. The logical styles, the save depth and the clips stay. The
+  /// final path is the inner rounded rectangle, as after the ordinary
+  /// sequence. Each case that the ordinary [fill] draws in another way
+  /// declines with no effect: a shadow, a ring that is not nested, a shape
+  /// that is not finite, a negative side, a radius that is negative or not
+  /// finite, a transform that is not axis-aligned, and each observer of
+  /// [tryDrawRectBar].
+  @override
+  @internal
+  bool tryDrawRoundedBar({
+    required bool border,
+    required double outerX,
+    required double outerY,
+    required double outerWidth,
+    required double outerHeight,
+    required double outerUpperLeft,
+    required double outerUpperRight,
+    required double outerLowerRight,
+    required double outerLowerLeft,
+    required double innerX,
+    required double innerY,
+    required double innerWidth,
+    required double innerHeight,
+    required double innerUpperLeft,
+    required double innerUpperRight,
+    required double innerLowerRight,
+    required double innerLowerLeft,
+    required Object? borderColor,
+    required Object? backgroundColor,
+  }) {
+    final s = _s;
+    final t = s.transform;
+    if (_disposed ||
+        s.shadowOn ||
+        (!_notified && _onChanged != null) ||
+        ui.Picture.onCreate != null ||
+        ui.Picture.onDispose != null ||
+        ui.Image.onCreate != null ||
+        ui.Image.onDispose != null ||
+        !identical(_path.transform, t) ||
+        !t.isAxisAligned ||
+        !t.isInvertible ||
+        !_finite4(innerX, innerY, innerWidth, innerHeight) ||
+        // A negative side flips the rectangle of roundRect.
+        innerWidth < 0 ||
+        innerHeight < 0 ||
+        !_radii4(
+          innerUpperLeft,
+          innerUpperRight,
+          innerLowerRight,
+          innerLowerLeft,
+        ) ||
+        (border &&
+            (!_finite4(outerX, outerY, outerWidth, outerHeight) ||
+                outerWidth < 0 ||
+                outerHeight < 0 ||
+                !_radii4(
+                  outerUpperLeft,
+                  outerUpperRight,
+                  outerLowerRight,
+                  outerLowerLeft,
+                ) ||
+                !_rectBarColor(borderColor, _rectBarBorder))) ||
+        !_rectBarColor(backgroundColor, _rectBarBackground)) {
+      return false;
+    }
+    final inner = _roundedBarRRect(
+      innerX,
+      innerY,
+      innerWidth,
+      innerHeight,
+      innerUpperLeft,
+      innerUpperRight,
+      innerLowerRight,
+      innerLowerLeft,
+    );
+    if (!inner.isFinite) return false;
+    ui.RRect? sole;
+    ({ui.RRect outer, ui.RRect inner})? ring;
+    if (border) {
+      final outer = _roundedBarRRect(
+        outerX,
+        outerY,
+        outerWidth,
+        outerHeight,
+        outerUpperLeft,
+        outerUpperRight,
+        outerLowerRight,
+        outerLowerLeft,
+      );
+      if (!outer.isFinite) return false;
+      // The path order of the ordinary sequence: the outer shape first.
+      final pair = (first: outer, second: inner);
+      sole = _soleShape(pair);
+      if (sole == null) {
+        ring = _ring(pair);
+        // Two shapes that are not nested: [fill] draws the path.
+        if (ring == null) return false;
+      }
+    }
+    final background = (backgroundColor is SolidChartPaint
+        ? backgroundColor.color
+        : backgroundColor! as ui.Color);
+    if (border) {
+      final borderPaint = (borderColor is SolidChartPaint
+          ? borderColor.color
+          : borderColor! as ui.Color);
+      _rectBarBorder = borderPaint;
+      if (_setupPaint(
+        _fillPaint,
+        borderPaint,
+        null,
+        mapped: true,
+        exact: true,
+      )) {
+        final canvas = _c; // Flush pending circles in their original order.
+        if (sole != null) {
+          if (!sole.isEmpty) {
+            if (sole.isRect) {
+              canvas.drawRect(sole.outerRect, _fillPaint);
+            } else {
+              canvas.drawRRect(sole, _fillPaint);
+            }
+          }
+        } else {
+          canvas.drawDRRect(ring!.outer, ring.inner, _fillPaint);
+        }
+        _drew();
+      }
+    }
+    _rectBarBackground = background;
+    // Paths are outside save/restore: the final path of the ordinary
+    // sequence is the inner rounded rectangle.
+    _path.reset();
+    if (t.isReflected) {
+      // The path of a reflected transform has the segments of roundRect.
+      _path.addRoundRect(
+        innerX,
+        innerY,
+        roundRectCornersGeometry(
+          innerX,
+          innerY,
+          innerWidth,
+          innerHeight,
+          innerUpperLeft,
+          innerUpperRight,
+          innerLowerRight,
+          innerLowerLeft,
+        ),
+        inner,
+      );
+    } else {
+      _path.addClockwiseRRect(innerX, innerY, inner);
+    }
+    if (inner.isEmpty) {
+      // As in [tryDrawRectBar]: an empty fill still counts and notifies.
+      if (s.globalAlpha != 0 || s.blendMode != ui.BlendMode.srcOver) {
+        if (s.blendMode != ui.BlendMode.srcOver) _needsLayer = true;
+        _c;
+        _drew();
+      }
+    } else if (_setupPaint(
+      _fillPaint,
+      background,
+      null,
+      mapped: true,
+      exact: true,
+    )) {
+      _c.drawRRect(inner, _fillPaint);
+      _drew();
+    }
+    return true;
+  }
+
+  /// The rounded rectangle in bitmap space that `roundRect(x, y, w, h,
+  /// [ul, ur, lr, ll])` adds under the current axis-aligned transform, for
+  /// finite numbers, a [w] and a [h] of 0 or more and radii of 0 or more:
+  /// the radii of [roundRectCornersGeometry] (step 11, no flip) and
+  /// [UiPathBuilder.mappedRRectOf], with no record.
+  ui.RRect _roundedBarRRect(
+    double x,
+    double y,
+    double w,
+    double h,
+    double ul,
+    double ur,
+    double lr,
+    double ll,
+  ) {
+    final scale = roundRectRadiusScale(w, h, ul, ur, lr, ll);
+    return scale < 1
+        ? _path.mappedRRectOf(
+            x,
+            y,
+            w,
+            h,
+            ul * scale,
+            ur * scale,
+            lr * scale,
+            ll * scale,
+          )
+        : _path.mappedRRectOf(x, y, w, h, ul, ur, lr, ll);
+  }
+
+  /// Four radii of [roundRectCornersGeometry]: finite and 0 or more. The
+  /// ordinary `roundRect` adds nothing for a radius that is not finite and
+  /// throws for a negative radius.
+  static bool _radii4(double a, double b, double c, double d) =>
+      a >= 0 &&
+      b >= 0 &&
+      c >= 0 &&
+      d >= 0 &&
+      a != double.infinity &&
+      b != double.infinity &&
+      c != double.infinity &&
+      d != double.infinity;
+
   ui.Color? _arcBorder;
   ui.Color? _arcBackground;
 

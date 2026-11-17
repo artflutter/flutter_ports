@@ -309,14 +309,46 @@ RoundRectGeometry? roundRectGeometry(
     }
   }
   // Steps 6 to 10.
-  var upperLeft = r0;
-  var upperRight = count == 1 ? r0 : r1;
-  var lowerRight = count < 3 ? r0 : r2;
-  var lowerLeft = switch (count) {
-    1 => r0,
-    4 => r3,
-    _ => r1,
-  };
+  return roundRectCornersGeometry(
+    x,
+    y,
+    w,
+    h,
+    r0,
+    count == 1 ? r0 : r1,
+    count < 3 ? r0 : r2,
+    switch (count) {
+      1 => r0,
+      4 => r3,
+      _ => r1,
+    },
+  );
+}
+
+/// The flips and the step 11 of [roundRectGeometry] for the four radii [ul],
+/// [ur], [lr] and [ll] of the upper-left, upper-right, lower-right and
+/// lower-left corners: the result of `roundRect(x, y, w, h, [ul, ur, lr,
+/// ll])` when [x], [y], [w], [h] and each radius are finite and each radius
+/// is 0 or more. The caller examines that first.
+///
+/// The fused rounded bar of the `dart:ui` canvas calls it with the corners of
+/// `addRoundedRectPath` (helpers.canvas.ts:498, Chart.js ADR 0158), so that
+/// its rounded rectangles equal those of the path.
+@internal
+RoundRectGeometry roundRectCornersGeometry(
+  double x,
+  double y,
+  double w,
+  double h,
+  double ul,
+  double ur,
+  double lr,
+  double ll,
+) {
+  var upperLeft = ul;
+  var upperRight = ur;
+  var lowerRight = lr;
+  var lowerLeft = ll;
   // The flips of Chromium and Firefox.
   var left = x;
   var top = y;
@@ -338,11 +370,14 @@ RoundRectGeometry? roundRectGeometry(
     (upperRight, lowerRight) = (lowerRight, upperRight);
   }
   // Step 11.
-  var scale = 1.0;
-  scale = _limitScale(scale, width, upperLeft + upperRight);
-  scale = _limitScale(scale, height, upperRight + lowerRight);
-  scale = _limitScale(scale, width, lowerRight + lowerLeft);
-  scale = _limitScale(scale, height, upperLeft + lowerLeft);
+  final scale = roundRectRadiusScale(
+    width,
+    height,
+    upperLeft,
+    upperRight,
+    lowerRight,
+    lowerLeft,
+  );
   if (scale < 1) {
     upperLeft *= scale;
     upperRight *= scale;
@@ -360,6 +395,28 @@ RoundRectGeometry? roundRectGeometry(
     lowerLeft: lowerLeft,
     clockwise: clockwise,
   );
+}
+
+/// The factor of step 11 of `roundRect` for a rectangle of [width] and
+/// [height] (0 or more) with the radii [ul], [ur], [lr] and [ll] of the
+/// upper-left, upper-right, lower-right and lower-left corners: 1, or the
+/// smallest ratio of the length of a side to the sum of its radii. The radii
+/// scale by it when it is below 1.
+@internal
+double roundRectRadiusScale(
+  double width,
+  double height,
+  double ul,
+  double ur,
+  double lr,
+  double ll,
+) {
+  var scale = 1.0;
+  scale = _limitScale(scale, width, ul + ur);
+  scale = _limitScale(scale, height, ur + lr);
+  scale = _limitScale(scale, width, lr + ll);
+  scale = _limitScale(scale, height, ul + ll);
+  return scale;
 }
 
 /// The smaller of [scale] and [length] / [sum], for a [sum] above 0: the

@@ -1129,12 +1129,12 @@ the cut inventory describe their original review snapshots.
 | DOM `arcTo` (tangent arc) math | `canvas_ui_path.dart:1425-1488` | ~60 | None. `ui.Path.arcToPoint` is the SVG end-point arc. | **Keep**. It calls `_addArc`. |
 | `rect()` with four mapped corners | `canvas_ui_path.dart:1214-1246` | 33 | None. `addRect` sorts the corners and changes the winding when `w < 0` or `h < 0`. | **Keep** |
 | Pending full circle (`singleCircle`, `_deferCircle`) | `canvas_ui_path.dart:818-829`, `:885-889`, `:1067-1109`, `:1372-1391` | ~50 | None | **Keep** (cut 3) |
-| `roundRect` of the path builder: `UiPathBuilder.roundRect` (one `addRRect` under an axis-aligned transform, else the HTML segments through `_addArc`), `_mappedRRect`, `_roundRectSegments` | `canvas_ui_path.dart:1248-1348` | 101 | None. `ui.Path.addRRect` has no direction and no Canvas 2D checks, flips, scale or subpath at (x, y). | **Keep**. A performance addition (porting-flow.md §1.1), not a cut. |
+| `roundRect` of the path builder: `UiPathBuilder.roundRect` (one `addRRect` under an axis-aligned transform, else the HTML segments through `_addArc`), `addRoundRect` and `addClockwiseRRect` (its second part, also for the fused rounded bar of Chart.js ADR 0158), `mappedRRect` and `mappedRRectOf` (the former `_mappedRRect`), `_roundRectSegments` | `canvas_ui_path.dart:1389-1585` (2026-11-17) | 197 | None. `ui.Path.addRRect` has no direction and no Canvas 2D checks, flips, scale or subpath at (x, y). | **Keep**. A performance addition (porting-flow.md §1.1), not a cut. |
 | The shape tracking of the fast paths (`singleRRect`, `shapePair`, `_trackShape`, the fields `_rrect`, `_shape0`, `_shape1`) | `canvas_ui_path.dart:838-843`, `:853-883` | 37 | None. `ui.Path` does not tell its shapes. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | `rrectContains` and `_cornerContains` (the inner rounded rectangle is inside the outer one) | `canvas_ui_path.dart:1637-1748` | 112 | None. `RRect.contains` tests one point. | **Keep**. A performance addition (porting-flow.md §1.1): the condition of `drawDRRect`. |
 | N3 of §7: the deferred commands of the path builder (`deferredPathCommands`, the command codes, `_codes`, `_numbers`, `_rrects`, `path`, `debugBuilt`, `_build`, `_replay`, `_direct` and the `_path` writers) | `canvas_ui_path.dart:272-300`, `:411-816` | ~220 | None. `ui.Path` builds each command at once. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | N4 of §7: the sector fill (`UiSector`, the tolerances, `_sameAngle`, `singleSector`, `_near`, `_nearEnd`, `_nearStart` and the item buffers; in the context `_sectorPaint`, `_shaderSectorPaint` (Chart.js ADR 0149), the sector branch of `fill` and `_fillSector`) | `canvas_ui_path.dart:302-335`, `:428-455`, `:891-1065`; `canvas_ui.dart:526-528`, `:1393-1398`, `:1405-1437` | ~250 | `Canvas.drawArc` draws the sector; no `dart:ui` API tells the sector of a path. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
-| `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:184-196`, `:199-345`, `:1008-1023`, `:1321-1343` | 199 | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
+| `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `roundRectCornersGeometry` and `roundRectRadiusScale` (the flips and step 11 for four radii, Chart.js ADR 0158), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:184-196`, `:199-345`, `:1008-1023`, `:1321-1343`; `roundRectCornersGeometry` and `roundRectRadiusScale` at `canvas.dart:328-430` (2026-11-17) | 199 before Chart.js ADR 0158, 256 after | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:407-414`, `:571-622`, `:1312-1314`, `:1373-1400`, `:1438-1472`, `:1514-1518` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:566-569`, `:700-723`, `:1017-1040`, `:1522-1529` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
 | `CircleBatch`, with a color for each instance of a run that meets another color below 16 circles (N5 of §7), and the held run of a run of markers (`hold`, `addHeld`, `release`; the held path of `UiCanvasContext.tryAddRunCircle`) | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
@@ -1167,6 +1167,8 @@ the cut inventory describe their original review snapshots.
   - 627-632 and 642-672: the shape tracking of the rounded rectangle fast paths (`singleRRect`,
     `shapePair`).
   - 1030-1130: `roundRect`, `_mappedRRect` and `_roundRectSegments`. The segments call `_addArc`.
+    Since Chart.js ADR 0158 (2026-11-17), `_mappedRRect` is `mappedRRect` and `mappedRRectOf`, and
+    `roundRect` ends in `addRoundRect`; use the named anchors.
   - 1132-1176: `arc`, with the full-circle fast path at 1154-1173.
   - 1179-1205: `ellipse`.
   - 1208-1270: `arcTo` (the DOM tangent arc).
@@ -2381,6 +2383,16 @@ the shadow is one `drawRect` with a kept paint (`_castShadowRect`). A bar with a
 Canvas 2D sequence. The twins are in `test/port/canvas/canvas_ui_solid_paint_test.dart` and
 `test/port/canvas/canvas_ui_shadow_rect_test.dart`; the figures are in performance.md §76.
 
+[Chart.js ADR 0158](adr/0158-fused-rounded-bar.md) (2026-11-17, proposed, row `adapt-native-rounded-bar`) adds the
+rounded bar to this operation. `BarElement.draw` computes the numbers of `boundingRects` as scalars and offers the
+outer and the inner rounded rectangle to `RectBarCanvas.tryDrawRoundedBar`. A bar whose corners are all 0 takes the
+rectangular operation. The native context makes each rounded rectangle with the code of `roundRect`
+(`roundRectRadiusScale` and `UiPathBuilder.mappedRRectOf`) and selects the draw call of `fill`: the sole shape or
+the `drawDRRect` ring for the border, and `drawRRect` for the fill. A shadow, a ring that is not nested, a value that
+is not finite, a negative side or radius, a transform that is not axis-aligned and each observer decline to the
+Canvas 2D sequence. The byte twins are in `test/port/canvas/canvas_rounded_bar_test.dart`; the CI job
+`test-impeller` also runs them on Impeller.
+
 ### 7.13 Numeric category parsing before geometry
 
 ADR 0071 reduces repeated label-source reads during primitive parsing in the bar
@@ -2782,3 +2794,16 @@ line of them. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter
 changes, and no canvas operation or drawing cut changes. `doc/performance.md` gets section 77 at its end; no cited
 section number changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and the estimates do not
 change. Test: `test/port/core/animation_share_test.dart` (new). No trigger occurred.
+
+## Fused rounded bar, 2026-11-17
+
+[Chart.js ADR 0158](adr/0158-fused-rounded-bar.md) (proposed, row `adapt-native-rounded-bar`) changes
+`lib/src/canvas/canvas.dart` (1322 to 1379 lines: `roundRectCornersGeometry` and `roundRectRadiusScale`),
+`canvas_ui_path.dart` (2455 to 2503 lines: `addRoundRect`, `addClockwiseRRect`, `mappedRRect` and `mappedRRectOf`
+take the place of `_mappedRRect`), `canvas_ui.dart` (3263 to 3490 lines: `tryDrawRoundedBar`, `_roundedBarRRect` and
+`_radii4` after `tryDrawRectBar`, from line 1880) and `canvas_rect_bar.dart` (21 to 53 lines). No arc, transform,
+host size, circle batch or text rotation code changes, and no deferred cut changes. The line references of these
+files in §1.1, §2.3 and §2.5 do not move in this entry: use the named anchors. Tests:
+`test/port/canvas/canvas_rounded_bar_test.dart` (new; the CI job `test-impeller` also runs it) and
+`test/port/canvas/canvas_rect_bar_test.dart` (the new member of the interface). The estimates do not change. No
+trigger occurred.
