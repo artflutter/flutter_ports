@@ -1,6 +1,6 @@
 // Original code, not ported from @kurkle/color: color fast-path equivalence tests.
 
-import 'package:flutter_kurkle_color_port/src/index.esm.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 
 import '../support/reference.dart';
@@ -21,15 +21,15 @@ void main() {
         'rgb(255,0,0)',
         'hsl(0,100%,50%)',
       ]) {
-        expect(cssColor(input).hexString(), '#F00');
+        expect(cssColor(input)!.hexString(), '#F00');
       }
       for (final input in ['', '#ab', 'rgb(', 'RGB(255,0,0)', 'constructor']) {
-        expect(cssColor(input).valid, isFalse);
+        expect(cssColor(input), isNull);
       }
-      expect(cssColor('#ggg').valid, isTrue);
-      expect(cssColor('#ggg').hexString(), '#000');
-      expect(cssColor('LİME').valid, isFalse);
-      expect(cssColor('LIME').hexString(), '#0F0');
+      expect(cssColor('#ggg'), isNotNull);
+      expect(cssColor('#ggg')!.hexString(), '#000');
+      expect(cssColor('LİME'), isNull);
+      expect(cssColor('LIME')!.hexString(), '#0F0');
     });
   });
 
@@ -158,20 +158,11 @@ void main() {
   group('adapt-kurkle-byte-bounds', () {
     test('mix retains wrapping for wide channels and exceptional weights', () {
       // Results from the pinned src/color.js mix on arm64 Node.js v24.22.1.
+      // A Flutter color clamps a finite channel to a byte (row
+      // adapt-kurkle-color-extension). Thus the wide channels of upstream do
+      // not reach mix: the cases keep the non-finite channels and the
+      // exceptional weights.
       final cases = <(List<double>, List<double>, double, List<double>)>[
-        (
-          [2147483647.9, -2147483648.75, 4294967295, 0.5],
-          [1, 2, 3, 0.5],
-          0.5,
-          [0, 2, 1, 0.5],
-        ),
-        (
-          [2147483648, -2147483649, 4294967296, 0.5],
-          [0, 0, 0, 0.5],
-          1,
-          [0, 0, 0, 0.5],
-        ),
-        ([-0.9, 255.9, 256.1, 0.25], [0, 0, 0, 0.75], 2, [2, 1, 1, 0]),
         (
           [double.nan, double.infinity, double.negativeInfinity, 0.5],
           [12, 34, 56, 0.5],
@@ -183,7 +174,7 @@ void main() {
         ([12, 34, 56, 0.5], [255, 128, 0, 0.5], -1, [242, 222, 201, 0.5]),
       ];
       for (final (from, to, weight, expected) in cases) {
-        final rgb = cssColor(from).mix(cssColor(to), weight).rgb!;
+        final rgb = cssColor(from)!.mix(cssColor(to), weight).rgb;
         expect([rgb.r, rgb.g, rgb.b, rgb.a], expected);
       }
     });
@@ -303,31 +294,19 @@ void main() {
   });
 
   group('adapt-kurkle-color-copies', () {
-    test('clone retains alpha quantization and independent mutation', () {
-      final original = cssColor('rgba(1,2,3,0.5)');
-      final copied = original.clone();
+    test('rgb gives an independent copy', () {
+      final original = cssColor('rgba(1,2,3,0.5)')!;
       expect(original.hexString(), '#0102037F');
-      expect(copied.hexString(), '#01020380');
-      copied.negate();
-      expect(original.hexString(), '#0102037F');
-      final rgb = original.rgb!..r = 200;
+      final rgb = original.rgb..r = 200;
       expect(rgb.r, 200);
-      expect(original.rgb!.r, 1);
+      expect(original.rgb.r, 1);
     });
 
-    test('clone of an invalid color with assigned RGB becomes valid', () {
-      final c = cssColor('invalid')..rgb = [1, 2, 3, 0.4];
-      expect(c.valid, isFalse);
-      expect(c.clone().valid, isTrue);
-      expect(_members(c.clone().rgb), (r: 1.0, g: 2.0, b: 3.0, a: 0.4));
-      expect(cssColor('invalid').clone().valid, isFalse);
-    });
-
-    test('self-mixing keeps the setter alpha conversion', () {
-      final c = cssColor('rgba(12,34,56,0.5)');
-      c.mix(c, 0.25);
-      expect(c.hexString(), '#0C223880');
-      final other = cssColor('#ff638480');
+    test('mix keeps the setter alpha conversion and changes no input', () {
+      final c = cssColor('rgba(12,34,56,0.5)')!;
+      expect(c.mix(c, 0.25).hexString(), '#0C223880');
+      expect(c.hexString(), '#0C22387F');
+      final other = cssColor('#ff638480')!;
       final before = other.hexString();
       c.mix(other, 0.3);
       expect(other.hexString(), before);

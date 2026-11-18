@@ -7,9 +7,9 @@
 /// @module utils
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:flutter_kurkle_color_port/src/numbers.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// byte.js:10 `round`.
 ///
@@ -21,7 +21,7 @@ double round(double v) {
 }
 
 /// byte.js:14 `lim`.
-double lim(double v, double l, double h) => math.max(math.min(v, h), l);
+double lim(double v, double l, double h) => max(min(v, h), l);
 
 /// byte.js:20 `p2b`.
 ///

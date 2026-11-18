@@ -15,7 +15,7 @@ next. Fifth port: chartjs-chart-sankey 0.19.1, an add-on of the Chart.js port an
 type of another package → `packages/flutter_chartjs_chart_sankey_port`, phases 0-4 done (each
 file of `src/` ported; the unit tests, the specs and the fixtures pass; a gallery page), phase 5
 next. Sixth port: @kurkle/color 0.3.2, the color library of the Chart.js port →
-`packages/flutter_kurkle_color_port`, a package of its own (version 0.1.2, on pub.dev), with no
+`packages/flutter_kurkle_color_port`, a package of its own (version 0.2.0; 0.1.2 is on pub.dev), with no
 import of another port.
 
 ## Commands
@@ -999,27 +999,37 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     item 6). `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
-- `packages/flutter_kurkle_color_port`: the @kurkle/color 0.3.2 port (library, version 0.1.2,
-  MIT), the color library of the Chart.js port. Its pubspec has no `publish_to`: it is on pub.dev.
-  It depends only on Flutter (`dart:ui`, for the Flutter `Color` input of the `Color`
-  constructor) and imports no other port. `flutter_chartjs_port` depends on it with `^0.1.0`, which
+- `packages/flutter_kurkle_color_port`: the @kurkle/color 0.3.2 port (library, version 0.2.0,
+  MIT; 0.1.2 is on pub.dev), the color library of the Chart.js port. Its pubspec has no
+  `publish_to`. It depends only on Flutter (`dart:ui`: the methods of the upstream class `Color`
+  are the extension `KurkleColor` on the Flutter `Color`, Chart.js ADR 0171) and imports no other
+  port. `flutter_chartjs_port` depends on it with `^0.2.0`, which
   the workspace resolves to the package; `chartjs_test_utils` and the gallery name it as a path
   dependency. Its `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive, and
   `example/main.dart` is the example of the archive.
-  - `lib/flutter_kurkle_color_port.dart`: the public library (port-only). It exports
-    `lib/src/index.esm.dart` (the names of `src/index.esm.js`: `Color`, `RGBA`, `color` and the
-    functions of `byte`, `hex`, `hue`, `names` and `rgb`) and `lib/src/upstream.dart`
-    (`kurkleColorVersion`). The app library of `flutter_chartjs_port` exports it with
-    `hide Color, color`.
+  - `lib/flutter_kurkle_color_port.dart`: the public library (port-only). It exports each file of
+    `lib/src/`: `index.esm.dart` (the names of `src/index.esm.js`: the extension `KurkleColor`,
+    `RGBA`, `color` and the functions of `byte`, `hex`, `hue`, `names` and `rgb`), the other
+    modules and `upstream.dart` (`kurkleColorVersion`). The files of `lib/src/` import the public
+    library, not each other; an import of the package has no `show` list and no prefix, except
+    for a name conflict (`color.dart` imports the library again as `kurkle` for the module
+    functions that its methods shadow, `hue.dart` keeps `dart:math` as `math` beside the upstream
+    locals `max` and `min`, and a file that also imports the `color` of Chart.js hides `color`).
+    The app library of `flutter_chartjs_port` exports it with `hide color`.
   - `lib/src/`: the files of `src/` and `packed.js` at their mapped paths, `simple_parse.dart`
     (the guarded comma notation) and `numbers.dart` (port-only): the plain Dart forms of `x | 0`
     (`toInt32`), the number of an input value (`toNumber`), the test `if (x)` of a number
     (`isNonZero`) and the text of a number in a CSS string (`numberText`). The package uses no JS
-    runtime. Dart `null` stands for JS `undefined`: `Color(null)` is a color that is not valid,
-    and a string method of such a color gives `null`. The constructor takes no CSS text (row
-    `adapt-direct-colors`); `hexParse`, `nameParse`, `rgbParse` and `hueParse` read it.
+    runtime. Dart `null` stands for JS `undefined`. Each method of `KurkleColor` reads the bytes
+    of the Flutter color, runs the upstream arithmetic and returns a new color (row
+    `adapt-kurkle-color-extension`): `alpha(a)` is `withAlphaRatio(a)`, and `clone` and `valid`
+    have no port. `KurkleColor.of` (the constructor) and `color()` give Dart `null` for an input
+    that is no color. They take no CSS text (row `adapt-direct-colors`); `hexParse`, `nameParse`,
+    `rgbParse` and `hueParse` read it, and `KurkleColor.fromRgbaBytes` makes a color of their
+    result.
   - `test/index_test.dart` ports `test/index.js`; `test/port/` has the port-only tests;
-    `test/support/reference.dart` has `cssColor` (the string branch of the upstream constructor)
+    `test/support/reference.dart` has `cssColor` (the string branch of the upstream constructor,
+    a `Color?`)
     and an independent ToInt32 reference. The tests use `package:test` and run on the VM and in
     `test:web`.
   - `tool/port_sources.yaml`: the pin of `third_party/kurkle-color`, with the top-level key

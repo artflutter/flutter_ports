@@ -5,7 +5,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    show Color;
+    hide color;
 import 'package:test/test.dart';
 
 // The behaviour of helpers.color that test/specs/helpers.color.tests.js does
@@ -43,10 +43,10 @@ void main() {
     });
   });
 
-  test('color returns a Color', () {
+  test('color returns the Flutter color', () {
     final c = color(const ui.Color.fromRGBO(1, 2, 3, 1));
-    expect(c, isA<Color>());
-    expect((c as Color).rgbString(), 'rgb(1, 2, 3)');
+    expect(c, isA<ui.Color>());
+    expect((c as ui.Color).rgbString(), 'rgb(1, 2, 3)');
     expect(() => color('nope'), throwsArgumentError);
   });
 

@@ -225,7 +225,7 @@ bool _isColorKey(String key) => key == 'color' || key.endsWith('Color');
 /// [value] with each color in its parsed form. A value that does not parse
 /// stays as it is. A List gets the parse of each item.
 Object? _parseColor(Object? value) => switch (value) {
-  final String s => referenceParsedColor(s).rgbString() ?? s,
+  final String s => referenceParsedColor(s)?.rgbString() ?? s,
   final List<Object?> list => [for (final item in list) _parseColor(item)],
   _ => value,
 };

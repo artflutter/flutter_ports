@@ -30,7 +30,7 @@ import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    as kurkle;
+    hide color;
 import 'package:flutter_test/flutter_test.dart';
 
 // theming.md §8 test 8: the runtime theme switch of ChartView (Chart.js ADR
@@ -593,15 +593,7 @@ void main() {
       expect(modes.last, 'theme');
       final to = _rgba(_blue, 0.5);
       // The colors interpolator of core.animation.js:15-21 at 0.5.
-      final channels = (color(to) as kurkle.Color)
-          .mix(color(from) as kurkle.Color, 0.5)
-          .rgbaBytes!;
-      final half = Color.fromRGBO(
-        channels.r.round(),
-        channels.g.round(),
-        channels.b.round(),
-        channels.a / 255,
-      );
+      final half = (color(to) as Color).mix(color(from) as Color, 0.5);
       await tester.pump(const Duration(milliseconds: 100));
       expect(_elementOption(chart, 'backgroundColor'), ChartPaint.solid(half));
       await tester.pump(const Duration(milliseconds: 100));

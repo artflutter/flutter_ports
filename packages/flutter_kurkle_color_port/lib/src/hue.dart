@@ -13,10 +13,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_kurkle_color_port/src/byte.dart';
-import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
-import 'package:flutter_kurkle_color_port/src/numbers.dart';
-import 'package:flutter_kurkle_color_port/src/simple_parse.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// hue.js:15 `HUE_RE`.
 final RegExp _hueRe = RegExp(

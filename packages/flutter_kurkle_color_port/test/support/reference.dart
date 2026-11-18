@@ -5,20 +5,23 @@
 /// JavaScript computed with [BigInt], apart from the code under test.
 library;
 
+import 'dart:ui';
+
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// color.js:90 `hexParse(input) || nameParse(input) || functionParse(input)`
-/// for a CSS text [input]. Another input goes to the [Color] constructor,
-/// which takes no text (row `adapt-direct-colors`).
-Color cssColor(Object? input) {
-  if (input is! String) return Color(input);
+/// for a CSS text [input], or Dart `null` for a text that does not parse.
+/// Another input goes to [KurkleColor.of], which takes no text (row
+/// `adapt-direct-colors`).
+Color? cssColor(Object? input) {
+  if (input is! String) return KurkleColor.of(input);
   final rgba =
       hexParse(input) ??
       nameParse(input) ??
       (input.isNotEmpty && input.codeUnitAt(0) == 114
           ? rgbParse(input)
           : hueParse(input));
-  return rgba == null ? Color(null) : Color.fromRgbaBytes(rgba);
+  return rgba == null ? null : KurkleColor.fromRgbaBytes(rgba);
 }
 
 /// ECMAScript ToInt32([x]), as a double: NaN and the infinities give 0,

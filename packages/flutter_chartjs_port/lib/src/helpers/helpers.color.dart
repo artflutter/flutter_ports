@@ -12,8 +12,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    show Color;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// helpers.color.ts:3 `isPatternOrGradient`.
 ///
@@ -29,16 +28,17 @@ bool isPatternOrGradient(Object? value) {
 
 /// helpers.color.ts:21 `color`.
 ///
-/// Returns a [ChartGradient] or [ChartPattern] unchanged. Else returns a
-/// [Color] of [input]. As in JavaScript, a JS `null` [input] (Dart `null`)
-/// throws.
+/// Returns a [ChartGradient] or [ChartPattern] unchanged. Else returns the
+/// Flutter color of [input], whose [KurkleColor] methods are the methods of
+/// the upstream `Color` (Chart.js ADR 0171). As in JavaScript, a JS `null`
+/// [input] (Dart `null`) throws.
 Object color(Object? input) {
   if (isPatternOrGradient(input)) return input!;
   final value = input is SolidChartPaint ? input.color : input;
   if (value is! ui.Color) {
     throw ArgumentError.value(value, 'color', 'Expected Flutter Color');
   }
-  return Color(value);
+  return value;
 }
 
 /// helpers.color.ts:28 `getHoverColor`.
@@ -49,17 +49,5 @@ Object color(Object? input) {
 Object? getHoverColor(Object? value) {
   if (value is Undefined) return null;
   if (isPatternOrGradient(value)) return value;
-  final hovered = (color(value) as Color).saturate(0.5).darken(0.1);
-  final rgb = hovered.rgbaBytes!;
-  return ChartPaint.solid(
-    ui.Color.fromRGBO(
-      // js-ok: color arithmetic produces finite non-negative byte channels.
-      rgb.r.round(),
-      // js-ok: color arithmetic produces finite non-negative byte channels.
-      rgb.g.round(),
-      // js-ok: color arithmetic produces finite non-negative byte channels.
-      rgb.b.round(),
-      rgb.a / 255,
-    ),
-  );
+  return ChartPaint.solid((color(value) as ui.Color).saturate(0.5).darken(0.1));
 }

@@ -1,7 +1,6 @@
 // Ported from @kurkle/color v0.3.2 test/index.js (MIT, Jukka Kurkela).
 // DIVERGES(kurkle): adapt-direct-colors, test-only CSS decoding.
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    show RGBA;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 
 import 'support/reference.dart';
@@ -29,113 +28,116 @@ Matcher _rgba(double r, double g, double b, double a) => isA<RGBA>()
 
 void main() {
   test("new Color('#fef').rgb (:4)", () {
-    expect(cssColor('#fef').rgb, _rgba(255, 238, 255, 1));
+    expect(cssColor('#fef')!.rgb, _rgba(255, 238, 255, 1));
   });
   test("new Color('#fffFEF').rgb (:5)", () {
-    expect(cssColor('#fffFEF').rgb, _rgba(255, 255, 239, 1));
+    expect(cssColor('#fffFEF')!.rgb, _rgba(255, 255, 239, 1));
   });
   test("new Color('#feg').rgb (:6)", () {
-    expect(cssColor('#feg').rgb, _rgba(255, 238, 0, 1));
+    expect(cssColor('#feg')!.rgb, _rgba(255, 238, 0, 1));
   });
   test("new Color('rgb(244, 233, 100)').rgb (:7)", () {
-    expect(cssColor('rgb(244, 233, 100)').rgb, _rgba(244, 233, 100, 1));
+    expect(cssColor('rgb(244, 233, 100)')!.rgb, _rgba(244, 233, 100, 1));
   });
   test("new Color('rgb(100%, 30%, 90%)').rgb (:8)", () {
-    expect(cssColor('rgb(100%, 30%, 90%)').rgb, _rgba(255, 77, 229, 1));
+    expect(cssColor('rgb(100%, 30%, 90%)')!.rgb, _rgba(255, 77, 229, 1));
   });
   test("new Color('rgb(255, 0, 0)').rgb (:9)", () {
-    expect(cssColor('rgb(255, 0, 0)').rgb, _rgba(255, 0, 0, 1));
+    expect(cssColor('rgb(255, 0, 0)')!.rgb, _rgba(255, 0, 0, 1));
   });
   test("new Color('hsl(240, 100%, 50.5%)').rgb (:10)", () {
-    expect(cssColor('hsl(240, 100%, 50.5%)').rgb, _rgba(3, 3, 255, 1));
+    expect(cssColor('hsl(240, 100%, 50.5%)')!.rgb, _rgba(3, 3, 255, 1));
   });
   test("new Color('hsl(240deg, 100%, 50.5%)').rgb (:11)", () {
-    expect(cssColor('hsl(240deg, 100%, 50.5%)').rgb, _rgba(3, 3, 255, 1));
+    expect(cssColor('hsl(240deg, 100%, 50.5%)')!.rgb, _rgba(3, 3, 255, 1));
   });
   test("new Color('hwb(240, 100%, 50.5%)').rgb (:12)", () {
-    expect(cssColor('hwb(240, 100%, 50.5%)').rgb, _rgba(169, 169, 169, 1));
+    expect(cssColor('hwb(240, 100%, 50.5%)')!.rgb, _rgba(169, 169, 169, 1));
   });
   test("new Color('hsl(0deg 100% 50%)').rgb (:13)", () {
-    expect(cssColor('hsl(0deg 100% 50%)').rgb, _rgba(255, 0, 0, 1));
+    expect(cssColor('hsl(0deg 100% 50%)')!.rgb, _rgba(255, 0, 0, 1));
   });
   test("new Color('moccasin').rgb (:14)", () {
-    expect(cssColor('moccasin').rgb, _rgba(255, 228, 181, 1));
+    expect(cssColor('moccasin')!.rgb, _rgba(255, 228, 181, 1));
   });
   test("new Color('rgb(0 255 0)').rgb (:15)", () {
-    expect(cssColor('rgb(0 255 0)').rgb, _rgba(0, 255, 0, 1));
+    expect(cssColor('rgb(0 255 0)')!.rgb, _rgba(0, 255, 0, 1));
   });
   test("new Color('rgb(0 0 100% / 80%)').rgb (:16)", () {
-    expect(cssColor('rgb(0 0 100% / 80%)').rgb, _rgba(0, 0, 255, 0.8));
+    expect(cssColor('rgb(0 0 100% / 80%)')!.rgb, _rgba(0, 0, 255, 0.8));
   });
   test("new Color('hsv(240, 100%, 50.5%)').rgb (:17)", () {
-    expect(cssColor('hsv(240, 100%, 50.5%)').rgb, _rgba(0, 0, 129, 1));
+    expect(cssColor('hsv(240, 100%, 50.5%)')!.rgb, _rgba(0, 0, 129, 1));
   });
   test("new Color('hsv(244, 100%, 100%, 0.6)').rgb (:18)", () {
-    expect(cssColor('hsv(244, 100%, 100%, 0.6)').rgb, _rgba(17, 0, 255, 0.6));
+    expect(cssColor('hsv(244, 100%, 100%, 0.6)')!.rgb, _rgba(17, 0, 255, 0.6));
   });
   test('new Color({r: 255, g: 254, b: 253}).rgb (:19)', () {
     expect(
-      cssColor(<String, Object?>{'r': 255, 'g': 254, 'b': 253}).rgb,
+      cssColor(<String, Object?>{'r': 255, 'g': 254, 'b': 253})!.rgb,
       _rgba(255, 254, 253, 1),
     );
   });
   test('new Color({r: 255, g: 254, b: 253, a: 0.3}).rgb (:20)', () {
     expect(
-      cssColor(<String, Object?>{'r': 255, 'g': 254, 'b': 253, 'a': 0.3}).rgb,
+      cssColor(<String, Object?>{'r': 255, 'g': 254, 'b': 253, 'a': 0.3})!.rgb,
       _rgba(255, 254, 253, 0.3),
     );
   });
   test('new Color([255, 254, 253]).rgb (:21)', () {
-    expect(cssColor(<Object?>[255, 254, 253]).rgb, _rgba(255, 254, 253, 1));
+    expect(cssColor(<Object?>[255, 254, 253])!.rgb, _rgba(255, 254, 253, 1));
   });
   test('new Color([255, 254, 253, 0.5]).rgb (:22)', () {
     expect(
-      cssColor(<Object?>[255, 254, 253, 0.5]).rgb,
+      cssColor(<Object?>[255, 254, 253, 0.5])!.rgb,
       _rgba(255, 254, 253, 0.5),
     );
   });
   test("new Color('#feff').rgb (:24)", () {
-    expect(cssColor('#feff').rgb, _rgba(255, 238, 255, 1));
+    expect(cssColor('#feff')!.rgb, _rgba(255, 238, 255, 1));
   });
   test("new Color('#fef0').rgb (:25)", () {
-    expect(cssColor('#fef0').rgb, _rgba(255, 238, 255, 0));
+    expect(cssColor('#fef0')!.rgb, _rgba(255, 238, 255, 0));
   });
   test("new Color('#fefa').rgbString() (:26)", () {
-    expect(cssColor('#fefa').rgbString(), 'rgba(255, 238, 255, 0.67)');
+    expect(cssColor('#fefa')!.rgbString(), 'rgba(255, 238, 255, 0.67)');
   });
   test("new Color('#c814e933').rgb (:27)", () {
-    expect(cssColor('#c814e933').rgb, _rgba(200, 20, 233, 0.2));
+    expect(cssColor('#c814e933')!.rgb, _rgba(200, 20, 233, 0.2));
   });
   test("new Color('#c814e900').rgb (:28)", () {
-    expect(cssColor('#c814e900').rgb, _rgba(200, 20, 233, 0));
+    expect(cssColor('#c814e900')!.rgb, _rgba(200, 20, 233, 0));
   });
   test("new Color('#c814e9ff').rgb (:29)", () {
-    expect(cssColor('#c814e9ff').rgb, _rgba(200, 20, 233, 1));
+    expect(cssColor('#c814e9ff')!.rgb, _rgba(200, 20, 233, 1));
   });
   test("new Color('rgba(200, 20, 233, 0.2)').rgb (:30)", () {
-    expect(cssColor('rgba(200, 20, 233, 0.2)').rgb, _rgba(200, 20, 233, 0.2));
+    expect(cssColor('rgba(200, 20, 233, 0.2)')!.rgb, _rgba(200, 20, 233, 0.2));
   });
   test("new Color('rgba(200, 20, 233, 0)').rgb (:31)", () {
-    expect(cssColor('rgba(200, 20, 233, 0)').rgb, _rgba(200, 20, 233, 0));
+    expect(cssColor('rgba(200, 20, 233, 0)')!.rgb, _rgba(200, 20, 233, 0));
   });
   test("new Color('rgba(200, 20, 233, 1e-15)').rgb (:32)", () {
-    expect(cssColor('rgba(200, 20, 233, 1e-15)').rgb, _rgba(200, 20, 233, 0));
+    expect(cssColor('rgba(200, 20, 233, 1e-15)')!.rgb, _rgba(200, 20, 233, 0));
   });
   test("new Color('rgba(100%, 30%, 90%, 0.2)').rgb (:33)", () {
-    expect(cssColor('rgba(100%, 30%, 90%, 0.2)').rgb, _rgba(255, 77, 229, 0.2));
+    expect(
+      cssColor('rgba(100%, 30%, 90%, 0.2)')!.rgb,
+      _rgba(255, 77, 229, 0.2),
+    );
   });
   test("new Color('rgba(255, 0, 0, .5)').rgb (:34)", () {
-    expect(cssColor('rgba(255, 0, 0, .5)').rgb, _rgba(255, 0, 0, 0.5));
+    expect(cssColor('rgba(255, 0, 0, .5)')!.rgb, _rgba(255, 0, 0, 0.5));
   });
   test("new Color('hsla(12, 10%, 50%, .3)').rgb (:35)", () {
-    expect(cssColor('hsla(12, 10%, 50%, .3)').rgb, _rgba(140, 120, 115, 0.3));
+    expect(cssColor('hsla(12, 10%, 50%, .3)')!.rgb, _rgba(140, 120, 115, 0.3));
   });
   test("new Color('hsla(12, 10%, 50%, 30%)').rgb (:36)", () {
-    expect(cssColor('hsla(12, 10%, 50%, 30%)').rgb, _rgba(140, 120, 115, 0.3));
+    expect(cssColor('hsla(12, 10%, 50%, 30%)')!.rgb, _rgba(140, 120, 115, 0.3));
   });
   test("new Color('hwb(244, 100%, 100%, 0.6)').rgb (:37)", () {
     expect(
-      cssColor('hwb(244, 100%, 100%, 0.6)').rgb,
+      cssColor('hwb(244, 100%, 100%, 0.6)')!.rgb,
       _rgba(128, 128, 128, 0.6),
     );
   });
@@ -143,194 +145,196 @@ void main() {
     expect(
       cssColor(
         'hsla(240.0384227364303,4.12843378950259%,48.71943371204973%,0.3)',
-      ).rgb,
+      )!.rgb,
       _rgba(119, 119, 129, 0.3),
     );
   });
   test("new Color('hsla(-10.0, 100%, 50%, -0.2)').hslString() (:39)", () {
     expect(
-      cssColor('hsla(-10.0, 100%, 50%, -0.2)').hslString(),
+      cssColor('hsla(-10.0, 100%, 50%, -0.2)')!.hslString(),
       'hsla(350, 100%, 50%, 0)',
     );
   });
   test("new Color('hsla(-1e1, 1e2%, 50%, -2e-1)').hslString() (:40)", () {
     expect(
-      cssColor('hsla(-1e1, 1e2%, 50%, -2e-1)').hslString(),
+      cssColor('hsla(-1e1, 1e2%, 50%, -2e-1)')!.hslString(),
       'hsla(350, 100%, 50%, 0)',
     );
   });
   test("new Color('blue').rgb (:42)", () {
-    expect(cssColor('blue').rgb, _rgba(0, 0, 255, 1));
+    expect(cssColor('blue')!.rgb, _rgba(0, 0, 255, 1));
   });
   test("new Color('BluE').rgb (:43)", () {
-    expect(cssColor('BluE').rgb, _rgba(0, 0, 255, 1));
+    expect(cssColor('BluE')!.rgb, _rgba(0, 0, 255, 1));
   });
   test("new Color('transparent').rgb (:44)", () {
-    expect(cssColor('transparent').rgb, _rgba(0, 0, 0, 0));
+    expect(cssColor('transparent')!.rgb, _rgba(0, 0, 0, 0));
   });
   test("new Color('yellowblue').rgb (:46)", () {
-    expect(cssColor('yellowblue').rgb, isNull);
+    expect(cssColor('yellowblue')?.rgb, isNull);
   });
   test("new Color('#1').rgb (:47)", () {
-    expect(cssColor('#1').rgb, isNull);
+    expect(cssColor('#1')?.rgb, isNull);
   });
   test("new Color('#f').rgb (:48)", () {
-    expect(cssColor('#f').rgb, isNull);
+    expect(cssColor('#f')?.rgb, isNull);
   });
   test("new Color('#4f').rgb (:49)", () {
-    expect(cssColor('#4f').rgb, isNull);
+    expect(cssColor('#4f')?.rgb, isNull);
   });
   test("new Color('#45ab4').rgb (:50)", () {
-    expect(cssColor('#45ab4').rgb, isNull);
+    expect(cssColor('#45ab4')?.rgb, isNull);
   });
   test("new Color('#45ab45e').rgb (:51)", () {
-    expect(cssColor('#45ab45e').rgb, isNull);
+    expect(cssColor('#45ab45e')?.rgb, isNull);
   });
   test("new Color('yellowblue').hexString() (:53)", () {
-    expect(cssColor('yellowblue').hexString(), isNull);
+    expect(cssColor('yellowblue')?.hexString(), isNull);
   });
   test("new Color('#45ab45ed').hexString() (:55)", () {
-    expect(cssColor('#45ab45ed').hexString(), '#45AB45ED');
+    expect(cssColor('#45ab45ed')!.hexString(), '#45AB45ED');
   });
   test("new Color('hsl(100, 50%, 50%)').rgb (:56)", () {
-    expect(cssColor('hsl(100, 50%, 50%)').rgb, _rgba(106, 191, 64, 1));
+    expect(cssColor('hsl(100, 50%, 50%)')!.rgb, _rgba(106, 191, 64, 1));
   });
   test("new Color('hsl(100, 50%, 50%)').hexString() (:57)", () {
-    expect(cssColor('hsl(100, 50%, 50%)').hexString(), '#6ABF40');
+    expect(cssColor('hsl(100, 50%, 50%)')!.hexString(), '#6ABF40');
   });
   test("new Color('hsl(100, 50%, 50%)').hslString() (:58)", () {
-    expect(cssColor('hsl(100, 50%, 50%)').hslString(), 'hsl(100, 50%, 50%)');
+    expect(cssColor('hsl(100, 50%, 50%)')!.hslString(), 'hsl(100, 50%, 50%)');
   });
   test("new Color('hsl(100, 50%, 75%)').hexString() (:59)", () {
-    expect(cssColor('hsl(100, 50%, 75%)').hexString(), '#B5DF9F');
+    expect(cssColor('hsl(100, 50%, 75%)')!.hexString(), '#B5DF9F');
   });
   test("new Color('rgb(54, 162, 235)').hslString() (:60)", () {
-    expect(cssColor('rgb(54, 162, 235)').hslString(), 'hsl(204, 82%, 57%)');
+    expect(cssColor('rgb(54, 162, 235)')!.hslString(), 'hsl(204, 82%, 57%)');
   });
   test("new Color('#123').hexString() (:61)", () {
-    expect(cssColor('#123').hexString(), '#123');
+    expect(cssColor('#123')!.hexString(), '#123');
   });
   test("new Color('#123F').hexString() (:62)", () {
-    expect(cssColor('#123F').hexString(), '#123');
+    expect(cssColor('#123F')!.hexString(), '#123');
   });
   test("new Color('#1234').hexString() (:63)", () {
-    expect(cssColor('#1234').hexString(), '#1234');
+    expect(cssColor('#1234')!.hexString(), '#1234');
   });
   test("new Color('#112233').hexString() (:64)", () {
-    expect(cssColor('#112233').hexString(), '#123');
+    expect(cssColor('#112233')!.hexString(), '#123');
   });
   test("new Color('#112233FF').hexString() (:65)", () {
-    expect(cssColor('#112233FF').hexString(), '#123');
+    expect(cssColor('#112233FF')!.hexString(), '#123');
   });
 
   // manipulation
   test("new Color('#7743CE').alpha(0.5).lighten(0.5).hslString() (:68)", () {
     expect(
-      cssColor('#7743CE').alpha(0.5).lighten(0.5).hslString(),
+      cssColor('#7743CE')!.withAlphaRatio(0.5).lighten(0.5).hslString(),
       'hsla(262, 58%, 80%, 0.5)',
     );
   });
   test("new Color('rgb(0, 100, 255)').negate().rgbString() (:70)", () {
     expect(
-      cssColor('rgb(0, 100, 255)').negate().rgbString(),
+      cssColor('rgb(0, 100, 255)')!.negate().rgbString(),
       'rgb(255, 155, 0)',
     );
   });
   test("new Color('hsl(100, 50%, 50%)').lighten(0.5).hslString() (:72)", () {
     expect(
-      cssColor('hsl(100, 50%, 50%)').lighten(0.5).hslString(),
+      cssColor('hsl(100, 50%, 50%)')!.lighten(0.5).hslString(),
       'hsl(100, 50%, 75%)',
     );
   });
   test("new Color('hsl(100, 50%, 50%)').darken(0.5).hslString() (:73)", () {
     expect(
-      cssColor('hsl(100, 50%, 50%)').darken(0.5).hslString(),
+      cssColor('hsl(100, 50%, 50%)')!.darken(0.5).hslString(),
       'hsl(100, 50%, 25%)',
     );
   });
   test("new Color('hsl(100, 50%, 50%)').saturate(0.5).hslString() (:75)", () {
     expect(
-      cssColor('hsl(100, 50%, 50%)').saturate(0.5).hslString(),
+      cssColor('hsl(100, 50%, 50%)')!.saturate(0.5).hslString(),
       'hsl(100, 75%, 50%)',
     );
   });
   test("new Color('hsl(204, 82%, 57%)').saturate(0.5).hslString() (:76)", () {
     expect(
-      cssColor('hsl(204, 82%, 57%)').saturate(0.5).hslString(),
+      cssColor('hsl(204, 82%, 57%)')!.saturate(0.5).hslString(),
       'hsl(204, 100%, 57%)',
     );
   });
   test("new Color('rgb(54, 162, 235)').saturate(0.5).hslString() (:77)", () {
     expect(
-      cssColor('rgb(54, 162, 235)').saturate(0.5).hslString(),
+      cssColor('rgb(54, 162, 235)')!.saturate(0.5).hslString(),
       'hsl(204, 100%, 57%)',
     );
   });
   test("new Color('rgb(54, 162, 235)').saturate(0.5).rgbString() (:78)", () {
     expect(
-      cssColor('rgb(54, 162, 235)').saturate(0.5).rgbString(),
+      cssColor('rgb(54, 162, 235)')!.saturate(0.5).rgbString(),
       'rgb(34, 167, 255)',
     );
   });
   test("new Color('hsl(100, 50%, 50%)').desaturate(0.5).hslString() (:79)", () {
     expect(
-      cssColor('hsl(100, 50%, 50%)').desaturate(0.5).hslString(),
+      cssColor('hsl(100, 50%, 50%)')!.desaturate(0.5).hslString(),
       'hsl(100, 25%, 50%)',
     );
   });
   test("new Color('#5CBF54').greyscale().hexString() (:80)", () {
-    expect(cssColor('#5CBF54').greyscale().hexString(), '#969696');
+    expect(cssColor('#5CBF54')!.greyscale().hexString(), '#969696');
   });
   test("new Color('rgba(10, 10, 10, 0.8)').clearer(0.5).rgbString() (:82)", () {
     expect(
-      cssColor('rgba(10, 10, 10, 0.8)').clearer(0.5).rgbString(),
+      cssColor('rgba(10, 10, 10, 0.8)')!.clearer(0.5).rgbString(),
       'rgba(10, 10, 10, 0.4)',
     );
   });
   test("new Color('rgba(10, 10, 10, 0.8)').opaquer(0.5).rgbString() (:83)", () {
     expect(
-      cssColor('rgba(10, 10, 10, 0.8)').opaquer(0.5).rgbString(),
+      cssColor('rgba(10, 10, 10, 0.8)')!.opaquer(0.5).rgbString(),
       'rgb(10, 10, 10)',
     );
   });
   test("new Color('hsl(60, 20%, 20%)').rotate(180).hslString() (:85)", () {
     expect(
-      cssColor('hsl(60, 20%, 20%)').rotate(180).hslString(),
+      cssColor('hsl(60, 20%, 20%)')!.rotate(180).hslString(),
       'hsl(240, 20%, 20%)',
     );
   });
   test("new Color('hsl(60, 20%, 20%)').rotate(-90).hslString() (:86)", () {
     expect(
-      cssColor('hsl(60, 20%, 20%)').rotate(-90).hslString(),
+      cssColor('hsl(60, 20%, 20%)')!.rotate(-90).hslString(),
       'hsl(330, 20%, 20%)',
     );
   });
   test("new Color('cyan').mix(new Color('yellow')).rgbString() (:88)", () {
     expect(
-      cssColor('cyan').mix(cssColor('yellow')).rgbString(),
+      cssColor('cyan')!.mix(cssColor('yellow')).rgbString(),
       'rgb(128, 255, 128)',
     );
   });
   test("new Color('cyan').mix(new Color('yellow'), 0.3).rgbString() (:89)", () {
     expect(
-      cssColor('cyan').mix(cssColor('yellow'), 0.3).rgbString(),
+      cssColor('cyan')!.mix(cssColor('yellow'), 0.3).rgbString(),
       'rgb(179, 255, 77)',
     );
   });
   test("new Color('rgba(10, 10, 10, 0.8)').clone().rgbString() (:91)", () {
+    // A Flutter color does not change: `clone` has no port (row
+    // `adapt-kurkle-color-extension`).
     expect(
-      cssColor('rgba(10, 10, 10, 0.8)').clone().rgbString(),
+      cssColor('rgba(10, 10, 10, 0.8)')!.rgbString(),
       'rgba(10, 10, 10, 0.8)',
     );
   });
   test("new Color('invalid-color-value').lighten(0.1).hslString() (:93)", () {
-    expect(cssColor('invalid-color-value').lighten(0.1).hslString(), isNull);
+    expect(cssColor('invalid-color-value')?.lighten(0.1).hslString(), isNull);
   });
   test(
     "new Color('invalid-color-value').mix(undefined, 0.5).rgbString() (:94)",
     () {
       expect(
-        cssColor('invalid-color-value').mix(null, 0.5).rgbString(),
+        cssColor('invalid-color-value')?.mix(null, 0.5).rgbString(),
         isNull,
       );
     },
@@ -339,7 +343,7 @@ void main() {
     "new Color('red').interpolate(new Color('green'), 0).rgbString() (:96)",
     () {
       expect(
-        cssColor('red').interpolate(cssColor('green'), 0).rgbString(),
+        cssColor('red')!.interpolate(cssColor('green'), 0).rgbString(),
         'rgb(255, 0, 0)',
       );
     },
@@ -348,7 +352,7 @@ void main() {
     "new Color('red').interpolate(new Color('green'), 0.25).rgbString() (:97)",
     () {
       expect(
-        cssColor('red').interpolate(cssColor('green'), 0.25).rgbString(),
+        cssColor('red')!.interpolate(cssColor('green'), 0.25).rgbString(),
         'rgb(225, 65, 0)',
       );
     },
@@ -357,7 +361,7 @@ void main() {
     "new Color('red').interpolate(new Color('green'), 0.5).rgbString() (:98)",
     () {
       expect(
-        cssColor('red').interpolate(cssColor('green'), 0.5).rgbString(),
+        cssColor('red')!.interpolate(cssColor('green'), 0.5).rgbString(),
         'rgb(188, 92, 0)',
       );
     },
@@ -366,7 +370,7 @@ void main() {
     "new Color('red').interpolate(new Color('green'), 0.75).rgbString() (:99)",
     () {
       expect(
-        cssColor('red').interpolate(cssColor('green'), 0.75).rgbString(),
+        cssColor('red')!.interpolate(cssColor('green'), 0.75).rgbString(),
         'rgb(137, 112, 0)',
       );
     },
@@ -375,7 +379,7 @@ void main() {
     "new Color('red').interpolate(new Color('green'), 1).rgbString() (:100)",
     () {
       expect(
-        cssColor('red').interpolate(cssColor('green'), 1).rgbString(),
+        cssColor('red')!.interpolate(cssColor('green'), 1).rgbString(),
         'rgb(0, 128, 0)',
       );
     },
@@ -383,7 +387,7 @@ void main() {
   test("new Color('#fefa').interpolate(new Color('#ced5'), 0.6).hexString() "
       '(:102)', () {
     expect(
-      cssColor('#fefa').interpolate(cssColor('#ced5'), 0.6).hexString(),
+      cssColor('#fefa')!.interpolate(cssColor('#ced5'), 0.6).hexString(),
       '#E2EDEC77',
     );
   });
@@ -391,7 +395,7 @@ void main() {
   // invalid values
   test("new Color('rgba(267,292,60,0.2)').rgbString() (:105)", () {
     expect(
-      cssColor('rgba(267,292,60,0.2)').rgbString(),
+      cssColor('rgba(267,292,60,0.2)')!.rgbString(),
       'rgba(255, 255, 60, 0.2)',
     );
   });

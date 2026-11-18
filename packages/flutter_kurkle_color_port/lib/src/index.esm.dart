@@ -16,20 +16,22 @@
 /// @module index
 library;
 
-import 'package:flutter_kurkle_color_port/src/color.dart';
+import 'dart:ui';
+
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 export 'package:flutter_kurkle_color_port/src/byte.dart';
-export 'package:flutter_kurkle_color_port/src/color.dart' show Color;
+export 'package:flutter_kurkle_color_port/src/color.dart';
 export 'package:flutter_kurkle_color_port/src/hex.dart';
 export 'package:flutter_kurkle_color_port/src/hue.dart';
 export 'package:flutter_kurkle_color_port/src/names.dart';
 export 'package:flutter_kurkle_color_port/src/rgb.dart';
 
-/// index.esm.js:16 `RGBA`, the color of a [Color].
+/// index.esm.js:16 `RGBA`, the bytes of a color.
 ///
 /// The components `r`, `g` and `b` are bytes [0..255]. The JSDoc gives `a`
-/// as alpha [0..1]. That is the scale of `Color.rgb`. Inside a [Color], `a`
-/// is a byte [0..255], as in the results of the parse functions.
+/// as alpha [0..1]. That is the scale of `KurkleColor.rgb`. In the bytes of a
+/// color, `a` is a byte [0..255], as in the results of the parse functions.
 ///
 /// A JS object compares by identity. Thus the class has no `==`.
 final class RGBA({
@@ -42,8 +44,8 @@ final class RGBA({
   /// index.esm.js:19 `b`: blue [0..255].
   required var double b,
 
-  /// index.esm.js:20 `a`: alpha [0..1], or a byte [0..255] inside a
-  /// [Color].
+  /// index.esm.js:20 `a`: alpha [0..1], or a byte [0..255] in the bytes
+  /// of a color.
   required var double a,
 }) {
   /// The object literal `{r, g, b, a}`.
@@ -53,7 +55,8 @@ final class RGBA({
 /// index.esm.js:29 the default export.
 ///
 /// Construct new Color instance. JavaScript gives the function no name. The
-/// port names it `color`.
-Color color(Object? input) {
-  return Color(input);
+/// port names it `color`. It gives the Flutter color of [input]
+/// ([KurkleColor.of]), or Dart `null` for an input that is not an object.
+Color? color(Object? input) {
+  return KurkleColor.of(input);
 }

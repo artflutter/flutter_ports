@@ -2,8 +2,8 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter_chartjs_port/chartjs.dart'
     show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/helpers.dart' as helpers;
-// Numerical color operations; solid paints contain Flutter Color values.
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart' as kc;
+// The color operations of @kurkle/color on the Flutter Color.
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// Native color samples used by the chart API.
@@ -18,8 +18,6 @@ const List<Color> sampleColors = [
 
 String _argb(Color color) =>
     '0x${color.toARGB32().toRadixString(16).padLeft(8, '0').toUpperCase()}';
-
-kc.Color _numeric(Color color) => helpers.color(color) as kc.Color;
 
 /// Native colors, hover colors and numerical color mixing.
 class const ColorDemo({super.key}) extends StatefulWidget {
@@ -37,7 +35,7 @@ class _ColorDemoState() extends State<ColorDemo> {
 
   @override
   Widget build(BuildContext context) {
-    final mixed = _numeric(_mixA).mix(_numeric(_mixB), _weight);
+    final mixed = _mixA.mix(_mixB, _weight);
     Widget dropdown(String key, Color value, ValueChanged<Color> change) =>
         DropdownButton<Color>(
           key: ValueKey(key),
@@ -111,9 +109,9 @@ class _ColorDemoState() extends State<ColorDemo> {
               Row(
                 key: const ValueKey('color.mixed'),
                 children: [
-                  ColorSwatchBox(color: flutterColor(mixed), size: 56),
+                  ColorSwatchBox(color: mixed, size: 56),
                   const SizedBox(width: 12),
-                  Mono(_argb(flutterColor(mixed)!)),
+                  Mono(_argb(mixed)),
                 ],
               ),
             ],

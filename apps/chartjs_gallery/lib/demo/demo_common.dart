@@ -6,8 +6,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
 // Not public: jsNumberToString, the JS text of a number in the readouts.
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsNumberToString;
-// The Color class of the @kurkle/color port.
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart' as kc;
 import 'package:material_ui/material_ui.dart';
 
 /// The JavaScript text of the number [value] (`Number.prototype.toString`),
@@ -40,19 +38,6 @@ Object? readByName(Object? object, String key) => switch (object) {
   final JsObjectFace face => face[key],
   _ => null,
 };
-
-/// The Flutter color of a parsed `@kurkle/color` [kc.Color], or `null` when
-/// the color is not valid.
-Color? flutterColor(kc.Color color) {
-  final rgb = color.valid ? color.rgb : null;
-  if (rgb == null) return null;
-  return Color.from(
-    alpha: rgb.a.clamp(0, 1).toDouble(),
-    red: rgb.r / 255,
-    green: rgb.g / 255,
-    blue: rgb.b / 255,
-  );
-}
 
 /// A centered column with a readable maximum width, for wide screens.
 ///

@@ -1,8 +1,7 @@
 // Original code, not ported from @kurkle/color: tests of the kurkle functions.
 import 'dart:convert';
 
-import 'package:flutter_kurkle_color_port/src/index.esm.dart';
-import 'package:flutter_kurkle_color_port/src/srgb.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 
 // The exports of src/index.esm.js, and interpolate of src/srgb.js, which the

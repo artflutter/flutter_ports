@@ -38,6 +38,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show Plugin, PluginHookArgs, UpdateHookArgs;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -211,7 +212,7 @@ AnyObject _undefinedAxisIds(AnyObject observation) => <String, Object?>{
 /// [value] in its parsed form when it is a color: `Color(value).rgbString()`
 /// (`_parseColor` of controller_chart_harness.dart).
 Object? _parseColor(Object? value) => switch (value) {
-  final String s => referenceParsedColor(s).rgbString() ?? s,
+  final String s => referenceParsedColor(s)?.rgbString() ?? s,
   _ => value,
 };
 

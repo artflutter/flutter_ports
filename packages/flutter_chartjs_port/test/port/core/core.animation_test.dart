@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/color.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -53,7 +54,7 @@ bool _same(Object? actual, Object? expected) {
     }
   }
   if (expected is String && nativeColorBytes(actual) != null) {
-    final rgb = referenceColor(expected).rgbaBytes;
+    final rgb = referenceColor(expected)?.rgbaBytes;
     if (rgb == null) return false;
     final bytes = nativeColorBytes(actual)!;
     return bytes[0] == rgb.r.round() &&
@@ -308,7 +309,7 @@ void main() {
     });
   });
 
-  group('adapt-animation-color-cache', () {
+  group('interpolators.color', () {
     test('supported color pairs at 11 factors give the upstream colors', () {
       for (final (from, to, results) in animationColorReference) {
         final inputs = [referenceColorInput(from), referenceColorInput(to)];
@@ -332,7 +333,7 @@ void main() {
       }
     });
 
-    test('a change of from and to between the calls parses again', () {
+    test('a change of from and to between the calls gives the new colors', () {
       final target = <String, Object?>{
         'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
       };
@@ -369,7 +370,7 @@ void main() {
     });
 
     test('repeated ticks of the same pair give the same colors', () {
-      // The cache mixes a clone of the cached target color. Thus a second
+      // `mix` returns a new color and changes neither input. Thus a second
       // round of ticks gives the colors of the first round.
       final first = _colorResults(
         const ChartPaint.solid(ui.Color.fromRGBO(54, 162, 235, 0.5)),

@@ -18,15 +18,13 @@
 /// §10): `Animations` gives the key of its typed table, and the public
 /// constructor maps the name with [AnimatedProp.of].
 ///
-/// The port has four hunks for performance (Chart.js ADR 0019, sections 5
+/// The port has three hunks for performance (Chart.js ADR 0019, sections 5
 /// and 6, with Chart.js ADR 0054 §10; the last one is of Chart.js ADR
 /// 0149):
 /// - An animation with the built-in `number` interpolator and two `double`
 ///   values ticks on two `double` fields (`adapt-animation-number-path`).
 ///   It writes an `Element` through `Element.writeNumber`, the typed setter
 ///   of the property.
-/// - A color animation keeps the parsed colors of its last call
-///   (`adapt-animation-color-cache`).
 /// - The constructor resolves the interpolator one time, with no list and
 ///   no lookup by name. A user `fn` is an [Interpolator], called directly
 ///   (Chart.js ADR 0130).
@@ -54,8 +52,7 @@ import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/core/option_call_epoch.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
-    show color, isPatternOrGradient;
+import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -70,7 +67,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    show Color;
+    hide color;
 import 'package:meta/meta.dart';
 
 /// core.animation.js:5 `transparent`.
@@ -97,29 +94,13 @@ Object? _boolean(Object? from, Object? to, double factor) {
 /// @param {number} factor
 ///
 /// `helpers.color` returns a `ChartGradient` or a `ChartPattern`
-/// unchanged. Such an object has no `valid` property in JavaScript. Thus
-/// `c0.valid` is `c0 is Color && c0.valid`.
+/// unchanged. Such an object has no `valid` property in JavaScript. A
+/// Flutter color is always valid (Chart.js ADR 0171). Thus `c0.valid` is
+/// `c0 is ui.Color`.
 Object? _color(Object? from, Object? to, double factor) {
   final c0 = color(jsTruthy(from) ? from : _transparent);
-  final c1 = c0 is Color && c0.valid
-      ? color(jsTruthy(to) ? to : _transparent)
-      : false;
-  return c1 is Color && c1.valid ? _mixedColor(c1, c0 as Color, factor) : to;
-}
-
-Object _mixedColor(Color to, Color from, double factor) {
-  final rgb = to.mix(from, factor).rgbaBytes!;
-  return ChartPaint.solid(
-    ui.Color.fromRGBO(
-      // js-ok: color arithmetic produces finite non-negative byte channels.
-      rgb.r.round(),
-      // js-ok: color arithmetic produces finite non-negative byte channels.
-      rgb.g.round(),
-      // js-ok: color arithmetic produces finite non-negative byte channels.
-      rgb.b.round(),
-      rgb.a / 255,
-    ),
-  );
+  final c1 = c0 is ui.Color ? color(jsTruthy(to) ? to : _transparent) : false;
+  return c1 is ui.Color ? ChartPaint.solid(c1.mix(c0 as ui.Color, factor)) : to;
 }
 
 /// core.animation.js:22 `interpolators.number`.
@@ -156,52 +137,6 @@ Interpolator? _interpolatorOf(Object? from) => switch (from) {
   SolidChartPaint() => _color,
   _ => null,
 };
-
-/// core.animation.js:15-21 `interpolators.color` with one parse of each
-/// color (Chart.js ADR 0019, section 5).
-///
-/// Each color animation gets its own object. It keeps the parsed `from` and
-/// `to` of its last call, and it compares the next values with `identical`.
-/// A new value, for example after `update` or after a write of
-/// [Animation.from], gives a new parse. `mix` changes its receiver, so the
-/// call mixes a `clone()` of the cached target color. `mix` does not change
-/// its argument. A `from` or a `to` that is not a String takes [_color]. The
-/// results are the results of [_color].
-// DIVERGES(chartjs): adapt-animation-color-cache, one parse of each color.
-final class _ColorInterpolator() {
-  /// The `from || transparent` of the last parse of [_c0].
-  Object? _fromKey;
-
-  /// The parse of [_fromKey]. Dart `null` before the first parse.
-  Color? _c0;
-
-  /// The `to || transparent` of the last parse of [_c1].
-  Object? _toKey;
-
-  /// The parse of [_toKey]. Dart `null` before the first parse.
-  Color? _c1;
-
-  /// The color at [factor] between [from] and [to], as [_color] gives.
-  Object? call(Object? from, Object? to, double factor) {
-    final f = jsTruthy(from) ? from : _transparent;
-    final t = jsTruthy(to) ? to : _transparent;
-    if (isPatternOrGradient(f) || isPatternOrGradient(t)) {
-      return _color(from, to, factor);
-    }
-    var c0 = _c0;
-    if (c0 == null || !identical(f, _fromKey)) {
-      _fromKey = f;
-      _c0 = c0 = color(f) as Color;
-    }
-    if (!c0.valid) return to;
-    var c1 = _c1;
-    if (c1 == null || !identical(t, _toKey)) {
-      _toKey = t;
-      _c1 = c1 = color(t) as Color;
-    }
-    return c1.valid ? _mixedColor(c1.clone(), c0, factor) : to;
-  }
-}
 
 /// core.animation.js:27 `Animation`, the animation of the property [_key]
 /// of the target [_target].
@@ -270,8 +205,6 @@ class Animation.typed(
           ? _interpolatorNamed(jsToString(type))
           : _interpolatorOf(from);
     }
-    // DIVERGES(chartjs): adapt-animation-color-cache, one parse of each color.
-    if (identical(_fn, _color)) _fn = _ColorInterpolator().call;
     // DIVERGES(chartjs): adapt-flutter-curves, the curve of the config.
     // DIVERGES(chartjs): adapt-property-animations, the item of the app.
     _easing = item?.easing ?? _cfgEasing(cfg);

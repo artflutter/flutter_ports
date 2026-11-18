@@ -47,6 +47,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     show tooltipCallbacksOf;
 import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -273,7 +274,7 @@ Object? _observeTooltip(Chart chart) {
 
 /// [value] in its parsed form when it is a color: `Color(value).rgbString()`.
 Object? _parseColor(Object? value) => switch (value) {
-  final String s => referenceParsedColor(s).rgbString() ?? s,
+  final String s => referenceParsedColor(s)?.rgbString() ?? s,
   _ => value,
 };
 

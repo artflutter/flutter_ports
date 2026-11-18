@@ -6,8 +6,7 @@
 /// @module utils
 library;
 
-import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
-import 'package:flutter_kurkle_color_port/src/packed.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// names.js:7 `names`. Dart `null` stands for JS `undefined`, the start
 /// value.

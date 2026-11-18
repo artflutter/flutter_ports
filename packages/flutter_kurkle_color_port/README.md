@@ -4,6 +4,27 @@ A native Dart port of `@kurkle/color` 0.3.2 for Flutter.
 
 Fast and small CSS color parsing and manipulation library.
 
+## Usage
+
+The methods of the upstream `Color` class are the extension `KurkleColor` on the Flutter `Color`. Each method
+returns a new color.
+
+```dart
+import 'dart:ui';
+
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
+
+void main() {
+  const blue = Color(0xFF3366CC);
+  print(blue.lighten(0.2).rotate(30).withAlphaRatio(0.5).rgbString()); // rgba(112, 92, 214, 0.5)
+  print(const Color(0xFFFF0000).mix(const Color(0xFF0000FF), 0.25).hexString()); // #4000BF
+  print(hexString(nameParse('steelblue'))); // #4682B4
+}
+```
+
+The parse functions `hexParse`, `nameParse`, `rgbParse` and `hueParse` read the CSS text forms below into an `RGBA`.
+`KurkleColor.fromRgbaBytes` makes a Flutter `Color` of it.
+
 ## Parsing
 
 Supported formats:

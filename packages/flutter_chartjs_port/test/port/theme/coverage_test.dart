@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 
 // dart:io reads the manifest and the snapshot, so the web legs
@@ -333,8 +334,8 @@ bool _same(String path, Object? value, Object? upstream) {
   if (_isColorKey(path) &&
       (value is String || nativeColorBytes(value) != null) &&
       (upstream is String || nativeColorBytes(upstream) != null)) {
-    final a = referenceParsedColor(value).rgbString();
-    final b = referenceParsedColor(upstream).rgbString();
+    final a = referenceParsedColor(value)?.rgbString();
+    final b = referenceParsedColor(upstream)?.rgbString();
     if (a != null && b != null) return a == b;
   }
   if (value is num && upstream is num) return value == upstream;

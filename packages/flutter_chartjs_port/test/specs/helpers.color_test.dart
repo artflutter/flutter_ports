@@ -11,8 +11,6 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    show Color;
 import 'package:flutter_test/flutter_test.dart';
 
 // The spec reads `color` and `getHoverColor` from Chart.helpers. Here they
@@ -41,9 +39,10 @@ void main() {
   setUpSpecs();
   group('Color helper', () {
     // `typeof obj === 'object' && obj.valid`. Of the objects that `color`
-    // returns, only a Color has `valid`.
+    // returns, only a Flutter color stands for a valid Color: the methods of
+    // the upstream Color are its extension `KurkleColor` (Chart.js ADR 0171).
     bool isColorInstance(Object? obj) {
-      return obj is Color && obj.valid;
+      return obj is native_ui.Color;
     }
 
     test('should return a color when called with a color', () {

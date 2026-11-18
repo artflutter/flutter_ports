@@ -10,8 +10,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/pure.dart' show referenceColor;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    as legacy;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 
 /// RGBA bytes of a numerical/native color, or null for a non-color value.
@@ -44,8 +43,8 @@ Object? canonicalColors(Object? value, [String? key]) {
   if (value is String && _key(key)) {
     if (value.isEmpty && key == 'textStrokeColor') return [0, 0, 0, 0];
     final color = referenceColor(value);
-    if (color.valid) {
-      final rgb = color.rgb!;
+    if (color != null) {
+      final rgb = color.rgb;
       return [
         rgb.r.round(),
         rgb.g.round(),
@@ -80,8 +79,8 @@ Matcher referenceColorOrString(String expected) => predicate<Object?>((actual) {
   if (bytes == null) return false;
   if (expected.isEmpty) return bytes.every((byte) => byte == 0);
   final parsed = referenceColor(expected);
-  if (!parsed.valid) return false;
-  final rgb = parsed.rgb!;
+  if (parsed == null) return false;
+  final rgb = parsed.rgb;
   final wanted = [
     rgb.r.round(),
     rgb.g.round(),
@@ -109,7 +108,7 @@ String referenceColorText(String text) {
 
 /// Parses only legacy reference data; native production values are converted
 /// numerically, without sending Flutter Color objects to the old string parser.
-legacy.Color referenceParsedColor(Object? value) =>
+ui.Color? referenceParsedColor(Object? value) =>
     referenceColor(value is SolidChartPaint ? value.color : value);
 
 /// JSON/probe text with CSS scalar values normalized to RGBA bytes. Keys and
@@ -125,8 +124,8 @@ String referenceColorTokens(String text) {
     }
     final value = jsonDecode(match[0]!) as String;
     final parsed = referenceColor(value);
-    if (!parsed.valid) return match[0]!;
-    final rgb = parsed.rgb!;
+    if (parsed == null) return match[0]!;
+    final rgb = parsed.rgb;
     return jsonEncode([
       rgb.r.round(),
       rgb.g.round(),
@@ -143,14 +142,10 @@ Object? referenceColorInput(Object? value) {
   if (value == null || value is ChartPaint || nativeColorBytes(value) != null) {
     return value;
   }
-  if (value is! String &&
-      value is! Map &&
-      value is! List &&
-      value is! legacy.RGBA) {
+  if (value is! String && value is! Map && value is! List && value is! RGBA) {
     return value;
   }
-  final parsed = referenceColor(value);
-  final rgba = parsed.rgbaBytes;
+  final rgba = referenceColor(value)?.rgbaBytes;
   if (rgba == null ||
       ![rgba.r, rgba.g, rgba.b, rgba.a].every((v) => v.isFinite)) {
     return value;
@@ -182,7 +177,7 @@ Object? referenceColorInput(Object? value) {
 
 /// Whether a frozen string names a color value rather than a drawing opcode.
 bool isReferenceColor(String value) =>
-    value.isEmpty || referenceColor(value).valid;
+    value.isEmpty || referenceColor(value) != null;
 
 /// The native color of a paint for frozen pre-migration observations only.
 Object? referencePaintValue(ChartPaint paint) => switch (paint) {

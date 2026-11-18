@@ -1,6 +1,6 @@
 // Original code, not ported from @kurkle/color: guarded comma-color parsing.
 
-import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// Parses only unsigned integral channels in canonical comma notation.
 /// Other forms return null so the upstream regular expressions decide them.

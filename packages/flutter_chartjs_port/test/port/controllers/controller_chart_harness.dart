@@ -69,6 +69,7 @@ import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -458,7 +459,7 @@ bool _isColorKey(String key) => key == 'color' || key.endsWith('Color');
 /// A value that does not parse stays as it is. A List gets the parse of
 /// each item.
 Object? _parseColor(Object? value) => switch (value) {
-  final String s => referenceParsedColor(s).rgbString() ?? s,
+  final String s => referenceParsedColor(s)?.rgbString() ?? s,
   final List<Object?> list => [for (final item in list) _parseColor(item)],
   _ => value,
 };

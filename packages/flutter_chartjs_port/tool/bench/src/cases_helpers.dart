@@ -22,8 +22,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    as kurkle;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 import 'fixtures.dart';
@@ -226,32 +225,32 @@ List<BenchCase> helperCases() => [
       return (n) {
         var acc = 0;
         for (var i = 0; i < n; i++) {
-          acc += kurkle.color(value).rgbaBytes!.r.round();
+          acc += KurkleColor.of(value)!.rgbaBytes.r.round();
         }
         return acc;
       };
     }, per: 'numerical channels of native $name Color'),
   BenchCase('color', 'kurkle/rgbString', () {
-    final c = kurkle.color(const ui.Color.fromRGBO(255, 99, 132, 0.5));
+    const c = ui.Color.fromRGBO(255, 99, 132, 0.5);
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        acc += c.rgbString()?.length ?? 0;
+        acc += c.rgbString().length;
       }
       return acc;
     };
   }, per: 'legacy rgbString of numerical channels'),
-  BenchCase('color', 'kurkle/clone_mix', () {
-    final c1 = kurkle.color(const ui.Color(0xffff6384));
-    final c2 = kurkle.color(const ui.Color.fromRGBO(54, 162, 235, 0.5));
+  BenchCase('color', 'kurkle/mix', () {
+    const c1 = ui.Color(0xffff6384);
+    const c2 = ui.Color.fromRGBO(54, 162, 235, 0.5);
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        if (c1.clone().mix(c2, 0.3).valid) acc++;
+        if (c1.mix(c2, 0.3).a > 0) acc++;
       }
       return acc;
     };
-  }, per: 'clone().mix(c2, 0.3)'),
+  }, per: 'mix(c2, 0.3)'),
   BenchCase('color', 'getHoverColor/native', () {
     return (n) {
       var acc = 0;

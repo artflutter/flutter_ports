@@ -334,4 +334,4 @@ export 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 export 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart'
     hide chartViewPluginId, createChartViewPlugin;
 export 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    hide Color, color;
+    hide color;

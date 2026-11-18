@@ -24,6 +24,7 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -329,7 +330,7 @@ const Set<String> _styleSetters = {'setFillStyle', 'setStrokeStyle'};
 /// Whether the style [value] keeps a pixel blue over the blue background:
 /// a color with the channels of [_blue] (any alpha), or alpha 0.
 bool _keepsBlue(Object? value) {
-  final rgb = referenceParsedColor(value).rgb;
+  final rgb = referenceParsedColor(value)?.rgb;
   if (rgb == null) return false;
   return rgb.a == 0 ||
       (rgb.r == ((_blue >> 16) & 0xFF) &&
@@ -506,7 +507,7 @@ void main() {
     for (final (path, value) in colors) {
       expect(value, isNot(isA<String>()), reason: path);
       expect(nativeColorBytes(value), isNotNull, reason: path);
-      final rgb = referenceParsedColor(value).rgb;
+      final rgb = referenceParsedColor(value)?.rgb;
       expect(rgb, isNotNull, reason: path);
       expect([rgb!.r, rgb.g, rgb.b], [32, 80, 192], reason: path);
       // The token `surface` gives the tick backdrop at alpha 0.75. The
@@ -596,7 +597,7 @@ void main() {
           chart,
           const ui.Color(_blue),
         );
-        final rgb = referenceParsedColor(_hoverBlue).rgb!;
+        final rgb = referenceParsedColor(_hoverBlue)!.rgb;
         final check = _segmentCheck(pixels, [
           rgb.r.round(),
           rgb.g.round(),

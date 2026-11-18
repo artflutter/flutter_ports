@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -79,7 +80,7 @@ String _callsText(List<List<Object?>> calls) => calls
     .map(
       (call) => jsonEncode(
         call,
-        toEncodable: (value) => referenceParsedColor(value).rgbString(),
+        toEncodable: (value) => referenceParsedColor(value)?.rgbString(),
       ),
     )
     .join('\n');

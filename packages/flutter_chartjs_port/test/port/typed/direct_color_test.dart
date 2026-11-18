@@ -13,8 +13,6 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
     as core_defaults;
 import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    as numerical;
 import 'package:flutter_test/flutter_test.dart';
 
 const _blue = ui.Color(0xFF2050C0);
@@ -205,7 +203,7 @@ void main() {
 
   test('the numerical constructor never parses CSS strings', () {
     for (final value in ['red', '#fff', 'rgba(1,2,3,0.5)', '']) {
-      expect(() => numerical.Color(value), throwsArgumentError);
+      expect(() => KurkleColor.of(value), throwsArgumentError);
     }
   });
 

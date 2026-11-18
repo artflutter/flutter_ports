@@ -27,6 +27,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
@@ -871,13 +872,13 @@ void main() {
       expect(borders, hasLength(_upstreamBorderColors.length));
       for (var i = 0; i < borders.length; i++) {
         expect(
-          referenceParsedColor(borders[i]).rgbString(),
-          referenceParsedColor(_upstreamBorderColors[i]).rgbString(),
+          referenceParsedColor(borders[i])?.rgbString(),
+          referenceParsedColor(_upstreamBorderColors[i])?.rgbString(),
           reason: '$i',
         );
         expect(
-          referenceParsedColor(borders[i]).rgbString(),
-          referenceParsedColor(_upstreamBorderColors[i]).rgbString(),
+          referenceParsedColor(borders[i])?.rgbString(),
+          referenceParsedColor(_upstreamBorderColors[i])?.rgbString(),
           reason: '$i',
         );
       }
@@ -1121,14 +1122,14 @@ void main() {
       );
       expect(
         referenceParsedColor(_at(compiled, 'plugins.tooltip.backgroundColor'))
-            .rgbString(),
-        referenceParsedColor('rgba(0,0,0,0.8)').rgbString(),
+            ?.rgbString(),
+        referenceParsedColor('rgba(0,0,0,0.8)')?.rgbString(),
       );
       for (final key in tooltipColors.skip(1)) {
         expect(
           referenceParsedColor(_at(compiled, 'plugins.tooltip.$key'))
-              .rgbString(),
-          referenceParsedColor('#fff').rgbString(),
+              ?.rgbString(),
+          referenceParsedColor('#fff')?.rgbString(),
           reason: key,
         );
       }

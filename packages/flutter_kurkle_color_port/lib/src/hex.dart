@@ -13,8 +13,7 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
-import 'package:flutter_kurkle_color_port/src/numbers.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// The upstream digit map as an integer; -1 marks an absent map entry.
 int _digit(String str, int i) {

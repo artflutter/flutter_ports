@@ -13,10 +13,7 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter_kurkle_color_port/src/byte.dart';
-import 'package:flutter_kurkle_color_port/src/index.esm.dart' show RGBA;
-import 'package:flutter_kurkle_color_port/src/numbers.dart';
-import 'package:flutter_kurkle_color_port/src/simple_parse.dart';
+import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// rgb.js:15 `RGB_RE`.
 final RegExp _rgbRe = RegExp(
