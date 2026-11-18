@@ -89,6 +89,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
         resolveObjectKey;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
@@ -2633,7 +2634,7 @@ Object? _resolveArray(
     // DIVERGES(chartjs): adapt-shared-bar-animations, a read by the index.
     optionCallEpoch++;
     final remainder = jsToNumber(index).remainder(value.length);
-    return jsGet(value, jsNumberToString(remainder));
+    return jsGet(value, numberString(remainder));
   } else if (isObject(value[0])) {
     // Array of objects, return array or resolvers
     final arr = value;

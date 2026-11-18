@@ -13,10 +13,10 @@ import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFunction;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -58,7 +58,7 @@ import '../../support/scale_border.dart';
 // snapshot under each TargetPlatform of Flutter.
 
 /// The JSON form of [value]: a Map gives its keys in the `Object.keys`
-/// order, a number gives [jsNumberToString], `undefined` gives
+/// order, a number gives [numberString], `undefined` gives
 /// `"<undefined>"` and a function gives `"<fn>"`. The form is the same on
 /// every platform.
 String _json(Object? value) => referenceColorTokens(_jsonRaw(value));
@@ -74,7 +74,7 @@ String _jsonRaw(Object? value) => switch (value) {
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
-  final num n => jsNumberToString(n),
+  final num n => numberString(n),
   final String s => jsonEncode(s),
   final TextStyle font => _jsonRaw(fontObjectRecordOf(font)),
   _ when isFunction(value) => '"<fn>"',

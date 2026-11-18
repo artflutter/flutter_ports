@@ -374,7 +374,7 @@ Object? _progressDuration(Object? ctx) {
 List<String>? _tooltipLabel(TooltipModel tooltip, TooltipItem context) {
   final parsedCustom =
       (context.parsed! as ParsedItem).custom! as SankeyParsedCustom;
-  final flow = jsNumberToString(parsedCustom.flow);
+  final flow = numberString(parsedCustom.flow);
   return ['${parsedCustom.from.key} -> ${parsedCustom.to.key}: $flow'];
 }
 

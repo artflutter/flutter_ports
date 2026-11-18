@@ -587,7 +587,7 @@ void _beforeElementsUpdate(
       continue;
     }
 
-    final xAxis = chart.scales[jsToString(meta.xAxisID)]!;
+    final xAxis = chart.scales[meta.xAxisID]!;
     if (xAxis.type != 'linear' && xAxis.type != 'time') {
       // Only linear interpolation is supported
       continue;

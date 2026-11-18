@@ -34,6 +34,7 @@ library;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -229,12 +230,12 @@ final class const _ToBeChartOfSize(final Map<String, Object?> expected)
     // sanity checks
     if (chart.height != orh) {
       message =
-          'Expected chart height ${jsNumberToString(chart.height)} to be '
-          'equal to original render height ${jsNumberToString(orh)}';
+          'Expected chart height ${numberString(chart.height)} to be '
+          'equal to original render height ${numberString(orh)}';
     } else if (chart.width != orw) {
       message =
-          'Expected chart width ${jsNumberToString(chart.width)} to be '
-          'equal to original render width ${jsNumberToString(orw)}';
+          'Expected chart width ${numberString(chart.width)} to be '
+          'equal to original render width ${numberString(orw)}';
     }
 
     // validity checks

@@ -7,8 +7,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show pi;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableLineSegmentContext;
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
@@ -158,7 +158,7 @@ ChartGradient _gradient() => ChartGradient.linear(
 /// SameValue on a number: `-0` does not equal `0`.
 Matcher _sameValue(double expected) => predicate<double>(
   (actual) => actual == expected && actual.isNegative == expected.isNegative,
-  'SameValue ${jsNumberToString(expected)}',
+  'SameValue ${numberString(expected)}',
 );
 
 /// A segment `{start, end, loop, style}`. The default [style] is `isNull`,

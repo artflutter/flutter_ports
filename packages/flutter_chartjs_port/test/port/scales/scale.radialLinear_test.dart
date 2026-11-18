@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -85,7 +86,7 @@ final Map<String, Object?> _functions = {
       ? ''
       : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 1)),
   'tickUnit': (Object? scale, double value, int index, Object? ticks) => [
-    '${jsNumberToString(value)} u',
+    '${numberString(value)} u',
   ],
   'hideOneAndThree': (Object? chart) {
     (chart! as Chart)
@@ -93,7 +94,7 @@ final Map<String, Object?> _functions = {
       ..toggleDataVisibility(3);
   },
   'tickLines': (Object? scale, double value, int index, Object? ticks) => [
-    jsNumberToString(value),
+    numberString(value),
     'x',
   ],
   // A font is a ChartTextStyle (row adapt-text-style-fonts).

@@ -85,6 +85,7 @@ import 'package:flutter_chartjs_port/src/helpers/index.dart'
         isDomSupported,
         retinaScale,
         unclipArea;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -294,7 +295,7 @@ Chart? _getChart(Object? key) {
 /// core.controller.js:72 `moveNumericKeys(obj, start, move)`.
 ///
 /// The keys are the `ToString` of the indices. `+key` is [jsToNumber]. The
-/// write `obj[intKey + move]` takes the key [jsNumberToString]. An absent
+/// write `obj[intKey + move]` takes the key [numberString]. An absent
 /// key reads as Dart `null`, as `undefined`.
 void _moveNumericKeys(Map<String, Object?> obj, int start, int move) {
   final keys = jsObjectKeys(obj);
@@ -304,7 +305,7 @@ void _moveNumericKeys(Map<String, Object?> obj, int start, int move) {
       final value = obj[key];
       obj.remove(key);
       if (move > 0 || intKey > start) {
-        obj[jsNumberToString(intKey + move)] = value;
+        obj[numberString(intKey + move)] = value;
       }
     }
   }
@@ -389,7 +390,7 @@ class Chart(
     if (existingChart != null) {
       throw StateError(
         'Canvas is already in use. Chart with ID '
-        "'${jsNumberToString(existingChart.id)}'"
+        "'${numberString(existingChart.id)}'"
         ' must be destroyed before the canvas with ID '
         "'${existingChart.canvas!.getAttribute('id') ?? ''}' can be reused.",
       );
@@ -440,7 +441,7 @@ class Chart(
     );
 
     // Add the chart instance to the global namespace
-    instances[jsNumberToString(id)] = this;
+    instances[numberString(id)] = this;
 
     if (context == null || canvas == null) {
       // The given item is not a compatible context2d element, let's return
@@ -2428,7 +2429,7 @@ class Chart(
       this.ctx = null;
     }
 
-    instances.remove(jsNumberToString(id));
+    instances.remove(numberString(id));
 
     notifyPlugins(PluginHook.afterDestroy);
   }
@@ -2489,7 +2490,8 @@ class Chart(
     }
 
     each<Object?, Object?>(_options.readKey(OptionKey.events), (type, _) {
-      add(type is String ? type : jsToString(type), listener);
+      // DIVERGES(chartjs): adapt-string-ids, a String event name only.
+      if (type is String) add(type, listener);
     });
   }
 
@@ -3010,10 +3012,11 @@ UpdateHookArgs _updateArgs(Object? mode) => UpdateHookArgs(
 
 /// The update mode of `DatasetController.update_`: a `String`, or Dart
 /// `null` for a falsy mode, which `_update` replaces with `'default'`
-/// (core.datasetController.js:703). A truthy value of another type gives its
-/// `ToString`, which compares with the mode names as the value does.
+/// (core.datasetController.js:703). A mode is a `String`: a value of another
+/// type is no mode (Chart.js ADR 0176).
+// DIVERGES(chartjs): adapt-string-ids, a String mode only.
 String? _modeArg(Object? mode) =>
-    mode is String ? mode : (jsTruthy(mode) ? jsToString(mode) : null);
+    mode is String && mode.isNotEmpty ? mode : null;
 
 /// `new Set(iterable)` of an option value: the items of a List. JS `null`
 /// and `undefined` give an empty set. Another value throws a [TypeError].

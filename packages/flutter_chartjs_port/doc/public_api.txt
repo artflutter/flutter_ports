@@ -218,6 +218,7 @@ filler
 layouts
 legend
 notifyArrayListeners
+numberString
 plugins
 registerables
 registry
@@ -954,7 +955,6 @@ jsGetKey
 jsIsNaN
 jsIsObjectLike
 jsLessThan
-jsNumberToString
 jsObjectClass
 jsObjectFreeze
 jsObjectKeys
@@ -1015,6 +1015,7 @@ notifyArrayListeners
 numberEpsilon
 numberFormatOf
 numberList
+numberString
 numberText
 optNull
 optUndefined
@@ -1244,7 +1245,6 @@ jsGetKey
 jsIsNaN
 jsIsObjectLike
 jsLessThan
-jsNumberToString
 jsObjectClass
 jsObjectFreeze
 jsObjectKeys

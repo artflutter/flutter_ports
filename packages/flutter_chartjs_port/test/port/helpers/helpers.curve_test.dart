@@ -2,7 +2,7 @@
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show createResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
@@ -55,7 +55,7 @@ bool _sameValue(double? actual, double? expected) => expected == null
               ? actual.isNaN
               : actual == expected && actual.isNegative == expected.isNegative);
 
-String _show(double? v) => v == null ? 'undefined' : jsNumberToString(v);
+String _show(double? v) => v == null ? 'undefined' : numberString(v);
 
 /// The control points `(cp1x, cp1y, cp2x, cp2y)` of each point, compared
 /// with SameValue. An expected `null` is JS `undefined`. The port stores it as

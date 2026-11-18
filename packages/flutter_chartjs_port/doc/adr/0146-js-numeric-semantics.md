@@ -10,6 +10,7 @@
   tables), and the fdlibm consequence. The rule of a copy in item 2 stays in force. The `jsHypot` parts of
   [Chart.js ADR 0108](0108-input-surface-and-exports-for-add-on-plugins.md): §2, its test rows and the rejected
   `math.sqrt` form.
+- Superseded in part by: [Chart.js ADR 0176](0176-number-text-and-string-ids.md) (2026-11-18)
 - Related: Chart.js ADRs [0034](0034-no-display-only-js-exactness.md), [0119](0119-plain-intl-number-format.md)
   and [0129](0129-int-indexes.md)
 

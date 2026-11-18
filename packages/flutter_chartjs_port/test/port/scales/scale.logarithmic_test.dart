@@ -11,8 +11,8 @@ import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFunction;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show log10;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.logarithmic.dart';
@@ -164,7 +164,7 @@ Map<String, Object?> _logObservations(Scale scale, Chart chart) {
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {
   'withUnit': (Object? scale, double value, int index, Object? ticks) => [
-    '${jsNumberToString(value)} kg',
+    '${numberString(value)} kg',
   ],
 };
 

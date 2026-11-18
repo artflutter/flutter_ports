@@ -74,6 +74,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, sign;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsStringList, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -228,7 +229,7 @@ Object _plus(Object? value, num other) {
   return switch (value) {
     final double number => number + add,
     null || Undefined() || bool() || num() => jsToNumber(value) + add,
-    _ => jsToString(value) + jsNumberToString(other),
+    _ => jsToString(value) + numberString(other),
   };
 }
 
@@ -280,13 +281,13 @@ types.StackMode _isStacked(types.Scale? scale, types.ChartMeta meta) {
 /// A `stack` or an axis id of a dataset as the value of the meta: Dart
 /// `null` for JS `undefined` and `null`, else the string. The schema shape of
 /// both is `string`: another value stops a debug build, and a release build
-/// takes its string form (row `adapt-native-chart-meta`).
+/// takes no id (row `adapt-native-chart-meta`, Chart.js ADR 0176).
 @internal
 String? metaStringOf(Object? value, String option) {
   if (value is String) return value;
   if (value == null || value is Undefined) return null;
   assert(false, 'The dataset option $option takes a String, not $value.');
-  return jsToString(value);
+  return null;
 }
 
 /// core.datasetController.js:124 `getStackKey`.
@@ -857,24 +858,22 @@ void presizeParsedNumbers(
 }
 
 /// The property keys `'0'` to `'63'`.
-final List<String> _indexKeys = [
-  for (var i = 0; i < 64; i++) jsNumberToString(i),
-];
+final List<String> _indexKeys = [for (var i = 0; i < 64; i++) numberString(i)];
 
 /// The property key of the number [index], the `ToPropertyKey` of
 /// `object[index]`: a cached key for a small dataset index, else
-/// [jsNumberToString].
+/// [numberString].
 String _indexKey(int index) =>
     index >= 0 && index < _indexKeys.length ? _indexKeys[index] : '$index';
 
 /// The property key of the index value [value] of a stack, its `ToString`:
-/// a cached key for a small whole number, else [jsNumberToString].
+/// a cached key for a small whole number, else [numberString].
 String _numberKey(double value) {
   if (value >= 0 && value < _indexKeys.length) {
     final i = value.toInt();
     if (i == value) return _indexKeys[i];
   }
-  return jsNumberToString(value);
+  return numberString(value);
 }
 
 /// The JS read `item[axis]` of a parsed item: the hot read of Chart.js ADR
@@ -1430,11 +1429,9 @@ class DatasetController(
   /// @return {Scale}
   ///
   /// Dart `null` for [scaleID] and for the result stands for JS
-  /// `undefined`. Another id reads the property key `ToString(scaleID)`, as
-  /// JavaScript does: the number `1` finds the scale `'1'`.
-  types.Scale? getScaleForId(Object? scaleID) {
-    return scaleID == null ? null : chart.scales[jsToString(scaleID)];
-  }
+  /// `undefined`. A scale id is a `String` (Chart.js ADR 0176).
+  // DIVERGES(chartjs): adapt-string-ids, a String id only.
+  types.Scale? getScaleForId(String? scaleID) => chart.scales[scaleID];
 
   /// core.datasetController.js:338 `_getOtherScale(scale)`.
   /// @private

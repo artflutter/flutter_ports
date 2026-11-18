@@ -55,6 +55,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFinite, isNullOrUndef, mergeIf, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isNumber, limitValue, toRadians;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -830,7 +831,7 @@ class TimeScale(super.cfg) extends Scale {
     if (jsToNumber(adapter.diff(max, min, minor)) >
         100000 * jsToNumber(stepSize)) {
       throw StateError(
-        '${jsNumberToString(min)} and ${jsNumberToString(max)} are too far '
+        '${numberString(min)} and ${numberString(max)} are too far '
         'apart with stepSize of ${jsToString(stepSize)} ${minor.name}',
       );
     }
@@ -845,7 +846,7 @@ class TimeScale(super.cfg) extends Scale {
       // DIVERGES(chartjs): adapt-time-generate-no-advance, a stuck step.
       if (next <= time) {
         throw StateError(
-          '${jsNumberToString(min)} and ${jsNumberToString(max)}: the step '
+          '${numberString(min)} and ${numberString(max)}: the step '
           'of ${jsToString(stepSize)} ${minor.name} does not advance',
         );
       }

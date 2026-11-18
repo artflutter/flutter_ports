@@ -16,8 +16,14 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
         ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, UpdateMode;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ActiveElement, Chart, ChartEvent, ChartPosition, JsObjectFace, Scale;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsNumberToString;
+    show
+        ActiveElement,
+        Chart,
+        ChartEvent,
+        ChartPosition,
+        JsObjectFace,
+        Scale,
+        numberString;
 
 /// A sample of the docs of chartjs-plugin-zoom: the `module.exports` of its
 /// `chart-editor` block (`{actions, config, output}`).
@@ -114,7 +120,7 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
   // The zoom level is a number in the text: its JS text, as `+` gives it.
   String zoomStatus(Chart chart) =>
       '${wheelEnabled() ? 'enabled' : 'disabled'} '
-      '(${jsNumberToString(chart.getZoomLevel())}x)';
+      '(${numberString(chart.getZoomLevel())}x)';
 
   // <block:config:1>
   final config = <String, Object?>{
@@ -264,9 +270,7 @@ Map<String, Object?> zoomSampleScales() {
     'ticks': <String, Object?>{
       // A TickCallback: the scale, the value, the index and the ticks.
       'callback': (Object? scale, double val, int index, List<Object?> ticks) =>
-          index == 0 || index == ticks.length - 1
-          ? null
-          : [jsNumberToString(val)],
+          index == 0 || index == ticks.length - 1 ? null : [numberString(val)],
     },
     'grid': <String, Object?>{
       'borderColor': ChartPaint.solid(_grey(1)),

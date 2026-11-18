@@ -449,7 +449,7 @@ class Flow([Map<String, Object?>? cfg])
       final backgroundColor = labels.backgroundColor;
       drawLabel(
         ctx,
-        jsNumberToString(flow),
+        numberString(flow),
         DrawLabelOptions(
           autoPosition: SankeyLabelPosition.center,
           backgroundColor: backgroundColor is Undefined

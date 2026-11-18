@@ -43,6 +43,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isObject;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -671,9 +672,9 @@ List<Object> _objectKeys(Object? value) {
       // The face: the keys of a typed object.
       return jsObjectKeys(object);
     case final List<Object?> list:
-      return [for (var i = 0; i < list.length; i++) jsNumberToString(i)];
+      return [for (var i = 0; i < list.length; i++) numberString(i)];
     case final String string:
-      return [for (var i = 0; i < string.length; i++) jsNumberToString(i)];
+      return [for (var i = 0; i < string.length; i++) numberString(i)];
   }
   return const [];
 }

@@ -2,8 +2,8 @@
 import 'dart:ui' show Locale;
 
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:intl/intl.dart';
 import 'package:test/test.dart';
@@ -76,7 +76,7 @@ void main() {
       addTearDown(() => formatters['numeric'] = numeric);
       formatters['numeric'] = (self, v, i, ticks) {
         final same = identical(self, scale);
-        return ['patched ${jsNumberToString(v)} $i ${ticks.length} $same'];
+        return ['patched ${numberString(v)} $i ${ticks.length} $same'];
       };
       expect(
         _apply(formatters['logarithmic'], 1, 0, _ticks([1, 2]), scale),

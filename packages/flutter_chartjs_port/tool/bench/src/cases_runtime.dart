@@ -1,9 +1,10 @@
 // Original code, not ported from Chart.js: the JS runtime benchmarks.
 
 /// The cases of `lib/src/js/` and of `callScriptable`: `jsGet`, `jsTruthy`, `jsToNumber`,
-/// `jsNumberToString`, `jsObjectKeys` and `jsSort`.
+/// `numberString`, `jsObjectKeys` and `jsSort`.
 library;
 
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -151,25 +152,25 @@ List<BenchCase> runtimeCases() => [
       return acc.toInt();
     };
   }, per: 'jsToNumber of a numeric string (RegExp path)'),
-  BenchCase('js', 'jsNumberToString/mixed', () {
+  BenchCase('js', 'numberString/mixed', () {
     final values = <double>[12, 0.1 + 0.2, 1e21, 1.5e-7, -3, 1234.5678];
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        acc += jsNumberToString(values[i % 6]).length;
+        acc += numberString(values[i % 6]).length;
       }
       return acc;
     };
-  }, per: 'jsNumberToString of one of 6 doubles'),
-  BenchCase('js', 'jsNumberToString/integral', () {
+  }, per: 'numberString of one of 6 doubles'),
+  BenchCase('js', 'numberString/integral', () {
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        acc += jsNumberToString((i & 1023).toDouble()).length;
+        acc += numberString((i & 1023).toDouble()).length;
       }
       return acc;
     };
-  }, per: 'jsNumberToString of an integral double (index keys)'),
+  }, per: 'numberString of an integral double (index keys)'),
   BenchCase('js', 'jsObjectKeys/map30', () {
     final map = <String, Object?>{
       for (var i = 0; i < 30; i++) 'option$i': i.toDouble(),

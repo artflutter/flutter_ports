@@ -28,6 +28,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFunction;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/index.dart' show registerables;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -382,7 +383,7 @@ AnyObject _points(String name, [double? order]) {
 }
 
 /// `String(value)` of a number.
-String _n(num value) => jsNumberToString(value);
+String _n(num value) => numberString(value);
 
 /// The text of a chart area or a box: `left,top,right,bottom`.
 String _edges(Object? area) => switch (area) {

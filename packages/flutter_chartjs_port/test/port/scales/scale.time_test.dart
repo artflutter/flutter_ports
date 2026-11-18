@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -98,7 +99,7 @@ final Map<String, Object?> _functions = {
   // of that tick (row adapt-native-tick): the twin gives the label `null` of
   // upstream for it.
   'valueString': (Object? scale, double value, int index, Object? ticks) => [
-    if (value.isNaN) 'null' else jsNumberToString(value),
+    if (value.isNaN) 'null' else numberString(value),
   ],
 };
 
@@ -303,7 +304,7 @@ void main() {
         expect(
           decimal,
           _same((value - min) / (max - min)),
-          reason: jsNumberToString(value),
+          reason: numberString(value),
         );
         if (value.isFinite && value == value.truncateToDouble()) {
           expect(
@@ -329,11 +330,11 @@ void main() {
       final x = _x(_chart(_xy([_t0, _t0 + _day])));
       final value = _t0 + _day / 3;
       expect(
-        x.getDecimalForValue(jsNumberToString(value)),
+        x.getDecimalForValue(numberString(value)),
         x.getDecimalForValue(value),
       );
       expect(
-        x.getPixelForValue(jsNumberToString(value)),
+        x.getPixelForValue(numberString(value)),
         x.getPixelForValue(value),
       );
     });
@@ -407,7 +408,7 @@ void main() {
           isA<StateError>().having(
             (e) => e.message,
             'message',
-            '${jsNumberToString(_t0)} and ${jsNumberToString(_t0 + 200001)} '
+            '${numberString(_t0)} and ${numberString(_t0 + 200001)} '
                 'are too far apart with stepSize of 2 millisecond',
           ),
         ),
@@ -536,7 +537,7 @@ void main() {
             'callback':
                 (Object? scale, double value, int index, Object? ticks) {
                   values.add(value);
-                  return [jsNumberToString(value)];
+                  return [numberString(value)];
                 },
           },
         }),

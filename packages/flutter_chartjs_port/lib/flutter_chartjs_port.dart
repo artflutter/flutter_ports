@@ -197,6 +197,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         nativeMergeKind,
         nativeSegmentType,
         parseObjectDataRadialScaleOf;
+export 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 export 'package:flutter_chartjs_port/src/helpers/point_style.dart';
 export 'package:flutter_chartjs_port/src/helpers/radius_length.dart';
 export 'package:flutter_chartjs_port/src/index.dart' hide Animation, Element;

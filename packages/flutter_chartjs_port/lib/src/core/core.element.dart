@@ -37,6 +37,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show isNumber;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -777,7 +778,7 @@ final class const ElementPoint(
 
   /// The literal as JavaScript prints it, for test messages.
   @override
-  String toString() => '{x: ${jsNumberToString(x)}, y: ${jsNumberToString(y)}}';
+  String toString() => '{x: ${numberString(x)}, y: ${numberString(y)}}';
 }
 
 /// Whether [a] and [b] are equal coordinates of an [ElementPoint]. NaN is

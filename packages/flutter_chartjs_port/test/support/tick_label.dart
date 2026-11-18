@@ -3,8 +3,7 @@
 /// The tick label forms of the tests (differences.md row `adapt-native-tick`).
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsNumberToString;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' show Scale, Tick;
 import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
 
@@ -31,7 +30,7 @@ List<String>? valueTickLabel(
   double value,
   int index,
   List<Tick> ticks,
-) => <String>[jsNumberToString(value)];
+) => <String>[numberString(value)];
 
 /// The tick callback `(value, index) => '' + index` of the upstream specs
 /// (`index.toString()`).

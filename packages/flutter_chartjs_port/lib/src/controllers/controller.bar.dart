@@ -535,7 +535,7 @@ void _skipEdge(BorderSkipped res, Object? edge) {
     case final BorderSkippedEdge other:
       res.jsWrite(other.name, true);
     default:
-      res.jsWrite(jsToString(edge), true);
+      res.jsWrite('$edge', true);
   }
 }
 

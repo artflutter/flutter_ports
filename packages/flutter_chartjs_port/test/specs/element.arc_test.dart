@@ -5,7 +5,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
@@ -88,8 +88,8 @@ void main() {
             arc.inRange(x, y),
             isTrue,
             reason:
-                'radius: ${jsNumberToString(radius)}, '
-                'angle: ${jsNumberToString(angle)}',
+                'radius: ${numberString(radius)}, '
+                'angle: ${numberString(angle)}',
           );
         }
       }
@@ -102,8 +102,8 @@ void main() {
             arc.inRange(x, y),
             isFalse,
             reason:
-                'radius: ${jsNumberToString(radius)}, '
-                'angle: ${jsNumberToString(angle)}',
+                'radius: ${numberString(radius)}, '
+                'angle: ${numberString(angle)}',
           );
         }
       }

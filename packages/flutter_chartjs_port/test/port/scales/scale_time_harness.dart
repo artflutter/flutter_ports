@@ -32,6 +32,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -114,7 +115,7 @@ Map<String, Object?> timeObservations(Scale scale, Chart chart) {
         double.nan,
         0,
         false,
-        jsNumberToString(mid),
+        numberString(mid),
         true,
       ])
         scale.getDecimalForValue(v),
@@ -124,7 +125,7 @@ Map<String, Object?> timeObservations(Scale scale, Chart chart) {
         null,
         undefined,
         double.nan,
-        jsNumberToString(mid),
+        numberString(mid),
         true,
       ])
         scale.getPixelForValue(v),

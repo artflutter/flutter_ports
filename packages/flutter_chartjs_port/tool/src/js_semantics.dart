@@ -382,7 +382,8 @@ final class _ResolvedSitesVisitor(final ResolvedUnitResult unit)
           'number interpolation',
           'Dart writes the ${type!.getDisplayString()} with toString(), for '
               'example "12.0" on the VM and dart2wasm; JS String(12) is '
-              '"12". Use jsNumberToString of $jsRuntime, or add js-ok with '
+              '"12". Use numberString of '
+              'package:flutter_chartjs_port/chartjs.dart, or add js-ok with '
               'the reason.',
         ),
       );

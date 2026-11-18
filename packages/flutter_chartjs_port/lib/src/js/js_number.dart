@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: JS number coercion as in V8.
 
 /// The JavaScript coercions `ToNumber`, `ToBoolean` and `ToString`, the
-/// globals `parseFloat`, `isNaN` and `isFinite`, `Number::toString`, the
+/// global `isNaN`, the
 /// form `value || 0`, the operator `+` and the relational comparison `a < b`
 /// ([jsLessThan], Chart.js ADR 0036) over the Dart values that stand for
 /// JavaScript values (Chart.js ADR 0146).
@@ -17,6 +17,7 @@
 /// also removes U+0085.
 library;
 
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
@@ -119,7 +120,7 @@ Object? _toPrimitiveNumber(Object? value) => switch (value) {
 /// ECMAScript `ToString(value)`, the coercion of `'' + value`, of a template
 /// literal and of `String(value)`.
 ///
-/// A number gives [jsNumberToString]. An array gives the join of its elements
+/// A number gives [numberString]. An array gives the join of its elements
 /// with `,`, where `null` and [undefined] are empty. A cyclic array recurses
 /// without end: chart data has no such array. A `Map` gives
 /// `'[object Object]'`. A `DateTime` (a JS `Date`, Chart.js ADR 0024) gives
@@ -133,7 +134,7 @@ String jsToString(Object? value) => switch (value) {
   // The element ids and the modes of each option resolution (ADR 0093).
   final String string => string,
   null => 'null',
-  final num n => jsNumberToString(n),
+  final num n => numberString(n),
   final List<Object?> list =>
     list.map((e) => e == null || e is Undefined ? '' : jsToString(e)).join(','),
   Map<Object?, Object?>() || JsObjectFace() => '[object Object]',
@@ -227,28 +228,6 @@ String? _zoneName(DateTime local) {
       local.timeZoneOffset == Duration.zero &&
       (name == 'UTC' || name == 'Coordinated Universal Time');
   return utc ? 'Coordinated Universal Time' : null;
-}
-
-/// ECMAScript `Number::toString(x, 10)`, the string of `String(x)` and
-/// `'' + x` for a number: `'12'`, `'0.000001'`, `'1e+21'`, `'1.5e-7'`, and
-/// `'0'` for both `0` and `-0`.
-///
-/// Dart's `toString()` gives the shortest digits that read back as [x] and
-/// the notation of ECMAScript on the VM, dart2js and dart2wasm. Only the VM
-/// and dart2wasm add `.0` to an integral value in plain notation, and give
-/// `'-0.0'` for -0.
-String jsNumberToString(num x) {
-  final d = x.toDouble();
-  if (d == 0) return '0';
-  // Below 2^53 the shortest round-trip digits of an integral value are its
-  // exact digits. Above it, JavaScript pads the shortest digits with zeros
-  // (2^60 gives '1152921504606847000'), so int.toString gives other digits.
-  // NaN and the infinities fail the first test.
-  if (d == d.truncateToDouble() && d.abs() < 9007199254740992) {
-    return d.toInt().toString();
-  }
-  final s = d.toString();
-  return s.endsWith('.0') ? s.substring(0, s.length - 2) : s;
 }
 
 /// `StrDecimalLiteral` (ECMAScript 7.1.4.1).

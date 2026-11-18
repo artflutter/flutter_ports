@@ -111,6 +111,7 @@ export 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
     show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
 export 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableLineSegmentContext;
+export 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 export 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PathPointStyle, PointStyle;
 export 'package:flutter_chartjs_port/src/helpers/radius_length.dart'

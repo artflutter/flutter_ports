@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show setMinAndMaxByKey;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, createContext;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -254,21 +255,21 @@ final Map<String, Object> _functions = {
   // result is the lines of the label, and null for the `null` and the
   // `undefined` of the generator.
   'nullOdd': (Scale scale, double value, int index, List<Tick> ticks) =>
-      index.isOdd ? null : ['L${jsNumberToString(value)}'],
+      index.isOdd ? null : ['L${numberString(value)}'],
   'undefinedLast': (Scale scale, double value, int index, List<Tick> ticks) =>
-      index == ticks.length - 1 ? null : ['v${jsNumberToString(value)}'],
+      index == ticks.length - 1 ? null : ['v${numberString(value)}'],
   'arrayLabel': (Scale scale, double value, int index, List<Tick> ticks) => [
-    'a${jsNumberToString(value)}',
+    'a${numberString(value)}',
     'second line',
   ],
   'longLabel': (Scale scale, double value, int index, List<Tick> ticks) => [
-    'Label number ${jsNumberToString(value)}',
+    'Label number ${numberString(value)}',
   ],
   'numberLabel': (Scale scale, double value, int index, List<Tick> ticks) => [
-    jsNumberToString(value * 10),
+    numberString(value * 10),
   ],
   'thisType': (Scale scale, double value, int index, List<Tick> ticks) => [
-    '${scale.type}${jsNumberToString(value)}',
+    '${scale.type}${numberString(value)}',
   ],
   'colorByIndex': (Object? ctx) =>
       jsTruthy(jsToNumber(jsGet(ctx, 'index')).remainder(2))

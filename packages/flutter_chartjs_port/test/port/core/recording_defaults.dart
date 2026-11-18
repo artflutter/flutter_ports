@@ -8,10 +8,10 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -73,7 +73,7 @@ String probeJson(Object? value) => switch (value) {
   _ when nativeColorBytes(value) != null => jsonEncode(nativeColorBytes(value)),
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
-  final double d => jsNumberToString(d),
+  final double d => numberString(d),
   num() => '"<int>"',
   final String s => jsonEncode(s),
   _ when identical(value, formatters['values']) => '"<values>"',

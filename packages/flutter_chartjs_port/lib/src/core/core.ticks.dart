@@ -18,6 +18,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show log10;
+import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
@@ -60,9 +61,9 @@ final Map<String, TickFormatter> formatters = {
 /// @param value the value to display
 /// @return {string|string[]} the label to display
 ///
-/// `'' + value` is [jsNumberToString]: the value of a tick is a number.
+/// `'' + value` is [numberString]: the value of a tick is a number.
 List<String>? _values(Scale scale, double value, int index, List<Tick> ticks) {
-  return <String>[jsNumberToString(value)];
+  return <String>[numberString(value)];
 }
 
 /// core.ticks.js:28 `numeric`.

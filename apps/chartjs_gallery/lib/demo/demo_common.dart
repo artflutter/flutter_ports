@@ -1,16 +1,10 @@
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show JsObjectFace, SolidChartPaint, Undefined;
-// Not public: jsNumberToString, the JS text of a number in the readouts.
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsNumberToString;
+    show JsObjectFace, SolidChartPaint, Undefined, numberString;
 import 'package:material_ui/material_ui.dart';
 
 /// The JavaScript text of the number [value] (`Number.prototype.toString`),
 /// for the readouts.
-String jsNumberText(double value) => jsNumberToString(value);
+String jsNumberText(double value) => numberString(value);
 
 /// The JavaScript source form of an option value, for display: `undefined`,
 /// `null`, a quoted string, a JS number string, or `{…}` and `[…]`.
@@ -20,8 +14,8 @@ String showJs(Object? value) => switch (value) {
   Undefined() => 'undefined',
   null => 'null',
   final String s => "'$s'",
-  final double d => jsNumberToString(d),
-  final num n => jsNumberToString(n.toDouble()),
+  final double d => numberString(d),
+  final num n => numberString(n.toDouble()),
   final bool b => '$b',
   final Map<Object?, Object?> _ => '{…}',
   final JsObjectFace _ => '{…}',
