@@ -8,7 +8,6 @@
 /// and the base class `Color`.
 library;
 
-export 'package:flutter_d3_color_port/src/color.dart'
-    show Color, Hsl, Rgb, color;
-export 'package:flutter_d3_color_port/src/cubehelix.dart' show Cubehelix;
-export 'package:flutter_d3_color_port/src/lab.dart' show Hcl, Lab, gray, lch;
+export 'package:flutter_d3_color_port/src/color.dart';
+export 'package:flutter_d3_color_port/src/cubehelix.dart';
+export 'package:flutter_d3_color_port/src/lab.dart';

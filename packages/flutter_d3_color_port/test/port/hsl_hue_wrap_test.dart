@@ -6,7 +6,7 @@
 /// bit for bit, on hues of each kind.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_d3_color_port/d3_color.dart';
@@ -44,7 +44,7 @@ bool _same(double a, double b) =>
     a.isNaN ? b.isNaN : a == b && a.isNegative == b.isNegative;
 
 /// A double of random bits: each sign, exponent and fraction.
-double _randomBits(math.Random r, ByteData bytes) {
+double _randomBits(Random r, ByteData bytes) {
   bytes
     ..setUint32(0, r.nextInt(1 << 16) << 16 | r.nextInt(1 << 16))
     ..setUint32(4, r.nextInt(1 << 16) << 16 | r.nextInt(1 << 16));
@@ -54,7 +54,7 @@ double _randomBits(math.Random r, ByteData bytes) {
 /// The hues of the test: the edges of the fast form, a dense sweep, random
 /// hues and random bits.
 List<double> _hues() {
-  final r = math.Random(20261115);
+  final r = Random(20261115);
   final bytes = ByteData(8);
   const edges = [
     0.0, -0.0, 360.0, -360.0, 359.99999999999994, -359.99999999999994, //
@@ -74,7 +74,7 @@ List<double> _hues() {
 
 void main() {
   test('Hsl.rgb() gives the channels of the plain translation', () {
-    final r = math.Random(7);
+    final r = Random(7);
     const levels = [
       0.0, -0.0, 0.25, 0.5, 0.75, 1.0, -0.2, 1.3, double.nan, //
       double.infinity, 1e-300,

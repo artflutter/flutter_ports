@@ -10,15 +10,14 @@
 /// changes the text.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:test/test.dart';
 
 /// color.js:288 `clampa(opacity)`.
-double _clampa(double opacity) =>
-    opacity.isNaN ? 1 : math.max(0, math.min(1, opacity));
+double _clampa(double opacity) => opacity.isNaN ? 1 : max(0, min(1, opacity));
 
 /// color.js:292 `clampi(value)`.
 int _clampi(double value) {
@@ -42,7 +41,7 @@ String _formatRgb(Rgb c) {
 String _plain(Color c) => _formatRgb(c.rgb());
 
 /// A double of random bits: each sign, exponent and fraction.
-double _randomBits(math.Random r, ByteData bytes) {
+double _randomBits(Random r, ByteData bytes) {
   bytes
     ..setUint32(0, r.nextInt(1 << 16) << 16 | r.nextInt(1 << 16))
     ..setUint32(4, r.nextInt(1 << 16) << 16 | r.nextInt(1 << 16));
@@ -71,7 +70,7 @@ const List<double> _specials = [
 ];
 
 /// An opacity: 1, k / 100, a random value or a special value.
-double _opacity(math.Random r) => switch (r.nextInt(6)) {
+double _opacity(Random r) => switch (r.nextInt(6)) {
   0 || 1 => 1,
   2 => r.nextInt(101) / 100,
   3 => r.nextDouble() * 1.4 - 0.2,
@@ -109,14 +108,14 @@ List<T> _crossing<T extends Color>(
 }
 
 /// The [_crossing] of an HSL color of a random hue and saturation.
-List<Hsl> _hslCrossing(math.Random r) {
+List<Hsl> _hslCrossing(Random r) {
   final h = r.nextDouble() * 360;
   final s = r.nextDouble();
   return _crossing((l) => Hsl(h, s, l), 0, 1, r.nextInt(255) + 0.5);
 }
 
 /// The [_crossing] of an HCL color of a random hue and chroma.
-List<Hcl> _hclCrossing(math.Random r) {
+List<Hcl> _hclCrossing(Random r) {
   final h = r.nextDouble() * 360;
   final c = r.nextDouble() * 40;
   return _crossing((l) => Hcl(h, c, l), 0, 100, r.nextInt(255) + 0.5);
@@ -124,7 +123,7 @@ List<Hcl> _hclCrossing(math.Random r) {
 
 /// The HSL colors of the test.
 List<Hsl> _hslColors() {
-  final r = math.Random(20261115);
+  final r = Random(20261115);
   final bytes = ByteData(8);
   double pick(double Function() random) => switch (r.nextInt(5)) {
     0 => _specials[r.nextInt(_specials.length)],
@@ -151,7 +150,7 @@ List<Hsl> _hslColors() {
 
 /// The HCL colors of the test.
 List<Hcl> _hclColors() {
-  final r = math.Random(1115);
+  final r = Random(1115);
   final bytes = ByteData(8);
   double pick(double Function() random) => switch (r.nextInt(5)) {
     0 => _specials[r.nextInt(_specials.length)],
@@ -201,7 +200,7 @@ void main() {
 
   test('the pairs of colors on each side of a half give two texts', () {
     // The texts of these colors depend on the last bit of the red channel.
-    final r = math.Random(1);
+    final r = Random(1);
     final pairs = [
       for (var i = 0; i < 200; i++) _hslCrossing(r),
       for (var i = 0; i < 200; i++) _hclCrossing(r),

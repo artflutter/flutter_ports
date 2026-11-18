@@ -4,10 +4,10 @@
 /// radians.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
 /// math.js:1 `radians`: the radians of one degree.
-const double radians = math.pi / 180;
+const double radians = pi / 180;
 
 /// math.js:2 `degrees`: the degrees of one radian.
-const double degrees = 180 / math.pi;
+const double degrees = 180 / pi;

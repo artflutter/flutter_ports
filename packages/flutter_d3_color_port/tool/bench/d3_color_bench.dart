@@ -18,7 +18,7 @@ library;
 // The benchmark prints its results.
 // ignore_for_file: avoid_print
 
-import 'package:flutter_d3_color_port/d3_color.dart' as d3;
+import 'package:flutter_d3_color_port/d3_color.dart';
 
 /// The Park-Miller generator: exact in JavaScript numbers and in Dart.
 final class Lcg(
@@ -77,7 +77,7 @@ final class Inputs() {
         )],
       );
       rgbColors.add(
-        d3.Rgb(
+        Rgb(
           r.next(25600) / 100,
           r.next(25600) / 100,
           r.next(25600) / 100,
@@ -85,15 +85,10 @@ final class Inputs() {
         ),
       );
       hslColors.add(
-        d3.Hsl(
-          r.next(36000) / 100,
-          r.next(1000) / 1000,
-          r.next(1000) / 1000,
-          1,
-        ),
+        Hsl(r.next(36000) / 100, r.next(1000) / 1000, r.next(1000) / 1000, 1),
       );
       labColors.add(
-        d3.Lab(
+        Lab(
           r.next(10000) / 100,
           r.next(16000) / 100 - 80,
           r.next(16000) / 100 - 80,
@@ -101,15 +96,10 @@ final class Inputs() {
         ),
       );
       hclColors.add(
-        d3.Hcl(
-          r.next(36000) / 100,
-          r.next(10000) / 100,
-          r.next(10000) / 100,
-          1,
-        ),
+        Hcl(r.next(36000) / 100, r.next(10000) / 100, r.next(10000) / 100, 1),
       );
       cubehelixColors.add(
-        d3.Cubehelix(
+        Cubehelix(
           r.next(36000) / 100,
           r.next(1000) / 1000,
           r.next(1000) / 1000,
@@ -155,19 +145,19 @@ final class Inputs() {
   final List<String> mixed = [];
 
   /// RGB colors, half of them with an opacity below 1.
-  final List<d3.Rgb> rgbColors = [];
+  final List<Rgb> rgbColors = [];
 
   /// HSL colors.
-  final List<d3.Hsl> hslColors = [];
+  final List<Hsl> hslColors = [];
 
   /// Lab colors.
-  final List<d3.Lab> labColors = [];
+  final List<Lab> labColors = [];
 
   /// HCL colors.
-  final List<d3.Hcl> hclColors = [];
+  final List<Hcl> hclColors = [];
 
   /// Cubehelix colors.
-  final List<d3.Cubehelix> cubehelixColors = [];
+  final List<Cubehelix> cubehelixColors = [];
 }
 
 /// A value that the cases write, so that no compiler removes their work.
@@ -181,7 +171,7 @@ typedef Case = (String, void Function(int i));
 List<Case> cases(Inputs p) {
   const m = _pool - 1;
   void parse(List<String> pool, int i) {
-    final c = d3.color(pool[i & m]);
+    final c = color(pool[i & m]);
     sink += c == null ? 1 : c.opacity;
   }
 
@@ -194,21 +184,21 @@ List<Case> cases(Inputs p) {
     ('parse.hsl', (i) => parse(p.hsl, i)),
     ('parse.invalid', (i) => parse(p.invalid, i)),
     ('parse.mixed', (i) => parse(p.mixed, i)),
-    ('rgb.parse', (i) => sink += d3.Rgb.parse(p.mixed[i & m]).r),
+    ('rgb.parse', (i) => sink += Rgb.parse(p.mixed[i & m]).r),
     ('format.hex', (i) => sink += p.rgbColors[i & m].formatHex().length),
     ('format.hex8', (i) => sink += p.rgbColors[i & m].formatHex8().length),
     ('format.rgb', (i) => sink += p.rgbColors[i & m].formatRgb().length),
     ('format.hsl', (i) => sink += p.hslColors[i & m].formatHsl().length),
     ('format.rgbOfHsl', (i) => sink += p.hslColors[i & m].toString().length),
-    ('convert.rgbToHsl', (i) => sink += d3.Hsl.from(p.rgbColors[i & m]).l),
+    ('convert.rgbToHsl', (i) => sink += Hsl.from(p.rgbColors[i & m]).l),
     ('convert.hslToRgb', (i) => sink += p.hslColors[i & m].rgb().r),
-    ('convert.rgbToLab', (i) => sink += d3.Lab.from(p.rgbColors[i & m]).l),
+    ('convert.rgbToLab', (i) => sink += Lab.from(p.rgbColors[i & m]).l),
     ('convert.labToRgb', (i) => sink += p.labColors[i & m].rgb().r),
-    ('convert.rgbToHcl', (i) => sink += d3.Hcl.from(p.rgbColors[i & m]).c),
+    ('convert.rgbToHcl', (i) => sink += Hcl.from(p.rgbColors[i & m]).c),
     ('convert.hclToRgb', (i) => sink += p.hclColors[i & m].rgb().r),
     (
       'convert.rgbToCubehelix',
-      (i) => sink += d3.Cubehelix.from(p.rgbColors[i & m]).l,
+      (i) => sink += Cubehelix.from(p.rgbColors[i & m]).l,
     ),
     ('convert.cubehelixToRgb', (i) => sink += p.cubehelixColors[i & m].rgb().r),
     ('op.brighterRgb', (i) => sink += p.rgbColors[i & m].brighter(0.5).r),
@@ -226,7 +216,7 @@ List<Case> cases(Inputs p) {
     ),
     (
       'pipe.parseHex',
-      (i) => sink += d3.Rgb.parse(p.mixed[i & m]).formatHex().length,
+      (i) => sink += Rgb.parse(p.mixed[i & m]).formatHex().length,
     ),
   ];
 }

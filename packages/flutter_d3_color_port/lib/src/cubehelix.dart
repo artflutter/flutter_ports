@@ -4,10 +4,9 @@
 /// of Dave Green, [Cubehelix].
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:flutter_d3_color_port/src/color.dart';
-import 'package:flutter_d3_color_port/src/math.dart';
+import 'package:flutter_d3_color_port/d3_color.dart';
 
 // The methods `brighter` and `darker` of [Cubehelix] hide the two constants
 // of color.dart in the class body.
@@ -52,12 +51,10 @@ Cubehelix cubehelixConvert(Color? o) {
   final bl = b - l;
   final k = (_e * (g - l) - _c * bl) / _d;
   // NaN if l = 0 or l = 1.
-  final s = math.sqrt(k * k + bl * bl) / (_e * l * (1.0 - l));
+  final s = sqrt(k * k + bl * bl) / (_e * l * (1.0 - l));
   // `s ? … : NaN`: s is neither 0 nor NaN.
   // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math atan2.
-  final h = s != 0.0 && !s.isNaN
-      ? math.atan2(k, bl) * degrees - 120.0
-      : double.nan;
+  final h = s != 0.0 && !s.isNaN ? atan2(k, bl) * degrees - 120.0 : double.nan;
   return Cubehelix(h < 0.0 ? h + 360.0 : h, s, l, c.opacity);
 }
 
@@ -94,14 +91,14 @@ class Cubehelix(
   /// cubehelix.js:40 `brighter(k)`.
   @override
   Cubehelix brighter([double? k]) {
-    final f = k == null ? _brighter : math.pow(_brighter, k).toDouble();
+    final f = k == null ? _brighter : pow(_brighter, k).toDouble();
     return Cubehelix(h, s, l * f, opacity);
   }
 
   /// cubehelix.js:44 `darker(k)`.
   @override
   Cubehelix darker([double? k]) {
-    final f = k == null ? _darker : math.pow(_darker, k).toDouble();
+    final f = k == null ? _darker : pow(_darker, k).toDouble();
     return Cubehelix(h, s, l * f, opacity);
   }
 
@@ -112,8 +109,8 @@ class Cubehelix(
     final l = this.l;
     final a = s.isNaN ? 0.0 : s * l * (1.0 - l);
     // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math cos, sin.
-    final cosh = math.cos(h);
-    final sinh = math.sin(h);
+    final cosh = cos(h);
+    final sinh = sin(h);
     return Rgb(
       255.0 * (l + a * (_a * cosh + _b * sinh)),
       255.0 * (l + a * (_c * cosh + _d * sinh)),

@@ -6,10 +6,10 @@
 /// a large set of generated values.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter_d3_color_port/src/color.dart';
+import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:test/test.dart';
 
 /// The text of a number in a template literal of color.js, as the port had
@@ -53,7 +53,7 @@ List<double> _neighbors(double x) {
 /// The values of the twin: each k / 100 in [0, 360] with its neighbors, the
 /// percentages of the HSL formats, random values and edge cases.
 List<double> _values() {
-  final random = math.Random(11);
+  final random = Random(11);
   final values = <double>[
     double.nan,
     0,
@@ -100,7 +100,7 @@ List<double> _values() {
       ..add(random.nextDouble())
       ..add(random.nextDouble() * 100)
       ..add(random.nextInt(100000) / 1000)
-      ..add(math.pow(10, -random.nextInt(30) - random.nextDouble()).toDouble());
+      ..add(pow(10, -random.nextInt(30) - random.nextDouble()).toDouble());
   }
   return values;
 }

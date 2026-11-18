@@ -6,7 +6,7 @@ library;
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_d3_color_port/src/color.dart';
+import 'package:flutter_d3_color_port/d3_color.dart';
 
 /// The Flutter color of a d3-color [Color].
 extension D3ColorToUi on Color {

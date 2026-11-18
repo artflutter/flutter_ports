@@ -6,18 +6,16 @@
 /// on each whole channel, a dense sweep and random channels.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter_d3_color_port/src/lab.dart' show rgb2lrgb;
+import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:test/test.dart';
 
 /// lab.js:80 `rgb2lrgb(x)`, the plain translation.
 double _rgb2lrgb(double x) {
   final v = x / 255;
-  return v <= 0.04045
-      ? v / 12.92
-      : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+  return v <= 0.04045 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4).toDouble();
 }
 
 /// Whether [a] and [b] are the same double: NaN equals NaN, and -0 differs
@@ -27,7 +25,7 @@ bool _same(double a, double b) =>
 
 /// The channels of the test.
 List<double> _channels() {
-  final r = math.Random(20261115);
+  final r = Random(20261115);
   final bytes = ByteData(8);
   double bits() {
     bytes
@@ -47,7 +45,7 @@ List<double> _channels() {
     ...edges,
     for (var i = -300; i <= 600; i++) i.toDouble(),
     for (var i = 0; i <= 256; i++) ...[
-      math.max(0, i - 1e-13),
+      max(0, i - 1e-13),
       i + 1e-13,
       i + 0.5,
       -i.toDouble(),

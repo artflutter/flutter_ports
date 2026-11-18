@@ -22,7 +22,7 @@
 /// - NaN equals NaN, and -0 equals +0.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:test/test.dart';
@@ -375,7 +375,7 @@ bool _same(double actual, double expected) =>
 bool _near(double actual, double expected) {
   if (expected.isNaN) return actual.isNaN;
   if (expected.isInfinite || actual.isInfinite) return actual == expected;
-  return (actual - expected).abs() <= math.max(1e-12 * expected.abs(), 1e-9);
+  return (actual - expected).abs() <= max(1e-12 * expected.abs(), 1e-9);
 }
 
 /// A number of a CSS text of d3-color.

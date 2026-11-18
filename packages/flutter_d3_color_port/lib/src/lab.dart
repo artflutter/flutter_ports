@@ -5,11 +5,10 @@
 /// <https://observablehq.com/@mbostock/lab-and-rgb>.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter_d3_color_port/src/color.dart';
-import 'package:flutter_d3_color_port/src/math.dart';
+import 'package:flutter_d3_color_port/d3_color.dart';
 
 /// lab.js:6 `K`: the lightness step of `brighter()` and `darker()`.
 const double _k = 18;
@@ -141,7 +140,7 @@ Rgb _lab2rgb(double l, double a, double b, double opacity) {
 /// lab.js:68 `xyz2lab(t)`.
 @pragma('vm:prefer-inline')
 double xyz2lab(double t) =>
-    t > _t3 ? math.pow(t, 1.0 / 3.0).toDouble() : t / _t2 + _t0;
+    t > _t3 ? pow(t, 1.0 / 3.0).toDouble() : t / _t2 + _t0;
 
 /// lab.js:72 `lab2xyz(t)`.
 @pragma('vm:prefer-inline')
@@ -152,9 +151,7 @@ double lab2xyz(double t) => t > _t1 ? t * t * t : _t2 * (t - _t0);
 @pragma('vm:prefer-inline')
 double lrgb2rgb(double x) =>
     255.0 *
-    (x <= 0.0031308
-        ? 12.92 * x
-        : 1.055 * math.pow(x, 1.0 / 2.4).toDouble() - 0.055);
+    (x <= 0.0031308 ? 12.92 * x : 1.055 * pow(x, 1.0 / 2.4).toDouble() - 0.055);
 
 /// lab.js:80 `rgb2lrgb(x)`: an sRGB channel in [0, 255] as a linear channel
 /// in [0, 1].
@@ -173,7 +170,7 @@ double rgb2lrgb(double x) {
 const double _p52 = 4503599627370496;
 
 /// The power branch of lab.js:81 `rgb2lrgb` for the channel [v] in [0, 1].
-double _lrgbPow(double v) => math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+double _lrgbPow(double v) => pow((v + 0.055) / 1.055, 2.4).toDouble();
 
 /// The [_lrgbPow] of each whole channel 0 to 255, from the formula itself, so
 /// that a read gives the double of the formula on each platform. A parsed
@@ -203,8 +200,8 @@ Hcl hclConvert(Color? o) {
     return Hcl(double.nan, 0.0 < l && l < 100.0 ? 0.0 : double.nan, l, opacity);
   }
   // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math atan2.
-  final h = math.atan2(b, a) * degrees;
-  return Hcl(h < 0.0 ? h + 360.0 : h, math.sqrt(a * a + b * b), l, opacity);
+  final h = atan2(b, a) * degrees;
+  return Hcl(h < 0.0 ? h + 360.0 : h, sqrt(a * a + b * b), l, opacity);
 }
 
 /// lab.js:92 `lch(l, c, h, opacity)`: the [Hcl] of the lightness [l], the
@@ -259,7 +256,7 @@ class Hcl(
     if (this.h.isNaN) return _lab2rgb(l, 0, 0, opacity);
     final h = this.h * radians;
     // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math cos, sin.
-    return _lab2rgb(l, math.cos(h) * c, math.sin(h) * c, opacity);
+    return _lab2rgb(l, cos(h) * c, sin(h) * c, opacity);
   }
 
   /// color.js:181 `formatRgb()`: `this.rgb().formatRgb()`, with the lines
@@ -279,8 +276,8 @@ class Hcl(
     } else {
       final h = this.h * radians;
       // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math cos, sin.
-      a = math.cos(h) * c;
-      b = math.sin(h) * c;
+      a = cos(h) * c;
+      b = sin(h) * c;
     }
     final (r, g, bb) = _lab2channels(l, a, b);
     return rgbText(r, g, bb, opacity);
@@ -292,5 +289,5 @@ Lab hcl2lab(Hcl o) {
   if (o.h.isNaN) return Lab(o.l, 0, 0, o.opacity);
   final h = o.h * radians;
   // DIVERGES(d3-color): platform-color-trig-last-bit, dart:math cos, sin.
-  return Lab(o.l, math.cos(h) * o.c, math.sin(h) * o.c, o.opacity);
+  return Lab(o.l, cos(h) * o.c, sin(h) * o.c, o.opacity);
 }

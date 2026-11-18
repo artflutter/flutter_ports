@@ -8,7 +8,7 @@
 /// of generated colors.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:test/test.dart';
@@ -17,8 +17,7 @@ import 'package:test/test.dart';
 // of the format path.
 
 /// color.js:288 `clampa(opacity)`.
-double _clampa(double opacity) =>
-    opacity.isNaN ? 1 : math.max(0, math.min(1, opacity));
+double _clampa(double opacity) => opacity.isNaN ? 1 : max(0, min(1, opacity));
 
 /// color.js:292 `clampi(value)`.
 int _clampi(double value) {
@@ -43,8 +42,7 @@ double _clamph(double value) {
 }
 
 /// color.js:386 `clampt(value)`.
-double _clampt(double value) =>
-    math.max(0, math.min(1, value.isNaN ? 0 : value));
+double _clampt(double value) => max(0, min(1, value.isNaN ? 0 : value));
 
 /// color.js:275 `rgb_formatHex`.
 String _formatHex(Rgb c) => '#${_hex(c.r)}${_hex(c.g)}${_hex(c.b)}';
@@ -130,7 +128,7 @@ const List<double> _unitEdges = [
 
 /// A channel of an RGB color: an edge, a random value in [-20, 280], a
 /// value k / 100 or a whole number.
-double _channel(math.Random random) => switch (random.nextInt(8)) {
+double _channel(Random random) => switch (random.nextInt(8)) {
   0 => _edges[random.nextInt(_edges.length)],
   1 || 2 => random.nextDouble() * 300 - 20,
   3 || 4 => random.nextInt(25600) / 100,
@@ -140,18 +138,18 @@ double _channel(math.Random random) => switch (random.nextInt(8)) {
 };
 
 /// An opacity, a saturation or a lightness.
-double _unit(math.Random random) => switch (random.nextInt(8)) {
+double _unit(Random random) => switch (random.nextInt(8)) {
   0 => _unitEdges[random.nextInt(_unitEdges.length)],
   1 => 1,
   2 => random.nextInt(100) / 100,
   3 => random.nextInt(1000) / 1000,
   4 => random.nextDouble() * 1.4 - 0.2,
-  5 => math.pow(10, -random.nextInt(12) - random.nextDouble()).toDouble(),
+  5 => pow(10, -random.nextInt(12) - random.nextDouble()).toDouble(),
   _ => random.nextDouble(),
 };
 
 /// A hue.
-double _hue(math.Random random) => switch (random.nextInt(8)) {
+double _hue(Random random) => switch (random.nextInt(8)) {
   0 => _edges[random.nextInt(_edges.length)],
   1 => random.nextInt(36000) / 100,
   2 => random.nextInt(8) * 360.0,
@@ -163,7 +161,7 @@ double _hue(math.Random random) => switch (random.nextInt(8)) {
 
 void main() {
   test('the RGB formats give the texts of the plain translations', () {
-    final random = math.Random(3);
+    final random = Random(3);
     final mismatches = <String>[];
     for (var i = 0; i < 30000; i++) {
       final c = Rgb(
@@ -189,7 +187,7 @@ void main() {
   });
 
   test('formatHsl gives the text of the plain translation', () {
-    final random = math.Random(5);
+    final random = Random(5);
     final mismatches = <String>[];
     for (var i = 0; i < 30000; i++) {
       final c = Hsl(_hue(random), _unit(random), _unit(random), _unit(random));
@@ -205,7 +203,7 @@ void main() {
   });
 
   test('the formats of other spaces go through the same path', () {
-    final random = math.Random(9);
+    final random = Random(9);
     final mismatches = <String>[];
     for (var i = 0; i < 3000; i++) {
       final colors = <Color>[

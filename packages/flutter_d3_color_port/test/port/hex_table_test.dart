@@ -5,10 +5,10 @@
 /// a large set of generated values.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter_d3_color_port/src/color.dart';
+import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:test/test.dart';
 
 /// color.js:292 `clampi(value)`, as the port had it before the row
@@ -28,7 +28,7 @@ String _hexReference(double value) {
 /// The values of the twin: the specials, each half from -4 to 300 with its
 /// neighbors, and random values.
 List<double> _values() {
-  final random = math.Random(7);
+  final random = Random(7);
   final data = ByteData(8);
   final values = <double>[
     double.nan,

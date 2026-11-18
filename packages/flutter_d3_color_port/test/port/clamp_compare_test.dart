@@ -7,10 +7,10 @@
 /// clamp, gives the bits of color.js:386 too.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter_d3_color_port/src/color.dart';
+import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:test/test.dart';
 
 /// color.js:292 `Math.max(0, Math.min(255, Math.round(value) || 0))`.
@@ -31,7 +31,7 @@ double _clamphReference(double value) {
 /// color.js:386 `Math.max(0, Math.min(1, value || 0))`: `value || 0` is 0
 /// for NaN and -0.
 double _clamptReference(double value) =>
-    math.max(0, math.min(1, value.isNaN || value == 0 ? 0.0 : value));
+    max(0, min(1, value.isNaN || value == 0 ? 0.0 : value));
 
 /// The double next to [x] away from 0 ([step] 1) or toward 0 ([step] -1),
 /// through the two 32-bit halves of its bits, as on each platform.
@@ -86,7 +86,7 @@ const List<double> _specials = [
 /// its neighbors, random values in some ranges, and random doubles of any
 /// exponent.
 List<double> _values() {
-  final random = math.Random(42);
+  final random = Random(42);
   final values = <double>[..._specials];
   for (var k = 1; k <= 800; k++) {
     values

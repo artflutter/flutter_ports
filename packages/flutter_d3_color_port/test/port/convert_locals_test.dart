@@ -8,13 +8,10 @@
 /// port, bit for bit, on colors of each space.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_d3_color_port/d3_color.dart';
-import 'package:flutter_d3_color_port/src/cubehelix.dart' show cubehelixConvert;
-import 'package:flutter_d3_color_port/src/lab.dart' show hclConvert, labConvert;
-import 'package:flutter_d3_color_port/src/math.dart';
 import 'package:test/test.dart';
 
 // lab.js:6-13.
@@ -82,8 +79,7 @@ Rgb _labRgb(Lab o) {
 }
 
 /// lab.js:68 `xyz2lab(t)`.
-double _xyz2lab(double t) =>
-    t > _t3 ? math.pow(t, 1 / 3).toDouble() : t / _t2 + _t0;
+double _xyz2lab(double t) => t > _t3 ? pow(t, 1 / 3).toDouble() : t / _t2 + _t0;
 
 /// lab.js:72 `lab2xyz(t)`.
 double _lab2xyz(double t) => t > _t1 ? t * t * t : _t2 * (t - _t0);
@@ -91,16 +87,12 @@ double _lab2xyz(double t) => t > _t1 ? t * t * t : _t2 * (t - _t0);
 /// lab.js:76 `lrgb2rgb(x)`.
 double _lrgb2rgb(double x) =>
     255 *
-    (x <= 0.0031308
-        ? 12.92 * x
-        : 1.055 * math.pow(x, 1 / 2.4).toDouble() - 0.055);
+    (x <= 0.0031308 ? 12.92 * x : 1.055 * pow(x, 1 / 2.4).toDouble() - 0.055);
 
 /// lab.js:80 `rgb2lrgb(x)`.
 double _rgb2lrgb(double x) {
   final v = x / 255;
-  return v <= 0.04045
-      ? v / 12.92
-      : math.pow((v + 0.055) / 1.055, 2.4).toDouble();
+  return v <= 0.04045 ? v / 12.92 : pow((v + 0.055) / 1.055, 2.4).toDouble();
 }
 
 /// lab.js:84 `hclConvert(o)`.
@@ -110,20 +102,15 @@ Hcl _hclConvert(Color? o) {
   if (c.a == 0 && c.b == 0) {
     return Hcl(_nan, 0 < c.l && c.l < 100 ? 0 : _nan, c.l, c.opacity);
   }
-  final h = math.atan2(c.b, c.a) * degrees;
-  return Hcl(
-    h < 0 ? h + 360 : h,
-    math.sqrt(c.a * c.a + c.b * c.b),
-    c.l,
-    c.opacity,
-  );
+  final h = atan2(c.b, c.a) * degrees;
+  return Hcl(h < 0 ? h + 360 : h, sqrt(c.a * c.a + c.b * c.b), c.l, c.opacity);
 }
 
 /// lab.js:107 `hcl2lab(o)`.
 Lab _hcl2lab(Hcl o) {
   if (o.h.isNaN) return Lab(o.l, 0, 0, o.opacity);
   final h = o.h * radians;
-  return Lab(o.l, math.cos(h) * o.c, math.sin(h) * o.c, o.opacity);
+  return Lab(o.l, cos(h) * o.c, sin(h) * o.c, o.opacity);
 }
 
 /// lab.js:120 `Hcl.rgb()`.
@@ -139,8 +126,8 @@ Cubehelix _cubehelixConvert(Color? o) {
   final l = (_bcDa * b + _ed * r - _eb * g) / (_bcDa + _ed - _eb);
   final bl = b - l;
   final k = (_e * (g - l) - _c * bl) / _d;
-  final s = math.sqrt(k * k + bl * bl) / (_e * l * (1 - l));
-  final h = s != 0 && !s.isNaN ? math.atan2(k, bl) * degrees - 120 : _nan;
+  final s = sqrt(k * k + bl * bl) / (_e * l * (1 - l));
+  final h = s != 0 && !s.isNaN ? atan2(k, bl) * degrees - 120 : _nan;
   return Cubehelix(h < 0 ? h + 360 : h, s, l, c.opacity);
 }
 
@@ -183,7 +170,7 @@ List<double> _channels(Color c) => switch (c) {
 };
 
 /// The test values of one channel.
-final class _Values(final math.Random random) {
+final class _Values(final Random random) {
   final ByteData _bytes = ByteData(8);
 
   static const List<double> edges = [
@@ -211,7 +198,7 @@ final class _Values(final math.Random random) {
 
 /// The colors of the test: RGB (also grays), HSL, Lab, HCL and Cubehelix.
 List<Color> _colors() {
-  final v = _Values(math.Random(20261115));
+  final v = _Values(Random(20261115));
   final r = v.random;
   final colors = <Color>[];
   for (var i = 0; i < 4000; i++) {
