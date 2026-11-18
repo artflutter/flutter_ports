@@ -1234,9 +1234,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `jsAdd` (the operator `a + b` on a raw option value: a string operand joins, else the numbers
   add), `jsGetKey` (the read `object[key]` of a parsed item, a data item or a stack object, with the
   `jsGet` result; a read of a resolver stays `jsGet`), `jsGetIndex` (the read `object[index]` with a
-  number index: a List gives the item at a whole index in range, else `undefined`), `jsSetIndex`
-  (the write `list[index] = value`: a write at the length appends, a write past it or at a negative
-  index throws a `RangeError`), `jsLessThan` (the operator `a < b` on raw values: two strings
+  number index: a List gives the item at a whole index in range, else `undefined`), `jsLessThan` (the operator `a < b` on raw values: two strings
   compare by their code units, a `DateTime` by its time value) (Chart.js ADR 0036) and the
   `undefined` sentinel (Chart.js ADR 0043). `Math.hypot(a, b)` has no runtime function: it is
   `math.sqrt(a * a + b * b)` (Chart.js ADR 0146 §4). `Math.round(x)` is `x.roundToDouble()` (Chart.js
@@ -1287,8 +1285,11 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
     `TypeError`.
   - `jsOwnPropertyNames` is `Object.getOwnPropertyNames`. For a resolver, it gives the keys of the
     `ownKeys` trap.
-  - `jsSplice` is `Array.prototype.splice`. `start` and `deleteCount` go through
-    `ToIntegerOrInfinity`. Dart `null` stands for an absent `deleteCount`.
+  - The runtime has no `splice`, index write, `hasOwn`, `delete`, `parseFloat` or `isFinite`
+    (Chart.js ADR 0175): ported code uses `removeRange`, `insertAll`, an append at the length and
+    `Map.remove`. `isNumber` of `helpers.math` is true for a finite `num` only. A spec port
+    changes a data array with `spliceList` of `test/support/list_splice.dart`, and reads own keys
+    with `hasOwnKey` and `deleteOwnKey` of `test/support/object_keys.dart`.
   - `Date.now()` has no runtime function: it is `clock.now().millisecondsSinceEpoch` of
     package:clock, with `.toDouble()` where the code computes with doubles (Chart.js ADR 0146 §6).
     Inside `testWidgets` and `withClock`, the fake clock moves it. Ported code never calls

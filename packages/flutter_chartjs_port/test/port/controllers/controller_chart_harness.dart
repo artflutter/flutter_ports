@@ -56,8 +56,7 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show jsObjectKeys, jsSplice;
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -74,6 +73,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/data_label.dart';
+import '../../support/list_splice.dart';
 import '../../support/scale_border.dart';
 import '../../support/segment_style.dart';
 import '../scales/scale_chart_harness.dart';
@@ -867,7 +867,7 @@ Future<void> runStep(
       ...final items,
     ]:
       final data = _data(chart, d);
-      jsSplice(data, start.toDouble(), count.toDouble(), items);
+      spliceList(data, start.toInt(), count.toInt(), items);
       notifyArrayListeners(data, 'splice', [start, count, ...items]);
       chart.update();
     case ['reset']:
@@ -994,6 +994,7 @@ void testControllerChartCases(
   bool hits = true,
   Map<String, Object?> Function(Chart chart)? observeExtra,
   Map<String, Set<String>> hitBorders = const {},
+  Map<String, String> skips = const {},
 }) {
   for (final c in cases) {
     if (theme != null &&
@@ -1017,7 +1018,7 @@ void testControllerChartCases(
       } else {
         await atNow(now, body);
       }
-    });
+    }, skip: skips.containsKey(c.name));
   }
 }
 

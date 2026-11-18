@@ -35,6 +35,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/object_keys.dart';
 import '../controllers/controller_chart_harness.dart' show ReferenceEvent;
 import '../scales/scale_chart_harness.dart'
     show copyReference, referenceMatcher, testReferenceOrigin;
@@ -215,7 +216,7 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       );
     case ['deleteDefault', final String path]:
       final (object, key) = _parentOf(defaults, path);
-      jsDeleteKey(object, key);
+      deleteOwnKey(object, key);
     case ['readScale', final String id, final String path]:
       return _valueOf(_readPath(chart.scales[id]!.options, path), 0);
     case ['readLegend', final String path]:

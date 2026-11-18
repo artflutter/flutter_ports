@@ -30,6 +30,8 @@ import 'package:flutter_chartjs_port/src/types/data_item.dart'
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/object_keys.dart';
+
 /// Expects the lowered [actual] to be the raw twin [expected].
 void expectTwin(Object? actual, Object? expected) =>
     _twin(actual, expected, r'$');
@@ -102,11 +104,11 @@ Object? _parameterOf(String key, Object? value) {
 /// probe key adds no pair to the audit O2.
 void _expectWritable(Object map, String path) {
   const probe = r'$twinProbe';
-  expect(jsHasOwn(map, probe), isFalse, reason: path);
+  expect(hasOwnKey(map, probe), isFalse, reason: path);
   expect(
     () => jsSet(map, probe, undefined),
     returnsNormally,
     reason: '$path takes a write',
   );
-  jsDeleteKey(map, probe);
+  deleteOwnKey(map, probe);
 }

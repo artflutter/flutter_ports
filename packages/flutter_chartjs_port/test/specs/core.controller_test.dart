@@ -35,6 +35,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
+import '../support/list_splice.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
 // chart reaches the chart host and dart:ui.
@@ -83,7 +84,7 @@ import '../support/jasmine.dart';
 // - `chart._metasets`, `chart._sortedMetasets` and `meta._dataset` are
 //   `chart.metasets`, `chart.sortedMetasets` and `meta.dataset_` (Chart.js
 //   ADR 0012 and ADR 0023). A hole of the metasets is Dart null.
-// - `chart.data.datasets.splice(...)` is `jsSplice`: no listener watches
+// - `chart.data.datasets.splice(...)` is `spliceList`: no listener watches
 //   the datasets array.
 // - `[].concat(hooks.a, hooks.b)` is a list literal with spreads.
 // - A plugin is a native `Plugin` (Chart.js ADR 0144), with a field for
@@ -217,7 +218,7 @@ void _splice(
   int deleteCount, [
   List<Object?> items = const [],
 ]) {
-  jsSplice(array, start.toDouble(), deleteCount.toDouble(), items);
+  spliceList(array, start, deleteCount, items);
   notifyArrayListeners(array, 'splice', [start, deleteCount, ...items]);
 }
 
@@ -2614,7 +2615,7 @@ void main() {
         tester,
       ) async {
         beforeEach();
-        jsSplice(_datasets(chart), 0, 2);
+        spliceList(_datasets(chart), 0, 2);
         chart.update();
         final metasets = chart.metasets;
         expect(metasets[0]!.order, jasmineEquals(4));
@@ -2626,7 +2627,7 @@ void main() {
         tester,
       ) async {
         beforeEach();
-        jsSplice(_datasets(chart), 1, 2);
+        spliceList(_datasets(chart), 1, 2);
         chart.update();
         final metasets = chart.metasets;
         expect(metasets[0]!.order, jasmineEquals(2));
@@ -2636,7 +2637,7 @@ void main() {
 
       testWidgets('should be moved when datasets are inserted', (tester) async {
         beforeEach();
-        jsSplice(_datasets(chart), 1, 0, [
+        spliceList(_datasets(chart), 1, 0, [
           <String, Object?>{'label': '1.5', 'order': 5},
         ]);
         chart.update();
@@ -2653,7 +2654,7 @@ void main() {
         tester,
       ) async {
         beforeEach();
-        jsSplice(_datasets(chart), 1, 1, [
+        spliceList(_datasets(chart), 1, 1, [
           <String, Object?>{'label': '1.5', 'order': 5},
         ]);
         chart.update();

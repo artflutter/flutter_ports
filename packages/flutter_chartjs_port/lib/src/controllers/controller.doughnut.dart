@@ -10,9 +10,9 @@
 ///
 /// - A parsed item and a data item are any value (Chart.js ADR 0036). A read
 ///   with a number index is [jsGetIndex], and the write `meta._parsed[i] =`
-///   is [jsSetIndex]. The parsed items stay the upstream numbers (Chart.js
-///   ADR 0054 §8). The one cast of a data value is the `data` List of
-///   [DoughnutController.parse] (Chart.js ADR 0036, section 5 item 4).
+///   appends at the length. The parsed items stay the upstream numbers
+///   (Chart.js ADR 0054 §8). The one cast of a data value is the `data` List
+///   of [DoughnutController.parse] (Chart.js ADR 0036, section 5 item 4).
 /// - The dataset, chart and legend options and the [ElementOptions] of an
 ///   arc read typed ([OptionView.readKey], [readOption]). The data object
 ///   and the dataset objects of the user read by name. The properties of an
@@ -66,8 +66,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show angleBetween, halfPi, pi, tau, toRadians;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show PercentRadius, PixelRadius, RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show JsStringList, jsSetIndex;
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show JsStringList;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -378,7 +377,13 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       // DIVERGES(chartjs): adapt-parse-presize, one growth for numbers.
       presizeParsedNumbers(meta.parsed, data, start, count);
       for (var i = start, ilen = start + count; i < ilen; ++i) {
-        jsSetIndex<Object?>(meta.parsed, i, getter(i));
+        final value = getter(i);
+        // `meta._parsed[i] = value`: a write at the length appends.
+        if (i == meta.parsed.length) {
+          meta.parsed.add(value);
+        } else {
+          meta.parsed[i] = value;
+        }
       }
     }
   }

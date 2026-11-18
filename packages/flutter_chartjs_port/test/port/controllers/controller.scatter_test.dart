@@ -19,7 +19,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -29,6 +28,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/list_splice.dart';
 import '../../support/segment_style.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
@@ -128,6 +128,12 @@ void _expectLinePoints(Chart chart) {
   }
 }
 
+/// The reference cases with a number option written as a string: a string is
+/// no number for `isNumber` (Chart.js ADR 0175).
+const Map<String, String> _typedNumberSkips = {
+  "parsed: spanGaps '2'": 'diverges: adapt-typed-number-test',
+};
+
 void main() {
   testReferenceOrigin(
     node: controllerScatterReferenceNode,
@@ -156,10 +162,14 @@ void main() {
   // A side of the clip is a number (row `adapt-native-chart-meta`): this
   // case keeps a string side upstream. The group `adapt-native-chart-meta`
   // pins the port.
-  testControllerChartCases([
-    for (final c in controllerScatterReference)
-      if (c.name != _stringClipCase) c,
-  ], functions: _functions);
+  testControllerChartCases(
+    [
+      for (final c in controllerScatterReference)
+        if (c.name != _stringClipCase) c,
+    ],
+    functions: _functions,
+    skips: _typedNumberSkips,
+  );
 
   group('adapt-native-chart-meta', () {
     // Upstream keeps the string '3' of the borderWidth as each side of the
@@ -358,7 +368,7 @@ void main() {
         final chart = acquireChart(config());
         final data = _data(chart, 0);
         final item = <String, Object?>{'x': 2.5, 'y': 9.0};
-        jsSplice(data, 1, 2, [item]);
+        spliceList(data, 1, 2, [item]);
         notifyArrayListeners(data, 'splice', [1.0, 2.0, item]);
         chart.update();
         expect(chart.getDatasetMeta(0).data.length, 3);

@@ -75,7 +75,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show JsStringList, jsObjectKeys, jsSetIndex, jsSplice;
+    show JsStringList, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -1649,7 +1649,13 @@ class DatasetController(
       // DIVERGES(chartjs): adapt-parse-presize, one growth of the plain List.
       var presized = _presizeParsed(parsedItems, start, count, parsed);
       for (i = 0; i < count; ++i) {
-        jsSetIndex(parsedItems, i + offset, cur = parsed[i]);
+        cur = parsed[i];
+        // `parsed[i + offset] = cur`: a write at the length appends.
+        if (i + offset == parsedItems.length) {
+          parsedItems.add(cur);
+        } else {
+          parsedItems[i + offset] = cur;
+        }
         if (sorted) {
           // The comparison runs the `toString` of a value that is not a
           // number. That user code sees the list of upstream.
@@ -2854,12 +2860,12 @@ class DatasetController(
   void _removeElements(int start, int count) {
     final meta = cachedMeta;
     if (jsTruthy(parsing)) {
-      final removed = jsSplice(meta.parsed, start, count);
+      final removed = _removeRange(meta.parsed, start, count);
       if (meta.stacked != types.StackMode.off) {
         _clearStacks(meta, removed);
       }
     }
-    jsSplice(meta.data, start, count);
+    _removeRange(meta.data, start, count);
   }
 
   /// core.datasetController.js:1041 `_sync(args)`.
@@ -2961,3 +2967,15 @@ typedef _RangeDraw = void Function(
   int? start,
   int? count,
 );
+
+/// `list.splice(start, count)`: removes [count] items from [start] and gives
+/// them. [start] and the end clamp to the List, as `splice` does.
+List<T> _removeRange<T>(List<T> list, int start, int count) {
+  final length = list.length;
+  final from = start < 0 ? 0 : (start > length ? length : start);
+  final end = from + count;
+  final to = end > length ? length : (end < from ? from : end);
+  final removed = list.sublist(from, to);
+  list.removeRange(from, to);
+  return removed;
+}

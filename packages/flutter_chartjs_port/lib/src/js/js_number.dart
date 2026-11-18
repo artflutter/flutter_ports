@@ -39,21 +39,9 @@ double jsToNumber(Object? value) => switch (value) {
   _ => _stringToNumber(jsToString(value)),
 };
 
-/// The global `parseFloat(value)`: the longest decimal prefix of
-/// `ToString(value)` after leading white space, or NaN.
-double jsParseFloat(Object? value) {
-  // String(-0) is '0'. String(x) reads back as x for every other number.
-  if (value is num) return value == 0 ? 0 : value.toDouble();
-  final match = _decimalPrefix.firstMatch(jsToString(value));
-  return match == null ? double.nan : _decimalValue(match[1]!);
-}
-
 /// The global `isNaN(value)`: whether `ToNumber(value)` is NaN. For a
 /// `double`, `x.isNaN` is the same test.
 bool jsIsNaN(Object? value) => jsToNumber(value).isNaN;
-
-/// The global `isFinite(value)`: whether `ToNumber(value)` is finite.
-bool jsIsFinite(Object? value) => jsToNumber(value).isFinite;
 
 /// ECMAScript `ToBoolean(value)`, the test of `if (value)`, `!value`,
 /// `value || d` and `value && d`.
@@ -276,9 +264,6 @@ const String _decimal =
 final RegExp _literal = RegExp(
   '^\\s*(?:($_decimal)|0([xXoObB])([0-9a-fA-F]+))?\\s*\$',
 );
-
-/// The prefix that `parseFloat` reads.
-final RegExp _decimalPrefix = RegExp('^\\s*($_decimal)');
 
 /// `StringToNumber(string)` (ECMAScript 7.1.4.1.1).
 double _stringToNumber(String string) {

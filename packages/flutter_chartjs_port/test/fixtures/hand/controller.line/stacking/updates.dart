@@ -8,10 +8,11 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
+
+import '../../../../support/list_splice.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{
@@ -58,7 +59,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'stack': 's2',
         'borderColor': const ChartPaint.solid(ui.Color(0xFF000000)),
       };
-      jsSplice(datasets, 1, 0, <Object?>[dataset]);
+      spliceList(datasets, 1, 0, <Object?>[dataset]);
       notifyArrayListeners(datasets, 'splice', <Object?>[1, 0, dataset]);
       chart.update();
     },

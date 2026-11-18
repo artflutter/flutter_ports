@@ -38,6 +38,7 @@ import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/object_keys.dart';
 import '../../support/scale_border.dart';
 
 // Upstream behavior that test/specs/core.defaults.tests.js does not check
@@ -497,7 +498,7 @@ void main() {
       expect(_keys(u), ['a', 'b']);
       expect(_get(u, 'a'), same(undefined));
       expect(_get(u, 'b'), isNull);
-      expect(jsHasOwn(u, 'a'), true);
+      expect(hasOwnKey(u, 'a'), true);
     });
 
     test('getScope replaces a falsy value with a new object', () {
@@ -611,7 +612,7 @@ void main() {
         _get(d['e'], 'z'),
         const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
-      expect(jsHasOwn(d['e'], 'z'), true);
+      expect(hasOwnKey(d['e'], 'z'), true);
       expect(_keys(d['f']), ['p', 'z', 'q']);
       expect(_get(d['f'], 'z'), 5.0);
     });
@@ -697,7 +698,7 @@ void main() {
         _get(d['e'], 'z'),
         const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
-      expect(() => jsDeleteKey(d['e'], 'z'), _throwsTypeError);
+      expect(() => deleteOwnKey(d['e'], 'z'), _throwsTypeError);
       expect(_keys(d['e']), ['p', 'z']);
     });
 
@@ -726,7 +727,7 @@ void main() {
         ..route('f', 'z', '', 'color')
         ..route('f', 'z', '', 'backgroundColor');
       expect(_get(d['f'], 'z'), 5.0);
-      jsDeleteKey(d['f'], 'z');
+      deleteOwnKey(d['f'], 'z');
       expect(_keys(d['f']), ['p', 'q']);
       expect(_keys(d.get('f')), ['p', 'q']);
     });

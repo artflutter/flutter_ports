@@ -16,7 +16,6 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -26,6 +25,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/list_splice.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
 import 'controller_radar_reference.dart';
@@ -235,7 +235,7 @@ void main() {
       testWidgets('after a splice and chart.update()', (tester) async {
         final chart = acquireChart(_radar(const [10.0, 20.0, 5.0, 8.0]));
         final data = _data0(chart);
-        jsSplice(data, 1, 2, [7.0]);
+        spliceList(data, 1, 2, [7.0]);
         notifyArrayListeners(data, 'splice', [1.0, 2.0, 7.0]);
         chart.update();
         _expectLinePoints(chart, 3);

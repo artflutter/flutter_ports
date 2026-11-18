@@ -226,7 +226,9 @@ void main() {
           ('1.5', 1.5, stopsOf1_5),
           ('3', 3, noStops),
           ('2.5', 2.5, stopsOf1_5),
-          ("'2'", '2', stopsOf1_5),
+          // A string is no number (Chart.js ADR 0175): '2' is truthy, so
+          // it spans each gap, as true does.
+          ("'2'", '2', noStops),
         ]) {
           test('$form items, spanGaps $name: the held x', () {
             final twins = _twins(

@@ -25,7 +25,7 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsDeleteKey, jsGet, jsHasOwn, jsIsObjectLike, jsSet;
+    show JsObjectFace, jsGet, jsIsObjectLike, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionScope;
@@ -154,11 +154,17 @@ final class TypedRegistry(
       final scopeObject = defaults[scope];
       // A JavaScript TypeError: `in` of a value that is not an object.
       if (!jsIsObjectLike(scopeObject)) throw TypeError();
-      if (jsHasOwn(scopeObject, key)) {
-        jsDeleteKey(scopeObject, key);
-        if (override) {
-          overrides.jsDelete(key);
-        }
+      // `if (key in scopeObject) delete scopeObject[key]`.
+      var owned = false;
+      switch (scopeObject) {
+        case final JsObjectFace face:
+          owned = face.jsDelete(key);
+        case final Map<Object?, Object?> map:
+          owned = map.containsKey(key);
+          map.remove(key);
+      }
+      if (owned && override) {
+        overrides.jsDelete(key);
       }
     }
   }

@@ -31,6 +31,7 @@ import '../../support/color_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
+import '../../support/object_keys.dart';
 import '../../support/scale_border.dart';
 
 /// The observations of one scenario: one line `<label>: <value>` for each
@@ -115,7 +116,7 @@ String error(void Function() body) {
 /// face [object]: `'true'` or `'false'`. Another value gives `'false'`.
 String has(Object? object, Object? key) =>
     (object is Map || object is JsObjectFace) &&
-        jsHasOwn(object, key is String ? key : jsToString(key))
+        hasOwnKey(object, key is String ? key : jsToString(key))
     ? 'true'
     : 'false';
 

@@ -122,18 +122,21 @@ void main() {
   });
 
   group('isNumber', () {
-    test('coerces like isFinite and parseFloat', () {
-      expect(math.isNumber([5]), isTrue);
-      expect(math.isNumber([1, 2]), isFalse);
-      expect(math.isNumber(' 12 '), isTrue);
-      expect(math.isNumber('0x10'), isTrue);
-      expect(math.isNumber(true), isFalse);
-      expect(math.isNumber('Infinity'), isFalse);
-      expect(math.isNumber('1e3'), isTrue);
-      expect(math.isNumber('12px'), isFalse);
-      expect(math.isNumber(''), isFalse);
-      expect(math.isNumber(<Object?>[]), isFalse);
+    test('is true for a finite num only (Chart.js ADR 0175)', () {
       expect(math.isNumber(5), isTrue);
+      expect(math.isNumber(1.5), isTrue);
+      expect(math.isNumber(double.infinity), isFalse);
+      expect(math.isNumber(double.nan), isFalse);
+      for (final value in <Object?>[
+        [5],
+        ' 12 ',
+        '0x10',
+        '1e3',
+        true,
+        null,
+      ]) {
+        expect(math.isNumber(value), isFalse, reason: '$value');
+      }
     });
   });
 

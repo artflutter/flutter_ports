@@ -126,7 +126,7 @@ repository.
     are `hasOwnProperty` and `delete`. `JsObjectFace` is public (`chartjs.dart` and the app
     library): raw-API code reads a context, the hook arguments or the options by name through
     it. A `Map` of the port is an object of the user. The JS runtime (`jsGet`,
-    `jsObjectKeys`, `jsAssign`, `jsSet`, `jsHasOwn`, `jsDeleteKey`, `jsObjectOrNull`) and
+    `jsObjectKeys`, `jsAssign`, `jsSet`, `jsObjectOrNull`) and
     `isObject`, `clone`, `merge`, `mergeIf` and `each` take Maps and faces.
     The walk reads a typed scope with `OptionScope.lookup`. `Config.resolveElementNamedOptions` of
     `core.config.dart` is the typed element step of `_resolveElementOptions`: it reads each own key
@@ -380,7 +380,7 @@ repository.
       two typed Maps (Chart.js ADR 0054 §8, §11). A parsed item reads with `parsedValueOf`
       (`@internal`, the `ScaleAxis` of the scale), a `TypedDataItem` of `parsing: false` gives its typed `x` or `y`, another data item of
       `parsing: false` and a `_stacks` object that user code gave read with `jsGetKey`. The index reads
-      use `jsGetIndex` and `jsSetIndex`, and `getParsed` and the item reads of the parse functions read
+      use `jsGetIndex`, the writes append at the length, and `getParsed` and the item reads of the parse functions read
       their List directly (Chart.js ADR 0096). `stacksOf` reads `item._stacks` of a parsed item, also of a List item,
       through an `Expando` (Chart.js ADR 0036).
       `_insertElements` keeps the old parsed item at each new index below the old length, as the

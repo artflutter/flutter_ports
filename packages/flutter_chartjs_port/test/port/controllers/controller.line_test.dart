@@ -19,8 +19,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show jsObjectKeys, jsSplice;
+import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -32,6 +31,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/list_splice.dart';
 import '../../support/segment_style.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
@@ -160,6 +160,12 @@ void _expectLinePoints(Chart chart) {
   }
 }
 
+/// The reference cases with a number option written as a string: a string is
+/// no number for `isNumber` (Chart.js ADR 0175).
+const Map<String, String> _typedNumberSkips = {
+  "parsed: spanGaps '2'": 'diverges: adapt-typed-number-test',
+};
+
 void main() {
   testReferenceOrigin(
     node: controllerLineReferenceNode,
@@ -185,7 +191,12 @@ void main() {
       if (c.name != _otherLineCase) c,
   ];
 
-  testControllerChartCases(cases, functions: _functions, extras: _extras);
+  testControllerChartCases(
+    cases,
+    functions: _functions,
+    extras: _extras,
+    skips: _typedNumberSkips,
+  );
 
   group('a dataset element of another class', () {
     setUp(() {
@@ -342,7 +353,11 @@ void main() {
       }
     });
 
-    testWidgets("spanGaps '2' gives the points of spanGaps 2", (tester) async {
+    testWidgets("spanGaps '2' gives the points of spanGaps true", (
+      tester,
+    ) async {
+      // A string is no number (Chart.js ADR 0175): '2' is truthy and spans
+      // each gap, as true does. Upstream reads it as 2.
       AnyObject config(Object? spanGaps) => <String, Object?>{
         'type': 'line',
         'data': <String, Object?>{
@@ -369,11 +384,10 @@ void main() {
         },
       };
       final points = _points(acquireChart(config('2')));
-      expect(points, referenceMatcher(_points(acquireChart(config(2.0)))));
-      // The stops of the gaps 3 and 2.5: the compare is not empty.
+      expect(points, referenceMatcher(_points(acquireChart(config(true)))));
       expect(
         [for (final p in (points[0]! as List).cast<List<Object?>>()) p[3]],
-        [false, false, true, false, true],
+        [false, false, false, false, false],
       );
     });
 
@@ -449,7 +463,7 @@ void main() {
       testWidgets('after a splice and chart.update()', (tester) async {
         final chart = acquireChart(config());
         final data = _data(chart, 0);
-        jsSplice(data, 1, 2, [9.0]);
+        spliceList(data, 1, 2, [9.0]);
         notifyArrayListeners(data, 'splice', [1.0, 2.0, 9.0]);
         chart.update();
         expect(chart.getDatasetMeta(0).data.length, 3);

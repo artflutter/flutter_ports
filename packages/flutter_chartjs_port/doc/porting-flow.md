@@ -686,8 +686,8 @@ items that stay open. It supersedes Chart.js ADR 0027. In short:
 - A parsed item, a data item and a stack object are any value. `jsGetKey` of `js_object.dart` is
   the read `object[key]` with a String key: it gives the `jsGet` result, with a Map case first. A
   read of a resolver or of an option object stays `jsGet`.
-- `jsGetIndex` is the read `object[index]` with a number index, `jsSetIndex` is the write
-  `list[index] = value` (a write at the length appends), and `jsLessThan` is the operator `a < b`
+- `jsGetIndex` is the read `object[index]` with a number index, a write `list[index] = value`
+  appends at the length (Chart.js ADR 0175), and `jsLessThan` is the operator `a < b`
   on raw values (two strings by their code units, a `DateTime` by its time value). They replace
   the private index helpers of `core.datasetController` and `core.controller`.
 - `core.datasetController` reads parsed items and stack objects with `jsGetKey`. The reads that

@@ -57,6 +57,7 @@ import '../../support/easing_json.dart';
 import '../../support/fill_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
+import '../../support/list_splice.dart';
 import '../../support/point_style_json.dart';
 import 'dataset_controller_reference.dart';
 
@@ -737,7 +738,12 @@ final class _Run(final AnyObject spec) {
       case 'splice':
         final data = _dataOf(args[0]);
         final items = _materialize(args.sublist(3))! as List<Object?>;
-        jsSplice(data, jsToNumber(args[1]), jsToNumber(args[2]), items);
+        spliceList(
+          data,
+          jsToNumber(args[1]).toInt(),
+          jsToNumber(args[2]).toInt(),
+          items,
+        );
         notifyArrayListeners(data, 'splice', [args[1], args[2], ...items]);
       case 'unshift':
         final data = _dataOf(args[0]);

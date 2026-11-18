@@ -64,7 +64,7 @@ import '../support/tick_label.dart';
 // - `toEqual` is `jasmineEquals`. `toBeCloseTo` is `_toBeCloseTo`.
 // - `new Array(300).fill(value)` is `List.filled(300, value)`.
 // - `parseFloat(value.toFixed(2))` is
-//   `jsParseFloat(value.toStringAsFixed(2))`.
+//   `double.parse(value.toStringAsFixed(2))`.
 
 /// The member read `object.key` of the option object [object]: a resolver,
 /// read through its face (Chart.js ADR 0054 §5).
@@ -1059,7 +1059,7 @@ void main() {
         });
         // `parseFloat(value.toFixed(2))`.
         double mapper(types.LabelItem item) =>
-            jsParseFloat(item.options.translation!.$1.toStringAsFixed(2));
+            double.parse(item.options.translation!.$1.toStringAsFixed(2));
         const expected = <double>[20.15, 113.6, 207.05, 300.5, 393.95, 487.4];
         final actual = chart.scales['x']!.getLabelItems().map(mapper).toList();
         final len = expected.length;

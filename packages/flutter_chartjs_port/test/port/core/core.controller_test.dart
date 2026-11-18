@@ -50,6 +50,7 @@ import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
+import '../../support/list_splice.dart';
 import 'controller_reference.dart';
 import 'registry_observe.dart';
 
@@ -1442,7 +1443,7 @@ void main() {
       }
 
       chart.toggleDataVisibility(3);
-      change('splice', (l) => jsSplice(l, 1, 1), [1.0, 1.0]);
+      change('splice', (l) => spliceList(l, 1, 1), [1.0, 1.0]);
       chart.update();
       expectVisibility([true, true, false]);
 
@@ -1464,7 +1465,7 @@ void main() {
       expectVisibility([true, true, true, true]);
 
       chart.toggleDataVisibility(1);
-      change('splice', (l) => jsSplice(l, 1, 0, [item(1)]), [
+      change('splice', (l) => spliceList(l, 1, 0, [item(1)]), [
         1.0,
         0.0,
         item(1),

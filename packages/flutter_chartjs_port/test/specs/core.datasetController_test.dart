@@ -28,6 +28,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
 import '../support/jasmine.dart';
+import '../support/list_splice.dart';
 
 // The spec tests Chart.DatasetController, the DatasetController of
 // lib/src/core/core.datasetController.dart. Each case acquires a line, bar,
@@ -105,7 +106,7 @@ void _splice(
   int deleteCount,
   List<Object?> items,
 ) {
-  jsSplice(data, start.toDouble(), deleteCount.toDouble(), items);
+  spliceList(data, start, deleteCount, items);
   notifyArrayListeners(data, 'splice', [start, deleteCount, ...items]);
 }
 

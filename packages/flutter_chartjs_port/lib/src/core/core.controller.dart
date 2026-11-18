@@ -1108,7 +1108,7 @@ class Chart(
       for (var i = numData; i < numMeta; ++i) {
         _destroyDatasetMeta(i);
       }
-      jsSplice(metasets, numData, numMeta - numData);
+      metasets.removeRange(numData, numMeta);
     }
     sortedMetasets = jsSort(
       List.of(metasets),
@@ -1868,7 +1868,8 @@ class Chart(
       var i = 0;
       for (final c in dataChanges) {
         if (c[0] == idx) {
-          set.add('$i,${_join(jsSplice(c, 1))}');
+          // `c.splice(1)`: the items after the first; c is not read again.
+          set.add('$i,${_join(c.sublist(1))}');
           i++;
         }
       }

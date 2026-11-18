@@ -18,8 +18,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 ///
 /// The face is the cold API for user code, the raw boundary and the tests.
 /// It is never in a hot path. The JS runtime reads a face by name: [jsGet],
-/// [jsGetKey], [jsSet], [jsHasOwn], [jsDeleteKey], `jsObjectKeys` and
-/// `jsOwnPropertyNames` take it.
+/// [jsGetKey], [jsSet], `jsObjectKeys` and `jsOwnPropertyNames` take it.
 ///
 /// The members have the JS rules:
 /// - [jsRead] and [operator []] give the value of a property, or [undefined]
@@ -100,31 +99,6 @@ void jsSet(Object? object, String key, Object? value) {
     default:
       throw ArgumentError.value(object, 'object', 'is not a JS object');
   }
-}
-
-/// `Object.prototype.hasOwnProperty.call(object, key)`: whether [object]
-/// owns [key]. A `Map` owns its keys; a [JsObjectFace] gives
-/// [JsObjectFace.jsHas]. Any other value gives false.
-bool jsHasOwn(Object? object, String key) => switch (object) {
-  final JsObjectFace face => face.jsHas(key),
-  final Map<dynamic, dynamic> map => map.containsKey(key),
-  _ => false,
-};
-
-/// `delete object[key]`: removes the own property [key] of [object] and
-/// returns whether [object] owned it. A `Map` removes the key; a
-/// [JsObjectFace] gives [JsObjectFace.jsDelete]. Any other value gives
-/// false.
-bool jsDeleteKey(Object? object, String key) {
-  switch (object) {
-    case final JsObjectFace face:
-      return face.jsDelete(key);
-    case final Map<dynamic, dynamic> map:
-      if (!map.containsKey(key)) return false;
-      map.remove(key);
-      return true;
-  }
-  return false;
 }
 
 /// `object[key]`: the value of the property [key] of [object].

@@ -37,7 +37,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show limitValue;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -407,7 +406,7 @@ class CategoryScale(super.cfg)
       final labels = getLabels();
       for (final (:index, :label) in added) {
         if (_strictEquals(_labelAt(labels, index), label)) {
-          jsSplice(labels, index, 1);
+          labels.removeAt(index.toInt());
         }
       }
       _addedLabels = [];

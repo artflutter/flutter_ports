@@ -5,12 +5,13 @@ library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+
+import '../../../../support/list_splice.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///
-/// `chart.data.datasets.splice(0, 1)` is [jsSplice], then
+/// `chart.data.datasets.splice(0, 1)` is [spliceList], then
 /// [notifyArrayListeners], the body of the hooked method (differences.md
 /// row platform-array-events). The datasets array has no listeners, so the
 /// notification does nothing, as upstream.
@@ -107,7 +108,7 @@ Map<String, Object?> fixture() {
     'options': <String, Object?>{
       'run': (Chart chart) {
         final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-        jsSplice(datasets, 0, 1);
+        spliceList(datasets, 0, 1);
         notifyArrayListeners(datasets, 'splice', <Object?>[0, 1]);
         chart.update();
       },

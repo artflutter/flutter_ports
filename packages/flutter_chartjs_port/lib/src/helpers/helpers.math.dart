@@ -9,7 +9,7 @@ library;
 import 'dart:math' as math;
 
 // Upstream imports isFinite as isFiniteNumber, to keep the global isFinite
-// that isNumber calls. Here the global is jsIsFinite.
+// that isNumber calls. The port's isNumber needs no global isFinite.
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFinite;
 import 'package:flutter_chartjs_port/src/js/js_math.dart';
@@ -115,19 +115,13 @@ List<double> factorize(double value) {
   return result;
 }
 
-/// helpers.math.ts:63 `isNonPrimitive`.
+/// helpers.math.ts:67 `isNumber`: a finite `num`.
 ///
-/// Verifies that attempting to coerce n to string or number won't throw a
-/// TypeError.
-bool _isNonPrimitive(Object? n) {
-  // Every Dart object has toString(), so only the symbol test can hold.
-  return n is Symbol;
-}
-
-/// helpers.math.ts:67 `isNumber`.
-bool isNumber(Object? n) {
-  return !_isNonPrimitive(n) && !jsParseFloat(n).isNaN && jsIsFinite(n);
-}
+/// Upstream also takes a string that `parseFloat` and `isFinite` read as a
+/// number, for example `'12'`. The port takes a Dart `num` only (Chart.js
+/// ADR 0175): data written as strings is no number.
+// DIVERGES(chartjs): adapt-typed-number-test, a num only.
+bool isNumber(Object? n) => n is num && n.isFinite;
 
 /// helpers.math.ts:71 `almostWhole`.
 bool almostWhole(double x, double epsilon) {

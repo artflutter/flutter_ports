@@ -206,92 +206,6 @@ void main() {
     });
   });
 
-  group('jsSplice', () {
-    // [0, 1, 2, 3, 4].splice(...args) in Node.js v24.12.0 on x64: the
-    // arguments, the removed elements and the array after the call. Dart
-    // null stands for an absent deleteCount.
-    final cases = <(double, double?, List<Object?>, List<int>, List<Object?>)>[
-      (1, 2, [], [1, 2], [0, 3, 4]),
-      (1, null, [], [1, 2, 3, 4], [0]),
-      (-1, 1, [], [4], [0, 1, 2, 3]),
-      (-10, 2, [], [0, 1], [2, 3, 4]),
-      (7, 2, [], [], [0, 1, 2, 3, 4]),
-      (2, 10, [], [2, 3, 4], [0, 1]),
-      (2, -3, [], [], [0, 1, 2, 3, 4]),
-      (1.7, 1.9, [], [1], [0, 2, 3, 4]),
-      (double.nan, 2, [], [0, 1], [2, 3, 4]),
-      (1, double.nan, [], [], [0, 1, 2, 3, 4]),
-      (double.infinity, 1, [], [], [0, 1, 2, 3, 4]),
-      (double.negativeInfinity, 1, [], [0], [1, 2, 3, 4]),
-      (1, double.infinity, [], [1, 2, 3, 4], [0]),
-      (1, 0, ['a', 'b'], [], [0, 'a', 'b', 1, 2, 3, 4]),
-      (1, 2, ['a'], [1, 2], [0, 'a', 3, 4]),
-      (-2, -0.5, ['a'], [], [0, 1, 2, 'a', 3, 4]),
-    ];
-    for (final (start, deleteCount, items, removed, after) in cases) {
-      test('splice($start, $deleteCount, ...$items)', () {
-        final list = <Object?>[0, 1, 2, 3, 4];
-        expect(jsSplice(list, start, deleteCount, items), removed);
-        expect(list, after);
-      });
-    }
-
-    test('an empty array', () {
-      // [].splice(-1, 1) and [].splice(0, 0, 'a').
-      final empty = <Object?>[];
-      expect(jsSplice(empty, -1, 1), isEmpty);
-      expect(empty, isEmpty);
-      expect(jsSplice(empty, 0, 0, ['a']), isEmpty);
-      expect(empty, ['a']);
-    });
-  });
-
-  group('jsSetIndex', () {
-    test('appends at the length', () {
-      // const a = [1, 2]; a[2] = 3 gives [1, 2, 3].
-      final list = <Object?>[1.0, 2.0];
-      jsSetIndex(list, 2, 3.0);
-      expect(list, [1.0, 2.0, 3.0]);
-      final empty = <Object?>[];
-      jsSetIndex(empty, 0, 'a');
-      expect(empty, ['a']);
-    });
-
-    test('replaces an item below the length', () {
-      // const a = [1, 2]; a[0] = 9 gives [9, 2].
-      final list = <Object?>[1.0, 2.0];
-      jsSetIndex(list, 0, 9.0);
-      expect(list, [9.0, 2.0]);
-    });
-
-    test('throws a RangeError past the length', () {
-      // const a = [1, 2]; a[3] = 9 gives the length 4 and a hole at 2 in
-      // JavaScript (differences.md row platform-array-events).
-      final list = <Object?>[1.0, 2.0];
-      expect(() => jsSetIndex(list, 3, 9.0), throwsA(isA<RangeError>()));
-      expect(list, [1.0, 2.0]);
-    });
-
-    test('throws a RangeError for a negative index', () {
-      // const a = [1, 2]; a[-1] = 9 writes the property '-1' in JavaScript:
-      // no throw, and the length stays 2 (differences.md row
-      // platform-array-events).
-      final list = <Object?>[1.0, 2.0];
-      expect(() => jsSetIndex(list, -1, 9.0), throwsA(isA<RangeError>()));
-      expect(list, [1.0, 2.0]);
-    });
-
-    test('throws a TypeError for a value of another type', () {
-      // A List<int> takes no double: the run-time check of the covariant
-      // type argument fails, at the length and below it. The value is not
-      // whole, because a whole double is an int on dart2js.
-      final List<Object?> ints = <int>[1, 2];
-      expect(() => jsSetIndex(ints, 2, 3.5), throwsA(isA<TypeError>()));
-      expect(() => jsSetIndex(ints, 0, 3.5), throwsA(isA<TypeError>()));
-      expect(ints, [1, 2]);
-    });
-  });
-
   group('JsStringList', () {
     test('reads the UTF-16 code units of the string', () {
       // const s = 'a\u{1F600}'; s.length is 3, s[0] is 'a', and s[1] and
@@ -308,7 +222,6 @@ void main() {
       // s.length = 1 throw a TypeError.
       final list = JsStringList('abc');
       expect(() => list[0] = 'x', throwsA(isA<TypeError>()));
-      expect(() => jsSetIndex(list, 3, 'x'), throwsA(isA<TypeError>()));
       expect(() => list.length = 1, throwsA(isA<TypeError>()));
       expect(() => list.add('x'), throwsA(isA<TypeError>()));
       expect(list, ['a', 'b', 'c']);

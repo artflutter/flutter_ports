@@ -2,9 +2,8 @@
 
 /// `Array.prototype.sort` and the key order of `Object.keys` for ported code
 /// (Chart.js ADR 0146, "Sort"), `Object.getOwnPropertyNames` (Chart.js
-/// ADR 0019, section 1), `Array.prototype.splice` ([jsSplice]), the write
-/// `list[index] = value` ([jsSetIndex], Chart.js ADR 0036) and a string as
-/// an array-like value ([JsStringList]).
+/// ADR 0019, section 1) and a string as an array-like value
+/// ([JsStringList]).
 ///
 /// A JavaScript array is a `List<Object?>`. A plain object is a
 /// `Map<String, Object?>` or a typed object with a face (Chart.js ADR 0054
@@ -73,25 +72,6 @@ abstract interface class JsProxyObject() implements JsObjectFace {
 
   /// The `has` trap: `name in proxy`.
   bool hasProperty(String name);
-}
-
-/// The JS write `list[index] = value` (Chart.js ADR 0036): a write at the
-/// length appends.
-///
-/// JavaScript leaves a hole for an index past the length, and a negative
-/// index writes a property (`list[-1] = v` gives the key `'-1'`, and the
-/// length does not change). Dart throws a [RangeError] for both
-/// (differences.md row `platform-array-events`). `parse` writes the items in
-/// order from its start, so its index is never negative. `_resyncElements`
-/// gives a start at most the length. `_insertElements` gives the start of
-/// the caller of `onDataSplice`, which can be past the length. A negative
-/// start fails before the write, at the insert of the elements.
-void jsSetIndex<T>(List<T> list, int index, T value) {
-  if (index == list.length) {
-    list.add(value);
-  } else {
-    list[index] = value;
-  }
 }
 
 /// `Object.keys(object)`: the keys of [object] in the ECMAScript
@@ -194,56 +174,6 @@ int? jsArrayIndex(String key) {
   }
   return index <= _maxArrayIndex ? index : null;
 }
-
-/// `array.splice(start, deleteCount, ...items)`: removes [deleteCount]
-/// elements of [list] from [start], inserts [items] there, and returns the
-/// removed elements (ECMAScript 23.1.3.31).
-///
-/// [start] and [deleteCount] go through `ToIntegerOrInfinity`: NaN gives 0,
-/// and a fraction truncates toward zero. A negative [start] counts from the
-/// end of [list]. Both values clamp to [list]. Dart `null` for
-/// [deleteCount] stands for an absent argument: the removal runs to the end
-/// of [list]. The JavaScript `undefined` gives 0, as NaN does.
-///
-/// `_removeElements` of `core.datasetController.js:1030` and `:1035` calls
-/// it with the `start` of `_onDataPop`, which is -1 for an empty dataset.
-List<T> jsSplice<T>(
-  List<T> list,
-  num start, [
-  num? deleteCount,
-  List<T> items = const [],
-]) {
-  final length = list.length;
-  final relativeStart = _toIntegerOrInfinity(start.toDouble());
-  final int actualStart;
-  if (relativeStart < 0) {
-    final fromEnd = length + relativeStart;
-    actualStart = fromEnd > 0 ? fromEnd.toInt() : 0;
-  } else {
-    actualStart = relativeStart < length ? relativeStart.toInt() : length;
-  }
-  final int actualDeleteCount;
-  if (deleteCount == null) {
-    actualDeleteCount = length - actualStart;
-  } else {
-    final count = _toIntegerOrInfinity(deleteCount.toDouble());
-    final rest = length - actualStart;
-    actualDeleteCount = count <= 0
-        ? 0
-        : count < rest
-        ? count.toInt()
-        : rest;
-  }
-  final end = actualStart + actualDeleteCount;
-  final removed = list.sublist(actualStart, end);
-  list.replaceRange(actualStart, end, items);
-  return removed;
-}
-
-/// `ToIntegerOrInfinity(value)` (ECMAScript 7.1.5) of a number: NaN gives 0,
-/// an infinity gives itself, and another value truncates toward zero.
-double _toIntegerOrInfinity(double value) =>
-    value.isNaN ? 0 : value.truncateToDouble();
 
 /// A JavaScript string as an array-like value: the reads `string[i]` and
 /// `string.length`.

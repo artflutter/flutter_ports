@@ -29,7 +29,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsDeleteKey, jsGet, jsSet;
+    show JsObjectFace, jsGet, jsSet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
     show foreignAudit;
@@ -50,6 +50,7 @@ import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/legend_item.dart';
+import '../../support/object_keys.dart';
 
 // The tests of Chart.js ADR 0092 and of the row `adapt-hidden-legend-items`
 // of differences.md. A hidden legend of a built-in slice chart leaves its
@@ -2179,7 +2180,7 @@ void main() {
         armed = true;
         chart.update(UpdateMode.none);
         armed = false;
-        jsDeleteKey(arc, 'pinned');
+        deleteOwnKey(arc, 'pinned');
         final seen = calls;
         releaseChart(chart);
         return seen;

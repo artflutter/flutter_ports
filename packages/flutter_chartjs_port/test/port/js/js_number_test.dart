@@ -165,43 +165,16 @@ void main() {
       final date = DateTime.utc(2015, 1, 1, 20);
       expect(jsToNumber(date), 1420142400000.0);
       expect(jsToNumber(date), isA<double>());
-      expect(jsIsFinite(date), isTrue);
       expect(jsToNumber(DateTime.fromMillisecondsSinceEpoch(-1)), -1);
     });
   });
 
-  group('jsParseFloat', () {
-    for (final (string, _, number) in _strings) {
-      test('parseFloat(${_quote(string)}) is $number', () {
-        expect(jsParseFloat(string), _isSameNumber(number));
-      });
-    }
-
-    test('converts other values to strings first', () {
-      expect(jsParseFloat(null), isNaN);
-      expect(jsParseFloat(undefined), isNaN);
-      expect(jsParseFloat(true), isNaN);
-      expect(jsParseFloat(<String, Object?>{}), isNaN);
-      expect(jsParseFloat(-0.0), _isSameNumber(0));
-      expect(jsParseFloat(1e21), 1e21);
-      expect(jsParseFloat(1e-7), 1e-7);
-      expect(jsParseFloat([1.5, 2]), 1.5);
-      expect(jsParseFloat(<Object?>[]), isNaN);
-      expect(jsParseFloat([-0.0]), _isSameNumber(0));
-    });
-  });
-
-  group('jsIsNaN and jsIsFinite', () {
-    test('coerce their argument', () {
+  group('jsIsNaN', () {
+    test('coerces its argument', () {
       expect(jsIsNaN('abc'), isTrue);
       expect(jsIsNaN('12'), isFalse);
       expect(jsIsNaN(null), isFalse);
       expect(jsIsNaN(undefined), isTrue);
-      expect(jsIsFinite(undefined), isFalse);
-      expect(jsIsFinite('Infinity'), isFalse);
-      expect(jsIsFinite(' 12 '), isTrue);
-      expect(jsIsFinite(null), isTrue);
-      expect(jsIsFinite(double.nan), isFalse);
     });
   });
 
@@ -517,7 +490,6 @@ void main() {
         final text = jsToString(date);
         expect(jsToString([date, null, date]), '$text,,$text');
         expect(jsAdd(date, ''), text);
-        expect(jsParseFloat(date), isNaN);
       });
     });
   });

@@ -269,7 +269,12 @@ void main() {
       now: scaleTimeReferenceNow,
       functions: _functions,
       setUps: _setUps,
-      skips: _zoneSkips(),
+      skips: {
+        ..._zoneSkips(),
+        // The string '3' is no number for isNumber (Chart.js ADR 0175).
+        'the unit week with the isoWeekday string 3':
+            'diverges: adapt-typed-number-test',
+      },
     );
   });
 

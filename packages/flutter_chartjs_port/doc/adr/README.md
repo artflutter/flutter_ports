@@ -169,4 +169,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0172](0172-animation-frame-jobs.md) Animation frame jobs in place of promise jobs: accepted, supersedes 0019.
 - [0173](0173-option-function-types.md) Fixed Dart types for the option functions: accepted, supersedes 0020, 0024.
 - [0174](0174-canvas-option-values.md) Canvas values of option values without WebIDL conversions: accepted, supersedes 0017.
+- [0175](0175-typed-list-and-key-helpers.md) Typed Dart forms in place of six JS helpers: accepted.
 <!-- adr-index:end -->

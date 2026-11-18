@@ -140,7 +140,8 @@ void main() {
 
     test('should detect a number', () {
       expect(math.isNumber(123.0), true);
-      expect(math.isNumber('123'), true);
+      // DIVERGES(chartjs): adapt-typed-number-test, a string is no number.
+      expect(math.isNumber('123'), false);
       expect(math.isNumber(null), false);
       expect(math.isNumber(double.nan), false);
       expect(math.isNumber(undefined), false);
