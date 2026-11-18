@@ -642,6 +642,32 @@ class Config([Object? config]) implements types.ChartConfiguration {
     int datasetIndex, {
     String controllerType = 'scatter',
   }) {
+    final warm = _warmPointResolver(datasetIndex, controllerType);
+    if (warm == null) return null;
+    return warm.resolver.prepareIndexedPointColors(warm.keys);
+  }
+
+  /// [prepareIndexedPointColors], where the three size fields can also vary
+  /// with the index (Chart.js ADR 0163). With [sizes] false only the colors
+  /// can vary.
+  @internal
+  // DIVERGES(chartjs): adapt-scatter-indexed-sizes, cached point inputs.
+  helpers.IndexedPointPlan? prepareIndexedPointPlan(
+    int datasetIndex, {
+    required String controllerType,
+    bool sizes = true,
+  }) {
+    final warm = _warmPointResolver(datasetIndex, controllerType);
+    if (warm == null) return null;
+    return warm.resolver.prepareIndexedPointPlan(warm.keys, sizes: sizes);
+  }
+
+  /// The warmed point resolver of dataset [datasetIndex] and its keys, or
+  /// Dart `null`. No option getter or context callback runs.
+  ({helpers.OptionResolver resolver, List<Object> keys})? _warmPointResolver(
+    int datasetIndex,
+    String controllerType,
+  ) {
     if (super.runtimeType != Config ||
         !supportsDataUpdates ||
         (_config is OptionScope && _config.routeOf('type') != null)) {
@@ -675,8 +701,9 @@ class Config([Object? config]) implements types.ChartConfiguration {
     if (elementScopes.routeOf('point') != null) return null;
     final point = elementScopes.pointCell?.raw;
     if (point.runtimeType != PointOptionsScope) return null;
-    return cached.resolver.prepareIndexedPointColors(
-      (point! as PointOptionsScope).jsOwnKeys(),
+    return (
+      resolver: cached.resolver,
+      keys: (point! as PointOptionsScope).jsOwnKeys(),
     );
   }
 

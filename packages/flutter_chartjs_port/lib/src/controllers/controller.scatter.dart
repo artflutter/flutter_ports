@@ -55,7 +55,7 @@ import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ElementOptions, LineOptions, PointOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
+    show IndexedPointPlan, OptionView, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isNullOrUndef;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
@@ -641,11 +641,12 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           _nativeProjection(vScale)) {
         // The preparation is not part of the proof.
         gaps?.held = null;
-        colors = _preparePointColors(points);
-        if (colors != null) {
+        final plan = _preparePointPlan(points);
+        if (plan != null) {
+          colors = plan.options;
           contexts = prepareNativePointContexts(this, mode);
           if (overflowFollows && contexts != null) {
-            overflowPass = _prepareOverflowPass(points, start, count, colors);
+            overflowPass = _prepareOverflowPass(points, start, count, plan);
             if (overflowPass != null) waitingFrom = i + 1;
           }
         }
@@ -682,13 +683,16 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// value in native scopes runs no user code. Each point of a whole-dataset
   /// loop has qualified as native at its own iteration, or below, if the plan
   /// holds to the end. Thus the pass reads no options object and calls no
-  /// `size`: the options of each index differ in their colors only.
+  /// `size`: the options of each index differ in their colors and in the
+  /// size fields of the plan only. With varying sizes, the overflow is the
+  /// maximum of the size of each index (Chart.js ADR 0163): no user code runs
+  /// until the pass, so the lists give the same items then.
   // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the window of the proof.
   _OverflowPass? _prepareOverflowPass(
     List<types.Element> points,
     int start,
     int count,
-    PointOptions Function(int) colors,
+    IndexedPointPlan plan,
   ) {
     if (start != 0 ||
         count != points.length ||
@@ -698,15 +702,20 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         !options.rawOptionsAreScalar(const [OptionKey.clip])) {
       return null;
     }
-    final fields = NativePointSizeFields.of(colors(1));
+    final sizes = NativePointSizes.of(plan);
     final contexts = prepareNativePointContexts(this, 'default');
-    if (fields == null || contexts == null) return null;
-    // `max = Math.max(max, size / 2)` from 0, and `max > 0 && max`, of one size.
-    final max = math.max<double>(
-      0,
-      nativePointSize(fields.radius, fields.hoverRadius, fields.borderWidth) /
-          2,
-    );
+    if (sizes == null || contexts == null) return null;
+    // `max = Math.max(max, size / 2)` from 0, and `max > 0 && max`. One size
+    // for constant fields; else, in the descending order of :160-162.
+    var max = 0.0;
+    if (sizes.constant) {
+      max = math.max<double>(0, sizes.at(0) / 2);
+    } else {
+      // DIVERGES(chartjs): adapt-scatter-indexed-sizes, the size of each index.
+      for (var i = points.length - 1; i >= 0; --i) {
+        max = math.max<double>(max, sizes.at(i) / 2);
+      }
+    }
     return (overflow: max > 0 ? max : null, contexts: contexts);
   }
 
@@ -754,33 +763,35 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       // DIVERGES(chartjs): adapt-native-point-size, one size inside this loop.
       // A custom point ends it before its options or its `size` can run.
       double? nativeSize;
+      // DIVERGES(chartjs): adapt-scatter-indexed-sizes, a size for each index.
+      NativePointSizes? sizes;
       NativePointContextReader? contexts;
       var indexed = false;
       final last = data.length - 1;
       for (var i = last; i >= 0; --i) {
         final point = data[i] as types.PointElement;
         if (i == last) nativeSize = _cachedPointSize();
-        if (nativeSize != null && !nativePointElement(point)) {
+        if ((nativeSize != null || sizes != null) &&
+            !nativePointElement(point)) {
           nativeSize = null;
+          sizes = null;
           indexed = false;
         }
-        if (nativeSize == null) {
+        if (nativeSize == null && sizes == null) {
           max = math.max(max, point.size(resolveDataElementOptions(i)) / 2);
           // The first ordinary resolution makes the entry of constant options.
           if (i == last) nativeSize = _cachedPointSize();
           // No coordinate conversion occurs here: parsed/raw values are only
           // copied into contexts, so qualifying their containers is sufficient.
           if (nativeSize == null && i == last - 1) {
-            final prepared = _preparePointColors(data);
-            final fields = prepared == null
-                ? null
-                : NativePointSizeFields.of(prepared(i));
-            if (fields != null) {
-              nativeSize = nativePointSize(
-                fields.radius,
-                fields.hoverRadius,
-                fields.borderWidth,
-              );
+            final plan = _preparePointPlan(data);
+            final planSizes = plan == null ? null : NativePointSizes.of(plan);
+            if (planSizes != null) {
+              if (planSizes.constant) {
+                nativeSize = planSizes.at(i);
+              } else {
+                sizes = planSizes;
+              }
               indexed = true;
               contexts = prepareNativePointContexts(this, 'default');
             }
@@ -790,7 +801,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           if (indexed && contexts?.readQualified(point, i) == null) {
             getContext(i, false, 'default');
           }
-          max = math.max(max, nativeSize / 2);
+          max = math.max(max, (nativeSize ?? sizes!.at(i)) / 2);
         }
       }
       return max > 0 ? max : null;
@@ -840,10 +851,11 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       nativePointProjection(scale) && identical(scale.chart, chart);
 
   // DIVERGES(chartjs): adapt-native-point-contracts, shared preparation rules.
-  PointOptions Function(int)? _preparePointColors(List<types.Element> points) {
+  // DIVERGES(chartjs): adapt-scatter-indexed-sizes, also the size fields.
+  IndexedPointPlan? _preparePointPlan(List<types.Element> points) {
     if (super.runtimeType != ScatterController || type != 'scatter') {
       return null;
     }
-    return prepareNativePointColors(this, points, controllerType: 'scatter');
+    return prepareNativePointPlan(this, points, controllerType: 'scatter');
   }
 }

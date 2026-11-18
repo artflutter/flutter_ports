@@ -306,7 +306,7 @@ void main() {
     expect(states[0], states[1]);
   });
 
-  test('scriptable and indexed numeric options preserve ordinary calls', () {
+  test('scriptable and indexed numeric options keep their results', () {
     for (final callback in [false, true]) {
       final states = <Object>[];
       final counts = <int>[];
@@ -325,7 +325,13 @@ void main() {
         chart.update(UpdateMode.none);
         states.add(_observe(chart));
         counts.add(calls);
-        expect(probes.every((p) => p.planReads == 0), isTrue);
+        // An indexed radius takes the size plan of Chart.js ADR 0163; a
+        // scriptable one keeps ordinary resolution.
+        if (callback || reference) {
+          expect(probes.every((p) => p.planReads == 0), isTrue);
+        } else {
+          expect(probes.any((p) => p.planReads > 0), isTrue);
+        }
       }
       expect(states[0], states[1]);
       expect(counts[0], counts[1]);

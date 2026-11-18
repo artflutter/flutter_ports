@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/src/core/data_update.dart'
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show IndexedPointPlan;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -39,6 +41,39 @@ PointOptions Function(int)? prepareNativePointColors(
       ? config.prepareIndexedPointColors(
           controller.index,
           controllerType: controllerType,
+        )
+      : null;
+}
+
+/// [prepareNativePointColors], where `radius`, `hoverRadius` and
+/// `borderWidth` can also vary with the index (Chart.js ADR 0163). With
+/// [sizes] false, only the colors can vary. The same reads in the same order.
+@internal
+// DIVERGES(chartjs): adapt-scatter-indexed-sizes, the plan of one loop.
+IndexedPointPlan? prepareNativePointPlan(
+  DatasetController controller,
+  List<types.Element> points, {
+  required String controllerType,
+  bool sizes = true,
+}) {
+  final owner = controller.chart;
+  if (!nativePointChart(owner) ||
+      !identical(points, controller.cachedMeta.data) ||
+      !nativePointList(points) ||
+      !nativeDataUpdateList(controller.cachedMeta.parsed)) {
+    return null;
+  }
+  final elementClass = controller.dataElementType;
+  if (!nativePointClass(elementClass) ||
+      !nativePointDatasetIndex(controller.index)) {
+    return null;
+  }
+  final config = controller.chart.config;
+  return config is Config && config.runtimeType == Config
+      ? config.prepareIndexedPointPlan(
+          controller.index,
+          controllerType: controllerType,
+          sizes: sizes,
         )
       : null;
 }

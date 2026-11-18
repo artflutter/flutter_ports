@@ -564,6 +564,78 @@ final class _VaryingColors(
   }
 }
 
+/// A loop-local plan of the options of a native point: a static template, the
+/// colors that vary with the index, and the lists of the three size fields
+/// that vary with it (Chart.js ADR 0163). Each list is a native SDK list of
+/// numbers, nonempty. The lists stay live: the caller stops using the plan
+/// before any user code can run.
+@internal
+// DIVERGES(chartjs): adapt-scatter-indexed-sizes, the sizes of a loop plan.
+final class IndexedPointPlan._(
+  /// The static fields, with `$shared: false`.
+  final PointOptions template,
+  final _VaryingColors? _colors,
+
+  /// The list of `radius`, or Dart `null` when [template] holds it.
+  final List<Object?>? radii,
+
+  /// The list of `hoverRadius`, or Dart `null` when [template] holds it.
+  final List<Object?>? hoverRadii,
+
+  /// The list of `borderWidth`, or Dart `null` when [template] holds it.
+  final List<Object?>? borderWidths,
+) {
+  /// A fresh options copy for [index]: the template and the item
+  /// `value[index % value.length]` of each list, as a resolve of an
+  /// indexable option stores it.
+  PointOptions options(int index) {
+    final result = template.clone();
+    _colors?.storeInto(result, index);
+    final radii = this.radii;
+    if (radii != null) {
+      // js-ok: native loop indices are nonnegative and lengths positive.
+      result.storeKey(OptionKey.radius, radii[index % radii.length]);
+    }
+    final hoverRadii = this.hoverRadii;
+    if (hoverRadii != null) {
+      result.storeKey(
+        OptionKey.hoverRadius,
+        // js-ok: native loop indices are nonnegative and lengths positive.
+        hoverRadii[index % hoverRadii.length],
+      );
+    }
+    final borderWidths = this.borderWidths;
+    if (borderWidths != null) {
+      result.storeKey(
+        OptionKey.borderWidth,
+        // js-ok: native loop indices are nonnegative and lengths positive.
+        borderWidths[index % borderWidths.length],
+      );
+    }
+    return result;
+  }
+}
+
+/// The size keys that a point plan can take as lists (Chart.js ADR 0163).
+// DIVERGES(chartjs): adapt-scatter-indexed-sizes, the keys of `size`.
+bool _pointSizeKey(OptionKey key) =>
+    key == OptionKey.radius ||
+    key == OptionKey.hoverRadius ||
+    key == OptionKey.borderWidth;
+
+/// Whether [value] is a list that a size plan can read: a native SDK list
+/// (no subclass with its own `operator []`), nonempty, whose items are all
+/// numbers. A read of such a list runs no user code, and each item stores as
+/// a plain number.
+// DIVERGES(chartjs): adapt-scatter-indexed-sizes, the proof of a list.
+bool _plainNumberList(List<Object?> value) {
+  if (!OptionResolver.nativeIndexedList(value) || value.isEmpty) return false;
+  for (var i = 0; i < value.length; i++) {
+    if (value[i] is! num) return false;
+  }
+  return true;
+}
+
 /// `index % length` of a finite, whole, nonnegative JS number and a positive
 /// length. Below 2^53 the integer form gives the result of the double form with
 /// no call of `fmod`. Above it, the double form matches `jsToNumber` of a VM
@@ -856,6 +928,89 @@ final class OptionResolver._(
       varying.storeInto(result, index);
       return result;
     };
+  }
+
+  /// The plan of a native point loop: [prepareIndexedPointColors], where
+  /// also `radius`, `hoverRadius` and `borderWidth` can vary with the index,
+  /// each as a native list of numbers (Chart.js ADR 0163). With [sizes]
+  /// false, only the colors can vary. The caller must stop using it before
+  /// any user code can run.
+  @internal
+  // DIVERGES(chartjs): adapt-scatter-indexed-sizes, loop-local size plan.
+  IndexedPointPlan? prepareIndexedPointPlan(
+    List<Object> keys, {
+    bool sizes = true,
+  }) {
+    final plan = _indexedElementPlan;
+    if (_slotsTouched ||
+        plan == null ||
+        !plan.matches(keys) ||
+        !plan._rawListPlain) {
+      return null;
+    }
+    final template = PointOptions()..storeKey(OptionKey.dollarShared, false);
+    OptionKey? firstKey;
+    List<Object?>? firstValues;
+    OptionKey? secondKey;
+    List<Object?>? secondValues;
+    List<Object?>? radii;
+    List<Object?>? hoverRadii;
+    List<Object?>? borderWidths;
+    for (var i = 0; i < plan.keys.length; i++) {
+      final key = plan.keys[i];
+      if (!template.knownKeyList.contains(key.jsName)) return null;
+      final value = plan.values[i];
+      if (i == plan.rawListAt) {
+        template.storeKey(key, value);
+      } else if (value is List<Object?>) {
+        if (key == OptionKey.backgroundColor || key == OptionKey.borderColor) {
+          if (value.isEmpty ||
+              !value.every(
+                (entry) =>
+                    entry == null ||
+                    entry is Undefined ||
+                    (entry is ChartPaint && !isObject(entry)),
+              )) {
+            return null;
+          }
+          if (firstValues == null) {
+            firstKey = key;
+            firstValues = value;
+          } else {
+            secondKey = key;
+            secondValues = value;
+          }
+        } else if (sizes && _pointSizeKey(key) && _plainNumberList(value)) {
+          if (key == OptionKey.radius) {
+            radii = value;
+          } else if (key == OptionKey.hoverRadius) {
+            hoverRadii = value;
+          } else {
+            borderWidths = value;
+          }
+        } else {
+          return null;
+        }
+      } else {
+        if (!_nativeIndexedValue(key, value)) return null;
+        template.storeKey(key, value);
+      }
+    }
+    if (firstValues == null &&
+        radii == null &&
+        hoverRadii == null &&
+        borderWidths == null) {
+      return null;
+    }
+    return IndexedPointPlan._(
+      template,
+      firstValues == null
+          ? null
+          : _VaryingColors(firstKey!, firstValues, secondKey, secondValues),
+      radii,
+      hoverRadii,
+      borderWidths,
+    );
   }
 
   /// A fresh options copy per native arc, with static fields prepared once.

@@ -2,7 +2,11 @@
 @TestOn('vm')
 library;
 
+import 'dart:collection' show ListBase;
+import 'dart:typed_data' show Uint8List;
 import 'dart:ui' as ui;
+
+import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
 
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -233,6 +237,66 @@ List<DataPoint> _points({double step = 0}) => [
   for (var i = 0; i < _length; i++)
     DataPoint(i.toDouble(), (i - 3).toDouble() + step),
 ];
+
+/// A List of the app whose reads run code of the app: its `operator []`
+/// counts each read.
+final class _ReadingList(final List<Object?> _inner) extends ListBase<Object?> {
+  int reads = 0;
+
+  @override
+  int get length => _inner.length;
+
+  @override
+  set length(int value) => _inner.length = value;
+
+  @override
+  Object? operator [](int index) {
+    reads++;
+    return _inner[index];
+  }
+
+  @override
+  void operator []=(int index, Object? value) => _inner[index] = value;
+}
+
+/// [_observe] with the clip of the meta and the chart area, which the
+/// overflow of an update decides.
+Object _observeAll(Chart chart) {
+  final meta = chart.getDatasetMeta(0);
+  final area = chart.chartArea!;
+  final clip = meta.clip;
+  return [
+    _observe(chart),
+    [clip.left, clip.top, clip.right, clip.bottom],
+    [area.left, area.top, area.right, area.bottom],
+  ];
+}
+
+/// The draw calls of one draw of [chart].
+List<Object?> _drawCalls(Chart chart) {
+  final target = chart.ctx!;
+  final recording = RecordingContext(target);
+  chart.ctx = recording;
+  try {
+    chart.draw();
+  } finally {
+    chart.ctx = target;
+  }
+  return recording.getCalls();
+}
+
+Future<Uint8List> _pixels(Chart chart) async {
+  chart.draw();
+  final canvas = chart.canvas! as UiCanvasElement;
+  final recorder = ui.PictureRecorder();
+  canvas.getContext2d().paint(ui.Canvas(recorder), ui.Offset.zero, 1, 1);
+  final picture = recorder.endRecording();
+  final image = await picture.toImage(canvas.width, canvas.height);
+  final data = await image.toByteData();
+  image.dispose();
+  picture.dispose();
+  return data!.buffer.asUint8List();
+}
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -584,6 +648,327 @@ void main() {
       expect((points[4].options! as ElementOptions).jsRead('radius'), 3);
       chart.update(UpdateMode.none);
       expect((points[3].options! as ElementOptions).jsRead('radius'), 3);
+    });
+  });
+
+  // Chart.js ADR 0163: the size fields of the point plan.
+  group('indexed sizes', () {
+    final cases = <String, Map<String, Object?> Function()>{
+      'radius': () => {
+        'radius': <double>[2, 3, 4, 5, 6, 7, 8, 9],
+      },
+      'radius, shorter than the data': () => {
+        'radius': <double>[2, 5, 3],
+      },
+      'radius of int values': () => {
+        'radius': <int>[2, 6, 4],
+      },
+      'radius with NaN, 0 and a negative item': () => {
+        'radius': <double>[2, double.nan, 0, -3, 4],
+      },
+      'border width': () => {
+        'borderWidth': <double>[0, 1, 2.5],
+      },
+      'hover radius': () => {
+        'radius': 2.0,
+        'hoverRadius': <double>[1, 9, 4],
+      },
+      'all three with indexed colors': () => {
+        'radius': <double>[2, 3, 4],
+        'hoverRadius': <num>[5, 1.5],
+        'borderWidth': <double>[1, 0, 3, 2],
+        'backgroundColor': <ChartPaint>[red, blue],
+      },
+      'one item': () => {
+        'radius': <double>[6],
+      },
+    };
+
+    for (final MapEntry(key: name, value: options) in cases.entries) {
+      test('twin over updates: $name', () async {
+        final a = _config(dataset: options());
+        final b = _config(type: 'referenceScatter', dataset: options());
+        final first = _chart(a);
+        final second = _chart(b, reference: true);
+        expect(_observeAll(first), _observeAll(second));
+        for (var step = 0; step < 3; step++) {
+          for (final cfg in [a, b]) {
+            _dataset(cfg)['data'] = <Object?>[
+              for (var i = 0; i < _length; i++)
+                <String, Object?>{'x': i.toDouble(), 'y': step + i - 3.0},
+            ];
+            // The lists stay live: an item changes in place.
+            final radius = _dataset(cfg)['radius'];
+            if (radius is List<double>) radius[0] = 2.0 + step;
+          }
+          first.update(UpdateMode.none);
+          second.update(UpdateMode.none);
+          expect(_observeAll(first), _observeAll(second), reason: '$step');
+          expect(_drawCalls(first), _drawCalls(second), reason: '$step');
+          expect(await _pixels(first), await _pixels(second));
+        }
+      });
+    }
+
+    test('the plan takes each size with no options object and no size', () {
+      final chart = _chart(
+        _config(
+          dataset: {
+            'radius': <double>[2, 3, 4],
+          },
+        ),
+      );
+      final probes = _probes(chart);
+      final overflow = chart.getDatasetMeta(0).controller!.getMaxOverflow();
+      // Two ordinary resolutions warm the plan, then each index takes it.
+      expect(probes[_length - 1].sizeCalls, 1);
+      expect(probes[_length - 2].sizeCalls, 1);
+      expect(probes.take(_length - 2).every((p) => p.sizeCalls == 0), isTrue);
+      // The radius 4 at the indexes 2 and 5, with the border 1: (4 + 1) / 1.
+      expect(overflow, 5);
+      for (var i = 0; i < _length; i++) {
+        expect(probes[i].$context?.jsRead('index'), i);
+        expect(probes[i].$context?.jsRead('mode'), 'default');
+      }
+      for (final probe in probes) {
+        probe.sizeCalls = 0;
+      }
+      chart.update(UpdateMode.none);
+      // The overflow before the layout resolves the last two points, then
+      // takes the plan. The loop takes it from its third point, and the
+      // overflow pass of the update takes each size from it. The draw of each
+      // point calls `size` once (element.point.ts:91).
+      expect(probes.map((p) => p.sizeCalls), [
+        ...List.filled(_length - 2, 1),
+        2,
+        2,
+      ]);
+      final points = chart.getDatasetMeta(0).data;
+      for (var i = 0; i < _length; i++) {
+        expect(jsGet(points[i].options, 'radius'), [2, 3, 4][i % 3]);
+        expect(jsGet(points[i].options, r'$shared'), isFalse);
+      }
+      expect(identical(points[3].options, points[6].options), isFalse);
+    });
+
+    test('a List of the app keeps its reads and each size call', () {
+      final reads = <int>[];
+      final states = <Object>[];
+      for (final type in ['scatter', 'referenceScatter']) {
+        final radius = _ReadingList(<Object?>[2.0, 3.0, 4.0]);
+        final chart = _chart(
+          _config(type: type, dataset: {'radius': radius}),
+          reference: type != 'scatter',
+        );
+        final probes = _probes(chart);
+        radius.reads = 0;
+        chart.getDatasetMeta(0).controller!.getMaxOverflow();
+        chart.update(UpdateMode.none);
+        reads.add(radius.reads);
+        states.add(_observeAll(chart));
+        expect(probes.every((p) => p.sizeCalls >= 1), isTrue);
+      }
+      expect(reads[0], greaterThan(0));
+      expect(reads[0], reads[1]);
+      expect(states[0], states[1]);
+    });
+
+    test('an item that is not a number keeps the options object', () {
+      final saved = foreignAudit;
+      addTearDown(() => foreignAudit = saved);
+      foreignAudit = (_, _, _) {};
+      for (final items in <List<Object?>>[
+        <Object?>[2.0, '5', 4.0],
+        <Object?>[2.0, null, 4.0],
+        <Object?>[2.0, true, 4.0],
+        <Object?>[2.0, 3.0, undefined],
+      ]) {
+        final a = _chart(_config(dataset: {'radius': List.of(items)}));
+        final probes = _probes(a);
+        final b = _chart(
+          _config(type: 'referenceScatter', dataset: {'radius': items}),
+          reference: true,
+        );
+        _probes(b);
+        expect(_observeAll(a), _observeAll(b), reason: '$items');
+        expect(probes.every((p) => p.sizeCalls == 1), isTrue, reason: '$items');
+      }
+      foreignAudit = saved;
+    });
+
+    test('a scriptable radius beside an indexed width keeps its calls', () {
+      final logs = <List<Object?>>[];
+      final states = <Object>[];
+      for (final type in ['scatter', 'referenceScatter']) {
+        final calls = <Object?>[];
+        double radius(Object? ctx) {
+          final context = ctx! as JsObjectFace;
+          calls.add([context.jsRead('dataIndex'), context.jsRead('mode')]);
+          return 2 + (context.jsRead('dataIndex')! as num).toDouble();
+        }
+
+        final chart = _chart(
+          _config(
+            type: type,
+            dataset: {
+              'radius': radius,
+              'borderWidth': <double>[1, 2],
+            },
+          ),
+          reference: type != 'scatter',
+        )..update(UpdateMode.none);
+        logs.add(calls);
+        states.add(_observeAll(chart));
+      }
+      expect(logs[0], isNotEmpty);
+      expect(logs[0], logs[1]);
+      expect(states[0], states[1]);
+    });
+
+    test('a list that the app empties falls back as upstream does', () {
+      final a = _config(
+        dataset: {
+          'radius': <double>[2, 3],
+        },
+      );
+      final b = _config(
+        type: 'referenceScatter',
+        dataset: {
+          'radius': <double>[2, 3],
+        },
+      );
+      final first = _chart(a);
+      final second = _chart(b, reference: true);
+      for (final cfg in [a, b]) {
+        (_dataset(cfg)['radius']! as List<double>).clear();
+      }
+      first.update(UpdateMode.none);
+      second.update(UpdateMode.none);
+      expect(_observeAll(first), _observeAll(second));
+    });
+  });
+
+  // Chart.js ADR 0163: the overflow pass of `update_` decides `meta.clip`
+  // only on a scale with no `min` or `max` (scaleClip of
+  // core.datasetController.js). The twins above set both, so these twins
+  // free the scales.
+  group('indexed sizes in the clip of the overflow pass', () {
+    Map<String, Object?> free(Map<String, Object?> cfg) {
+      final options = cfg['options']! as Map<String, Object?>;
+      for (final axis in (options['scales']! as Map<String, Object?>).values) {
+        (axis! as Map<String, Object?>)
+          ..remove('min')
+          ..remove('max');
+      }
+      return cfg;
+    }
+
+    List<double?> clipOf(Chart chart) {
+      final clip = chart.getDatasetMeta(0).clip;
+      return [clip.left, clip.top, clip.right, clip.bottom];
+    }
+
+    final cases = <String, Map<String, Object?> Function()>{
+      'the largest radius at index 0': () => {
+        'radius': <double>[20, 3, 4, 5, 6, 7],
+      },
+      'the largest radius at index 1': () => {
+        'radius': <double>[2, 30, 4],
+      },
+      'the largest radius in the middle': () => {
+        'radius': <double>[2, 3, 4, 50, 6, 7, 8, 4],
+      },
+      'the largest border width in the middle': () => {
+        'borderWidth': <double>[1, 1, 1, 25, 1, 1, 1, 1],
+      },
+      'the largest hover radius in the middle': () => {
+        'hoverRadius': <double>[1, 1, 1, 1, 33, 1, 1, 1],
+      },
+      'an infinite radius and border width': () => {
+        'radius': <double>[2, 3, double.infinity, 4],
+        'borderWidth': <double>[1, 2, double.negativeInfinity],
+      },
+      'zero radii': () => {
+        'radius': <double>[0, 0, 0],
+      },
+      'negative radii': () => {
+        'radius': <double>[-5, -2, -9],
+        'hoverRadius': <double>[3, 8],
+      },
+      'NaN in the middle': () => {
+        'radius': <double>[2, 3, 4, double.nan, 6, 7, 8, 4],
+      },
+    };
+
+    for (final MapEntry(key: name, value: options) in cases.entries) {
+      test('twin over updates: $name', () {
+        final a = free(_config(dataset: options()));
+        final b = free(_config(type: 'referenceScatter', dataset: options()));
+        final first = _chart(a);
+        final second = _chart(b, reference: true);
+        for (var step = 0; step < 3; step++) {
+          for (final cfg in [a, b]) {
+            _dataset(cfg)['data'] = <Object?>[
+              for (var i = 0; i < _length; i++)
+                <String, Object?>{'x': i.toDouble(), 'y': step * i - 3.0},
+            ];
+            // The last item changes in place: the pass reads the live list.
+            final radius = _dataset(cfg)['radius'];
+            if (radius is List<double>) {
+              radius[radius.length - 1] = 2.0 + 9 * step;
+            }
+          }
+          first.update(UpdateMode.none);
+          second.update(UpdateMode.none);
+          expect(clipOf(first), clipOf(second), reason: '$step');
+          expect(_observeAll(first), _observeAll(second), reason: '$step');
+          expect(_drawCalls(first), _drawCalls(second), reason: '$step');
+        }
+      });
+    }
+
+    test('lists of the elements, a hidden dataset and an active point', () {
+      for (final variant in ['elements', 'hidden', 'active']) {
+        Map<String, Object?> make(String type) {
+          final cfg = free(_config(type: type));
+          final dataset = _dataset(cfg);
+          switch (variant) {
+            case 'elements':
+              dataset.remove('radius');
+              (cfg['options']!
+                  as Map<String, Object?>)['elements'] = <String, Object?>{
+                'point': <String, Object?>{
+                  'radius': <double>[2, 9, 4],
+                  'hoverRadius': <double>[2, 4],
+                },
+              };
+            case 'hidden':
+              dataset
+                ..['radius'] = <double>[2, 9, 4]
+                ..['hidden'] = true;
+            default:
+              dataset
+                ..['radius'] = <double>[2, 9, 4]
+                ..['pointHoverRadius'] = <double>[12, 1];
+          }
+          return cfg;
+        }
+
+        final first = _chart(make('scatter'));
+        final second = _chart(make('referenceScatter'), reference: true);
+        if (variant == 'active') {
+          for (final chart in [first, second]) {
+            chart.setActiveElements([
+              const ActiveElement(datasetIndex: 0, index: 4),
+            ]);
+          }
+        }
+        first.update(UpdateMode.none);
+        second.update(UpdateMode.none);
+        expect(clipOf(first), clipOf(second), reason: variant);
+        expect(_observeAll(first), _observeAll(second), reason: variant);
+        expect(_drawCalls(first), _drawCalls(second), reason: variant);
+      }
     });
   });
 }

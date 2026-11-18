@@ -124,6 +124,7 @@ export 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'
         prepareNativeGapReads,
         prepareNativePointColors,
         prepareNativePointContexts,
+        prepareNativePointPlan,
         prepareNativePointResolution;
 export 'package:flutter_chartjs_port/src/core/point_options.dart'
     hide
@@ -132,6 +133,7 @@ export 'package:flutter_chartjs_port/src/core/point_options.dart'
         NativePointCoordinateCache,
         NativePointResolution,
         NativePointSizeFields,
+        NativePointSizes,
         NativeTypedItems,
         canPrepareNativePointUpdate,
         nativePointChart,
@@ -162,7 +164,11 @@ export 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 export 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart';
 export 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 export 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    hide IndexedElementStyles, descriptors, parseObjectDataRadialScaleOf;
+    hide
+        IndexedElementStyles,
+        IndexedPointPlan,
+        descriptors,
+        parseObjectDataRadialScaleOf;
 export 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 export 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     hide mergeNativeOptionValues, nativeMergeKind;
@@ -181,6 +187,7 @@ export 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
 export 'package:flutter_chartjs_port/src/helpers/index.dart'
     hide
         IndexedElementStyles,
+        IndexedPointPlan,
         createBoundarySegment,
         easingEffects,
         mergeNativeOptionValues,

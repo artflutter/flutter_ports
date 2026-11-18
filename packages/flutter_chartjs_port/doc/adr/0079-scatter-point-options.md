@@ -2,6 +2,7 @@
 
 - Status: implemented; VM/JavaScript/WebAssembly and port checks pass.
 - Date: 2026-11-03
+- Superseded in part by: [Chart.js ADR 0163](0163-scatter-indexed-point-sizes.md) (2026-11-18)
 - Related: ADRs 0028, 0054, 0076, 0078; performance.md §46 estimates.
 
 ## Decision

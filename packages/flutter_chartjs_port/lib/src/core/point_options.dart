@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
 import 'package:flutter_chartjs_port/src/core/data_update.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show PointOptions, plainOption;
+import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
+    show IndexedPointPlan;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
@@ -158,6 +160,68 @@ final class NativePointSizeFields._(
           options.borderWidth,
         )
       : null;
+}
+
+/// The sizes of one indexed point plan, by index: `size` of the options that
+/// the plan gives for an index, with no options object (Chart.js ADR 0163).
+/// A static field comes from the template, a varying one from its list. The
+/// lists stay live; the caller reads them inside the loop of the plan only.
+@internal
+// DIVERGES(chartjs): adapt-scatter-indexed-sizes, the size of each index.
+final class NativePointSizes._(
+  final double _radius,
+  final double _hoverRadius,
+  final double _borderWidth,
+  final List<Object?>? _radii,
+  final List<Object?>? _hoverRadii,
+  final List<Object?>? _borderWidths,
+) {
+  /// The sizes of [plan], or Dart `null` unless each static size field of its
+  /// template is plain: an absent or foreign value keeps the options object
+  /// and `size`.
+  static NativePointSizes? of(IndexedPointPlan plan) {
+    final template = plan.template;
+    final radii = plan.radii;
+    final hoverRadii = plan.hoverRadii;
+    final borderWidths = plan.borderWidths;
+    if ((radii == null && !plainOption(template, OptionKey.radius)) ||
+        (hoverRadii == null && !plainOption(template, OptionKey.hoverRadius)) ||
+        (borderWidths == null &&
+            !plainOption(template, OptionKey.borderWidth))) {
+      return null;
+    }
+    return NativePointSizes._(
+      template.radius,
+      template.hoverRadius,
+      template.borderWidth,
+      radii,
+      hoverRadii,
+      borderWidths,
+    );
+  }
+
+  /// Whether each index has the same size: no size field varies.
+  bool get constant =>
+      _radii == null && _hoverRadii == null && _borderWidths == null;
+
+  /// `size` of the options of [index]: the same number as a `storeKey` of
+  /// the item and a read of the field give.
+  double at(int index) => nativePointSize(
+    _item(_radii, index, _radius),
+    _item(_hoverRadii, index, _hoverRadius),
+    _item(_borderWidths, index, _borderWidth),
+  );
+
+  @pragma('vm:prefer-inline')
+  @pragma('dart2js:prefer-inline')
+  @pragma('wasm:prefer-inline')
+  static double _item(List<Object?>? list, int index, double field) {
+    if (list == null) return field;
+    // js-ok: native loop indices are nonnegative and lengths positive.
+    final value = list[index % list.length];
+    // The plan proved each item a number.
+    return value is double ? value : (value! as int) * 1.0;
+  }
 }
 
 /// Weak identities of maps already accepted by the native container contract.

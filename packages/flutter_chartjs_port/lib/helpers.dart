@@ -33,6 +33,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         DefaultCubicInterpolationMode,
         ImagePointStyle,
         IndexedElementStyles,
+        IndexedPointPlan,
         LinePointStyle,
         MonotoneCubicInterpolationMode,
         OptionResolver,

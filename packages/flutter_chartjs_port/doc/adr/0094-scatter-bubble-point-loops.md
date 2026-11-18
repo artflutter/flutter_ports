@@ -2,6 +2,7 @@
 
 - Status: accepted
 - Date: 2026-11-06
+- Superseded in part by: [Chart.js ADR 0163](0163-scatter-indexed-point-sizes.md) (2026-11-18)
 - Related: Chart.js ADRs 0054, 0074, 0078, 0079, 0082, 0087; `differences.md` rows
   `adapt-native-point-size`, `adapt-bubble-point-options` and `adapt-bubble-typed-radius`.
 - Measurements: performance.md §65.

@@ -81,7 +81,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0076](0076-indexed-element-options.md) Cached native indexed element options: implemented.
 - [0077](0077-background-chart-value.md) Sealed dataset color values: prototype, supersedes 0052.
 - [0078](0078-prepared-indexed-options.md) Prepared indexed styles and color-only bulk bars: implemented.
-- [0079](0079-scatter-point-options.md) Scatter options prepared within native loops: implemented.
+- [0079](0079-scatter-point-options.md) Scatter options prepared within native loops: implemented, superseded in part by 0163.
 - [0080](0080-line-20k-options.md) Line option costs at 20k items: implemented.
 - [0081](0081-option-resolution-setup.md) Native option setup and owned results: implemented.
 - [0082](0082-native-line-resolution.md) Loop-local native line resolution and contexts: implemented.
@@ -96,7 +96,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0091](0091-live-mouse-move.md) One hover pass and one draw for each frame of a live chart: accepted.
 - [0092](0092-hidden-legend-items.md) The items of a hidden legend wait for a read: accepted.
 - [0093](0093-arc-options.md) Native arc options: accepted.
-- [0094](0094-scatter-bubble-point-loops.md) One size in scatter overflow and native bubble loops: accepted.
+- [0094](0094-scatter-bubble-point-loops.md) One size in scatter overflow and native bubble loops: accepted, superseded in part by 0163.
 - [0095](0095-radial-static-plans.md) Guarded static plans of the radial scale and the radar loop: accepted, superseded in part by 0130.
 - [0096](0096-per-item-plumbing.md) Direct reads and one growth in the per-item plumbing: accepted.
 - [0097](0097-native-chart-drawing-routes.md) Native drawing routes of live charts: accepted.
@@ -159,6 +159,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0157](0157-time-axis-and-floating-bars.md) Bars on a time axis and floating bars on the fast paths: proposed, supersedes 0068, 0069, 0071.
 - [0158](0158-fused-rounded-bar.md) Fused rounded bar: proposed, supersedes 0070.
 - [0160](0160-shared-point-animation-options.md) Shared animation options of a scatter update: accepted.
+- [0163](0163-scatter-indexed-point-sizes.md) Indexed point sizes in the scatter plan: accepted, supersedes 0079, 0094.
 - [0167](0167-point-hover-scan.md) A typed scan of the points in the hover search: accepted.
 - [0170](0170-typed-gallery-type-pages.md) Typed gallery type pages: accepted, supersedes 0052.
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.
