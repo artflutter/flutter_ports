@@ -830,7 +830,6 @@ class TimeScale(super.cfg) extends Scale {
     if (jsToNumber(adapter.diff(max, min, minor)) >
         100000 * jsToNumber(stepSize)) {
       throw StateError(
-        // js-ok: the text of an error.
         '$min and $max are too far '
         'apart with stepSize of ${jsToString(stepSize)} ${minor.name}',
       );
@@ -846,7 +845,6 @@ class TimeScale(super.cfg) extends Scale {
       // DIVERGES(chartjs): adapt-time-generate-no-advance, a stuck step.
       if (next <= time) {
         throw StateError(
-          // js-ok: the text of an error.
           '$min and $max: the step '
           'of ${jsToString(stepSize)} ${minor.name} does not advance',
         );

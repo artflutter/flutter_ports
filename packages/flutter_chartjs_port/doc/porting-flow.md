@@ -310,8 +310,7 @@ display-only JS exactness. In short:
   Flutter `Locale`, and the tick option `format` a `NumberFormat`. The port does not correct the
   defects of package:intl. A string that differs from the V8 string is the `differences.md` row
   `adapt-intl-number-format`.
-- Tool 3 enforces the translation rules. A site that keeps a flagged form for a stated reason
-  carries `// js-ok: <reason>` at the end of its line, or alone on the line before it.
+- The review and the tests apply the translation rules. No tool checks them (Chart.js ADR 0178).
 
 ### 2.4 Chart.js ADR 0003: Type-only dependencies (gate 1)
 
@@ -1040,8 +1039,8 @@ cannot do this, because GitHub sets `CI=true` in every job ([Chart.js ADR
 ## 4. Tooling owned by this flow
 
 **1. Library import guard** (`tool/check_lib_imports.dart`, `check:lib-imports`, phase 1). The
-melos script `check:port` and the CI job `port-checks` run tools 1-3 and the checks of tools 6
-and 8. Tool 1 uses allowlists:
+melos script `check:port` and the CI job `port-checks` run tools 1 and 2 and the checks of tools
+6 and 8. Tool 1 uses allowlists:
 - `lib/`: `dart:async`, `collection`, `convert`, `core`, `math`, `typed_data` and `ui`, the
   `package:flutter/` libraries `foundation`, `gestures`, `painting`, `rendering`, `scheduler`,
   `semantics`, `services` and `widgets`, `package:meta/meta.dart`, `package:intl/intl.dart` with
@@ -1114,33 +1113,8 @@ lowercase category, for example `theme-H1`. It has an HTML anchor. The marker te
 `DIVERGES(chartjs): ` starts with the ID. A skip reason is `'diverges: <ID>'`. The categories are
 `adapt`, `platform`, `theme`, `js-semantics`, `harness` and `not-followed`. The file comes with the first `DIVERGES` hunk.
 
-**3. JS-semantics check** (`tool/check_js_semantics.dart`, `check:js-semantics`, phase 1). It
-examines the `lib/` and `test/` files of the given packages whose header block names a `js`
-project. When `packages/chartjs_test_utils` exists, the check also examines that package. It reads
-the `language` of each project from the `tool/port_sources.yaml` of each given package; the first
-entry of a project counts. Thus the melos script passes the host and the add-on port
-`flutter_chartjs_plugin_zoom_port` ([ADR 0009](../../../docs/adr/0009-add-on-ports.md) item 6). Its
-advice names the JS runtime: `lib/src/js/`, or `package:flutter_chartjs_port/js_semantics.dart` in
-an add-on. It flags these forms:
-- `.round()`, `.roundToDouble()`, `.floor()`, `.ceil()`, `.truncate()`, `.clamp(`, `%`, `pow(`
-  with any base, every `.toString()` call, `is int` and `.sort(`. A `pow` call with `double`
-  operands carries `// js-ok`.
-- the `dart:math` functions `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `atan2`, `exp` and
-  `log`. A display-only `sin` or `cos` carries `// js-ok: display only (Chart.js ADR 0045)`
-  ([Chart.js ADR 0045](adr/0045-reference-engine-arm64.md)).
-- the interpolation of a value with the static type `double` or `num`
-- the calls and tear-offs of `dart:math` `max` and `min` with the type argument `num`. Give them
-  `double` operands or the type argument `double`
-  ([Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §8).
-- from phase 2, the sorts of `package:collection`: `mergeSort(`, `insertionSort(`, `.sorted(`,
-  `.sortedBy(`, `.sortedByCompare(`, `.sortBy(`, `.sortByCompare(` and `.sortRange(`
-- from phase 5, `DateTime.now(`. Ported code reads the time through `clock.now()`, because only
-  `clock.now()` follows the fake clock of `testWidgets` and `withClock`.
-
-A site passes with `// js-ok: <reason>` at the end of its line, or alone on the line before it.
-The lexical rules read the code without comments and strings. The interpolation rule and the
-`max`/`min` rule resolve types with `package:analyzer`, a dev_dependency of `flutter_chartjs_port`.
-[Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §8 lists the forms that tool 3 does not find.
+**3. JS-semantics check.** Removed ([Chart.js ADR 0178](adr/0178-no-js-semantics-check.md)). The
+review and the tests apply the translation rules of [Chart.js ADR 0146](adr/0146-js-numeric-semantics.md).
 
 **4. Upstream manifest** (`tool/upstream_manifest/`, Node, `upstream:manifest`, job
 `upstream-manifest`, mid phase 2). With `--src <checkout> --out <file>`, it writes

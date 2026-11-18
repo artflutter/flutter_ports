@@ -535,13 +535,10 @@ base class ContextObject implements JsObjectFace {
       return List<String>.of(_names);
     }
     // The indices are distinct integers: an unstable sort gives one order.
-    final indices =
-        [
-            for (final name in _names)
-              if (jsArrayIndex(name) case final int index) (index, name),
-          ]
-          // js-ok: distinct keys, as jsObjectKeys sorts them
-          ..sort((a, b) => a.$1.compareTo(b.$1));
+    final indices = [
+      for (final name in _names)
+        if (jsArrayIndex(name) case final int index) (index, name),
+    ]..sort((a, b) => a.$1.compareTo(b.$1));
     return [
       for (final (_, name) in indices) name,
       for (final name in _names)
@@ -802,7 +799,6 @@ final class ScriptableContext extends ContextObject {
     // On dart2wasm an int in an Object? field is a box: one box for both keys,
     // and the box of the last write when the index is the same number.
     final Object box =
-        // js-ok: an equal int of the same sign is the same JS number.
         current is int &&
             current == index &&
             current.isNegative == index.isNegative

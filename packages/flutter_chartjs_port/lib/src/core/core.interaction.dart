@@ -273,7 +273,6 @@ double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
     final deltaX = useX ? ((pt1.x ?? 0) - (pt2.x ?? 0)).abs() : 0.0;
     final deltaY = useY ? ((pt1.y ?? 0) - (pt2.y ?? 0)).abs() : 0.0;
     return math.sqrt(
-      // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
       math.pow(deltaX, 2.0).toDouble() + math.pow(deltaY, 2.0).toDouble(),
     );
   };

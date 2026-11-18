@@ -48,7 +48,6 @@ final class const SankeyDataPoint({
   this;
 
   @override
-  // js-ok: the text of a debug message.
   String toString() => 'SankeyDataPoint($from -> $to: $flow)';
 }
 

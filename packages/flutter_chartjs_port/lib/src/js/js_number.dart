@@ -29,7 +29,6 @@ double jsToNumber(Object? value) => switch (value) {
   // conversion in an AOT build, and `toDouble()` is a call (dart-lang/sdk
   // issue 64209). The case stays `num`: dart2js then emits the same code as
   // for `n.toDouble()`, with no int test for a value that is not a number.
-  // js-ok: the two branches give the same number.
   final num n => n is int ? n * 1.0 : n as double,
   null => 0,
   Undefined() => double.nan,

@@ -139,7 +139,6 @@ List<ActiveElement> _intersectItems(
 double _distance(Point a, Point b, InteractionAxis axis) {
   final dx = axis.usesX ? ((a.x ?? 0) - (b.x ?? 0)).abs() : 0.0;
   final dy = axis.usesY ? ((a.y ?? 0) - (b.y ?? 0)).abs() : 0.0;
-  // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
   return math.sqrt(math.pow(dx, 2.0) + math.pow(dy, 2.0));
 }
 

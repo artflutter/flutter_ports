@@ -777,7 +777,6 @@ final class const ElementPoint(
 
   /// The point, for test messages.
   @override
-  // js-ok: the text of a test message.
   String toString() => '{x: $x, y: $y}';
 }
 

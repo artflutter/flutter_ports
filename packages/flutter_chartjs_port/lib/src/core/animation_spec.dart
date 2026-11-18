@@ -260,13 +260,10 @@ final class AnimationSpec() implements JsObjectFace {
     ];
     if (!keys.any((key) => jsArrayIndex(key) != null)) return keys;
     // The indices are distinct integers: an unstable sort gives one order.
-    final indices =
-        [
-            for (final key in keys)
-              if (jsArrayIndex(key) case final int index) (index, key),
-          ]
-          // js-ok: distinct keys, as jsObjectKeys sorts them
-          ..sort((a, b) => a.$1.compareTo(b.$1));
+    final indices = [
+      for (final key in keys)
+        if (jsArrayIndex(key) case final int index) (index, key),
+    ]..sort((a, b) => a.$1.compareTo(b.$1));
     return [
       for (final (_, key) in indices) key,
       for (final key in keys)

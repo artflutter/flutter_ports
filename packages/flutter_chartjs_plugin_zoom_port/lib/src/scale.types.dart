@@ -104,9 +104,7 @@ ScaleRange _logarithmicZoomRange(Scale scale, double zoom, Point center) {
   final delta = zoomDelta(logCenter, logMin, logRange, newLogRange);
 
   return (
-    // js-ok: Math.pow with double operands (Chart.js ADR 0146).
     min: math.pow(10.0, logMin + delta.min).toDouble(),
-    // js-ok: Math.pow with double operands (Chart.js ADR 0146).
     max: math.pow(10.0, logMax - delta.max).toDouble(),
   );
 }

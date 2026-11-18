@@ -81,9 +81,6 @@ melos:
     check:headers:
       run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_chart_sankey_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_kurkle_color_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_color_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_interpolate_port
       description: Fail on flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port, flutter_chartjs_chart_sankey_port, flutter_kurkle_color_port, flutter_d3_port, flutter_d3_color_port and flutter_d3_interpolate_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. Each add-on package, the color packages, the D3 package and the D3 module packages run as their own home package.
-    check:js-semantics:
-      run: dart run packages/flutter_chartjs_port/tool/check_js_semantics.dart packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port packages/flutter_chartjs_chart_sankey_port
-      description: Fail on Dart constructs with JavaScript-incompatible results in ported flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port and flutter_chartjs_chart_sankey_port files.
     port:next:check:
       run: dart run packages/flutter_chartjs_port/tool/port_order.dart --check
       description: Fail when tool 8 cannot read a module of third_party/Chart.js/src, a header line of lib/ or a parity.md status, or when an import does not resolve.
@@ -106,13 +103,12 @@ melos:
       steps:
         - check:lib-imports
         - check:headers
-        - check:js-semantics
         - port:next:check
         - parity:check
         - check:typed-reads
         - options:gen:check
         - adr:index:check
-      description: Run check:lib-imports, check:headers, check:js-semantics, port:next:check, parity:check, check:typed-reads, options:gen:check and adr:index:check.
+      description: Run check:lib-imports, check:headers, port:next:check, parity:check, check:typed-reads, options:gen:check and adr:index:check.
     test:fixtures:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart --fixtures
       description: Run the fixture smoke tests of flutter_chartjs_port (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.

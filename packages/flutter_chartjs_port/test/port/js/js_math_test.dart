@@ -190,7 +190,6 @@ void main() {
   // Math.pow(x, 2) is dart:math pow (Chart.js ADR 0146 §4). V8 gives the bits
   // of x * x for it (Chart.js ADR 0146, section 4).
   group('dart:math pow(x, 2.0)', () {
-    // js-ok: the form of Math.pow(x, 2) under test.
     double square(double x) => math.pow(x, 2.0).toDouble();
 
     test('gives the JS results of Math.pow(x, 2) for the special values', () {

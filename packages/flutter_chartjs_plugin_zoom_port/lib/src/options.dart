@@ -252,7 +252,6 @@ final class const WheelOptions({
 
   @override
   String toString() =>
-      // js-ok: the debug text of toString.
       'WheelOptions(enabled: $enabled, speed: $speed, '
       'modifierKey: $modifierKey)';
 }
@@ -345,9 +344,7 @@ final class const DragOptions({
 
   @override
   String toString() =>
-      // js-ok: the debug text of toString.
       'DragOptions(enabled: $enabled, threshold: $threshold, '
-      // js-ok: the debug text of toString.
       'borderColor: $borderColor, borderWidth: $borderWidth, '
       'backgroundColor: $backgroundColor, modifierKey: $modifierKey, '
       'drawTime: $drawTime, maintainAspectRatio: $maintainAspectRatio)';
@@ -613,7 +610,6 @@ final class const PanOptions({
   String toString() =>
       'PanOptions(enabled: $enabled, mode: $mode, modifierKey: $modifierKey, '
       'scaleMode: $scaleMode, overScaleMode: $overScaleMode, '
-      // js-ok: the debug text of toString.
       'threshold: $threshold)';
 }
 
@@ -651,7 +647,6 @@ final class const ScaleLimit._(
 
   @override
   String toString() =>
-      // js-ok: the debug text of toString.
       isOriginal ? 'ScaleLimit.original' : 'ScaleLimit($value)';
 }
 
@@ -698,7 +693,6 @@ final class const ScaleLimits({
   int get hashCode => Object.hash(min, max, minRange);
 
   @override
-  // js-ok: the debug text of toString.
   String toString() => 'ScaleLimits(min: $min, max: $max, minRange: $minRange)';
 }
 

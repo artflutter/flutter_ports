@@ -31,19 +31,19 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0026](0026-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, supersedes 0008, superseded by 0119.
 - [0027](0027-parsed-data.md) Parsed data in the controllers: accepted, superseded by 0036.
 - [0028](0028-controller-interfaces.md) Controller interfaces and values: accepted, superseded in part by 0145.
-- [0029](0029-fixture-smoke-runner.md) Fixture smoke runner: accepted, superseded in part by 0115.
+- [0029](0029-fixture-smoke-runner.md) Fixture smoke runner: accepted, superseded in part by 0115, 0178.
 - [0030](0030-controller-test-strategy.md) Controller test strategy: accepted.
 - [0031](0031-gallery-chart-types.md) Gallery chart types and the stress controller: accepted, superseded in part by 0075.
 - [0032](0032-js-numeric-semantics.md) JS numeric semantics: accepted, supersedes 0010, superseded by 0045.
 - [0033](0033-radial-scale-centers.md) Radial scale centers before the first layout: accepted, supersedes 0025.
-- [0034](0034-no-display-only-js-exactness.md) No display-only JS exactness: accepted, supersedes 0009.
-- [0035](0035-third-party-sources.md) Third-party sources: accepted, supersedes 0011, superseded in part by 0122, 0146.
+- [0034](0034-no-display-only-js-exactness.md) No display-only JS exactness: accepted, supersedes 0009, superseded in part by 0178.
+- [0035](0035-third-party-sources.md) Third-party sources: accepted, supersedes 0011, superseded in part by 0122, 0146, 0178.
 - [0036](0036-parsed-data.md) Parsed data in the controllers: accepted, supersedes 0027, superseded in part by 0054, 0109.
 - [0037](0037-legend-and-tooltip-input-path.md) Legend and tooltip input path: accepted, supersedes 0014, superseded in part by 0108.
 - [0038](0038-plugin-modules-class-values-and-interfaces.md) Plugin modules, class values and interfaces: accepted, superseded in part by 0054, 0145.
 - [0039](0039-tooltip-model-and-animation.md) Tooltip model and animation: accepted, superseded in part by 0145.
-- [0040](0040-filler-targets-and-plain-points.md) Filler targets and plain points: accepted, superseded in part by 0140.
-- [0041](0041-plugin-test-strategy.md) Plugin test strategy: accepted.
+- [0040](0040-filler-targets-and-plain-points.md) Filler targets and plain points: accepted, superseded in part by 0140, 0178.
+- [0041](0041-plugin-test-strategy.md) Plugin test strategy: accepted, superseded in part by 0178.
 - [0042](0042-theming.md) Theming: accepted, supersedes 0001, superseded by 0050.
 - [0043](0043-options-representation-and-resolver.md) Options representation and resolver: accepted, supersedes 0006, superseded by 0054, superseded in part by 0052.
 - [0044](0044-stack-fill-search.md) Stack fill search: rejected.
@@ -148,7 +148,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0143](0143-clock-now.md) `Date.now()` is `clock.now()`: accepted, supersedes 0045, superseded by 0146.
 - [0144](0144-native-plugins.md) Native plugins: accepted, supersedes 0052, 0054, 0108, 0126, superseded in part by 0148, 0150.
 - [0145](0145-native-option-types.md) Native option types with no earlier ADR: accepted, supersedes 0015, 0017, 0019, 0024, 0028, 0038, 0039, 0052, 0054, 0125, 0127.
-- [0146](0146-js-numeric-semantics.md) JS numeric semantics and the reference engine: accepted, supersedes 0035, 0045, 0108, 0122, 0134, 0135, 0136, 0138, 0143, superseded in part by 0176.
+- [0146](0146-js-numeric-semantics.md) JS numeric semantics and the reference engine: accepted, supersedes 0035, 0045, 0108, 0122, 0134, 0135, 0136, 0138, 0143, superseded in part by 0176, 0178.
 - [0147](0147-public-theme-api.md) The public theme API: accepted, supersedes 0050, 0054, 0057, 0116, 0117, 0118, 0128, 0141.
 - [0148](0148-plugin-typing.md) Typed plugin chart, options and update mode: accepted, supersedes 0144, superseded in part by 0150.
 - [0149](0149-bar-chart-small-costs.md) Four small costs of a bar chart: proposed, supersedes 0054, 0070, 0106.
@@ -170,6 +170,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0173](0173-option-function-types.md) Fixed Dart types for the option functions: accepted, supersedes 0020, 0024.
 - [0174](0174-canvas-option-values.md) Canvas values of option values without WebIDL conversions: accepted, supersedes 0017.
 - [0175](0175-typed-list-and-key-helpers.md) Typed Dart forms in place of six JS helpers: accepted.
-- [0176](0176-number-text-and-string-ids.md) The number text and the string ids: accepted, supersedes 0146, superseded in part by 0177.
-- [0177](0177-no-number-text-helper.md) No number text helper: accepted, supersedes 0176.
+- [0176](0176-number-text-and-string-ids.md) The number text and the string ids: accepted, supersedes 0146, superseded in part by 0177, 0178.
+- [0177](0177-no-number-text-helper.md) No number text helper: accepted, supersedes 0176, superseded in part by 0178.
+- [0178](0178-no-js-semantics-check.md) No JS-semantics check: accepted, supersedes 0029, 0034, 0035, 0040, 0041, 0146, 0176, 0177.
 <!-- adr-index:end -->

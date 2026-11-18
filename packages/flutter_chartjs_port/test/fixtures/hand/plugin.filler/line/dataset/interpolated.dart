@@ -23,12 +23,10 @@ Map<String, Object?> fixture() {
       'y': i < 86 || i > 104 && i < 178 ? math.sin(a) : double.nan,
     });
 
-    // js-ok: i is an int and never negative, so Dart % equals JS %.
     if (i % 10 == 0) {
       data2.add(<String, Object?>{'x': i, 'y': math.cos(a)});
     }
 
-    // js-ok: i is an int and never negative, so Dart % equals JS %.
     if (i % 15 == 0) {
       data3.add(<String, Object?>{'x': i, 'y': math.cos(a + math.pi / 2)});
     }

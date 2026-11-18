@@ -84,9 +84,7 @@ JsObjectFace _optionsY(Chart chart, [String? key]) {
 /// 10^(precision + 1)`, with `delta = |expected - actual|`. The spec also
 /// gives a precision that is not an integer, `1e-2` (:1027-1038).
 Matcher _toBeCloseTo(num expected, [num precision = 2]) {
-  // js-ok: a test tolerance only, as Jasmine's Math.pow.
   final pow = math.pow(10.0, precision + 1);
-  // js-ok: a test tolerance only, as Jasmine's Math.pow.
   final maxDelta = math.pow(10.0, -precision) / 2;
   return predicate<Object?>(
     (actual) =>

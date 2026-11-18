@@ -563,7 +563,7 @@ The roadmap gives tools 1-3 for both ports to phase 1, and tools 4-6 to phase 2 
 |---|---|---|---|
 | 1. Library import guard | `check:lib-imports` | 1 | The allowlists of `lib/`, of the pure layers and of the web tests of `flutter_d3_port`, with `package:js_semantics/`. The pure roots: the modules of phases 1-6 and the pure parts of phase 7. A test file without `@TestOn('vm')` imports only pure layers and `package:test` |
 | 2. Header check | `check:headers` | 1 | The 34 entries of `tool/port_sources.yaml` with their targets. The D3 port-only marker. `DIVERGES(d3)`. The backport lines of the four GitHub owners `d3`, `mbostock`, `mapbox` and `mourner`, from the `url` of each entry. The ignore line after the header lines. The gitlinks of the 34 submodules |
-| 3. JS-semantics check | `check:js-semantics` | 1 | The `js` projects of the D3 `port_sources.yaml`: all 34 repositories. D3 ADR 0006 can add D3 forms |
+| 3. JS-semantics check | removed | — | Chart.js ADR 0178 removed the tool. The review and the tests apply the number rules. |
 | 4. Upstream manifest | `upstream:manifest` | 2 | A D3 tool of its own (ADR 0008). It reads the test names of three runners: mocha `it`, vitest `test` and `node:test` `test`, with the names that loops make. Output: `packages/flutter_d3_port/doc/upstream/manifest.json` |
 | 5. Spec-case tracking | `test:cases` | 2 | The D3 spec paths `test/specs/<repo>/` and the manifest of tool 4. It moves to `port_tools` (ADR 0008) |
 | 6. Parity generator | `parity`, `parity:check` | 2 | One row for each source file, grouped by repository, from `doc/status.yaml`. It replaces the hand-written [parity.md](parity.md). It moves to `port_tools` (ADR 0008) |

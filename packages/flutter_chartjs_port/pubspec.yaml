@@ -42,7 +42,7 @@ dependencies:
   meta: ^1.18.0
 
 dev_dependencies:
-  # tool/check_js_semantics.dart resolves the types of interpolated values.
+  # The tool tests resolve the types of the library (tool/src/dart_sdk.dart).
   # 12.1.0 is the version that test_core already resolves in the workspace.
   analyzer: ^14.0.0
   # The test harness (porting-flow.md section 3). It depends on this package;

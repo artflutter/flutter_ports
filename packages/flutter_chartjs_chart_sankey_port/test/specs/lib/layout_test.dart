@@ -68,9 +68,7 @@ SankeyNode _copy(SankeyNode node) => _node(
 /// `toBeCloseTo(expected, numDigits)` of Vitest: a difference below
 /// `10 ** -numDigits / 2`.
 Matcher _toBeCloseTo(double expected, int numDigits) => predicate<double>(
-  // js-ok: double operands, as Math.pow.
   (received) => (expected - received).abs() < pow(10.0, -numDigits) / 2,
-  // js-ok: the text of a test failure.
   'a number close to $expected, to $numDigits digits',
 );
 
@@ -467,7 +465,6 @@ void main() {
 
         void runFillers(int count) {
           for (var i = 0; i < count; i++) {
-            // js-ok: both operands are not negative.
             nodeCount(fillers[i % fillers.length].to, FlowDirection.to);
           }
         }

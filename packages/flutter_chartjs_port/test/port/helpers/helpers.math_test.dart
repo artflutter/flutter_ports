@@ -280,9 +280,7 @@ void main() {
       // The form before Chart.js ADR 0010: ToNumber through jsToNumber, and
       // Math.pow(x, 2) through dart:math pow.
       double before(Point pt1, Point pt2) => js_math.sqrt(
-        // js-ok: the earlier form, the reference of the test.
         js_math.pow(jsToNumber(pt2.x) - jsToNumber(pt1.x), 2.0) +
-            // js-ok: the earlier form, the reference of the test.
             js_math.pow(jsToNumber(pt2.y) - jsToNumber(pt1.y), 2.0),
       );
       final coordinates = _coordinates();

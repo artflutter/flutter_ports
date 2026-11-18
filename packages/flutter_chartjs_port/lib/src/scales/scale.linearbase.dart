@@ -163,7 +163,6 @@ List<Tick> _generateTicks(
   if (!isNullOrUndef(precision)) {
     // If the user specified a precision, round to that number of decimal
     // places
-    // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0146).
     factor = math.pow(10.0, jsToNumber(precision)).toDouble();
     spacing = (spacing * factor).ceilToDouble() / factor;
   }
@@ -228,7 +227,6 @@ List<Tick> _generateTicks(
   final exponent = isNullOrUndef(precision)
       ? decimalPlaces_
       : jsToNumber(precision);
-  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0146).
   factor = math.pow(10.0, exponent).toDouble();
   niceMin = (jsToNumber(niceMin) * factor).roundToDouble() / factor;
   niceMax = (jsToNumber(niceMax) * factor).roundToDouble() / factor;
@@ -436,7 +434,6 @@ class LinearScaleBase(super.cfg) extends Scale {
       if (maxTicks > 1000) {
         _consoleWarn(
           'scales.$id.ticks.stepSize: ${jsToString(stepSize)} would result '
-          // js-ok: the text of a warning.
           'generating up to $maxTicks ticks. Limiting to '
           '1000.',
         );

@@ -229,15 +229,11 @@ final class const _ToBeChartOfSize(final Map<String, Object?> expected)
     // sanity checks
     if (chart.height != orh) {
       message =
-          // js-ok: the text of a test message.
           'Expected chart height ${chart.height} to be '
-          // js-ok: the text of a test message.
           'equal to original render height $orh';
     } else if (chart.width != orw) {
       message =
-          // js-ok: the text of a test message.
           'Expected chart width ${chart.width} to be '
-          // js-ok: the text of a test message.
           'equal to original render width $orw';
     }
 
@@ -319,6 +315,5 @@ double? _px(String value) {
 /// `auto` (Dart `null`) gives NaN, and `|| 0` gives 0.
 int _parseInt(double? value) {
   if (value == null || !value.isFinite) return 0;
-  // js-ok: parseInt keeps the integer part, which truncates toward zero.
   return value.truncate();
 }

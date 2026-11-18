@@ -12,7 +12,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:test/test.dart';
 
-import '../../../tool/src/js_semantics.dart' show dartSdkPath;
+import '../../../tool/src/dart_sdk.dart';
 
 // The name rules of Chart.js ADR 0052, section 8, over the 80 names of the
 // typed API (probe J5 of the design panel checked 43 of them; the details

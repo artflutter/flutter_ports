@@ -60,13 +60,13 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   with 0 without the summary of a run that passed: `flutter test` exits with 0 when a SIGTERM stops
   it. It needs a local Google Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
-  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1-3 and the checks of tools 6 and 8)
-  and tool 9, `options:gen:check` and `adr:index:check`, as melos steps. The CI job `port-checks`
-  runs the eight checks with a shallow checkout of the three Chart.js submodules,
-  `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey`. `check:lib-imports`,
-  `check:headers` and `check:js-semantics` also examine the add-on ports
-  `flutter_chartjs_plugin_zoom_port` and `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6).
-  The other four checks examine only `flutter_chartjs_port`.
+  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1 and 2 and the checks of tools 6
+  and 8) and tool 9, `options:gen:check` and `adr:index:check`, as melos steps. The CI job
+  `port-checks` runs the seven checks with a shallow checkout of the three Chart.js submodules,
+  `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey`. `check:lib-imports` and
+  `check:headers` also examine the add-on ports `flutter_chartjs_plugin_zoom_port` and
+  `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6). The other four checks examine only
+  `flutter_chartjs_port`. The port has no JS-semantics check (Chart.js ADR 0178).
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
     the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
@@ -105,14 +105,6 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     on a Dart path that is not the mapped path. A port-only file at the mapped path of a pinned
     source also fails. It compares each submodule gitlink with its `commit` in
     `port_sources.yaml`.
-  - `check:js-semantics`: Dart forms that give other results than JavaScript. It examines the
-    `lib/` and `test/` files of the given packages and of `chartjs_test_utils` whose header names a
-    `js` project. It reads the `language` of each project from the `tool/port_sources.yaml` of
-    each given package; the first entry of a project counts. Its advice names the JS runtime:
-    `lib/src/js/`, or `package:flutter_chartjs_port/js_semantics.dart` in an add-on. It resolves
-    types with `package:analyzer` to find the interpolation of
-    `double` and `num` values. It also fails on `DateTime.now(`: ported code reads the time with
-    `clock.now()` of package:clock (Chart.js ADR 0146 §6).
   - `port:next:check`: the check mode of tool 8 (`port:next`, below).
   - `parity:check`: the check mode of tool 6 (`parity`, below).
   - `check:typed-reads`: tool 9, the ratchet of the by-name forms (Chart.js ADR 0054). For each
@@ -699,7 +691,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     repository) and the prior-art survey `prior-art/`.
     - `doc/adr/`: the D3 ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:headers`, `test:web` and `test --no-select` examine the package. `check:lib-imports`,
-    `check:js-semantics`, `test:cases`, `parity` and `port:next` do not examine it yet.
+    `test:cases`, `parity` and `port:next` do not examine it yet.
 - `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.2, on pub.dev,
   ISC), the first module package of the D3 port (D3 ADR 0008), as `d3-color` on npm. Its
   `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive, its `analysis_options.yaml`
@@ -927,8 +919,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     header cell `Reserved ID`, so `check:headers` reads no rows from it) and `upstream-ledger.md`.
     `prior-art/README.md` is the prior-art survey (2026-11-10).
     - `doc/adr/`: the zoom ADRs. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
-  - `check:lib-imports`, `check:headers` and `check:js-semantics` examine the package (ADR 0009
-    item 6). `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
+  - `check:lib-imports` and `check:headers` examine the package (ADR 0009 item 6).
+    `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
 - `packages/flutter_chartjs_chart_sankey_port`: the chartjs-chart-sankey port (library,
@@ -1001,8 +993,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `upstream-ledger.md` and `prior-art/README.md` (2026-11-13: no Dart port of
     this library exists).
     - `doc/adr/`: the sankey ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
-  - `check:lib-imports`, `check:headers` and `check:js-semantics` examine the package (ADR 0009
-    item 6). `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
+  - `check:lib-imports` and `check:headers` examine the package (ADR 0009 item 6).
+    `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
 - `packages/flutter_kurkle_color_port`: the @kurkle/color 0.3.2 port (library, version 0.2.0,
@@ -1041,8 +1033,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `tool/port_sources.yaml`: the pin of `third_party/kurkle-color`, with the top-level key
     `marker: kurkle` (the tag of `DIVERGES(kurkle)`). `doc/differences.md` has its rows.
   - `check:headers` examines the package as its own home. `test:web` and `test --no-select` run
-    its tests. `check:lib-imports`, `check:js-semantics`, `test:cases`, `parity`, `port:next` and
-    `check:typed-reads` do not examine it. The core layers of `flutter_chartjs_port` may import its
+    its tests. `check:lib-imports`, `test:cases`, `parity`, `port:next` and `check:typed-reads` do
+    not examine it. The core layers of `flutter_chartjs_port` may import its
     public library (`colorLibrary` of `tool/src/lib_imports.dart`).
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
@@ -1216,8 +1208,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   Emulate JavaScript only where the result changes behavior (Chart.js ADR 0034): the ticks, the
   hit element, the item order, the resolved option, a throw, or a value that reaches a layout, a
   scale, an element property, a hit test, a discrete decision or a public return value. Do not
-  emulate JavaScript for exact digits or pixels only. `check:js-semantics` already fails on the
-  flagged forms. A kept form carries `// js-ok: <reason>`.
+  emulate JavaScript for exact digits or pixels only. No tool checks these forms: the review and the
+  tests apply them (Chart.js ADR 0178).
 - Deferred plans (`porting-flow.md` §5.1), for example
   `packages/flutter_chartjs_port/doc/canvas-cuts-plan.md`: do not do their work in a phase. A change
   that edits a file that a deferred plan cites updates the plan in the same commit (the
@@ -1241,8 +1233,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   ADR 0146 §7), and `Math.pow(x, 2)` is `math.pow(x, 2.0)` (Chart.js ADR 0146 §4). `Math.max` and
   `Math.min` have no
   runtime function: they are `dart:math` `max` and `min` with the type argument `double`, explicit
-  or inferred (`math.max<double>(x, 0)`; a call in arithmetic infers `num`), and
-  `check:js-semantics` flags a `num` type argument (Chart.js ADR 0146 §4). `lib/js_semantics.dart` exports each
+  or inferred (`math.max<double>(x, 0)`; a call in arithmetic infers `num`), never `num` (Chart.js
+  ADR 0146 §4). `lib/js_semantics.dart` exports each
   name of `lib/src/js/` for add-on ports (Chart.js ADR 0132). `JsStringList` of `js_array.dart` is a string
   as an array-like value: the reads `s[i]` and `s.length`, and a `TypeError` for each write.
   `_dataCheck` keeps a string `data` in it.

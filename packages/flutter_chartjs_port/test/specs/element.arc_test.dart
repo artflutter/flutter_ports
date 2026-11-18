@@ -27,7 +27,6 @@ import 'package:test/test.dart';
 /// Jasmine 3.99 rounds the difference to `precision + 1` places before it
 /// compares, so it also accepts differences up to about 1.1 times this bound.
 Matcher _toBeCloseTo(double expected, [int precision = 2]) =>
-    // js-ok: the exponent is an int, as in Jasmine's Math.pow(10, -precision).
     closeTo(expected, math.pow(10.0, -precision) / 2);
 
 /// The number `args[index]` of the recorded [call].

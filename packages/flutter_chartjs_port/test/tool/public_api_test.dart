@@ -12,7 +12,7 @@ import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
 import 'package:test/test.dart';
 
-import '../../tool/src/js_semantics.dart' show dartSdkPath;
+import '../../tool/src/dart_sdk.dart';
 
 // The public API of the package (Chart.js ADR 0048, sections 5 and 6, and
 // Chart.js ADR 0108): `lib/chartjs.dart` (the `chart.js` entry),

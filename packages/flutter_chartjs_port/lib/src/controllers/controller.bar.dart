@@ -1333,7 +1333,6 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         values[i - begin] = value;
         continue;
       }
-      // js-ok: only the VM and dart2wasm get here with a number, an int.
       if (value is! int) return false;
       values[i - begin] = value * 1.0;
     }

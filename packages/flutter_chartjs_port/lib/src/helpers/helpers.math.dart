@@ -52,7 +52,6 @@ const double twoThirdsPi = pi * 2 / 3;
 double log10(double x) {
   final exponent = math.log(x) * math.log10e;
   final powerOf10 = exponent.roundToDouble();
-  // js-ok: double operands; a power of ten up to 1e22 is exact.
   return x == math.pow(10.0, powerOf10) ? powerOf10 : exponent;
 }
 
@@ -75,7 +74,6 @@ double niceNum(double range) {
   range = almostEquals(range, roundedRange, range / 1000)
       ? roundedRange
       : range;
-  // js-ok: integer exponent, V8 bits for -340..320 (Chart.js ADR 0146).
   final niceRange = math.pow(10.0, log10(range).floorToDouble()).toDouble();
   final fraction = range / niceRange;
   final niceFraction = fraction <= 1
@@ -109,7 +107,7 @@ List<double> factorize(double value) {
 
   // The factors are distinct and finite, so List.sort gives the order of
   // Array.prototype.sort with (a, b) => a - b.
-  result.sort((a, b) => a.compareTo(b)); // js-ok: distinct finite numbers
+  result.sort((a, b) => a.compareTo(b));
   // pop() on an empty array does nothing.
   if (result.isNotEmpty) result.removeLast();
   return result;
@@ -220,9 +218,7 @@ double? decimalPlaces(Object? x) {
 /// helpers.math.ts:144 `distanceBetweenPoints`.
 double distanceBetweenPoints(Point pt1, Point pt2) {
   return math.sqrt(
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
     math.pow((pt2.x ?? 0) - (pt1.x ?? 0), 2.0).toDouble() +
-        // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
         math.pow((pt2.y ?? 0) - (pt1.y ?? 0), 2.0).toDouble(),
   );
 }

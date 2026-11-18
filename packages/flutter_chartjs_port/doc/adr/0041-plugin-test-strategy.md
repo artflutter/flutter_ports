@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-10-23)
 - Date: 2026-10-22
+- Superseded in part by: [Chart.js ADR 0178](0178-no-js-semantics-check.md) (2026-11-18)
 - Related: [Chart.js ADR 0012](0012-dart-file-naming.md) (the spec paths and the file names),
   [Chart.js ADR 0020](0020-registry-and-component-classes.md) §13 (a gain that only a
   microbenchmark measures),

@@ -10,9 +10,8 @@
 #   is newer than its release.
 # - version_source: where the version comes from.
 # - url: the project repository.
-# - language: the language of the source. "js" is JavaScript or TypeScript:
-#   tool/check_js_semantics.dart examines each Dart file whose header names a
-#   js project. "c" is C.
+# - language: the language of the source. "js" is JavaScript or TypeScript.
+#   "c" is C.
 # - spdx: the SPDX license identifier.
 # - holder: the copyright holder, as the header, the package LICENSE and
 #   REUSE.toml write it.

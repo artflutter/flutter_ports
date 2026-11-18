@@ -133,7 +133,7 @@ RGBA _bytes(Color color) {
     r: _byte(native.r),
     g: _byte(native.g),
     b: _byte(native.b),
-    // js-ok: native alpha normalization keeps the former clamping. `clamp`
+    // Native alpha normalization keeps the former clamping. `clamp`
     // makes NaN the maximum: a NaN alpha, as `hexParse` gives it for a
     // non-hex digit, stays NaN.
     a: native.a.isNaN ? native.a : native.a.clamp(0.0, 1.0) * 255,
@@ -145,7 +145,6 @@ RGBA _bytes(Color color) {
 /// `rgbString` prints it, as upstream prints the member.
 double _byte(double value) {
   final byte = value * 255;
-  // js-ok: native Color normalization preserves byte rounding.
   return byte.isFinite ? byte.round().clamp(0, 255).toDouble() : byte;
 }
 

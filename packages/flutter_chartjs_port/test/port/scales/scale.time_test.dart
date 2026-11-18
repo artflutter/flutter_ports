@@ -405,7 +405,6 @@ void main() {
           isA<StateError>().having(
             (e) => e.message,
             'message',
-            // js-ok: the Dart text of the message.
             '$_t0 and ${_t0 + 200001} '
                 'are too far apart with stepSize of 2 millisecond',
           ),
@@ -463,7 +462,6 @@ void main() {
             isA<StateError>().having(
               (e) => e.message,
               'message',
-              // js-ok: the Dart text of the message.
               '${1609718400000.0} and ${1610150400000.0} are too far apart '
                   'with stepSize of $text day',
             ),

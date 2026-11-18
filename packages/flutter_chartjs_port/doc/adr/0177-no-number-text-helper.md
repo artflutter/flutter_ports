@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-11-18): its code and the tests of section Tests pass.
 - Date: 2026-11-18
+- Superseded in part by: [Chart.js ADR 0178](0178-no-js-semantics-check.md) (2026-11-18)
 - Supersedes: of [Chart.js ADR 0176](0176-number-text-and-string-ids.md), item 1, the second bullet of section
   Consequences and the first two bullets of section Tests.
 - Related: [Chart.js ADR 0034](0034-no-display-only-js-exactness.md), [Chart.js ADR 0146](0146-js-numeric-semantics.md)

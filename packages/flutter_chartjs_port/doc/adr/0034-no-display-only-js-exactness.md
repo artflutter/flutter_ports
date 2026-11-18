@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-10-21)
 - Date: 2026-10-21
+- Superseded in part by: [Chart.js ADR 0178](0178-no-js-semantics-check.md) (2026-11-18)
 - Supersedes: [Chart.js ADR 0009](0009-no-display-only-js-exactness.md)
 - Related: [Chart.js ADR 0032](0032-js-numeric-semantics.md) (the JS numeric rules, `jsSin` and
   `jsCos`), [Chart.js ADR 0013](0013-canvas-model.md) (the canvas model, the bitmap space),

@@ -48,9 +48,7 @@ List<Object?> _getLabels(Scale scale) => [
 /// `Math.round(delta * 10^(precision + 1)) <= 10^-precision / 2 *
 /// 10^(precision + 1)`, with `delta = |expected - actual|`.
 Matcher _toBeCloseTo(num expected, [int precision = 2]) {
-  // js-ok: the exponents are ints, as in Jasmine's Math.pow.
   final pow = math.pow(10.0, precision + 1);
-  // js-ok: the exponent is an int, as in Jasmine's Math.pow.
   final maxDelta = math.pow(10.0, -precision) / 2;
   return predicate<Object?>(
     (actual) =>

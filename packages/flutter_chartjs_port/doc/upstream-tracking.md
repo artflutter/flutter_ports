@@ -15,7 +15,7 @@ This document owns the upstream tooling:
 - the bump report, the bump PR gate and the header restamp
 
 [porting-flow.md](porting-flow.md) owns the per-module tooling:
-- the header check, the library import guard and the JS-semantics check
+- the header check and the library import guard
 - the upstream manifest, the parity generator and spec-case tracking
 - the fixture smoke runner and the port-order helper
 

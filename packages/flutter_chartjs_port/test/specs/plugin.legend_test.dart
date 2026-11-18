@@ -727,7 +727,6 @@ void main() {
                   final value = _dataValue(ctx);
                   return ChartPaint.solid(
                     native_ui.Color.fromRGBO(
-                      // js-ok: finite channel with ordered integer bounds.
                       (value * 10).toInt().clamp(0, 255),
                       0,
                       0,
@@ -740,7 +739,6 @@ void main() {
                   final value = _dataValue(ctx);
                   return ChartPaint.solid(
                     native_ui.Color.fromRGBO(
-                      // js-ok: finite channel with ordered integer bounds.
                       (255 - value * 10).toInt().clamp(0, 255),
                       0,
                       0,

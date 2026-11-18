@@ -555,11 +555,9 @@ final class _VaryingColors(
   /// Stores the colors of [index] into the fresh [result], in the key order.
   void storeInto(ElementOptions result, int index) {
     final first = _firstValues;
-    // js-ok: native loop indices are nonnegative and lengths positive.
     result.storeKey(_firstKey, first[index % first.length]);
     final second = _secondValues;
     if (second != null) {
-      // js-ok: native loop indices are nonnegative and lengths positive.
       result.storeKey(_secondKey!, second[index % second.length]);
     }
   }
@@ -594,14 +592,12 @@ final class IndexedPointPlan._(
     _colors?.storeInto(result, index);
     final radii = this.radii;
     if (radii != null) {
-      // js-ok: native loop indices are nonnegative and lengths positive.
       result.storeKey(OptionKey.radius, radii[index % radii.length]);
     }
     final hoverRadii = this.hoverRadii;
     if (hoverRadii != null) {
       result.storeKey(
         OptionKey.hoverRadius,
-        // js-ok: native loop indices are nonnegative and lengths positive.
         hoverRadii[index % hoverRadii.length],
       );
     }
@@ -609,7 +605,6 @@ final class IndexedPointPlan._(
     if (borderWidths != null) {
       result.storeKey(
         OptionKey.borderWidth,
-        // js-ok: native loop indices are nonnegative and lengths positive.
         borderWidths[index % borderWidths.length],
       );
     }
@@ -645,7 +640,6 @@ bool _plainNumberList(List<Object?> value) {
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
 int _indexedSlot(double index, int length) => index < 9007199254740992.0
-    // js-ok: nonnegative index and positive length (the callers' preflight).
     ? index.toInt() % length
     : index.remainder(length).toInt();
 

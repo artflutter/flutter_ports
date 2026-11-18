@@ -550,12 +550,9 @@ class PointElement([AnyObject? cfg])
     // `options.hitRadius + options.radius` is the JS `+`: a string option
     // joins (`1 + '07'` is `'107'`). `Math.pow` applies `ToNumber` to the
     // sum.
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
     final dx = math.pow((mouseX ?? 0) - x, 2.0).toDouble();
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
     final dy = math.pow((mouseY ?? 0) - y, 2.0).toDouble();
     final reach = _sum(options, OptionKey.hitRadius, OptionKey.radius);
-    // js-ok: double operands, dart:math pow (Chart.js ADR 0146 §4).
     return (dx + dy) < math.pow(reach, 2.0).toDouble();
   }
 

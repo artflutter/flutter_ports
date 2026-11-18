@@ -752,7 +752,6 @@ void main() {
 
     test('prints its fields', () {
       const point = ElementPoint(1, 2.5);
-      // js-ok: the Dart text of the fields.
       expect(point.toString(), '{x: ${point.x}, y: ${point.y}}');
     });
   });

@@ -28,8 +28,7 @@
 /// §4). `dart:math` `pow` gives 1 for
 /// `pow(1, NaN)` and `pow(+-1, +-Infinity)`, where JavaScript gives NaN.
 /// `Math.sin`, `Math.cos` and the other transcendental builtins are the
-/// `dart:math` functions as they are, with no `js-ok` comment (Chart.js ADR
-/// 0146 §3).
+/// `dart:math` functions as they are (Chart.js ADR 0146 §3).
 library;
 
 /// `Number.EPSILON`: 2^-52, the gap between 1 and the next double.

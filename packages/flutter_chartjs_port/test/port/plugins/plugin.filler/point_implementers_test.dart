@@ -10,7 +10,7 @@ library;
 // every curved line 64 to 70 % slower on AOT and about 2 times slower on
 // dart2wasm, also in a chart without a fill (the Benchmarks of the ADR and
 // performance.md). The test resolves the element model of lib/ with
-// package:analyzer, as check:js-semantics does, and reads the
+// package:analyzer and reads the
 // `allSupertypes` of each class, mixin and enum. Thus a mixin application
 // class (`class C = S with M implements I;`), a type alias of an interface
 // and an indirect supertype do not escape the scan. It does not examine
@@ -27,7 +27,7 @@ import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
-import '../../../../tool/src/js_semantics.dart' show dartSdkPath;
+import '../../../../tool/src/dart_sdk.dart';
 
 /// The point interfaces: the library URI and the name of each.
 const Set<String> _pointInterfaces = {

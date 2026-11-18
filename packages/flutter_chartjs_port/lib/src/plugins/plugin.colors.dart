@@ -92,10 +92,8 @@ Object? _getBorderColor(int i) {
   // DIVERGES(chartjs): theme-H4b, the theme palette comes first.
   final themeColors = _themeBorderColors;
   if (themeColors != null) {
-    // js-ok: i is an int and never negative, so Dart % equals JS %.
     return ChartPaint.solid(themeColors[i % themeColors.length]! as ui.Color);
   }
-  // js-ok: i is an int and never negative, so Dart % equals JS %.
   return ChartPaint.solid(_borderColors[i % _borderColors.length]);
 }
 
@@ -104,10 +102,8 @@ Object? _getBackgroundColor(int i) {
   // DIVERGES(chartjs): theme-H4c, the theme palette comes first.
   final themeColors = _themeBackgroundColors;
   if (themeColors != null) {
-    // js-ok: i is an int and never negative, so Dart % equals JS %.
     return ChartPaint.solid(themeColors[i % themeColors.length]! as ui.Color);
   }
-  // js-ok: i is an int and never negative, so Dart % equals JS %.
   return ChartPaint.solid(_backgroundColors[i % _backgroundColors.length]);
 }
 
@@ -286,11 +282,8 @@ bool _isDefaultColor(Object? input) {
   final value = input is SolidChartPaint ? input.color : input;
   if (value is! ui.Color) return false;
   final color = value.withValues(colorSpace: ui.ColorSpace.extendedSRGB);
-  // js-ok: byte rounding is the native-color normalization of ADR 0057.
   return (color.r * 255).round().clamp(0, 255) == 0 &&
-      // js-ok: byte rounding is the native-color normalization of ADR 0057.
       (color.g * 255).round().clamp(0, 255) == 0 &&
-      // js-ok: byte rounding is the native-color normalization of ADR 0057.
       (color.b * 255).round().clamp(0, 255) == 0 &&
       color.a == 0.1;
 }

@@ -285,9 +285,7 @@ H4c add a theme branch before the unchanged upstream line:
 Object? _getBorderColor(int i) {
   // DIVERGES(chartjs): theme-H4b, the theme palette comes first.
   final themeColors = _themeBorderColors;
-  // js-ok: i is an int and never negative, so Dart % equals JS %.
   if (themeColors != null) return themeColors[i % themeColors.length];
-  // js-ok: i is an int and never negative, so Dart % equals JS %.
   return _borderColors[i % _borderColors.length];
 }
 ```

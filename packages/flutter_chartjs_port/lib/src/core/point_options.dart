@@ -217,7 +217,6 @@ final class NativePointSizes._(
   @pragma('wasm:prefer-inline')
   static double _item(List<Object?>? list, int index, double field) {
     if (list == null) return field;
-    // js-ok: native loop indices are nonnegative and lengths positive.
     final value = list[index % list.length];
     // The plan proved each item a number.
     return value is double ? value : (value! as int) * 1.0;

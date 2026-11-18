@@ -225,7 +225,6 @@ jobs:
       - uses: ./.github/actions/setup
       - run: dart run melos run check:lib-imports
       - run: dart run melos run check:headers
-      - run: dart run melos run check:js-semantics
       - run: dart run melos run port:next:check
       - run: dart run melos run parity:check
       - run: dart run melos run check:typed-reads

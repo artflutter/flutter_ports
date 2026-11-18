@@ -388,13 +388,10 @@ abstract base class TypedRecord() implements JsObjectFace {
       return keys;
     }
     // The indices are distinct integers: an unstable sort gives one order.
-    final indices =
-        [
-            for (final name in keys)
-              if (jsArrayIndex(name) case final int index) (index, name),
-          ]
-          // js-ok: distinct keys, as jsObjectKeys sorts them
-          ..sort((a, b) => a.$1.compareTo(b.$1));
+    final indices = [
+      for (final name in keys)
+        if (jsArrayIndex(name) case final int index) (index, name),
+    ]..sort((a, b) => a.$1.compareTo(b.$1));
     return [
       for (final (_, name) in indices) name,
       for (final name in keys)

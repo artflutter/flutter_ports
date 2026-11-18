@@ -737,7 +737,7 @@ of tools serve all ports, in the dev package `port_tools`. The ECharts port uses
 |---|---|---|---|
 | 1. Library import guard | `check:lib-imports` | 1 | The allowlists of `lib/`, of the pure layers and of the web tests of `flutter_echarts_port`, with `package:js_semantics/`. The pure roots `lib/src/echarts/` and `lib/src/zrender/`. No ported file imports `lib/src/theme/` |
 | 2. Header check | `check:headers` | 1 | The two entries of `tool/port_sources.yaml` with their targets. The lazy project `Apache ECharts`. The holder from `LICENSE` or `NOTICE`. `DIVERGES(echarts)`. The backport lines of `apache/echarts` and `ecomfe/zrender`. The ignore line and the upstream license block after the header lines. The two gitlinks |
-| 3. JS-semantics check | `check:js-semantics` | 1 | Both projects with `language: js`. ECharts ADR 0003 and ECharts ADR 0004 can add ECharts forms |
+| 3. JS-semantics check | removed | — | Chart.js ADR 0178 removed the tool. The review and the tests apply the number rules. |
 | 4. Upstream manifest | `upstream:manifest` | 2, visual pages 6 | An ECharts Node.js tool of its own (ADR 0008). It reads the jest case names at run time. Output: `doc/upstream/manifest.json` with two projects (191 and 68 cases). From phase 6, also `doc/upstream/fixtures.json` |
 | 5. Spec-case tracking | `test:cases` | 2 | The spec paths `test/specs/echarts/` and `test/specs/zrender/`, the manifest keyed by project and `--exclude-tags fixtures`. It moves to `port_tools` (ADR 0008) |
 | 6. Parity generator | `parity`, `parity:check` | 2 | One row for each source file, grouped by repository and directory, from `doc/status.yaml`. It replaces the hand-written [parity.md](parity.md). It moves to `port_tools` (ADR 0008) |

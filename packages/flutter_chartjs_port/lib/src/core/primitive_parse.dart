@@ -28,7 +28,6 @@ abstract interface class NativeNumericParseScale() {
 @pragma('wasm:prefer-inline')
 double? _finiteDouble(Object? value) {
   if (value is double) return value.isFinite ? value : null;
-  // js-ok: only the VM and dart2wasm get here with a number, an int.
   return value is int ? value * 1.0 : null;
 }
 
