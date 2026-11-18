@@ -4,9 +4,9 @@
 /// interpolator of a list of values.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:flutter_d3_interpolate_port/src/value.dart' as value;
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart' as value;
 
 /// piecewise.js:3 the default export (`piecewise` of index.js:20): the
 /// piecewise interpolator through [values], with the interpolator factory
@@ -49,7 +49,7 @@ T Function(double t) piecewise<T>(
     final x = t * n;
     // The index in doubles: the floor of an infinite x is infinite, and the
     // clamp gives a whole number before toInt().
-    final i = math.max<double>(0, math.min(n - 1.0, x.floorToDouble())).toInt();
+    final i = max<double>(0, min(n - 1.0, x.floorToDouble())).toInt();
     return pairs[i](x - i);
   };
 }

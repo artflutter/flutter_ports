@@ -4,13 +4,8 @@
 /// which chooses the interpolator of the type of its end value.
 library;
 
-import 'package:flutter_d3_color_port/d3_color.dart' show Color;
-import 'package:flutter_d3_interpolate_port/src/array.dart';
-import 'package:flutter_d3_interpolate_port/src/constant.dart';
-import 'package:flutter_d3_interpolate_port/src/date.dart';
-import 'package:flutter_d3_interpolate_port/src/number.dart';
-import 'package:flutter_d3_interpolate_port/src/numberArray.dart';
-import 'package:flutter_d3_interpolate_port/src/rgb.dart';
+import 'package:flutter_d3_color_port/d3_color.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// value.js:11 the default export (`interpolate` of index.js:1): the
 /// interpolator from [a] to [b], of the type of [b].

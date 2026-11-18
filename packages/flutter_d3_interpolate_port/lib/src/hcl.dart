@@ -9,9 +9,8 @@
 /// text (decisions 1 and 2 of the design).
 library;
 
-import 'package:flutter_d3_color_port/d3_color.dart' show Color, Hcl;
-import 'package:flutter_d3_interpolate_port/src/color.dart'
-    show Channel, hue, nogamma;
+import 'package:flutter_d3_color_port/d3_color.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// hcl.js:4 `hcl(hue)`: the HCL interpolator from [start] to [end] with the
 /// hue interpolation [hue].

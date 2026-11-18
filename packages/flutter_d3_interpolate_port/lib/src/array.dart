@@ -4,11 +4,10 @@
 /// lists.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter_d3_interpolate_port/src/numberArray.dart';
-import 'package:flutter_d3_interpolate_port/src/value.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// array.js:4 the default export (`interpolateArray` of index.js:2): the
 /// interpolator from the items of [a] to the items of [b].
@@ -46,7 +45,7 @@ List<E> Function(double t) interpolateArray<E>(List<E> a, List<E> b) =>
 R Function(double t) genericArray<R>(List<Object?> a, List<Object?> b) {
   // DIVERGES(d3-interpolate): adapt-interpolate-typed-values, no undefined.
   final nb = b.length;
-  final na = math.min(nb, a.length);
+  final na = min(nb, a.length);
   if (a is List<double> && b is List<double>) {
     // DIVERGES(d3-interpolate): adapt-interpolate-typed-loops, no closures.
     // Each item interpolator is `interpolateNumber(a[i], b[i])` (value.js

@@ -9,10 +9,10 @@
 /// [TransformParts] (the row `adapt-interpolate-typed-transform`).
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
 /// decompose.js:1 `degrees`: the degrees of one radian.
-const double _degrees = 180 / math.pi;
+const double _degrees = 180 / pi;
 
 /// The parts of a 2D transform, in the order of the CSS text
 /// `translate(translateX, translateY) rotate(rotate) skewX(skewX)
@@ -78,7 +78,7 @@ TransformParts decompose(
   var b1 = b;
   var c1 = c;
   var d1 = d;
-  var scaleX = math.sqrt(a1 * a1 + b1 * b1);
+  var scaleX = sqrt(a1 * a1 + b1 * b1);
   if (scaleX != 0 && !scaleX.isNaN) {
     a1 /= scaleX;
     b1 /= scaleX;
@@ -88,7 +88,7 @@ TransformParts decompose(
     c1 -= a1 * skewX;
     d1 -= b1 * skewX;
   }
-  final scaleY = math.sqrt(c1 * c1 + d1 * d1);
+  final scaleY = sqrt(c1 * c1 + d1 * d1);
   if (scaleY != 0 && !scaleY.isNaN) {
     c1 /= scaleY;
     d1 /= scaleY;
@@ -104,8 +104,8 @@ TransformParts decompose(
   return TransformParts(
     e,
     f,
-    math.atan2(b1, a1) * _degrees,
-    math.atan(skewX) * _degrees,
+    atan2(b1, a1) * _degrees,
+    atan(skewX) * _degrees,
     scaleX,
     scaleY,
   );

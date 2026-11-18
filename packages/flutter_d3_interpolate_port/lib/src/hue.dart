@@ -4,7 +4,7 @@
 /// angles in degrees.
 library;
 
-import 'package:flutter_d3_interpolate_port/src/color.dart' show hue;
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// hue.js:3 the default export (`interpolateHue` of index.js:7): the
 /// interpolator from the angle [a] to the angle [b] in degrees, along the

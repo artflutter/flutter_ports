@@ -10,7 +10,7 @@
 /// functions, as upstream index.js does not.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
 /// The interpolator of one channel: the closure of color.js `linear`,
 /// `exponential` or `constant` as one object of one class.
@@ -36,7 +36,7 @@ final class const Channel._(
   double call(double t) {
     if (_kind == 0) return _a + t * _d;
     if (_kind == 1) return _a;
-    return math.pow(_a + t * _d, _y).toDouble();
+    return pow(_a + t * _d, _y).toDouble();
   }
 }
 
@@ -50,8 +50,8 @@ Channel _constant(double x) => Channel._(1, x, 0, 0);
 /// raised to `1 / y`.
 Channel _exponential(double a, double b, double y) {
   // DIVERGES(d3-interpolate): platform-interpolate-math-last-bit, pow.
-  final a1 = math.pow(a, y).toDouble();
-  final b1 = math.pow(b, y).toDouble() - a1;
+  final a1 = pow(a, y).toDouble();
+  final b1 = pow(b, y).toDouble() - a1;
   final y1 = 1 / y;
   return Channel._(2, a1, b1, y1);
 }

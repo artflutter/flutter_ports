@@ -13,7 +13,7 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter_d3_color_port/d3_color.dart' show Cubehelix, Rgb;
+import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 import 'package:test/test.dart';
 

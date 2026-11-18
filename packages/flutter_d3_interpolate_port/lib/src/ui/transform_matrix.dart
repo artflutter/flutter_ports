@@ -16,7 +16,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_d3_interpolate_port/src/transform/decompose.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 import 'package:vector_math/vector_math_64.dart';
 
 /// The radians of one degree.

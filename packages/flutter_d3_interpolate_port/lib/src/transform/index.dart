@@ -11,9 +11,7 @@
 /// `adapt-interpolate-typed-transform`).
 library;
 
-import 'package:flutter_d3_interpolate_port/src/number.dart'
-    show interpolateNumber;
-import 'package:flutter_d3_interpolate_port/src/transform/decompose.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// The list `s` of index.js:46: the six parts of the result. A part that no
 /// item of `q` writes keeps the part of the identity or of `b`.

@@ -28,7 +28,7 @@ library;
 
 import 'dart:typed_data';
 
-import 'package:flutter_d3_color_port/d3_color.dart' as d3;
+import 'package:flutter_d3_color_port/d3_color.dart';
 import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// The Park-Miller generator: exact in JavaScript numbers and in Dart.
@@ -55,7 +55,7 @@ final class Inputs() {
   this {
     final r = Lcg(42);
     double number() => r.next(200000) / 100 - 1000;
-    d3.Rgb rgb() => d3.Rgb(
+    Rgb rgb() => Rgb(
       r.next(256).toDouble(),
       r.next(256).toDouble(),
       r.next(256).toDouble(),
@@ -132,13 +132,13 @@ final class Inputs() {
   final List<List<double>> arraysB = [];
 
   /// The start colors.
-  final List<d3.Rgb> colorsA = [];
+  final List<Rgb> colorsA = [];
 
   /// The end colors.
-  final List<d3.Rgb> colorsB = [];
+  final List<Rgb> colorsB = [];
 
   /// Lists of 8 colors.
-  final List<List<d3.Rgb>> palettes = [];
+  final List<List<Rgb>> palettes = [];
 
   /// The start views of the zoom.
   final List<ZoomView> zoomsA = [];
@@ -212,7 +212,7 @@ List<Case> cases(Inputs p) {
     (i) => interpolateCubehelixLong.gamma(3)(p.colorsA[i], p.colorsB[i]),
   );
   final piecewiseRgb = make(
-    (i) => piecewise<d3.Color>(
+    (i) => piecewise<Color>(
       p.palettes[i].sublist(0, 4),
       interpolate: interpolateRgb.call,
     ),
@@ -288,10 +288,9 @@ List<Case> cases(Inputs p) {
     ),
     (
       'create.valueColor',
-      (i) => sink += interpolate<d3.Color>(
-        p.colorsA[i & _m],
-        p.colorsB[i & _m],
-      )(0.5).opacity,
+      (i) =>
+          sink += interpolate<Color>(p.colorsA[i & _m], p.colorsB[i & _m])(0.5)
+              .opacity,
     ),
     (
       'create.valueArray',

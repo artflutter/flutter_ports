@@ -4,7 +4,7 @@
 /// list of discrete values.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
 /// discrete.js:1 the default export (`interpolateDiscrete` of index.js:6): a
 /// discrete interpolator over [range].
@@ -26,7 +26,7 @@ T Function(double t) interpolateDiscrete<T>(List<T> range) {
   return (t) {
     // The index in doubles: the floor of an infinite t is infinite, and the
     // clamp gives a whole number before toInt().
-    final i = math.max<double>(0, math.min(n - 1.0, (t * n).floorToDouble()));
+    final i = max<double>(0, min(n - 1.0, (t * n).floorToDouble()));
     // DIVERGES(d3-interpolate): adapt-interpolate-typed-values, no undefined.
     return range[i.toInt()];
   };

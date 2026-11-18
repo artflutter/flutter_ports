@@ -20,76 +20,60 @@
 /// file (D3 ADR 0008 §6).
 library;
 
-import 'package:flutter_d3_color_port/d3_color.dart' show Color, Hcl, Hsl, Rgb;
-import 'package:flutter_d3_interpolate_port/src/cubehelix.dart' as cubehelix;
-import 'package:flutter_d3_interpolate_port/src/hcl.dart' as hcl;
-import 'package:flutter_d3_interpolate_port/src/hsl.dart' as hsl;
-import 'package:flutter_d3_interpolate_port/src/rgb.dart' as rgb;
+import 'package:flutter_d3_color_port/d3_color.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
-export 'package:flutter_d3_interpolate_port/src/array.dart'
-    show interpolateArray;
-export 'package:flutter_d3_interpolate_port/src/basis.dart'
-    show interpolateBasis;
-export 'package:flutter_d3_interpolate_port/src/basisClosed.dart'
-    show interpolateBasisClosed;
-export 'package:flutter_d3_interpolate_port/src/cubehelix.dart'
-    show InterpolateCubehelix, interpolateCubehelix;
-export 'package:flutter_d3_interpolate_port/src/date.dart' show interpolateDate;
-export 'package:flutter_d3_interpolate_port/src/discrete.dart'
-    show interpolateDiscrete;
-export 'package:flutter_d3_interpolate_port/src/hcl.dart' show interpolateHcl;
-export 'package:flutter_d3_interpolate_port/src/hsl.dart' show interpolateHsl;
-export 'package:flutter_d3_interpolate_port/src/hue.dart' show interpolateHue;
-export 'package:flutter_d3_interpolate_port/src/lab.dart' show interpolateLab;
-export 'package:flutter_d3_interpolate_port/src/number.dart'
-    show interpolateNumber;
-export 'package:flutter_d3_interpolate_port/src/numberArray.dart'
-    show interpolateNumberArray;
+export 'package:flutter_d3_interpolate_port/src/array.dart';
+export 'package:flutter_d3_interpolate_port/src/basis.dart';
+export 'package:flutter_d3_interpolate_port/src/basisClosed.dart';
+export 'package:flutter_d3_interpolate_port/src/cubehelix.dart';
+export 'package:flutter_d3_interpolate_port/src/date.dart';
+export 'package:flutter_d3_interpolate_port/src/discrete.dart';
+export 'package:flutter_d3_interpolate_port/src/hcl.dart';
+export 'package:flutter_d3_interpolate_port/src/hsl.dart';
+export 'package:flutter_d3_interpolate_port/src/hue.dart';
+export 'package:flutter_d3_interpolate_port/src/lab.dart';
+export 'package:flutter_d3_interpolate_port/src/number.dart';
+export 'package:flutter_d3_interpolate_port/src/numberArray.dart';
 // DIVERGES(d3-interpolate): adapt-interpolate-typed-values, no object.js.
-export 'package:flutter_d3_interpolate_port/src/piecewise.dart' show piecewise;
-export 'package:flutter_d3_interpolate_port/src/quantize.dart' show quantize;
-export 'package:flutter_d3_interpolate_port/src/rgb.dart'
-    show InterpolateRgb, interpolateRgb;
-export 'package:flutter_d3_interpolate_port/src/round.dart'
-    show interpolateRound;
+export 'package:flutter_d3_interpolate_port/src/piecewise.dart';
+export 'package:flutter_d3_interpolate_port/src/quantize.dart';
+export 'package:flutter_d3_interpolate_port/src/rgb.dart';
+export 'package:flutter_d3_interpolate_port/src/round.dart';
 // DIVERGES(d3-interpolate): adapt-interpolate-typed-values, no string.js.
 // DIVERGES(d3-interpolate): adapt-interpolate-typed-transform, no Css, Svg.
-export 'package:flutter_d3_interpolate_port/src/transform/decompose.dart'
-    show TransformParts, decompose;
-export 'package:flutter_d3_interpolate_port/src/transform/index.dart'
-    show interpolateTransform;
-export 'package:flutter_d3_interpolate_port/src/value.dart' show interpolate;
-export 'package:flutter_d3_interpolate_port/src/zoom.dart'
-    show InterpolateZoom, ZoomInterpolator, ZoomView, interpolateZoom;
+export 'package:flutter_d3_interpolate_port/src/transform/decompose.dart';
+export 'package:flutter_d3_interpolate_port/src/transform/index.dart';
+export 'package:flutter_d3_interpolate_port/src/value.dart';
+export 'package:flutter_d3_interpolate_port/src/zoom.dart';
 
 /// index.js:15 `rgbBasis as interpolateRgbBasis`: a uniform nonrational
 /// B-spline through a list of colors in RGB, `rgbBasis` of rgb.dart.
 const Rgb Function(double t) Function(List<Color> colors) interpolateRgbBasis =
-    rgb.rgbBasis;
+    rgbBasis;
 
 /// index.js:15 `rgbBasisClosed as interpolateRgbBasisClosed`: a closed
 /// uniform nonrational B-spline through a list of colors in RGB,
 /// `rgbBasisClosed` of rgb.dart.
 const Rgb Function(double t) Function(List<Color> colors)
-interpolateRgbBasisClosed = rgb.rgbBasisClosed;
+interpolateRgbBasisClosed = rgbBasisClosed;
 
 /// index.js:16 `hslLong as interpolateHslLong`: the interpolator of two
 /// colors in HSL, with no shortest path between the hues, `hslLong` of
 /// hsl.dart.
 const Hsl Function(double t) Function(Color start, Color end)
-interpolateHslLong = hsl.hslLong;
+interpolateHslLong = hslLong;
 
 /// index.js:18 `hclLong as interpolateHclLong`: the interpolator of two
 /// colors in HCL, with no shortest path between the hues, `hclLong` of
 /// hcl.dart.
 const Hcl Function(double t) Function(Color start, Color end)
-interpolateHclLong = hcl.hclLong;
+interpolateHclLong = hclLong;
 
 /// index.js:19 `cubehelixLong as interpolateCubehelixLong`: the Cubehelix
 /// interpolator factory with no shortest path between the hues, with the
 /// gamma 1 and its method `gamma`, `cubehelixLong` of cubehelix.dart.
 ///
-/// The constant is of the class [cubehelix.InterpolateCubehelix], which
+/// The constant is of the class [InterpolateCubehelix], which
 /// this file exports.
-const cubehelix.InterpolateCubehelix interpolateCubehelixLong =
-    cubehelix.cubehelixLong;
+const InterpolateCubehelix interpolateCubehelixLong = cubehelixLong;

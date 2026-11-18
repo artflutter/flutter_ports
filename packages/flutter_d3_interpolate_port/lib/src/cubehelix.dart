@@ -10,11 +10,10 @@
 /// that text (decisions 1 and 2 of the design).
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:flutter_d3_color_port/d3_color.dart' show Color, Cubehelix;
-import 'package:flutter_d3_interpolate_port/src/color.dart'
-    show Channel, hue, nogamma;
+import 'package:flutter_d3_color_port/d3_color.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// cubehelix.js:4 `cubehelix(hue)` with cubehelix.js:5 `cubehelixGamma(y)`:
 /// a Cubehelix interpolator factory with the hue interpolation of its kind
@@ -50,8 +49,7 @@ final class const InterpolateCubehelix._(
     final opacity = nogamma(st.opacity, e.opacity);
     // DIVERGES(d3-interpolate): adapt-interpolate-color-values, a new color.
     // DIVERGES(d3-interpolate): platform-interpolate-math-last-bit, the pow.
-    return (t) =>
-        Cubehelix(h(t), s(t), l(math.pow(t, y).toDouble()), opacity(t));
+    return (t) => Cubehelix(h(t), s(t), l(pow(t, y).toDouble()), opacity(t));
   }
 
   /// cubehelix.js:22 `cubehelix.gamma` (`cubehelixGamma(y)`,

@@ -1,5 +1,5 @@
 // Ported from d3-interpolate v3.0.1 test/zoom-test.js (ISC, Mike Bostock).
-import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 import 'package:test/test.dart';
@@ -26,13 +26,13 @@ void main() {
   test('interpolateZoom parameter rho() defaults to sqrt(2)', () {
     assertInDelta(
       interpolateZoom((0, 0, 1), (10, 10, 5))(0.5),
-      interpolateZoom.rho(math.sqrt(2))((0, 0, 1), (10, 10, 5))(0.5),
+      interpolateZoom.rho(sqrt(2))((0, 0, 1), (10, 10, 5))(0.5),
     );
   });
 
   test('interpolateZoom.rho(0) is (almost) linear', () {
     final interp = interpolateZoom.rho(0)((0, 0, 1), (10, 0, 8));
-    assertInDelta(interp(0.5), (1.111, 0.0, math.sqrt(8)), 1e-3);
+    assertInDelta(interp(0.5), (1.111, 0.0, sqrt(8)), 1e-3);
     expect(interp.duration.round(), 1470);
   });
 

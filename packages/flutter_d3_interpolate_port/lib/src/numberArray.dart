@@ -5,7 +5,7 @@
 /// two lists of numbers.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
 /// numberArray.js:1 the default export, as array.js and value.js import it
@@ -23,7 +23,7 @@ import 'dart:typed_data';
 /// result.
 R Function(double t) numberArray<R>(List<num> a, List<num> b) {
   // DIVERGES(d3-interpolate): adapt-interpolate-typed-values, no undefined.
-  final n = math.min(b.length, a.length);
+  final n = min(b.length, a.length);
   final c = b.sublist(0);
   final result = c as R;
   // DIVERGES(d3-interpolate): adapt-interpolate-typed-loops, typed reads.

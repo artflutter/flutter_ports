@@ -9,8 +9,8 @@
 /// text (decisions 1 and 2 of the design).
 library;
 
-import 'package:flutter_d3_color_port/d3_color.dart' show Color, Lab;
-import 'package:flutter_d3_interpolate_port/src/color.dart' show nogamma;
+import 'package:flutter_d3_color_port/d3_color.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// lab.js:4 `lab(start, end)`, exported as `interpolateLab`: the
 /// interpolator from [start] to [end] in CIELAB.

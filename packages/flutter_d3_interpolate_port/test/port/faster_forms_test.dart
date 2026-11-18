@@ -8,11 +8,10 @@
 /// copy at the creation).
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
-import 'package:flutter_d3_interpolate_port/src/color.dart' as color;
 import 'package:test/test.dart';
 
 /// A negative zero made at run time: DDC folds the constant `-0.0` to 0.
@@ -209,22 +208,22 @@ void main() {
   group('zoom.js', () {
     /// zoom.js:48-56 with cosh(r0) and sinh(r0) at each call.
     ZoomView upstream(ZoomView p0, ZoomView p1, double t) {
-      const rho = math.sqrt2;
+      const rho = sqrt2;
       const rho2 = 2.0;
       const rho4 = 4.0;
-      double cosh(double x) => (math.exp(x) + 1 / math.exp(x)) / 2;
-      double sinh(double x) => (math.exp(x) - 1 / math.exp(x)) / 2;
-      double tanh(double x) => (math.exp(2 * x) - 1) / (math.exp(2 * x) + 1);
+      double cosh(double x) => (exp(x) + 1 / exp(x)) / 2;
+      double sinh(double x) => (exp(x) - 1 / exp(x)) / 2;
+      double tanh(double x) => (exp(2 * x) - 1) / (exp(2 * x) + 1);
       final (ux0, uy0, w0) = p0;
       final (ux1, uy1, w1) = p1;
       final dx = ux1 - ux0;
       final dy = uy1 - uy0;
       final d2 = dx * dx + dy * dy;
-      final d1 = math.sqrt(d2);
+      final d1 = sqrt(d2);
       final b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1);
       final b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1);
-      final r0 = math.log(math.sqrt(b0 * b0 + 1) - b0);
-      final r1 = math.log(math.sqrt(b1 * b1 + 1) - b1);
+      final r0 = log(sqrt(b0 * b0 + 1) - b0);
+      final r1 = log(sqrt(b1 * b1 + 1) - b1);
       final s = t * ((r1 - r0) / rho);
       final coshr0 = cosh(r0);
       final u = w0 / (rho2 * d1) * (coshr0 * tanh(rho * s + r0) - sinh(r0));
@@ -343,7 +342,7 @@ void main() {
 
     test('nogamma gives the lines of linear and constant', () {
       for (final (a, b) in pairs) {
-        final i = color.nogamma(a, b);
+        final i = nogamma(a, b);
         final d = b - a;
         for (final t in [..._ts, double.nan, double.infinity]) {
           final expected = d != 0 && !d.isNaN ? a + t * d : (a.isNaN ? b : a);
@@ -354,7 +353,7 @@ void main() {
 
     test('hue gives the lines of linear and constant', () {
       for (final (a, b) in pairs) {
-        final i = color.hue(a, b);
+        final i = hue(a, b);
         var d = b - a;
         if (d > 180 || d < -180) {
           // Math.round of d / 360: a negative half rounds up.
@@ -374,12 +373,12 @@ void main() {
     test('gamma gives the lines of exponential and constant', () {
       for (final y in [2.2, 0.5, 3.0]) {
         for (final (a, b) in pairs) {
-          final i = color.gamma(y)(a, b);
-          final a1 = math.pow(a, y).toDouble();
-          final b1 = math.pow(b, y).toDouble() - a1;
+          final i = gamma(y)(a, b);
+          final a1 = pow(a, y).toDouble();
+          final b1 = pow(b, y).toDouble() - a1;
           for (final t in _ts) {
             final expected = b - a != 0 && !(b - a).isNaN
-                ? math.pow(a1 + t * b1, 1 / y).toDouble()
+                ? pow(a1 + t * b1, 1 / y).toDouble()
                 : (a.isNaN ? b : a);
             _expectSame(i(t), expected, '$y $a $b $t');
           }

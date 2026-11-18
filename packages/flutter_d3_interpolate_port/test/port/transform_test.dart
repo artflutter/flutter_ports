@@ -8,10 +8,9 @@
 /// CSS texts, with the expected parts of their expected texts.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:flutter_d3_interpolate_port/src/transform/decompose.dart';
-import 'package:flutter_d3_interpolate_port/src/transform/index.dart';
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 import 'package:test/test.dart';
 
 /// Expects the six parts of [actual] within [delta] of [expected].
@@ -39,7 +38,7 @@ List<double> _list(TransformParts p) => [
 ];
 
 /// The radians of [degrees].
-double _rad(double degrees) => degrees * math.pi / 180;
+double _rad(double degrees) => degrees * pi / 180;
 
 void main() {
   group('decompose', () {
@@ -105,7 +104,7 @@ void main() {
       final r = _rad(5);
       final i = interpolateTransform(
         decompose(2, 0, 0, 2, 0, 12),
-        decompose(math.cos(r), math.sin(r), -math.sin(r), math.cos(r), 48, 0),
+        decompose(cos(r), sin(r), -sin(r), cos(r), 48, 0),
       );
       _expectParts(i(0.5), const TransformParts(24, 6, 2.5, 0, 1.5, 1.5));
     });
@@ -134,8 +133,8 @@ void main() {
     test('skewX(-60) to skewX(60) translate(280,0)', () {
       // "translate(140, 0) skewX(0)"
       final i = interpolateTransform(
-        decompose(1, 0, math.tan(_rad(-60)), 1, 0, 0),
-        decompose(1, 0, math.tan(_rad(60)), 1, 280, 0),
+        decompose(1, 0, tan(_rad(-60)), 1, 0, 0),
+        decompose(1, 0, tan(_rad(60)), 1, 280, 0),
       );
       _expectParts(i(0.5), const TransformParts(140, 0, 0, 0, 1, 1));
     });

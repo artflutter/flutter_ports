@@ -5,7 +5,7 @@
 /// cubic B-spline through a list of numbers.
 library;
 
-import 'package:flutter_d3_interpolate_port/src/basis.dart' show basis;
+import 'package:flutter_d3_interpolate_port/d3_interpolate.dart';
 
 /// basisClosed.js:3 the default export (`interpolateBasisClosed` of
 /// index.js:4): a closed uniform nonrational B-spline interpolator through

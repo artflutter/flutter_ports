@@ -10,7 +10,7 @@
 /// `adapt-interpolate-function-properties`).
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
 /// zoom.js:1 `epsilon2`: the squared distance below which two centers are
 /// the same point.
@@ -19,21 +19,21 @@ const double _epsilon2 = 1e-12;
 /// zoom.js:3 `cosh(x)`.
 double _cosh(double x) {
   // DIVERGES(d3-interpolate): platform-interpolate-math-last-bit, exp.
-  final e = math.exp(x);
+  final e = exp(x);
   return (e + 1 / e) / 2;
 }
 
 /// zoom.js:7 `sinh(x)`.
 double _sinh(double x) {
   // DIVERGES(d3-interpolate): platform-interpolate-math-last-bit, exp.
-  final e = math.exp(x);
+  final e = exp(x);
   return (e - 1 / e) / 2;
 }
 
 /// zoom.js:11 `tanh(x)`.
 double _tanh(double x) {
   // DIVERGES(d3-interpolate): platform-interpolate-math-last-bit, exp.
-  final e = math.exp(2 * x);
+  final e = exp(2 * x);
   return (e - 1) / (e + 1);
 }
 
@@ -106,17 +106,17 @@ final class const InterpolateZoom._(
     // Special case for u0 ≅ u1.
     if (d2 < _epsilon2) {
       // DIVERGES(d3-interpolate): platform-interpolate-math-last-bit, log, exp.
-      S = math.log(w1 / w0) / rho;
-      i = (t) => (ux0 + t * dx, uy0 + t * dy, w0 * math.exp(rho * t * S));
+      S = log(w1 / w0) / rho;
+      i = (t) => (ux0 + t * dx, uy0 + t * dy, w0 * exp(rho * t * S));
     }
     // General case.
     else {
-      final d1 = math.sqrt(d2);
+      final d1 = sqrt(d2);
       final b0 = (w1 * w1 - w0 * w0 + rho4 * d2) / (2 * w0 * rho2 * d1);
       final b1 = (w1 * w1 - w0 * w0 - rho4 * d2) / (2 * w1 * rho2 * d1);
       // DIVERGES(d3-interpolate): platform-interpolate-math-last-bit, log.
-      final r0 = math.log(math.sqrt(b0 * b0 + 1) - b0);
-      final r1 = math.log(math.sqrt(b1 * b1 + 1) - b1);
+      final r0 = log(sqrt(b0 * b0 + 1) - b0);
+      final r1 = log(sqrt(b1 * b1 + 1) - b1);
       S = (r1 - r0) / rho;
       // DIVERGES(d3-interpolate): adapt-interpolate-zoom-constants, once.
       // Upstream computes cosh(r0), sinh(r0), w0 / (rho2 * d1) and
@@ -133,14 +133,14 @@ final class const InterpolateZoom._(
       };
     }
 
-    return ZoomInterpolator._(i, S * 1000 * rho / math.sqrt2);
+    return ZoomInterpolator._(i, S * 1000 * rho / sqrt2);
   }
 
   /// zoom.js:65 `zoom.rho(rho)`: the zoom interpolator of the curvature
   /// [rho], at least 1e-3. A curvature near 0 zooms and pans at the same
   /// time, almost linearly; a larger one zooms out further.
   InterpolateZoom rho(double rho) {
-    final rho1 = math.max(1e-3, rho);
+    final rho1 = max(1e-3, rho);
     final rho2 = rho1 * rho1;
     final rho4 = rho2 * rho2;
     return InterpolateZoom._(rho1, rho2, rho4);
@@ -156,4 +156,4 @@ final class const InterpolateZoom._(
 /// final ms = i.duration; // the recommended duration
 /// final slow = interpolateZoom.rho(2)((0.0, 0.0, 1.0), (10.0, 0.0, 8.0));
 /// ```
-const InterpolateZoom interpolateZoom = InterpolateZoom._(math.sqrt2, 2, 4);
+const InterpolateZoom interpolateZoom = InterpolateZoom._(sqrt2, 2, 4);
