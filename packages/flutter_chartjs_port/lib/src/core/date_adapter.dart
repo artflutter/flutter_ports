@@ -14,8 +14,8 @@
 /// (row `adapt-date-default-adapter`).
 ///
 /// Each member is a top-level function that does not read `this`. Thus a
-/// method of `DateAdapterBase` calls it directly, and the call gives the
-/// result of `jsCall` (Chart.js ADR 0024, decision 1).
+/// method of `DateAdapterBase` calls it directly (Chart.js ADR 0024,
+/// decision 1, and Chart.js ADR 0173).
 ///
 /// [setDefaultDateZone] is the analog of `moment.tz.setDefault`. The members
 /// use the local zone by default, as moment without a default zone.

@@ -65,6 +65,13 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     trace.add(traceEntry(name, a, b));
     return body(a, b);
   };
+  // A descriptor takes the name only (Chart.js ADR 0173). The trace records
+  // `undefined` for the second argument, as the JS call gives none.
+  bool Function(String) descriptor(String name, bool Function(String) body) =>
+      (key) {
+        trace.add(traceEntry(name, key, undefined));
+        return body(key);
+      };
   double index(Object? ctx) => jsToNumber(jsGet(ctx, 'dataIndex'));
   return {
     'dsColor': fn(
@@ -90,8 +97,8 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     'arcRadius': fn('arcRadius', (ctx, _) => index(ctx) + 1),
     'listItem': fn('listItem', (_, _) => 3.0),
     'fallbackFn': fn('fallbackFn', (_, _) => 'radiusFallback'),
-    'userScriptable': fn('userScriptable', (name, _) => name != 'radius'),
-    'userIndexable': fn('userIndexable', (name, _) => name != 'hitRadius'),
+    'userScriptable': descriptor('userScriptable', (name) => name != 'radius'),
+    'userIndexable': descriptor('userIndexable', (name) => name != 'hitRadius'),
     'radiusFn': fn('radiusFn', (_, _) => 5.0),
     'selfRadius': fn('selfRadius', (_, options) => jsGet(options, 'radius')),
     'writeParsed': fn('writeParsed', (ctx, _) {

@@ -5,9 +5,9 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
+    show LegendLabelsGenerator;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -46,18 +46,16 @@ Map<String, Object?> fixture() => <String, Object?>{
           'labels': <String, Object?>{
             'generateLabels': (Object? chart) {
               // Chart.defaults.plugins.legend.labels.generateLabels(chart)
-              final items =
-                  jsCall(
+              final generateLabels =
+                  jsGet(
                         jsGet(
-                          jsGet(
-                            jsGet(jsGet(Chart.defaults, 'plugins'), 'legend'),
-                            'labels',
-                          ),
-                          'generateLabels',
+                          jsGet(jsGet(Chart.defaults, 'plugins'), 'legend'),
+                          'labels',
                         ),
-                        [chart],
+                        'generateLabels',
                       )!
-                      as List<LegendItem>;
+                      as LegendLabelsGenerator;
+              final items = generateLabels(chart! as Chart);
 
               for (final item in items) {
                 item.borderRadius = const TooltipCornerRadii.all(5);

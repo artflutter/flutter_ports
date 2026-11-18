@@ -37,11 +37,11 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show ArrayListener, listenArrayEvents, unlistenArrayEvents;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextResolver, Resolver;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart'
-    show JsFunction, jsCall, jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
@@ -55,6 +55,7 @@ import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:test/test.dart';
 
 import 'data_label.dart';
+import 'drop_extra_args.dart';
 import 'legend_hit_box.dart';
 import 'legend_item.dart';
 
@@ -306,14 +307,13 @@ final class const _JasmineObjectContaining(final Map<String, Object?> expected)
 }
 
 /// `jasmine.any(Function)`: a function value, `typeof value ===
-/// 'function'` ([jsIsFunction]): a Dart function, a [JsFunction] or a class
-/// value.
+/// 'function'` ([isFunction]): a Dart function or a class value.
 const Matcher anyFunction = _AnyFunction();
 
 final class const _AnyFunction() extends Matcher {
   @override
   bool matches(Object? item, Map<Object?, Object?> matchState) =>
-      jsIsFunction(item);
+      isFunction(item);
 
   @override
   Description describe(Description description) =>
@@ -379,7 +379,7 @@ final class JasmineSpy._(
   late final void Function(types.Chart chart, Object args, Object? options)
   hook = _register((chart, args, options) {
     calls.add([chart, args, options]);
-    if (_callThrough) jsCall(_original, [chart, args, options]);
+    if (_callThrough) _callOriginal(_original, [chart, args, options]);
   });
 
   /// The spy as a cancelable hook of a native plugin (Chart.js ADR 0144):
@@ -389,7 +389,7 @@ final class JasmineSpy._(
   cancelableHook = _register((chart, args, options) {
     calls.add([chart, args, options]);
     return !_callThrough ||
-        !identical(jsCall(_original, [chart, args, options]), false);
+        !identical(_callOriginal(_original, [chart, args, options]), false);
   });
 
   /// Registers [hook] as a function of this spy for [spyOf].
@@ -398,17 +398,17 @@ final class JasmineSpy._(
     return hook;
   }
 
-  /// The function value of the spy. A call gets up to three arguments.
-  late final JsFunction function = JsFunction((
-    Object? self, [
-    Object? a = _none,
-    Object? b = _none,
-    Object? c = _none,
-  ]) {
-    final args = [a, b, c].where((arg) => !identical(arg, _none)).toList();
-    calls.add(args, object: self);
-    return _callThrough ? jsCall(_original, args, thisArg: self) : undefined;
-  });
+  /// The function value of the spy. A call gets up to three arguments. A
+  /// Dart function has no `this` (Chart.js ADR 0173): each call records
+  /// `null` as its object.
+  // One function value for each spy: [spyOf] finds the spy by it.
+  // ignore: prefer_function_declarations_over_variables
+  late final Object? Function([Object? a, Object? b, Object? c]) function =
+      ([a = _none, b = _none, c = _none]) {
+        final args = [a, b, c].where((arg) => !identical(arg, _none)).toList();
+        calls.add(args);
+        return _callThrough ? _callOriginal(_original, args) : undefined;
+      };
 }
 
 /// `spy.and` of a [JasmineSpy].
@@ -433,7 +433,7 @@ JasmineSpy spyOn(Map<String, Object?> object, String method) {
 /// The spy of the function value [value]. As in Jasmine, a value that is not
 /// a spy throws.
 JasmineSpy spyOf(Object? value) =>
-    (value is JsFunction || value is Function ? _spies[value!] : null) ??
+    (value is Function ? _spies[value] : null) ??
     (throw ArgumentError.value(value, 'value', 'is not a spy'));
 
 /// A spy of a hook of a native plugin (Chart.js ADR 0144): [JasmineSpy.hook]
@@ -768,3 +768,8 @@ Map<String, JasmineCalls> spyOnArrayListener(
   });
   return spy.calls;
 }
+
+/// `and.callThrough()`: the call of [original] with the first arguments of
+/// [args] that it takes, as JavaScript drops the extra arguments.
+Object? _callOriginal(Object? original, List<Object?> args) =>
+    original is Function ? callDroppingExtraArgs(original, args) : undefined;

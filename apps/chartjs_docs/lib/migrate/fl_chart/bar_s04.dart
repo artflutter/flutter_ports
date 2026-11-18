@@ -59,7 +59,7 @@ final List<List<DataPoint>> _points = [
 ];
 
 /// The grid of fl_chart: a line at each title, but not at the ends.
-ChartPaint _gridColor(JsObjectFace context) {
+ChartPaint _gridColor(Object? context) {
   final value = tickOf(context);
   return .solid(
     value <= 0 || value >= 35000000000

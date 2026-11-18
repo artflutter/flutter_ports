@@ -10,13 +10,14 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isObject;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:test/test.dart';
+
+import '../support/drop_extra_args.dart';
 
 // A JavaScript object literal is a `Map<String, Object?>` and an array is a
 // `List<Object?>` (Chart.js ADR 0043). The `_createResolver` and
@@ -962,8 +963,8 @@ void main() {
         final opts = attachContext(resolver, {'index': 1});
         final fn =
             opts['scales']['time']['adapters']['date']['locale']['method'];
-        expect(jsIsFunction(fn), isTrue);
-        expect(jsCall(fn, const []), 'ok');
+        expect(fn is Function, isTrue);
+        expect(callDroppingExtraArgs(fn, const []), 'ok');
       });
 
       test('should not create proxy for objects with custom constructor', () {
@@ -972,8 +973,7 @@ void main() {
         final resolver = createResolver([<String, Object?>{}, defaults]);
         final opts = attachContext(resolver, {'index': 1});
         final fn = (opts['test']! as _MyClass).method;
-        expect(jsIsFunction(fn), isTrue);
-        expect(jsCall(fn, const []), 'ok');
+        expect(fn(), 'ok');
         expect((opts['test']! as _MyClass).string, 'test string');
         expect(opts['test'].runtimeType, _MyClass);
       });
@@ -1020,7 +1020,7 @@ void main() {
           final opts = attachContext(createResolver([options]), {'index': 1});
           expect(opts['array'], [1, 2, 3]);
           expect(opts['func'], same(fn));
-          expect(jsCall(opts['func'], const []), 'test');
+          expect(callDroppingExtraArgs(opts['func'], const []), 'test');
         });
 
         test('should allow function', () {

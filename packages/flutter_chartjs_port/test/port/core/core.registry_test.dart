@@ -14,7 +14,6 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
@@ -243,13 +242,16 @@ void main() {
         'beforeUnregister',
         'afterUnregister',
       ]) {
-        final callback = JsFunction((Object? self) {
+        // The hook gets the component as its parameter (Chart.js ADR 0173).
+        Object? callback(Object? self) {
           final id = jsGet(self, 'id');
           log.add(
             '$name ${o.labelOf(self)} ${has(reg.plugins.items, id)}'
             ' ${has(reg.elements.items, id)}',
           );
-        });
+          return null;
+        }
+
         switch (target) {
           case final JsClass value:
             value[name] = callback;

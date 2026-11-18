@@ -7,7 +7,6 @@
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
     show foreignAudit;
@@ -52,9 +51,8 @@ void main() {
 
   group('the order of the resolver', () {
     test('a function is a function cell for every shape', () {
-      const js = JsFunction(_fn);
       final klass = JsClass('C');
-      for (final value in <Object>[_fn, js, klass]) {
+      for (final value in <Object>[_fn, klass]) {
         expect(classifyNumber(value), isA<OptFunction<double>>());
         expect(classifyString(value).raw, same(value));
         expect(classifyUnion(value, ShapeBits.any), isA<OptFunction<Object>>());

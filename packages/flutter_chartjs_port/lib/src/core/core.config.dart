@@ -48,7 +48,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys, jsOwnPropertyNames;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
@@ -1259,9 +1258,10 @@ class Config([Object? config]) implements types.ChartConfiguration {
     Object options = resolver;
     if (_needContext(resolver, names)) {
       jsSet(result, r'$shared', false);
+      // DIVERGES(chartjs): adapt-option-function-types, a typed call.
       // Upstream reassigns its parameter.
       // ignore: parameter_assignments
-      context = isFunction(context) ? jsCall(context, const []) : context;
+      context = context is Object? Function() ? context() : context;
       // subResolver is passed to scriptable options. It should not resolve to
       // hover options.
       final subResolver = createResolver(scopes, context, subPrefixes);

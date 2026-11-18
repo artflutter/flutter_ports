@@ -137,10 +137,9 @@ Object? _toPrimitiveNumber(Object? value) => switch (value) {
 /// `'[object Object]'`. A `DateTime` (a JS `Date`, Chart.js ADR 0024) gives
 /// the text of `Date.prototype.toString` ([_dateToString]). Any other object
 /// gives its `toString()`, which is `'undefined'` for [undefined]. A
-/// function value (a Dart closure or a
-/// `JsFunction`) and a Dart object that stands for a JS object, for example
-/// an element, give their Dart text, where JavaScript gives the source of
-/// the function or `'[object Object]'` (differences.md row
+/// function value (a Dart closure) and a Dart object that stands for a JS
+/// object, for example an element, give their Dart text, where JavaScript
+/// gives the source of the function or `'[object Object]'` (differences.md row
 /// `js-semantics-function-source`).
 String jsToString(Object? value) => switch (value) {
   // The element ids and the modes of each option resolution (ADR 0093).

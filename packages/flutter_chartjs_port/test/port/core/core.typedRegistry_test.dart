@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show JsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -504,14 +503,13 @@ void main() {
   group('js-semantics-function-source', () {
     // core.typedRegistry.js:38 throws `'class does not have id: ' + item`.
     // JavaScript prints the source of a function, for example `() => 1`.
-    // jsToString of a Dart closure, a JsFunction or another Dart object is
+    // jsToString of a Dart closure or another Dart object is
     // its Dart toString(), whose text differs between the VM and the web
     // compilers. The throw is the same.
     final plugins = TypedRegistry(jsObjectClass, 'tfunctions');
 
     for (final (name, item) in <(String, Object)>[
       ('a closure', () => 1),
-      ('a JsFunction', JsFunction((Object? self) => self)),
       ('a Dart object', PointElement()),
     ]) {
       test('$name gives the Dart text in the register error', () {

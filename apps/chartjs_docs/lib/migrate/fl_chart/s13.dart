@@ -162,7 +162,7 @@ class _Sample13State() extends State<Sample13> {
               ];
             },
             extra: {
-              'color': (JsObjectFace c) => ChartPaint.solid(
+              'color': (Object? c) => ChartPaint.solid(
                 tickOf(c) == _hovered ? Colors.white : Fl.green,
               ),
             },
@@ -174,15 +174,15 @@ class _Sample13State() extends State<Sample13> {
           grid: AxisGrid(
             drawTicks: false,
             extra: {
-              'color': (JsObjectFace c) =>
+              'color': (Object? c) =>
                   ChartPaint.solid(tickOf(c) == 0 ? Fl.white38 : Fl.blueGrey),
-              'lineWidth': (JsObjectFace c) => tickOf(c) == 0 ? 0.8 : 0.4,
+              'lineWidth': (Object? c) => tickOf(c) == 0 ? 0.8 : 0.4,
             },
           ),
           // The dash of each grid line follows its tick: a function of the
           // context gives the border.
           extra: {
-            'border': (JsObjectFace c) => AxisBorder(
+            'border': (Object? c) => AxisBorder(
               display: false,
               dash: tickOf(c) == 0 ? const [] : const [8, 4],
             ),

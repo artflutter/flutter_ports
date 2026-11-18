@@ -8,11 +8,12 @@ import 'package:flutter_chartjs_port/src/elements/element.point.dart'
     as elements;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/src/types/option_functions.dart'
+    show appFunctionCalls;
 import 'package:test/test.dart';
 
 // Upstream behavior that test/specs/helpers.core.tests.js does not check
@@ -106,17 +107,27 @@ void main() {
   });
 
   group('callback', () {
-    test('passes no argument for null args, and thisArg', () {
-      final result = helpers.callback(
-        JsFunction((Object? self, [Object? a = 'none']) => [self, a]),
-        null,
-        7,
-      );
-      expect(result, [7, 'none']);
+    test('passes no argument for null args', () {
+      final result = helpers.callback(([Object? a = 'none']) => [a]);
+      expect(result, ['none']);
     });
 
-    test('drops the arguments that a Dart function does not take', () {
-      expect(helpers.callback((Object? a) => a, [1, 2]), 1);
+    test('passes the exact arguments (Chart.js ADR 0173)', () {
+      expect(helpers.callback((Object? a, Object? b) => [a, b], [1, 2]), [
+        1,
+        2,
+      ]);
+      expect(
+        () => helpers.callback((Object? a) => a, [1, 2]),
+        throwsNoSuchMethodError,
+      );
+    });
+
+    test('counts each call of a function', () {
+      final before = appFunctionCalls;
+      helpers.callback(() => 1);
+      helpers.callback('no function');
+      expect(appFunctionCalls, before + 1);
     });
   });
 
@@ -124,7 +135,7 @@ void main() {
     test('visits object keys in the Object.keys order', () {
       final keys = <Object?>[];
       final values = <Object?>[];
-      helpers.each(_ordered(), (Object? value, Object? key) {
+      helpers.each<Object?, Object?>(_ordered(), (value, key) {
         keys.add(key);
         values.add(value);
       });
@@ -135,7 +146,7 @@ void main() {
     test('reads a removed key as undefined', () {
       final object = <String, Object?>{'a': 1, 'b': 2};
       final seen = <Object?>[];
-      helpers.each(object, (Object? value, Object? key) {
+      helpers.each<Object?, Object?>(object, (value, key) {
         seen.add([key, value]);
         object.remove('b');
       });
@@ -148,7 +159,7 @@ void main() {
     test('reads an index past a shortened array as undefined', () {
       final array = <Object?>[1, 2, 3];
       final seen = <Object?>[];
-      helpers.each(array, (Object? value, Object? index) {
+      helpers.each<Object?, Object?>(array, (value, index) {
         seen.add([value, index]);
         array.length = 1;
       });
@@ -161,21 +172,33 @@ void main() {
 
     test('passes the index as an int', () {
       final indices = <Object?>[];
-      helpers.each(<Object?>['a'], (Object? value, Object? index) {
+      helpers.each<Object?, Object?>(<Object?>['a'], (value, index) {
         indices.add(index);
       });
       expect(indices.single, isA<int>());
     });
 
-    test('calls a function that takes only the item', () {
-      final items = <Object?>[];
-      helpers.each(<Object?>['a', 'b'], items.add);
+    test('casts the item and the key to the parameter types', () {
+      final items = <String>[];
+      final keys = <int>[];
+      helpers.each<String, int>(<Object?>['a', 'b'], (item, key) {
+        items.add(item);
+        keys.add(key);
+      });
       expect(items, ['a', 'b']);
+      expect(keys, [0, 1]);
+      expect(
+        () => helpers.each<String, int>(<Object?>[1], (item, key) {}),
+        throwsA(isA<TypeError>()),
+      );
     });
 
     test('iterates over a typed list', () {
       final items = <Object?>[];
-      helpers.each(Float64List.fromList([1.5, 2]), items.add);
+      helpers.each<Object?, Object?>(
+        Float64List.fromList([1.5, 2]),
+        (item, _) => items.add(item),
+      );
       expect(items, [1.5, 2]);
     });
   });
@@ -699,9 +722,8 @@ void main() {
   });
 
   group('isFunction', () {
-    test('is true for a Dart function and a JsFunction', () {
+    test('is true for a Dart function', () {
       expect(helpers.isFunction(() => 1), isTrue);
-      expect(helpers.isFunction(JsFunction((Object? self) => self)), isTrue);
       expect(helpers.isFunction(<String, Object?>{}), isFalse);
       expect(helpers.isFunction(null), isFalse);
       expect(helpers.isFunction(undefined), isFalse);

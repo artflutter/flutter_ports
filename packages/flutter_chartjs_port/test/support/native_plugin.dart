@@ -12,8 +12,9 @@
 /// cancelable hook cancels when the function returns `false`.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
+
+import 'drop_extra_args.dart';
 
 /// The native plugin of the reference plugin Map [map]: its `id` and a hook
 /// for each function of a hook key. Another key throws an [ArgumentError].
@@ -72,7 +73,7 @@ PluginHookFunction<A, Object?>? _void<A extends Object>(Object? function) =>
     function == null
     ? null
     : (chart, args, options) {
-        jsCall(function, [chart, args, options]);
+        callDroppingExtraArgs(function, [chart, args, options]);
       };
 
 /// The cancelable hook of the function [function], or Dart `null`: the
@@ -81,5 +82,7 @@ CancelableHookFunction<A, Object?>? _cancel<A extends Object>(
   Object? function,
 ) => function == null
     ? null
-    : (chart, args, options) =>
-          !identical(jsCall(function, [chart, args, options]), false);
+    : (chart, args, options) => !identical(
+        callDroppingExtraArgs(function, [chart, args, options]),
+        false,
+      );

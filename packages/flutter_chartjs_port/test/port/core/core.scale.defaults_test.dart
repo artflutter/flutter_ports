@@ -5,7 +5,6 @@ import 'package:flutter_chartjs_port/src/core/core.scale.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show createResolver;
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -13,6 +12,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/drop_extra_args.dart';
 import 'recording_defaults.dart';
 
 // core.scale.defaults.js has no spec. The expected values come from Node.js
@@ -80,14 +80,14 @@ void main() {
       final grid = values(0)['grid']! as JsObjectFace;
       final context = <String, Object?>{};
       expect(
-        jsCall(grid['tickWidth'], [
+        callDroppingExtraArgs(grid['tickWidth'], [
           context,
           <String, Object?>{'lineWidth': 3.0},
         ]),
         3,
       );
       expect(
-        jsCall(grid['tickColor'], [
+        callDroppingExtraArgs(grid['tickColor'], [
           context,
           <String, Object?>{
             'color': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
@@ -102,22 +102,28 @@ void main() {
       final context = <String, Object?>{};
       // options.lineWidth of {} is undefined, not null.
       expect(
-        jsCall(grid['tickWidth'], [context, <String, Object?>{}]),
+        callDroppingExtraArgs(grid['tickWidth'], [
+          context,
+          <String, Object?>{},
+        ]),
         same(undefined),
       );
       expect(
-        jsCall(grid['tickColor'], [
+        callDroppingExtraArgs(grid['tickColor'], [
           context,
           <String, Object?>{'color': null},
         ]),
         isNull,
       );
       // A property read of a number gives undefined.
-      expect(jsCall(grid['tickWidth'], [context, 5.0]), same(undefined));
+      expect(
+        callDroppingExtraArgs(grid['tickWidth'], [context, 5.0]),
+        same(undefined),
+      );
       // A property read of undefined or null throws a TypeError.
       for (final options in [undefined, null]) {
         expect(
-          () => jsCall(grid['tickWidth'], [context, options]),
+          () => callDroppingExtraArgs(grid['tickWidth'], [context, options]),
           throwsA(isA<TypeError>()),
         );
       }
@@ -134,8 +140,14 @@ void main() {
         ['hover', ''],
       );
       final context = <String, Object?>{};
-      expect(jsCall(grid['tickWidth'], [context, options]), isNull);
-      expect(jsCall(grid['tickColor'], [context, options]), isNull);
+      expect(
+        callDroppingExtraArgs(grid['tickWidth'], [context, options]),
+        isNull,
+      );
+      expect(
+        callDroppingExtraArgs(grid['tickColor'], [context, options]),
+        isNull,
+      );
     });
 
     test('scale._scriptable and scale._indexable', () {
@@ -152,7 +164,11 @@ void main() {
         ('Before', true),
         ('ticks', true),
       ]) {
-        expect(jsCall(scriptable, [name]), expected, reason: name);
+        expect(
+          callDroppingExtraArgs(scriptable, [name]),
+          expected,
+          reason: name,
+        );
       }
       final indexable = descriptor['_indexable'];
       for (final (name, expected) in [
@@ -161,7 +177,11 @@ void main() {
         ('dash', false),
         ('color', true),
       ]) {
-        expect(jsCall(indexable, [name]), expected, reason: name);
+        expect(
+          callDroppingExtraArgs(indexable, [name]),
+          expected,
+          reason: name,
+        );
       }
     });
 
@@ -174,8 +194,16 @@ void main() {
         ('callback', false, true),
         ('color', true, true),
       ]) {
-        expect(jsCall(scriptable, [name]), isScriptable, reason: name);
-        expect(jsCall(indexable, [name]), isIndexable, reason: name);
+        expect(
+          callDroppingExtraArgs(scriptable, [name]),
+          isScriptable,
+          reason: name,
+        );
+        expect(
+          callDroppingExtraArgs(indexable, [name]),
+          isIndexable,
+          reason: name,
+        );
       }
     });
   });

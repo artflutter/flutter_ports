@@ -9,7 +9,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show clone, each, merge, mergeIf, resolveObjectKey;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -545,7 +544,7 @@ void main() {
     // keys. each, clone and merge of helpers.core enumerate with it.
     List<Object?> eachKeys(Object? object) {
       final seen = <Object?>[];
-      each(object, (Object? value, Object? key) => seen.add(key));
+      each(object, (value, key) => seen.add(key));
       return seen;
     }
 
@@ -698,36 +697,38 @@ void main() {
     });
   });
 
-  group('this of the descriptor functions', () {
-    // helpers.config.ts:242 calls descriptors.isScriptable(prop) as a method.
-    // :246 passes descriptors.isIndexable without its object.
-    test('_scriptable gets the descriptor, _indexable gets undefined', () {
-      Object? scriptableThis;
-      Object? indexableThis = 'not called';
-      final scriptable = JsFunction((Object? self, Object? name) {
-        scriptableThis = self;
+  group('the descriptor functions', () {
+    // helpers.config.ts:242 calls descriptors.isScriptable(prop) as a method,
+    // and :246 passes descriptors.isIndexable without its object. The port
+    // gives neither a `this` (Chart.js ADR 0173): each gets the name.
+    test('_scriptable and _indexable get the name', () {
+      final scriptableNames = <String>[];
+      final indexableNames = <String>[];
+      bool scriptable(String name) {
+        scriptableNames.add(name);
         return name == 'v';
-      });
-      final indexable = JsFunction((Object? self, Object? name) {
-        indexableThis = self;
+      }
+
+      bool indexable(String name) {
+        indexableNames.add(name);
         return true;
-      });
+      }
+
       final opts = attachContext(
         createResolver([
           <String, Object?>{
             '_scriptable': scriptable,
             '_indexable': indexable,
-            'v': () => 7,
+            'v': (_) => 7,
             'w': <Object?>[1, 2],
           },
         ]),
         {'index': 1},
       );
       expect(opts['v'], 7);
-      expect(scriptableThis, isA<Descriptor>());
-      expect((scriptableThis! as Descriptor).scriptable, same(scriptable));
+      expect(scriptableNames, contains('v'));
       expect(opts['w'], 2);
-      expect(indexableThis, same(undefined));
+      expect(indexableNames, contains('w'));
     });
   });
 
@@ -940,14 +941,13 @@ void main() {
       int start,
       int count,
     ) {
-      final parsed =
-          jsCall(parseObjectDataRadialScale, [
-                _Meta(_Scale()),
-                data,
-                start,
-                count,
-              ], thisArg: _Controller(parsing))!
-              as List<Object?>;
+      final parsed = parseObjectDataRadialScale(
+        _Controller(parsing),
+        _Meta(_Scale()),
+        data,
+        start,
+        count,
+      );
       return [for (final item in parsed) jsGet(item, 'r')];
     }
 

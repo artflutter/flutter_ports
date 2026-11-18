@@ -59,6 +59,7 @@ DateAdapter
 DecimationAlgorithm
 DefaultCubicInterpolationMode
 Defaults
+DescriptorPredicate
 DoughnutController
 Element
 ElementPoint
@@ -137,6 +138,7 @@ RectRoundedPointStyle
 RelativeFill
 RenderTextOpts
 ResizeHookArgs
+ResolverFallback
 Scale
 ScaleAxis
 ScaleBorder
@@ -145,6 +147,8 @@ ScaleHook
 ScaleValuePosition
 ScatterController
 ScriptableLineSegmentContext
+ScriptableOption
+ScriptableOptionWithResolver
 Segment
 ShapeFill
 SolidChartPaint
@@ -403,6 +407,7 @@ Defaults
 DenseCurveCanvas
 Descriptor
 DescriptorDefaults
+DescriptorPredicate
 DescriptorsScope
 DisplayFormats
 DisplayFormatsScope
@@ -458,7 +463,6 @@ ItemStacks
 JsClass
 JsConstruct
 JsFreezable
-JsFunction
 JsObjectFace
 JsProxyObject
 JsStringList
@@ -626,6 +630,7 @@ ResizeHookArgs
 ResizeTransition
 Resolver
 ResolverCache
+ResolverFallback
 ResolverObjectKey
 ResolverProxy
 RoundRectCommand
@@ -651,6 +656,8 @@ ScopeState
 ScriptableChartContext
 ScriptableContext
 ScriptableLineSegmentContext
+ScriptableOption
+ScriptableOptionWithResolver
 ScriptableScaleContext
 ScriptableScalePointLabelContext
 ScriptableTooltipContext
@@ -946,8 +953,6 @@ isReducedMotion
 jsAdd
 jsArrayIndex
 jsAssign
-jsCall
-jsCall1
 jsConstruct
 jsDeleteKey
 jsGet
@@ -955,11 +960,9 @@ jsGetIndex
 jsGetKey
 jsHasOwn
 jsIsFinite
-jsIsFunction
 jsIsNaN
 jsIsObjectLike
 jsLessThan
-jsMaxArity
 jsNumberToString
 jsObjectClass
 jsObjectFreeze
@@ -1239,7 +1242,6 @@ valueOrDefault
 JsClass
 JsConstruct
 JsFreezable
-JsFunction
 JsObjectFace
 JsProxyObject
 JsStringList
@@ -1253,8 +1255,6 @@ canvasTextAlign
 jsAdd
 jsArrayIndex
 jsAssign
-jsCall
-jsCall1
 jsConstruct
 jsDeleteKey
 jsGet
@@ -1262,11 +1262,9 @@ jsGetIndex
 jsGetKey
 jsHasOwn
 jsIsFinite
-jsIsFunction
 jsIsNaN
 jsIsObjectLike
 jsLessThan
-jsMaxArity
 jsNumberToString
 jsObjectClass
 jsObjectFreeze

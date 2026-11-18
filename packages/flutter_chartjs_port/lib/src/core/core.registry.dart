@@ -25,7 +25,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show callback, capitalize, each;
+    show capitalize, each;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
@@ -195,7 +195,7 @@ final class Registry() {
         // Use case:
         //  import * as plugins from './plugins.js';
         //  Chart.register(plugins);
-        each(arg, (Object? item) {
+        each<Object?, Object?>(arg, (item, _) {
           // If there are mixed types in the loopable, make sure those are
           // registered in correct registry
           // Use case: (treemap exporting controller, elements etc)
@@ -212,7 +212,8 @@ final class Registry() {
   /// core.registry.js:151 `_exec`.
   /// @private
   ///
-  /// The callbacks get [component] as `this`. The call
+  /// A callback gets [component] as its parameter, in place of `this`
+  /// (Chart.js ADR 0173). The call
   /// `registry[method](component)` is a `switch` on the two method names.
   ///
   /// A plugin is a native [Plugin] (Chart.js ADR 0144). Another value for the
@@ -228,7 +229,7 @@ final class Registry() {
     }
     final camelMethod = capitalize(method);
     // beforeRegister / beforeUnregister
-    callback(jsGet(component, 'before$camelMethod'), const [], component);
+    _callHook(jsGet(component, 'before$camelMethod'), component);
     switch (method) {
       case 'register':
         registry.register(component);
@@ -236,7 +237,21 @@ final class Registry() {
         registry.unregister(component);
     }
     // afterRegister / afterUnregister
-    callback(jsGet(component, 'after$camelMethod'), const [], component);
+    _callHook(jsGet(component, 'after$camelMethod'), component);
+  }
+
+  /// `helpers.callback(hook, [], component)` of core.registry.js:153 and
+  /// :155: a function of the component, or of no argument. Another value
+  /// makes no call, as `callback` does.
+  // DIVERGES(chartjs): adapt-option-function-types, the component as a
+  // parameter.
+  void _callHook(Object? hook, Object? component) {
+    switch (hook) {
+      case final Object? Function(Object?) f:
+        f(component);
+      case final Object? Function() f:
+        f();
+    }
   }
 
   /// core.registry.js:161 `_getRegistryForType`.

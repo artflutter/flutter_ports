@@ -26,10 +26,11 @@ import 'package:flutter_chartjs_port/src/core/core.registry.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/index.dart' show registerables;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -225,7 +226,7 @@ final JsClass _testScale = JsClass(
 String _argText(Object? value, Observations o) {
   if (value == null) return 'null';
   if (value is Undefined) return 'undefined';
-  if (jsIsFunction(value)) return '<fn>';
+  if (isFunction(value)) return '<fn>';
   if (value is String || value is num || value is bool) {
     return jsToString(value);
   }

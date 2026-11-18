@@ -30,7 +30,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isArray, isObject, valueOrDefault;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -40,6 +39,8 @@ import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' show PointElement;
+import 'package:flutter_chartjs_port/src/types/option_functions.dart'
+    show callScriptable;
 import 'package:meta/meta.dart' show internal, protected;
 
 /// helpers.options.ts:43 `numberOrZero`: `+v || 0`.
@@ -296,7 +297,7 @@ Object? _arrayElement(List<Object?> array, int index) =>
 /// is JS `null`, a defined context. Dart `null` stands for an [index] that
 /// is `undefined` (Chart.js ADR 0043): JS `null` never reaches it. [info]
 /// is the plain object `{cacheable: boolean}`, and Dart `null` stands for
-/// `undefined`. A function value is called through [jsCall]. The result is
+/// `undefined`. [callScriptable] calls a function value. The result is
 /// [undefined] when no input gives a defined value.
 Object? resolve(
   List<Object?> inputs, [
@@ -312,8 +313,8 @@ Object? resolve(
     if (identical(value, undefined)) {
       continue;
     }
-    if (!identical(context, undefined) && jsIsFunction(value)) {
-      value = jsCall(value, [context]);
+    if (!identical(context, undefined) && value is Function) {
+      value = callScriptable(value, context);
       cacheable = false;
     }
     if (index != null && isArray(value)) {

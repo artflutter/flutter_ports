@@ -32,10 +32,11 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart'
     show Scale, Tick, TickCallback;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -676,7 +677,7 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
     // keyword (keyword_enum_json.dart).
     case final Enum keyword when isKeywordEnum(keyword):
       return jsonEncode(keyword.name);
-    case Function() || JsFunction():
+    case Function():
       return '<fn>';
     case final JsClass c:
       return '<class ${c.name}>';
@@ -1033,10 +1034,6 @@ Object? _wrapped(Object? value, String path, List<String> trace) {
     };
   }
   switch (value) {
-    case final JsFunction f:
-      final k = _exactArity(f.function);
-      if (k == null || k == 0) return null;
-      return JsFunction(_recorder(f.function, k, path, trace, self: true));
     case final Function f:
       final k = _exactArity(f);
       if (k == null) return null;
@@ -1164,7 +1161,7 @@ String _argKind(Object? value) => identical(value, undefined)
         bool() => 'boolean',
         num() => 'number',
         String() => 'string',
-        _ when jsIsFunction(value) => 'function',
+        _ when isFunction(value) => 'function',
         _ => 'object',
       };
 

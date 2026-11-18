@@ -11,10 +11,11 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -76,7 +77,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final num n => jsNumberToString(n),
   final String s => jsonEncode(s),
   final TextStyle font => _jsonRaw(fontObjectRecordOf(font)),
-  _ when jsIsFunction(value) => '"<fn>"',
+  _ when isFunction(value) => '"<fn>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,

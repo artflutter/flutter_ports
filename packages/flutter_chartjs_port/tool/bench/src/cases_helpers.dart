@@ -9,14 +9,12 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -27,27 +25,6 @@ import 'package:intl/intl.dart' show NumberFormat;
 
 import 'fixtures.dart';
 import 'harness.dart';
-
-/// The `chart` of a `this` object `{chart: {options}, options}`.
-final class _Chart(@override final Map<String, Object?> options)
-    implements Chart {
-  @override
-  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-/// A `this` object `{chart, options}`, passed as a [Scale].
-final class _Scale(
-  @override final Chart chart,
-  @override final Map<String, Object?> options,
-) implements Scale {
-  @override
-  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
-}
-
-/// A tick `{value}`.
-final class _Tick(double value) extends Tick {
-  this : super(value: value);
-}
 
 /// A point `{x, y}`.
 final class const _Point(@override final double x, @override final double y)
@@ -261,36 +238,7 @@ List<BenchCase> helperCases() => [
       return acc;
     };
   }, per: 'native Color + saturate + darken + native Color'),
-  // core.ticks and helpers.intl
-  BenchCase(
-    'ticks',
-    'ticks/numeric_11_cache_hit',
-    () {
-      final scale = _Scale(
-        _Chart(<String, Object?>{'locale': const ui.Locale('en', 'US')}),
-        {'ticks': <String, Object?>{}},
-      );
-      final ticks = <Tick>[for (var i = 0; i <= 10; i++) _Tick(i * 10.0)];
-      final numeric = formatters['numeric'];
-      jsCall(numeric, [10.0, 1.0, ticks], thisArg: scale);
-      return (n) {
-        var acc = 0;
-        for (var i = 0; i < n; i++) {
-          for (var t = 0; t < ticks.length; t++) {
-            final label = jsCall(numeric, [
-              ticks[t].value,
-              t.toDouble(),
-              ticks,
-            ], thisArg: scale);
-            acc += (label! as String).length;
-          }
-        }
-        return acc;
-      };
-    },
-    items: 11,
-    per: 'formatters.numeric over 11 ticks 0..100, intl cache hit',
-  ),
+  // helpers.intl
   BenchCase('ticks', 'formatNumber/cache_hit', () {
     const locale = ui.Locale('en', 'US');
     formatNumberDigits(12.5, locale, scientific: false, fractionDigits: 1);

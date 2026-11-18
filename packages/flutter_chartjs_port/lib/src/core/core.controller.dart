@@ -987,7 +987,7 @@ class Chart(
       <String, Object?>{},
     );
 
-    each(scalesOptions, (Object? axisOptions, Object? axisID) {
+    each<Object?, Object?>(scalesOptions, (axisOptions, axisID) {
       (axisOptions! as JsObjectFace).jsWrite(OptionKey.id.jsName, axisID);
     });
   }
@@ -1037,6 +1037,7 @@ class Chart(
 
     each(items, (
       ({OptionView options, ChartPosition dposition, String dtype}) item,
+      _,
     ) {
       final scaleOptions = item.options;
       final id = scaleOptions.readKey(OptionKey.id)! as String;
@@ -1076,13 +1077,13 @@ class Chart(
       scale!.init(scaleOptions, options);
     });
     // clear up discarded scales
-    each(updated, (Object? hasUpdated, Object? id) {
+    each<Object?, Object?>(updated, (hasUpdated, id) {
       if (!jsTruthy(hasUpdated)) {
         scales.remove(id);
       }
     });
 
-    each(scales, (Scale scale) {
+    each<Scale, Object?>(scales, (scale, _) {
       layouts
         ..configure(this, scale, scale.options)
         ..addBox(this, scale);
@@ -1210,9 +1211,9 @@ class Chart(
   /// Reset the elements of all datasets
   /// @private
   void _resetElements() {
-    each(_datasets, (Object? dataset, int datasetIndex) {
+    each<Object?, int>(_datasets, (dataset, datasetIndex) {
       getDatasetMeta(datasetIndex).controller!.reset();
-    }, this);
+    });
   }
 
   /// core.controller.js:470 `reset()`.
@@ -1310,7 +1311,7 @@ class Chart(
       // Can only reset the new controllers after the scales have been
       // updated
       // Reset is done to get the starting point for the initial animation
-      each(newControllers, (DatasetController controller) {
+      each<DatasetController, Object?>(newControllers, (controller, _) {
         controller.reset();
       });
     }
@@ -1808,7 +1809,7 @@ class Chart(
   /// core.controller.js:542 `_updateScales()`.
   /// @private
   void _updateScales() {
-    each(scales, (Scale scale) {
+    each<Scale, Object?>(scales, (scale, _) {
       layouts.removeBox(this, scale);
     });
 
@@ -1916,7 +1917,7 @@ class Chart(
     final noArea = area.width <= 0 || area.height <= 0;
 
     _layers = [];
-    each(boxes, (LayoutItem box) {
+    each<LayoutItem, Object?>(boxes, (box, _) {
       if (noArea && box.position == ChartPosition.chartArea) {
         // Skip drawing and configuring chartArea boxes when chartArea is
         // zero or negative
@@ -1929,7 +1930,7 @@ class Chart(
         box.configure();
       }
       _layers.addAll(box.layers!());
-    }, this);
+    });
 
     for (var index = 0; index < _layers.length; index++) {
       _layers[index].idx = index.toDouble();
@@ -2486,7 +2487,7 @@ class Chart(
       eventHandler(e);
     }
 
-    each(_options.readKey(OptionKey.events), (Object? type) {
+    each<Object?, Object?>(_options.readKey(OptionKey.events), (type, _) {
       add(type is String ? type : jsToString(type), listener);
     });
   }
@@ -2553,12 +2554,12 @@ class Chart(
   /// core.controller.js:1054 `unbindEvents()`.
   /// @private
   void unbindEvents() {
-    each(_listeners, (Function listener, String type) {
+    each<Function, String>(_listeners, (listener, type) {
       platform.removeEventListener(this, type, listener);
     });
     _listeners = {};
 
-    each(_responsiveListeners, (Function listener, String type) {
+    each<Function, String>(_responsiveListeners, (listener, type) {
       platform.removeEventListener(this, type, listener);
     });
     _responsiveListeners = null;
@@ -2960,7 +2961,10 @@ class Chart(
 ///
 /// `each(Chart.instances, ...)` takes the charts in the `Object.keys` order.
 void _invalidatePlugins() {
-  each(Chart.instances, (Chart chart) => chart.plugins.invalidate());
+  each<Chart, Object?>(
+    Chart.instances,
+    (chart, _) => chart.plugins.invalidate(),
+  );
 }
 
 /// The read `meta.data[index]` of a data element: the element at a whole

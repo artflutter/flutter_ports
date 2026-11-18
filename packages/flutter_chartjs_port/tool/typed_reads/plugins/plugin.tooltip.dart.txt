@@ -9,11 +9,11 @@
 # are native (row adapt-native-tooltip-item). stringIndex 2: $animations by
 # property name: the running animations stay a Map<String, Animation>
 # (Element.$animations is public; the typed table is an open point of the
-# close step). jsCall 1: the setContext of plain options, with JS arity (the
-# 14 text and style callbacks are native, Chart.js ADR 0125; filter, itemSort
-# and external are typed functions, row adapt-native-tooltip-item).
+# close step). The setContext of plain options is a typed call (Chart.js ADR
+# 0173). The 14 text and style callbacks are native (Chart.js ADR 0125);
+# filter, itemSort and external are typed functions (row
+# adapt-native-tooltip-item).
 # jsObjectKeys 1: the values of a borderWidth object of user code.
 jsGet 15
 stringIndex 2
-jsCall 1
 jsObjectKeys 1

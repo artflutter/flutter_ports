@@ -108,8 +108,8 @@ void main() {
   });
 
   for (final entry in <String, Object?>{
-    'whole scriptable font': (Map<String, Object?> c) =>
-        _font(10.0 + (c['index']! as int)),
+    'whole scriptable font': (Object? c) =>
+        _font(10.0 + ((c! as Map<String, Object?>)['index']! as int)),
     'indexed font': [_font(10), _font(20)],
   }.entries) {
     test('${entry.key} retains per-tick resolution', () {

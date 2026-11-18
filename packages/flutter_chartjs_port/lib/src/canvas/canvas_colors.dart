@@ -2,7 +2,6 @@
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -45,7 +44,7 @@ void validateChartColors(Object? config) {
   final paintLists = Set<Object>.identity();
   final colorLists = Set<Object>.identity();
   void color(Object? value, String path, {bool solidOnly = false}) {
-    if (value == null || value is Undefined || jsIsFunction(value)) return;
+    if (value == null || value is Undefined || value is Function) return;
     if (value is List) {
       // A shared list can occur as both a palette and a paint option.
       // Validate it under each contract, while still breaking cycles.

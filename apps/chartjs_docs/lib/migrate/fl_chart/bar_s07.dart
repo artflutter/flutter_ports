@@ -107,8 +107,7 @@ class _BarSample7State() extends State<BarSample7> {
         font: const TextStyle(fontFamily: 'MaterialIcons', fontSize: 28),
         callback: _icon,
         extra: {
-          'color': (JsObjectFace c) =>
-              ChartPaint.solid(_colors[tickOf(c).toInt()]),
+          'color': (Object? c) => ChartPaint.solid(_colors[tickOf(c).toInt()]),
         },
       ),
     );

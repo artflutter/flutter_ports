@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show PointInteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -59,7 +58,7 @@ const Set<String> _nestedKeys = {
 
 /// `valueOf` of the generator.
 Object? _valueOf(Object? v, int depth) => switch (v) {
-  Function() || JsFunction() || JsClass() => '<fn>',
+  Function() || JsClass() => '<fn>',
   final List<Object?> list => [
     for (final item in list) _valueOf(item, depth + 1),
   ],

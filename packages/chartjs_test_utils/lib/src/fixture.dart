@@ -60,9 +60,6 @@ import 'package:chartjs_test_utils/src/utils.dart' as utils;
 // lib/src.
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-// typeof run === 'function' and the call of the hook,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 // ToBoolean,
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -371,10 +368,13 @@ void specFromFixture(String description, String input, FixtureInputs inputs) {
       final run = fixtureOptions == null
           ? undefined
           : jsGet(fixtureOptions, 'run'); // :63
-      if (jsIsFunction(run)) {
-        final result = jsCall(run, [chart]);
-        if (result is Future<Object?>) await _settle(result); // :65
-      }
+      // A typed call (Chart.js ADR 0173): `run(chart)` or `run()`.
+      final result = switch (run) {
+        final Object? Function(Chart) fn => fn(chart),
+        final Object? Function() fn => fn(),
+        _ => null,
+      };
+      if (result is Future<Object?>) await _settle(result); // :65
       if (inputs.png == null) {
         fail('$descr\r\nMissing PNG comparison file for $input'); // :52-55
       }

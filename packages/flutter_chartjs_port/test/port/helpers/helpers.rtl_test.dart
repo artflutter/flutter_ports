@@ -120,8 +120,10 @@ void main() {
     test('a scriptable direction resolves at its context', () {
       final resolver = createResolver([
         {
-          'textDirection': (Map<String, Object?> ctx, Object? _) =>
-              ctx['rtl'] == true ? TextDirection.rtl : TextDirection.ltr,
+          'textDirection': (Object? ctx, Object? _) =>
+              (ctx! as Map<String, Object?>)['rtl'] == true
+              ? TextDirection.rtl
+              : TextDirection.ltr,
         },
       ]);
       expect(

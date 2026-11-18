@@ -8,9 +8,10 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show log10;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -244,7 +245,7 @@ void main() {
       final ticks = logarithmic['ticks']! as JsObjectFace;
       expect(ticks.jsKeys(), ['callback', 'major']);
       expect(ticks['callback'], same(formatters['logarithmic']));
-      expect(jsIsFunction(ticks['callback']), isTrue);
+      expect(isFunction(ticks['callback']), isTrue);
       expect(plainObject(ticks['major']), {'enabled': true});
     });
 

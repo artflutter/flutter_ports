@@ -26,8 +26,8 @@
 ///    0140). An object option value becomes a typed scope of the kind of its
 ///    key ([put]).
 /// 4. A plain value never lowers to a closure. Only a function parameter
-///    does: a ChartValue bridge for dataset colors, a `JsFunction` for the
-///    tick format, and a trampoline for each event and text callback.
+///    does: a ChartValue bridge for dataset colors, a function for the tick
+///    format, and a trampoline for each event and text callback.
 /// 5. A trampoline reads the callback of the newest config of its
 ///    [ChartConfigLowering] at each call ([eventTrampoline],
 ///    [legendTrampoline], [tooltipCallbacksTrampoline]

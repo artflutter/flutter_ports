@@ -5,7 +5,6 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -27,7 +26,7 @@ Object? _plain(Object? value) {
 }
 
 void main() {
-  for (final arity in ['one', 'two', 'this']) {
+  for (final arity in ['one', 'two', 'optional']) {
     for (final change in [
       'plain',
       'middle',
@@ -118,10 +117,10 @@ void main() {
             return switch (arity) {
               'one' => callback,
               'two' => withOptions,
-              _ => JsFunction((Object? self, Object? context, Object? options) {
-                expect(self, same(undefined));
-                return withOptions(context, options);
-              }),
+              _ => (Object? context, [Object? options]) => withOptions(
+                context,
+                options,
+              ),
             };
           }
 

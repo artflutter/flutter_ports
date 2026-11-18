@@ -12,10 +12,11 @@ import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show attachContext, createResolver;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -31,6 +32,7 @@ import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
+import '../../support/drop_extra_args.dart';
 import '../../support/easing_json.dart';
 import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
@@ -69,7 +71,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final TextStyle font => _jsonRaw(fontObjectRecordOf(font)),
   // The upstream object of a scale border (row adapt-native-scale-border).
   ScaleBorder() => _jsonRaw(upstreamBorderOf(value)),
-  _ when jsIsFunction(value) => '"<fn>"',
+  _ when isFunction(value) => '"<fn>"',
   Curve() => curveJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
   RadiusLength() || GraceLength() => lengthJson,
@@ -249,10 +251,19 @@ void main() {
         ),
       );
       expect(_json(overrides), referenceColorTokens('{}'));
-      expect(jsCall(descriptors['_scriptable'], ['onClick']), false);
-      expect(jsCall(descriptors['_scriptable'], ['color']), true);
-      expect(jsCall(descriptors['_indexable'], ['events']), false);
-      expect(jsCall(descriptors['_indexable'], ['color']), true);
+      expect(
+        callDroppingExtraArgs(descriptors['_scriptable'], ['onClick']),
+        false,
+      );
+      expect(
+        callDroppingExtraArgs(descriptors['_scriptable'], ['color']),
+        true,
+      );
+      expect(
+        callDroppingExtraArgs(descriptors['_indexable'], ['events']),
+        false,
+      );
+      expect(callDroppingExtraArgs(descriptors['_indexable'], ['color']), true);
     });
 
     test('routes the colors of the scale', () {
@@ -329,7 +340,7 @@ void main() {
 
     test('calls its function values', () {
       expect(
-        jsCall(defaults['hoverBackgroundColor'], [
+        callDroppingExtraArgs(defaults['hoverBackgroundColor'], [
           <String, Object?>{},
           <String, Object?>{
             'backgroundColor': const ChartPaint.solid(
@@ -340,7 +351,7 @@ void main() {
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
       expect(
-        jsCall(defaults['hoverBorderColor'], [
+        callDroppingExtraArgs(defaults['hoverBorderColor'], [
           <String, Object?>{},
           <String, Object?>{
             'borderColor': const ChartPaint.solid(
@@ -351,7 +362,7 @@ void main() {
         const ChartPaint.solid(ui.Color.fromRGBO(5, 155, 255, 1)),
       );
       expect(
-        jsCall(defaults['hoverColor'], [
+        callDroppingExtraArgs(defaults['hoverColor'], [
           <String, Object?>{},
           <String, Object?>{
             'color': const ChartPaint.solid(
@@ -362,7 +373,7 @@ void main() {
         const ChartPaint.solid(ui.Color.fromRGBO(92, 92, 92, 1)),
       );
       expect(
-        jsCall(defaults['devicePixelRatio'], [
+        callDroppingExtraArgs(defaults['devicePixelRatio'], [
           <String, Object?>{'chart': _Chart()},
         ]),
         2.0,
@@ -370,10 +381,11 @@ void main() {
     });
 
     test('a hover color of a color that does not parse is undefined', () {
-      Object? hover(Object? value) => jsCall(defaults['hoverBackgroundColor'], [
-        <String, Object?>{},
-        <String, Object?>{'backgroundColor': value},
-      ]);
+      Object? hover(Object? value) =>
+          callDroppingExtraArgs(defaults['hoverBackgroundColor'], [
+            <String, Object?>{},
+            <String, Object?>{'backgroundColor': value},
+          ]);
       expect(hover(undefined), same(undefined));
       for (final value in ['', 'nope', 0.0, double.nan, -0.0]) {
         expect(() => hover(value), throwsArgumentError, reason: '$value');
@@ -388,7 +400,10 @@ void main() {
         const ChartPaint.solid(ui.Color.fromRGBO(1, 0, 0, 1)),
       );
       expect(
-        jsCall(defaults['hoverColor'], [<String, Object?>{}, 'str']),
+        callDroppingExtraArgs(defaults['hoverColor'], [
+          <String, Object?>{},
+          'str',
+        ]),
         same(undefined),
       );
     });
@@ -411,18 +426,24 @@ void main() {
       final context = attachContext(resolver, <String, Object?>{});
       expect(resolver.hasProperty('backgroundColor'), false);
       expect(
-        jsCall(defaults['hoverBackgroundColor'], [
+        callDroppingExtraArgs(defaults['hoverBackgroundColor'], [
           <String, Object?>{},
           resolver,
         ]),
         const ChartPaint.solid(ui.Color.fromRGBO(230, 0, 0, 1)),
       );
       expect(
-        jsCall(defaults['hoverBorderColor'], [<String, Object?>{}, context]),
+        callDroppingExtraArgs(defaults['hoverBorderColor'], [
+          <String, Object?>{},
+          context,
+        ]),
         const ChartPaint.solid(ui.Color.fromRGBO(0, 230, 0, 1)),
       );
       expect(
-        jsCall(defaults['hoverColor'], [<String, Object?>{}, resolver]),
+        callDroppingExtraArgs(defaults['hoverColor'], [
+          <String, Object?>{},
+          resolver,
+        ]),
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 230, 1)),
       );
     });

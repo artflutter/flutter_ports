@@ -43,7 +43,7 @@ import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
+import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
@@ -102,8 +102,7 @@ final class const OptValue<T>(
   String toString() => 'OptValue($value)';
 }
 
-/// A function value: a Dart `Function`, a `JsFunction` or a class value
-/// (`jsIsFunction`).
+/// A function value: a Dart `Function` or a class value (`JsClass`).
 final class const OptFunction<T>(
   /// The function value, as the user gave it.
   final Object function,
@@ -376,7 +375,7 @@ abstract final class ShapeBits() {
 Opt<T>? _special<T>(Object? raw) {
   if (raw == null) return optNull;
   if (raw is Undefined) return optUndefined;
-  if (jsIsFunction(raw)) return OptFunction<T>(raw);
+  if (raw is Function || raw is JsClass) return OptFunction<T>(raw);
   if (raw is List<Object?>) return OptList<T>(raw);
   if (raw is Map<String, Object?> ||
       raw is OptionObject ||

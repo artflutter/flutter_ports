@@ -41,9 +41,9 @@ of a parsed List in place, and then the upstream search finds another item.
    axis that is not a number, `null` or `undefined` (`jsIsNaN` of an object calls its `toString`). A list that the
    walk did not see (a new list) gets a proof at its first search, and a failed proof ends the index. So, after the
    test, no read of a parsed list or of its items runs code of the app.
-4. **The count of calls.** `jsCall` and `jsCall1` add one to `JsFunction.calls`. After the tests of items 2 and 3,
-   code of the app can enter the bar loop only as a function value through the JS runtime, or as the resolve of the
-   options of one bar. A new count ends the index. The resolve of the options of a bar ends it before the resolve.
+4. **The count of calls.** Each call of an option function adds one to `appFunctionCalls` (Chart.js ADR 0173).
+   After the tests of items 2 and 3, code of the app can enter the bar loop only as an option function, or as the
+   resolve of the options of one bar. A new count ends the index. The resolve of the options of a bar ends it before the resolve.
    The upstream search then takes the rest of the update.
 5. **The cache rule.** The index is a cache of our own. It is allowed because it lives inside one `update` call,
    it tests the list and the item at each read, and items 2 to 4 prove that no code writes a parsed List while it
@@ -67,7 +67,7 @@ of a parsed List in place, and then the upstream search finds another item.
   A new read of a parsed item must read a value that item 3 tests.
 - The test of the chart walks each bar list one time for each controller. The walk replaces the first proof of
   each list, so the count of the visits does not change (§78).
-- `jsCall` and `jsCall1` cost one more increment of a static field for each call.
+- Each call of an option function costs one more increment of a top-level field.
 
 ## Tests
 

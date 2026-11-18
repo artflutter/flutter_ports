@@ -47,9 +47,10 @@ Map<String, Object?> fixture() => <String, Object?>{
 
 /// The border of the context [ctx]: `dash: (ctx) => ctx.index % 2 === 0 ?
 /// [6, 3] : []`. The scale context has no index: its `undefined % 2` is NaN,
-/// which gives the solid dash.
-AxisBorder _border(ScriptableScaleContext ctx) => AxisBorder(
-  dash: jsToNumber(ctx.index).remainder(2) == 0
+/// which gives the solid dash. A scriptable option takes an `Object?`
+/// context (Chart.js ADR 0173).
+AxisBorder _border(Object? context) => AxisBorder(
+  dash: jsToNumber((context! as ScriptableScaleContext).index).remainder(2) == 0
       ? const <double>[6, 3]
       : const <double>[],
 );

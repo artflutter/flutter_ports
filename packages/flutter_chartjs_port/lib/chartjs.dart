@@ -202,6 +202,12 @@ export 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
 export 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
     show LineSegmentStyle;
+export 'package:flutter_chartjs_port/src/types/option_functions.dart'
+    show
+        DescriptorPredicate,
+        ResolverFallback,
+        ScriptableOption,
+        ScriptableOptionWithResolver;
 export 'package:flutter_chartjs_port/src/types/plugin.dart'
     show
         CancelableHookFunction,

@@ -7,7 +7,7 @@
 /// option scopes of the kind of their path (Chart.js ADR 0054 §3).
 /// `undefined` is the [optUndefined] cell and numbers are `double` (Chart.js
 /// ADR 0146). A function value is a Dart closure
-/// (`lib/src/js/js_function.dart`). [Defaults] is the interface of the
+/// (`lib/src/types/option_functions.dart`). [Defaults] is the interface of the
 /// `defaults` object of `core.defaults.js`.
 library;
 

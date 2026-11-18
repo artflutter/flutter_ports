@@ -60,7 +60,7 @@ class _Sample3State() extends State<Sample3> {
     chart.update(UpdateMode.none);
   }
 
-  ChartPaint _bottomColor(JsObjectFace c) =>
+  ChartPaint _bottomColor(Object? c) =>
       .solid(tickOf(c) == _touched ? Fl.yellow : _indicatorColor);
 
   ChartConfig _config() => fills(
@@ -121,7 +121,7 @@ class _Sample3State() extends State<Sample3> {
           grid: AxisGrid(
             drawTicks: false,
             extra: {
-              'color': (JsObjectFace c) => ChartPaint.solid(
+              'color': (Object? c) => ChartPaint.solid(
                 tickOf(c) == 0 ? Colors.transparent : Fl.white10,
               ),
               'lineWidth': 0.5,
@@ -140,7 +140,7 @@ class _Sample3State() extends State<Sample3> {
           grid: AxisGrid(
             drawTicks: false,
             extra: {
-              'color': (JsObjectFace c) => ChartPaint.solid(
+              'color': (Object? c) => ChartPaint.solid(
                 tickOf(c) == 0 ? Colors.transparent : Fl.white10,
               ),
               'lineWidth': 0.5,

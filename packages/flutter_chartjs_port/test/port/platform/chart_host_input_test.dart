@@ -7,7 +7,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart';
 import 'package:flutter_chartjs_port/src/index.dart' show defaults;
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -18,6 +17,7 @@ import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show EventHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/drop_extra_args.dart';
 import '../scales/scale_chart_harness.dart';
 import 'chart_host_input_reference.dart';
 
@@ -126,7 +126,7 @@ Map<String, Object?> _functions(_Logs logs) => {
   'legendClick': (Object? e, Object? item, Object? legendBox) {
     logs.legend.add(_entry('click', e, item));
     final legend = jsGet(jsGet(defaults, 'plugins'), 'legend');
-    jsCall(jsGet(legend, 'onClick'), [e, item, legendBox]);
+    callDroppingExtraArgs(jsGet(legend, 'onClick'), [e, item, legendBox]);
   },
 };
 

@@ -28,7 +28,6 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode, IndexInteractionMode;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
@@ -52,6 +51,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
 import '../../support/data_label.dart';
+import '../../support/drop_extra_args.dart';
 import '../../support/easing_json.dart';
 import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
@@ -1557,9 +1557,9 @@ void main() {
       ]);
       expect(identical(t['_cachedAnimations'], undefined), isTrue);
       final options =
-          jsCall(jsGet(t.options, 'setContext'), [
+          callDroppingExtraArgs(jsGet(t.options, 'setContext'), [
                 t.getContext(),
-              ], thisArg: t.options)!
+              ])!
               as JsObjectFace;
       expect(jsGet(options, '_cacheable'), false);
       expect(jsGet(jsGet(options, 'animations'), '_cacheable'), false);

@@ -2,12 +2,10 @@
 # - jsGet 3, jsObjectKeys 1, stringIndex 8: readValueToProps (the shorthand
 #   props table) and the plain result objects of toTRBL and toTRBLCorners
 #   (helpers.options.ts:41-80).
-# - jsCall 1, stringIndex 1: resolve calls a scriptable option of the user
-#   and writes the cacheable flag of the info object (helpers.options.ts:
-#   185-199).
+# - stringIndex 1: resolve writes the cacheable flag of the info object
+#   (helpers.options.ts:185-199).
 # - stringIndex 1, jsObjectKeys 1: createContext reads the type and the own
 #   keys of the object literal of its caller (helpers.options.ts:204).
 jsGet 3
 stringIndex 10
-jsCall 1
 jsObjectKeys 2

@@ -24,9 +24,10 @@
 ///
 /// [DateAdapterBase.prototype] starts with the default members of
 /// `date_adapter.dart` (Chart.js ADR 0024, row `adapt-date-default-adapter`).
-/// A method calls a member of the exact Dart function type of the method
-/// directly. It calls any other value through `jsCall`, with the adapter as
-/// `this`.
+/// A member is a Dart function of a fixed type (Chart.js ADR 0173): it
+/// takes the arguments of the method, or the adapter first and then the
+/// arguments, in place of `this`. A member of another type stops a debug
+/// build, and a release build runs the body of the method.
 ///
 /// This library is a pure layer. It imports neither `dart:ui` nor
 /// `package:flutter`.
@@ -38,7 +39,6 @@ import 'dart:core' as core show override;
 import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show dateAdapterMembers;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -199,13 +199,30 @@ Never _abstract() {
 /// The Dart function type of a member with two arguments that a method of
 /// [DateAdapterBase] calls directly (Chart.js ADR 0024, decision 1). The
 /// members `formats` and `init` have the types `Object? Function()` and
-/// `Object? Function(Object?)`. A Dart closure cannot read `this`. Thus a
-/// direct call gives the result of `jsCall`.
+/// `Object? Function(Object?)`.
 typedef _Member2 = Object? Function(Object?, Object?);
 
 /// The Dart function type of a member with three arguments (see
 /// [_Member2]).
 typedef _Member3 = Object? Function(Object?, Object?, Object?);
+
+/// A member that reads `this`, with no argument: its parameter gets the
+/// adapter (Chart.js ADR 0173).
+typedef _Self0 = Object? Function(DateAdapterBase self);
+
+/// A member that reads `this`, with one argument (see [_Self0]).
+typedef _Self1 = Object? Function(DateAdapterBase self, Object?);
+
+/// A member that reads `this`, with two arguments (see [_Self0]).
+typedef _Self2 = Object? Function(DateAdapterBase self, Object?, Object?);
+
+/// A member that reads `this`, with three arguments (see [_Self0]).
+typedef _Self3 = Object? Function(
+  DateAdapterBase self,
+  Object?,
+  Object?,
+  Object?,
+);
 
 /// core.adapters.ts:75 `class DateAdapterBase implements DateAdapter`.
 ///
@@ -232,7 +249,8 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   ///
   /// `Object.assign(DateAdapterBase.prototype, members)` writes each key of
   /// [members] into [prototype], in the `jsObjectKeys` order. A member that
-  /// reads `this` is a `JsFunction`.
+  /// reads `this` takes the adapter as its first parameter (Chart.js ADR
+  /// 0173).
   static void override(AnyObject members) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, a Map of the members.
     jsAssign(prototype, members);
@@ -247,9 +265,8 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   ///
   /// The methods of the class body are not entries. Each method of
   /// [DateAdapterBase] calls its entry when the entry exists, else it runs
-  /// its body. An entry that is not a function value throws an
-  /// [ArgumentError] at the call, where JavaScript throws a `TypeError`
-  /// (`jsCall`).
+  /// its body. An entry of another type stops a debug build, and a release
+  /// build runs the body (Chart.js ADR 0173).
   // DIVERGES(chartjs): adapt-date-adapter-prototype, a Map of the members.
   static final AnyObject prototype = <String, Object?>{
     // DIVERGES(chartjs): adapt-date-default-adapter, the default members.
@@ -272,24 +289,28 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   final Object? options = jsTruthy(options) ? options : <String, Object?>{};
 
-  /// The call of [member], a member of [prototype], with [args], with this
-  /// adapter as `this`: `adapter[name](...args)`.
-  Object? _callMember(Object? member, List<Object?> args) =>
-      jsCall(member, args, thisArg: this);
+  /// Stops a debug build when [name] has an entry of another type in
+  /// [prototype]. A release build runs the body of the method.
+  void _foreign(String name) {
+    assert(
+      !prototype.containsKey(name),
+      'The date adapter member $name has another type (Chart.js ADR 0173).',
+    );
+  }
 
   /// core.adapters.ts:100 `init() {}`.
   @core.override
   void init(Object? chartOptions) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['init'];
-    if (member is Object? Function(Object?)) {
-      member(chartOptions);
-      return;
+    switch (prototype['init']) {
+      case final Object? Function(Object?) member:
+        member(chartOptions);
+        return;
+      case final _Self1 member:
+        member(this, chartOptions);
+        return;
     }
-    if (prototype.containsKey('init')) {
-      _callMember(member, [chartOptions]);
-      return;
-    }
+    _foreign('init');
     // eslint-disable-next-line @typescript-eslint/no-empty-function
   }
 
@@ -297,11 +318,13 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   Object? formats() {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['formats'];
-    if (member is Object? Function()) return member();
-    if (prototype.containsKey('formats')) {
-      return _callMember(member, const []);
+    switch (prototype['formats']) {
+      case final Object? Function() member:
+        return member();
+      case final _Self0 member:
+        return member(this);
     }
+    _foreign('formats');
     return _abstract();
   }
 
@@ -309,11 +332,13 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   Object? parse(Object? value, [Object? format = undefined]) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['parse'];
-    if (member is _Member2) return member(value, format);
-    if (prototype.containsKey('parse')) {
-      return _callMember(member, [value, format]);
+    switch (prototype['parse']) {
+      case final _Member2 member:
+        return member(value, format);
+      case final _Self2 member:
+        return member(this, value, format);
     }
+    _foreign('parse');
     return _abstract();
   }
 
@@ -321,11 +346,13 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   Object? format(Object? timestamp, Object? format) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['format'];
-    if (member is _Member2) return member(timestamp, format);
-    if (prototype.containsKey('format')) {
-      return _callMember(member, [timestamp, format]);
+    switch (prototype['format']) {
+      case final _Member2 member:
+        return member(timestamp, format);
+      case final _Self2 member:
+        return member(this, timestamp, format);
     }
+    _foreign('format');
     return _abstract();
   }
 
@@ -333,11 +360,13 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   Object? add(Object? timestamp, Object? amount, TimeUnit unit) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['add'];
-    if (member is _Member3) return member(timestamp, amount, unit);
-    if (prototype.containsKey('add')) {
-      return _callMember(member, [timestamp, amount, unit]);
+    switch (prototype['add']) {
+      case final _Member3 member:
+        return member(timestamp, amount, unit);
+      case final _Self3 member:
+        return member(this, timestamp, amount, unit);
     }
+    _foreign('add');
     return _abstract();
   }
 
@@ -345,11 +374,13 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   Object? diff(Object? a, Object? b, TimeUnit unit) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['diff'];
-    if (member is _Member3) return member(a, b, unit);
-    if (prototype.containsKey('diff')) {
-      return _callMember(member, [a, b, unit]);
+    switch (prototype['diff']) {
+      case final _Member3 member:
+        return member(a, b, unit);
+      case final _Self3 member:
+        return member(this, a, b, unit);
     }
+    _foreign('diff');
     return _abstract();
   }
 
@@ -357,11 +388,13 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   Object? startOf(Object? timestamp, TimeUnit unit) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['startOf'];
-    if (member is _Member2) return member(timestamp, unit);
-    if (prototype.containsKey('startOf')) {
-      return _callMember(member, [timestamp, unit]);
+    switch (prototype['startOf']) {
+      case final _Member2 member:
+        return member(timestamp, unit);
+      case final _Self2 member:
+        return member(this, timestamp, unit);
     }
+    _foreign('startOf');
     return _abstract();
   }
 
@@ -369,11 +402,13 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   Object? startOfIsoWeek(Object? timestamp, Object? weekday) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['startOfIsoWeek'];
-    if (member is _Member2) return member(timestamp, weekday);
-    if (prototype.containsKey('startOfIsoWeek')) {
-      return _callMember(member, [timestamp, weekday]);
+    switch (prototype['startOfIsoWeek']) {
+      case final _Member2 member:
+        return member(timestamp, weekday);
+      case final _Self2 member:
+        return member(this, timestamp, weekday);
     }
+    _foreign('startOfIsoWeek');
     return _abstract();
   }
 
@@ -381,11 +416,13 @@ class DateAdapterBase([Object? options = undefined]) implements DateAdapter {
   @core.override
   Object? endOf(Object? timestamp, TimeUnit unit) {
     // DIVERGES(chartjs): adapt-date-adapter-prototype, the assigned member.
-    final member = prototype['endOf'];
-    if (member is _Member2) return member(timestamp, unit);
-    if (prototype.containsKey('endOf')) {
-      return _callMember(member, [timestamp, unit]);
+    switch (prototype['endOf']) {
+      case final _Member2 member:
+        return member(timestamp, unit);
+      case final _Self2 member:
+        return member(this, timestamp, unit);
     }
+    _foreign('endOf');
     return _abstract();
   }
 }

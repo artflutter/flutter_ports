@@ -54,9 +54,10 @@
 /// that it does not resolve. The cache keeps a resolved [undefined] as an
 /// own key, as `_cached` does.
 ///
-/// A scriptable option is a function value of `lib/src/js/js_function.dart`.
-/// The resolver calls it through [jsCall] with the context and the
-/// sub-resolver.
+/// A scriptable option is a `ScriptableOption` or a
+/// `ScriptableOptionWithResolver` of `option_functions.dart` (Chart.js ADR
+/// 0173). The resolver calls it through [callScriptable] with the context
+/// and the sub-resolver.
 library;
 
 import 'dart:collection' show LinkedHashMap;
@@ -93,7 +94,6 @@ import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -114,6 +114,7 @@ import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/src/types/option_functions.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:meta/meta.dart';
 
@@ -1271,7 +1272,7 @@ final class OptionResolver._(
   ElementOptions _resolveScalarColors(_ScriptableElementPlan plan, Object ctx) {
     final result = plan.template.clone();
     for (final color in plan.colors) {
-      final value = jsCall1(color.callback, ctx);
+      final value = callScriptable(color.callback, ctx);
       if (!_indexedScalar(value)) {
         return _finishScalarColors(plan, ctx, result, color.position, value);
       }
@@ -1880,7 +1881,11 @@ final class OptionView._(
   // ignore: prefer_function_declarations_over_variables
   late final OptionView Function(Object scope) _override = (scope) =>
       attachContext(
-        jsCall(jsGet(_proxy, 'override'), [scope], thisArg: _proxy),
+        switch (_proxy) {
+          final OptionResolver resolver => resolver.override(scope),
+          final OptionView view => view.override(scope),
+          _ => throw TypeError(),
+        },
         _context,
         _subProxy,
         _descriptorDefaults,
@@ -2190,7 +2195,7 @@ final class OptionView._(
         bound(proxy._cache.get(OptionKey.min)) &&
         bound(proxy._cache.get(OptionKey.max)) &&
         !identical(labels, _absent) &&
-        !jsIsFunction(labels);
+        !isFunction(labels);
   }
 
   /// The own property [name] of the target, or [_absent].
@@ -2462,8 +2467,8 @@ Descriptor descriptors(Object? proxy, [DescriptorDefaults? defaults]) {
 
 /// The object literal that `_descriptors` returns (helpers.config.ts:205).
 ///
-/// `isScriptable` and `isIndexable` call a function value through [jsCall1]
-/// with no `this`, as the detached calls of upstream do
+/// `isScriptable` and `isIndexable` call a function value through
+/// [callDescriptor] with no `this`, as the detached calls of upstream do
 /// (`core.config.js:409-410` and helpers.config.ts:283). The method call at
 /// :242 is `_isScriptableMethod`. They return the ToBoolean of the result
 /// ([jsTruthy]), because every caller tests only its truth.
@@ -2479,13 +2484,11 @@ final class _Descriptor({
 }) implements Descriptor {
   /// helpers.config.ts:209 `isScriptable`.
   @override
-  bool isScriptable(String key) =>
-      jsTruthy(isFunction(scriptable) ? jsCall1(scriptable, key) : scriptable);
+  bool isScriptable(String key) => jsTruthy(callDescriptor(scriptable, key));
 
   /// helpers.config.ts:210 `isIndexable`.
   @override
-  bool isIndexable(String key) =>
-      jsTruthy(isFunction(indexable) ? jsCall1(indexable, key) : indexable);
+  bool isIndexable(String key) => jsTruthy(callDescriptor(indexable, key));
 }
 
 /// helpers.config.ts:214 `readKey`.
@@ -2554,22 +2557,16 @@ Object? _resolveWithContext(
 
 /// `descriptors.isScriptable(prop)` at helpers.config.ts:242: a method call.
 ///
-/// A function `_scriptable` gets [descriptors] as `this`, as upstream gives
-/// the descriptor object. The result is the ToBoolean of its result.
-bool _isScriptableMethod(Descriptor descriptors, String prop) {
-  final scriptable = descriptors.scriptable;
-  return jsTruthy(
-    isFunction(scriptable)
-        ? jsCall1(scriptable, prop, thisArg: descriptors)
-        : scriptable,
-  );
-}
+/// A function `_scriptable` is a `DescriptorPredicate`, with no `this`
+/// (Chart.js ADR 0173). The result is the ToBoolean of its result.
+bool _isScriptableMethod(Descriptor descriptors, String prop) =>
+    jsTruthy(callDescriptor(descriptors.scriptable, prop));
 
 /// helpers.config.ts:255 `_resolveScriptable`.
 ///
 /// [getValue] is a function value. It gets the context and the
-/// sub-resolver, or the [receiver], through [jsCall]. Upstream throws an
-/// `Error` on recursion. The port throws a [StateError] with the same
+/// sub-resolver, or the [receiver], through [callScriptable]. Upstream
+/// throws an `Error` on recursion. The port throws a [StateError] with the same
 /// message.
 Object? _resolveScriptable(
   String prop,
@@ -2588,7 +2585,7 @@ Object? _resolveScriptable(
   final options = jsTruthy(subProxy) ? subProxy : receiver;
   // DIVERGES(chartjs): adapt-shared-bar-animations, the count of the calls.
   optionCallEpoch++;
-  final value = jsCall(getValue, [context, options]);
+  final value = callScriptable(getValue, context, options);
   stack.remove(prop);
   return _resolveScriptableReturn(prop, value, proxy);
 }
@@ -2666,7 +2663,7 @@ ResolverObjectKey _resolveFallback(
   ResolverObjectKey prop,
   Object? value,
 ) {
-  return isFunction(fallback) ? jsCall(fallback, [prop, value]) : fallback;
+  return callFallback(fallback, prop, value);
 }
 
 /// helpers.config.ts:306 `getScope`.
@@ -3026,20 +3023,12 @@ List<String> _resolveKeysFromAllScopes(List<Object?> scopes) {
 /// helpers.config.ts:437 `_parseObjectDataRadialScale`.
 ///
 /// The function reads `this`, the dataset controller that
-/// `controller.polarArea.js:110` binds. Thus it is a [JsFunction]
-/// (`lib/src/js/js_function.dart`). Its closure takes `this` (a
-/// [DatasetController]), `meta` (a [ChartMeta]), `data` (a `List<Object?>`),
-/// `start` and `count` (`int`s). Call it with [jsCall] and the controller
-/// as `thisArg`. It returns a `List<ParsedItem>`: each item is the object
-/// `{r}` of upstream, a typed parsed item (Chart.js ADR 0054 §8) with the
-/// one key `r`.
-const JsFunction parseObjectDataRadialScale = JsFunction(
-  _parseObjectDataRadialScale,
-);
-
-/// The closure of [parseObjectDataRadialScale]: the typed body with the
-/// reads of `this` and `meta`, in the upstream order.
-List<ParsedItem> _parseObjectDataRadialScale(
+/// `controller.polarArea.js:110` binds. The port gives the controller as the
+/// first parameter [self] (Chart.js ADR 0173). It returns a
+/// `List<ParsedItem>`: each item is the object `{r}` of upstream, a typed
+/// parsed item (Chart.js ADR 0054 §8) with the one key `r`.
+// DIVERGES(chartjs): adapt-option-function-types, `this` as a parameter.
+List<ParsedItem> parseObjectDataRadialScale(
   DatasetController self,
   ChartMeta meta,
   List<Object?> data,
@@ -3049,7 +3038,7 @@ List<ParsedItem> _parseObjectDataRadialScale(
     parseObjectDataRadialScaleOf(meta.iScale, self.parsing, data, start, count);
 
 /// helpers.config.ts:437 `_parseObjectDataRadialScale`, the typed body for
-/// the radar and polar area controllers: no [jsCall].
+/// the radar and polar area controllers.
 ///
 /// [iScale] is `meta.iScale` and [parsing] is `this._parsing` of the
 /// controller, the two values that upstream reads from `meta` and `this`. A
@@ -3153,7 +3142,7 @@ bool _has(Object? object, String key) {
     final index = jsArrayIndex(key);
     return index != null && index < object.length;
   }
-  if (jsIsFunction(object)) {
+  if (isFunction(object)) {
     return false;
   }
   throw TypeError();
@@ -3190,7 +3179,7 @@ List<String> _reflectOwnKeys(Object? object) {
   if (object is List) {
     return [for (var i = 0; i < object.length; i++) '$i', 'length'];
   }
-  if (jsIsFunction(object)) {
+  if (isFunction(object)) {
     return [];
   }
   throw TypeError();

@@ -144,9 +144,9 @@ class _BarSample5State() extends State<BarSample5> {
 
   /// The horizontal grid of fl_chart: a line at each step of the fl_chart
   /// interval that is a multiple of 5, but not at the ends.
-  bool _gridAt(JsObjectFace context) {
+  bool _gridAt(Object? context) {
     final value = tickOf(context);
-    final scale = context['scale']! as Scale;
+    final scale = (context! as JsObjectFace)['scale']! as Scale;
     final step = flInterval(scale.height, 40);
     return value.abs() < 20 && value % step == 0 && value % 5 == 0;
   }
@@ -260,14 +260,14 @@ class _BarSample5State() extends State<BarSample5> {
             grid: AxisGrid(
               drawTicks: false,
               extra: {
-                'color': (JsObjectFace c) => ChartPaint.solid(
+                'color': (Object? c) => ChartPaint.solid(
                   !_gridAt(c)
                       ? Colors.transparent
                       : Colors.white.withValues(
                           alpha: tickOf(c) == 0 ? 0.1 : 0.05,
                         ),
                 ),
-                'lineWidth': (JsObjectFace c) => tickOf(c) == 0 ? 3.0 : 0.8,
+                'lineWidth': (Object? c) => tickOf(c) == 0 ? 3.0 : 0.8,
               },
             ),
             // Chart.js turns all the labels of an axis by one angle.

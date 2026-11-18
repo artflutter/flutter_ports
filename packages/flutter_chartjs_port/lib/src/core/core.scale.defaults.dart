@@ -6,7 +6,7 @@
 /// The value objects of `defaults.set` and `defaults.describe` are typed
 /// option scopes of the kind of their path (Chart.js ADR 0054 §3), and
 /// numbers are `double` (Chart.js ADR 0146). A scriptable option is a Dart
-/// closure (`lib/src/js/js_function.dart`). [Defaults] is the interface of
+/// closure (`lib/src/types/option_functions.dart`). [Defaults] is the interface of
 /// the `defaults` object of `core.defaults.js`.
 library;
 

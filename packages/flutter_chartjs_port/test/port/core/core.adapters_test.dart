@@ -1,11 +1,14 @@
 // Original code, not ported from Chart.js: core.adapters cases with no spec.
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/date_adapter.dart';
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
+
+import '../../support/drop_extra_args.dart';
 
 // Upstream has no spec for src/core/core.adapters.ts (AGENTS.md rule 3). The
 // expected values come from src/core/core.adapters.ts at v4.5.1, with its
@@ -44,13 +47,13 @@ void main() {
       expect(adapters.keys, ['_date']);
       expect(adapters['_date'], same(DateAdapterBase.jsClass));
       expect(DateAdapterBase.jsClass.name, 'DateAdapterBase');
-      expect(jsIsFunction(adapters['_date']), isTrue);
+      expect(isFunction(adapters['_date']), isTrue);
     });
 
     test('the class value has the static override', () {
       final override = jsGet(DateAdapterBase.jsClass, 'override');
-      expect(jsIsFunction(override), isTrue);
-      jsCall(override, [
+      expect(isFunction(override), isTrue);
+      callDroppingExtraArgs(override, [
         <String, Object?>{
           'formats': () => <String, Object?>{'day': 'D'},
         },
@@ -122,10 +125,10 @@ void main() {
       final calls = <List<Object?>>[];
       final before = DateAdapterBase(<String, Object?>{'tag': 'before'});
       DateAdapterBase.override({
-        'parse': JsFunction((Object? self, Object? value, Object? format) {
+        'parse': (Object? self, Object? value, Object? format) {
           calls.add([_option(self! as DateAdapter, 'tag'), value, format]);
           return 42.0;
-        }),
+        },
         'formats': () => <String, Object?>{'day': 'D'},
         '_id': 'probe',
       });
@@ -159,18 +162,16 @@ void main() {
 
     test('a later override replaces only its own keys', () {
       DateAdapterBase.override({
-        'parse': (Object? value) => 42.0,
+        'parse': (Object? value, Object? format) => 42.0,
         'formats': () => <String, Object?>{'day': 'D'},
       });
       DateAdapterBase.override({
-        'add': JsFunction(
-          (Object? self, Object? t, Object? n, Object? u) => [
-            _option(self! as DateAdapter, 'tag'),
-            t,
-            n,
-            u,
-          ],
-        ),
+        'add': (Object? self, Object? t, Object? n, Object? u) => [
+          _option(self! as DateAdapter, 'tag'),
+          t,
+          n,
+          u,
+        ],
       });
       final adapter = DateAdapterBase(<String, Object?>{'tag': 'after'});
       expect(adapter.add(1.0, 2.0, TimeUnit.day), [
@@ -200,19 +201,18 @@ void main() {
       expect(adapter.format('t', 'f'), 'f:t');
     });
 
-    test('a member that is not a function throws at the call', () {
+    test('a member that is not a function stops a debug build', () {
       // JavaScript throws a TypeError: "after.format is not a function".
       DateAdapterBase.override({'format': 5.0});
       final adapter = DateAdapterBase();
-      expect(() => adapter.format(1.0, 'f'), throwsArgumentError);
+      expect(() => adapter.format(1.0, 'f'), throwsA(isA<AssertionError>()));
       DateAdapterBase.override({'format': undefined});
-      expect(() => adapter.format(1.0, 'f'), throwsArgumentError);
+      expect(() => adapter.format(1.0, 'f'), throwsA(isA<AssertionError>()));
     });
 
     group('typed direct call', () {
       // A member of the exact Dart function type of its method gets a direct
-      // call. Any other value goes through jsCall (Chart.js ADR 0024,
-      // decision 1). Both calls give one result.
+      // call (Chart.js ADR 0024, decision 1, and Chart.js ADR 0173).
 
       test('a closure of the exact type gets the arguments', () {
         final calls = <List<Object?>>[];
@@ -242,17 +242,15 @@ void main() {
         ]);
       });
 
-      test('a JsFunction gets the adapter as this', () {
+      test('a member with one more parameter gets the adapter first', () {
         final adapter = DateAdapterBase(<String, Object?>{'tag': 'a'});
         DateAdapterBase.override({
-          'diff': JsFunction(
-            (Object? self, Object? a, Object? b, Object? u) => [
-              identical(self, adapter),
-              a,
-              b,
-              u,
-            ],
-          ),
+          'diff': (Object? self, Object? a, Object? b, Object? u) => [
+            identical(self, adapter),
+            a,
+            b,
+            u,
+          ],
         });
         expect(adapter.diff(3.0, 1.0, TimeUnit.day), [
           true,
@@ -262,36 +260,26 @@ void main() {
         ]);
       });
 
-      test('a closure with fewer arguments gets the first arguments', () {
+      test('a closure of another parameter count stops a debug build', () {
+        // Chart.js ADR 0173: a member takes the arguments of its method, or
+        // the adapter first and then the arguments.
         DateAdapterBase.override({
           'startOf': (Object? t) => [t],
-          'endOf': (Object? t) => [t],
           'format': () => 'text',
-        });
-        final adapter = DateAdapterBase();
-        expect(adapter.startOf(1.0, TimeUnit.week), [1.0]);
-        expect(adapter.endOf(5.0, TimeUnit.day), [5.0]);
-        expect(adapter.format(1.0, 'f'), 'text');
-      });
-
-      test('a closure with more arguments gets undefined for them', () {
-        DateAdapterBase.override({
           'formats': (Object? a, Object? b) => [a, b],
-          'endOf': (Object? t, Object? u, Object? extra) => [t, u, extra],
         });
         final adapter = DateAdapterBase();
-        expect(adapter.formats(), [undefined, undefined]);
-        expect(adapter.endOf(5.0, TimeUnit.day), [
-          5.0,
-          TimeUnit.day,
-          undefined,
-        ]);
+        final stops = throwsA(isA<AssertionError>());
+        expect(() => adapter.startOf(1.0, TimeUnit.week), stops);
+        expect(() => adapter.format(1.0, 'f'), stops);
+        expect(adapter.formats, stops);
       });
 
-      test('a stored null throws the ArgumentError of jsCall', () {
+      test('a stored null stops a debug build', () {
         DateAdapterBase.override({'parse': null, 'init': null});
-        expect(() => DateAdapterBase().parse('x'), throwsArgumentError);
-        expect(() => DateAdapterBase().init(null), throwsArgumentError);
+        final stops = throwsA(isA<AssertionError>());
+        expect(() => DateAdapterBase().parse('x'), stops);
+        expect(() => DateAdapterBase().init(null), stops);
       });
     });
 
@@ -299,7 +287,7 @@ void main() {
       final sub = JsClass('Sub', superclass: DateAdapterBase.jsClass);
       final override = jsGet(sub, 'override');
       expect(override, same(jsGet(DateAdapterBase.jsClass, 'override')));
-      jsCall(override, [
+      callDroppingExtraArgs(override, [
         <String, Object?>{
           'formats': () => <String, Object?>{'sub': true},
         },

@@ -723,7 +723,6 @@ void main() {
       ..write('lib/src/core/core.controller.dart', [_ported])
       ..write('lib/src/core/core.scale.dart', [_ported])
       ..write('lib/src/core/core.adapters.dart', [_ported])
-      ..write('lib/src/js/js_function.dart', [_portOnly])
       ..write('lib/src/js/js_number.dart', [_portOnly])
       ..write('lib/src/js/js_undefined.dart', [_portOnly])
       ..write('lib/src/theme/compile.dart', [_portOnly])
@@ -745,7 +744,7 @@ void main() {
         "import 'package:flutter_chartjs_port/src/core/core.controller.dart';",
         "import '../core/core.scale.dart';",
         "import '../core/core.adapters.dart';",
-        "import '../js/js_function.dart';",
+        "import '../types/option_functions.dart';",
         "import '../js/js_number.dart';",
         "import '../js/js_undefined.dart';",
         "import '../options/opt.dart';",

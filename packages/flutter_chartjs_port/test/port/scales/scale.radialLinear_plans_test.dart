@@ -32,7 +32,6 @@ import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableScalePointLabelContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
@@ -1016,10 +1015,6 @@ void main() {
       (
         'a closure with a narrow parameter',
         (RadialLinearScale scale, List<String> label, int index) => label,
-      ),
-      (
-        'a JsFunction',
-        JsFunction((Object? self, Object? label, Object? index) => label),
       ),
       ('a value that is no function', 'no function'),
     ]) {

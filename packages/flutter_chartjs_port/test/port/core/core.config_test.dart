@@ -22,12 +22,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -89,7 +90,7 @@ String _jsonRaw(Object? value) => switch (value) {
   final double d => jsNumberToString(d),
   num() => throw ArgumentError.value(value, 'value', 'is an int'),
   final String s => jsonEncode(s),
-  _ when jsIsFunction(value) => '"<fn>"',
+  _ when isFunction(value) => '"<fn>"',
   CubicInterpolationMode() => cubicModeJson,
   PointStyle() => pointStyleJson,
   final Object keyword when isKeywordEnum(keyword) => keywordJson(keyword),
@@ -1688,7 +1689,7 @@ void main() {
         <String, Object?>{},
       );
       expect((notScriptable as AnyObject)[r'$shared'], isTrue);
-      expect(jsIsFunction(notScriptable['radius']), isTrue);
+      expect(isFunction(notScriptable['radius']), isTrue);
       expect(
         _json(
           config.resolveNamedOptions(

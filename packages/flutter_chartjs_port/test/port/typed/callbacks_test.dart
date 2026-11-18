@@ -14,6 +14,8 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart'
     show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/drop_extra_args.dart';
+
 // Chart.js ADR 0052, section 6: the views and the details objects of the
 // typed callbacks over the objects of a real chart. The raw callbacks of
 // these charts cast the arguments of the chart to the views, as the
@@ -663,7 +665,7 @@ void main() {
       final options = lowering.lower()['options']! as JsObjectFace;
       final onComplete = (options['animation']! as JsObjectFace)['onComplete'];
       final chart = acquireChart(_bar(const <String, Object?>{}));
-      jsCall(onComplete, [
+      callDroppingExtraArgs(onComplete, [
         animator.AnimationEvent(
           chart: chart,
           initial: true,
@@ -671,7 +673,9 @@ void main() {
           currentStep: 250,
         ),
       ]);
-      jsCall(onComplete, [animator.AnimationEvent(chart: chart)]);
+      callDroppingExtraArgs(onComplete, [
+        animator.AnimationEvent(chart: chart),
+      ]);
       expect(
         [
           for (final d in details)

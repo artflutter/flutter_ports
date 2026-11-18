@@ -8,6 +8,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/drop_extra_args.dart';
+
 const _red = ChartPaint.solid(ui.Color(0xffff0000));
 const _blue = ChartPaint.solid(ui.Color(0xff0000ff));
 
@@ -176,7 +178,10 @@ void main() {
     final function = (cell! as OptFunction<ChartPaint>).function;
     for (final index in [0.0, 1.0]) {
       final context = createContext(null, {'type': 'data', 'dataIndex': index});
-      expect(jsCall(function, [context, null]), index == 0 ? _red : _blue);
+      expect(
+        callDroppingExtraArgs(function, [context, null]),
+        index == 0 ? _red : _blue,
+      );
     }
     expect(calls, [0, 1]);
   });
@@ -345,7 +350,7 @@ void main() {
           scope.ownCell(OptionKey.borderColor)! as OptFunction<ChartPaint>;
       expect(calls, isEmpty);
       final context = createContext(null, {'type': 'data', 'dataIndex': 1.0});
-      expect(jsCall(cell.function, [context, null]), _blue);
+      expect(callDroppingExtraArgs(cell.function, [context, null]), _blue);
       expect(calls, [1]);
       final changed = dataset.copyWith(
         borderColor: const ChartValue.constant(_blue),

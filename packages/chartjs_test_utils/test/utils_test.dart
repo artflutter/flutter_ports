@@ -13,7 +13,6 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -186,7 +185,7 @@ void main() {
       // A chart event of the type `mousemove` with a native `pointermove`.
       chart.eventHandler(_NativeEvent('mousemove', 'pointermove'));
       expect(called, 1);
-      expect(jsIsFunction(chart.eventHandler), isTrue);
+      expect(chart.eventHandler, isA<Function>());
     });
   });
 
@@ -483,7 +482,7 @@ void main() {
       expect(event.offsetY, 20);
       expect(event.target, same(chart.canvas));
       // The afterEvent replacement is gone after the callback.
-      expect(jsIsFunction(chart.eventHandler), isTrue);
+      expect(chart.eventHandler, isA<Function>());
     });
 
     testWidgets('the event is cancelable and bubbles to the document of the '

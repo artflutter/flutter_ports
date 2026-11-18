@@ -147,7 +147,8 @@ void main() {
       tester,
     ) async {
       final indexes = <Object?>[];
-      AxisBorder border(ScriptableScaleContext context) {
+      AxisBorder border(Object? scaleContext) {
+        final context = scaleContext! as ScriptableScaleContext;
         indexes.add(context.index);
         return AxisBorder(
           dash: jsToNumber(context.index).remainder(2) == 0

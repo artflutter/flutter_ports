@@ -10,7 +10,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -19,6 +18,7 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/drop_extra_args.dart';
 import '../support/jasmine.dart';
 
 // `Chart.overrides` is the static getter of core.controller.dart. `toEqual`
@@ -205,12 +205,20 @@ void main() {
         final calls = _spyOnUpdate(chart);
 
         final legendItem = chart.legend!.legendItems![0];
-        jsCall(_onClick(config), [null, legendItem, chart.legend]);
+        callDroppingExtraArgs(_onClick(config), [
+          null,
+          legendItem,
+          chart.legend,
+        ]);
 
         expect(chart.getDataVisibility(0), false);
         expect(calls, isNotEmpty);
 
-        jsCall(_onClick(config), [null, legendItem, chart.legend]);
+        callDroppingExtraArgs(_onClick(config), [
+          null,
+          legendItem,
+          chart.legend,
+        ]);
         expect(chart.getDataVisibility(0), true);
       });
     });
@@ -283,12 +291,20 @@ void main() {
         final calls = _spyOnUpdate(chart);
 
         final legendItem = chart.legend!.legendItems![0];
-        jsCall(_onClick(config), [null, legendItem, chart.legend]);
+        callDroppingExtraArgs(_onClick(config), [
+          null,
+          legendItem,
+          chart.legend,
+        ]);
 
         expect(chart.getDataVisibility(0), false);
         expect(calls, isNotEmpty);
 
-        jsCall(_onClick(config), [null, legendItem, chart.legend]);
+        callDroppingExtraArgs(_onClick(config), [
+          null,
+          legendItem,
+          chart.legend,
+        ]);
         expect(chart.getDataVisibility(0), true);
       });
     });

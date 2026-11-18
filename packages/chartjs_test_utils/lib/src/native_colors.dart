@@ -6,14 +6,12 @@
 library;
 
 // Test-only access to the native color bridge.
-// Callback arity must remain explicit for the observation oracle.
-// ignore_for_file: implementation_imports, avoid_types_on_closure_parameters
+// ignore_for_file: implementation_imports
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
@@ -84,29 +82,19 @@ void nativeFixtureColors(Object? config) {
       return paintOfCss(value) ?? value;
     }
     if (value is List) return <Object?>[for (final item in value) color(item)];
-    if (value is JsFunction || value is Function) {
-      final existing = _callbacks[value!];
+    if (value is Function) {
+      final existing = _callbacks[value];
       if (existing != null) return existing;
-      final fn = value is JsFunction ? value.function : value as Function;
-      final self = value is JsFunction;
-      Object? invoke(List<Object?> args) => color(
-        jsCall(
-          value,
-          self ? args.skip(1).toList() : args,
-          thisArg: self && args.isNotEmpty ? args.first : null,
-        ),
-      );
-      final Function wrapper;
-      if (fn is Object? Function()) {
-        wrapper = () => invoke([]);
-      } else if (fn is Object? Function(Never)) {
-        wrapper = (Object? a) => invoke([a]);
-      } else if (fn is Object? Function(Never, Never)) {
-        wrapper = (Object? a, Object? b) => invoke([a, b]);
-      } else {
-        wrapper = (Object? a, Object? b, Object? c) => invoke([a, b, c]);
-      }
-      final wrapped = self ? JsFunction(wrapper) : wrapper;
+      // A typed wrapper of the same shape (Chart.js ADR 0173).
+      final wrapped = switch (value) {
+        final Object? Function(Object?, Object?) fn => (
+          Object? a,
+          Object? b,
+        ) => color(fn(a, b)),
+        final Object? Function(Object?) fn => (Object? a) => color(fn(a)),
+        final Object? Function() fn => () => color(fn()),
+        _ => value,
+      };
       _callbacks[value] = wrapped;
       _callbacks[wrapped] = wrapped;
       return wrapped;

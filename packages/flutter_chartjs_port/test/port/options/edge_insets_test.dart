@@ -39,8 +39,8 @@ void main() {
   test('a scriptable padding returns a native value at each context', () {
     final resolver = createResolver([
       {
-        'padding': (Map<String, Object?> ctx, Object? _) =>
-            EdgeInsets.all(ctx['index']! as double),
+        'padding': (Object? ctx, Object? _) =>
+            EdgeInsets.all((ctx! as Map<String, Object?>)['index']! as double),
       },
     ]);
     final first = attachContext(resolver, {'index': 2.0});

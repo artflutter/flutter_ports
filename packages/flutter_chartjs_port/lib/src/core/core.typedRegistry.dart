@@ -67,8 +67,7 @@ final class TypedRegistry(
   /// [type] ([JsClass.isSubclassOf]). The test is strict: [type] itself is
   /// not for its own registry. Each other value has no `prototype` that a
   /// class prototype can be the prototype of: a Map, a string, a number, a
-  /// Dart `Function` (an arrow function or a method) and a `JsFunction` give
-  /// false.
+  /// Dart `Function` (an arrow function or a method) give false.
   ///
   /// Throws a [TypeError] for Dart `null` and [undefined], as the read
   /// `type.prototype` does.

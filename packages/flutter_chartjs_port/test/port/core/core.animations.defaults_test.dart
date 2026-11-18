@@ -3,12 +3,12 @@ import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/core/core.animation.dart'
     show Interpolator;
 import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
+import '../../support/drop_extra_args.dart';
 import 'recording_defaults.dart';
 
 // core.animations.defaults.js has no spec. The expected values come from
@@ -74,10 +74,10 @@ void main() {
 
     test('animation._scriptable excludes the callbacks', () {
       final scriptable = values(1)['_scriptable'];
-      expect(jsCall(scriptable, ['onProgress']), isFalse);
-      expect(jsCall(scriptable, ['onComplete']), isFalse);
-      expect(jsCall(scriptable, ['fn']), isFalse);
-      expect(jsCall(scriptable, ['duration']), isTrue);
+      expect(callDroppingExtraArgs(scriptable, ['onProgress']), isFalse);
+      expect(callDroppingExtraArgs(scriptable, ['onComplete']), isFalse);
+      expect(callDroppingExtraArgs(scriptable, ['fn']), isFalse);
+      expect(callDroppingExtraArgs(scriptable, ['duration']), isTrue);
     });
 
     test('the hide transition fn is v | 0', () {

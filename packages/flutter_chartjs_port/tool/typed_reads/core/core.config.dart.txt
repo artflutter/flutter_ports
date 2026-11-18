@@ -15,8 +15,6 @@
 #   They do not introduce new option names or by-name reads in point loops.
 # - One more stringIndex read selects the upstream resolver cache by the joined
 #   native arc prefixes (ADR 0093), not a user option name.
-# - jsCall 1: the context function of resolveNamedOptions.
 jsGet 59
 stringIndex 14
-jsCall 1
 jsObjectKeys 3

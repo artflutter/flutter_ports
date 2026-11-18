@@ -360,7 +360,9 @@ void main() {
     });
 
     test('an override replaces only its own members', () {
-      DateAdapterBase.override({'parse': (Object? value) => 42.0});
+      DateAdapterBase.override({
+        'parse': (Object? value, Object? format) => 42.0,
+      });
       final adapter = DateAdapterBase();
       expect(adapter.parse('2015'), 42.0);
       expect(adapter.add(0.0, 1, TimeUnit.second), 1000);

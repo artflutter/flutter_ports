@@ -1,11 +1,12 @@
 // Original code, not ported from Chart.js: the index of the skipNull search.
 
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/parsed.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/option_functions.dart'
+    show appFunctionCalls;
 import 'package:meta/meta.dart';
 
 /// The `find` of `skipNull` in `_getStacks` (controller.bar.js:443-450) as
@@ -25,9 +26,9 @@ import 'package:meta/meta.dart';
 /// parsed list and no index value between two bars. Code of the app can run
 /// there only in these ways:
 ///
-/// - a function value that the JS runtime calls ([jsCall], [jsCall1]): a
+/// - a function value of the options (`option_functions.dart`): a
 ///   scriptable option of any scope, a `_fallback` or `_scriptable`
-///   descriptor. [JsFunction.calls] counts each such call. A new count ends
+///   descriptor. [appFunctionCalls] counts each such call. A new count ends
 ///   the proofs.
 /// - the options of one bar ([optionRead]): the resolve of the options of a
 ///   bar can read a custom scope. It ends the proofs before the resolve.
@@ -104,7 +105,7 @@ final class BarSkipNullIndex(
   /// Whether the first search with a number ran [qualify].
   bool _started = false;
 
-  /// [JsFunction.calls] at the first proof.
+  /// [appFunctionCalls] at the first proof.
   int _calls = 0;
 
   /// Whether an event ended the proofs of this update, or [qualify] failed.
@@ -151,9 +152,9 @@ final class BarSkipNullIndex(
         _dropped = true;
         return scan;
       }
-      _calls = JsFunction.calls;
+      _calls = appFunctionCalls;
       _axis = axis;
-    } else if (JsFunction.calls != _calls || !identical(axis, _axis)) {
+    } else if (appFunctionCalls != _calls || !identical(axis, _axis)) {
       // A function of the app ran since the first proof.
       _dropped = true;
       return scan;

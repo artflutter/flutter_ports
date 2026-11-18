@@ -9,8 +9,8 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/bar_skip_null.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/src/types/option_functions.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _colors = [
@@ -895,21 +895,23 @@ void main() {
       final meta = metaOf(items);
       final index = BarSkipNullIndex(() => true);
       expect(index.find(meta, x, 4.0), same(items[4]));
-      // Each call through the JS runtime counts: a scriptable option of any
-      // scope, a descriptor, a callback.
-      final before = JsFunction.calls;
-      jsCall1((Object? v) => v, 1.0);
-      expect(JsFunction.calls, greaterThan(before));
+      // Each call of an option function counts: a scriptable option of any
+      // scope, a descriptor, a fallback.
+      final before = appFunctionCalls;
+      callScriptable((Object? v) => v, 1.0);
+      expect(appFunctionCalls, greaterThan(before));
       expect(index.find(meta, x, 4.0), same(BarSkipNullIndex.scan));
       // Also after it: the search takes the rest of the update.
       expect(index.find(meta, x, 3.0), same(BarSkipNullIndex.scan));
       expect(index.dropped, isTrue);
     });
 
-    test('jsCall counts too', () {
-      final before = JsFunction.calls;
-      jsCall((Object? a, Object? b) => a, [1.0, 2.0]);
-      expect(JsFunction.calls, greaterThan(before));
+    test('a descriptor and a fallback count too', () {
+      final before = appFunctionCalls;
+      callDescriptor((String name) => true, 'a');
+      expect(appFunctionCalls, before + 1);
+      callFallback((Object? name, Object? value) => name, 'a', 1.0);
+      expect(appFunctionCalls, before + 2);
     });
 
     test('the test of the chart runs one time, at the first proof', () {

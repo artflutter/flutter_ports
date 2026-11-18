@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/typed/lower.dart'
 import 'package:flutter_chartjs_port/src/types/index.dart' as callback_types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/drop_extra_args.dart';
 import 'twin.dart';
 
 // Chart.js ADR 0052, sections 2 and 11: the lowering twins. For each typed
@@ -1348,7 +1349,7 @@ void main() {
           expect(script, isA<Object? Function(Object?, Object?)>());
           final values = [
             for (final index in [0.0, 1.0, 2.0])
-              jsCall(script, [
+              callDroppingExtraArgs(script, [
                 createContext(null, <String, Object?>{
                   'type': 'data',
                   'dataIndex': index,

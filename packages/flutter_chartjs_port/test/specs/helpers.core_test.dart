@@ -4,7 +4,6 @@ import 'dart:typed_data';
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -25,24 +24,23 @@ const Object _none = Object();
 /// One call that a [_Spy] recorded: `this` and the arguments.
 typedef _Call = ({Object? object, List<Object?> args});
 
-/// A `jasmine.createSpy`: a [JsFunction] that records `this` and up to four
-/// arguments of each call.
+/// A `jasmine.createSpy`: a function that records up to four arguments of
+/// each call. A Dart function has no `this` (Chart.js ADR 0173).
 final class _Spy() {
   /// The recorded calls, as `spy.calls.all()`.
   final List<_Call> calls = [];
 
   /// The function value of the spy.
-  late final JsFunction fn = JsFunction(_record);
+  late final Function fn = _record;
 
-  Object? _record(
-    Object? self, [
+  Object? _record([
     Object? a = _none,
     Object? b = _none,
     Object? c = _none,
     Object? d = _none,
   ]) {
     calls.add((
-      object: self,
+      object: null,
       args: [a, b, c, d].where((arg) => !identical(arg, _none)).toList(),
     ));
     return undefined;
@@ -214,96 +212,67 @@ void main() {
         expect(spy.argsFor(3), [42, 'bar']);
       });
       test('should call fn with the given scope', () {
+        // A Dart function has no `this`: callback has no thisArg.
         final spy = _Spy();
-        final scope = <String, Object?>{};
-
         helpers.callback(spy.fn);
-        helpers.callback(spy.fn, [], null);
-        // The explicit undefined is the upstream call.
-        // ignore: avoid_redundant_argument_values
-        helpers.callback(spy.fn, [], undefined);
-        helpers.callback(spy.fn, [], scope);
-
-        // Upstream expects `window` for the first three calls: the Jasmine
-        // spy is a sloppy-mode function, so JavaScript makes a null or
-        // undefined `this` the global object. Dart has no global object. A
-        // JsFunction gets `this` as the caller gives it, as a strict-mode
-        // function does (lib/src/js/js_function.dart). callback passes
-        // thisArg unchanged, as fn.apply(thisArg, args) does.
-        // DIVERGES(chartjs): js-semantics-strict-this, no global this.
-        expect(spy.calls[0].object, same(undefined));
-        expect(spy.calls[1].object, isNull);
-        expect(spy.calls[2].object, same(undefined));
-        expect(spy.calls[3].object, same(scope));
-      });
+        expect(spy.calls, hasLength(1));
+      }, skip: 'diverges: adapt-option-function-types');
       test('should return the value returned by fn', () {
         // helpers.noop: an empty function, which returns undefined.
-        expect(helpers.callback(() => undefined, [41]), same(undefined));
+        // A Dart function takes the exact arguments (Chart.js ADR 0173).
+        expect(
+          helpers.callback((Object? _) => undefined, [41]),
+          same(undefined),
+        );
         expect(helpers.callback((double i) => i + 1, [41.0]), 42);
       });
     });
 
     group('each', () {
       test('should iterate over an array forward if reverse === false', () {
-        final scope = <String, Object?>{};
-        final scopes = <Object?>[];
+        // DIVERGES(chartjs): adapt-option-function-types, no scope.
         final items = <Object?>[];
         final keys = <Object?>[];
 
-        helpers.each(
-          <Object?>['foo', 'bar', 42],
-          JsFunction((Object? self, Object? item, Object? key) {
-            scopes.add(self);
-            items.add(item);
-            keys.add(key);
-          }),
-          scope,
-        );
+        helpers.each<Object?, Object?>(<Object?>['foo', 'bar', 42], (
+          item,
+          key,
+        ) {
+          items.add(item);
+          keys.add(key);
+        });
 
-        expect(scopes, [scope, scope, scope]);
-        expect(scopes, everyElement(same(scope)));
         expect(items, ['foo', 'bar', 42]);
         expect(keys, [0, 1, 2]);
       });
       test('should iterate over an array backward if reverse === true', () {
-        final scope = <String, Object?>{};
-        final scopes = <Object?>[];
+        // DIVERGES(chartjs): adapt-option-function-types, no scope.
         final items = <Object?>[];
         final keys = <Object?>[];
 
-        helpers.each(
-          <Object?>['foo', 'bar', 42],
-          JsFunction((Object? self, Object? item, Object? key) {
-            scopes.add(self);
-            items.add(item);
-            keys.add(key);
-          }),
-          scope,
-          true,
-        );
+        helpers.each<Object?, Object?>(<Object?>['foo', 'bar', 42], (
+          item,
+          key,
+        ) {
+          items.add(item);
+          keys.add(key);
+        }, true);
 
-        expect(scopes, [scope, scope, scope]);
-        expect(scopes, everyElement(same(scope)));
         expect(items, [42, 'bar', 'foo']);
         expect(keys, [2, 1, 0]);
       });
       test('should iterate over object properties', () {
-        final scope = <String, Object?>{};
-        final scopes = <Object?>[];
+        // DIVERGES(chartjs): adapt-option-function-types, no scope.
         // Upstream sets the keys on an array: `items[key] = item`.
         final items = <String, Object?>{};
 
-        helpers.each(
+        helpers.each<Object?, String>(
           <String, Object?>{'a': 'foo', 'b': 'bar', 'c': 42},
-          JsFunction((Object? self, Object? item, Object? key) {
-            scopes.add(self);
-            items[key! as String] = item;
-          }),
-          scope,
+          (item, key) {
+            items[key] = item;
+          },
         );
 
-        expect(scopes, [scope, scope, scope]);
-        expect(scopes, everyElement(same(scope)));
         // jasmine.objectContaining({a: 'foo', b: 'bar', c: 42})
         expect(
           items,
@@ -317,7 +286,7 @@ void main() {
       test('should not throw when called with a non iterable object', () {
         // helpers.each(x) passes no fn. Dart requires one: this fn fails the
         // test if each calls it.
-        void fn() => fail('each called fn');
+        void fn(Object? _, Object? _) => fail('each called fn');
         expect(() => helpers.each(undefined, fn), returnsNormally);
         expect(() => helpers.each(null, fn), returnsNormally);
         expect(() => helpers.each(42, fn), returnsNormally);

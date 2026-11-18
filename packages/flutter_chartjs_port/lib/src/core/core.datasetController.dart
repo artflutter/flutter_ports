@@ -77,7 +77,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsStringList, jsObjectKeys, jsSetIndex, jsSplice;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsGetKey, jsObjectFreeze, jsSet;
@@ -2073,10 +2072,11 @@ class DatasetController(
 
   /// core.datasetController.js:712 `draw()`.
   ///
-  /// The dataset element gets `start` and `count` through [jsCall]: a line
-  /// element takes them, and another element, also of a user element
-  /// class, ignores them as a JavaScript call ignores an extra argument. The
-  /// port casts the elements to `types.VisualElement` for their `draw`.
+  /// The dataset element gets `start` and `count` when its `draw` takes
+  /// them, as a line element does. Another element, also of a user element
+  /// class, gets `ctx` and `area` only, as a JavaScript call ignores an extra
+  /// argument (Chart.js ADR 0173). The port casts the elements to
+  /// `types.VisualElement` for their `draw`.
   void draw() {
     final ctx = this.ctx;
     final chart = this.chart;
@@ -2096,7 +2096,14 @@ class DatasetController(
 
     final dataset = meta.dataset;
     if (dataset != null) {
-      jsCall((dataset as types.VisualElement).draw, [ctx, area, start, count]);
+      final draw = (dataset as types.VisualElement).draw;
+      // DIVERGES(chartjs): adapt-option-function-types, a typed draw call.
+      // A null context throws a TypeError, as the JS call does.
+      if (draw case final _RangeDraw rangeDraw) {
+        rangeDraw(ctx!, area, start, count);
+      } else {
+        draw(ctx!, area);
+      }
     }
 
     i = start;
@@ -2945,3 +2952,12 @@ bool _fillTruthy(Object? fill) => switch (FillTarget.of(fill)) {
   final FillTarget target => fillTargetTruthy(target),
   null => false,
 };
+
+/// The `draw` of a dataset element that takes `start` and `count`, as
+/// `LineElement.draw` does (element.line.js:427).
+typedef _RangeDraw = void Function(
+  CanvasRenderingContext2D ctx,
+  types.ChartArea? area,
+  int? start,
+  int? count,
+);

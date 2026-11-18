@@ -10,8 +10,6 @@
 ///   keys first.
 /// - `jsSort`: the stable `Array.prototype.sort`, which reads only the sign
 ///   of the comparator result.
-/// - `jsCall`: the call of a JavaScript function value with JavaScript
-///   arity.
 /// - `jsGet`: the property read `object[key]` of a Map, a typed object of
 ///   the port (`JsObjectFace`), a List or a String. An absent key gives
 ///   `undefined`.
@@ -30,7 +28,6 @@ library;
 
 export 'package:flutter_chartjs_port/src/js/js_array.dart';
 export 'package:flutter_chartjs_port/src/js/js_class.dart';
-export 'package:flutter_chartjs_port/src/js/js_function.dart';
 export 'package:flutter_chartjs_port/src/js/js_math.dart';
 export 'package:flutter_chartjs_port/src/js/js_number.dart';
 export 'package:flutter_chartjs_port/src/js/js_object.dart';

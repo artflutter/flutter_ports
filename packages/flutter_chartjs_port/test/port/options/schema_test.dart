@@ -16,13 +16,12 @@ import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isObject;
+    show isFunction, isObject;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -462,7 +461,7 @@ String? _mismatch(Object? actual, Object? expected) {
     case {'undefined': true}:
       return identical(actual, undefined) ? null : 'not undefined: $actual';
     case {'function': _}:
-      return jsIsFunction(actual) ? null : 'not a function: $actual';
+      return isFunction(actual) ? null : 'not a function: $actual';
     case {'route': final Object? routed}:
       return _mismatch(actual, routed);
     case final num n:

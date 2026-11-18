@@ -28,8 +28,8 @@ const List<double> _rainfall = [
 
 // onCreateShader: a vertical gradient over the bounds of the line, with
 // three hard bands. The top third is high, the bottom third is low.
-Object? _zones(JsObjectFace context) {
-  final chart = context['chart']! as Chart;
+Object? _zones(Object? context) {
+  final chart = (context! as JsObjectFace)['chart']! as Chart;
   if (chart.chartArea == null) return const ChartPaint.solid(_medium);
   final y = chart.scales['y']!;
   final top = y.getPixelForValue(_rainfall.reduce(math.max));

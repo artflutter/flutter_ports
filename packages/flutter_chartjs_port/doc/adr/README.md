@@ -22,11 +22,11 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054, 0145.
 - [0018](0018-typed-element-options.md) Typed element options: accepted, superseded by 0054.
 - [0019](0019-animation.md) Animation: accepted, superseded in part by 0145, 0171, 0172.
-- [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted.
+- [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted, superseded in part by 0173.
 - [0021](0021-typed-options-in-the-resolver.md) Typed options in the resolver: accepted, superseded by 0054.
 - [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108.
 - [0023](0023-underscore-member-collisions.md) Underscore members with a colliding name: accepted.
-- [0024](0024-dates.md) Dates: accepted, superseded in part by 0110, 0145.
+- [0024](0024-dates.md) Dates: accepted, superseded in part by 0110, 0145, 0173.
 - [0025](0025-scale-value-parameters.md) Scale value parameters: accepted, superseded in part by 0033.
 - [0026](0026-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, supersedes 0008, superseded by 0119.
 - [0027](0027-parsed-data.md) Parsed data in the controllers: accepted, superseded by 0036.
@@ -167,4 +167,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0170](0170-typed-gallery-type-pages.md) Typed gallery type pages: accepted, supersedes 0052.
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.
 - [0172](0172-animation-frame-jobs.md) Animation frame jobs in place of promise jobs: accepted, supersedes 0019.
+- [0173](0173-option-function-types.md) Fixed Dart types for the option functions: accepted, supersedes 0020, 0024.
 <!-- adr-index:end -->

@@ -17,7 +17,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -42,6 +41,7 @@ import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/drop_extra_args.dart';
 import '../../support/legend_item.dart';
 import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
@@ -732,7 +732,7 @@ void main() {
     testWidgets('the default click mutates the native item', (tester) async {
       final chart = acquireChart(_line({}));
       final item = LegendItem(text: ['Apples'], datasetIndex: 0);
-      jsCall(jsGet(chart.legend!.options, 'onClick'), [
+      callDroppingExtraArgs(jsGet(chart.legend!.options, 'onClick'), [
         null,
         item,
         chart.legend,
@@ -883,17 +883,17 @@ void main() {
       final chart = acquireChart(_line({}));
       final item = chart.legend!.legendItems![1];
       final click = jsGet(chart.legend!.options, 'onClick');
-      jsCall(click, [null, item, chart.legend]);
+      callDroppingExtraArgs(click, [null, item, chart.legend]);
       expect(item.hidden, isTrue);
       expect(chart.isDatasetVisible(1), isFalse);
-      jsCall(click, [null, item, chart.legend]);
+      callDroppingExtraArgs(click, [null, item, chart.legend]);
       expect(item.hidden, isFalse);
       expect(chart.isDatasetVisible(1), isTrue);
     });
     testWidgets('a descriptive item does not toggle a dataset', (tester) async {
       final chart = acquireChart(_line({}));
       final item = LegendItem(text: ['description']);
-      jsCall(jsGet(chart.legend!.options, 'onClick'), [
+      callDroppingExtraArgs(jsGet(chart.legend!.options, 'onClick'), [
         null,
         item,
         chart.legend,

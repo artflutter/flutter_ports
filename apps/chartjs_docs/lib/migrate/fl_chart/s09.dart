@@ -9,7 +9,7 @@ import 'package:material_ui/material_ui.dart';
 
 const _font = TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
 
-ChartPaint _zero(JsObjectFace c, Color color) =>
+ChartPaint _zero(Object? c, Color color) =>
     .solid(tickOf(c) == 0 ? color : Colors.transparent);
 
 /// The grid dash of both axes, and no axis line.
@@ -58,7 +58,7 @@ final ChartConfig _config = fills(
         grid: AxisGrid(
           drawTicks: false,
           lineWidth: 0.8,
-          extra: {'color': (JsObjectFace c) => _zero(c, Fl.yellow)},
+          extra: {'color': (Object? c) => _zero(c, Fl.yellow)},
         ),
         border: _border,
         ticks: const AxisTicks(
@@ -75,7 +75,7 @@ final ChartConfig _config = fills(
         grid: AxisGrid(
           drawTicks: false,
           lineWidth: 0.8,
-          extra: {'color': (JsObjectFace c) => _zero(c, Fl.blue)},
+          extra: {'color': (Object? c) => _zero(c, Fl.blue)},
         ),
         border: _border,
         ticks: AxisTicks(

@@ -1229,7 +1229,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   the upstream structure gets a `DIVERGES` marker and an `adapt` row. Record the figures in
   `performance.md`.
 - The JS runtime in `lib/src/js/`: `jsObjectKeys` (`Object.keys` order), `jsSort` (the stable
-  `Array.prototype.sort`), `jsCall` (a call of a JS function value with JS arity), `jsGet` (the
+  `Array.prototype.sort`), `jsGet` (the
   property read `object[key]`), `jsOrZero` (`value || 0` before arithmetic, Chart.js ADR 0017 §8),
   `jsAdd` (the operator `a + b` on a raw option value: a string operand joins, else the numbers
   add), `jsGetKey` (the read `object[key]` of a parsed item, a data item or a stack object, with the
@@ -1270,8 +1270,16 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   - `JsClass` of `js_class.dart`: a JS class as a value (Chart.js ADR 0020). A read of a
     static property follows the superclass chain. `jsConstruct` is `new target(...args)`.
     `jsAssign` is `Object.assign` on a class value or a Map.
-  - `jsIsFunction` (`typeof value === 'function'`) is true for a class value. `jsCall` throws an
-    `ArgumentError` for a class value. A test of `typeof` is a Dart type test.
+  - The runtime has no JS function call (Chart.js ADR 0173). An option function has a fixed Dart
+    type, with no `this` and no JS arity (`lib/src/types/option_functions.dart`): a scriptable
+    option is `(context) => value`, `(context, options) => value` or `() => value`, with an
+    `Object?` context; a descriptor `_scriptable` or `_indexable` is `(name) => bool`; a function
+    `_fallback` is `(name, value) => fallback`. Another type stops a debug build. `isFunction` of
+    `helpers.core` (`typeof value === 'function'`) is true for a Dart function and a class value.
+    `each<T, K>` takes `(value, key)`, and `callback` calls with the exact arguments. A date adapter
+    member and a registry hook take the adapter or the component as their first parameter, in
+    place of `this`. A test of `typeof` is a Dart type test. A spec port that gives a function more
+    arguments than it declares calls `callDroppingExtraArgs` of `test/support/drop_extra_args.dart`.
   - `jsObjectFreeze` is `Object.freeze`, and `Object.isFrozen` is the `isFrozen` getter of a
     `JsFreezable` (Chart.js ADR 0021 §5). Only a `JsFreezable` freezes. A write into frozen options throws a
     `TypeError`.

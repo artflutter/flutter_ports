@@ -28,6 +28,8 @@ import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show GraceLength;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show MinMax;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, createContext;
@@ -37,7 +39,6 @@ import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -587,7 +588,7 @@ String _enc(Object? v) => switch (v) {
   final num n => n.isNaN ? 'NaN' : jsNumberToString(n),
   final String s => jsonEncode(s),
   final JsClass c => 'class:${c.name}',
-  Function() || JsFunction() => 'fn',
+  Function() => 'fn',
   final _Tagged t => t.tag,
   Element() => 'element',
   Animation() => 'animation',
@@ -1092,7 +1093,7 @@ void main() {
       expect(value['datasetElementType'], isNull);
       expect(value.has('dataElementType'), isTrue);
       expect(value['dataElementType'], isNull);
-      expect(jsIsFunction(value), isTrue);
+      expect(isFunction(value), isTrue);
     });
 
     test('new.target gives the element types of the subclass', () {

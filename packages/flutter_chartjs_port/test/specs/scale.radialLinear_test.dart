@@ -14,7 +14,6 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -58,10 +57,9 @@ import '../support/tick_label.dart';
 //   A routed key, for example `ticks.color`, is a key of the RoutedScope
 //   and reads its route target. The key `backdropColor` holds the
 //   `undefined` sentinel. Functions compare by identity.
-// - `jasmine.any(Function)` is [_anyFunction], which uses `jsIsFunction`. A
-//   value with `typeof` `'function'` is a Dart `Function`, a `JsFunction`
-//   or a `JsClass`. `ticks.callback` is the function `formatters.numeric`,
-//   a `TickCallback` (row `adapt-native-tick`).
+// - `jasmine.any(Function)` is [_anyFunction], a Dart `Function`.
+//   `ticks.callback` is the function `formatters.numeric`, a
+//   `TickCallback` (row `adapt-native-tick`).
 //
 // - The chart cases read `_pointLabels` and `_pointLabelItems` as
 //   `pointLabels` and `pointLabelItems` (Chart.js ADR 0012, Underscore
@@ -81,7 +79,7 @@ import '../support/tick_label.dart';
 //   with the keys `name` and `args`.
 
 /// `jasmine.any(Function)`: a value with `typeof` `'function'`.
-final Matcher _anyFunction = predicate(jsIsFunction, 'any Function');
+final Matcher _anyFunction = isA<Function>();
 
 /// scale.radialLinear.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [

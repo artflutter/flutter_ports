@@ -23,7 +23,8 @@
 /// last test, and no check fails.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsIsFunction;
+import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
+    show isFunction;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
 /// Whether the run prints the pairs and checks nothing
@@ -40,7 +41,7 @@ String jsKindOf(Object? value) => switch (value) {
   String() => 'string',
   List<Object?>() => 'array',
   DateTime() => 'Date',
-  _ when jsIsFunction(value) => 'function',
+  _ when isFunction(value) => 'function',
   _ => 'object',
 };
 

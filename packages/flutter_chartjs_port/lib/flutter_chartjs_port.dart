@@ -202,7 +202,6 @@ export 'package:flutter_chartjs_port/src/helpers/radius_length.dart';
 export 'package:flutter_chartjs_port/src/index.dart' hide Animation, Element;
 export 'package:flutter_chartjs_port/src/js/js_array.dart';
 export 'package:flutter_chartjs_port/src/js/js_class.dart';
-export 'package:flutter_chartjs_port/src/js/js_function.dart';
 export 'package:flutter_chartjs_port/src/js/js_math.dart';
 export 'package:flutter_chartjs_port/src/js/js_number.dart';
 export 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -327,6 +326,12 @@ export 'package:flutter_chartjs_port/src/types/legend_item.dart';
 export 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
 export 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
     hide lineSegmentStyleOf;
+export 'package:flutter_chartjs_port/src/types/option_functions.dart'
+    show
+        DescriptorPredicate,
+        ResolverFallback,
+        ScriptableOption,
+        ScriptableOptionWithResolver;
 export 'package:flutter_chartjs_port/src/types/plugin.dart';
 export 'package:flutter_chartjs_port/src/types/tick.dart' hide labelLinesOf;
 export 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'

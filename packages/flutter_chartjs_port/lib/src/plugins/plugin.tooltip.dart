@@ -72,7 +72,6 @@ import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show jsObjectKeys, jsSort;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsIsObjectLike, jsObjectFreeze, jsObjectOrNull;
@@ -1073,18 +1072,22 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   ///
   /// The resolver of a chart gives its typed `setContext`. A plain Map with
   /// a `setContext` function (`plugin.tooltip.tests.js:1391`) gives the
-  /// read by name and the call with the options as `this` (Chart.js ADR
-  /// 0039, section 7). Options without `setContext` throw where upstream
-  /// throws.
+  /// read by name and a call with no `this` (Chart.js ADR 0039, section 7,
+  /// and Chart.js ADR 0173). Options without `setContext` throw where
+  /// upstream throws.
   TooltipOptions _resolveOptions() {
     final options = this.options ?? undefined;
     if (options is OptionView) {
       return TooltipOptions(options.setContext(getContext()));
     }
-    // Options of a spec or of user code: the call by name.
-    return TooltipOptions(
-      jsCall(jsGet(options, 'setContext'), [getContext()], thisArg: options),
-    );
+    // Options of a spec or of user code: the read by name and a typed call
+    // with no `this` (Chart.js ADR 0173).
+    // DIVERGES(chartjs): adapt-option-function-types, a typed call.
+    return TooltipOptions(switch (jsGet(options, 'setContext')) {
+      final Object? Function(Object?) setContext => setContext(getContext()),
+      final Object? Function() setContext => setContext(),
+      _ => throw TypeError(),
+    });
   }
 
   /// plugin.tooltip.js:507 `_resolveAnimations()`.

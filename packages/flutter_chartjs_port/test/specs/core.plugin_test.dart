@@ -8,7 +8,6 @@ import 'package:chartjs_test_utils/flutter.dart'
 import 'package:chartjs_test_utils/pure.dart' show toEqualOptions;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
@@ -16,6 +15,7 @@ import 'package:flutter_chartjs_port/src/types/plugin.dart'
     show Plugin, PluginHook, PluginHookArgs, TooltipDrawHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/drop_extra_args.dart';
 import '../support/jasmine.dart';
 import '../support/plugin_defaults.dart';
 
@@ -649,12 +649,18 @@ void main() {
             id: 'test',
             start: (chart, args, opts) {
               expect(jsGet(opts, 'fun'), isA<Function>());
-              expect(jsCall(jsGet(opts, 'fun'), const []), 'test');
+              expect(
+                callDroppingExtraArgs(jsGet(opts, 'fun'), const []),
+                'test',
+              );
               expect(jsGet(opts, 'arr'), [1, 2, 3]);
 
               expect(jsGet(jsGet(opts, 'sub'), 'subfun'), isA<Function>());
               expect(
-                jsCall(jsGet(jsGet(opts, 'sub'), 'subfun'), const []),
+                callDroppingExtraArgs(
+                  jsGet(jsGet(opts, 'sub'), 'subfun'),
+                  const [],
+                ),
                 'subtest',
               );
               expect(jsGet(jsGet(opts, 'sub'), 'subarr'), [3, 2, 1]);

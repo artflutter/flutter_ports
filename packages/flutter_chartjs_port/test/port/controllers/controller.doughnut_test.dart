@@ -10,7 +10,6 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
 import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
@@ -21,6 +20,7 @@ import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/drop_extra_args.dart';
 import '../../support/light_theme.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
@@ -95,9 +95,10 @@ Object? _legendOverrides() =>
 
 /// `generateLabels(chart)` of `overrides.doughnut.plugins.legend.labels`.
 List<Object?> _generateLabels(Chart chart) =>
-    jsCall(jsGet(jsGet(_legendOverrides(), 'labels'), 'generateLabels'), [
-          chart,
-        ])!
+    callDroppingExtraArgs(
+          jsGet(jsGet(_legendOverrides(), 'labels'), 'generateLabels'),
+          [chart],
+        )!
         as List<Object?>;
 
 /// The probe `realLegend` of the generator: the items and the hit boxes of
@@ -473,7 +474,7 @@ void main() {
       final legend = chart.legend!;
       final before = updates;
 
-      jsCall(jsGet(_legendOverrides(), 'onClick'), [
+      callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
         <String, Object?>{},
         LegendItem(text: ['item'], index: 1),
         legend,
@@ -502,7 +503,7 @@ void main() {
       ) async {
         final chart = acquireChart(_one(const {}, <Object?>[1.0, 2.0, 3.0]));
         final legend = chart.legend!;
-        jsCall(jsGet(_legendOverrides(), 'onClick'), [
+        callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
           <String, Object?>{},
           LegendItem(text: ['item'], index: index),
           legend,
@@ -534,7 +535,7 @@ void main() {
             _one(const {}, <Object?>[1.0, 2.0, 3.0, 4.0]),
           );
           final legend = chart.legend!;
-          jsCall(jsGet(_legendOverrides(), 'onClick'), [
+          callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
             <String, Object?>{},
             LegendItem(text: ['item'], index: index),
             legend,

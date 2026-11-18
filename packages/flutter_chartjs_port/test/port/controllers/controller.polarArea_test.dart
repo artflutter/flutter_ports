@@ -26,8 +26,6 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart'
-    show jsCall, jsIsFunction;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -40,6 +38,7 @@ import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/drop_extra_args.dart';
 import '../../support/light_theme.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
@@ -145,7 +144,7 @@ Object? _noLegend(Chart chart) {
     'generateLabels',
   );
   try {
-    return jsCall(generateLabels, [chart]);
+    return callDroppingExtraArgs(generateLabels, [chart]);
     // The JS `catch (e)` of the probe: a JS TypeError is a Dart TypeError.
     // ignore: avoid_catching_errors
   } on TypeError {
@@ -364,10 +363,10 @@ void main() {
       );
       final first = _legendFunctions();
       final second = _legendFunctions();
-      expect(jsIsFunction(generateLabels(first)), isTrue);
+      expect(generateLabels(first), isA<Function>());
       expect(generateLabels(first), same(generateLabels(second)));
       expect(generateLabels(first), same(generateLabels(own)));
-      expect(jsIsFunction(jsGet(first, 'onClick')), isTrue);
+      expect(jsGet(first, 'onClick'), isA<Function>());
       expect(jsGet(first, 'onClick'), same(jsGet(second, 'onClick')));
       expect(jsGet(first, 'onClick'), same(jsGet(own, 'onClick')));
     });
@@ -388,7 +387,7 @@ void main() {
       final chart = acquireChart(config);
       final legend = chart.legend!;
       updates = 0;
-      jsCall(jsGet(_legendFunctions(), 'onClick'), [
+      callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
         <String, Object?>{},
         LegendItem(text: ['item'], index: 1),
         legend,
@@ -415,7 +414,7 @@ void main() {
         final chart = acquireChart(
           _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]),
         );
-        jsCall(jsGet(_legendFunctions(), 'onClick'), [
+        callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
           <String, Object?>{},
           LegendItem(text: ['item'], index: index),
           chart.legend,
@@ -441,7 +440,7 @@ void main() {
       final chart = acquireChart(
         _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]),
       );
-      jsCall(jsGet(_legendFunctions(), 'onClick'), [
+      callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
         <String, Object?>{},
         LegendItem(text: ['item'], index: 1),
         chart.legend,

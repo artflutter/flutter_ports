@@ -874,7 +874,7 @@ void _update(
   // Before any changes are made, notify boxes that an update is about to
   // being
   // This is used to clear any cached data (e.g. scale limits)
-  each(chart.boxes, (Object? box) {
+  each<Object?, Object?>(chart.boxes, (box, _) {
     if (box is LayoutItemBeforeLayout) {
       box.beforeLayout();
     }
@@ -978,7 +978,7 @@ void _update(
   );
 
   // Finally update boxes in chartArea (radial scale for example)
-  each(boxes.chartArea, (_LayoutWrap layout) {
+  each<_LayoutWrap, Object?>(boxes.chartArea, (layout, _) {
     final box = layout.box;
     final area = chart.chartArea!;
     box

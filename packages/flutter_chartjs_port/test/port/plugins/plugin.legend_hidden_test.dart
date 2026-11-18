@@ -2731,7 +2731,8 @@ void main() {
         final twinCalls = <Object?>[];
         Map<String, Object?> dataset(List<Object?> into) => {
           ..._indexedColors,
-          'hoverBackgroundColor': (ScriptableContext ctx) {
+          'hoverBackgroundColor': (Object? context) {
+            final ctx = context! as ScriptableContext;
             into.add([ctx.index, ctx.mode, ctx.active]);
             return _black;
           },

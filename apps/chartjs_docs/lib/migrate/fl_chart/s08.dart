@@ -115,7 +115,7 @@ final ChartConfig _config = fills(
             String.fromCharCode(_icons[value.toInt()]!.$1.codePoint),
           ],
           extra: {
-            'color': (JsObjectFace c) =>
+            'color': (Object? c) =>
                 ChartPaint.solid(_icons[tickOf(c).toInt()]!.$2),
           },
         ),

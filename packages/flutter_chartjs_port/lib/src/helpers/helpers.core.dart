@@ -8,8 +8,8 @@
 /// object with a face ([JsObjectFace]: a typed option scope, resolved
 /// options, a resolver, a context, a parsed item, ...), an array is a
 /// [List], `undefined` is the [undefined] sentinel and `null` is Dart `null`.
-/// A function value is a Dart [Function] or a [JsFunction], and ported code
-/// calls it through [jsCall] (`lib/src/js/js_function.dart`).
+/// A function value is a Dart [Function] of a fixed type (Chart.js ADR
+/// 0173).
 ///
 /// [isObject] is true for a `Map<String, Object?>` and a typed object with a
 /// face. In JavaScript it is also true for an instance of another class
@@ -27,7 +27,7 @@ import 'dart:typed_data';
 
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_function.dart';
+import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
@@ -41,6 +41,8 @@ import 'package:flutter_chartjs_port/src/types/data_item.dart'
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
     show LineSegmentStyle;
+import 'package:flutter_chartjs_port/src/types/option_functions.dart'
+    show appFunctionCalls;
 import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
 import 'package:meta/meta.dart' show internal;
 
@@ -210,19 +212,17 @@ T valueOrDefault<T>(T value, T defaultValue) {
 /// returns undefined.
 /// @param fn - The function to call.
 /// @param args - The arguments with which `fn` should be called.
-/// @param [thisArg] - The value of `this` provided for the call to `fn`.
+/// @param `[thisArg]` - The value of `this` provided for the call to `fn`.
 ///
-/// [fn] is a Dart [Function] or a [JsFunction]. Only a [JsFunction] gets
-/// [thisArg] ([jsCall]). A null [args] is no argument, as
+/// [fn] is a Dart [Function], called with `Function.apply` and the exact
+/// [args]. A Dart function has no `this`: the port has no `thisArg`
+/// (Chart.js ADR 0173). A null [args] is no argument, as
 /// `fn.apply(thisArg, undefined)` is.
-Object? callback(
-  Object? fn, [
-  List<Object?>? args,
-  Object? thisArg = undefined,
-]) {
-  // A function is always truthy, and every function has a `call` method.
-  if (jsIsFunction(fn)) {
-    return jsCall(fn, args ?? const [], thisArg: thisArg);
+// DIVERGES(chartjs): adapt-option-function-types, a Dart call with no this.
+Object? callback(Object? fn, [List<Object?>? args]) {
+  if (fn is Function) {
+    appFunctionCalls++;
+    return Function.apply(fn, args ?? const []);
   }
   return undefined;
 }
@@ -235,17 +235,19 @@ Object? callback(
 /// extra function calls.
 /// @param loopable - The object or array to be iterated.
 /// @param fn - The function to call for each item.
-/// @param [thisArg] - The value of `this` provided for the call to `fn`.
+/// @param `[thisArg]` - The value of `this` provided for the call to `fn`.
 /// @param [reverse] - If true, iterates backward on the loopable.
 ///
-/// [fn] is a Dart [Function] or a [JsFunction], called through [jsCall]. For
-/// a List it gets the item and its index as an `int`. For a Map it gets the
-/// value and the key, in the [jsObjectKeys] order. An item that a call of
-/// [fn] removes reads as [undefined], as in JavaScript.
-void each(
+/// [fn] takes the value and the key: for a List the item and its index as an
+/// `int`, for a Map the value and the key, in the [jsObjectKeys] order. An
+/// item that a call of [fn] removes reads as [undefined], as in JavaScript.
+/// [T] and [K] are the parameter types of [fn]: a value of another type
+/// throws a [TypeError]. A Dart function has no `this`: the port has no
+/// `thisArg` (Chart.js ADR 0173).
+// DIVERGES(chartjs): adapt-option-function-types, a typed function.
+void each<T, K>(
   Object? loopable,
-  Object fn, [
-  Object? thisArg = undefined,
+  void Function(T value, K key) fn, [
   bool reverse = false,
 ]) {
   int i;
@@ -257,11 +259,11 @@ void each(
     if (reverse) {
       for (i = len - 1; i >= 0; i--) {
         // DIVERGES(chartjs): adapt-int-indexes, the index is an int.
-        jsCall(fn, [_item(array, i), i], thisArg: thisArg);
+        fn(_item(array, i) as T, i as K);
       }
     } else {
       for (i = 0; i < len; i++) {
-        jsCall(fn, [_item(array, i), i], thisArg: thisArg);
+        fn(_item(array, i) as T, i as K);
       }
     }
   } else if (isObject(loopable)) {
@@ -271,7 +273,7 @@ void each(
     keys = jsObjectKeys(object);
     len = keys.length;
     for (i = 0; i < len; i++) {
-      jsCall(fn, [jsGet(object, keys[i]), keys[i]], thisArg: thisArg);
+      fn(jsGet(object, keys[i]) as T, keys[i] as K);
     }
   }
 }
@@ -826,9 +828,9 @@ String capitalize(String str) {
 bool defined(Object? value) => !identical(value, undefined);
 
 /// helpers.core.ts:393 `isFunction`: `typeof value === 'function'`, which is
-/// [jsIsFunction]: a Dart [Function], a [JsFunction] or a class value
-/// (`JsClass`, Chart.js ADR 0020).
-bool isFunction(Object? value) => jsIsFunction(value);
+/// true for a Dart [Function] and a class value ([JsClass], Chart.js ADR
+/// 0020).
+bool isFunction(Object? value) => value is Function || value is JsClass;
 
 /// helpers.core.ts:396 `setsEqual`.
 ///

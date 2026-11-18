@@ -11,13 +11,13 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show PixelRadius;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_function.dart' show jsCall;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/drop_extra_args.dart';
 import 'controller_chart_harness.dart';
 
 // The port-only tests of lib/src/controllers/controller.pie.dart. Pie has no
@@ -38,9 +38,10 @@ Object? _legendOverrides([String type = 'pie']) =>
 
 /// `generateLabels(chart)` of `overrides.pie.plugins.legend.labels`.
 List<Object?> _generateLabels(Chart chart) =>
-    jsCall(jsGet(jsGet(_legendOverrides(), 'labels'), 'generateLabels'), [
-          chart,
-        ])!
+    callDroppingExtraArgs(
+          jsGet(jsGet(_legendOverrides(), 'labels'), 'generateLabels'),
+          [chart],
+        )!
         as List<Object?>;
 
 /// The config of a pie chart with the labels a, b, c and one dataset with
@@ -132,7 +133,7 @@ void main() {
       final legend = chart.legend!;
       final before = updates;
 
-      jsCall(jsGet(_legendOverrides(), 'onClick'), [
+      callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
         <String, Object?>{},
         LegendItem(text: ['item'], index: 1),
         legend,

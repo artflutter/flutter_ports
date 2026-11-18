@@ -525,12 +525,11 @@ repository.
     - `controller.polarArea.dart`: it casts the scale `r` to `types.RadialLinearScale` once
       (`controller.polarArea.js:166`), and it ports the #12238 hunk with `== 0` and
       `== 'angular'`. `overrides` holds the legend functions as tear-offs of top-level functions.
-      `parseObjectData` calls `parseObjectDataRadialScaleOf(meta.iScale, parsing, …)` and no
-      longer uses `jsCall`.
+      `parseObjectData` calls `parseObjectDataRadialScaleOf(meta.iScale, parsing, …)`.
     - `controller.radar.dart`: the write `line.points = points` is the typed setter of
       `types.LineElementWrites` for a line of the built-in class, by name through
       `types.PropertyAccess` for another class. `parseObjectData`
-      calls `parseObjectDataRadialScaleOf(meta.iScale, parsing, …)` and no longer uses `jsCall`.
+      calls `parseObjectDataRadialScaleOf(meta.iScale, parsing, …)`.
       The cast to `types.RadialLinearScale` stands in the loop of
       `updateElements`, at `controller.radar.js:88`. The label of `getLabelAndValue` is the raw
       label.
