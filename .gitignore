@@ -11,3 +11,6 @@ coverage/
 
 # Playwright MCP output
 .playwright-mcp/
+
+# Flutter DevTools settings
+devtools_options.yaml
