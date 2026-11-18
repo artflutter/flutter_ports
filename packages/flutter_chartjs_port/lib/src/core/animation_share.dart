@@ -1,8 +1,12 @@
-// Original code, not ported from Chart.js: shared bar animation options.
+// Original code, not ported from Chart.js: shared animation options.
 
 /// One resolution of the animation options for the bars of one
 /// `BarController.update` call (Chart.js ADR 0151, row
-/// `adapt-shared-bar-animations`).
+/// `adapt-shared-bar-animations`), and for the points of one
+/// `ScatterController.update` call (Chart.js ADR 0160, row
+/// `adapt-shared-point-animations`). The text below says bar; a point of a
+/// scatter update takes the same guard, with the change of item 3 that the
+/// last paragraph states.
 ///
 /// Upstream resolves the animation options again for each bar
 /// (core.datasetController.js:841-861 and :898-908): a resolver with a
@@ -39,6 +43,16 @@
 ///    the property object are absent or shared: no bar resolved element
 ///    options of its own, which can call code of the app.
 ///
+/// A point of a scatter update has element options of its own in each
+/// animated update: the scatter controller shares no options
+/// (core.datasetController.js:270 and :809: `enableOptionSharing` is false).
+/// Item 3 accepts them for a point. The resolution of these options runs
+/// between two points, and each call of app code in it (a scriptable option
+/// or the item of an indexable option at the index) adds one to the count,
+/// so the test of the count already covers it. The point must be a
+/// `PointElement` of the exact class with a `PointProperties` object with no
+/// foreign value, and the options are absent or a resolved options object.
+///
 /// A bar that fails a test of item 3 takes the ordinary resolution, and its
 /// result can become the kept object. The kept object lives until the end of
 /// the update call: no object outlives the loop (Chart.js ADR 0054 section 4
@@ -67,11 +81,13 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
     show OptionKey;
-import 'package:flutter_chartjs_port/src/options/props.dart' show BarProperties;
+import 'package:flutter_chartjs_port/src/options/props.dart'
+    show BarProperties, PointProperties;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
-/// The kept animation options of one `BarController.update` call.
+/// The kept animation options of one `BarController.update` or
+/// `ScatterController.update` call.
 // DIVERGES(chartjs): adapt-shared-bar-animations, one resolution for a loop.
 final class SharedBarAnimations._(
   final DatasetController _controller,
@@ -81,7 +97,8 @@ final class SharedBarAnimations._(
 ) {
   /// The plan of one update call of [controller] in the mode [mode], or Dart
   /// `null` when item 1 of the guard fails. [exactClass] is whether the
-  /// controller is an object of the class `BarController` itself.
+  /// controller is an object of the class `BarController` or
+  /// `ScatterController` itself.
   static SharedBarAnimations? begin(
     DatasetController controller,
     String mode, {
@@ -144,8 +161,20 @@ final class SharedBarAnimations._(
   }
 
   /// Whether [element] with [properties] is a built-in bar whose property
-  /// object has no foreign value and no element options of its own.
+  /// object has no foreign value and no element options of its own, or a
+  /// built-in point whose property object has no foreign value.
   static bool _sharable(types.Element element, Object properties) {
+    if (properties is PointProperties) {
+      // DIVERGES(chartjs): adapt-shared-point-animations, a point with
+      // options of its own (Chart.js ADR 0160).
+      if (properties.hasForeign ||
+          element is! Element ||
+          !element.takesProperties(properties)) {
+        return false;
+      }
+      final options = properties.options;
+      return options == null || options is ElementOptions;
+    }
     if (properties is! BarProperties || properties.hasForeign) return false;
     if (element is! Element || !element.takesProperties(properties)) {
       return false;

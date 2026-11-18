@@ -2548,9 +2548,10 @@ class DatasetController(
     }
   }
 
-  /// The kept animation options of the `BarController.update` call that runs
-  /// now, or Dart `null` (Chart.js ADR 0151). Only `BarController.update`
-  /// writes it, and it clears it at the end of its loop.
+  /// The kept animation options of the `BarController.update` or
+  /// `ScatterController.update` call that runs now, or Dart `null` (Chart.js
+  /// ADRs 0151 and 0160). Only these two methods write it, and each clears it
+  /// at the end of its loop.
   @internal
   // DIVERGES(chartjs): adapt-shared-bar-animations, it lives for one loop.
   SharedBarAnimations? sharedAnimations;

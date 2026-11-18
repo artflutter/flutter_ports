@@ -2807,3 +2807,13 @@ files in §1.1, §2.3 and §2.5 do not move in this entry: use the named anchors
 `test/port/canvas/canvas_rounded_bar_test.dart` (new; the CI job `test-impeller` also runs it) and
 `test/port/canvas/canvas_rect_bar_test.dart` (the new member of the interface). The estimates do not change. No
 trigger occurred.
+
+## Shared animation options of a scatter update, 2026-11-18
+
+[Chart.js ADR 0160](adr/0160-shared-point-animation-options.md) (proposed, row `adapt-shared-point-animations`) edits
+`lib/src/controllers/controller.scatter.dart` (`ScatterController.update`), `lib/src/core/animation_share.dart` (a point
+branch in `_sharable`) and the doc of `sharedAnimations` in `lib/src/core/core.datasetController.dart`. The lines of
+these files move. This plan cites `controller.scatter.dart` and `core.datasetController.dart` only by name and cites no
+line of them. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart` or `helpers.dom.dart` changes,
+and no canvas operation or drawing cut changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and
+the estimates do not change. Test: `test/port/core/animation_share_point_test.dart` (new). No trigger occurred.

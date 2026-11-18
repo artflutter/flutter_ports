@@ -42,6 +42,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_port/src/core/animation_share.dart'
+    show SharedBarAnimations;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
@@ -401,7 +403,24 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     // Update Points
     // DIVERGES(chartjs): adapt-scatter-overflow-refresh, names this loop.
     _loopBeforeOverflow = overflowFollows;
-    updateElements(points, start, count, mode);
+    // DIVERGES(chartjs): adapt-shared-point-animations, one resolution of the
+    // animation options for the points of this call, under the guard of
+    // animation_share.dart (Chart.js ADR 0160).
+    final shared = SharedBarAnimations.begin(
+      this,
+      mode,
+      exactClass: super.runtimeType == ScatterController,
+    );
+    if (shared == null) {
+      updateElements(points, start, count, mode);
+      return;
+    }
+    sharedAnimations = shared;
+    try {
+      updateElements(points, start, count, mode);
+    } finally {
+      sharedAnimations = null;
+    }
   }
 
   /// Whether the [updateElements] that starts now is the loop of an [update]
