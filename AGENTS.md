@@ -15,7 +15,7 @@ next. Fifth port: chartjs-chart-sankey 0.19.1, an add-on of the Chart.js port an
 type of another package → `packages/flutter_chartjs_chart_sankey_port`, phases 0-4 done (each
 file of `src/` ported; the unit tests, the specs and the fixtures pass; a gallery page), phase 5
 next. Sixth port: @kurkle/color 0.3.2, the color library of the Chart.js port →
-`packages/flutter_kurkle_color_port`, a package of its own (version 0.2.0; 0.1.2 is on pub.dev), with no
+`packages/flutter_kurkle_color_port`, a package of its own (version 0.2.0, on pub.dev), with no
 import of another port.
 
 ## Commands
@@ -1000,7 +1000,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
 - `packages/flutter_kurkle_color_port`: the @kurkle/color 0.3.2 port (library, version 0.2.0,
-  MIT; 0.1.2 is on pub.dev), the color library of the Chart.js port. Its pubspec has no
+  MIT, on pub.dev), the color library of the Chart.js port. Its pubspec has no
   `publish_to`. It depends only on Flutter (`dart:ui`: the methods of the upstream class `Color`
   are the extension `KurkleColor` on the Flutter `Color`, Chart.js ADR 0171) and imports no other
   port. `flutter_chartjs_port` depends on it with `^0.2.0`, which
