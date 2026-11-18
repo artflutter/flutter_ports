@@ -5,11 +5,10 @@ library;
 // The spec keeps the upstream statements: one call on the chart in each.
 // ignore_for_file: cascade_invocations
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, UpdateMode, YAxis;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';

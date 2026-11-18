@@ -39,27 +39,11 @@ import 'dart:ui';
 
 // index.js:1-8 imports the helpers of chartjs-test-utils. The specs import
 // `acquireChart` and `releaseChart` from package:chartjs_test_utils/flutter.dart.
-import 'package:chartjs_test_utils/flutter.dart'
-    show afterEachChart, installTestFont, releaseCharts;
-import 'package:chartjs_test_utils/pure.dart'
-    show setUpBuiltins, setUpDefaultsRestore;
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart'
-    show ModifierKey, ZoomPluginOptions;
-import 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart'
-    show zoomPlugin;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        CanvasEventTarget,
-        Chart,
-        HTMLCanvasElement,
-        JsObjectFace,
-        NativeEvent,
-        controllers,
-        defaults,
-        elements,
-        plugins,
-        scales,
-        setDefaultDateZone;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    hide defaults;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The `devicePixelRatio` of the test view (index.js:10-12).

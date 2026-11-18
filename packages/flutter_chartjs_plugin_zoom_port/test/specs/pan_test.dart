@@ -2,21 +2,12 @@
 @TestOn('vm')
 library;
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show
-        Mode,
-        ModifierKey,
-        PanOptions,
-        ScaleLimit,
-        ScaleLimits,
-        ZoomChart,
-        ZoomPluginOptions;
-import 'package:flutter_chartjs_port/chartjs.dart' show CanvasEventTarget;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../flutter_test_config.dart'
-    show EventInit, dispatchPointer, simulatePan;
+import '../flutter_test_config.dart';
 import '../support/jasmine.dart';
 
 void main() {

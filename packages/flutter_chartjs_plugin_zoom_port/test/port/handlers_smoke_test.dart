@@ -2,12 +2,9 @@
 @TestOn('vm')
 library;
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
-import 'package:flutter_chartjs_plugin_zoom_port/src/handlers.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show CanvasEventTarget, Chart, NativeEvent;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A scatter chart with the linear scales `x` and `y` from 0 to 100, and no

@@ -4,16 +4,15 @@
 library;
 
 import 'dart:async';
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show Mode, PanOptions, ZoomPluginOptions;
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
-import 'package:flutter_chartjs_port/helpers.dart' show clearCanvas;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet, jsToNumber;
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/helpers.dart' hide pi;
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
-import '../../../flutter_test_config.dart' show simulatePan;
+import '../../../flutter_test_config.dart';
 import '../../observe.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -22,7 +21,7 @@ Map<String, Object?> fixture() {
   final data = <Object?>[];
   for (var i = 1; i <= 100; i++) {
     labels.add('Label $i');
-    data.add(math.sin((i / 100) * math.pi) * 10);
+    data.add(sin((i / 100) * pi) * 10);
   }
 
   // DIVERGES(zoom): harness-fixture-observations, no sprite canvas.

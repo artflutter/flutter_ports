@@ -2,13 +2,11 @@
 @TestOn('vm')
 library;
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
-import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/scale.types.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Scale, XAxis, undefined;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsToString;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';

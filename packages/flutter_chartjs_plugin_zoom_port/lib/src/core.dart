@@ -16,16 +16,11 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/scale.types.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/utils.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, Scale, UpdateMode;
-import 'package:flutter_chartjs_port/helpers.dart' show isNumber, sign;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsObjectKeys, jsToNumber, jsTruthy;
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
+import 'package:flutter_chartjs_port/helpers.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// The values of [scales] in the order of `Object.values`: the order of
 /// `Object.keys`, with the array index keys first.

@@ -8,10 +8,8 @@
 /// the chart.
 library;
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show NativeEvent, NativeEventListener, NativeEventTarget, undefined;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
 
 export 'package:flutter_chartjs_plugin_zoom_port/src/types.dart'
     show ScaleRange;

@@ -17,30 +17,20 @@
 /// - The active pointers are a `Map<int, ActivePointer>`: a Dart `Map`
 ///   literal is a `LinkedHashMap`, which keeps the insertion order of a JS
 ///   `Map`, also when a write replaces the value of a key.
-/// - `Math.hypot(a, b)` is `math.sqrt(a * a + b * b)` (Chart.js ADR 0146 §4):
+/// - `Math.hypot(a, b)` is `sqrt(a * a + b * b)` (Chart.js ADR 0146 §4):
 ///   for pointer distances, only the last bit can differ.
 /// - The `WeakMap` of the managers is an `Expando`.
 /// - A user callback has its typedef type and gets a direct call (Zoom ADR
 ///   0004).
 library;
 
-import 'dart:math' as math;
+import 'dart:math' hide Point;
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/core.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/utils.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        CanvasEventTarget,
-        Chart,
-        CssStyleProperties,
-        HTMLCanvasElement,
-        NativeEvent,
-        NativeEventTarget;
-import 'package:flutter_chartjs_port/helpers.dart' show getRelativePosition;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsTruthy;
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
+import 'package:flutter_chartjs_port/helpers.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// gestures.ts:13 `GestureEvent`: the normalized gesture event of the pan
 /// and pinch callbacks (`onPanStart`, `onPanRejected`).
@@ -96,7 +86,7 @@ const double _defaultPanThreshold = 10;
 double _distance(ActivePointer a, ActivePointer b) {
   final dx = a.clientX - b.clientX;
   final dy = a.clientY - b.clientY;
-  return math.sqrt(dx * dx + dy * dy);
+  return sqrt(dx * dx + dy * dy);
 }
 
 /// gestures.ts:41 `createEnabler(chart, state)`: the test of a pan start.
@@ -394,7 +384,7 @@ final class _GestureManager(
       center: center,
       deltaX: deltaX,
       deltaY: deltaY,
-      distance: math.sqrt(deltaX * deltaX + deltaY * deltaY),
+      distance: sqrt(deltaX * deltaX + deltaY * deltaY),
       scale: scale,
       pointers: pointers,
       target: _canvas,

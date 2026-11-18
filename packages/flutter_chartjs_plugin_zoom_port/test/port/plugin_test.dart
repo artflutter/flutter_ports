@@ -4,12 +4,10 @@ library;
 
 import 'dart:async';
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
-import 'package:flutter/widgets.dart'
-    show Align, Alignment, Directionality, SizedBox, TextDirection, Widget;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/widgets.dart' hide Element;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart' show getState;
-import 'package:flutter_chartjs_port/chartjs.dart' show Element, JsObjectFace;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 

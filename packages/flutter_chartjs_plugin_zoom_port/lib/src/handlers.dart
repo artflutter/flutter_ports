@@ -18,22 +18,11 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/core.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/utils.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        CanvasEventTarget,
-        Chart,
-        ChartArea,
-        HTMLCanvasElement,
-        NativeEvent,
-        NativeEventTarget;
-import 'package:flutter_chartjs_port/helpers.dart'
-    show getRelativePosition, isPointInArea, sign;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsTruthy;
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
+import 'package:flutter_chartjs_port/helpers.dart' hide debounce;
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// handlers.ts:9 `clamp(x, from, to)`.
 double _clamp(double x, double from, double to) =>

@@ -2,20 +2,9 @@
 @TestOn('vm')
 library;
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart, waitForDone;
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show
-        DragOptions,
-        Mode,
-        ModifierKey,
-        PanOptions,
-        ZoomChart,
-        ZoomChartContext,
-        ZoomOptions,
-        ZoomPluginOptions,
-        ZoomTrigger;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show CanvasEventTarget, Chart, NativeEvent, Scale, undefined;
+import 'package:chartjs_test_utils/flutter.dart' hide triggerMouseEvent;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';

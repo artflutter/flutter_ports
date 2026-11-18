@@ -11,17 +11,11 @@
 /// chart, with no cast and no read by name.
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui';
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/core.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/defaults.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/gestures.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/handlers.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/upstream.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, ChartPlugin, EventHookArgs, PluginHookArgs, UpdateHookArgs;
+import 'package:flutter_chartjs_port/chartjs.dart' hide defaults;
 
 /// The CSS color `rgba(225,225,225,0.3)` of plugin.ts:40: the default fill
 /// of the drag rectangle.

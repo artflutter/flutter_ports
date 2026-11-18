@@ -33,11 +33,9 @@
 /// ```
 library;
 
-import 'package:flutter/foundation.dart' show immutable, listEquals;
-import 'package:flutter_chartjs_plugin_zoom_port/src/gestures.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, ChartPaint, NativeEvent, PluginOptions;
+import 'package:flutter/foundation.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
 
 /// options.ts:5 `Mode = 'x' | 'y' | 'xy'`: the zoom or pan directions.
 ///

@@ -2,12 +2,10 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter/gestures.dart' show PointerDeviceKind;
-import 'package:flutter/services.dart' show LogicalKeyboardKey;
+import 'package:flutter/gestures.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart'
-    show HandlerName, getState;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 

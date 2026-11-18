@@ -15,15 +15,12 @@
 /// This file is not a test entry. Only VM test files import it.
 library;
 
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 // The drag rectangle of `draw` (src/plugin.ts:23-36) and the drag of the
 // state: the generator reads them from src/handlers.ts and src/state.ts.
-import 'package:flutter_chartjs_plugin_zoom_port/src/handlers.dart'
-    show computeDragRect;
-import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart' show getState;
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsObjectKeys;
+
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// The chart of the running fixture and its observations, or null outside a
 /// run.

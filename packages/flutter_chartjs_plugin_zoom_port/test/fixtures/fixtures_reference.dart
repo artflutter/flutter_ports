@@ -10,7 +10,7 @@
 // the Liberation Sans context of scale_chart_common.mjs.
 // 12 fixtures, 129 observations.
 
-import 'package:flutter_chartjs_port/chartjs.dart' show undefined;
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String fixturesReferenceNode = 'v24.22.1';

@@ -3,21 +3,20 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
-import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show DragOptions, DrawTime, ZoomOptions, ZoomPluginOptions;
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
-import '../../../flutter_test_config.dart' show triggerMouseEvent;
+import '../../../flutter_test_config.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
   final data = <Object?>[];
   for (var i = 0; i < 100; i++) {
-    data.add(<String, Object?>{'x': i, 'y': math.sin((i / 25) * math.pi) * 10});
+    data.add(<String, Object?>{'x': i, 'y': sin((i / 25) * pi) * 10});
   }
 
   return <String, Object?>{

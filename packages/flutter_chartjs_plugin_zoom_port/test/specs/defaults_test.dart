@@ -2,22 +2,12 @@
 @TestOn('vm')
 library;
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show
-        DragOptions,
-        DrawTime,
-        Mode,
-        PanOptions,
-        PinchOptions,
-        WheelOptions,
-        ZoomOptions,
-        ZoomPluginOptions;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, ChartPlugin, JsObjectFace, PluginHook, UpdateHookArgs;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../flutter_test_config.dart' show zoomRangeOnlyUpdates;
+import '../flutter_test_config.dart';
 import '../support/jasmine.dart';
 
 // `Chart.defaults.plugins.zoom` is one immutable `ZoomPluginOptions`

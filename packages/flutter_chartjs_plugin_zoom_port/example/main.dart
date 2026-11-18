@@ -9,7 +9,7 @@
 /// the dependencies.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -54,7 +54,7 @@ class _ZoomPageState() extends State<ZoomPage> {
   /// 500 points of a signal.
   static final List<DataPoint> _points = [
     for (var i = 0; i < 500; i++)
-      DataPoint(i, math.sin(i / 20) * 40 + math.sin(i / 3) * 8),
+      DataPoint(i, sin(i / 20) * 40 + sin(i / 3) * 8),
   ];
 
   /// The zoom options: the wheel and a pinch zoom the x axis, a drag pans

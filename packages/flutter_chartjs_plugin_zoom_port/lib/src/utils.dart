@@ -9,11 +9,9 @@ library;
 
 import 'dart:async';
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show CartesianAxis, Chart, NativeEvent, Scale, ScaleAxis, XAxis, YAxis;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsObjectKeys;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 // utils.ts:5 `eventKey(key)`: the flag ``event[`${key}Key`]`` of a modifier
 // key is `ModifierKey.pressedIn`, the field of the enum value.

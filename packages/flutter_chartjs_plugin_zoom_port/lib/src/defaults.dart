@@ -8,7 +8,7 @@
 /// library does not export it: the name clashes with `defaults` of the host.
 library;
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 
 /// defaults.ts:3 `defaults`: the default `ZoomPluginOptions`.
 ///

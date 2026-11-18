@@ -4,11 +4,11 @@ library;
 
 import 'package:flutter_test/flutter_test.dart';
 
-import '../fixtures/index.dart' as fixture;
+import '../fixtures/index.dart';
 
 void main() {
   group('fixtures', () {
-    group('zoom', fixture.specs('zoom'));
-    group('pan', fixture.specs('pan'));
+    group('zoom', specs('zoom'));
+    group('pan', specs('pan'));
   });
 }

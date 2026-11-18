@@ -12,12 +12,9 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomPluginOptions;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show ChartPlugin, JsObjectFace, undefined;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsObjectKeys;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The default of an argument that the caller did not pass.

@@ -15,15 +15,13 @@
 /// - The methods of `interface Chart` (:19-34): the extension [ZoomChart].
 library;
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/core.dart' as core;
-import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, Scale, UpdateMode;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
+    as core;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
 
-export 'package:flutter_chartjs_plugin_zoom_port/src/core.dart'
-    show pan, resetZoom, zoom, zoomRect, zoomScale, zoomUpdateMode;
-export 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart'
-    show zoomPlugin;
+export 'package:flutter_chartjs_plugin_zoom_port/src/core.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart';
 
 /// index.ts:19 the methods of the zoom API on a chart.
 ///

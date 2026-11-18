@@ -16,15 +16,11 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show RAxis, Scale, TimeUnit, XAxis, YAxis, undefined;
-import 'package:flutter_chartjs_port/helpers.dart'
-    show almostEquals, isNullOrUndef, isNumber, log10;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsToNumber, jsTruthy;
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
+import 'package:flutter_chartjs_port/helpers.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// scale.types.ts:7 `ZoomFunction`: zooms [scale] by the factor [zoom]
 /// around [center], within [limits]. The result is true if the range

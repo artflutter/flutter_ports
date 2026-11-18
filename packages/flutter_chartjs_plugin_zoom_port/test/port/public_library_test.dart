@@ -2,7 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'package:chartjs_test_utils/pure.dart' show removeBuiltins;
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';

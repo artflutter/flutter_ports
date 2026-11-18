@@ -3,10 +3,9 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart;
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart, JsObjectFace;
-import 'package:flutter_chartjs_port/helpers.dart' show clearCanvas;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/helpers.dart';
 
 import '../../observe.dart' as observe;
 

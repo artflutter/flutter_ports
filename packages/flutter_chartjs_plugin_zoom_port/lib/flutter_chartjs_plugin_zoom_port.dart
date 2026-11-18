@@ -37,52 +37,23 @@
 /// (`ChartView.dataOnlyUpdates`): new data keeps the zoom range.
 ///
 /// The port follows the upstream modules file by file: each module of the
-/// pinned upstream `src/` folder is ported. The `doc/` folder of this
-/// package has the roadmap and the parity tracker.
+/// pinned upstream `src/` folder is ported, and the library exports each of
+/// them (ADR 0011). The `doc/` folder of this package has the roadmap and
+/// the parity tracker.
 library;
 
-export 'src/gestures.dart' show ActivePointer, GestureEvent;
-export 'src/index.dart'
-    show
-        ZoomChart,
-        pan,
-        resetZoom,
-        zoom,
-        zoomPlugin,
-        zoomRect,
-        zoomScale,
-        zoomUpdateMode;
-export 'src/options.dart'
-    show
-        DragOptions,
-        DrawTime,
-        GenericEvent,
-        LimitOptions,
-        Mode,
-        ModeFn,
-        ModifierKey,
-        PanOptions,
-        PinchOptions,
-        RejectEvent,
-        RejectableStartEvent,
-        ScaleLimit,
-        ScaleLimits,
-        WheelOptions,
-        ZoomCallback,
-        ZoomChartContext,
-        ZoomEventContext,
-        ZoomOptions,
-        ZoomPluginOptions,
-        ZoomStartContext,
-        ZoomTrigger,
-        ZoomTriggerContext;
-export 'src/scale.types.dart'
-    show
-        PanFunction,
-        ZoomFunction,
-        ZoomRectFunction,
-        panFunctions,
-        zoomFunctions,
-        zoomRectFunctions;
-export 'src/types.dart' show PanAmount, ScaleRange, ZoomAmount;
-export 'src/upstream.dart';
+// The library hides `State` of `src/state.dart`, an internal name that
+// clashes with the Flutter `State`, so that an app imports the library next
+// to Flutter. A file of lib/src that uses it imports its file (ADR 0011).
+export 'package:flutter_chartjs_plugin_zoom_port/src/core.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/defaults.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/gestures.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/handlers.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/index.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/options.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/plugin.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/scale.types.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/state.dart' hide State;
+export 'package:flutter_chartjs_plugin_zoom_port/src/types.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/upstream.dart';
+export 'package:flutter_chartjs_plugin_zoom_port/src/utils.dart';
