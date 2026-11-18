@@ -9,6 +9,7 @@ import 'package:chartjs_gallery/docs/charts/polar.dart';
 import 'package:chartjs_gallery/docs/charts/radar.dart';
 import 'package:chartjs_gallery/docs/charts/scatter.dart';
 import 'package:chartjs_gallery/docs/samples/area/line_boundaries.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// One variant of a chart type page: a `chart-editor` block of the docs.
 ///
@@ -16,12 +17,12 @@ import 'package:chartjs_gallery/docs/samples/area/line_boundaries.dart';
 ///   `type.<stem>.variant.<key>`.
 /// - `text`: the short text of the segment.
 /// - `source`: the docs file and the lines of the block at the pin.
-/// - `config`: makes a new chart config for each call.
+/// - `config`: makes a new typed chart config for each call.
 typedef ChartTypeVariant = ({
   String key,
   String text,
   String source,
-  Map<String, Object?> Function() config,
+  ChartConfig Function() config,
 });
 
 /// One entry of the home list: the page of `docs/charts/<stem>.md`.

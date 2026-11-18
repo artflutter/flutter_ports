@@ -1,10 +1,9 @@
 // Ported from Chart.js v4.6.1 docs/samples/area/line-boundaries.md (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
 
-import 'dart:ui' as ui;
+import 'dart:ui';
 
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show FillTarget;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The area chart of `docs/samples/area/line-boundaries.md:3-120` at the
 /// fill `'origin'`: the action `Fill: origin` of `:48-56`.
@@ -23,82 +22,57 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show FillTarget;
 ///   the dataset (Chart.js ADR 0031, Open "The Area `fill` control"). The
 ///   page has no actions: `Randomize` (`:76-82`) and `Smooth` (`:84-90`)
 ///   are not variants.
+/// - The title function `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
+///   (`:106`) is the constant text of each variant: `ChartTitle.text` is a
+///   `String`, and a `FillTarget` has no text (Chart.js ADR 0140).
 ///
 /// The options are those of `:95-113`. The gallery registers
 /// `registerables`, with the filler and the title: the chart fills the
 /// area to the origin, and the title is `Fill: origin`.
-Map<String, Object?> areaOriginConfig() =>
-    _config(FillTarget.toOrigin, 'origin');
+ChartConfig areaOriginConfig() => _config(.toOrigin, 'origin');
 
 /// The config of the action `Fill: start` (`line-boundaries.md:57-65`):
 /// the chart fills the area to the bottom of the value scale
 /// (`src/plugins/plugin.filler/filler.options.js:82-83`).
-Map<String, Object?> areaStartConfig() => _config(FillTarget.toStart, 'start');
+ChartConfig areaStartConfig() => _config(.toStart, 'start');
 
 /// The config of the action `Fill: end` (`line-boundaries.md:66-74`): the
 /// chart fills the area to the top of the value scale
 /// (`src/plugins/plugin.filler/filler.options.js:84-85`).
-Map<String, Object?> areaEndConfig() => _config(FillTarget.toEnd, 'end');
+ChartConfig areaEndConfig() => _config(.toEnd, 'end');
 
 /// The config of the action `Fill: false (default)`
 /// (`line-boundaries.md:39-47`), the first state of the sample (`:29`):
 /// the chart draws the line with no fill.
-Map<String, Object?> areaFalseConfig() => _config(FillTarget.none, 'false');
+ChartConfig areaFalseConfig() => _config(.none, 'false');
 
 /// The config of `line-boundaries.md:95-113` with the data of `:20-33`,
 /// where the dataset has the fill value [fill] of an action, and [name] is
 /// the text of the fill of the action in the title.
-Map<String, Object?> _config(FillTarget fill, String name) => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'labels': <Object?>[
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-    ],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'Dataset',
-        'data': <Object?>[
-          97.81,
-          -42.3,
-          84.05,
-          -46.6,
-          -31.77,
-          12.48,
-          -59.53,
-          -0.87,
-        ],
-        'borderColor': const ChartPaint.solid(
-          ui.Color.fromRGBO(255, 99, 132, 1),
-        ),
-        'backgroundColor': const ChartPaint.solid(
-          ui.Color.fromRGBO(255, 99, 132, 0.5),
-        ),
-        'fill': fill,
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'plugins': <String, Object?>{
-      'filler': <String, Object?>{'propagate': false},
-      'title': <String, Object?>{
-        'display': true,
-        'text': (Object? ctx) => _titleText(name),
-      },
-    },
-    'interaction': <String, Object?>{'intersect': false},
-  },
-};
-
-/// `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
-/// (`line-boundaries.md:106`). The fill of each variant is a `FillTarget`
-/// (Chart.js ADR 0140), which has no text: the title takes the [name] of the
-/// fill of the action, the text of the JS `+` of the upstream value.
-// DIVERGES(chartjs): adapt-fill-target-objects, the title takes the name.
-Object _titleText(String name) => 'Fill: $name';
+ChartConfig _config(FillTarget fill, String name) => ChartConfig(
+  type: .line,
+  labels: const [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+  ],
+  datasets: [
+    LineDataset(
+      label: 'Dataset',
+      data: const [97.81, -42.3, 84.05, -46.6, -31.77, 12.48, -59.53, -0.87],
+      borderColor: const .constant(.solid(Color.fromRGBO(255, 99, 132, 1))),
+      backgroundColor: const .constant(
+        .solid(Color.fromRGBO(255, 99, 132, 0.5)),
+      ),
+      fill: fill,
+    ),
+  ],
+  filler: const ChartFiller(propagate: false),
+  title: ChartTitle(display: true, text: 'Fill: $name'),
+  interaction: const ChartInteraction(intersect: false),
+);

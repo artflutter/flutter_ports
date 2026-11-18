@@ -1,37 +1,26 @@
 // Ported from Chart.js v4.6.1 docs/charts/scatter.md (MIT, Chart.js Contributors).
 // DIVERGES(chartjs): adapt-direct-colors, native Color inputs and values.
-import 'dart:ui' as ui;
+import 'dart:ui';
 
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartPosition;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The scatter chart of `docs/charts/scatter.md:5-47`, with each key and
 /// value of the docs block.
-Map<String, Object?> scatterConfig() => <String, Object?>{
-  'type': 'scatter',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'Scatter Dataset',
-        'data': <Object?>[
-          <String, Object?>{'x': -10.0, 'y': 0.0},
-          <String, Object?>{'x': 0.0, 'y': 10.0},
-          <String, Object?>{'x': 10.0, 'y': 5.0},
-          <String, Object?>{'x': 0.5, 'y': 5.5},
-        ],
-        'backgroundColor': const ChartPaint.solid(
-          ui.Color.fromRGBO(255, 99, 132, 1),
-        ),
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': 'linear',
-        'position': ChartPosition.bottom,
-      },
-    },
-  },
-};
+ChartConfig scatterConfig() => ChartConfig(
+  type: .scatter,
+  datasets: [
+    ScatterDataset(
+      label: 'Scatter Dataset',
+      points: [
+        DataPoint(-10, 0),
+        DataPoint(0, 10),
+        DataPoint(10, 5),
+        DataPoint(0.5, 5.5),
+      ],
+      backgroundColor: const ChartValue.constant(
+        ChartPaint.solid(Color.fromRGBO(255, 99, 132, 1)),
+      ),
+    ),
+  ],
+  scales: const {'x': LinearAxis(position: .bottom)},
+);

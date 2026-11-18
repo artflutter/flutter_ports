@@ -422,10 +422,9 @@ void main() {
     });
     final chart = state.chart!;
     final dataset =
-        (readByName(chart.data, 'datasets')! as List<Object?>).single!
-            as Map<Object?, Object?>;
-    expect(dataset['fill'], FillTarget.toOrigin);
-    expect(dataset['data'], [
+        (readByName(chart.data, 'datasets')! as List<Object?>).single;
+    expect(readByName(dataset, 'fill'), FillTarget.toOrigin);
+    expect(readByName(dataset, 'data'), [
       97.81,
       -42.3,
       84.05,
@@ -470,9 +469,8 @@ void main() {
         final fill = fills[variant.key]!;
         final chart = state.chart!;
         final dataset =
-            (readByName(chart.data, 'datasets')! as List<Object?>).single!
-                as Map<Object?, Object?>;
-        expect(dataset['fill'], fill, reason: variant.key);
+            (readByName(chart.data, 'datasets')! as List<Object?>).single;
+        expect(readByName(dataset, 'fill'), fill, reason: variant.key);
         // line-boundaries.md:106: `'Fill: ' + ctx.chart.data.datasets[0]
         // .fill`.
         final title = chart.titleBlock! as title_plugin.Title;

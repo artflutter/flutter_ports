@@ -10,8 +10,8 @@ import 'package:material_ui/material_ui.dart';
 /// The page of one chart type: the variant line, the chart, the readout
 /// and the help text (Chart.js ADR 0031 sections 1 and 10).
 ///
-/// The chart is the `ChartView` of the app library with the config of a
-/// docs block (Chart.js ADRs 0048 and 0049). The view has no height: it
+/// The chart is the `ChartView` of the app library with the typed config of
+/// a docs block (Chart.js ADRs 0048, 0049 and 0170). The view has no height: it
 /// gets an unbounded height in the scroll view, and the platform gives the
 /// height from the width and the aspect ratio of the type (Chart.js ADR
 /// 0049, section 5). Thus the chart has the aspect of the docs: 2, or 1 for
@@ -64,10 +64,10 @@ class ChartTypePageState() extends State<ChartTypePage> {
   Chart? _chart;
   final ValueNotifier<int> _readout = ValueNotifier(0);
 
-  /// The config of the variant. The page makes it once for each variant,
-  /// so that a rebuild of the page gives the `ChartView` the same Map: no
-  /// update (Chart.js ADR 0049, section 4).
-  late Map<String, Object?> _config = _makeConfig();
+  /// The typed config of the variant (Chart.js ADR 0170). The page makes it
+  /// once for each variant, so that a rebuild of the page gives the
+  /// `ChartView` the same config: no update (Chart.js ADR 0049, section 4).
+  late ChartConfig _config = _makeConfig();
 
   /// The chart, once it exists. For the tests.
   @visibleForTesting
@@ -116,14 +116,12 @@ class ChartTypePageState() extends State<ChartTypePage> {
 
   /// The config of the current variant, with the option `onHover` and the
   /// inline plugin of the readout. The components are registered first.
-  Map<String, Object?> _makeConfig() {
+  ChartConfig _makeConfig() {
     registerGalleryComponents();
-    final config = _current.config();
-    final options =
-        (config['options'] ??= <String, Object?>{}) as Map<String, Object?>;
-    options['onHover'] = (event, active, chart) => _readout.value++;
-    config['plugins'] = <Plugin<Object?>>[_mouseoutPlugin];
-    return config;
+    return _current.config().copyWith(
+      onHover: (event, active, chart) => _readout.value++,
+      plugins: [_mouseoutPlugin],
+    );
   }
 
   /// The inline plugin `typeReadout`: it rebuilds the readout after a
@@ -191,7 +189,7 @@ class ChartTypePageState() extends State<ChartTypePage> {
             ),
           KeyedSubtree(
             key: ValueKey(_variant),
-            child: ChartView.raw(
+            child: ChartView(
               key: ValueKey('type.$stem.host'),
               config: _config,
               onChartCreated: _onChart,

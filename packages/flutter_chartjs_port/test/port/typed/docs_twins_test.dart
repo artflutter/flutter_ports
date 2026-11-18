@@ -22,8 +22,9 @@ import 'chart_twin.dart';
 // The group "the docs configs" has the 12 docs configs of the gallery: the
 // 11 `chart-editor` blocks of `apps/chartjs_gallery/lib/docs/charts/` and
 // the Area sample of `lib/docs/samples/area/line_boundaries.dart` with its 4
-// fill variants. The raw twin of each is a copy of the gallery config, with
-// each key and value of the docs block; the docs lines are in its comment.
+// fill variants. The typed config of each is a copy of the gallery config
+// (Chart.js ADR 0170). The raw twin of each has each key and value of the
+// docs block, and the docs lines are in its comment.
 // The typed configs need no `extra`. Three typed forms differ from the docs
 // block (Chart.js ADR 0052, section 4):
 // - The horizontal bar and the vertical line leave out the dataset keys

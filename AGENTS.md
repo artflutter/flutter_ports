@@ -323,8 +323,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     datasets, and the hover text of `getLabelAndValue`) and the help text. The help text gives the
     docs source and the input: a hover or a tap on an element shows the tooltip, a tap outside the
     chart hides it, and a tap on a legend item hides or shows its data. Its last line gives the
-    keys of Chart.js ADR 0051. The chart is a `ChartView.raw` with the config that the page makes
-    once for each variant, and `onChartCreated` gives the chart to the page. The chart has the
+    keys of Chart.js ADR 0051. The chart is a `ChartView` with the typed `ChartConfig` that the page
+    makes once for each variant (Chart.js ADR 0170), and `onChartCreated` gives the chart to the page. The chart has the
     semantics label `<title> chart: <variant>`. The app follows the platform brightness: its builder puts a `ChartTheme` above each route, with the
     light preset or the dark preset over the surface of the dark color scheme (Chart.js ADR 0147).
     The host has no height: the platform gives the aspect of the docs (2, or 1 for doughnut, pie,
@@ -1541,8 +1541,8 @@ sankey ADRs are proposed. The doc paths are relative to
   `ChartView` and its raw twin in a `ChartView.raw`, and compare the observations of the
   controller harness, the hits on a grid and the draw calls, before and during a hover, unthemed
   and under `ChartThemeData.light()`, with the colors in parsed form. A docs twin compares two
-  charts through the public API: it holds when the internal model of the chart changes. The raw
-  twin of a docs config is a copy of the gallery config: a change of a docs config of the
+  charts through the public API: it holds when the internal model of the chart changes. The typed
+  config of a docs twin is a copy of the gallery config: a change of a docs config of the
   gallery changes its copy in the same commit.
 - The plugin reference tests in `test/port/plugins/` run the cases of their generator through
   `testPluginChartCases` of `plugin_chart_harness.dart`: the controller harness with `hits: false`,
