@@ -206,7 +206,6 @@ export 'package:flutter_chartjs_port/src/js/js_math.dart';
 export 'package:flutter_chartjs_port/src/js/js_number.dart';
 export 'package:flutter_chartjs_port/src/js/js_object.dart';
 export 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-export 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 export 'package:flutter_chartjs_port/src/options/animated_prop.dart';
 export 'package:flutter_chartjs_port/src/options/element_options_base.dart';
 export 'package:flutter_chartjs_port/src/options/foreign_audit.dart'

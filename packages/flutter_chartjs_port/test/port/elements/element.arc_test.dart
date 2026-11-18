@@ -770,11 +770,12 @@ void main() {
       );
     });
 
-    test('a JS null borderDashOffset sets 0, the ToNumber of the setter', () {
-      // The DOM setter converts null to 0. The JS mock records null.
+    test('a JS null borderDashOffset sets no offset', () {
+      // The DOM setter converts null to 0. The port applies no ToNumber
+      // (Chart.js ADR 0174): null gives no offset, and 0 is the default.
       final ctx = _CanvasContext();
       _drawArc({'borderDashOffset': null}).draw(ctx);
-      expect(_named(ctx, 'setLineDashOffset').single['args'], [0.0]);
+      expect(_named(ctx, 'setLineDashOffset').single['args'], [null]);
     });
 
     test('a borderJoinStyle that is not a StrokeJoin gives the default '

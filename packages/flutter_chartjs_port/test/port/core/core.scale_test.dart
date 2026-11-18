@@ -606,6 +606,14 @@ final class _DrawingScale(super.cfg) extends Scale {
 /// A scale subclass that inherits `draw` through another subclass.
 final class _SubScale(super.cfg, super.spec) extends _TestScale;
 
+/// The reference cases that the port draws in another way, by name.
+const Map<String, String> _referenceSkips = {
+  // The string strokeWidth of the title is no number: the port gives the
+  // canvas no width, where the DOM applies ToNumber (Chart.js ADR 0174).
+  'bottom, title with a string strokeWidth and no strokeColor':
+      'diverges: adapt-canvas-option-values',
+};
+
 void main() {
   setUpDefaultsRestore();
 
@@ -686,7 +694,7 @@ void main() {
 
   group('the scale pipeline', () {
     for (final c in scaleReference) {
-      test(c.name, () => _run(c));
+      test(c.name, () => _run(c), skip: _referenceSkips[c.name]);
     }
   });
 

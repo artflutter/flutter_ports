@@ -3,13 +3,13 @@
 /// Normalization at the built-in legend generator boundary.
 library;
 
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toTRBLCorners;
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBLCorners;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';

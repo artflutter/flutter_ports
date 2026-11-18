@@ -17,10 +17,11 @@
 /// - Numbers are `double` (Chart.js ADR 0146). An option value goes through
 ///   `jsToNumber` before arithmetic, through `jsAdd` in a `+` (a string
 ///   option joins the other operand), through `jsTruthy` for a test, and
-///   through the conversions of `lib/src/js/js_webidl.dart` before a canvas
-///   setter. A scale property that starts JS `undefined` and holds a number
-///   starts as NaN, the `ToNumber` of `undefined`. Each upstream reader of
-///   such a property gives the same result for NaN and `undefined`.
+///   through the functions of `lib/src/canvas/canvas_values.dart` before a
+///   canvas setter. A scale property that starts JS `undefined` and holds a
+///   number starts as NaN, the `ToNumber` of `undefined`. Each upstream
+///   reader of such a property gives the same result for NaN and
+///   `undefined`.
 ///   [Scale.labelRotation] holds any JS value, the raw `minRotation` too,
 ///   and starts as [undefined]. [Scale.paddingTop] and [Scale.paddingBottom]
 ///   hold a number or a padding that a string option joins, and start as
@@ -46,11 +47,11 @@
 library;
 
 import 'dart:math' as math;
-
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
 import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -79,7 +80,6 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;

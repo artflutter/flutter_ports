@@ -1,15 +1,14 @@
-// Original code, not ported from Chart.js: tests of lib/src/js/js_webidl.dart.
+// Original code, not ported from Chart.js: tests of lib/src/canvas/canvas_values.dart.
 import 'dart:ui' show Color, Offset, StrokeCap, StrokeJoin;
 
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:test/test.dart';
 
-// The conversions follow the WebIDL types of the DOM setters: ToNumber for
-// an unrestricted double and ToNumber of each item for a sequence of
-// numbers. An undefined value gives Dart null, which the canvas layer
-// ignores, as the DOM ignores the value.
+// A canvas value is the option value when it has the type of the setter
+// (Chart.js ADR 0174): no ToNumber. An undefined value gives Dart null,
+// which the canvas layer ignores, as the DOM ignores the value.
 
 void main() {
   group('canvasStyle', () {
@@ -27,14 +26,17 @@ void main() {
   });
 
   group('canvasNumber', () {
-    test('gives null for undefined, else the ToNumber', () {
+    test('gives the double of a num, and null for undefined and null', () {
       expect(canvasNumber(undefined), isNull);
-      expect(canvasNumber(null), 0.0);
+      expect(canvasNumber(null), isNull);
       expect(canvasNumber(2), 2.0);
-      expect(canvasNumber('1.5'), 1.5);
-      expect(canvasNumber(true), 1.0);
-      expect(canvasNumber('a'), isNaN);
       expect(canvasNumber(double.infinity), double.infinity);
+    });
+
+    test('a value of another type gives null, which the canvas ignores', () {
+      for (final value in <Object?>['1.5', true, 'a', <Object?>[]]) {
+        expect(canvasNumber(value), isNull, reason: '$value');
+      }
     });
   });
 
@@ -66,17 +68,18 @@ void main() {
   });
 
   group('canvasLineDash', () {
-    test('gives the ToNumber of each item of a List', () {
+    test('gives the double of each num of a List', () {
       final segments = <double>[5, 3];
       expect(canvasLineDash(segments), same(segments));
       expect(canvasLineDash(<int>[4]), [4.0]);
-      expect(canvasLineDash(<Object?>[1, '2', null, true]), [
-        1.0,
-        2.0,
-        0.0,
-        1.0,
-      ]);
+      expect(canvasLineDash(<Object?>[1, 2.5]), [1.0, 2.5]);
       expect(canvasLineDash(const <Object?>[]), isEmpty);
+    });
+
+    test('an item that is not a num gives NaN, so the canvas ignores it', () {
+      final dash = canvasLineDash(<Object?>[1, '2']);
+      expect(dash.first, 1.0);
+      expect(dash.last, isNaN);
     });
 
     test('throws a TypeError for a value that is not a List', () {

@@ -16,6 +16,8 @@ import 'dart:math' as math;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
     show CanvasPath, CanvasRenderingContext2D;
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart'
+    show canvasStyle;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show clipArea, unclipArea;
@@ -27,7 +29,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart' show canvasStyle;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 // DIVERGES(chartjs): adapt-boundary-exact-points, private boundary endpoints.
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'

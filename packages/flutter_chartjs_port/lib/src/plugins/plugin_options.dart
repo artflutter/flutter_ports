@@ -29,6 +29,8 @@ library;
 import 'dart:ui' show TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart'
+    show canvasNumber, canvasTextAlign;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionMode;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -45,8 +47,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
     show jsToNumber, jsToString, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
-    show canvasNumber, canvasTextAlign;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;

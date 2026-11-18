@@ -38,12 +38,12 @@
 library;
 
 import 'dart:math' as math;
-
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
     show NativeArcScale;
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
@@ -69,10 +69,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableScalePointLabelContext, toFont, toTRBLCorners;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
-
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;

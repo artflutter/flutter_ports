@@ -51,8 +51,8 @@ repository.
     `test/port/public_library_test.dart` imports the app library next to `material_ui.dart`,
     registers the line set and pumps a `ChartView`.
   - `lib/src/`: ported modules at their upstream paths (`controllers/`, `core/`, `elements/`,
-    `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), and `js/`, the JS runtime: port-only `js_*.dart` files. `js_webidl.dart` has the WebIDL
-    conversions of the Canvas 2D setters. `js_class.dart` has the JS class values (Chart.js ADR
+    `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), and `js/`, the JS runtime: port-only `js_*.dart` files. `canvas/canvas_values.dart` gives an
+    option value to a Canvas 2D setter, with no `ToNumber` (Chart.js ADR 0174). `js_class.dart` has the JS class values (Chart.js ADR
     0020). `Animation.runFrame` of `core.animation.dart` runs the frame jobs of the animations (Chart.js ADR
     0172). The animator walks a copy
     of its chart list (row `adapt-animator-chart-list`): a chart that a listener starts gets its
@@ -628,7 +628,7 @@ repository.
     - The text aligns hold the Flutter `TextAlign` (row `adapt-flutter-text-align`), also in a
       raw config: the canvas `textAlign`, `labels.textAlign` of the legend and a legend item,
       `titleAlign`, `bodyAlign` and `footerAlign` of the tooltip, a label item of a scale and the
-      options of `renderText`. `canvasTextAlign` of `js_webidl.dart` reads an option value; a
+      options of `renderText`. `canvasTextAlign` of `canvas_values.dart` reads an option value; a
       keyword stops a debug build. `TextAlign.justify` draws as `start`. The `'inner'` of the x
       labels of a scale is `TickAlign.inner`.
     - The arc options `borderAlign` and `spacingMode` hold the enums `ArcBorderAlign` and

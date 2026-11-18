@@ -924,7 +924,7 @@ export function observe(chart, extra) {
 
 // ---------------------------------------------------------------------------
 // The calls: a copy of tool/reference/scale_reference.mjs (the records of
-// the Dart MockContext, harness-mock-optional-args, js_webidl.dart), with
+// the Dart MockContext, harness-mock-optional-args, canvas_values.dart), with
 // `arc`.
 
 /**
@@ -936,7 +936,7 @@ const PAD = {clip: 2, fill: 2, stroke: 1, fillText: 4, strokeText: 4, arc: 6};
 
 /**
  * The value that the Dart MockContext records for a canvas setter when
- * upstream assigns `v`: the conversions of lib/src/js/js_webidl.dart.
+ * upstream assigns `v`: the conversions of lib/src/canvas/canvas_values.dart.
  */
 function setterValue(name, v) {
   if (v === undefined) return null;

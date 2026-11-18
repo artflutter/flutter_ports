@@ -45,7 +45,7 @@ Map<String, Object?> fixture() => <String, Object?>{
   },
 };
 
-/// The border of the context [ctx]: `dash: (ctx) => ctx.index % 2 === 0 ?
+/// The border of the context [context]: `dash: (ctx) => ctx.index % 2 === 0 ?
 /// [6, 3] : []`. The scale context has no index: its `undefined % 2` is NaN,
 /// which gives the solid dash. A scriptable option takes an `Object?`
 /// context (Chart.js ADR 0173).

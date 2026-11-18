@@ -321,7 +321,7 @@ const SETTERS = new Set([
  * The value that the Dart MockContext records for the canvas setter `name`
  * when upstream assigns `v`. The port converts an option value as the DOM
  * setter does, with canvasStyle and canvasNumber of
- * lib/src/js/js_webidl.dart: JS `undefined` is Dart `null`, a number
+ * lib/src/canvas/canvas_values.dart: JS `undefined` is Dart `null`, a number
  * setter applies `ToNumber`, and a keyword setter applies `ToString` to a
  * value other than `null`.
  */

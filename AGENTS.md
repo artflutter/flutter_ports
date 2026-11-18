@@ -1250,9 +1250,11 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   `_dataCheck` keeps a string `data` in it.
   `jsToString` of a `DateTime` gives the `Date.prototype.toString` text in the platform zone, with
   the V8 zone name on the web and in UTC on the VM (Chart.js ADR 0036, differences.md row
-  `platform-date-zone-name`). The conversions of `js_webidl.dart` (`canvasStyle`, `canvasNumber`,
-  `canvasLineCap`, `canvasLineJoin` and `canvasLineDash`) apply the WebIDL
-  conversion of a Canvas 2D setter or of `setLineDash` to an option value (Chart.js ADR 0017 §8).
+  `platform-date-zone-name`). The functions of `lib/src/canvas/canvas_values.dart` (`canvasStyle`,
+  `canvasNumber`, `canvasLineCap`, `canvasLineJoin`, `canvasTextAlign` and `canvasLineDash`) give
+  an option value to a Canvas 2D setter or to `setLineDash` with no `ToNumber`: a number option
+  holds a `num`, and a value of another type gives Dart `null` or NaN, which the canvas ignores
+  (Chart.js ADR 0174).
   The options `borderCapStyle` and `borderJoinStyle` (also their hover keys of a line), and
   `lineCap` and `lineJoin` of the canvas interface and of a legend item, hold the Flutter enums `StrokeCap` and `StrokeJoin` (row
   `adapt-flutter-stroke-enums`, the schema shapes `strokeCap` and `strokeJoin`), also in a raw

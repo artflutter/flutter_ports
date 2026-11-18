@@ -46,6 +46,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show LineOptions, plainOption, rawOption;
@@ -74,7 +75,6 @@ import 'package:flutter_chartjs_port/src/js/js_math.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
@@ -244,10 +244,9 @@ LineSegmentStyle? _segment(Object? options) => lineSegmentStyleOf(
 /// default [options]. A segment without a style has the style `undefined`
 /// ([types.Segment.style]).
 ///
-/// The canvas setters take typed values. A value that the DOM converts is
-/// converted here in the same way, with [canvasLineDash], [canvasNumber]
-/// and [canvasStyle] of `lib/src/js/js_webidl.dart`, as in the other
-/// element classes.
+/// The canvas setters take typed values. An option value goes to them through
+/// [canvasLineDash], [canvasNumber] and [canvasStyle] of
+/// `lib/src/canvas/canvas_values.dart`, as in the other element classes.
 void _setStyle(CanvasRenderingContext2D ctx, Object? options, [Object? style]) {
   if (style == null && options is LineOptions) {
     // `style = options`: `valueOrDefault(options.x, options.x)` is the value

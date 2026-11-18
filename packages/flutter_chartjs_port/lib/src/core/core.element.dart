@@ -24,9 +24,10 @@
 /// - [ElementPoint] is the object literal `{x, y}` of
 ///   [Element.tooltipPosition] and of `getCenterPoint`.
 ///
-/// The element classes convert an option value for a canvas setter with the
-/// functions of `lib/src/js/js_webidl.dart`, and read `value || 0` with
-/// `jsOrZero` of `lib/src/js/js_number.dart` (Chart.js ADR 0017, section 8).
+/// The element classes give an option value to a canvas setter through the
+/// functions of `lib/src/canvas/canvas_values.dart`, and read `value || 0`
+/// with `jsOrZero` of `lib/src/js/js_number.dart` (Chart.js ADR 0017, section
+/// 8).
 ///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.

@@ -41,6 +41,14 @@ import 'dart:ui' as ui;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart'
+    show
+        canvasLineCap,
+        canvasLineDash,
+        canvasLineJoin,
+        canvasNumber,
+        canvasStyle,
+        canvasTextAlign;
 import 'package:flutter_chartjs_port/src/core/arc_options.dart'
     show nativeArcClass, nativeArcElement;
 import 'package:flutter_chartjs_port/src/core/category_label_source.dart'
@@ -87,14 +95,6 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show jsGet, jsGetIndex, jsObjectOrNull;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart'
-    show
-        canvasLineCap,
-        canvasLineDash,
-        canvasLineJoin,
-        canvasNumber,
-        canvasStyle,
-        canvasTextAlign;
 import 'package:flutter_chartjs_port/src/options/opt.dart'
     show OptFunction, optNull;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';

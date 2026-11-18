@@ -19,7 +19,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0014](0014-input-events-and-chart-host.md) Input events and the chart host: accepted, superseded by 0037.
 - [0015](0015-text.md) Text: accepted, superseded in part by 0116, 0145.
 - [0016](0016-frame-scheduling.md) Frame scheduling: accepted, supersedes 0007.
-- [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054, 0145.
+- [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054, 0145, 0174.
 - [0018](0018-typed-element-options.md) Typed element options: accepted, superseded by 0054.
 - [0019](0019-animation.md) Animation: accepted, superseded in part by 0145, 0171, 0172.
 - [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted, superseded in part by 0173.
@@ -168,4 +168,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.
 - [0172](0172-animation-frame-jobs.md) Animation frame jobs in place of promise jobs: accepted, supersedes 0019.
 - [0173](0173-option-function-types.md) Fixed Dart types for the option functions: accepted, supersedes 0020, 0024.
+- [0174](0174-canvas-option-values.md) Canvas values of option values without WebIDL conversions: accepted, supersedes 0017.
 <!-- adr-index:end -->

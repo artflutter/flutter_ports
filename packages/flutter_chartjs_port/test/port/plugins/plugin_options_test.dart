@@ -79,10 +79,11 @@ void main() {
         const TooltipOptions(<String, Object?>{'borderWidth': 2.0}).borderWidth,
         2,
       );
+      // JS null is no number: no ToNumber (Chart.js ADR 0174).
       expect(
         const TooltipOptions(<String, Object?>{'borderWidth': null})
             .borderWidth,
-        0,
+        isNull,
       );
     });
 

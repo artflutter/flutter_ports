@@ -30,7 +30,7 @@
 ///   the option functions such as `_borderAlign`).
 /// - The JS `+` of two options (`_sum`) adds two numbers and joins a string.
 /// - A canvas setter gets its value through `canvasStyle`, `canvasNumber`
-///   or `canvasLineDash` of `lib/src/js/js_webidl.dart`, as in the other
+///   or `canvasLineDash` of `lib/src/canvas/canvas_values.dart`, as in the other
 ///   element classes.
 ///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
@@ -42,6 +42,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
+import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
 import 'package:flutter_chartjs_port/src/core/arc_options.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show Defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -71,7 +72,6 @@ import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/js/js_webidl.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedBy, AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;

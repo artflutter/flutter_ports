@@ -803,14 +803,8 @@ callback
 canvasArcSweep
 canvasBaselineShift
 canvasFontSize
-canvasLineCap
-canvasLineDash
-canvasLineJoin
 canvasMetricsCacheLength
-canvasNumber
 canvasParagraphCacheLength
-canvasStyle
-canvasTextAlign
 canvasTextMetricsGeneration
 capitalize
 chartJsPackageVersion
@@ -1246,12 +1240,6 @@ JsObjectFace
 JsProxyObject
 JsStringList
 Undefined
-canvasLineCap
-canvasLineDash
-canvasLineJoin
-canvasNumber
-canvasStyle
-canvasTextAlign
 jsAdd
 jsArrayIndex
 jsAssign
