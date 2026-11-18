@@ -4,6 +4,7 @@
 - Date: 2026-11-18
 - Supersedes: of [Chart.js ADR 0146](0146-js-numeric-semantics.md), in §7 the bullet of `'' + n` and the bullets of
   `parseFloat` and `isFinite`, and in §10 the bullet of the `jsNumberToString` test.
+- Superseded in part by: [Chart.js ADR 0177](0177-no-number-text-helper.md)
 - Related: [Chart.js ADR 0175](0175-typed-list-and-key-helpers.md), [Chart.js ADR 0034](0034-no-display-only-js-exactness.md)
 
 ## Context

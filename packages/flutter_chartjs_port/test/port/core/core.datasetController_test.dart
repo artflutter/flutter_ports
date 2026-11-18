@@ -33,7 +33,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show MinMax;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, createContext;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
@@ -587,7 +586,7 @@ String _enc(Object? v) => switch (v) {
   Undefined() => 'undefined',
   null => 'null',
   bool() => '$v',
-  final num n => n.isNaN ? 'NaN' : numberString(n),
+  final num n => n.isNaN ? 'NaN' : jsToString(n),
   final String s => jsonEncode(s),
   final JsClass c => 'class:${c.name}',
   Function() => 'fn',
@@ -629,7 +628,7 @@ String _encOptions(Object? options) => options == null
 Object _none(Object? value) => value ?? 'none';
 
 /// `String(value)` of a step argument.
-String _s(Object? value) => value is num ? numberString(value) : '$value';
+String _s(Object? value) => value is num ? jsToString(value) : '$value';
 
 /// The name of the error [error], as `error.name` of JavaScript.
 String _errorName(Object error) => switch (error) {

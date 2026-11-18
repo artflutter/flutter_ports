@@ -3,7 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -30,7 +30,7 @@ Map<String, Object?> fixture() => <String, Object?>{
             // A TickCallback (row adapt-native-tick).
             'callback':
                 (Object? scale, double value, int index, Object? ticks) {
-                  return <String>['${numberString(value)} very long unit!'];
+                  return <String>['${jsToString(value)} very long unit!'];
                 },
           },
         },

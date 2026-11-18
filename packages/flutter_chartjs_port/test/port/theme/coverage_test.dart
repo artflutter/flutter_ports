@@ -8,8 +8,8 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -175,7 +175,7 @@ const Map<String, String> _moduleConstants = {
 /// colors of the manifest.
 String _rgba(native_ui.Color color) =>
     'rgba(${(color.r * 255).round()}, ${(color.g * 255).round()}, '
-    '${(color.b * 255).round()}, ${numberString(color.a)})';
+    '${(color.b * 255).round()}, ${jsToString(color.a)})';
 
 /// The environment variable that makes the test write the snapshot.
 const String _updateVariable = 'THEME_SNAPSHOT_UPDATE';

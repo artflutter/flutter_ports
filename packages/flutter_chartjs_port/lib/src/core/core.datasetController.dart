@@ -74,7 +74,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show MinMax, sign;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ContextObject, ScriptableContext;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsStringList, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -229,7 +228,7 @@ Object _plus(Object? value, num other) {
   return switch (value) {
     final double number => number + add,
     null || Undefined() || bool() || num() => jsToNumber(value) + add,
-    _ => jsToString(value) + numberString(other),
+    _ => jsToString(value) + jsToString(other),
   };
 }
 
@@ -858,22 +857,22 @@ void presizeParsedNumbers(
 }
 
 /// The property keys `'0'` to `'63'`.
-final List<String> _indexKeys = [for (var i = 0; i < 64; i++) numberString(i)];
+final List<String> _indexKeys = [for (var i = 0; i < 64; i++) '$i'];
 
 /// The property key of the number [index], the `ToPropertyKey` of
 /// `object[index]`: a cached key for a small dataset index, else
-/// [numberString].
+/// its text.
 String _indexKey(int index) =>
     index >= 0 && index < _indexKeys.length ? _indexKeys[index] : '$index';
 
 /// The property key of the index value [value] of a stack, its `ToString`:
-/// a cached key for a small whole number, else [numberString].
+/// a cached key for a small whole number, else [jsToString].
 String _numberKey(double value) {
   if (value >= 0 && value < _indexKeys.length) {
     final i = value.toInt();
     if (i == value) return _indexKeys[i];
   }
-  return numberString(value);
+  return jsToString(value);
 }
 
 /// The JS read `item[axis]` of a parsed item: the hot read of Chart.js ADR

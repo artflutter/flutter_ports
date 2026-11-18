@@ -915,7 +915,7 @@ class _ChartViewState() extends State<ChartView> {
     super.debugFillProperties(properties);
     final chart = _chart;
     properties
-      ..add(IntProperty('id', chart?.id.toInt(), ifNull: 'no chart'))
+      ..add(IntProperty('id', chart?.id, ifNull: 'no chart'))
       ..add(
         FlagProperty(
           'attached',

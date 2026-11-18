@@ -411,9 +411,7 @@ void main() {
       startsWith('error: $zoom/lib/src/utils.dart:2: %:'),
       allOf(
         startsWith('error: $zoom/test/specs/utils_test.dart:2: number '),
-        contains(
-          'Use numberString of package:flutter_chartjs_port/chartjs.dart',
-        ),
+        contains('Give an int, give a message the Dart text with js-ok'),
       ),
       startsWith('error: $home/lib/src/a.dart:2: .round():'),
     ]);

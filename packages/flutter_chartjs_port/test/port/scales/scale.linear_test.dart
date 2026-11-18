@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -153,7 +152,7 @@ final Map<String, Object?> _functions = {
     '$index',
   ],
   'withUnit': (Object? scale, double value, int index, Object? ticks) => [
-    '${numberString(value)} kg',
+    '${jsToString(value)} kg',
   ],
   'labelOfThis': (Object? scale, double value, int index, Object? ticks) => [
     '[${jsToString((scale! as Scale).getLabelForValue(value))}]',

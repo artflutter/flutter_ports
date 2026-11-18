@@ -36,7 +36,7 @@ Map<String, Object?> fixture() {
             'barPercentage': 1,
             'categoryPercentage': 1,
             'backgroundColor': (Object? c) =>
-                'rgba(${numberString(255 - jsToNumber(jsGet(c, 'index')) * 4)}, 0, 0, 1)',
+                'rgba(${jsToString(255 - jsToNumber(jsGet(c, 'index')) * 4)}, 0, 0, 1)',
           },
         ],
       },

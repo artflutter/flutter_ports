@@ -19,8 +19,8 @@ void main() {
   group('Core helper tests', () {
     test('should generate integer ids', () {
       final uid = helpers.uid();
-      // jasmine.any(Number)
-      expect(uid, isA<double>());
+      // jasmine.any(Number): an int (row adapt-string-ids).
+      expect(uid, isA<int>());
       expect(helpers.uid(), uid + 1);
       expect(helpers.uid(), uid + 2);
       expect(helpers.uid(), uid + 3);

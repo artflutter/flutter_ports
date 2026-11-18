@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleBounds;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -311,7 +310,7 @@ final Map<String, Object?> _functions = {
     jsToString((scale! as Scale).getLabelForValue(value)).toUpperCase(),
   ],
   'indexLabel': (Object? scale, double value, int index, Object? ticks) => [
-    numberString(value),
+    jsToString(value),
   ],
 };
 

@@ -85,7 +85,6 @@ import 'package:flutter_chartjs_port/src/helpers/index.dart'
         isDomSupported,
         retinaScale,
         unclipArea;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -294,18 +293,18 @@ Chart? _getChart(Object? key) {
 
 /// core.controller.js:72 `moveNumericKeys(obj, start, move)`.
 ///
-/// The keys are the `ToString` of the indices. `+key` is [jsToNumber]. The
-/// write `obj[intKey + move]` takes the key [numberString]. An absent
-/// key reads as Dart `null`, as `undefined`.
+/// The keys are the text of the `int` indices. A key that is no `int` text
+/// stays. An absent key reads as Dart `null`, as `undefined`.
 void _moveNumericKeys(Map<String, Object?> obj, int start, int move) {
   final keys = jsObjectKeys(obj);
   for (final key in keys) {
-    final intKey = jsToNumber(key);
-    if (intKey >= start) {
+    // DIVERGES(chartjs): adapt-string-ids, an int key only.
+    final intKey = int.tryParse(key);
+    if (intKey != null && intKey >= start) {
       final value = obj[key];
       obj.remove(key);
       if (move > 0 || intKey > start) {
-        obj[numberString(intKey + move)] = value;
+        obj[(intKey + move).toString()] = value;
       }
     }
   }
@@ -390,7 +389,7 @@ class Chart(
     if (existingChart != null) {
       throw StateError(
         'Canvas is already in use. Chart with ID '
-        "'${numberString(existingChart.id)}'"
+        "'${existingChart.id}'"
         ' must be destroyed before the canvas with ID '
         "'${existingChart.canvas!.getAttribute('id') ?? ''}' can be reused.",
       );
@@ -441,7 +440,7 @@ class Chart(
     );
 
     // Add the chart instance to the global namespace
-    instances[numberString(id)] = this;
+    instances[id.toString()] = this;
 
     if (context == null || canvas == null) {
       // The given item is not a compatible context2d element, let's return
@@ -542,8 +541,8 @@ class Chart(
   @override
   late final BasePlatform platform;
 
-  /// core.controller.js:144 `id`: a number of `uid()`.
-  late final double id;
+  /// core.controller.js:144 `id`: an `int` of `uid()`.
+  late final int id;
 
   /// core.controller.js:145 `ctx`. Dart `null` stands for JS `null`: the
   /// context of a failed `acquireContext`, and the context after [destroy].
@@ -2429,7 +2428,7 @@ class Chart(
       this.ctx = null;
     }
 
-    instances.remove(numberString(id));
+    instances.remove(id.toString());
 
     notifyPlugins(PluginHook.afterDestroy);
   }

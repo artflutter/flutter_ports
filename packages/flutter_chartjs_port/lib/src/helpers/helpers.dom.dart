@@ -29,7 +29,6 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
     show infinity;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
@@ -264,7 +263,7 @@ int _toUint32(double value) {
 /// [HTMLCanvasElement.style] is a [CSSStyleDeclaration], so the property
 /// reads and writes of `canvas.style.height` and `canvas.style.width` call
 /// `getPropertyValue` and `setProperty`. The template literal formats the
-/// size with `Number::toString` ([numberString]): 400 gives `'400px'`.
+/// size with `Number::toString` ([jsToString]): 400 gives `'400px'`.
 /// The canvas width and height take the `Math.floor` of the device size
 /// (:230-231). The test of :232-234 compares these integers, so a fractional
 /// device size that does not change gives `false`. The assignment converts
@@ -296,8 +295,8 @@ bool retinaScale(Chart chart, double? forceRatio, [bool? forceStyle]) {
       (style.getPropertyValue('height').isEmpty &&
           style.getPropertyValue('width').isEmpty)) {
     style
-      ..setProperty('height', '${numberString(chart.height)}px')
-      ..setProperty('width', '${numberString(chart.width)}px');
+      ..setProperty('height', '${jsToString(chart.height)}px')
+      ..setProperty('width', '${jsToString(chart.width)}px');
   }
 
   final canvasHeight = deviceHeight.floorToDouble();

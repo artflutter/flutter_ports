@@ -13,7 +13,6 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -99,7 +98,7 @@ final Map<String, Object?> _functions = {
   // of that tick (row adapt-native-tick): the twin gives the label `null` of
   // upstream for it.
   'valueString': (Object? scale, double value, int index, Object? ticks) => [
-    if (value.isNaN) 'null' else numberString(value),
+    if (value.isNaN) 'null' else jsToString(value),
   ],
 };
 
@@ -304,7 +303,7 @@ void main() {
         expect(
           decimal,
           _same((value - min) / (max - min)),
-          reason: numberString(value),
+          reason: jsToString(value),
         );
         if (value.isFinite && value == value.truncateToDouble()) {
           expect(
@@ -330,13 +329,10 @@ void main() {
       final x = _x(_chart(_xy([_t0, _t0 + _day])));
       final value = _t0 + _day / 3;
       expect(
-        x.getDecimalForValue(numberString(value)),
+        x.getDecimalForValue(jsToString(value)),
         x.getDecimalForValue(value),
       );
-      expect(
-        x.getPixelForValue(numberString(value)),
-        x.getPixelForValue(value),
-      );
+      expect(x.getPixelForValue(jsToString(value)), x.getPixelForValue(value));
     });
 
     testWidgets('a DateTime x is a JS Date: its time value', (tester) async {
@@ -400,15 +396,17 @@ void main() {
       );
     });
 
-    testWidgets('a range of more than 100000 steps throws the upstream '
-        'error', (tester) async {
+    testWidgets('a range of more than 100000 steps throws the error', (
+      tester,
+    ) async {
       expect(
         () => stepChart([_t0, _t0 + 200001], TimeUnit.millisecond, 2.0),
         throwsA(
           isA<StateError>().having(
             (e) => e.message,
             'message',
-            '${numberString(_t0)} and ${numberString(_t0 + 200001)} '
+            // js-ok: the Dart text of the message.
+            '$_t0 and ${_t0 + 200001} '
                 'are too far apart with stepSize of 2 millisecond',
           ),
         ),
@@ -454,9 +452,7 @@ void main() {
     }
 
     for (final (stepSize, text) in [(null, 'null'), (-1.0, '-1')]) {
-      testWidgets('the stepSize $text throws the upstream error', (
-        tester,
-      ) async {
+      testWidgets('the stepSize $text throws the error', (tester) async {
         // 100000 * stepSize is 0 or negative (scale.time.js:474-476).
         expect(
           () => _chart(_xy(times), {
@@ -467,8 +463,9 @@ void main() {
             isA<StateError>().having(
               (e) => e.message,
               'message',
-              '1609718400000 and 1610150400000 are too far apart with '
-                  'stepSize of $text day',
+              // js-ok: the Dart text of the message.
+              '${1609718400000.0} and ${1610150400000.0} are too far apart '
+                  'with stepSize of $text day',
             ),
           ),
         );
@@ -537,7 +534,7 @@ void main() {
             'callback':
                 (Object? scale, double value, int index, Object? ticks) {
                   values.add(value);
-                  return [numberString(value)];
+                  return [jsToString(value)];
                 },
           },
         }),

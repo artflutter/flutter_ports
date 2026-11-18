@@ -1,13 +1,13 @@
-// Original code, not ported from Chart.js: tests of lib/src/helpers/number_string.dart.
+// Original code, not ported from Chart.js: tests of the jsToString number text.
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:test/test.dart';
 
-import '../js/number_to_string_reference.dart';
+import 'number_to_string_reference.dart';
 
 void main() {
-  group('numberString', () {
+  group('jsToString of a number', () {
     final pairs = [
       for (final line in numberToStringReference.split('\n'))
         if (line.isNotEmpty) line.split(' '),
@@ -26,7 +26,7 @@ void main() {
         '$numberToStringReferenceArch String(x) for every input', () {
       final mismatches = <String>[];
       for (final [input, expected] in pairs) {
-        final actual = numberString(_fromHex(input));
+        final actual = jsToString(_fromHex(input));
         if (actual != expected) {
           mismatches.add('$input: expected $expected, got $actual');
         }
@@ -68,7 +68,7 @@ void main() {
         (-1.0, '-1'),
       ];
       for (final (x, expected) in cases) {
-        expect(numberString(x), expected, reason: '$x');
+        expect(jsToString(x), expected, reason: '$x');
       }
     });
   });

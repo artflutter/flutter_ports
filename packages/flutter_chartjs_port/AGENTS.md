@@ -1025,7 +1025,7 @@ repository.
     `doc/upstream/fixtures.json`, the benchmark and focused configs and the configs of the D2
     trace) twice, as given and with a recorder of each user function. After the construction and
     after each of 8 steps it writes a text of JS kinds only (no Dart class name of an option
-    object, no `int` marker, a number through `numberString`): the resolved options with
+    object, no `int` marker, a number through `jsToString`): the resolved options with
     their key order, `$shared`, the element properties, `getProps`, the contexts, the animations,
     the active-mode options, the active elements, the draw calls and the user calls. It compares
     the SHA-256 of each text with `observation_digests.dart` on macOS. `O1_UPDATE=1` writes the

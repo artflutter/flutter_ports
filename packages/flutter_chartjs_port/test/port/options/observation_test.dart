@@ -34,7 +34,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFunction;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart'
     show JsProxyObject, jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -640,7 +639,7 @@ String _throwText(Object e) => switch (e) {
 /// object.
 ///
 /// - `undefined`, `null`, `true` and `false`; a number is its JS string
-///   `String(n)` ([numberString]), so 3 and 3.0 give one text; a string
+///   `String(n)` ([jsToString]), so 3 and 3.0 give one text; a string
 ///   is its JSON text. -0 gives `0`, as `String(-0)` does. On the Map
 ///   model, a negative zero reaches only the canvas arguments of
 ///   `translate` and `fillText`. The negation of a `double` option 0 gives
@@ -661,7 +660,7 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
   switch (value) {
     case final native_ui.Color color:
       return 'Color(${color.colorSpace.name}; '
-          '${[color.a, color.r, color.g, color.b].map(numberString).join(', ')})';
+          '${[color.a, color.r, color.g, color.b].map(jsToString).join(', ')})';
     // A font is a TextStyle (Chart.js ADR 0116): its family, fallback
     // families, size, weight, style and height.
     case final TextStyle font:
@@ -671,7 +670,7 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
     case final bool b:
       return '$b';
     case final num n:
-      return numberString(n);
+      return jsToString(n);
     case final String s:
       return jsonEncode(s);
     // An enum whose value names are the upstream keywords stands for the

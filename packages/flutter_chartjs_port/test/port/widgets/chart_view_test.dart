@@ -516,7 +516,7 @@ void main() {
       await tester.pumpWidget(_box(widget));
       final chart = _chart(tester)!;
       expect(_properties(tester.state(find.byType(ChartView))), [
-        'id: ${chart.id.toInt()}',
+        'id: ${chart.id}',
         'attached',
         'size: Size(400.0, 200.0)',
       ]);

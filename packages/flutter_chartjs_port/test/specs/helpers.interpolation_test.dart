@@ -1,7 +1,7 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.interpolation.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart';
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
@@ -34,7 +34,7 @@ Matcher _sameValue(double expected) => predicate<double?>(
       (expected.isNaN
           ? actual.isNaN
           : actual == expected && actual.isNegative == expected.isNegative),
-  'SameValue ${numberString(expected)}',
+  'SameValue ${jsToString(expected)}',
 );
 
 /// Jasmine `toEqual({x, y})`. The functions return a literal with exactly

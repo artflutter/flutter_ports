@@ -29,7 +29,6 @@
 library;
 
 import 'package:flutter/painting.dart';
-import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/helpers.dart';
 import 'package:flutter_chartjs_port/js_semantics.dart';
 
@@ -49,7 +48,8 @@ final class const SankeyDataPoint({
   this;
 
   @override
-  String toString() => 'SankeyDataPoint($from -> $to: ${numberString(flow)})';
+  // js-ok: the text of a debug message.
+  String toString() => 'SankeyDataPoint($from -> $to: $flow)';
 }
 
 /// types.ts:25 `SankeyLabelPosition`: where a label goes at its node or

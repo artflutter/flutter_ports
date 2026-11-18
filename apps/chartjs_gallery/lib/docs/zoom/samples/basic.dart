@@ -2,6 +2,7 @@
 
 import 'dart:ui' as ui;
 
+import 'package:chartjs_gallery/demo/demo_common.dart' show jsNumberText;
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show
@@ -16,14 +17,7 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
         ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, UpdateMode;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        ActiveElement,
-        Chart,
-        ChartEvent,
-        ChartPosition,
-        JsObjectFace,
-        Scale,
-        numberString;
+    show ActiveElement, Chart, ChartEvent, ChartPosition, JsObjectFace, Scale;
 
 /// A sample of the docs of chartjs-plugin-zoom: the `module.exports` of its
 /// `chart-editor` block (`{actions, config, output}`).
@@ -117,10 +111,10 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
   bool panEnabled() => zoomOptions.pan?.enabled ?? false;
   bool wheelEnabled() => zoomOptions.zoom?.wheel?.enabled ?? false;
   String panStatus() => panEnabled() ? 'enabled' : 'disabled';
-  // The zoom level is a number in the text: its JS text, as `+` gives it.
+  // The zoom level is a number in the text, with no `.0` for a whole number.
   String zoomStatus(Chart chart) =>
       '${wheelEnabled() ? 'enabled' : 'disabled'} '
-      '(${numberString(chart.getZoomLevel())}x)';
+      '(${jsNumberText(chart.getZoomLevel())}x)';
 
   // <block:config:1>
   final config = <String, Object?>{
@@ -270,7 +264,7 @@ Map<String, Object?> zoomSampleScales() {
     'ticks': <String, Object?>{
       // A TickCallback: the scale, the value, the index and the ticks.
       'callback': (Object? scale, double val, int index, List<Object?> ticks) =>
-          index == 0 || index == ticks.length - 1 ? null : [numberString(val)],
+          index == 0 || index == ticks.length - 1 ? null : [jsNumberText(val)],
     },
     'grid': <String, Object?>{
       'borderColor': ChartPaint.solid(_grey(1)),

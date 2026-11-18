@@ -1,7 +1,7 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.segment.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart';
 import 'package:test/test.dart';
@@ -61,7 +61,7 @@ Matcher _sameValue(double expected) => predicate<double>(
   (actual) => expected.isNaN
       ? actual.isNaN
       : actual == expected && actual.isNegative == expected.isNegative,
-  'SameValue ${numberString(expected)}',
+  'SameValue ${jsToString(expected)}',
 );
 
 /// Jasmine `toEqual({start, end, loop, style: undefined})` on a segment.

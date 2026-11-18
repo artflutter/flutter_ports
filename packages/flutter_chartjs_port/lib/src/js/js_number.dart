@@ -17,7 +17,6 @@
 /// also removes U+0085.
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 
@@ -120,9 +119,9 @@ Object? _toPrimitiveNumber(Object? value) => switch (value) {
 /// ECMAScript `ToString(value)`, the coercion of `'' + value`, of a template
 /// literal and of `String(value)`.
 ///
-/// A number gives [numberString]. An array gives the join of its elements
-/// with `,`, where `null` and [undefined] are empty. A cyclic array recurses
-/// without end: chart data has no such array. A `Map` gives
+/// A number gives its V8 text ([_numberText]). An array gives the join of
+/// its elements with `,`, where `null` and [undefined] are empty. A cyclic
+/// array recurses without end: chart data has no such array. A `Map` gives
 /// `'[object Object]'`. A `DateTime` (a JS `Date`, Chart.js ADR 0024) gives
 /// the text of `Date.prototype.toString` ([_dateToString]). Any other object
 /// gives its `toString()`, which is `'undefined'` for [undefined]. A
@@ -134,7 +133,7 @@ String jsToString(Object? value) => switch (value) {
   // The element ids and the modes of each option resolution (ADR 0093).
   final String string => string,
   null => 'null',
-  final num n => numberString(n),
+  final num n => _numberText(n),
   final List<Object?> list =>
     list.map((e) => e == null || e is Undefined ? '' : jsToString(e)).join(','),
   Map<Object?, Object?>() || JsObjectFace() => '[object Object]',
@@ -142,6 +141,27 @@ String jsToString(Object? value) => switch (value) {
   // DIVERGES(chartjs): js-semantics-function-source, the Dart toString().
   _ => value.toString(),
 };
+
+/// `Number::toString` of V8: `'12'`, `'0.000001'`, `'1e+21'`, `'1.5e-7'`, and
+/// `'0'` for both `0` and `-0`. It goes with [jsToString].
+///
+/// Dart's `toString()` gives the shortest digits that read back as [x] and
+/// the same notation on the VM, dart2js and dart2wasm. Only the VM and
+/// dart2wasm add `.0` to an integral value in plain notation, and give
+/// `'-0.0'` for -0. This function removes both.
+String _numberText(num x) {
+  final d = x.toDouble();
+  if (d == 0) return '0';
+  // Below 2^53 the shortest round-trip digits of an integral value are its
+  // exact digits. Above it, Chart.js pads the shortest digits with zeros
+  // (2^60 gives '1152921504606847000'), so int.toString gives other digits.
+  // NaN and the infinities fail the first test.
+  if (d == d.truncateToDouble() && d.abs() < 9007199254740992) {
+    return d.toInt().toString();
+  }
+  final s = d.toString();
+  return s.endsWith('.0') ? s.substring(0, s.length - 2) : s;
+}
 
 /// The weekday names of `DateString` (ECMAScript 21.4.4.41.2), from Monday,
 /// the [DateTime.weekday] 1.

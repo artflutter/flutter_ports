@@ -53,12 +53,13 @@ import 'package:meta/meta.dart' show internal;
 
 /// The counter of [uid]: the `id` variable of the closure at
 /// helpers.core.ts:19.
-double _id = 0;
+int _id = 0;
 
 /// helpers.core.ts:18 `uid`.
 ///
 /// Returns a unique id, sequentially generated from a global variable.
-double uid() => _id++;
+// DIVERGES(chartjs): adapt-string-ids, an int id.
+int uid() => _id++;
 
 /// helpers.core.ts:28 `isNullOrUndef`.
 ///

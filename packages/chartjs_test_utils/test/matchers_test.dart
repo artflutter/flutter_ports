@@ -608,7 +608,7 @@ void main() {
       );
     });
 
-    test('toBeChartOfSize gives the upstream messages in their order', () {
+    test('toBeChartOfSize gives the messages in their order', () {
       final size = {'dw': 300, 'dh': 150, 'rw': 300, 'rh': 150};
       expect(_mismatch(toBeChartOfSize(size), 5), contains('instance of'));
       // The sanity check of the chart height against the render height.
@@ -617,15 +617,16 @@ void main() {
           toBeChartOfSize(size),
           _Chart(canvas: _Canvas(300, 150), width: 300, height: 100),
         ),
-        'Expected chart height 100 to be equal to original render height '
-        '150',
+        'Expected chart height ${100.0} to be equal to original render '
+        'height ${150.0}',
       );
       expect(
         _mismatch(
           toBeChartOfSize(size),
           _Chart(canvas: _Canvas(300, 150), width: 200, height: 150),
         ),
-        'Expected chart width 200 to be equal to original render width 300',
+        'Expected chart width ${200.0} to be equal to original render width '
+        '${300.0}',
       );
       // A validity check replaces the message of a sanity check.
       expect(

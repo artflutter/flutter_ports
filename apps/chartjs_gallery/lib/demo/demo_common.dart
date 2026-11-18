@@ -1,10 +1,13 @@
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show JsObjectFace, SolidChartPaint, Undefined, numberString;
+    show JsObjectFace, SolidChartPaint, Undefined;
 import 'package:material_ui/material_ui.dart';
 
-/// The JavaScript text of the number [value] (`Number.prototype.toString`),
-/// for the readouts.
-String jsNumberText(double value) => numberString(value);
+/// The text of the number [value] for the readouts: a whole number has no
+/// `.0`.
+String jsNumberText(double value) =>
+    value == value.truncateToDouble() && value.abs() < 1e15
+    ? value.toInt().toString()
+    : value.toString();
 
 /// The JavaScript source form of an option value, for display: `undefined`,
 /// `null`, a quoted string, a JS number string, or `{…}` and `[…]`.
@@ -14,8 +17,8 @@ String showJs(Object? value) => switch (value) {
   Undefined() => 'undefined',
   null => 'null',
   final String s => "'$s'",
-  final double d => numberString(d),
-  final num n => numberString(n.toDouble()),
+  final double d => jsNumberText(d),
+  final num n => jsNumberText(n.toDouble()),
   final bool b => '$b',
   final Map<Object?, Object?> _ => '{…}',
   final JsObjectFace _ => '{…}',

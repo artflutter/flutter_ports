@@ -18,8 +18,7 @@
 ///   (Chart.js ADR 0146 §4), and `Math.hypot(a, b)` is
 ///   `math.sqrt(a * a + b * b)` (Chart.js ADR 0146 §4).
 /// - `jsToNumber`, `jsToString` and `jsTruthy`: the conversions `ToNumber`,
-///   `ToString` and `ToBoolean`. `numberString`: the V8 text of a
-///   number.
+///   `ToString` and `ToBoolean`.
 ///
 /// An app does not need this library. `chartjs.dart` and the app library do
 /// not export it. When the shared package `js_semantics` of ADR 0008 exists,

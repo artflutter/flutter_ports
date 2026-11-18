@@ -4,7 +4,6 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -43,9 +42,7 @@ Map<String, Object?> fixture() => <String, Object?>{
         'y': <String, Object?>{
           'ticks': <String, Object?>{
             'callback': (Object? scale, double val, int index, Object? ticks) {
-              return index.remainder(2) == 0
-                  ? <String>[numberString(val)]
-                  : null;
+              return index.remainder(2) == 0 ? <String>[jsToString(val)] : null;
             },
           },
         },

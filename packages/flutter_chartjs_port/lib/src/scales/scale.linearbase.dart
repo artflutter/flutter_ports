@@ -48,7 +48,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
         setMinAndMaxByKey,
         sign,
         toRadians;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
@@ -437,7 +436,8 @@ class LinearScaleBase(super.cfg) extends Scale {
       if (maxTicks > 1000) {
         _consoleWarn(
           'scales.$id.ticks.stepSize: ${jsToString(stepSize)} would result '
-          'generating up to ${numberString(maxTicks)} ticks. Limiting to '
+          // js-ok: the text of a warning.
+          'generating up to $maxTicks ticks. Limiting to '
           '1000.',
         );
         maxTicks = 1000;

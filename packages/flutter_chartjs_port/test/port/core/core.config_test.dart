@@ -24,12 +24,12 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     as helpers;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
     show isFunction;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
 import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
     show PointStyle;
 import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show RadiusLength;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
@@ -87,7 +87,7 @@ String _jsonRaw(Object? value) => switch (value) {
   null => 'null',
   Undefined() => '"<undefined>"',
   final bool b => b ? 'true' : 'false',
-  final double d => numberString(d),
+  final double d => jsToString(d),
   num() => throw ArgumentError.value(value, 'value', 'is an int'),
   final String s => jsonEncode(s),
   _ when isFunction(value) => '"<fn>"',

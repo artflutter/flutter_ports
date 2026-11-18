@@ -1,7 +1,7 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.curve.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart' as helpers;
-import 'package:flutter_chartjs_port/src/helpers/number_string.dart';
+import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:test/test.dart';
 
@@ -50,7 +50,7 @@ bool _sameValue(double? actual, double? expected) => expected == null
               ? actual.isNaN
               : actual == expected && actual.isNegative == expected.isNegative);
 
-String _show(double? v) => v == null ? 'undefined' : numberString(v);
+String _show(double? v) => v == null ? 'undefined' : jsToString(v);
 
 /// Jasmine `toEqual({x, y})` on a point literal of `splineCurve`.
 Matcher _toEqualPoint(double x, double y) => predicate<({double x, double y})>(
