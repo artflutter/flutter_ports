@@ -113,7 +113,7 @@ Terms:
 
    Until tool 6 exists (phase 2), each port change edits [parity.md](parity.md) by hand. A
    repository with a started module then gets one row for each source file. From phase 2,
-   `doc/status.yaml` holds the status text. Tool 6 writes `parity.md` from it.
+   A person writes the status text in `parity.md`.
 8. **Gallery.** From phase 4, add a demo to `apps/d3_gallery` when a module draws.
 9. **Gates.** Run `format:check`, `analyze`, `test --no-select`, `test:web`, `check:port` and
    `upstream:check`. From phase 2, also run `test:cases`.
@@ -566,9 +566,9 @@ The roadmap gives tools 1-3 for both ports to phase 1, and tools 4-6 to phase 2 
 | 3. JS-semantics check | removed | — | Chart.js ADR 0178 removed the tool. The review and the tests apply the number rules. |
 | 4. Upstream manifest | `upstream:manifest` | 2 | A D3 tool of its own (ADR 0008). It reads the test names of three runners: mocha `it`, vitest `test` and `node:test` `test`, with the names that loops make. Output: `packages/flutter_d3_port/doc/upstream/manifest.json` |
 | 5. Spec-case tracking | `test:cases` | 2 | The D3 spec paths `test/specs/<repo>/` and the manifest of tool 4. It moves to `port_tools` (ADR 0008) |
-| 6. Parity generator | `parity`, `parity:check` | 2 | One row for each source file, grouped by repository, from `doc/status.yaml`. It replaces the hand-written [parity.md](parity.md). It moves to `port_tools` (ADR 0008) |
+| 6. Parity generator | removed | — | Chart.js ADR 0179 removed the tool. |
 | 7. Fixture smoke runner | `test:fixtures` (Chart.js phase 7) | none | D3 has no fixture configs. The decision "Image snapshots" (2.13) can add a smoke test of the d3-geo projections |
-| 8. Port-order helper | `port:next` | not in the roadmap | It reads the imports of one repository. D3 imports cross repositories. ADR 0008 moves it to `port_tools` when the D3 port needs it. Section 7 has the open question |
+| 8. Port-order helper | removed | — | Chart.js ADR 0179 removed the tool. |
 
 **Tool 4 and the upstream test files.** A Node `vm` cannot run some D3 test files as they are:
 - `d3-geo test/snapshot-test.js:10` calls `mkdirSync("./test/snapshots")` at load time. Thus it

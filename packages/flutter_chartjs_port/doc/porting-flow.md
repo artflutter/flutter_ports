@@ -15,8 +15,7 @@ the `differences.md` schema.
 
 ## 1. Life cycle of one module port
 
-1. **Choose.** Run `dart run melos run port:next` (tool 8, section 4). Pick a ready module of the
-   current phase. Each value import of a ready module is done. Read the interfaces that the module
+1. **Choose.** Pick a module of the current phase whose value imports are done. Each value import of a ready module is done. Read the interfaces that the module
    needs. Declare each interface that is not declared, and add the members that the module reads
    (2.4). A blocked module waits for the modules that the list names. Run the module-start check
    ([upstream-tracking.md](upstream-tracking.md) §4.3). When the melos script `upstream:status`
@@ -31,7 +30,7 @@ the `differences.md` schema.
    - Mark each hunk that does not translate upstream lines with
      `// DIVERGES(chartjs): <row id>, <reason>` and a `differences.md` row (section 4).
    - Start a port-only file with `// Original code, not ported from Chart.js: <reason>.` Add its
-     row to the `port-only` list of `doc/status.yaml`.
+     row to the port-only list of `parity.md`.
    - When two Dart forms give the upstream behavior, choose the faster form (1.1).
 
    ```dart
@@ -85,10 +84,9 @@ the `differences.md` schema.
    (upstream prefix match). Hand-port each impure config to `test/fixtures/hand/<path>.dart`, and
    add its entry to `handFixtures` ([Chart.js ADR 0029](adr/0029-fixture-smoke-runner.md)).
 7. **Status.** The values are `not started`, `in progress`, `partial` (with a symbol list),
-   `ported`, `replaced`, `distributed` and `n/a` (with a reason). `doc/status.yaml` holds the
-   status text of each row. Tool 6 writes `parity.md` from it (section 4). Do not edit `parity.md`.
-   A row that `status.yaml` does not list is `not started`. The upstream status script reads the
-   same source. The first PR with a new value updates the legend in `status.yaml`. A module row
+   `ported`, `replaced`, `distributed` and `n/a` (with a reason). A person writes the
+   status text of each row in `parity.md` (Chart.js ADR 0179). The first PR with a new value updates
+   the legend in `parity.md`. A module row
    goes to `ported` only in the change that lifts its `blocked: <module>` skips: tool 5 fails on a
    `blocked: <module>` skip when each `src/` row of the module is `ported`
    ([Chart.js ADR 0041](adr/0041-plugin-test-strategy.md) §8).
@@ -761,7 +759,7 @@ and the items that stay open. In short:
   fixtures: 628 pass and 39 skip, all `diverges: adapt-date-moment-format`. No `blocked: plugin.*`
   skip stays. The 36 pure data configs of the moment skips run as ICU
   twins in `test/port/fixtures/moment_twins_test.dart`.
-- Each fixture test has the tag `fixtures`. `test`, `test:cases` and tool 6 exclude it.
+- Each fixture test has the tag `fixtures`. `test` and `test:cases` exclude it.
   `test:fixtures` (tool 5 `--fixtures`, tool 7) runs it. The CI job `fixtures` makes a shallow
   checkout of `third_party/Chart.js` and sets `FIXTURES_REQUIRED=1`.
 - Rows `harness-fixture-sources` and `harness-fixture-frame`. The row `harness-method-fields`
@@ -1025,7 +1023,7 @@ The matrix does not use `flutter test --platform chrome`. That flag is deprecate
 3.44.9. Its JS leg compiles with DDC (`lib/src/test/web_test_compiler.dart:113-176` of
 `flutter_tools`), not with dart2js. `flutter build web` uses dart2js.
 
-**Fixture selection.** From phase 7 (tool 7), the melos `test` script, `test:cases` and tool 6
+**Fixture selection.** From phase 7 (tool 7), the melos `test` script and `test:cases`
 pass `--exclude-tags fixtures`. `test:fixtures` runs tool 5 with `--fixtures`, which runs
 `flutter test --tags fixtures`. The `fixtures` job runs it with a shallow checkout of
 `third_party/Chart.js`. Before a fixture runs, the runner compares the SHA-256 of
@@ -1129,7 +1127,7 @@ manifests or git.
 **5. Spec-case tracking** (`tool/spec_cases.dart`, `test:cases` in the ubuntu test leg, mid phase
 2). Each upstream case is `passed`, `failed`, `skipped(<reason>)` or `missing`. The tool fails on
 unknown names. It also fails on `missing` cases in `ported` modules. The case mode runs
-`flutter test --exclude-tags fixtures` (`caseTestArguments`), and tool 6 runs the same command.
+`flutter test --exclude-tags fixtures` (`caseTestArguments`).
 The mode `--fixtures` is tool 7. Both modes also run the stale-block check (Chart.js ADR 0041,
 section 8). The check reads the string literals of the Dart files of `test/` through `DartSource`,
 without `test/tool/` (its literals are test input) and without the generated `*_reference*.dart`
@@ -1142,41 +1140,8 @@ row, and on a literal that starts with `blocked:` and is not of the whole form
 The check covers the spec files, `test/port/` and `fixtureSkips`. The runtime check of the
 fixture runner (Chart.js ADR 0029 §9 item 6) stays.
 
-**6. Parity generator** (`tool/parity.dart`, `parity` and `parity:check`, phase 5). It writes
-`doc/parity.md` from these inputs:
-1. The files of the pinned copies in `third_party/` and their `wc -l` line counts. Each file gets
-   one row.
-2. The rule-2 headers of the Dart files of both packages. They give the Dart target of a row. A
-   `dart` entry of `status.yaml` gives the target of a row without a header, for example
-   `platform.flutter.dart` for `platform.dom.js`.
-3. `doc/status.yaml`: the text outside the tables, the status text of each row and the port-only
-   rows.
-4. The case results of tool 5, and the case and fixture counts of `doc/upstream/manifest.json`.
-5. The `DIVERGES` markers and the rows of `differences.md`.
-
-The spec table has the columns Cases and Fixtures. Placeholders in the texts of `status.yaml` give
-the derived values:
-- `{{differences}}` gives the `differences.md` row count by category and the links of the hunks
-  of the row ([theming.md](theming.md) §7). For a spec row, the rows of its `diverges:` skip
-  reasons also count.
-- `{{passed}}`, `{{failed}}`, `{{skipped}}`, `{{missing}}`, `{{cases}}` and
-  `{{skipped:<reason>}}` give the case counts of tool 5.
-- `{{platforms}}` gives the test legs from `@TestOn('vm')`. `{{files:<glob>}}` counts files.
-  `{{rows:<area>:<status>}}` counts the rows of a Summary area.
-
-These findings are errors:
-- a `status.yaml` entry of a file that no table lists
-- a status that does not start with a value of section 1 step 7
-- an unknown placeholder, or a placeholder without a value
-- a row with hunks and no `{{differences}}`
-- a `dart` entry of a row with a header
-
-These findings are warnings: a row with a Dart file and the status `not started`, a port-only Dart
-file that no port-only row names, and a port-only path that does not exist. `parity:check` fails
-when `parity.md` differs from the output, or on an error. `check:port` and the CI job
-`port-checks` run it. `--import` reads the cells of `parity.md` back into `status.yaml`.
-`--import --base <file>` keeps the entries of the cells that did not change after `<file>`. The
-sections for the Flutter input mapping and for `test/types` do not exist yet.
+**6. Parity generator.** Removed ([Chart.js ADR 0179](adr/0179-no-parity-generator-or-port-order.md)). A
+person writes `parity.md`.
 
 **7. Fixture smoke runner** (`test:fixtures`, job `fixtures`, phase 7). It builds a chart from
 each fixture config of a ported module and renders one frame. A test passes when no exception
@@ -1191,38 +1156,8 @@ passed, failed, skipped or missing. The job `fixtures` makes a shallow checkout 
 `third_party/Chart.js` and sets `FIXTURES_REQUIRED=1` ([Chart.js ADR
 0029](adr/0029-fixture-smoke-runner.md)).
 
-**8. Port-order helper** (`tool/port_order.dart`, `port:next`, phase 5). It reads each `.js` and
-`.ts` file of `third_party/Chart.js/src`, with its imports, re-exports and JSDoc `import()` types.
-It also reads the port state of each module:
-- A Dart file in `lib/` at the mapped path (2.5), whose rule-2 header names the module, starts the
-  module. The status `in progress` or `partial` also starts it.
-- The `parity.md` status `ported`, `replaced`, `distributed` or `n/a` makes the module done.
-
-A module that is not started is ready when each value import is done. A `partial` module satisfies
-the imports of the symbols that its status lists in backticks. These rules apply:
-- An imported name that a module re-exports (an `index` file) is an import of the module that
-  declares the name. Thus `plugin.colors.ts:1` needs `controller.doughnut.js`,
-  `controller.polarArea.js` and `core.defaults.js`, not `src/index.ts`.
-- A type-only import does not block a module (2.4). The type-only imports are `import type`,
-  `export type`, a `type` specifier, an import of a `.d.ts` file, each import in a `.d.ts` file
-  and a JSDoc `import()` type. The helper lists these types as the interfaces that the module
-  needs. For each type, it names the Dart file that declares it: a file of `lib/src/types`, or the
-  Dart file of the done module.
-- An import of a JSON file of the pin is data, not a module. `core.controller.js:12` imports
-  `version` from `package.json`. The port has `chartJsPackageVersion` for it.
-- A package import is done when `tool/port_sources.yaml` has an entry for the package, for example
-  `@kurkle/color`.
-- Modules that import each other are ready together when no other import blocks them.
-- The phase table does not name a phase for `src/index.ts`, `src/index.umd.ts` and `src/types.ts`.
-  The helper gives them phase 9.
-
-The list gives the ready modules in the phase order of section 5, with the upstream line count and
-the number of modules that need each module. It also gives the modules in progress and the blocked
-modules with their missing imports. `--json` prints the same data. `--check` fails in three
-cases. The helper cannot read a module or a header line of `lib/`. A `parity.md` status is not a
-value of section 1 step 7. An import does not resolve. The melos script `port:next:check` runs this
-mode in `check:port` and in the CI job `port-checks`, which checks out the submodules. Without the
-submodule, each mode exits with 2. Thus a gate without the checkout fails.
+**8. Port-order helper.** Removed ([Chart.js ADR 0179](adr/0179-no-parity-generator-or-port-order.md)): each
+Chart.js module is ported.
 
 **Node and ADR 0001.** A dev-time Node tool is not runtime. Nothing in `lib/` or `test/` loads it.
 [ADR 0001](../../../docs/adr/0001-native-ports-not-wrappers.md) records this in its Decision.
@@ -1280,7 +1215,7 @@ Keep each deferred plan current while the phases go on:
   upstream-tracking.md §2.5.
 - Rule 3: spec names, skip reasons, `@TestOn('vm')`, `package:test` for pure layers, fixtures,
   `test/port/`.
-- Rule 4: status vocabulary, tool 6. Rule 5: the tool 1 allowlist, the library floor and the four
+- Rule 4: status vocabulary, `parity.md`. Rule 5: the tool 1 allowlist, the library floor and the four
   invariants of Chart.js ADR 0147 §19.
 - New rule: JS numeric semantics.
 - Licensing: SunPro, OFL. Item 1 becomes "its notice in the `LICENSE` of the package that

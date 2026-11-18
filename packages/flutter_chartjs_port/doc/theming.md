@@ -609,7 +609,7 @@ specs such as `controller.line.tests.js:784-799` thus run unthemed. Theme tests 
 
 - `lib/src/theme/` holds `theme_data.dart`, `chart_theme.dart`, `presets.dart` and
   `compile.dart`, each with the port-only header (porting-flow.md, section 1). The
-  parity generator (porting-flow.md, tool 6) lists them in its port-only section. They get no
+  port-only section of `parity.md` lists them. They get no
   `differences.md` rows.
 - Each hunk has one row in `packages/flutter_chartjs_port/doc/differences.md`, in the column set of porting-flow.md. A
   theme row has the category `theme`. It names its section 8 test. The H4b and H4c rows say
@@ -617,9 +617,6 @@ specs such as `controller.line.tests.js:784-799` thus run unthemed. Theme tests 
 - The import guard (porting-flow.md, tool 1) must reject an import of `src/theme/` in a ported
   file. It keeps `lib/` free of `material`, `cupertino`, `material_ui`, `cupertino_ui` and `forui`. The forui
   adapter is its own package. The Material snippet lives in the gallery.
-- `dart run melos run parity` writes the `differences.md` row count by category into the `core.config` and
-  `plugin.colors` rows of `parity.md`. Nobody edits these notes by hand. The status texts of these
-  rows in `doc/status.yaml` hold the placeholder `{{differences}}`.
 - Port-only tests live under `test/port/theme/`.
 
 ## 8. Tests

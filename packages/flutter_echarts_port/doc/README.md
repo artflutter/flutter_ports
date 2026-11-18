@@ -104,8 +104,7 @@ cases are run-time counts of the jest cases. Loops make more cases than the stat
    `test/specs/zrender/<p>_test.dart`
    ([ECharts ADR 0005](adr/0005-spec-harness-and-reference-tests.md)). Behavior without an
    upstream spec gets port-only tests in `test/port/echarts/` or `test/port/zrender/`.
-5. Update the row in [parity.md](parity.md) in the same change. From phase 2, update
-   `doc/status.yaml` and run tool 6. Tool 6 writes `parity.md`.
+5. Update the row in [parity.md](parity.md) in the same change.
 
 [porting-flow.md](porting-flow.md) §1 gives all steps.
 

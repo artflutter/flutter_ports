@@ -58,8 +58,7 @@ conditions are true:
    types-only changes are never backports.
 2. **Scope.** It fixes a regression released up to the pinned tag (#12142 fixes #12097 from
    v4.5.1). Or it fixes a bug in a module whose status is `in progress`, `partial` or `ported`.
-   The status is in `parity.md` until the parity generator exists, then in
-   `packages/flutter_chartjs_port/doc/status.yaml`. A `replaced` module has the status of its replacement file.
+   The status is in `parity.md`. A `replaced` module has the status of its replacement file.
 3. **Self-contained.** It applies to the pinned file plus the recorded backports.
 4. **Recorded.** The same PR contains the `backported` ledger row, the header backport line, the
    trailers (§4.2), tests and the parity change of AGENTS.md rule 4. If upstream has no test
@@ -424,7 +423,7 @@ feature work. A Flutter SDK bump is a separate PR (porting-flow.md §2.12, §3).
    and 4). Update the snapshot, the `notThemed` list or the preset values. Re-apply the theme
    hunks in changed hosts. Then run their pinning tests.
 9. **Events and JS semantics.** Read report sections 7 and 3. For events, update the
-   input-mapping source that the parity generator reads. Then run `dart run melos run parity`.
+   input-mapping rows of `parity.md`.
 10. **Dependencies.**
     - `@kurkle/color`: if its lock version changed, diff the two kurkle tags and port the change.
     - `chartjs-test-utils`: if its lock version changed, review the harness port. If upstream

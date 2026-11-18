@@ -31,7 +31,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0026](0026-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, supersedes 0008, superseded by 0119.
 - [0027](0027-parsed-data.md) Parsed data in the controllers: accepted, superseded by 0036.
 - [0028](0028-controller-interfaces.md) Controller interfaces and values: accepted, superseded in part by 0145.
-- [0029](0029-fixture-smoke-runner.md) Fixture smoke runner: accepted, superseded in part by 0115, 0178.
+- [0029](0029-fixture-smoke-runner.md) Fixture smoke runner: accepted, superseded in part by 0115, 0178, 0179.
 - [0030](0030-controller-test-strategy.md) Controller test strategy: accepted.
 - [0031](0031-gallery-chart-types.md) Gallery chart types and the stress controller: accepted, superseded in part by 0075.
 - [0032](0032-js-numeric-semantics.md) JS numeric semantics: accepted, supersedes 0010, superseded by 0045.
@@ -173,4 +173,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0176](0176-number-text-and-string-ids.md) The number text and the string ids: accepted, supersedes 0146, superseded in part by 0177, 0178.
 - [0177](0177-no-number-text-helper.md) No number text helper: accepted, supersedes 0176, superseded in part by 0178.
 - [0178](0178-no-js-semantics-check.md) No JS-semantics check: accepted, supersedes 0029, 0034, 0035, 0040, 0041, 0146, 0176, 0177.
+- [0179](0179-no-parity-generator-or-port-order.md) No parity generator and no port-order tool: accepted, supersedes 0029.
 <!-- adr-index:end -->

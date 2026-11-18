@@ -3,7 +3,7 @@
 One row per upstream source file of [Chart.js v4.6.1](https://github.com/chartjs/Chart.js/tree/v4.6.1),
 the tag that ended the commit pin v4.5.1+7169e651 ([upstream-tracking.md](upstream-tracking.md) §2.4)
 (the pinned `third_party/Chart.js` submodule; run `melos run upstream` to check it out).
-Tool 6 ([porting-flow.md](porting-flow.md) §4) writes this file. Port work edits `doc/status.yaml` in the same PR as the code.
+A person writes this file ([Chart.js ADR 0179](adr/0179-no-parity-generator-or-port-order.md)). Port work edits the row of its file in the same PR as the code.
 
 Status values ([porting-flow.md](porting-flow.md) §1 step 7):
 

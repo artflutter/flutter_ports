@@ -60,12 +60,12 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   with 0 without the summary of a run that passed: `flutter test` exits with 0 when a SIGTERM stops
   it. It needs a local Google Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
-  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1 and 2 and the checks of tools 6
-  and 8) and tool 9, `options:gen:check` and `adr:index:check`, as melos steps. The CI job
-  `port-checks` runs the seven checks with a shallow checkout of the three Chart.js submodules,
+  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1 and 2) and tool 9,
+  `options:gen:check` and `adr:index:check`, as melos steps. The CI job `port-checks` runs the five
+  checks with a shallow checkout of the three Chart.js submodules,
   `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey`. `check:lib-imports` and
   `check:headers` also examine the add-on ports `flutter_chartjs_plugin_zoom_port` and
-  `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6). The other four checks examine only
+  `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6). The other three checks examine only
   `flutter_chartjs_port`. The port has no JS-semantics check (Chart.js ADR 0178).
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
@@ -105,8 +105,6 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
     on a Dart path that is not the mapped path. A port-only file at the mapped path of a pinned
     source also fails. It compares each submodule gitlink with its `commit` in
     `port_sources.yaml`.
-  - `port:next:check`: the check mode of tool 8 (`port:next`, below).
-  - `parity:check`: the check mode of tool 6 (`parity`, below).
   - `check:typed-reads`: tool 9, the ratchet of the by-name forms (Chart.js ADR 0054). For each
     file of `packages/flutter_chartjs_port/lib/src` outside `lib/src/js/` and
     `lib/src/options/`, it counts in the code (not in comments or strings) `jsGet(`, `jsGetKey(`,
@@ -138,7 +136,7 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
 - `dart run melos run test:cases`: tool 5. It runs `test/specs/` and reports each upstream case of
   `doc/upstream/manifest.json` as passed, failed, skipped or missing. It fails on an unknown test
   name, a bad skip reason and a missing case of a `ported` module. CI runs it in the ubuntu `test`
-  leg of shard 0. It passes `--exclude-tags fixtures`, as tool 6 does. It also fails on a stale
+  leg of shard 0. It passes `--exclude-tags fixtures`. It also fails on a stale
   `blocked: <module>` skip literal in `test/` (each `src/` row of the module `ported`), on an
   unknown module and on a `blocked:` literal in another form than `blocked: <module>` (Chart.js ADR
   0041). The check reads the string literals of `test/` without `test/tool/` and without the
@@ -182,28 +180,6 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   input `flutter_version` writes `.fvmrc` first, for a move to a new Flutter. The golden files are
   `test/port/theme/goldens/bar_light.png` and `bar_dark.png`. On each other run, the job `fixtures`
   compares them after `test:fixtures`. A failed compare uploads the `failures/` images.
-- `dart run melos run parity`: tool 6. It writes `packages/flutter_chartjs_port/doc/parity.md` from
-  `doc/status.yaml`, the files of the pinned `third_party/` copies, the rule-2 headers, the spec
-  case results of tool 5 and `doc/differences.md`. It runs the spec tests and needs the
-  submodules (`upstream`). Do not edit `parity.md`. Edit `doc/status.yaml`. Placeholders in its
-  texts give the derived values: `{{differences}}`, `{{passed}}`, `{{cases}}`,
-  `{{skipped:<reason>}}`, `{{platforms}}`, `{{files:<glob>}}` and `{{rows:<area>:<status>}}`
-  (`tool/src/parity.dart`). Put options after `--`. `-- --dry-run` prints the output.
-  `-- --import` reads the cells of `parity.md` back into `doc/status.yaml`.
-  `-- --import --base <file>` keeps the edits of both files. `-- --results <file>` reads the JSON
-  reporter output of the spec tests from a file. `parity:check` fails when `parity.md` differs
-  from the output, or on an error in `doc/status.yaml`. `check:port` and the CI job `port-checks`
-  run it.
-- `dart run melos run port:next`: tool 8. It lists the modules of `third_party/Chart.js/src` that
-  are ready to port, in the phase order of `packages/flutter_chartjs_port/doc/porting-flow.md` §5. Each
-  ready module comes with its line count and the interfaces that its type-only imports need. The
-  list also gives the modules in progress, and the blocked modules with their missing imports. The
-  port state comes from the rule-2 headers of the Dart files in `lib/` and from the status column
-  of `doc/parity.md`. It needs the submodule (`upstream`). Without it, the tool exits with 2. Put
-  options after `--`: `-- --json` prints the same data as JSON. `port:next:check` runs
-  `-- --check`. It fails when tool 8 cannot read a module, a header line of `lib/` or a
-  `parity.md` status. It also fails when an import does not resolve. `check:port` and the CI job
-  `port-checks` run it.
 - `dart run melos run docs` / `docs:build:web`: run the documentation site in Chrome / build it for the web
   with WebAssembly. Each web build (the melos scripts and the workflow `pages`) passes
   `--web-content-hash`: the bundle and asset files get a content hash in their names, so a new build
@@ -690,8 +666,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (proposed), `parity.md`, `differences.md`, `upstream-ledger.md` (one section for each
     repository) and the prior-art survey `prior-art/`.
     - `doc/adr/`: the D3 ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
-  - `check:headers`, `test:web` and `test --no-select` examine the package. `check:lib-imports`,
-    `test:cases`, `parity` and `port:next` do not examine it yet.
+  - `check:headers`, `test:web` and `test --no-select` examine the package. `check:lib-imports`
+    and `test:cases` do not examine it yet.
 - `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.2, on pub.dev,
   ISC), the first module package of the D3 port (D3 ADR 0008), as `d3-color` on npm. Its
   `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive, its `analysis_options.yaml`
@@ -808,7 +784,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (proposed), `parity.md`, `differences.md`, `upstream-ledger.md` (one section for each
     repository) and the prior-art survey `prior-art/`.
     - `doc/adr/`: the ECharts ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
-  - `check:port`, `test:web`, `test:cases`, `parity` and `port:next` do not examine the package
+  - `check:port`, `test:web` and `test:cases` do not examine the package
     yet. `test --no-select` runs its tests.
 - `packages/flutter_chartjs_plugin_zoom_port`: the chartjs-plugin-zoom port (library,
   version 0.1.0-beta.2, on pub.dev as a beta, MIT), the first add-on port (ADR 0009). Zoom phases 1-4 are
@@ -920,8 +896,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `prior-art/README.md` is the prior-art survey (2026-11-10).
     - `doc/adr/`: the zoom ADRs. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:lib-imports` and `check:headers` examine the package (ADR 0009 item 6).
-    `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
-    `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
+    `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`
+    and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
 - `packages/flutter_chartjs_chart_sankey_port`: the chartjs-chart-sankey port (library,
   `publish_to: none` until 0.1.0, MIT), the second add-on port (ADR 0009) and the first chart type
@@ -994,8 +970,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     this library exists).
     - `doc/adr/`: the sankey ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
   - `check:lib-imports` and `check:headers` examine the package (ADR 0009 item 6).
-    `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`,
-    `parity`, `port:next` and `check:typed-reads` do not examine it. `test --no-select` runs its
+    `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`
+    and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
 - `packages/flutter_kurkle_color_port`: the @kurkle/color 0.3.2 port (library, version 0.2.0,
   MIT, on pub.dev), the color library of the Chart.js port. Its pubspec has no
@@ -1033,7 +1009,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `tool/port_sources.yaml`: the pin of `third_party/kurkle-color`, with the top-level key
     `marker: kurkle` (the tag of `DIVERGES(kurkle)`). `doc/differences.md` has its rows.
   - `check:headers` examines the package as its own home. `test:web` and `test --no-select` run
-    its tests. `check:lib-imports`, `test:cases`, `parity`, `port:next` and `check:typed-reads` do
+    its tests. `check:lib-imports`, `test:cases` and `check:typed-reads` do
     not examine it. The core layers of `flutter_chartjs_port` may import its
     public library (`colorLibrary` of `tool/src/lib_imports.dart`).
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
@@ -1170,9 +1146,8 @@ of the generators and compare the names of its functions (`test/support/segment_
    line 1.
 3. **Port the specs.** Upstream `test/specs/<module>.tests.js` becomes a test file in `test/specs/`
    (see below). Behaviour without an upstream spec still needs tests.
-4. **Track parity.** Update the status text of the module in
-   `packages/flutter_chartjs_port/doc/status.yaml` in the same change. Then run
-   `dart run melos run parity`. Tool 6 writes `doc/parity.md`. Do not edit it by hand.
+4. **Track parity.** Update the row of the module in `packages/flutter_chartjs_port/doc/parity.md`
+   in the same change. A person writes `parity.md` (Chart.js ADR 0179).
 5. **No JavaScript at runtime.** No WebView, no JS engine, no `dart:js_interop` in library code
    (ADR 0001). Library code must compile for every Flutter platform and for web WebAssembly.
    `check:lib-imports` fails on a `lib/` import outside its allowlist.
@@ -1188,8 +1163,8 @@ of the generators and compare the names of its functions (`test/support/segment_
    and `commit` in `packages/flutter_chartjs_port/tool/port_sources.yaml`. Run `upstream:manifest`.
    Port the diff for every started module. Close the ledger rows of the range. Move the Chart.js
    citations of `doc/differences.md` to the new pin (`upstream-tracking.md` §4.9). Restamp the
-   headers (`packages/flutter_chartjs_port/doc/upstream-tracking.md` §4.8). Update the status texts in
-   `doc/status.yaml` and run `dart run melos run parity`. Backports follow ADR 0006. They never
+   headers (`packages/flutter_chartjs_port/doc/upstream-tracking.md` §4.8). Update the rows of
+   `doc/parity.md`. Backports follow ADR 0006. They never
    move the submodule. `upstream:check` and `packages/flutter_chartjs_port/test/upstream_test.dart`
    fail on a mismatch.
 
@@ -1347,7 +1322,7 @@ are relative to `packages/flutter_d3_port/doc/`.
   header lines (D3 ADR 0002).
 - Rules 3 and 4: port the specs by D3 ADR 0009, and by D3 ADR 0004 §6 to §10. Update the row of
   the repository in `parity.md`
-  in the same change. From D3 phase 2, tool 6 writes `parity.md`.
+  in the same change. A person writes `parity.md`.
 - Rule 6: a bump moves one repository. It changes the submodule, the entry in
   `tool/port_sources.yaml` and the headers of the files of that repository (D3 ADR 0001 item 7).
   A bump of `third_party/d3` also changes `d3Version`. `upstream:check` and
@@ -1625,8 +1600,8 @@ sankey ADRs are proposed. The doc paths are relative to
   `omit_local_variable_types` flags a declared variable type.
 - A spec file with a fixture group calls `group('auto', fixture.specs('<prefix>'))` at the upstream
   line, with `import '../fixtures/index.dart' as fixture;` (Chart.js ADR 0029). Thus the file has
-  `@TestOn('vm')`. Each fixture test has the tag `fixtures`: `test --no-select`, `test:cases` and
-  `parity` exclude it, and `test:fixtures` runs it. A hand port is one file at
+  `@TestOn('vm')`. Each fixture test has the tag `fixtures`: `test --no-select` and `test:cases`
+  exclude it, and `test:fixtures` runs it. A hand port is one file at
   `test/fixtures/hand/<path>.dart` with the header of rule 2, the library doc `/// A hand-ported
   fixture config (Chart.js ADR 0029, section 4).` before `library;`, and the function `fixture()`,
   which makes new objects at each call. Its entry in `handFixtures` has the first 12 hex digits of

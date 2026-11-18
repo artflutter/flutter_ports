@@ -1087,7 +1087,7 @@ repository.
     goldens of Chart.js ADR 0147). The `dart_test.yaml` of `packages/chartjs_test_utils` declares
     the tag `fixtures`.
   - `tool/`: the port checks (`check_*.dart`), tool 5 (`spec_cases.dart`, also tool 7 with
-    `--fixtures`), tool 6 (`parity.dart`), tool 8 (`port_order.dart`), shared code in `tool/src/`,
+    `--fixtures`), shared code in `tool/src/`,
     `port_sources.yaml` (one entry for each project that the package ports code from, with its pin;
     the Chart.js entry maps `test/fixtures/` to `packages/flutter_chartjs_port/test/fixtures/hand/`),
     `upstream_manifest/` (tool 4, Node.js) and `reference/` (the Node.js generators of reference
@@ -1099,9 +1099,8 @@ repository.
       supersessions (`adr:index`). The porting lead owns the statuses: it accepts an ADR when its
       code passes the tests. `docs/adr/README.md` has the rules and the template.
     - `doc/differences.md`: one row for each `DIVERGES` difference.
-    - `doc/status.yaml`: the hand-written parts of `parity.md`: the text outside the tables, the
-      status text of each row, the Dart targets that no header gives and the port-only rows. Tool 6
-      writes `doc/parity.md` from it. Do not edit `parity.md` by hand.
+    - `doc/parity.md`: the parity tracker, one row for each upstream file. A person writes it
+      (Chart.js ADR 0179). `test:cases` reads its status column.
     - `doc/upstream/`: the output of tool 4 (`manifest.json`, `fixtures.json`). Do not edit it by
       hand.
     - `doc/porting-flow.md`: the porting plan (proposed). It has the module life cycle, the

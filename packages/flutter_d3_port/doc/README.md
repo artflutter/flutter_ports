@@ -71,8 +71,7 @@ cases are static counts of the `it(` and `test(` calls. Loops make more cases at
      `REUSE.toml` ([AGENTS.md](../../../AGENTS.md#licensing)).
 3. Port the upstream test files of the module to the `test/` folder of its package
    ([D3 ADR 0008](adr/0008-module-packages.md) §1, [D3 ADR 0009](adr/0009-native-spec-harness.md)).
-4. Update the row of the repository in [parity.md](parity.md) in the same change. From phase 2,
-   update `doc/status.yaml` and run tool 6. Tool 6 writes `parity.md`.
+4. Update the row of the repository in [parity.md](parity.md) in the same change.
 
 [porting-flow.md](porting-flow.md) §1 gives all steps.
 

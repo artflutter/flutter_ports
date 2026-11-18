@@ -70,8 +70,7 @@ Jukka Kurkela; `^0.3.0`, resolved to **0.3.2** in the lockfile of the pin), whic
    Code from another project (such as `@kurkle/color`) also adds that project's notice to the
    package LICENSE and `REUSE.toml` ([AGENTS.md](../../../AGENTS.md#licensing)).
 3. Port the matching spec from `test/specs` next to it.
-4. Update the status text of the module in [status.yaml](status.yaml) and run
-   `dart run melos run parity` (tool 6), which writes [parity.md](parity.md), in the same PR.
+4. Update the row of the module in [parity.md](parity.md) in the same PR.
 
 ## Roadmap (draft)
 

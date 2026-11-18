@@ -81,9 +81,6 @@ melos:
     check:headers:
       run: dart run packages/flutter_chartjs_port/tool/check_port_headers.dart && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_plugin_zoom_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_chartjs_chart_sankey_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_kurkle_color_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_color_port && dart run packages/flutter_chartjs_port/tool/check_port_headers.dart packages/flutter_d3_interpolate_port
       description: Fail on flutter_chartjs_port, chartjs_test_utils, flutter_chartjs_plugin_zoom_port, flutter_chartjs_chart_sankey_port, flutter_kurkle_color_port, flutter_d3_port, flutter_d3_color_port and flutter_d3_interpolate_port file headers, DIVERGES markers or port_sources.yaml entries that break the rules. Each add-on package, the color packages, the D3 package and the D3 module packages run as their own home package.
-    port:next:check:
-      run: dart run packages/flutter_chartjs_port/tool/port_order.dart --check
-      description: Fail when tool 8 cannot read a module of third_party/Chart.js/src, a header line of lib/ or a parity.md status, or when an import does not resolve.
     options:gen:
       run: dart run packages/flutter_chartjs_port/tool/options_gen.dart
       description: Write the typed option scopes of flutter_chartjs_port (lib/src/options/*.g.dart) from tool/options_schema.yaml, formatted (Chart.js ADR 0054).
@@ -103,12 +100,10 @@ melos:
       steps:
         - check:lib-imports
         - check:headers
-        - port:next:check
-        - parity:check
         - check:typed-reads
         - options:gen:check
         - adr:index:check
-      description: Run check:lib-imports, check:headers, port:next:check, parity:check, check:typed-reads, options:gen:check and adr:index:check.
+      description: Run check:lib-imports, check:headers, check:typed-reads, options:gen:check and adr:index:check.
     test:fixtures:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart --fixtures
       description: Run the fixture smoke tests of flutter_chartjs_port (tool 7) and report each fixture as passed, failed, skipped or missing. Fail on a failed, missing or unknown fixture and on a bad skip reason. Without the submodule third_party/Chart.js, each fixture skips; with FIXTURES_REQUIRED=1, it fails.
@@ -124,15 +119,6 @@ melos:
     test:cases:
       run: dart run packages/flutter_chartjs_port/tool/spec_cases.dart
       description: Run the flutter_chartjs_port spec tests and report each upstream case as passed, failed, skipped or missing (tool 5). Fail on unknown test names and on missing cases of ported modules.
-    port:next:
-      run: dart run packages/flutter_chartjs_port/tool/port_order.dart
-      description: List the Chart.js modules that are ready to port, with their line counts and the interfaces that they need, and the blocked modules with their missing imports, in phase order (tool 8). Needs the submodule (melos run upstream). Options go after "--", for example "dart run melos run port:next -- --check" (fail when a module, a header or a parity.md status does not parse) or "-- --json".
-    parity:
-      run: dart run packages/flutter_chartjs_port/tool/parity.dart
-      description: Write packages/flutter_chartjs_port/doc/parity.md from doc/status.yaml, the pinned upstream files, the Dart headers, the spec case results of tool 5 and doc/differences.md (tool 6). It runs the spec tests and needs the submodules (melos run upstream). Options go after "--", for example "dart run melos run parity -- --dry-run" (print the output) or "-- --import" (read the cells of parity.md into status.yaml).
-    parity:check:
-      run: dart run packages/flutter_chartjs_port/tool/parity.dart --check
-      description: Fail when packages/flutter_chartjs_port/doc/parity.md differs from the output of tool 6, or when doc/status.yaml has an error.
 
     upstream:
       run: git submodule update --init --depth 1

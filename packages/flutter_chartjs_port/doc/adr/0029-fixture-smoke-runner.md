@@ -1,7 +1,7 @@
 # Chart.js ADR 0029: Fixture smoke runner
 
 - Status: accepted (2026-10-21)
-- Superseded in part by: [Chart.js ADR 0115](0115-hand-ports-of-typed-data-fixtures.md) (2026-11-12); [Chart.js ADR 0178](0178-no-js-semantics-check.md) (2026-11-18)
+- Superseded in part by: [Chart.js ADR 0115](0115-hand-ports-of-typed-data-fixtures.md) (2026-11-12); [Chart.js ADR 0178](0178-no-js-semantics-check.md) (2026-11-18); [Chart.js ADR 0179](0179-no-parity-generator-or-port-order.md) (2026-11-18)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (raw Map configs,
   `jsonDecode` output, the `undefined` sentinel),

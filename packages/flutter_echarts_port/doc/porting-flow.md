@@ -168,7 +168,7 @@ Terms:
 
    Until tool 6 exists (phase 2), each port change edits [parity.md](parity.md) by hand. A
    directory with a started module then gets one row for each source file. From phase 2,
-   `doc/status.yaml` holds the status text. Tool 6 writes `parity.md` from it.
+   A person writes the status text in `parity.md`.
 8. **Gallery.** From phase 6, add a demo to `apps/echarts_gallery` when a chart type or a
    component works. The layout rule of Chart.js ADR 0031 applies: the chart is in view after the
    first frame.
@@ -740,9 +740,9 @@ of tools serve all ports, in the dev package `port_tools`. The ECharts port uses
 | 3. JS-semantics check | removed | — | Chart.js ADR 0178 removed the tool. The review and the tests apply the number rules. |
 | 4. Upstream manifest | `upstream:manifest` | 2, visual pages 6 | An ECharts Node.js tool of its own (ADR 0008). It reads the jest case names at run time. Output: `doc/upstream/manifest.json` with two projects (191 and 68 cases). From phase 6, also `doc/upstream/fixtures.json` |
 | 5. Spec-case tracking | `test:cases` | 2 | The spec paths `test/specs/echarts/` and `test/specs/zrender/`, the manifest keyed by project and `--exclude-tags fixtures`. It moves to `port_tools` (ADR 0008) |
-| 6. Parity generator | `parity`, `parity:check` | 2 | One row for each source file, grouped by repository and directory, from `doc/status.yaml`. It replaces the hand-written [parity.md](parity.md). It moves to `port_tools` (ADR 0008) |
+| 6. Parity generator | removed | — | Chart.js ADR 0179 removed the tool. |
 | 7. Fixture smoke runner | `test:fixtures` | 6 | The charts of the 605 visual pages (section 3). Tool 5 with `--fixtures` reports them |
-| 8. Port-order helper | `port:next` | 2 | The file-based order of both repositories, with the bare specifier `zrender/src/<p>`. The value graph has no cycle. Thus the file order fits ECharts. It moves to `port_tools` (ADR 0008) |
+| 8. Port-order helper | removed | — | Chart.js ADR 0179 removed the tool. |
 
 **Tool 4 and the upstream specs.** The specs are TypeScript files for jest. Tool 4 does not run
 `npm install`. It reads the case names at run time:
@@ -903,7 +903,7 @@ change.
   The zrender and d3 components in the package `LICENSE` and in `REUSE.toml`. The package in
   `test:web`, with its first pure test. The AGENTS.md text for the ECharts tool commands. The
   `JsDate` subset and the zone files in `js_semantics` (ECharts ADR 0008 §3).
-- Phase 2: `upstream:manifest`, `test:cases`, `parity` and `port:next` for ECharts, and the
+- Phase 2: `upstream:manifest` and `test:cases` for ECharts, and the
   ECharts step of the CI job `upstream-manifest`. The node-timsort, jsdiff and
   `OrientedBoundingRect.ts` notices. The fdlibm files `e_acos.c`, `s_tan.c` and `k_tan.c` in
   `third_party/fdlibm`, with their `REUSE.toml` paths. `e_asin.c` follows in phase 4.
