@@ -56,6 +56,7 @@ import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
+import 'package:flutter_chartjs_port/src/core/point_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
@@ -590,6 +591,7 @@ class Scale(AnyObject cfg)
         types.Scale,
         NativeBarIndexReads,
         BulkBarScale,
+        LinearPixelScale,
         types.LayoutItemBeforeLayout,
         types.LayoutItemConfigure,
         types.LayoutItemPadding,
@@ -884,6 +886,27 @@ class Scale(AnyObject cfg)
   @override
   @internal
   bool get supportsBulkBarUpdate => false;
+
+  /// Unknown scales retain their virtual pixel calls (Chart.js ADR 0166).
+  @override
+  @internal
+  // DIVERGES(chartjs): adapt-bulk-point-update, the exact linear scale only.
+  LinearPixels? get linearPixels => null;
+
+  /// The inputs of the pixel of a number for the exact linear scale, with the
+  /// value range [startValue] and [valueRange] of that scale.
+  @internal
+  // DIVERGES(chartjs): adapt-bulk-point-update, read once for a bulk run.
+  LinearPixels linearPixelsOf(double startValue, double valueRange) =>
+      LinearPixels(
+        scale: this,
+        startValue: startValue,
+        valueRange: valueRange,
+        startPixel: startPixel,
+        length: length,
+        reverse: reversePixels,
+        align: jsTruthy(_alignToPixels),
+      );
 
   /// Only native category or explicitly bounded numeric scales opt in.
   @internal

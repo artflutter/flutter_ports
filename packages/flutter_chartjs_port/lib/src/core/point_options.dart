@@ -411,6 +411,13 @@ final class NativeGapReads._(
     return iValue is double ? iValue : (iValue as int) * 1.0;
   }
 
+  /// Whether [item], read by `getParsed` from the native parsed list, is a
+  /// native item: its reads of x and y run no user code. The bulk point loop
+  /// of Chart.js ADR 0166 tests it before its reads.
+  // DIVERGES(chartjs): adapt-bulk-point-update, the item test before the reads.
+  bool acceptsItem(Object? item) =>
+      identical(_meta.parsed, _parsed) && _nativeItem(item);
+
   bool _nativeItem(Object? item) {
     if (item is ParsedItem) return true;
     if (!_sameTypeIsCheap) return false;

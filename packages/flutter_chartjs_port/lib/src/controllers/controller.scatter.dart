@@ -55,6 +55,7 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show PointInteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
+import 'package:flutter_chartjs_port/src/core/point_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
@@ -558,8 +559,45 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final hold = super.runtimeType == ScatterController
         ? HeldElementOptions.forLoop()
         : null;
+    // DIVERGES(chartjs): adapt-bulk-point-update, the loop-wide guards of a
+    // bulk run (Chart.js ADR 0166): the gap reads hold their own guards (the
+    // exact controller, chart and projections, a direct update, no stack and
+    // no segment), the held entry, unshared options and the axes x and y.
+    final bulk =
+        bulkPointUpdatesOn &&
+        gaps != null &&
+        hold != null &&
+        !reset &&
+        sharedOptions == null &&
+        includeOptions &&
+        iAxis is XAxis &&
+        vAxis is YAxis;
 
     for (var i = start; i < start + count; ++i) {
+      // DIVERGES(chartjs): adapt-bulk-point-update, after the passes that can
+      // prepare the plans, while the previous pass held its x and the entry.
+      if (bulk &&
+          i > start + 1 &&
+          colors == null &&
+          gaps.held != null &&
+          hold.holds) {
+        final next = _bulkPoints(
+          points,
+          i,
+          start + count,
+          mode,
+          gaps,
+          hold,
+          iScale,
+          vScale,
+        );
+        if (next > i) {
+          prevParsed = getParsed(next - 1);
+          // The pass of the index `next` follows.
+          i = next - 1;
+          continue;
+        }
+      }
       final point = points[i];
       final parsed = getParsed(i);
       // The catch-up of the contexts is not part of the proof.
@@ -676,6 +714,79 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     gaps?.finish();
     hold?.finish();
     updateSharedOptions(sharedOptions, mode, firstOpts);
+  }
+
+  /// The bulk run of [updateElements] from the index [i] until [end] at most
+  /// (Chart.js ADR 0166). It gives the index after the last point that it
+  /// wrote, or [i] when it wrote none.
+  ///
+  /// Each pass is the pass of the loop with the held entry and a held x: the
+  /// same reads, pixels, writes, options call and gap test, in the same
+  /// order, with the typed writes of an exact point and the pixels of the
+  /// exact linear scales read once. A pass starts only when its point is an
+  /// exact point that is not active and its parsed item is native: then its
+  /// reads and its pixels run no user code. A value that is not a number
+  /// ends the run before any write: its reads ran no user code, so the pass
+  /// of the loop reads it again. A pass whose options call did not take the
+  /// held entry of a class value is the last one: that call can run user
+  /// code, as in the pass of the loop.
+  // DIVERGES(chartjs): adapt-bulk-point-update, one loop with no user code.
+  int _bulkPoints(
+    List<types.Element> points,
+    int i,
+    int end,
+    String mode,
+    NativeGapReads gaps,
+    HeldElementOptions hold,
+    types.Scale iScale,
+    types.Scale vScale,
+  ) {
+    final iPixels = iScale is LinearPixelScale
+        ? (iScale as LinearPixelScale).linearPixels
+        : null;
+    final vPixels = vScale is LinearPixelScale
+        ? (vScale as LinearPixelScale).linearPixels
+        : null;
+    if (iPixels == null || vPixels == null) return i;
+    var j = i;
+    while (j < end) {
+      final element = points[j];
+      final point = element is types.PointElementWrites
+          ? element as types.PointElementWrites
+          : null;
+      if (point == null || !point.typedWrites || element.active) break;
+      final parsed = getParsed(j);
+      if (!gaps.acceptsItem(parsed)) break;
+      // :128 and :129, one read each.
+      final vValue = parsedValueOf(parsed, const YAxis());
+      final iValue = parsedValueOf(parsed, const XAxis());
+      if (iValue is! num ||
+          !(vValue == null || vValue is Undefined || vValue is num)) {
+        break;
+      }
+      // `toDouble()` on a num is a call in an AOT build (performance.md §72).
+      final x = iValue is double ? iValue : (iValue as int) * 1.0;
+      final iPixel = iPixels.pixelOf(x);
+      point.x = iPixel;
+      final nullData = vValue is! num;
+      final vPixel = nullData
+          ? vScale.getBasePixel()
+          : vPixels.pixelOf(vValue is double ? vValue : (vValue as int) * 1.0);
+      point
+        ..y = vPixel
+        ..skip = iPixel.isNaN || vPixel.isNaN || nullData
+        // The previous pass held its x.
+        ..stop = gaps.stopOf(x)!
+        ..options = resolveHeldDataElementOptions(hold, j, mode);
+      j++;
+      if (!hold.native) {
+        gaps.held = null;
+        break;
+      }
+      gaps.held = x;
+    }
+    countBulkPoints(j - i);
+    return j;
   }
 
   /// The refreshes that the loop left out, for the indexes from [from] until

@@ -722,6 +722,9 @@ final class HeldElementOptions._() {
 
   int _taken = 0;
 
+  /// Whether the hold has an entry.
+  bool get holds => _entry != null;
+
   /// Adds the count of the calls that took the entry to
   /// [heldElementOptionsTaken].
   void finish() => heldElementOptionsTaken += _taken;

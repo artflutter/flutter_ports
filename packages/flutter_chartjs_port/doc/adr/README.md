@@ -162,6 +162,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0163](0163-scatter-indexed-point-sizes.md) Indexed point sizes in the scatter plan: accepted, supersedes 0079, 0094.
 - [0164](0164-kept-circle-run.md) The kept circle run of point markers: accepted, supersedes 0104.
 - [0165](0165-held-element-options.md) The held option cache entry of a scatter loop: accepted, supersedes 0054, 0109.
+- [0166](0166-bulk-point-loop.md) The bulk point loop of a scatter update: accepted.
 - [0167](0167-point-hover-scan.md) A typed scan of the points in the hover search: accepted.
 - [0170](0170-typed-gallery-type-pages.md) Typed gallery type pages: accepted, supersedes 0052.
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.
