@@ -15,42 +15,14 @@
 ///   0020): the registry of the host takes it.
 library;
 
-import 'dart:math' as math;
-import 'dart:ui' show Color;
+import 'dart:math';
 
-import 'package:flutter/animation.dart' show Curves;
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_chart_sankey_port/src/flow.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/labels.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/core.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/layout.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        ChartArea,
-        ChartClip,
-        ChartMeta,
-        ChartPaint,
-        DatasetController,
-        Element,
-        JsClass,
-        NearestInteractionMode,
-        ParsedItem,
-        Scale,
-        ScaleBounds,
-        TooltipCallbacks,
-        TooltipItem,
-        TooltipModel,
-        Undefined,
-        XAxis,
-        YAxis,
-        controllerArgs,
-        undefined;
-import 'package:flutter_chartjs_port/helpers.dart'
-    show isNullOrUndef, toFont, valueOrDefault;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsNumberToString, jsToNumber, jsTruthy;
+import 'package:flutter/animation.dart';
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/helpers.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 const ChartPaint _black = ChartPaint.solid(Color(0xFF000000));
 const ChartPaint _transparent = ChartPaint.solid(Color(0x00000000));
@@ -240,7 +212,7 @@ double _getColumnPadding(
   final trailingSpace = orientation == SankeyOrientation.vertical
       ? chartHeight - chartArea.bottom
       : chartWidth - chartArea.right;
-  return math.max(0, nodeWidth + 3 - trailingSpace);
+  return max(0, nodeWidth + 3 - trailingSpace);
 }
 
 /// controller.ts:159 `getNodeRect`.
@@ -266,9 +238,9 @@ double _getColumnPadding(
   if (orientation == SankeyOrientation.vertical) {
     final x1 = xScale.getPixelForValue(_nodeY(node));
     final x2 = xScale.getPixelForValue(_nodeY(node) + size);
-    final left = math.min(x1, x2);
+    final left = min(x1, x2);
     final naturalWidth = (x2 - x1).abs();
-    final width = math.max(naturalWidth, minSize);
+    final width = max(naturalWidth, minSize);
     return (
       height: nodeWidth,
       width: width,
@@ -278,9 +250,9 @@ double _getColumnPadding(
   }
   final y1 = yScale.getPixelForValue(_nodeY(node));
   final y2 = yScale.getPixelForValue(_nodeY(node) + size);
-  final top = math.min(y1, y2);
+  final top = min(y1, y2);
   final naturalHeight = (y2 - y1).abs();
-  final height = math.max(naturalHeight, minSize);
+  final height = max(naturalHeight, minSize);
   return (
     height: height,
     width: nodeWidth,

@@ -15,13 +15,11 @@
 /// This file is not a test entry. Only VM test files import it.
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui';
 
-import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
-import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
-    show Flow, SankeyController;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, LinearChartGradient;
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The style [style] of a recorded `setFillStyle` or `setStrokeStyle`: a
 /// color as `#rrggbbaa`, the gradient of a flow as `['linearGradient', x0,

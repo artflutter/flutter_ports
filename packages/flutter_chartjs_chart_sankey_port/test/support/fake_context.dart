@@ -6,8 +6,8 @@
 /// (`measureText: vi.fn().mockReturnValue({ width })`).
 library;
 
-import 'package:chartjs_test_utils/pure.dart' show MockContext;
-import 'package:flutter_chartjs_port/chartjs.dart' show TextMetrics;
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 final class const _FixedMetrics(@override final double width)
     implements TextMetrics {

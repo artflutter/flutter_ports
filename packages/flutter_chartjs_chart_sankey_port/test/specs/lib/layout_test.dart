@@ -2,11 +2,9 @@
 @TestOn('vm')
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/core.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/layout.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:test/test.dart';
 
 // layout.test.ts:13-31 `formatValue`, `formatDescription` and `each`: a
@@ -71,7 +69,7 @@ SankeyNode _copy(SankeyNode node) => _node(
 /// `10 ** -numDigits / 2`.
 Matcher _toBeCloseTo(double expected, int numDigits) => predicate<double>(
   // js-ok: double operands, as Math.pow.
-  (received) => (expected - received).abs() < math.pow(10.0, -numDigits) / 2,
+  (received) => (expected - received).abs() < pow(10.0, -numDigits) / 2,
   // js-ok: the text of a test failure.
   'a number close to $expected, to $numDigits digits',
 );
@@ -738,13 +736,13 @@ void main() {
         // production code.
         double visualBottom(SankeyNode node, Map<String, double> minSizes) {
           final minSizeUnits = minSizes[node.key] ?? 0;
-          final height = math.max(node.size, minSizeUnits);
+          final height = max(node.size, minSizeUnits);
           return (node.y ?? 0) + (node.size + height) / 2;
         }
 
         double visualTop(SankeyNode node, Map<String, double> minSizes) {
           final minSizeUnits = minSizes[node.key] ?? 0;
-          final height = math.max(node.size, minSizeUnits);
+          final height = max(node.size, minSizeUnits);
           return (node.y ?? 0) + (node.size - height) / 2;
         }
 
@@ -850,7 +848,7 @@ void main() {
           expect(
             maxY,
             greaterThan(
-              nodes[1].y! + math.max<double>(nodes[1].inFlow, nodes[1].outFlow),
+              nodes[1].y! + max<double>(nodes[1].inFlow, nodes[1].outFlow),
             ),
           );
         });

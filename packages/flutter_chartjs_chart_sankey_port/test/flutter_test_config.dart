@@ -26,14 +26,10 @@ library;
 import 'dart:async';
 import 'dart:ui';
 
-import 'package:chartjs_test_utils/flutter.dart'
-    show afterEachChart, installTestFont, releaseCharts;
-import 'package:chartjs_test_utils/pure.dart'
-    show setUpBuiltins, setUpDefaultsRestore;
-import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
-    show sankeyRegisterables;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show Chart, JsObjectFace, controllers, defaults, elements, plugins, scales;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// setup.js:18 `Chart.defaults.devicePixelRatio = 1`.

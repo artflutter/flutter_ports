@@ -9,20 +9,6 @@
 /// `Chart.register(sankeyRegisterables)` of the public library.
 library;
 
-export 'controller.dart' show SankeyController;
-export 'flow.dart' show Flow;
-export 'types.dart'
-    show
-        FromToElement,
-        SankeyColorMode,
-        SankeyDataPoint,
-        SankeyLabelPosition,
-        SankeyModeX,
-        SankeyNode,
-        SankeyNodeCallback,
-        SankeyNodeGap,
-        SankeyNodeLabelPosition,
-        SankeyNodePaddingMode,
-        SankeyOrientation,
-        SankeyParsedCustom,
-        SankeySize;
+export 'package:flutter_chartjs_chart_sankey_port/src/controller.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/flow.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/types.dart';

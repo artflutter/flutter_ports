@@ -4,10 +4,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'dart:ui' show Color;
-
-import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `export default` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{

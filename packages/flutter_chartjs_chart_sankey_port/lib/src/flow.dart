@@ -14,29 +14,12 @@
 library;
 
 import 'dart:math' as math;
-import 'dart:ui' show Color, Offset;
+import 'dart:ui';
 
-import 'package:flutter_chartjs_chart_sankey_port/src/labels.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        CanvasRenderingContext2D,
-        ChartArea,
-        ChartGradient,
-        ChartPaint,
-        Element,
-        ElementPoint,
-        JsClass,
-        ScaleAxis,
-        SolidChartPaint,
-        Undefined,
-        VisualElementRange,
-        XAxis,
-        elementCfgArg,
-        undefined;
-import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor, toFont;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsNumberToString, jsToNumber, jsTruthy;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/helpers.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 typedef _FlowPoint = ({double x, double y});
 typedef _ControlPoints = ({_FlowPoint cp1, _FlowPoint cp2});

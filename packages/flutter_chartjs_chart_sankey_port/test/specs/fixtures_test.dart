@@ -2,20 +2,19 @@
 @TestOn('vm')
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
-import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
-import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
-    show Flow, SankeyOrientation;
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../fixtures/index.dart' as fixture;
+import '../fixtures/index.dart';
 
 void main() {
-  group('fixtures', fixture.specs());
+  group('fixtures', specs());
 
   group('index', () {
     test('should register controller and element', () {
@@ -106,7 +105,7 @@ void main() {
             x + width,
       ];
       expect(rightEdges, isNotEmpty);
-      expect(rightEdges.reduce(math.max), closeTo(chart.width - 3, 0.000005));
+      expect(rightEdges.reduce(max), closeTo(chart.width - 3, 0.000005));
     });
   });
 }

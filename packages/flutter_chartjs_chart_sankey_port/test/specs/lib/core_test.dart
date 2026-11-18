@@ -2,8 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/core.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:test/test.dart';
 
 /// The fields of [node] that the upstream object literal of a node has,

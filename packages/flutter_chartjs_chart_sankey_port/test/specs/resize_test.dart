@@ -2,12 +2,11 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show AnimationEvent, Chart, ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The drawn share of the flows of [chart].

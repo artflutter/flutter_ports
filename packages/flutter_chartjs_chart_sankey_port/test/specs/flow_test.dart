@@ -2,13 +2,11 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui';
 
-import 'package:flutter_chartjs_chart_sankey_port/src/flow.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show ChartPaint, ElementPoint;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:test/test.dart';
 
 import '../support/fake_context.dart';

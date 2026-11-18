@@ -3,9 +3,8 @@
 /// Port of `src/lib/helpers.ts`.
 library;
 
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsToString, jsTruthy;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// helpers.ts:1 `defined`: whether [x] is not `undefined`.
 ///

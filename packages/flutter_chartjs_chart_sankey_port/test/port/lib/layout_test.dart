@@ -2,9 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/core.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/layout.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:test/test.dart';
 
 /// A graph with a cycle through a node with 34 flows.

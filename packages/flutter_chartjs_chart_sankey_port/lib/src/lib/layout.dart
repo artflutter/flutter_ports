@@ -9,9 +9,8 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsSort;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 const double _smallValue = 1e-6;
 

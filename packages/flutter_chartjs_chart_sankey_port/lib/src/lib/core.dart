@@ -3,19 +3,10 @@
 /// Port of `src/lib/core.ts`: the data points and the nodes of the data.
 library;
 
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show
-        JsObjectFace,
-        JsProxyObject,
-        jsGet,
-        jsSort,
-        jsToNumber,
-        jsToString,
-        jsTruthy;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// core.ts:11 `flowSort`: the larger flow first.
 double _flowSort(FromToElement a, FromToElement b) {
@@ -35,8 +26,8 @@ double nodeSizeOf(SankeyNode node, SankeySize size) {
   final a = _or(node.inFlow, node.outFlow);
   final b = _or(node.outFlow, node.inFlow);
   return switch (size) {
-    SankeySize.min => math.min(a, b),
-    SankeySize.max => math.max(a, b),
+    SankeySize.min => min(a, b),
+    SankeySize.max => max(a, b),
   };
 }
 

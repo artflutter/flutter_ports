@@ -2,15 +2,13 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color;
+import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show ActiveElement, Chart, ChartPaint, SolidChartPaint;
-import 'package:flutter_chartjs_port/chartjs.dart' show UpdateMode;
-import 'package:flutter_chartjs_port/helpers.dart' show getHoverColor;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/helpers.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const ChartPaint _red = ChartPaint.solid(Color(0xFFFF0000));

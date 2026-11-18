@@ -33,10 +33,17 @@ library;
 
 import 'package:flutter_chartjs_chart_sankey_port/src/controller.dart';
 import 'package:flutter_chartjs_chart_sankey_port/src/flow.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show JsClass;
+import 'package:flutter_chartjs_port/chartjs.dart';
 
-export 'src/index.esm.dart';
-export 'src/upstream.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/controller.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/flow.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/index.esm.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/labels.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/lib/core.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/lib/layout.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/upstream.dart';
 
 /// The two components of the chart type, for `Chart.register`: the class
 /// values of the controller `sankey` and of the element `flow`.

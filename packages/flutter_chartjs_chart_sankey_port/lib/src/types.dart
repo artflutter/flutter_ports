@@ -28,10 +28,9 @@
 ///   object of the host, read through [FlowOptionsFace]).
 library;
 
-import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/helpers.dart' show isNullOrUndef;
-import 'package:flutter_chartjs_port/js_semantics.dart'
-    show jsGet, jsNumberToString;
+import 'package:flutter/painting.dart';
+import 'package:flutter_chartjs_port/helpers.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// types.ts:15 `SankeyDataPoint`: one flow of the data, from the node
 /// [from] to the node [to].

@@ -4,9 +4,9 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // One huge node and several tiny ones in the same column, matching issue 87's

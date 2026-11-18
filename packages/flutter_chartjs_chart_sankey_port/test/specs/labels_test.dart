@@ -2,12 +2,10 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color, Offset, TextAlign;
+import 'dart:ui';
 
-import 'package:flutter_chartjs_chart_sankey_port/src/labels.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show ChartGradient, ChartPaint, ChartTextStyle;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:test/test.dart';
 
 import '../support/fake_context.dart';

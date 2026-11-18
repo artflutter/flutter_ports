@@ -7,19 +7,12 @@
 /// same name: a gradient or a pattern is a `ChartShaderPaint` there.
 library;
 
-import 'dart:math' as math;
-import 'dart:ui' show TextAlign;
+import 'dart:math';
+import 'dart:ui';
 
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        CanvasRenderingContext2D,
-        CanvasTextBaseline,
-        ChartTextStyle,
-        JsObjectFace,
-        Undefined;
-import 'package:flutter_chartjs_port/js_semantics.dart' show jsGet;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// labels.ts:13 `DrawLabelOptions`.
 final class const DrawLabelOptions({
@@ -109,10 +102,7 @@ void _addRoundedRectPath(
   double height,
   double radius,
 ) {
-  final r = math.max<double>(
-    0,
-    math.min(math.min(radius, width / 2), height / 2),
-  );
+  final r = max<double>(0, min(min(radius, width / 2), height / 2));
   ctx
     ..beginPath()
     ..moveTo(x + r, y)
@@ -218,7 +208,7 @@ void drawLabel(
   ctx.font = font;
   var textWidth = double.negativeInfinity;
   for (final line in lines) {
-    textWidth = math.max(textWidth, ctx.measureText(line).width);
+    textWidth = max(textWidth, ctx.measureText(line).width);
   }
   final totalTextHeight = textHeight * lines.length;
   final text = _getTextPosition(position, options, totalTextHeight);

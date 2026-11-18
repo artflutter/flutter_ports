@@ -31,9 +31,8 @@
 /// image.
 library;
 
-import 'package:chartjs_test_utils/flutter.dart'
-    show FixtureLoad, FixtureSource, HandFixture, specsFromFixtures;
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fixtures_reference.dart';

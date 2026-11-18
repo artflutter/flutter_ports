@@ -2,9 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
-import 'package:flutter_chartjs_chart_sankey_port/src/types.dart'
-    show SankeySize;
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:test/test.dart';
 
 // helpers.test.ts:3-21 `formatValue`, `formatDescription` and `each`: a
