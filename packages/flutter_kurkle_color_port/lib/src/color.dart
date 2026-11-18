@@ -210,6 +210,7 @@ extension KurkleColor on Color {
   ///
   /// A copy of the color with `a` as alpha [0..1].
   RGBA get rgb {
+    // DIVERGES(kurkle): adapt-kurkle-color-copies, performance optimisations.
     final v = _bytes(this);
     return v..a = b2n(v.a);
   }
@@ -257,6 +258,8 @@ extension KurkleColor on Color {
       ..g = _mixByte(w1 * c1.g + w2 * c2.g + 0.5)
       ..b = _mixByte(w1 * c1.b + w2 * c2.b + 0.5)
       ..a = p * c1.a + (1 - p) * c2.a;
+    // DIVERGES(kurkle): adapt-kurkle-color-copies, performance
+    // optimisations.
     return _color(c1..a = n2b(c1.a));
   }
 
