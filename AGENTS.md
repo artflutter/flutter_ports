@@ -1278,9 +1278,9 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
     Inside `testWidgets` and `withClock`, the fake clock moves it. Ported code never calls
     `DateTime.now()`. A `DateTime` is a JS `Date`: `jsToNumber` gives its time value (Chart.js ADR
     0024).
-  - `js_promise.dart` has the promise jobs of Chart.js ADR 0019 §7:
-    `jsEnqueuePromiseJob`, `jsRunWithMicrotaskCheckpoint` (the checkpoint after an animator frame
-    callback) and `jsPromiseAll` (`Promise.all`).
+  - The runtime has no promise code (Chart.js ADR 0172). The animations call a function at their
+    end (`Animation.onSettle`, `Animation.whenAllEnd`), and `Animation.runFrame` runs these calls at
+    the end of the animator frame callback.
 - Rule 2 for the typed layers (Chart.js ADR 0054 §13). A file that ports an upstream module
   keeps its mapped path, its line-1 header and the upstream function names and order, also in
   the config, resolver and data layers. The data representation of these layers is typed:

@@ -34,6 +34,5 @@ export 'package:flutter_chartjs_port/src/js/js_function.dart';
 export 'package:flutter_chartjs_port/src/js/js_math.dart';
 export 'package:flutter_chartjs_port/src/js/js_number.dart';
 export 'package:flutter_chartjs_port/src/js/js_object.dart';
-export 'package:flutter_chartjs_port/src/js/js_promise.dart';
 export 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 export 'package:flutter_chartjs_port/src/js/js_webidl.dart';

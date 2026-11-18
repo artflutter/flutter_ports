@@ -950,7 +950,6 @@ jsCall
 jsCall1
 jsConstruct
 jsDeleteKey
-jsEnqueuePromiseJob
 jsGet
 jsGetIndex
 jsGetKey
@@ -969,8 +968,6 @@ jsObjectOrNull
 jsOrZero
 jsOwnPropertyNames
 jsParseFloat
-jsPromiseAll
-jsRunWithMicrotaskCheckpoint
 jsSet
 jsSetIndex
 jsSort
@@ -1260,7 +1257,6 @@ jsCall
 jsCall1
 jsConstruct
 jsDeleteKey
-jsEnqueuePromiseJob
 jsGet
 jsGetIndex
 jsGetKey
@@ -1279,8 +1275,6 @@ jsObjectOrNull
 jsOrZero
 jsOwnPropertyNames
 jsParseFloat
-jsPromiseAll
-jsRunWithMicrotaskCheckpoint
 jsSet
 jsSetIndex
 jsSort

@@ -186,7 +186,7 @@ void main() {
       };
       final sharedB = <String, Object?>{'option': 2.0, r'$shared': true};
       // The option has no animation config: _createAnimations writes it at
-      // once, and awaitAll gives jsPromiseAll an empty list.
+      // once, and awaitAll gives Animation.whenAllEnd an empty list.
       final animsB = Animations(chart, <String, Object?>{
         'other': <String, Object?>{'duration': 100},
       });

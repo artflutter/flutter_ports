@@ -32,8 +32,11 @@
 ///   and the same factor share one curve call (Chart.js ADR 0149,
 ///   `adapt-animation-ease-table`, `animation_ease.dart`).
 ///
-/// The promises of [Animation.wait] settle in a job of `js_promise.dart`
-/// (`platform-animation-promise-checkpoint`, Chart.js ADR 0019, section 7).
+/// The end of an animation calls the functions of [Animation.onSettle] in a
+/// frame job: [Animation.runFrame] runs the jobs at the end of the animator
+/// frame callback, as a browser runs the promise jobs after each
+/// `requestAnimationFrame` callback (`platform-animation-promise-checkpoint`,
+/// Chart.js ADR 0172).
 ///
 /// `Animation` is also a class of `package:flutter/animation.dart`. A file
 /// that needs both classes imports one library with a prefix.
@@ -56,7 +59,6 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
@@ -276,8 +278,9 @@ class Animation.typed(
   /// core.animation.js:43 `_to`.
   Object? _to;
 
-  /// core.animation.js:44 `_promises`. Dart `null` stands for `undefined`.
-  List<Completer<void>>? _promises;
+  /// core.animation.js:44 `_promises`: the functions of [onSettle] that
+  /// [_notify] did not call yet. Dart `null` stands for `undefined`.
+  List<void Function(bool resolved)>? _promises;
 
   /// Whether [tick] runs on [_fromNumber] and [_toNumber]: the built-in
   /// `number` interpolator with two `double` values (Chart.js ADR 0019,
@@ -459,37 +462,120 @@ class Animation.typed(
   /// core.animation.js:105 `wait()`: a future that completes when the
   /// animation ends, and fails when it is updated or cancelled.
   ///
-  /// The future is the future of a `Completer.sync()`. [_notify] settles it
-  /// in a promise job (Chart.js ADR 0019, section 7). The error of a failed
-  /// future is the [undefined] sentinel, because `rej()` passes no reason.
+  /// The error of a failed future is the [undefined] sentinel, because
+  /// `rej()` passes no reason. The port itself does not call it: it uses
+  /// [onSettle].
   Future<void> wait() {
-    final promises = _promises ??= [];
-    // DIVERGES(chartjs): platform-animation-promise-checkpoint, a sync job.
-    final completer = Completer<void>.sync();
-    promises.add(completer);
+    final completer = Completer<void>();
+    onSettle((resolved) {
+      if (resolved) {
+        completer.complete();
+      } else {
+        completer.completeError(undefined);
+      }
+    });
     return completer.future;
+  }
+
+  /// The native form of [wait]: [listener] gets `true` when the animation
+  /// ends, or `false` when it is updated or cancelled. It gets one call, in
+  /// a frame job (Chart.js ADR 0172).
+  // DIVERGES(chartjs): platform-animation-promise-checkpoint, a function.
+  @internal
+  void onSettle(void Function(bool resolved) listener) {
+    (_promises ??= []).add(listener);
   }
 
   /// core.animation.js:112 `_notify(resolved)`: resolves or rejects each
   /// promise of [wait].
   ///
-  /// Each promise gets one job of [jsEnqueuePromiseJob]. The job does
-  /// nothing for a completed completer, as a settled promise ignores a later
-  /// `res()` or `rej()`. `update` can reject a promise. The end of the
-  /// animation then resolves the same list again (core.animation.js:53, :89).
+  /// Each function of [onSettle] gets one frame job, as each promise
+  /// reaction is one job. A settled promise ignores a later `res()` or
+  /// `rej()`. Thus [_notify] removes the functions that it calls: `update`
+  /// can reject them, and the end of the animation then resolves only the
+  /// functions of later [onSettle] calls (core.animation.js:53, :89).
   void _notify(bool resolved) {
-    final promises = _promises ?? const <Completer<void>>[];
+    final promises = _promises;
+    if (promises == null) return;
+    _promises = null;
     for (var i = 0; i < promises.length; i++) {
-      final completer = promises[i];
+      final listener = promises[i];
       // DIVERGES(chartjs): platform-animation-promise-checkpoint, a job.
-      jsEnqueuePromiseJob(() {
-        if (completer.isCompleted) return;
-        if (resolved) {
-          completer.complete();
-        } else {
-          completer.completeError(undefined);
+      _queueFrameJob(() => listener(resolved));
+    }
+  }
+
+  /// `Promise.all(running).then(onEnd, () => {})` of `awaitAll` and
+  /// `_animateOptions` (core.animations.js:51-55, :144): calls [onEnd] when
+  /// each animation of [running] ends, and never when one of them is
+  /// updated or cancelled.
+  ///
+  /// [onEnd] runs in the frame job after the job of the last end, as the
+  /// `.then` of `Promise.all` runs one job after the reaction of its last
+  /// item. For an empty [running], it runs in the next job, as
+  /// `Promise.all([])` is already settled. Two chains on one target read
+  /// that order (Chart.js ADR 0172).
+  // DIVERGES(chartjs): platform-animation-promise-checkpoint, no promise.
+  @internal
+  static void whenAllEnd(List<Animation> running, void Function() onEnd) {
+    if (running.isEmpty) {
+      _queueFrameJob(onEnd);
+      return;
+    }
+    var pending = running.length;
+    var failed = false;
+    for (var i = 0; i < running.length; i++) {
+      running[i].onSettle((resolved) {
+        if (failed) return;
+        if (!resolved) {
+          failed = true;
+        } else if (--pending == 0) {
+          _queueFrameJob(onEnd);
         }
       });
+    }
+  }
+
+  /// Runs [callback], then the frame jobs that [callback] and these jobs
+  /// queue, in their order, until no job is left: the microtask checkpoint
+  /// that a browser runs after each `requestAnimationFrame` callback.
+  ///
+  /// Flutter runs the microtasks of a frame after all its frame callbacks
+  /// (Chart.js ADR 0016). Without this step, the shared options of a
+  /// `_animateOptions` chain would reach the element after a re-hover of the
+  /// same frame.
+  ///
+  /// - A nested call runs its [callback] in the outer frame. Its jobs run at
+  ///   the end of the outer frame.
+  /// - The jobs also run when [callback] throws. Then the error of
+  ///   [callback] continues after the jobs.
+  /// - A job that throws does not stop the others. Its error goes to the
+  ///   uncaught-error handler of the current zone.
+  // DIVERGES(chartjs): platform-animation-promise-checkpoint, the frame jobs.
+  @internal
+  static void runFrame(void Function() callback) {
+    if (_frameJobs != null) {
+      callback();
+      return;
+    }
+    final jobs = _frameJobs = <void Function()>[];
+    try {
+      callback();
+    } finally {
+      try {
+        // A job can queue more jobs: the length grows during the loop.
+        for (var i = 0; i < jobs.length; i++) {
+          try {
+            jobs[i]();
+            // A job error goes to the zone, and the next job runs.
+            // ignore: avoid_catches_without_on_clauses
+          } catch (error, stackTrace) {
+            Zone.current.handleUncaughtError(error, stackTrace);
+          }
+        }
+      } finally {
+        _frameJobs = null;
+      }
     }
   }
 
@@ -725,5 +811,20 @@ void writeProperty(Object target, String prop, Object? value) {
       map[prop] = value;
     default:
       throw ArgumentError.value(target, 'target', 'is not an object');
+  }
+}
+
+/// The jobs of the running [Animation.runFrame], or Dart `null` outside a
+/// frame.
+List<void Function()>? _frameJobs;
+
+/// Queues [job] for the running [Animation.runFrame]. Outside a frame, [job]
+/// runs as a Dart microtask, after the synchronous code.
+void _queueFrameJob(void Function() job) {
+  final jobs = _frameJobs;
+  if (jobs != null) {
+    jobs.add(job);
+  } else {
+    scheduleMicrotask(job);
   }
 }

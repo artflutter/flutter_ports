@@ -21,7 +21,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0016](0016-frame-scheduling.md) Frame scheduling: accepted, supersedes 0007.
 - [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054, 0145.
 - [0018](0018-typed-element-options.md) Typed element options: accepted, superseded by 0054.
-- [0019](0019-animation.md) Animation: accepted, superseded in part by 0145, 0171.
+- [0019](0019-animation.md) Animation: accepted, superseded in part by 0145, 0171, 0172.
 - [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted.
 - [0021](0021-typed-options-in-the-resolver.md) Typed options in the resolver: accepted, superseded by 0054.
 - [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108.
@@ -166,4 +166,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0167](0167-point-hover-scan.md) A typed scan of the points in the hover search: accepted.
 - [0170](0170-typed-gallery-type-pages.md) Typed gallery type pages: accepted, supersedes 0052.
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.
+- [0172](0172-animation-frame-jobs.md) Animation frame jobs in place of promise jobs: accepted, supersedes 0019.
 <!-- adr-index:end -->

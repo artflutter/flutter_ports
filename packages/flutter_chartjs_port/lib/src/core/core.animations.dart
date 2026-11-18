@@ -24,13 +24,11 @@
 /// - `_resolveTargetOptions` copies shared options with `copyOptions`. The
 ///   copy keeps the class of the options (`adapt-typed-element-options`,
 ///   Chart.js ADR 0021, section 3).
-/// - `Promise.all` is [jsPromiseAll], and `.then(f, r)` is
-///   `.then(f, onError: r)`.
+/// - `awaitAll(...).then(f, () => {})` is [Animation.whenAllEnd] with `f`:
+///   a function, not a promise (Chart.js ADR 0172).
 ///
 /// This file imports `core.animator.dart`. Thus it is not a pure layer.
 library;
-
-import 'dart:async';
 
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
@@ -49,7 +47,6 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart'
@@ -289,18 +286,15 @@ class Animations(
       // After all animations are done, assign the shared options object to
       // the element
       // So any new updates to the shared options are observed
-      unawaited(
+      // DIVERGES(chartjs): platform-animation-promise-checkpoint, no promise.
+      Animation.whenAllEnd(
         _awaitAll(
           _animationsOf(readProperty(target, 'options')),
           newOptionsObject,
-        ).then(
-          (_) {
-            writeProperty(target, 'options', newOptions);
-          },
-          onError: (Object _) {
-            // rejected, noop
-          },
         ),
+        () {
+          writeProperty(target, 'options', newOptions);
+        },
       );
     }
 
@@ -601,23 +595,24 @@ Object? _read(Object object, Object key) => key is OptionKey
     ? readOption(object, key)
     : _readName(object, key as String);
 
-/// core.animations.js:134 `awaitAll(animations, properties)`: a future of
-/// the end of each active animation of [animations] under a key of
-/// [properties].
+/// core.animations.js:134 `awaitAll(animations, properties)`: the active
+/// animations of [animations] under a key of [properties].
 ///
 /// `animations[key]` is a read by name. Thus `undefined` animations throw a
-/// [TypeError], as in JavaScript. `Promise.all` is [jsPromiseAll].
-Future<List<void>> _awaitAll(Object? animations, Object properties) {
-  final running = <Future<void>>[];
+/// [TypeError], as in JavaScript. The caller gives the list to
+/// [Animation.whenAllEnd] in place of `Promise.all` (Chart.js ADR 0172).
+// DIVERGES(chartjs): platform-animation-promise-checkpoint, no promise.
+List<Animation> _awaitAll(Object? animations, Object properties) {
+  final running = <Animation>[];
   // The face: `Object.keys` of the options object.
   final keys = jsObjectKeys(properties);
   for (var i = 0; i < keys.length; i++) {
     final anim = _readName(animations, keys[i]);
     if (jsTruthy(anim) && (anim! as Animation).active()) {
-      running.add((anim as Animation).wait());
+      running.add(anim as Animation);
     }
   }
-  return jsPromiseAll(running);
+  return running;
 }
 
 /// core.animations.js:147 `resolveTargetOptions(target, newOptions)`: the

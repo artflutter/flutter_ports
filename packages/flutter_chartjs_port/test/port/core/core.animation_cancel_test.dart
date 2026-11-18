@@ -2,15 +2,12 @@
 @TestOn('vm')
 library;
 
-import 'dart:async';
-
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:test/test.dart';
 
@@ -30,11 +27,11 @@ import 'animation_reference.dart';
 // tool/reference/animation_reference.mjs writes them to
 // animation_reference.dart (Chart.js ADR 0146). Here withClock gives the
 // same dates to clock.now(): the constructor reads animationCancelNow, and a
-// cancel step reads `start + offset`. jsRunWithMicrotaskCheckpoint runs the
-// promise jobs of each step before the next step, as the script waits for a
-// macrotask. The handler of wait() records the value and the active state
-// that it sees. Thus the data also gives the order of the write and of the
-// settlement.
+// cancel step reads `start + offset`. Animation.runFrame runs the frame
+// jobs of each step before the next step, as the script waits for a
+// macrotask. The onSettle function, the native form of wait(), records the
+// value and the active state that it sees. Thus the data also gives the
+// order of the write and of the settlement.
 //
 // The web legs do not compile this file: package:clock is not in the import
 // list of a web test (check:lib-imports).
@@ -99,18 +96,18 @@ void _replay(
     () => Animation(cfgOf(cancelCase.cfg), target, prop, input(cancelCase.to)),
   );
   AnimationSettled? settled;
-  unawaited(
-    anim.wait().then<void>(
-      (_) => settled = ('resolved', readProperty(target, prop), anim.active()),
-      onError: (Object _) =>
-          settled = ('rejected', readProperty(target, prop), anim.active()),
+  anim.onSettle(
+    (resolved) => settled = (
+      resolved ? 'resolved' : 'rejected',
+      readProperty(target, prop),
+      anim.active(),
     ),
   );
   for (final (i, (step, expected)) in cancelCase.steps.indexed) {
     final reason = '$label, ${cancelCase.name}, step $i (${step.$1})';
     String? error;
     try {
-      jsRunWithMicrotaskCheckpoint(() {
+      Animation.runFrame(() {
         switch (step.$1) {
           case 'tick':
             anim.tick(anim.start + step.$2);

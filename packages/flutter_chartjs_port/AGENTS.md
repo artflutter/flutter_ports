@@ -53,7 +53,8 @@ repository.
   - `lib/src/`: ported modules at their upstream paths (`controllers/`, `core/`, `elements/`,
     `helpers/`, `platform/`, `plugins/`, `scales/`, `types/`), and `js/`, the JS runtime: port-only `js_*.dart` files. `js_webidl.dart` has the WebIDL
     conversions of the Canvas 2D setters. `js_class.dart` has the JS class values (Chart.js ADR
-    0020). `js_promise.dart` has the promise jobs (Chart.js ADR 0019). The animator walks a copy
+    0020). `Animation.runFrame` of `core.animation.dart` runs the frame jobs of the animations (Chart.js ADR
+    0172). The animator walks a copy
     of its chart list (row `adapt-animator-chart-list`): a chart that a listener starts gets its
     first visit in the next frame.
   - `lib/src/options/` (Chart.js ADR 0054, port-only, pure layers): the typed internal model.

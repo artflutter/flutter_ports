@@ -7,10 +7,10 @@
 /// is `clock.now()` of package:clock (Chart.js ADR 0146 §6). Inside
 /// `testWidgets`, `tester.pump` moves its clock.
 ///
-/// - The frame callback runs inside [jsRunWithMicrotaskCheckpoint]. Thus the
-///   promise chains that it starts finish at the end of the callback, as
-///   after a `requestAnimationFrame` callback of a browser
-///   (`platform-animation-promise-checkpoint`).
+/// - The frame callback runs inside [Animation.runFrame]. Thus the shared
+///   options of an animation that ends reach the element at the end of the
+///   callback, as after a `requestAnimationFrame` callback of a browser
+///   (`platform-animation-promise-checkpoint`, Chart.js ADR 0172).
 /// - [Animator.update] walks a copy of the chart list: a listener can
 ///   destroy a chart or start a new chart (`adapt-animator-chart-list`). A
 ///   destroyed chart gets no visit. A new chart gets its first visit in the
@@ -40,7 +40,6 @@ import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show requestAnimFrame;
-import 'package:flutter_chartjs_port/src/js/js_promise.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -174,8 +173,8 @@ class Animator() {
 
   /// The upstream body of `_refresh` (core.animator.js:38-52).
   ///
-  /// The callback runs inside [jsRunWithMicrotaskCheckpoint]: the promise
-  /// jobs that it queues run at its end (Chart.js ADR 0019, section 7).
+  /// The callback runs inside [Animation.runFrame]: the frame jobs that it
+  /// queues run at its end (Chart.js ADR 0172).
   /// `requestAnimFrame.call(window, …)` is a plain call (Chart.js ADR 0016,
   /// decision 1).
   void _refreshMethod() {
@@ -186,7 +185,7 @@ class Animator() {
 
     _request = requestAnimFrame(() {
       // DIVERGES(chartjs): platform-animation-promise-checkpoint, a checkpoint.
-      jsRunWithMicrotaskCheckpoint(() {
+      Animation.runFrame(() {
         update();
         _request = null;
 

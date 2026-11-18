@@ -409,8 +409,8 @@ decision, its evidence and the items that stay open. In short:
 - `core.animation`, `core.animations` and `core.animator` are line-by-line ports on the
   module-level animator of Chart.js ADR 0016, with `clock.now()` as the clock.
 - An animation reads and writes its target by name, and keeps the `undefined` state.
-- A promise checkpoint (`lib/src/js/js_promise.dart`) runs the promise jobs of an animator frame
-  callback at the end of that callback, as a browser does. Without it, a re-hover in the frame
+- The frame jobs of `Animation.runFrame` run at the end of an animator frame callback, as the
+  promise jobs of a browser do (Chart.js ADR 0172). Without them, a re-hover in the frame
   that ends a 400 ms un-hover gives a wrong resolved option.
 - Three `adapt` hunks make the frame cheaper: a typed animation config, a number path on
   `double` values and a color cache for each animation. The checkpoint is a `platform` hunk for
