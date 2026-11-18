@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
-import 'dart:math' show Random;
-import 'dart:ui' show FramePhase, FrameTiming, Size;
+import 'dart:math';
+import 'dart:ui';
 
 import 'package:chart_benchmark_lab/benchmark/config.dart';
 import 'package:chart_benchmark_lab/benchmark/data.dart';
@@ -9,7 +9,7 @@ import 'package:chart_benchmark_lab/benchmark/metrics.dart';
 import 'package:chart_benchmark_lab/benchmark/web_mode.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter/services.dart' show FlutterVersion;
+import 'package:flutter/services.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
     show chartjsChartSankeyVersion;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
