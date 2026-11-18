@@ -272,9 +272,10 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `toBeChartOfSize`). `createMockContext` is in `lib/src/context.dart` (the row
     `harness-index-pure-split`). It also has `setUpBuiltins()` and `removeBuiltins()` (the row
     `harness-register-builtins`). `setUpSpecs()` calls `removeBuiltins()` and then
-    `setUpDefaultsRestore()`.
-  - `lib/flutter.dart`: the part that needs the Flutter engine, for `flutter test` only. It has
-    `installTestFont()`. It also has the DOM stand-in of `lib/src/dom.dart` and the chart helpers
+    `setUpDefaultsRestore()`. It exports each file of `lib/src/` of the pure part (ADR 0011).
+  - `lib/flutter.dart`: the part that needs the Flutter engine, for `flutter test` only. It
+    exports each other file of `lib/src/`, with `hide acquireChart, releaseChart` on `utils.dart`
+    (ADR 0011). It has `installTestFont()`. It also has the DOM stand-in of `lib/src/dom.dart` and the chart helpers
     `acquireChart`, `releaseChart`, `releaseCharts`, `afterEvent`, `waitForResize` and
     `triggerMouseEvent` (Chart.js ADR 0022). `acquireChart` takes the config Map of a spec;
     `acquireChartRoot` takes the typed root scope of a typed config (`ChartConfigLowering`,
@@ -676,8 +677,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   port of `d3/src/index.js`) exports its pure library. `doc/README.md` has the plan and the
   roadmap.
   - `lib/d3.dart` (port-only): the pure library, with no Flutter import. It exports
-    `lib/src/d3/index.dart` and `lib/src/upstream.dart` (`d3Version`, `7.9.0`).
-    `lib/flutter_d3_port.dart` (port-only) exports it and the Flutter layer of each module
+    `lib/src/d3/index.dart` and `lib/src/upstream.dart` (`d3Version`, `7.9.0`). The index exports
+    the pure library of each module package with all of its names (ADR 0011).
+    `lib/flutter_d3_port.dart` (port-only) exports it and the main library of each module
     package. `test/port/d3/index_test.dart` reads the names of d3-color and d3-interpolate through
     the bundle.
   - `test/upstream_test.dart` (`@TestOn('vm')`) compares `d3Version` with
@@ -712,10 +714,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `Cubehelix`; `color`, `gray` and `lch` stay functions). A string or null channel does not
     compile: the coercion cases skip as `diverges: adapt-color-factories`. The channels are
     mutable fields, as upstream.
-  - `lib/d3_color.dart` (port-only): the pure library, with no Flutter import: `lib/src/index.dart`
-    and `lib/src/upstream.dart` (`d3ColorVersion`). `lib/flutter_d3_color_port.dart` (port-only)
-    exports it and the Flutter layer `lib/src/ui/ui_color.dart` (`toUiColor()` on a d3-color
-    `Color`, `toD3Rgb()` on a Flutter `Color`).
+  - `lib/d3_color.dart` (port-only): the pure library, with no Flutter import. It exports each
+    file of `lib/src/` outside `ui/` (ADR 0011), also `index.dart` and `upstream.dart`
+    (`d3ColorVersion`). `lib/flutter_d3_color_port.dart` (port-only) exports it and the Flutter
+    layer `lib/src/ui/ui_color.dart` (`toUiColor()` on a d3-color `Color`, `toD3Rgb()` on a
+    Flutter `Color`). Each file of the package imports one of the two libraries.
   - `lib/src/`: `color.dart`, `lab.dart`, `cubehelix.dart`, `math.dart` and `index.dart` at the
     mapped paths of `src/`. `src/define.js` has no Dart file: Dart classes take the place of the
     prototype helper. `color()` returns null for a text with U+0085 or U+0130, where Dart `trim()`
@@ -752,11 +755,12 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     and `interpolateZoom` are const objects of callable classes with `gamma` or `rho`
     (`interpolateRgb.gamma(2.2)(a, b)`); a function of two colors is the tear-off
     `interpolateRgb.call`. A zoom view is the record `ZoomView`, `(double, double, double)`.
-  - `lib/d3_interpolate.dart` (port-only): the pure library, with no Flutter import:
-    `lib/src/index.dart` and `lib/src/upstream.dart` (`d3InterpolateVersion`).
-    `lib/flutter_d3_interpolate_port.dart` (port-only) exports it and the Flutter layer
-    `lib/src/ui/transform_matrix.dart` (`toTransformParts()` on a `Matrix4`, `toMatrix4()` on a
-    `TransformParts`).
+  - `lib/d3_interpolate.dart` (port-only): the pure library, with no Flutter import. It exports
+    each file of `lib/src/` outside `ui/` (ADR 0011), also `index.dart` and `upstream.dart`
+    (`d3InterpolateVersion`). `lib/flutter_d3_interpolate_port.dart` (port-only) exports it and
+    the Flutter layer `lib/src/ui/transform_matrix.dart` (`toTransformParts()` on a `Matrix4`,
+    `toMatrix4()` on a `TransformParts`). Each file of the package imports one of the two
+    libraries.
   - `lib/src/`: the files of `src/` at their mapped paths, `transform/` too. `src/transform/parse.js`
     has no Dart file: `decompose` returns a `TransformParts`, and `interpolateTransform(a, b)`
     interpolates two of them. A name that `index.js` renames (`hslLong as interpolateHslLong`) is
@@ -825,7 +829,9 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     libraries, `js_semantics.dart` among them (Zoom ADR 0003, Chart.js ADR 0108).
   - Its `.pubignore` keeps `doc/`, `test/`, `tool/` and `build/` out of the archive, and
     `example/main.dart` (a line chart that zooms and pans) is the example of the archive.
-  - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library (port-only): `zoomPlugin`, the
+  - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library (port-only). It exports each
+    file of `lib/src/` and hides `State` of `src/state.dart`, which clashes with the Flutter
+    `State` (ADR 0011): the five files that use it import `src/state.dart`. Its names: `zoomPlugin`, the
     functions `pan`, `zoom`, `zoomRect`, `zoomScale` and `resetZoom`, the extension `ZoomChart`
     (the ten chart methods of `bindApi`, row `adapt-chart-methods-extension`), `ZoomAmount` and
     `PanAmount` (row `adapt-amount-classes`, `chart.zoom(.all(1.5))`), `ScaleRange`, the option
@@ -931,8 +937,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   roadmap. Phase 5, next, is the work on the public API of the host for its seams.
   - It depends on `flutter_chartjs_port` with a path dependency, and imports only its public
     libraries (Sankey ADR 0003). Chart.js ADRs 0132 and 0133 are the host changes for it.
-  - `lib/flutter_chartjs_chart_sankey_port.dart`: the public library (port-only). It exports
-    `lib/src/index.esm.dart` (`SankeyController`, `Flow`, `SankeyDataPoint`, `SankeyNode`,
+  - `lib/flutter_chartjs_chart_sankey_port.dart`: the public library (port-only). It exports each
+    file of `lib/src/` (ADR 0011), also `lib/src/index.esm.dart` (`SankeyController`, `Flow`, `SankeyDataPoint`, `SankeyNode`,
     `FromToElement`, `SankeyNodeGap`, `SankeyNodeCallback`, `SankeyParsedCustom` and the six
     enums) and `lib/src/upstream.dart` (`chartjsChartSankeyVersion`, `0.19.1`), and has the
     port-only List `sankeyRegisterables`. An app calls `Chart.register(sankeyRegisterables)` once
@@ -1011,7 +1017,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `lib/src/`: `index.esm.dart` (the names of `src/index.esm.js`: the extension `KurkleColor`,
     `RGBA`, `color` and the functions of `byte`, `hex`, `hue`, `names` and `rgb`), the other
     modules and `upstream.dart` (`kurkleColorVersion`). The files of `lib/src/` import the public
-    library, not each other; an import of the package has no `show` list and no prefix, except
+    library, not each other (ADR 0011); an import of the package has no `show` list and no prefix, except
     for a name conflict (`color.dart` imports the library again as `kurkle` for the module
     functions that its methods shadow, `hue.dart` keeps `dart:math` as `math` beside the upstream
     locals `max` and `min`, and a file that also imports the `color` of Chart.js hides `color`).
@@ -1802,6 +1808,14 @@ sankey ADRs are proposed. The doc paths are relative to
   `apps/<library>_gallery`. A design-system adapter is `<library package>_<system>`, for example
   `flutter_chartjs_port_forui`. The directory and the commit scope of a package are its name.
   Before a change adds a name, examine `https://pub.dev/api/packages/<name>`: it must give 404.
+- Imports (ADR 0011): the public library of each package of `packages/` except
+  `flutter_chartjs_port` exports each file of `lib/src/`, and each file of the package imports that
+  library, not a file of `lib/src/`. An import has no `show` list, no `hide` list and no prefix,
+  except for a clash of two names, a local name that hides an imported name, or a check that needs
+  the list (`show TextStyle` on `package:flutter/painting.dart` in a core layer). A package import
+  hides a `dart:` name with no error: a file that reads `pi` of `dart:math` next to the host
+  helpers has `hide pi` on the helpers. A public library hides an internal name that clashes with
+  `package:flutter/widgets.dart` (the zoom `State`).
 - Lints: `very_good_analysis` (root `analysis_options.yaml`, which also carries its formatter
   settings, so run Dart tools after `flutter pub get`). The `analysis_options.yaml` of
   `flutter_chartjs_port` includes the same rules (Chart.js ADR 0047). Public APIs are documented.

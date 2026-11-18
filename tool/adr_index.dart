@@ -131,8 +131,17 @@ List<String> _headerBullets(List<String> lines) {
   return bullets;
 }
 
-Set<String> _numbers(String text, String self) =>
-    {for (final m in _number.allMatches(text)) m.group(1)!}..remove(self);
+// A markdown link to a file in another folder, for example an ADR of another
+// port: `[D3 ADR 0008](../../packages/flutter_d3_port/doc/adr/0008-x.md)`.
+final _otherFolderLink = RegExp(r'\[[^\]]*\]\([^)]*/[^)]*\)');
+
+/// The numbers of the ADRs of the same folder in [text]. A link to another
+/// folder names an ADR of that folder, so its number does not count (ADR
+/// 0011 supersedes ADRs of three port folders).
+Set<String> _numbers(String text, String self) => {
+  for (final m in _number.allMatches(text.replaceAll(_otherFolderLink, '')))
+    m.group(1)!,
+}..remove(self);
 
 void _checkPointers(
   String folder,

@@ -88,4 +88,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0008](0008-shared-js-runtime-and-port-tools.md) Shared JS runtime and port tools: proposed.
 - [0009](0009-add-on-ports.md) Ports of add-on libraries: proposed.
 - [0010](0010-primary-constructors.md) Primary constructors: accepted.
+- [0011](0011-public-library-exports-every-file.md) The public library exports every file: accepted.
 <!-- adr-index:end -->

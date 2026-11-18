@@ -1,6 +1,7 @@
 # D3 ADR 0008: One package for each D3 module
 
 - Status: accepted (2026-11-15): its code and the tests of section Tests pass.
+- Superseded in part by: [ADR 0011](../../../../docs/adr/0011-public-library-exports-every-file.md): the export forms of §6 (2026-11-18)
 - Date: 2026-11-15
 - Supersedes: [D3 ADR 0002](0002-file-naming-and-layout.md) §1 (the paths) and §6 (the module indexes and the public libraries)
 - Related: [ADR 0007](../../../../docs/adr/0007-package-names.md), [D3 ADR 0007](0007-native-dart-forms.md), [ADR 0005](../../../../docs/adr/0005-pin-upstream-sources.md)
