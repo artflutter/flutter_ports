@@ -159,6 +159,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0157](0157-time-axis-and-floating-bars.md) Bars on a time axis and floating bars on the fast paths: proposed, supersedes 0068, 0069, 0071.
 - [0158](0158-fused-rounded-bar.md) Fused rounded bar: proposed, supersedes 0070.
 - [0160](0160-shared-point-animation-options.md) Shared animation options of a scatter update: accepted.
+- [0167](0167-point-hover-scan.md) A typed scan of the points in the hover search: accepted.
 - [0170](0170-typed-gallery-type-pages.md) Typed gallery type pages: accepted, supersedes 0052.
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.
 <!-- adr-index:end -->

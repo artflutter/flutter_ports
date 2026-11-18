@@ -323,11 +323,12 @@ List<types.ActiveElement> _getIntersectItems(
     }
   }
 
-  // The handler does nothing for a miss, so the typed scan of the bars
-  // gives the same items: it calls the handler only for a bar that its own
-  // bounds test does not reject. Each other element takes the calls of
-  // `evaluateInteractionItems` (core.interaction.js:130).
+  // The handler does nothing for a miss, so the typed scan of the bars and
+  // the points gives the same items: it calls the handler only for a bar or
+  // a point that its own test does not reject. Each other element takes the
+  // calls of `evaluateInteractionItems` (core.interaction.js:130).
   // DIVERGES(chartjs): adapt-bar-hover-scan, a typed scan of the bars.
+  // DIVERGES(chartjs): adapt-point-hover-scan, a typed scan of the points.
   scanBarInteractionItems(
     chart,
     axis,
@@ -462,8 +463,10 @@ List<types.ActiveElement> _getNearestCartesianItems(
   }
 
   // With `intersect`, the handler returns at once for a miss, so the typed
-  // scan of the bars gives the same items (core.interaction.js:195).
+  // scan of the bars and the points gives the same items
+  // (core.interaction.js:195).
   // DIVERGES(chartjs): adapt-bar-hover-scan, a typed scan of the bars.
+  // DIVERGES(chartjs): adapt-point-hover-scan, a typed scan of the points.
   if (intersect) {
     scanBarInteractionItems(
       chart,

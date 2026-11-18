@@ -1,15 +1,16 @@
-// Original code, not ported from Chart.js: the typed hover scan of bars.
+// Original code, not ported from Chart.js: the typed hover scan.
 
-/// The search of the bars at an event position, for the two callers of
-/// `evaluateInteractionItems` whose handler does nothing for an element
-/// that the position does not intersect: `getIntersectItems` and
+/// The search of the bars and the points at an event position, for the two
+/// callers of `evaluateInteractionItems` whose handler does nothing for an
+/// element that the position does not intersect: `getIntersectItems` and
 /// `getNearestCartesianItems` with `intersect` (core.interaction.js:114,
 /// :168).
 ///
 /// [scanBarInteractionItems] is the loop of `evaluateInteractionItems`
 /// (core.interaction.js:74) with two changes for an element of the class
-/// [BarElement] itself. Each other element takes the calls of that loop at
-/// its own position.
+/// [BarElement] itself, and a test of its own for an element of the class
+/// [PointElement] itself (below). Each other element takes the calls of that
+/// loop at its own position.
 ///
 /// 1. The read of `skip` is typed: such an element has `skip` only as an
 ///    extra property ([Element.hasExtras]).
@@ -18,8 +19,15 @@
 ///    bar that this test does not reject takes the handler, which calls
 ///    `inRange` again.
 ///
-/// The scan keeps no result of a search: it reads the pixels of each bar at
-/// each search (differences.md row `adapt-bar-hover-scan`).
+/// For an element of the class [PointElement] itself, the scan reads `skip`
+/// typed, and rejects a point whose distance to the position on the axis x
+/// or y is above the reach `hitRadius + radius` with a margin
+/// ([_pointMisses]). A point that this test does not reject takes the
+/// handler, which calls `inRange` again (Chart.js ADR 0167).
+///
+/// The scan keeps no result of a search: it reads the pixels of each bar
+/// and each point at each search (differences.md rows
+/// `adapt-bar-hover-scan` and `adapt-point-hover-scan`).
 library;
 
 import 'dart:math' as math;
@@ -28,6 +36,11 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionHandler;
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
+import 'package:flutter_chartjs_port/src/elements/element.point.dart';
+import 'package:flutter_chartjs_port/src/elements/element_options.dart'
+    show PointOptions, plainOption;
+import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
+    show OptionKey;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -82,6 +95,48 @@ bool _misses(BarElement bar, double? px, double? py) {
   return false;
 }
 
+/// The relative margin of [_pointMisses]: far above one rounding step of
+/// a `double` (2^-52), so a reject holds for each rounding of the upstream
+/// `Math.pow` calls.
+const double _reachMargin = 1e-6;
+
+/// Whether `point.inRange(px, py)` is false with the current values of
+/// [point] and `useFinalPosition` false, by a test with no `pow`
+/// (element.point.ts:62-66).
+///
+/// [reach] is `|options.hitRadius + options.radius|` of plain numbers. The
+/// test rejects when `|px - x|` or `|py - y|` is above
+/// `reach * (1 + 1e-6) + 1e-6`. Then the square of that distance is above
+/// `reach^2` by far more than the rounding of `Math.pow`, the sum
+/// `dx^2 + dy^2` is not below it, and upstream gives false. A NaN makes each
+/// comparison false, so such a point is not rejected, and the handler
+/// decides. Dart `null` for [px] or [py] is JS `null`, which the upstream
+/// subtraction reads as 0.
+@pragma('vm:prefer-inline')
+bool _pointMisses(PointElement point, double reach, double? px, double? py) {
+  final bound = reach * (1 + _reachMargin) + _reachMargin;
+  if (((px ?? 0) - point.x).abs() > bound) return true;
+  return ((py ?? 0) - point.y).abs() > bound;
+}
+
+/// `|options.hitRadius + options.radius|` of the point options [options]
+/// when both are plain numbers, else NaN: the reach of [_pointMisses]. NaN
+/// rejects nothing.
+@pragma('vm:prefer-inline')
+double _pointReach(Object? options) {
+  if (options is PointOptions &&
+      plainOption(options, OptionKey.hitRadius) &&
+      plainOption(options, OptionKey.radius)) {
+    return (options.hitRadius + options.radius).abs();
+  }
+  return double.nan;
+}
+
+/// Whether [element] is of the class [PointElement] itself.
+@pragma('vm:prefer-inline')
+bool _isBuiltInPoint(types.Element element) =>
+    element is PointElement && element.typedWrites;
+
 /// Whether [element] is of the class [BarElement] itself.
 @pragma('vm:prefer-inline')
 bool _isBuiltInBar(types.Element element) =>
@@ -97,9 +152,10 @@ bool _isBuiltInBar(types.Element element) =>
 /// The loop reads the position one time, and again after each call that can
 /// run code of a program: a handler call, and each call of an element of
 /// another class. A bar with `$animations` and a true [useFinalPosition]
-/// takes the handler at once: its bounds are those of its targets. A
-/// dataset whose first element is not a built-in bar takes the loop of
-/// upstream as it is.
+/// takes the handler at once: its bounds are those of its targets. A point
+/// with `$animations` and a true [useFinalPosition] takes the handler at
+/// once too. A dataset whose first element is neither a built-in bar nor a
+/// built-in point takes the loop of upstream as it is.
 @internal
 void scanBarInteractionItems(
   types.Chart chart,
@@ -123,9 +179,24 @@ void scanBarInteractionItems(
   for (var i = 0, ilen = metasets.length; i < ilen; ++i) {
     final types.ChartMeta(:index, :data) = metasets[i];
     final (:lo, :hi) = search(metasets[i], axis, value, intersect);
+    if (data.isNotEmpty && _isBuiltInPoint(data[0])) {
+      _scanPoints(
+        data,
+        index,
+        lo,
+        hi,
+        position,
+        handler,
+        useFinalPosition: useFinalPosition,
+        skipped: skipped,
+      );
+      px = position.x;
+      py = position.y;
+      continue;
+    }
     if (data.isEmpty || !_isBuiltInBar(data[0])) {
-      // Not a dataset of built-in bars: the loop of upstream, with no test
-      // of each element.
+      // Not a dataset of built-in bars or points: the loop of upstream, with
+      // no test of each element.
       for (var j = lo; j <= hi; ++j) {
         final element = data[j] as Element;
         if (!skipped(element)) {
@@ -151,5 +222,44 @@ void scanBarInteractionItems(
       px = position.x;
       py = position.y;
     }
+  }
+}
+
+/// The loop of `evaluateInteractionItems` over the range [lo] to [hi] of
+/// the dataset [datasetIndex], whose first element is a built-in point.
+///
+/// An element of the class [PointElement] itself reads `skip` typed and
+/// takes the test of [_pointMisses]. Each other element takes the calls of
+/// upstream. The loop reads the options and the position of each point at
+/// the point, and the position again after each handler call and each call
+/// of an element of another class: these calls can run code of a program.
+/// It keeps no value from one point to the next.
+void _scanPoints(
+  List<types.Element> data,
+  int datasetIndex,
+  int lo,
+  int hi,
+  Point position,
+  InteractionHandler handler, {
+  required bool? useFinalPosition,
+  required bool Function(Element element) skipped,
+}) {
+  var px = position.x;
+  var py = position.y;
+  for (var j = lo; j <= hi; ++j) {
+    final element = data[j] as Element;
+    if (element is PointElement && element.typedWrites) {
+      // `_skipped`: `skip` of a point is a typed `bool?`.
+      if (element.skip == true) continue;
+      if (useFinalPosition != true || element.$animations == null) {
+        final reach = _pointReach(element.options);
+        if (_pointMisses(element, reach, px, py)) continue;
+      }
+      handler(element, datasetIndex, j);
+    } else if (!skipped(element)) {
+      handler(element, datasetIndex, j);
+    }
+    px = position.x;
+    py = position.y;
   }
 }
