@@ -40,8 +40,9 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 
-export 'fixture.dart';
-export 'utils.dart' show afterEvent, triggerMouseEvent, waitForResize;
+export 'package:chartjs_test_utils/src/fixture.dart';
+export 'package:chartjs_test_utils/src/utils.dart'
+    hide acquireChart, releaseChart;
 
 /// index.js:9 `charts`: keep track of all acquired charts to automatically
 /// release them after each specs.

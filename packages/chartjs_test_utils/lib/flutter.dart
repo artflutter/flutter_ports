@@ -23,47 +23,22 @@
 ///   upstream files, also for the observation oracle O1 of
 ///   flutter_chartjs_port).
 ///
+/// The library exports each file of `lib/src/` that needs the Flutter
+/// engine, and `src/native_colors.dart` and `src/native_easing.dart` (ADR
+/// 0011). `src/utils.dart` has its own `acquireChart` and `releaseChart`,
+/// the ports of `_acquireChart` and `_releaseChart`: the library hides them
+/// and exports those of `src/index.dart` (Chart.js ADR 0012, Collisions).
+///
 /// The pure part of the harness is `package:chartjs_test_utils/pure.dart`.
 /// This library is not a pure layer: a test that imports it needs
 /// `@TestOn('vm')`.
 library;
 
-export 'src/dom.dart'
-    show
-        CanvasParentElement,
-        CssProperties,
-        HarnessDocument,
-        HarnessElement,
-        HarnessWindow,
-        afterEachChart,
-        document,
-        frameInterval,
-        pumpFrame,
-        pumpFrames,
-        setTimeout,
-        specTimeout,
-        waitForDone,
-        window;
-export 'src/fonts.dart' show installTestFont, testFontFamilies, testFontFiles;
-export 'src/index.dart'
-    show
-        FixtureInputs,
-        FixtureItem,
-        FixtureLoad,
-        FixtureSource,
-        HandFixture,
-        acquireChart,
-        acquireChartRoot,
-        afterEvent,
-        fixturesRequiredVariable,
-        fixturesTag,
-        noSubmoduleReason,
-        releaseChart,
-        releaseCharts,
-        sha256Hex,
-        specFromFixture,
-        specsFromFixtures,
-        triggerMouseEvent,
-        waitForResize;
-export 'src/native_colors.dart' show nativeFixtureColors;
-export 'src/native_easing.dart' show EffectCurve, nativeFixtureEasing;
+export 'package:chartjs_test_utils/src/dom.dart';
+export 'package:chartjs_test_utils/src/fixture.dart';
+export 'package:chartjs_test_utils/src/fonts.dart';
+export 'package:chartjs_test_utils/src/index.dart';
+export 'package:chartjs_test_utils/src/native_colors.dart';
+export 'package:chartjs_test_utils/src/native_easing.dart';
+export 'package:chartjs_test_utils/src/utils.dart'
+    hide acquireChart, releaseChart;

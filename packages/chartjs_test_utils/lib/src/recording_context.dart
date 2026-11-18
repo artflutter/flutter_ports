@@ -5,7 +5,7 @@
 /// This library is a pure layer, as `context.dart` is.
 library;
 
-import 'package:chartjs_test_utils/src/context.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show TextStyle;
 // flutter_chartjs_port does not export lib/src.
 // ignore: implementation_imports

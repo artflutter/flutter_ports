@@ -11,7 +11,8 @@
 /// The mocks and matchers need dart:ui Color through the chart core, but no
 /// Flutter framework UI. Browser tests use Flutter JavaScript/WebAssembly;
 /// standalone dart test is unsupported (ADR 0061). Chart-host helpers live in
-/// `package:chartjs_test_utils/flutter.dart`.
+/// `package:chartjs_test_utils/flutter.dart`. The library exports each file
+/// of `lib/src/` of the pure part (ADR 0011).
 library;
 
 import 'dart:collection';
@@ -22,29 +23,19 @@ import 'dart:collection';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 // The harness sets the zone of the default date adapter.
 // ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
-    show setDefaultDateZone;
+import 'package:flutter_chartjs_port/src/core/date_adapter.dart';
 // The typed scopes of the defaults (Chart.js ADR 0054).
 // ignore: implementation_imports
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:test/test.dart';
 
-export 'package:chartjs_test_utils/src/color_reference.dart'
-    show nativeFixturePaint, referenceColor;
-export 'package:chartjs_test_utils/src/color_values.dart' show equalColorValues;
-export 'package:chartjs_test_utils/src/native_easing.dart'
-    show EffectCurve, nativeFixtureEasing;
-
-export 'src/context.dart' show ContextCall, MockContext, createMockContext;
-export 'src/matchers.dart'
-    show
-        toBeChartOfSize,
-        toBeCloseToPixel,
-        toBeCloseToPoint,
-        toBeValidChart,
-        toEqualOneOf,
-        toEqualOptions;
-export 'src/recording_context.dart' show RecordingContext;
+export 'package:chartjs_test_utils/src/color_reference.dart';
+export 'package:chartjs_test_utils/src/color_values.dart';
+export 'package:chartjs_test_utils/src/context.dart';
+export 'package:chartjs_test_utils/src/matchers.dart';
+export 'package:chartjs_test_utils/src/matchers.options.dart';
+export 'package:chartjs_test_utils/src/native_easing.dart';
+export 'package:chartjs_test_utils/src/recording_context.dart';
 
 /// Sets up the specs of one pure-layer spec file. Call it first in `main()`.
 ///

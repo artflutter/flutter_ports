@@ -24,7 +24,7 @@ library;
 
 import 'dart:convert';
 
-import 'package:chartjs_test_utils/src/color_values.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';

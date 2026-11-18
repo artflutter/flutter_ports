@@ -29,9 +29,9 @@ library;
 // The harness replaces a member of the chart that only the harness reads.
 // ignore_for_file: invalid_use_of_internal_member
 
-import 'dart:ui' show Locale;
+import 'dart:ui';
 
-import 'package:chartjs_test_utils/src/dom.dart';
+import 'package:chartjs_test_utils/flutter.dart';
 // flutter_chartjs_port does not export lib/src. The harness reads the canvas
 // interface,
 // ignore: implementation_imports

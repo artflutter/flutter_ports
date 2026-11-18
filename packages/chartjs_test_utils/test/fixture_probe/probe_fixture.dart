@@ -26,7 +26,7 @@ import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const String _folder = 'test/fixture_probe';

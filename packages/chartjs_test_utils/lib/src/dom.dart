@@ -28,9 +28,9 @@
 library;
 
 import 'dart:async';
-import 'dart:math' as math;
+import 'dart:math';
 
-import 'package:chartjs_test_utils/src/matchers.dart' show computedCanvasSize;
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
@@ -1038,20 +1038,20 @@ final class _RenderHarnessElement(
       switch (child) {
         case final RenderChartHost host:
           final width = _contentOf(host).width;
-          minWidth = math.max(minWidth, width);
-          maxWidth = math.max(maxWidth, width);
+          minWidth = max(minWidth, width);
+          maxWidth = max(maxWidth, width);
         case final _RenderHarnessElement element:
           final layout = element._layout;
           if (layout.none) continue;
           final fixed = layout.width;
           if (fixed != null) {
             final width = fixed + 2 * layout.padding;
-            minWidth = math.max(minWidth, width);
-            maxWidth = math.max(maxWidth, width);
+            minWidth = max(minWidth, width);
+            maxWidth = max(maxWidth, width);
           } else {
             final (childMin, childMax) = element._contentWidths();
-            minWidth = math.max(minWidth, childMin + 2 * layout.padding);
-            maxWidth = math.max(maxWidth, childMax + 2 * layout.padding);
+            minWidth = max(minWidth, childMin + 2 * layout.padding);
+            maxWidth = max(maxWidth, childMax + 2 * layout.padding);
           }
       }
     }
@@ -1118,22 +1118,22 @@ final class _RenderHarnessElement(
 
   void _layoutElement(_Layout layout) {
     final padding = layout.padding;
-    final available = math.max<double>(0, constraints.maxWidth - 2 * padding);
+    final available = max<double>(0, constraints.maxWidth - 2 * padding);
     var width = layout.width;
     if (width == null) {
       if (layout.absolute) {
         final (minContent, maxContent) = _contentWidths();
-        width = math.min(math.max(minContent, available), maxContent);
+        width = min(max(minContent, available), maxContent);
       } else {
         width = available;
       }
     }
     final maxWidth = layout.maxWidth;
-    if (maxWidth != null) width = math.min(width, maxWidth);
+    if (maxWidth != null) width = min(width, maxWidth);
     var height = layout.height;
     final maxHeight = layout.maxHeight;
     if (height != null && maxHeight != null) {
-      height = math.min(height, maxHeight);
+      height = min(height, maxHeight);
     }
 
     var flow = 0.0;
@@ -1161,7 +1161,7 @@ final class _RenderHarnessElement(
     }
     var contentHeight = height ?? flow;
     if (height == null && maxHeight != null) {
-      contentHeight = math.min(contentHeight, maxHeight);
+      contentHeight = min(contentHeight, maxHeight);
     }
     size = constraints.constrain(
       Size(width + 2 * padding, contentHeight + 2 * padding),
@@ -1180,7 +1180,7 @@ final class _RenderHarnessElement(
     var boxHeight = height;
     if (boxHeight == null) {
       boxHeight = _contentOf(host).height;
-      if (maxHeight != null) boxHeight = math.min(boxHeight, maxHeight);
+      if (maxHeight != null) boxHeight = min(boxHeight, maxHeight);
     }
     host.layout(
       BoxConstraints(maxWidth: width, maxHeight: boxHeight),
@@ -1229,7 +1229,7 @@ void setTimeout(void Function() callback, [int delay = 0]) {
   final harness = _harness..begin();
   harness.tasks.add(
     _Task(
-      clock.now().add(Duration(milliseconds: math.max(0, delay))),
+      clock.now().add(Duration(milliseconds: max(0, delay))),
       harness.taskOrder++,
       callback,
     ),

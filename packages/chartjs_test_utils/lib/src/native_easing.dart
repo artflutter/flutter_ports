@@ -6,11 +6,10 @@
 /// formula of that effect. Production charts do not import this module.
 library;
 
-import 'package:flutter/animation.dart' show Curve;
+import 'package:flutter/animation.dart';
 // Test-only access to the ported easing formulas.
 // ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
-    show effects;
+import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
 
 /// A curve with the formula of the upstream effect [effect], or of the
 /// linear effect when `effects` has no such key, as

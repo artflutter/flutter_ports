@@ -8,27 +8,19 @@ library;
 // Test-only access to the native color bridge.
 // Callback arity must remain explicit for the observation oracle.
 // ignore_for_file: implementation_imports, avoid_types_on_closure_parameters
-import 'dart:ui' as ui;
+import 'dart:ui';
 
-import 'package:chartjs_test_utils/src/color_reference.dart';
-import 'package:chartjs_test_utils/src/native_easing.dart';
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_function.dart';
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
-    show FillerDrawTime;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/layout.dart'
-    show ChartPosition, ScaleValuePosition;
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
+import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
+import 'package:flutter_chartjs_port/src/types/align.dart';
+import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
 
 final _callbacks = Expando<Object>('fixture native color callback');
 
@@ -84,7 +76,7 @@ List<Enum>? _scaleEnumValues(String key, String? owner) =>
 void nativeFixtureColors(Object? config) {
   final seen = Set<Object>.identity();
   Object? color(Object? value) {
-    if (value is ui.Color) return ChartPaint.solid(value);
+    if (value is Color) return ChartPaint.solid(value);
     // Upstream uses false/empty colors to suppress a stroke.
     if (value == false) return null;
     if (value is String) {
@@ -134,9 +126,9 @@ void nativeFixtureColors(Object? config) {
       } else if (key == 'borderCapStyle' || key == 'lineCap') {
         // The option takes the Flutter enum, not the upstream keyword. The
         // names of the enum values are the keywords.
-        value[key] = _enumValue(ui.StrokeCap.values, value[key]);
+        value[key] = _enumValue(StrokeCap.values, value[key]);
       } else if (key == 'borderJoinStyle' || key == 'lineJoin') {
-        value[key] = _enumValue(ui.StrokeJoin.values, value[key]);
+        value[key] = _enumValue(StrokeJoin.values, value[key]);
       } else if (key == 'align' &&
           (owner == 'legend' || owner == 'title' || owner == 'subtitle')) {
         // The align of a box takes a ChartAlign (row adapt-chart-align-enum).
@@ -165,13 +157,13 @@ void nativeFixtureColors(Object? config) {
         // A time unit takes its enum (row adapt-time-unit-enum).
         value[key] = _enumValue(TimeUnit.values, value[key]);
       } else if (key == 'textDirection') {
-        value[key] = _enumValue(ui.TextDirection.values, value[key]);
+        value[key] = _enumValue(TextDirection.values, value[key]);
       } else if (key == 'textAlign' ||
           key == 'titleAlign' ||
           key == 'bodyAlign' ||
           key == 'footerAlign') {
         // A text align takes the Flutter enum (row adapt-flutter-text-align).
-        value[key] = _enumValue(ui.TextAlign.values, value[key]);
+        value[key] = _enumValue(TextAlign.values, value[key]);
       } else if (key == 'stepped') {
         // The keyword form takes its enum (row adapt-stepped-line-enum); a
         // boolean stays.

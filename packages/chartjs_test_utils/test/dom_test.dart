@@ -5,7 +5,6 @@ library;
 import 'dart:async';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:chartjs_test_utils/src/dom.dart' show forceHarnessLayout;
 import 'package:clock/clock.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';

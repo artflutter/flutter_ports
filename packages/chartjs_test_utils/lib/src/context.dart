@@ -8,7 +8,7 @@
 /// `flutter_chartjs_port` (`lib/src/canvas/canvas.dart`), a framework-free core.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
+import 'dart:ui';
 
 import 'package:flutter/painting.dart' show TextStyle;
 // The harness implements the canvas interface. flutter_chartjs_port does not
@@ -17,8 +17,7 @@ import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 // The pure harness consumes paint value types without importing widgets.
 // ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show SolidChartPaint, UnchangedChartPaint;
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 
 /// context.js:157 the object that `record` pushes: `{name, args}`.
 ///

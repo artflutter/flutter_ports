@@ -2,7 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,12 +25,12 @@ double _width(
   String? family,
   List<String>? fallback,
   double size = 12,
-  ui.FontWeight weight = ui.FontWeight.w400,
-  ui.FontStyle style = ui.FontStyle.normal,
+  FontWeight weight = FontWeight.w400,
+  FontStyle style = FontStyle.normal,
 }) {
-  final builder = ui.ParagraphBuilder(ui.ParagraphStyle())
+  final builder = ParagraphBuilder(ParagraphStyle())
     ..pushStyle(
-      ui.TextStyle(
+      TextStyle(
         fontFamily: family,
         fontFamilyFallback: fallback,
         fontSize: size,
@@ -40,7 +40,7 @@ double _width(
     )
     ..addText(text);
   final paragraph = builder.build()
-    ..layout(const ui.ParagraphConstraints(width: double.infinity));
+    ..layout(const ParagraphConstraints(width: double.infinity));
   final width = paragraph.maxIntrinsicWidth;
   paragraph.dispose();
   return width;
@@ -91,20 +91,20 @@ void main() {
 
     test('picks the bold and italic faces', () {
       expect(
-        _width('Hello', family: 'Arial', weight: ui.FontWeight.w700),
+        _width('Hello', family: 'Arial', weight: FontWeight.w700),
         closeTo(_helloBold, 0.01),
       );
       // The italic faces have the advances of the upright faces.
       expect(
-        _width('Hello', family: 'Arial', style: ui.FontStyle.italic),
+        _width('Hello', family: 'Arial', style: FontStyle.italic),
         closeTo(_helloRegular, 0.01),
       );
       expect(
         _width(
           'Hello',
           family: 'Arial',
-          weight: ui.FontWeight.w700,
-          style: ui.FontStyle.italic,
+          weight: FontWeight.w700,
+          style: FontStyle.italic,
         ),
         closeTo(_helloBold, 0.01),
       );

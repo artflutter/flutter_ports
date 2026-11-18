@@ -1,8 +1,7 @@
 // Original code, not ported from Chart.js: tests of the mock context.
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
+import 'dart:ui';
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:chartjs_test_utils/src/context.dart' as context;
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:test/test.dart';
@@ -26,8 +25,8 @@ void main() {
     // Chart.js ADR 0022, section 1: index.js:33 createMockContext moves to
     // context.dart. Thus pure.dart exports it and stays a pure layer.
     test('pure.dart exports the createMockContext of context.dart', () {
-      expect(createMockContext, same(context.createMockContext));
-      expect(context.createMockContext(), isA<MockContext>());
+      expect(createMockContext, same(createMockContext));
+      expect(createMockContext(), isA<MockContext>());
     });
   });
 

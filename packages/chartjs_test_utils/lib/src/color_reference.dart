@@ -4,7 +4,7 @@
 /// rejects strings and charts accept native Flutter Color values.
 library;
 
-import 'dart:ui' as ui;
+import 'dart:ui';
 
 // The test harness decodes frozen upstream input through internal primitives.
 // ignore_for_file: implementation_imports
@@ -18,7 +18,7 @@ RGBA? _function(String value) => value.isNotEmpty && value.codeUnitAt(0) == 114
 /// Reconstructs the old parser's numerical input for frozen upstream probes:
 /// the Flutter color of [input], or Dart `null` for an input that is no
 /// color. Non-string inputs take `KurkleColor.of` of the color port.
-ui.Color? referenceColor(Object? input) {
+Color? referenceColor(Object? input) {
   final value = input is SolidChartPaint ? input.color : input;
   if (value is! String) return KurkleColor.of(value);
   final RGBA? rgba;
@@ -39,7 +39,7 @@ ChartPaint? paintOfCss(String value) {
   if (parsed == null) return null;
   final rgb = parsed.rgbaBytes;
   return ChartPaint.solid(
-    ui.Color.fromRGBO(rgb.r.round(), rgb.g.round(), rgb.b.round(), rgb.a / 255),
+    Color.fromRGBO(rgb.r.round(), rgb.g.round(), rgb.b.round(), rgb.a / 255),
   );
 }
 

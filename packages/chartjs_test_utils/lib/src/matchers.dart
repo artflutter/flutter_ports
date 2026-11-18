@@ -32,7 +32,7 @@ library;
 // export lib/src.
 // ignore_for_file: implementation_imports
 
-import 'package:chartjs_test_utils/src/matchers.options.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -40,8 +40,7 @@ import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:test/test.dart';
 
-export 'package:chartjs_test_utils/src/matchers.options.dart'
-    show toEqualOptions;
+export 'package:chartjs_test_utils/src/matchers.options.dart';
 
 /// matchers.js:58 `toBeCloseToPixel`: whether the actual value is within
 /// 0.5% of [expected], or less than 2 pixels from it.

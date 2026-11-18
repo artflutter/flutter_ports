@@ -54,8 +54,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 
-import 'package:chartjs_test_utils/src/dom.dart' show pumpFrame, pumpFrames;
-import 'package:chartjs_test_utils/src/native_colors.dart';
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/src/utils.dart' as utils;
 // The harness keeps the charts of flutter_chartjs_port, which does not export
 // lib/src.
