@@ -46,7 +46,12 @@ import 'package:flutter_chartjs_port/src/core/animation_share.dart'
     show SharedBarAnimations;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
 import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
+    show
+        DatasetController,
+        HeldElementOptions,
+        controllerArgs,
+        parsedValueOf,
+        setPointAxis;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show PointInteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
@@ -547,6 +552,12 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
             maxGapLength: maxGapLength,
           )
         : null;
+    // DIVERGES(chartjs): adapt-held-element-options, the cache entry of the
+    // last resolution of this loop (Chart.js ADR 0165). A subclass can
+    // replace `resolveDataElementOptions`: it keeps the ordinary call.
+    final hold = super.runtimeType == ScatterController
+        ? HeldElementOptions.forLoop()
+        : null;
 
     for (var i = start; i < start + count; ++i) {
       final point = points[i];
@@ -617,12 +628,18 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
             getContext(i, false, mode);
           }
           writes.options(prepared(i));
+        } else if (sharedOptions != null) {
+          writes.options(sharedOptions);
         } else {
-          userCode = sharedOptions == null;
-          writes.options(
-            sharedOptions ??
-                resolveDataElementOptions(i, point.active ? 'active' : mode),
-          );
+          final elementMode = point.active ? 'active' : mode;
+          if (hold != null) {
+            writes.options(resolveHeldDataElementOptions(hold, i, elementMode));
+            // A held entry of a class value runs no user code.
+            userCode = !hold.native;
+          } else {
+            userCode = true;
+            writes.options(resolveDataElementOptions(i, elementMode));
+          }
         }
       }
 
@@ -657,6 +674,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     // end: the overflow pass of this `update_` writes each waiting context.
     _overflowPass = waitingFrom >= 0 ? overflowPass : null;
     gaps?.finish();
+    hold?.finish();
     updateSharedOptions(sharedOptions, mode, firstOpts);
   }
 

@@ -7,6 +7,8 @@ import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
+    show heldElementOptionsEnabled;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show registerDataUpdateTypes;
 import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'
@@ -288,7 +290,17 @@ void main() {
         expect(_stops(twins.chart), stopsOf1_5);
         expect(twins.takes, 0);
         if (!line) {
+          // Chart.js ADR 0165: a point whose options are a held cache entry
+          // runs no user code after its read of x, so it holds its x.
+          final saved = heldElementOptionsEnabled;
+          addTearDown(() => heldElementOptionsEnabled = saved);
+          heldElementOptionsEnabled = false;
           expect(_twins(() => _config(type, spanGaps: 1.5)).takes, 0);
+          heldElementOptionsEnabled = true;
+          final held = _twins(() => _config(type, spanGaps: 1.5));
+          expect(_stops(held.chart), stopsOf1_5);
+          expect(held.takes, _points.length - 3);
+          heldElementOptionsEnabled = saved;
         }
       });
 

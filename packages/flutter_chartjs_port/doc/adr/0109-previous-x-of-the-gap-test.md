@@ -3,6 +3,7 @@
 - Status: accepted (2026-11-10). Its code and its tests pass. The porting lead accepted it by the
   maintainer's rule of 2026-10-31: a record is accepted when its code passes the tests.
 - Date: 2026-11-10
+- Superseded in part by: [Chart.js ADR 0165](0165-held-element-options.md) (2026-11-18)
 - Supersedes, in part: [Chart.js ADR 0036](0036-parsed-data.md) §8, the bullet "A local lives only
   inside one pass. The read `prevParsed[iAxis]` stays a read at each pass", the 3-read form that §8
   adopts for `line.js:98-104` and `scatter.js:127-133`, and the rejected alternative "The 2-read

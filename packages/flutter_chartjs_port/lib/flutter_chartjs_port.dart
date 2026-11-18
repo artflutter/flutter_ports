@@ -72,8 +72,11 @@ export 'package:flutter_chartjs_port/src/core/core.config.dart';
 export 'package:flutter_chartjs_port/src/core/core.controller.dart';
 export 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
     hide
+        HeldElementOptions,
         axisStackOf,
         dataItemValue,
+        heldElementOptionsEnabled,
+        heldElementOptionsTaken,
         metaStringOf,
         parsedValueOf,
         presizeParsedNumbers,

@@ -63,7 +63,7 @@ import 'package:flutter_chartjs_port/src/core/point_options.dart'
     show nativePointDatasetIndex;
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions, createElementOptions;
+    show ElementOptions, PointOptions, createElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show ArrayListener, listenArrayEvents, unlistenArrayEvents;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -690,6 +690,53 @@ void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
   }
 }
 
+/// The cache entry of the element options that the last call of one loop
+/// read, for [DatasetController.resolveHeldDataElementOptions] (Chart.js ADR
+/// 0165). A loop makes one and drops it at its end.
+@internal
+// DIVERGES(chartjs): adapt-held-element-options, it lives inside one loop.
+final class HeldElementOptions._() {
+  /// A hold for one loop, or Dart `null` when [heldElementOptionsEnabled] is
+  /// off.
+  static HeldElementOptions? forLoop() =>
+      heldElementOptionsEnabled ? HeldElementOptions._() : null;
+
+  /// The `id` of the data element type of the read, a string.
+  String? _id;
+
+  /// The mode of the read.
+  String _mode = '';
+
+  /// The cache key of the read.
+  String _key = '';
+
+  /// The entry of the read, or Dart `null` for none.
+  ElementOptions? _entry;
+
+  /// The count of the writes and the clears of the cache after the read.
+  int _generation = -1;
+
+  /// Whether the last call took the entry and ran no code of the app: the
+  /// data element type is a class value and the entry a `PointOptions`.
+  bool native = false;
+
+  int _taken = 0;
+
+  /// Adds the count of the calls that took the entry to
+  /// [heldElementOptionsTaken].
+  void finish() => heldElementOptionsTaken += _taken;
+}
+
+/// Differential test switch of Chart.js ADR 0165; not a chart option. With it
+/// off, a loop makes no [HeldElementOptions].
+@visibleForTesting
+bool heldElementOptionsEnabled = true;
+
+/// The calls that took a held entry, for differential tests. A loop adds its
+/// count when it ends.
+@visibleForTesting
+int heldElementOptionsTaken = 0;
+
 /// core.datasetController.js:229 `isDirectUpdateMode`.
 bool _isDirectUpdateMode(Object? mode) => mode == 'reset' || mode == 'none';
 
@@ -1056,6 +1103,10 @@ class DatasetController(
   /// one object. The two typed Maps have the same keys. [configure] clears
   /// both, as `this._cachedDataOpts = {}` (:445) does.
   final Map<String, ElementOptions> _cachedElementOptions = {};
+
+  // DIVERGES(chartjs): adapt-held-element-options, a count of the writes and
+  // the clears of [_cachedElementOptions]. It keeps no value.
+  int _elementOptionsGeneration = 0;
 
   // DIVERGES(chartjs): adapt-element-option-cache-key, reuse only the last
   // joined string. The option cache and its invalidation stay unchanged.
@@ -1524,6 +1575,8 @@ class DatasetController(
     options = config.createResolver(scopes, getContext()) as OptionView;
     parsing = options.readKey(OptionKey.parsing);
     _cachedElementOptions.clear();
+    // DIVERGES(chartjs): adapt-held-element-options, the clear ends a hold.
+    _elementOptionsGeneration++;
     _cachedAnimations.clear();
   }
 
@@ -1541,6 +1594,8 @@ class DatasetController(
     options = attachContext(options.resolver, getContext());
     parsing = options.readKey(OptionKey.parsing);
     _cachedElementOptions.clear();
+    // DIVERGES(chartjs): adapt-held-element-options, the clear ends a hold.
+    _elementOptionsGeneration++;
     _cachedAnimations.clear();
   }
 
@@ -2179,6 +2234,66 @@ class DatasetController(
     return _resolveElementOptions(_idOf(dataElementType), mode, index);
   }
 
+  /// [resolveDataElementOptions] of a loop over the data elements, with the
+  /// cache entry that the last call of the loop read (Chart.js ADR 0165).
+  ///
+  /// A hit of `_resolveElementOptions` (core.datasetController.js:804-811)
+  /// gives `cloneIfNotShared(cache[elementType.id + '-' + mode], sharing)`.
+  /// The call takes the entry of [hold] when the inputs of that read are
+  /// those of the call that read it: the same `id` object of the data element
+  /// type (a string, read with `_idOf` as each call does), an equal mode, and
+  /// no write or clear of the cache since. Then the key is the same and the
+  /// read gives the same entry. The call writes the last key as
+  /// `_elementCacheKey` does. Each other call is the ordinary one, and holds
+  /// its entry for the next call. [hold] lives inside one loop: no entry
+  /// outlives the loop (Chart.js ADR 0054 section 4).
+  @internal
+  // DIVERGES(chartjs): adapt-held-element-options, one cache read for a loop.
+  ElementOptions resolveHeldDataElementOptions(
+    HeldElementOptions hold,
+    int index,
+    String mode,
+  ) {
+    final elementType = dataElementType;
+    final id = _idOf(elementType);
+    final entry = hold._entry;
+    if (entry != null &&
+        identical(id, hold._id) &&
+        mode == hold._mode &&
+        hold._generation == _elementOptionsGeneration) {
+      // The writes of `_elementCacheKey` for an equal key.
+      _lastElementTypeName = hold._id;
+      _lastElementMode = hold._mode;
+      _lastElementCacheKey = hold._key;
+      // A class value gives its `id` with no code of the app, and the clone of
+      // the final class `PointOptions` is ours.
+      hold
+        ..native = elementType is JsClass && entry is PointOptions
+        .._taken += 1;
+      return _cloneIfNotShared(entry, enableOptionSharing);
+    }
+    hold
+      ..native = false
+      .._entry = null;
+    final result = _resolveElementOptions(id, mode, index);
+    // The key of this call, unless a call inside it wrote another one.
+    if (id is String &&
+        _lastElementTypeName == id &&
+        _lastElementMode == mode) {
+      final key = _lastElementCacheKey;
+      final cached = _cachedElementOptions[key];
+      if (cached != null) {
+        hold
+          .._id = id
+          .._mode = mode
+          .._key = key
+          .._entry = cached
+          .._generation = _elementOptionsGeneration;
+      }
+    }
+    return result;
+  }
+
   /// Existing per-mode cache entries must retain priority over a loop plan.
   @internal
   // DIVERGES(chartjs): adapt-native-line-resolution, retain cache precedence.
@@ -2389,6 +2504,8 @@ class DatasetController(
       // enables us to have the 'active' element options and 'default'
       // options to switch between when interacting.
       cache[cacheKey] = jsObjectFreeze(_cloneIfNotShared(values, sharing));
+      // DIVERGES(chartjs): adapt-held-element-options, the write ends a hold.
+      _elementOptionsGeneration++;
       // DIVERGES(chartjs): adapt-hidden-legend-items, the cache of the entry.
       if (!active) _staticEntryGeneration = config.resolutionGeneration;
     }

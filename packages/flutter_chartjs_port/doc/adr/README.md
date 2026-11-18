@@ -56,7 +56,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0051](0051-input-events-and-interaction-state.md) Input events and interaction state: accepted, superseded in part by 0108.
 - [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170.
 - [0053](0053-resolver-fast-paths.md) The resolver fast paths: rejected.
-- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147.
+- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165.
 - [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106.
 - [0056](0056-color-performance.md) Profile-guided color implementation: proposed.
 - [0057](0057-direct-typed-colors.md) Color-only inputs: implemented, supersedes 0050, 0052, 0054, superseded in part by 0061, 0128, 0147.
@@ -111,7 +111,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0106](0106-canvas-shadows.md) Canvas shadows: accepted, supersedes 0055, superseded in part by 0107.
 - [0107](0107-dataset-shadow.md) The dataset shadow: accepted, supersedes 0106, superseded in part by 0139.
 - [0108](0108-input-surface-and-exports-for-add-on-plugins.md) The input surface and exports for add-on plugins: accepted, supersedes 0022, 0037, 0048, 0051, 0054, superseded in part by 0132, 0135, 0144, 0146.
-- [0109](0109-previous-x-of-the-gap-test.md) The previous x of the gap test in the line and scatter loops: accepted, supersedes 0036.
+- [0109](0109-previous-x-of-the-gap-test.md) The previous x of the gap test in the line and scatter loops: accepted, supersedes 0036, superseded in part by 0165.
 - [0110](0110-local-zone-offset-cache.md) The local-zone offset cache: accepted, supersedes 0024.
 - [0111](0111-range-updates.md) An opt-in range update for scale range changes: accepted.
 - [0112](0112-frame-aligned-input-coalescing.md) Frame-aligned coalescing of continuous input in the chart host: proposed, supersedes 0016, 0037, 0108.
@@ -161,6 +161,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0160](0160-shared-point-animation-options.md) Shared animation options of a scatter update: accepted.
 - [0163](0163-scatter-indexed-point-sizes.md) Indexed point sizes in the scatter plan: accepted, supersedes 0079, 0094.
 - [0164](0164-kept-circle-run.md) The kept circle run of point markers: accepted, supersedes 0104.
+- [0165](0165-held-element-options.md) The held option cache entry of a scatter loop: accepted, supersedes 0054, 0109.
 - [0167](0167-point-hover-scan.md) A typed scan of the points in the hover search: accepted.
 - [0170](0170-typed-gallery-type-pages.md) Typed gallery type pages: accepted, supersedes 0052.
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.
