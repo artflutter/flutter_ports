@@ -464,8 +464,7 @@ class AxesDemoState() extends State<AxesDemo> {
   // Readout.
 
   /// A value of `getLabelForValue` as text.
-  static String _labelText(Object? label) =>
-      label is String ? label : showJs(label);
+  static String _labelText(Object? label) => '$label';
 
   /// A scale value as text: a timestamp without decimals.
   static String _valueText(double value) =>

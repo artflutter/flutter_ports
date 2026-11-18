@@ -82,7 +82,7 @@ class const OptionsDemo({super.key}) extends StatelessWidget {
           source:
               "createResolver([dataset, defaults])['borderColor'] · "
               "defaults['borderColor'] = "
-              "${showJs(defaults['borderColor'])}",
+              "${valueText(defaults['borderColor'])}",
           child: _table(
             context,
             const ['dataset scope', 'resolved', 'from'],
@@ -138,7 +138,7 @@ class const OptionsDemo({super.key}) extends StatelessWidget {
     final own =
         s.scope.containsKey('borderColor') &&
         !identical(s.scope['borderColor'], undefined);
-    return [s.label, showJs(value), if (own) 'dataset' else 'defaults'];
+    return [s.label, valueText(value), if (own) 'dataset' else 'defaults'];
   }
 
   Widget _nested(BuildContext context) {
@@ -162,11 +162,11 @@ class const OptionsDemo({super.key}) extends StatelessWidget {
           context,
           const ['read', 'resolved', 'from'],
           [
-            ['font.fontSize', showJs(font.fontSize), 'dataset'],
+            ['font.fontSize', '${font.fontSize}', 'dataset'],
             ['font.fontWeight', '${font.fontWeight?.value}', 'dataset'],
             ['font.fontFamily', '${font.fontFamily}', 'defaults.font'],
-            ['font.lineHeight', showJs(font.lineHeight), 'fontSize × height'],
-            ['hoverBackgroundColor', showJs(hover), _hoverSource],
+            ['font.lineHeight', '${font.lineHeight}', 'fontSize × height'],
+            ['hoverBackgroundColor', valueText(hover), _hoverSource],
           ],
         ),
         const SizedBox(height: 8),
@@ -245,12 +245,12 @@ class const _FontRow({
         Mono('toFont($label)', style: theme.textTheme.bodySmall),
         const SizedBox(height: 4),
         Mono(
-          '${font.fontFamily} · size ${showJs(font.fontSize)} · height '
-          '${showJs(font.height)}',
+          '${font.fontFamily} · size ${font.fontSize} · height '
+          '${font.height}',
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         Mono(
-          'lineHeight ${showJs(font.lineHeight)}px · weight '
+          'lineHeight ${font.lineHeight}px · weight '
           '${font.fontWeight?.value} · style ${font.fontStyle?.name}',
           style: theme.textTheme.bodySmall,
         ),

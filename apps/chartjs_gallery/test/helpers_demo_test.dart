@@ -229,7 +229,7 @@ void main() {
     await _scrollTo(tester, find.text('ChartPaint.solid(Color(0xFF059BFF))'));
     expect(find.text('ChartPaint.solid(Color(0xFF059BFF))'), findsOneWidget);
 
-    await _scrollTo(tester, find.text('Georgia · size 16 · height 1.5'));
+    await _scrollTo(tester, find.text('Georgia · size ${16.0} · height 1.5'));
     await _scrollTo(tester, find.text('{top: 1, left: 2}'));
     expect(find.text('{x: 5, y: 10}'), findsOneWidget);
   });

@@ -1,5 +1,5 @@
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show JsObjectFace, SolidChartPaint, Undefined;
+    show JsObjectFace, SolidChartPaint;
 import 'package:material_ui/material_ui.dart';
 
 /// The text of the number [value] for the readouts: a whole number has no
@@ -9,21 +9,12 @@ String jsNumberText(double value) =>
     ? value.toInt().toString()
     : value.toString();
 
-/// The JavaScript source form of an option value, for display: `undefined`,
-/// `null`, a quoted string, a JS number string, or `{…}` and `[…]`.
-String showJs(Object? value) => switch (value) {
-  SolidChartPaint(:final color) => 'ChartPaint.solid(${showJs(color)})',
+/// The text of an option value for the readouts: a color as
+/// `Color(0xAARRGGBB)`, and any other value as its Dart text.
+String valueText(Object? value) => switch (value) {
+  SolidChartPaint(:final color) => 'ChartPaint.solid(${valueText(color)})',
   final Color color => 'Color(0x${_argbText(color)})',
-  Undefined() => 'undefined',
-  null => 'null',
-  final String s => "'$s'",
-  final double d => jsNumberText(d),
-  final num n => jsNumberText(n.toDouble()),
-  final bool b => '$b',
-  final Map<Object?, Object?> _ => '{…}',
-  final JsObjectFace _ => '{…}',
-  final List<Object?> _ => '[…]',
-  _ => value.toString(),
+  _ => '$value',
 };
 
 /// The read by name `object[key]` of an object of the chart: a Map of the

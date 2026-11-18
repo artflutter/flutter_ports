@@ -675,8 +675,8 @@ class ElementsDemoState() extends State<ElementsDemo> {
           math.pow(x - point.x, 2) + math.pow(y - point.y, 2),
         );
         return 'PointElement.inRange: distance ${_f(distance)} < radius '
-            '${showJs(options['radius'])} + hitRadius '
-            '${showJs(options['hitRadius'])}';
+            '${options['radius']} + hitRadius '
+            '${options['hitRadius']}';
       case _Kind.bar:
         final bar = _bars[hit.index];
         return 'BarElement.inRange: x in [${_f(bar.x - bar.width / 2)}, '
@@ -709,7 +709,7 @@ class ElementsDemoState() extends State<ElementsDemo> {
     final changed = [
       for (final key in options.active.jsKeys())
         if (options.active[key] != options.base[key])
-          '$key ${showJs(options.active[key])}',
+          '$key ${valueText(options.active[key])}',
     ];
     return changed.isEmpty ? 'none' : changed.join(' · ');
   }

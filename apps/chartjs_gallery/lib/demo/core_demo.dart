@@ -361,7 +361,7 @@ class CoreDemoState() extends State<CoreDemo> {
         ('radius', radius is double ? radius.toStringAsFixed(2) : '-'),
         (
           'backgroundColor',
-          options == null ? '-' : showJs(options['backgroundColor']),
+          options == null ? '-' : valueText(options['backgroundColor']),
         ),
         (
           'options',
@@ -369,7 +369,7 @@ class CoreDemoState() extends State<CoreDemo> {
               ? '-'
               // A web release build minifies runtimeType.
               : '${options is PointOptions ? 'PointOptions' : 'Map'}, '
-                    '\$shared ${showJs(options[r'$shared'])}, '
+                    '\$shared ${options[r'$shared']}, '
                     '${switch (options) {
                       JsFreezable(isFrozen: true) => 'frozen',
                       _ => 'not frozen',
