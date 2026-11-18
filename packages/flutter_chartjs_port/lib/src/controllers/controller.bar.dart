@@ -1106,10 +1106,11 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       final ipixels = _calculateBarIndexPixels(i, ruler, plan);
       final itemStacks = stacksOf(parsed);
       // `(parsed._stacks || {})[vScale.axis]`: the read of the empty object
-      // gives `undefined` (Chart.js ADR 0036, section 8).
+      // gives `undefined` (Chart.js ADR 0036, section 8). Dart `null` gives
+      // the same result: the test below reads only its truthiness.
       final stack = jsTruthy(itemStacks)
           ? axisStackOf(itemStacks, vAxis)
-          : undefined;
+          : null;
 
       final properties = BarProperties.geometry(
         horizontal: horizontal,
@@ -1473,8 +1474,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       getFirstScaleIdForIndexAxis() ?? undefined,
     );
     final axisNumber = axes.indexWhere((key) => key == axisKey);
-    final stackIndex =
-        getStackIndex(index, cachedMeta.stack ?? undefined) + axisNumber;
+    final stackIndex = getStackIndex(index, cachedMeta.stack) + axisNumber;
     if (!axisCount.isFinite || axisCount < 1 || !stackIndex.isFinite) {
       return null;
     }
@@ -1562,9 +1562,10 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         .toList();
     final stacked = readOption(iScale.options, OptionKey.stacked);
     final stacks = <Object?>[];
-    // `getParsed(undefined)` is `undefined`.
+    // `getParsed(undefined)` is `undefined`. Dart `null` gives the same
+    // result: without a data index, `skipNull` does not run.
     final currentParsed = dataIndex == null
-        ? undefined
+        ? null
         : cachedMeta.controller!.getParsed(dataIndex);
     final iAxis = iScale.axis;
     final iScaleValue = jsTruthy(currentParsed)
@@ -1584,7 +1585,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
           : meta.parsed.firstWhere((item) {
               assert(BarSkipNullIndex.debugCountVisit(), 'counts the visit');
               return _strictEquals(parsedValueOf(item, iAxis), iScaleValue);
-            }, orElse: () => undefined);
+            }, orElse: () => null);
       final val = jsTruthy(parsed)
           ? _axisValueOf(parsed, meta.vScale!)
           : parsed;
@@ -1605,11 +1606,12 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       // false     |   x   |     x     |     x
       // true      |       |     x     |
       // undefined |       |     x     |     x
-      // Dart `null` of the meta is the `undefined` of an absent stack.
-      final metaStack = meta.stack ?? undefined;
+      // Dart `null` of the meta is the `undefined` of an absent stack. The
+      // option `stacked` keeps `undefined`: a stored `null` differs from it.
+      final metaStack = meta.stack;
       if (stacked == false ||
           !stacks.any((stack) => _strictEquals(stack, metaStack)) ||
-          (identical(stacked, undefined) && identical(metaStack, undefined))) {
+          (identical(stacked, undefined) && metaStack == null)) {
         stacks.add(metaStack);
       }
       if (meta.index == last) {
@@ -1622,7 +1624,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     // located.
     // https://github.com/chartjs/Chart.js/issues/6368
     if (stacks.isEmpty) {
-      stacks.add(undefined);
+      stacks.add(null);
     }
 
     return stacks;
@@ -1714,19 +1716,15 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// @returns {number} The stack index
   /// @private
   ///
-  /// Dart `null` for [dataIndex] stands for JS `undefined`. [name] is the
-  /// [undefined] sentinel when the caller gives no name. `indexOf` compares
+  /// Dart `null` for [name] and [dataIndex] stands for JS `undefined`: a
+  /// stack name is the `String?` of `ChartMeta.stack`. `indexOf` compares
   /// with `===` ([_strictEquals]). The spec reads it with one argument
   /// (controller.bar.tests.js:325). Thus it drops the underscore (Chart.js
   /// ADR 0012).
   @internal
-  double getStackIndex(
-    int datasetIndex, [
-    Object? name = undefined,
-    int? dataIndex,
-  ]) {
+  double getStackIndex(int datasetIndex, [Object? name, int? dataIndex]) {
     final stacks = _getStacks(datasetIndex, dataIndex);
-    final index = !identical(name, undefined)
+    final index = name != null
         ? stacks.indexWhere((stack) => _strictEquals(stack, name))
         : -1; // indexOf returns -1 if element is not present
 
@@ -1997,7 +1995,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         stackIndex =
             getStackIndex(
               this.index,
-              cachedMeta.stack ?? undefined,
+              cachedMeta.stack,
               jsTruthy(skipNull) ? index : null,
             ) +
             axisNumber;
