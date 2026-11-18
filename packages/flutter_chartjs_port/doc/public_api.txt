@@ -462,6 +462,7 @@ JsFunction
 JsObjectFace
 JsProxyObject
 JsStringList
+KurkleColor
 LabelItem
 LayoutItem
 LayoutItemBeforeLayout
@@ -926,6 +927,7 @@ hwb2rgb
 infinity
 initCanvas
 int16Range
+interpolate
 interpolatedLineTo
 invalidateCanvasTextMetrics
 isArray
@@ -934,6 +936,7 @@ isClickEvent
 isDomSupported
 isFinite
 isFunction
+isNonZero
 isNullOrUndef
 isNumber
 isObject
@@ -1024,6 +1027,7 @@ notifyArrayListeners
 numberEpsilon
 numberFormatOf
 numberList
+numberText
 optNull
 optUndefined
 optionKeyOf
@@ -1089,6 +1093,7 @@ setsEqual
 shaderFor
 shouldApplyFill
 sign
+simpleColor
 splineCurve
 splineCurveDefault
 splineCurveMonotone
@@ -1112,7 +1117,9 @@ timeClip
 title
 toDegrees
 toFont
+toInt32
 toLeftRightCenter
+toNumber
 toPadding
 toRadians
 toTRBL
@@ -1130,6 +1137,7 @@ unclipArea
 undefined
 uniqueSortedBarValues
 unlistenArrayEvents
+unpack
 updateBezierControlPoints
 validateChartColors
 valueOrDefault
