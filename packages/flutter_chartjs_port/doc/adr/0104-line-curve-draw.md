@@ -2,6 +2,7 @@
 
 - Status: accepted
 - Date: 2026-11-06
+- Superseded in part by: [Chart.js ADR 0164](0164-kept-circle-run.md) (2026-11-18)
 - Related: Chart.js ADRs 0034, 0084, 0085, 0089, 0097. Measurements: performance.md §66.
 - Rows of `differences.md`: `adapt-compact-path-storage`, `adapt-partitioned-baseline-fill`,
   `adapt-spline-scalar-writes`, `adapt-line-curve-walk`, `adapt-bound-ascending-segment`,

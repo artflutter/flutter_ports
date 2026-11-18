@@ -57,6 +57,8 @@ import 'package:flutter_chartjs_port/src/options/typed_record.dart'
     show TypedRecord;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
+    show SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
@@ -107,6 +109,19 @@ double _numberField(PointOptions options, OptionKey key) => switch (key) {
 /// colors at each point, and dart2wasm keeps the bit tests as calls.
 Object? _paintOption(PointOptions options, OptionKey key, Object? field) =>
     field ?? rawOption(options, key, null);
+
+/// The style setters of [PointElement.draw] for the plain [options] of a
+/// circle run (element.point.ts:96-98).
+void _writeRunStyles(CanvasRenderingContext2D ctx, PointOptions options) {
+  ctx
+    ..strokeStyle = canvasStyle(
+      _paintOption(options, OptionKey.borderColor, options.borderColor),
+    )
+    ..lineWidth = options.borderWidth
+    ..fillStyle = canvasStyle(
+      _paintOption(options, OptionKey.backgroundColor, options.backgroundColor),
+    );
+}
 
 /// `options[key]`, the raw JS value of the numeric option [key]: JS
 /// `undefined` for an absent key, a foreign value as it is.
@@ -677,6 +692,12 @@ class PointElement([AnyObject? cfg])
   /// setters run once for each series of elements with one options object, and
   /// the path of the last circle is the current path at the end. Gives the
   /// index of the first element that the run did not handle.
+  ///
+  /// Options with the radius, the hover radius and the border width of the
+  /// run and solid colors keep the run (Chart.js ADR 0164): the circle takes
+  /// its colors through [CircleRunCanvas.tryAddRunCircleColors], and the
+  /// setters of the last such options run at the end of the run, or before
+  /// the next canvas call that reads the styles.
   // DIVERGES(chartjs): adapt-point-circle-run, one canvas call for each marker.
   @override
   int drawCircleRun(
@@ -692,9 +713,17 @@ class PointElement([AnyObject? cfg])
     final run = ctx as CircleRunCanvas;
     PointOptions? options;
     var radius = 0.0;
+    var hoverRadius = 0.0;
     var margin = 0.0;
     var borderWidth = 0.0;
     var styled = false;
+    // The options of the current element are not the options of the styles
+    // of the run, with the same sizes: the next drawn element adds its circle
+    // in its own colors.
+    var recolor = false;
+    // The options whose style setters the canvas owes: the run drew a circle
+    // in their colors with no setter.
+    PointOptions? owed;
     var drawn = false;
     var lastX = 0.0;
     var lastY = 0.0;
@@ -723,12 +752,20 @@ class PointElement([AnyObject? cfg])
             break;
           }
           options = current;
-          radius = current.radius;
-          borderWidth = current.borderWidth;
-          final half =
-              nativePointSize(radius, current.hoverRadius, borderWidth) / 2;
-          margin = half == 0 || half.isNaN ? 0.5 : half;
-          styled = false;
+          // DIVERGES(chartjs): adapt-kept-circle-run, equal sizes keep the run.
+          if (styled &&
+              current.radius == radius &&
+              current.hoverRadius == hoverRadius &&
+              current.borderWidth == borderWidth) {
+            recolor = true;
+          } else {
+            radius = current.radius;
+            hoverRadius = current.hoverRadius;
+            borderWidth = current.borderWidth;
+            final half = nativePointSize(radius, hoverRadius, borderWidth) / 2;
+            margin = half == 0 || half.isNaN ? 0.5 : half;
+            styled = false;
+          }
         }
         if (point.skip == true) continue;
         // NaN takes the ordinary path: it writes the styles, with no draw.
@@ -743,17 +780,45 @@ class PointElement([AnyObject? cfg])
           continue;
         }
         if (!styled) {
-          final o = options!;
-          ctx
-            ..strokeStyle = canvasStyle(
-              _paintOption(o, OptionKey.borderColor, o.borderColor),
-            )
-            ..lineWidth = borderWidth
-            ..fillStyle = canvasStyle(
-              _paintOption(o, OptionKey.backgroundColor, o.backgroundColor),
-            );
+          if (owed != null) {
+            _writeRunStyles(ctx, owed);
+            owed = null;
+          }
+          _writeRunStyles(ctx, options!);
           if (!run.tryStartCircleRun(radius, stroke: borderWidth > 0)) break;
           styled = true;
+          recolor = false;
+        } else if (recolor || owed != null) {
+          // Without [recolor], [owed] is [options].
+          final o = options!;
+          final fill = o.backgroundColor;
+          final stroke = o.borderColor;
+          if (fill is SolidChartPaint &&
+              stroke is SolidChartPaint &&
+              run.tryAddRunCircleColors(
+                x,
+                y,
+                fill.color,
+                borderWidth > 0 ? stroke.color : null,
+              )) {
+            owed = o;
+            recolor = false;
+            drawn = true;
+            lastX = x;
+            lastY = y;
+            lastRadius = radius;
+            continue;
+          }
+          // The calls of the run without the kept colors.
+          if (owed != null) {
+            _writeRunStyles(ctx, owed);
+            owed = null;
+          }
+          if (recolor) {
+            recolor = false;
+            _writeRunStyles(ctx, o);
+            if (!run.tryStartCircleRun(radius, stroke: borderWidth > 0)) break;
+          }
         }
         if (!run.tryAddRunCircle(x, y)) break;
         drawn = true;
@@ -762,6 +827,8 @@ class PointElement([AnyObject? cfg])
         lastRadius = radius;
       }
     } finally {
+      // The setters of solid colors and of a plain width do not throw.
+      if (owed != null) _writeRunStyles(ctx, owed);
       if (drawn) {
         ctx
           ..beginPath()

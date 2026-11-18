@@ -409,9 +409,15 @@ final class CircleBatch() {
   /// Whether the batch holds a run ([hold]).
   bool get holdsRun => _held;
 
-  /// Ends the held run: the next circle takes [accepts] and [add].
+  /// Ends the held run: the next circle takes [accepts] and [add]. The ARGB
+  /// values of [addHeldColors] hold for one run: a color of a program may
+  /// change between two draws.
   void release() {
     _held = false;
+    _argbColorA[0] = null;
+    _argbColorA[1] = null;
+    _argbColorB[0] = null;
+    _argbColorB[1] = null;
   }
 
   /// Adds the fill in [fill] and, for a [stroke] color, the stroke in
@@ -424,6 +430,59 @@ final class CircleBatch() {
     }
     _push(x, y, 0, _heldFillArgb, fill);
     if (stroke != null) _push(x, y, 1, _heldStrokeArgb, stroke);
+    return true;
+  }
+
+  // The last two colors of [addHeldColors] for each kind and their ARGB
+  // values: [0] fill, [1] stroke. [release] clears them.
+  final List<ui.Color?> _argbColorA = List<ui.Color?>.filled(2, null);
+  final List<ui.Color?> _argbColorB = List<ui.Color?>.filled(2, null);
+  final Int32List _argbA = Int32List(2);
+  final Int32List _argbB = Int32List(2);
+
+  /// `color.toARGB32()`, with the last two colors of [kind] first.
+  int _argbOf(ui.Color color, int kind) {
+    if (identical(color, _argbColorA[kind])) return _argbA[kind];
+    if (identical(color, _argbColorB[kind])) return _argbB[kind];
+    final argb = color.toARGB32();
+    _argbColorB[kind] = _argbColorA[kind];
+    _argbB[kind] = _argbA[kind];
+    _argbColorA[kind] = color;
+    _argbA[kind] = argb;
+    return argb;
+  }
+
+  /// Adds the fill in [fill] and, for a [stroke] color, the stroke in
+  /// [stroke] of one more circle of the held run at (x, y), as [accepts],
+  /// [add] and [hold] would for these colors (Chart.js ADR 0164). The run
+  /// then holds these colors. Returns false, with no change, unless the
+  /// batch holds a run with a stroke exactly when [stroke] is given, and
+  /// either has a color for each instance or the colors equal those of the
+  /// run. A run of one color that would take a color for each instance goes
+  /// back to [accepts] and [add].
+  // DIVERGES(chartjs): adapt-kept-circle-run, the colors of a held run.
+  bool addHeldColors(double x, double y, ui.Color fill, ui.Color? stroke) {
+    if (!_held || (stroke == null) != (_heldStroke == null)) return false;
+    if (_colored) {
+      final fillArgb = _argbOf(fill, 0);
+      final strokeArgb = stroke == null ? 0 : _argbOf(stroke, 1);
+      _push(x, y, 0, fillArgb, fill);
+      if (stroke != null) _push(x, y, 1, strokeArgb, stroke);
+      _heldFillArgb = fillArgb;
+      _heldStrokeArgb = strokeArgb;
+    } else {
+      // [add] keeps one color for each kind while the colors are equal.
+      if (!(identical(fill, _fill) || fill == _fill) ||
+          (stroke != null &&
+              !(identical(stroke, _stroke) || stroke == _stroke))) {
+        return false;
+      }
+      _push(x, y, 0, 0, fill);
+      if (stroke != null) _push(x, y, 1, 0, stroke);
+    }
+    _fill = fill;
+    if (stroke != null) _stroke = stroke;
+    _heldStroke = stroke;
     return true;
   }
 

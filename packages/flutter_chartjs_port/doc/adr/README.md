@@ -106,7 +106,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0101](0101-context-refresh.md) One write of a data context, and one refresh less in a scatter update: accepted.
 - [0102](0102-direct-element-writes.md) Direct typed writes of arcs and bubbles: accepted.
 - [0103](0103-radial-line-fan.md) The angle lines of the radial scale in one native call: accepted.
-- [0104](0104-line-curve-draw.md) The curve and the markers of a dense line draw: accepted.
+- [0104](0104-line-curve-draw.md) The curve and the markers of a dense line draw: accepted, superseded in part by 0164.
 - [0105](0105-web-long-paths-in-pieces.md) Long paths in pieces on the web: accepted, superseded by 0113.
 - [0106](0106-canvas-shadows.md) Canvas shadows: accepted, supersedes 0055, superseded in part by 0107.
 - [0107](0107-dataset-shadow.md) The dataset shadow: accepted, supersedes 0106, superseded in part by 0139.
@@ -160,6 +160,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0158](0158-fused-rounded-bar.md) Fused rounded bar: proposed, supersedes 0070.
 - [0160](0160-shared-point-animation-options.md) Shared animation options of a scatter update: accepted.
 - [0163](0163-scatter-indexed-point-sizes.md) Indexed point sizes in the scatter plan: accepted, supersedes 0079, 0094.
+- [0164](0164-kept-circle-run.md) The kept circle run of point markers: accepted, supersedes 0104.
 - [0167](0167-point-hover-scan.md) A typed scan of the points in the hover search: accepted.
 - [0170](0170-typed-gallery-type-pages.md) Typed gallery type pages: accepted, supersedes 0052.
 - [0171](0171-color-methods-on-flutter-color.md) Color methods on the Flutter Color: accepted, supersedes 0019.

@@ -1,5 +1,7 @@
 // Original code, not ported from Chart.js: native point marker capability.
 
+import 'dart:ui' as ui;
+
 /// Optional run of full circles for the markers of a dataset (Chart.js ADR
 /// 0104).
 ///
@@ -22,4 +24,22 @@ abstract interface class CircleRunCanvas() {
   /// circle. Call it only after a [tryStartCircleRun] that gave true, with no
   /// other canvas call between.
   bool tryAddRunCircle(double x, double y);
+
+  /// Draws one circle of the run at (x, y) in user space in the fill color
+  /// [fill] and, for a run with a stroke, the stroke color [stroke] (`null`
+  /// for a run of fills). It gives the draws of the setters `fillStyle` and
+  /// `strokeStyle` with these colors, a [tryStartCircleRun] with the radius
+  /// and the line width of the run, and a [tryAddRunCircle] (Chart.js ADR
+  /// 0164). The canvas styles do not change: the caller writes them after the
+  /// run.
+  ///
+  /// A false result changes nothing and requests that sequence. Call it only
+  /// in a run that holds after a [tryAddRunCircle] or a call of this method
+  /// that gave true, with no other canvas call between.
+  bool tryAddRunCircleColors(
+    double x,
+    double y,
+    ui.Color fill,
+    ui.Color? stroke,
+  );
 }

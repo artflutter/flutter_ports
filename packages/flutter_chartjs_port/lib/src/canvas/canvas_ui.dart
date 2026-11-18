@@ -2213,6 +2213,10 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   bool tryStartCircleRun(double radius, {required bool stroke}) {
     // The radius, the width or the colors may differ from the last run.
     _batch.release();
+    // The colors of [tryAddRunCircleColors] hold for one run: a color of a
+    // program may change between two draws.
+    _keptColorA = null;
+    _keptColorB = null;
     final s = _s;
     final t = s.transform;
     final fill = s.fillColor;
@@ -2284,6 +2288,68 @@ final class UiCanvasContext._(final UiCanvasElement _element)
     } else if (added && debugHoldCircleRuns) {
       _batch.hold(radius, fill, null, width);
     }
+    return true;
+  }
+
+  /// Whether [tryAddRunCircleColors] takes circles. Only the tests set it to
+  /// false: then each circle of new options takes the style setters,
+  /// [tryStartCircleRun] and [tryAddRunCircle], for a comparison of the two
+  /// forms.
+  @visibleForTesting
+  static bool debugKeepRunColors = true;
+
+  int _keptRunCircles = 0;
+
+  /// The count of the circles that [tryAddRunCircleColors] took, for tests.
+  @visibleForTesting
+  int get debugKeptRunCircles => _keptRunCircles;
+
+  // The last two colors that passed [batchKeepsColor] in
+  // [tryAddRunCircleColors] in the current run ([tryStartCircleRun] clears
+  // them).
+  ui.Color? _keptColorA;
+  ui.Color? _keptColorB;
+
+  /// Whether the batch keeps [color] ([batchKeepsColor]), with the last two
+  /// colors that passed first.
+  bool _keepsRunColor(ui.Color color) {
+    if (identical(color, _keptColorA) || identical(color, _keptColorB)) {
+      return true;
+    }
+    if (!batchKeepsColor(color)) return false;
+    _keptColorB = _keptColorA;
+    _keptColorA = color;
+    return true;
+  }
+
+  // DIVERGES(chartjs): adapt-kept-circle-run, no style setters for each point.
+  @override
+  bool tryAddRunCircleColors(
+    double x,
+    double y,
+    ui.Color fill,
+    ui.Color? stroke,
+  ) {
+    // The run holds: [tryStartCircleRun] proved each state but the colors
+    // for the radius and the width of the run, and no canvas call came since.
+    // The setters of a solid color write the color and no shader, so only
+    // the color tests of [tryStartCircleRun] can differ.
+    if (!debugKeepRunColors ||
+        !_batch.holdsRun ||
+        (stroke != null) != _circleRunStroke ||
+        !_keepsRunColor(fill) ||
+        (stroke != null && !_keepsRunColor(stroke))) {
+      return false;
+    }
+    final t = _s.transform;
+    final px = t.mapX(x, y);
+    final py = t.mapY(x, y);
+    if (!(px.abs() <= maxBatchCenter && py.abs() <= maxBatchCenter)) {
+      return false;
+    }
+    if (!_batch.addHeldColors(px, py, fill, stroke)) return false;
+    _keptRunCircles++;
+    _drew(batched: true);
     return true;
   }
 

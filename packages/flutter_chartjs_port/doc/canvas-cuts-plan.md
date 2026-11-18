@@ -1137,7 +1137,7 @@ the cut inventory describe their original review snapshots.
 | `roundRect` of the interface: `CanvasPath.roundRect`, `RoundRectGeometry`, `roundRectGeometry` (the HTML steps 1 to 11), `roundRectCornersGeometry` and `roundRectRadiusScale` (the flips and step 11 for four radii, Chart.js ADR 0158), `Path2D.roundRect`, `RoundRectCommand` | `lib/src/canvas/canvas.dart:184-196`, `:199-345`, `:1008-1023`, `:1321-1343`; `roundRectCornersGeometry` and `roundRectRadiusScale` at `canvas.dart:328-430` (2026-11-17) | 199 before Chart.js ADR 0158, 256 after | None. The pure layer has no `dart:ui`. | **Keep**. A performance addition (porting-flow.md §1.1). |
 | The fast paths of the context: `_RRectClip`, `roundRect`, the `drawRRect`, sole shape and `drawDRRect` branch of `fill` (with no draw call for a shape with no area, N2 of §7), `_soleShape`, `_ring`, the `clipRRect` branch of `clip`, `debugPath`, `debugRing`, `debugSoleShape` and `debugClips` | `canvas_ui.dart:407-414`, `:571-622`, `:1312-1314`, `:1373-1400`, `:1438-1472`, `:1514-1518` | 115 | None | **Keep**. A performance addition (porting-flow.md §1.1). |
 | N1 of §7: the save of the recording canvas only for a state with a clip of its own (`_begin`, `_ownsClips`, `save`, `restore`, the first save in `clip`), and `debugPendingCircles` | `canvas_ui.dart:566-569`, `:700-723`, `:1017-1040`, `:1522-1529` | ~60 | None. A `ui.Canvas` has no state stack without its saves. | **Added** (§7). A performance addition (porting-flow.md §1.1). |
-| `CircleBatch`, with a color for each instance of a run that meets another color below 16 circles (N5 of §7), and the held run of a run of markers (`hold`, `addHeld`, `release`; the held path of `UiCanvasContext.tryAddRunCircle`) | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
+| `CircleBatch`, with a color for each instance of a run that meets another color below 16 circles (N5 of §7), and the held run of a run of markers (`hold`, `addHeld`, `addHeldColors`, `release`; the held paths of `UiCanvasContext.tryAddRunCircle` and `tryAddRunCircleColors`) | `lib/src/canvas/canvas_ui_batch.dart` | whole file | None. Flutter does not merge `drawCircle` calls. | **Keep** (cut 3) |
 | Text rotation snap of 2 degrees | `lib/src/canvas/canvas_ui.dart:114-117` (`_textAngleStep`), `:2779-2816` (`_snappedTextMatrix`) | ~40 | Fixed on Flutter `master`, not in a stable release | **Keep** until a stable release has the fixes (cut 3) |
 | `RenderChartHost.displaySize` (was `chartSize`): the two px styles, else the render size. The host has no CSS rule for one style. | `lib/src/platform/chart_host.dart:1047-1060` | 14 | The harness matcher `toBeChartOfSize` takes the rule for one style | **Done** (C2): the rule for one style moves to the harness of phase 5 |
 | `UiCanvasElement.devicePixelRatio` and `logicalSize` | removed (`canvas_ui.dart:143`, `:176-193` at 69f9d97) | 0 | The host gives the paint scale | **Done** (C2): removed |
@@ -2817,3 +2817,16 @@ these files move. This plan cites `controller.scatter.dart` and `core.datasetCon
 line of them. No file of `lib/src/canvas/`, `chart_host.dart`, `platform.flutter.dart` or `helpers.dom.dart` changes,
 and no canvas operation or drawing cut changes. The references, the inventory (§1.1), the tests of §2.6 and §3.5 and
 the estimates do not change. Test: `test/port/core/animation_share_point_test.dart` (new). No trigger occurred.
+
+## Kept circle run, 2026-11-18
+
+[Chart.js ADR 0164](adr/0164-kept-circle-run.md) (proposed, row `adapt-kept-circle-run`) changes
+`lib/src/canvas/canvas_circle_run.dart` (25 to 45 lines: `tryAddRunCircleColors`), `canvas_ui.dart` (after
+`tryAddRunCircle`: `debugKeepRunColors`, `debugKeptRunCircles`, `_keepsRunColor` and `tryAddRunCircleColors`) and
+`canvas_ui_batch.dart` (before `_push`: `_argbOf` and `addHeldColors`), and `lib/src/elements/element.point.dart`
+(`drawCircleRun`, `_writeRunStyles`). `tryStartCircleRun` and `CircleBatch.release` clear the last two colors of the
+run and their ARGB values (4 lines each), so that no color value lives from one run to the next. The batches, their flush points, the native draw calls and the pixels do not
+change. The line references of `canvas_ui.dart` after `tryAddRunCircle` and of `canvas_ui_batch.dart` after
+`release` move; use the named anchors. The inventory row of `CircleBatch` names `addHeldColors`. Tests:
+`test/port/elements/element.point_kept_run_test.dart` and `test/port/controllers/scatter_kept_run_test.dart` (new).
+No deferred cut changes. The estimates do not change. No trigger occurred.
