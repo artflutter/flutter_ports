@@ -203,10 +203,20 @@ List<Object?> _labels(Chart chart) =>
 List<Object?> _data(Chart chart, int index) =>
     jsGet(_datasets(chart)[index], 'data')! as List<Object?>;
 
+/// [items] in a new List with the element type of [array]: a typed config
+/// gives its Lists (`List<Object>` labels, `List<num?>` data) to the chart
+/// by reference, and `addAll` or `insertAll` of a `List<Object?>` into them
+/// fails the type check of the iterable.
+List<Object?> _itemsOf(List<Object?> array, List<Object?> items) {
+  final typed = array.sublist(0, 0);
+  items.forEach(typed.add);
+  return typed;
+}
+
 /// `array.push(...items)`: the change, then the notification of the hooked
 /// method (differences.md row platform-array-events).
 void _push(List<Object?> array, List<Object?> items) {
-  array.addAll(items);
+  array.addAll(_itemsOf(array, items));
   notifyArrayListeners(array, 'push', items);
 }
 
@@ -229,13 +239,13 @@ void _splice(
   int deleteCount, [
   List<Object?> items = const [],
 ]) {
-  spliceList(array, start, deleteCount, items);
+  spliceList(array, start, deleteCount, _itemsOf(array, items));
   notifyArrayListeners(array, 'splice', [start, deleteCount, ...items]);
 }
 
 /// `array.unshift(...items)`.
 void _unshift(List<Object?> array, List<Object?> items) {
-  array.insertAll(0, items);
+  array.insertAll(0, _itemsOf(array, items));
   notifyArrayListeners(array, 'unshift', items);
 }
 
@@ -255,6 +265,8 @@ void main() {
   group('Chart', () {
     // https://github.com/chartjs/Chart.js/issues/2481
     // See global.deprecations.tests.js for backward compatibility
+    // A Map config: the empty config has no chart type, which a typed
+    // config needs.
     testWidgets('should be defined and prototype of chart instances', (
       tester,
     ) async {
@@ -269,18 +281,16 @@ void main() {
     testWidgets('should throw an error if the canvas is already in use', (
       tester,
     ) async {
-      final config = <String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 2, 3, 4],
-            },
+      final config = ChartConfigLowering(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(data: [1, 2, 3, 4]),
           ],
-          'labels': <Object?>['A', 'B', 'C', 'D'],
-        },
-      };
-      final chart = acquireChart(config);
+          labels: ['A', 'B', 'C', 'D'],
+        ),
+      ).lower();
+      final chart = acquireChartRoot(config);
       final canvas = chart.canvas;
 
       Chart createChart() {
@@ -307,6 +317,9 @@ void main() {
       expect(createChart, returnsNormally);
     });
 
+    // The Map configs of this group: the cases test the raw config itself,
+    // its `data` object, the merge of `Chart.defaults` and
+    // `Chart.overrides`, or have no chart type.
     group('config initialization', () {
       testWidgets('should create missing config.data properties', (
         tester,
@@ -481,7 +494,11 @@ void main() {
       ) async {
         final pieDefaults = jsGet(defaults['datasets'], 'pie');
 
-        final chart = acquireChart(<String, Object?>{'type': 'pie'});
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(type: ChartKind.pie, datasets: []),
+          ).lower(),
+        );
 
         final options = chart.options;
         expect(options['circumference'], jsGet(pieDefaults, 'circumference'));
@@ -490,15 +507,18 @@ void main() {
       testWidgets('should override axis positions that are incorrect', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'position': ChartPosition.left},
-              'y': <String, Object?>{'position': ChartPosition.bottom},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [],
+              scales: {
+                'x': CategoryAxis(position: ChartPosition.left),
+                'y': LinearAxis(position: ChartPosition.bottom),
+              },
+            ),
+          ).lower(),
+        );
 
         final scaleOptions = chart.options['scales'];
         expect(
@@ -511,6 +531,8 @@ void main() {
       // update() builds the scales before the controllers. Thus the case
       // needs the linear and category scales, but no controller: the
       // expected error is the missing controller 'area'.
+      // A Map config: a typed dataset class names its own controller, and
+      // this dataset must take the unregistered type of the chart.
       testWidgets('should throw an error if the chart type is incorrect', (
         tester,
       ) async {
@@ -553,6 +575,7 @@ void main() {
         );
       });
 
+      // A Map config: the case writes new data objects into `chart.data`.
       testWidgets('should initialize the data object', (tester) async {
         final chart = acquireChart(<String, Object?>{'type': 'bar'});
         _expectEmptyData(chart);
@@ -564,6 +587,9 @@ void main() {
         _expectEmptyData(chart);
       });
 
+      // Map configs: the cases test the merge of the keys `hover` and
+      // `interaction` of the raw options, and `interaction: false` has no
+      // typed form.
       group('should disable hover', () {
         testWidgets('when options.hover=false', (tester) async {
           final chart = acquireChart(<String, Object?>{
@@ -602,17 +628,17 @@ void main() {
       });
 
       testWidgets('should activate element on hover', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              labels: ['A', 'B', 'C', 'D'],
+              datasets: [
+                LineDataset(data: [10, 20, 30, 100]),
+              ],
+            ),
+          ).lower(),
+        );
 
         final point = chart.getDatasetMeta(0).data[1];
 
@@ -625,6 +651,8 @@ void main() {
         );
       });
 
+      // A Map config: the case writes `events` into `chart.options` before
+      // `chart.update()`.
       testWidgets('should handle changing the events at runtime', (
         tester,
       ) async {
@@ -670,24 +698,24 @@ void main() {
         'should activate element on hover when minPadding pixels outside '
         'chart area',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['A', 'B', 'C', 'D'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 20, 30, 100],
-                  'hoverRadius': 0,
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                labels: ['A', 'B', 'C', 'D'],
+                datasets: [
+                  LineDataset(
+                    data: [10, 20, 30, 100],
+                    extra: {'hoverRadius': 0},
+                  ),
+                ],
+                scales: {
+                  'x': CategoryAxis(display: ScaleDisplay.off),
+                  'y': LinearAxis(display: ScaleDisplay.off),
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{'display': ScaleDisplay.off},
-                'y': <String, Object?>{'display': ScaleDisplay.off},
-              },
-            },
-          });
+              ),
+            ).lower(),
+          );
 
           final point = chart.getDatasetMeta(0).data[0];
 
@@ -707,6 +735,8 @@ void main() {
       testWidgets('should not activate elements when hover is disabled', (
         tester,
       ) async {
+        // A Map config: `hover: false` has no typed form, and a typed scope
+        // keeps the boolean as a foreign value.
         final chart = acquireChart(<String, Object?>{
           'type': 'line',
           'data': <String, Object?>{
@@ -730,25 +760,25 @@ void main() {
         'should not change the active elements when outside chartArea, except '
         'for mouseout',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['A', 'B', 'C', 'D'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 20, 30, 100],
-                  'hoverRadius': 0,
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                labels: ['A', 'B', 'C', 'D'],
+                datasets: [
+                  LineDataset(
+                    data: [10, 20, 30, 100],
+                    extra: {'hoverRadius': 0},
+                  ),
+                ],
+                scales: {
+                  'x': CategoryAxis(display: ScaleDisplay.off),
+                  'y': LinearAxis(display: ScaleDisplay.off),
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{'display': ScaleDisplay.off},
-                'y': <String, Object?>{'display': ScaleDisplay.off},
-              },
-              'layout': <String, Object?>{'padding': const EdgeInsets.all(5)},
-            },
-          });
+                padding: EdgeInsets.all(5),
+              ),
+            ).lower(),
+          );
 
           final point = chart.getDatasetMeta(0).data[0];
 
@@ -783,6 +813,9 @@ void main() {
       );
     });
 
+    // Map configs: the cases test the merge of `Chart.defaults` into raw
+    // scale configs, with keys of no option (`_jasmineCheck*`), `xAxes` and a
+    // resolver as scale options.
     group('when merging scale options', () {
       // :400-419 the beforeEach and afterEach are a setUp and a tearDown:
       // they read no chart. The restore of flutter_test_config.dart also
@@ -991,6 +1024,7 @@ void main() {
       });
     });
 
+    // A Map config: the case writes new options into `chart.options`.
     group('Updating options', () {
       // :584 the config has `data: []`. Upstream writes `datasets` and
       // `labels` into the array. The port gives a new Map (row
@@ -1021,6 +1055,8 @@ void main() {
       });
     });
 
+    // The Map configs of this group have no chart type, which a typed config
+    // needs, or write into `chart.options` before an update.
     group('config.options.responsive: true (maintainAspectRatio: false)', () {
       testWidgets('should fill parent width and height', (tester) async {
         final chart = acquireChart(
@@ -1285,14 +1321,15 @@ void main() {
         'should not include parent padding when resizing the canvas',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'type': 'line',
-                'options': <String, Object?>{
-                  'responsive': true,
-                  'maintainAspectRatio': false,
-                },
-              },
+            final chart = acquireChartRoot(
+              ChartConfigLowering(
+                const ChartConfig(
+                  type: ChartKind.line,
+                  datasets: [],
+                  responsive: true,
+                  maintainAspectRatio: false,
+                ),
+              ).lower(),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1476,13 +1513,17 @@ void main() {
             final canvas = document.createElement<HTMLCanvasElement>('canvas');
             final wrapper = document.createElement<HarnessElement>('div');
             final body = document.body;
-            final chart = Chart(canvas, <String, Object?>{
-              'type': 'line',
-              'options': <String, Object?>{
-                'responsive': true,
-                'maintainAspectRatio': false,
-              },
-            });
+            final chart = Chart(
+              canvas,
+              ChartConfigLowering(
+                const ChartConfig(
+                  type: ChartKind.line,
+                  datasets: [],
+                  responsive: true,
+                  maintainAspectRatio: false,
+                ),
+              ).lower(),
+            );
 
             expect(
               chart,
@@ -1517,13 +1558,17 @@ void main() {
             final canvas = document.createElement<HTMLCanvasElement>('canvas');
             final wrapper = document.createElement<HarnessElement>('div');
             final body = document.body;
-            final chart = Chart(canvas, <String, Object?>{
-              'type': 'line',
-              'options': <String, Object?>{
-                'responsive': true,
-                'maintainAspectRatio': false,
-              },
-            });
+            final chart = Chart(
+              canvas,
+              ChartConfigLowering(
+                const ChartConfig(
+                  type: ChartKind.line,
+                  datasets: [],
+                  responsive: true,
+                  maintainAspectRatio: false,
+                ),
+              ).lower(),
+            );
 
             expect(
               chart,
@@ -1768,10 +1813,16 @@ void main() {
             );
 
             chart.destroy();
-            chart = Chart(canvas, <String, Object?>{
-              'type': 'line',
-              'options': <String, Object?>{'responsive': true},
-            });
+            chart = Chart(
+              canvas,
+              ChartConfigLowering(
+                const ChartConfig(
+                  type: ChartKind.line,
+                  datasets: [],
+                  responsive: true,
+                ),
+              ).lower(),
+            );
 
             waitForResize(chart, () {
               expect(
@@ -1800,13 +1851,17 @@ void main() {
             final wrapper3 = document.createElement<HarnessElement>('div');
             final body = document.body;
 
-            final chart = Chart(canvas, <String, Object?>{
-              'type': 'line',
-              'options': <String, Object?>{
-                'responsive': true,
-                'maintainAspectRatio': false,
-              },
-            });
+            final chart = Chart(
+              canvas,
+              ChartConfigLowering(
+                const ChartConfig(
+                  type: ChartKind.line,
+                  datasets: [],
+                  responsive: true,
+                  maintainAspectRatio: false,
+                ),
+              ).lower(),
+            );
 
             expect(
               chart,
@@ -1837,20 +1892,23 @@ void main() {
       );
     });
 
+    // The Map config of the second case has no chart type, which a typed
+    // config needs.
     group('config.options.responsive: true (maintainAspectRatio: true)', () {
       testWidgets(
         'should resize the canvas with correct aspect ratio when parent width '
         'changes',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'type': 'line', // AR == 2
-                'options': <String, Object?>{
-                  'responsive': true,
-                  'maintainAspectRatio': true,
-                },
-              },
+            final chart = acquireChartRoot(
+              ChartConfigLowering(
+                const ChartConfig(
+                  type: ChartKind.line, // AR == 2
+                  datasets: [],
+                  responsive: true,
+                  maintainAspectRatio: true,
+                ),
+              ).lower(),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1932,6 +1990,8 @@ void main() {
       });
     });
 
+    // Map configs: the configs of the next three groups have no chart type,
+    // which a typed config needs.
     group('Retina scale (a.k.a. device pixel ratio)', () {
       late double devicePixelRatio;
 
@@ -2086,18 +2146,18 @@ void main() {
     group('controller.reset', () {
       // :1515 The y values include the legend box at the top of the chart.
       testWidgets('should reset the chart elements', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 0],
-              },
-            ],
-          },
-          'options': <String, Object?>{'responsive': true},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              labels: ['A', 'B', 'C', 'D'],
+              datasets: [
+                LineDataset(data: [10, 20, 30, 0]),
+              ],
+              responsive: true,
+            ),
+          ).lower(),
+        );
 
         final meta = chart.getDatasetMeta(0);
 
@@ -2118,6 +2178,9 @@ void main() {
       });
     });
 
+    // The Map configs of this group: the cases write into `chart.options` or
+    // `chart.config.data` before an update. The metadata case has no chart type
+    // either.
     group('config update', () {
       testWidgets('should update options', (tester) async {
         final chart =
@@ -2257,23 +2320,23 @@ void main() {
       });
 
       testWidgets('should update the tooltip on update', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
+        // The key `tooltip` of the options, not of `options.plugins`, has no
+        // typed parameter: it goes through `extra`.
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              labels: ['A', 'B', 'C', 'D'],
+              datasets: [
+                LineDataset(data: [10, 20, 30, 100]),
+              ],
+              responsive: true,
+              extra: {
+                'tooltip': {'mode': NearestInteractionMode()},
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'responsive': true,
-            'tooltip': <String, Object?>{
-              'mode': const NearestInteractionMode(),
-            },
-          },
-        });
+            ),
+          ).lower(),
+        );
 
         // Trigger an event over top of a point to
         // put an item into the tooltip
@@ -2380,15 +2443,15 @@ void main() {
           final sequence = <Object?>[];
           final plugin = _sequencePlugin('sequence', sequence.add);
 
-          final chart = acquireChart(
-            <String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[<String, Object?>{}],
-              },
-              'plugins': <Plugin<Object?>>[plugin],
-              'options': <String, Object?>{'responsive': true},
-            },
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              ChartConfig(
+                type: ChartKind.line,
+                datasets: const [LineDataset()],
+                plugins: [plugin],
+                responsive: true,
+              ),
+            ).lower(),
             <String, Object?>{
               'wrapper': <String, Object?>{'style': 'width: 300px'},
             },
@@ -2421,6 +2484,8 @@ void main() {
         });
       });
 
+      // A Map config: the case writes into `chart.options.plugins` before an
+      // update.
       testWidgets('should notify initially disabled plugin in correct order', (
         tester,
       ) async {
@@ -2480,17 +2545,19 @@ void main() {
             },
           );
 
-          acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{},
-                <String, Object?>{'hidden': true},
-                <String, Object?>{},
-              ],
-            },
-            'plugins': <Plugin<Object?>>[plugin],
-          });
+          acquireChartRoot(
+            ChartConfigLowering(
+              ChartConfig(
+                type: ChartKind.line,
+                datasets: const [
+                  LineDataset(),
+                  LineDataset(hidden: true),
+                  LineDataset(),
+                ],
+                plugins: [plugin],
+              ),
+            ).lower(),
+          );
 
           expect(
             sequence,
@@ -2512,13 +2579,15 @@ void main() {
       testWidgets(
         'should not crash when accessing options of a blank inline plugin',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': <Object?>[<String, Object?>{}],
-            },
-            'plugins': <Plugin<Object?>>[Plugin<Object?>(id: 'blank')],
-          });
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              ChartConfig(
+                type: ChartKind.line,
+                datasets: const [LineDataset()],
+                plugins: [Plugin<Object?>(id: 'blank')],
+              ),
+            ).lower(),
+          );
 
           void iterateOptions() {
             for (final plugin in chart.plugins.cache!) {
@@ -2539,6 +2608,7 @@ void main() {
       // The beforeEach acquires a chart, and the afterEach reads it: local
       // functions that each case calls first and last (Chart.js ADR 0022,
       // section 2).
+      // A Map config: the cases put new dataset Maps into `chart.data`.
       void beforeEach() {
         chart = acquireChart(<String, Object?>{
           'type': 'line',
@@ -2694,17 +2764,19 @@ void main() {
       // The beforeEach acquires a chart: a local function that the case
       // calls first (Chart.js ADR 0022, section 2).
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'label': '1', 'order': 2},
-              <String, Object?>{'label': '2', 'order': 1},
-              <String, Object?>{'label': '3', 'order': 4},
-              <String, Object?>{'label': '4', 'order': 3},
-            ],
-          },
-        });
+        chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [
+                LineDataset(label: '1', order: 2),
+                LineDataset(label: '2', order: 1),
+                LineDataset(label: '3', order: 4),
+                LineDataset(label: '4', order: 3),
+              ],
+            ),
+          ).lower(),
+        );
       }
 
       testWidgets('cleans up metasets when the chart is destroyed', (
@@ -2720,33 +2792,33 @@ void main() {
 
     group('data visibility', () {
       testWidgets('should hide a dataset', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, 1, 2],
-              },
-            ],
-            'labels': <Object?>['a', 'b', 'c'],
-          },
-        })..setDatasetVisibility(0, false);
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [
+                LineDataset(data: [0, 1, 2]),
+              ],
+              labels: ['a', 'b', 'c'],
+            ),
+          ).lower(),
+        )..setDatasetVisibility(0, false);
 
         final meta = chart.getDatasetMeta(0);
         expect(meta.hidden, true);
       });
 
       testWidgets('should toggle data visibility by index', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'pie',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.pie,
+              datasets: [
+                PieDataset(data: [1, 2, 3]),
+              ],
+            ),
+          ).lower(),
+        );
 
         expect(chart.getDataVisibility(1), true);
 
@@ -2760,20 +2832,22 @@ void main() {
       testWidgets('should maintain data visibility indices when data changes', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'pie',
-          'data': <String, Object?>{
-            'labels': <Object?>['0', '1', '2', '3'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, 1, 2, 3],
-              },
-              <String, Object?>{
-                'data': <Object?>[0, 1, 2, 3],
-              },
-            ],
-          },
-        })..toggleDataVisibility(3);
+        // The Lists are not `const`: the case changes them.
+        final labels = <Object>['0', '1', '2', '3'];
+        final data0 = <num?>[0, 1, 2, 3];
+        final data1 = <num?>[0, 1, 2, 3];
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: ChartKind.pie,
+              labels: labels,
+              datasets: [
+                PieDataset(data: data0),
+                PieDataset(data: data1),
+              ],
+            ),
+          ).lower(),
+        )..toggleDataVisibility(3);
 
         _splice(_labels(chart), 1, 1);
         _splice(_data(chart, 0), 1, 1);
@@ -2831,20 +2905,22 @@ void main() {
         'should leave data visibility indices intact when data changes in '
         'non-uniform way',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'pie',
-            'data': <String, Object?>{
-              'labels': <Object?>['0', '1', '2', '3'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3],
-                },
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3],
-                },
-              ],
-            },
-          })..toggleDataVisibility(0);
+          // The Lists are not `const`: the case changes them.
+          final labels = <Object>['0', '1', '2', '3'];
+          final data0 = <num?>[0, 1, 2, 3];
+          final data1 = <num?>[0, 1, 2, 3];
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              ChartConfig(
+                type: ChartKind.pie,
+                labels: labels,
+                datasets: [
+                  PieDataset(data: data0),
+                  PieDataset(data: data1),
+                ],
+              ),
+            ).lower(),
+          )..toggleDataVisibility(0);
 
           _push(_labels(chart), <Object?>['a']);
           _pop(_data(chart, 0));
@@ -2863,17 +2939,17 @@ void main() {
       testWidgets('should return false if index is out of bounds', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, 1, 2],
-              },
-            ],
-            'labels': <Object?>['a', 'b', 'c'],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [
+                LineDataset(data: [0, 1, 2]),
+              ],
+              labels: ['a', 'b', 'c'],
+            ),
+          ).lower(),
+        );
 
         expect(chart.isDatasetVisible(1), false);
       });
@@ -2889,32 +2965,32 @@ void main() {
       testWidgets('should get the chart from an HTMLCanvasElement', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'pie',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.pie,
+              datasets: [
+                PieDataset(data: [1, 2, 3]),
+              ],
+            ),
+          ).lower(),
+        );
         expect(Chart.getChart(chart.canvas), same(chart));
       });
 
       testWidgets('should get the chart from an CanvasRenderingContext2D', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'pie',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.pie,
+              datasets: [
+                PieDataset(data: [1, 2, 3]),
+              ],
+            ),
+          ).lower(),
+        );
         expect(Chart.getChart(chart.ctx), same(chart));
       });
 
@@ -2926,28 +3002,30 @@ void main() {
 
     group('active elements', () {
       testWidgets('should set the active elements', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'pie',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-                'borderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.pie,
+              datasets: [
+                PieDataset(
+                  data: [1, 2, 3],
+                  borderColor: ChartValue.constant(
+                    ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+                  ),
+                  hoverBorderColor: ChartValue.constant(
+                    ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+                  ),
                 ),
-                'hoverBorderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(0, 0, 255, 1),
-                ),
-              },
-            ],
-          },
-        });
+              ],
+            ),
+          ).lower(),
+        );
 
         final meta = chart.getDatasetMeta(0);
         final arc0 = meta.data[0] as Element;
         var props = arc0.getProps(const ['borderColor']);
         expect(
-          jsGet(props['options'], 'borderColor'),
+          (props['options']! as ArcOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
@@ -2959,7 +3037,7 @@ void main() {
 
         props = arc0.getProps(const ['borderColor']);
         expect(
-          jsGet(props['options'], 'borderColor'),
+          (props['options']! as ArcOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
           ),
@@ -2974,23 +3052,25 @@ void main() {
     testWidgets(
       'should not replace the user set active elements by event replay',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>[1, 2, 3],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-                'borderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              labels: [1, 2, 3],
+              datasets: [
+                LineDataset(
+                  data: [1, 2, 3],
+                  borderColor: ChartValue.constant(
+                    ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+                  ),
+                  hoverBorderColor: ChartValue.constant(
+                    ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+                  ),
                 ),
-                'hoverBorderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(0, 0, 255, 1),
-                ),
-              },
-            ],
-          },
-        });
+              ],
+            ),
+          ).lower(),
+        );
 
         final meta = chart.getDatasetMeta(0);
         final point0 = meta.data[0] as Element;
@@ -2998,7 +3078,7 @@ void main() {
 
         final props = point0.getProps(const ['borderColor']);
         expect(
-          jsGet(props['options'], 'borderColor'),
+          (props['options']! as PointOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
@@ -3015,13 +3095,13 @@ void main() {
           ]),
         );
         expect(
-          (point0.options! as JsObjectFace)['borderColor'],
+          (point0.options! as PointOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
           ),
         );
         expect(
-          (point1.options! as JsObjectFace)['borderColor'],
+          (point1.options! as PointOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
@@ -3037,13 +3117,13 @@ void main() {
           ]),
         );
         expect(
-          (point0.options! as JsObjectFace)['borderColor'],
+          (point0.options! as PointOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
         );
         expect(
-          (point1.options! as JsObjectFace)['borderColor'],
+          (point1.options! as PointOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
           ),
@@ -3057,13 +3137,13 @@ void main() {
           ]),
         );
         expect(
-          (point0.options! as JsObjectFace)['borderColor'],
+          (point0.options! as PointOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
           ),
         );
         expect(
-          (point1.options! as JsObjectFace)['borderColor'],
+          (point1.options! as PointOptions).borderColor,
           equals(
             const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
           ),
@@ -3077,6 +3157,7 @@ void main() {
       ) async {
         // `Chart.platforms.BasicPlatform` (src/index.umd.ts:41) is the class
         // value `BasicPlatform.jsClass` (Chart.js ADR 0020, section 3).
+        // A Map config: the typed config has no key `platform`.
         final chart = acquireChart(<String, Object?>{
           'platform': BasicPlatform.jsClass,
           'type': 'line',
