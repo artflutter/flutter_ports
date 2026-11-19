@@ -1733,52 +1733,63 @@ void _afterEvent(IChart chart, EventHookArgs args, LegendOptions _) {
 /// ADR 0144). The key `_element: Legend` of plugin.legend.js:599 is for the
 /// tests: they read `Legend.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
-final legend = Plugin<LegendOptions>(
-  id: 'legend',
-  // The hooks get the facade of the resolved options (Chart.js ADR 0150).
-  options: LegendOptions.new,
-  start: _start,
-  stop: _stop,
-  beforeUpdate: _beforeUpdate,
-  afterUpdate: _afterUpdate,
-  afterEvent: _afterEvent,
-  // plugin.legend.js:636-712. A typed scope of the kind `LegendOptions`
-  // (Chart.js ADR 0054 §3).
-  defaults: LegendOptionsScope()
-    ..display = true
-    ..position = ChartPosition.top
-    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-    ..align = ChartAlign.center
-    ..fullSize = true
-    ..reverse = false
-    ..weight = 1000.0
-    // a callback that will handle
-    ..onClick = _onClick
-    ..onHoverCell = optNull
-    ..onLeaveCell = optNull
-    ..labels = (LegendLabelOptionsScope()
-      ..colorCell = const OptFunction(_chartColor)
-      ..boxWidth = 40.0
-      ..padding = 10.0
-      // Generates labels shown in the legend
-      ..generateLabels = _generateLabels)
-    ..title = (LegendTitleOptionsScope()
-      ..colorCell = const OptFunction(_chartColor)
-      ..display = false
-      // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-      ..position = ChartAlign.center
-      // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
-      ..text = const ['']),
-  // plugin.legend.js:714-719. A typed scope of the kind `Descriptors`.
-  descriptors: DescriptorsScope()
-    ..descScriptable = _scriptableDescriptor
-    ..jsWrite(
-      'labels',
-      DescriptorsScope()..descScriptable = _labelsScriptableDescriptor,
-    ),
-  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-  supportsDataUpdates: true,
-);
+final legend = LegendPlugin();
+
+/// The legend plugin: a class of its own, so
+/// `registry.getPlugin<LegendPlugin>()`
+/// finds it by its type.
+// DIVERGES(chartjs): adapt-typed-plugins, a class for each plugin.
+final class LegendPlugin() extends Plugin<LegendOptions> {
+  /// The legend plugin.
+  this
+    : super(
+        id: 'legend',
+        // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+        options: LegendOptions.new,
+        start: _start,
+        stop: _stop,
+        beforeUpdate: _beforeUpdate,
+        afterUpdate: _afterUpdate,
+        afterEvent: _afterEvent,
+        // plugin.legend.js:636-712. A typed scope of the kind `LegendOptions`
+        // (Chart.js ADR 0054 §3).
+        defaults: LegendOptionsScope()
+          ..display = true
+          ..position = ChartPosition.top
+          // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+          ..align = ChartAlign.center
+          ..fullSize = true
+          ..reverse = false
+          ..weight = 1000.0
+          // a callback that will handle
+          ..onClick = _onClick
+          ..onHoverCell = optNull
+          ..onLeaveCell = optNull
+          ..labels = (LegendLabelOptionsScope()
+            ..colorCell = const OptFunction(_chartColor)
+            ..boxWidth = 40.0
+            ..padding = 10.0
+            // Generates labels shown in the legend
+            ..generateLabels = _generateLabels)
+          ..title = (LegendTitleOptionsScope()
+            ..colorCell = const OptFunction(_chartColor)
+            ..display = false
+            // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+            ..position = ChartAlign.center
+            // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
+            ..text = const ['']),
+        // plugin.legend.js:714-719. A typed scope of the kind `Descriptors`.
+        descriptors: DescriptorsScope()
+          ..descScriptable = _scriptableDescriptor
+          ..jsWrite(
+            'labels',
+            DescriptorsScope()..descScriptable = _labelsScriptableDescriptor,
+          ),
+        // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
+        // opt-in.
+        supportsDataUpdates: true,
+      );
+}
 
 /// plugin.legend.js:715 the `_scriptable` descriptor of the plugin.
 bool _scriptableDescriptor(String name) => !name.startsWith('on');

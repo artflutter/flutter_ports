@@ -2281,96 +2281,123 @@ void _afterEvent(IChart chart, EventHookArgs args, TooltipOptions _) {
 /// upstream order. The key `_element: Tooltip` of plugin.tooltip.js:1225 is
 /// for the tests: they read `Tooltip.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
-final tooltip = Plugin<TooltipOptions>(
-  id: 'tooltip',
-  // The hooks get the facade of the resolved options (Chart.js ADR 0150).
-  options: TooltipOptions.new,
-  afterInit: _afterInit,
-  beforeUpdate: _beforeUpdate,
-  reset: _reset,
-  afterDraw: _afterDraw,
-  afterEvent: _afterEvent,
-  // plugin.tooltip.js:1275-1325. A typed scope of the kind `TooltipOptions`
-  // (Chart.js ADR 0054 §3).
-  defaults: TooltipOptionsScope()
-    ..enabled = true
-    ..externalCell = optNull
-    // DIVERGES(chartjs): adapt-tooltip-positioner-objects, the positioner.
-    ..position = const AverageTooltipPositioner()
-    ..backgroundColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.8))
-    ..titleColor = const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))
-    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
-    ..titleFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
-    ..titleSpacing = 2.0
-    ..titleMarginBottom = 6.0
-    // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-    ..titleAlign = TextAlign.left
-    ..bodyColor = const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))
-    ..bodySpacing = 2.0
-    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
-    ..bodyFont = const ChartTextStyle()
-    // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-    ..bodyAlign = TextAlign.left
-    ..footerColor = const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))
-    ..footerSpacing = 2.0
-    ..footerMarginTop = 6.0
-    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
-    ..footerFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
-    // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
-    ..footerAlign = TextAlign.left
-    ..padding = const EdgeInsets.all(6)
-    ..caretPadding = 2.0
-    ..caretSize = 5.0
-    ..cornerRadius = 6.0
-    ..boxHeightCell = const OptFunction<double>(_bodyFontSize)
-    ..boxWidthCell = const OptFunction<double>(_bodyFontSize)
-    ..multiKeyBackground = const ChartPaint.solid(
-      ui.Color.fromRGBO(255, 255, 255, 1),
-    )
-    ..displayColors = true
-    ..boxPadding = 0.0
-    ..borderColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0))
-    ..borderWidth = 0.0
-    ..animation = (AnimationOptionsScope()
-      ..duration = 400.0
-      // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
-      ..easing = Curves.easeOutQuart)
-    ..animations = (AnimationsSpecScope()
-      // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
-      ..numbers = (AnimationOptionsScope()
-        ..properties = <Object?>[
-          'x',
-          'y',
-          'width',
-          'height',
-          'caretX',
-          'caretY',
-        ])
-      ..opacity = (AnimationOptionsScope()
-        // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
-        ..easing = Curves.linear
-        ..duration = 200.0))
-    ..callbacks = _defaultCallbacks,
-  // plugin.tooltip.js:1327-1331.
-  defaultRoutes: const {
-    'bodyFont': 'font',
-    'footerFont': 'font',
-    'titleFont': 'font',
-  },
-  // plugin.tooltip.js:1333-1346. A typed scope of the kind `Descriptors`.
-  descriptors: DescriptorsScope()
-    ..descScriptable = _scriptableDescriptor
-    ..descIndexable = false
-    ..jsWrite(
-      'callbacks',
-      DescriptorsScope()
-        ..descScriptable = false
-        ..descIndexable = false,
-    )
-    ..jsWrite('animation', DescriptorsScope()..descFallback = false)
-    ..jsWrite('animations', DescriptorsScope()..descFallback = 'animation'),
-  // Resolve additionally from `interaction` options and defaults.
-  additionalOptionScopes: const ['interaction'],
-  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-  supportsDataUpdates: true,
-);
+final tooltip = TooltipPlugin();
+
+/// The tooltip plugin: a class of its own, so
+/// `registry.getPlugin<TooltipPlugin>()`
+/// finds it by its type.
+// DIVERGES(chartjs): adapt-typed-plugins, a class for each plugin.
+final class TooltipPlugin() extends Plugin<TooltipOptions> {
+  /// The tooltip plugin.
+  this
+    : super(
+        id: 'tooltip',
+        // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+        options: TooltipOptions.new,
+        afterInit: _afterInit,
+        beforeUpdate: _beforeUpdate,
+        reset: _reset,
+        afterDraw: _afterDraw,
+        afterEvent: _afterEvent,
+        // plugin.tooltip.js:1275-1325. A typed scope of the kind
+        // `TooltipOptions`
+        // (Chart.js ADR 0054 §3).
+        defaults: TooltipOptionsScope()
+          ..enabled = true
+          ..externalCell = optNull
+          // DIVERGES(chartjs): adapt-tooltip-positioner-objects, the
+          // positioner.
+          ..position = const AverageTooltipPositioner()
+          ..backgroundColor = const ChartPaint.solid(
+            ui.Color.fromRGBO(0, 0, 0, 0.8),
+          )
+          ..titleColor = const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 255, 255, 1),
+          )
+          // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
+          // ChartTextStyle.
+          ..titleFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
+          ..titleSpacing = 2.0
+          ..titleMarginBottom = 6.0
+          // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+          ..titleAlign = TextAlign.left
+          ..bodyColor = const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 255, 255, 1),
+          )
+          ..bodySpacing = 2.0
+          // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
+          // ChartTextStyle.
+          ..bodyFont = const ChartTextStyle()
+          // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+          ..bodyAlign = TextAlign.left
+          ..footerColor = const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 255, 255, 1),
+          )
+          ..footerSpacing = 2.0
+          ..footerMarginTop = 6.0
+          // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
+          // ChartTextStyle.
+          ..footerFont = const ChartTextStyle(fontWeight: ui.FontWeight.bold)
+          // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
+          ..footerAlign = TextAlign.left
+          ..padding = const EdgeInsets.all(6)
+          ..caretPadding = 2.0
+          ..caretSize = 5.0
+          ..cornerRadius = 6.0
+          ..boxHeightCell = const OptFunction<double>(_bodyFontSize)
+          ..boxWidthCell = const OptFunction<double>(_bodyFontSize)
+          ..multiKeyBackground = const ChartPaint.solid(
+            ui.Color.fromRGBO(255, 255, 255, 1),
+          )
+          ..displayColors = true
+          ..boxPadding = 0.0
+          ..borderColor = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0))
+          ..borderWidth = 0.0
+          ..animation = (AnimationOptionsScope()
+            ..duration = 400.0
+            // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
+            ..easing = Curves.easeOutQuart)
+          ..animations = (AnimationsSpecScope()
+            // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
+            ..numbers = (AnimationOptionsScope()
+              ..properties = <Object?>[
+                'x',
+                'y',
+                'width',
+                'height',
+                'caretX',
+                'caretY',
+              ])
+            ..opacity = (AnimationOptionsScope()
+              // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
+              ..easing = Curves.linear
+              ..duration = 200.0))
+          ..callbacks = _defaultCallbacks,
+        // plugin.tooltip.js:1327-1331.
+        defaultRoutes: const {
+          'bodyFont': 'font',
+          'footerFont': 'font',
+          'titleFont': 'font',
+        },
+        // plugin.tooltip.js:1333-1346. A typed scope of the kind `Descriptors`.
+        descriptors: DescriptorsScope()
+          ..descScriptable = _scriptableDescriptor
+          ..descIndexable = false
+          ..jsWrite(
+            'callbacks',
+            DescriptorsScope()
+              ..descScriptable = false
+              ..descIndexable = false,
+          )
+          ..jsWrite('animation', DescriptorsScope()..descFallback = false)
+          ..jsWrite(
+            'animations',
+            DescriptorsScope()..descFallback = 'animation',
+          ),
+        // Resolve additionally from `interaction` options and defaults.
+        additionalOptionScopes: const ['interaction'],
+        // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
+        // opt-in.
+        supportsDataUpdates: true,
+      );
+}

@@ -317,34 +317,45 @@ bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
 /// facade [TitleOptions] (Chart.js ADR 0150). The key `_element: Title` of
 /// plugin.title.js:127 is for the tests: they read `Title.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
-final title = Plugin<TitleOptions>(
-  id: 'title',
-  // The hooks get the facade of the resolved options (Chart.js ADR 0150).
-  options: TitleOptions.new,
-  start: _start,
-  stop: _stop,
-  beforeUpdate: _beforeUpdate,
-  // plugin.title.js:145-156. A typed scope of the kind `TitleOptions`
-  // (Chart.js ADR 0054 §3).
-  defaults: TitleOptionsScope()
-    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-    ..align = ChartAlign.center
-    ..display = false
-    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
-    ..font = const ChartTextStyle(fontWeight: FontWeight.bold)
-    ..fullSize = true
-    ..padding = const EdgeInsets.all(10)
-    ..position = ChartPosition.top
-    // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
-    ..text = const ['']
-    // by default greater than legend (1000) to be above
-    ..weight = 2000.0,
-  // plugin.title.js:158-160.
-  defaultRoutes: const {'color': 'color'},
-  // plugin.title.js:162-165. A typed scope of the kind `Descriptors`.
-  descriptors: DescriptorsScope()
-    ..descScriptable = true
-    ..descIndexable = false,
-  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-  supportsDataUpdates: true,
-);
+final title = TitlePlugin();
+
+/// The title plugin: a class of its own, so `registry.getPlugin<TitlePlugin>()`
+/// finds it by its type.
+// DIVERGES(chartjs): adapt-typed-plugins, a class for each plugin.
+final class TitlePlugin() extends Plugin<TitleOptions> {
+  /// The title plugin.
+  this
+    : super(
+        id: 'title',
+        // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+        options: TitleOptions.new,
+        start: _start,
+        stop: _stop,
+        beforeUpdate: _beforeUpdate,
+        // plugin.title.js:145-156. A typed scope of the kind `TitleOptions`
+        // (Chart.js ADR 0054 §3).
+        defaults: TitleOptionsScope()
+          // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+          ..align = ChartAlign.center
+          ..display = false
+          // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
+          // ChartTextStyle.
+          ..font = const ChartTextStyle(fontWeight: FontWeight.bold)
+          ..fullSize = true
+          ..padding = const EdgeInsets.all(10)
+          ..position = ChartPosition.top
+          // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
+          ..text = const ['']
+          // by default greater than legend (1000) to be above
+          ..weight = 2000.0,
+        // plugin.title.js:158-160.
+        defaultRoutes: const {'color': 'color'},
+        // plugin.title.js:162-165. A typed scope of the kind `Descriptors`.
+        descriptors: DescriptorsScope()
+          ..descScriptable = true
+          ..descIndexable = false,
+        // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
+        // opt-in.
+        supportsDataUpdates: true,
+      );
+}

@@ -214,7 +214,7 @@ void main() {
     });
 
     test('the registry gives the plugin object', () {
-      expect(registry.getPlugin('subtitle'), same(subTitle));
+      expect(registry.getPlugin<SubtitlePlugin>(), same(subTitle));
     });
 
     test('the hooks are typed hook functions', () {

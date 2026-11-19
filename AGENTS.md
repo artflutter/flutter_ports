@@ -800,7 +800,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `example/main.dart` (a line chart that zooms and pans) is the example of the archive.
   - `lib/flutter_chartjs_plugin_zoom_port.dart`: the public library (port-only). It exports each
     file of `lib/src/` and hides `State` of `src/state.dart`, which clashes with the Flutter
-    `State` (ADR 0011): the five files that use it import `src/state.dart`. Its names: `zoomPlugin`, the
+    `State` (ADR 0011): the five files that use it import `src/state.dart`. Its names: `zoomPlugin` (an instance of its class `ZoomPlugin`, Chart.js ADR 0181), the
     functions `pan`, `zoom`, `zoomRect`, `zoomScale` and `resetZoom`, the extension `ZoomChart`
     (the ten chart methods of `bindApi`, row `adapt-chart-methods-extension`), `ZoomAmount` and
     `PanAmount` (row `adapt-amount-classes`, `chart.zoom(.all(1.5))`), `ScaleRange`, the option

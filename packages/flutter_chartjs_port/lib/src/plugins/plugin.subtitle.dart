@@ -72,34 +72,46 @@ bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
 /// upstream order. The hooks get the facade [TitleOptions] (Chart.js ADR
 /// 0150).
-final subTitle = Plugin<TitleOptions>(
-  id: 'subtitle',
-  // The hooks get the facade of the resolved options (Chart.js ADR 0150).
-  options: TitleOptions.new,
-  start: _start,
-  stop: _stop,
-  beforeUpdate: _beforeUpdate,
-  // plugin.subtitle.js:32-43. A typed scope of the kind `TitleOptions`
-  // (Chart.js ADR 0054 §3).
-  defaults: TitleOptionsScope()
-    // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
-    ..align = ChartAlign.center
-    ..display = false
-    // DIVERGES(chartjs): adapt-text-style-fonts, the font is a ChartTextStyle.
-    ..font = const ChartTextStyle(fontWeight: FontWeight.normal)
-    ..fullSize = true
-    ..padding = EdgeInsets.zero
-    ..position = ChartPosition.top
-    // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
-    ..text = const ['']
-    // by default greater than legend (1000) and smaller than title (2000)
-    ..weight = 1500.0,
-  // plugin.subtitle.js:45-47.
-  defaultRoutes: const {'color': 'color'},
-  // plugin.subtitle.js:49-52. A typed scope of the kind `Descriptors`.
-  descriptors: DescriptorsScope()
-    ..descScriptable = true
-    ..descIndexable = false,
-  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-  supportsDataUpdates: true,
-);
+final subTitle = SubtitlePlugin();
+
+/// The subtitle plugin: a class of its own, so
+/// `registry.getPlugin<SubtitlePlugin>()`
+/// finds it by its type.
+// DIVERGES(chartjs): adapt-typed-plugins, a class for each plugin.
+final class SubtitlePlugin() extends Plugin<TitleOptions> {
+  /// The subtitle plugin.
+  this
+    : super(
+        id: 'subtitle',
+        // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+        options: TitleOptions.new,
+        start: _start,
+        stop: _stop,
+        beforeUpdate: _beforeUpdate,
+        // plugin.subtitle.js:32-43. A typed scope of the kind `TitleOptions`
+        // (Chart.js ADR 0054 §3).
+        defaults: TitleOptionsScope()
+          // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
+          ..align = ChartAlign.center
+          ..display = false
+          // DIVERGES(chartjs): adapt-text-style-fonts, the font is a
+          // ChartTextStyle.
+          ..font = const ChartTextStyle(fontWeight: FontWeight.normal)
+          ..fullSize = true
+          ..padding = EdgeInsets.zero
+          ..position = ChartPosition.top
+          // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
+          ..text = const ['']
+          // by default greater than legend (1000) and smaller than title (2000)
+          ..weight = 1500.0,
+        // plugin.subtitle.js:45-47.
+        defaultRoutes: const {'color': 'color'},
+        // plugin.subtitle.js:49-52. A typed scope of the kind `Descriptors`.
+        descriptors: DescriptorsScope()
+          ..descScriptable = true
+          ..descIndexable = false,
+        // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
+        // opt-in.
+        supportsDataUpdates: true,
+      );
+}

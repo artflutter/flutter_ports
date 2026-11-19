@@ -636,16 +636,27 @@ void _beforeElementsUpdate(
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
 /// ADR 0144). Its hooks get the options through the facade
 /// [DecimationOptions].
-final decimation = Plugin<DecimationOptions>(
-  id: 'decimation',
-  options: DecimationOptions.new,
-  // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
-  defaults: DecimationOptionsScope()
-    // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the class.
-    ..algorithm = const MinMaxDecimationAlgorithm()
-    ..enabled = false,
-  beforeElementsUpdate: _beforeElementsUpdate,
-  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-  supportsDataUpdates: true,
-  dataUpdateGuard: (options) => !options.enabled,
-);
+final decimation = DecimationPlugin();
+
+/// The decimation plugin: a class of its own, so
+/// `registry.getPlugin<DecimationPlugin>()`
+/// finds it by its type.
+// DIVERGES(chartjs): adapt-typed-plugins, a class for each plugin.
+final class DecimationPlugin() extends Plugin<DecimationOptions> {
+  /// The decimation plugin.
+  this
+    : super(
+        id: 'decimation',
+        options: DecimationOptions.new,
+        // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
+        defaults: DecimationOptionsScope()
+          // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the class.
+          ..algorithm = const MinMaxDecimationAlgorithm()
+          ..enabled = false,
+        beforeElementsUpdate: _beforeElementsUpdate,
+        // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
+        // opt-in.
+        supportsDataUpdates: true,
+        dataUpdateGuard: (options) => !options.enabled,
+      );
+}

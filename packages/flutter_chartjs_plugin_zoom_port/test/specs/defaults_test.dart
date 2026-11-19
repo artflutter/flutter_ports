@@ -46,8 +46,7 @@ void main() {
     });
 
     testWidgets('should be called with default options', (tester) async {
-      final plugin =
-          Chart.registry.getPlugin('zoom') as ChartPlugin<ZoomPluginOptions>;
+      final plugin = Chart.registry.getPlugin<ZoomPlugin>();
       final previous = plugin.beforeUpdate;
       final spyCalls =
           <(Chart chart, UpdateHookArgs args, ZoomPluginOptions options)>[];

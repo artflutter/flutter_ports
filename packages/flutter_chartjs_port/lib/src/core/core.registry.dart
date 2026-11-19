@@ -117,12 +117,23 @@ final class Registry() {
     return _get(id, elements, 'element');
   }
 
-  /// core.registry.js:81 `getPlugin`.
+  /// core.registry.js:81 `getPlugin`: the registered plugin of the type
+  /// [T], with no id.
   ///
-  /// @param {string} id
-  /// @returns {object}
-  Object getPlugin(Object? id) {
-    return _get(id, plugins, 'plugin');
+  /// ```dart
+  /// final zoom = registry.getPlugin<ZoomPlugin>();
+  /// ```
+  ///
+  /// Each plugin is a class of its own, so its type selects it. No plugin of
+  /// [T] throws a [StateError]. Two plugins of [T] stop a debug build.
+  // DIVERGES(chartjs): adapt-typed-plugins, the plugin type is the key.
+  T getPlugin<T extends Plugin<Object?>>() {
+    final found = plugins.items.values.whereType<T>();
+    if (found.isEmpty) {
+      throw StateError('$T is not a registered plugin.');
+    }
+    assert(found.length == 1, 'More than one registered plugin is a $T.');
+    return found.first;
   }
 
   /// core.registry.js:89 `getScale`.

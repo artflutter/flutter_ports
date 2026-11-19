@@ -335,8 +335,21 @@ bool _beforeLayout(Object hookChart, Object _, ColorsPluginOptions opts) {
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
 /// ADR 0144). Its hooks get the options through the facade
 /// [ColorsPluginOptions].
-final colors =
-    Plugin<ColorsPluginOptions>(
+final colors = ColorsPlugin()
+  // With `forceOverride`, each layout writes new color Lists into the
+  // datasets, a change of the config that a kept resolver of a range
+  // update would miss (Chart.js ADR 0111): such a chart takes `update`.
+  // DIVERGES(chartjs): adapt-range-updates, the guard of forceOverride.
+  ..rangeUpdateGuard = _rangeUpdateGuard;
+
+/// The colors plugin: a class of its own, so
+/// `registry.getPlugin<ColorsPlugin>()`
+/// finds it by its type.
+// DIVERGES(chartjs): adapt-typed-plugins, a class for each plugin.
+final class ColorsPlugin() extends Plugin<ColorsPluginOptions> {
+  /// The colors plugin.
+  this
+    : super(
         id: 'colors',
         options: ColorsPluginOptions.new,
         // A typed scope of the kind `ColorsOptions` (Chart.js ADR 0054 §3).
@@ -346,12 +359,8 @@ final colors =
         beforeLayout: _beforeLayout,
         // DIVERGES(chartjs): adapt-incremental-data-update, the opt-in.
         supportsDataUpdates: true,
-      )
-      // With `forceOverride`, each layout writes new color Lists into the
-      // datasets, a change of the config that a kept resolver of a range
-      // update would miss (Chart.js ADR 0111): such a chart takes `update`.
-      // DIVERGES(chartjs): adapt-range-updates, the guard of forceOverride.
-      ..rangeUpdateGuard = _rangeUpdateGuard;
+      );
+}
 
 /// Whether a range update keeps the colors of a full update: the plugin is
 /// off, or it writes no color of a dataset that it colored before.

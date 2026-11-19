@@ -94,10 +94,10 @@ void main() {
   testWidgets('an app registers the plugin and zooms a ChartView', (
     tester,
   ) async {
-    expect(() => registry.getPlugin('zoom'), throwsStateError);
+    expect(() => registry.getPlugin<ZoomPlugin>(), throwsStateError);
     Chart.register(_components);
     addTearDown(() => Chart.unregister(_components));
-    expect(registry.getPlugin('zoom'), same(zoomPlugin));
+    expect(registry.getPlugin<ZoomPlugin>(), same(zoomPlugin));
 
     final triggers = <ZoomTrigger>[];
     Chart? created;

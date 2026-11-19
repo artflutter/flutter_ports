@@ -438,7 +438,7 @@ void main() {
       for (final name in jsObjectKeys(plugins)) {
         final plugin = plugins[name]! as Plugin<Object?>;
         expect(
-          registry.getPlugin(plugin.id),
+          registry.plugins.items[plugin.id],
           same(plugin),
           reason: 'the registry item of $name',
         );

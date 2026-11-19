@@ -544,10 +544,13 @@ repository.
     `decimation`, `filler`, `legend`, `subTitle`, `title` and `tooltip`, with the export names in
     lowerCamelCase. Each plugin object is a native `Plugin` of `lib/src/types/plugin.dart` with the
     upstream keys in the upstream order (Chart.js ADR 0144); its hooks are private functions of
-    the hook type `(chart, args, options)`. Each plugin gets the facade of its options: `filler`,
-    `decimation` and `colors` are `Plugin<FillerOptions>`, `Plugin<DecimationOptions>` and
-    `Plugin<ColorsPluginOptions>`. `legend` is a `Plugin<LegendOptions>`, `title` and `subTitle`
-    are `Plugin<TitleOptions>`, and `tooltip` is a `Plugin<TooltipOptions>`. A box keeps the
+    the hook type `(chart, args, options)`. Each plugin object is an instance of its own final class
+    (Chart.js ADR 0181): `FillerPlugin`, `DecimationPlugin` and `ColorsPlugin` extend
+    `Plugin<FillerOptions>`, `Plugin<DecimationOptions>` and `Plugin<ColorsPluginOptions>`.
+    `LegendPlugin` extends `Plugin<LegendOptions>`, `TitlePlugin` and `SubtitlePlugin` extend
+    `Plugin<TitleOptions>`, and `TooltipPlugin` extends `Plugin<TooltipOptions>`.
+    `registry.getPlugin<T>()` finds a registered plugin by its class, with no id; a test plugin
+    that a test finds this way has a private class. A box keeps the
     resolved options (Chart.js ADR 0150). The
     key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
     `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The plugins read their options through the facades of

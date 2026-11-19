@@ -149,6 +149,7 @@ CircumferenceAnimation
 ClosePathCommand
 ColorAnimation
 ColorsOptionsScope
+ColorsPlugin
 ColorsPluginOptions
 Config
 ContainerResizeObserver
@@ -182,6 +183,7 @@ Debounced
 DecimationAlgorithm
 DecimationOptions
 DecimationOptionsScope
+DecimationPlugin
 DefaultCubicInterpolationMode
 Defaults
 DenseCurveCanvas
@@ -213,6 +215,7 @@ FillTarget
 FillerDrawTime
 FillerOptions
 FillerOptionsScope
+FillerPlugin
 FillerSource
 FilterCallback
 FloatingBar
@@ -285,6 +288,7 @@ LegendLabelOptionsScope
 LegendLabelsGenerator
 LegendOptions
 LegendOptionsScope
+LegendPlugin
 LegendTitleOptions
 LegendTitleOptionsScope
 LightThemeTokens
@@ -492,6 +496,7 @@ StartFill
 StaticFontInputs
 SteppedLine
 StyleProp
+SubtitlePlugin
 SweepChartGradient
 TRBL
 TRBLCorners
@@ -518,6 +523,7 @@ TimeUnit
 Title
 TitleOptions
 TitleOptionsScope
+TitlePlugin
 Tooltip
 TooltipBodyItem
 TooltipCallbacks
@@ -535,6 +541,7 @@ TooltipLabelStyle
 TooltipModel
 TooltipOptions
 TooltipOptionsScope
+TooltipPlugin
 TooltipPoint
 TooltipPosition
 TooltipPositioner
@@ -1189,6 +1196,7 @@ CircumferenceAnimation
 ClosePathCommand
 ColorAnimation
 ColorsOptionsScope
+ColorsPlugin
 ColorsPluginOptions
 Config
 ContainerResizeObserver
@@ -1222,6 +1230,7 @@ Debounced
 DecimationAlgorithm
 DecimationOptions
 DecimationOptionsScope
+DecimationPlugin
 DefaultCubicInterpolationMode
 Defaults
 DenseCurveCanvas
@@ -1252,6 +1261,7 @@ FillTarget
 FillerDrawTime
 FillerOptions
 FillerOptionsScope
+FillerPlugin
 FillerSource
 FloatingBar
 FloatingBarOf
@@ -1324,6 +1334,7 @@ LegendLabelOptionsScope
 LegendLabelsGenerator
 LegendOptions
 LegendOptionsScope
+LegendPlugin
 LegendTitleOptions
 LegendTitleOptionsScope
 LightThemeTokens
@@ -1532,6 +1543,7 @@ StartFill
 StaticFontInputs
 SteppedLine
 StyleProp
+SubtitlePlugin
 SweepChartGradient
 TRBL
 TRBLCorners
@@ -1557,6 +1569,7 @@ TimeSeriesScale
 TimeUnit
 TitleOptions
 TitleOptionsScope
+TitlePlugin
 TooltipBodyItem
 TooltipCallbacks
 TooltipCornerRadii
@@ -1573,6 +1586,7 @@ TooltipLabelStyle
 TooltipModel
 TooltipOptions
 TooltipOptionsScope
+TooltipPlugin
 TooltipPoint
 TooltipPosition
 TooltipPositioner

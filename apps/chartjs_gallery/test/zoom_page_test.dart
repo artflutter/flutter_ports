@@ -215,7 +215,7 @@ void main() {
         closeTo(tester.getSize(_host).width / 2, 1),
       );
       // The zoom plugin runs on the chart with the options of the sample.
-      expect(registry.getPlugin('zoom'), same(zoomPlugin));
+      expect(registry.getPlugin<ZoomPlugin>(), same(zoomPlugin));
       expect(chart.isZoomedOrPanned(), isFalse);
       expect(chart.getZoomLevel(), 1);
       _expectReadout('1x');

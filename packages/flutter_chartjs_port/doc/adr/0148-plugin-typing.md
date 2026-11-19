@@ -1,7 +1,7 @@
 # Chart.js ADR 0148: Typed plugin chart, options and update mode
 
 - Status: accepted (2026-11-15): its code and the tests of section Tests pass.
-- Superseded in part by: [Chart.js ADR 0150](0150-typed-plugin-options.md) (2026-11-16), for item 3 (the members of `PluginOptions`) and the consequence on `Plugin.events`
+- Superseded in part by: [Chart.js ADR 0150](0150-typed-plugin-options.md) (2026-11-16), for item 3 (the members of `PluginOptions`) and the consequence on `Plugin.events`; [Chart.js ADR 0181](0181-plugin-classes-and-typed-get-plugin.md) (2026-11-19), for the final class `PluginOf` of item 1
 - Date: 2026-11-15
 - Supersedes: the parts of [Chart.js ADR 0144](0144-native-plugins.md) that stay dynamic: item 4 (the `Object?`
   update mode of the hook arguments), item 6 (`defaults` and `descriptors` as `Object?`), item 10 (the chart of a

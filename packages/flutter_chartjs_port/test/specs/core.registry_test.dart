@@ -163,11 +163,8 @@ void main() {
       // The case `as plugin` registers a native plugin with the id and the
       // defaults of customExtension: a class value is not a plugin
       // (Chart.js ADR 0144).
-      final customPlugin = Plugin<Object?>(
-        id: 'custom',
-        defaults: pluginDefaults(
-          customExtension['defaults']! as Map<String, Object?>,
-        ),
+      final customPlugin = _CustomPlugin(
+        pluginDefaults(customExtension['defaults']! as Map<String, Object?>),
       );
 
       test('as controller', () {
@@ -224,7 +221,7 @@ void main() {
       test('as plugin', () {
         Chart.registry.addPlugins([customPlugin]);
 
-        expect(Chart.registry.getPlugin('custom'), customPlugin);
+        expect(Chart.registry.getPlugin<_CustomPlugin>(), customPlugin);
         expect(
           _plain(_defaults('plugins', 'custom')),
           equals(_plain(customPlugin.defaults)),
@@ -233,8 +230,9 @@ void main() {
         Chart.registry.removePlugins([customPlugin]);
 
         expect(() {
-          Chart.registry.getPlugin('custom');
-        }, _throwsError('"custom" is not a registered plugin.'));
+          Chart.registry.getPlugin<_CustomPlugin>();
+          // DIVERGES(chartjs): adapt-typed-plugins, the type is the key.
+        }, _throwsError('_CustomPlugin is not a registered plugin.'));
         expect(_defaults('plugins', 'custom'), same(undefined));
       });
     });
@@ -382,4 +380,11 @@ void main() {
       });
     });
   });
+}
+
+/// The plugin `custom` of the spec, a class of its own, so
+/// `getPlugin<_CustomPlugin>()` finds it (row adapt-typed-plugins).
+final class _CustomPlugin(PluginDefaults defaults) extends Plugin<Object?> {
+  /// The plugin `custom` with [defaults].
+  this : super(id: 'custom', defaults: defaults);
 }

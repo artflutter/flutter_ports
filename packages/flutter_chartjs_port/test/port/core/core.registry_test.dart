@@ -289,7 +289,7 @@ void main() {
     o
       ..observe('controller', error(() => reg.getController('nope')))
       ..observe('element', error(() => reg.getElement(undefined)))
-      ..observe('plugin', error(() => reg.getPlugin(5.0)))
+      ..observe('plugin', error(() => reg.getPlugin<_RExtPlugin>()))
       ..observe('scale', error(() => reg.getScale(null)));
     final rExt = o.label(
       _class(
@@ -303,13 +303,7 @@ void main() {
     );
     // The plugin of the class `RExt` is a native plugin (Chart.js ADR 0144)
     // with the same id and defaults.
-    final rExtPlugin = o.label(
-      Plugin<Object?>(
-        id: 'rext',
-        defaults: pluginDefaults(<String, Object?>{'prop': true}),
-      ),
-      'RExt',
-    );
+    final rExtPlugin = o.label(_RExtPlugin(), 'RExt');
     for (final (name, item, add, get, remove) in [
       (
         'controller',
@@ -319,7 +313,13 @@ void main() {
         reg.removeControllers,
       ),
       ('element', rExt, reg.addElements, reg.getElement, reg.removeElements),
-      ('plugin', rExtPlugin, reg.addPlugins, reg.getPlugin, reg.removePlugins),
+      (
+        'plugin',
+        rExtPlugin,
+        reg.addPlugins,
+        (Object? _) => reg.getPlugin<_RExtPlugin>(),
+        reg.removePlugins,
+      ),
       ('scale', rExt, reg.addScales, reg.getScale, reg.removeScales),
     ]) {
       add([item]);
@@ -327,7 +327,19 @@ void main() {
       remove([item]);
       o.observe('$name after', error(() => get('rext')));
     }
-    expect(o.text, registryReference['registry getters']);
+    // The plugin type is the key of getPlugin (row adapt-typed-plugins).
+    expect(
+      o.text,
+      registryReference['registry getters']!
+          .replaceFirst(
+            '"5" is not a registered plugin.',
+            '_RExtPlugin is not a registered plugin.',
+          )
+          .replaceFirst(
+            '"rext" is not a registered plugin.',
+            '_RExtPlugin is not a registered plugin.',
+          ),
+    );
   });
 
   /// The namespace `elements` of the bundle: a Map with the export names in
@@ -379,17 +391,27 @@ void main() {
 
   test('the singleton', () {
     final o = Observations();
-    final plugin = Plugin<Object?>(id: 'rsingle');
+    final plugin = _RSinglePlugin();
     o.observe(
       'is a Registry',
       '${isA<Registry>().matches(registry, <Object?, Object?>{})}',
     );
     registry.add([plugin]);
     addTearDown(() => registry.remove([plugin]));
-    o.observe('get', '${identical(registry.getPlugin('rsingle'), plugin)}');
+    o.observe(
+      'get',
+      '${identical(registry.getPlugin<_RSinglePlugin>(), plugin)}',
+    );
     registry.remove([plugin]);
-    o.observe('after', error(() => registry.getPlugin('rsingle')));
-    expect(o.text, registryReference['registry singleton']);
+    o.observe('after', error(() => registry.getPlugin<_RSinglePlugin>()));
+    // The plugin type is the key of getPlugin (row adapt-typed-plugins).
+    expect(
+      o.text,
+      registryReference['registry singleton']!.replaceFirst(
+        '"rsingle" is not a registered plugin.',
+        '_RSinglePlugin is not a registered plugin.',
+      ),
+    );
   });
 
   test('the four registries of the base class values', () {
@@ -422,3 +444,20 @@ final Map<String, String> registryReference = {
   for (final entry in frozen.registryReference.entries)
     entry.key: referenceColorTokens(entry.value),
 };
+
+/// The plugin of the class `RExt`: a native plugin (Chart.js ADR 0144) of its
+/// own class, so `getPlugin<_RExtPlugin>()` finds it.
+final class _RExtPlugin() extends Plugin<Object?> {
+  /// The plugin `rext` with the defaults of `RExt`.
+  this
+    : super(
+        id: 'rext',
+        defaults: pluginDefaults(<String, Object?>{'prop': true}),
+      );
+}
+
+/// The plugin of the singleton scenario.
+final class _RSinglePlugin() extends Plugin<Object?> {
+  /// The plugin `rsingle`.
+  this : super(id: 'rsingle');
+}

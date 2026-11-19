@@ -1,7 +1,7 @@
 # Chart.js ADR 0020: Registry and component classes
 
 - Status: accepted (2026-10-21)
-- Superseded in part by: [Chart.js ADR 0173](0173-option-function-types.md) (2026-11-18)
+- Superseded in part by: [Chart.js ADR 0173](0173-option-function-types.md) (2026-11-18); [Chart.js ADR 0181](0181-plugin-classes-and-typed-get-plugin.md) (2026-11-19), for the signature of `getPlugin` in §5
 - Date: 2026-10-19
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type-only dependencies, records),
   [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (plain objects as Maps, the

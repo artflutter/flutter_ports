@@ -322,9 +322,9 @@ A _noArgs<A extends Object>(PluginHook<A> hook) =>
 ) {
   final localIds = <String, bool>{};
   final plugins = <Plugin<Object?>>[];
-  final keys = jsObjectKeys(registry.plugins.items);
-  for (var i = 0; i < keys.length; i++) {
-    plugins.add(registry.getPlugin(keys[i]) as Plugin<Object?>);
+  final items = registry.plugins.items;
+  for (final key in jsObjectKeys(items)) {
+    plugins.add(items[key]! as Plugin<Object?>);
   }
 
   // The inline plugins of the config of the user: a List of native plugins

@@ -387,7 +387,7 @@ abstract class const PluginOptions<T extends PluginOptions<T>>()
 /// );
 /// Chart.register([crosshair]);
 /// ```
-final class PluginOf<O, C extends IChart>({
+base class PluginOf<O, C extends IChart>({
   /// `id`: the id of the plugin, the key of its options in
   /// `options.plugins`.
   required final String id,

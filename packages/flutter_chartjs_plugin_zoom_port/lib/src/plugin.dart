@@ -195,16 +195,25 @@ void _stop(Chart chart, PluginHookArgs _, ZoomPluginOptions _) {
 /// three function tables. The plugin opts into the data-only updates of the
 /// host (`supportsDataUpdates`): its hooks change no option and no data.
 // DIVERGES(zoom): adapt-typed-plugin-object, a native ChartPlugin.
-final zoomPlugin = ChartPlugin<ZoomPluginOptions>(
-  id: 'zoom',
-  defaults: defaults,
-  start: _start,
-  beforeEvent: _beforeEvent,
-  beforeUpdate: _beforeUpdate,
-  beforeDatasetsDraw: _beforeDatasetsDraw,
-  afterDatasetsDraw: _afterDatasetsDraw,
-  beforeDraw: _beforeDraw,
-  afterDraw: _afterDraw,
-  stop: _stop,
-  supportsDataUpdates: true,
-);
+final zoomPlugin = ZoomPlugin();
+
+/// The zoom plugin: a class of its own, so `registry.getPlugin<ZoomPlugin>()`
+/// finds it by its type.
+// DIVERGES(zoom): adapt-typed-plugin-object, a class of its own.
+final class ZoomPlugin() extends ChartPlugin<ZoomPluginOptions> {
+  /// The zoom plugin.
+  this
+    : super(
+        id: 'zoom',
+        defaults: defaults,
+        start: _start,
+        beforeEvent: _beforeEvent,
+        beforeUpdate: _beforeUpdate,
+        beforeDatasetsDraw: _beforeDatasetsDraw,
+        afterDatasetsDraw: _afterDatasetsDraw,
+        beforeDraw: _beforeDraw,
+        afterDraw: _afterDraw,
+        stop: _stop,
+        supportsDataUpdates: true,
+      );
+}

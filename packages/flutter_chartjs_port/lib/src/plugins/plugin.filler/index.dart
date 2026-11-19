@@ -195,19 +195,31 @@ bool _beforeDatasetDraw(
 ///
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
 /// ADR 0144). Its hooks get the options through the facade [FillerOptions].
-final filler = Plugin<FillerOptions>(
-  id: 'filler',
-  options: FillerOptions.new,
-  afterDatasetsUpdate: _afterDatasetsUpdate,
-  beforeDraw: _beforeDraw,
-  beforeDatasetsDraw: _beforeDatasetsDraw,
-  beforeDatasetDraw: _beforeDatasetDraw,
-  // index.js:93-96. A typed scope of the kind `FillerOptions` (Chart.js ADR
-  // 0054 §3).
-  defaults: FillerOptionsScope()
-    ..propagate = true
-    // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
-    ..drawTime = FillerDrawTime.beforeDatasetDraw,
-  // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle opt-in.
-  supportsDataUpdates: true,
-);
+final filler = FillerPlugin();
+
+/// The filler plugin: a class of its own, so
+/// `registry.getPlugin<FillerPlugin>()`
+/// finds it by its type.
+// DIVERGES(chartjs): adapt-typed-plugins, a class for each plugin.
+final class FillerPlugin() extends Plugin<FillerOptions> {
+  /// The filler plugin.
+  this
+    : super(
+        id: 'filler',
+        options: FillerOptions.new,
+        afterDatasetsUpdate: _afterDatasetsUpdate,
+        beforeDraw: _beforeDraw,
+        beforeDatasetsDraw: _beforeDatasetsDraw,
+        beforeDatasetDraw: _beforeDatasetDraw,
+        // index.js:93-96. A typed scope of the kind `FillerOptions` (Chart.js
+        // ADR
+        // 0054 §3).
+        defaults: FillerOptionsScope()
+          ..propagate = true
+          // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
+          ..drawTime = FillerDrawTime.beforeDatasetDraw,
+        // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
+        // opt-in.
+        supportsDataUpdates: true,
+      );
+}

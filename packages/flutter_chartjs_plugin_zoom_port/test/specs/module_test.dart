@@ -37,7 +37,7 @@ void main() {
     );
 
     test('should be globally registered', () {
-      final plugin = Chart.registry.getPlugin('zoom');
+      final plugin = Chart.registry.getPlugin<ZoomPlugin>();
       expect(plugin, same(zoomPlugin));
     });
   });

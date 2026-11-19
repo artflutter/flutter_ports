@@ -10,7 +10,7 @@ import 'package:chartjs_gallery/demo/stress_axes.dart';
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show ZoomChart;
+    show ZoomChart, ZoomPlugin;
 // The prefix keeps the port names that Flutter also has apart.
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -260,7 +260,7 @@ void main() {
     // comparable with the figures of earlier runs. The cases of the mode
     // zoom register it for their own runs only (the zoom tests below).
     registerGalleryComponents();
-    expect(() => registry.getPlugin('zoom'), throwsA(anything));
+    expect(() => registry.getPlugin<ZoomPlugin>(), throwsA(anything));
   });
 
   testWidgets('main_bench prints one BENCH line for a tiny case', (

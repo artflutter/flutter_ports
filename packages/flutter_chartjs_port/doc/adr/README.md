@@ -22,7 +22,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0017](0017-element-properties.md) Element properties: accepted, superseded in part by 0054, 0145, 0174.
 - [0018](0018-typed-element-options.md) Typed element options: accepted, superseded by 0054.
 - [0019](0019-animation.md) Animation: accepted, superseded in part by 0145, 0171, 0172.
-- [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted, superseded in part by 0173.
+- [0020](0020-registry-and-component-classes.md) Registry and component classes: accepted, superseded in part by 0173, 0181.
 - [0021](0021-typed-options-in-the-resolver.md) Typed options in the resolver: accepted, superseded by 0054.
 - [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108.
 - [0023](0023-underscore-member-collisions.md) Underscore members with a colliding name: accepted.
@@ -150,7 +150,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0145](0145-native-option-types.md) Native option types with no earlier ADR: accepted, supersedes 0015, 0017, 0019, 0024, 0028, 0038, 0039, 0052, 0054, 0125, 0127.
 - [0146](0146-js-numeric-semantics.md) JS numeric semantics and the reference engine: accepted, supersedes 0035, 0045, 0108, 0122, 0134, 0135, 0136, 0138, 0143, superseded in part by 0176, 0178.
 - [0147](0147-public-theme-api.md) The public theme API: accepted, supersedes 0050, 0054, 0057, 0116, 0117, 0118, 0128, 0141.
-- [0148](0148-plugin-typing.md) Typed plugin chart, options and update mode: accepted, supersedes 0144, superseded in part by 0150.
+- [0148](0148-plugin-typing.md) Typed plugin chart, options and update mode: accepted, supersedes 0144, superseded in part by 0150, 0181.
 - [0149](0149-bar-chart-small-costs.md) Four small costs of a bar chart: proposed, supersedes 0054, 0070, 0106.
 - [0150](0150-typed-plugin-options.md) Typed plugin options: accepted, supersedes 0144, 0148.
 - [0151](0151-shared-bar-animation-options.md) Shared animation options of a bar update: proposed, supersedes 0053, 0054, 0149.
@@ -175,4 +175,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0178](0178-no-js-semantics-check.md) No JS-semantics check: accepted, supersedes 0029, 0034, 0035, 0040, 0041, 0146, 0176, 0177.
 - [0179](0179-no-parity-generator-or-port-order.md) No parity generator and no port-order tool: accepted, supersedes 0029.
 - [0180](0180-native-spec-matchers.md) Native matchers and recorders in the spec ports: accepted, supersedes 0030.
+- [0181](0181-plugin-classes-and-typed-get-plugin.md) A class for each plugin, and getPlugin by type: accepted, supersedes 0020, 0148.
 <!-- adr-index:end -->
