@@ -106,13 +106,11 @@ double _width((double, double) range) => range.$2 - range.$1;
 SegmentToggles _toggles(WidgetTester tester) =>
     tester.widget<SegmentToggles>(find.byType(SegmentToggles));
 
-/// The resolved text of the title of [chart]: the options of the chart
-/// call the scriptable `text` with the chart context.
-/// The one line of the title text (row adapt-title-text-lines).
-Object? _titleText(Chart chart) {
-  final plugins = chart.options['plugins']! as JsObjectFace;
-  return ((plugins['title']! as JsObjectFace)['text']! as List<String>).single;
-}
+/// The one line of the resolved title text of [chart] (row
+/// adapt-title-text-lines): the [TitleOptions] of the title box
+/// (Chart.js ADR 0182).
+String _titleText(Chart chart) =>
+    (chart.titleBlock!.options! as TitleOptions).text.single;
 
 /// The rect of the host lies inside the view of [size].
 void _expectInView(WidgetTester tester, Size size, String reason) {

@@ -42,6 +42,8 @@ void main() {
         : upstream;
 
     test('should be registered as global plugin options', () {
+      // By name: the scope `plugins` has no typed field for the id of an
+      // add-on, and the subject is the entry under that id.
       expect((Chart.defaults['plugins']! as JsObjectFace)['zoom'], expected);
     });
 
@@ -56,14 +58,14 @@ void main() {
       };
       addTearDown(() => plugin.beforeUpdate = previous);
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-          ],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(data: [])],
+          ),
+        ).lower(),
+      );
 
       final calls = spyCalls.where(
         (call) => identical(call.$1, chart) && call.$2.mode == null,
