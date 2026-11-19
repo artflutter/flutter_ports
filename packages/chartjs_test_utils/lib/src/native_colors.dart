@@ -194,6 +194,15 @@ void nativeFixtureColors(Object? config) {
         // The display of a scale and of its point labels takes a
         // ScaleDisplay (row adapt-scale-display-enum).
         value[key] = _scaleDisplay(value[key]);
+      } else if (key == 'text' && (owner == 'title' || owner == 'subtitle')) {
+        // The text of a title takes its lines (row adapt-title-text-lines).
+        value[key] = switch (value[key]) {
+          final String line => <String>[line],
+          final List<Object?> lines => <String>[
+            for (final line in lines) '$line',
+          ],
+          final other => other,
+        };
       } else if (key == 'stacked') {
         // The scale stacked takes a StackMode (row adapt-stacked-option-enum).
         value[key] = _stackMode(value[key]);

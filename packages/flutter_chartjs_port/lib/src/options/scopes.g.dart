@@ -18437,13 +18437,13 @@ base class ScaleTitleOptionsScope() extends OptionScope {
   set align(ChartAlign value) =>
       store(OptionKey.align, OptValue<ChartAlign>(value));
 
-  Opt<Object>? _text;
+  Opt<List<String>>? _text;
 
   /// The cell of `text`, or Dart `null` when absent.
-  Opt<Object>? get textCell => _text;
+  Opt<List<String>>? get textCell => _text;
 
   /// Stores the cell of `text`. Dart `null` deletes the key.
-  set textCell(Opt<Object>? cell) {
+  set textCell(Opt<List<String>>? cell) {
     if (cell == null) {
       delete(OptionKey.text);
     } else {
@@ -18452,8 +18452,8 @@ base class ScaleTitleOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `text`.
-  set text(Object value) =>
-      store(OptionKey.text, classify(OptionKey.text, value));
+  set text(List<String> value) =>
+      store(OptionKey.text, OptValue<List<String>>(value));
 
   Opt<ChartPaint>? _color;
 
@@ -18577,7 +18577,7 @@ base class ScaleTitleOptionsScope() extends OptionScope {
       case OptionKey.align:
         _align = fitCell(cell, classifyTyped<ChartAlign>);
       case OptionKey.text:
-        _text = fitCell(cell, (raw) => classifyUnion(raw, 20));
+        _text = fitCell(cell, classifyTypedList<String>);
       case OptionKey.color:
         _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.strokeColor:
@@ -18618,7 +18618,7 @@ base class ScaleTitleOptionsScope() extends OptionScope {
       case OptionKey.align:
         return classifyTyped<ChartAlign>(raw);
       case OptionKey.text:
-        return classifyUnion(raw, 20);
+        return classifyTypedList<String>(raw);
       case OptionKey.color:
         return classifyTyped<ChartPaint>(raw);
       case OptionKey.strokeColor:
@@ -20511,13 +20511,13 @@ base class LegendTitleOptionsScope() extends OptionScope {
   set padding(EdgeInsets value) =>
       store(OptionKey.padding, OptValue<EdgeInsets>(value));
 
-  Opt<String>? _text;
+  Opt<List<String>>? _text;
 
   /// The cell of `text`, or Dart `null` when absent.
-  Opt<String>? get textCell => _text;
+  Opt<List<String>>? get textCell => _text;
 
   /// Stores the cell of `text`. Dart `null` deletes the key.
-  set textCell(Opt<String>? cell) {
+  set textCell(Opt<List<String>>? cell) {
     if (cell == null) {
       delete(OptionKey.text);
     } else {
@@ -20526,7 +20526,8 @@ base class LegendTitleOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `text`.
-  set text(String value) => store(OptionKey.text, OptValue<String>(value));
+  set text(List<String> value) =>
+      store(OptionKey.text, OptValue<List<String>>(value));
 
   @override
   Opt<Object?>? cellOf(OptionKey key) {
@@ -20562,7 +20563,7 @@ base class LegendTitleOptionsScope() extends OptionScope {
       case OptionKey.padding:
         _padding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.text:
-        _text = fitCell(cell, classifyString);
+        _text = fitCell(cell, classifyTypedList<String>);
       default:
         throw ArgumentError.value(
           key,
@@ -20601,7 +20602,7 @@ base class LegendTitleOptionsScope() extends OptionScope {
       case OptionKey.padding:
         return classifyTyped<EdgeInsets>(raw);
       case OptionKey.text:
-        return classifyString(raw);
+        return classifyTypedList<String>(raw);
       default:
         return kind.classifyOther(raw);
     }
@@ -20741,13 +20742,13 @@ base class TitleOptionsScope() extends OptionScope {
   set padding(EdgeInsets value) =>
       store(OptionKey.padding, OptValue<EdgeInsets>(value));
 
-  Opt<Object>? _text;
+  Opt<List<String>>? _text;
 
   /// The cell of `text`, or Dart `null` when absent.
-  Opt<Object>? get textCell => _text;
+  Opt<List<String>>? get textCell => _text;
 
   /// Stores the cell of `text`. Dart `null` deletes the key.
-  set textCell(Opt<Object>? cell) {
+  set textCell(Opt<List<String>>? cell) {
     if (cell == null) {
       delete(OptionKey.text);
     } else {
@@ -20756,8 +20757,8 @@ base class TitleOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `text`.
-  set text(Object value) =>
-      store(OptionKey.text, classify(OptionKey.text, value));
+  set text(List<String> value) =>
+      store(OptionKey.text, OptValue<List<String>>(value));
 
   Opt<double>? _weight;
 
@@ -20840,7 +20841,7 @@ base class TitleOptionsScope() extends OptionScope {
       case OptionKey.padding:
         _padding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.text:
-        _text = fitCell(cell, (raw) => classifyUnion(raw, 20));
+        _text = fitCell(cell, classifyTypedList<String>);
       case OptionKey.weight:
         _weight = fitCell(cell, classifyNumber);
       case OptionKey.events:
@@ -20887,7 +20888,7 @@ base class TitleOptionsScope() extends OptionScope {
       case OptionKey.padding:
         return classifyTyped<EdgeInsets>(raw);
       case OptionKey.text:
-        return classifyUnion(raw, 20);
+        return classifyTypedList<String>(raw);
       case OptionKey.weight:
         return classifyNumber(raw);
       case OptionKey.events:

@@ -474,11 +474,9 @@ void main() {
         // line-boundaries.md:106: `'Fill: ' + ctx.chart.data.datasets[0]
         // .fill`.
         final title = chart.titleBlock! as title_plugin.Title;
-        expect(
-          jsGet(title.options, 'text'),
+        expect(jsGet(title.options, 'text'), [
           'Fill: ${variant.key}',
-          reason: variant.key,
-        );
+        ], reason: variant.key);
         // `_decodeFill` keeps each of these values (filler.options.js:60),
         // and the filler stores it (plugin.filler/index.js:29).
         final source = fillerSourceOf(chart.getDatasetMeta(0))!;

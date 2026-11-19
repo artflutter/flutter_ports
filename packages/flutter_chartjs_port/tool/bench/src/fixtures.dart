@@ -118,7 +118,10 @@ AnyObject barChartOptions() => <String, Object?>{
         'stepSize': 10.0,
         'font': <String, Object?>{'size': 12.0, 'weight': 'bold'},
       },
-      'title': <String, Object?>{'display': true, 'text': 'Value'},
+      'title': <String, Object?>{
+        'display': true,
+        'text': ['Value'],
+      },
     },
   },
   'plugins': <String, Object?>{
@@ -126,7 +129,10 @@ AnyObject barChartOptions() => <String, Object?>{
       'position': 'top',
       'labels': <String, Object?>{'usePointStyle': true, 'boxWidth': 12.0},
     },
-    'title': <String, Object?>{'display': true, 'text': 'Bar chart'},
+    'title': <String, Object?>{
+      'display': true,
+      'text': ['Bar chart'],
+    },
     'tooltip': <String, Object?>{
       'mode': 'index',
       'intersect': false,

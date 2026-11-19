@@ -1086,8 +1086,9 @@ final class const AxisTitle({
   /// Whether the chart shows the title: `display`. The default is `false`.
   final bool? display,
 
-  /// The text of the title: `text`.
-  final String? text,
+  /// The lines of the title: `text` (row `adapt-title-text-lines`), for
+  /// example `['Revenue']`.
+  final List<String>? text,
 
   /// The color of the title: `color`.
   final ChartPaint? color,
@@ -1114,7 +1115,7 @@ final class const AxisTitle({
   /// that is `null` keeps its value.
   AxisTitle copyWith({
     bool? display,
-    String? text,
+    List<String>? text,
     ChartPaint? color,
     TextStyle? font,
     ChartAlign? align,
@@ -1132,7 +1133,7 @@ final class const AxisTitle({
 
   List<TypedProperty> get _props => [
     ('display', display),
-    ('text', text),
+    ('text', byItems(text)),
     ('color', color),
     ('font', font),
     ('align', align),

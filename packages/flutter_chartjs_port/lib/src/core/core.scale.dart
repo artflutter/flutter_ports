@@ -69,7 +69,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextProxy, OptionView, functionOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show finiteOrDefault, isArray, isFinite, valueOrDefault;
+    show finiteOrDefault, isFinite, valueOrDefault;
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
     show alignStartEnd, toLeftRightCenter;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -336,8 +336,8 @@ double _getTitleHeight(ScaleTitleOptions options, Object? fallback) {
 
   final font = toFont(options.font, fallback);
   final padding = options.padding;
-  final text = options.text;
-  final lines = isArray(text) ? (text! as List<Object?>).length : 1;
+  // DIVERGES(chartjs): adapt-title-text-lines, the count of the lines.
+  final lines = options.text.length;
 
   return (lines * font.lineHeight!) + padding.vertical;
 }
@@ -2869,10 +2869,8 @@ class Scale(AnyObject cfg)
         position == ChartPosition.center ||
         position is ScaleValuePosition) {
       offset += padding.bottom;
-      final text = title.text;
-      if (isArray(text)) {
-        offset += font.lineHeight! * ((text! as List<Object?>).length - 1);
-      }
+      // DIVERGES(chartjs): adapt-title-text-lines, the lines of the text.
+      offset += font.lineHeight! * (title.text.length - 1);
     } else {
       offset += padding.top;
     }

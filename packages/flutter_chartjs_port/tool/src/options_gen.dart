@@ -74,6 +74,7 @@ const Map<String, int> shapeAtoms = {
   'pluginOptions': 5504,
   'stackMode': 5632,
   'scaleDisplay': 5760,
+  'textLines': 5888,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -293,6 +294,8 @@ const Map<String, TypedAtom> typedAtoms = {
     uri: 'package:flutter_chartjs_port/src/core/scale_option_enums.dart',
     field: null,
   ),
+  // The `text` of a title: its lines (row adapt-title-text-lines).
+  'textLines': (type: 'List<String>', uri: 'dart:core', field: null),
 };
 
 /// The import lines of the typed atoms whose types [types] lists, and of
@@ -304,7 +307,7 @@ String typedAtomImports(
 ]) {
   final byUri = <String, Set<String>>{for (final uri in others) uri: {}};
   for (final atom in typedAtoms.values) {
-    if (types.contains(atom.type)) {
+    if (types.contains(atom.type) && atom.uri != 'dart:core') {
       (byUri[atom.uri] ??= <String>{}).add(atom.type);
     }
   }
@@ -396,7 +399,7 @@ final class const Shape(
     if (mask == shapeAtoms['bool']) return 'classifyBool(raw)';
     if (mask == shapeAtoms['string']) return 'classifyString(raw)';
     if (typedAtomOf(mask) case final atom?) {
-      return 'classifyTyped<${atom.type}>(raw)';
+      return '${_classifyName(atom)}(raw)';
     }
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>(raw)';
     return 'classifyUnion(raw, $mask)';
@@ -408,12 +411,19 @@ final class const Shape(
     if (mask == shapeAtoms['bool']) return 'classifyBool';
     if (mask == shapeAtoms['string']) return 'classifyString';
     if (typedAtomOf(mask) case final atom?) {
-      return 'classifyTyped<${atom.type}>';
+      return _classifyName(atom);
     }
     if (mask == shapeAtoms['scope']) return 'classifyScope<${scope}Scope>';
     return '(raw) => classifyUnion(raw, $mask)';
   }
 }
+
+/// The classification function of the typed atom [atom]: `classifyTypedList`
+/// of the element type for a `List` type, else `classifyTyped`.
+String _classifyName(TypedAtom atom) =>
+    atom.type.startsWith('List<') && atom.type.endsWith('>')
+    ? 'classifyTypedList<${atom.type.substring(5, atom.type.length - 1)}>'
+    : 'classifyTyped<${atom.type}>';
 
 /// One kind of the schema.
 final class Kind(

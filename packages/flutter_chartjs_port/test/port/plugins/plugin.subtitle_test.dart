@@ -143,7 +143,7 @@ AnyObject _line(Object? subtitleOptions) => <String, Object?>{
 /// `text`, `position`, `weight` and `fullSize`.
 AnyObject _startOptions(String text) => <String, Object?>{
   'display': true,
-  'text': text,
+  'text': [text],
   'position': ChartPosition.top,
   'weight': 1500,
   'fullSize': true,
@@ -288,7 +288,7 @@ void main() {
       expect(defaults['fullSize'], isTrue);
       expect(defaults['padding'], EdgeInsets.zero);
       expect(defaults['position'], ChartPosition.top);
-      expect(defaults['text'], '');
+      expect(defaults['text'], ['']);
       expect(defaults['weight'], 1500);
       expect(_plain(subTitle.defaultRoutes), <String, Object?>{
         'color': 'color',
@@ -305,11 +305,14 @@ void main() {
         'box each time', (tester) async {
       // The probe outputs `afterStop` 0 and `afterRestart` [1, true, 'A2'].
       final chart = acquireChart(
-        _line(<String, Object?>{'display': true, 'text': 'A'}),
+        _line(<String, Object?>{
+          'display': true,
+          'text': ['A'],
+        }),
       );
       final first = _subtitles(chart);
       expect(first, hasLength(1));
-      expect(jsGet(first.single.options, 'text'), 'A');
+      expect(jsGet(first.single.options, 'text'), ['A']);
 
       _pluginOptions(chart)['subtitle'] = false;
       chart.update();
@@ -317,35 +320,41 @@ void main() {
 
       _pluginOptions(chart)['subtitle'] = <String, Object?>{
         'display': true,
-        'text': 'A2',
+        'text': ['A2'],
       };
       chart.update();
       final second = _subtitles(chart);
       expect(second, hasLength(1));
       expect(second.single, isNot(same(first.single)));
-      expect(jsGet(second.single.options, 'text'), 'A2');
+      expect(jsGet(second.single.options, 'text'), ['A2']);
     });
 
     testWidgets('two charts each have their own subtitle', (tester) async {
       // The probe outputs `twoCharts` [1, 1, true, 'A', 'B'] and
       // `otherAfterStop` [1, 'B'].
       final a = acquireChart(
-        _line(<String, Object?>{'display': true, 'text': 'A'}),
+        _line(<String, Object?>{
+          'display': true,
+          'text': ['A'],
+        }),
       );
       final b = acquireChart(
-        _line(<String, Object?>{'display': true, 'text': 'B'}),
+        _line(<String, Object?>{
+          'display': true,
+          'text': ['B'],
+        }),
       );
       expect(_subtitles(a), hasLength(1));
       expect(_subtitles(b), hasLength(1));
       expect(_subtitles(a).single, isNot(same(_subtitles(b).single)));
-      expect(jsGet(_subtitles(a).single.options, 'text'), 'A');
-      expect(jsGet(_subtitles(b).single.options, 'text'), 'B');
+      expect(jsGet(_subtitles(a).single.options, 'text'), ['A']);
+      expect(jsGet(_subtitles(b).single.options, 'text'), ['B']);
 
       final boxOfB = _subtitles(b).single;
       _hook('stop', a);
       expect(_subtitles(a), isEmpty);
       expect(_subtitles(b), [same(boxOfB)]);
-      expect(jsGet(boxOfB.options, 'text'), 'B');
+      expect(jsGet(boxOfB.options, 'text'), ['B']);
     });
 
     testWidgets('stop without start does not throw', (tester) async {
@@ -372,7 +381,10 @@ void main() {
       // beforeUpdateAfterStop: TypeError} (map.delete of
       // plugin.subtitle.js:23).
       final chart = acquireChart(
-        _line(<String, Object?>{'display': true, 'text': 'A'}),
+        _line(<String, Object?>{
+          'display': true,
+          'text': ['A'],
+        }),
       );
       final count = chart.boxes.length;
       _hook('stop', chart);
@@ -399,7 +411,7 @@ void main() {
       _hook('stop', chart);
       counts.add(_subtitles(chart).length);
       expect(counts, [1, 0, 1, 2, 1]);
-      expect(jsGet(_subtitles(chart).single.options, 'text'), 'y');
+      expect(jsGet(_subtitles(chart).single.options, 'text'), ['y']);
     });
 
     testWidgets('the subtitle box is a Title of the chart', (tester) async {
@@ -407,7 +419,10 @@ void main() {
       // and `configure` writes the position, the weight and fullSize of the
       // defaults (plugin.subtitle.js:32-43).
       final chart = acquireChart(
-        _line(<String, Object?>{'display': true, 'text': 'A'}),
+        _line(<String, Object?>{
+          'display': true,
+          'text': ['A'],
+        }),
       );
       final subtitle = _subtitles(chart).single;
       expect(subtitle.position, ChartPosition.top);

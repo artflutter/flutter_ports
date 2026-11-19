@@ -77,10 +77,12 @@ import 'plugin_title_reference.dart';
 /// The named functions of the configs of the generator, with the same
 /// bodies.
 final Map<String, Object?> _functions = {
-  // (ctx) => `Chart of type ${ctx.chart.config.type}`
-  'titleText': (Object? ctx) =>
-      'Chart of type '
-      '${jsToString((jsGet(ctx, 'chart')! as Chart).config.type)}',
+  // (ctx) => `Chart of type ${ctx.chart.config.type}`, as its one line
+  // (row adapt-title-text-lines).
+  'titleText': (Object? ctx) {
+    final type = jsToString((jsGet(ctx, 'chart')! as Chart).config.type);
+    return ['Chart of type $type'];
+  },
 };
 
 /// The observer `plugins.title` of the generator (`observeTitle`): Dart
@@ -190,7 +192,10 @@ void main() {
 
     test('new Title(config) keeps a plain chart object', () {
       final chart = <String, Object?>{'options': <String, Object?>{}};
-      final options = <String, Object?>{'display': true, 'text': 'a'};
+      final options = <String, Object?>{
+        'display': true,
+        'text': ['a'],
+      };
       final constructed = _construct([
         <String, Object?>{'chart': chart, 'options': options},
       ]);
@@ -257,7 +262,10 @@ void main() {
       // drawBeforeUpdate).
       final box = Title((
         chart: null,
-        options: <String, Object?>{'display': true, 'text': 'a'},
+        options: <String, Object?>{
+          'display': true,
+          'text': ['a'],
+        },
         ctx: createMockContext(),
       ));
       expect(box.draw, throwsA(isA<TypeError>()));
@@ -283,7 +291,7 @@ void main() {
       ];
       AnyObject options() => <String, Object?>{
         'display': true,
-        'text': 'a',
+        'text': ['a'],
         'padding': const EdgeInsets.all(10),
         'font': const ChartTextStyle(fontSize: 12),
         'position': ChartPosition.top,
@@ -340,7 +348,10 @@ void main() {
 
     testWidgets('stop removes the title box', (tester) async {
       final chart = acquireChart(
-        _line(<String, Object?>{'display': true, 'text': 'a'}),
+        _line(<String, Object?>{
+          'display': true,
+          'text': ['a'],
+        }),
       );
       final box = chart.titleBlock;
       expect(box, isA<Title>());

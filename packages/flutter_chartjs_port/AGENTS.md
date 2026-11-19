@@ -597,6 +597,10 @@ repository.
       a number, and `undefined` or `null` is the upstream `'auto'`; the bar defaults keep the key
       with `undefined`, because the element options take their names from the keys of the
       defaults (row `adapt-inflate-amount-auto`).
+    - The `text` of the chart title, the subtitle, a scale title and the legend title holds a
+      `List<String>` of its lines (row `adapt-title-text-lines`), also in a raw config; the
+      default is `['']`. A typed list atom of the schema (`textLines`) has the cell
+      `classifyTypedList<E>` of `opt.dart`: a list of another element type is foreign.
     - A font is a Flutter `TextStyle` from the option to the canvas (Chart.js ADR 0116, row
       `adapt-text-style-fonts`), also in a raw config: the options `font`, `titleFont`,
       `bodyFont` and `footerFont`, the canvas `font`, the font of a label item and the result of

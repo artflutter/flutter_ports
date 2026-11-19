@@ -237,6 +237,9 @@ Object? _copyJson(Object? value) => switch (value) {
   final Map<String, Object?> map => <String, Object?>{
     for (final MapEntry(:key, :value) in map.entries) key: _copyJson(value),
   },
+  // The lines of a title text keep their type (row
+  // adapt-title-text-lines).
+  final List<String> lines => List<String>.of(lines),
   final List<Object?> list => <Object?>[
     for (final item in list) _copyJson(item),
   ],

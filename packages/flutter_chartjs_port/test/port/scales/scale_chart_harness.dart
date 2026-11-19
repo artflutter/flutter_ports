@@ -791,6 +791,9 @@ Object? copyReference(
         _ => copyReference(value, functions),
       },
   },
+  // The lines of a title text keep their type (row
+  // adapt-title-text-lines).
+  final List<String> lines => List<String>.of(lines),
   final List<Object?> list => <Object?>[
     for (final item in list) copyReference(item, functions),
   ],

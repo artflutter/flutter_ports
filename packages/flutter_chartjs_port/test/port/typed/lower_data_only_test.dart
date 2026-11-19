@@ -180,7 +180,7 @@ void main() {
           _config([BarDataset(data: _data())]),
           _config([
             BarDataset(data: _data()),
-          ], title: const ChartTitle(text: 't')),
+          ], title: const ChartTitle(text: ['t'])),
         ),
         isFalse,
       );

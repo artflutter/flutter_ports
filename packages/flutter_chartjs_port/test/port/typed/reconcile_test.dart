@@ -413,7 +413,7 @@ void main() {
   group('the data and the options Maps', () {
     testWidgets('the options Map stays for a data change, with an imperative '
         'edit; an option change gives a new options Map', (tester) async {
-      const title = ChartTitle(display: true, text: 'T');
+      const title = ChartTitle(display: true, text: ['T']);
       await tester.pumpWidget(
         _view(
           _bars([
@@ -441,7 +441,7 @@ void main() {
         _view(
           _bars([
             const BarDataset(data: [4, 5, 6]),
-          ], title: const ChartTitle(display: true, text: 'U')),
+          ], title: const ChartTitle(display: true, text: ['U'])),
         ),
       );
       expect(chart.config.options, isNot(same(options)));
@@ -459,7 +459,7 @@ void main() {
       final data = chart.data;
 
       await tester.pumpWidget(
-        _view(_bars(datasets, title: const ChartTitle(text: 'T'))),
+        _view(_bars(datasets, title: const ChartTitle(text: ['T']))),
       );
       expect(chart.data, same(data));
 

@@ -529,7 +529,7 @@ void main() {
             _bars(
               3,
               labels,
-              title: const ChartTitle(display: true, text: 'new'),
+              title: const ChartTitle(display: true, text: ['new']),
             ),
             dataOnly: dataOnly,
           ),
@@ -622,8 +622,11 @@ void main() {
     testWidgets('an option field', (tester) async {
       final spy = await afterChange(
         tester,
-        (labels) =>
-            _bars(1, labels, title: const ChartTitle(display: true, text: 't')),
+        (labels) => _bars(
+          1,
+          labels,
+          title: const ChartTitle(display: true, text: ['t']),
+        ),
       );
       expect(spy.layouts, 1);
     });
@@ -1186,7 +1189,7 @@ void main() {
           await tick(3);
 
           // A later full update.
-          const title = ChartTitle(display: true, text: 'new');
+          const title = ChartTitle(display: true, text: ['new']);
           spy.clear();
           await tester.pumpWidget(view(4, title: title));
           expect(spy.layouts, 1);
@@ -1733,7 +1736,7 @@ void main() {
                 6,
                 labels,
                 position,
-              ).copyWith(title: const ChartTitle(display: true, text: 'new')),
+              ).copyWith(title: const ChartTitle(display: true, text: ['new'])),
               dataOnly: dataOnly,
             ),
           );

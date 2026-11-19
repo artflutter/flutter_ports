@@ -820,6 +820,7 @@ classifyNumber
 classifyScope
 classifyString
 classifyTyped
+classifyTypedList
 classifyUnion
 clearCanvas
 clipArea

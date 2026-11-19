@@ -82,7 +82,7 @@ final ChartConfig _config = ChartConfig(
   padding: const EdgeInsets.all(10),
   title: const ChartTitle(
     display: true,
-    text: 'Annual rainfall of Paris',
+    text: ['Annual rainfall of Paris'],
     color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),
@@ -129,7 +129,7 @@ final ChartConfig _config = ChartConfig(
       ),
       title: AxisTitle(
         display: true,
-        text: 'Year',
+        text: ['Year'],
         color: ChartPaint.solid(_text),
         font: TextStyle(fontSize: 15),
       ),

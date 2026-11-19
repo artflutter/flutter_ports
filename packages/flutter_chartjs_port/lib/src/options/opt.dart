@@ -374,6 +374,10 @@ abstract final class ShapeBits() {
   /// point labels (row `adapt-scale-display-enum`).
   static const int scaleDisplay = 5760;
 
+  /// `textLines`: a `List<String>`, the `text` of a title (row
+  /// `adapt-title-text-lines`).
+  static const int textLines = 5888;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -420,6 +424,15 @@ Opt<String> classifyString(Object? raw) =>
 /// a foreign value, as each other value is.
 Opt<T> classifyTyped<T extends Object>(Object? raw) =>
     _special<T>(raw) ?? (raw is T ? OptValue<T>(raw) : OptForeign<T>(raw!));
+
+/// The cell of [raw] for a key whose shape is a typed list atom, a `List<E>`:
+/// a list of [E] is an [OptValue]. A list of another element type is a
+/// foreign value, as each other plain value is.
+Opt<List<E>> classifyTypedList<E>(Object? raw) {
+  if (raw is List<E>) return OptValue<List<E>>(raw);
+  if (raw is List<Object?>) return OptForeign<List<E>>(raw);
+  return _special<List<E>>(raw) ?? OptForeign<List<E>>(raw!);
+}
 
 /// The cell of [raw] for a key of the shape `scope <Kind>`: an object is an
 /// [OptScope], another plain value is foreign.
@@ -489,6 +502,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.pluginOptions => classifyTyped<PluginOptions<Object?>>(raw),
   ShapeBits.stackMode => classifyTyped<StackMode>(raw),
   ShapeBits.scaleDisplay => classifyTyped<ScaleDisplay>(raw),
+  ShapeBits.textLines => classifyTypedList<String>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),

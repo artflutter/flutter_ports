@@ -10,7 +10,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, Plugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartClip, CirclePointStyle;
+    show ChartClip, CirclePointStyle, ScaleDisplay;
 // Not public: jsToNumber of case (c), kept for the series before phase 9.
 import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
 // Not public: jsGet of case (c), kept for the series before phase 9.
@@ -290,7 +290,7 @@ Map<String, Object?> stressHiddenScale(
   double? max,
 }) => <String, Object?>{
   'type': type,
-  'display': false,
+  'display': ScaleDisplay.off,
   'ticks': <String, Object?>{'display': false},
   'min': ?min,
   'max': ?max,

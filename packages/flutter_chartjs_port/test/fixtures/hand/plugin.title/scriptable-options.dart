@@ -39,7 +39,8 @@ Map<String, Object?> fixture() {
           'legend': false,
           'title': <String, Object?>{
             'display': true,
-            'text': () => 'Title Text',
+            // DIVERGES(chartjs): adapt-title-text-lines, the lines of the text.
+            'text': () => ['Title Text'],
           },
           'filler': false,
           'tooltip': false,

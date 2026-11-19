@@ -454,6 +454,13 @@ String? _mismatch(Object? actual, Object? expected) {
   // Upstream has the keyword of a line cap, a line join or an interaction
   // axis where the port has the enum: the name of the enum value is the
   // keyword.
+  // Upstream has a text where the port has its lines (row
+  // adapt-title-text-lines).
+  if (expected is String && actual is List<String>) {
+    return actual.length == 1 && actual.single == expected
+        ? null
+        : '$actual != $expected';
+  }
   // Upstream has a boolean where the port has a ScaleDisplay or a StackMode
   // (keyword_enum_json.dart).
   if (expected is bool && isKeywordEnum(actual)) {

@@ -360,7 +360,8 @@ final title = Plugin<TitleOptions>(
     ..fullSize = true
     ..padding = const EdgeInsets.all(10)
     ..position = ChartPosition.top
-    ..text = ''
+    // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
+    ..text = const ['']
     // by default greater than legend (1000) to be above
     ..weight = 2000.0,
   // plugin.title.js:158-160.

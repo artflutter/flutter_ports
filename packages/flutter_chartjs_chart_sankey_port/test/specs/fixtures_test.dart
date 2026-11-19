@@ -30,7 +30,7 @@ void main() {
             'legend': <String, Object?>{'display': false},
             'title': <String, Object?>{
               'display': true,
-              'text': 'OD pairs on hexagon level',
+              'text': ['OD pairs on hexagon level'],
             },
           },
         },

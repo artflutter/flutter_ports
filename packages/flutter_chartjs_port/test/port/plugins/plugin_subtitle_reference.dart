@@ -88,7 +88,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'legend': false,
           'subtitle': <String, Object?>{
             'display': true,
-            'text': 'Chart subtitle',
+            'text': <String>['Chart subtitle'],
           },
           'tooltip': false,
         },
@@ -660,7 +660,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Chart subtitle',
+            'text': <String>['Chart subtitle'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
@@ -679,7 +679,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'fullSize': true,
             'padding': EdgeInsets.all(10),
             'position': ChartPosition.top,
-            'text': '',
+            'text': <String>[''],
             'weight': 2000.0,
             'color': '#666',
           },
@@ -1196,9 +1196,12 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'legend': false,
           'subtitle': <String, Object?>{
             'display': true,
-            'text': 'Chart subtitle',
+            'text': <String>['Chart subtitle'],
           },
-          'title': <String, Object?>{'display': true, 'text': 'Chart title'},
+          'title': <String, Object?>{
+            'display': true,
+            'text': <String>['Chart title'],
+          },
           'tooltip': false,
         },
       },
@@ -1738,7 +1741,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Chart subtitle',
+            'text': <String>['Chart subtitle'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
@@ -1752,7 +1755,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Chart title',
+            'text': <String>['Chart title'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
@@ -2317,7 +2320,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Chart subtitle',
+                'text': <String>['Chart subtitle'],
                 'weight': 2500.0,
                 'align': ChartAlign.center,
                 'font': ChartTextStyle(fontWeight: FontWeight.normal),
@@ -2331,7 +2334,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Chart title',
+                'text': <String>['Chart title'],
                 'align': ChartAlign.center,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
@@ -2863,7 +2866,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'legend': false,
           'subtitle': <String, Object?>{
             'display': true,
-            'text': 'Left subtitle',
+            'text': <String>['Left subtitle'],
             'position': ChartPosition.left,
             'align': ChartAlign.start,
           },
@@ -3437,7 +3440,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Left subtitle',
+            'text': <String>['Left subtitle'],
             'position': ChartPosition.left,
             'align': ChartAlign.start,
             'font': ChartTextStyle(fontWeight: FontWeight.normal),
@@ -3456,7 +3459,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'fullSize': true,
             'padding': EdgeInsets.all(10),
             'position': ChartPosition.top,
-            'text': '',
+            'text': <String>[''],
             'weight': 2000.0,
             'color': '#666',
           },
@@ -4535,7 +4538,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'fullSize': true,
             'padding': EdgeInsets.zero,
             'position': ChartPosition.top,
-            'text': '',
+            'text': <String>[''],
             'weight': 1500.0,
             'color': '#666',
           },
@@ -4549,7 +4552,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'fullSize': true,
             'padding': EdgeInsets.all(10),
             'position': ChartPosition.top,
-            'text': '',
+            'text': <String>[''],
             'weight': 2000.0,
             'color': '#666',
           },
@@ -4557,7 +4560,11 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.subtitle.text', 'Later'],
+          'do': <Object?>[
+            'setOption',
+            'plugins.subtitle.text',
+            <String>['Later'],
+          ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
               27.34765625,
@@ -5125,7 +5132,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'plugins.subtitle': <String, Object?>{
               'lines': 1.0,
               'options': <String, Object?>{
-                'text': 'Later',
+                'text': <String>['Later'],
                 'align': ChartAlign.center,
                 'display': false,
                 'font': ChartTextStyle(fontWeight: FontWeight.normal),
@@ -5145,7 +5152,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'fullSize': true,
                 'padding': EdgeInsets.all(10),
                 'position': ChartPosition.top,
-                'text': '',
+                'text': <String>[''],
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -5729,7 +5736,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
             'plugins.subtitle': <String, Object?>{
               'lines': 1.0,
               'options': <String, Object?>{
-                'text': 'Later',
+                'text': <String>['Later'],
                 'display': true,
                 'align': ChartAlign.center,
                 'font': ChartTextStyle(fontWeight: FontWeight.normal),
@@ -5749,7 +5756,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'fullSize': true,
                 'padding': EdgeInsets.all(10),
                 'position': ChartPosition.top,
-                'text': '',
+                'text': <String>[''],
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -6320,7 +6327,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'fullSize': true,
                 'padding': EdgeInsets.all(10),
                 'position': ChartPosition.top,
-                'text': '',
+                'text': <String>[''],
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -6331,7 +6338,10 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'do': <Object?>[
             'setOption',
             'plugins.subtitle',
-            <String, Object?>{'display': true, 'text': 'Back'},
+            <String, Object?>{
+              'display': true,
+              'text': <String>['Back'],
+            },
           ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
@@ -6909,7 +6919,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Back',
+                'text': <String>['Back'],
                 'align': ChartAlign.center,
                 'font': ChartTextStyle(fontWeight: FontWeight.normal),
                 'fullSize': true,
@@ -6928,7 +6938,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                 'fullSize': true,
                 'padding': EdgeInsets.all(10),
                 'position': ChartPosition.top,
-                'text': '',
+                'text': <String>[''],
                 'weight': 2000.0,
                 'color': '#666',
               },
@@ -7446,13 +7456,13 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'legend': false,
           'subtitle': <String, Object?>{
             'display': true,
-            'text': 'Padded',
+            'text': <String>['Padded'],
             'position': ChartPosition.bottom,
             'padding': EdgeInsets.fromLTRB(0, 6, 0, 12),
           },
           'title': <String, Object?>{
             'display': true,
-            'text': 'Title',
+            'text': <String>['Title'],
             'position': ChartPosition.bottom,
             'padding': EdgeInsets.all(4),
           },
@@ -7998,7 +8008,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Padded',
+            'text': <String>['Padded'],
             'position': ChartPosition.bottom,
             'padding': EdgeInsets.fromLTRB(0, 6, 0, 12),
             'align': ChartAlign.center,
@@ -8012,7 +8022,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Title',
+            'text': <String>['Title'],
             'position': ChartPosition.bottom,
             'padding': EdgeInsets.all(4),
             'align': ChartAlign.center,
@@ -8543,7 +8553,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'legend': false,
           'subtitle': <String, Object?>{
             'display': true,
-            'text': <Object?>['Line one', 'Line two'],
+            'text': <String>['Line one', 'Line two'],
             'align': ChartAlign.end,
             'color': 'rgb(0, 128, 0)',
             'font': ChartTextStyle(
@@ -8556,7 +8566,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           },
           'title': <String, Object?>{
             'display': true,
-            'text': 'Title',
+            'text': <String>['Title'],
             'align': ChartAlign.start,
           },
           'tooltip': false,
@@ -9104,7 +9114,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 2.0,
           'options': <String, Object?>{
             'display': true,
-            'text': <Object?>['Line one', 'Line two'],
+            'text': <String>['Line one', 'Line two'],
             'align': ChartAlign.end,
             'color': 'rgb(0, 128, 0)',
             'font': ChartTextStyle(
@@ -9125,7 +9135,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Title',
+            'text': <String>['Title'],
             'align': ChartAlign.start,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
@@ -9653,9 +9663,12 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
         'plugins': <String, Object?>{
           'subtitle': <String, Object?>{
             'display': true,
-            'text': 'Chart subtitle',
+            'text': <String>['Chart subtitle'],
           },
-          'title': <String, Object?>{'display': true, 'text': 'Chart title'},
+          'title': <String, Object?>{
+            'display': true,
+            'text': <String>['Chart title'],
+          },
         },
       },
     },
@@ -10231,7 +10244,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Chart subtitle',
+            'text': <String>['Chart subtitle'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.normal),
             'fullSize': true,
@@ -10245,7 +10258,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Chart title',
+            'text': <String>['Chart title'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,

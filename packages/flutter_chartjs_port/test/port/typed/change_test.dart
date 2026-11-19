@@ -103,7 +103,7 @@ class _ParentState() extends State<_Parent> {
                 ],
                 title: title == null
                     ? null
-                    : ChartTitle(display: true, text: title),
+                    : ChartTitle(display: true, text: [?title]),
                 animation: ChartAnimation.none,
                 onClick: onClick,
               ),

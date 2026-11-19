@@ -2335,7 +2335,10 @@ void main() {
               'x': <String, Object?>{'type': 'category'},
               'y': <String, Object?>{
                 'type': 'linear',
-                'title': <String, Object?>{'display': true, 'text': 'Value'},
+                'title': <String, Object?>{
+                  'display': true,
+                  'text': ['Value'],
+                },
               },
             },
           },

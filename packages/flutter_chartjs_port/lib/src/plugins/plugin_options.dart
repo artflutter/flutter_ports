@@ -40,12 +40,10 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
         paddingOption,
         readOption,
         textDirectionOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
 import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsToString, jsTruthy;
+    show jsToNumber, jsTruthy;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
@@ -90,9 +88,15 @@ double? _definedNumber(Object? value) =>
 /// The lines of the text option [value], as `renderText` draws them
 /// (`helpers.canvas.ts:457`): each item of a List, else the value itself,
 /// as a `ToString`.
-List<String> _textLines(Object? value) => isArray(value)
-    ? [for (final line in value! as List<Object?>) jsToString(line)]
-    : [jsToString(value)];
+// DIVERGES(chartjs): adapt-title-text-lines, the lines of the text.
+List<String> _textLines(Object? value) {
+  if (value is List<String>) return value;
+  assert(
+    value == null || value is Undefined,
+    'A title text takes a List<String> of its lines, not $value.',
+  );
+  return const <String>[];
+}
 
 /// The [LayoutPosition] of a `position` option value, or Dart `null` for a
 /// value that is not one. A keyword of Chart.js stops a debug build.

@@ -973,7 +973,7 @@ ChartBenchCase _boxCase(
             if (title)
               'title': <String, Object?>{
                 'display': true,
-                'text': 'Chart.js Line Chart',
+                'text': ['Chart.js Line Chart'],
               },
           },
         },
@@ -1348,7 +1348,7 @@ ChartBenchCase _themeCase(
           'plugins': <String, Object?>{
             'title': <String, Object?>{
               'display': true,
-              'text': 'Chart.js Theme Chart',
+              'text': ['Chart.js Theme Chart'],
             },
           },
         },

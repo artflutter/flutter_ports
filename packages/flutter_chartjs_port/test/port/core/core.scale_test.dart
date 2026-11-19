@@ -313,6 +313,9 @@ Object? _copy(Object? value) => switch (value) {
           ? referenceColorInput(value)
           : _copy(value),
   },
+  // The lines of a title text keep their type (row
+  // adapt-title-text-lines).
+  final List<String> lines => List<String>.of(lines),
   final List<Object?> list => <Object?>[for (final item in list) _copy(item)],
   _ => value,
 };
@@ -1200,7 +1203,10 @@ void main() {
                 _scaleOptions({
                   'axis': axisClass,
                   'position': ScaleValuePosition(otherAxis, value),
-                  'title': <String, Object?>{'display': true, 'text': 'T'},
+                  'title': <String, Object?>{
+                    'display': true,
+                    'text': ['T'],
+                  },
                 }, chart),
               )
               ..update(250, 320)

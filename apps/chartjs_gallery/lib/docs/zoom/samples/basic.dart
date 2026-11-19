@@ -127,8 +127,9 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
         'title': <String, Object?>{
           'display': true,
           'position': ChartPosition.bottom,
-          'text': (Object? ctx) =>
-              'Zoom: ${zoomStatus(_chartOf(ctx))}, Pan: ${panStatus()}',
+          'text': (Object? ctx) => [
+            'Zoom: ${zoomStatus(_chartOf(ctx))}, Pan: ${panStatus()}',
+          ],
         },
       },
       // Chart.js ADR 0130: a ChartEventHandler, with all three parameters.
@@ -294,10 +295,11 @@ void setZoomSampleOptions(
   (chartOptions['plugins']! as Map<String, Object?>)['zoom'] = options;
 }
 
-/// `(ctx) => ctx.scale.axis + ' axis'`, the scale title of the samples. The
-/// context is a typed object, read by name through its face.
-String zoomAxisTitle(Object? ctx) =>
-    '${((ctx! as JsObjectFace)['scale']! as Scale).axis} axis';
+/// `(ctx) => ctx.scale.axis + ' axis'`, the scale title of the samples: its
+/// one line. The context is a typed object, read by name through its face.
+List<String> zoomAxisTitle(Object? ctx) => [
+  '${((ctx! as JsObjectFace)['scale']! as Scale).axis} axis',
+];
 
 /// `ctx.chart` of a scriptable context: a typed object, read by name
 /// through its face.

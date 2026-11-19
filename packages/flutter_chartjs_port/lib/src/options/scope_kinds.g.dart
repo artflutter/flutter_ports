@@ -2934,7 +2934,7 @@ enum ScopeKind(
           case OptionKey.align:
             return 1536;
           case OptionKey.text:
-            return 20;
+            return 5888;
           case OptionKey.color:
             return 4864;
           case OptionKey.strokeColor:
@@ -3113,7 +3113,7 @@ enum ScopeKind(
           case OptionKey.padding:
             return 4480;
           case OptionKey.text:
-            return 4;
+            return 5888;
           default:
             return 0;
         }
@@ -3134,7 +3134,7 @@ enum ScopeKind(
           case OptionKey.padding:
             return 4480;
           case OptionKey.text:
-            return 20;
+            return 5888;
           case OptionKey.weight:
             return 1;
           case OptionKey.events:

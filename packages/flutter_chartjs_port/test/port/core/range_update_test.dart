@@ -156,11 +156,13 @@ Map<String, Object?> _titleOf(_Log log, String axis) => <String, Object?>{
     log.context('title.text', ctx);
     final chart = jsGet(ctx, 'chart')! as Chart;
     final scale = chart.scales[axis];
-    if (scale == null) return 'none';
+    if (scale == null) return ['none'];
     final options = scale.options;
-    return '$axis ${plainValue(jsGet(options, 'min'))} to '
+    final line =
+        '$axis ${plainValue(jsGet(options, 'min'))} to '
         '${plainValue(jsGet(options, 'max'))}, was ${scale.min} to '
         '${scale.max}';
+    return [line];
   },
 };
 
@@ -865,21 +867,20 @@ void main() {
       final chart = acquireChart(_small(log));
       final title = chart.titleBlock! as Title;
       // The first update laid out the title before any scale had a range.
-      expect(jsGet(title.options, 'text'), startsWith('x undefined to'));
+      expect(jsGet(title.options, 'text'), [startsWith('x undefined to')]);
       for (final (min, max, was) in [
         (1.0, 4.0, '0.0 to 7.0'),
         (2.0, 6.0, '1.0 to 4.0'),
       ]) {
         _range('x', min, max)(chart);
         expect(chart.updateRanges(), isTrue);
-        expect(jsGet(title.options, 'text'), 'x $min to $max, was $was');
+        expect(jsGet(title.options, 'text'), ['x $min to $max, was $was']);
       }
       _reset(['x'])(chart);
       expect(chart.updateRanges(), isTrue);
-      expect(
-        jsGet(title.options, 'text'),
+      expect(jsGet(title.options, 'text'), [
         'x undefined to undefined, was 2.0 to 6.0',
-      );
+      ]);
     });
 
     testWidgets('100 range updates add no cache entry and no scope', (

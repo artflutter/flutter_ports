@@ -940,7 +940,7 @@ kinds:
     keys:
       display: bool
       align: chartAlign
-      text: string | list
+      text: textLines
       color: chartPaint
       strokeColor: chartPaint
       strokeWidth: number
@@ -1037,7 +1037,7 @@ kinds:
       font: textStyle
       position: chartAlign
       padding: edgeInsets
-      text: string
+      text: textLines
   TitleOptions:
     doc: index.d.ts:2579 TitleOptions, the scopes `plugins.title` and `plugins.subtitle`.
     keys:
@@ -1048,7 +1048,7 @@ kinds:
       font: textStyle
       fullSize: bool
       padding: edgeInsets
-      text: string | list
+      text: textLines
       weight: number  # plugin.title.js:155 and plugin.subtitle.js:42 defaults, read at core.layouts.js:334
       events: list  # read at core.controller.js:1170
   TooltipOptions:

@@ -266,7 +266,7 @@ void main() {
             'color': jsGet(title, 'color'),
             'display': false,
             'position': ChartAlign.center,
-            'text': '',
+            'text': [''],
           },
         }),
       );

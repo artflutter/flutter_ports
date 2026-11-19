@@ -7491,7 +7491,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
-        'text': 'Time',
+        'text': <String>['Time'],
         'align': ChartAlign.end,
         'color': 'purple',
         'padding': EdgeInsets.fromLTRB(0, 2, 0, 6),
@@ -7771,7 +7771,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'reverse': true,
       'title': <String, Object?>{
         'display': true,
-        'text': <Object?>['Line one', 'Line two'],
+        'text': <String>['Line one', 'Line two'],
         'align': ChartAlign.start,
       },
     },
@@ -8047,7 +8047,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': XAxis(),
       'position': ChartPosition.center,
-      'title': <String, Object?>{'display': true, 'text': 'Center'},
+      'title': <String, Object?>{
+        'display': true,
+        'text': <String>['Center'],
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -8316,7 +8319,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': XAxis(),
       'position': ScaleValuePosition('y', 40.0),
-      'title': <String, Object?>{'display': true, 'text': 'At y'},
+      'title': <String, Object?>{
+        'display': true,
+        'text': <String>['At y'],
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -11542,7 +11548,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'ticks': <String, Object?>{'mirror': true},
       'title': <String, Object?>{
         'display': true,
-        'text': 'Value',
+        'text': <String>['Value'],
         'align': ChartAlign.start,
       },
     },
@@ -11785,7 +11791,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.right,
       'title': <String, Object?>{
         'display': true,
-        'text': <Object?>['Two', 'lines'],
+        'text': <String>['Two', 'lines'],
         'align': ChartAlign.end,
       },
     },
@@ -12032,7 +12038,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': YAxis(),
       'position': ChartPosition.center,
-      'title': <String, Object?>{'display': true, 'text': 'Center'},
+      'title': <String, Object?>{
+        'display': true,
+        'text': <String>['Center'],
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -12272,7 +12281,10 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': YAxis(),
       'position': ScaleValuePosition('x', 100.0),
-      'title': <String, Object?>{'display': true, 'text': 'At x'},
+      'title': <String, Object?>{
+        'display': true,
+        'text': <String>['At x'],
+      },
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -12514,7 +12526,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
-        'text': 'title-x',
+        'text': <String>['title-x'],
         'color': '#ddd',
         'strokeWidth': 1.0,
         'strokeColor': '#333',
@@ -12795,7 +12807,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.left,
       'title': <String, Object?>{
         'display': true,
-        'text': <Object?>['title', 'y'],
+        'text': <String>['title', 'y'],
         'color': '#ddd',
         'strokeWidth': 2.0,
         'strokeColor': '#222',
@@ -13053,7 +13065,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
-        'text': 'Time',
+        'text': <String>['Time'],
         'strokeWidth': '2',
       },
     },
@@ -13332,7 +13344,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
-        'text': 'Time',
+        'text': <String>['Time'],
         'strokeWidth': 3.0,
         'strokeColor': '',
       },
@@ -13609,7 +13621,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.right,
       'title': <String, Object?>{
         'display': true,
-        'text': 'Value',
+        'text': <String>['Value'],
         'strokeWidth': 0.0,
         'strokeColor': 'red',
       },
@@ -19599,7 +19611,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'position': ChartPosition.bottom,
       'title': <String, Object?>{
         'display': true,
-        'text': 'Time',
+        'text': <String>['Time'],
         'padding': EdgeInsets.all(4),
       },
     },

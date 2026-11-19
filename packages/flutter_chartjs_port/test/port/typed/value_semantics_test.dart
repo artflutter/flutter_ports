@@ -639,7 +639,7 @@ void main() {
         (
           const AxisTitle(),
           const AxisTitle().copyWith(),
-          const AxisTitle().copyWith(text: 'T'),
+          const AxisTitle().copyWith(text: ['T']),
         ),
         (
           const ChartLegend(),
@@ -659,7 +659,7 @@ void main() {
         (
           const ChartTitle(),
           const ChartTitle().copyWith(),
-          const ChartTitle().copyWith(text: 'T'),
+          const ChartTitle().copyWith(text: ['T']),
         ),
         (
           const ChartTooltip(),

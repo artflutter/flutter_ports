@@ -157,7 +157,10 @@ void main() {
             'ticks': <String, Object?>{'padding': '3', 'mirror': true},
             'grid': <String, Object?>{'tickLength': '8', 'drawTicks': true},
             'border': const AxisBorder(width: 2, dash: <double>[4]),
-            'title': <String, Object?>{'display': true, 'text': 'T'},
+            'title': <String, Object?>{
+              'display': true,
+              'text': ['T'],
+            },
           },
         ]),
       );
@@ -170,7 +173,7 @@ void main() {
       expect(options.grid.drawTicks, isTrue);
       // The border is one object (Chart.js ADR 0141).
       expect(options.border, const AxisBorder(width: 2, dash: <double>[4]));
-      expect(options.title.text, 'T');
+      expect(options.title.text, ['T']);
       // No scope has `ticks.major` (the scale defaults hold `major: {}`):
       // the nested facade holds `undefined`, and its read throws the
       // `TypeError` of `undefined.enabled`, as upstream.

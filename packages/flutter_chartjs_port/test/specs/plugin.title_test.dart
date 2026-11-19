@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/plugin.title.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-title-text-lines, the lines of a title text.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -124,7 +125,7 @@ void main() {
           'weight': 2000,
           'font': const ChartTextStyle(fontWeight: native_ui.FontWeight.bold),
           'padding': const EdgeInsets.all(10),
-          'text': '',
+          'text': [''],
         }),
       );
     });
@@ -133,7 +134,7 @@ void main() {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
       final options = _cloneTitleDefaults();
-      options['text'] = 'My title';
+      options['text'] = ['My title'];
 
       final title = _newTitle(<String, Object?>{
         'chart': chart,
@@ -156,7 +157,7 @@ void main() {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
       final options = _cloneTitleDefaults();
-      options['text'] = 'My title';
+      options['text'] = ['My title'];
       options['position'] = ChartPosition.left;
 
       final title = _newTitle(<String, Object?>{
@@ -182,7 +183,7 @@ void main() {
         final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
         final options = _cloneTitleDefaults();
-        options['text'] = <Object?>['line1', 'line2'];
+        options['text'] = <String>['line1', 'line2'];
         options['position'] = ChartPosition.left;
         options['display'] = true;
         options['font'] = (options['font']! as TextStyle).merge(
@@ -204,7 +205,7 @@ void main() {
       final context = createMockContext();
 
       final options = _cloneTitleDefaults();
-      options['text'] = 'My title';
+      options['text'] = ['My title'];
 
       final title =
           _newTitle(<String, Object?>{
@@ -240,7 +241,7 @@ void main() {
       final context = createMockContext();
 
       final options = _cloneTitleDefaults();
-      options['text'] = 'My title';
+      options['text'] = ['My title'];
       options['position'] = ChartPosition.left;
 
       final title =

@@ -889,10 +889,13 @@ void main() {
     for (final cfg in [ca, cb]) {
       ((cfg['options']! as Map)['plugins'] as Map).addAll(<String, Object?>{
         'legend': true,
-        'title': <String, Object?>{'display': true, 'text': 'Fixed title'},
+        'title': <String, Object?>{
+          'display': true,
+          'text': ['Fixed title'],
+        },
         'subtitle': <String, Object?>{
           'display': true,
-          'text': 'Fixed subtitle',
+          'text': ['Fixed subtitle'],
         },
         'tooltip': true,
         'colors': true,

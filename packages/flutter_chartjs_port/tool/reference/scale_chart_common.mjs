@@ -976,7 +976,7 @@ export function jsonValue(v, ids = new Map()) {
     };
   }
   // A value of the Dart writer stays (row adapt-chart-position-enum).
-  if (v instanceof DartPadding || v instanceof DartClip || v instanceof DartBorder || v instanceof DartEnum || v instanceof DartScalePosition) return v;
+  if (v instanceof DartPadding || v instanceof DartClip || v instanceof DartBorder || v instanceof DartEnum || v instanceof DartStringList || v instanceof DartScalePosition) return v;
   if (v && typeof v === 'object') {
     return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, jsonValue(x, ids)]));
   }
@@ -1378,6 +1378,13 @@ const STROKE_VALUES = {
 };
 
 /** A value of a Flutter enum as a value of the Dart data. */
+/** The lines of a title `text`, a `List<String>` (row adapt-title-text-lines). */
+export class DartStringList {
+  constructor(lines) {
+    this.lines = lines;
+  }
+}
+
 export class DartEnum {
   constructor(type, name) {
     this.type = type;
@@ -1593,6 +1600,16 @@ function keyedValue(k, value, owner) {
     });
     if (code === null) throw new Error(`No FillTarget for the fill ${JSON.stringify(value)}`);
     return new DartFill(code);
+  }
+  // The `text` of a title is its lines (row adapt-title-text-lines): the
+  // chart title, the subtitle, a scale title, the legend title, and the
+  // `options` of a title box in the observations.
+  if (
+    k === 'text' &&
+    ['title', 'subtitle', 'options'].includes(owner) &&
+    (typeof value === 'string' || typeof value === 'number' || Array.isArray(value))
+  ) {
+    return new DartStringList((Array.isArray(value) ? value : [value]).map(String));
   }
   // The bar `inflateAmount` `'auto'` is `undefined` (row
   // adapt-inflate-amount-auto).
@@ -1872,6 +1889,9 @@ function dart(v, state, owner) {
   if (v instanceof DartScaleAxis) {
     state.scaleAxes = true;
     return constLeaves ? nativeConstant(() => `${v.name.toUpperCase()}Axis()`) : `${v.name.toUpperCase()}Axis()`;
+  }
+  if (v instanceof DartStringList) {
+    return `<String>[${v.lines.map((line) => dart(line, state)).join(', ')}]`;
   }
   if (v instanceof DartEnum) {
     if (v.type in STROKE_VALUES) {

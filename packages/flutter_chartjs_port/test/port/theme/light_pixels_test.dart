@@ -90,10 +90,19 @@ AnyObject _config(String type, {required bool colors, Object? theme}) {
     'options': <String, Object?>{
       'plugins': <String, Object?>{
         'colors': <String, Object?>{'enabled': colors},
-        'title': <String, Object?>{'display': true, 'text': 'Title'},
-        'subtitle': <String, Object?>{'display': true, 'text': 'Subtitle'},
+        'title': <String, Object?>{
+          'display': true,
+          'text': ['Title'],
+        },
+        'subtitle': <String, Object?>{
+          'display': true,
+          'text': ['Subtitle'],
+        },
         'legend': <String, Object?>{
-          'title': <String, Object?>{'display': true, 'text': 'Legend title'},
+          'title': <String, Object?>{
+            'display': true,
+            'text': ['Legend title'],
+          },
         },
         'tooltip': <String, Object?>{
           'callbacks': TooltipCallbacks(
@@ -105,7 +114,10 @@ AnyObject _config(String type, {required bool colors, Object? theme}) {
         'scales': <String, Object?>{
           for (final id in ['x', 'y'])
             id: <String, Object?>{
-              'title': <String, Object?>{'display': true, 'text': '$id axis'},
+              'title': <String, Object?>{
+                'display': true,
+                'text': ['$id axis'],
+              },
             },
         },
       if (radial)

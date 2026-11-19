@@ -113,7 +113,7 @@ CategoryAxis apexCategoryAxis({String? title, bool horizontal = false}) =>
 /// `xaxis.title` and `yaxis.title`: 12 px, semibold.
 AxisTitle apexAxisTitle(String text) => AxisTitle(
   display: true,
-  text: text,
+  text: [text],
   color: const .solid(Apex.text),
   font: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
   padding: const EdgeInsets.only(top: 4),

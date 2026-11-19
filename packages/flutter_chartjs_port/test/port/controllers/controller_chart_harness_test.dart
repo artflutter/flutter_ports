@@ -75,7 +75,10 @@ Map<String, Object?> _lineConfig() => <String, Object?>{
   },
   'options': <String, Object?>{
     'plugins': <String, Object?>{
-      'title': <String, Object?>{'display': true, 'text': 'T'},
+      'title': <String, Object?>{
+        'display': true,
+        'text': ['T'],
+      },
     },
   },
 };

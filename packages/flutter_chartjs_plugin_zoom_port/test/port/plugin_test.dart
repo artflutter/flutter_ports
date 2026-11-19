@@ -159,7 +159,7 @@ Map<String, Object?> _rangeConfig(
           final chart = (ctx! as JsObjectFace).jsRead('chart')! as Chart;
           final level = 'Zoom level ${chart.getZoomLevel()}';
           titles.add(level);
-          return level;
+          return [level];
         },
       },
       // An explicit false: the run with the option in the defaults keeps

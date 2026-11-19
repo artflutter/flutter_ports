@@ -495,9 +495,11 @@ _axisCommon = {
     },
   ),
   'title': (
-    (a) => a.copyWith(title: const AxisTitle(text: 'T')),
+    (a) => a.copyWith(title: const AxisTitle(text: ['T'])),
     {
-      'title': {'text': 'T'},
+      'title': {
+        'text': ['T'],
+      },
     },
   ),
   'extra': (
@@ -698,7 +700,12 @@ const Map<String, (AxisGrid, Map<String, Object?>)> _grid = {
 /// The cases of the parameters of [AxisTitle] and the twin `title` Map.
 const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
   'display': (AxisTitle(display: true), {'display': true}),
-  'text': (AxisTitle(text: 'Month'), {'text': 'Month'}),
+  'text': (
+    AxisTitle(text: ['Month']),
+    {
+      'text': ['Month'],
+    },
+  ),
   'color': (AxisTitle(color: ChartPaint.solid(_red)), {'color': _redValue}),
   'font': (AxisTitle(font: _font), {'font': _fontValue}),
   'align': (AxisTitle(align: .end), {'align': ChartAlign.end}),
@@ -1007,7 +1014,12 @@ const Map<String, (ChartLegend, Map<String, Object?>)> _legend = {
 /// The cases of the parameters of [ChartTitle] and the twin Map.
 const Map<String, (ChartTitle, Map<String, Object?>)> _title = {
   'display': (ChartTitle(display: true), {'display': true}),
-  'text': (ChartTitle(text: 'Votes'), {'text': 'Votes'}),
+  'text': (
+    ChartTitle(text: ['Votes']),
+    {
+      'text': ['Votes'],
+    },
+  ),
   'color': (ChartTitle(color: ChartPaint.solid(_blue)), {'color': _blueValue}),
   'font': (ChartTitle(font: _font), {'font': _fontValue}),
   'align': (ChartTitle(align: .start), {'align': ChartAlign.start}),
@@ -2073,11 +2085,14 @@ void main() {
     test('each axis class with all its parameters, in parameter order', () {
       const ticks = AxisTicks(display: true, color: ChartPaint.solid(_red));
       const grid = AxisGrid(display: false);
-      const title = AxisTitle(display: true, text: 'T');
+      const title = AxisTitle(display: true, text: ['T']);
       const tail = <String, Object?>{
         'ticks': {'display': true, 'color': _redValue},
         'grid': {'display': false},
-        'title': {'display': true, 'text': 'T'},
+        'title': {
+          'display': true,
+          'text': ['T'],
+        },
         'grace': ValueGrace(1),
       };
       const head = <String, Object?>{
@@ -2402,7 +2417,7 @@ void main() {
           ),
           title: const ChartTitle(
             display: true,
-            text: 'T',
+            text: ['T'],
             color: ChartPaint.solid(_red),
             font: _font,
             align: .end,
@@ -2492,7 +2507,7 @@ void main() {
           },
           'title': {
             'display': true,
-            'text': 'T',
+            'text': ['T'],
             'color': _redValue,
             'font': _fontValue,
             'align': ChartAlign.end,

@@ -490,8 +490,17 @@ extension type const ScaleTitleOptions(Object? raw) {
   /// `adapt-chart-align-enum`).
   ChartAlign? get align => ChartAlign.of(readOption(raw, OptionKey.align));
 
-  /// index.d.ts:3315 `text: string | string[]`.
-  Object? get text => readOption(raw, OptionKey.text);
+  /// index.d.ts:3315 `text: string | string[]`: its lines (row
+  /// `adapt-title-text-lines`). Another value stops a debug build.
+  List<String> get text {
+    final value = readOption(raw, OptionKey.text);
+    if (value is List<String>) return value;
+    assert(
+      value == null || value is Undefined,
+      'A title text takes a List<String> of its lines, not $value.',
+    );
+    return const <String>[];
+  }
 
   /// index.d.ts:3317 `color: Color`: the paint of the option value, or
   /// [ChartPaint.unchanged] without one.

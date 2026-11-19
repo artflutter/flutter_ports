@@ -362,7 +362,7 @@ void main() {
         expect(chart.getDatasetMeta(0).clip.disabled, isTrue);
         final y = chart.scales['y']!;
         expect((y.min, y.max), (0, 1));
-        expect(y.options['display'], false);
+        expect(y.options['display'], ScaleDisplay.off);
       } finally {
         chart.destroy();
       }

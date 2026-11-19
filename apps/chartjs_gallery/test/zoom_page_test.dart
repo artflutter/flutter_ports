@@ -108,9 +108,10 @@ SegmentToggles _toggles(WidgetTester tester) =>
 
 /// The resolved text of the title of [chart]: the options of the chart
 /// call the scriptable `text` with the chart context.
+/// The one line of the title text (row adapt-title-text-lines).
 Object? _titleText(Chart chart) {
   final plugins = chart.options['plugins']! as JsObjectFace;
-  return (plugins['title']! as JsObjectFace)['text'];
+  return ((plugins['title']! as JsObjectFace)['text']! as List<String>).single;
 }
 
 /// The rect of the host lies inside the view of [size].

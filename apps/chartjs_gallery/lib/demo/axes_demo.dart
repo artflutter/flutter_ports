@@ -367,7 +367,7 @@ class AxesDemoState() extends State<AxesDemo> {
     'border': AxisBorder(display: _borderDisplay),
     'title': <String, Object?>{
       'display': _titleDisplay,
-      'text': '$axis: $type',
+      'text': ['$axis: $type'],
     },
   };
 

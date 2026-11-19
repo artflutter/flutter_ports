@@ -327,6 +327,9 @@ Object? clone(Object? source) {
     // Array.prototype.map(clone). clone(v) is v for each number of a typed
     // list, so a copy is the map result.
     if (array is TypedData) return array.sublist(0);
+    // DIVERGES(chartjs): adapt-title-text-lines, a list of the lines of a
+    // text keeps its type: clone(v) is v for each String.
+    if (array is List<String>) return List<String>.of(array);
     return <Object?>[for (final value in array) clone(value)];
   }
 

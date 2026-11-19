@@ -45157,7 +45157,10 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'title': <String, Object?>{'display': true, 'text': 'x'},
+            'title': <String, Object?>{
+              'display': true,
+              'text': <String>['x'],
+            },
           },
           'y': <String, Object?>{
             'title': <String, Object?>{'display': true},

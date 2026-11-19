@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/core.scale.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-title-text-lines, the lines of a title text.
 // DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
@@ -205,7 +206,7 @@ void main() {
         jasmineEquals(<String, Object?>{
           'color': defaults['color'],
           'display': false,
-          'text': '',
+          'text': [''],
           'padding': const EdgeInsets.only(top: 4, bottom: 4),
         }),
       );
@@ -1086,7 +1087,7 @@ void main() {
                 'type': 'linear',
                 'title': <String, Object?>{
                   'display': true,
-                  'text': 'title-x',
+                  'text': ['title-x'],
                   'color': const ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
@@ -1100,7 +1101,7 @@ void main() {
                 'type': 'linear',
                 'title': <String, Object?>{
                   'display': true,
-                  'text': 'title-y',
+                  'text': ['title-y'],
                   'color': const ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
@@ -1125,7 +1126,7 @@ void main() {
                 'type': 'linear',
                 'title': <String, Object?>{
                   'display': true,
-                  'text': 'title-x',
+                  'text': ['title-x'],
                   'color': const ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
@@ -1135,7 +1136,7 @@ void main() {
                 'type': 'linear',
                 'title': <String, Object?>{
                   'display': true,
-                  'text': 'title-y',
+                  'text': ['title-y'],
                   'color': const ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),

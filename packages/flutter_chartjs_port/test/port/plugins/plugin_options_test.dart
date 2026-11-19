@@ -88,22 +88,33 @@ void main() {
     });
 
     test('the lines of a text', () {
-      expect(const TitleOptions(<String, Object?>{'text': 'a'}).text, ['a']);
       expect(
         const TitleOptions(<String, Object?>{
-          'text': <Object?>['a', 'b'],
+          'text': ['a'],
+        }).text,
+        ['a'],
+      );
+      expect(
+        const TitleOptions(<String, Object?>{
+          'text': ['a', 'b'],
         }).text,
         ['a', 'b'],
       );
       expect(
         const LegendTitleOptions(<String, Object?>{
-          'text': <Object?>['a', 1.0],
+          'text': ['a'],
         }).text,
-        ['a', '1'],
+        ['a'],
       );
       expect(
-        const TitleOptions(<String, Object?>{'text': <Object?>[]}).text,
+        const TitleOptions(<String, Object?>{'text': <String>[]}).text,
         isEmpty,
+      );
+      // A text takes its lines (row adapt-title-text-lines): a String stops
+      // a debug build.
+      expect(
+        () => const TitleOptions(<String, Object?>{'text': 'a'}).text,
+        throwsA(isA<AssertionError>()),
       );
     });
 

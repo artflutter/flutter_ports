@@ -66,18 +66,33 @@ Map<String, Object?> _config() => <String, Object?>{
     'animation': false,
     'plugins': <String, Object?>{
       'colors': <String, Object?>{'enabled': true},
-      'title': <String, Object?>{'display': true, 'text': 'Title'},
-      'subtitle': <String, Object?>{'display': true, 'text': 'Subtitle'},
+      'title': <String, Object?>{
+        'display': true,
+        'text': ['Title'],
+      },
+      'subtitle': <String, Object?>{
+        'display': true,
+        'text': ['Subtitle'],
+      },
       'legend': <String, Object?>{
-        'title': <String, Object?>{'display': true, 'text': 'Legend'},
+        'title': <String, Object?>{
+          'display': true,
+          'text': ['Legend'],
+        },
       },
     },
     'scales': <String, Object?>{
       'x': <String, Object?>{
-        'title': <String, Object?>{'display': true, 'text': 'Label'},
+        'title': <String, Object?>{
+          'display': true,
+          'text': ['Label'],
+        },
       },
       'y': <String, Object?>{
-        'title': <String, Object?>{'display': true, 'text': 'Value'},
+        'title': <String, Object?>{
+          'display': true,
+          'text': ['Value'],
+        },
       },
     },
   },

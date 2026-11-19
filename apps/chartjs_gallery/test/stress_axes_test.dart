@@ -363,8 +363,8 @@ void main() {
     // Chart.js ADR 0031 section 3.
     await _tap(tester, 'stress.mode.chart');
     expect(_chart(tester).config.type, 'line');
-    expect(_scale(tester, 'x').options['display'], false);
-    expect(_scale(tester, 'y').options['display'], false);
+    expect(_scale(tester, 'x').options['display'], ScaleDisplay.off);
+    expect(_scale(tester, 'y').options['display'], ScaleDisplay.off);
     expect((_scale(tester, 'y').min, _scale(tester, 'y').max), (0, 1));
     expect(tester.takeException(), isNull);
   });

@@ -85,7 +85,10 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'title': <String, Object?>{'display': true, 'text': 'T'},
+          'title': <String, Object?>{
+            'display': true,
+            'text': <String>['T'],
+          },
           'colors': <String, Object?>{'enabled': false},
         },
       },

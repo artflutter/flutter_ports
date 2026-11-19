@@ -40,7 +40,7 @@ void main() {
           '"drawTicks":true,"tickLength":8,"tickWidth":"<fn>",'
           '"tickColor":"<fn>","offset":false},'
           '"border":{"display":true,"dash":[],"dashOffset":0,"width":1},'
-          '"title":{"display":false,"text":"",'
+          '"title":{"display":false,"text":[""],'
           '"padding":{"top":4,"right":0,"bottom":4,"left":0}},'
           '"ticks":{"minRotation":0,"maxRotation":50,"mirror":false,'
           '"textStrokeWidth":0,"textStrokeColor":"","padding":3,'

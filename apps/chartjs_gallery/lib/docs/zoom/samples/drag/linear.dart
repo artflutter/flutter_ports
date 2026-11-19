@@ -80,7 +80,7 @@ ZoomDocsSample zoomDragLinearSample(ZoomDocsLog log) {
         'title': <String, Object?>{
           'display': true,
           'position': ChartPosition.bottom,
-          'text': () => 'Zoom: ${zoomStatus()}',
+          'text': () => ['Zoom: ${zoomStatus()}'],
         },
       },
     },

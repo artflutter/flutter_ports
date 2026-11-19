@@ -67,7 +67,7 @@ final ChartConfig _config = ChartConfig(
   padding: const EdgeInsets.all(10),
   title: const ChartTitle(
     display: true,
-    text: 'Inflation - Consumer price',
+    text: ['Inflation - Consumer price'],
     color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),

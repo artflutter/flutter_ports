@@ -101,7 +101,8 @@ final subTitle = Plugin<TitleOptions>(
     ..fullSize = true
     ..padding = EdgeInsets.zero
     ..position = ChartPosition.top
-    ..text = ''
+    // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
+    ..text = const ['']
     // by default greater than legend (1000) and smaller than title (2000)
     ..weight = 1500.0,
   // plugin.subtitle.js:45-47.

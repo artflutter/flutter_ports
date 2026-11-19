@@ -90,7 +90,8 @@ void applyScaleDefaults(Defaults defaults) {
           // display property
           ..display = false
           // actual label
-          ..text = ''
+          // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
+          ..text = const ['']
           // top/bottom padding
           ..padding = const EdgeInsets.symmetric(vertical: 4))
         // label settings

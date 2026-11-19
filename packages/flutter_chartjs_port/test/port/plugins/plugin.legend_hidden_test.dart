@@ -3024,7 +3024,7 @@ void main() {
               'display': true,
               'text': (Object? ctx) {
                 into.add(_contexts(jsGet(ctx, 'chart')! as Chart));
-                return 'title';
+                return ['title'];
               },
             },
             'legend': <String, Object?>{
@@ -3540,7 +3540,7 @@ void main() {
                         if (armed) {
                           log.add(_fillStyles(jsGet(ctx, 'chart')! as Chart));
                         }
-                        return 'title';
+                        return ['title'];
                       },
                     },
                     'legend': <String, Object?>{

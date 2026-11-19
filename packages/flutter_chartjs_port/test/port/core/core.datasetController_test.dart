@@ -570,6 +570,9 @@ final Map<Object?, Object?> _functions = {
 /// A new value from a spec value: `{$fn: name}` gives a function,
 /// `{$undefined: true}` gives [undefined], and the Lists and Maps are new.
 Object? _materialize(Object? value) => switch (value) {
+  // The lines of a title text keep their type (row
+  // adapt-title-text-lines).
+  final List<String> lines => List<String>.of(lines),
   final List<Object?> list => <Object?>[
     for (final item in list) _materialize(item),
   ],

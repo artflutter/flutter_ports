@@ -140,7 +140,7 @@ const AxisGrid _grid = AxisGrid(
 );
 const AxisTitle _axisTitle = AxisTitle(
   display: true,
-  text: 'T',
+  text: ['T'],
   color: ChartPaint.solid(_red),
   font: _font,
   align: .center,
@@ -299,7 +299,7 @@ List<ChartConfig> _configs() {
       ),
       title: const ChartTitle(
         display: true,
-        text: 'T',
+        text: ['T'],
         color: ChartPaint.solid(_red),
         font: _font,
         align: .center,
@@ -309,7 +309,7 @@ List<ChartConfig> _configs() {
       ),
       subtitle: const ChartTitle(
         display: true,
-        text: 'S',
+        text: ['S'],
         color: ChartPaint.solid(_red),
         font: _font,
         align: .center,

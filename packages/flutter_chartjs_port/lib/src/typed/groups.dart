@@ -114,7 +114,7 @@ final class const ChartLegend({
   final TextDirection? textDirection,
 
   /// The Chart.js legend options that have no parameter, for example
-  /// `{'title': {'display': true, 'text': 'Votes'}}`.
+  /// `{'title': {'display': true, 'text': ['Votes']}}`.
   ///
   /// The entries go into the legend Map last: an entry wins over a
   /// parameter with the same key. A Map value merges into the Map of the
@@ -238,9 +238,9 @@ final class const ChartTitle({
   /// Set it to `true` to show the [text].
   final bool? display,
 
-  /// The text of the title: `text`. The lines of a title with more lines
-  /// go through [extra] as a List.
-  final String? text,
+  /// The lines of the title: `text` (row `adapt-title-text-lines`), for
+  /// example `['Sales']` or `['Sales', '2026']`.
+  final List<String>? text,
 
   /// The color of the text: `color`.
   final ChartPaint? color,
@@ -276,7 +276,7 @@ final class const ChartTitle({
   /// that is `null` keeps its value.
   ChartTitle copyWith({
     bool? display,
-    String? text,
+    List<String>? text,
     ChartPaint? color,
     TextStyle? font,
     ChartAlign? align,
@@ -298,7 +298,7 @@ final class const ChartTitle({
 
   List<TypedProperty> get _props => [
     ('display', display),
-    ('text', text),
+    ('text', byItems(text)),
     ('color', color),
     ('font', font),
     ('align', align),

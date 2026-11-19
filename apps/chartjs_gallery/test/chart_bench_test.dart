@@ -1162,7 +1162,7 @@ void main() {
             if (name == 'stack') {
               expect(
                 jsGet(chart.scales['y']!.options, 'stacked'),
-                true,
+                StackMode.on,
                 reason: reason,
               );
             }
@@ -1240,10 +1240,10 @@ void main() {
             expect(chart.boxes, contains(block));
             expect(jsGet(block.options, 'display'), title, reason: reason);
             if (title) {
-              expect(jsGet(block.options, 'text'), 'Chart.js Line Chart');
+              expect(jsGet(block.options, 'text'), ['Chart.js Line Chart']);
             }
             // The scales of the docs blocks are visible.
-            expect(chart.scales['x']!.options['display'], true);
+            expect(chart.scales['x']!.options['display'], ScaleDisplay.on);
             expect(chart.chartArea!.top, greaterThan(0), reason: reason);
           },
         );

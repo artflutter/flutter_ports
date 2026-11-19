@@ -73,6 +73,6 @@ ChartConfig _config(FillTarget fill, String name) => ChartConfig(
     ),
   ],
   filler: const ChartFiller(propagate: false),
-  title: ChartTitle(display: true, text: 'Fill: $name'),
+  title: ChartTitle(display: true, text: ['Fill: $name']),
   interaction: const ChartInteraction(intersect: false),
 );

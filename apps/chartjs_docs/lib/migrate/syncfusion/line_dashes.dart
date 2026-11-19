@@ -76,7 +76,7 @@ final ChartConfig _config = ChartConfig(
   padding: const EdgeInsets.all(10),
   title: const ChartTitle(
     display: true,
-    text: 'Capital investment as a share of exports',
+    text: ['Capital investment as a share of exports'],
     color: ChartPaint.solid(_text),
     font: TextStyle(fontSize: 18, fontWeight: FontWeight.normal),
   ),

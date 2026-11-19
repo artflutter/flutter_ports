@@ -207,11 +207,17 @@ AnyObject _formConfig() => <String, Object?>{
     'animation': false,
     'plugins': <String, Object?>{
       'colors': <String, Object?>{'enabled': true},
-      'title': <String, Object?>{'display': true, 'text': 'user'},
+      'title': <String, Object?>{
+        'display': true,
+        'text': ['user'],
+      },
     },
     'scales': <String, Object?>{
       'x': <String, Object?>{
-        'title': <String, Object?>{'display': true, 'text': 'x'},
+        'title': <String, Object?>{
+          'display': true,
+          'text': ['x'],
+        },
       },
     },
   },
@@ -230,7 +236,7 @@ String _formState(Chart chart) {
       'x.min=${jsGet(x, 'min')} '
       'ds0.borderColor=${_rgbaText(borderColor)} '
       'visible1=${chart.isDatasetVisible(1)} '
-      'title.text=${jsGet(title, 'text')}';
+      'title.text=${(jsGet(title, 'text')! as List<Object?>).join()}';
 }
 
 const String _formCreated =
@@ -244,7 +250,7 @@ const String _formEdited =
 /// the title text and `x.min` of [options] imperatively.
 void _formEdits(Chart chart, AnyObject options) {
   chart.hide(1);
-  jsSet(jsGet(jsGet(options, 'plugins'), 'title'), 'text', 'edited');
+  jsSet(jsGet(jsGet(options, 'plugins'), 'title'), 'text', ['edited']);
   // After `initOptions`, `scales` is the typed scale scope of the chart
   // (Chart.js ADR 0054 §5): the edit goes through its face.
   jsSet(jsGet(jsGet(options, 'scales'), 'x'), 'min', 'b');
@@ -256,6 +262,7 @@ Object? _copy(Object? v) => switch (v) {
   final Map<String, Object?> m => <String, Object?>{
     for (final e in m.entries) e.key: _copy(e.value),
   },
+  final List<String> l => List<String>.of(l),
   final List<Object?> l => [for (final i in l) _copy(i)],
   _ => v,
 };

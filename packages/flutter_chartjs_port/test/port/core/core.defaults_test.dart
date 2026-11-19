@@ -213,7 +213,7 @@ void main() {
           '"tickWidth":"<fn>","tickColor":"<fn>","offset":false,'
           '"color":"rgba(0,0,0,0.1)"},"border":{"display":true,"dash":[],'
           '"dashOffset":0,"width":1,"color":"rgba(0,0,0,0.1)"},'
-          '"title":{"display":false,"text":"",'
+          '"title":{"display":false,"text":[""],'
           '"padding":{"top":4,"right":0,"bottom":4,"left":0},'
           '"color":"#666"},"ticks":{"minRotation":0,"maxRotation":50,'
           '"mirror":false,"textStrokeWidth":0,"textStrokeColor":"",'

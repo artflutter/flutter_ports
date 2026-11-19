@@ -109,7 +109,7 @@ class _Sample5State() extends State<Sample5> {
           border: Fl.noBorder,
           title: AxisTitle(
             display: true,
-            text: 'count',
+            text: ['count'],
             color: ChartPaint.solid(Colors.white),
           ),
           ticks: AxisTicks(display: false),
@@ -120,7 +120,7 @@ class _Sample5State() extends State<Sample5> {
           border: Fl.noBorder,
           title: AxisTitle(
             display: true,
-            text: 'count',
+            text: ['count'],
             color: ChartPaint.solid(Colors.white),
           ),
           ticks: AxisTicks(display: false),
@@ -131,7 +131,7 @@ class _Sample5State() extends State<Sample5> {
           border: Fl.noBorder,
           title: AxisTitle(
             display: true,
-            text: 'Wall clock',
+            text: ['Wall clock'],
             color: ChartPaint.solid(Colors.white),
           ),
           ticks: AxisTicks(display: false),

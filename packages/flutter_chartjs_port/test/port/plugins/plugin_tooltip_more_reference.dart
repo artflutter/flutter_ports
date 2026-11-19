@@ -11797,7 +11797,10 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'title': <String, Object?>{'display': true, 'text': 'Chart title'},
+          'title': <String, Object?>{
+            'display': true,
+            'text': <String>['Chart title'],
+          },
           'tooltip': <String, Object?>{
             'mode': IndexInteractionMode(),
             'intersect': false,

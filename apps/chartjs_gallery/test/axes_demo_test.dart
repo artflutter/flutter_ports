@@ -554,8 +554,8 @@ void main() {
     // A title takes space from the chart area.
     await _tap(tester, 'axes.title.display');
     expect(jsGet(x.options['title'], 'display'), true);
-    expect(jsGet(x.options['title'], 'text'), 'x: linear');
-    expect(jsGet(_scale(chart, 'y').options['title'], 'text'), 'y: linear');
+    expect(jsGet(x.options['title'], 'text'), ['x: linear']);
+    expect(jsGet(_scale(chart, 'y').options['title'], 'text'), ['y: linear']);
     expect(chart.chartArea!.height, lessThan(height));
     expect(tester.takeException(), isNull);
   });

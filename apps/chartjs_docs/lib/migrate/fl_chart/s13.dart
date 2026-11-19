@@ -142,7 +142,7 @@ class _Sample13State() extends State<Sample13> {
           border: Fl.noBorder,
           title: const AxisTitle(
             display: true,
-            text: 'Day of month',
+            text: ['Day of month'],
             color: ChartPaint.solid(Fl.green),
             font: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
           ),

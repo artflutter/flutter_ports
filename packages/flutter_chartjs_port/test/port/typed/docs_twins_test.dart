@@ -719,7 +719,7 @@ Map<String, Object?> _areaRaw(FillTarget fill, String name) =>
 /// `(ctx) => 'Fill: ' + ctx.chart.data.datasets[0].fill`
 /// (`line-boundaries.md:106`), as in the gallery: a `FillTarget` has no
 /// text, so the title takes the [name] of the fill.
-Object _areaTitleText(String name) => 'Fill: $name';
+List<String> _areaTitleText(String name) => ['Fill: $name'];
 
 /// The typed Area config at the fill [fill], with the constant title
 /// [title].
@@ -738,7 +738,7 @@ ChartConfig _areaTyped(FillTarget fill, String title) => ChartConfig(
     ),
   ],
   filler: const ChartFiller(propagate: false),
-  title: ChartTitle(display: true, text: title),
+  title: ChartTitle(display: true, text: [title]),
   interaction: const ChartInteraction(intersect: false),
 );
 
@@ -904,7 +904,7 @@ ChartConfig _barTyped() => ChartConfig(
       ticks: AxisTicks(stepSize: 5, padding: 6, callback: _units),
       title: AxisTitle(
         display: true,
-        text: 'Units',
+        text: ['Units'],
         color: ChartPaint.solid(_navy),
         font: TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
         padding: EdgeInsets.symmetric(vertical: 4),
@@ -923,7 +923,7 @@ ChartConfig _barTyped() => ChartConfig(
   ),
   title: const ChartTitle(
     display: true,
-    text: 'Sales by quarter',
+    text: ['Sales by quarter'],
     align: .start,
     font: TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
     padding: EdgeInsets.only(top: 4, bottom: 8),
@@ -1029,7 +1029,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
         },
         'title': <String, Object?>{
           'display': true,
-          'text': 'Units',
+          'text': ['Units'],
           'color': const ChartPaint.solid(
             native_ui.Color.fromRGBO(27, 58, 92, 1),
           ),
@@ -1063,7 +1063,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
       },
       'title': <String, Object?>{
         'display': true,
-        'text': 'Sales by quarter',
+        'text': ['Sales by quarter'],
         'align': ChartAlign.start,
         'font': const ChartTextStyle(
           fontSize: 16,
@@ -1154,7 +1154,7 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
   ),
   subtitle: ChartTitle(
     display: true,
-    text: 'Steps in thousands',
+    text: ['Steps in thousands'],
     color: ChartPaint.solid(_navy),
     position: .bottom,
   ),
@@ -1252,7 +1252,7 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
     'plugins': <String, Object?>{
       'subtitle': <String, Object?>{
         'display': true,
-        'text': 'Steps in thousands',
+        'text': ['Steps in thousands'],
         'color': const ChartPaint.solid(
           native_ui.Color.fromRGBO(27, 58, 92, 1),
         ),
@@ -1315,7 +1315,7 @@ ChartConfig _scatterTypeTyped() => ChartConfig(
     'y': const LogarithmicAxis(
       min: 1,
       max: 100,
-      title: AxisTitle(display: true, text: 'ppm'),
+      title: AxisTitle(display: true, text: ['ppm']),
     ),
   },
 );
@@ -1377,7 +1377,10 @@ Map<String, Object?> _scatterTypeRaw() => <String, Object?>{
         'type': 'logarithmic',
         'min': 1,
         'max': 100,
-        'title': <String, Object?>{'display': true, 'text': 'ppm'},
+        'title': <String, Object?>{
+          'display': true,
+          'text': ['ppm'],
+        },
       },
     },
   },
@@ -1423,7 +1426,7 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
     ),
     'y': LinearAxis(
       reverse: true,
-      title: AxisTitle(display: true, text: 'Score', align: .end),
+      title: AxisTitle(display: true, text: ['Score'], align: .end),
     ),
   },
   legend: const ChartLegend(display: false),
@@ -1481,7 +1484,7 @@ Map<String, Object?> _bubbleTypeRaw() => <String, Object?>{
         'reverse': true,
         'title': <String, Object?>{
           'display': true,
-          'text': 'Score',
+          'text': ['Score'],
           'align': ChartAlign.end,
         },
       },
@@ -1630,7 +1633,7 @@ ChartConfig _doughnutTypeTyped() => const ChartConfig(
   ],
   title: ChartTitle(
     display: true,
-    text: 'Tasks',
+    text: ['Tasks'],
     color: ChartPaint.solid(_navy),
     position: .bottom,
     fullSize: false,
@@ -1697,7 +1700,7 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
     'plugins': <String, Object?>{
       'title': <String, Object?>{
         'display': true,
-        'text': 'Tasks',
+        'text': ['Tasks'],
         'color': const ChartPaint.solid(
           native_ui.Color.fromRGBO(27, 58, 92, 1),
         ),

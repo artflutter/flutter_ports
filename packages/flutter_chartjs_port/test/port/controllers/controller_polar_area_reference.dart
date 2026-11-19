@@ -201,7 +201,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
               },
               'title': <String, Object?>{
                 'display': false,
-                'text': '',
+                'text': <String>[''],
                 'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                 'color': '#666',
               },
@@ -967,7 +967,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                   },
                   'title': <String, Object?>{
                     'display': false,
-                    'text': '',
+                    'text': <String>[''],
                     'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
@@ -1848,7 +1848,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                   },
                   'title': <String, Object?>{
                     'display': false,
-                    'text': '',
+                    'text': <String>[''],
                     'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
@@ -2724,7 +2724,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                   },
                   'title': <String, Object?>{
                     'display': false,
-                    'text': '',
+                    'text': <String>[''],
                     'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
@@ -3600,7 +3600,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                   },
                   'title': <String, Object?>{
                     'display': false,
-                    'text': '',
+                    'text': <String>[''],
                     'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
@@ -4531,7 +4531,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                   },
                   'title': <String, Object?>{
                     'display': false,
-                    'text': '',
+                    'text': <String>[''],
                     'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
@@ -5517,7 +5517,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                   },
                   'title': <String, Object?>{
                     'display': false,
-                    'text': '',
+                    'text': <String>[''],
                     'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },
@@ -6503,7 +6503,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                   },
                   'title': <String, Object?>{
                     'display': false,
-                    'text': '',
+                    'text': <String>[''],
                     'padding': EdgeInsets.fromLTRB(0, 4, 0, 4),
                     'color': '#666',
                   },

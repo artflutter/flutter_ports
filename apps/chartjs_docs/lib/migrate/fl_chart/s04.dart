@@ -48,7 +48,7 @@ final ChartConfig _config = fills(
         border: Fl.noBorder,
         title: AxisTitle(
           display: true,
-          text: '2019',
+          text: ['2019'],
           color: ChartPaint.solid(Fl.yellow),
           font: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
         ),
@@ -65,7 +65,7 @@ final ChartConfig _config = fills(
         border: flGridDash,
         title: const AxisTitle(
           display: true,
-          text: 'Value',
+          text: ['Value'],
           color: ChartPaint.solid(Fl.white70),
         ),
         ticks: AxisTicks(

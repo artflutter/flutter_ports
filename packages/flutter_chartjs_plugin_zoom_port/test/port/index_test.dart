@@ -68,7 +68,9 @@ Widget _view({
             'y': LinearAxis(min: 0, max: 100),
           },
           maintainAspectRatio: false,
-          title: title == null ? null : ChartTitle(display: true, text: title),
+          title: title == null
+              ? null
+              : ChartTitle(display: true, text: [title]),
           animation: ChartAnimation.none,
           pluginOptions: [_wheelZoom()],
         ),

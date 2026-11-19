@@ -35371,7 +35371,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           'legend': <String, Object?>{
             'title': <String, Object?>{
               'display': true,
-              'text': 'Legend title',
+              'text': <String>['Legend title'],
               'position': ChartAlign.start,
             },
           },
@@ -36879,7 +36879,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
             'position': ChartPosition.left,
             'title': <String, Object?>{
               'display': true,
-              'text': 'Title',
+              'text': <String>['Title'],
               'position': ChartAlign.end,
               'padding': EdgeInsets.all(6),
             },

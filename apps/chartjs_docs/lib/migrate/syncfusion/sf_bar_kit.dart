@@ -32,7 +32,7 @@ const EdgeInsets sfPadding = EdgeInsets.fromLTRB(4, 10, 10, 5);
 /// `ChartTitle(text: ...)`: the title over the plot area.
 ChartTitle sfTitle(String text) => ChartTitle(
   display: true,
-  text: text,
+  text: [text],
   color: const .solid(Sf.text),
   font: const TextStyle(
     fontSize: 18,
@@ -45,7 +45,7 @@ ChartTitle sfTitle(String text) => ChartTitle(
 /// `AxisTitle(text: ...)`.
 AxisTitle sfAxisTitle(String text) => AxisTitle(
   display: true,
-  text: text,
+  text: [text],
   color: const .solid(Sf.text),
   font: const TextStyle(
     fontSize: 15,

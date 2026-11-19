@@ -1845,7 +1845,8 @@ final legend = Plugin<LegendOptions>(
       ..display = false
       // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
       ..position = ChartAlign.center
-      ..text = ''),
+      // DIVERGES(chartjs): adapt-title-text-lines, the lines of `''`.
+      ..text = const ['']),
   // plugin.legend.js:714-719. A typed scope of the kind `Descriptors`.
   descriptors: DescriptorsScope()
     ..descScriptable = _scriptableDescriptor

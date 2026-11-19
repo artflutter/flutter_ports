@@ -371,6 +371,10 @@ function scaleEnum(k, x, owner) {
       return `ScaleValuePosition(${dart(id)}, ${dart(x[id])})`;
     }
   }
+  // The `text` of a scale title is its lines (row adapt-title-text-lines).
+  if (k === 'text' && owner === 'title' && (typeof x === 'string' || Array.isArray(x))) {
+    return `<String>[${(Array.isArray(x) ? x : [x]).map((line) => dart(String(line))).join(', ')}]`;
+  }
   // The `display` of a scale and of the point labels (row
   // adapt-scale-display-enum). The `display` of another object stays a bool.
   if (

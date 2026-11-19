@@ -639,7 +639,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'fullSize': true,
             'padding': EdgeInsets.all(10),
             'position': ChartPosition.top,
-            'text': '',
+            'text': <String>[''],
             'weight': 2000.0,
             'color': '#666',
           },
@@ -647,7 +647,11 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.title.text', 'Later'],
+          'do': <Object?>[
+            'setOption',
+            'plugins.title.text',
+            <String>['Later'],
+          ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
               27.34765625,
@@ -1203,7 +1207,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'plugins.title': <String, Object?>{
               'lines': 1.0,
               'options': <String, Object?>{
-                'text': 'Later',
+                'text': <String>['Later'],
                 'align': ChartAlign.center,
                 'display': false,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -1769,7 +1773,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
             'plugins.title': <String, Object?>{
               'lines': 1.0,
               'options': <String, Object?>{
-                'text': 'Later',
+                'text': <String>['Later'],
                 'display': true,
                 'align': ChartAlign.center,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -2292,7 +2296,10 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{'display': true, 'text': 'Chart title'},
+          'title': <String, Object?>{
+            'display': true,
+            'text': <String>['Chart title'],
+          },
           'tooltip': false,
         },
       },
@@ -2836,7 +2843,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Chart title',
+            'text': <String>['Chart title'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
@@ -3406,7 +3413,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': false,
-                'text': 'Chart title',
+                'text': <String>['Chart title'],
                 'align': ChartAlign.center,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
@@ -3967,7 +3974,10 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'do': <Object?>[
             'setOption',
             'plugins.title',
-            <String, Object?>{'display': true, 'text': 'Back'},
+            <String, Object?>{
+              'display': true,
+              'text': <String>['Back'],
+            },
           ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
@@ -4521,7 +4531,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Back',
+                'text': <String>['Back'],
                 'align': ChartAlign.center,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
@@ -5045,7 +5055,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Bottom title',
+            'text': <String>['Bottom title'],
             'position': ChartPosition.bottom,
           },
           'tooltip': false,
@@ -5583,7 +5593,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Bottom title',
+            'text': <String>['Bottom title'],
             'position': ChartPosition.bottom,
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -6106,7 +6116,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Left title',
+            'text': <String>['Left title'],
             'position': ChartPosition.left,
             'align': ChartAlign.start,
           },
@@ -6663,7 +6673,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Left title',
+            'text': <String>['Left title'],
             'position': ChartPosition.left,
             'align': ChartAlign.start,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -7186,7 +7196,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Left title',
+            'text': <String>['Left title'],
             'position': ChartPosition.left,
             'align': ChartAlign.center,
           },
@@ -7743,7 +7753,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Left title',
+            'text': <String>['Left title'],
             'position': ChartPosition.left,
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -8313,7 +8323,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Left title',
+                'text': <String>['Left title'],
                 'position': ChartPosition.left,
                 'align': ChartAlign.end,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -8837,7 +8847,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Right title',
+            'text': <String>['Right title'],
             'position': ChartPosition.right,
             'align': ChartAlign.start,
           },
@@ -9385,7 +9395,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Right title',
+            'text': <String>['Right title'],
             'position': ChartPosition.right,
             'align': ChartAlign.start,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -9908,7 +9918,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Right title',
+            'text': <String>['Right title'],
             'position': ChartPosition.right,
             'align': ChartAlign.end,
           },
@@ -10456,7 +10466,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Right title',
+            'text': <String>['Right title'],
             'position': ChartPosition.right,
             'align': ChartAlign.end,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -10979,7 +10989,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Aligned',
+            'text': <String>['Aligned'],
             'align': ChartAlign.start,
           },
           'tooltip': false,
@@ -11525,7 +11535,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Aligned',
+            'text': <String>['Aligned'],
             'align': ChartAlign.start,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
@@ -12091,7 +12101,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Aligned',
+                'text': <String>['Aligned'],
                 'align': ChartAlign.end,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
@@ -12615,7 +12625,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Aligned',
+            'text': <String>['Aligned'],
             'align': ChartAlign.end,
           },
           'tooltip': false,
@@ -13161,7 +13171,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Aligned',
+            'text': <String>['Aligned'],
             'align': ChartAlign.end,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
@@ -13727,7 +13737,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Aligned',
+                'text': <String>['Aligned'],
                 'align': ChartAlign.start,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
@@ -14251,7 +14261,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Not full size',
+            'text': <String>['Not full size'],
             'fullSize': false,
           },
           'tooltip': false,
@@ -14797,7 +14807,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Not full size',
+            'text': <String>['Not full size'],
             'fullSize': false,
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -15371,7 +15381,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Not full size',
+                'text': <String>['Not full size'],
                 'fullSize': false,
                 'position': ChartPosition.left,
                 'align': ChartAlign.center,
@@ -15895,7 +15905,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Padded',
+            'text': <String>['Padded'],
             'padding': EdgeInsets.all(25),
           },
           'tooltip': false,
@@ -16428,7 +16438,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Padded',
+            'text': <String>['Padded'],
             'padding': EdgeInsets.all(25),
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -16951,7 +16961,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Padded',
+            'text': <String>['Padded'],
             'padding': EdgeInsets.fromLTRB(30, 4, 0, 16),
           },
           'tooltip': false,
@@ -17497,7 +17507,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Padded',
+            'text': <String>['Padded'],
             'padding': EdgeInsets.fromLTRB(30, 4, 0, 16),
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
@@ -18071,7 +18081,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Padded',
+                'text': <String>['Padded'],
                 'padding': EdgeInsets.fromLTRB(30, 4, 0, 16),
                 'position': ChartPosition.left,
                 'align': ChartAlign.center,
@@ -18595,7 +18605,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': <Object?>['Line one', 'Line two', 'Line three'],
+            'text': <String>['Line one', 'Line two', 'Line three'],
             'font': ChartTextStyle(height: 1.5),
           },
           'tooltip': false,
@@ -19125,7 +19135,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 3.0,
           'options': <String, Object?>{
             'display': true,
-            'text': <Object?>['Line one', 'Line two', 'Line three'],
+            'text': <String>['Line one', 'Line two', 'Line three'],
             'font': ChartTextStyle(fontWeight: FontWeight.bold, height: 1.5),
             'align': ChartAlign.center,
             'fullSize': true,
@@ -19692,7 +19702,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 3.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': <Object?>['Line one', 'Line two', 'Line three'],
+                'text': <String>['Line one', 'Line two', 'Line three'],
                 'font': ChartTextStyle(
                   fontWeight: FontWeight.bold,
                   height: 1.5,
@@ -20221,7 +20231,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'subtitle': false,
           'title': <String, Object?>{
             'display': true,
-            'text': 'Styled',
+            'text': <String>['Styled'],
             'color': 'rgb(255, 0, 0)',
             'font': ChartTextStyle(
               fontFamily: 'Arial',
@@ -20769,7 +20779,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Styled',
+            'text': <String>['Styled'],
             'color': 'rgb(255, 0, 0)',
             'font': ChartTextStyle(
               fontFamily: 'Arial',
@@ -21840,7 +21850,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Chart of type line',
+            'text': <String>['Chart of type line'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
@@ -22361,7 +22371,10 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'filler': false,
           'legend': false,
           'subtitle': false,
-          'title': <String, Object?>{'display': true, 'text': 0.0},
+          'title': <String, Object?>{
+            'display': true,
+            'text': <String>['0'],
+          },
           'tooltip': false,
         },
       },
@@ -22905,7 +22918,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 0.0,
+            'text': <String>['0'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
@@ -23421,7 +23434,10 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'title': <String, Object?>{'display': true, 'text': 'Chart title'},
+          'title': <String, Object?>{
+            'display': true,
+            'text': <String>['Chart title'],
+          },
         },
       },
     },
@@ -23975,7 +23991,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
           'lines': 1.0,
           'options': <String, Object?>{
             'display': true,
-            'text': 'Chart title',
+            'text': <String>['Chart title'],
             'align': ChartAlign.center,
             'font': ChartTextStyle(fontWeight: FontWeight.bold),
             'fullSize': true,
@@ -24574,7 +24590,7 @@ const List<PluginTitleReferenceCase> pluginTitleReference = [
               'lines': 1.0,
               'options': <String, Object?>{
                 'display': true,
-                'text': 'Chart title',
+                'text': <String>['Chart title'],
                 'align': ChartAlign.center,
                 'font': ChartTextStyle(fontWeight: FontWeight.bold),
                 'fullSize': true,
