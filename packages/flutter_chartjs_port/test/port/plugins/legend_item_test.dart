@@ -6,6 +6,8 @@ import 'dart:ui' show Color, StrokeCap, StrokeJoin, TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -80,46 +82,36 @@ void main() {
         final filtered = <LegendItem>[];
         final compared = <LegendItem>[];
         LegendItem? clicked;
-        final chart = acquireChart({
-          'type': 'bar',
-          'data': {
-            'labels': ['x'],
-            'datasets': [
-              {
-                'label': 'first',
-                'data': [1],
-              },
-              {
-                'label': 'second',
-                'data': [2],
-              },
-            ],
-          },
-          'options': {
-            'animation': false,
-            'plugins': {
-              'legend': {
-                'reverse': reverse,
-                'labels': {
-                  'generateLabels': (Chart chart) => [a, b],
-                  'filter': (LegendItem item, Object data) {
-                    filtered.add(item);
-                    return true;
-                  },
-                  'sort': (LegendItem x, LegendItem y, Object data) {
-                    compared.addAll([x, y]);
-                    return x.datasetIndex!.compareTo(y.datasetIndex!);
-                  },
+        final config = ChartConfig(
+          type: ChartKind.bar,
+          labels: const ['x'],
+          datasets: const [
+            BarDataset(label: 'first', data: [1]),
+            BarDataset(label: 'second', data: [2]),
+          ],
+          animation: ChartAnimation.none,
+          legend: ChartLegend(
+            reverse: reverse,
+            onClick: (event, item, legend) {
+              clicked = item;
+              item.hidden = true;
+            },
+            extra: {
+              'labels': {
+                'generateLabels': (Chart chart) => [a, b],
+                'filter': (LegendItem item, Object data) {
+                  filtered.add(item);
+                  return true;
                 },
-                'onClick':
-                    (ChartEvent event, LegendItem item, LegendElement legend) {
-                      clicked = item;
-                      item.hidden = true;
-                    },
+                'sort': (LegendItem x, LegendItem y, Object data) {
+                  compared.addAll([x, y]);
+                  return x.datasetIndex!.compareTo(y.datasetIndex!);
+                },
               },
             },
-          },
-        });
+          ),
+        );
+        final chart = acquireChartRoot(ChartConfigLowering(config).lower());
         expect(
           chart.legend!.legendItems,
           reverse ? [same(b), same(a)] : [same(a), same(b)],
@@ -149,31 +141,27 @@ void main() {
   testWidgets('an invalid item is rejected even with a hidden legend', (
     tester,
   ) async {
-    expect(
-      () => acquireChart({
-        'type': 'bar',
-        'data': {
-          'labels': ['x'],
-          'datasets': [
-            {
-              'data': [1],
-            },
-          ],
-        },
-        'options': {
-          'animation': false,
-          'plugins': {
-            'legend': {
-              'display': false,
-              'labels': {
-                'generateLabels': (Chart chart) => [
-                  {'text': 'map'},
-                ],
-              },
-            },
+    final config = ChartConfig(
+      type: ChartKind.bar,
+      labels: const ['x'],
+      datasets: const [
+        BarDataset(data: [1]),
+      ],
+      animation: ChartAnimation.none,
+      legend: ChartLegend(
+        display: false,
+        // Keep the invalid callback in extra to test runtime rejection.
+        extra: {
+          'labels': {
+            'generateLabels': (Chart chart) => [
+              {'text': 'map'},
+            ],
           },
         },
-      }),
+      ),
+    );
+    expect(
+      () => acquireChartRoot(ChartConfigLowering(config).lower()),
       // Chart.js ADR 0130: a generator of Map items is not a
       // LegendLabelsGenerator.
       throwsA(isA<AssertionError>()),

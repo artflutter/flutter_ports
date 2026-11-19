@@ -5,8 +5,8 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show ChartConfig, ChartKind, DecimationAlgorithm, LineDataset, LinearAxis;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -15,7 +15,8 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
     show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -60,7 +61,7 @@ ChartOptionsScope? _localTheme() => compileChartTheme(
 
 /// The three runs: the name and the compiled theme (Dart `null` for no
 /// theme).
-final List<(String, Object? Function())> _runs = [
+final List<(String, ChartOptionsScope? Function())> _runs = [
   ('no theme', () => null),
   ('the light preset', compileLightTheme),
   ('a local theme', _localTheme),
@@ -85,7 +86,7 @@ typedef _State = ({
 /// The state of the dataset 0 of [chart], with [input] the input List.
 _State _state(Chart chart, List<Object?> input) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-  final dataset = datasets[0]! as AnyObject;
+  final dataset = datasets[0]!;
   final data = jsGet(dataset, 'data')! as List<Object?>;
   return (
     items: [for (final item in data) (jsGet(item, 'x'), jsGet(item, 'y'))],
@@ -101,29 +102,38 @@ _State _state(Chart chart, List<Object?> input) {
 /// state after the first draw and after `chart.update()`.
 Future<(_State, _State)> _run(
   WidgetTester tester,
-  AnyObject algorithm,
-  Object? theme,
-) async {
+  DecimationAlgorithm algorithm,
+  ChartOptionsScope? theme, {
+  int? samples,
+}) async {
   final input = _input();
-  final chart = acquireChart(<String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{'label': 'd', 'data': input, 'pointRadius': 0},
-      ],
-    },
-    'options': <String, Object?>{
+  final config = ChartConfig(
+    type: ChartKind.line,
+    datasets: [
+      LineDataset(
+        label: 'd',
+        pointRadius: 0,
+        // Min-max copies map fields when it replaces x with a bin average.
+        // Keep the original point inputs and their List identity for this test.
+        extra: {'data': input},
+      ),
+    ],
+    scales: const {'x': LinearAxis()},
+    extra: {
       'parsing': false,
-      'scales': <String, Object?>{
-        'x': <String, Object?>{'type': 'linear'},
-      },
-      'plugins': <String, Object?>{
-        'colors': <String, Object?>{'enabled': true},
-        'decimation': <String, Object?>{'enabled': true, ...algorithm},
+      'plugins': {
+        'colors': const {'enabled': true},
+        'decimation': {
+          'enabled': true,
+          'algorithm': algorithm,
+          'samples': ?samples,
+        },
       },
     },
-    themeConfigKey: ?theme,
-  });
+  );
+  final root = ChartConfigLowering(config).lower();
+  if (theme != null) root.dollarTheme = theme;
+  final chart = acquireChartRoot(root);
   await tester.pump();
   final first = _state(chart, input);
   chart.update();
@@ -133,18 +143,9 @@ Future<(_State, _State)> _run(
 }
 
 void main() {
-  for (final (name, algorithm) in <(String, AnyObject)>[
-    (
-      'min-max',
-      <String, Object?>{'algorithm': const MinMaxDecimationAlgorithm()},
-    ),
-    (
-      'lttb',
-      <String, Object?>{
-        'algorithm': const LttbDecimationAlgorithm(),
-        'samples': 50,
-      },
-    ),
+  for (final (name, algorithm, samples) in const [
+    ('min-max', MinMaxDecimationAlgorithm(), null),
+    ('lttb', LttbDecimationAlgorithm(), 50),
   ]) {
     group(name, () {
       testWidgets('a theme leaves data, _data and the elements unchanged', (
@@ -152,7 +153,12 @@ void main() {
       ) async {
         final results = <String, (_State, _State)>{};
         for (final (run, theme) in _runs) {
-          results[run] = await _run(tester, algorithm, theme());
+          results[run] = await _run(
+            tester,
+            algorithm,
+            theme(),
+            samples: samples,
+          );
         }
         final (base, baseUpdated) = results['no theme']!;
         // The plugin decimated the data.

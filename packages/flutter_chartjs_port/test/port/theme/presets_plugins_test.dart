@@ -5,13 +5,17 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show BarDataset, ChartConfig, ChartKind;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show toFont;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show ChartOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
@@ -92,20 +96,19 @@ Map<String, Object?> _resolve(Chart chart) => {
 };
 
 /// A bar chart with the compiled theme [theme].
-Chart _chart(Object? theme) => acquireChart(<String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'd',
-        'data': <Object?>[1.0, 2.0],
-      },
-    ],
-  },
-  'options': <String, Object?>{},
-  themeConfigKey: ?theme,
-});
+Chart _chart(ChartOptionsScope? theme) {
+  final root = ChartConfigLowering(
+    const ChartConfig(
+      type: ChartKind.bar,
+      labels: ['a', 'b'],
+      datasets: [
+        BarDataset(label: 'd', data: [1.0, 2.0]),
+      ],
+    ),
+  ).lower();
+  if (theme != null) root.dollarTheme = theme;
+  return acquireChartRoot(root);
+}
 
 void main() {
   test('the plugin keys have 7 fonts', () {

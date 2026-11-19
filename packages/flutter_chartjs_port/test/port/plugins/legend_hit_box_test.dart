@@ -3,9 +3,9 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -172,31 +172,17 @@ void main() {
     tester,
   ) async {
     LegendItem? clicked;
-    final chart = acquireChart({
-      'type': 'bar',
-      'data': {
-        'labels': ['x'],
-        'datasets': [
-          {
-            'label': 'one',
-            'data': [1],
-          },
-          {
-            'label': 'two',
-            'data': [2],
-          },
-        ],
-      },
-      'options': {
-        'animation': false,
-        'plugins': {
-          'legend': {
-            'onClick': (ChartEvent e, LegendItem item, LegendElement legend) =>
-                clicked = item,
-          },
-        },
-      },
-    });
+    final config = ChartConfig(
+      type: ChartKind.bar,
+      labels: const ['x'],
+      datasets: const [
+        BarDataset(label: 'one', data: [1]),
+        BarDataset(label: 'two', data: [2]),
+      ],
+      animation: ChartAnimation.none,
+      legend: ChartLegend(onClick: (event, item, legend) => clicked = item),
+    );
+    final chart = acquireChartRoot(ChartConfigLowering(config).lower());
     final legend = chart.legend! as Legend;
     final first = _CustomHit(legend.legendHitBoxes.first, accepts: false);
     final second = _CustomHit(legend.legendHitBoxes[1], accepts: true);

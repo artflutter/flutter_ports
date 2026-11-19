@@ -6,8 +6,15 @@ import 'dart:ui' show Color;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        AxisGrid,
+        CategoryAxis,
+        ChartConfig,
+        ChartKind,
+        LineDataset,
+        RadarDataset,
+        RadialLinearAxis;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
@@ -16,9 +23,11 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ScaleOptionsScope;
+    show ChartOptionsScope, ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/theme/compile.dart'
     show compileChartTheme;
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -36,24 +45,20 @@ const Color _blue = Color(0xFF0000FF);
 const Color _defaultBorderColor = Color.fromRGBO(0, 0, 0, 0.1);
 
 /// A line chart with the x scale [x] and the theme [theme].
-Chart _cartesian(Map<String, Object?> x, {Object? theme}) =>
-    acquireChart(<String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1, 2, 3, 4],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'category', ...x},
-        },
-      },
-      themeConfigKey: ?theme,
-    });
+Chart _cartesian(CategoryAxis x, {ChartOptionsScope? theme}) {
+  final root = ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.line,
+      labels: const ['a', 'b', 'c', 'd'],
+      datasets: const [
+        LineDataset(data: [1, 2, 3, 4]),
+      ],
+      scales: {'x': x},
+    ),
+  ).lower();
+  if (theme != null) root.dollarTheme = theme;
+  return acquireChartRoot(root);
+}
 
 /// The calls of the canvas of the x scale of [chart] in one draw.
 List<Map<String, Object?>> _xCalls(Chart chart) {
@@ -75,9 +80,9 @@ void main() {
       tester,
     ) async {
       // The grid draws no line: the only stroke of the x scale is the border.
-      final chart = _cartesian(<String, Object?>{
-        'grid': <String, Object?>{'display': false},
-      });
+      final chart = _cartesian(
+        const CategoryAxis(grid: AxisGrid(display: false)),
+      );
       expect(
         chart.scales['x']!.options.border,
         const AxisBorder(display: true, dash: [], dashOffset: 0, width: 1),
@@ -92,9 +97,10 @@ void main() {
     });
 
     testWidgets('the theme gives the border color', (tester) async {
-      final chart = _cartesian(<String, Object?>{
-        'grid': <String, Object?>{'display': false},
-      }, theme: compileChartTheme(borderColor: _blue));
+      final chart = _cartesian(
+        const CategoryAxis(grid: AxisGrid(display: false)),
+        theme: compileChartTheme(borderColor: _blue),
+      );
       expect(
         chart.scales['x']!.options.border,
         const AxisBorder(
@@ -111,10 +117,13 @@ void main() {
     testWidgets('a user border merges with the defaults field by field', (
       tester,
     ) async {
-      final chart = _cartesian(<String, Object?>{
-        'grid': <String, Object?>{'display': false},
-        'border': const AxisBorder(width: 3, color: ChartPaint.solid(_red)),
-      }, theme: compileChartTheme(borderColor: _blue));
+      final chart = _cartesian(
+        const CategoryAxis(
+          grid: AxisGrid(display: false),
+          border: AxisBorder(width: 3, color: ChartPaint.solid(_red)),
+        ),
+        theme: compileChartTheme(borderColor: _blue),
+      );
       expect(
         chart.scales['x']!.options.border,
         const AxisBorder(
@@ -135,10 +144,9 @@ void main() {
         AxisBorder(display: false),
         AxisBorder(width: 0),
       ]) {
-        final chart = _cartesian(<String, Object?>{
-          'grid': <String, Object?>{'display': false},
-          'border': border,
-        });
+        final chart = _cartesian(
+          CategoryAxis(grid: const AxisGrid(display: false), border: border),
+        );
         expect(_args(_xCalls(chart), 'stroke'), isEmpty, reason: '$border');
       }
     });
@@ -158,10 +166,13 @@ void main() {
       }
 
       // No tick mark: each dash of the x scale is the dash of a grid line.
-      final chart = _cartesian(<String, Object?>{
-        'border': border,
-        'grid': <String, Object?>{'drawTicks': false},
-      });
+      final chart = _cartesian(
+        CategoryAxis(
+          grid: const AxisGrid(drawTicks: false),
+          // The border parameter accepts a value; this case needs a callback.
+          extra: {'border': border},
+        ),
+      );
       // The first draw computes the grid line items (core.scale.js:1460):
       // the ticks a, b, c and d. The grid line of each tick takes the dash
       // of its context.
@@ -178,34 +189,32 @@ void main() {
   });
 
   group('the radial linear scale', () {
-    Chart radar(Map<String, Object?> r, {Object? theme}) =>
-        acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'labels': <Object?>['a', 'b', 'c'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{'r': r},
-          },
-          themeConfigKey: ?theme,
-        });
+    Chart radar(RadialLinearAxis r, {ChartOptionsScope? theme}) {
+      final root = ChartConfigLowering(
+        ChartConfig(
+          type: ChartKind.radar,
+          labels: const ['a', 'b', 'c'],
+          datasets: const [
+            RadarDataset(data: [1, 2, 3]),
+          ],
+          scales: {'r': r},
+        ),
+      ).lower();
+      if (theme != null) root.dollarTheme = theme;
+      return acquireChartRoot(root);
+    }
 
     testWidgets('never gets the AxisBorder of the defaults or the theme', (
       tester,
     ) async {
       const radialDefault = RadialAxisBorder(dash: [], dashOffset: 0);
       expect(
-        radar(<String, Object?>{}).scales['r']!.options.border,
+        radar(const RadialLinearAxis()).scales['r']!.options.border,
         radialDefault,
       );
       expect(
         radar(
-          <String, Object?>{},
+          const RadialLinearAxis(),
           theme: compileChartTheme(borderColor: _blue),
         ).scales['r']!.options.border,
         radialDefault,
@@ -214,7 +223,7 @@ void main() {
       (defaults.lookup(OptionKey.scale)!.raw! as ScaleOptionsScope).border =
           const AxisBorder(width: 7);
       expect(
-        radar(<String, Object?>{}).scales['r']!.options.border,
+        radar(const RadialLinearAxis()).scales['r']!.options.border,
         radialDefault,
       );
     });
@@ -222,9 +231,9 @@ void main() {
     testWidgets('a user border merges with the radial defaults', (
       tester,
     ) async {
-      final chart = radar(<String, Object?>{
-        'border': const RadialAxisBorder(dash: [4, 2]),
-      });
+      final chart = radar(
+        const RadialLinearAxis(border: RadialAxisBorder(dash: [4, 2])),
+      );
       expect(
         chart.scales['r']!.options.border,
         const RadialAxisBorder(dash: [4, 2], dashOffset: 0),
