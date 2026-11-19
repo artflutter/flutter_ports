@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
-import '../support/jasmine.dart';
 
 void main() {
   group('zoom with wheel', () {
@@ -38,7 +37,8 @@ void main() {
               '${pressed ? 'with' : 'without'} key ${key.name}', (
             tester,
           ) async {
-            final rejectedSpy = createSpy('wheelFailed');
+            // `createSpy('wheelFailed')`: the contexts of the calls.
+            final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
             chart = acquireChart(<String, Object?>{
               'type': 'line',
               'data': data(),
@@ -52,7 +52,7 @@ void main() {
                     zoom: ZoomOptions(
                       wheel: WheelOptions(enabled: true, modifierKey: key),
                       mode: Mode.x,
-                      onZoomRejected: rejectedSpy.call,
+                      onZoomRejected: rejectedCalls.add,
                     ),
                   ),
                 },
@@ -81,13 +81,13 @@ void main() {
             );
 
             if (pressed) {
-              expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
-              expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
-              expect(rejectedSpy, isNot(toHaveBeenCalled()));
+              expect(scaleX.options.min, isNot(equals(oldMinX)));
+              expect(scaleX.options.max, isNot(equals(oldMaxX)));
+              expect(rejectedCalls, isEmpty);
             } else {
-              expect(scaleX.options.min, jasmineEquals(oldMinX));
-              expect(scaleX.options.max, jasmineEquals(oldMaxX));
-              expect(rejectedSpy, toHaveBeenCalled());
+              expect(scaleX.options.min, equals(oldMinX));
+              expect(scaleX.options.max, equals(oldMaxX));
+              expect(rejectedCalls, isNotEmpty);
             }
           });
         }
@@ -145,10 +145,10 @@ void main() {
             deltaY: wheelEv.deltaY,
           );
 
-          expect(scaleX.options.min, jasmineEquals(oldMinX));
-          expect(scaleX.options.max, jasmineEquals(oldMaxX));
-          expect(scaleY.options.min, isNot(jasmineEquals(oldMinY)));
-          expect(scaleY.options.max, isNot(jasmineEquals(oldMaxY)));
+          expect(scaleX.options.min, equals(oldMinX));
+          expect(scaleX.options.max, equals(oldMaxX));
+          expect(scaleY.options.min, isNot(equals(oldMinY)));
+          expect(scaleY.options.max, isNot(equals(oldMaxY)));
         });
       });
 
@@ -179,10 +179,10 @@ void main() {
             deltaY: wheelEv.deltaY,
           );
 
-          expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
-          expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
-          expect(scaleY.options.min, jasmineEquals(oldMinY));
-          expect(scaleY.options.max, jasmineEquals(oldMaxY));
+          expect(scaleX.options.min, isNot(equals(oldMinX)));
+          expect(scaleX.options.max, isNot(equals(oldMaxX)));
+          expect(scaleY.options.min, equals(oldMinY));
+          expect(scaleY.options.max, equals(oldMaxY));
         });
       });
     });
@@ -236,10 +236,10 @@ void main() {
             deltaY: wheelEv.deltaY,
           );
 
-          expect(scaleX.options.min, jasmineEquals(oldMinX));
-          expect(scaleX.options.max, jasmineEquals(oldMaxX));
-          expect(scaleY.options.min, isNot(jasmineEquals(oldMinY)));
-          expect(scaleY.options.max, isNot(jasmineEquals(oldMaxY)));
+          expect(scaleX.options.min, equals(oldMinX));
+          expect(scaleX.options.max, equals(oldMaxX));
+          expect(scaleY.options.min, isNot(equals(oldMinY)));
+          expect(scaleY.options.max, isNot(equals(oldMaxY)));
         });
       });
 
@@ -268,10 +268,10 @@ void main() {
             deltaY: wheelEv.deltaY,
           );
 
-          expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
-          expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
-          expect(scaleY.options.min, isNot(jasmineEquals(oldMinY)));
-          expect(scaleY.options.max, isNot(jasmineEquals(oldMaxY)));
+          expect(scaleX.options.min, isNot(equals(oldMinX)));
+          expect(scaleX.options.max, isNot(equals(oldMaxX)));
+          expect(scaleY.options.min, isNot(equals(oldMinY)));
+          expect(scaleY.options.max, isNot(equals(oldMaxY)));
         });
       });
     });
@@ -314,8 +314,8 @@ void main() {
 
         final zoomOut = (x: zoomIn.x, y: zoomIn.y, deltaY: 100);
 
-        expect(scaleY.min, toBe(1));
-        expect(scaleY.max, toBe(10000));
+        expect(scaleY.min, equals(1));
+        expect(scaleY.max, equals(10000));
 
         triggerWheelEvent(
           chart,
@@ -324,8 +324,8 @@ void main() {
           deltaY: zoomIn.deltaY,
         );
 
-        expect(scaleY.min, toBeCloseTo(1.6, 1));
-        expect(scaleY.max, toBeCloseTo(6310, -1));
+        expect(scaleY.min, closeTo(1.6, 0.05));
+        expect(scaleY.max, closeTo(6310, 5));
 
         triggerWheelEvent(
           chart,
@@ -334,8 +334,8 @@ void main() {
           deltaY: zoomIn.deltaY,
         );
 
-        expect(scaleY.min, toBeCloseTo(2.4, 1));
-        expect(scaleY.max, toBeCloseTo(4170, -1));
+        expect(scaleY.min, closeTo(2.4, 0.05));
+        expect(scaleY.max, closeTo(4170, 5));
 
         triggerWheelEvent(
           chart,
@@ -350,13 +350,13 @@ void main() {
           deltaY: zoomOut.deltaY,
         );
 
-        expect(scaleY.min, toBe(1));
-        expect(scaleY.max, toBe(10000));
+        expect(scaleY.min, equals(1));
+        expect(scaleY.max, equals(10000));
 
         chart.resetZoom();
 
-        expect(scaleY.min, toBe(1));
-        expect(scaleY.max, toBe(10000));
+        expect(scaleY.min, equals(1));
+        expect(scaleY.max, equals(10000));
 
         triggerWheelEvent(
           chart,
@@ -365,8 +365,8 @@ void main() {
           deltaY: zoomOut.deltaY,
         );
 
-        expect(scaleY.min, toBeCloseTo(0.6, 1));
-        expect(scaleY.max, toBeCloseTo(16700, -2));
+        expect(scaleY.min, closeTo(0.6, 0.05));
+        expect(scaleY.max, closeTo(16700, 50));
 
         triggerWheelEvent(
           chart,
@@ -375,8 +375,8 @@ void main() {
           deltaY: zoomIn.deltaY,
         );
 
-        expect(scaleY.min, toBeCloseTo(1));
-        expect(scaleY.max, toBeCloseTo(10000));
+        expect(scaleY.min, closeTo(1, 0.005));
+        expect(scaleY.max, closeTo(10000, 0.005));
       });
     });
 
@@ -414,10 +414,10 @@ void main() {
         y: scaleY.getPixelForValue(1.7),
       ));
 
-      expect(scaleX.options.min, toBeCloseTo(1.5));
-      expect(scaleX.options.max, toBeCloseTo(2.1));
-      expect(scaleY.options.min, toBeCloseTo(1.1));
-      expect(scaleY.options.max, toBeCloseTo(1.7));
+      expect(scaleX.options.min, closeTo(1.5, 0.005));
+      expect(scaleX.options.max, closeTo(2.1, 0.005));
+      expect(scaleY.options.min, closeTo(1.1, 0.005));
+      expect(scaleY.options.max, closeTo(1.7, 0.005));
     });
 
     group('events', () {
@@ -425,8 +425,10 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final startSpy = createSpy('start');
-          final zoomSpy = createSpy('zoom');
+          // `createSpy('start')`: the contexts of the calls.
+          final startCalls = <ZoomStartContext<NativeEvent>>[];
+          // `createSpy('zoom')`: the contexts of the calls.
+          final zoomCalls = <ZoomTriggerContext>[];
           final chart = acquireChart(<String, Object?>{
             'type': 'scatter',
             'data': data(),
@@ -437,10 +439,10 @@ void main() {
                     wheel: const WheelOptions(enabled: true),
                     mode: Mode.xy,
                     onZoomStart: (context) {
-                      startSpy.call(context);
+                      startCalls.add(context);
                       return true;
                     },
-                    onZoom: zoomSpy.call,
+                    onZoom: zoomCalls.add,
                     onZoomComplete: (_) => done(),
                   ),
                 ),
@@ -460,17 +462,18 @@ void main() {
             deltaY: wheelEv.deltaY,
           );
 
-          expect(startSpy, toHaveBeenCalled());
+          expect(startCalls, isNotEmpty);
           expect(
-            zoomSpy,
-            toHaveBeenCalledWith([(chart: chart, trigger: ZoomTrigger.wheel)]),
+            zoomCalls,
+            contains((chart: chart, trigger: ZoomTrigger.wheel)),
           );
-          expect(chart.scales['x']!.min, isNot(toBe(1)));
+          expect(chart.scales['x']!.min, isNot(equals(1)));
         });
       });
 
       testWidgets('should detect configuration change', (tester) async {
-        final startSpy = createSpy('started');
+        // `createSpy('started')`: the contexts of the calls.
+        final startCalls = <ZoomStartContext<NativeEvent>>[];
         final chart = acquireChart(<String, Object?>{
           'type': 'scatter',
           'data': data(),
@@ -481,7 +484,7 @@ void main() {
                   wheel: const WheelOptions(enabled: false),
                   mode: Mode.xy,
                   onZoomStart: (context) {
-                    startSpy.call(context);
+                    startCalls.add(context);
                     return true;
                   },
                 ),
@@ -500,8 +503,8 @@ void main() {
           y: wheelEv.y,
           deltaY: wheelEv.deltaY,
         );
-        expect(startSpy, isNot(toHaveBeenCalled()));
-        expect(chart.scales['x']!.min, toBe(1));
+        expect(startCalls, isEmpty);
+        expect(chart.scales['x']!.min, equals(1));
 
         // chart.options.plugins.zoom.zoom.wheel.enabled = true: the options
         // are one immutable object (Chart.js ADR 0148), so the write gives
@@ -522,14 +525,15 @@ void main() {
           y: wheelEv.y,
           deltaY: wheelEv.deltaY,
         );
-        expect(startSpy, toHaveBeenCalled());
-        expect(chart.scales['x']!.min, isNot(toBe(1)));
+        expect(startCalls, isNotEmpty);
+        expect(chart.scales['x']!.min, isNot(equals(1)));
       });
 
       testWidgets('should call onZoomRejected when onZoomStart returns false', (
         tester,
       ) async {
-        final rejectSpy = createSpy('rejected');
+        // `createSpy('rejected')`: the contexts of the calls.
+        final rejectCalls = <ZoomEventContext<NativeEvent>>[];
         final chart = acquireChart(<String, Object?>{
           'type': 'scatter',
           'data': data(),
@@ -540,7 +544,7 @@ void main() {
                   wheel: const WheelOptions(enabled: true),
                   mode: Mode.xy,
                   onZoomStart: (_) => false,
-                  onZoomRejected: rejectSpy.call,
+                  onZoomRejected: rejectCalls.add,
                 ),
               ),
             },
@@ -557,8 +561,8 @@ void main() {
           y: wheelEv.y,
           deltaY: wheelEv.deltaY,
         );
-        expect(rejectSpy, toHaveBeenCalled());
-        expect(chart.scales['x']!.min, toBe(1));
+        expect(rejectCalls, isNotEmpty);
+        expect(chart.scales['x']!.min, equals(1));
       });
     });
   });

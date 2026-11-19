@@ -17,14 +17,6 @@ import 'package:test/test.dart';
 // createMockContext of chartjs_test_utils. A recorded call is a Map with the
 // keys 'name' and 'args'.
 
-/// Jasmine `toBeCloseTo(expected, precision)`: within half a unit in the
-/// `precision`-th decimal place. Jasmine's default precision is 2.
-///
-/// Jasmine 3.99 rounds the difference to `precision + 1` places before it
-/// compares, so it also accepts differences up to about 1.1 times this bound.
-Matcher _toBeCloseTo(double expected, [int precision = 2]) =>
-    closeTo(expected, math.pow(10.0, -precision) / 2);
-
 /// The number `args[index]` of the recorded [call].
 double _arg(ContextCall call, int index) =>
     (call['args']! as List<Object?>)[index]! as double;
@@ -181,8 +173,8 @@ void main() {
       });
 
       final pos = arc.tooltipPosition();
-      expect(pos.x, _toBeCloseTo(0.5));
-      expect(pos.y, _toBeCloseTo(0.5));
+      expect(pos.x, closeTo(0.5, 0.005));
+      expect(pos.y, closeTo(0.5, 0.005));
     });
 
     test('should get the center', () {
@@ -202,8 +194,8 @@ void main() {
       });
 
       final center = arc.getCenterPoint();
-      expect(center.x, _toBeCloseTo(0.5, 6));
-      expect(center.y, _toBeCloseTo(0.5, 6));
+      expect(center.x, closeTo(0.5, 5e-7));
+      expect(center.y, closeTo(0.5, 5e-7));
     });
 
     test('should get the center with offset and spacing', () {
@@ -223,8 +215,8 @@ void main() {
       });
 
       final center = arc.getCenterPoint();
-      expect(center.x, _toBeCloseTo(7.57, 1));
-      expect(center.y, _toBeCloseTo(7.57, 1));
+      expect(center.x, closeTo(7.57, 5e-2));
+      expect(center.y, closeTo(7.57, 5e-2));
     });
 
     test('should get the center of full circle before and after draw', () {
@@ -244,15 +236,15 @@ void main() {
       });
 
       var center = arc.getCenterPoint();
-      expect(center.x, _toBeCloseTo(1, 6));
-      expect(center.y, _toBeCloseTo(2, 6));
+      expect(center.x, closeTo(1, 5e-7));
+      expect(center.y, closeTo(2, 5e-7));
 
       final ctx = createMockContext();
       arc.draw(ctx);
 
       center = arc.getCenterPoint();
-      expect(center.x, _toBeCloseTo(1, 6));
-      expect(center.y, _toBeCloseTo(2, 6));
+      expect(center.x, closeTo(1, 5e-7));
+      expect(center.y, closeTo(2, 5e-7));
     });
 
     test('should not draw when radius < 0', () {
@@ -410,7 +402,7 @@ void main() {
 
         expect(
           angularStart - proportionalStart,
-          _toBeCloseTo(angularSpacingOffset - proportionalSpacingOffset, 6),
+          closeTo(angularSpacingOffset - proportionalSpacingOffset, 5e-7),
         );
       },
     );
@@ -573,7 +565,7 @@ void main() {
         expect(radii.length, 2);
         expect(
           (_arg(arcCalls[0], 4) - _arg(arcCalls[0], 3)).abs(),
-          _toBeCloseTo(math.pi * 2, 3),
+          closeTo(math.pi * 2, 5e-4),
         );
       },
     );

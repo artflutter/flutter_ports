@@ -9,14 +9,14 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/jasmine.dart';
+import '../../support/draw_recorder.dart';
 import '../canvas/path2d_record.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
 
 // The self-test of the controller harness (controller_chart_harness.dart,
 // tool/reference/controller_chart_common.mjs, Chart.js ADR 0030) and of the
-// spies of test/support/jasmine.dart. Most charts use the cartesian test
+// recorders of test/support/draw_recorder.dart. Most charts use the cartesian test
 // controller `scaleTest` of scale_chart_harness.dart: a point for each
 // value, with the category scale on x and the linear scale on y. The cases
 // of the plugin options (`hits: false`, `observeExtra` and the steps
@@ -635,40 +635,40 @@ void main() {
     });
   });
 
-  group('the spies of test/support/jasmine.dart', () {
-    testWidgets('spyOnElementDraw takes the slot of a point', (tester) async {
+  group('the recorders of test/support/draw_recorder.dart', () {
+    testWidgets('recordElementDraws takes the slot of a point', (tester) async {
       final chart = acquireChart(_config());
       final meta = chart.getDatasetMeta(0);
       final original = meta.data[1];
-      final calls = spyOnElementDraw(meta, 1);
+      final draws = recordElementDraws(meta, 1);
       expect(meta.data[1], isNot(same(original)));
       expect(meta.data[1].x, original.x);
       chart.draw();
-      expect(calls.count(), 1);
-      expect(calls.mostRecent().args.first, same(chart.ctx));
+      expect(draws, hasLength(1));
+      expect(draws.last.ctx, same(chart.ctx));
       // An update renders: with `animation: false`, it draws at once.
       chart.update();
-      expect(calls.count(), 2, reason: 'an update keeps the slot');
+      expect(draws, hasLength(2), reason: 'an update keeps the slot');
 
       final recording = createMockContext();
-      final through = spyOnElementDraw(meta, 2, callThrough: true);
+      final through = recordElementDraws(meta, 2, drawThrough: true);
       chart.getDatasetMeta(0).controller!.ctx = recording;
       chart.draw();
-      expect(through.count(), 1);
+      expect(through, hasLength(1));
       expect(
         recording.getCalls().where((c) => c['name'] == 'arc'),
         hasLength(3),
         reason:
-            'the points 0, 2 (a spy with callThrough) and 3 draw; the spy of '
-            'the point 1 does not call through',
+            'the points 0, 2 (a recorder with drawThrough) and 3 draw; the '
+            'recorder of the point 1 does not draw through',
       );
     });
 
-    testWidgets('a draw spy of an element with a running animation throws', (
-      tester,
-    ) async {
-      // Upstream, spyOn keeps the object that the animation moves. The spy
-      // is a new object: the animation would move the original element.
+    testWidgets('a draw recorder of an element with a running animation '
+        'throws', (tester) async {
+      // Upstream, spyOn keeps the object that the animation moves. The
+      // recorder is a new object: the animation would move the original
+      // element.
       final chart = acquireChart({
         ..._config(),
         'options': <String, Object?>{
@@ -681,62 +681,41 @@ void main() {
       chart.update();
       await tester.pump(const Duration(milliseconds: 16));
       await tester.pump(const Duration(milliseconds: 100));
-      expect(() => spyOnElementDraw(meta, 1), throwsStateError);
-      // After the end of the animations, a spy takes the slot.
+      expect(() => recordElementDraws(meta, 1), throwsStateError);
+      // After the end of the animations, a recorder takes the slot.
       await tester.pump(const Duration(seconds: 1));
-      spyOnElementDraw(meta, 1);
+      recordElementDraws(meta, 1);
     });
 
-    testWidgets('spyOnDataset takes the slot of the line', (tester) async {
+    testWidgets('recordLineCalls takes the slot of the line', (tester) async {
       final chart = acquireChart(_config());
       final meta = chart.getDatasetMeta(0);
       meta.dataset = LineElement(<String, Object?>{
         'points': meta.data,
         'options': <String, Object?>{'borderWidth': 1},
       });
-      final spy = spyOnDataset(meta);
+      final calls = recordLineCalls(meta);
       chart.draw();
-      expect(spy.draw.count(), 1);
-      expect(spy.draw.mostRecent().args.first, same(chart.ctx));
+      expect(calls.draws, hasLength(1));
+      expect(calls.draws.last.ctx, same(chart.ctx));
       (meta.dataset! as LineElement).updateControlPoints(chart.chartArea);
-      expect(spy.updateControlPoints.count(), 1);
+      expect(calls.updates, hasLength(1));
     });
 
-    testWidgets('spyOnArrayListener records the _onData calls', (tester) async {
+    testWidgets('recordArrayCalls records the array calls', (tester) async {
       final chart = acquireChart(_config());
       final data = _data(chart, 0);
-      final calls = spyOnArrayListener(
-        data,
-        chart.getDatasetMeta(0).controller!,
-      );
+      final calls = recordArrayCalls(data, chart.getDatasetMeta(0).controller!);
       await runStep(tester, chart, ['push', 0.0, 7.0, 8.0]);
       await runStep(tester, chart, ['splice', 0.0, 1.0, 1.0]);
-      expect(calls['_onDataPush']!.count(), 1);
-      expect(calls['_onDataPush']!.argsFor(0), [7.0, 8.0]);
-      expect(calls['_onDataSplice']!.count(), 1);
-      expect(calls['_onDataSplice']!.argsFor(0), [1.0, 1.0]);
-      expect(calls['_onDataPop']!.count(), 0);
-    });
-
-    test('spyOn replaces a function value of a Map', () {
-      final object = <String, Object?>{'hook': (Object? a) => 'original'};
-      final spy = spyOn(object, 'hook');
-      expect(object['hook'], anyFunction);
-      expect(object['hook'], isNot(toHaveBeenCalled()));
-      expect(object['hook'].calls, same(spy.calls));
-      expect(spyOf(object['hook']), same(spy));
-    });
-
-    test('jasmineEquals and objectContaining', () {
-      expect(<String, Object?>{
-        'a': 1,
-        'b': double.nan,
-      }, jasmineEquals({'a': 1.0, 'b': double.nan}));
-      expect(0.0, isNot(jasmineEquals(-0.0)));
-      expect(<String, Object?>{'a': 1, 'b': 2}, objectContaining({'a': 1}));
-      expect(<String, Object?>{
-        'a': 1,
-      }, isNot(objectContaining({'a': 1, 'b': 2})));
+      expect(calls.pushes, [
+        [7.0, 8.0],
+      ]);
+      expect(calls.splices, hasLength(1));
+      expect(calls.splices.single.index, 1);
+      expect(calls.splices.single.deleteCount, 1);
+      expect(calls.splices.single.items, isEmpty);
+      expect(calls.pops, 0);
     });
   });
 }

@@ -1089,9 +1089,9 @@ void main() {
           "import 'package:$zoomName/$zoomName.dart';",
           "import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';",
           "import 'package:flutter_test/flutter_test.dart';",
-          "import '../support/jasmine.dart';",
+          "import '../support/helpers.dart';",
         ])
-        ..write('$zoom/test/support/jasmine.dart', [
+        ..write('$zoom/test/support/helpers.dart', [
           zoomPortOnly,
           "import 'package:flutter_chartjs_port/chartjs.dart';",
         ]);
@@ -1120,7 +1120,7 @@ void main() {
           "import 'package:flutter_chartjs_port/missing.dart';",
           "import 'package:chartjs_test_utils/flutter.dart';",
         ])
-        ..write('$zoom/test/support/jasmine.dart', [
+        ..write('$zoom/test/support/helpers.dart', [
           zoomPortOnly,
           "import 'package:flutter_chartjs_port/src/types/plugin.dart';",
           "import 'package:chartjs_test_utils/src/utils.dart';",
@@ -1156,17 +1156,17 @@ void main() {
           'which is not on the lib/ allowlist (porting-flow.md 4, tool 1).',
         ),
         error(
-          'test/support/jasmine.dart:2',
+          'test/support/helpers.dart:2',
           'package:flutter_chartjs_port/src/types/plugin.dart',
           hostRule,
         ),
         error(
-          'test/support/jasmine.dart:3',
+          'test/support/helpers.dart:3',
           'package:chartjs_test_utils/src/utils.dart',
           harnessRule,
         ),
         error(
-          'test/support/jasmine.dart:4',
+          'test/support/helpers.dart:4',
           'package:chartjs_test_utils/chartjs_test_utils.dart',
           harnessRule,
         ),

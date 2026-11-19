@@ -9,12 +9,12 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
 // chart reaches the chart host and dart:ui. Each chart case is a
 // `testWidgets` case with the harness of Chart.js ADR 0022, section 2. The
-// conventions are those of Chart.js ADR 0030, section 13.
+// conventions are those of Chart.js ADR 0030, section 13, with items 1
+// and 5 to 8 of Chart.js ADR 0180.
 //
 // flutter_test_config.dart registers the scatter controller with the
 // built-in components before main(), as index.umd.ts:28 does (Chart.js ADR
@@ -25,12 +25,20 @@ import '../support/jasmine.dart';
 //   `Chart.registry.controllers.items`.
 // - `Chart.elements.LineElement` is the class LineElement of
 //   element.line.dart. `x instanceof C` is `x is C`.
-// - `toEqual` of an array is `jasmineEquals` of test/support/jasmine.dart.
+// - `toEqual` of an array is `equals`, and of a tooltip body item
+//   `_bodyItem`, a matcher of the fields of `TooltipBodyItem`.
 //
 // The tooltip cases (:8, :146) read `chart.tooltip`, the field of `Chart` (a
 // `types.TooltipModel?`), through the interface.
 // `chart.options.plugins.tooltip = value` writes the key `tooltip` of the
 // Map `chart.options['plugins']`.
+
+/// The tooltip body item `{before: [], lines: lines, after: []}`
+/// (plugin.tooltip.js:559-563).
+Matcher _bodyItem(List<String> lines) => isA<TooltipBodyItem>()
+    .having((b) => b.before, 'before', isEmpty)
+    .having((b) => b.lines, 'lines', equals(lines))
+    .having((b) => b.after, 'after', isEmpty);
 
 void main() {
   group('Chart.controllers.scatter', () {
@@ -197,15 +205,11 @@ void main() {
 
       await triggerMouseEvent(chart, 'mousemove', point);
 
-      expect(tooltip.title, jasmineEquals(<Object?>['Label 1']));
+      expect(tooltip.title, equals(<String>['Label 1']));
       expect(
         tooltip.body,
-        jasmineEquals(<Object?>[
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Dataset 1: (10, 15)'],
-            'after': <Object?>[],
-          },
+        equals(<Matcher>[
+          _bodyItem(['Dataset 1: (10, 15)']),
         ]),
       );
 
@@ -214,20 +218,12 @@ void main() {
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);
 
-      expect(tooltip.title, jasmineEquals(<Object?>['Dataset 1']));
+      expect(tooltip.title, equals(<String>['Dataset 1']));
       expect(
         tooltip.body,
-        jasmineEquals(<Object?>[
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Label 1: (10, 15)'],
-            'after': <Object?>[],
-          },
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Label 2: (12, 10)'],
-            'after': <Object?>[],
-          },
+        equals(<Matcher>[
+          _bodyItem(['Label 1: (10, 15)']),
+          _bodyItem(['Label 2: (12, 10)']),
         ]),
       );
     });

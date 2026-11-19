@@ -12,7 +12,6 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 
 // The spec calls the modes of Chart.Interaction, which is the Interaction of
 // lib/src/core/core.interaction.dart. Each case reads the elements of a
@@ -32,10 +31,10 @@ import '../support/jasmine.dart';
 // - `Chart.Interaction.modes.point(chart, evt, {})` is
 //   `const PointInteractionMode().itemsAt(chart, evt, {})`.
 //   `.map(item => item.element)` is `_elements`.
-// - `toEqual` is `jasmineEquals`. Jasmine compares two elements by their
+// - `toEqual` is `equals`. Jasmine compares two elements by their
 //   properties. The elements of the expected values are the same objects as
-//   the actual elements, so the identity of `jasmineEquals` gives the same
-//   result.
+//   the actual elements, so the identity of the `==` of an element gives the
+//   same result.
 // - `meta.data[i].x` is `_data(meta, i).x`, an `Element` of
 //   core.element.dart.
 // - A `beforeEach` that acquires a chart is a local function that each case
@@ -207,7 +206,7 @@ void main() {
         final elements = _elements(
           const PointInteractionMode().itemsAt(chart, evt, <String, Object?>{}),
         );
-        expect(elements, jasmineEquals(<Object?>[point, meta1.data[1]]));
+        expect(elements, equals(<Object?>[point, meta1.data[1]]));
       });
 
       testWidgets('should return an empty array when no items are found', (
@@ -219,7 +218,7 @@ void main() {
         final elements = _elements(
           const PointInteractionMode().itemsAt(chart, evt, <String, Object?>{}),
         );
-        expect(elements, jasmineEquals(<Object?>[]));
+        expect(elements, equals(<Object?>[]));
       });
     });
 
@@ -253,7 +252,7 @@ void main() {
               'intersect': true,
             }),
           );
-          expect(elements, jasmineEquals(<Object?>[point, meta1.data[1]]));
+          expect(elements, equals(<Object?>[point, meta1.data[1]]));
         });
 
         testWidgets('returns empty array when nothing found', (tester) async {
@@ -265,7 +264,7 @@ void main() {
               'intersect': true,
             }),
           );
-          expect(elements, jasmineEquals(<Object?>[]));
+          expect(elements, equals(<Object?>[]));
         });
       });
 
@@ -297,10 +296,7 @@ void main() {
               'intersect': false,
             }),
           );
-          expect(
-            elements,
-            jasmineEquals(<Object?>[meta0.data[0], meta1.data[0]]),
-          );
+          expect(elements, equals(<Object?>[meta0.data[0], meta1.data[0]]));
         });
 
         testWidgets('axis: y gets correct items', (tester) async {
@@ -323,10 +319,7 @@ void main() {
               'intersect': false,
             }),
           );
-          expect(
-            elements,
-            jasmineEquals(<Object?>[meta0.data[0], meta1.data[0]]),
-          );
+          expect(elements, equals(<Object?>[meta0.data[0], meta1.data[0]]));
         });
 
         testWidgets('axis: xy gets correct items', (tester) async {
@@ -346,10 +339,7 @@ void main() {
               'intersect': false,
             }),
           );
-          expect(
-            elements,
-            jasmineEquals(<Object?>[meta0.data[0], meta1.data[0]]),
-          );
+          expect(elements, equals(<Object?>[meta0.data[0], meta1.data[0]]));
         });
       });
     });
@@ -387,7 +377,7 @@ void main() {
                 <String, Object?>{'intersect': true},
               ),
             );
-            expect(elements, jasmineEquals(meta.data));
+            expect(elements, equals(meta.data));
           },
         );
 
@@ -402,7 +392,7 @@ void main() {
             evt,
             <String, Object?>{'intersect': true},
           );
-          expect(elements, jasmineEquals(<Object?>[]));
+          expect(elements, equals(<Object?>[]));
         });
       });
 
@@ -439,7 +429,7 @@ void main() {
               <String, Object?>{'axis': InteractionAxis.x, 'intersect': false},
             ),
           );
-          expect(elements, jasmineEquals(chart.getDatasetMeta(0).data));
+          expect(elements, equals(chart.getDatasetMeta(0).data));
         });
 
         testWidgets('axis: y gets correct items', (tester) async {
@@ -457,7 +447,7 @@ void main() {
               <String, Object?>{'axis': InteractionAxis.y, 'intersect': false},
             ),
           );
-          expect(elements, jasmineEquals(chart.getDatasetMeta(1).data));
+          expect(elements, equals(chart.getDatasetMeta(1).data));
         });
 
         testWidgets('axis: xy gets correct items', (tester) async {
@@ -475,7 +465,7 @@ void main() {
               <String, Object?>{'intersect': false},
             ),
           );
-          expect(elements, jasmineEquals(chart.getDatasetMeta(1).data));
+          expect(elements, equals(chart.getDatasetMeta(1).data));
         });
       });
     });
@@ -535,7 +525,7 @@ void main() {
               ),
             );
             final meta = chart.getDatasetMeta(1);
-            expect(elements, jasmineEquals(<Object?>[meta.data[0]]));
+            expect(elements, equals(<Object?>[meta.data[0]]));
           });
 
           testWidgets('should return all items at the same nearest distance', (
@@ -562,10 +552,7 @@ void main() {
                 <String, Object?>{'intersect': false},
               ),
             );
-            expect(
-              elements,
-              jasmineEquals(<Object?>[meta0.data[1], meta1.data[1]]),
-            );
+            expect(elements, equals(<Object?>[meta0.data[1], meta1.data[1]]));
           });
         });
 
@@ -592,10 +579,7 @@ void main() {
                 },
               ),
             );
-            expect(
-              elements,
-              jasmineEquals(<Object?>[meta0.data[1], meta1.data[1]]),
-            );
+            expect(elements, equals(<Object?>[meta0.data[1], meta1.data[1]]));
           });
 
           testWidgets('should return all items at nearest x-distance', (
@@ -627,7 +611,7 @@ void main() {
             );
             expect(
               elements,
-              jasmineEquals(<Object?>[
+              equals(<Object?>[
                 meta0.data[0],
                 meta0.data[1],
                 meta1.data[0],
@@ -659,7 +643,7 @@ void main() {
                 },
               ),
             );
-            expect(elements, jasmineEquals(<Object?>[meta0.data[2]]));
+            expect(elements, equals(<Object?>[meta0.data[2]]));
           });
 
           testWidgets('should return all items at value 40', (tester) async {
@@ -686,7 +670,7 @@ void main() {
             );
             expect(
               elements,
-              jasmineEquals(<Object?>[
+              equals(<Object?>[
                 meta0.data[1],
                 meta1.data[0],
                 meta1.data[1],
@@ -711,7 +695,7 @@ void main() {
                 <String, Object?>{'axis': InteractionAxis.r},
               ),
             );
-            expect(elements, jasmineEquals(<Object?>[meta0.data[1]]));
+            expect(elements, equals(<Object?>[meta0.data[1]]));
           });
 
           testWidgets(
@@ -733,7 +717,7 @@ void main() {
                   },
                 ),
               );
-              expect(elements, jasmineEquals(<Object?>[meta0.data[0]]));
+              expect(elements, equals(<Object?>[meta0.data[0]]));
             },
           );
         });
@@ -771,7 +755,7 @@ void main() {
                 <String, Object?>{'intersect': true},
               ),
             );
-            expect(elements, jasmineEquals(<Object?>[]));
+            expect(elements, equals(<Object?>[]));
 
             evt = _Event(chart, point.x, point.y);
             elements = _elements(
@@ -781,7 +765,7 @@ void main() {
                 <String, Object?>{'intersect': true},
               ),
             );
-            expect(elements, jasmineEquals(<Object?>[point]));
+            expect(elements, equals(<Object?>[point]));
           });
 
           testWidgets('should return the nearest item even if 2 intersect', (
@@ -810,7 +794,7 @@ void main() {
                 <String, Object?>{'intersect': true},
               ),
             );
-            expect(elements, jasmineEquals(<Object?>[meta0.data[1]]));
+            expect(elements, equals(<Object?>[meta0.data[1]]));
           });
 
           testWidgets(
@@ -840,10 +824,7 @@ void main() {
                   <String, Object?>{'intersect': true},
                 ),
               );
-              expect(
-                elements,
-                jasmineEquals(<Object?>[meta0.data[1], meta1.data[1]]),
-              );
+              expect(elements, equals(<Object?>[meta0.data[1], meta1.data[1]]));
             },
           );
         });
@@ -885,10 +866,7 @@ void main() {
               'intersect': false,
             }),
           );
-          expect(
-            elements,
-            jasmineEquals(<Object?>[meta0.data[1], meta1.data[1]]),
-          );
+          expect(elements, equals(<Object?>[meta0.data[1], meta1.data[1]]));
 
           evt = _Event(chart, pt.x + 20, 0);
 
@@ -897,7 +875,7 @@ void main() {
               'intersect': false,
             }),
           );
-          expect(elements, jasmineEquals(<Object?>[]));
+          expect(elements, equals(<Object?>[]));
         },
       );
 
@@ -918,10 +896,7 @@ void main() {
               'intersect': true,
             }),
           );
-          expect(
-            elements,
-            jasmineEquals(<Object?>[]),
-          ); // we don't intersect anything
+          expect(elements, equals(<Object?>[])); // we don't intersect anything
 
           evt = _Event(chart, pt.x, pt.y);
 
@@ -930,10 +905,7 @@ void main() {
               'intersect': true,
             }),
           );
-          expect(
-            elements,
-            jasmineEquals(<Object?>[meta0.data[1], meta1.data[1]]),
-          );
+          expect(elements, equals(<Object?>[meta0.data[1], meta1.data[1]]));
         },
       );
     });
@@ -975,7 +947,7 @@ void main() {
           );
           expect(
             elements,
-            jasmineEquals(<Object?>[
+            equals(<Object?>[
               meta0.data[1],
               meta1.data[0],
               meta1.data[1],
@@ -990,7 +962,7 @@ void main() {
               'intersect': false,
             }),
           );
-          expect(elements, jasmineEquals(<Object?>[]));
+          expect(elements, equals(<Object?>[]));
         },
       );
 
@@ -1011,10 +983,7 @@ void main() {
               'intersect': true,
             }),
           );
-          expect(
-            elements,
-            jasmineEquals(<Object?>[]),
-          ); // we don't intersect anything
+          expect(elements, equals(<Object?>[])); // we don't intersect anything
 
           evt = _Event(chart, pt.x, pt.y);
 
@@ -1025,7 +994,7 @@ void main() {
           );
           expect(
             elements,
-            jasmineEquals(<Object?>[
+            equals(<Object?>[
               meta0.data[1],
               meta1.data[0],
               meta1.data[1],
@@ -1145,7 +1114,7 @@ void main() {
         );
         expect(
           elements,
-          jasmineEquals(<Object?>[meta.data[expectedNearestPointIndex]]),
+          equals(<Object?>[meta.data[expectedNearestPointIndex]]),
         );
       });
     }

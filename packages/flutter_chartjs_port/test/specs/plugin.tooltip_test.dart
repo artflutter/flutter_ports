@@ -18,13 +18,12 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart, with the static members
 // `Chart.registry` and `Chart.defaults`. `Chart.helpers.merge` is `merge` of
-// helpers.core.dart. `toEqual` is jasmineEquals of test/support/jasmine.dart,
-// and `jasmine.objectContaining` is objectContaining. `toEqualOptions` is the
-// matcher of chartjs_test_utils. `jasmine.triggerMouseEvent` is
+// helpers.core.dart. `toEqual` is `equals`, and `jasmine.objectContaining`
+// of the tooltip is [_tooltipWith]. `toEqualOptions` is the matcher of
+// chartjs_test_utils. `jasmine.triggerMouseEvent` is
 // triggerMouseEvent of chartjs_test_utils (Chart.js ADR 0022, section 6).
 //
 // Each chart case is a `testWidgets` case with the harness of Chart.js ADR
@@ -33,14 +32,16 @@ import '../support/jasmine.dart';
 // the members of `index.d.ts:2648-2699` through the interface, and the
 // other members through a cast to `Tooltip` (Chart.js ADR 0039, section
 // 14). The access by name of the tooltip (`tooltip['opacity']`) is the JS
-// property read. The tooltip items, the body items and the label colors are
-// Maps with the upstream keys.
+// property read. A body item, a label color and a label point style
+// compare field by field ([_bodyItem], [_labelStyleEquals],
+// [_pointStyleEquals]).
 //
 // `spyOn(tooltip, 'update')` (:964, :1027) replaces the field `update` of
 // the tooltip with a recording closure, as `core.controller_test.dart` does
 // for `chart.resize` (differences.md `harness-method-fields`, Chart.js ADR
-// 0039, section 6). An active element is the Map `{datasetIndex, index,
-// element}` in a Jasmine `toEqual` ([_activeItems]).
+// 0039, section 6). An active element `{datasetIndex, index, element}` of a
+// `toEqual` is an [ActiveElement]: its `==` compares the indexes and the
+// identity of the element.
 
 /// :2-3 `Chart.registry.getPlugin('tooltip')._element`: the class value of
 /// [Tooltip]. The native plugin `tooltip` has no key `_element` (Chart.js
@@ -85,17 +86,10 @@ Tooltip _tooltipOf(Chart chart) => chart.tooltip! as Tooltip;
 /// The point `{x, y}`.
 AnyObject _point(num x, num y) => <String, Object?>{'x': x, 'y': y};
 
-/// The active elements [items] as the objects `{datasetIndex, index,
-/// element}` of a Jasmine `toEqual`. Dart `null` of an element is JS
-/// `undefined`.
-List<Object?> _activeItems(List<ActiveElement> items) => [
-  for (final item in items)
-    <String, Object?>{
-      'datasetIndex': item.datasetIndex,
-      'index': item.index,
-      'element': item.element ?? undefined,
-    },
-];
+/// `jasmine.objectContaining({datasetIndex, index})` of an active element.
+Matcher _activeAt(int datasetIndex, int index) => isA<ActiveElement>()
+    .having((e) => e.datasetIndex, 'datasetIndex', datasetIndex)
+    .having((e) => e.index, 'index', index);
 
 /// The two datasets of most cases (:10-17, :40-51): `Dataset 1` with the
 /// data [10, 20, 30] and `Dataset 2` with [40, 40, 40], each with the
@@ -168,11 +162,123 @@ TooltipLabelStyle _defaultLabelColor() => TooltipLabelStyle(
 );
 
 /// The body item `{before: [], lines: [line], after: []}`.
-AnyObject _bodyItem(String line) => <String, Object?>{
-  'before': <Object?>[],
-  'lines': <Object?>[line],
-  'after': <Object?>[],
-};
+Matcher _bodyItem(String line) => _bodyItemOf(lines: [line]);
+
+/// The body item `{before, lines, after}`.
+Matcher _bodyItemOf({
+  required List<String> lines,
+  List<String> before = const [],
+  List<String> after = const [],
+}) => isA<TooltipBodyItem>()
+    .having((item) => item.before, 'before', equals(before))
+    .having((item) => item.lines, 'lines', equals(lines))
+    .having((item) => item.after, 'after', equals(after));
+
+/// `toEqual(expected)` of a label color: each field of [expected].
+Matcher _labelStyleEquals(TooltipLabelStyle expected) =>
+    isA<TooltipLabelStyle>()
+        .having((s) => s.borderColor, 'borderColor', expected.borderColor)
+        .having(
+          (s) => s.backgroundColor,
+          'backgroundColor',
+          expected.backgroundColor,
+        )
+        .having((s) => s.borderWidth, 'borderWidth', expected.borderWidth)
+        .having((s) => s.borderDash, 'borderDash', equals(expected.borderDash))
+        .having(
+          (s) => s.borderDashOffset,
+          'borderDashOffset',
+          expected.borderDashOffset,
+        )
+        .having(
+          (s) => [
+            s.borderRadius.topLeft,
+            s.borderRadius.topRight,
+            s.borderRadius.bottomLeft,
+            s.borderRadius.bottomRight,
+          ],
+          'borderRadius',
+          [
+            expected.borderRadius.topLeft,
+            expected.borderRadius.topRight,
+            expected.borderRadius.bottomLeft,
+            expected.borderRadius.bottomRight,
+          ],
+        );
+
+/// `toEqual(expected)` of a label point style: its style and its rotation.
+Matcher _pointStyleEquals(TooltipLabelPointStyle expected) =>
+    isA<TooltipLabelPointStyle>()
+        .having((s) => s.pointStyle, 'pointStyle', expected.pointStyle)
+        .having((s) => s.rotation, 'rotation', expected.rotation);
+
+/// `jasmine.objectContaining` of the tooltip: each given member equals its
+/// expected value.
+Matcher _tooltipWith({
+  num? opacity,
+  TooltipXAlign? xAlign,
+  TooltipYAlign? yAlign,
+  List<String>? title,
+  List<String>? beforeBody,
+  List<Matcher>? body,
+  List<String>? afterBody,
+  List<String>? footer,
+  List<ChartPaint>? labelTextColors,
+  List<TooltipLabelStyle>? labelColors,
+  List<TooltipLabelPointStyle>? labelPointStyles,
+}) {
+  var matcher = isA<Tooltip>();
+  if (opacity != null) {
+    matcher = matcher.having((t) => t.opacity, 'opacity', opacity);
+  }
+  if (xAlign != null) {
+    matcher = matcher.having((t) => t.xAlign, 'xAlign', xAlign);
+  }
+  if (yAlign != null) {
+    matcher = matcher.having((t) => t.yAlign, 'yAlign', yAlign);
+  }
+  if (title != null) {
+    matcher = matcher.having((t) => t.title, 'title', equals(title));
+  }
+  if (beforeBody != null) {
+    matcher = matcher.having(
+      (t) => t.beforeBody,
+      'beforeBody',
+      equals(beforeBody),
+    );
+  }
+  if (body != null) {
+    matcher = matcher.having((t) => t.body, 'body', equals(body));
+  }
+  if (afterBody != null) {
+    matcher = matcher.having(
+      (t) => t.afterBody,
+      'afterBody',
+      equals(afterBody),
+    );
+  }
+  if (footer != null) {
+    matcher = matcher.having((t) => t.footer, 'footer', equals(footer));
+  }
+  if (labelTextColors != null) {
+    matcher = matcher.having(
+      (t) => t.labelTextColors,
+      'labelTextColors',
+      equals(labelTextColors),
+    );
+  }
+  if (labelColors != null) {
+    matcher = matcher.having((t) => t.labelColors, 'labelColors', [
+      for (final style in labelColors) _labelStyleEquals(style),
+    ]);
+  }
+  if (labelPointStyles != null) {
+    matcher = matcher.having((t) => t.labelPointStyles, 'labelPointStyles', [
+      for (final style in labelPointStyles) _pointStyleEquals(style),
+    ]);
+  }
+  return matcher;
+}
 
 /// The default value of an absent argument of the spy of `update`.
 const Object _absent = Object();
@@ -409,23 +515,17 @@ void main() {
 
         expect(
           tooltip,
-          objectContaining(<String, Object?>{
-            'opacity': 1,
+          _tooltipWith(
+            opacity: 1,
 
             // Text
-            'title': <Object?>['Point 2'],
-            'beforeBody': <Object?>[],
-            'body': <Object?>[
-              _bodyItem('Dataset 1: 20'),
-              _bodyItem('Dataset 2: 40'),
-            ],
-            'afterBody': <Object?>[],
-            'footer': <Object?>[],
-            'labelColors': <Object?>[
-              _defaultLabelColor(),
-              _defaultLabelColor(),
-            ],
-          }),
+            title: ['Point 2'],
+            beforeBody: [],
+            body: [_bodyItem('Dataset 1: 20'), _bodyItem('Dataset 2: 40')],
+            afterBody: [],
+            footer: [],
+            labelColors: [_defaultLabelColor(), _defaultLabelColor()],
+          ),
         );
 
         expect(tooltip.x, toBeCloseToPixel(266));
@@ -453,7 +553,7 @@ void main() {
         // Check and see if tooltip was displayed
         final tooltip = _tooltipOf(chart);
 
-        expect(tooltip, objectContaining(<String, Object?>{'opacity': 0}));
+        expect(tooltip, _tooltipWith(opacity: 0));
       });
     });
 
@@ -531,25 +631,19 @@ void main() {
       );
 
       expect(tooltip.opacity, 1);
-      expect(tooltip.title, jasmineEquals(<Object?>['Point 2']));
-      expect(tooltip.beforeBody, jasmineEquals(<Object?>[]));
-      expect(
-        tooltip.body,
-        jasmineEquals(<Object?>[_bodyItem('Dataset 1: 20')]),
-      );
-      expect(tooltip.afterBody, jasmineEquals(<Object?>[]));
-      expect(tooltip.footer, jasmineEquals(<Object?>[]));
+      expect(tooltip.title, equals(<Object?>['Point 2']));
+      expect(tooltip.beforeBody, equals(<Object?>[]));
+      expect(tooltip.body, equals(<Object?>[_bodyItem('Dataset 1: 20')]));
+      expect(tooltip.afterBody, equals(<Object?>[]));
+      expect(tooltip.footer, equals(<Object?>[]));
       expect(
         tooltip.labelTextColors,
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         ]),
       );
 
-      expect(
-        tooltip.labelColors,
-        jasmineEquals(<Object?>[_defaultLabelColor()]),
-      );
+      expect(tooltip.labelColors, [_labelStyleEquals(_defaultLabelColor())]);
 
       expect(tooltip.x, toBeCloseToPixel(267));
       expect(tooltip.y, toBeCloseToPixel(308));
@@ -647,31 +741,31 @@ void main() {
         }),
       );
 
-      AnyObject callbackBodyItem() => <String, Object?>{
-        'before': <Object?>['beforeLabel'],
-        'lines': <Object?>['label'],
-        'after': <Object?>['afterLabel'],
-      };
+      Matcher callbackBodyItem() => _bodyItemOf(
+        before: ['beforeLabel'],
+        lines: ['label'],
+        after: ['afterLabel'],
+      );
       TooltipLabelPointStyle pointStyle() =>
           const TooltipLabelPointStyle.draw(CirclePointStyle(), rotation: 42);
       expect(
         tooltip,
-        objectContaining(<String, Object?>{
-          'opacity': 1,
+        _tooltipWith(
+          opacity: 1,
 
           // Text
-          'title': <Object?>['beforeTitle', 'title', 'afterTitle'],
-          'beforeBody': <Object?>['beforeBody'],
-          'body': <Object?>[callbackBodyItem(), callbackBodyItem()],
-          'afterBody': <Object?>['afterBody'],
-          'footer': <Object?>['beforeFooter', 'footer', 'afterFooter'],
-          'labelTextColors': <Object?>[
+          title: ['beforeTitle', 'title', 'afterTitle'],
+          beforeBody: ['beforeBody'],
+          body: [callbackBodyItem(), callbackBodyItem()],
+          afterBody: ['afterBody'],
+          footer: ['beforeFooter', 'footer', 'afterFooter'],
+          labelTextColors: [
             const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
             const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
           ],
-          'labelColors': <Object?>[_defaultLabelColor(), _defaultLabelColor()],
-          'labelPointStyles': <Object?>[pointStyle(), pointStyle()],
-        }),
+          labelColors: [_defaultLabelColor(), _defaultLabelColor()],
+          labelPointStyles: [pointStyle(), pointStyle()],
+        ),
       );
 
       expect(tooltip.x, toBeCloseToPixel(267));
@@ -722,10 +816,7 @@ void main() {
       final point = meta.data[1];
 
       await triggerMouseEvent(chart, 'mousemove', point);
-      expect(
-        _tooltipOf(chart).body![0].before,
-        jasmineEquals(<Object?>['2,20']),
-      );
+      expect(_tooltipOf(chart).body![0].before, equals(<Object?>['2,20']));
     });
 
     testWidgets('Should allow sorting items', (tester) async {
@@ -751,22 +842,19 @@ void main() {
 
       expect(
         tooltip,
-        objectContaining(<String, Object?>{
+        _tooltipWith(
           // Positioning
-          'xAlign': TooltipXAlign.left,
-          'yAlign': TooltipYAlign.center,
+          xAlign: TooltipXAlign.left,
+          yAlign: TooltipYAlign.center,
 
           // Text
-          'title': <Object?>['Point 2'],
-          'beforeBody': <Object?>[],
-          'body': <Object?>[
-            _bodyItem('Dataset 2: 40'),
-            _bodyItem('Dataset 1: 20'),
-          ],
-          'afterBody': <Object?>[],
-          'footer': <Object?>[],
-          'labelColors': <Object?>[_defaultLabelColor(), _defaultLabelColor()],
-        }),
+          title: ['Point 2'],
+          beforeBody: [],
+          body: [_bodyItem('Dataset 2: 40'), _bodyItem('Dataset 1: 20')],
+          afterBody: [],
+          footer: [],
+          labelColors: [_defaultLabelColor(), _defaultLabelColor()],
+        ),
       );
 
       expect(tooltip.x, toBeCloseToPixel(267));
@@ -794,22 +882,19 @@ void main() {
 
       expect(
         tooltip,
-        objectContaining(<String, Object?>{
+        _tooltipWith(
           // Positioning
-          'xAlign': TooltipXAlign.left,
-          'yAlign': TooltipYAlign.center,
+          xAlign: TooltipXAlign.left,
+          yAlign: TooltipYAlign.center,
 
           // Text
-          'title': <Object?>['Point 2'],
-          'beforeBody': <Object?>[],
-          'body': <Object?>[
-            _bodyItem('Dataset 2: 40'),
-            _bodyItem('Dataset 1: 20'),
-          ],
-          'afterBody': <Object?>[],
-          'footer': <Object?>[],
-          'labelColors': <Object?>[_defaultLabelColor(), _defaultLabelColor()],
-        }),
+          title: ['Point 2'],
+          beforeBody: [],
+          body: [_bodyItem('Dataset 2: 40'), _bodyItem('Dataset 1: 20')],
+          afterBody: [],
+          footer: [],
+          labelColors: [_defaultLabelColor(), _defaultLabelColor()],
+        ),
       );
 
       expect(tooltip.x, toBeCloseToPixel(267));
@@ -836,22 +921,19 @@ void main() {
 
       expect(
         tooltip,
-        objectContaining(<String, Object?>{
+        _tooltipWith(
           // Positioning
-          'xAlign': TooltipXAlign.left,
-          'yAlign': TooltipYAlign.center,
+          xAlign: TooltipXAlign.left,
+          yAlign: TooltipYAlign.center,
 
           // Text
-          'title': <Object?>['Point 2'],
-          'beforeBody': <Object?>[],
-          'body': <Object?>[
-            _bodyItem('Dataset 2: 40'),
-            _bodyItem('Dataset 1: 20'),
-          ],
-          'afterBody': <Object?>[],
-          'footer': <Object?>[],
-          'labelColors': <Object?>[_defaultLabelColor(), _defaultLabelColor()],
-        }),
+          title: ['Point 2'],
+          beforeBody: [],
+          body: [_bodyItem('Dataset 2: 40'), _bodyItem('Dataset 1: 20')],
+          afterBody: [],
+          footer: [],
+          labelColors: [_defaultLabelColor(), _defaultLabelColor()],
+        ),
       );
 
       expect(tooltip.x, toBeCloseToPixel(267));
@@ -900,19 +982,19 @@ void main() {
 
       expect(
         tooltip,
-        objectContaining(<String, Object?>{
+        _tooltipWith(
           // Positioning
-          'xAlign': TooltipXAlign.left,
-          'yAlign': TooltipYAlign.center,
+          xAlign: TooltipXAlign.left,
+          yAlign: TooltipYAlign.center,
 
           // Text
-          'title': <Object?>['Point 2'],
-          'beforeBody': <Object?>[],
-          'body': <Object?>[_bodyItem('Dataset 2: 40')],
-          'afterBody': <Object?>[],
-          'footer': <Object?>[],
-          'labelColors': <Object?>[_defaultLabelColor()],
-        }),
+          title: ['Point 2'],
+          beforeBody: [],
+          body: [_bodyItem('Dataset 2: 40')],
+          afterBody: [],
+          footer: [],
+          labelColors: [_defaultLabelColor()],
+        ),
       );
     });
 
@@ -1019,7 +1101,7 @@ void main() {
 
       // First dispatch change event, should update tooltip
       await triggerMouseEvent(chart, 'mousemove', firstPoint);
-      expect(calls, contains(jasmineEquals(_eventUpdate)));
+      expect(calls, contains(equals(_eventUpdate)));
 
       // Reset calls
       calls.clear();
@@ -1065,7 +1147,7 @@ void main() {
 
         // First dispatch change event, should update tooltip
         await triggerMouseEvent(chart, 'mousemove', firstPoint);
-        expect(calls, contains(jasmineEquals(_eventUpdate)));
+        expect(calls, contains(equals(_eventUpdate)));
 
         // Reset calls
         calls.clear();
@@ -1073,7 +1155,7 @@ void main() {
         // Second dispatch change event (same event), should update tooltip
         // because position mode is 'nearest'
         await triggerMouseEvent(chart, 'mousemove', secondPoint);
-        expect(calls, contains(jasmineEquals(_eventUpdate)));
+        expect(calls, contains(equals(_eventUpdate)));
       },
     );
 
@@ -1389,19 +1471,19 @@ void main() {
         }),
       );
 
-      AnyObject newlineBodyItem() => <String, Object?>{
-        'before': <Object?>['beforeLabel', 'newline'],
-        'lines': <Object?>['label'],
-        'after': <Object?>['afterLabel', 'newline'],
-      };
+      Matcher newlineBodyItem() => _bodyItemOf(
+        before: ['beforeLabel', 'newline'],
+        lines: ['label'],
+        after: ['afterLabel', 'newline'],
+      );
       TooltipLabelStyle labelColor() => _defaultLabelColor();
       expect(
         tooltip,
-        objectContaining(<String, Object?>{
-          'opacity': 1,
+        _tooltipWith(
+          opacity: 1,
 
           // Text
-          'title': <Object?>[
+          title: [
             'beforeTitle',
             'newline',
             'title',
@@ -1409,10 +1491,10 @@ void main() {
             'afterTitle',
             'newline',
           ],
-          'beforeBody': <Object?>['beforeBody', 'newline'],
-          'body': <Object?>[newlineBodyItem(), newlineBodyItem()],
-          'afterBody': <Object?>['afterBody', 'newline'],
-          'footer': <Object?>[
+          beforeBody: ['beforeBody', 'newline'],
+          body: [newlineBodyItem(), newlineBodyItem()],
+          afterBody: ['afterBody', 'newline'],
+          footer: [
             'beforeFooter',
             'newline',
             'footer',
@@ -1420,12 +1502,12 @@ void main() {
             'afterFooter',
             'newline',
           ],
-          'labelTextColors': <Object?>[
+          labelTextColors: [
             const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
             const ChartPaint.solid(native_ui.Color(0xFF123ABC)),
           ],
-          'labelColors': <Object?>[labelColor(), labelColor()],
-        }),
+          labelColors: [labelColor(), labelColor()],
+        ),
       );
     });
 
@@ -1527,20 +1609,17 @@ void main() {
 
       // The mock records each declared parameter: the absent arguments of
       // `fill`, `stroke` and `fillText` are `null`
-      // (harness-mock-optional-args).
+      // (harness-mock-optional-args). It records the color of a solid
+      // paint.
       List<Object?> drawBody() => <Object?>[
         <String, Object?>{'name': 'save', 'args': <Object?>[]},
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[
-            const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.8)),
-          ],
+          'args': <Object?>[const native_ui.Color.fromRGBO(0, 0, 0, 0.8)],
         },
         <String, Object?>{
           'name': 'setStrokeStyle',
-          'args': <Object?>[
-            const ChartPaint.solid(native_ui.Color.fromRGBO(170, 170, 170, 1)),
-          ],
+          'args': <Object?>[const native_ui.Color.fromRGBO(170, 170, 170, 1)],
         },
         <String, Object?>{
           'name': 'setLineWidth',
@@ -1627,9 +1706,7 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[
-            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
-          ],
+          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
         },
         <String, Object?>{
           'name': 'setFont',
@@ -1653,15 +1730,11 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[
-            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
-          ],
+          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[
-            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
-          ],
+          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
         },
         <String, Object?>{
           'name': 'fillText',
@@ -1677,9 +1750,7 @@ void main() {
         },
         <String, Object?>{
           'name': 'setFillStyle',
-          'args': <Object?>[
-            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
-          ],
+          'args': <Object?>[const native_ui.Color.fromRGBO(255, 255, 255, 1)],
         },
         <String, Object?>{
           'name': 'setFont',
@@ -1710,7 +1781,7 @@ void main() {
 
         expect(
           mockContext.getCalls(),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             ...drawBody(),
             ...textCalls('left', 105, 'left', 105, 'left', 105),
           ]),
@@ -1727,7 +1798,7 @@ void main() {
 
         expect(
           mockContext.getCalls(),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             ...drawBody(),
             ...textCalls('right', 195, 'right', 195, 'right', 195),
           ]),
@@ -1744,7 +1815,7 @@ void main() {
 
         expect(
           mockContext.getCalls(),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             ...drawBody(),
             ...textCalls('center', 150, 'center', 150, 'center', 150),
           ]),
@@ -1761,7 +1832,7 @@ void main() {
 
         expect(
           mockContext.getCalls(),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             ...drawBody(),
             ...textCalls('right', 195, 'center', 150, 'left', 105),
           ]),
@@ -1803,14 +1874,8 @@ void main() {
           );
           expect(chart.tooltip!.opacity, 1);
           expect(
-            _activeItems(chart.tooltip!.getActiveElements()),
-            jasmineEquals(<Object?>[
-              <String, Object?>{
-                'datasetIndex': 0,
-                'index': 0,
-                'element': point0,
-              },
-            ]),
+            chart.tooltip!.getActiveElements(),
+            equals([ActiveElement(datasetIndex: 0, index: 0, element: point0)]),
           );
 
           chart.tooltip!.setActiveElements([
@@ -1819,14 +1884,8 @@ void main() {
           chart.update();
           expect(chart.tooltip!.opacity, 1);
           expect(
-            _activeItems(chart.tooltip!.getActiveElements()),
-            jasmineEquals(<Object?>[
-              <String, Object?>{
-                'datasetIndex': 0,
-                'index': 1,
-                'element': point1,
-              },
-            ]),
+            chart.tooltip!.getActiveElements(),
+            equals([ActiveElement(datasetIndex: 0, index: 1, element: point1)]),
           );
 
           chart.tooltip!.setActiveElements([]);
@@ -1863,33 +1922,18 @@ void main() {
 
           await triggerMouseEvent(chart, 'mousemove', _point(point.x, point.y));
           expect(
-            _activeItems(chart.tooltip!.getActiveElements()),
-            jasmineEquals(<Object?>[
-              <String, Object?>{
-                'datasetIndex': 0,
-                'index': 0,
-                'element': point,
-              },
-            ]),
+            chart.tooltip!.getActiveElements(),
+            equals([ActiveElement(datasetIndex: 0, index: 0, element: point)]),
           );
 
           await triggerMouseEvent(chart, 'mousemove', _point(1, 1));
           expect(
-            _activeItems(chart.tooltip!.getActiveElements()),
-            jasmineEquals(<Object?>[
-              <String, Object?>{
-                'datasetIndex': 0,
-                'index': 0,
-                'element': point,
-              },
-            ]),
+            chart.tooltip!.getActiveElements(),
+            equals([ActiveElement(datasetIndex: 0, index: 0, element: point)]),
           );
 
           await triggerMouseEvent(chart, 'mouseout', _point(1, 1));
-          expect(
-            _activeItems(chart.tooltip!.getActiveElements()),
-            jasmineEquals(<Object?>[]),
-          );
+          expect(chart.tooltip!.getActiveElements(), equals(<Object?>[]));
         },
       );
 
@@ -1921,31 +1965,21 @@ void main() {
 
           final meta = chart.getDatasetMeta(0);
           final point = meta.data[1];
-          final expectedPoint = objectContaining(<String, Object?>{
-            'datasetIndex': 0,
-            'index': 1,
-          });
+          final expectedPoint = _activeAt(0, 1);
 
           await triggerMouseEvent(chart, 'mousemove', point);
 
-          expect(_activeItems(chart.tooltip!.getActiveElements()), [
-            expectedPoint,
-          ]);
+          expect(chart.tooltip!.getActiveElements(), [expectedPoint]);
 
           (chart.data as AnyObject)['datasets'] = <Object?>[];
           chart.update();
 
-          expect(
-            _activeItems(chart.tooltip!.getActiveElements()),
-            jasmineEquals(<Object?>[]),
-          );
+          expect(chart.tooltip!.getActiveElements(), equals(<Object?>[]));
 
           (chart.data as AnyObject)['datasets'] = <Object?>[dataset];
           chart.update();
 
-          expect(_activeItems(chart.tooltip!.getActiveElements()), [
-            expectedPoint,
-          ]);
+          expect(chart.tooltip!.getActiveElements(), [expectedPoint]);
         },
       );
     });
@@ -1976,10 +2010,7 @@ void main() {
 
         final meta = chart.getDatasetMeta(0);
         final point = meta.data[1];
-        final expectedPoints = [
-          objectContaining(<String, Object?>{'datasetIndex': 0, 'index': 1}),
-          objectContaining(<String, Object?>{'datasetIndex': 1, 'index': 1}),
-        ];
+        final expectedPoints = [_activeAt(0, 1), _activeAt(1, 1)];
 
         await triggerMouseEvent(chart, 'mousemove', point);
         await triggerMouseEvent(
@@ -1988,19 +2019,14 @@ void main() {
           _point(chart.chartArea!.left - 5, point.y),
         );
 
-        expect(
-          _activeItems(chart.tooltip!.getActiveElements()),
-          expectedPoints,
-        );
+        expect(chart.tooltip!.getActiveElements(), expectedPoints);
 
         (chart.data as AnyObject)['datasets'] = <Object?>[dataset1];
         chart.update();
 
         await triggerMouseEvent(chart, 'mousemove', _point(2, 1));
 
-        expect(_activeItems(chart.tooltip!.getActiveElements()), [
-          expectedPoints[0],
-        ]);
+        expect(chart.tooltip!.getActiveElements(), [expectedPoints[0]]);
       },
     );
 
@@ -2030,10 +2056,7 @@ void main() {
 
         final meta = chart.getDatasetMeta(0);
         final point = meta.data[1];
-        final expectedPoints = [
-          objectContaining(<String, Object?>{'datasetIndex': 0, 'index': 1}),
-          objectContaining(<String, Object?>{'datasetIndex': 1, 'index': 1}),
-        ];
+        final expectedPoints = [_activeAt(0, 1), _activeAt(1, 1)];
 
         await triggerMouseEvent(chart, 'mousemove', point);
         await triggerMouseEvent(
@@ -2042,10 +2065,7 @@ void main() {
           _point(chart.chartArea!.left - 5, point.y),
         );
 
-        expect(
-          _activeItems(chart.tooltip!.getActiveElements()),
-          expectedPoints,
-        );
+        expect(chart.tooltip!.getActiveElements(), expectedPoints);
 
         dataset1['data'] = (dataset1['data']! as List<Object?>).sublist(0, 1);
         (chart.data as AnyObject)['datasets'] = <Object?>[dataset1];
@@ -2053,10 +2073,7 @@ void main() {
 
         await triggerMouseEvent(chart, 'mousemove', _point(2, 1));
 
-        expect(
-          _activeItems(chart.tooltip!.getActiveElements()),
-          jasmineEquals(<Object?>[]),
-        );
+        expect(chart.tooltip!.getActiveElements(), equals(<Object?>[]));
       },
     );
 
@@ -2116,25 +2133,25 @@ void main() {
 
         expect(
           tooltip,
-          objectContaining(<String, Object?>{
-            'opacity': 1,
+          _tooltipWith(
+            opacity: 1,
 
             // Text
-            'title': <Object?>['Point 1'],
-            'beforeBody': <Object?>[],
-            'body': <Object?>[_bodyItem('Dataset 1: 10')],
-            'afterBody': <Object?>[],
-            'footer': <Object?>[],
-            'labelTextColors': <Object?>[
+            title: ['Point 1'],
+            beforeBody: [],
+            body: [_bodyItem('Dataset 1: 10')],
+            afterBody: [],
+            footer: [],
+            labelTextColors: [
               const ChartPaint.solid(
                 native_ui.Color.fromRGBO(255, 255, 255, 1),
               ),
             ],
-            'labelColors': <Object?>[_defaultLabelColor()],
-            'labelPointStyles': <Object?>[
+            labelColors: [_defaultLabelColor()],
+            labelPointStyles: [
               const TooltipLabelPointStyle.draw(CirclePointStyle()),
             ],
-          }),
+          ),
         );
       },
     );

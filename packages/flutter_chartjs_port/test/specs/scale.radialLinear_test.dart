@@ -17,7 +17,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 import '../support/tick_label.dart';
 
 // `Chart.registry` and `Chart.defaults` are the statics of Chart of
@@ -43,20 +42,21 @@ import '../support/tick_label.dart';
 //   chain of `jsGet`.
 // - `typeof x === 'function'` is `isA<JsClass>()`: the class value of a
 //   scale is a `JsClass` (Chart.js ADR 0020).
-// - `toEqual` of an object compares the keys and the values with `equals`.
-//   A routed key, for example `ticks.color`, is a key of the RoutedScope
-//   and reads its route target. The key `backdropColor` holds the
-//   `undefined` sentinel. Functions compare by identity.
-// - `jasmine.any(Function)` is [_anyFunction], a Dart `Function`.
-//   `ticks.callback` is the function `formatters.numeric`, a
-//   `TickCallback` (row `adapt-native-tick`).
+// - `toEqual` of an options object compares its `ownKeys` with
+//   `unorderedEquals` and the `raw` of the typed cell of each key with
+//   `equals`. A routed key, for example `ticks.color`, reads its route
+//   target through `lookup`. The key `backdropColor` holds the `undefined`
+//   sentinel. Functions compare by identity.
+// - `jasmine.any(Function)` is `isA<Function>()`. `ticks.callback` is the
+//   function `formatters.numeric`, a `TickCallback` (row
+//   `adapt-native-tick`).
 //
 // - The chart cases read `_pointLabels` and `_pointLabelItems` as
 //   `pointLabels` and `pointLabelItems` (Chart.js ADR 0012, Underscore
 //   members, and Chart.js ADR 0025, section 6). `chart.scales.r` is
 //   `chart.scales['r']!`, or `_r(chart)` for a member of
 //   `RadialLinearScale`.
-// - `toEqual` of an array is `jasmineEquals`.
+// - `toEqual` of an array is `equals`.
 // - `chart.scales.r.options.reverse = true` writes through the resolver of
 //   the scale options. `chart.options.scales.r.ticks.maxTicksLimit = 11`
 //   writes into the resolver of the last read of the chain (`_optionsR`).
@@ -67,9 +67,6 @@ import '../support/tick_label.dart';
 //   `scale.ctx = createMockContext()`, a mock context of
 //   package:chartjs_test_utils/pure.dart. A call of `getCalls()` is a Map
 //   with the keys `name` and `args`.
-
-/// `jasmine.any(Function)`: a value with `typeof` `'function'`.
-final Matcher _anyFunction = isA<Function>();
 
 /// scale.radialLinear.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
@@ -102,60 +99,108 @@ void main() {
     });
 
     test('Should have the correct default config', () {
-      final defaultConfig = jsGet(
-        jsGet(Chart.defaults, 'scales'),
-        'radialLinear',
+      final defaultConfig =
+          jsGet(jsGet(Chart.defaults, 'scales'), 'radialLinear')!
+              as ScaleOptionsScope;
+      // `toEqual`: the own keys of each object and the value of each key. A
+      // routed key reads its route target (`lookup`).
+      expect(
+        defaultConfig.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.display,
+          OptionKey.animate,
+          OptionKey.position,
+          OptionKey.angleLines,
+          OptionKey.grid,
+          OptionKey.border,
+          OptionKey.startAngle,
+          OptionKey.ticks,
+          OptionKey.pointLabels,
+        ]),
+      );
+      expect(defaultConfig.displayCell?.raw, ScaleDisplay.on);
+      expect(defaultConfig.animateCell?.raw, true);
+      expect(defaultConfig.positionCell?.raw, ChartPosition.chartArea);
+
+      final angleLines =
+          defaultConfig.angleLinesCell!.raw! as AngleLineOptionsScope;
+      expect(
+        angleLines.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.display,
+          OptionKey.color,
+          OptionKey.lineWidth,
+          OptionKey.borderDash,
+          OptionKey.borderDashOffset,
+        ]),
+      );
+      expect(angleLines.displayCell?.raw, true);
+      expect(
+        angleLines.lookup(OptionKey.color)?.raw,
+        const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
+      );
+      expect(angleLines.lineWidthCell?.raw, 1);
+      expect(angleLines.borderDashCell?.raw, equals(<double>[]));
+      expect(angleLines.borderDashOffsetCell?.raw, 0.0);
+
+      final grid = defaultConfig.gridCell!.raw! as GridLineOptionsScope;
+      expect(grid.ownKeys, <Object>[OptionKey.circular]);
+      expect(grid.circularCell?.raw, false);
+
+      // DIVERGES(chartjs): adapt-native-scale-border, the radial scale has
+      // its own border object with the values of `defaults.scale`.
+      expect(
+        defaultConfig.borderCell?.raw,
+        const RadialAxisBorder(dash: <double>[], dashOffset: 0),
+      );
+
+      expect(defaultConfig.startAngleCell?.raw, 0);
+
+      final ticks = defaultConfig.ticksCell!.raw! as TickOptionsScope;
+      expect(
+        ticks.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.color,
+          OptionKey.showLabelBackdrop,
+          OptionKey.callback,
+        ]),
       );
       expect(
-        defaultConfig,
-        jasmineEquals(<String, Object?>{
-          'display': ScaleDisplay.on,
-          'animate': true,
-          'position': ChartPosition.chartArea,
-
-          'angleLines': <String, Object?>{
-            'display': true,
-            'color': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 0, 0.1),
-            ),
-            'lineWidth': 1,
-            'borderDash': <double>[],
-            'borderDashOffset': 0.0,
-          },
-
-          'grid': <String, Object?>{'circular': false},
-
-          // DIVERGES(chartjs): adapt-native-scale-border, the radial scale has
-          // its own border object with the values of `defaults.scale`.
-          'border': const RadialAxisBorder(dash: <double>[], dashOffset: 0),
-
-          'startAngle': 0,
-
-          'ticks': <String, Object?>{
-            'color': jsGet(Chart.defaults, 'color'),
-            'showLabelBackdrop': true,
-            'callback': jsGet(jsGet(defaultConfig, 'ticks'), 'callback'),
-          },
-
-          'pointLabels': <String, Object?>{
-            'backdropColor': undefined,
-            'backdropPadding': const EdgeInsets.all(2),
-            'color': jsGet(Chart.defaults, 'color'),
-            'display': ScaleDisplay.on,
-            'font': const ChartTextStyle(fontSize: 10),
-            'callback': jsGet(jsGet(defaultConfig, 'pointLabels'), 'callback'),
-            'padding': 5,
-            'centerPointLabels': false,
-          },
-        }),
+        ticks.lookup(OptionKey.color)?.raw,
+        jsGet(Chart.defaults, 'color'),
       );
+      expect(ticks.showLabelBackdropCell?.raw, true);
+      expect(ticks.callbackCell?.raw, same(formatters['numeric']));
+
+      final pointLabels =
+          defaultConfig.pointLabelsCell!.raw! as PointLabelOptionsScope;
+      expect(
+        pointLabels.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.backdropColor,
+          OptionKey.backdropPadding,
+          OptionKey.color,
+          OptionKey.display,
+          OptionKey.font,
+          OptionKey.callback,
+          OptionKey.padding,
+          OptionKey.centerPointLabels,
+        ]),
+      );
+      expect(pointLabels.backdropColorCell?.raw, same(undefined));
+      expect(pointLabels.backdropPaddingCell?.raw, const EdgeInsets.all(2));
+      expect(
+        pointLabels.lookup(OptionKey.color)?.raw,
+        jsGet(Chart.defaults, 'color'),
+      );
+      expect(pointLabels.displayCell?.raw, ScaleDisplay.on);
+      expect(pointLabels.fontCell?.raw, const ChartTextStyle(fontSize: 10));
+      expect(pointLabels.paddingCell?.raw, 5);
+      expect(pointLabels.centerPointLabelsCell?.raw, false);
 
       // Is this actually a function
-      expect(jsGet(jsGet(defaultConfig, 'ticks'), 'callback'), _anyFunction);
-      expect(
-        jsGet(jsGet(defaultConfig, 'pointLabels'), 'callback'),
-        _anyFunction,
-      );
+      expect(ticks.callbackCell?.raw, isA<Function>());
+      expect(pointLabels.callbackCell?.raw, isA<Function>());
     });
 
     testWidgets('Should correctly determine the max & min data values', (
@@ -376,7 +421,7 @@ void main() {
       expect(chart.scales['r']!.max, 1010);
       expect(
         _getLabels(chart.scales['r']!),
-        jasmineEquals(<Object?>['-1,010', '-500', '0', '500', '1,010']),
+        equals(<Object?>['-1,010', '-500', '0', '500', '1,010']),
       );
     });
 
@@ -403,7 +448,7 @@ void main() {
 
         expect(
           _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>['20', '25', '30', '35', '40', '45', '50']),
+          equals(<Object?>['20', '25', '30', '35', '40', '45', '50']),
         );
 
         chart.scales['r']!.options['beginAtZero'] = true;
@@ -411,7 +456,7 @@ void main() {
 
         expect(
           _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '0', '5', '10', '15', '20', '25', '30', '35', '40', '45', '50', //
           ]),
         );
@@ -421,7 +466,7 @@ void main() {
 
         expect(
           _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '-50', '-45', '-40', '-35', '-30', '-25', '-20', '-15', '-10', //
             '-5', '0',
           ]),
@@ -432,7 +477,7 @@ void main() {
 
         expect(
           _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '-50', '-45', '-40', '-35', '-30', '-25', '-20', //
           ]),
         );
@@ -467,7 +512,7 @@ void main() {
 
         expect(
           _getLabels(chart.scales['r']!),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '80', '70', '60', '50', '40', '30', '20', '10', '0', //
           ]),
         );
@@ -500,7 +545,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['r']!),
-        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+        equals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
       );
 
       _optionsR(chart, 'ticks')['maxTicksLimit'] = 11;
@@ -508,7 +553,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['r']!),
-        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+        equals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
       );
 
       _optionsR(chart, 'ticks')['stepSize'] = 0.01;
@@ -516,7 +561,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['r']!),
-        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+        equals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
       );
 
       _optionsR(chart)['min'] = 0.3;
@@ -525,7 +570,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['r']!),
-        jasmineEquals(<Object?>['0.3', '0.8', '1.3', '1.8', '2.3', '2.8']),
+        equals(<Object?>['0.3', '0.8', '1.3', '1.8', '2.3', '2.8']),
       );
     });
 
@@ -553,11 +598,11 @@ void main() {
 
       expect(
         _getLabels(chart.scales['r']!),
-        jasmineEquals(<Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8']),
+        equals(<Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8']),
       );
       expect(
         _r(chart).pointLabels,
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           ['label1'],
           ['label2'],
           ['label3'],
@@ -597,7 +642,7 @@ void main() {
 
       expect(
         _r(chart).pointLabels,
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           ['0'],
           ['1'],
           ['2'],
@@ -624,7 +669,7 @@ void main() {
         _r(chart).pointLabels,
         // Chart.js ADR 0131: each point label is its lines; a value that
         // Chart.js draws as '' is one empty line.
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           ['0'],
           [''],
           [''],
@@ -655,7 +700,7 @@ void main() {
 
       expect(
         _r(chart).pointLabels,
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           ['a'],
           ['b'],
           ['c'],

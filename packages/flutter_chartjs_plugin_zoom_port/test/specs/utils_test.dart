@@ -6,8 +6,6 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
-
 /// `{} as Chart`: a chart that `directionEnabled` only passes on.
 final class _FakeChart() extends Fake implements Chart;
 
@@ -30,19 +28,18 @@ void main() {
           'returns $expected when mode is ${mode.name} and required direction '
           'is $dir',
           () {
-            expect(directionEnabled(mode, dir, chart), jasmineEquals(expected));
+            expect(directionEnabled(mode, dir, chart), equals(expected));
 
-            final modeFn = createSpy('mode').and.returnValue(mode);
+            // `createSpy('mode').and.returnValue(mode)`: a closure that
+            // records its context and returns `mode`.
+            final modeFnCalls = <ZoomChartContext>[];
+            Mode modeFn(ZoomChartContext context) {
+              modeFnCalls.add(context);
+              return mode;
+            }
 
-            expect(
-              directionEnabled(
-                (ZoomChartContext context) => modeFn.call(context)! as Mode,
-                dir,
-                chart,
-              ),
-              jasmineEquals(expected),
-            );
-            expect(modeFn, toHaveBeenCalledWith([(chart: chart)]));
+            expect(directionEnabled(modeFn, dir, chart), equals(expected));
+            expect(modeFnCalls, contains((chart: chart)));
           },
         );
       }

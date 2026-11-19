@@ -7,8 +7,6 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
-
 void main() {
   group('gesture manager', () {
     final data = <String, Object?>{
@@ -35,8 +33,8 @@ void main() {
         },
       });
 
-      expect(chart.canvas!.style.touchAction, toBe('none'));
-      expect(chart.canvas!.style.userSelect, toBe('none'));
+      expect(chart.canvas!.style.touchAction, equals('none'));
+      expect(chart.canvas!.style.userSelect, equals('none'));
     });
 
     testWidgets(
@@ -55,8 +53,8 @@ void main() {
           },
         });
 
-        expect(chart.canvas!.style.userSelect, toBe(''));
-        expect(chart.canvas!.style.touchAction, toBe(''));
+        expect(chart.canvas!.style.userSelect, equals(''));
+        expect(chart.canvas!.style.touchAction, equals(''));
       },
     );
   });

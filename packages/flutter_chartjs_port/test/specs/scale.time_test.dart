@@ -16,7 +16,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 import '../support/tick_label.dart';
 
 // The spec reads Chart.registry and Chart.defaults, the static members
@@ -199,32 +198,61 @@ void main() {
     });
 
     test('should have the correct default config', () {
-      final defaultConfig = jsGet(jsGet(Chart.defaults, 'scales'), 'time');
+      final defaultConfig =
+          jsGet(jsGet(Chart.defaults, 'scales'), 'time')! as ScaleOptionsScope;
+      // `toEqual`: the own keys of each object and the value of each key.
       expect(
-        defaultConfig,
-        jasmineEquals(<String, Object?>{
-          'bounds': ScaleBounds.data,
-          'adapters': <String, Object?>{},
-          'time': <String, Object?>{
-            // false == a pattern string from or a custom callback that
-            // converts its argument to a timestamp
-            'parser': false,
-            // false == automatic or override with week, month, year, etc.
-            'unit': false,
-            // none, or override with week, month, year, etc.
-            'round': false,
-            // override week start day
-            'isoWeekday': false,
-            'minUnit': TimeUnit.millisecond,
-            'displayFormats': <String, Object?>{},
-          },
-          'ticks': <String, Object?>{
-            'source': TickSource.auto,
-            'callback': false,
-            'major': <String, Object?>{'enabled': false},
-          },
-        }),
+        defaultConfig.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.bounds,
+          OptionKey.adapters,
+          OptionKey.time,
+          OptionKey.ticks,
+        ]),
       );
+      expect(defaultConfig.boundsCell?.raw, ScaleBounds.data);
+      expect(defaultConfig.adaptersCell?.raw, equals(<String, Object?>{}));
+
+      final time = defaultConfig.timeCell!.raw! as TimeScaleTimeOptionsScope;
+      expect(
+        time.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.parser,
+          OptionKey.unit,
+          OptionKey.round,
+          OptionKey.isoWeekday,
+          OptionKey.minUnit,
+          OptionKey.displayFormats,
+        ]),
+      );
+      // false == a pattern string from or a custom callback that
+      // converts its argument to a timestamp
+      expect(time.parserCell?.raw, false);
+      // false == automatic or override with week, month, year, etc.
+      expect(time.unitCell?.raw, false);
+      // none, or override with week, month, year, etc.
+      expect(time.roundCell?.raw, false);
+      // override week start day
+      expect(time.isoWeekdayCell?.raw, false);
+      expect(time.minUnitCell?.raw, TimeUnit.millisecond);
+      final displayFormats =
+          time.displayFormatsCell!.raw! as DisplayFormatsScope;
+      expect(displayFormats.ownKeys, isEmpty);
+
+      final ticks = defaultConfig.ticksCell!.raw! as TickOptionsScope;
+      expect(
+        ticks.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.source,
+          OptionKey.callback,
+          OptionKey.major,
+        ]),
+      );
+      expect(ticks.sourceCell?.raw, TickSource.auto);
+      expect(ticks.callbackCell?.raw, false);
+      final major = ticks.majorCell!.raw! as MajorTickOptionsScope;
+      expect(major.ownKeys, [OptionKey.enabled]);
+      expect(major.enabledCell?.raw, false);
     });
 
     testWidgets('should correctly determine the unit', (tester) async {
@@ -257,7 +285,7 @@ void main() {
 
       final scale = chart.scales['x']! as TimeScale;
 
-      expect(scale.unit, jasmineEquals(TimeUnit.month));
+      expect(scale.unit, equals(TimeUnit.month));
     });
 
     group('when specifying limits', () {
@@ -496,7 +524,7 @@ void main() {
         beforeEach();
         expect(
           _getLabels(scale),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '2005',
             '2006',
             '2007',
@@ -637,9 +665,9 @@ void main() {
         beforeEach();
         final labels = _getLabels(scale);
 
-        expect(labels.length, jasmineEquals(21));
-        expect(labels[0], jasmineEquals('<0>'));
-        expect(labels[labels.length - 1], jasmineEquals('<60>'));
+        expect(labels.length, equals(21));
+        expect(labels[0], equals('<0>'));
+        expect(labels[labels.length - 1], equals('<60>'));
       });
 
       testWidgets('should update ticks.callback correctly', (tester) async {
@@ -655,9 +683,9 @@ void main() {
         chart.update();
 
         final labels = _getLabels(scale);
-        expect(labels.length, jasmineEquals(21));
-        expect(labels[0], jasmineEquals('{0}'));
-        expect(labels[labels.length - 1], jasmineEquals('{60}'));
+        expect(labels.length, equals(21));
+        expect(labels[0], equals('{0}'));
+        expect(labels[labels.length - 1], equals('{60}'));
       });
     });
 
@@ -747,7 +775,7 @@ void main() {
       final label = xScale.getLabelForValue(
         jsGet(controller.getParsed(0), xScale.id),
       );
-      expect(label, jasmineEquals('Jan 8, 2018, 5:14:23 am'));
+      expect(label, equals('Jan 8, 2018, 5:14:23 am'));
     });
 
     testWidgets(
@@ -779,7 +807,7 @@ void main() {
 
         expect(
           xScale.getValueForPixel(pixel),
-          jasmineEquals(_moment(_labels(chart)[0])),
+          equals(_moment(_labels(chart)[0])),
         );
       },
     );
@@ -817,9 +845,9 @@ void main() {
           'wrapper': <String, Object?>{'style': 'display: none'},
         },
       );
-      expect(chart.scales['y']!.width, jasmineEquals(0));
-      expect(chart.scales['y']!.maxWidth, jasmineEquals(0));
-      expect(chart.width, jasmineEquals(0));
+      expect(chart.scales['y']!.width, equals(0));
+      expect(chart.scales['y']!.maxWidth, equals(0));
+      expect(chart.width, equals(0));
     });
 
     group('when ticks.source', () {
@@ -885,7 +913,7 @@ void main() {
 
             expect(
               scale.min,
-              jasmineEquals(
+              equals(
                 _startOf(
                   clock.now().millisecondsSinceEpoch.toDouble(),
                   TimeUnit.day,
@@ -894,7 +922,7 @@ void main() {
             );
             expect(
               scale.max,
-              jasmineEquals(
+              equals(
                 _endOf(
                       clock.now().millisecondsSinceEpoch.toDouble(),
                       TimeUnit.day,
@@ -902,7 +930,7 @@ void main() {
                     1,
               ),
             );
-            expect(_getLabels(scale), jasmineEquals(<Object?>[]));
+            expect(_getLabels(scale), equals(<Object?>[]));
           },
         );
 
@@ -919,7 +947,7 @@ void main() {
 
             expect(
               scale.min,
-              jasmineEquals(
+              equals(
                 _startOf(
                   clock.now().millisecondsSinceEpoch.toDouble(),
                   TimeUnit.year,
@@ -928,7 +956,7 @@ void main() {
             );
             expect(
               scale.max,
-              jasmineEquals(
+              equals(
                 _endOf(
                       clock.now().millisecondsSinceEpoch.toDouble(),
                       TimeUnit.year,
@@ -936,7 +964,7 @@ void main() {
                     1,
               ),
             );
-            expect(_getLabels(scale), jasmineEquals(<Object?>[]));
+            expect(_getLabels(scale), equals(<Object?>[]));
           },
         );
       });
@@ -1017,7 +1045,7 @@ void main() {
 
             expect(
               scale.min,
-              jasmineEquals(
+              equals(
                 _startOf(
                   clock.now().millisecondsSinceEpoch.toDouble(),
                   TimeUnit.year,
@@ -1026,7 +1054,7 @@ void main() {
             );
             expect(
               scale.max,
-              jasmineEquals(
+              equals(
                 _endOf(
                       clock.now().millisecondsSinceEpoch.toDouble(),
                       TimeUnit.year,
@@ -1034,7 +1062,7 @@ void main() {
                     1,
               ),
             );
-            expect(_getLabels(scale), jasmineEquals(<Object?>[]));
+            expect(_getLabels(scale), equals(<Object?>[]));
           },
         );
       });

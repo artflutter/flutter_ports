@@ -10,7 +10,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/drop_extra_args.dart';
-import '../support/jasmine.dart';
 import '../support/plugin_defaults.dart';
 
 // Each case builds a chart with `acquireChart` (Chart.js ADR 0022): a chart
@@ -40,9 +39,11 @@ import '../support/plugin_defaults.dart';
 // `PluginHookArgs` with these fields.
 //
 // `spyOn(plugin, 'hook')` is [_spyOnReset] or [_spyOnTooltipDraw]: it puts a
-// spy of `hookSpy` (test/support/jasmine.dart) into the hook field.
-// `plugin.hook.calls` reads the calls of the spy through the hook field of
-// the plugin. `toBe` is `same` for objects. A notify returns a `bool?`:
+// recording closure into the hook field and returns the list of the calls,
+// a `_HookCall` record `(chart, args, options)` for each call.
+// `plugin.hook.calls.count()` is the length of the list, `calls.first()` its
+// first item, and `toHaveBeenCalled()` a list that is not empty. `toBe` is
+// `same` for objects. A notify returns a `bool?`:
 // `toBeTruthy()` and `toBeFalsy()` are `isTrue` and `isFalse`.
 //
 // The case with `done` is `await waitForDone((done) { ... })`, and an
@@ -64,19 +65,33 @@ final class _SpecArgs({
   final Object? arg2,
 }) extends PluginHookArgs;
 
-/// `spyOn(plugin, 'hook')`: puts a spy into the hook `reset` of [plugin].
-JasmineSpy _spyOnReset(Plugin<Object?> plugin) {
-  final spy = hookSpy(plugin.reset);
-  plugin.reset = spy.hook;
-  return spy;
+/// One call of a hook: the chart, the args object and the options.
+typedef _HookCall = ({IChart chart, Object args, Object? options});
+
+/// `spyOn(plugin, 'hook')`: puts a recording closure into the hook `reset`
+/// of [plugin] and returns its calls. As a Jasmine spy without
+/// `callThrough`, the closure does not call the original hook.
+List<_HookCall> _spyOnReset(Plugin<Object?> plugin) {
+  final calls = <_HookCall>[];
+  plugin.reset = (chart, args, options) {
+    calls.add((chart: chart, args: args, options: options));
+  };
+  return calls;
 }
 
-/// `spyOn(plugin, 'hook')`: puts a spy into the cancelable hook
-/// `beforeTooltipDraw` of [plugin].
-JasmineSpy _spyOnTooltipDraw(Plugin<Object?> plugin) {
-  final spy = hookSpy(plugin.beforeTooltipDraw);
-  plugin.beforeTooltipDraw = spy.cancelableHook;
-  return spy;
+/// `spyOn(plugin, 'hook').and.callThrough()`: puts a recording closure into
+/// the cancelable hook `beforeTooltipDraw` of [plugin] and returns its
+/// calls. The closure calls the original hook and returns its result, or
+/// `true` when the plugin has no such hook (a JS `undefined` does not
+/// cancel).
+List<_HookCall> _spyOnTooltipDraw(Plugin<Object?> plugin) {
+  final calls = <_HookCall>[];
+  final original = plugin.beforeTooltipDraw;
+  plugin.beforeTooltipDraw = (chart, args, options) {
+    calls.add((chart: chart, args: args, options: options));
+    return original?.call(chart, args, options) ?? true;
+  };
+  return calls;
 }
 
 /// `chart.notifyPlugins('hook', {cancelable: true})`: a notify of the
@@ -100,16 +115,13 @@ void main() {
         });
         final args = _SpecArgs(value: 42);
 
-        _spyOnReset(plugin);
+        final calls = _spyOnReset(plugin);
 
         chart.notifyPlugins(PluginHook.reset, args);
-        expect(plugin.reset.calls.count(), 1);
-        expect(plugin.reset.calls.first().args[0], same(chart));
-        expect(plugin.reset.calls.first().args[1], same(args));
-        expect(
-          plugin.reset.calls.first().args[2],
-          toEqualOptions(<String, Object?>{}),
-        );
+        expect(calls, hasLength(1));
+        expect(calls.first.chart, same(chart));
+        expect(calls.first.args, same(args));
+        expect(calls.first.options, toEqualOptions(<String, Object?>{}));
       });
 
       testWidgets('should call global plugins with arguments', (tester) async {
@@ -117,17 +129,14 @@ void main() {
         final chart = acquireChart(<String, Object?>{});
         final args = _SpecArgs(value: 42);
 
-        _spyOnReset(plugin);
+        final calls = _spyOnReset(plugin);
 
         Chart.register([plugin]);
         chart.notifyPlugins(PluginHook.reset, args);
-        expect(plugin.reset.calls.count(), 1);
-        expect(plugin.reset.calls.first().args[0], same(chart));
-        expect(plugin.reset.calls.first().args[1], same(args));
-        expect(
-          plugin.reset.calls.first().args[2],
-          toEqualOptions(<String, Object?>{}),
-        );
+        expect(calls, hasLength(1));
+        expect(calls.first.chart, same(chart));
+        expect(calls.first.args, same(args));
+        expect(calls.first.options, toEqualOptions(<String, Object?>{}));
         Chart.unregister([plugin]);
       });
 
@@ -139,13 +148,13 @@ void main() {
             'plugins': [plugin, plugin],
           });
 
-          _spyOnReset(plugin);
+          final calls = _spyOnReset(plugin);
 
           Chart.register([
             [plugin, plugin],
           ]);
           chart.notifyPlugins(PluginHook.reset);
-          expect(plugin.reset.calls.count(), 1);
+          expect(calls, hasLength(1));
           Chart.unregister([plugin]);
         },
       );
@@ -245,14 +254,12 @@ void main() {
         });
 
         final plugins = _inlinePlugins(chart);
-        for (final plugin in plugins) {
-          _spyOnTooltipDraw(plugin).and.callThrough();
-        }
+        final calls = [for (final plugin in plugins) _spyOnTooltipDraw(plugin)];
 
         final ret = _notifyCancelable(chart);
         expect(ret, isTrue);
-        for (final plugin in plugins) {
-          expect(plugin.beforeTooltipDraw, toHaveBeenCalled());
+        for (final pluginCalls in calls) {
+          expect(pluginCalls, isNotEmpty);
         }
       });
 
@@ -297,17 +304,17 @@ void main() {
           });
 
           final plugins = _inlinePlugins(chart);
-          for (final plugin in plugins) {
-            _spyOnTooltipDraw(plugin).and.callThrough();
-          }
+          final calls = [
+            for (final plugin in plugins) _spyOnTooltipDraw(plugin),
+          ];
 
           final ret = _notifyCancelable(chart);
           expect(ret, isFalse);
-          expect(plugins[0].beforeTooltipDraw, toHaveBeenCalled());
-          expect(plugins[1].beforeTooltipDraw, toHaveBeenCalled());
-          expect(plugins[2].beforeTooltipDraw, toHaveBeenCalled());
-          expect(plugins[3].beforeTooltipDraw, isNot(toHaveBeenCalled()));
-          expect(plugins[4].beforeTooltipDraw, isNot(toHaveBeenCalled()));
+          expect(calls[0], isNotEmpty);
+          expect(calls[1], isNotEmpty);
+          expect(calls[2], isNotEmpty);
+          expect(calls[3], isEmpty);
+          expect(calls[4], isEmpty);
         },
       );
     });
@@ -326,7 +333,7 @@ void main() {
           },
         });
 
-        _spyOnReset(plugin);
+        final calls = _spyOnReset(plugin);
 
         Chart.register([plugin]);
         chart
@@ -334,19 +341,10 @@ void main() {
           ..notifyPlugins(PluginHook.reset, _SpecArgs(arg1: 'bla'))
           ..notifyPlugins(PluginHook.reset, _SpecArgs(arg1: 'bla', arg2: 42));
 
-        expect(plugin.reset.calls.count(), 3);
-        expect(
-          plugin.reset.calls.argsFor(0)[2],
-          toEqualOptions(<String, Object?>{'a': '123'}),
-        );
-        expect(
-          plugin.reset.calls.argsFor(1)[2],
-          toEqualOptions(<String, Object?>{'a': '123'}),
-        );
-        expect(
-          plugin.reset.calls.argsFor(2)[2],
-          toEqualOptions(<String, Object?>{'a': '123'}),
-        );
+        expect(calls, hasLength(3));
+        expect(calls[0].options, toEqualOptions(<String, Object?>{'a': '123'}));
+        expect(calls[1].options, toEqualOptions(<String, Object?>{'a': '123'}));
+        expect(calls[2].options, toEqualOptions(<String, Object?>{'a': '123'}));
 
         Chart.unregister([plugin]);
       });
@@ -373,25 +371,25 @@ void main() {
             },
           });
 
-          _spyOnReset(plugins['a']!);
-          _spyOnReset(plugins['b']!);
-          _spyOnReset(plugins['c']!);
+          final callsA = _spyOnReset(plugins['a']!);
+          final callsB = _spyOnReset(plugins['b']!);
+          final callsC = _spyOnReset(plugins['c']!);
 
           chart.notifyPlugins(PluginHook.reset);
 
-          expect(plugins['a']!.reset, toHaveBeenCalled());
-          expect(plugins['b']!.reset, toHaveBeenCalled());
-          expect(plugins['c']!.reset, toHaveBeenCalled());
+          expect(callsA, isNotEmpty);
+          expect(callsB, isNotEmpty);
+          expect(callsC, isNotEmpty);
           expect(
-            plugins['a']!.reset.calls.first().args[2],
+            callsA.first.options,
             toEqualOptions(<String, Object?>{'a': '123'}),
           );
           expect(
-            plugins['b']!.reset.calls.first().args[2],
+            callsB.first.options,
             toEqualOptions(<String, Object?>{'b': '456'}),
           );
           expect(
-            plugins['c']!.reset.calls.first().args[2],
+            callsC.first.options,
             toEqualOptions(<String, Object?>{'c': '789'}),
           );
 
@@ -417,15 +415,15 @@ void main() {
             },
           });
 
-          _spyOnReset(plugins['a']!);
-          _spyOnReset(plugins['b']!);
-          _spyOnReset(plugins['c']!);
+          final callsA = _spyOnReset(plugins['a']!);
+          final callsB = _spyOnReset(plugins['b']!);
+          final callsC = _spyOnReset(plugins['c']!);
 
           chart.notifyPlugins(PluginHook.reset);
 
-          expect(plugins['a']!.reset, isNot(toHaveBeenCalled()));
-          expect(plugins['b']!.reset, isNot(toHaveBeenCalled()));
-          expect(plugins['c']!.reset, toHaveBeenCalled());
+          expect(callsA, isEmpty);
+          expect(callsB, isEmpty);
+          expect(callsC, isNotEmpty);
 
           Chart.unregister([plugins['a']]);
         },
@@ -448,16 +446,17 @@ void main() {
             },
           });
 
-          _spyOnReset(plugin);
+          final calls = _spyOnReset(plugin);
 
           chart.notifyPlugins(PluginHook.reset);
 
-          expect(plugin.reset, toHaveBeenCalled());
-          expect(jsObjectKeys(plugin.reset.calls.first().args[2]), ['a']);
-          // jasmine.objectContaining({a: 42})
+          expect(calls, isNotEmpty);
+          expect(jsObjectKeys(calls.first.options), ['a']);
+          // jasmine.objectContaining({a: 42}): the keys are `['a']`, so the
+          // compare of the key `a` is the whole check.
           expect(
-            plugin.reset.calls.first().args[2],
-            objectContaining({'a': 42}),
+            calls.first.options,
+            toEqualOptions(<String, Object?>{'a': 42}),
           );
 
           Chart.unregister([plugin]);
@@ -475,13 +474,13 @@ void main() {
           );
 
           Chart.register([plugin]);
-          _spyOnReset(plugin);
+          final calls = _spyOnReset(plugin);
 
           acquireChart().notifyPlugins(PluginHook.reset);
 
-          expect(plugin.reset, toHaveBeenCalled());
+          expect(calls, isNotEmpty);
           expect(
-            plugin.reset.calls.first().args[2],
+            calls.first.options,
             toEqualOptions(<String, Object?>{'a': 'foobar'}),
           );
 
@@ -505,12 +504,12 @@ void main() {
           },
         });
 
-        _spyOnReset(plugin);
+        final calls = _spyOnReset(plugin);
         chart.notifyPlugins(PluginHook.reset);
 
-        expect(plugin.reset, toHaveBeenCalled());
+        expect(calls, isNotEmpty);
         expect(
-          plugin.reset.calls.first().args[2],
+          calls.first.options,
           toEqualOptions(<String, Object?>{'foo': 'foo', 'bar': 'bar'}),
         );
 
@@ -529,13 +528,13 @@ void main() {
           },
         });
 
-        _spyOnReset(plugin);
+        final calls = _spyOnReset(plugin);
 
         chart.notifyPlugins(PluginHook.reset);
 
-        expect(plugin.reset, toHaveBeenCalled());
+        expect(calls, isNotEmpty);
         expect(
-          plugin.reset.calls.first().args[2],
+          calls.first.options,
           toEqualOptions(<String, Object?>{'foo': 'foo'}),
         );
 
@@ -544,12 +543,12 @@ void main() {
         };
         chart.update();
 
-        plugin.reset.calls.reset();
+        calls.clear();
         chart.notifyPlugins(PluginHook.reset);
 
-        expect(plugin.reset, toHaveBeenCalled());
+        expect(calls, isNotEmpty);
         expect(
-          plugin.reset.calls.first().args[2],
+          calls.first.options,
           toEqualOptions(<String, Object?>{'bar': 'bar'}),
         );
       });
@@ -604,11 +603,11 @@ void main() {
           'options': <String, Object?>{'plugins': false},
         });
 
-        _spyOnReset(plugin);
+        final calls = _spyOnReset(plugin);
 
         chart.notifyPlugins(PluginHook.reset);
 
-        expect(plugin.reset, isNot(toHaveBeenCalled()));
+        expect(calls, isEmpty);
       });
 
       testWidgets('should not restart plugins when a double register occurs', (

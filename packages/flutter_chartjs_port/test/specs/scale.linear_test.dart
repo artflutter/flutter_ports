@@ -4,7 +4,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:math' as math;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -16,7 +15,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 import '../support/tick_label.dart';
 
 // The spec reads Chart.registry and Chart.defaults: the static fields
@@ -42,7 +40,8 @@ import '../support/tick_label.dart';
 //   value whose `typeof` is `'function'`.
 // - `toBeLessThanOrEqual(x)` is `lessThanOrEqualTo(x)`.
 //
-// - `toBeCloseTo` is `_toBeCloseTo`. `toEqual` is `jasmineEquals`.
+// - `toBeCloseTo(e, p)` is `closeTo(e, 5e-(p + 1))`; the precision 1e-2
+//   of :1300-1317 is the tolerance 0.49. `toEqual` is `equals`.
 // - `chart.scales.y.options.stacked = true` writes through the resolver of
 //   the scale options: `chart.scales['y']!.options['stacked'] =
 //   StackMode.on` (row adapt-stacked-option-enum).
@@ -66,23 +65,6 @@ AnyObject _dataset(Chart chart, int index) =>
 JsObjectFace _optionsY(Chart chart, [String? key]) {
   final y = jsGet(jsGet(chart.options, 'scales'), 'y');
   return (key == null ? y : jsGet(y, key))! as JsObjectFace;
-}
-
-/// Jasmine `toBeCloseTo(expected, precision)` of jasmine-core 3.99.1:
-/// `Math.round(delta * 10^(precision + 1)) <= 10^-precision / 2 *
-/// 10^(precision + 1)`, with `delta = |expected - actual|`. The spec also
-/// gives a precision that is not an integer, `1e-2` (:1027-1038).
-Matcher _toBeCloseTo(num expected, [num precision = 2]) {
-  final pow = math.pow(10.0, precision + 1);
-  final maxDelta = math.pow(10.0, -precision) / 2;
-  return predicate<Object?>(
-    (actual) =>
-        actual is num &&
-        ((expected - actual).abs() * pow).toDouble().roundToDouble() <=
-            maxDelta * pow,
-    'a number close to ${jsToString(expected)} (Jasmine toBeCloseTo, '
-    'precision ${jsToString(precision)})',
-  );
 }
 
 void main() {
@@ -387,8 +369,8 @@ void main() {
         });
 
         expect(chart.scales['y'], isNotNull); // must construct
-        expect(chart.scales['y']!.min * 1e8, _toBeCloseTo(-4));
-        expect(chart.scales['y']!.max * 1e8, _toBeCloseTo(6));
+        expect(chart.scales['y']!.min * 1e8, closeTo(-4, 5e-3));
+        expect(chart.scales['y']!.max * 1e8, closeTo(6, 5e-3));
       },
     );
 
@@ -815,7 +797,7 @@ void main() {
         expect(chart.scales['y']!.max, 11);
         expect(
           _getLabels(chart.scales['y']!),
-          jasmineEquals(<Object?>['1', '3', '5', '7', '9', '11']),
+          equals(<Object?>['1', '3', '5', '7', '9', '11']),
         );
       },
     );
@@ -898,7 +880,7 @@ void main() {
       expect(chart.scales['y']!.max, 10);
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>['0', '2.5', '5', '7.5', '10']),
+        equals(<Object?>['0', '2.5', '5', '7.5', '10']),
       );
     });
 
@@ -932,7 +914,7 @@ void main() {
         expect(chart.scales['y']!.max, 2);
         expect(
           _getLabels(chart.scales['y']!),
-          jasmineEquals(<Object?>['0', '1', '2']),
+          equals(<Object?>['0', '1', '2']),
         );
       });
 
@@ -965,7 +947,7 @@ void main() {
           expect(chart.scales['y']!.max, 0.01);
           expect(
             _getLabels(chart.scales['y']!),
-            jasmineEquals(<Object?>['0', '0.01']),
+            equals(<Object?>['0', '0.01']),
           );
         },
       );
@@ -996,14 +978,14 @@ void main() {
         expect(chart.scales['y'], isNotNull); // must construct
         expect(
           _getLabels(chart.scales['y']!),
-          jasmineEquals(<Object?>['20', '25', '30', '35', '40', '45', '50']),
+          equals(<Object?>['20', '25', '30', '35', '40', '45', '50']),
         );
 
         chart.scales['y']!.options['beginAtZero'] = true;
         chart.update();
         expect(
           _getLabels(chart.scales['y']!),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '0',
             '5',
             '10',
@@ -1022,7 +1004,7 @@ void main() {
         chart.update();
         expect(
           _getLabels(chart.scales['y']!),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '-50',
             '-45',
             '-40',
@@ -1041,15 +1023,7 @@ void main() {
         chart.update();
         expect(
           _getLabels(chart.scales['y']!),
-          jasmineEquals(<Object?>[
-            '-50',
-            '-45',
-            '-40',
-            '-35',
-            '-30',
-            '-25',
-            '-20',
-          ]),
+          equals(<Object?>['-50', '-45', '-40', '-35', '-30', '-25', '-20']),
         );
       },
     );
@@ -1077,7 +1051,7 @@ void main() {
 
         expect(
           _getLabels(chart.scales['y']!),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '80',
             '70',
             '60',
@@ -1118,7 +1092,7 @@ void main() {
 
         expect(
           _getLabels(chart.scales['y']!),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             '0',
             '0.01',
             '0.02',
@@ -1153,7 +1127,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+        equals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
       );
 
       _optionsY(chart, 'ticks')['maxTicksLimit'] = 11;
@@ -1161,7 +1135,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+        equals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
       );
 
       _optionsY(chart, 'ticks')['maxTicksLimit'] = 21;
@@ -1169,7 +1143,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           '0.5',
           '0.6',
           '0.7',
@@ -1200,7 +1174,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
+        equals(<Object?>['0.5', '1.0', '1.5', '2.0', '2.5']),
       );
 
       _optionsY(chart)['min'] = 0.3;
@@ -1209,7 +1183,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>['0.3', '0.8', '1.3', '1.8', '2.3', '2.8']),
+        equals(<Object?>['0.3', '0.8', '1.3', '1.8', '2.3', '2.8']),
       );
     });
 
@@ -1231,8 +1205,8 @@ void main() {
         },
       });
 
-      expect(chart.scales['y']!.min, jasmineEquals(1));
-      expect(chart.scales['y']!.max, jasmineEquals(99));
+      expect(chart.scales['y']!.min, equals(1));
+      expect(chart.scales['y']!.max, equals(99));
     });
 
     testWidgets('Should build labels using the user supplied callback', (
@@ -1262,7 +1236,7 @@ void main() {
       // Just the index
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8']),
+        equals(<Object?>['0', '1', '2', '3', '4', '5', '6', '7', '8']),
       );
     });
 
@@ -1306,9 +1280,9 @@ void main() {
         toBeCloseToPixel(266 + 3 / 2),
       ); // halfway*/
 
-      expect(xScale.getValueForPixel(501), _toBeCloseTo(1, 1e-2));
-      expect(xScale.getValueForPixel(31), _toBeCloseTo(-1, 1e-2));
-      expect(xScale.getValueForPixel(266), _toBeCloseTo(0, 1e-2));
+      expect(xScale.getValueForPixel(501), closeTo(1, 0.49));
+      expect(xScale.getValueForPixel(31), closeTo(-1, 0.49));
+      expect(xScale.getValueForPixel(266), closeTo(0, 0.49));
 
       final yScale = chart.scales['y']!;
       expect(
@@ -1321,9 +1295,9 @@ void main() {
       ); // left + paddingLeft
       expect(yScale.getPixelForValue(0), toBeCloseToPixel(258)); // halfway*/
 
-      expect(yScale.getValueForPixel(32), _toBeCloseTo(1, 1e-2));
-      expect(yScale.getValueForPixel(484), _toBeCloseTo(-1, 1e-2));
-      expect(yScale.getValueForPixel(258), _toBeCloseTo(0, 1e-2));
+      expect(yScale.getValueForPixel(32), closeTo(1, 0.49));
+      expect(yScale.getValueForPixel(484), closeTo(-1, 0.49));
+      expect(yScale.getValueForPixel(258), closeTo(0, 0.49));
     });
 
     testWidgets('should fit correctly', (tester) async {
@@ -1480,8 +1454,8 @@ void main() {
           chart.update();
         }
 
-        expect(chart.scales['x']!.min, jasmineEquals(0));
-        expect(chart.scales['x']!.max, jasmineEquals(1));
+        expect(chart.scales['x']!.min, equals(0));
+        expect(chart.scales['x']!.max, equals(1));
       },
     );
 
@@ -1514,8 +1488,8 @@ void main() {
           },
         });
 
-        expect(chart.scales['x']!.min, jasmineEquals(20));
-        expect(chart.scales['x']!.max, jasmineEquals(21));
+        expect(chart.scales['x']!.min, equals(20));
+        expect(chart.scales['x']!.max, equals(21));
       },
     );
 
@@ -1544,7 +1518,7 @@ void main() {
         },
       });
 
-      expect(chart.scales['x']!.min, jasmineEquals(0));
+      expect(chart.scales['x']!.min, equals(0));
     });
 
     testWidgets('max settings should be used if set to zero', (tester) async {
@@ -1572,7 +1546,7 @@ void main() {
         },
       });
 
-      expect(chart.scales['x']!.max, jasmineEquals(0));
+      expect(chart.scales['x']!.max, equals(0));
     });
 
     testWidgets('Should get correct pixel values when horizontal', (
@@ -1603,8 +1577,8 @@ void main() {
 
       expect(scale.getPixelForValue(max), toBeCloseToPixel(end));
       expect(scale.getPixelForValue(min), toBeCloseToPixel(start));
-      expect(scale.getValueForPixel(end), _toBeCloseTo(max, 4));
-      expect(scale.getValueForPixel(start), _toBeCloseTo(min, 4));
+      expect(scale.getValueForPixel(end), closeTo(max, 5e-5));
+      expect(scale.getValueForPixel(start), closeTo(min, 5e-5));
 
       scale.options['reverse'] = true;
       chart.update();
@@ -1614,8 +1588,8 @@ void main() {
 
       expect(scale.getPixelForValue(max), toBeCloseToPixel(start));
       expect(scale.getPixelForValue(min), toBeCloseToPixel(end));
-      expect(scale.getValueForPixel(end), _toBeCloseTo(min, 4));
-      expect(scale.getValueForPixel(start), _toBeCloseTo(max, 4));
+      expect(scale.getValueForPixel(end), closeTo(min, 5e-5));
+      expect(scale.getValueForPixel(start), closeTo(max, 5e-5));
     });
 
     testWidgets('Should get correct pixel values when vertical', (
@@ -1645,8 +1619,8 @@ void main() {
 
       expect(scale.getPixelForValue(max), toBeCloseToPixel(end));
       expect(scale.getPixelForValue(min), toBeCloseToPixel(start));
-      expect(scale.getValueForPixel(end), _toBeCloseTo(max, 4));
-      expect(scale.getValueForPixel(start), _toBeCloseTo(min, 4));
+      expect(scale.getValueForPixel(end), closeTo(max, 5e-5));
+      expect(scale.getValueForPixel(start), closeTo(min, 5e-5));
 
       scale.options['reverse'] = true;
       chart.update();
@@ -1656,8 +1630,8 @@ void main() {
 
       expect(scale.getPixelForValue(max), toBeCloseToPixel(start));
       expect(scale.getPixelForValue(min), toBeCloseToPixel(end));
-      expect(scale.getValueForPixel(end), _toBeCloseTo(min, 4));
-      expect(scale.getValueForPixel(start), _toBeCloseTo(max, 4));
+      expect(scale.getValueForPixel(end), closeTo(min, 5e-5));
+      expect(scale.getValueForPixel(start), closeTo(max, 5e-5));
     });
 
     testWidgets('should not throw errors when chart size is negative', (

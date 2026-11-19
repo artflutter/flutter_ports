@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
-import '../support/jasmine.dart';
 
 void main() {
   group('pinch', () {
@@ -27,7 +26,8 @@ void main() {
     group('events', () {
       testWidgets('should call onZoomStart', (tester) async {
         await waitForDone((done) {
-          final startSpy = createSpy('started');
+          // `createSpy('started')`: the contexts of the calls.
+          final startCalls = <ZoomStartContext<NativeEvent>>[];
           final chart = acquireChart(<String, Object?>{
             'type': 'scatter',
             'data': data,
@@ -37,7 +37,7 @@ void main() {
                   zoom: ZoomOptions(
                     mode: Mode.xy,
                     onZoomStart: (context) {
-                      startSpy.call(context);
+                      startCalls.add(context);
                       return true;
                     },
                     pinch: const PinchOptions(enabled: true),
@@ -51,8 +51,8 @@ void main() {
             chart,
             pos: (chart.width / 2, chart.height / 2),
             done: () {
-              expect(startSpy, toHaveBeenCalled());
-              expect(chart.scales['x']!.min, isNot(toBe(1)));
+              expect(startCalls, isNotEmpty);
+              expect(chart.scales['x']!.min, isNot(equals(1)));
               done();
             },
           );
@@ -63,7 +63,8 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final rejectSpy = createSpy('rejected');
+          // `createSpy('rejected')`: the contexts of the calls.
+          final rejectCalls = <ZoomEventContext<NativeEvent>>[];
           final chart = acquireChart(<String, Object?>{
             'type': 'scatter',
             'data': data,
@@ -73,7 +74,7 @@ void main() {
                   zoom: ZoomOptions(
                     mode: Mode.xy,
                     onZoomStart: (_) => false,
-                    onZoomRejected: rejectSpy.call,
+                    onZoomRejected: rejectCalls.add,
                     pinch: const PinchOptions(enabled: true),
                   ),
                 ),
@@ -84,8 +85,8 @@ void main() {
           simulatePinch(
             chart,
             done: () {
-              expect(rejectSpy, toHaveBeenCalled());
-              expect(chart.scales['x']!.min, toBe(1));
+              expect(rejectCalls, isNotEmpty);
+              expect(chart.scales['x']!.min, equals(1));
               done();
             },
           );
@@ -103,7 +104,7 @@ void main() {
                   zoom: ZoomOptions(
                     mode: Mode.xy,
                     onZoomComplete: (ctx) {
-                      expect(ctx.chart.scales['x']!.min, isNot(toBe(1)));
+                      expect(ctx.chart.scales['x']!.min, isNot(equals(1)));
                       done();
                     },
                     pinch: const PinchOptions(enabled: true),
@@ -119,8 +120,10 @@ void main() {
       testWidgets('should ignore a third pointer during a pinch', (
         tester,
       ) async {
-        final startSpy = createSpy('started');
-        final completeSpy = createSpy('completed');
+        // `createSpy('started')`: the contexts of the calls.
+        final startCalls = <ZoomStartContext<NativeEvent>>[];
+        // `createSpy('completed')`: the contexts of the calls.
+        final completeCalls = <ZoomChartContext>[];
         final chart = acquireChart(<String, Object?>{
           'type': 'scatter',
           'data': data,
@@ -130,10 +133,10 @@ void main() {
                 zoom: ZoomOptions(
                   mode: Mode.xy,
                   onZoomStart: (context) {
-                    startSpy.call(context);
+                    startCalls.add(context);
                     return true;
                   },
-                  onZoomComplete: completeSpy.call,
+                  onZoomComplete: completeCalls.add,
                   pinch: const PinchOptions(enabled: true),
                 ),
               ),
@@ -149,21 +152,21 @@ void main() {
 
         dispatch(node, 'pointerdown', 1, cx - 40, cy);
         dispatch(node, 'pointerdown', 2, cx + 40, cy);
-        expect(startSpy, toHaveBeenCalledTimes(1));
+        expect(startCalls, hasLength(1));
 
         // A third finger neither restarts the pinch nor ends it when lifted.
         dispatch(node, 'pointerdown', 3, cx, cy + 100);
-        expect(startSpy, toHaveBeenCalledTimes(1));
+        expect(startCalls, hasLength(1));
         dispatch(node, 'pointerup', 3, cx, cy + 100);
-        expect(completeSpy, isNot(toHaveBeenCalled()));
+        expect(completeCalls, isEmpty);
 
         dispatch(node, 'pointermove', 1, cx - 80, cy);
         dispatch(node, 'pointermove', 2, cx + 80, cy);
-        expect(chart.scales['x']!.min, isNot(toBe(1)));
+        expect(chart.scales['x']!.min, isNot(equals(1)));
 
         dispatch(node, 'pointerup', 1, cx - 80, cy);
         dispatch(node, 'pointerup', 2, cx + 80, cy);
-        expect(completeSpy, toHaveBeenCalledTimes(1));
+        expect(completeCalls, hasLength(1));
       });
     });
   });

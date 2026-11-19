@@ -783,8 +783,9 @@ evidence and the items that stay open. In short:
   5, the hover tests and the blue screen come with the theme unit of step 4.
 - The lift of the `blocked: controller.*` skips follows a check of all 536 records of the
   classification by `lift_check.py`, a temporary script of phase 7, not kept.
-- The 7 controller spec files follow the conventions of §13 and share the Jasmine matchers and
-  spies of `test/support/jasmine.dart`.
+- The 7 controller spec files follow the conventions of §13 of Chart.js ADR 0030, with items 1, 5,
+  6, 7 and 8 of [Chart.js ADR 0180](adr/0180-native-spec-matchers.md): native matchers and the
+  recorders of `test/support/draw_recorder.dart`.
 
 ### 2.24 Chart.js ADRs 0038-0041: Plugins (gate 8)
 
@@ -969,11 +970,12 @@ controllers follow [Chart.js ADR 0030](adr/0030-controller-test-strategy.md) §1
 - A scatter line with `tension` draws its Bézier curves with NaN control points upstream: scatter
   has no `draw` override, so no `updateControlPoints` call. The canvas of the port skips a
   `bezierCurveTo` with an argument that is not finite, as a Canvas 2D does.
-- The spec ports share the Jasmine matchers and spies of `test/support/jasmine.dart`: a spy of a
-  function value is a recording function value, and a spy of a method is a spy object in the slot
-  that the library reads (`meta.data[i]`, `meta.dataset`, the listeners of a data array,
-  `chart.ctx`). A draw spy of an element with a running animation throws a `StateError`. Jasmine
-  `this` is a set of `late` variables of the group closure.
+- The spec ports use the native matchers of package:test ([Chart.js ADR
+  0180](adr/0180-native-spec-matchers.md)): a spy of a function value is a local recording
+  closure, and a spy of a method is a recorder in the slot that the library reads (`meta.data[i]`,
+  `meta.dataset`, the listeners of a data array, `chart.ctx`). A recorder of an element with a
+  running animation throws a `StateError`. Jasmine `this` is a set of `late` variables of the
+  group closure.
 
 **Where tests run.**
 

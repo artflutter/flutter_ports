@@ -16,12 +16,14 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
+import '../support/legend_item.dart';
 
 // `Chart` is the class of core.controller.dart, with the static members
 // `Chart.registry` and `Chart.defaults`. `window.Chart.helpers.color` is
-// `color` of helpers.color.dart. `toEqual` is jasmineEquals of
-// test/support/jasmine.dart, and `jasmine.any(Function)` is anyFunction.
+// `color` of helpers.color.dart. `toEqual` of the legend items is
+// [_itemsEqual]: `legendItemEquals` of test/support/legend_item.dart for
+// each item. `toEqual` of the defaults reads the own keys and the cells of
+// the typed scopes, and `jasmine.any(Function)` is `isA<Function>()`.
 // `toEqualOptions` is the matcher of chartjs_test_utils.
 //
 // Each chart case is a `testWidgets` case with the harness of Chart.js ADR
@@ -119,48 +121,51 @@ List<Object?> _lineDatasets() => <Object?>[
   },
 ];
 
-/// A legend item with the values of the spec (each key of :62-77).
-AnyObject _item({
+/// A legend item with the values of the spec (each key of :62-77). An
+/// absent key of the spec is Dart `null`.
+LegendItem _item({
   required String text,
-  required Object? fillStyle,
+  required ChartPaint fillStyle,
   required bool hidden,
-  required num lineWidth,
-  required Object? strokeStyle,
-  required num datasetIndex,
-  Object? borderRadius = undefined,
-  Object? lineCap = undefined,
-  Object? lineDash = undefined,
-  Object? lineDashOffset = undefined,
-  Object? lineJoin = undefined,
-  Object? pointStyle = undefined,
-  Object? rotation = undefined,
-}) => <String, Object?>{
-  'text': text,
-  'borderRadius': borderRadius,
-  'fillStyle': fillStyle,
-  'fontColor': const ChartPaint.solid(
-    native_ui.Color.fromRGBO(102, 102, 102, 1),
-  ),
-  'hidden': hidden,
-  'lineCap': lineCap,
-  'lineDash': lineDash,
-  'lineDashOffset': lineDashOffset,
-  'lineJoin': lineJoin,
-  'lineWidth': lineWidth,
-  'strokeStyle': strokeStyle,
-  'pointStyle': pointStyle,
-  'rotation': rotation,
-  'textAlign': undefined,
-  'datasetIndex': datasetIndex,
-};
+  required double lineWidth,
+  required ChartPaint strokeStyle,
+  required int datasetIndex,
+  TRBLCorners? borderRadius,
+  native_ui.StrokeCap? lineCap,
+  List<double>? lineDash,
+  double? lineDashOffset,
+  native_ui.StrokeJoin? lineJoin,
+  PointStyle? pointStyle,
+  double? rotation,
+}) => LegendItem(
+  text: [text],
+  borderRadius: borderRadius,
+  fillStyle: fillStyle,
+  fontColor: const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
+  hidden: hidden,
+  lineCap: lineCap,
+  lineDash: lineDash,
+  lineDashOffset: lineDashOffset,
+  lineJoin: lineJoin,
+  lineWidth: lineWidth,
+  strokeStyle: strokeStyle,
+  pointStyle: pointStyle,
+  rotation: rotation,
+  datasetIndex: datasetIndex,
+);
+
+/// `toEqual(expected)` of a list of legend items: the same length, and each
+/// item matches `legendItemEquals` of its expected item.
+Matcher _itemsEqual(List<LegendItem> expected) =>
+    equals([for (final item in expected) legendItemEquals(item)]);
 
 /// The items of the line cases, dataset 1 to 3 (:141-189).
-AnyObject _lineItem1() => _item(
+LegendItem _lineItem1() => _item(
   text: 'dataset1',
   fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
   hidden: false,
   lineCap: native_ui.StrokeCap.round,
-  lineDash: <Object?>[2, 2],
+  lineDash: <double>[2, 2],
   lineDashOffset: 5.5,
   lineJoin: native_ui.StrokeJoin.miter,
   lineWidth: 3,
@@ -168,12 +173,12 @@ AnyObject _lineItem1() => _item(
   datasetIndex: 0,
 );
 
-AnyObject _lineItem2() => _item(
+LegendItem _lineItem2() => _item(
   text: 'dataset2',
   fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
   hidden: true,
   lineCap: native_ui.StrokeCap.butt,
-  lineDash: <Object?>[],
+  lineDash: <double>[],
   lineDashOffset: 0,
   lineJoin: native_ui.StrokeJoin.round,
   lineWidth: 3,
@@ -181,12 +186,12 @@ AnyObject _lineItem2() => _item(
   datasetIndex: 1,
 );
 
-AnyObject _lineItem3() => _item(
+LegendItem _lineItem3() => _item(
   text: 'dataset3',
   fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
   hidden: false,
   lineCap: native_ui.StrokeCap.butt,
-  lineDash: <Object?>[],
+  lineDash: <double>[],
   lineDashOffset: 0,
   lineJoin: native_ui.StrokeJoin.miter,
   lineWidth: 10,
@@ -218,44 +223,66 @@ void main() {
     group('auto', fixture.specs('plugin.legend'));
 
     test('should have the correct default config', () {
-      final actual = _legendDefaults();
-      final labels = jsGet(actual, 'labels')! as JsObjectFace;
-      final title = jsGet(actual, 'title')! as JsObjectFace;
-      // jasmine.any(Function): each function value of the expected object.
-      expect(jsGet(actual, 'onClick'), anyFunction);
-      expect(jsGet(labels, 'color'), anyFunction);
-      expect(jsGet(labels, 'generateLabels'), anyFunction);
-      expect(jsGet(title, 'color'), anyFunction);
+      final actual = _legendDefaults() as LegendOptionsScope;
+      // `toEqual`: the own keys of each object and the value of each key.
       expect(
-        actual,
-        jasmineEquals(<String, Object?>{
-          'display': true,
-          'position': ChartPosition.top,
-          'align': ChartAlign.center,
-          'fullSize': true,
-          'reverse': false,
-          'weight': 1000,
-
-          // a callback that will handle
-          'onClick': jsGet(actual, 'onClick'),
-          'onHover': null,
-          'onLeave': null,
-
-          'labels': <String, Object?>{
-            'color': jsGet(labels, 'color'),
-            'boxWidth': 40,
-            'padding': 10,
-            'generateLabels': jsGet(labels, 'generateLabels'),
-          },
-
-          'title': <String, Object?>{
-            'color': jsGet(title, 'color'),
-            'display': false,
-            'position': ChartAlign.center,
-            'text': [''],
-          },
-        }),
+        actual.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.display,
+          OptionKey.position,
+          OptionKey.align,
+          OptionKey.fullSize,
+          OptionKey.reverse,
+          OptionKey.weight,
+          OptionKey.onClick,
+          OptionKey.onHover,
+          OptionKey.onLeave,
+          OptionKey.labels,
+          OptionKey.title,
+        ]),
       );
+      expect(actual.displayCell?.raw, true);
+      expect(actual.positionCell?.raw, ChartPosition.top);
+      expect(actual.alignCell?.raw, ChartAlign.center);
+      expect(actual.fullSizeCell?.raw, true);
+      expect(actual.reverseCell?.raw, false);
+      expect(actual.weightCell?.raw, 1000);
+
+      // a callback that will handle
+      // jasmine.any(Function): each function value of the expected object.
+      expect(actual.onClickCell?.raw, isA<Function>());
+      expect(actual.onHoverCell?.raw, isNull);
+      expect(actual.onLeaveCell?.raw, isNull);
+
+      final labels = actual.labelsCell!.raw! as LegendLabelOptionsScope;
+      expect(
+        labels.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.color,
+          OptionKey.boxWidth,
+          OptionKey.padding,
+          OptionKey.generateLabels,
+        ]),
+      );
+      expect(labels.colorCell?.raw, isA<Function>());
+      expect(labels.boxWidthCell?.raw, 40);
+      expect(labels.paddingCell?.raw, 10);
+      expect(labels.generateLabelsCell?.raw, isA<Function>());
+
+      final title = actual.titleCell!.raw! as LegendTitleOptionsScope;
+      expect(
+        title.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.color,
+          OptionKey.display,
+          OptionKey.position,
+          OptionKey.text,
+        ]),
+      );
+      expect(title.colorCell?.raw, isA<Function>());
+      expect(title.displayCell?.raw, false);
+      expect(title.positionCell?.raw, ChartAlign.center);
+      expect(title.textCell?.raw, ['']);
     });
 
     testWidgets('should update bar chart correctly', (tester) async {
@@ -269,7 +296,7 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(<Object?>[
+        _itemsEqual([
           _item(
             text: 'dataset1',
             fillStyle: const ChartPaint.solid(
@@ -323,7 +350,7 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(<Object?>[_lineItem1(), _lineItem2(), _lineItem3()]),
+        _itemsEqual([_lineItem1(), _lineItem2(), _lineItem3()]),
       );
     });
 
@@ -343,7 +370,7 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(<Object?>[_lineItem3(), _lineItem2(), _lineItem1()]),
+        _itemsEqual([_lineItem3(), _lineItem2(), _lineItem1()]),
       );
     });
 
@@ -373,7 +400,7 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(<Object?>[
+        _itemsEqual([
           _item(
             text: 'dataset1',
             fillStyle: const ChartPaint.solid(
@@ -428,7 +455,7 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(<Object?>[_lineItem3(), _lineItem2(), _lineItem1()]),
+        _itemsEqual([_lineItem3(), _lineItem2(), _lineItem1()]),
       );
     });
 
@@ -624,7 +651,7 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(<Object?>[
+        _itemsEqual([
           _item(
             text: 'dataset1',
             fillStyle: const ChartPaint.solid(
@@ -682,10 +709,10 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(<Object?>[
+        _itemsEqual([
           _item(
             text: 'dataset1',
-            borderRadius: 10,
+            borderRadius: const TooltipCornerRadii.all(10),
             fillStyle: const ChartPaint.solid(
               native_ui.Color.fromRGBO(255, 51, 17, 1),
             ),
@@ -741,7 +768,7 @@ void main() {
 
         expect(
           chart.legend!.legendItems,
-          jasmineEquals(<Object?>[
+          _itemsEqual([
             _item(
               text: 'dataset1',
               fillStyle: const ChartPaint.solid(
@@ -779,7 +806,7 @@ void main() {
 
       expect(
         chart.legend!.legendItems,
-        jasmineEquals(_pointStyleItems(const CrossRotPointStyle())),
+        _itemsEqual(_pointStyleItems(const CrossRotPointStyle())),
       );
     });
 
@@ -809,7 +836,7 @@ void main() {
 
         expect(
           chart.legend!.legendItems,
-          jasmineEquals(_pointStyleItems(const StarPointStyle())),
+          _itemsEqual(_pointStyleItems(const StarPointStyle())),
         );
       },
     );
@@ -1158,7 +1185,7 @@ List<Object?> _pointStyleDatasets() => <Object?>[
 
 /// The items of the usePointStyle cases with the point style [pointStyle]
 /// (:769-801, :845-877).
-List<Object?> _pointStyleItems(PointStyle pointStyle) => <Object?>[
+List<LegendItem> _pointStyleItems(PointStyle pointStyle) => [
   _item(
     text: 'dataset1',
     fillStyle: const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),

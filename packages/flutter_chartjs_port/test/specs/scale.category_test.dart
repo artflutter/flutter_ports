@@ -10,7 +10,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 import '../support/tick_label.dart';
 
 // The spec reads Chart.registry and Chart.defaults, the static members
@@ -36,16 +35,24 @@ import '../support/tick_label.dart';
 //   `Chart.defaults.scales.category`, is a chain of `jsGet`.
 // - `typeof Constructor === 'function'` is `isA<JsClass>()`.
 //   `not.toBe(undefined)` is `isNot(same(undefined))`.
-// - `toEqual` of an object compares the keys and values. Jasmine compares
-//   functions by identity. The default tick callback is a top-level
-//   function, a `TickCallback` (row `adapt-native-tick`).
-// - `toEqual` of a number is `jasmineEquals`: Jasmine `eq` makes `0` and
-//   `-0` different, and Dart `==` makes them equal.
+// - `toEqual` of an options object compares its `ownKeys` and the `raw` of
+//   the typed cell of each key. Jasmine compares functions by identity. The
+//   default tick callback is a top-level function, a `TickCallback` (row
+//   `adapt-native-tick`).
+// - `toEqual` of a number is `_equalsNumber`: Jasmine `eq` makes `0` and
+//   `-0` different, and Dart `==` makes them equal. Thus the matcher also
+//   compares the sign. `toEqual` of an array is `equals`.
 // - `toBeLessThan` and `toBeGreaterThan` are `lessThan` and `greaterThan`.
 // - `xScale.options.offset = true` writes through the resolver of the scale
 //   options: `xScale.options['offset'] = true`.
 // - `chart.options.scales.x.bounds = 'ticks'` writes into the resolver of
 //   the last read of the chain.
+
+/// `toEqual(expected)` of a number: the value and the sign of a zero.
+Matcher _equalsNumber(num expected) => allOf(
+  equals(expected),
+  isA<num>().having((v) => v.isNegative, 'isNegative', expected.isNegative),
+);
 
 /// scale.category.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
@@ -63,21 +70,16 @@ void main() {
     });
 
     test('Should have the correct default config', () {
-      final defaultConfig = jsGet(jsGet(Chart.defaults, 'scales'), 'category');
-      expect(
-        defaultConfig,
-        jasmineEquals(<String, Object?>{
-          'ticks': <String, Object?>{
-            'callback': jsGet(
-              jsGet(
-                jsGet(Chart.registry.getScale('category'), 'defaults'),
-                'ticks',
-              ),
-              'callback',
-            ),
-          },
-        }),
-      );
+      final defaultConfig =
+          jsGet(jsGet(Chart.defaults, 'scales'), 'category')!
+              as ScaleOptionsScope;
+      // `toEqual`: the own keys of each object and the value of each key.
+      expect(defaultConfig.ownKeys, <Object>[OptionKey.ticks]);
+      final ticks = defaultConfig.ticksCell!.raw! as TickOptionsScope;
+      expect(ticks.ownKeys, <Object>[OptionKey.callback]);
+      final categoryTicks =
+          CategoryScale.defaults.ticksCell!.raw! as TickOptionsScope;
+      expect(ticks.callbackCell?.raw, same(categoryTicks.callbackCell?.raw));
     });
 
     testWidgets('Should generate ticks from the data xLabels', (tester) async {
@@ -100,7 +102,7 @@ void main() {
       });
 
       final scale = chart.scales['x']!;
-      expect(_getLabels(scale), jasmineEquals(labels));
+      expect(_getLabels(scale), equals(labels));
     });
 
     testWidgets('Should generate ticks from the data yLabels', (tester) async {
@@ -123,7 +125,7 @@ void main() {
       });
 
       final scale = chart.scales['y']!;
-      expect(_getLabels(scale), jasmineEquals(labels));
+      expect(_getLabels(scale), equals(labels));
     });
 
     testWidgets('Should generate ticks from the axis labels', (tester) async {
@@ -145,7 +147,7 @@ void main() {
       });
 
       final scale = chart.scales['x']!;
-      expect(_getLabels(scale), jasmineEquals(labels));
+      expect(_getLabels(scale), equals(labels));
     });
 
     testWidgets('Should generate missing labels', (tester) async {
@@ -170,7 +172,7 @@ void main() {
       });
 
       final scale = chart.scales['x']!;
-      expect(_getLabels(scale), jasmineEquals(labels));
+      expect(_getLabels(scale), equals(labels));
     });
 
     testWidgets('should parse only to a valid index', (tester) async {
@@ -199,14 +201,14 @@ void main() {
 
       final scale = chart.scales['x']!;
 
-      expect(scale.parse(-10), jasmineEquals(0));
-      expect(scale.parse(-0.1), jasmineEquals(0));
-      expect(scale.parse(4.1), jasmineEquals(4));
-      expect(scale.parse(5), jasmineEquals(4));
-      expect(scale.parse(1), jasmineEquals(1));
-      expect(scale.parse(1.4), jasmineEquals(1));
-      expect(scale.parse(1.5), jasmineEquals(2));
-      expect(scale.parse('tick2'), jasmineEquals(1));
+      expect(scale.parse(-10), _equalsNumber(0));
+      expect(scale.parse(-0.1), _equalsNumber(0));
+      expect(scale.parse(4.1), _equalsNumber(4));
+      expect(scale.parse(5), _equalsNumber(4));
+      expect(scale.parse(1), _equalsNumber(1));
+      expect(scale.parse(1.4), _equalsNumber(1));
+      expect(scale.parse(1.5), _equalsNumber(2));
+      expect(scale.parse('tick2'), _equalsNumber(1));
     });
 
     testWidgets('should get the correct label for the index', (tester) async {
@@ -657,7 +659,7 @@ void main() {
         for (var i = 0; i < 50; i++) {
           final x2 = scale.getPixelForValue(labels[i]);
           final x3 = scale.getPixelForValue(i);
-          expect(x2, jasmineEquals(x3));
+          expect(x2, _equalsNumber(x3));
           expect(x2, greaterThan(x));
           expect(scale.getValueForPixel(x2), i);
           x = x2;
@@ -686,15 +688,15 @@ void main() {
         },
       });
 
-      expect(chart.scales['x']!.min, jasmineEquals(1));
-      expect(chart.scales['x']!.max, jasmineEquals(2));
+      expect(chart.scales['x']!.min, _equalsNumber(1));
+      expect(chart.scales['x']!.max, _equalsNumber(2));
 
       (jsGet(jsGet(chart.options, 'scales'), 'x')! as JsObjectFace)['bounds'] =
           ScaleBounds.ticks;
       chart.update();
 
-      expect(chart.scales['x']!.min, jasmineEquals(0));
-      expect(chart.scales['x']!.max, jasmineEquals(3));
+      expect(chart.scales['x']!.min, _equalsNumber(0));
+      expect(chart.scales['x']!.max, _equalsNumber(3));
     });
   });
 }

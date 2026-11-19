@@ -1082,8 +1082,8 @@ repository.
     `test/port/plugins/plugin.filler/`. `test/port/plugins/index_test.dart` compares the hook
     dispatch of the seven plugins with `plugin_dispatch_reference.dart`.
     `test/port/canvas/path2d_record.dart` (the record form of `Path2D` arguments) and
-    `test/support/jasmine.dart` (the Jasmine matchers and spies of the spec ports) are pure helper
-    libraries. `test/tool/`: tests of the port tools.
+    `test/support/draw_recorder.dart` (the draw and call recorders of the spec ports, Chart.js ADR
+    0180) are pure helper libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
     (367 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`

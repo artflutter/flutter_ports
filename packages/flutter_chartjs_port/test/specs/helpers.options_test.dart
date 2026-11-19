@@ -5,8 +5,6 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
-import '../support/jasmine.dart';
-
 // A JavaScript object literal is a `Map<String, Object?>` and an array is a
 // `List<Object?>` (Chart.js ADR 0043). `Chart.defaults` is the `defaults` Map
 // of `core.defaults.dart`. Jasmine `toBe` is `same` for objects and `equals`
@@ -14,8 +12,8 @@ import '../support/jasmine.dart';
 //
 // The results of `toTRBLCorners`, `toPadding` and `toFont` are typed objects
 // (differences.md row `adapt-options-typed-results`). The spec compares
-// their members with the keys of the upstream object, through [_corners],
-// [_padding] and [_font].
+// their typed members, as a Map with the keys of the upstream object, with
+// `equals`: [_corners], [_padding] and [_font].
 //
 // A font is a `ChartTextStyle` (Chart.js ADR 0116, differences.md row
 // `adapt-text-style-fonts`): `toLineHeight` and the font text `string` are
@@ -91,7 +89,7 @@ void main() {
       test('should support number values', () {
         expect(
           _corners(toTRBLCorners(4.0)),
-          jasmineEquals({
+          equals({
             'topLeft': 4,
             'topRight': 4,
             'bottomLeft': 4,
@@ -100,7 +98,7 @@ void main() {
         );
         expect(
           _corners(toTRBLCorners(4.5)),
-          jasmineEquals({
+          equals({
             'topLeft': 4.5,
             'topRight': 4.5,
             'bottomLeft': 4.5,
@@ -111,7 +109,7 @@ void main() {
       test('should support string values', () {
         expect(
           _corners(toTRBLCorners('4')),
-          jasmineEquals({
+          equals({
             'topLeft': 4,
             'topRight': 4,
             'bottomLeft': 4,
@@ -120,7 +118,7 @@ void main() {
         );
         expect(
           _corners(toTRBLCorners('4.5')),
-          jasmineEquals({
+          equals({
             'topLeft': 4.5,
             'topRight': 4.5,
             'bottomLeft': 4.5,
@@ -138,7 +136,7 @@ void main() {
               'bottomRight': 4.0,
             }),
           ),
-          jasmineEquals({
+          equals({
             'topLeft': 1,
             'topRight': 2,
             'bottomLeft': 3,
@@ -154,7 +152,7 @@ void main() {
               'bottomRight': 4.5,
             }),
           ),
-          jasmineEquals({
+          equals({
             'topLeft': 1.5,
             'topRight': 2.5,
             'bottomLeft': 3.5,
@@ -170,7 +168,7 @@ void main() {
               'bottomRight': '4',
             }),
           ),
-          jasmineEquals({
+          equals({
             'topLeft': 1,
             'topRight': 2,
             'bottomLeft': 3,
@@ -194,7 +192,7 @@ void main() {
               'bottomRight': 'foo',
             }),
           ),
-          jasmineEquals(zero),
+          equals(zero),
         );
         expect(
           _corners(
@@ -205,15 +203,12 @@ void main() {
               'bottomRight': null,
             }),
           ),
-          jasmineEquals(zero),
+          equals(zero),
         );
-        expect(
-          _corners(toTRBLCorners(<String, Object?>{})),
-          jasmineEquals(zero),
-        );
-        expect(_corners(toTRBLCorners('foo')), jasmineEquals(zero));
-        expect(_corners(toTRBLCorners(null)), jasmineEquals(zero));
-        expect(_corners(toTRBLCorners(undefined)), jasmineEquals(zero));
+        expect(_corners(toTRBLCorners(<String, Object?>{})), equals(zero));
+        expect(_corners(toTRBLCorners('foo')), equals(zero));
+        expect(_corners(toTRBLCorners(null)), equals(zero));
+        expect(_corners(toTRBLCorners(undefined)), equals(zero));
       });
     });
 
@@ -221,7 +216,7 @@ void main() {
       test('should support number values', () {
         expect(
           _padding(toPadding(4.0)),
-          jasmineEquals({
+          equals({
             'top': 4,
             'right': 4,
             'bottom': 4,
@@ -232,7 +227,7 @@ void main() {
         );
         expect(
           _padding(toPadding(4.5)),
-          jasmineEquals({
+          equals({
             'top': 4.5,
             'right': 4.5,
             'bottom': 4.5,
@@ -245,7 +240,7 @@ void main() {
       test('should support string values', () {
         expect(
           _padding(toPadding('4')),
-          jasmineEquals({
+          equals({
             'top': 4,
             'right': 4,
             'bottom': 4,
@@ -256,7 +251,7 @@ void main() {
         );
         expect(
           _padding(toPadding('4.5')),
-          jasmineEquals({
+          equals({
             'top': 4.5,
             'right': 4.5,
             'bottom': 4.5,
@@ -276,7 +271,7 @@ void main() {
               'left': 4.0,
             }),
           ),
-          jasmineEquals({
+          equals({
             'top': 1,
             'right': 2,
             'bottom': 3,
@@ -294,7 +289,7 @@ void main() {
               'left': 4.5,
             }),
           ),
-          jasmineEquals({
+          equals({
             'top': 1.5,
             'right': 2.5,
             'bottom': 3.5,
@@ -312,7 +307,7 @@ void main() {
               'left': '4',
             }),
           ),
-          jasmineEquals({
+          equals({
             'top': 1,
             'right': 2,
             'bottom': 3,
@@ -340,7 +335,7 @@ void main() {
               'left': 'foo',
             }),
           ),
-          jasmineEquals(zero),
+          equals(zero),
         );
         expect(
           _padding(
@@ -351,19 +346,19 @@ void main() {
               'left': null,
             }),
           ),
-          jasmineEquals(zero),
+          equals(zero),
         );
-        expect(_padding(toPadding(<String, Object?>{})), jasmineEquals(zero));
-        expect(_padding(toPadding('foo')), jasmineEquals(zero));
-        expect(_padding(toPadding(null)), jasmineEquals(zero));
+        expect(_padding(toPadding(<String, Object?>{})), equals(zero));
+        expect(_padding(toPadding('foo')), equals(zero));
+        expect(_padding(toPadding(null)), equals(zero));
         // The spec passes undefined explicitly.
         // ignore: avoid_redundant_argument_values
-        expect(_padding(toPadding(undefined)), jasmineEquals(zero));
+        expect(_padding(toPadding(undefined)), equals(zero));
       });
       test('should support x / y shorthands', () {
         expect(
           _padding(toPadding(<String, Object?>{'x': 1.0, 'y': 2.0})),
-          jasmineEquals({
+          equals({
             'top': 2,
             'right': 1,
             'bottom': 2,
@@ -374,7 +369,7 @@ void main() {
         );
         expect(
           _padding(toPadding(<String, Object?>{'x': 1.0, 'left': 0.0})),
-          jasmineEquals({
+          equals({
             'top': 0,
             'right': 1,
             'bottom': 0,
@@ -385,7 +380,7 @@ void main() {
         );
         expect(
           _padding(toPadding(<String, Object?>{'y': 5.0, 'bottom': 0.0})),
-          jasmineEquals({
+          equals({
             'top': 5,
             'right': 0,
             'bottom': 0,
@@ -411,7 +406,7 @@ void main() {
 
         expect(
           _font(toFont(const ChartTextStyle())),
-          jasmineEquals({
+          equals({
             'family': 'foobar',
             'fallback': <String>[],
             'lineHeight': 63,
@@ -436,7 +431,7 @@ void main() {
               ),
             ),
           ),
-          jasmineEquals({
+          equals({
             'family': 'bla',
             'fallback': <String>[],
             'lineHeight': 8 * 21,

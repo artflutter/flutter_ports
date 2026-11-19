@@ -16,13 +16,12 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 
 // `Chart` is the class of core.controller.dart, with the static members
 // `Chart.registry` and `Chart.defaults`. `Chart.helpers.clone` is `clone` of
 // helpers.core.dart. `window.createMockContext()` is createMockContext of
 // chartjs_test_utils. A recorded call is a Map with the keys 'name' and
-// 'args'. `toEqual` is jasmineEquals of test/support/jasmine.dart.
+// 'args'. `toEqual` of the calls is `equals`.
 //
 // `Title` of :3, the plugin entry `_element`, is the class value
 // `Title.jsClass` (Chart.js ADR 0038, section 4): the native plugin `title`
@@ -76,9 +75,8 @@ List<Object?> _textCalls(List<Object?> translate, double rotate) => [
   },
   <String, Object?>{
     'name': 'setFillStyle',
-    'args': <Object?>[
-      const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
-    ],
+    // The mock context records the color of a solid paint.
+    'args': <Object?>[const native_ui.Color.fromRGBO(102, 102, 102, 1)],
   },
   <String, Object?>{
     'name': 'setTextAlign',
@@ -102,20 +100,40 @@ void main() {
     group('auto', fixture.specs('plugin.title'));
 
     test('Should have the correct default config', () {
+      final defaults =
+          jsGet(jsGet(Chart.defaults, 'plugins'), 'title')!
+              as TitleOptionsScope;
+      // `toEqual`: the own keys of the object and the value of each key.
       expect(
-        jsGet(jsGet(Chart.defaults, 'plugins'), 'title'),
-        jasmineEquals(<String, Object?>{
-          'align': ChartAlign.center,
-          'color': jsGet(Chart.defaults, 'color'),
-          'display': false,
-          'position': ChartPosition.top,
-          'fullSize': true,
-          'weight': 2000,
-          'font': const ChartTextStyle(fontWeight: native_ui.FontWeight.bold),
-          'padding': const EdgeInsets.all(10),
-          'text': [''],
-        }),
+        defaults.ownKeys,
+        unorderedEquals(<Object>[
+          OptionKey.align,
+          OptionKey.color,
+          OptionKey.display,
+          OptionKey.position,
+          OptionKey.fullSize,
+          OptionKey.weight,
+          OptionKey.font,
+          OptionKey.padding,
+          OptionKey.text,
+        ]),
       );
+      expect(defaults.alignCell?.raw, ChartAlign.center);
+      // `color` routes to `Chart.defaults.color` (plugin.title.js:158-160).
+      expect(
+        defaults.lookup(OptionKey.color)?.raw,
+        Chart.defaults.colorCell?.raw,
+      );
+      expect(defaults.displayCell?.raw, false);
+      expect(defaults.positionCell?.raw, ChartPosition.top);
+      expect(defaults.fullSizeCell?.raw, true);
+      expect(defaults.weightCell?.raw, 2000);
+      expect(
+        defaults.fontCell?.raw,
+        const ChartTextStyle(fontWeight: native_ui.FontWeight.bold),
+      );
+      expect(defaults.paddingCell?.raw, const EdgeInsets.all(10));
+      expect(defaults.textCell?.raw, ['']);
     });
 
     test('should update correctly', () {
@@ -204,7 +222,7 @@ void main() {
             ..update(400, 200)
             ..draw();
 
-      expect(context.getCalls(), jasmineEquals(<Object?>[]));
+      expect(context.getCalls(), equals(<Object?>[]));
 
       // Now we have a height since we display
       (title.options! as JsObjectFace)['display'] = true;
@@ -218,10 +236,7 @@ void main() {
         ..right = title.left + title.width
         ..draw();
 
-      expect(
-        context.getCalls(),
-        jasmineEquals(_textCalls(<Object?>[300, 67.2], 0)),
-      );
+      expect(context.getCalls(), equals(_textCalls(<Object?>[300, 67.2], 0)));
     });
 
     test('should draw correctly vertically', () {
@@ -241,7 +256,7 @@ void main() {
             ..update(200, 400)
             ..draw();
 
-      expect(context.getCalls(), jasmineEquals(<Object?>[]));
+      expect(context.getCalls(), equals(<Object?>[]));
 
       // Now we have a height since we display
       (title.options! as JsObjectFace)['display'] = true;
@@ -257,7 +272,7 @@ void main() {
 
       expect(
         context.getCalls(),
-        jasmineEquals(_textCalls(<Object?>[117.2, 250], -0.5 * math.pi)),
+        equals(_textCalls(<Object?>[117.2, 250], -0.5 * math.pi)),
       );
 
       // Rotation is other way on right side
@@ -277,7 +292,7 @@ void main() {
 
       expect(
         context.getCalls(),
-        jasmineEquals(_textCalls(<Object?>[117.2, 250], 0.5 * math.pi)),
+        equals(_textCalls(<Object?>[117.2, 250], 0.5 * math.pi)),
       );
     });
 

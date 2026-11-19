@@ -6,12 +6,11 @@ import 'package:chartjs_test_utils/flutter.dart' show setTimeout, waitForDone;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
-
 // `Chart.Animations` is the class Animations of core.animations.dart, and
 // `Chart.animator` is `animator` of core.animator.dart. The spec reads
 // `_properties`: the member `properties` (Chart.js ADR 0019, section 1).
-// `jasmine.objectContaining({duration: 1000})` is `containsPair`.
+// `jasmine.objectContaining({duration: 1000})` is `_hasDuration(1000)`, the
+// typed `duration` of the [AnimationSpec].
 //
 // The cases with `done` wait with `setTimeout` and `waitForDone` of the
 // harness (Chart.js ADR 0022, section 7, Chart.js ADR 0019, section 12).
@@ -39,6 +38,10 @@ final class _Chart() implements IChart {
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
+/// An [AnimationSpec] with the duration [duration].
+Matcher _hasDuration(double duration) =>
+    isA<AnimationSpec>().having((s) => s.duration, 'duration', duration);
+
 void main() {
   group('Chart.animations', () {
     test('should override property collection with property', () {
@@ -50,14 +53,8 @@ void main() {
         },
         'property2': <String, Object?>{'duration': 2000},
       });
-      expect(
-        anims.properties['property1'],
-        objectContaining({'duration': 1000}),
-      );
-      expect(
-        anims.properties['property2'],
-        objectContaining({'duration': 2000}),
-      );
+      expect(anims.properties['property1'], _hasDuration(1000));
+      expect(anims.properties['property2'], _hasDuration(2000));
     });
 
     test('should ignore duplicate definitions from collections', () {
@@ -72,14 +69,8 @@ void main() {
           'duration': 2000,
         },
       });
-      expect(
-        anims.properties['property1'],
-        objectContaining({'duration': 1000}),
-      );
-      expect(
-        anims.properties['property2'],
-        objectContaining({'duration': 2000}),
-      );
+      expect(anims.properties['property1'], _hasDuration(1000));
+      expect(anims.properties['property2'], _hasDuration(2000));
     });
 
     test('should not animate undefined options key', () {

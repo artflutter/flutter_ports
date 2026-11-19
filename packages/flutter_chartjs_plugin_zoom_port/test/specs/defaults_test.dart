@@ -8,15 +8,15 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
-import '../support/jasmine.dart';
 
 // `Chart.defaults.plugins.zoom` is one immutable `ZoomPluginOptions`
 // (Chart.js ADR 0148), read through the face of the plugins scope, and
 // `toEqual` compares it with `==`, field by field. The upstream
 // `modifierKey: null` is a field that is not set: the expected object
 // leaves it out (row `adapt-native-zoom-options`). `spyOn(plugin,
-// 'beforeUpdate')` writes a spy into the hook field of the native plugin
-// (`spyOnBeforeUpdate`), with no call-through. The hook arguments
+// 'beforeUpdate')` writes a closure into the hook field of the native plugin
+// that records each call and continues the update, with no call-through,
+// and `addTearDown` puts the old hook back. The hook arguments
 // `{ cancelable: true, mode: undefined }` are the `UpdateHookArgs` of the
 // host with no mode: the hook `beforeUpdate` is cancelable (Chart.js ADR
 // 0144).
@@ -46,8 +46,16 @@ void main() {
     });
 
     testWidgets('should be called with default options', (tester) async {
-      final plugin = Chart.registry.getPlugin('zoom');
-      final spy = spyOnBeforeUpdate(plugin as ChartPlugin<ZoomPluginOptions>);
+      final plugin =
+          Chart.registry.getPlugin('zoom') as ChartPlugin<ZoomPluginOptions>;
+      final previous = plugin.beforeUpdate;
+      final spyCalls =
+          <(Chart chart, UpdateHookArgs args, ZoomPluginOptions options)>[];
+      plugin.beforeUpdate = (chart, args, options) {
+        spyCalls.add((chart, args, options));
+        return true;
+      };
+      addTearDown(() => plugin.beforeUpdate = previous);
 
       final chart = acquireChart(<String, Object?>{
         'type': 'line',
@@ -58,15 +66,12 @@ void main() {
         },
       });
 
-      final calls = spy.calls.where(
-        (call) =>
-            identical(call[0], chart) &&
-            call[1] is UpdateHookArgs &&
-            (call[1]! as UpdateHookArgs).mode == null,
+      final calls = spyCalls.where(
+        (call) => identical(call.$1, chart) && call.$2.mode == null,
       );
       expect(calls, isNotEmpty);
       expect(PluginHook.beforeUpdate.cancelable, isTrue);
-      expect(calls.first[2], expected);
+      expect(calls.first.$3, expected);
     });
   });
 }

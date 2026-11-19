@@ -3,7 +3,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:math' as math;
 import 'dart:ui' show Locale;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -14,7 +13,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 import '../support/tick_label.dart';
 
 // The spec reads `Chart.registry`, `Chart.defaults` and `Chart.Ticks`.
@@ -43,7 +41,9 @@ import '../support/tick_label.dart';
 // The spec forms:
 // - `chart.scales.y` is `chart.scales['y']!`. `not.toEqual(undefined)` of a
 //   scale is `isNotNull`.
-// - `toBeCloseTo` is `_toBeCloseTo`. `toEqual` is `jasmineEquals`.
+// - `toBeCloseTo(e, p)` is `closeTo(e, 5e-(p + 1))`. `toEqual` is
+//   `equals`, and of an options object a compare of its `ownKeys` and of
+//   the `raw` of the typed cell of each key.
 // - `chart.options.scales.y.stacked = true` writes `StackMode.on` into the
 //   resolver of the last read of the chain (`_chartScaleOptions`, row
 //   adapt-stacked-option-enum).
@@ -77,22 +77,6 @@ double _side(ChartArea area, String side) => switch (side) {
   'bottom' => area.bottom,
   _ => throw ArgumentError.value(side, 'side'),
 };
-
-/// Jasmine `toBeCloseTo(expected, precision)` of jasmine-core 3.99.1:
-/// `Math.round(delta * 10^(precision + 1)) <= 10^-precision / 2 *
-/// 10^(precision + 1)`, with `delta = |expected - actual|`.
-Matcher _toBeCloseTo(num expected, [int precision = 2]) {
-  final pow = math.pow(10.0, precision + 1);
-  final maxDelta = math.pow(10.0, -precision) / 2;
-  return predicate<Object?>(
-    (actual) =>
-        actual is num &&
-        ((expected - actual).abs() * pow).toDouble().roundToDouble() <=
-            maxDelta * pow,
-    'a number close to ${jsToString(expected)} (Jasmine toBeCloseTo, '
-    'precision ${jsToString(precision)})',
-  );
-}
 
 /// The two `axes` items of the second and the third `when` group
 /// (scale.logarithmic.tests.js:962-973 and :1084-1095).
@@ -154,19 +138,25 @@ void main() {
     });
 
     test('should have the correct default config', () {
-      final defaultConfig = jsGet(Chart.defaults['scales'], 'logarithmic');
+      final defaultConfig =
+          jsGet(Chart.defaults['scales'], 'logarithmic')! as ScaleOptionsScope;
+      // `toEqual`: the own keys of each object and the value of each key.
+      expect(defaultConfig.ownKeys, <Object>[OptionKey.ticks]);
+      final ticksScope = defaultConfig.ticksCell!.raw! as TickOptionsScope;
       expect(
-        defaultConfig,
-        jasmineEquals(<String, Object?>{
-          'ticks': <String, Object?>{
-            'callback': jsGet(ticks['formatters'], 'logarithmic'),
-            'major': <String, Object?>{'enabled': true},
-          },
-        }),
+        ticksScope.ownKeys,
+        unorderedEquals(<Object>[OptionKey.callback, OptionKey.major]),
       );
+      expect(
+        ticksScope.callbackCell?.raw,
+        same(jsGet(ticks['formatters'], 'logarithmic')),
+      );
+      final major = ticksScope.majorCell!.raw! as MajorTickOptionsScope;
+      expect(major.ownKeys, <Object>[OptionKey.enabled]);
+      expect(major.enabledCell?.raw, true);
 
       // Is this actually a function
-      expect(jsGet(jsGet(defaultConfig, 'ticks'), 'callback'), isA<Function>());
+      expect(ticksScope.callbackCell?.raw, isA<Function>());
     });
 
     testWidgets('should correctly determine the max & min data values', (
@@ -231,7 +221,7 @@ void main() {
       expect(chart.scales['y2']!.max, 4000);
 
       expect(chart.scales['y3'], isNotNull); // must construct
-      expect(chart.scales['y3']!.min, _toBeCloseTo(0.0001, 4));
+      expect(chart.scales['y3']!.min, closeTo(0.0001, 5e-5));
       expect(chart.scales['y3']!.max, 900);
     });
 
@@ -297,7 +287,7 @@ void main() {
         expect(chart.scales['y2']!.max, 4000);
 
         expect(chart.scales['y3'], isNotNull); // must construct
-        expect(chart.scales['y3']!.min, _toBeCloseTo(0.0001, 4));
+        expect(chart.scales['y3']!.min, closeTo(0.0001, 5e-5));
         expect(chart.scales['y3']!.max, 900);
       },
     );
@@ -769,7 +759,7 @@ void main() {
       expect(
         // Row adapt-native-tick: the label is the line of the number.
         _getLabels(scale).map(jsToNumber).toList(),
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           1,
           2,
           3,
@@ -790,8 +780,8 @@ void main() {
           80,
         ]),
       );
-      expect(scale.start, jasmineEquals(1));
-      expect(scale.end, jasmineEquals(80));
+      expect(scale.start, equals(1));
+      expect(scale.end, equals(80));
     });
 
     testWidgets('should generate tick marks when 0 values are present', (
@@ -822,7 +812,7 @@ void main() {
       expect(
         // Row adapt-native-tick: the label is the line of the number.
         _getLabels(scale).map(jsToNumber).toList(),
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           0.1,
           0.2,
           0.3,
@@ -843,8 +833,8 @@ void main() {
           8, 9, 10, 15, 20, 30,
         ]),
       );
-      expect(scale.start, jasmineEquals(0.1));
-      expect(scale.end, jasmineEquals(30));
+      expect(scale.start, equals(0.1));
+      expect(scale.end, equals(30));
     });
 
     testWidgets(
@@ -878,12 +868,12 @@ void main() {
         expect(
           // Row adapt-native-tick: the label is the line of the number.
           _getLabels(scale).map(jsToNumber).toList(),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             80, 70, 60, 50, 40, 30, 20, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, //
           ]),
         );
-        expect(scale.start, jasmineEquals(80));
-        expect(scale.end, jasmineEquals(1));
+        expect(scale.start, equals(80));
+        expect(scale.end, equals(1));
       },
     );
 
@@ -916,12 +906,12 @@ void main() {
         expect(
           // Row adapt-native-tick: the label is the line of the number.
           _getLabels(scale).map(jsToNumber).toList(),
-          jasmineEquals(<Object?>[
+          equals(<Object?>[
             30, 20, 15, 10, 9, 8, 7, 6, 5, 4, 3, 2, 1, //
           ]),
         );
-        expect(scale.start, jasmineEquals(30));
-        expect(scale.end, jasmineEquals(1));
+        expect(scale.start, equals(30));
+        expect(scale.end, equals(1));
       },
     );
 
@@ -950,7 +940,7 @@ void main() {
 
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           '1', '2', '3', '', '5', '', '', '', '', '10', '15', '20', '30', //
           '', '50', '60', '70', '80',
         ]),
@@ -983,7 +973,7 @@ void main() {
       // Just the index
       expect(
         _getLabels(chart.scales['y']!),
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           '0',
           '1',
           '2',
@@ -1207,8 +1197,8 @@ void main() {
             expect(scale.getPixelForValue(firstTick), toBeCloseToPixel(start));
             expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
 
-            expect(scale.getValueForPixel(start), _toBeCloseTo(firstTick, 4));
-            expect(scale.getValueForPixel(end), _toBeCloseTo(lastTick, 4));
+            expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
+            expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
 
             chart.scales[axisID]!.options['reverse'] = true; // Reverse mode
             chart.update();
@@ -1220,8 +1210,8 @@ void main() {
             expect(scale.getPixelForValue(firstTick), toBeCloseToPixel(start));
             expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
 
-            expect(scale.getValueForPixel(start), _toBeCloseTo(firstTick, 4));
-            expect(scale.getValueForPixel(end), _toBeCloseTo(lastTick, 4));
+            expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
+            expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
           });
         });
       }
@@ -1324,8 +1314,8 @@ void main() {
                 toBeCloseToPixel(start),
               ); // 0 is invalid, put it at the start.
 
-              expect(scale.getValueForPixel(start), _toBeCloseTo(firstTick, 4));
-              expect(scale.getValueForPixel(end), _toBeCloseTo(lastTick, 4));
+              expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
+              expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
 
               chart.scales[axisID]!.options['reverse'] = true; // Reverse mode
               chart.update();
@@ -1340,8 +1330,8 @@ void main() {
               );
               expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
 
-              expect(scale.getValueForPixel(start), _toBeCloseTo(firstTick, 4));
-              expect(scale.getValueForPixel(end), _toBeCloseTo(lastTick, 4));
+              expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
+              expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
             });
           });
         }
@@ -1448,8 +1438,8 @@ void main() {
               expect(scale.getPixelForValue(0), toBeCloseToPixel(start));
               expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
 
-              expect(scale.getValueForPixel(start), _toBeCloseTo(scale.min, 4));
-              expect(scale.getValueForPixel(end), _toBeCloseTo(lastTick, 4));
+              expect(scale.getValueForPixel(start), closeTo(scale.min, 5e-5));
+              expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
 
               chart.scales[axisID]!.options['reverse'] = true; // Reverse mode
               chart.update();
@@ -1461,8 +1451,8 @@ void main() {
               expect(scale.getPixelForValue(0), toBeCloseToPixel(start));
               expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
 
-              expect(scale.getValueForPixel(start), _toBeCloseTo(scale.min, 4));
-              expect(scale.getValueForPixel(end), _toBeCloseTo(lastTick, 4));
+              expect(scale.getValueForPixel(start), closeTo(scale.min, 5e-5));
+              expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
             });
           });
         }
@@ -1519,8 +1509,8 @@ void main() {
         },
       });
 
-      expect(chart.scales['y']!.min, jasmineEquals(1.1));
-      expect(chart.scales['y']!.max, jasmineEquals(99));
+      expect(chart.scales['y']!.min, equals(1.1));
+      expect(chart.scales['y']!.max, equals(99));
     });
   });
 }

@@ -65,13 +65,6 @@ SankeyNode _copy(SankeyNode node) => _node(
   y: node.y!,
 );
 
-/// `toBeCloseTo(expected, numDigits)` of Vitest: a difference below
-/// `10 ** -numDigits / 2`.
-Matcher _toBeCloseTo(double expected, int numDigits) => predicate<double>(
-  (received) => (expected - received).abs() < pow(10.0, -numDigits) / 2,
-  'a number close to $expected, to $numDigits digits',
-);
-
 void main() {
   group('lib/layout', () {
     group('returnsToNearerColumn', () {
@@ -766,7 +759,7 @@ void main() {
               visualTop(nodes[1], minSizes) - visualBottom(nodes[0], minSizes);
           expect(gapBetweenBars, greaterThanOrEqualTo(4));
           // The stretch is accounted for exactly, not just conservatively.
-          expect(gapBetweenBars, _toBeCloseTo(4, 9));
+          expect(gapBetweenBars, closeTo(4, 5e-10));
         });
 
         test('auto mode: grows maxY to cover the stretched bar', () {
@@ -788,7 +781,7 @@ void main() {
 
           expect(baseMaxY, 5);
           // Visual bottom of the stretched bar: y + (size + minSize) / 2
-          expect(stretchedMaxY, _toBeCloseTo(27.5, 9));
+          expect(stretchedMaxY, closeTo(27.5, 5e-10));
           expect(stretchedMaxY, greaterThan(baseMaxY));
         });
 
@@ -838,10 +831,10 @@ void main() {
 
           final gapBetweenBars =
               visualTop(nodes[1], minSizes) - visualBottom(nodes[0], minSizes);
-          expect(gapBetweenBars, _toBeCloseTo(4, 9));
+          expect(gapBetweenBars, closeTo(4, 5e-10));
 
           // maxY covers b's stretched bar, not just its natural in/out.
-          expect(maxY, _toBeCloseTo(visualBottom(nodes[1], minSizes), 9));
+          expect(maxY, closeTo(visualBottom(nodes[1], minSizes), 5e-10));
           expect(
             maxY,
             greaterThan(

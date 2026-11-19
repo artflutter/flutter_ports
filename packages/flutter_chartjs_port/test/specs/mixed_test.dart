@@ -9,7 +9,8 @@ import '../fixtures/index.dart' as fixture;
 
 // The spec runs on the VM: a chart reaches the chart host and dart:ui. Each
 // chart case is a `testWidgets` case with the harness of Chart.js ADR 0022,
-// section 2. The conventions are those of Chart.js ADR 0030, section 13.
+// section 2. The conventions are those of Chart.js ADR 0030, section 13,
+// with items 1 and 5 to 8 of Chart.js ADR 0180.
 //
 // flutter_test_config.dart registers the eight controllers of phase 7 with
 // the built-in components before main(). The config of each case has no

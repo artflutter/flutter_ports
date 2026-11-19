@@ -17,12 +17,13 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
+import '../support/draw_recorder.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
 // chart reaches the chart host and dart:ui. Each chart case is a
 // `testWidgets` case with the harness of Chart.js ADR 0022, section 2. The
-// conventions are those of Chart.js ADR 0030, section 13.
+// conventions are those of Chart.js ADR 0030, section 13, with items 1
+// and 5 to 8 of Chart.js ADR 0180.
 //
 // flutter_test_config.dart registers the line controller with the
 // built-in components before main(), as index.umd.ts:28 does (Chart.js ADR
@@ -41,10 +42,12 @@ import '../support/jasmine.dart';
 //   `meta.parsed`. `controller._drawStart` and `_drawCount` are `drawStart`
 //   and `drawCount` of DatasetController (Chart.js ADR 0012).
 // - `spyOn(meta.dataset, 'updateControlPoints')` and `spyOn(meta.dataset,
-//   'draw')` are `spyOnDataset(meta)`, and `spyOn(meta.data[i], 'draw')` is
-//   `spyOnElementDraw(meta, i)` of test/support/jasmine.dart.
-// - `toEqual` of an object is `jasmineEquals`. `jasmine.objectContaining` is
-//   `objectContaining`.
+//   'draw')` are `recordLineCalls(meta)`, and `spyOn(meta.data[i], 'draw')` is
+//   `recordElementDraws(meta, i)` of test/support/draw_recorder.dart.
+// - `toEqual` of a value is `equals`, of a tooltip body item `_bodyItem`
+//   (the fields of `TooltipBodyItem`). `jasmine.objectContaining` of the
+//   element options is `isA<...Options>()` with `having` for each key.
+// - `toEqual` of the `{min, max}` of `getMinMax` compares the record.
 // - Jasmine `this._defaults` and `this.chart` are `late` variables of the
 //   group closure. The `beforeEach` and the `afterEach` of the group
 //   `dataset global defaults` read no chart. Thus they are `setUp` and
@@ -74,12 +77,6 @@ Object? _option(Object element, String key) => jsGet(_options(element), key);
 JsObjectFace _datasetDefaults() =>
     jsGet(Chart.defaults, 'datasets')! as JsObjectFace;
 
-/// The `{min, max}` of `getMinMax` as an object for `toEqual`.
-AnyObject _minMax(({double min, double max}) range) => <String, Object?>{
-  'min': range.min,
-  'max': range.max,
-};
-
 /// The event `{type: 'mousemove', native: true, ...point}` of :1062-1066.
 ///
 /// The spread copies the properties of the point; `_handleEvent` reads only
@@ -105,6 +102,13 @@ final class _PointEvent(Point point) implements ChartEvent {
   IChart? get chart => null;
 }
 
+/// The tooltip body item `{before: [], lines: lines, after: []}`
+/// (plugin.tooltip.js:559-563).
+Matcher _bodyItem(List<String> lines) => isA<TooltipBodyItem>()
+    .having((b) => b.before, 'before', isEmpty)
+    .having((b) => b.lines, 'lines', equals(lines))
+    .having((b) => b.after, 'after', isEmpty);
+
 void main() {
   group('Chart.controllers.line', () {
     group('auto', fixture.specs('controller.line'));
@@ -129,7 +133,7 @@ void main() {
       expect(meta.controller, isNot(same(undefined)));
       expect(meta.controller, isNotNull);
       expect(meta.controller!.index, 0);
-      expect(meta.data, jasmineEquals(<Object?>[]));
+      expect(meta.data, isEmpty);
 
       meta.controller!.updateIndex(1);
       expect(meta.controller!.index, 1);
@@ -196,21 +200,21 @@ void main() {
       });
       final y = chart.scales['y']!;
       expect(
-        _minMax(chart.getDatasetMeta(0).controller!.getMinMax(y, true)),
-        jasmineEquals(<String, Object?>{'min': 10, 'max': 13}),
+        chart.getDatasetMeta(0).controller!.getMinMax(y, true),
+        equals((min: 10.0, max: 13.0)),
       );
       expect(
-        _minMax(chart.getDatasetMeta(1).controller!.getMinMax(y, true)),
-        jasmineEquals(<String, Object?>{'min': 11, 'max': 17}),
+        chart.getDatasetMeta(1).controller!.getMinMax(y, true),
+        equals((min: 11.0, max: 17.0)),
       );
       chart.hide(0);
       expect(
-        _minMax(chart.getDatasetMeta(0).controller!.getMinMax(y, true)),
-        jasmineEquals(<String, Object?>{'min': 10, 'max': 13}),
+        chart.getDatasetMeta(0).controller!.getMinMax(y, true),
+        equals((min: 10.0, max: 13.0)),
       );
       expect(
-        _minMax(chart.getDatasetMeta(1).controller!.getMinMax(y, true)),
-        jasmineEquals(<String, Object?>{'min': 1, 'max': 4}),
+        chart.getDatasetMeta(1).controller!.getMinMax(y, true),
+        equals((min: 1.0, max: 4.0)),
       );
     });
 
@@ -257,20 +261,20 @@ void main() {
       });
 
       final meta = chart.getDatasetMeta(0);
-      final dataset = spyOnDataset(meta);
-      final draw0 = spyOnElementDraw(meta, 0);
-      final draw1 = spyOnElementDraw(meta, 1);
-      final draw2 = spyOnElementDraw(meta, 2);
-      final draw3 = spyOnElementDraw(meta, 3);
+      final dataset = recordLineCalls(meta);
+      final draw0 = recordElementDraws(meta, 0);
+      final draw1 = recordElementDraws(meta, 1);
+      final draw2 = recordElementDraws(meta, 2);
+      final draw3 = recordElementDraws(meta, 3);
 
       chart.update();
 
-      expect(dataset.updateControlPoints.count(), greaterThanOrEqualTo(1));
-      expect(dataset.draw.count(), 1);
-      expect(draw0.count(), 1);
-      expect(draw1.count(), 1);
-      expect(draw2.count(), 1);
-      expect(draw3.count(), 1);
+      expect(dataset.updates, isNotEmpty);
+      expect(dataset.draws, hasLength(1));
+      expect(draw0, hasLength(1));
+      expect(draw1, hasLength(1));
+      expect(draw2, hasLength(1));
+      expect(draw3, hasLength(1));
     });
 
     testWidgets('should update elements when modifying data', (tester) async {
@@ -324,14 +328,17 @@ void main() {
         expect(meta.data[i].y, toBeCloseToPixel(expected.y));
         expect(
           _options(meta.data[i]),
-          objectContaining(<String, Object?>{
-            'backgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
-            'borderColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 255, 1),
-            ),
-          }),
+          isA<PointOptions>()
+              .having(
+                (o) => o.backgroundColor,
+                'backgroundColor',
+                const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+              )
+              .having(
+                (o) => o.borderColor,
+                'borderColor',
+                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+              ),
         );
       }
 
@@ -701,7 +708,7 @@ void main() {
           const ChartPaint.solid(native_ui.Color.fromRGBO(221, 170, 221, 1)),
         );
         expect(jsGet(options, 'borderCapStyle'), native_ui.StrokeCap.round);
-        expect(jsGet(options, 'borderDash'), jasmineEquals(<Object?>[0]));
+        expect(jsGet(options, 'borderDash'), equals(<double>[0]));
         expect(jsGet(options, 'borderDashOffset'), 0.871);
         expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
         expect(jsGet(options, 'fill'), FillTarget.toStart);
@@ -797,7 +804,7 @@ void main() {
         const ChartPaint.solid(native_ui.Color.fromRGBO(221, 170, 221, 1)),
       );
       expect(jsGet(options, 'borderCapStyle'), native_ui.StrokeCap.round);
-      expect(jsGet(options, 'borderDash'), jasmineEquals(<Object?>[0]));
+      expect(jsGet(options, 'borderDash'), equals(<double>[0]));
       expect(jsGet(options, 'borderDashOffset'), 0.871);
       expect(jsGet(options, 'borderJoinStyle'), native_ui.StrokeJoin.miter);
       expect(jsGet(options, 'fill'), FillTarget.toStart);
@@ -1418,15 +1425,11 @@ void main() {
 
       await triggerMouseEvent(chart, 'mousemove', point);
 
-      expect(tooltip.title, jasmineEquals(<Object?>['Label 1']));
+      expect(tooltip.title, equals(<String>['Label 1']));
       expect(
         tooltip.body,
-        jasmineEquals(<Object?>[
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Dataset 1: 21'],
-            'after': <Object?>[],
-          },
+        equals(<Matcher>[
+          _bodyItem(['Dataset 1: 21']),
         ]),
       );
 
@@ -1435,20 +1438,12 @@ void main() {
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);
 
-      expect(tooltip.title, jasmineEquals(<Object?>['Dataset 1']));
+      expect(tooltip.title, equals(<String>['Dataset 1']));
       expect(
         tooltip.body,
-        jasmineEquals(<Object?>[
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Label 1: 21'],
-            'after': <Object?>[],
-          },
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Label 2: 79'],
-            'after': <Object?>[],
-          },
+        equals(<Matcher>[
+          _bodyItem(['Label 1: 21']),
+          _bodyItem(['Label 2: 79']),
         ]),
       );
     });

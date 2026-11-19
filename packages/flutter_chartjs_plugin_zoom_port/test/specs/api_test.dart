@@ -10,8 +10,6 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
-
 // The Dart forms of the spec:
 //
 // - `chart.zoom(1.5)` is `chart.zoom(const .all(1.5))`, and the object form
@@ -94,56 +92,56 @@ void main() {
         tester,
       ) async {
         final chart = acquireChart(_scatter0to100());
-        expect(_min(chart, 'x'), toBe(0));
-        expect(_max(chart, 'x'), toBe(100));
-        expect(_min(chart, 'y'), toBe(0));
-        expect(_max(chart, 'y'), toBe(100));
+        expect(_min(chart, 'x'), equals(0));
+        expect(_max(chart, 'x'), equals(100));
+        expect(_min(chart, 'y'), equals(0));
+        expect(_max(chart, 'y'), equals(100));
 
         chart.zoom(const .all(1.5));
-        expect(_min(chart, 'x'), toBe(25));
-        expect(_max(chart, 'x'), toBe(75));
-        expect(_min(chart, 'y'), toBe(25));
-        expect(_max(chart, 'y'), toBe(75));
+        expect(_min(chart, 'x'), equals(25));
+        expect(_max(chart, 'x'), equals(75));
+        expect(_min(chart, 'y'), equals(25));
+        expect(_max(chart, 'y'), equals(75));
 
         chart.zoom(const .all(0.5));
-        expect(_min(chart, 'x'), toBe(12.5));
-        expect(_max(chart, 'x'), toBe(87.5));
-        expect(_min(chart, 'y'), toBe(12.5));
-        expect(_max(chart, 'y'), toBe(87.5));
+        expect(_min(chart, 'x'), equals(12.5));
+        expect(_max(chart, 'x'), equals(87.5));
+        expect(_min(chart, 'y'), equals(12.5));
+        expect(_max(chart, 'y'), equals(87.5));
 
         chart.resetZoom();
-        expect(_min(chart, 'x'), toBe(0));
-        expect(_max(chart, 'x'), toBe(100));
-        expect(_min(chart, 'y'), toBe(0));
-        expect(_max(chart, 'y'), toBe(100));
+        expect(_min(chart, 'x'), equals(0));
+        expect(_max(chart, 'x'), equals(100));
+        expect(_min(chart, 'y'), equals(0));
+        expect(_max(chart, 'y'), equals(100));
       });
 
       testWidgets('should accept different percentages per axis', (
         tester,
       ) async {
         final chart = acquireChart(_scatter0to100());
-        expect(_min(chart, 'x'), toBe(0));
-        expect(_max(chart, 'x'), toBe(100));
-        expect(_min(chart, 'y'), toBe(0));
-        expect(_max(chart, 'y'), toBe(100));
+        expect(_min(chart, 'x'), equals(0));
+        expect(_max(chart, 'x'), equals(100));
+        expect(_min(chart, 'y'), equals(0));
+        expect(_max(chart, 'y'), equals(100));
 
         chart.zoom(const ZoomAmount(x: 1.5, y: 1.25));
-        expect(_min(chart, 'x'), toBe(25));
-        expect(_max(chart, 'x'), toBe(75));
-        expect(_min(chart, 'y'), toBe(12.5));
-        expect(_max(chart, 'y'), toBe(87.5));
+        expect(_min(chart, 'x'), equals(25));
+        expect(_max(chart, 'x'), equals(75));
+        expect(_min(chart, 'y'), equals(12.5));
+        expect(_max(chart, 'y'), equals(87.5));
 
         chart.zoom(const ZoomAmount(x: 0.75, y: 0.3));
-        expect(_min(chart, 'x'), toBe(18.75));
-        expect(_max(chart, 'x'), toBe(81.25));
-        expect(_min(chart, 'y'), toBe(-13.75));
-        expect(_max(chart, 'y'), toBe(113.75));
+        expect(_min(chart, 'x'), equals(18.75));
+        expect(_max(chart, 'x'), equals(81.25));
+        expect(_min(chart, 'y'), equals(-13.75));
+        expect(_max(chart, 'y'), equals(113.75));
 
         chart.resetZoom();
-        expect(_min(chart, 'x'), toBe(0));
-        expect(_max(chart, 'x'), toBe(100));
-        expect(_min(chart, 'y'), toBe(0));
-        expect(_max(chart, 'y'), toBe(100));
+        expect(_min(chart, 'x'), equals(0));
+        expect(_max(chart, 'x'), equals(100));
+        expect(_min(chart, 'y'), equals(0));
+        expect(_max(chart, 'y'), equals(100));
       });
 
       testWidgets('should honor fitted scale updates on reset', (tester) async {
@@ -153,8 +151,8 @@ void main() {
         _firstPoint(chart)['x'] = -100;
         chart.update();
         chart.resetZoom();
-        expect(_min(chart, 'x'), toBe(-100));
-        expect(_max(chart, 'x'), toBe(100));
+        expect(_min(chart, 'x'), equals(-100));
+        expect(_max(chart, 'x'), equals(100));
       });
 
       testWidgets('should no-op with fully constrained limits', (tester) async {
@@ -173,8 +171,8 @@ void main() {
         );
 
         chart.zoom(const .all(1.5));
-        expect(_min(chart, 'x'), toBe(0));
-        expect(_max(chart, 'x'), toBe(100));
+        expect(_min(chart, 'x'), equals(0));
+        expect(_max(chart, 'x'), equals(100));
       });
 
       testWidgets('should no-op whan laready at limit', (tester) async {
@@ -207,16 +205,16 @@ void main() {
         );
 
         chart.zoom(atValue(100));
-        expect(_min(chart, 'x'), toBe(50));
-        expect(_max(chart, 'x'), toBe(100));
+        expect(_min(chart, 'x'), equals(50));
+        expect(_max(chart, 'x'), equals(100));
 
         chart.zoom(atValue(100));
-        expect(_min(chart, 'x'), toBe(50));
-        expect(_max(chart, 'x'), toBe(100));
+        expect(_min(chart, 'x'), equals(50));
+        expect(_max(chart, 'x'), equals(100));
 
         chart.zoom(atValue(50));
-        expect(_min(chart, 'x'), toBe(50));
-        expect(_max(chart, 'x'), toBe(100));
+        expect(_min(chart, 'x'), equals(50));
+        expect(_max(chart, 'x'), equals(100));
       });
 
       testWidgets('should honor zoom changes against a limit', (tester) async {
@@ -239,8 +237,8 @@ void main() {
             ),
           ),
         );
-        expect(_min(chart, 'x'), toBe(0));
-        expect(_max(chart, 'x'), toBe(1));
+        expect(_min(chart, 'x'), equals(0));
+        expect(_max(chart, 'x'), equals(1));
 
         chart.zoom(
           ZoomAmount(
@@ -252,14 +250,15 @@ void main() {
             ),
           ),
         );
-        expect(_min(chart, 'x'), toBe(0));
-        expect(_max(chart, 'x'), toBe(100));
+        expect(_min(chart, 'x'), equals(0));
+        expect(_max(chart, 'x'), equals(100));
       });
     });
 
     group('zoomScale', () {
       testWidgets('should call onZoom', (tester) async {
-        final zoomSpy = createSpy('start');
+        // `createSpy('start')`: a closure that records its context.
+        final zoomCalls = <ZoomTriggerContext>[];
         final chart = acquireChart(<String, Object?>{
           'type': 'scatter',
           'data': <String, Object?>{
@@ -275,7 +274,7 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{
               'zoom': ZoomPluginOptions(
-                zoom: ZoomOptions(onZoom: zoomSpy.call),
+                zoom: ZoomOptions(onZoom: zoomCalls.add),
               ),
             },
           },
@@ -283,10 +282,7 @@ void main() {
 
         chart.zoomScale('x', (min: 2, max: 10), UpdateMode.defaultMode);
 
-        expect(
-          zoomSpy,
-          toHaveBeenCalledWith([(chart: chart, trigger: ZoomTrigger.api)]),
-        );
+        expect(zoomCalls, contains((chart: chart, trigger: ZoomTrigger.api)));
       });
     });
 
@@ -298,16 +294,16 @@ void main() {
           final chart = acquireChart(_scatter0to100());
 
           chart.zoom(const .all(1));
-          expect(chart.getInitialScaleBounds()['x']!.min, toBe(0));
-          expect(chart.getInitialScaleBounds()['x']!.max, toBe(100));
-          expect(chart.getInitialScaleBounds()['y']!.min, toBe(0));
-          expect(chart.getInitialScaleBounds()['y']!.max, toBe(100));
+          expect(chart.getInitialScaleBounds()['x']!.min, equals(0));
+          expect(chart.getInitialScaleBounds()['x']!.max, equals(100));
+          expect(chart.getInitialScaleBounds()['y']!.min, equals(0));
+          expect(chart.getInitialScaleBounds()['y']!.max, equals(100));
 
           chart.zoom(const ZoomAmount(x: 1.5, y: 1.25));
-          expect(chart.getInitialScaleBounds()['x']!.min, toBe(0));
-          expect(chart.getInitialScaleBounds()['x']!.max, toBe(100));
-          expect(chart.getInitialScaleBounds()['y']!.min, toBe(0));
-          expect(chart.getInitialScaleBounds()['y']!.max, toBe(100));
+          expect(chart.getInitialScaleBounds()['x']!.min, equals(0));
+          expect(chart.getInitialScaleBounds()['x']!.max, equals(100));
+          expect(chart.getInitialScaleBounds()['y']!.min, equals(0));
+          expect(chart.getInitialScaleBounds()['y']!.max, equals(100));
         },
       );
 
@@ -316,18 +312,18 @@ void main() {
       ) async {
         final chart = acquireChart(_scatterFitted());
 
-        expect(chart.getInitialScaleBounds()['x']!.min, toBe(0));
-        expect(chart.getInitialScaleBounds()['x']!.max, toBe(100));
-        expect(chart.getInitialScaleBounds()['y']!.min, toBe(0));
-        expect(chart.getInitialScaleBounds()['y']!.max, toBe(100));
+        expect(chart.getInitialScaleBounds()['x']!.min, equals(0));
+        expect(chart.getInitialScaleBounds()['x']!.max, equals(100));
+        expect(chart.getInitialScaleBounds()['y']!.min, equals(0));
+        expect(chart.getInitialScaleBounds()['y']!.max, equals(100));
 
         _firstPoint(chart)['x'] = -100;
         chart.update();
 
-        expect(chart.getInitialScaleBounds()['x']!.min, toBe(-100));
-        expect(chart.getInitialScaleBounds()['x']!.max, toBe(100));
-        expect(chart.getInitialScaleBounds()['y']!.min, toBe(0));
-        expect(chart.getInitialScaleBounds()['y']!.max, toBe(100));
+        expect(chart.getInitialScaleBounds()['x']!.min, equals(-100));
+        expect(chart.getInitialScaleBounds()['x']!.max, equals(100));
+        expect(chart.getInitialScaleBounds()['y']!.min, equals(0));
+        expect(chart.getInitialScaleBounds()['y']!.max, equals(100));
       });
     });
 
@@ -337,19 +333,19 @@ void main() {
       ) async {
         final chart = acquireChart(_scatter0to100());
 
-        expect(chart.isZoomedOrPanned(), toBe(false));
+        expect(chart.isZoomedOrPanned(), equals(false));
 
         chart.zoom(const .all(1));
-        expect(chart.isZoomedOrPanned(), toBe(false));
+        expect(chart.isZoomedOrPanned(), equals(false));
 
         chart.zoom(const ZoomAmount(x: 1.5, y: 1.25));
-        expect(chart.isZoomedOrPanned(), toBe(true));
+        expect(chart.isZoomedOrPanned(), equals(true));
 
         chart.zoom(const ZoomAmount(x: 0.25, y: 0.5));
-        expect(chart.isZoomedOrPanned(), toBe(true));
+        expect(chart.isZoomedOrPanned(), equals(true));
 
         chart.resetZoom();
-        expect(chart.isZoomedOrPanned(), toBe(false));
+        expect(chart.isZoomedOrPanned(), equals(false));
       });
 
       testWidgets('should return whether or not the page is currently panned', (
@@ -357,16 +353,16 @@ void main() {
       ) async {
         final chart = acquireChart(_scatter0to100());
 
-        expect(chart.isZoomedOrPanned(), toBe(false));
+        expect(chart.isZoomedOrPanned(), equals(false));
 
         chart.pan(const PanAmount());
-        expect(chart.isZoomedOrPanned(), toBe(false));
+        expect(chart.isZoomedOrPanned(), equals(false));
 
         chart.pan(const PanAmount(x: 10));
-        expect(chart.isZoomedOrPanned(), toBe(true));
+        expect(chart.isZoomedOrPanned(), equals(true));
 
         chart.resetZoom();
-        expect(chart.isZoomedOrPanned(), toBe(false));
+        expect(chart.isZoomedOrPanned(), equals(false));
       });
 
       testWidgets('should work with updated data and fitted scales', (
@@ -379,9 +375,9 @@ void main() {
         _firstPoint(chart)['x'] = -100;
         chart.update();
         chart.resetZoom();
-        expect(_min(chart, 'x'), toBe(-100));
-        expect(_max(chart, 'x'), toBe(100));
-        expect(chart.isZoomedOrPanned(), toBe(false));
+        expect(_min(chart, 'x'), equals(-100));
+        expect(_max(chart, 'x'), equals(100));
+        expect(chart.isZoomedOrPanned(), equals(false));
       });
     });
 
@@ -395,7 +391,7 @@ void main() {
         chart.zoom(const .all(1.5));
         expect(
           chart.getZoomedScaleBounds()['x'],
-          jasmineEquals((min: 25, max: 75)),
+          equals((min: 25.0, max: 75.0)),
         );
 
         chart.resetZoom();
@@ -423,20 +419,20 @@ void main() {
             },
           },
         });
-        expect(_min(chart, 'x'), toBe(1));
-        expect(_max(chart, 'x'), toBe(3));
+        expect(_min(chart, 'x'), equals(1));
+        expect(_max(chart, 'x'), equals(3));
         chart.zoom(const .all(1.1));
-        expect(_min(chart, 'x'), toBe(2));
-        expect(_max(chart, 'x'), toBe(2));
+        expect(_min(chart, 'x'), equals(2));
+        expect(_max(chart, 'x'), equals(2));
         chart.zoom(const .all(0.9));
-        expect(_min(chart, 'x'), toBe(1));
-        expect(_max(chart, 'x'), toBe(3));
+        expect(_min(chart, 'x'), equals(1));
+        expect(_max(chart, 'x'), equals(3));
         chart.zoom(const .all(0.9));
-        expect(_min(chart, 'x'), toBe(0));
-        expect(_max(chart, 'x'), toBe(4));
+        expect(_min(chart, 'x'), equals(0));
+        expect(_max(chart, 'x'), equals(4));
         chart.resetZoom();
-        expect(_min(chart, 'x'), toBe(1));
-        expect(_max(chart, 'x'), toBe(3));
+        expect(_min(chart, 'x'), equals(1));
+        expect(_max(chart, 'x'), equals(3));
       });
 
       testWidgets('should not exceed limits', (tester) async {
@@ -472,29 +468,29 @@ void main() {
             },
           },
         });
-        expect(_min(chart, 'y'), toBe(2));
-        expect(_max(chart, 'y'), toBe(4));
+        expect(_min(chart, 'y'), equals(2));
+        expect(_max(chart, 'y'), equals(4));
         chart.zoom(const .all(1.1));
-        expect(_min(chart, 'y'), toBe(3));
-        expect(_max(chart, 'y'), toBe(4));
+        expect(_min(chart, 'y'), equals(3));
+        expect(_max(chart, 'y'), equals(4));
         chart.pan(const .all(-100));
-        expect(_min(chart, 'y'), toBe(4));
-        expect(_max(chart, 'y'), toBe(5));
+        expect(_min(chart, 'y'), equals(4));
+        expect(_max(chart, 'y'), equals(5));
         chart.zoom(const .all(0.9));
-        expect(_min(chart, 'y'), toBe(3));
-        expect(_max(chart, 'y'), toBe(5));
+        expect(_min(chart, 'y'), equals(3));
+        expect(_max(chart, 'y'), equals(5));
         chart.zoom(const .all(0.9));
-        expect(_min(chart, 'y'), toBe(1));
-        expect(_max(chart, 'y'), toBe(5));
+        expect(_min(chart, 'y'), equals(1));
+        expect(_max(chart, 'y'), equals(5));
         chart.zoom(const .all(0.9));
-        expect(_min(chart, 'y'), toBe(1));
-        expect(_max(chart, 'y'), toBe(5));
+        expect(_min(chart, 'y'), equals(1));
+        expect(_max(chart, 'y'), equals(5));
         chart.pan(const .all(-100));
-        expect(_min(chart, 'y'), toBe(1));
-        expect(_max(chart, 'y'), toBe(5));
+        expect(_min(chart, 'y'), equals(1));
+        expect(_max(chart, 'y'), equals(5));
         chart.pan(const .all(100));
-        expect(_min(chart, 'y'), toBe(1));
-        expect(_max(chart, 'y'), toBe(5));
+        expect(_min(chart, 'y'), equals(1));
+        expect(_max(chart, 'y'), equals(5));
       });
     });
 
@@ -516,20 +512,20 @@ void main() {
             },
           },
         });
-        expect(_min(chart, 'y'), toBe(0.1));
-        expect(_max(chart, 'y'), toBe(4000));
+        expect(_min(chart, 'y'), equals(0.1));
+        expect(_max(chart, 'y'), equals(4000));
         chart.zoom(const .all(1.1));
-        expect(_min(chart, 'y'), toBeCloseTo(0.17));
-        expect(_max(chart, 'y'), toBeCloseTo(2355, 0));
+        expect(_min(chart, 'y'), closeTo(0.17, 0.005));
+        expect(_max(chart, 'y'), closeTo(2355, 0.5));
         chart.zoom(const .all(0.9));
-        expect(_min(chart, 'y'), toBeCloseTo(0.105, 3));
-        expect(_max(chart, 'y'), toBeCloseTo(3794, 0));
+        expect(_min(chart, 'y'), closeTo(0.105, 0.0005));
+        expect(_max(chart, 'y'), closeTo(3794, 0.5));
         chart.zoom(const .all(0.9));
-        expect(_min(chart, 'y'), toBeCloseTo(0.06));
-        expect(_max(chart, 'y'), toBeCloseTo(6410, 0));
+        expect(_min(chart, 'y'), closeTo(0.06, 0.005));
+        expect(_max(chart, 'y'), closeTo(6410, 0.5));
         chart.resetZoom();
-        expect(_min(chart, 'y'), toBe(0.1));
-        expect(_max(chart, 'y'), toBe(4000));
+        expect(_min(chart, 'y'), equals(0.1));
+        expect(_max(chart, 'y'), equals(4000));
       });
     });
   });

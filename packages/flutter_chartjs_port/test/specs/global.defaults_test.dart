@@ -14,10 +14,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/drop_extra_args.dart';
-import '../support/jasmine.dart';
+import '../support/legend_item.dart';
 
 // `Chart.overrides` is the static getter of core.controller.dart. `toEqual`
-// is jasmineEquals of test/support/jasmine.dart. Each case builds a chart:
+// of the legend items is a list of `legendItemEquals` of
+// test/support/legend_item.dart, one native `LegendItem` for each expected
+// object: a key that the expected object does not have is a null field
+// (`textAlign: undefined` and the others). Each case builds a chart:
 // it is a `testWidgets` case with the harness of Chart.js ADR 0022, section
 // 2. `chart.legend` is the field of `Chart`, and the spec reads
 // `legendItems` through `types.LegendElement` (Chart.js ADR 0038, section
@@ -74,56 +77,46 @@ AnyObject _config(String type) => <String, Object?>{
   },
 };
 
+/// The colors of the expected legend items.
+const ChartPaint _red = ChartPaint.solid(
+  native_ui.Color.fromRGBO(255, 0, 0, 1),
+);
+const ChartPaint _green = ChartPaint.solid(
+  native_ui.Color.fromRGBO(0, 128, 0, 1),
+);
+const ChartPaint _blue = ChartPaint.solid(
+  native_ui.Color.fromRGBO(0, 0, 255, 1),
+);
+const ChartPaint _gray = ChartPaint.solid(
+  native_ui.Color.fromRGBO(102, 102, 102, 1),
+);
+const ChartPaint _black = ChartPaint.solid(
+  native_ui.Color.fromRGBO(0, 0, 0, 1),
+);
+
 void main() {
   group('Default Configs', () {
     group('Doughnut Chart', () {
       testWidgets('should return correct legend label objects', (tester) async {
         final chart = acquireChart(_config('doughnut'));
 
-        final expectedCommon = <String, Object?>{
-          'fontColor': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(102, 102, 102, 1),
-          ),
-          'hidden': false,
-          'strokeStyle': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(0, 0, 0, 1),
-          ),
-          'textAlign': undefined,
-          'lineWidth': 2,
-          'pointStyle': undefined,
-          'lineDash': <Object?>[],
-          'lineDashOffset': 0,
-          'lineJoin': undefined,
-          'borderRadius': undefined,
-        };
+        LegendItem item(String text, ChartPaint fillStyle, int index) =>
+            LegendItem(
+              text: [text],
+              fillStyle: fillStyle,
+              index: index,
+              fontColor: _gray,
+              strokeStyle: _black,
+              lineWidth: 2,
+              lineDash: [],
+              lineDashOffset: 0,
+            );
 
-        final expected = <Object?>[
-          <String, Object?>{
-            'text': 'label1',
-            'fillStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
-            'index': 0,
-            ...expectedCommon,
-          },
-          <String, Object?>{
-            'text': 'label2',
-            'fillStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 128, 0, 1),
-            ),
-            'index': 1,
-            ...expectedCommon,
-          },
-          <String, Object?>{
-            'text': 'label3',
-            'fillStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 255, 1),
-            ),
-            'index': 2,
-            ...expectedCommon,
-          },
-        ];
-        expect(chart.legend!.legendItems, jasmineEquals(expected));
+        expect(chart.legend!.legendItems, [
+          legendItemEquals(item('label1', _red, 0)),
+          legendItemEquals(item('label2', _green, 1)),
+          legendItemEquals(item('label3', _blue, 2)),
+        ]);
       });
 
       testWidgets(
@@ -165,30 +158,23 @@ void main() {
             },
           });
 
-          final expected = <Object?>[
-            <String, Object?>{
-              'text': 'label1',
-              'fillStyle': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+          expect(chart.legend!.legendItems, [
+            legendItemEquals(
+              LegendItem(
+                text: ['label1'],
+                fillStyle: _red,
+                index: 0,
+                fontColor: _gray,
+                strokeStyle: _black,
+                textAlign: TextAlign.left,
+                lineWidth: 2,
+                lineDash: [1, 2, 3],
+                lineDashOffset: 1,
+                lineJoin: native_ui.StrokeJoin.miter,
+                borderRadius: const TooltipCornerRadii.all(5),
               ),
-              'index': 0,
-              'fontColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(102, 102, 102, 1),
-              ),
-              'hidden': false,
-              'strokeStyle': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(0, 0, 0, 1),
-              ),
-              'textAlign': TextAlign.left,
-              'lineWidth': 2,
-              'pointStyle': undefined,
-              'lineDash': <Object?>[1, 2, 3],
-              'lineDashOffset': 1,
-              'lineJoin': native_ui.StrokeJoin.miter,
-              'borderRadius': 5,
-            },
-          ];
-          expect(chart.legend!.legendItems, jasmineEquals(expected));
+            ),
+          ]);
         },
       );
 
@@ -222,60 +208,21 @@ void main() {
       testWidgets('should return correct legend label objects', (tester) async {
         final chart = acquireChart(_config('polarArea'));
 
-        final expected = <Object?>[
-          <String, Object?>{
-            'text': 'label1',
-            'fillStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
-            'fontColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(102, 102, 102, 1),
-            ),
-            'hidden': false,
-            'index': 0,
-            'strokeStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 0, 1),
-            ),
-            'textAlign': undefined,
-            'lineWidth': 2,
-            'pointStyle': undefined,
-          },
-          <String, Object?>{
-            'text': 'label2',
-            'fillStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 128, 0, 1),
-            ),
-            'fontColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(102, 102, 102, 1),
-            ),
-            'hidden': false,
-            'index': 1,
-            'strokeStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 0, 1),
-            ),
-            'textAlign': undefined,
-            'lineWidth': 2,
-            'pointStyle': undefined,
-          },
-          <String, Object?>{
-            'text': 'label3',
-            'fillStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 255, 1),
-            ),
-            'fontColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(102, 102, 102, 1),
-            ),
-            'hidden': false,
-            'index': 2,
-            'strokeStyle': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 0, 1),
-            ),
-            'textAlign': undefined,
-            'lineWidth': 2,
-            'pointStyle': undefined,
-          },
-        ];
-        expect(chart.legend!.legendItems, jasmineEquals(expected));
+        LegendItem item(String text, ChartPaint fillStyle, int index) =>
+            LegendItem(
+              text: [text],
+              fillStyle: fillStyle,
+              fontColor: _gray,
+              index: index,
+              strokeStyle: _black,
+              lineWidth: 2,
+            );
+
+        expect(chart.legend!.legendItems, [
+          legendItemEquals(item('label1', _red, 0)),
+          legendItemEquals(item('label2', _green, 1)),
+          legendItemEquals(item('label3', _blue, 2)),
+        ]);
       });
 
       testWidgets('should hide the correct arc when a legend item is clicked', (

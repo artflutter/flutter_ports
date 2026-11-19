@@ -5,7 +5,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:math' as math;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -17,7 +16,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 import '../support/tick_label.dart';
 
 // The spec reads Chart.defaults, which is `defaults` of core.defaults.dart.
@@ -52,7 +50,10 @@ import '../support/tick_label.dart';
 //   `xScale.ctx = createMockContext()` of
 //   package:chartjs_test_utils/pure.dart. A call of `getCalls()` is a Map
 //   with the keys `name` and `args`.
-// - `toEqual` is `jasmineEquals`. `toBeCloseTo` is `_toBeCloseTo`.
+// - `toEqual` is `equals`. `toEqual` of an option scope is a compare of
+//   its `Object.keys` (`jsKeys` of its face) and of each value that its
+//   face reads. `toBeCloseTo(e, p)` is
+//   `closeTo(e, 5e-(p + 1))`.
 // - `new Array(300).fill(value)` is `List.filled(300, value)`.
 // - `parseFloat(value.toFixed(2))` is
 //   `double.parse(value.toStringAsFixed(2))`.
@@ -148,22 +149,6 @@ _gridLineTests = [
 Object? _arg(ContextCall call, int index) =>
     (call['args']! as List<Object?>)[index];
 
-/// Jasmine `toBeCloseTo(expected, precision)` of jasmine-core 3.99.1:
-/// `Math.round(delta * 10^(precision + 1)) <= 10^-precision / 2 *
-/// 10^(precision + 1)`, with `delta = |expected - actual|`.
-Matcher _toBeCloseTo(num expected, [int precision = 2]) {
-  final pow = math.pow(10.0, precision + 1);
-  final maxDelta = math.pow(10.0, -precision) / 2;
-  return predicate<Object?>(
-    (actual) =>
-        actual is num &&
-        ((expected - actual).abs() * pow).toDouble().roundToDouble() <=
-            maxDelta * pow,
-    'a number close to ${jsToString(expected)} (Jasmine toBeCloseTo, '
-    'precision ${jsToString(precision)})',
-  );
-}
-
 /// A case of `gridLineTests` with a line at 0: `roundToDouble()` places the
 /// line at -0.5, where upstream places it at 0.5 (Chart.js ADR 0146 §7).
 void _skipGridLineCase(String name) =>
@@ -188,14 +173,17 @@ void main() {
 
     test('should provide default scale label options', () {
       final scale = _member(defaults, 'scale');
+      final title = _member(scale, 'title')! as JsObjectFace;
       expect(
-        _member(scale, 'title'),
-        jasmineEquals(<String, Object?>{
-          'color': defaults['color'],
-          'display': false,
-          'text': [''],
-          'padding': const EdgeInsets.only(top: 4, bottom: 4),
-        }),
+        title.jsKeys(),
+        unorderedEquals(<String>['color', 'display', 'text', 'padding']),
+      );
+      expect(title['color'], equals(defaults['color']));
+      expect(title['display'], equals(false));
+      expect(title['text'], equals(<String>['']));
+      expect(
+        title['padding'],
+        equals(const EdgeInsets.only(top: 4, bottom: 4)),
       );
     });
 
@@ -247,7 +235,7 @@ void main() {
         'larger number as autoSkip calculation',
         (tester) async {
           final chart = getChartBigData(300);
-          expect(chart.scales['x']!.ticks!.length, jasmineEquals(20));
+          expect(chart.scales['x']!.ticks!.length, equals(20));
         },
       );
 
@@ -256,7 +244,7 @@ void main() {
         'to a smaller number as autoSkip calculation',
         (tester) async {
           final chart = getChartBigData(3);
-          expect(chart.scales['x']!.ticks!.length, jasmineEquals(3));
+          expect(chart.scales['x']!.ticks!.length, equals(3));
         },
       );
 
@@ -276,10 +264,7 @@ void main() {
             ],
           });
 
-          expect(
-            upstreamTickLabel(lastTick(chart)),
-            jasmineEquals('September 2018'),
-          );
+          expect(upstreamTickLabel(lastTick(chart)), equals('September 2018'));
         },
       );
 
@@ -308,10 +293,7 @@ void main() {
             ],
           });
 
-          expect(
-            upstreamTickLabel(lastTick(chart)),
-            jasmineEquals('March 2020'),
-          );
+          expect(upstreamTickLabel(lastTick(chart)), equals('March 2020'));
         },
       );
     });
@@ -364,7 +346,7 @@ void main() {
               .where((x) => x['name'] == 'moveTo' && _arg(x, 1) == 0)
               .map((x) => _arg(x, 0))
               .toList(),
-          jasmineEquals(test.expected),
+          equals(test.expected),
         );
       });
     }
@@ -853,10 +835,10 @@ void main() {
           },
         });
 
-        expect(chart.scales['x']!.min, jasmineEquals(-20));
-        expect(chart.scales['x']!.max, jasmineEquals(20));
-        expect(chart.scales['y']!.min, jasmineEquals(-10));
-        expect(chart.scales['y']!.max, jasmineEquals(10));
+        expect(chart.scales['x']!.min, equals(-20));
+        expect(chart.scales['x']!.max, equals(20));
+        expect(chart.scales['y']!.min, equals(-10));
+        expect(chart.scales['y']!.max, equals(10));
       });
     });
 
@@ -889,7 +871,7 @@ void main() {
 
         expect(
           jsSort(chart.scales.keys.toList(), (a, b) => a.compareTo(b)),
-          jasmineEquals(<Object?>['x', 'x2', 'y']),
+          equals(<Object?>['x', 'x2', 'y']),
         );
       });
 
@@ -926,7 +908,7 @@ void main() {
 
         expect(
           jsSort(chart.scales.keys.toList(), (a, b) => a.compareTo(b)),
-          jasmineEquals(<Object?>['scaleX', 'x', 'y']),
+          equals(<Object?>['scaleX', 'x', 'y']),
         );
       });
 
@@ -1055,7 +1037,7 @@ void main() {
         for (var i = 0; i < len; ++i) {
           final actualValue = actual[i];
           final expectedValue = expected[i];
-          expect(actualValue, _toBeCloseTo(expectedValue, 1));
+          expect(actualValue, closeTo(expectedValue, 0.05));
         }
       });
     });

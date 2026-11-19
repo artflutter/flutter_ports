@@ -7,7 +7,6 @@ library;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
 import '../support/plugin_defaults.dart';
 
 // The registry spec has no chart: each case calls `Chart.register`,
@@ -25,7 +24,8 @@ import '../support/plugin_defaults.dart';
 // `Chart.register([a, b])`, and `Chart.register([A, B])` is
 // `Chart.register([[a, b]])` (Chart.js ADR 0020, section 6). `new Error(m)`
 // is a StateError with the message m. `toEqual` of a class compares by
-// identity, and `toEqual` of an object compares the keys and values.
+// identity, and `toEqual` of an object compares the keys and values: `equals`
+// of the two Maps of `_plain`.
 // `not.toBeDefined()` is the `undefined` sentinel.
 //
 // A plugin is a native `Plugin` (Chart.js ADR 0144): a class value or a Map
@@ -40,6 +40,14 @@ Object? _defaults(String scope, String key) =>
 
 /// `Chart.overrides[key]`.
 Object? _overrides(String key) => jsGet(Chart.overrides, key);
+
+/// The keys and values of the option object [object]: a Map of the spec,
+/// or a typed scope, read through its face.
+Map<String, Object?> _plain(Object? object) => switch (object) {
+  final Map<String, Object?> map => map,
+  final JsObjectFace face => {for (final key in face.jsKeys()) key: face[key]},
+  _ => throw ArgumentError.value(object, 'object', 'is not an object'),
+};
 
 /// `toThrow(new Error(message))`.
 Matcher _throwsError(String message) => throwsA(
@@ -60,12 +68,12 @@ void main() {
 
       expect(Chart.registry.getController('custom'), customController);
       expect(
-        _defaults('datasets', 'custom'),
-        jasmineEquals(customController['defaults']),
+        _plain(_defaults('datasets', 'custom')),
+        equals(_plain(customController['defaults'])),
       );
       expect(
-        _overrides('custom'),
-        jasmineEquals(customController['overrides']),
+        _plain(_overrides('custom')),
+        equals(_plain(customController['overrides'])),
       );
 
       Chart.unregister([customController]);
@@ -85,8 +93,8 @@ void main() {
 
       expect(Chart.registry.getScale('es6Scale'), customScale);
       expect(
-        _defaults('scales', 'es6Scale'),
-        jasmineEquals(customScale['defaults']),
+        _plain(_defaults('scales', 'es6Scale')),
+        equals(_plain(customScale['defaults'])),
       );
 
       Chart.unregister([customScale]);
@@ -108,8 +116,8 @@ void main() {
 
       expect(Chart.registry.getElement('es6element'), customElement);
       expect(
-        _defaults('elements', 'es6element'),
-        jasmineEquals(customElement['defaults']),
+        _plain(_defaults('elements', 'es6element')),
+        equals(_plain(customElement['defaults'])),
       );
 
       Chart.unregister([customElement]);
@@ -167,8 +175,8 @@ void main() {
 
         expect(Chart.registry.getController('custom'), customExtension);
         expect(
-          _defaults('datasets', 'custom'),
-          jasmineEquals(customExtension['defaults']),
+          _plain(_defaults('datasets', 'custom')),
+          equals(_plain(customExtension['defaults'])),
         );
 
         Chart.registry.removeControllers([customExtension]);
@@ -184,8 +192,8 @@ void main() {
 
         expect(Chart.registry.getScale('custom'), customExtension);
         expect(
-          _defaults('scales', 'custom'),
-          jasmineEquals(customExtension['defaults']),
+          _plain(_defaults('scales', 'custom')),
+          equals(_plain(customExtension['defaults'])),
         );
 
         Chart.registry.removeScales([customExtension]);
@@ -201,8 +209,8 @@ void main() {
 
         expect(Chart.registry.getElement('custom'), customExtension);
         expect(
-          _defaults('elements', 'custom'),
-          jasmineEquals(customExtension['defaults']),
+          _plain(_defaults('elements', 'custom')),
+          equals(_plain(customExtension['defaults'])),
         );
 
         Chart.registry.removeElements([customExtension]);
@@ -218,8 +226,8 @@ void main() {
 
         expect(Chart.registry.getPlugin('custom'), customPlugin);
         expect(
-          _defaults('plugins', 'custom'),
-          jasmineEquals(customPlugin.defaults),
+          _plain(_defaults('plugins', 'custom')),
+          equals(_plain(customPlugin.defaults)),
         );
 
         Chart.registry.removePlugins([customPlugin]);
@@ -299,16 +307,16 @@ void main() {
 
       Chart.register([testController]);
       expect(
-        _defaults('datasets', 'test'),
-        jasmineEquals(<String, Object?>{
+        _plain(_defaults('datasets', 'test')),
+        equals(<String, Object?>{
           'test1': false,
           'test2': true,
           'test3': false,
         }),
       );
       expect(
-        _overrides('test'),
-        jasmineEquals(<String, Object?>{
+        _plain(_overrides('test')),
+        equals(<String, Object?>{
           'testA': false,
           'testB': true,
           'testC': false,

@@ -14,7 +14,6 @@ import 'package:flutter_chartjs_port/chartjs.dart' as helpers;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 
 // The spec reads the functions from Chart.helpers. Here `helpers` is
 // helpers.canvas.dart. The upstream `_` exports drop the underscore (Chart.js
@@ -26,22 +25,32 @@ import '../support/jasmine.dart';
 // (Chart.js ADR 0022, sections 1 and 2). Thus the file runs on the VM only,
 // although helpers.canvas.dart is a pure layer.
 
+/// One call of `clearRect`: the context that got it and the arguments.
+typedef _ClearRectCall = ({
+  CanvasRenderingContext2D ctx,
+  double x,
+  double y,
+  double w,
+  double h,
+});
+
 /// The canvas context of a chart after `spyOn(chart.ctx, 'clearRect')`.
 ///
-/// A Dart object cannot replace one of its methods. Thus the spy is a second
-/// context that takes the place of `chart.ctx`. Its `clearRect` records each
-/// call and does nothing else, as a Jasmine spy without `callThrough`. It
+/// A Dart object cannot replace one of its methods. Thus the recorder is a
+/// second context that takes the place of `chart.ctx`. Its `clearRect`
+/// records each call and does nothing else, as a Jasmine spy without
+/// `callThrough`. It
 /// forwards the other members that the case and the release of the chart
 /// call to the context of the chart: `canvas`, `save`, `restore` and
 /// `resetTransform`. Another member throws a `NoSuchMethodError`.
 final class _ClearRectSpy(final CanvasRenderingContext2D _context)
     implements CanvasRenderingContext2D {
   /// `chart.ctx.clearRect.calls`.
-  final JasmineCalls calls = JasmineCalls();
+  final List<_ClearRectCall> calls = [];
 
   @override
   void clearRect(double x, double y, double w, double h) {
-    calls.add([x, y, w, h], object: this);
+    calls.add((ctx: this, x: x, y: y, w: w, h: h));
   }
 
   @override
@@ -60,15 +69,14 @@ final class _ClearRectSpy(final CanvasRenderingContext2D _context)
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// `spyOn(chart.ctx, 'clearRect')`. Jasmine removes a spy after the spec,
-/// after the release of the chart. The spy here stays on the chart.
-void _spyOnClearRect(Chart chart) {
-  chart.ctx = _ClearRectSpy(chart.ctx!);
+/// `spyOn(chart.ctx, 'clearRect')`: the calls of `clearRect`. Jasmine
+/// removes a spy after the spec, after the release of the chart. The
+/// recorder here stays on the chart.
+List<_ClearRectCall> _recordClearRect(Chart chart) {
+  final recorder = _ClearRectSpy(chart.ctx!);
+  chart.ctx = recorder;
+  return recorder.calls;
 }
-
-/// `chart.ctx.clearRect.calls` of a context with a spy.
-JasmineCalls _clearRectCalls(CanvasRenderingContext2D? ctx) =>
-    (ctx! as _ClearRectSpy).calls;
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].
 final class const _Point(@override final double? x, @override final double? y)
@@ -105,13 +113,14 @@ void main() {
           'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
         });
 
-        _spyOnClearRect(chart);
+        final clearRectCalls = _recordClearRect(chart);
 
         clearCanvas(chart.canvas, chart.ctx);
 
-        expect(_clearRectCalls(chart.ctx).count(), 1);
-        expect(_clearRectCalls(chart.ctx).first().object, same(chart.ctx));
-        expect(_clearRectCalls(chart.ctx).first().args, [0, 0, 150, 245]);
+        expect(clearRectCalls, hasLength(1));
+        final call = clearRectCalls.first;
+        expect(call.ctx, same(chart.ctx));
+        expect([call.x, call.y, call.w, call.h], [0, 0, 150, 245]);
       });
 
       testWidgets('should not throw error when chart is null', (tester) async {

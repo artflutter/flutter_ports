@@ -10,7 +10,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
 import '../support/tick_label.dart';
 
 // The spec reads `Chart.Ticks`, which src/index.umd.ts:43 sets. Here it is
@@ -23,7 +22,7 @@ import '../support/tick_label.dart';
 // - `value.toString()` of a tick callback is `valueTickLabel`, a
 //   `TickCallback` (row `adapt-native-tick`).
 // - `chart.scales.x` is `chart.scales['x']!`.
-// - `toEqual` of an array is `jasmineEquals`.
+// - `toEqual` of an array of strings is `equals`.
 
 /// core.ticks.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
@@ -101,14 +100,14 @@ void main() {
 
       expect(
         xLabels,
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           '0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', //
           '1',
         ]),
       );
       expect(
         yLabels,
-        jasmineEquals(<Object?>[
+        equals(<Object?>[
           '0', '0.1', '0.2', '0.3', '0.4', '0.5', '0.6', '0.7', '0.8', '0.9', //
           '1',
         ]),
@@ -159,8 +158,8 @@ void main() {
           '0.18', '0.19', '0.2', '0.25', '0.3', '0.4', '0.5', '0.6', '0.7', //
           '0.8', '0.9', '1',
         ];
-        expect(xLabels, jasmineEquals(expected));
-        expect(yLabels, jasmineEquals(expected));
+        expect(xLabels, equals(expected));
+        expect(yLabels, equals(expected));
       },
     );
 

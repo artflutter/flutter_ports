@@ -856,8 +856,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `simulatePan`, `simulatePinch` (a named `done`) and a synchronous
     `triggerMouseEvent(chart, type, (x: x, y: y))` (rows `harness-dom-events` and
     `harness-trigger-mouse-event-sync`). Each helper builds a bubbling, cancelable `NativeEvent`
-    and calls `canvas.dispatchEvent`. `test/support/jasmine.dart` (port-only) has the spies and
-    the matchers of the specs, with the `toBeCloseTo` of jasmine-core 5.4.0.
+    and calls `canvas.dispatchEvent`. The specs use the native matchers of package:test and
+    local recording closures for the spies (Zoom ADR 0006).
   - `test/specs/`: the 8 specs of `test/specs/*.spec.js` (83 cases) and the 2 unit tests of
     `src/*.test.ts` (20 cases; the 4 category pan cases run on a real chart, row
     `harness-category-scale-fake`), with no skip. The configs give the zoom options as
@@ -1490,17 +1490,15 @@ sankey ADRs are proposed. The doc paths are relative to
   `TypeError` at the write.
 - A dataset Map of a chart that the colors plugin colorizes needs the type `<String, Object?>`. The
   colorizers write `borderColor` and `backgroundColor` into it (row `js-semantics-narrow-datasets`).
-- A chart spec ports a Jasmine spy of a function value as a recording function value (`spyOn` of
-  `test/support/jasmine.dart`). The spec stores it in place of the spied property, as
-  `core.plugin_test.dart` does. A spy of a method is a spy object in the slot that the library
-  reads (`spyOnElementDraw` for `meta.data[i]`, `spyOnDataset` for `meta.dataset`,
-  `spyOnArrayListener` for the listeners of a data array, a context in `chart.ctx`).
-  `test/support/jasmine.dart` holds the shared matchers (`jasmineEquals`, `objectContaining`,
-  `anyFunction`, `JasmineOptions`) and spies (Chart.js ADR 0030). A draw spy needs
-  `animation: false` (the default of `acquireChart`) or the end of the animations: it throws a
-  `StateError` for an element with a running animation. A spy of a plugin hook is `hookSpy()`:
-  its `hook` or its `cancelableHook` goes into the hook field of a native plugin (Chart.js ADR
-  0144).
+- The spec ports have no Jasmine emulation (Chart.js ADR 0180, Zoom ADR 0006). A spec compares
+  with the matchers of package:test: `equals` on native values and objects with `==`
+  (`ActiveElement`, records), `same`, `closeTo` and `isA<T>().having(...)` on typed members. A
+  spy of a function value or of a plugin hook is a local closure that adds its arguments to a
+  local `List`. A spy of a method is a recorder in the slot that the library reads
+  (`recordElementDraws` for `meta.data[i]`, `recordLineCalls` for `meta.dataset`,
+  `recordArrayCalls` for the listeners of a data array, of `test/support/draw_recorder.dart`; a
+  context in `chart.ctx`). A recorder needs `animation: false` (the default of `acquireChart`) or
+  the end of the animations: it throws a `StateError` for an element with a running animation.
 - A Jasmine `spyOn(chart, 'update')` is a plugin with a `beforeUpdate` hook (`_spyOnUpdate` of
   `test/specs/global.defaults_test.dart`, Chart.js ADR 0041 §11 item 2).
 - A plugin of a test is a native `Plugin<Object?>(id: ..., hooks)`, never a Map. A cancelable

@@ -6,8 +6,6 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
-
 // `window.ChartZoom` is the global of the UMD bundle of the plugin
 // (`src/index.umd.ts`). Dart has no global object, and the port has no UMD
 // bundle (Chart.js ADR 0120, Zoom ADR 0002 item 8): the module value is
@@ -23,7 +21,7 @@ void main() {
     });
 
     test('should be referenced with id "zoom"', () {
-      expect(zoomPlugin.id, toBe('zoom'));
+      expect(zoomPlugin.id, equals('zoom'));
     });
 
     test(
@@ -40,7 +38,7 @@ void main() {
 
     test('should be globally registered', () {
       final plugin = Chart.registry.getPlugin('zoom');
-      expect(plugin, toBe(zoomPlugin));
+      expect(plugin, same(zoomPlugin));
     });
   });
 }

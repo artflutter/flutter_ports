@@ -6,8 +6,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
-
 // The spec reads the functions from Chart.helpers. Here `helpers` is
 // helpers.dom.dart, which lib/src/helpers/index.dart exports.
 //
@@ -25,9 +23,9 @@ import '../support/jasmine.dart';
 // The two `getRelativePosition` cases with a bar chart: the `onHover`
 // option is a Dart function of the chart event. `getRelativePosition`
 // returns a [Point], not the object of the event: `toEqual({x, y})` of
-// the result compares the record `{x, y}` of the point (`_point`).
-// `not.toEqual(NaN)` is `isNot(jasmineEquals(double.nan))`: Jasmine `eq`
-// makes NaN equal to NaN.
+// the result compares the `x` and the `y` of the point.
+// `not.toEqual(NaN)` is `isNot(isNaN)`: a value that is not a number passes,
+// as in Jasmine.
 
 /// A test container: the parent node of a canvas, with the content box
 /// [contentWidth] x [contentHeight].
@@ -56,12 +54,6 @@ final class _Canvas(@override final CanvasContainer? parentNode)
 /// inner node as a canvas whose parent node has that size.
 _Canvas _nodeIn(double width, double height) =>
     _Canvas(_Container(width, height));
-
-/// The object `{x, y}` of [point], for `toEqual`.
-Map<String, Object?> _point(Point point) => <String, Object?>{
-  'x': point.x,
-  'y': point.y,
-};
 
 /// `jasmine.objectContaining({width, height})` for the record of
 /// `getMaximumSize`.
@@ -243,8 +235,8 @@ void main() {
         final point = chart.getDatasetMeta(0).data[1];
         await triggerMouseEvent(chart, 'mousemove', point);
 
-        expect(dataX, isNot(jasmineEquals(double.nan)));
-        expect(dataY, isNot(jasmineEquals(double.nan)));
+        expect(dataX, isNot(isNaN));
+        expect(dataY, isNot(isNaN));
       });
 
       testWidgets(
@@ -281,13 +273,8 @@ void main() {
           final nativePosition = getRelativePosition(nativeEvent, chart);
 
           expect(chartPosition, isNotNull);
-          expect(
-            _point(nativePosition),
-            jasmineEquals(<String, Object?>{
-              'x': chartPosition!.x,
-              'y': chartPosition!.y,
-            }),
-          );
+          expect(nativePosition.x, chartPosition!.x);
+          expect(nativePosition.y, chartPosition!.y);
         },
       );
     });

@@ -3,8 +3,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:math' as math;
-
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
@@ -14,7 +12,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
 import '../support/tick_label.dart';
 
 // The spec reads Chart.layouts, which src/index.umd.ts sets to the default
@@ -32,7 +29,7 @@ import '../support/tick_label.dart';
 // - `chart.scales.x` is `chart.scales['x']!`. `chart.chartArea` is
 //   `chart.chartArea!`.
 // - `expect(a < b && b < c).toBe(true)` keeps the boolean expression.
-// - `toBeCloseTo` is `_toBeCloseTo`.
+// - `toBeCloseTo(e, p)` is `closeTo(e, 5e-(p + 1))`.
 // - `chart.legend` and `chart.titleBlock` are layout boxes: `legend.right`
 //   reads the member of `LayoutItem` (index.d.ts:2414, `LegendElement`
 //   extends `LayoutItem`).
@@ -41,22 +38,6 @@ import '../support/tick_label.dart';
 List<Object?> _getLabels(Scale scale) => [
   for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
-
-/// Jasmine `toBeCloseTo(expected, precision)` of jasmine-core 3.99.1:
-/// `Math.round(delta * 10^(precision + 1)) <= 10^-precision / 2 *
-/// 10^(precision + 1)`, with `delta = |expected - actual|`.
-Matcher _toBeCloseTo(num expected, [int precision = 2]) {
-  final pow = math.pow(10.0, precision + 1);
-  final maxDelta = math.pow(10.0, -precision) / 2;
-  return predicate<Object?>(
-    (actual) =>
-        actual is num &&
-        ((expected - actual).abs() * pow).toDouble().roundToDouble() <=
-            maxDelta * pow,
-    'a number close to ${jsToString(expected)} (Jasmine toBeCloseTo, '
-    'precision ${jsToString(precision)})',
-  );
-}
 
 void main() {
   group('Chart.layouts', () {
@@ -107,14 +88,14 @@ void main() {
       expect(chart.scales['x']!.left, toBeCloseToPixel(31));
       expect(chart.scales['x']!.right, toBeCloseToPixel(250));
       expect(chart.scales['x']!.top, toBeCloseToPixel(120));
-      expect(chart.scales['x']!.labelRotation, _toBeCloseTo(0));
+      expect(chart.scales['x']!.labelRotation, closeTo(0, 5e-3));
 
       // Is yScale at the right spot
       expect(chart.scales['y']!.bottom, toBeCloseToPixel(120));
       expect(chart.scales['y']!.left, toBeCloseToPixel(0));
       expect(chart.scales['y']!.right, toBeCloseToPixel(31));
       expect(chart.scales['y']!.top, toBeCloseToPixel(32));
-      expect(chart.scales['y']!.labelRotation, _toBeCloseTo(0));
+      expect(chart.scales['y']!.labelRotation, closeTo(0, 5e-3));
     });
 
     testWidgets('should fit scales that are in the top and right positions', (
@@ -166,14 +147,14 @@ void main() {
       expect(chart.scales['x']!.left, toBeCloseToPixel(0));
       expect(chart.scales['x']!.right, toBeCloseToPixel(218));
       expect(chart.scales['x']!.top, toBeCloseToPixel(32));
-      expect(chart.scales['x']!.labelRotation, _toBeCloseTo(0));
+      expect(chart.scales['x']!.labelRotation, closeTo(0, 5e-3));
 
       // Is yScale at the right spot
       expect(chart.scales['y']!.bottom, toBeCloseToPixel(139));
       expect(chart.scales['y']!.left, toBeCloseToPixel(218));
       expect(chart.scales['y']!.right, toBeCloseToPixel(250));
       expect(chart.scales['y']!.top, toBeCloseToPixel(62));
-      expect(chart.scales['y']!.labelRotation, _toBeCloseTo(0));
+      expect(chart.scales['y']!.labelRotation, closeTo(0, 5e-3));
     });
 
     testWidgets('should fit scales that overlap the chart area', (
@@ -264,20 +245,20 @@ void main() {
       expect(chart.scales['x']!.left, toBeCloseToPixel(70));
       expect(chart.scales['x']!.right, toBeCloseToPixel(250));
       expect(chart.scales['x']!.top, toBeCloseToPixel(110));
-      expect(chart.scales['x']!.labelRotation, _toBeCloseTo(40, -1));
+      expect(chart.scales['x']!.labelRotation, closeTo(40, 5));
 
       // Are yScales at the right spot
       expect(chart.scales['y']!.bottom, toBeCloseToPixel(110));
       expect(chart.scales['y']!.left, toBeCloseToPixel(38));
       expect(chart.scales['y']!.right, toBeCloseToPixel(70));
       expect(chart.scales['y']!.top, toBeCloseToPixel(32));
-      expect(chart.scales['y']!.labelRotation, _toBeCloseTo(0));
+      expect(chart.scales['y']!.labelRotation, closeTo(0, 5e-3));
 
       expect(chart.scales['y2']!.bottom, toBeCloseToPixel(110));
       expect(chart.scales['y2']!.left, toBeCloseToPixel(0));
       expect(chart.scales['y2']!.right, toBeCloseToPixel(38));
       expect(chart.scales['y2']!.top, toBeCloseToPixel(32));
-      expect(chart.scales['y2']!.labelRotation, _toBeCloseTo(0));
+      expect(chart.scales['y2']!.labelRotation, closeTo(0, 5e-3));
     });
 
     testWidgets('should fit a full width box correctly', (tester) async {
@@ -706,7 +687,7 @@ void main() {
         expect(yAxis.width, toBeCloseToPixel(30));
         expect(
           _getLabels(yAxis),
-          jasmineEquals(<Object?>['0', '0.5', '1.0', '1.5', '2.0', '2.5']),
+          equals(<Object?>['0', '0.5', '1.0', '1.5', '2.0', '2.5']),
         );
       });
     });

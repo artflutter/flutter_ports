@@ -14,12 +14,13 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
+import '../support/draw_recorder.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
 // chart reaches the chart host and dart:ui. Each chart case is a
 // `testWidgets` case with the harness of Chart.js ADR 0022, section 2. The
-// conventions are those of Chart.js ADR 0030, section 13.
+// conventions are those of Chart.js ADR 0030, section 13, with items 1
+// and 5 to 8 of Chart.js ADR 0180.
 //
 // flutter_test_config.dart registers the polar area controller with the
 // built-in components before main(), as index.umd.ts:28 does (Chart.js ADR
@@ -35,10 +36,12 @@ import '../support/jasmine.dart';
 //   `jsGet`.
 // - `chart.data.datasets[i]` is `_dataset(chart, i)`. `chart.data.labels =
 //   v` writes the key `labels` of `chart.data`.
-// - `spyOn(meta.data[i], 'draw')` is `spyOnElementDraw(meta, i)` of
-//   test/support/jasmine.dart.
-// - `toEqual` of an object is `jasmineEquals`. `jasmine.objectContaining` is
-//   `objectContaining`. `.withContext(i)` is `reason: '$i'`.
+// - `spyOn(meta.data[i], 'draw')` is `recordElementDraws(meta, i)` of
+//   test/support/draw_recorder.dart.
+// - `toEqual` of a value is `equals`, of a tooltip body item `_bodyItem`
+//   (the fields of `TooltipBodyItem`). `jasmine.objectContaining` of the
+//   element options is `isA<...Options>()` with `having` for each key.
+// - `.withContext(i)` is `reason: '$i'`.
 // - Jasmine `this.chart` is a `late` variable of the group closure. The
 //   `beforeEach` of the group `Interactions` acquires a chart. Thus it is a
 //   local function `beforeEach()`, and each test calls it first.
@@ -77,18 +80,28 @@ void _expectArc(ChartMeta meta, int i, _ArcValues expected) {
   expect(arc.endAngle, expected.e, reason: '$i');
   expect(
     _options(arc),
-    objectContaining(<String, Object?>{
-      'backgroundColor': const ChartPaint.solid(
-        native_ui.Color.fromRGBO(255, 0, 0, 1),
-      ),
-      'borderColor': const ChartPaint.solid(
-        native_ui.Color.fromRGBO(0, 255, 0, 1),
-      ),
-      'borderWidth': 1.2,
-    }),
+    isA<ArcOptions>()
+        .having(
+          (o) => o.backgroundColor,
+          'backgroundColor',
+          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+        )
+        .having(
+          (o) => o.borderColor,
+          'borderColor',
+          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 255, 0, 1)),
+        )
+        .having((o) => o.borderWidth, 'borderWidth', 1.2),
     reason: '$i',
   );
 }
+
+/// The tooltip body item `{before: [], lines: lines, after: []}`
+/// (plugin.tooltip.js:559-563).
+Matcher _bodyItem(List<String> lines) => isA<TooltipBodyItem>()
+    .having((b) => b.before, 'before', isEmpty)
+    .having((b) => b.lines, 'lines', equals(lines))
+    .having((b) => b.after, 'after', isEmpty);
 
 void main() {
   group('Chart.controllers.polarArea', () {
@@ -136,7 +149,7 @@ void main() {
 
       final meta = chart.getDatasetMeta(1);
       expect(meta.type, 'polarArea');
-      expect(meta.data, jasmineEquals(<Object?>[]));
+      expect(meta.data, isEmpty);
       expect(meta.hidden, isNull);
       expect(meta.controller, isNot(same(undefined)));
       expect(meta.controller, isNotNull);
@@ -233,17 +246,17 @@ void main() {
 
       final meta = chart.getDatasetMeta(0);
 
-      final draw0 = spyOnElementDraw(meta, 0);
-      final draw1 = spyOnElementDraw(meta, 1);
-      final draw2 = spyOnElementDraw(meta, 2);
-      final draw3 = spyOnElementDraw(meta, 3);
+      final draw0 = recordElementDraws(meta, 0);
+      final draw1 = recordElementDraws(meta, 1);
+      final draw2 = recordElementDraws(meta, 2);
+      final draw3 = recordElementDraws(meta, 3);
 
       chart.update();
 
-      expect(draw0.count(), 1);
-      expect(draw1.count(), 1);
-      expect(draw2.count(), 1);
-      expect(draw3.count(), 1);
+      expect(draw0, hasLength(1));
+      expect(draw1, hasLength(1));
+      expect(draw2, hasLength(1));
+      expect(draw3, hasLength(1));
     });
 
     testWidgets('should update elements when modifying data', (tester) async {
@@ -601,15 +614,11 @@ void main() {
 
       await triggerMouseEvent(chart, 'mousemove', point);
 
-      expect(tooltip.title, jasmineEquals(<Object?>['Label 1']));
+      expect(tooltip.title, equals(<String>['Label 1']));
       expect(
         tooltip.body,
-        jasmineEquals(<Object?>[
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Dataset 1: 21'],
-            'after': <Object?>[],
-          },
+        equals(<Matcher>[
+          _bodyItem(['Dataset 1: 21']),
         ]),
       );
 
@@ -618,20 +627,12 @@ void main() {
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);
 
-      expect(tooltip.title, jasmineEquals(<Object?>['Dataset 1']));
+      expect(tooltip.title, equals(<String>['Dataset 1']));
       expect(
         tooltip.body,
-        jasmineEquals(<Object?>[
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Label 1: 21'],
-            'after': <Object?>[],
-          },
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Label 2: 79'],
-            'after': <Object?>[],
-          },
+        equals(<Matcher>[
+          _bodyItem(['Label 1: 21']),
+          _bodyItem(['Label 2: 79']),
         ]),
       );
     });

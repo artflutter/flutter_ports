@@ -14,12 +14,13 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
+import '../support/draw_recorder.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
 // chart reaches the chart host and dart:ui. Each chart case is a
 // `testWidgets` case with the harness of Chart.js ADR 0022, section 2. The
-// conventions are those of Chart.js ADR 0030, section 13.
+// conventions are those of Chart.js ADR 0030, section 13, with items 1
+// and 5 to 8 of Chart.js ADR 0180.
 //
 // flutter_test_config.dart registers the doughnut controller with the
 // built-in components before main(), as index.umd.ts:28 does (Chart.js ADR
@@ -37,10 +38,12 @@ import '../support/jasmine.dart';
 //   `ArcElement` (`_arc`).
 // - `meta.controller` is a `DoughnutController` where the spec reads its
 //   own members (`outerRadius`, `innerRadius`, `getMaxBorderWidth`).
-// - `spyOn(meta.data[i], 'draw')` is `spyOnElementDraw(meta, i)` of
-//   test/support/jasmine.dart.
-// - `toEqual` of an object is `jasmineEquals`. `jasmine.objectContaining` is
-//   `objectContaining`. `toBeCloseTo` is `_toBeCloseTo`.
+// - `spyOn(meta.data[i], 'draw')` is `recordElementDraws(meta, i)` of
+//   test/support/draw_recorder.dart.
+// - `toEqual` of a value is `equals`, of a tooltip body item `_bodyItem`
+//   (the fields of `TooltipBodyItem`). `jasmine.objectContaining` of the
+//   element options is `isA<...Options>()` with `having` for each key.
+// - `toBeCloseTo(e, p)` is `closeTo(e, 5e-(p + 1))`.
 // - Jasmine `this.chart` is a `late` variable of the group closure. The
 //   `beforeEach` of the group `Interactions` acquires a chart. Thus it is a
 //   local function `beforeEach()`, and each test calls it first.
@@ -49,14 +52,6 @@ import '../support/jasmine.dart';
 // `types.TooltipModel?`), through the interface.
 // `chart.options.plugins.tooltip = value` writes the key `tooltip` of the
 // Map `chart.options['plugins']`.
-
-/// Jasmine `toBeCloseTo(expected, precision)`: within half a unit in the
-/// `precision`-th decimal place. Jasmine's default precision is 2.
-///
-/// Jasmine 3.99 rounds the difference to `precision + 1` places before it
-/// compares, so it also accepts differences up to about 1.1 times this bound.
-Matcher _toBeCloseTo(double expected, [int precision = 2]) =>
-    closeTo(expected, math.pow(10.0, -precision) / 2);
 
 /// `chart.data.datasets[index]`.
 AnyObject _dataset(Chart chart, int index) =>
@@ -81,6 +76,13 @@ AnyObject _arcOptions() => <String, Object?>{
     'borderWidth': 2.0,
   },
 };
+
+/// The tooltip body item `{before: [], lines: lines, after: []}`
+/// (plugin.tooltip.js:559-563).
+Matcher _bodyItem(List<String> lines) => isA<TooltipBodyItem>()
+    .having((b) => b.before, 'before', isEmpty)
+    .having((b) => b.lines, 'lines', equals(lines))
+    .having((b) => b.after, 'after', isEmpty);
 
 void main() {
   group('Chart.controllers.doughnut', () {
@@ -109,7 +111,7 @@ void main() {
       expect(meta.controller, isNot(same(undefined)));
       expect(meta.controller, isNotNull);
       expect(meta.controller!.index, 0);
-      expect(meta.data, jasmineEquals(<Object?>[]));
+      expect(meta.data, isEmpty);
 
       meta.controller!.updateIndex(1);
       expect(meta.controller!.index, 1);
@@ -207,20 +209,23 @@ void main() {
         expect(arc.y, toBeCloseToPixel(256));
         expect(arc.outerRadius, toBeCloseToPixel(256));
         expect(arc.innerRadius, toBeCloseToPixel(192));
-        expect(arc.circumference, _toBeCloseTo(c, 8));
+        expect(arc.circumference, closeTo(c, 5e-9));
         expect(arc.startAngle, toBeCloseToPixel(math.pi * -0.5));
         expect(arc.endAngle, toBeCloseToPixel(math.pi * -0.5));
         expect(
           arc.options,
-          objectContaining(<String, Object?>{
-            'backgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
-            'borderColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 255, 1),
-            ),
-            'borderWidth': 2,
-          }),
+          isA<ArcOptions>()
+              .having(
+                (o) => o.backgroundColor,
+                'backgroundColor',
+                const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+              )
+              .having(
+                (o) => o.borderColor,
+                'borderColor',
+                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+              )
+              .having((o) => o.borderWidth, 'borderWidth', 2),
         );
       }
 
@@ -237,20 +242,23 @@ void main() {
         expect(arc.y, toBeCloseToPixel(256));
         expect(arc.outerRadius, toBeCloseToPixel(256));
         expect(arc.innerRadius, toBeCloseToPixel(192));
-        expect(arc.circumference, _toBeCloseTo(c, 8));
-        expect(arc.startAngle, _toBeCloseTo(s, 8));
-        expect(arc.endAngle, _toBeCloseTo(e, 8));
+        expect(arc.circumference, closeTo(c, 5e-9));
+        expect(arc.startAngle, closeTo(s, 5e-9));
+        expect(arc.endAngle, closeTo(e, 5e-9));
         expect(
           arc.options,
-          objectContaining(<String, Object?>{
-            'backgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(255, 0, 0, 1),
-            ),
-            'borderColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(0, 0, 255, 1),
-            ),
-            'borderWidth': 2,
-          }),
+          isA<ArcOptions>()
+              .having(
+                (o) => o.backgroundColor,
+                'backgroundColor',
+                const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+              )
+              .having(
+                (o) => o.borderColor,
+                'borderColor',
+                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+              )
+              .having((o) => o.borderWidth, 'borderWidth', 2),
         );
       }
 
@@ -323,9 +331,9 @@ void main() {
         expect(arc.y, toBeCloseToPixel(512));
         expect(arc.outerRadius, toBeCloseToPixel(512));
         expect(arc.innerRadius, toBeCloseToPixel(384));
-        expect(arc.circumference, _toBeCloseTo(c, 8));
-        expect(arc.startAngle, _toBeCloseTo(s, 8));
-        expect(arc.endAngle, _toBeCloseTo(e, 8));
+        expect(arc.circumference, closeTo(c, 5e-9));
+        expect(arc.startAngle, closeTo(s, 5e-9));
+        expect(arc.endAngle, closeTo(e, 5e-9));
       }
     });
 
@@ -364,9 +372,9 @@ void main() {
         ),
       ].indexed) {
         final arc = _arc(meta, i);
-        expect(arc.circumference, _toBeCloseTo(c, 8));
-        expect(arc.startAngle, _toBeCloseTo(s, 8));
-        expect(arc.endAngle, _toBeCloseTo(e, 8));
+        expect(arc.circumference, closeTo(c, 5e-9));
+        expect(arc.startAngle, closeTo(s, 5e-9));
+        expect(arc.endAngle, closeTo(e, 5e-9));
       }
     });
 
@@ -385,17 +393,17 @@ void main() {
 
       final meta = chart.getDatasetMeta(0);
 
-      final calls0 = spyOnElementDraw(meta, 0);
-      final calls1 = spyOnElementDraw(meta, 1);
-      final calls2 = spyOnElementDraw(meta, 2);
-      final calls3 = spyOnElementDraw(meta, 3);
+      final calls0 = recordElementDraws(meta, 0);
+      final calls1 = recordElementDraws(meta, 1);
+      final calls2 = recordElementDraws(meta, 2);
+      final calls3 = recordElementDraws(meta, 3);
 
       chart.update();
 
-      expect(calls0.count(), 1);
-      expect(calls1.count(), 1);
-      expect(calls2.count(), 1);
-      expect(calls3.count(), 1);
+      expect(calls0, hasLength(1));
+      expect(calls1, hasLength(1));
+      expect(calls2, hasLength(1));
+      expect(calls3, hasLength(1));
     });
 
     testWidgets(
@@ -619,15 +627,11 @@ void main() {
 
       await triggerMouseEvent(chart, 'mousemove', point);
 
-      expect(tooltip.title, jasmineEquals(<Object?>['Label 1']));
+      expect(tooltip.title, equals(<String>['Label 1']));
       expect(
         tooltip.body,
-        jasmineEquals(<Object?>[
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Dataset 1: 21'],
-            'after': <Object?>[],
-          },
+        equals(<Matcher>[
+          _bodyItem(['Dataset 1: 21']),
         ]),
       );
 
@@ -636,20 +640,12 @@ void main() {
       chart.update();
       await triggerMouseEvent(chart, 'mousemove', point);
 
-      expect(tooltip.title, jasmineEquals(<Object?>['Dataset 1']));
+      expect(tooltip.title, equals(<String>['Dataset 1']));
       expect(
         tooltip.body,
-        jasmineEquals(<Object?>[
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Label 1: 21'],
-            'after': <Object?>[],
-          },
-          <String, Object?>{
-            'before': <Object?>[],
-            'lines': <Object?>['Label 2: 79'],
-            'after': <Object?>[],
-          },
+        equals(<Matcher>[
+          _bodyItem(['Label 1: 21']),
+          _bodyItem(['Label 2: 79']),
         ]),
       );
     });

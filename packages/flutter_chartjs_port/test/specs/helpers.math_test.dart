@@ -14,15 +14,6 @@ import 'package:test/test.dart';
 final class const _Point(@override final double? x, @override final double? y)
     implements Point;
 
-/// Jasmine `toBeCloseTo(expected, precision)`: within half a unit in the
-/// `precision`-th decimal place.
-///
-/// Jasmine 3.99 rounds the difference to `precision + 1` places before it
-/// compares, so it also accepts differences up to about 1.1 times this bound.
-/// The spec always passes `precision`, so it has no default here.
-Matcher _toBeCloseTo(double expected, int precision) =>
-    closeTo(expected, js_math.pow(10.0, -precision) / 2);
-
 void main() {
   setUpSpecs();
   group('Chart.helpers.math', () {
@@ -146,17 +137,14 @@ void main() {
     test('should compute shortest distance between angles', () {
       expect(angleDiff(1, 2), -1);
       expect(angleDiff(2, 1), 1);
-      expect(angleDiff(0, 3.15), _toBeCloseTo(3.13, 2));
+      expect(angleDiff(0, 3.15), closeTo(3.13, 5e-3));
       expect(angleDiff(0, 3.13), -3.13);
-      expect(angleDiff(6.2, 0), _toBeCloseTo(-0.08, 2));
-      expect(angleDiff(6.3, 0), _toBeCloseTo(0.02, 2));
-      expect(angleDiff(4 * js_math.pi, -4 * js_math.pi), _toBeCloseTo(0, 4));
-      expect(
-        angleDiff(4 * js_math.pi, -3 * js_math.pi),
-        _toBeCloseTo(-3.14, 2),
-      );
-      expect(angleDiff(6.28, 3.1), _toBeCloseTo(-3.1, 2));
-      expect(angleDiff(6.28, 3.2), _toBeCloseTo(3.08, 2));
+      expect(angleDiff(6.2, 0), closeTo(-0.08, 5e-3));
+      expect(angleDiff(6.3, 0), closeTo(0.02, 5e-3));
+      expect(angleDiff(4 * js_math.pi, -4 * js_math.pi), closeTo(0, 5e-5));
+      expect(angleDiff(4 * js_math.pi, -3 * js_math.pi), closeTo(-3.14, 5e-3));
+      expect(angleDiff(6.28, 3.1), closeTo(-3.1, 5e-3));
+      expect(angleDiff(6.28, 3.2), closeTo(3.08, 5e-3));
     });
 
     test('should normalize angles correctly', () {
@@ -164,7 +152,7 @@ void main() {
       expect(normalizeAngle(js_math.pi), js_math.pi);
       expect(normalizeAngle(2), 2);
       expect(normalizeAngle(5 * js_math.pi), js_math.pi);
-      expect(normalizeAngle(-50 * js_math.pi), _toBeCloseTo(6.28, 2));
+      expect(normalizeAngle(-50 * js_math.pi), closeTo(6.28, 5e-3));
     });
 
     test('should determine if angle is between boundaries', () {

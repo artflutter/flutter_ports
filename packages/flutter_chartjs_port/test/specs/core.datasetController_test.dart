@@ -14,7 +14,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
-import '../support/jasmine.dart';
+import '../support/draw_recorder.dart';
 import '../support/list_splice.dart';
 
 // The spec tests Chart.DatasetController, the DatasetController of
@@ -30,14 +30,18 @@ import '../support/list_splice.dart';
 // - `chart.data.datasets[i]` is `_dataset(chart, i)`. `meta._parsed` is
 //   `meta.parsed`. `meta.data[i].x` is `_element(meta, i).x`.
 // - `expect(fn).not.toThrow()` is `expect(fn, returnsNormally)`. `toBe` of
-//   an object is `same`. `toEqual` is `jasmineEquals`.
-//   `jasmine.objectContaining` is `objectContaining`.
+//   an object is `same`. `toEqual` is `equals` of the native values, and
+//   `same` for an element. `toEqual` of `chart._stacks` compares the typed
+//   members of each stack object as a Map (`_stacks`, `_stackEntry`).
+//   `jasmine.objectContaining` of a context of `getContext` is
+//   `_contextContaining`, a matcher of the typed members of the context.
 // - `data.push(...)`, `pop()`, `shift()`, `splice(...)` and `unshift(...)`
 //   on a data array are `_push`, `_pop`, `_shift`, `_splice` and `_unshift`:
 //   the change of the List, then `notifyArrayListeners`, the body of the
 //   hooked method (differences.md row platform-array-events).
 // - `spyOn(controller, '_onData<X>')` for the five methods is
-//   `spyOnArrayListener(data, controller)` of test/support/jasmine.dart.
+//   `recordArrayCalls(data, controller)` of test/support/draw_recorder.dart:
+//   the calls of each method of the array listener.
 // - `Object.freeze(array)` is `List.unmodifiable`. `Object.seal(array)` and
 //   `Object.preventExtensions(array)` are a List of fixed length: Dart has no
 //   List that can lose items but not get them. `Object.isExtensible(array)`
@@ -59,6 +63,78 @@ AnyObject _dataset(Chart chart, int index) =>
 
 /// `meta.data[index]`, an element of core.element.dart.
 Element _element(ChartMeta meta, int index) => meta.data[index] as Element;
+
+/// `chart._stacks`: each stack object of each stack key as the Map of its
+/// typed members ([_stackEntry]).
+Map<String, Object?> _stacks(Chart chart) => {
+  for (final MapEntry(key: stackKey, value: subStack) in chart.stacks!.entries)
+    stackKey: {
+      for (final MapEntry(:key, :value)
+          in (subStack! as Map<String, StackEntry>).entries)
+        key: _stackEntry(value),
+    },
+};
+
+/// A stack object of `getOrCreateStack` as a Map with the keys of the JS
+/// object: the value of each dataset index, `_top`, `_bottom` and
+/// `_visualValues`.
+Map<String, Object?> _stackEntry(StackEntry entry) => {
+  ..._indexValues(entry.datasetValues),
+  '_top': entry.top,
+  '_bottom': entry.bottom,
+  '_visualValues': switch (entry.visualValues) {
+    final values? => _indexValues(values),
+    null => null,
+  },
+};
+
+/// The values of an [IndexValues] by the `ToString` of their index.
+Map<String, Object?> _indexValues(IndexValues values) => {
+  for (final index in values.indices) '$index': values.valueAt(index),
+};
+
+/// `jasmine.objectContaining({...})` of a context of `getContext`: each
+/// given key, read through the typed members of the context. A key that
+/// the case does not give (Dart `null` here) is not checked. `parsed` is
+/// the `x` and the `y` of the parsed item.
+Matcher _contextContaining({
+  required bool active,
+  required int datasetIndex,
+  required Object? dataset,
+  required int index,
+  required String mode,
+  int? dataIndex,
+  Object? element,
+  ({num x, num y})? parsed,
+  Map<String, Object?>? raw,
+}) {
+  var matcher = isA<ScriptableContext>()
+      .having((c) => c.active, 'active', active)
+      .having((c) => c.datasetIndex, 'datasetIndex', datasetIndex)
+      .having((c) => c.dataset, 'dataset', same(dataset))
+      .having((c) => c.index, 'index', index)
+      .having((c) => c.mode, 'mode', mode);
+  if (dataIndex != null) {
+    matcher = matcher.having((c) => c.dataIndex, 'dataIndex', dataIndex);
+  }
+  if (element != null) {
+    matcher = matcher.having((c) => c.element, 'element', same(element));
+  }
+  if (parsed != null) {
+    matcher = matcher.having(
+      (c) => switch (c.parsed) {
+        final ParsedItem p => (x: p.x, y: p.y),
+        final other => other,
+      },
+      'parsed',
+      parsed,
+    );
+  }
+  if (raw != null) {
+    matcher = matcher.having((c) => c.raw, 'raw', equals(raw));
+  }
+  return matcher;
+}
 
 /// `meta._parsed.map(p => p[key])`.
 List<Object?> _parsedOf(ChartMeta meta, String key) => [
@@ -136,17 +212,10 @@ void main() {
       });
 
       final controller = chart.getDatasetMeta(0).controller!;
-      final methods = <String>[
-        '_onDataPush',
-        '_onDataPop',
-        '_onDataShift',
-        '_onDataSplice',
-        '_onDataUnshift',
-      ];
 
-      // methods.forEach((method) => spyOn(controller, method)): one spy
-      // listener takes the place of the controller.
-      final calls = spyOnArrayListener(data, controller);
+      // methods.forEach((method) => spyOn(controller, method)): one
+      // recording listener takes the place of the controller.
+      final calls = recordArrayCalls(data, controller);
 
       _push(data, [6, 7, 8]);
       _push(data, [9]);
@@ -158,9 +227,18 @@ void main() {
       _unshift(data, [12, 13, 14, 15]);
       _unshift(data, [16, 17]);
 
+      // The calls of `_onDataPush`, `_onDataPop`, `_onDataShift`,
+      // `_onDataSplice` and `_onDataUnshift`.
       final expected = [2, 1, 3, 1, 2];
+      final counts = [
+        calls.pushes.length,
+        calls.pops,
+        calls.shifts,
+        calls.splices.length,
+        calls.unshifts.length,
+      ];
       for (var index = 0; index < expected.length; index++) {
-        expect(calls[methods[index]]!.count(), expected[index]);
+        expect(counts[index], expected[index]);
       }
     });
 
@@ -359,9 +437,9 @@ void main() {
       expect(meta1.data.length, 6);
       expect(
         parsedXValues1,
-        jasmineEquals(<Object?>[0, 1, 2, 3, 4, 5]),
+        equals(<Object?>[0, 1, 2, 3, 4, 5]),
       ); // label indices
-      expect(parsedYValues1, jasmineEquals(data1));
+      expect(parsedYValues1, equals(data1));
 
       final meta2 = chart.getDatasetMeta(1);
       final parsedXValues2 = _parsedOf(meta2, 'x');
@@ -370,12 +448,9 @@ void main() {
       expect(meta2.data.length, 5);
       expect(
         parsedXValues2,
-        jasmineEquals(<Object?>[1, 10, 100, 1000, 2000]),
+        equals(<Object?>[1, 10, 100, 1000, 2000]),
       ); // logarithmic scale labels
-      expect(
-        parsedYValues2,
-        jasmineEquals(<Object?>[0, 1, 2, 3, 0]),
-      ); // label indices
+      expect(parsedYValues2, equals(<Object?>[0, 1, 2, 3, 0])); // label indices
     });
 
     testWidgets('should parse using provided keys', (tester) async {
@@ -416,8 +491,8 @@ void main() {
       final parsedYValues = _parsedOf(meta, 'y');
 
       expect(meta.data.length, 2);
-      expect(parsedXValues, jasmineEquals(<Object?>[0, 1])); // label indices
-      expect(parsedYValues, jasmineEquals(<Object?>[20, 30]));
+      expect(parsedXValues, equals(<Object?>[0, 1])); // label indices
+      expect(parsedYValues, equals(<Object?>[20, 30]));
     });
 
     group('labels array synchronization', () {
@@ -457,7 +532,7 @@ void main() {
 
             final meta = chart.getDatasetMeta(0);
             final labels = meta.iScale!.getLabels();
-            expect(labels, jasmineEquals(xOf(data2)));
+            expect(labels, equals(xOf(data2)));
           });
 
           testWidgets('should not remove any user added labels', (
@@ -479,7 +554,7 @@ void main() {
 
             final meta = chart.getDatasetMeta(0);
             final labels = meta.iScale!.getLabels();
-            expect(labels, jasmineEquals(<Object?>['user-added']));
+            expect(labels, equals(<Object?>['user-added']));
           });
 
           testWidgets('should not remove any user defined labels', (
@@ -500,7 +575,7 @@ void main() {
 
             expect(
               meta.iScale!.getLabels(),
-              jasmineEquals(<Object?>['user1', 'user2', ...xOf(data1)]),
+              equals(<Object?>['user1', 'user2', ...xOf(data1)]),
             );
 
             _dataset(chart, 0)['data'] = data2;
@@ -508,7 +583,7 @@ void main() {
 
             expect(
               meta.iScale!.getLabels(),
-              jasmineEquals(<Object?>['user1', 'user2', ...xOf(data2)]),
+              equals(<Object?>['user1', 'user2', ...xOf(data2)]),
             );
           });
 
@@ -529,7 +604,7 @@ void main() {
 
             expect(
               scale.getLabels(),
-              jasmineEquals(<Object?>['One', 'Three', 'Two', 'Four', 'Five']),
+              equals(<Object?>['One', 'Three', 'Two', 'Four', 'Five']),
             );
 
             _dataset(chart, 0)['data'] = data2;
@@ -538,7 +613,7 @@ void main() {
 
             expect(
               scale.getLabels(),
-              jasmineEquals(<Object?>['One', 'Three', 'Four', 'Five', 'Two']),
+              equals(<Object?>['One', 'Three', 'Four', 'Five', 'Two']),
             );
           });
         });
@@ -573,7 +648,7 @@ void main() {
         expect(meta.data.length, 10);
         expect(meta.data[0], same(first));
         expect(meta.data[5], same(last));
-        expect(parsedYValues(), jasmineEquals(data));
+        expect(parsedYValues(), equals(data));
 
         last = meta.data[9];
         _pop(data);
@@ -581,7 +656,7 @@ void main() {
         expect(meta.data.length, 9);
         expect(meta.data[0], same(first));
         expect(meta.data.indexOf(last), -1);
-        expect(parsedYValues(), jasmineEquals(data));
+        expect(parsedYValues(), equals(data));
 
         last = meta.data[8];
         _shift(data);
@@ -591,7 +666,7 @@ void main() {
         expect(meta.data.length, 6);
         expect(meta.data.indexOf(first), -1);
         expect(meta.data[5], same(last));
-        expect(parsedYValues(), jasmineEquals(data));
+        expect(parsedYValues(), equals(data));
 
         first = meta.data[0];
         second = meta.data[1];
@@ -602,7 +677,7 @@ void main() {
         expect(meta.data[0], same(first));
         expect(meta.data[3], same(last));
         expect(meta.data.indexOf(second), -1);
-        expect(parsedYValues(), jasmineEquals(data));
+        expect(parsedYValues(), equals(data));
 
         _unshift(data, [12, 13, 14, 15]);
         _unshift(data, [16, 17]);
@@ -610,7 +685,7 @@ void main() {
         expect(meta.data.length, 10);
         expect(meta.data[6], same(first));
         expect(meta.data[9], same(last));
-        expect(parsedYValues(), jasmineEquals(data));
+        expect(parsedYValues(), equals(data));
       },
     );
 
@@ -670,7 +745,7 @@ void main() {
         expect(controller.getParsed(9), same(undefined));
         expect(
           controller.getParsed(8),
-          jasmineEquals(<String, Object?>{'x': 8, 'y': 8}),
+          equals(<String, Object?>{'x': 8, 'y': 8}),
         );
 
         last = controller.getParsed(8);
@@ -693,7 +768,7 @@ void main() {
         expect(controller.getParsed(3), same(last));
         expect(
           controller.getParsed(1),
-          jasmineEquals(<String, Object?>{'x': 10, 'y': 10}),
+          equals(<String, Object?>{'x': 10, 'y': 10}),
         );
 
         _unshift(data, [
@@ -772,15 +847,15 @@ void main() {
         final meta = chart.getDatasetMeta(0);
 
         expect(meta.data.length, 6);
-        expect(_parsedOf(meta, 'y'), jasmineEquals(data0));
+        expect(_parsedOf(meta, 'y'), equals(data0));
         final point0 = meta.data[0];
 
         _dataset(chart, 0)['data'] = data1;
         chart.update();
 
         expect(meta.data.length, 3);
-        expect(_parsedOf(meta, 'y'), jasmineEquals(data1));
-        expect(meta.data[0], jasmineEquals(point0));
+        expect(_parsedOf(meta, 'y'), equals(data1));
+        expect(meta.data[0], same(point0));
 
         _push(data1, [9]);
         chart.update();
@@ -790,13 +865,13 @@ void main() {
         chart.update();
 
         expect(meta.data.length, 6);
-        expect(_parsedOf(meta, 'y'), jasmineEquals(data0));
+        expect(_parsedOf(meta, 'y'), equals(data0));
 
         _dataset(chart, 0)['data'] = data2;
         chart.update();
 
         expect(meta.data.length, 8);
-        expect(_parsedOf(meta, 'y'), jasmineEquals(data2));
+        expect(_parsedOf(meta, 'y'), equals(data2));
       },
     );
 
@@ -819,15 +894,15 @@ void main() {
       final meta = chart.getDatasetMeta(0);
 
       expect(meta.data.length, 6);
-      expect(_parsedOf(meta, 'y'), jasmineEquals(data0));
+      expect(_parsedOf(meta, 'y'), equals(data0));
       final point0 = meta.data[0];
 
       _dataset(chart, 0)['data'] = data1;
       chart.update();
 
       expect(meta.data.length, 3);
-      expect(_parsedOf(meta, 'y'), jasmineEquals(data1));
-      expect(meta.data[0], jasmineEquals(point0));
+      expect(_parsedOf(meta, 'y'), equals(data1));
+      expect(meta.data[0], same(point0));
 
       _push(data1, [9]);
       chart.update();
@@ -837,13 +912,13 @@ void main() {
       chart.update();
 
       expect(meta.data.length, 6);
-      expect(_parsedOf(meta, 'y'), jasmineEquals(data0));
+      expect(_parsedOf(meta, 'y'), equals(data0));
 
       _dataset(chart, 0)['data'] = data2;
       chart.update();
 
       expect(meta.data.length, 8);
-      expect(_parsedOf(meta, 'y'), jasmineEquals(data2));
+      expect(_parsedOf(meta, 'y'), equals(data2));
     });
 
     testWidgets(
@@ -901,7 +976,7 @@ void main() {
         chart.update();
 
         expect(meta.data.length, 6);
-        expect(_element(meta, 0).x, jasmineEquals(firstX));
+        expect(_element(meta, 0).x, equals(firstX));
       },
     );
 
@@ -932,7 +1007,7 @@ void main() {
 
         (data[0]! as AnyObject)['y'] = 3;
         chart.update();
-        expect(_element(meta, 0).y, jasmineEquals(y3));
+        expect(_element(meta, 0).y, equals(y3));
       },
     );
 
@@ -1010,8 +1085,8 @@ void main() {
       });
 
       expect(
-        chart.stacks,
-        jasmineEquals(<String, Object?>{
+        _stacks(chart),
+        equals(<String, Object?>{
           'x.y.1': <String, Object?>{
             '0': <String, Object?>{
               '0': 1,
@@ -1049,8 +1124,8 @@ void main() {
       chart.update();
 
       expect(
-        chart.stacks,
-        jasmineEquals(<String, Object?>{
+        _stacks(chart),
+        equals(<String, Object?>{
           'x.y.1': <String, Object?>{
             '0': <String, Object?>{
               '0': 1,
@@ -1110,8 +1185,8 @@ void main() {
       });
 
       expect(
-        chart.stacks,
-        jasmineEquals(<String, Object?>{
+        _stacks(chart),
+        equals(<String, Object?>{
           'x.y.1': <String, Object?>{
             '0': <String, Object?>{
               '0': 1,
@@ -1149,8 +1224,8 @@ void main() {
       chart.update();
 
       expect(
-        chart.stacks,
-        jasmineEquals(<String, Object?>{
+        _stacks(chart),
+        equals(<String, Object?>{
           'x.y.1': <String, Object?>{
             '0': <String, Object?>{
               '0': 1,
@@ -1346,16 +1421,17 @@ void main() {
       });
 
       final meta = chart.getDatasetMeta(0);
+      // objectContaining({y: {...}}): the stack object of the axis `y`.
+      final itemStacks =
+          (meta.parsed[0]! as AnyObject)['_stacks']! as ItemStacks;
       expect(
-        jsGet(meta.parsed[0], '_stacks'),
-        objectContaining(<String, Object?>{
-          'y': <String, Object?>{
-            '0': 10,
-            '1': 20,
-            '_top': 1,
-            '_bottom': null,
-            '_visualValues': <String, Object?>{'0': 10, '1': 20},
-          },
+        _stackEntry(itemStacks.entryOf(const YAxis())!),
+        equals(<String, Object?>{
+          '0': 10,
+          '1': 20,
+          '_top': 1,
+          '_bottom': null,
+          '_visualValues': <String, Object?>{'0': 10, '1': 20},
         }),
       );
     });
@@ -1456,21 +1532,18 @@ void main() {
     });
 
     group('_resolveAnimations', () {
+      // Each case gives the keys `delay` and `duration`: the typed fields of
+      // the [AnimationSpec].
       void animationsExpectations(
         Animations anims,
-        Map<String, Map<String, Object?>> props,
+        Map<String, ({double delay, double duration})> props,
       ) {
         for (final MapEntry(key: prop, value: opts) in props.entries) {
           final anim = anims.properties[prop];
           expect(anim, isA<Object>(), reason: prop);
           if (anim != null) {
-            for (final MapEntry(key: name, :value) in opts.entries) {
-              expect(
-                anim[name],
-                jasmineEquals(value),
-                reason: '"$name" of ${jsObjectKeys(anim)}',
-              );
-            }
+            expect(anim.delay, opts.delay, reason: '"delay" of $prop');
+            expect(anim.duration, opts.duration, reason: '"duration" of $prop');
           }
         }
       }
@@ -1495,10 +1568,7 @@ void main() {
 
         final controller = chart.getDatasetMeta(0).controller!;
 
-        expect(
-          controller.resolveAnimations(0).properties.length,
-          jasmineEquals(0),
-        );
+        expect(controller.resolveAnimations(0).properties.length, equals(0));
       });
 
       testWidgets(
@@ -1518,10 +1588,7 @@ void main() {
 
           final controller = chart.getDatasetMeta(0).controller!;
 
-          expect(
-            controller.resolveAnimations(0).properties.length,
-            jasmineEquals(0),
-          );
+          expect(controller.resolveAnimations(0).properties.length, equals(0));
         },
       );
 
@@ -1561,20 +1628,18 @@ void main() {
 
         expect(
           jsGet(jsGet(Chart.defaults, 'animation'), 'duration'),
-          jasmineEquals(1000),
+          equals(1000),
         );
 
         final def0 = controller.resolveAnimations(0, 'default', false);
         animationsExpectations(def0, {
-          'x': <String, Object?>{'delay': 200, 'duration': 200},
-          'y': <String, Object?>{'delay': 100, 'duration': 200},
+          'x': (delay: 200, duration: 200),
+          'y': (delay: 100, duration: 200),
         });
 
         final controller2 = chart.getDatasetMeta(1).controller!;
         final def1 = controller2.resolveAnimations(0, 'default', false);
-        animationsExpectations(def1, {
-          'x': <String, Object?>{'delay': 200, 'duration': 500},
-        });
+        animationsExpectations(def1, {'x': (delay: 200, duration: 500)});
       });
     });
 
@@ -1597,27 +1662,27 @@ void main() {
 
         expect(
           meta.controller!.getContext(null, true, 'test'),
-          objectContaining(<String, Object?>{
-            'active': true,
-            'datasetIndex': 0,
-            'dataset': _dataset(chart, 0),
-            'index': 0,
-            'mode': 'test',
-          }),
+          _contextContaining(
+            active: true,
+            datasetIndex: 0,
+            dataset: _dataset(chart, 0),
+            index: 0,
+            mode: 'test',
+          ),
         );
         expect(
           meta.controller!.getContext(1, false, 'datatest'),
-          objectContaining(<String, Object?>{
-            'active': false,
-            'datasetIndex': 0,
-            'dataset': _dataset(chart, 0),
-            'dataIndex': 1,
-            'element': meta.data[1],
-            'index': 1,
-            'parsed': <String, Object?>{'x': 2, 'y': 1},
-            'raw': <String, Object?>{'x': 2, 'y': '1'},
-            'mode': 'datatest',
-          }),
+          _contextContaining(
+            active: false,
+            datasetIndex: 0,
+            dataset: _dataset(chart, 0),
+            dataIndex: 1,
+            element: meta.data[1],
+            index: 1,
+            parsed: (x: 2, y: 1),
+            raw: <String, Object?>{'x': 2, 'y': '1'},
+            mode: 'datatest',
+          ),
         );
 
         ((_dataset(chart, 0)['data']! as List<Object?>)[1]!
@@ -1627,17 +1692,17 @@ void main() {
 
         expect(
           meta.controller!.getContext(1, false, 'datatest'),
-          objectContaining(<String, Object?>{
-            'active': false,
-            'datasetIndex': 0,
-            'dataset': _dataset(chart, 0),
-            'dataIndex': 1,
-            'element': meta.data[1],
-            'index': 1,
-            'parsed': <String, Object?>{'x': 2, 'y': 5},
-            'raw': <String, Object?>{'x': 2, 'y': 5},
-            'mode': 'datatest',
-          }),
+          _contextContaining(
+            active: false,
+            datasetIndex: 0,
+            dataset: _dataset(chart, 0),
+            dataIndex: 1,
+            element: meta.data[1],
+            index: 1,
+            parsed: (x: 2, y: 5),
+            raw: <String, Object?>{'x': 2, 'y': 5},
+            mode: 'datatest',
+          ),
         );
 
         (chart.data as AnyObject)['datasets'] = <Object?>[
@@ -1654,27 +1719,27 @@ void main() {
 
         expect(
           meta.controller!.getContext(null, false, 'test2'),
-          objectContaining(<String, Object?>{
-            'active': false,
-            'datasetIndex': 0,
-            'dataset': _dataset(chart, 0),
-            'index': 0,
-            'mode': 'test2',
-          }),
+          _contextContaining(
+            active: false,
+            datasetIndex: 0,
+            dataset: _dataset(chart, 0),
+            index: 0,
+            mode: 'test2',
+          ),
         );
         expect(
           meta.controller!.getContext(1, true, 'datatest2'),
-          objectContaining(<String, Object?>{
-            'active': true,
-            'datasetIndex': 0,
-            'dataset': _dataset(chart, 0),
-            'dataIndex': 1,
-            'element': meta.data[1],
-            'index': 1,
-            'parsed': <String, Object?>{'x': 1, 'y': 1},
-            'raw': <String, Object?>{'x': 1, 'y': 1},
-            'mode': 'datatest2',
-          }),
+          _contextContaining(
+            active: true,
+            datasetIndex: 0,
+            dataset: _dataset(chart, 0),
+            dataIndex: 1,
+            element: meta.data[1],
+            index: 1,
+            parsed: (x: 1, y: 1),
+            raw: <String, Object?>{'x': 1, 'y': 1},
+            mode: 'datatest2',
+          ),
         );
 
         _unshift(_dataset(chart, 0)['data']! as List<Object?>, [
@@ -1683,31 +1748,31 @@ void main() {
         chart.update();
         expect(
           meta.controller!.getContext(0, true, 'unshift'),
-          objectContaining(<String, Object?>{
-            'active': true,
-            'datasetIndex': 0,
-            'dataset': _dataset(chart, 0),
-            'dataIndex': 0,
-            'element': meta.data[0],
-            'index': 0,
-            'parsed': <String, Object?>{'x': -1, 'y': -1},
-            'raw': <String, Object?>{'x': -1, 'y': -1},
-            'mode': 'unshift',
-          }),
+          _contextContaining(
+            active: true,
+            datasetIndex: 0,
+            dataset: _dataset(chart, 0),
+            dataIndex: 0,
+            element: meta.data[0],
+            index: 0,
+            parsed: (x: -1, y: -1),
+            raw: <String, Object?>{'x': -1, 'y': -1},
+            mode: 'unshift',
+          ),
         );
         expect(
           meta.controller!.getContext(2, true, 'unshift2'),
-          objectContaining(<String, Object?>{
-            'active': true,
-            'datasetIndex': 0,
-            'dataset': _dataset(chart, 0),
-            'dataIndex': 2,
-            'element': meta.data[2],
-            'index': 2,
-            'parsed': <String, Object?>{'x': 1, 'y': 1},
-            'raw': <String, Object?>{'x': 1, 'y': 1},
-            'mode': 'unshift2',
-          }),
+          _contextContaining(
+            active: true,
+            datasetIndex: 0,
+            dataset: _dataset(chart, 0),
+            dataIndex: 2,
+            element: meta.data[2],
+            index: 2,
+            parsed: (x: 1, y: 1),
+            raw: <String, Object?>{'x': 1, 'y': 1},
+            mode: 'unshift2',
+          ),
         );
 
         // `chart.data.datasets.unshift(...)`: no listener watches the
@@ -1724,33 +1789,33 @@ void main() {
         meta = chart.getDatasetMeta(0);
         expect(
           meta.controller!.getContext(0, true, 'unshift3'),
-          objectContaining(<String, Object?>{
-            'active': true,
-            'datasetIndex': 0,
-            'dataset': _dataset(chart, 0),
-            'dataIndex': 0,
-            'element': meta.data[0],
-            'index': 0,
-            'parsed': <String, Object?>{'x': 10, 'y': 20},
-            'raw': <String, Object?>{'x': 10, 'y': 20},
-            'mode': 'unshift3',
-          }),
+          _contextContaining(
+            active: true,
+            datasetIndex: 0,
+            dataset: _dataset(chart, 0),
+            dataIndex: 0,
+            element: meta.data[0],
+            index: 0,
+            parsed: (x: 10, y: 20),
+            raw: <String, Object?>{'x': 10, 'y': 20},
+            mode: 'unshift3',
+          ),
         );
 
         meta = chart.getDatasetMeta(1);
         expect(
           meta.controller!.getContext(2, true, 'unshift4'),
-          objectContaining(<String, Object?>{
-            'active': true,
-            'datasetIndex': 1,
-            'dataset': _dataset(chart, 1),
-            'dataIndex': 2,
-            'element': meta.data[2],
-            'index': 2,
-            'parsed': <String, Object?>{'x': 1, 'y': 1},
-            'raw': <String, Object?>{'x': 1, 'y': 1},
-            'mode': 'unshift4',
-          }),
+          _contextContaining(
+            active: true,
+            datasetIndex: 1,
+            dataset: _dataset(chart, 1),
+            dataIndex: 2,
+            element: meta.data[2],
+            index: 2,
+            parsed: (x: 1, y: 1),
+            raw: <String, Object?>{'x': 1, 'y': 1},
+            mode: 'unshift4',
+          ),
         );
       });
     });

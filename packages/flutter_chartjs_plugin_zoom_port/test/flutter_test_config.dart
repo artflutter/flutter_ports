@@ -147,7 +147,7 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   setUpDefaultsRestore();
 
   // index.js:132-134 `addMatchers()`: n/a. The matchers are functions of
-  // test/support/jasmine.dart and of package:chartjs_test_utils/pure.dart
+  // package:flutter_test and of package:chartjs_test_utils/pure.dart
   // that a spec imports.
 
   // index.js:136-138 afterEach(function () { releaseCharts() })

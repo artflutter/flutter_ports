@@ -1,7 +1,7 @@
 # Zoom ADR 0002: File naming and package layout
 
 - Status: proposed
-- Superseded in part by: [ADR 0011](../../../../docs/adr/0011-public-library-exports-every-file.md): the exports of the public library, item 7 (2026-11-18)
+- Superseded in part by: [ADR 0011](../../../../docs/adr/0011-public-library-exports-every-file.md): the exports of the public library, item 7 (2026-11-18); [Zoom ADR 0006](0006-native-test-matchers.md): the bullet of `test/support/jasmine.dart` in item 4 (2026-11-19)
 - Date: 2026-10-30
 - Revised: 2026-11-10, items 4 and 5: the helpers of the set-up and the comparison of the fixtures.
 - Revised: 2026-11-12, item 8: the port has no UMD entry (Chart.js ADR 0120).

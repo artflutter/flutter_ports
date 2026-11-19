@@ -11,7 +11,6 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
-import '../support/jasmine.dart';
 
 // The tests of the plugin object on the host that no upstream spec has:
 //
@@ -379,8 +378,8 @@ void main() {
       await tester.pumpWidget(view(2));
       expect(spy.updates, 1);
       expect(spy.layouts, 0);
-      expect(chart.scales['x']!.min, toBe(25));
-      expect(chart.scales['x']!.max, toBe(75));
+      expect(chart.scales['x']!.min, equals(25));
+      expect(chart.scales['x']!.max, equals(75));
       await tester.pumpWidget(const SizedBox());
     });
   });
@@ -430,12 +429,12 @@ void main() {
         await tick();
 
         chart.zoom(const .all(1.5));
-        expect(chart.scales['x']!.min, toBe(25));
-        expect(chart.scales['x']!.max, toBe(75));
+        expect(chart.scales['x']!.min, equals(25));
+        expect(chart.scales['x']!.max, equals(75));
         seen.add(_observe(chart));
         await tick();
-        expect(chart.scales['x']!.min, toBe(25));
-        expect(chart.scales['x']!.max, toBe(75));
+        expect(chart.scales['x']!.min, equals(25));
+        expect(chart.scales['x']!.max, equals(75));
         expect(chart.getZoomedScaleBounds()['x'], (min: 25.0, max: 75.0));
         expect(chart.isZoomedOrPanned(), isTrue);
 
@@ -461,8 +460,8 @@ void main() {
         await tick();
 
         chart.resetZoom();
-        expect(chart.scales['x']!.min, toBe(0));
-        expect(chart.scales['x']!.max, toBe(100));
+        expect(chart.scales['x']!.min, equals(0));
+        expect(chart.scales['x']!.max, equals(100));
         seen.add(_observe(chart));
         await tick();
         expect(chart.isZoomedOrPanned(), isFalse);
@@ -507,8 +506,8 @@ void main() {
       await tester.pumpWidget(view(2));
       expect(spy.updates, 1);
       expect(spy.layouts, 0);
-      expect(chart.scales['x']!.min, toBe(25));
-      expect(chart.scales['x']!.max, toBe(75));
+      expect(chart.scales['x']!.min, equals(25));
+      expect(chart.scales['x']!.max, equals(75));
 
       chart.resetZoom();
       expect(completed, [chart]);
@@ -606,21 +605,21 @@ void main() {
       expect(y.options.min, same(undefined));
 
       chart.zoom(const .all(1.5));
-      expect(x.options.min, toBe(25));
-      expect(x.options.max, toBe(75));
-      expect(y.options.min, toBe(y.min));
-      expect(y.options.max, toBe(y.max));
+      expect(x.options.min, equals(25));
+      expect(x.options.max, equals(75));
+      expect(y.options.min, equals(y.min));
+      expect(y.options.max, equals(y.max));
 
       chart.update();
-      expect(x.min, toBe(25));
-      expect(x.max, toBe(75));
-      expect(x.options.min, toBe(25));
+      expect(x.min, equals(25));
+      expect(x.max, equals(75));
+      expect(x.options.min, equals(25));
 
       chart.resetZoom();
-      expect(x.options.min, toBe(0));
-      expect(x.options.max, toBe(100));
-      expect(x.min, toBe(0));
-      expect(x.max, toBe(100));
+      expect(x.options.min, equals(0));
+      expect(x.options.max, equals(100));
+      expect(x.min, equals(0));
+      expect(x.max, equals(100));
       expect(y.options.min, same(undefined));
       expect(y.options.max, same(undefined));
     });

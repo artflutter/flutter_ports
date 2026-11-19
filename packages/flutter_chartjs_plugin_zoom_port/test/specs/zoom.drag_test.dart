@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
-import '../support/jasmine.dart';
 
 void main() {
   group('zoom with drag', () {
@@ -65,10 +64,10 @@ void main() {
           y: scaleY.getPixelForValue(1.7),
         ));
 
-        expect(scaleX.options.min, toBeCloseTo(1.5));
-        expect(scaleX.options.max, toBeCloseTo(2.8));
-        expect(scaleY.options.min, toBe(undefined));
-        expect(scaleY.options.max, toBe(undefined));
+        expect(scaleX.options.min, closeTo(1.5, 0.005));
+        expect(scaleX.options.max, closeTo(2.8, 0.005));
+        expect(scaleY.options.min, same(undefined));
+        expect(scaleY.options.max, same(undefined));
       });
 
       testWidgets('should be applied on X scale when mode = f() => x', (
@@ -107,10 +106,10 @@ void main() {
           y: scaleY.getPixelForValue(1.7),
         ));
 
-        expect(scaleX.options.min, toBeCloseTo(1.5));
-        expect(scaleX.options.max, toBeCloseTo(2.8));
-        expect(scaleY.options.min, toBe(undefined));
-        expect(scaleY.options.max, toBe(undefined));
+        expect(scaleX.options.min, closeTo(1.5, 0.005));
+        expect(scaleX.options.max, closeTo(2.8, 0.005));
+        expect(scaleY.options.min, same(undefined));
+        expect(scaleY.options.max, same(undefined));
       });
 
       testWidgets('should be applied on Y scale when mode = y', (tester) async {
@@ -145,10 +144,10 @@ void main() {
           y: scaleY.getPixelForValue(1.7),
         ));
 
-        expect(scaleX.options.min, toBe(undefined));
-        expect(scaleX.options.max, toBe(undefined));
-        expect(scaleY.options.min, toBeCloseTo(1.1));
-        expect(scaleY.options.max, toBeCloseTo(1.7));
+        expect(scaleX.options.min, same(undefined));
+        expect(scaleX.options.max, same(undefined));
+        expect(scaleY.options.min, closeTo(1.1, 0.005));
+        expect(scaleY.options.max, closeTo(1.7, 0.005));
       });
 
       testWidgets('should be applied on Y scale when mode = f() => y', (
@@ -187,10 +186,10 @@ void main() {
           y: scaleY.getPixelForValue(1.7),
         ));
 
-        expect(scaleX.options.min, toBe(undefined));
-        expect(scaleX.options.max, toBe(undefined));
-        expect(scaleY.options.min, toBeCloseTo(1.1));
-        expect(scaleY.options.max, toBeCloseTo(1.7));
+        expect(scaleX.options.min, same(undefined));
+        expect(scaleX.options.max, same(undefined));
+        expect(scaleY.options.min, closeTo(1.1, 0.005));
+        expect(scaleY.options.max, closeTo(1.7, 0.005));
       });
 
       testWidgets('should be applied on X and Y scales when mode = xy', (
@@ -227,10 +226,10 @@ void main() {
           y: scaleY.getPixelForValue(1.7),
         ));
 
-        expect(scaleX.options.min, toBeCloseTo(1.5));
-        expect(scaleX.options.max, toBeCloseTo(2.8));
-        expect(scaleY.options.min, toBeCloseTo(1.1));
-        expect(scaleY.options.max, toBeCloseTo(1.7));
+        expect(scaleX.options.min, closeTo(1.5, 0.005));
+        expect(scaleX.options.max, closeTo(2.8, 0.005));
+        expect(scaleY.options.min, closeTo(1.1, 0.005));
+        expect(scaleY.options.max, closeTo(1.7, 0.005));
       });
     });
 
@@ -244,7 +243,8 @@ void main() {
               '${pressed ? 'with' : 'without'} key ${key.name}', (
             tester,
           ) async {
-            final rejectedSpy = createSpy('wheelFailed');
+            // `createSpy('wheelFailed')`: the contexts of the calls.
+            final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
             chart = acquireChart(<String, Object?>{
               'type': 'line',
               'data': data(),
@@ -258,7 +258,7 @@ void main() {
                     zoom: ZoomOptions(
                       drag: DragOptions(enabled: true, modifierKey: key),
                       mode: Mode.x,
-                      onZoomRejected: rejectedSpy.call,
+                      onZoomRejected: rejectedCalls.add,
                     ),
                   ),
                 },
@@ -283,13 +283,13 @@ void main() {
             dispatchEvent(chart, 'mouseup', pt2, init);
 
             if (pressed) {
-              expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
-              expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
-              expect(rejectedSpy, isNot(toHaveBeenCalled()));
+              expect(scaleX.options.min, isNot(equals(oldMinX)));
+              expect(scaleX.options.max, isNot(equals(oldMaxX)));
+              expect(rejectedCalls, isEmpty);
             } else {
-              expect(scaleX.options.min, jasmineEquals(oldMinX));
-              expect(scaleX.options.max, jasmineEquals(oldMaxX));
-              expect(rejectedSpy, toHaveBeenCalled());
+              expect(scaleX.options.min, equals(oldMinX));
+              expect(scaleX.options.max, equals(oldMaxX));
+              expect(rejectedCalls, isNotEmpty);
             }
           });
         }
@@ -306,8 +306,10 @@ void main() {
               '${pressed ? 'without' : 'with'} key ${key.name}', (
             tester,
           ) async {
-            final rejectedSpy = createSpy('zoomRejected');
-            final clickSpy = createSpy('clicked');
+            // `createSpy('zoomRejected')`: the contexts of the calls.
+            final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
+            // `createSpy('clicked')`: the events of the calls.
+            final clickCalls = <ChartEvent>[];
             chart = acquireChart(<String, Object?>{
               'type': 'line',
               'data': data(),
@@ -322,11 +324,15 @@ void main() {
                     zoom: ZoomOptions(
                       drag: const DragOptions(enabled: true),
                       mode: Mode.x,
-                      onZoomRejected: rejectedSpy.call,
+                      onZoomRejected: rejectedCalls.add,
                     ),
                   ),
                 },
-                'onClick': clickSpy.call,
+                'onClick': (
+                  ChartEvent event,
+                  List<ActiveElement> elements,
+                  Chart _,
+                ) => clickCalls.add(event),
               },
             });
 
@@ -348,15 +354,15 @@ void main() {
             dispatchEvent(chart, 'mouseup', pt2, init);
 
             if (pressed) {
-              expect(scaleX.options.min, jasmineEquals(oldMinX));
-              expect(scaleX.options.max, jasmineEquals(oldMaxX));
-              expect(rejectedSpy, toHaveBeenCalled());
+              expect(scaleX.options.min, equals(oldMinX));
+              expect(scaleX.options.max, equals(oldMaxX));
+              expect(rejectedCalls, isNotEmpty);
             } else {
-              expect(scaleX.options.min, isNot(jasmineEquals(oldMinX)));
-              expect(scaleX.options.max, isNot(jasmineEquals(oldMaxX)));
-              expect(rejectedSpy, isNot(toHaveBeenCalled()));
+              expect(scaleX.options.min, isNot(equals(oldMinX)));
+              expect(scaleX.options.max, isNot(equals(oldMaxX)));
+              expect(rejectedCalls, isEmpty);
             }
-            expect(clickSpy, isNot(toHaveBeenCalled()));
+            expect(clickCalls, isEmpty);
           });
         }
       }
@@ -418,10 +424,10 @@ void main() {
           y: scaleY.getPixelForValue(1.7),
         ));
 
-        expect(scaleX.options.min, toBeCloseTo(1.5));
-        expect(scaleX.options.max, toBeCloseTo(4));
-        expect(scaleY.options.min, toBeCloseTo(1.2));
-        expect(scaleY.options.max, toBeCloseTo(1.7));
+        expect(scaleX.options.min, closeTo(1.5, 0.005));
+        expect(scaleX.options.max, closeTo(4, 0.005));
+        expect(scaleY.options.min, closeTo(1.2, 0.005));
+        expect(scaleY.options.max, closeTo(1.7, 0.005));
       });
 
       testWidgets('handles dragging off the right edge of the chart canvas', (
@@ -490,10 +496,10 @@ void main() {
           ),
         );
 
-        expect(scaleX.options.min, toBeCloseTo(1.5));
-        expect(scaleX.options.max, toBeCloseTo(4));
-        expect(scaleY.options.min, toBeCloseTo(1.2));
-        expect(scaleY.options.max, toBeCloseTo(1.7));
+        expect(scaleX.options.min, closeTo(1.5, 0.005));
+        expect(scaleX.options.max, closeTo(4, 0.005));
+        expect(scaleY.options.min, closeTo(1.2, 0.005));
+        expect(scaleY.options.max, closeTo(1.7, 0.005));
       });
     });
 
@@ -502,8 +508,10 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final startSpy = createSpy('start');
-          final zoomSpy = createSpy('zoom');
+          // `createSpy('start')`: the contexts of the calls.
+          final startCalls = <ZoomStartContext<NativeEvent>>[];
+          // `createSpy('zoom')`: the contexts of the calls.
+          final zoomCalls = <ZoomTriggerContext>[];
           final chart = acquireChart(<String, Object?>{
             'type': 'scatter',
             'data': data(),
@@ -514,10 +522,10 @@ void main() {
                     drag: const DragOptions(enabled: true),
                     mode: Mode.xy,
                     onZoomStart: (context) {
-                      startSpy.call(context);
+                      startCalls.add(context);
                       return true;
                     },
-                    onZoom: zoomSpy.call,
+                    onZoom: zoomCalls.add,
                     onZoomComplete: (_) => done(),
                   ),
                 ),
@@ -531,23 +539,23 @@ void main() {
           );
           final pt2 = (x: pt.x + 20, y: pt.y + 20);
 
-          expect(chart.isZoomingOrPanning(), toBe(false));
+          expect(chart.isZoomingOrPanning(), equals(false));
 
           dispatchEvent(chart, 'mousedown', pt);
           dispatchEvent(chart, 'mousemove', pt2);
 
-          expect(chart.isZoomingOrPanning(), toBe(true));
+          expect(chart.isZoomingOrPanning(), equals(true));
 
           dispatchEvent(chart, 'mouseup', pt2);
 
           // Drag state isn't cleared until a timeout fires (later), so we
           // can't easily test this here.
-          // expect(chart.isZoomingOrPanning()).toBe(false);
+          // expect(chart.isZoomingOrPanning()).equals(false);
 
-          expect(startSpy, toHaveBeenCalled());
+          expect(startCalls, isNotEmpty);
           expect(
-            zoomSpy,
-            toHaveBeenCalledWith([(chart: chart, trigger: ZoomTrigger.drag)]),
+            zoomCalls,
+            contains((chart: chart, trigger: ZoomTrigger.drag)),
           );
         });
       });
@@ -555,9 +563,12 @@ void main() {
       testWidgets('should call onZoomRejected when onZoomStart returns false', (
         tester,
       ) async {
-        final zoomSpy = createSpy('zoom');
-        final rejectSpy = createSpy('reject');
-        final doneSpy = createSpy('done');
+        // `createSpy('zoom')`: the contexts of the calls.
+        final zoomCalls = <ZoomTriggerContext>[];
+        // `createSpy('reject')`: the contexts of the calls.
+        final rejectCalls = <ZoomEventContext<NativeEvent>>[];
+        // `createSpy('done')`: the contexts of the calls.
+        final doneCalls = <ZoomChartContext>[];
         final chart = acquireChart(<String, Object?>{
           'type': 'scatter',
           'data': data(),
@@ -568,9 +579,9 @@ void main() {
                   drag: const DragOptions(enabled: true),
                   mode: Mode.xy,
                   onZoomStart: (_) => false,
-                  onZoom: zoomSpy.call,
-                  onZoomComplete: doneSpy.call,
-                  onZoomRejected: rejectSpy.call,
+                  onZoom: zoomCalls.add,
+                  onZoomComplete: doneCalls.add,
+                  onZoomRejected: rejectCalls.add,
                 ),
               ),
             },
@@ -583,20 +594,20 @@ void main() {
         );
         final pt2 = (x: pt.x + 20, y: pt.y + 20);
 
-        expect(chart.isZoomingOrPanning(), toBe(false));
+        expect(chart.isZoomingOrPanning(), equals(false));
 
         dispatchEvent(chart, 'mousedown', pt);
 
-        expect(chart.isZoomingOrPanning(), toBe(false));
+        expect(chart.isZoomingOrPanning(), equals(false));
 
         dispatchEvent(chart, 'mousemove', pt2);
         dispatchEvent(chart, 'mouseup', pt2);
 
-        expect(chart.isZoomingOrPanning(), toBe(false));
+        expect(chart.isZoomingOrPanning(), equals(false));
 
-        expect(rejectSpy, toHaveBeenCalled());
-        expect(zoomSpy, isNot(toHaveBeenCalled()));
-        expect(doneSpy, isNot(toHaveBeenCalled()));
+        expect(rejectCalls, isNotEmpty);
+        expect(zoomCalls, isEmpty);
+        expect(doneCalls, isEmpty);
       });
     });
   });

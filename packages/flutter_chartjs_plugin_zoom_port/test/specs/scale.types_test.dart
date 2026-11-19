@@ -8,8 +8,6 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../support/jasmine.dart';
-
 /// scale.types.test.ts:5 `createCategoryScale({ categories, min, max,
 /// width })`: a category scale of [categories] labels `'0'`, `'1'`, ...
 /// with the range [min] to [max] and the [width] in pixels.
@@ -82,6 +80,21 @@ double _toNumber(Object? value) =>
 /// A number or `undefined` of the table as a `double?`.
 double? _orNull(Object? value) =>
     identical(value, undefined) ? null : value! as double;
+
+/// `toEqual(expected)` of a range: each bound is the same number, NaN
+/// equals NaN, and `0` does not equal `-0`.
+Matcher _equalsRange(ScaleRange expected) => isA<ScaleRange>()
+    .having((r) => r.min, 'min', _sameNumber(expected.min))
+    .having((r) => r.max, 'max', _sameNumber(expected.max));
+
+/// The number [expected] with its sign: NaN for NaN, and `-0` only for
+/// `-0`.
+Matcher _sameNumber(double expected) => expected.isNaN
+    ? isNaN
+    : predicate<double>(
+        (x) => x == expected && x.isNegative == expected.isNegative,
+        '$expected',
+      );
 
 void main() {
   group('utils', () {
@@ -188,7 +201,7 @@ void main() {
                 _toNumber(range),
                 _toNumber(newRange),
               ),
-              jasmineEquals(expected),
+              _equalsRange(expected),
             );
           },
         );
@@ -211,8 +224,8 @@ void main() {
 
           panFunctions['category']!(scale, 25, const <String, ScaleLimits>{});
 
-          expect(scale.options.min, toBe(39));
-          expect(scale.options.max, toBe(58));
+          expect(scale.options.min, equals(39));
+          expect(scale.options.max, equals(58));
         },
       );
 
@@ -232,8 +245,8 @@ void main() {
 
           panFunctions['category']!(scale, 10, const <String, ScaleLimits>{});
 
-          expect(scale.options.min, toBe(3875));
-          expect(scale.options.max, toBe(8874));
+          expect(scale.options.min, equals(3875));
+          expect(scale.options.max, equals(8874));
         },
       );
 
@@ -247,8 +260,8 @@ void main() {
 
         panFunctions['category']!(scale, 10, const <String, ScaleLimits>{});
 
-        expect(scale.options.min, toBe(0));
-        expect(scale.options.max, toBe(4999));
+        expect(scale.options.min, equals(0));
+        expect(scale.options.max, equals(4999));
       });
 
       testWidgets('does not pan past the last category', (tester) async {
@@ -261,8 +274,8 @@ void main() {
 
         panFunctions['category']!(scale, -10, const <String, ScaleLimits>{});
 
-        expect(scale.options.min, toBe(5000));
-        expect(scale.options.max, toBe(9999));
+        expect(scale.options.min, equals(5000));
+        expect(scale.options.max, equals(9999));
       });
     });
   });

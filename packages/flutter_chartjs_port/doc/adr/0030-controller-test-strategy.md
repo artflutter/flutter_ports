@@ -1,6 +1,7 @@
 # Chart.js ADR 0030: Controller test strategy
 
 - Status: accepted (2026-10-21)
+- Superseded in part by: [Chart.js ADR 0180](0180-native-spec-matchers.md): §13 items 1, 5, 6, 7 and 8 (2026-11-19)
 - Date: 2026-10-21
 - Related: [Chart.js ADR 0001](0001-theming.md) (the four theming invariants),
   [Chart.js ADR 0006](0006-options-representation-and-resolver.md) (the `undefined` sentinel),
