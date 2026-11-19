@@ -148,23 +148,26 @@ final Map<String, Object?> _functions = {
 };
 
 /// A chart of the test controller `linearTest` with the points [points]
-/// and the options [options].
-Chart _linearChart(List<Object?> points, [AnyObject? options]) => acquireChart({
-  'type': 'linearTest',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{'data': points},
-    ],
-  },
-  'options': ?options,
-});
+/// and the axes [scales].
+Chart _linearChart(List<DataPoint> points, [Map<String, ChartAxis>? scales]) =>
+    acquireChartRoot(
+      ChartConfigLowering(
+        ChartConfig(
+          type: const ChartKind('linearTest'),
+          datasets: [
+            LineDataset(points: points, extra: const {'type': 'linearTest'}),
+          ],
+          scales: scales,
+        ),
+      ).lower(),
+    );
 
 /// The points of the case 'objects on two linear axes' of the generator.
-List<Object?> _scatter() => <Object?>[
-  <String, Object?>{'x': 10.0, 'y': 100.0},
-  <String, Object?>{'x': -10.0, 'y': 0.0},
-  <String, Object?>{'x': 0.0, 'y': 0.0},
-  <String, Object?>{'x': 99.0, 'y': 7.0},
+List<DataPoint> _scatter() => [
+  DataPoint(10, 100),
+  DataPoint(-10, 0),
+  DataPoint(0, 0),
+  DataPoint(99, 7),
 ];
 
 /// The linear scale [id] of [chart].
@@ -252,21 +255,19 @@ void main() {
   });
 
   group('fast path (Chart.js ADR 0025)', () {
-    for (final (name, options) in <(String, AnyObject)>[
-      ('a horizontal scale', <String, Object?>{}),
+    for (final (name, scales) in <(String, Map<String, ChartAxis>)>[
+      ('a horizontal scale', {}),
       (
         'a reversed vertical scale with offset',
-        <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'reverse': true, 'offset': true},
-          },
+        {
+          'y': const LinearAxis(reverse: true, extra: {'offset': true}),
         },
       ),
     ]) {
       testWidgets('a double and an int give the same pixel, $name', (
         tester,
       ) async {
-        final chart = _linearChart(_scatter(), options);
+        final chart = _linearChart(_scatter(), scales);
         for (final id in ['x', 'y']) {
           final s = _scale(chart, id);
           final min = s.min;

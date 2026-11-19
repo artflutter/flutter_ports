@@ -133,36 +133,30 @@ ChartPlugin<_ZoomLikeOptions> _zoomLike({bool supportsDataUpdates = true}) =>
 /// layout (Chart.js ADR 0074). [plugins] are the inline plugins, and
 /// [onHover] is the option `onHover`, when it is not Dart `null`. [events]
 /// is the option `events` of the plugin (Chart.js ADR 0150).
-Map<String, Object?> _config({
+ChartConfig _config({
   List<Plugin<Object?>> plugins = const [],
-  Object? onHover,
+  ChartEventHandler? onHover,
   List<String>? events,
-}) => <String, Object?>{
-  'type': 'line',
-  'plugins': plugins,
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'values',
-        'data': <Object?>[1.0, 2.0, 3.0],
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'onHover': ?onHover,
-    'plugins': <String, Object?>{
-      'zoomLike': _ZoomLikeOptions(
-        speed: 0.5,
-        nested: const _Nested(enabled: true),
-        events: events,
-      ),
-    },
-    'scales': <String, Object?>{
-      'y': <String, Object?>{'min': 0.0, 'max': 4.0},
-    },
-  },
-};
+}) => ChartConfig(
+  type: ChartKind.line,
+  plugins: plugins,
+  labels: const ['a', 'b', 'c'],
+  datasets: [
+    LineDataset(label: 'values', data: List<num?>.of(const [1.0, 2.0, 3.0])),
+  ],
+  onHover: onHover,
+  pluginOptions: [
+    _ZoomLikeOptions(
+      speed: 0.5,
+      nested: const _Nested(enabled: true),
+      events: events,
+    ),
+  ],
+  scales: const {'y': LinearAxis(min: 0, max: 4)},
+);
+
+Chart _chart(ChartConfig config) =>
+    acquireChartRoot(ChartConfigLowering(config).lower());
 
 void main() {
   tearDown(releaseCharts);
@@ -193,7 +187,7 @@ void main() {
       Chart.register([plugin]);
       addTearDown(() => Chart.unregister([plugin]));
 
-      final chart = acquireChart(_config());
+      final chart = _chart(_config());
       expect(_calls, isNotEmpty);
       expect(_calls.first, 'start');
       expect(_calls[1], 'beforeUpdate null');
@@ -226,9 +220,7 @@ void main() {
     testWidgets('cancels an event from beforeEvent', (tester) async {
       var hovers = 0;
       void onHover(Object? event, Object? active, Object? chart) => hovers++;
-      final chart = acquireChart(
-        _config(plugins: [_zoomLike()], onHover: onHover),
-      );
+      final chart = _chart(_config(plugins: [_zoomLike()], onHover: onHover));
 
       // A point in the chart area: `onHover` runs (core.controller.js:1223).
       await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
@@ -250,7 +242,7 @@ void main() {
     testWidgets('gets only the events of its events option', (tester) async {
       // `(plugin.options.events || this.options.events).includes(type)`
       // (core.controller.js:1170): the field of the options object.
-      final chart = acquireChart(
+      final chart = _chart(
         _config(plugins: [_zoomLike()], events: const ['click']),
       );
       await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
@@ -267,7 +259,7 @@ void main() {
 
     testWidgets('calls a hook that a field write replaces', (tester) async {
       final plugin = _zoomLike();
-      final chart = acquireChart(_config(plugins: [plugin]));
+      final chart = _chart(_config(plugins: [plugin]));
 
       final typed = <Object>[];
       final original = plugin.beforeUpdate;
@@ -294,13 +286,9 @@ void main() {
       ) async {
         final plugin = _zoomLike(supportsDataUpdates: approved);
         final config = _config(plugins: [plugin]);
-        final chart = acquireChart(config);
-        final dataset =
-            ((config['data']! as Map<String, Object?>)['datasets']!
-                        as List<Object?>)
-                    .single!
-                as Map<String, Object?>;
-        (dataset['data']! as List<Object?>)[0] = 2.5;
+        final chart = _chart(config);
+        final dataset = config.datasets.single as LineDataset;
+        dataset.data![0] = 2.5;
 
         _calls.clear();
         expect(chart.updateData(), approved);

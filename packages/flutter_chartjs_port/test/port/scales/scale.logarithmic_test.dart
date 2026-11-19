@@ -180,18 +180,18 @@ final Map<String, void Function(Chart chart)> _actions = {
   },
 };
 
-/// A chart of `logValueTest` with the labels a, b and c, the data [data]
-/// and the options [options].
-Chart _chart(List<Object?> data, [AnyObject? options]) => acquireChart({
-  'type': 'logValueTest',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{'data': data},
-    ],
-  },
-  'options': ?options,
-});
+/// A chart of `logValueTest` with the labels a, b and c and the data [data].
+Chart _chart(List<num?> data) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: const ChartKind('logValueTest'),
+      labels: const ['a', 'b', 'c'],
+      datasets: [
+        LineDataset(data: data, extra: const {'type': 'logValueTest'}),
+      ],
+    ),
+  ).lower(),
+);
 
 /// The logarithmic scale `y` of [chart].
 LogarithmicScale _y(Chart chart) => chart.scales['y']! as LogarithmicScale;
@@ -283,9 +283,9 @@ void main() {
 
   group('fast path (Chart.js ADR 0025)', () {
     for (final (name, data) in [
-      ('a range from 1 to 100', <Object?>[1.0, 10.0, 100.0]),
-      ('a range from 0.001 to 1000', <Object?>[0.001, 3.0, 1000.0]),
-      ('a range from 2 to 700', <Object?>[2.0, 50.0, 700.0]),
+      ('a range from 1 to 100', <num?>[1.0, 10.0, 100.0]),
+      ('a range from 0.001 to 1000', <num?>[0.001, 3.0, 1000.0]),
+      ('a range from 2 to 700', <num?>[2.0, 50.0, 700.0]),
     ]) {
       testWidgets('a double and an int give the same pixel, $name', (
         tester,

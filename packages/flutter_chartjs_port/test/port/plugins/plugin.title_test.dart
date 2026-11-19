@@ -93,21 +93,21 @@ const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 Object? _construct(List<Object?> args) => jsConstruct(Title.jsClass, args);
 
 /// A line chart with `plugins.title: false`: no title block.
-// A Map config: the typed API has no form for a plugin set to `false`.
-AnyObject _lineWithoutTitle() => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[1, 2],
+Chart _lineWithoutTitle() => acquireChartRoot(
+  ChartConfigLowering(
+    const ChartConfig(
+      type: ChartKind.line,
+      labels: ['a', 'b'],
+      datasets: [
+        LineDataset(data: [1, 2]),
+      ],
+      // Disable the plugin itself, rather than only hiding its title.
+      extra: {
+        'plugins': {'title': false},
       },
-    ],
-  },
-  'options': <String, Object?>{
-    'plugins': <String, Object?>{'title': false},
-  },
-};
+    ),
+  ).lower(),
+);
 
 /// A line chart with the title [title].
 Chart _line(ChartTitle title) => acquireChartRoot(
@@ -322,7 +322,7 @@ void main() {
     testWidgets('a chart with plugins.title false has no title block', (
       tester,
     ) async {
-      final chart = acquireChart(_lineWithoutTitle());
+      final chart = _lineWithoutTitle();
       expect(chart.titleBlock, isNull);
       // The seven plugins of registerables are registered (Chart.js ADR
       // 0041, section 1). Thus the one Title box is the box of the subtitle
@@ -338,7 +338,7 @@ void main() {
     testWidgets('the stop hook on a chart without a title block does not '
         'throw', (tester) async {
       // The probe stopWithoutBlock: no throw, the boxes stay.
-      final chart = acquireChart(_lineWithoutTitle());
+      final chart = _lineWithoutTitle();
       final boxes = [...chart.boxes];
       title.stop!(chart, const PluginHookArgs(), _titleOptions());
       expect(chart.titleBlock, isNull);
@@ -348,7 +348,7 @@ void main() {
     testWidgets('the beforeUpdate hook on a chart without a title block '
         'throws a TypeError', (tester) async {
       // The probe beforeUpdateWithoutBlock.
-      final chart = acquireChart(_lineWithoutTitle());
+      final chart = _lineWithoutTitle();
       expect(
         () => title.beforeUpdate!(chart, UpdateHookArgs(), _titleOptions()),
         throwsA(isA<TypeError>()),

@@ -160,26 +160,25 @@ final JsClass _customElement = JsClass(
 );
 
 /// The data of a dataset: two points.
-List<Object?> _points() => <Object?>[
-  <String, Object?>{'x': 1, 'y': 2},
-  <String, Object?>{'x': 5, 'y': 8},
-];
+List<DataPoint> _points() => [DataPoint(1, 2), DataPoint(5, 8)];
 
 /// A chart of the controller [type] with one dataset of [_points]. [dataset]
-/// adds keys to the dataset, and [options] gives the chart options.
+/// adds keys to the dataset, and [animation] gives the chart animation.
 Chart _chart(
   String type, {
   Map<String, Object?> dataset = const {},
-  Map<String, Object?>? options,
-}) => acquireChart({
-  'type': type,
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{'data': _points(), ...dataset},
-    ],
-  },
-  'options': ?options,
-});
+  ChartAnimation? animation,
+}) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind(type),
+      datasets: [
+        LineDataset(points: _points(), extra: {'type': type, ...dataset}),
+      ],
+      animation: animation,
+    ),
+  ).lower(),
+);
 
 /// The test controller of the dataset 0 of [chart].
 DatasetController _controllerOf(Chart chart) =>
@@ -365,9 +364,7 @@ void main() {
       // copy after the end.
       final chart = _chart(
         'typedLine',
-        options: <String, Object?>{
-          'animation': <String, Object?>{'duration': 100},
-        },
+        animation: const ChartAnimation(duration: Duration(milliseconds: 100)),
       );
       await tester.pump(const Duration(seconds: 2));
       final controller = _controllerOf(chart);
@@ -422,9 +419,9 @@ void main() {
       expect(
         () => _chart(
           'typedPointPoint',
-          options: <String, Object?>{
-            'animation': <String, Object?>{'duration': 100},
-          },
+          animation: const ChartAnimation(
+            duration: Duration(milliseconds: 100),
+          ),
         ),
         throwsA(isA<TypeError>()),
       );
@@ -459,20 +456,24 @@ void main() {
 
     /// A chart of `stacksPoint` with the data [data], `parsing: false` and
     /// a stacked y scale.
-    Chart stackedChart(List<Object?> data) => acquireChart({
-      'type': 'stacksPoint',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{'data': data},
-        ],
-      },
-      'options': <String, Object?>{
-        'parsing': false,
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': StackMode.on},
-        },
-      },
-    });
+    Chart stackedChart(List<Object?> data) => acquireChartRoot(
+      ChartConfigLowering(
+        ChartConfig(
+          type: const ChartKind('stacksPoint'),
+          datasets: [
+            // Keep the original List, DateTime and narrow Map inputs.
+            LineDataset(extra: {'type': 'stacksPoint', 'data': data}),
+          ],
+          scales: const {
+            'y': LinearAxis(
+              stacked: StackMode.on,
+              extra: {'type': 'typedLinear'},
+            ),
+          },
+          extra: const {'parsing': false},
+        ),
+      ).lower(),
+    );
 
     testWidgets('List data items take the stacks', (tester) async {
       registerController();

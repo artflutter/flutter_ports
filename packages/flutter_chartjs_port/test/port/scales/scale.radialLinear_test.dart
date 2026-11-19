@@ -244,23 +244,22 @@ Map<String, Object?> _radialObservations(Scale scale, Chart chart) {
 /// A chart of the test controller `radialTest` with the labels [labels], one
 /// dataset of [data] and the scale options [r].
 Chart _chart(
-  List<Object?> labels,
+  List<String> labels,
   List<Object?> data, [
-  Map<String, Object?> r = const {},
-]) => acquireChart(<String, Object?>{
-  'type': 'radialTest',
-  'data': <String, Object?>{
-    'labels': labels,
-    'datasets': <Object?>[
-      <String, Object?>{'data': data},
-    ],
-  },
-  'options': <String, Object?>{
-    'scales': <String, Object?>{
-      'r': <String, Object?>{...r},
-    },
-  },
-});
+  RadialLinearAxis r = const RadialLinearAxis(),
+]) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: const ChartKind('radialTest'),
+      labels: labels,
+      datasets: [
+        // Keep strings and undefined in the parser boundary cases.
+        RadarDataset(extra: {'type': 'radialTest', 'data': data}),
+      ],
+      scales: {'r': r},
+    ),
+  ).lower(),
+);
 
 /// The scale r of [chart].
 RadialLinearScale _r(Chart chart) => chart.scales['r']! as RadialLinearScale;
@@ -478,11 +477,11 @@ void main() {
       tester,
     ) async {
       final r = _r(
-        _chart(['A', 'B', 'C'], [1.0, 5.0, 9.0], {
-          'reverse': true,
-          'min': 0.0,
-          'max': 10.0,
-        }),
+        _chart(
+          ['A', 'B', 'C'],
+          [1.0, 5.0, 9.0],
+          const RadialLinearAxis(reverse: true, min: 0, max: 10),
+        ),
       );
       expect(r.getDistanceFromCenterForValue(10), 0);
       expect(r.getDistanceFromCenterForValue(0), r.drawingArea);

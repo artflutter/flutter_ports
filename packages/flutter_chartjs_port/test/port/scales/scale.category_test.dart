@@ -302,19 +302,41 @@ final Map<String, Object?> _functions = {
 };
 
 /// A chart of the test controller with the labels A, B and C, and the
-/// options [options].
-Chart _abcChart([AnyObject? options]) => acquireChart({
-  'type': 'categoryTest',
-  'data': <String, Object?>{
-    'labels': <Object?>['A', 'B', 'C'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[1.0, 3.0, 2.0],
-      },
-    ],
-  },
-  'options': ?options,
-});
+/// axes [scales].
+Chart _abcChart([Map<String, ChartAxis>? scales]) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: const ChartKind('categoryTest'),
+      // Category parsing adds labels to this list in several cases.
+      labels: List<Object>.of(const ['A', 'B', 'C']),
+      datasets: const [
+        LineDataset(data: [1.0, 3.0, 2.0], extra: {'type': 'categoryTest'}),
+      ],
+      scales: scales,
+    ),
+  ).lower(),
+);
+
+/// Retains the concrete label container for the narrow-list guard tests.
+Chart _labelsChart(List<Object?> labels, Object? x) {
+  final root = ChartConfigLowering(
+    ChartConfig(
+      type: const ChartKind('categoryTest'),
+      datasets: [
+        LineDataset(
+          extra: {
+            'type': 'categoryTest',
+            'data': <Object?>[
+              <String, Object?>{'x': x, 'y': 1.0},
+            ],
+          },
+        ),
+      ],
+    ),
+  ).lower();
+  (root.dataCell!.raw! as ChartDataScope).labels = labels;
+  return acquireChartRoot(root);
+}
 
 /// The category scale `x` of [chart].
 CategoryScale _x(Chart chart) => chart.scales['x']! as CategoryScale;
@@ -417,9 +439,7 @@ void main() {
       ) async {
         final x = _x(
           _abcChart({
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'offset': offset},
-            },
+            'x': CategoryAxis(extra: {'offset': offset}),
           }),
         );
         final min = x.min;
@@ -494,11 +514,12 @@ void main() {
 
     testWidgets('a y axis at the position of a label', (tester) async {
       final chart = _abcChart({
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'position': const ScaleValuePosition('x', 'B'),
+        'y': const LinearAxis(
+          extra: {
+            'type': 'testLinear',
+            'position': ScaleValuePosition('x', 'B'),
           },
-        },
+        ),
       });
       final pixel = _x(chart).getPixelForValue('B');
       final items = chart.scales['y']!.getLabelItems();
@@ -510,11 +531,12 @@ void main() {
 
     testWidgets('a y axis at the position null', (tester) async {
       final chart = _abcChart({
-        'scales': <String, Object?>{
-          'y': <String, Object?>{
-            'position': const ScaleValuePosition('x', null),
+        'y': const LinearAxis(
+          extra: {
+            'type': 'testLinear',
+            'position': ScaleValuePosition('x', null),
           },
-        },
+        ),
       });
       final items = chart.scales['y']!.getLabelItems();
       expect(items, isNotEmpty);
@@ -530,19 +552,8 @@ void main() {
   group('js-semantics-narrow-labels', () {
     /// A chart of the test controller with the labels [labels] and the data
     /// item `{x: x, y: 1}`.
-    Chart labelsChart(List<Object?> labels, Object? x) => acquireChart({
-      'type': 'categoryTest',
-      'data': <String, Object?>{
-        'labels': labels,
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': x, 'y': 1.0},
-            ],
-          },
-        ],
-      },
-    });
+    Chart labelsChart(List<Object?> labels, Object? x) =>
+        _labelsChart(labels, x);
 
     testWidgets('a List<int> of labels throws at a string that is not a '
         'label', (tester) async {
@@ -591,19 +602,7 @@ void main() {
   // List<String> class of the app, which keeps the scan.
   group('adapt-category-string-labels', () {
     /// A chart of the test controller with the labels [labels].
-    Chart labelsChart(List<Object?> labels) => acquireChart({
-      'type': 'categoryTest',
-      'data': <String, Object?>{
-        'labels': labels,
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 'a', 'y': 1.0},
-            ],
-          },
-        ],
-      },
-    });
+    Chart labelsChart(List<Object?> labels) => _labelsChart(labels, 'a');
 
     /// The raw values that are not a String, and 'b', a label.
     final notStrings = <Object?>[

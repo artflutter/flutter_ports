@@ -52,34 +52,39 @@ Object? _rawRadius(Object? ctx) => jsGet(ctx, 'raw');
 
 /// The config of a bubble chart with one dataset with [data] and the keys of
 /// [extra] (`one` of the generator).
-AnyObject _one(AnyObject extra, List<Object?> data) => <String, Object?>{
-  'type': 'bubble',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
+ChartConfig _one(AnyObject extra, List<Object?> data) => ChartConfig(
+  type: ChartKind.bubble,
+  datasets: [
+    // These cases deliberately give arrays, nulls and string radii.
+    BubbleDataset(
+      extra: {
         'data': <Object?>[...data],
         ...extra,
       },
-    ],
-  },
-};
+    ),
+  ],
+);
 
-/// The labels of the pin cases of the interfaces spec, section 7.3, with
-/// one more data item than labels.
-AnyObject _labelsConfig(List<Object?> labels) => <String, Object?>{
-  'type': 'bubble',
-  'data': <String, Object?>{
-    'labels': labels,
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          for (var v = 1.0; v <= 6; v++)
-            <String, Object?>{'x': v, 'y': 7 - v, 'r': v},
-        ],
-      },
-    ],
-  },
-};
+Chart _chart(ChartConfig config) =>
+    acquireChartRoot(ChartConfigLowering(config).lower());
+
+/// Preserve the original label container, including null and undefined entries.
+Chart _labelsChart(List<Object?> labels) {
+  final root = ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.bubble,
+      datasets: [
+        BubbleDataset(
+          points: [
+            for (var v = 1.0; v <= 6; v++) DataPoint.bubble(v, 7 - v, v),
+          ],
+        ),
+      ],
+    ),
+  ).lower();
+  (root.dataCell!.raw! as ChartDataScope).labels = labels;
+  return acquireChartRoot(root);
+}
 
 void main() {
   testReferenceOrigin(
@@ -127,7 +132,7 @@ void main() {
   group('parsed data', () {
     testWidgets('parsing false and [x, y, r] arrays give x and y NaN, skip '
         'true and radius 3', (tester) async {
-      final chart = acquireChart(
+      final chart = _chart(
         _one(
           <String, Object?>{'parsing': false},
           <Object?>[
@@ -149,7 +154,7 @@ void main() {
       tester,
     ) async {
       expect(
-        () => acquireChart(
+        () => _chart(
           _one(
             <String, Object?>{'parsing': false},
             <Object?>[
@@ -165,7 +170,7 @@ void main() {
     testWidgets("r '7' of an array gives the radius '07' (the + of strings)", (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = _chart(
         _one(<String, Object?>{}, <Object?>[
           <Object?>[1.0, 2.0, '7'],
         ]),
@@ -214,7 +219,7 @@ void main() {
           ],
         ),
       ]) {
-        final chart = acquireChart(_labelsConfig(labels));
+        final chart = _labelsChart(labels);
         final chartLabels = jsGet(chart.data, 'labels')! as List<Object?>;
         final controller = chart.getDatasetMeta(0).controller!;
         final first = controller.getLabelAndValue(0).label;

@@ -105,6 +105,18 @@ List<List<Object?>> _upstreamBar({
   ['restore'],
 ];
 
+/// A chart of the custom harness controller and its default scales.
+Chart _chart(List<DataPoint> points) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: const ChartKind('harnessTest'),
+      datasets: [
+        LineDataset(points: points, extra: const {'type': 'harnessTest'}),
+      ],
+    ),
+  ).lower(),
+);
+
 void main() {
   // Before the snapshot of the defaults restore (Chart.js ADR 0022, section
   // 8). The restore does not reset the items of the registry.
@@ -113,20 +125,11 @@ void main() {
   group('drawCalls', () {
     testWidgets('records the point draws of the test controller and puts '
         'back each context', (tester) async {
-      final chart = acquireChart({
-        'type': 'harnessTest',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 0, 'y': 1},
-                <String, Object?>{'x': 5, 'y': 3},
-                <String, Object?>{'x': 10, 'y': 2},
-              ],
-            },
-          ],
-        },
-      });
+      final chart = _chart([
+        DataPoint(0, 1),
+        DataPoint(5, 3),
+        DataPoint(10, 2),
+      ]);
       final context = chart.ctx;
       final scales = chart.scales.values.toList();
       final scaleContexts = [for (final scale in scales) scale.ctx];
@@ -165,19 +168,7 @@ void main() {
     testWidgets('leaves a controller with another context as it is', (
       tester,
     ) async {
-      final chart = acquireChart({
-        'type': 'harnessTest',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 0, 'y': 1},
-                <String, Object?>{'x': 10, 'y': 2},
-              ],
-            },
-          ],
-        },
-      });
+      final chart = _chart([DataPoint(0, 1), DataPoint(10, 2)]);
       final controller = chart.getDatasetMeta(0).controller!;
       final other = ReferenceRecordingContext(chart.ctx!);
       controller.ctx = other;

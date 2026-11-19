@@ -107,25 +107,24 @@ final Map<String, Object? Function(Chart chart)> _observers = {
 /// `defaults`, `defaultRoutes` and `descriptors`). No `_element`.
 const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 
-/// A line chart with the subtitle options [subtitleOptions] (`false` or a
-/// Map) and the plugins other than `subtitle` and `title` off.
-// A Map config: the typed API has no form for a plugin set to `false`, and
-// a test that writes `chart.options.plugins.subtitle` by name needs the raw
-// options of the chart.
-AnyObject _mapLine(Object? subtitleOptions) => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[1, 2],
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'plugins': <String, Object?>{'subtitle': subtitleOptions},
-  },
-};
+/// A line chart whose subtitle plugin is disabled when [subtitle] is null.
+Chart _lineWithSubtitle([ChartTitle? subtitle]) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.line,
+      labels: const ['a', 'b'],
+      datasets: const [
+        LineDataset(data: [1, 2]),
+      ],
+      subtitle: subtitle,
+      extra: subtitle == null
+          ? const {
+              'plugins': {'subtitle': false},
+            }
+          : null,
+    ),
+  ).lower(),
+);
 
 /// A line chart with a subtitle of the one line [text].
 Chart _line(String text) => acquireChartRoot(
@@ -323,11 +322,8 @@ void main() {
     testWidgets('stop, then start through the options gives one subtitle '
         'box each time', (tester) async {
       // The probe outputs `afterStop` 0 and `afterRestart` [1, true, 'A2'].
-      final chart = acquireChart(
-        _mapLine(<String, Object?>{
-          'display': true,
-          'text': ['A'],
-        }),
+      final chart = _lineWithSubtitle(
+        const ChartTitle(display: true, text: ['A']),
       );
       final first = _subtitles(chart);
       expect(first, hasLength(1));
@@ -368,7 +364,7 @@ void main() {
 
     testWidgets('stop without start does not throw', (tester) async {
       // The probe output `stopWithoutStart` [3, 3]: the boxes stay.
-      final chart = acquireChart(_mapLine(false));
+      final chart = _lineWithSubtitle();
       expect(_subtitles(chart), isEmpty);
       final boxes = [...chart.boxes];
       _hook('stop', chart);
@@ -380,7 +376,7 @@ void main() {
     ) async {
       // The probe output `beforeUpdateWithoutStart`: TypeError, the write
       // of `fullSize` into undefined (core.layouts.js:332).
-      final chart = acquireChart(_mapLine(false));
+      final chart = _lineWithSubtitle();
       expect(() => _hook('beforeUpdate', chart), throwsA(isA<TypeError>()));
     });
 
@@ -402,7 +398,7 @@ void main() {
       // The probe output `startStopStartDirect` [1, 0, 1, 2, 1]: a second
       // start without stop adds a second box, and stop removes only the box
       // of the last start (map.set replaces the entry).
-      final chart = acquireChart(_mapLine(false));
+      final chart = _lineWithSubtitle();
       final counts = <int>[];
       _hook('start', chart, _startOptions('x'));
       counts.add(_subtitles(chart).length);
