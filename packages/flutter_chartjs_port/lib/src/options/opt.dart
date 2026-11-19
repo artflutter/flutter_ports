@@ -61,7 +61,7 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
 import 'package:flutter_chartjs_port/src/types/axis_border.dart'
     show ScaleBorder;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
+    show BarThickness, BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis;
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
@@ -381,6 +381,9 @@ abstract final class ShapeBits() {
   /// `dashList`: a `List<double>`, a dash pattern (row `adapt-dash-lists`).
   static const int dashList = 6016;
 
+  /// `barThickness`: a [BarThickness] (row `adapt-bar-thickness-class`).
+  static const int barThickness = 6144;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -507,6 +510,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.scaleDisplay => classifyTyped<ScaleDisplay>(raw),
   ShapeBits.textLines => classifyTypedList<String>(raw),
   ShapeBits.dashList => classifyTypedList<double>(raw),
+  ShapeBits.barThickness => classifyTyped<BarThickness>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),

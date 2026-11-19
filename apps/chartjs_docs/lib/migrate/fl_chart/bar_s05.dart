@@ -163,7 +163,7 @@ class _BarSample5State() extends State<BarSample5> {
     stack: mirror ? 'mirror' : 'rod',
     // The rod and its mirror image share the place of the day.
     grouped: false,
-    barThickness: _width,
+    barThickness: const BarThickness.pixels(_width),
     borderRadius: 6,
     backgroundColor: .resolver(_fill),
     hoverBackgroundColor: .resolver(_fill),

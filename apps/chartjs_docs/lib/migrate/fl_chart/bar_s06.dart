@@ -89,7 +89,7 @@ final ChartConfig _config = flBars(
         BarDataset(
           label: _names[activity],
           backgroundColor: .constant(.solid(_colors[activity])),
-          barThickness: 5,
+          barThickness: const BarThickness.pixels(5),
           borderRadius: 2.5,
           // The rods of a group stand on each other at one place.
           grouped: false,

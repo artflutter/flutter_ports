@@ -312,8 +312,8 @@ void main() {
 
     test('options that leave the bulk loop keep equal bars', () {
       for (final extra in <Map<String, Object?>>[
-        {'barThickness': 'flex'},
-        {'barThickness': 6.0, 'base': 1.0},
+        {'barThickness': BarThickness.flex},
+        {'barThickness': const BarThickness.pixels(6), 'base': 1.0},
         {'minBarLength': 4.0},
         {'grouped': false},
         {

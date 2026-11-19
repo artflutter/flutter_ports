@@ -140,7 +140,7 @@ class _BarSample1State() extends State<BarSample1> {
             borderColor: .indexed(borders),
             hoverBorderColor: .indexed(borders),
             borderWidth: _touched < 0 ? 0 : 1,
-            barThickness: _width,
+            barThickness: const BarThickness.pixels(_width),
             borderRadius: _width / 2,
             extra: const {'borderSkipped': false},
           ),

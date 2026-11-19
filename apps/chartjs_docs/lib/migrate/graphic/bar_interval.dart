@@ -13,7 +13,7 @@ final ChartConfig _config = ChartConfig(
   datasets: [
     BarDataset(
       backgroundColor: const .constant(.solid(Gx.primary)),
-      barThickness: barSize,
+      barThickness: const BarThickness.pixels(barSize),
       // `RectShape(borderRadius: BorderRadius.circular(2))`: all four
       // corners, so no edge is skipped.
       borderRadius: 2,

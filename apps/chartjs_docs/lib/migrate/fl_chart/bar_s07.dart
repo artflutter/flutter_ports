@@ -76,7 +76,7 @@ class _BarSample7State() extends State<BarSample7> {
     backgroundColor: .indexed([for (final c in colors) .solid(c)]),
     hoverBackgroundColor: .indexed([for (final c in colors) .solid(c)]),
     // Two bars of 6 pixels with 2 pixels between them.
-    barThickness: _width + 2,
+    barThickness: const BarThickness.pixels(_width + 2),
     maxBarThickness: _width,
     borderRadius: _width / 2,
     extra: const {'borderSkipped': false},

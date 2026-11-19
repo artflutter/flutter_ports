@@ -26,7 +26,7 @@ final fixedBars = ChartConfig(
       label: '12 pixels',
       points: unevenPoints,
       backgroundColor: const .constant(.solid(teal)),
-      barThickness: 12,
+      barThickness: const BarThickness.pixels(12),
     ),
   ],
   scales: const {'x': LinearAxis()},

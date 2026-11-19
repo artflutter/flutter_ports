@@ -450,7 +450,7 @@ void main() {
         datasets: 4,
         horizontal: true,
         extra: (k) => {
-          'barThickness': 7.0,
+          'barThickness': const BarThickness.pixels(7),
           'maxBarThickness': 5.0 + k,
           'base': 2.0,
           'borderSkipped': k.isEven ? BorderSkippedEdge.end : false,
@@ -718,7 +718,7 @@ void main() {
         'a hidden dataset and a fixed thickness',
         (int k) => <String, Object?>{
           if (k == 2) 'hidden': true,
-          'barThickness': 6.0,
+          'barThickness': const BarThickness.pixels(6),
           'maxBarThickness': 4.0 + k,
         },
         const <String, Object?>{'stacked': StackMode.on},
@@ -727,7 +727,7 @@ void main() {
       ),
       (
         'flex bars decline (no cached bulk options)',
-        (int k) => <String, Object?>{'barThickness': 'flex'},
+        (int k) => <String, Object?>{'barThickness': BarThickness.flex},
         const <String, Object?>{'stacked': StackMode.on},
         const <String, Object?>{'stacked': StackMode.on},
         0,

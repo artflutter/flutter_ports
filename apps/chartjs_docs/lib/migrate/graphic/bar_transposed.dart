@@ -54,7 +54,7 @@ final ChartConfig _config = ChartConfig(
       data: [for (final row in basicData) row.sold],
       backgroundColor: const .resolver(_fill),
       hoverBackgroundColor: const .resolver(_selectedFill),
-      barThickness: barSize,
+      barThickness: const BarThickness.pixels(barSize),
       // The bars start at the left of the axis.
       extra: {'base': _range.min},
     ),

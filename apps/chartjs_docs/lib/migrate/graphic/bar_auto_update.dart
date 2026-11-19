@@ -81,7 +81,7 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
           data: _sold,
           backgroundColor: const .constant(.solid(Gx.primary)),
           hoverBackgroundColor: const .constant(.solid(Gx.primary)),
-          barThickness: barSize,
+          barThickness: const BarThickness.pixels(barSize),
           // The bars start at 0, or at the bottom of the axis when 0 is
           // below it.
           extra: {'base': max(range.min, 0)},

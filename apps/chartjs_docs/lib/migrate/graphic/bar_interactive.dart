@@ -36,7 +36,7 @@ final ChartConfig _config = ChartConfig(
       backgroundColor: const .resolver(_color),
       // The selected bar keeps the primary color.
       hoverBackgroundColor: const .constant(.solid(Gx.primary)),
-      barThickness: barSize,
+      barThickness: const BarThickness.pixels(barSize),
       // The bars of Graphic start at 0, below the axis, and the region clips
       // them. The bars start at the bottom of the axis: the same look, and a
       // tap also selects a short bar.

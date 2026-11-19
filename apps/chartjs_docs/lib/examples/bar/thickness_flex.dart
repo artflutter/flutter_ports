@@ -26,7 +26,7 @@ final flexBars = ChartConfig(
       label: 'Widths from the spaces',
       points: unevenPoints,
       backgroundColor: const .constant(.solid(teal)),
-      extra: const {'barThickness': 'flex'},
+      barThickness: BarThickness.flex,
     ),
   ],
   scales: const {'x': LinearAxis()},

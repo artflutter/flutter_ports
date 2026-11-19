@@ -1571,7 +1571,7 @@ enum ScopeKind(
           case OptionKey.categoryPercentage:
             return 1;
           case OptionKey.barThickness:
-            return 5;
+            return 6144;
           case OptionKey.maxBarThickness:
             return 1;
           case OptionKey.minBarLength:
@@ -2099,7 +2099,7 @@ enum ScopeKind(
           case OptionKey.categoryPercentage:
             return 1;
           case OptionKey.barThickness:
-            return 5;
+            return 6144;
           case OptionKey.maxBarThickness:
             return 1;
           case OptionKey.minBarLength:

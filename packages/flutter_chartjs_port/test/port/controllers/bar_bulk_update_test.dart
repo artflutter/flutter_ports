@@ -453,7 +453,7 @@ void main() {
           final extra = <String, Object?>{
             'base': base,
             'borderSkipped': edge,
-            'barThickness': 7.0,
+            'barThickness': const BarThickness.pixels(7),
             'maxBarThickness': 5.0,
             'inflateAmount': 0.33,
           };
@@ -594,7 +594,7 @@ void main() {
   test('unsupported scalar modes retain the ordinary update', () {
     for (final extra in <Map<String, Object?>>[
       {'minBarLength': 4.0},
-      {'barThickness': 'flex'},
+      {'barThickness': BarThickness.flex},
       {'skipNull': true},
       {'base': '0'},
       {'categoryPercentage': -1.0},

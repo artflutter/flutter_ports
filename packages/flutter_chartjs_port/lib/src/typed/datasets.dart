@@ -43,6 +43,8 @@ import 'package:flutter_chartjs_port/src/typed/chart_value.dart'
 import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartKind;
 import 'package:flutter_chartjs_port/src/typed/lower.dart';
 import 'package:flutter_chartjs_port/src/typed/props.dart';
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BarThickness;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis;
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
@@ -389,9 +391,11 @@ final class const BarDataset({
   /// `categoryPercentage`. The default is 0.8.
   final double? categoryPercentage,
 
-  /// The width of each bar in pixels: `barThickness`. The default fits the
-  /// bars to the category width. The value `'flex'` goes through [extra].
-  final double? barThickness,
+  /// The width of each bar: `barThickness`, a [BarThickness]
+  /// (`BarThickness.pixels(12)` or [BarThickness.flex], row
+  /// `adapt-bar-thickness-class`). The default fits the bars to the category
+  /// width.
+  final BarThickness? barThickness,
 
   /// The maximum width of each bar in pixels: `maxBarThickness`.
   final double? maxBarThickness,
@@ -432,7 +436,7 @@ final class const BarDataset({
     double? borderRadius,
     double? barPercentage,
     double? categoryPercentage,
-    double? barThickness,
+    BarThickness? barThickness,
     double? maxBarThickness,
     double? minBarLength,
     bool? grouped,

@@ -182,7 +182,7 @@ export 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
 export 'package:flutter_chartjs_port/src/types/axis_border.dart'
     show AxisBorder, RadialAxisBorder, ScaleBorder;
 export 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
+    show BarThickness, BarThicknessFlex, BarThicknessPixels, BorderSkippedEdge;
 export 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis, XAxis, YAxis;
 export 'package:flutter_chartjs_port/src/types/chart_paint.dart'

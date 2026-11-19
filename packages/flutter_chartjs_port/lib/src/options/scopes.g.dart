@@ -48,7 +48,7 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
 import 'package:flutter_chartjs_port/src/types/axis_border.dart'
     show ScaleBorder;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
+    show BarThickness, BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis;
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
@@ -1453,13 +1453,13 @@ base class ChartOptionsScope() extends OptionScope {
   set categoryPercentage(double value) =>
       store(OptionKey.categoryPercentage, OptValue<double>(value));
 
-  Opt<Object>? _barThickness;
+  Opt<BarThickness>? _barThickness;
 
   /// The cell of `barThickness`, or Dart `null` when absent.
-  Opt<Object>? get barThicknessCell => _barThickness;
+  Opt<BarThickness>? get barThicknessCell => _barThickness;
 
   /// Stores the cell of `barThickness`. Dart `null` deletes the key.
-  set barThicknessCell(Opt<Object>? cell) {
+  set barThicknessCell(Opt<BarThickness>? cell) {
     if (cell == null) {
       delete(OptionKey.barThickness);
     } else {
@@ -1468,8 +1468,8 @@ base class ChartOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `barThickness`.
-  set barThickness(Object value) =>
-      store(OptionKey.barThickness, classify(OptionKey.barThickness, value));
+  set barThickness(BarThickness value) =>
+      store(OptionKey.barThickness, OptValue<BarThickness>(value));
 
   Opt<double>? _maxBarThickness;
 
@@ -2601,7 +2601,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.categoryPercentage:
         _categoryPercentage = fitCell(cell, classifyNumber);
       case OptionKey.barThickness:
-        _barThickness = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _barThickness = fitCell(cell, classifyTyped<BarThickness>);
       case OptionKey.maxBarThickness:
         _maxBarThickness = fitCell(cell, classifyNumber);
       case OptionKey.minBarLength:
@@ -2930,7 +2930,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.categoryPercentage:
         return classifyNumber(raw);
       case OptionKey.barThickness:
-        return classifyUnion(raw, 5);
+        return classifyTyped<BarThickness>(raw);
       case OptionKey.maxBarThickness:
         return classifyNumber(raw);
       case OptionKey.minBarLength:
@@ -7976,13 +7976,13 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
   set categoryPercentage(double value) =>
       store(OptionKey.categoryPercentage, OptValue<double>(value));
 
-  Opt<Object>? _barThickness;
+  Opt<BarThickness>? _barThickness;
 
   /// The cell of `barThickness`, or Dart `null` when absent.
-  Opt<Object>? get barThicknessCell => _barThickness;
+  Opt<BarThickness>? get barThicknessCell => _barThickness;
 
   /// Stores the cell of `barThickness`. Dart `null` deletes the key.
-  set barThicknessCell(Opt<Object>? cell) {
+  set barThicknessCell(Opt<BarThickness>? cell) {
     if (cell == null) {
       delete(OptionKey.barThickness);
     } else {
@@ -7991,8 +7991,8 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `barThickness`.
-  set barThickness(Object value) =>
-      store(OptionKey.barThickness, classify(OptionKey.barThickness, value));
+  set barThickness(BarThickness value) =>
+      store(OptionKey.barThickness, OptValue<BarThickness>(value));
 
   Opt<double>? _maxBarThickness;
 
@@ -8455,7 +8455,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.categoryPercentage:
         _categoryPercentage = fitCell(cell, classifyNumber);
       case OptionKey.barThickness:
-        _barThickness = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _barThickness = fitCell(cell, classifyTyped<BarThickness>);
       case OptionKey.maxBarThickness:
         _maxBarThickness = fitCell(cell, classifyNumber);
       case OptionKey.minBarLength:
@@ -8608,7 +8608,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.categoryPercentage:
         return classifyNumber(raw);
       case OptionKey.barThickness:
-        return classifyUnion(raw, 5);
+        return classifyTyped<BarThickness>(raw);
       case OptionKey.maxBarThickness:
         return classifyNumber(raw);
       case OptionKey.minBarLength:

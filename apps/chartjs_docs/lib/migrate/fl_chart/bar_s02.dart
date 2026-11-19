@@ -54,7 +54,7 @@ class _BarSample2State() extends State<BarSample2> {
       for (var i = 0; i < 7; i++) .solid(i == _touched ? _avgColor : color),
     ]),
     // Two bars of 7 pixels with 4 pixels between them.
-    barThickness: _width + _barsSpace,
+    barThickness: const BarThickness.pixels(_width + _barsSpace),
     maxBarThickness: _width,
     borderRadius: _width / 2,
     extra: const {'borderSkipped': false},

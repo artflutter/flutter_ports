@@ -206,7 +206,7 @@ void main() {
             _dataset(cfg)['data'] = <double>[4.0 + step, 2, 0, -1];
             if (step == 1) _dataset(cfg)['stack'] = 'one';
             if (step == 2) _dataset(cfg)['grouped'] = false;
-            if (step == 3) _dataset(cfg)['barThickness'] = 'flex';
+            if (step == 3) _dataset(cfg)['barThickness'] = BarThickness.flex;
             if (step == 4) _dataset(cfg)['minBarLength'] = 12.0;
           }
           if (step == 4) {

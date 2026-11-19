@@ -107,7 +107,7 @@ class _BarSample8State() extends State<BarSample8> {
               .solid(_forecast(day) ? Colors.transparent : Colors.white),
           ]),
           borderWidth: 2,
-          barThickness: 22,
+          barThickness: const BarThickness.pixels(22),
           extra: const {'borderSkipped': false},
         ),
       ],

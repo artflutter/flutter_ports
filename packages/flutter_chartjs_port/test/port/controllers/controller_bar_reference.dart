@@ -16673,11 +16673,11 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[1.0, 2.0, 3.0, 4.0],
-            'barThickness': 20.0,
+            'barThickness': BarThickness.pixels(20),
           },
           <String, Object?>{
             'data': <Object?>[2.0, 3.0, 1.0, 1.0],
-            'barThickness': 'flex',
+            'barThickness': BarThickness.flex,
           },
           <String, Object?>{
             'data': <Object?>[3.0, 1.0, 2.0, 5.0],
@@ -16785,7 +16785,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             },
             'maxOverflow': 0.0,
             'datasetOptions': <String, Object?>{
-              'barThickness': 20.0,
+              'barThickness': BarThickness.pixels(20),
               'categoryPercentage': 0.8,
               'barPercentage': 0.9,
               'grouped': true,
@@ -16966,7 +16966,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             },
             'maxOverflow': 0.0,
             'datasetOptions': <String, Object?>{
-              'barThickness': 'flex',
+              'barThickness': BarThickness.flex,
               'categoryPercentage': 0.8,
               'barPercentage': 0.9,
               'grouped': true,
@@ -46415,7 +46415,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[10.0, 5.0, -3.0],
-            'barThickness': 'flex',
+            'barThickness': BarThickness.flex,
             'grouped': false,
           },
         ],
@@ -46512,7 +46512,7 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
             },
             'maxOverflow': 0.0,
             'datasetOptions': <String, Object?>{
-              'barThickness': 'flex',
+              'barThickness': BarThickness.flex,
               'categoryPercentage': 0.8,
               'barPercentage': 0.9,
               'grouped': false,

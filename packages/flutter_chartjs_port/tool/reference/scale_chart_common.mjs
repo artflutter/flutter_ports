@@ -976,7 +976,7 @@ export function jsonValue(v, ids = new Map()) {
     };
   }
   // A value of the Dart writer stays (row adapt-chart-position-enum).
-  if (v instanceof DartPadding || v instanceof DartClip || v instanceof DartBorder || v instanceof DartEnum || v instanceof DartStringList || v instanceof DartDoubleList || v instanceof DartScalePosition) return v;
+  if (v instanceof DartPadding || v instanceof DartClip || v instanceof DartBorder || v instanceof DartEnum || v instanceof DartStringList || v instanceof DartDoubleList || v instanceof DartBarThickness || v instanceof DartScalePosition) return v;
   if (v && typeof v === 'object') {
     return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, jsonValue(x, ids)]));
   }
@@ -1392,6 +1392,13 @@ export class DartDoubleList {
   }
 }
 
+/** A bar `barThickness`, a `BarThickness` (row adapt-bar-thickness-class). */
+export class DartBarThickness {
+  constructor(value) {
+    this.value = value;
+  }
+}
+
 export class DartEnum {
   constructor(type, name) {
     this.type = type;
@@ -1617,6 +1624,10 @@ function keyedValue(k, value, owner) {
     (typeof value === 'string' || typeof value === 'number' || Array.isArray(value))
   ) {
     return new DartStringList((Array.isArray(value) ? value : [value]).map(String));
+  }
+  // The bar `barThickness` is a BarThickness (row adapt-bar-thickness-class).
+  if (k === 'barThickness' && (typeof value === 'number' || value === 'flex')) {
+    return new DartBarThickness(value);
   }
   // A dash pattern is a list of doubles (row adapt-dash-lists).
   if (
@@ -1904,6 +1915,13 @@ function dart(v, state, owner) {
   if (v instanceof DartScaleAxis) {
     state.scaleAxes = true;
     return constLeaves ? nativeConstant(() => `${v.name.toUpperCase()}Axis()`) : `${v.name.toUpperCase()}Axis()`;
+  }
+  if (v instanceof DartBarThickness) {
+    // The file of BorderSkippedEdge also holds BarThickness.
+    state.borderSkips = true;
+    if (v.value === 'flex') return 'BarThickness.flex';
+    const code = `BarThickness.pixels(${nativeNumber(v.value)})`;
+    return constLeaves ? nativeConstant(() => code) : code;
   }
   if (v instanceof DartDoubleList) {
     // A whole number is an int literal (prefer_int_literals).

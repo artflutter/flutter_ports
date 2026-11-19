@@ -14,6 +14,8 @@
   `List<String>` of its lines: `ChartTitle(text: ['Sales'])`. A `String` stops a debug build.
 - The options `borderDash`, `hoverBorderDash` and `tickBorderDash` hold a `List<double>`, also in a
   raw config: `'borderDash': <double>[5, 5]`.
+- The bar option `barThickness` holds a `BarThickness`: `BarThickness.pixels(12)` or
+  `BarThickness.flex`, also in a raw config. A number or a text stops a debug build.
 
 ## 0.1.0-beta.3
 

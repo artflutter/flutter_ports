@@ -76,6 +76,7 @@ const Map<String, int> shapeAtoms = {
   'scaleDisplay': 5760,
   'textLines': 5888,
   'dashList': 6016,
+  'barThickness': 6144,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -300,6 +301,12 @@ const Map<String, TypedAtom> typedAtoms = {
   // A dash pattern: `borderDash`, `hoverBorderDash` and `tickBorderDash`
   // (row adapt-dash-lists).
   'dashList': (type: 'List<double>', uri: 'dart:core', field: null),
+  // The bar `barThickness` (row adapt-bar-thickness-class).
+  'barThickness': (
+    type: 'BarThickness',
+    uri: 'package:flutter_chartjs_port/src/types/bar_option_enums.dart',
+    field: null,
+  ),
 };
 
 /// The import lines of the typed atoms whose types [types] lists, and of

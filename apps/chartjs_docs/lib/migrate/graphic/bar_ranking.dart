@@ -90,7 +90,7 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
               DataPoint(_ranks[i], _sold[i]),
           ],
           backgroundColor: const .constant(.solid(Gx.primary)),
-          barThickness: barSize,
+          barThickness: const BarThickness.pixels(barSize),
         ),
       ],
       scales: {

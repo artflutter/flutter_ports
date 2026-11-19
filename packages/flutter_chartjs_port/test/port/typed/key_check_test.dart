@@ -180,7 +180,7 @@ List<ChartConfig> _configs() {
           borderRadius: 2,
           barPercentage: 0.9,
           categoryPercentage: 0.8,
-          barThickness: 10,
+          barThickness: const BarThickness.pixels(10),
           maxBarThickness: 12,
           minBarLength: 1,
           grouped: true,

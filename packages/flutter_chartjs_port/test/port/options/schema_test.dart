@@ -200,7 +200,9 @@ bool _fits(String kind, int shape) {
           shape & ShapeBits.typed == ShapeBits.radiusLength ||
           shape & ShapeBits.typed == ShapeBits.graceLength ||
           shape & ShapeBits.typed == ShapeBits.edgeInsets ||
-          shape & ShapeBits.typed == ShapeBits.fillTarget,
+          shape & ShapeBits.typed == ShapeBits.fillTarget ||
+          // A bar thickness (row adapt-bar-thickness-class).
+          shape & ShapeBits.typed == ShapeBits.barThickness,
     // Upstream data hold a name where the port has a typed atom: a curve, an
     // enum or a class of the port (`ShapeBits.typed`).
     'String' => shape & (ShapeBits.string | ShapeBits.typed) != 0,

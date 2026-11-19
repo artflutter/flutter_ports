@@ -12,6 +12,9 @@ AxisBorder
 BackdropOptions
 BarController
 BarElement
+BarThickness
+BarThicknessFlex
+BarThicknessPixels
 BasePlatform
 BasicPlatform
 BorderSkippedEdge
@@ -283,6 +286,9 @@ BarOptions
 BarOptionsScope
 BarProperties
 BarScaleKeys
+BarThickness
+BarThicknessFlex
+BarThicknessPixels
 BarWidthProp
 BaseAnimation
 BasePlatform

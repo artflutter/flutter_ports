@@ -159,7 +159,7 @@ void main() {
     const dataset = BarDataset(
       backgroundColor: .constant(.solid(teal)),
       barPercentage: 1,
-      barThickness: 1,
+      barThickness: BarThickness.pixels(1),
       borderColor: .constant(.solid(teal)),
       borderRadius: 1,
       borderWidth: 1,

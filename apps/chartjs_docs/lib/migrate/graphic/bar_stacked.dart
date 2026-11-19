@@ -30,7 +30,7 @@ BarDataset _type(int index, String type) {
     data: _values(type),
     backgroundColor: color,
     hoverBackgroundColor: color,
-    barThickness: barSize,
+    barThickness: const BarThickness.pixels(barSize),
   );
 }
 

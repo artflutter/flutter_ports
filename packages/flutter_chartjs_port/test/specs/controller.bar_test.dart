@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/controller.bar.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-bar-thickness-class, the bar thickness values.
 // DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-stacked-option-enum, the scale stacked values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
@@ -25,7 +26,7 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
+    show BarThickness, BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_meta.dart';
@@ -1747,7 +1748,11 @@ void main() {
                 'legend': false,
                 'title': false,
                 'datasets': <String, Object?>{
-                  'bar': <String, Object?>{'barThickness': barThickness},
+                  'bar': <String, Object?>{
+                    'barThickness': jsTruthy(barThickness)
+                        ? BarThickness.pixels(jsToNumber(barThickness))
+                        : barThickness,
+                  },
                 },
                 'scales': <String, Object?>{
                   'x': <String, Object?>{'id': 'x', 'type': 'category'},

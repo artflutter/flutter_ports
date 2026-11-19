@@ -107,6 +107,8 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
     show FillTarget, SplitFill;
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
+import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
+    show BarThickness, BarThicknessFlex, BarThicknessPixels;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
@@ -299,6 +301,7 @@ bool _indexedScalar(Object? value) =>
     value is bool ||
     value is String ||
     value is Enum ||
+    value is BarThickness ||
     value is PointStyle ||
     value is CubicInterpolationMode ||
     value is RadiusLength ||
@@ -2018,9 +2021,9 @@ final class OptionView._(
   bool get hasCachedStaticBarTraits {
     if (runtimeType != OptionView) return false;
     final thickness = _cache.get(OptionKey.barThickness);
-    if (thickness is num) return true;
-    return (identical(thickness, undefined) ||
-            (thickness is String && thickness == 'flex')) &&
+    // DIVERGES(chartjs): adapt-bar-thickness-class, the class value.
+    if (thickness is BarThicknessPixels) return true;
+    return (identical(thickness, undefined) || thickness is BarThicknessFlex) &&
         _cache.get(OptionKey.categoryPercentage) is num &&
         _cache.get(OptionKey.barPercentage) is num;
   }
@@ -2058,8 +2061,11 @@ final class OptionView._(
     final double? thicknessNumber;
     if (thickness == null || identical(thickness, undefined)) {
       thicknessNumber = null;
-    } else if (thickness is num && thickness.isFinite && thickness >= 0) {
-      thicknessNumber = thickness.toDouble();
+      // DIVERGES(chartjs): adapt-bar-thickness-class, the class value.
+    } else if (thickness is BarThicknessPixels &&
+        thickness.value.isFinite &&
+        thickness.value >= 0) {
+      thicknessNumber = thickness.value;
     } else {
       return null;
     }

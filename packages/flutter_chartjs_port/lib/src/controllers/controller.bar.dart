@@ -106,7 +106,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
         ScaleOptionsByIdScope,
         ScaleOptionsScope;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
+    show BarThickness, BarThicknessFlex, BarThicknessPixels, BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
@@ -231,11 +231,12 @@ _CategoryTraits _computeFitCategoryTraits(
   OptionView options,
   double stackCount,
 ) {
-  final thickness = options.readKey(OptionKey.barThickness);
+  // DIVERGES(chartjs): adapt-bar-thickness-class, the class value.
+  final thickness = BarThickness.of(options.readKey(OptionKey.barThickness));
   double size;
   Object? ratio;
 
-  if (isNullOrUndef(thickness)) {
+  if (thickness is! BarThicknessPixels) {
     size =
         jsToNumber(ruler.min) *
         jsToNumber(options.readKey(OptionKey.categoryPercentage));
@@ -246,7 +247,7 @@ _CategoryTraits _computeFitCategoryTraits(
     // Note(SB): we could add support for relative bar thickness (e.g.
     // barThickness: '50%') and deprecate barPercentage since this value is
     // ignored when thickness is absolute.
-    size = jsToNumber(thickness) * stackCount;
+    size = thickness.value * stackCount;
     ratio = 1.0;
   }
 
@@ -1765,10 +1766,19 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       );
     }
 
-    final barThickness = opts.readKey(OptionKey.barThickness);
-    final min = jsTruthy(barThickness)
-        ? barThickness
-        : _computeMinSampleSize(meta);
+    // DIVERGES(chartjs): adapt-bar-thickness-class, the class value. A
+    // width of 0 or NaN is falsy, as the upstream number.
+    final barThickness = BarThickness.of(opts.readKey(OptionKey.barThickness));
+    final thicknessSet = switch (barThickness) {
+      BarThicknessPixels(:final value) => value != 0 && !value.isNaN,
+      BarThicknessFlex() => true,
+      null => false,
+    };
+    final min = switch (barThickness) {
+      final BarThicknessPixels pixels when thicknessSet => pixels.value,
+      final BarThicknessFlex flex => flex,
+      _ => _computeMinSampleSize(meta),
+    };
 
     final ruler = (
       min: min,
@@ -1779,7 +1789,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       scale: iScale,
       grouped: opts.readKey(OptionKey.grouped),
       // bar thickness ratio used for non-grouped bars
-      ratio: jsTruthy(barThickness)
+      ratio: thicknessSet
           ? 1.0
           : jsToNumber(opts.readKey(OptionKey.categoryPercentage)) *
                 jsToNumber(opts.readKey(OptionKey.barPercentage)),
@@ -1963,7 +1973,8 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       final stackCount = jsTruthy(skipNull)
           ? getStackCount(index)
           : ruler.stackCount;
-      final range = options.readKey(OptionKey.barThickness) == 'flex'
+      // DIVERGES(chartjs): adapt-bar-thickness-class, the class value.
+      final range = options.readKey(OptionKey.barThickness) is BarThicknessFlex
           ? _computeFlexCategoryTraits(
               index,
               ruler,

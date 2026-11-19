@@ -37,7 +37,7 @@ const List<DocProperty> barProperties = [
   DocProperty(
     'barThickness',
     section: 'barthickness',
-    type: 'double',
+    type: 'BarThickness',
     fallback: 'undefined',
   ),
   DocProperty(
@@ -805,13 +805,14 @@ DocPageContent barChartPage() => DocPageContent(
           body: [
             const DocParagraph(
               DocText(
-                'A number sets the width of each bar, in pixels. The chart '
-                'then ignores `barPercentage` and `categoryPercentage`.',
+                '`BarThickness.pixels(12)` sets the width of each bar, in '
+                'pixels. The chart then ignores `barPercentage` and '
+                '`categoryPercentage`.',
               ),
             ),
             const DocParagraph(
               DocText(
-                "The value `'flex'` goes through `extra`. The chart then "
+                'With `BarThickness.flex`, the chart '
                 'calculates the width of each sample from the samples before '
                 'and after it, so that the bars fill the space with no '
                 'overlap. Then `barPercentage` and `categoryPercentage` set '

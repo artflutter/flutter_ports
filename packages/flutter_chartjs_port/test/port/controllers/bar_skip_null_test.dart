@@ -311,7 +311,10 @@ Map<String, Object?> _random(math.Random r) {
       if (r.nextInt(10) == 0) 'hidden': true,
       if (r.nextInt(10) == 0) 'grouped': false,
       if (r.nextInt(3) == 0) 'stack': r.nextBool() ? 'a' : 'b',
-      if (r.nextInt(8) == 0) 'barThickness': r.nextBool() ? 'flex' : 7.0,
+      if (r.nextInt(8) == 0)
+        'barThickness': r.nextBool()
+            ? BarThickness.flex
+            : const BarThickness.pixels(7),
       if (r.nextInt(12) == 0) 'type': 'line',
     });
   }
@@ -400,7 +403,7 @@ void main() {
       (data) => _config(
         labels: _labels(16),
         data: [for (var d = 0; d < 3; d++) data(d, 0)],
-        dataset: {'barThickness': 'flex', 'maxBarThickness': 9.0},
+        dataset: {'barThickness': BarThickness.flex, 'maxBarThickness': 9.0},
       ),
     );
     _modeTwin(

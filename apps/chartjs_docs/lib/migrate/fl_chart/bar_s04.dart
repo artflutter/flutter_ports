@@ -84,7 +84,7 @@ ChartConfig _config(double width) {
               stack: 'rod $rod',
               backgroundColor: .constant(.solid(_colors[item])),
               hoverBackgroundColor: .constant(.solid(_colors[item])),
-              barThickness: barsWidth + barsSpace,
+              barThickness: BarThickness.pixels(barsWidth + barsSpace),
               maxBarThickness: barsWidth,
             ),
       ],
