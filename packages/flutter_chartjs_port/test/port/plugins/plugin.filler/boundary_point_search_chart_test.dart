@@ -5,13 +5,23 @@ library;
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        CategoryAxis,
+        ChartAnimation,
+        ChartConfig,
+        ChartKind,
+        ChartValue,
+        LineDataset,
+        LinearAxis,
+        ScaleDisplay;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
@@ -47,33 +57,34 @@ void main() {
   testWidgets('a user dataset target keeps its interpolation callbacks', (
     tester,
   ) async {
-    final chart = acquireChart({
-      'type': 'line',
-      'data': {
-        'labels': [for (var i = 0; i < 64; i++) '$i'],
-        'datasets': [
-          {
-            'data': [for (var i = 0; i < 64; i++) 0],
-            'fill': FillTarget.none,
-            'pointRadius': 0,
-          },
-          {
-            'data': [
-              for (var i = 0; i < 64; i++)
-                if (i % 12 == 5) null else i % 7 - 3,
-            ],
-            'fill': const FillTarget.toDataset(0),
-            'pointRadius': 0,
-            'backgroundColor': const ChartPaint.solid(Color(0x88334455)),
-          },
-        ],
-      },
-      'options': {
-        'animation': false,
-        'responsive': false,
+    final config = ChartConfig(
+      type: ChartKind.line,
+      labels: [for (var i = 0; i < 64; i++) '$i'],
+      datasets: [
+        LineDataset(
+          data: [for (var i = 0; i < 64; i++) 0],
+          fill: FillTarget.none,
+          pointRadius: 0,
+        ),
+        LineDataset(
+          data: [
+            for (var i = 0; i < 64; i++)
+              if (i % 12 == 5) null else i % 7 - 3,
+          ],
+          fill: const FillTarget.toDataset(0),
+          pointRadius: 0,
+          backgroundColor: const ChartValue.constant(
+            ChartPaint.solid(Color(0x88334455)),
+          ),
+        ),
+      ],
+      animation: ChartAnimation.none,
+      responsive: false,
+      extra: const {
         'plugins': {'legend': false, 'tooltip': false},
       },
-    });
+    );
+    final chart = acquireChartRoot(ChartConfigLowering(config).lower());
     final meta = chart.getDatasetMeta(0);
     final target = _ObservedLine(meta.dataset! as LineElement);
     meta.dataset = target;
@@ -99,39 +110,46 @@ void main() {
         testWidgets(
           '$axis $fill reverse=$reverse preserves every draw command',
           (tester) async {
-            final chart = acquireChart({
-              'type': 'line',
-              'data': {
-                'labels': [for (var i = 0; i < 64; i++) '$i'],
-                'datasets': [
-                  for (var k = 0; k < 3; k++)
-                    {
-                      'data': [
-                        for (var i = 0; i < 64; i++)
-                          if (i % 12 == 5) null else (i + k) % 7 - 3,
-                      ],
-                      'fill': fill.split(
-                        above: const ChartPaint.solid(Color(0x88334455)),
-                        below: const ChartPaint.solid(Color(0x88778899)),
-                      ),
-                      'pointRadius': 0,
-                      if (k == 1) 'tension': 0.4,
-                      if (k == 2) 'stepped': SteppedLine.middle,
-                      'borderColor': const ChartPaint.solid(Color(0xff123456)),
-                    },
+            final data = <List<num?>>[
+              for (var k = 0; k < 3; k++)
+                [
+                  for (var i = 0; i < 64; i++)
+                    if (i % 12 == 5) null else (i + k) % 7 - 3,
                 ],
+            ];
+            final config = ChartConfig(
+              type: ChartKind.line,
+              labels: [for (var i = 0; i < 64; i++) '$i'],
+              datasets: [
+                for (var k = 0; k < 3; k++)
+                  LineDataset(
+                    data: data[k],
+                    fill: fill.split(
+                      above: const ChartPaint.solid(Color(0x88334455)),
+                      below: const ChartPaint.solid(Color(0x88778899)),
+                    ),
+                    pointRadius: 0,
+                    tension: k == 1 ? 0.4 : null,
+                    stepped: k == 2 ? SteppedLine.middle : null,
+                    borderColor: const ChartValue.constant(
+                      ChartPaint.solid(Color(0xff123456)),
+                    ),
+                  ),
+              ],
+              indexAxis: indexAxis,
+              animation: ChartAnimation.none,
+              responsive: false,
+              scales: {
+                axis: CategoryAxis(display: ScaleDisplay.off, reverse: reverse),
+                axis == 'x' ? 'y' : 'x': const LinearAxis(
+                  display: ScaleDisplay.off,
+                ),
               },
-              'options': {
-                'indexAxis': indexAxis,
-                'animation': false,
-                'responsive': false,
+              extra: const {
                 'plugins': {'legend': false, 'tooltip': false},
-                'scales': {
-                  axis: {'display': ScaleDisplay.off, 'reverse': reverse},
-                  axis == 'x' ? 'y' : 'x': {'display': ScaleDisplay.off},
-                },
               },
-            });
+            );
+            final chart = acquireChartRoot(ChartConfigLowering(config).lower());
             final source = fillerSourceOf(chart.getDatasetMeta(0))!;
             final target = getTarget(source)! as types.LineElement;
             final search = BoundaryPointSearch.create(target, axis);
@@ -157,10 +175,7 @@ void main() {
             expect(drawCalls(chart), original);
             boundarySegmentSearchEnabled = true;
             // The next update builds a fresh boundary with the new scale range.
-            final data = chart.data as Map<String, Object?>;
-            final datasets = data['datasets']! as List<Object?>;
-            final dataset = datasets.first! as Map<String, Object?>;
-            (dataset['data']! as List<Object?>)[0] = 20;
+            data.first[0] = 20;
             chart.update(UpdateMode.none);
             boundaryPointSearchEnabled = false;
             final changed = drawCalls(chart);

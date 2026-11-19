@@ -3,7 +3,11 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show BarDataset, ChartConfig, ChartKind, PolarAreaDataset;
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 // The coercions of js_number.dart where a chart reads their results. The
@@ -32,31 +36,26 @@ void main() {
           }.contains(date.timeZoneName),
     );
 
-    Map<String, Object?> config() => {
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': <Object?>[...labels],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1, 2, 3],
-          },
-        ],
+    ChartConfig config() => ChartConfig(
+      type: ChartKind.bar,
+      labels: [...labels],
+      datasets: const [
+        BarDataset(data: [1, 2, 3]),
+      ],
+      extra: const {
+        'plugins': {'legend': false, 'title': false, 'tooltip': false},
       },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'legend': false,
-          'title': false,
-          'tooltip': false,
-        },
-      },
-    };
+    );
 
     testWidgets('Date labels give the upstream layout at 800 x 300', (
       tester,
     ) async {
-      final chart = acquireChart(config(), <String, Object?>{
-        'canvas': <String, Object?>{'width': 800, 'height': 300},
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(config()).lower(),
+        <String, Object?>{
+          'canvas': <String, Object?>{'width': 800, 'height': 300},
+        },
+      );
       final area = chart.chartArea!;
       final x = chart.scales['x']!;
       expect(area.left, closeTo(282.60132464539663, 1e-9));
@@ -68,9 +67,12 @@ void main() {
     testWidgets('Date labels give the upstream layout at 1600 x 300', (
       tester,
     ) async {
-      final chart = acquireChart(config(), <String, Object?>{
-        'canvas': <String, Object?>{'width': 1600, 'height': 300},
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(config()).lower(),
+        <String, Object?>{
+          'canvas': <String, Object?>{'width': 1600, 'height': 300},
+        },
+      );
       final area = chart.chartArea!;
       final x = chart.scales['x']!;
       expect(area.left, closeTo(30.681640625, 1e-9));
@@ -92,18 +94,20 @@ void main() {
       // with `this` undefined and throws `TypeError: Cannot convert
       // undefined or null to object`. In the port, `valueOf` resolves as an
       // absent key, and jsToNumber gives NaN: the arc has the endAngle NaN.
-      final chart = acquireChart({
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 2],
-              'angle': <Object?>[90, <String, Object?>{}],
+      const config = ChartConfig(
+        type: ChartKind.polarArea,
+        labels: ['a', 'b'],
+        datasets: [
+          PolarAreaDataset(
+            data: [1, 2],
+            // Keep the invalid angle object to exercise numeric coercion.
+            extra: {
+              'angle': [90, <String, Object?>{}],
             },
-          ],
-        },
-      });
+          ),
+        ],
+      );
+      final chart = acquireChartRoot(ChartConfigLowering(config).lower());
       final arcs = chart.getDatasetMeta(0).data.cast<Element>();
       expect(arcs[0]['startAngle'], closeTo(-1.5707963267948966, 1e-12));
       expect(arcs[0]['endAngle'], 0);

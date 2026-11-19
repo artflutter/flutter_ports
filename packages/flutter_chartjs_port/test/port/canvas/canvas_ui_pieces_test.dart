@@ -8,13 +8,27 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, debugDefaultTargetPlatformOverride;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        AxisGrid,
+        AxisTicks,
+        CategoryAxis,
+        Chart,
+        ChartConfig,
+        ChartKind,
+        ChartLegend,
+        ChartValue,
+        DataPoint,
+        LineDataset,
+        LinearAxis;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
     show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -1070,30 +1084,34 @@ void main() {
     });
 
     testWidgets('a line chart with a fill', (tester) async {
-      Chart chartOf(int count) => acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>[for (var i = 0; i < count; i++) '$i'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                for (var i = 0; i < count; i++) 50 + 40 * math.sin(i * .2),
-              ],
-              'borderColor': const ChartPaint.solid(_blue),
-              'backgroundColor': const ChartPaint.solid(_soft),
-              'fill': FillTarget.toOrigin,
-              'pointRadius': 0.0,
+      Chart chartOf(int count) => acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            type: ChartKind.line,
+            labels: [for (var i = 0; i < count; i++) '$i'],
+            datasets: [
+              LineDataset(
+                data: [
+                  for (var i = 0; i < count; i++) 50 + 40 * math.sin(i * .2),
+                ],
+                borderColor: const ChartValue.constant(ChartPaint.solid(_blue)),
+                backgroundColor: const ChartValue.constant(
+                  ChartPaint.solid(_soft),
+                ),
+                fill: FillTarget.toOrigin,
+                pointRadius: 0,
+              ),
+            ],
+            scales: const {
+              'x': CategoryAxis(display: ScaleDisplay.off),
+              'y': LinearAxis(display: ScaleDisplay.off, min: 0),
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'display': ScaleDisplay.off},
-            'y': <String, Object?>{'display': ScaleDisplay.off, 'min': 0.0},
-          },
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-        },
-      });
+            extra: const {
+              'plugins': {'legend': false, 'title': false},
+            },
+          ),
+        ).lower(),
+      );
       int pieceDraws(Chart chart) =>
           (chart.ctx! as UiCanvasContext).debugPieceDraws;
 
@@ -1144,63 +1162,65 @@ void main() {
       // area ends on a whole pixel.
       const count = 2000;
       Chart chartOf({
-        Object fill = FillTarget.toOrigin,
+        FillTarget fill = FillTarget.toOrigin,
         bool ticks = true,
         bool legend = false,
         bool gap = false,
         int datasets = 1,
         int zeros = 0,
-      }) => acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            for (var d = 0; d < datasets; d++)
-              <String, Object?>{
-                'label': 'Series $d',
-                'data': <Object?>[
-                  for (var i = 0; i < count; i++)
-                    <String, Object?>{
-                      'x': i * 100 / (count - 1),
-                      'y': gap && i == count ~/ 2
-                          ? null
-                          : i >= count - zeros
-                          ? 0.0
-                          : 50 + 38 * math.sin(i * .02 + d),
-                    },
-                ],
-                'borderColor': const ChartPaint.solid(_blue),
-                'backgroundColor': const ChartPaint.solid(_soft),
-                'fill': fill,
-                'pointRadius': 0.0,
-              },
-          ],
-        },
-        'options': <String, Object?>{
-          'parsing': false,
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'min': 0.0,
-              'max': 100.0,
-              'display': ticks ? ScaleDisplay.on : ScaleDisplay.off,
-              'grid': <String, Object?>{'display': false},
-              'ticks': <String, Object?>{'maxRotation': 0.0},
+      }) => acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              for (var d = 0; d < datasets; d++)
+                LineDataset(
+                  label: 'Series $d',
+                  points: [
+                    for (var i = 0; i < count; i++)
+                      DataPoint(
+                        i * 100 / (count - 1),
+                        gap && i == count ~/ 2
+                            ? null
+                            : i >= count - zeros
+                            ? 0.0
+                            : 50 + 38 * math.sin(i * .02 + d),
+                      ),
+                  ],
+                  borderColor: const ChartValue.constant(
+                    ChartPaint.solid(_blue),
+                  ),
+                  backgroundColor: const ChartValue.constant(
+                    ChartPaint.solid(_soft),
+                  ),
+                  fill: fill,
+                  pointRadius: 0,
+                ),
+            ],
+            scales: {
+              'x': LinearAxis(
+                min: 0,
+                max: 100,
+                display: ticks ? ScaleDisplay.on : ScaleDisplay.off,
+                grid: const AxisGrid(display: false),
+                ticks: const AxisTicks(maxRotation: 0),
+              ),
+              'y': const LinearAxis(
+                min: 0,
+                max: 100,
+                display: ScaleDisplay.off,
+              ),
             },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'min': 0.0,
-              'max': 100.0,
-              'display': ScaleDisplay.off,
+            legend: legend
+                ? const ChartLegend(position: ChartPosition.right)
+                : null,
+            extra: {
+              'parsing': false,
+              'plugins': {if (!legend) 'legend': false, 'title': false},
             },
-          },
-          'plugins': <String, Object?>{
-            'legend': legend
-                ? <String, Object?>{'position': ChartPosition.right}
-                : false,
-            'title': false,
-          },
-        },
-      });
+          ),
+        ).lower(),
+      );
       int pieceDraws(Chart chart) =>
           (chart.ctx! as UiCanvasContext).debugPieceDraws;
 

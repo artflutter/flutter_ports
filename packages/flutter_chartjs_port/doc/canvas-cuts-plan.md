@@ -2840,3 +2840,13 @@ same, and the diagnostics assertion names the typed bar config. The same batch m
 `platform/chart_host_input_test.dart` under `test/port/`. No production code or canvas operation
 changes. The references, inventory, tests of §2.6 and §3.5, and estimates remain unchanged.
 No trigger occurred.
+
+## Typed canvas and filler test configs, 2026-11-19
+
+`test/port/canvas/canvas_ui_shadow_test.dart` and `canvas_ui_pieces_test.dart` now construct
+charts from typed `ChartConfig` objects. The line charts use typed datasets, paints and axes;
+the path-piece chart uses `DataPoint` inputs. The shadow plugin and the pixel comparisons
+keep their behavior. The same batch migrates the stack and boundary filler search chart tests
+and `test/port/js/js_number_chart_test.dart`. The references use named tests rather than the
+former line counts. No production canvas code or deferred cut changes. The inventory, tests
+of §2.6 and §3.5, and estimates remain unchanged. No trigger occurred.

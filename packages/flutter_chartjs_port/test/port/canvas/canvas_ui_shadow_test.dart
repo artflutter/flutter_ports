@@ -7,6 +7,8 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';
@@ -333,43 +335,42 @@ void main() {
 
   testWidgets('a plugin casts the shadow of a line', (tester) async {
     Future<double> ink({required bool shadow}) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b', 'c'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1.0, 3.0, 2.0],
-              'borderColor': const ChartPaint.solid(_black),
-              'pointRadius': 0.0,
-            },
-          ],
+      final config = ChartConfig(
+        type: ChartKind.line,
+        labels: const ['a', 'b', 'c'],
+        datasets: const [
+          LineDataset(
+            data: [1.0, 3.0, 2.0],
+            borderColor: ChartValue.constant(ChartPaint.solid(_black)),
+            pointRadius: 0,
+          ),
+        ],
+        scales: const {
+          'x': CategoryAxis(display: ScaleDisplay.off),
+          'y': LinearAxis(display: ScaleDisplay.off),
         },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'display': ScaleDisplay.off},
-            'y': <String, Object?>{'display': ScaleDisplay.off},
-          },
-          'plugins': <String, Object?>{'legend': false, 'title': false},
+        extra: const {
+          'plugins': {'legend': false, 'title': false},
         },
-        'plugins': <Plugin<Object?>>[
+        plugins: [
           if (shadow)
-            Plugin<Object?>(
+            ChartPlugin<Object?>(
               id: 'lineShadow',
-              beforeDatasetDraw: (c, args, options) {
-                (c as Chart).ctx!
+              beforeDatasetDraw: (chart, args, options) {
+                chart.ctx!
                   ..save()
                   ..shadowColor = _red
                   ..shadowBlur = 8
                   ..shadowOffsetY = 20;
                 return true;
               },
-              afterDatasetDraw: (c, args, options) {
-                (c as Chart).ctx!.restore();
+              afterDatasetDraw: (chart, args, options) {
+                chart.ctx!.restore();
               },
             ),
         ],
-      });
+      );
+      final chart = acquireChartRoot(ChartConfigLowering(config).lower());
       final source = (chart.canvas! as UiCanvasElement).toImageSource();
       final data = await tester.runAsync(source.image.toByteData);
       source.image.dispose();
