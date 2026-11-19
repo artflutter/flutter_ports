@@ -4,6 +4,14 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/gestures.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        ChartConfig,
+        ChartKind,
+        ChartLegend,
+        ChartPlugin,
+        LegendEventHandler,
+        LineDataset;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart';
 import 'package:flutter_chartjs_port/src/index.dart' show defaults;
@@ -11,13 +19,13 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show EventHookArgs;
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/drop_extra_args.dart';
 import '../scales/scale_chart_harness.dart';
 import 'chart_host_input_reference.dart';
 
@@ -99,41 +107,61 @@ final class _Logs() {
   }
 }
 
-/// The named functions of the configs of the generator, with the same
-/// bodies, for the logs [logs].
-Map<String, Object?> _functions(_Logs logs) => {
-  // (chart, args) => { const e = args.event; events.push([e.type,
-  //   e.native.type, e.x, e.y, args.replay === true]); }
-  // The hook of the native plugin of the Map (Chart.js ADR 0144) gets the
-  // typed arguments.
-  'logEvent': (Object? chart, Object? args) {
-    final a = args! as EventHookArgs;
-    final e = a.event;
-    logs.events.add([e.type, e.native!.type, e.x, e.y, a.replay]);
-  },
-  // (e, item) => { legend.push(`hover:${e.type}:${item.text}`); }
-  'legendHover': (Object? e, Object? item, Object? _) {
-    logs.legend.add(_entry('hover', e, item));
-  },
-  // (e, item) => { legend.push(`leave:${e.type}:${item.text}`); }
-  'legendLeave': (Object? e, Object? item, Object? _) {
-    logs.legend.add(_entry('leave', e, item));
-  },
-  // function (e, item, legendBox) {
-  //   legend.push(`click:${e.type}:${item.text}`);
-  //   C.Chart.defaults.plugins.legend.onClick.call(this, e, item,
-  //     legendBox); }
-  'legendClick': (Object? e, Object? item, Object? legendBox) {
-    logs.legend.add(_entry('click', e, item));
-    final legend = jsGet(jsGet(defaults, 'plugins'), 'legend');
-    callDroppingExtraArgs(jsGet(legend, 'onClick'), [e, item, legendBox]);
-  },
-};
+/// The typed chart of a reference case, with the callback bodies of the
+/// generator recording into [logs]. The data and event filter come from
+/// the generated config.
+ChartConfig _config(Map<String, Object?> reference, _Logs logs) {
+  final data = reference['data']! as Map<String, Object?>;
+  final options = reference['options']! as Map<String, Object?>;
+  return ChartConfig(
+    type: ChartKind(reference['type']! as String),
+    labels: (data['labels']! as List<Object?>).cast<Object>(),
+    datasets: [
+      for (final dataset
+          in (data['datasets']! as List<Object?>).cast<Map<String, Object?>>())
+        LineDataset(
+          label: dataset['label']! as String,
+          data: (dataset['data']! as List<Object?>).cast<num?>(),
+        ),
+    ],
+    legend: ChartLegend(
+      onHover: (event, item, legend) =>
+          logs.legend.add(_entry('hover', event, item)),
+      onLeave: (event, item, legend) =>
+          logs.legend.add(_entry('leave', event, item)),
+      onClick: (event, item, legendBox) {
+        logs.legend.add(_entry('click', event, item));
+        final legend = jsGet(jsGet(defaults, 'plugins'), 'legend');
+        (jsGet(legend, 'onClick')! as LegendEventHandler)(
+          event,
+          item,
+          legendBox,
+        );
+      },
+    ),
+    plugins: [
+      ChartPlugin<Object?>(
+        id: 'log',
+        beforeEvent: (chart, args, options) {
+          final event = args.event;
+          logs.events.add([
+            event.type,
+            event.native!.type,
+            event.x,
+            event.y,
+            args.replay,
+          ]);
+          return true;
+        },
+      ),
+    ],
+    extra: {'events': ?options['events']},
+  );
+}
 
 /// `<name>:<e.type>:<item.text>`.
-String _entry(String name, Object? e, Object? item) =>
-    '$name:${(e! as types.ChartEvent).type}:'
-    '${jsToString((item! as LegendItem).text)}';
+String _entry(String name, types.ChartEvent e, LegendItem item) =>
+    '$name:${e.type}:${jsToString(item.text)}';
 
 /// `[datasetIndex, index]` of each active element of [elements].
 List<Object?> _activeItems(List<types.ActiveElement> elements) => [
@@ -144,7 +172,7 @@ List<Object?> _activeItems(List<types.ActiveElement> elements) => [
 Map<String, Object?> _observe(Chart chart, _Logs logs) {
   final tooltip = chart.tooltip!;
   final lastEvent = chart.lastEvent;
-  final datasets = (chart.data as AnyObject)['datasets']! as List<Object?>;
+  final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
   return {
     'dom': [
       for (final native in logs.dom)
@@ -237,8 +265,8 @@ void main() {
   for (final c in chartHostInputReference) {
     testWidgets(c.name, (tester) async {
       final logs = _Logs();
-      final chart = acquireChart(
-        copyReference(c.config, _functions(logs))! as AnyObject,
+      final chart = acquireChartRoot(
+        ChartConfigLowering(_config(c.config, logs)).lower(),
         copyReference(c.options)! as AnyObject,
       );
       final canvas = chart.canvas!;

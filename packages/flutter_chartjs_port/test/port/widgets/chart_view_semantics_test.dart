@@ -5,9 +5,8 @@ library;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show BarDataset, ChartAnimation, ChartConfig, ChartKind, ChartView;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0051, section 8: the chart is one semantics node, as the
@@ -20,19 +19,15 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// A bar chart config with 3 values. [animated] keeps the default
 /// animation.
-Map<String, Object?> _config({bool animated = false}) => <String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'd0',
-        'data': <Object?>[1, 3, 2],
-      },
-    ],
-  },
-  'options': <String, Object?>{'animation': ?animated ? null : false},
-};
+ChartConfig _config({
+  bool animated = false,
+  List<num?> data = const [1, 3, 2],
+}) => ChartConfig(
+  type: ChartKind.bar,
+  labels: const ['a', 'b', 'c'],
+  datasets: [BarDataset(label: 'd0', data: data)],
+  animation: animated ? null : ChartAnimation.none,
+);
 
 /// [child] at the top left of the test view, in a box of 400 x 300.
 Widget _top(Widget child) => Directionality(
@@ -63,7 +58,7 @@ void main() {
       'the action focus', (tester) async {
     final handle = tester.ensureSemantics();
     await tester.pumpWidget(
-      _top(ChartView.raw(config: _config(), semanticLabel: 'Sales by month')),
+      _top(ChartView(config: _config(), semanticLabel: 'Sales by month')),
     );
     expect(
       tester.getSemantics(find.byType(ChartView)),
@@ -91,7 +86,7 @@ void main() {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Text('sibling'),
-              Expanded(child: ChartView.raw(config: _config())),
+              Expanded(child: ChartView(config: _config())),
             ],
           ),
         ),
@@ -126,7 +121,7 @@ void main() {
     final handle = tester.ensureSemantics();
     await tester.pumpWidget(
       _top(
-        ChartView.raw(
+        ChartView(
           config: _config(),
           semanticLabel: 'Sales by month',
           excludeFromSemantics: true,
@@ -145,12 +140,11 @@ void main() {
   testWidgets('a data update and the frames of its animation give no '
       'semantics update', (tester) async {
     final handle = tester.ensureSemantics();
-    late Chart chart;
+    var data = <num?>[1, 3, 2];
     Widget build(String label) => _top(
-      ChartView.raw(
-        config: _config(animated: true),
+      ChartView(
+        config: _config(animated: true, data: data),
         semanticLabel: label,
-        onChartCreated: (created) => chart = created,
       ),
     );
     await tester.pumpWidget(build('Sales'));
@@ -164,11 +158,8 @@ void main() {
     owner.addListener(count);
     addTearDown(() => owner.removeListener(count));
 
-    final data =
-        jsGet(jsGet(jsGet(chart.data, 'datasets'), 0.0), 'data')!
-            as List<Object?>;
-    data[1] = 9;
-    chart.update();
+    data = [1, 9, 2];
+    await tester.pumpWidget(build('Sales'));
     for (var i = 0; i < 20; i++) {
       await tester.pump(const Duration(milliseconds: 16));
     }
@@ -189,13 +180,18 @@ void main() {
     ];
     expect(
       properties(
-        const ChartView.raw(
-          config: {},
+        const ChartView(
+          config: ChartConfig(type: ChartKind.bar, datasets: []),
           semanticLabel: 'Sales',
           excludeFromSemantics: true,
         ),
       ),
-      ['type: null', 'semanticLabel: "Sales"', 'excluded from semantics'],
+      [
+        'type: bar',
+        'datasets: 0',
+        'semanticLabel: "Sales"',
+        'excluded from semantics',
+      ],
     );
   });
 }

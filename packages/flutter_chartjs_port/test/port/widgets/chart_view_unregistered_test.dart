@@ -4,9 +4,9 @@ library;
 
 import 'package:chartjs_test_utils/pure.dart' show removeBuiltins;
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show Chart, ChartConfig, ChartKind, ChartView, LineDataset;
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0048, section 3: no library code and no widget code
@@ -24,24 +24,19 @@ void main() {
     final previous = FlutterError.onError;
     FlutterError.onError = details.add;
     addTearDown(() => FlutterError.onError = previous);
-    // The chart writes into the config: it is not const.
-    final config = <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1, 2],
-          },
-        ],
-      },
-    };
+    const config = ChartConfig(
+      type: ChartKind.line,
+      labels: ['a', 'b'],
+      datasets: [
+        LineDataset(data: [1, 2]),
+      ],
+    );
     await tester.pumpWidget(
-      Directionality(
+      const Directionality(
         textDirection: TextDirection.ltr,
         child: Align(
           alignment: Alignment.topLeft,
-          child: SizedBox(width: 400, child: ChartView.raw(config: config)),
+          child: SizedBox(width: 400, child: ChartView(config: config)),
         ),
       ),
     );

@@ -3,6 +3,8 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show BarDataset, ChartConfig, ChartKind, PolarAreaDataset;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -11,6 +13,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
     show Legend;
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -38,16 +42,22 @@ import 'package:flutter_test/flutter_test.dart';
 
 /// A chart of the controller [type] with the labels [labels] and one
 /// dataset of [data].
-Chart _chart(String type, List<Object?> labels, List<Object?> data) =>
-    acquireChart(<String, Object?>{
-      'type': type,
-      'data': <String, Object?>{
-        'labels': labels,
-        'datasets': <Object?>[
-          <String, Object?>{'data': data},
-        ],
-      },
-    });
+Chart _chart(ChartKind type, List<String> labels, List<num?> data) =>
+    acquireChartRoot(
+      ChartConfigLowering(
+        ChartConfig(
+          type: type,
+          labels: labels,
+          datasets: [
+            switch (type) {
+              ChartKind.bar => BarDataset(data: data),
+              ChartKind.polarArea => PolarAreaDataset(data: data),
+              _ => throw ArgumentError.value(type, 'type'),
+            },
+          ],
+        ),
+      ).lower(),
+    );
 
 /// Whether the option objects [a] and [b] have the same keys in the same
 /// order and the same values (`jsObjectKeys` and `jsGet`, so that no
@@ -74,7 +84,9 @@ Type _type<T>() => T;
 void main() {
   group('types.Chart', () {
     testWidgets('the visibility members, legend and update', (tester) async {
-      final chart = _chart('bar', ['a', 'b', 'c'], [1.0, 2.0, 3.0]);
+      final labels = ['a', 'b', 'c'];
+      final data = <num?>[1.0, 2.0, 3.0];
+      final chart = _chart(ChartKind.bar, labels, data);
       final types.Chart t = chart;
       expect(t.isDatasetVisible(0), isTrue);
       expect(t.isDatasetVisible(0), chart.isDatasetVisible(0));
@@ -110,10 +122,8 @@ void main() {
       // update() through the interface builds the element of a new item.
       final meta = chart.getDatasetMeta(0);
       expect(meta.data, hasLength(3));
-      (jsGet(jsGet(jsGet(chart.data, 'datasets'), 0.0), 'data')!
-              as List<Object?>)
-          .add(4.0);
-      (jsGet(chart.data, 'labels')! as List<Object?>).add('d');
+      data.add(4.0);
+      labels.add('d');
       t.update();
       expect(meta.data, hasLength(4));
     });
@@ -121,7 +131,7 @@ void main() {
 
   group('types.ChartMeta', () {
     testWidgets('datasetConfig', (tester) async {
-      final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
+      final chart = _chart(ChartKind.bar, ['a', 'b'], [1.0, 2.0]);
       final meta = chart.getDatasetMeta(0);
       final types.ChartMeta t = meta;
       final dataset = jsGet(jsGet(chart.data, 'datasets'), 0.0);
@@ -135,7 +145,7 @@ void main() {
     testWidgets('options, getParsed, getStyle and resolveDataElementOptions', (
       tester,
     ) async {
-      final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
+      final chart = _chart(ChartKind.bar, ['a', 'b'], [1.0, 2.0]);
       final controller = chart.getDatasetMeta(0).controller!;
       final types.DatasetController t = controller;
       expect(identical(t.options, controller.options), isTrue);
@@ -166,7 +176,7 @@ void main() {
 
   group('types.Element', () {
     testWidgets('active and hidden', (tester) async {
-      final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
+      final chart = _chart(ChartKind.bar, ['a', 'b'], [1.0, 2.0]);
       final element = chart.getDatasetMeta(0).data[0] as Element;
       final types.Element t = element;
       expect(t.active, isFalse);
@@ -182,7 +192,7 @@ void main() {
 
   group('types.Scale', () {
     testWidgets('the 9 members of Chart.js ADR 0028', (tester) async {
-      final chart = _chart('bar', ['a', 'b', 'c'], [1.0, 5.0, 3.0]);
+      final chart = _chart(ChartKind.bar, ['a', 'b', 'c'], [1.0, 5.0, 3.0]);
       for (final id in ['x', 'y']) {
         final scale = chart.scales[id]!;
         final types.Scale t = scale;
@@ -218,7 +228,11 @@ void main() {
 
   group('types.RadialLinearScale', () {
     testWidgets('the 5 members and the type test', (tester) async {
-      final chart = _chart('polarArea', ['a', 'b', 'c'], [1.0, 5.0, 3.0]);
+      final chart = _chart(
+        ChartKind.polarArea,
+        ['a', 'b', 'c'],
+        [1.0, 5.0, 3.0],
+      );
       expect(chart.scales['r'] is types.RadialLinearScale, isTrue);
       expect(chart.scales['x'], isNull);
       final scale = chart.scales['r']! as RadialLinearScale;
@@ -254,7 +268,7 @@ void main() {
     testWidgets('a cartesian scale is not a types.RadialLinearScale', (
       tester,
     ) async {
-      final chart = _chart('bar', ['a'], [1.0]);
+      final chart = _chart(ChartKind.bar, ['a'], [1.0]);
       expect(chart.scales['x'] is types.RadialLinearScale, isFalse);
       expect(chart.scales['y'] is types.RadialLinearScale, isFalse);
     });
@@ -262,7 +276,7 @@ void main() {
 
   group('DatasetController.updateElement', () {
     testWidgets('takes a types.Element', (tester) async {
-      final chart = _chart('bar', ['a'], [1.0]);
+      final chart = _chart(ChartKind.bar, ['a'], [1.0]);
       final controller = chart.getDatasetMeta(0).controller!;
       final element = chart.getDatasetMeta(0).data[0];
       controller.updateElement(element, 0, {'x': 7.0, 'y': 8.0}, 'none');
@@ -275,7 +289,7 @@ void main() {
     testWidgets('gives the lines of the label and a String value', (
       tester,
     ) async {
-      final chart = _chart('bar', ['a', 'b'], [1.0, 2.0]);
+      final chart = _chart(ChartKind.bar, ['a', 'b'], [1.0, 2.0]);
       final controller = chart.getDatasetMeta(0).controller!;
       final result = controller.getLabelAndValue(1);
       // The record type of the row `adapt-native-tooltip-item`.

@@ -2830,3 +2830,13 @@ change. The line references of `canvas_ui.dart` after `tryAddRunCircle` and of `
 `release` move; use the named anchors. The inventory row of `CircleBatch` names `addHeldColors`. Tests:
 `test/port/elements/element.point_kept_run_test.dart` and `test/port/controllers/scatter_kept_run_test.dart` (new).
 No deferred cut changes. The estimates do not change. No trigger occurred.
+
+## Typed widget test configs, 2026-11-19
+
+`test/port/widgets/chart_view_semantics_test.dart` now uses typed `ChartConfig` objects and
+`ChartView`; its animated data update supplies a new config. The semantics assertions stay the
+same, and the diagnostics assertion names the typed bar config. The same batch migrates
+`chart_view_unregistered_test.dart`, `public_library_test.dart`, `types/index_test.dart` and
+`platform/chart_host_input_test.dart` under `test/port/`. No production code or canvas operation
+changes. The references, inventory, tests of §2.6 and §3.5, and estimates remain unchanged.
+No trigger occurred.

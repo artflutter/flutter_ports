@@ -49,24 +49,18 @@ void main() {
     Chart.register(_lineSet);
     addTearDown(() => Chart.unregister(_lineSet));
     Chart? created;
-    // A config is never const: Chart.js writes into its `data` and
-    // `options` objects (core.config.js:115-126).
-    final config = <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1, 3, 2],
-          },
-        ],
-      },
-      'options': <String, Object?>{'animation': false},
-    };
+    const config = ChartConfig(
+      type: ChartKind.line,
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        LineDataset(data: [1, 3, 2]),
+      ],
+      animation: ChartAnimation.none,
+    );
     await tester.pumpWidget(
       MaterialApp(
         home: Scaffold(
-          body: ChartView.raw(
+          body: ChartView(
             config: config,
             onChartCreated: (chart) => created = chart,
           ),
