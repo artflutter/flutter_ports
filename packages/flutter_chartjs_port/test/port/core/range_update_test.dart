@@ -123,8 +123,8 @@ Map<String, Object?> _titleOf(_Log log, String axis) => <String, Object?>{
     if (scale == null) return ['none'];
     final options = scale.options;
     final line =
-        '$axis ${plainValue(jsGet(options, 'min'))} to '
-        '${plainValue(jsGet(options, 'max'))}, was ${scale.min} to '
+        '$axis ${plainValue(options.min)} to '
+        '${plainValue(options.max)}, was ${scale.min} to '
         '${scale.max}';
     return [line];
   },
@@ -180,6 +180,8 @@ List<Object?> _points(int count, double shift) => <Object?>[
 
 /// A config of a case: the chart options of `options` with the recorder,
 /// the title, the padding and the animation of the run.
+// A Map: the typed API has no scriptable title text, padding, animation,
+// clip, ticks.color or grid.display, and `_newData` writes `chart.data`.
 Map<String, Object?> _config(
   _Log log, {
   required bool animated,
@@ -354,7 +356,7 @@ Object? _observe(Chart chart) => _canon(<String, Object?>{
       ? null
       : <Object?>[
           chart.tooltip!.opacity,
-          plainValue(jsGet(chart.tooltip, 'title')),
+          chart.tooltip!.title,
           chart.tooltip!.caretX,
           chart.tooltip!.caretY,
         ],
@@ -695,6 +697,8 @@ final List<_Case> _cases = [
 // The other cases.
 
 /// A small line chart with the recorder, on the axes x and y.
+// A Map: the typed API has no scriptable title text, and check 6 swaps the
+// data and options Maps of `chart.config`.
 Map<String, Object?> _small(
   _Log log, {
   List<Plugin<Object?>> plugins = const [],
