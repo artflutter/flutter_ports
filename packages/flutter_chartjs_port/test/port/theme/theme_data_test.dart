@@ -9,8 +9,8 @@ import 'dart:ui' show Color, ColorSpace, FontStyle, FontWeight;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show ChartConfig, ChartKind, DataPoint, ScatterDataset;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
@@ -19,8 +19,9 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -261,22 +262,21 @@ final class _Event(
 }
 
 /// The scatter chart of the probe F-P1b of Chart.js ADR 0050: 3 points,
-/// with the compiled [theme] under `themeConfigKey`.
-AnyObject _scatter(Object? theme) => <String, Object?>{
-  'type': 'scatter',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          <String, Object?>{'x': 0, 'y': 0},
-          <String, Object?>{'x': 5, 'y': 5},
-          <String, Object?>{'x': 10, 'y': 10},
-        ],
-      },
-    ],
-  },
-  themeConfigKey: ?theme,
-};
+/// with [theme] on the lowered root.
+Chart _scatter(Object? theme) {
+  final root = ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.scatter,
+      datasets: [
+        ScatterDataset(
+          points: [DataPoint(0, 0), DataPoint(5, 5), DataPoint(10, 10)],
+        ),
+      ],
+    ),
+  ).lower();
+  if (theme != null) root.dollarTheme = theme;
+  return acquireChartRoot(root);
+}
 
 /// The `point` hits of [chart] at 6 px right of the point 1 of the dataset
 /// 0, as `datasetIndex:index`. The point radius is 3 and the hit radius 1
@@ -760,7 +760,7 @@ void main() {
     // `elements.point.hitRadius: 8` changes the hit element (the guard
     // passes it, F-P1), so the event position is 6 px from a hit.
     testWidgets('the unthemed chart has no hit', (tester) async {
-      final chart = acquireChart(_scatter(null));
+      final chart = _scatter(null);
       await tester.pump();
       expect(_hits(chart), isEmpty);
     });
@@ -773,7 +773,7 @@ void main() {
       testWidgets('a chart with $name has no hit', (tester) async {
         final compiled = compileThemeData(theme);
         expect(compiled, isNotNull);
-        final chart = acquireChart(_scatter(compiled));
+        final chart = _scatter(compiled);
         await tester.pump();
         expect(_hits(chart), isEmpty);
       });
@@ -782,15 +782,13 @@ void main() {
     testWidgets('the control: a raw hitRadius of 8 gives a hit', (
       tester,
     ) async {
-      final chart = acquireChart(
-        _scatter(
-          // No token gives hitRadius: the theme scope of the raw config.
-          <String, Object?>{
-            'elements': <String, Object?>{
-              'point': <String, Object?>{'hitRadius': 8.0},
-            },
+      final chart = _scatter(
+        // No token gives hitRadius: supply a raw theme scope for the control.
+        <String, Object?>{
+          'elements': <String, Object?>{
+            'point': <String, Object?>{'hitRadius': 8.0},
           },
-        ),
+        },
       );
       await tester.pump();
       expect(_hits(chart), ['0:1']);

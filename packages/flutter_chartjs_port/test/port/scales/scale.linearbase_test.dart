@@ -5,6 +5,15 @@ library;
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        AxisTicks,
+        ChartAxis,
+        ChartConfig,
+        ChartKind,
+        DataPoint,
+        LineDataset,
+        LinearAxis;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
@@ -17,7 +26,8 @@ import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/tick_label.dart';
@@ -157,7 +167,7 @@ void main() {
     testWidgets('jsConstruct makes a LinearScaleBase from the cfg object', (
       tester,
     ) async {
-      final chart = acquireChart(_config({}));
+      final chart = _chart(_config({}));
       final scale = jsConstruct(LinearScaleBase.jsClass, [
         <String, Object?>{
           'id': 'z',
@@ -189,7 +199,7 @@ void main() {
       tester,
     ) async {
       // scale.logarithmic.js:104 calls the body with apply.
-      final chart = acquireChart(_config({}));
+      final chart = _chart(_config({}));
       final scale = chart.scales['y']! as LinearScaleBase;
       for (final value in _parseValues) {
         final parsed = scale.parse(value, 0);
@@ -217,9 +227,11 @@ void main() {
     testWidgets('a string bound gives its number as the tick value', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = _chart(
         _config({
-          'y': <String, Object?>{'min': '-15', 'max': '110'},
+          'y': const LinearAxis(
+            extra: {'type': 'testLinearBase', 'min': '-15', 'max': '110'},
+          ),
         }),
       );
       final scale = chart.scales['y']!;
@@ -236,19 +248,26 @@ void main() {
       );
     });
 
-    for (final ticks in <Map<String, Object?>>[
-      {'stepSize': 25.0},
-      {'count': 6.0},
+    for (final (name, ticks) in const [
+      ('{stepSize: 25.0}', AxisTicks(stepSize: 25)),
+      ('{count: 6.0}', AxisTicks(extra: {'count': 6.0})),
     ]) {
-      testWidgets('string bounds with $ticks give the NaN ticks of upstream', (
+      testWidgets('string bounds with $name give the NaN ticks of upstream', (
         tester,
       ) async {
         // The cases 1 and 2 assign the raw bounds to niceMin and niceMax.
         // `_decimalPlaces('-15')` is undefined, so the factor is NaN, as
         // upstream gives.
-        final chart = acquireChart(
+        final chart = _chart(
           _config({
-            'y': <String, Object?>{'min': '-15', 'max': '110', 'ticks': ticks},
+            'y': LinearAxis(
+              ticks: ticks,
+              extra: const {
+                'type': 'testLinearBase',
+                'min': '-15',
+                'max': '110',
+              },
+            ),
           }),
         );
         final scale = chart.scales['y']!;
@@ -267,9 +286,13 @@ void main() {
     }
 
     testWidgets('number bounds give number tick values', (tester) async {
-      final chart = acquireChart(
+      final chart = _chart(
         _config({
-          'y': <String, Object?>{'min': -15, 'max': 110},
+          'y': const LinearAxis(
+            min: -15,
+            max: 110,
+            extra: {'type': 'testLinearBase'},
+          ),
         }),
       );
       expect(
@@ -281,18 +304,17 @@ void main() {
 }
 
 /// A chart config of the test controller with the scale options [scales].
-AnyObject _config(Map<String, Object?> scales) => <String, Object?>{
-  'type': 'linearBaseChart',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          <String, Object?>{'x': -12.5, 'y': 3.0},
-          <String, Object?>{'x': 40.0, 'y': 117.0},
-          <String, Object?>{'x': 7.25, 'y': -20.0},
-        ],
-      },
-    ],
-  },
-  'options': <String, Object?>{'scales': scales},
-};
+ChartConfig _config(Map<String, ChartAxis> scales) => ChartConfig(
+  type: const ChartKind('linearBaseChart'),
+  datasets: [
+    LineDataset(
+      points: [DataPoint(-12.5, 3), DataPoint(40, 117), DataPoint(7.25, -20)],
+      // Keep the custom controller and its default testLinearBase scales.
+      extra: const {'type': 'linearBaseChart'},
+    ),
+  ],
+  scales: scales,
+);
+
+Chart _chart(ChartConfig config) =>
+    acquireChartRoot(ChartConfigLowering(config).lower());

@@ -8,9 +8,28 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        AxisTitle,
+        BarDataset,
+        BubbleDataset,
+        CategoryAxis,
+        ChartConfig,
+        ChartKind,
+        ChartLegend,
+        ChartTitle,
+        ChartTooltip,
+        DataPoint,
+        Dataset,
+        DoughnutDataset,
+        LineDataset,
+        LinearAxis,
+        PieDataset,
+        PolarAreaDataset,
+        RadarDataset,
+        RadialLinearAxis,
+        ScatterDataset;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
@@ -21,6 +40,8 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -183,16 +204,15 @@ const List<String> _pluginTexts = [
   'Footer',
 ];
 
-/// The configuration of the chart of the type [type]: 2 datasets, labels,
+/// Creates the chart of the type [type]: 2 datasets, labels,
 /// the scale titles on for the cartesian types, the point labels and the
 /// angle lines on for the radial types, and borders on bars and arcs.
 ///
 /// The plugins: the title and the subtitle on with a text, the legend title
 /// on with a text, a tooltip `footer` callback, and
 /// `plugins.colors.enabled` from [colors]. [legendLabels] replaces the
-/// legend `labels` options. With [theme], the configuration has
-/// `themeConfigKey: compileThemeData(theme)`.
-AnyObject _config(
+/// legend `labels` options. The lowered root carries the compiled [theme].
+Chart _chart(
   String type, {
   ChartThemeData? theme,
   bool colors = false,
@@ -200,81 +220,96 @@ AnyObject _config(
 }) {
   final cartesian = const {'bar', 'bubble', 'line', 'scatter'}.contains(type);
   final radial = type == 'polarArea' || type == 'radar';
-  final bordered = const {'bar', 'doughnut', 'pie', 'polarArea'}.contains(type);
-  List<Object?> data(int d) => switch (type) {
-    'bubble' => <Object?>[
-      for (final (x, y) in [(1, 2 + d), (5, 8 - d), (9, 4 + d)])
-        <String, Object?>{'x': x, 'y': y, 'r': 6},
-    ],
-    'scatter' => <Object?>[
-      for (final (x, y) in [(1, 2 + d), (5, 8 - d), (9, 4 + d)])
-        <String, Object?>{'x': x, 'y': y},
-    ],
-    _ => <Object?>[3 + d, 5, 2 + d],
-  };
-  return <String, Object?>{
-    'type': type,
-    'data': <String, Object?>{
-      'labels': <Object?>['alpha', 'beta', 'gamma'],
-      'datasets': <Object?>[
-        for (var d = 0; d < 2; d++)
-          <String, Object?>{
-            'label': 'dataset $d',
-            'data': data(d),
-            if (bordered) 'borderWidth': 2,
-          },
-      ],
-    },
-    'options': <String, Object?>{
-      'plugins': <String, Object?>{
-        'colors': <String, Object?>{'enabled': colors},
-        'title': <String, Object?>{
+  List<num?> values(int d) => [3 + d, 5, 2 + d];
+  Dataset dataset(int d) {
+    final label = 'dataset $d';
+    return switch (type) {
+      'bar' => BarDataset(label: label, data: values(d), borderWidth: 2),
+      'bubble' => BubbleDataset(
+        label: label,
+        points: [
+          for (final (x, y) in [(1, 2 + d), (5, 8 - d), (9, 4 + d)])
+            DataPoint.bubble(x, y, 6),
+        ],
+      ),
+      'doughnut' => DoughnutDataset(
+        label: label,
+        data: values(d),
+        borderWidth: 2,
+      ),
+      'line' => LineDataset(label: label, data: values(d)),
+      'pie' => PieDataset(label: label, data: values(d), borderWidth: 2),
+      'polarArea' => PolarAreaDataset(
+        label: label,
+        data: values(d),
+        borderWidth: 2,
+      ),
+      'radar' => RadarDataset(label: label, data: values(d)),
+      'scatter' => ScatterDataset(
+        label: label,
+        points: [
+          for (final (x, y) in [(1, 2 + d), (5, 8 - d), (9, 4 + d)])
+            DataPoint(x, y),
+        ],
+      ),
+      _ => throw ArgumentError.value(type, 'type'),
+    };
+  }
+
+  final config = ChartConfig(
+    type: ChartKind(type),
+    labels: const ['alpha', 'beta', 'gamma'],
+    datasets: [for (var d = 0; d < 2; d++) dataset(d)],
+    title: const ChartTitle(display: true, text: ['Title']),
+    subtitle: const ChartTitle(display: true, text: ['Subtitle']),
+    legend: ChartLegend(
+      extra: {
+        'title': const {
           'display': true,
-          'text': ['Title'],
+          'text': ['Legend title'],
         },
-        'subtitle': <String, Object?>{
-          'display': true,
-          'text': ['Subtitle'],
-        },
-        'legend': <String, Object?>{
-          'title': <String, Object?>{
-            'display': true,
-            'text': ['Legend title'],
-          },
-          'labels': ?legendLabels,
-        },
-        'tooltip': <String, Object?>{
-          'callbacks': TooltipCallbacks(
-            footer: (tooltip, arg) => 'Footer'.split('\n'),
-          ),
-        },
+        'labels': ?legendLabels,
       },
-      if (cartesian)
-        'scales': <String, Object?>{
-          for (final id in ['x', 'y'])
-            id: <String, Object?>{
-              'title': <String, Object?>{
-                'display': true,
-                'text': ['$id axis'],
-              },
-            },
-        },
-      if (radial)
-        'scales': <String, Object?>{
-          'r': <String, Object?>{
-            'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
-            'angleLines': <String, Object?>{'display': true},
-          },
-        },
+    ),
+    tooltip: ChartTooltip(
+      callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
+    ),
+    scales: cartesian
+        ? {
+            'x': type == 'bar' || type == 'line'
+                ? const CategoryAxis(
+                    title: AxisTitle(display: true, text: ['x axis']),
+                  )
+                : const LinearAxis(
+                    title: AxisTitle(display: true, text: ['x axis']),
+                  ),
+            'y': const LinearAxis(
+              title: AxisTitle(display: true, text: ['y axis']),
+            ),
+          }
+        : radial
+        ? const {
+            'r': RadialLinearAxis(
+              pointLabelsDisplay: ScaleDisplay.on,
+              angleLinesDisplay: true,
+            ),
+          }
+        : null,
+    extra: {
+      'plugins': {
+        'colors': {'enabled': colors},
+      },
     },
-    if (theme != null) themeConfigKey: compileThemeData(theme),
-  };
+  );
+  final root = ChartConfigLowering(config).lower();
+  final compiled = theme == null ? null : compileThemeData(theme);
+  if (compiled != null) root.dollarTheme = compiled;
+  return acquireChartRoot(root);
 }
 
-/// Acquires the chart of [config], pumps a frame and shows the tooltip
+/// Pumps a frame for [chart] and shows the tooltip
 /// ([_showTooltip]).
-Future<Chart> _acquireWithTooltip(WidgetTester tester, AnyObject config) async {
-  final chart = acquireChart(config);
+Future<Chart> _withTooltip(WidgetTester tester, Chart chart) async {
   await tester.pump();
   await _showTooltip(tester, chart);
   return chart;
@@ -416,15 +451,14 @@ Iterable<(String, Object?)> _themeColors(
   _ => const [],
 };
 
-/// Acquires the chart of [config], pumps a frame, makes the element 0 of
+/// Pumps a frame for [chart], makes the element 0 of
 /// the dataset 0 active with the tooltip at it, and pumps a frame.
 ///
 /// `setActiveElements` of the chart and of the tooltip request no render
 /// (`core.controller.js:1096-1117`, `plugin.tooltip.js:1106-1130`). Thus
 /// `chart.update()` draws the chart again. `acquireChart` gives
 /// `animation: false`: the active colors and the tooltip need no frames.
-Future<Chart> _acquireActive(WidgetTester tester, AnyObject config) async {
-  final chart = acquireChart(config);
+Future<Chart> _withActiveElement(WidgetTester tester, Chart chart) async {
   await tester.pump();
   const active = [ActiveElement(datasetIndex: 0, index: 0)];
   final element = chart.getDatasetMeta(0).data[0] as Element;
@@ -556,9 +590,9 @@ void main() {
     for (final type in _chartTypes) {
       testWidgets('a $type chart with the blue theme and the colors plugin '
           '$state paints only the blue', (tester) async {
-        final chart = await _acquireWithTooltip(
+        final chart = await _withTooltip(
           tester,
-          _config(type, theme: _blueTheme, colors: colors),
+          _chart(type, theme: _blueTheme, colors: colors),
         );
         await _expectBlue(tester, chart, knownLeaks[type] ?? const {});
       });
@@ -570,9 +604,9 @@ void main() {
         'strokeStyle paints the singleton defaults.color', (tester) async {
       // The pin case of Chart.js ADR 0147: a user `generateLabels` gives an
       // item without `fillStyle`, `strokeStyle` and `fontColor`.
-      final chart = await _acquireWithTooltip(
+      final chart = await _withTooltip(
         tester,
-        _config(
+        _chart(
           type,
           theme: _blueTheme,
           colors: true,
@@ -602,9 +636,9 @@ void main() {
       testWidgets('a $type chart with an active element, the blue theme and '
           'the colors plugin $state paints only the blue and its hover '
           'color', (tester) async {
-        final chart = await _acquireActive(
+        final chart = await _withActiveElement(
           tester,
-          _config(type, theme: _blueTheme, colors: colors),
+          _chart(type, theme: _blueTheme, colors: colors),
         );
         final pixels = await chartPixelsOver(
           tester,
@@ -643,7 +677,7 @@ void main() {
   testWidgets('the tooltip reaches the bitmap', (tester) async {
     // In the blue charts, the blue tooltip can lie on a blue element and
     // change no pixel. Thus this check uses a chart without a theme.
-    final chart = acquireChart(_config('bar'));
+    final chart = _chart('bar');
     await tester.pump();
     const white = ui.Color(0xFFFFFFFF);
     final before = await chartPixelsOver(tester, chart, white);
@@ -660,7 +694,7 @@ void main() {
     tester,
   ) async {
     // The negative control: the default colors are not the blue.
-    final chart = await _acquireWithTooltip(tester, _config('bar'));
+    final chart = await _withTooltip(tester, _chart('bar'));
     final pixels = await chartPixelsOver(tester, chart, const ui.Color(_blue));
     expect(offPixels(pixels, _blueRgba), greaterThan(0));
     expect(leakingSetters(drawCalls(chart)), isNotEmpty);
@@ -672,9 +706,9 @@ void main() {
     // without a theme palette, the colors plugin gives the upstream
     // BORDER_COLORS and BACKGROUND_COLORS (plugin.colors.ts:14-33) to the
     // two datasets.
-    final chart = await _acquireWithTooltip(
+    final chart = await _withTooltip(
       tester,
-      _config('bar', theme: _blueThemeWithoutPalette, colors: true),
+      _chart('bar', theme: _blueThemeWithoutPalette, colors: true),
     );
     final pixels = await chartPixelsOver(tester, chart, const ui.Color(_blue));
     expect(offPixels(pixels, _blueRgba), greaterThan(0));
@@ -695,9 +729,9 @@ void main() {
     final before = _plain(defaults);
     for (final colors in [true, false]) {
       for (final type in _chartTypes) {
-        final chart = await _acquireWithTooltip(
+        final chart = await _withTooltip(
           tester,
-          _config(type, theme: _blueTheme, colors: colors),
+          _chart(type, theme: _blueTheme, colors: colors),
         );
         drawCalls(chart);
       }

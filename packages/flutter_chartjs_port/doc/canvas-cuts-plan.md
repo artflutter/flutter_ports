@@ -2859,3 +2859,13 @@ in `extra`, and its native-call, style and pixel comparisons are unchanged. The 
 migrates pixel alignment, tick-label removal, single-scale parsing and controller setup tests.
 No production canvas code or deferred cut changes. The named references, inventory, tests of
 §2.6 and §3.5, and estimates remain unchanged. No trigger occurred.
+
+## Typed theme test configs, 2026-11-19
+
+`test/port/theme/blue_screen_test.dart` and `light_pixels_test.dart` now construct their eight
+chart types with typed datasets, axes and plugin groups. Their pixel, hover and tooltip
+assertions are unchanged. The public theme-data hit-test fixture also uses a typed scatter
+config. The batch additionally migrates the hand-written linear-base and timeseries scale
+configs; their generated reference cases and data stay in the existing harness. No production
+canvas code or deferred cut changes. The named references, inventory, tests of §2.6 and §3.5,
+and estimates remain unchanged. No trigger occurred.

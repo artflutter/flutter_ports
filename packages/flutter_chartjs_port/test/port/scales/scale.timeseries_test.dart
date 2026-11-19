@@ -6,6 +6,14 @@ library;
 // ignore_for_file: invalid_use_of_protected_member
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        AxisTicks,
+        ChartConfig,
+        ChartKind,
+        DataPoint,
+        LineDataset,
+        TimeSeriesAxis;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
@@ -15,7 +23,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.timeseries.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'scale_chart_harness.dart';
@@ -97,22 +106,19 @@ final double _t0 = DateTime.utc(2021, 1, 4).millisecondsSinceEpoch.toDouble();
 
 /// The timeseries scale `x` of a chart of `{x, y}` points at [times], with
 /// the options of the scale x [x].
-TimeSeriesScale _x(List<double> times, [AnyObject? x]) {
-  final chart = acquireChart({
-    'type': 'timeseriesTest',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            for (final x in times) <String, Object?>{'x': x, 'y': 1.0},
-          ],
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'scales': <String, Object?>{'x': ?x},
-    },
-  });
+TimeSeriesScale _x(List<double> times, [TimeSeriesAxis? x]) {
+  final config = ChartConfig(
+    type: const ChartKind('timeseriesTest'),
+    datasets: [
+      LineDataset(
+        points: [for (final time in times) DataPoint(time, 1)],
+        // Keep the test controller rather than the built-in line controller.
+        extra: const {'type': 'timeseriesTest'},
+      ),
+    ],
+    scales: {'x': ?x},
+  );
+  final chart = acquireChartRoot(ChartConfigLowering(config).lower());
   return chart.scales['x']! as TimeSeriesScale;
 }
 
@@ -190,24 +196,17 @@ void main() {
   // layout.
   group('adapt-time-null-timestamp', () {
     testWidgets('the pixel of a null tick is the pixel of 0', (tester) async {
-      final chart = acquireChart({
-        'type': 'timeseriesTest',
-        'data': <String, Object?>{
-          'labels': <Object?>['2021-01-04', 'garbage', '2021-01-20'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1.0, 2.0, 3.0],
-            },
-          ],
+      const config = ChartConfig(
+        type: ChartKind('timeseriesTest'),
+        labels: ['2021-01-04', 'garbage', '2021-01-20'],
+        datasets: [
+          LineDataset(data: [1.0, 2.0, 3.0], extra: {'type': 'timeseriesTest'}),
+        ],
+        scales: {
+          'x': TimeSeriesAxis(ticks: AxisTicks(source: TickSource.labels)),
         },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'ticks': <String, Object?>{'source': TickSource.labels},
-            },
-          },
-        },
-      });
+      );
+      final chart = acquireChartRoot(ChartConfigLowering(config).lower());
       final x = chart.scales['x']! as TimeSeriesScale;
       // Upstream gives the tick the value null, and getDecimalForValue of
       // the timeseries scale reads null as 0 (scale.timeseries.js:162-163).
@@ -227,7 +226,13 @@ void main() {
       // on the List of getDataTimestamps.
       final x = _x(
         [_t0 + _day, _t0 + 3 * _day],
-        {'min': _t0, 'max': _t0 + 5 * _day},
+        TimeSeriesAxis(
+          min: DateTime.fromMillisecondsSinceEpoch(_t0.toInt(), isUtc: true),
+          max: DateTime.fromMillisecondsSinceEpoch(
+            (_t0 + 5 * _day).toInt(),
+            isUtc: true,
+          ),
+        ),
       );
       final data = x.getDataTimestamps();
       expect(data, same(x.cache.data));
