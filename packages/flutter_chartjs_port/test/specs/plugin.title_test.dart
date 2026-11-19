@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
+import '../support/plugin_options_plain.dart';
 
 // `Chart` is the class of core.controller.dart, with the static members
 // `Chart.registry` and `Chart.defaults`. `Chart.helpers.clone` is `clone` of
@@ -151,9 +152,10 @@ void main() {
       expect(title.height, 0);
 
       // Now we have a height since we display
-      (title.options! as JsObjectFace)['display'] = true;
-
-      title.update(400, 200);
+      options['display'] = true;
+      title
+        ..options = TitleOptions.of(options)
+        ..update(400, 200);
 
       expect(title.width, 400);
       expect(title.height, 34.4);
@@ -175,9 +177,10 @@ void main() {
       expect(title.height, 0);
 
       // Now we have a height since we display
-      (title.options! as JsObjectFace)['display'] = true;
-
-      title.update(200, 400);
+      options['display'] = true;
+      title
+        ..options = TitleOptions.of(options)
+        ..update(200, 400);
 
       expect(title.width, 34.4);
       expect(title.height, 400);
@@ -225,9 +228,9 @@ void main() {
       expect(context.getCalls(), equals(<Object?>[]));
 
       // Now we have a height since we display
-      (title.options! as JsObjectFace)['display'] = true;
-
+      options['display'] = true;
       title
+        ..options = TitleOptions.of(options)
         ..update(400, 200)
         ..top = 50
         ..left = 100;
@@ -259,9 +262,9 @@ void main() {
       expect(context.getCalls(), equals(<Object?>[]));
 
       // Now we have a height since we display
-      (title.options! as JsObjectFace)['display'] = true;
-
+      options['display'] = true;
       title
+        ..options = TitleOptions.of(options)
         ..update(200, 400)
         ..top = 50
         ..left = 100;
@@ -276,7 +279,8 @@ void main() {
       );
 
       // Rotation is other way on right side
-      (title.options! as JsObjectFace)['position'] = ChartPosition.right;
+      options['position'] = ChartPosition.right;
+      title.options = TitleOptions.of(options);
 
       // Reset call tracker
       context.resetCalls();
@@ -314,11 +318,11 @@ void main() {
             },
           },
         });
-        expect(jsGet(chart.titleBlock!.options, 'display'), true);
+        expect((chart.titleBlock! as Title).options!.display, true);
 
         _titleOptions(chart)['display'] = false;
         chart.update();
-        expect(jsGet(chart.titleBlock!.options, 'display'), false);
+        expect((chart.titleBlock! as Title).options!.display, false);
       });
 
       testWidgets('should update the associated layout item', (tester) async {
@@ -394,12 +398,16 @@ void main() {
           _pluginOptions(chart)['title'] = <String, Object?>{};
           chart.update();
           expect(chart.titleBlock, isNotNull);
+          // `toEqualOptions` reads the own keys of the defaults: the box has
+          // the resolved `TitleOptions` (Chart.js ADR 0182), and `color` is a
+          // route of the defaults, not an own key.
+          final expected = TitleOptions.of(
+            jsGet(jsGet(Chart.defaults, 'plugins'), 'title'),
+          );
           expect(
-            chart.titleBlock!.options,
-            // `toEqualOptions` of the harness takes a Map: the copy of the
-            // own keys of the typed defaults (`Object.keys`) with their
-            // values, the keys and values that the matcher reads.
-            toEqualOptions(jsGet(jsGet(Chart.defaults, 'plugins'), 'title')!),
+            plainTitleOptions((chart.titleBlock! as Title).options)!
+              ..remove('color'),
+            plainTitleOptions(expected)!..remove('color'),
           );
         },
       );

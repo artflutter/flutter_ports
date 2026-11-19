@@ -12,7 +12,7 @@
 /// private function of the hook type `(types.Chart chart, args,
 /// TitleOptions options)` (Chart.js ADR 0150, in place of the upstream
 /// parameter counts of Chart.js ADR 0038, section 3): the argument class of
-/// its hook, and the facade of the resolved options.
+/// its hook, and the resolved [TitleOptions].
 ///
 /// The `WeakMap` of `plugin.subtitle.js:4` is the file-private `Expando`
 /// [_map] (Chart.js ADR 0038, section 5). An `Expando` holds its key
@@ -35,13 +35,12 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 final Expando<Title> _map = Expando<Title>('subtitle');
 
 /// plugin.subtitle.js:9 `start(chart, _args, options)`. The box keeps the
-/// resolved options of the facade.
+/// resolved options.
 void _start(IChart chart, PluginHookArgs _, TitleOptions options) {
-  final resolved = options.object!;
-  final title = Title((ctx: chart.ctx, options: resolved, chart: chart));
+  final title = Title((ctx: chart.ctx, options: options, chart: chart));
 
   layouts
-    ..configure(chart, title, resolved)
+    ..configure(chart, title, options)
     ..addBox(chart, title);
   _map[chart] = title;
 }
@@ -60,9 +59,8 @@ void _stop(IChart chart, PluginHookArgs _, TitleOptions _) {
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
 bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
   final title = _map[chart]!;
-  final resolved = options.object!;
-  layouts.configure(chart, title, resolved);
-  title.options = resolved;
+  layouts.configure(chart, title, options);
+  title.options = options;
   return true;
 }
 
@@ -70,8 +68,8 @@ bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
 /// `src/plugins/index.js:5` (Chart.js ADR 0038, section 1).
 ///
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
-/// upstream order. The hooks get the facade [TitleOptions] (Chart.js ADR
-/// 0150).
+/// upstream order. The hooks get the resolved [TitleOptions] (Chart.js ADR
+/// 0182).
 final subTitle = SubtitlePlugin();
 
 /// The subtitle plugin: a class of its own, so
@@ -83,8 +81,8 @@ final class SubtitlePlugin() extends Plugin<TitleOptions> {
   this
     : super(
         id: 'subtitle',
-        // The hooks get the facade of the resolved options (Chart.js ADR 0150).
-        options: TitleOptions.new,
+        // The hooks get the resolved options (Chart.js ADR 0182).
+        options: TitleOptions.of,
         start: _start,
         stop: _stop,
         beforeUpdate: _beforeUpdate,

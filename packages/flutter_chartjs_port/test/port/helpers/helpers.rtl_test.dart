@@ -98,17 +98,14 @@ void main() {
       final tooltip = TooltipOptionsScope()..textDirection = TextDirection.ltr;
       expect(legend.textDirectionCell, isA<OptValue<TextDirection>>());
       expect(legend.readKey(OptionKey.textDirection), TextDirection.rtl);
-      expect(LegendOptions(legend).textDirection, TextDirection.rtl);
-      expect(TooltipOptions(tooltip).textDirection, TextDirection.ltr);
+      expect(LegendOptions.of(legend).textDirection, TextDirection.rtl);
+      expect(TooltipOptions.of(tooltip).textDirection, TextDirection.ltr);
       expect(
-        const LegendOptions({'textDirection': TextDirection.rtl}).textDirection,
+        LegendOptions.of({'textDirection': TextDirection.rtl}).textDirection,
         TextDirection.rtl,
       );
-      expect(const LegendOptions({}).textDirection, isNull);
-      expect(
-        const TooltipOptions({'textDirection': null}).textDirection,
-        isNull,
-      );
+      expect(LegendOptions.of({}).textDirection, isNull);
+      expect(TooltipOptions.of({'textDirection': null}).textDirection, isNull);
     });
 
     test('a scriptable direction resolves at its context', () {
@@ -121,11 +118,11 @@ void main() {
         },
       ]);
       expect(
-        LegendOptions(attachContext(resolver, {'rtl': true})).textDirection,
+        LegendOptions.of(attachContext(resolver, {'rtl': true})).textDirection,
         TextDirection.rtl,
       );
       expect(
-        LegendOptions(attachContext(resolver, {'rtl': false})).textDirection,
+        LegendOptions.of(attachContext(resolver, {'rtl': false})).textDirection,
         TextDirection.ltr,
       );
     });

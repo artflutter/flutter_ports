@@ -205,7 +205,13 @@ Object? _applyStep(Chart chart, List<Object?> step) {
     case ['readScale', final String id, final String path]:
       return _valueOf(_readPath(chart.scales[id]!.options, path), 0);
     case ['readLegend', final String path]:
-      return _valueOf(_readPath(chart.legend!.options, path), 0);
+      // The legend keeps the resolved `LegendOptions` (Chart.js ADR 0182).
+      final options = LegendOptions.of(chart.legend!.options);
+      return _valueOf(switch (path) {
+        'position' => options.position,
+        'labels.color' => options.labels.color,
+        _ => throw StateError('Unknown legend option: $path'),
+      }, 0);
     case ['legendItems', final String key]:
       return [
         for (final item in chart.legend!.legendItems!)
@@ -343,6 +349,16 @@ void _runCase(ResolverTraceReferenceCase c) {
   expect(error, isNull, reason: 'the case has an error after its last step');
 }
 
+/// The cases whose trace differs from upstream by a row of
+/// `doc/differences.md`, by case name.
+const Map<String, String> _diverges = {
+  // The plugin resolves the legend options at the start of the chart and at
+  // its first update: two calls of a scriptable label color (Chart.js ADR
+  // 0182). Upstream reads the color once, in the build of the labels.
+  'plugin: a scriptable legend label color':
+      'diverges: adapt-native-plugin-options',
+};
+
 void main() {
   testReferenceOrigin(
     node: resolverTraceReferenceNode,
@@ -354,6 +370,6 @@ void main() {
   for (final c in resolverTraceReference) {
     testWidgets(c.name, (tester) async {
       atNow(resolverTraceReferenceNow, () => _runCase(c));
-    });
+    }, skip: _diverges.containsKey(c.name));
   }
 }

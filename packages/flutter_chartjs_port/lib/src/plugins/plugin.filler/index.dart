@@ -10,8 +10,8 @@
 /// and `Filler` of `src/plugins/index.js:3` (Chart.js ADR 0038, section 1).
 /// It is a typed `Plugin` (Chart.js ADR 0054 §12) with the upstream keys in
 /// the upstream order. Each hook is a private function of the hook type
-/// `(chart, args, options)`. The options are read through the facade
-/// `FillerOptions` of `plugin_options.dart`. `beforeDatasetDraw` reads the
+/// `(chart, args, options)`. The hooks get the resolved `FillerOptions` of
+/// `plugin_options.dart` (Chart.js ADR 0182). `beforeDatasetDraw` reads the
 /// typed `meta` of its [DatasetDrawHookArgs].
 ///
 /// [FillerSource] is the source object of `index.js:26-34`. The other
@@ -128,7 +128,7 @@ void _afterDatasetsUpdate(
 /// hook continues the draw: `true` is the `undefined` result of upstream.
 bool _beforeDraw(IChart chart, PluginHookArgs _, FillerOptions options) {
   // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
-  final draw = FillerDrawTime.of(options.drawTime) == FillerDrawTime.beforeDraw;
+  final draw = options.drawTime == FillerDrawTime.beforeDraw;
   final metasets = chart.getSortedVisibleDatasetMetas();
   final area = chart.chartArea;
   for (var i = metasets.length - 1; i >= 0; --i) {
@@ -153,8 +153,7 @@ bool _beforeDatasetsDraw(
   FillerOptions options,
 ) {
   // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
-  if (FillerDrawTime.of(options.drawTime) !=
-      FillerDrawTime.beforeDatasetsDraw) {
+  if (options.drawTime != FillerDrawTime.beforeDatasetsDraw) {
     return true;
   }
 
@@ -182,7 +181,7 @@ bool _beforeDatasetDraw(
 
   // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
   if (!shouldApplyFill(source) ||
-      FillerDrawTime.of(options.drawTime) != FillerDrawTime.beforeDatasetDraw) {
+      options.drawTime != FillerDrawTime.beforeDatasetDraw) {
     return true;
   }
 
@@ -194,7 +193,7 @@ bool _beforeDatasetDraw(
 /// (Chart.js ADR 0038, section 1).
 ///
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
-/// ADR 0144). Its hooks get the options through the facade [FillerOptions].
+/// ADR 0144). Its hooks get the resolved [FillerOptions].
 final filler = FillerPlugin();
 
 /// The filler plugin: a class of its own, so
@@ -206,7 +205,7 @@ final class FillerPlugin() extends Plugin<FillerOptions> {
   this
     : super(
         id: 'filler',
-        options: FillerOptions.new,
+        options: FillerOptions.of,
         afterDatasetsUpdate: _afterDatasetsUpdate,
         beforeDraw: _beforeDraw,
         beforeDatasetsDraw: _beforeDatasetsDraw,

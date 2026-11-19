@@ -9,10 +9,10 @@
 /// the upstream order: `id`, `defaults` and the hook `beforeLayout`.
 ///
 /// The TypeScript interface `ColorsPluginOptions` (`plugin.colors.ts:4-7`)
-/// is the facade `ColorsPluginOptions` of `plugin_options.dart` over the
-/// resolver of `core.plugins.js:175-188`. `ColorsDescriptor` (`:9-12`) is a
-/// type only: the descriptors are the datasets and the element options of
-/// the user, read by name.
+/// is the final class `ColorsPluginOptions` of `plugin_options.dart`: the
+/// resolved options of `core.plugins.js:175-188` (Chart.js ADR 0182).
+/// `ColorsDescriptor` (`:9-12`) is a type only: the descriptors are the
+/// datasets and the element options of the user, read by name.
 ///
 /// The colorizers write the colors into the dataset of the user: a typed
 /// field for a typed dataset scope, a write by name for a Map of the user
@@ -333,7 +333,7 @@ bool _beforeLayout(Object hookChart, Object _, ColorsPluginOptions opts) {
 /// src/plugins/index.js:1.
 ///
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
-/// ADR 0144). Its hooks get the options through the facade
+/// ADR 0144). Its hooks get the resolved
 /// [ColorsPluginOptions].
 final colors = ColorsPlugin()
   // With `forceOverride`, each layout writes new color Lists into the
@@ -351,7 +351,7 @@ final class ColorsPlugin() extends Plugin<ColorsPluginOptions> {
   this
     : super(
         id: 'colors',
-        options: ColorsPluginOptions.new,
+        options: ColorsPluginOptions.of,
         // A typed scope of the kind `ColorsOptions` (Chart.js ADR 0054 §3).
         defaults: ColorsOptionsScope()
           ..enabled = true

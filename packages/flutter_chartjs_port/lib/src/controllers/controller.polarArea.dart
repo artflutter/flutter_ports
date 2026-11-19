@@ -61,9 +61,11 @@ List<LegendItem> _generateLabels(IChart chart) {
   if (jsTruthy(_lengthOf(labels)) &&
       jsTruthy(_lengthOf(jsGet(data, 'datasets')))) {
     // `const {labels: {pointStyle, color}} = chart.legend.options;`
-    final labelsOptions = readOption(chart.legend!.options, OptionKey.labels);
-    final pointStyle = readOption(labelsOptions, OptionKey.pointStyle);
-    final color = readOption(labelsOptions, OptionKey.color);
+    // The resolved label options of the legend (Chart.js ADR 0182).
+    // DIVERGES(chartjs): adapt-native-plugin-options, the resolved values.
+    final labelsOptions = LegendOptions.of(chart.legend!.options).labels;
+    final pointStyle = labelsOptions.pointStyle;
+    final color = labelsOptions.color;
 
     return [
       for (final (i, label) in (labels! as List<Object?>).indexed)

@@ -1215,12 +1215,8 @@ void main() {
             expect(chart.options['events'], isEmpty);
             if (legend) {
               final box = chart.legend! as Legend;
-              expect(readByName(box.options, 'display'), true, reason: reason);
-              expect(
-                readByName(box.options, 'position'),
-                ChartPosition.top,
-                reason: reason,
-              );
+              expect(box.options.display, isTrue, reason: reason);
+              expect(box.options.position, ChartPosition.top, reason: reason);
               expect(box.legendItems, hasLength(3), reason: reason);
               expect(chart.boxes, contains(box));
             } else {
@@ -1230,9 +1226,9 @@ void main() {
             // also with `display: false` (plugin.title.js:108-118, :129-131).
             final block = chart.titleBlock! as chartjs.Title;
             expect(chart.boxes, contains(block));
-            expect(jsGet(block.options, 'display'), title, reason: reason);
+            expect(block.options!.display, title, reason: reason);
             if (title) {
-              expect(jsGet(block.options, 'text'), ['Chart.js Line Chart']);
+              expect(block.options!.text, ['Chart.js Line Chart']);
             }
             // The scales of the docs blocks are visible.
             expect(chart.scales['x']!.options['display'], ScaleDisplay.on);

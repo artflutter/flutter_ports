@@ -550,15 +550,20 @@ repository.
     `LegendPlugin` extends `Plugin<LegendOptions>`, `TitlePlugin` and `SubtitlePlugin` extend
     `Plugin<TitleOptions>`, and `TooltipPlugin` extends `Plugin<TooltipOptions>`.
     `registry.getPlugin<T>()` finds a registered plugin by its class, with no id; a test plugin
-    that a test finds this way has a private class. A box keeps the
-    resolved options (Chart.js ADR 0150). The
+    that a test finds this way has a private class. The
     key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
-    `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The plugins read their options through the facades of
-    the port-only pure `plugin_options.dart`. A getter gives the type of its key in the schema
-    (Chart.js ADR 0150): a number, a `ChartTextStyle`, a `TextAlign`, an enum or the lines of a
-    text, with the conversion that each reader applied before. The colors, the tooltip
-    `cornerRadius` and `animations`, the legend label `borderRadius`, `pointStyle` and
-    `generateLabels`, `LegendOptions.labelsValue` and the decimation `algorithm` stay raw values. The library exports no class `Title`, `Legend` or
+    `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The options of each built-in
+    plugin are an immutable final class of resolved values of the port-only pure
+    `plugin_options.dart` (Chart.js ADR 0182, row `adapt-native-plugin-options`): `TitleOptions.of`
+    and the other `of` methods read each key once, at the first hook of an update, and each hook of
+    the update gets the same object. A field has the type of its key in the schema: a number, a
+    `ChartTextStyle`, a `TextAlign`, an enum or the lines of a text. The colors, the tooltip
+    `cornerRadius` and `animations`, and the legend label `borderRadius`, `pointStyle` and
+    `generateLabels` stay `Object?`. `Title.options` is a `TitleOptions?` and `Legend.options` a
+    `LegendOptions`; the layout reads their layout keys through `LayoutBoxOptions`. The tooltip
+    keeps the resolved view and makes a `TooltipOptions` at each `setContext` of upstream.
+    `LegendOptions.view` and `TooltipOptions.view` keep the resolved view; a test that needs a read
+    in upstream order reads it. A test reads a hook field of a plugin through `hookOf`. The library exports no class `Title`, `Legend` or
     `Tooltip`. `plugin.decimation.dart`, `plugin_options.dart` and the files of `plugin.filler/` are
     pure layers. The other plugin files are not: `plugin.title`, `plugin.legend` and
     `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports `core.animations`, and

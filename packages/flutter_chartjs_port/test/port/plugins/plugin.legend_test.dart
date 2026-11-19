@@ -130,7 +130,9 @@ Object? _observeLegend(Chart chart) {
               <String, Object?>{'width': size.width, 'height': size.height},
           ],
     'log': [...?_logs[chart]],
-    'labels': _withoutFunctions(plainValue(jsGet(box.options, 'labels'))),
+    // The own keys of the resolved label options: the box keeps the
+    // `LegendOptions` of its resolved view (Chart.js ADR 0182).
+    'labels': _withoutFunctions(plainValue(jsGet(box.options.view, 'labels'))),
   };
 }
 
@@ -383,7 +385,8 @@ void main() {
       expect(constructed, isA<Legend>());
       final value = constructed! as Legend;
       expect(value.chart, same(chart));
-      expect(value.options, same(options));
+      expect(value.options.display, isTrue);
+      expect(value.options.view, same(options));
       expect(value.ctx, isNull);
     });
 
@@ -530,7 +533,11 @@ void main() {
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
       chart.legend = _ForeignLegend();
-      legend.stop!(chart, const PluginHookArgs(), LegendOptions(chart.options));
+      legend.stop!(
+        chart,
+        const PluginHookArgs(),
+        LegendOptions.of(chart.options),
+      );
       expect(chart.legend, isNull);
       expect(chart.boxes, boxes);
     });
@@ -547,7 +554,7 @@ void main() {
         () => legend.beforeUpdate!(
           chart,
           UpdateHookArgs(),
-          LegendOptions(chart.options),
+          LegendOptions.of(chart.options),
         ),
         throwsA(isA<TypeError>()),
       );
@@ -557,7 +564,7 @@ void main() {
         () => legend.afterUpdate!(
           chart,
           UpdateHookArgs(),
-          LegendOptions(chart.options),
+          LegendOptions.of(chart.options),
         ),
         throwsA(isA<TypeError>()),
       );
@@ -568,7 +575,11 @@ void main() {
       // The probe stopWithoutLegend.
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
-      legend.stop!(chart, const PluginHookArgs(), LegendOptions(chart.options));
+      legend.stop!(
+        chart,
+        const PluginHookArgs(),
+        LegendOptions.of(chart.options),
+      );
       expect(chart.legend, isNull);
       expect(chart.boxes, boxes);
     });
@@ -578,7 +589,11 @@ void main() {
       final box = chart.legend;
       expect(box, isA<Legend>());
       expect(chart.boxes, contains(same(box)));
-      legend.stop!(chart, const PluginHookArgs(), LegendOptions(chart.options));
+      legend.stop!(
+        chart,
+        const PluginHookArgs(),
+        LegendOptions.of(chart.options),
+      );
       expect(chart.legend, isNull);
       expect(chart.boxes.where((b) => identical(b, box)), isEmpty);
     });
@@ -705,7 +720,7 @@ void main() {
     testWidgets('the default click mutates the native item', (tester) async {
       final chart = acquireChart(_line({}));
       final item = LegendItem(text: ['Apples'], datasetIndex: 0);
-      callDroppingExtraArgs(jsGet(chart.legend!.options, 'onClick'), [
+      callDroppingExtraArgs(LegendOptions.of(chart.legend!.options).onClick, [
         null,
         item,
         chart.legend,
@@ -855,7 +870,7 @@ void main() {
     ) async {
       final chart = acquireChart(_line({}));
       final item = chart.legend!.legendItems![1];
-      final click = jsGet(chart.legend!.options, 'onClick');
+      final click = LegendOptions.of(chart.legend!.options).onClick;
       callDroppingExtraArgs(click, [null, item, chart.legend]);
       expect(item.hidden, isTrue);
       expect(chart.isDatasetVisible(1), isFalse);
@@ -866,7 +881,7 @@ void main() {
     testWidgets('a descriptive item does not toggle a dataset', (tester) async {
       final chart = acquireChart(_line({}));
       final item = LegendItem(text: ['description']);
-      callDroppingExtraArgs(jsGet(chart.legend!.options, 'onClick'), [
+      callDroppingExtraArgs(LegendOptions.of(chart.legend!.options).onClick, [
         null,
         item,
         chart.legend,

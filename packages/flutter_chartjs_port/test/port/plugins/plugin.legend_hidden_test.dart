@@ -1160,8 +1160,9 @@ void main() {
         final twin = acquireChart(_eager('doughnut', labels: {key: script}))
           ..update();
         expect(seen, calls);
-        // One call for each update, at the first read of the first build.
-        expect(seen, 2);
+        // Chart.js ADR 0182: one call for each set of resolved options, two
+        // at the start of the chart and one at the update.
+        expect(seen, 3);
         expect(
           _items(chart.legend!),
           legendObservationMatcher(_items(twin.legend!)),
@@ -1599,7 +1600,11 @@ void main() {
         final twin = acquireChart(_eager(type, plugins: [reader(), writer()]));
         armed = true;
         for (final each in [chart, twin]) {
-          each.update();
+          // Chart.js ADR 0182: the write of `beforeLayout` shows at the next
+          // update, which resolves the legend options again.
+          each
+            ..update()
+            ..update();
           expect(
             each.legend!.legendItems![0].pointStyle,
             const StarPointStyle(),
@@ -1615,7 +1620,10 @@ void main() {
     }
   });
 
-  group('the guard reads only what the ordinary build reads', () {
+  group('the options of an update are fixed at its first hook', () {
+    // Chart.js ADR 0182: the plugin resolves the legend options once, at the
+    // first hook of an update. A write into the label options in a later hook
+    // of the same update shows at the next update.
     const written = <String, Object?>{
       'pointStyle': StarPointStyle(),
       'textAlign': TextAlign.right,
@@ -1624,126 +1632,47 @@ void main() {
       'borderRadius': 7,
     };
 
-    /// Writes [key] of the label options in `afterLayout`, and reads it in
-    /// `afterUpdate` through the options of the box.
-    Plugin<Object?> writeThenRead(String key, void Function(Object?) keep) =>
-        _plugin('writeThenRead', ['afterLayout', 'afterUpdate'], (hook, chart) {
-          if (hook == 'afterLayout') {
-            _labelOptionsOf(chart)[key] = written[key];
-            return null;
-          }
-          keep(
-            readOption(
-              readOption(chart.legend!.options, OptionKey.labels),
-              optionKeyOf(key)!,
-            ),
-          );
-          return null;
-        });
+    /// The resolved label option [key] of the legend of [chart].
+    Object? labelValue(Chart chart, String key) {
+      final labels = LegendOptions.of(chart.legend!.options).labels;
+      return switch (key) {
+        'pointStyle' => labels.pointStyle,
+        'textAlign' => labels.textAlign,
+        'color' => labels.color,
+        'useBorderRadius' => labels.useBorderRadius,
+        'borderRadius' => labels.borderRadius,
+        _ => throw ArgumentError.value(key, 'key'),
+      };
+    }
 
     for (final type in const ['pie', 'polarArea', 'bar', 'line']) {
       for (final display in const [true, false]) {
         for (final key in written.keys) {
-          testWidgets('$type: display $display: a user generator: $key', (
-            tester,
-          ) async {
-            Object? seen;
-            acquireChart(
+          testWidgets('$type: display $display: a write of $key in '
+              'afterLayout', (tester) async {
+            var armed = true;
+            final chart = acquireChart(
               _config(
                 type,
                 legend: {'display': display},
-                labels: {
-                  'generateLabels': (Object? chart) => <LegendItem>[
-                    LegendItem(text: ['x']),
-                  ],
-                },
-                plugins: [writeThenRead(key, (value) => seen = value)],
+                plugins: [
+                  _plugin('writer', ['afterLayout'], (hook, chart) {
+                    if (armed) {
+                      _labelOptionsOf(chart)[key] = written[key];
+                      armed = false;
+                    }
+                    return null;
+                  }),
+                ],
               ),
             );
-            expect(seen, written[key]);
+            expect(labelValue(chart, key), isNot(written[key]));
+            chart.update();
+            expect(labelValue(chart, key), written[key]);
           });
         }
       }
     }
-
-    for (final display in const [true, false]) {
-      for (final key in const [
-        'textAlign',
-        'useBorderRadius',
-        'borderRadius',
-      ]) {
-        testWidgets('polarArea: display $display: a key of no read: $key', (
-          tester,
-        ) async {
-          Object? seen;
-          acquireChart(
-            _config(
-              'polarArea',
-              legend: {'display': display},
-              plugins: [writeThenRead(key, (value) => seen = value)],
-            ),
-          );
-          expect(seen, written[key]);
-        });
-      }
-    }
-
-    testWidgets('a user generator leaves the chart color unread', (
-      tester,
-    ) async {
-      Object? seen;
-      acquireChart(
-        _config(
-          'pie',
-          labels: {
-            'generateLabels': (Object? chart) => <LegendItem>[
-              LegendItem(text: ['x']),
-            ],
-          },
-          plugins: [
-            _plugin('writeThenRead', ['afterLayout', 'afterUpdate'], (
-              hook,
-              chart,
-            ) {
-              if (hook == 'afterLayout') {
-                (chart.config.options as Map<String, Object?>)['color'] =
-                    _green;
-              } else {
-                seen = readOption(chart.options, OptionKey.color);
-              }
-              return null;
-            }),
-          ],
-        ),
-      );
-      expect(seen, _green);
-    });
-
-    testWidgets('a visible doughnut with a generator that delegates', (
-      tester,
-    ) async {
-      final overrides = DoughnutController.overrides;
-      final builtIn = readOption(
-        readOption(
-          readOption(overrides.jsRead('plugins'), OptionKey.legend),
-          OptionKey.labels,
-        ),
-        OptionKey.generateLabels,
-      );
-      final chart = acquireChart(
-        _config(
-          'doughnut',
-          legend: {'display': true},
-          labels: {
-            'generateLabels': (Object? chart) {
-              _labelOptionsOf(chart! as Chart)['color'] = _green;
-              return (builtIn! as LegendLabelsGenerator)(chart as Chart);
-            },
-          },
-        ),
-      );
-      expect(chart.legend!.legendItems![0].fontColor, _green);
-    });
   });
 
   group('no read and no guard calls an option', () {
@@ -3768,7 +3697,9 @@ void main() {
         }
 
         final exact = run(exact: true);
-        expect((exact.first! as List<Object?>).first, 'default/false/raw=9.0');
+        // Chart.js ADR 0182: the plugin reads the key at the first hook of the
+        // update, before the change of the first arc.
+        expect((exact.first! as List<Object?>).first, 'active/true/raw=1');
         expect(exact, legendObservationMatcher(run(exact: false)));
       });
 
@@ -3810,7 +3741,9 @@ void main() {
         }
 
         final exact = run(exact: true);
-        expect((exact.first! as List<Object?>).first, 'default/false/raw=9.0');
+        // Chart.js ADR 0182: the plugin reads the key at the first hook of the
+        // update, before the change of the first arc.
+        expect((exact.first! as List<Object?>).first, 'active/true/raw=1');
         expect(exact, legendObservationMatcher(run(exact: false)));
       });
 

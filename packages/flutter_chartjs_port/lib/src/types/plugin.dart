@@ -800,6 +800,49 @@ base class PluginOf<O, C extends IChart>({
     ),
   };
 
+  /// The function of the hook [hook], or Dart `null` for none.
+  ///
+  /// The read is here, where the field has the [O] of this plugin: a read of
+  /// a hook field through `Plugin<Object?>` fails the covariance check of
+  /// Dart when [O] is a class (Chart.js ADR 0182).
+  Function? hookOf(PluginHook<Object> hook) => switch (hook) {
+    PluginHook.install => install,
+    PluginHook.start => start,
+    PluginHook.stop => stop,
+    PluginHook.beforeInit => beforeInit,
+    PluginHook.afterInit => afterInit,
+    PluginHook.beforeUpdate => beforeUpdate,
+    PluginHook.afterUpdate => afterUpdate,
+    PluginHook.beforeElementsUpdate => beforeElementsUpdate,
+    PluginHook.reset => reset,
+    PluginHook.beforeDatasetsUpdate => beforeDatasetsUpdate,
+    PluginHook.afterDatasetsUpdate => afterDatasetsUpdate,
+    PluginHook.beforeDatasetUpdate => beforeDatasetUpdate,
+    PluginHook.afterDatasetUpdate => afterDatasetUpdate,
+    PluginHook.beforeLayout => beforeLayout,
+    PluginHook.beforeDataLimits => beforeDataLimits,
+    PluginHook.afterDataLimits => afterDataLimits,
+    PluginHook.beforeBuildTicks => beforeBuildTicks,
+    PluginHook.afterBuildTicks => afterBuildTicks,
+    PluginHook.afterLayout => afterLayout,
+    PluginHook.beforeRender => beforeRender,
+    PluginHook.afterRender => afterRender,
+    PluginHook.beforeDraw => beforeDraw,
+    PluginHook.afterDraw => afterDraw,
+    PluginHook.beforeDatasetsDraw => beforeDatasetsDraw,
+    PluginHook.afterDatasetsDraw => afterDatasetsDraw,
+    PluginHook.beforeDatasetDraw => beforeDatasetDraw,
+    PluginHook.afterDatasetDraw => afterDatasetDraw,
+    PluginHook.beforeEvent => beforeEvent,
+    PluginHook.afterEvent => afterEvent,
+    PluginHook.resize => resize,
+    PluginHook.beforeDestroy => beforeDestroy,
+    PluginHook.afterDestroy => afterDestroy,
+    PluginHook.uninstall => uninstall,
+    PluginHook.beforeTooltipDraw => beforeTooltipDraw,
+    PluginHook.afterTooltipDraw => afterTooltipDraw,
+  };
+
   /// Whether the data-only lifecycle can run this plugin with the resolved
   /// options [view] (Chart.js ADR 0074).
   bool allowsDataUpdates(Object view) =>
@@ -812,10 +855,18 @@ base class PluginOf<O, C extends IChart>({
 
   /// The options of a hook: [options] of the resolved options [view], or
   /// [view] itself.
+  ///
+  /// The options of one view are made once: each hook of one update gets the
+  /// same object (Chart.js ADR 0182).
   O _optionsOf(Object view) {
     final make = options;
-    return make == null ? view as O : make(view as ContextResolver);
+    if (make == null) return view as O;
+    return (_madeOptions[view] ??= make(view as ContextResolver) as Object)
+        as O;
   }
+
+  /// The options that [options] made for each resolved view.
+  final Expando<Object> _madeOptions = Expando('plugin options');
 
   /// Calls the hook [function] that cannot cancel. The chart is a [C]: the
   /// one checked cast of the chart.

@@ -135,21 +135,39 @@ void main() {
   group('lttbDecimation', () {
     test('lttb samples 6', () {
       _expectItems(
-        lttbDecimation(_series(20, _wave), 0, 20, 100, {'samples': 6}),
+        lttbDecimation(
+          _series(20, _wave),
+          0,
+          20,
+          100,
+          DecimationOptions.of({'samples': 6}),
+        ),
         [_p(0, 0), _p(3, 19), _p(5, 1), _p(13, 21), _p(15, 3), _p(19, 13)],
       );
     });
 
     test('lttb start 4 count 11 samples 5', () {
       _expectItems(
-        lttbDecimation(_series(20, _wave), 4, 11, 100, {'samples': 5}),
+        lttbDecimation(
+          _series(20, _wave),
+          4,
+          11,
+          100,
+          DecimationOptions.of({'samples': 5}),
+        ),
         [_p(4, 10), _p(5, 1), _p(8, 20), _p(12, 7), _p(14, 12)],
       );
     });
 
     test('lttb samples >= count slices', () {
       final data = _series(20, _wave);
-      final result = lttbDecimation(data, 3, 5, 100, {'samples': 9});
+      final result = lttbDecimation(
+        data,
+        3,
+        5,
+        100,
+        DecimationOptions.of({'samples': 9}),
+      );
       expect(result, hasLength(5));
       expect(result[0], same(data[3]));
       expect(result, isNot(same(data)));
@@ -157,14 +175,26 @@ void main() {
 
     test('lttb samples string', () {
       _expectItems(
-        lttbDecimation(_series(20, _wave), 0, 20, 100, {'samples': '6'}),
+        lttbDecimation(
+          _series(20, _wave),
+          0,
+          20,
+          100,
+          DecimationOptions.of({'samples': '6'}),
+        ),
         [_p(0, 0), _p(3, 19), _p(5, 1), _p(13, 21), _p(15, 3), _p(19, 13)],
       );
     });
 
     test('lttb samples 6.5', () {
       _expectItems(
-        lttbDecimation(_series(20, _wave), 0, 20, 100, {'samples': 6.5}),
+        lttbDecimation(
+          _series(20, _wave),
+          0,
+          20,
+          100,
+          DecimationOptions.of({'samples': 6.5}),
+        ),
         [
           _p(0, 0),
           _p(3, 19),
@@ -179,7 +209,13 @@ void main() {
 
     test('lttb samples 0 uses the width 5', () {
       _expectItems(
-        lttbDecimation(_series(20, _wave), 0, 20, 5, {'samples': 0}),
+        lttbDecimation(
+          _series(20, _wave),
+          0,
+          20,
+          5,
+          DecimationOptions.of({'samples': 0}),
+        ),
         [_p(0, 0), _p(3, 19), _p(10, 2), _p(13, 21), _p(19, 13)],
       );
     });
@@ -188,14 +224,17 @@ void main() {
       final data = <Object?>[
         for (var i = 0; i < 20; i++) _p('$i', '${_wave(i)}'),
       ];
-      _expectItems(lttbDecimation(data, 0, 20, 100, {'samples': 6}), [
-        _p('0', '0'),
-        _p('4', '10'),
-        _p('8', '20'),
-        _p('10', '2'),
-        _p('18', '22'),
-        _p('19', '13'),
-      ]);
+      _expectItems(
+        lttbDecimation(data, 0, 20, 100, DecimationOptions.of({'samples': 6})),
+        [
+          _p('0', '0'),
+          _p('4', '10'),
+          _p('8', '20'),
+          _p('10', '2'),
+          _p('18', '22'),
+          _p('19', '13'),
+        ],
+      );
     });
 
     test('lttb no y in the first bucket, samples 3', () {
@@ -203,11 +242,14 @@ void main() {
         for (var i = 0; i < 9; i++)
           if (i < 5) <String, Object?>{'x': i} else _p(i, i),
       ];
-      _expectItems(lttbDecimation(data, 0, 9, 100, {'samples': 3}), [
-        <String, Object?>{'x': 0},
-        undefined,
-        _p(8, 8),
-      ]);
+      _expectItems(
+        lttbDecimation(data, 0, 9, 100, DecimationOptions.of({'samples': 3})),
+        [
+          <String, Object?>{'x': 0},
+          undefined,
+          _p(8, 8),
+        ],
+      );
     });
 
     test('lttb no y in the first bucket, samples 4', () {
@@ -217,7 +259,13 @@ void main() {
       ];
       // `a` is undefined in the second pass: the read of `data[a]` throws.
       expect(
-        () => lttbDecimation(data, 0, 9, 100, {'samples': 4}),
+        () => lttbDecimation(
+          data,
+          0,
+          9,
+          100,
+          DecimationOptions.of({'samples': 4}),
+        ),
         throwsA(isA<TypeError>()),
       );
     });
@@ -229,7 +277,7 @@ void main() {
           0,
           5,
           100,
-          {'samples': 3},
+          DecimationOptions.of({'samples': 3}),
         ),
         throwsA(isA<TypeError>()),
       );
@@ -237,7 +285,13 @@ void main() {
 
     test('lttb number items', () {
       _expectItems(
-        lttbDecimation([1, 2, 3, 4, 5, 6], 0, 6, 100, {'samples': 3}),
+        lttbDecimation(
+          [1, 2, 3, 4, 5, 6],
+          0,
+          6,
+          100,
+          DecimationOptions.of({'samples': 3}),
+        ),
         [1, undefined, 6],
       );
     });
@@ -488,7 +542,7 @@ void main() {
           () => decimation.beforeElementsUpdate!(
             chart,
             const PluginHookArgs(),
-            DecimationOptions(<String, Object?>{
+            DecimationOptions.of(<String, Object?>{
               'enabled': true,
               'algorithm': algorithm,
             }),
@@ -509,9 +563,9 @@ void main() {
       decimation.beforeElementsUpdate!(
         chart,
         const PluginHookArgs(),
-        const DecimationOptions(<String, Object?>{
+        DecimationOptions.of(<String, Object?>{
           'enabled': true,
-          'algorithm': MinMaxDecimationAlgorithm(),
+          'algorithm': const MinMaxDecimationAlgorithm(),
         }),
       );
       final datasets = (chart.data as AnyObject)['datasets']! as List<Object?>;

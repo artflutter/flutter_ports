@@ -18,17 +18,17 @@
 /// Each hook is a private function of the hook type `(types.Chart chart,
 /// args, TooltipOptions options)` (Chart.js ADR 0150, in place of the
 /// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
-/// class of its hook, and the facade [TooltipOptions] of the resolved
-/// options. The draw hooks of the tooltip get a
+/// class of its hook, and the resolved [TooltipOptions] (Chart.js ADR
+/// 0182). The draw hooks of the tooltip get a
 /// [TooltipDrawHookArgs]. `chart.tooltip` is a field of `types.Chart` with
 /// the type `types.TooltipModel?`: Dart `null` stands for JS `undefined`.
 /// The hooks cast it to [Tooltip], the class of this library (Chart.js ADR
 /// 0039, section 1).
 ///
-/// The tooltip reads its options through the facade [TooltipOptions] of
-/// `plugin_options.dart` (Chart.js ADR 0054 §4), in the upstream order of
-/// the reads. The tooltip items and the body items are the native
-/// [TooltipItem] and [TooltipBodyItem] (row
+/// The tooltip keeps the resolved view of its options and makes a
+/// [TooltipOptions] of `plugin_options.dart` with its own context where
+/// upstream calls `setContext` (Chart.js ADR 0182). The tooltip items and
+/// the body items are the native [TooltipItem] and [TooltipBodyItem] (row
 /// `adapt-native-tooltip-item`). The label colors, the label point styles
 /// and the positions of the built-in positioners are typed classes
 /// ([TooltipLabelStyle], [TooltipLabelPointStyle] and [TooltipPosition]). A
@@ -589,7 +589,7 @@ TooltipCallbacks _callbacksFor(TooltipOptions options, TooltipItem item) {
 }
 
 bool _isDatasetMode(TooltipModel tooltip) =>
-    TooltipOptions(tooltip.options).mode is DatasetInteractionMode;
+    TooltipOptions.of(tooltip.options).mode is DatasetInteractionMode;
 
 /// plugin.tooltip.js:364 the default `title(tooltipItems)`. Args are:
 /// (tooltipItems, data)
@@ -672,7 +672,7 @@ TooltipLabelStyle _defaultLabelColor(TooltipModel tooltip, TooltipItem item) {
 }
 
 ChartPaint _defaultLabelTextColor(TooltipModel tooltip, TooltipItem item) =>
-    chartPaintOf(TooltipOptions(tooltip.options).bodyColor, strict: false);
+    chartPaintOf(TooltipOptions.of(tooltip.options).bodyColor, strict: false);
 
 TooltipLabelPointStyle _defaultLabelPointStyle(
   TooltipModel tooltip,
@@ -1005,12 +1005,12 @@ class Tooltip(({IChart chart, Object? options}) config)
   TooltipOptions _resolveOptions() {
     final options = this.options ?? undefined;
     if (options is OptionView) {
-      return TooltipOptions(options.setContext(getContext()));
+      return TooltipOptions.of(options.setContext(getContext()));
     }
     // Options of a spec or of user code: the read by name and a typed call
     // with no `this` (Chart.js ADR 0173).
     // DIVERGES(chartjs): adapt-option-function-types, a typed call.
-    return TooltipOptions(switch (jsGet(options, 'setContext')) {
+    return TooltipOptions.of(switch (jsGet(options, 'setContext')) {
       final Object? Function(Object?) setContext => setContext(getContext()),
       final Object? Function() setContext => setContext(),
       _ => throw TypeError(),
@@ -1933,7 +1933,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     }
     _ignoreReplayEvents = false;
 
-    final options = TooltipOptions(this.options ?? undefined);
+    final options = TooltipOptions.of(this.options ?? undefined);
     final lastActive = _active;
     final active = _getActiveElements(e, lastActive, replay, chartArea);
 
@@ -1978,7 +1978,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     Object? replay,
     Object? inChartArea,
   ) {
-    final options = TooltipOptions(this.options ?? undefined);
+    final options = TooltipOptions.of(this.options ?? undefined);
 
     if (e.type == 'mouseout') {
       return [];
@@ -2012,7 +2012,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     final active = chart.getElementsAtEventForMode(
       e,
       options.mode,
-      options.object,
+      options.view,
       replay is bool ? replay : (jsTruthy(replay) ? true : null),
     );
 
@@ -2033,7 +2033,11 @@ class Tooltip(({IChart chart, Object? options}) config)
   bool _positionChanged(List<ActiveElement> active, Object? e) {
     final caretX = _caretX ?? undefined;
     final caretY = _caretY ?? undefined;
-    final position = _position(TooltipOptions(options ?? undefined), active, e);
+    final position = _position(
+      TooltipOptions.of(options ?? undefined),
+      active,
+      e,
+    );
     return !identical(position, false) &&
         (!_strictEquals(caretX, _readX(position)) ||
             !_strictEquals(caretY, _readY(position)));
@@ -2209,8 +2213,8 @@ bool _scriptableDescriptor(String name) =>
 
 /// plugin.tooltip.js:1228 `afterInit(chart, _args, options)`.
 void _afterInit(IChart chart, PluginHookArgs _, TooltipOptions options) {
-  if (jsTruthy(options.object)) {
-    chart.tooltip = Tooltip((chart: chart, options: options.object));
+  if (jsTruthy(options.view)) {
+    chart.tooltip = Tooltip((chart: chart, options: options.view));
   }
 }
 
@@ -2218,7 +2222,7 @@ void _afterInit(IChart chart, PluginHookArgs _, TooltipOptions options) {
 /// continues the update: `true` is the `undefined` result of upstream.
 bool _beforeUpdate(IChart chart, UpdateHookArgs _, TooltipOptions options) {
   if (chart.tooltip != null) {
-    (chart.tooltip! as Tooltip).initialize(options.object);
+    (chart.tooltip! as Tooltip).initialize(options.view);
   }
   return true;
 }
@@ -2226,7 +2230,7 @@ bool _beforeUpdate(IChart chart, UpdateHookArgs _, TooltipOptions options) {
 /// plugin.tooltip.js:1240 `reset(chart, _args, options)`.
 void _reset(IChart chart, PluginHookArgs _, TooltipOptions options) {
   if (chart.tooltip != null) {
-    (chart.tooltip! as Tooltip).initialize(options.object);
+    (chart.tooltip! as Tooltip).initialize(options.view);
   }
 }
 
@@ -2292,8 +2296,8 @@ final class TooltipPlugin() extends Plugin<TooltipOptions> {
   this
     : super(
         id: 'tooltip',
-        // The hooks get the facade of the resolved options (Chart.js ADR 0150).
-        options: TooltipOptions.new,
+        // The hooks get the resolved options (Chart.js ADR 0182).
+        options: TooltipOptions.of,
         afterInit: _afterInit,
         beforeUpdate: _beforeUpdate,
         reset: _reset,

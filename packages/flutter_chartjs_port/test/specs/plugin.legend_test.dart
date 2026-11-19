@@ -9,7 +9,6 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -896,7 +895,7 @@ void main() {
         },
       });
       expect(
-        jsGet(chart.legend!.options, 'onClick'),
+        LegendOptions.of(chart.legend!.options).onClick,
         same(jsGet(_legendDefaults(), 'onClick')),
       );
     });
@@ -930,11 +929,11 @@ void main() {
         },
       });
       expect(
-        jsGet(jsGet(chart.legend!.options, 'labels'), 'color'),
+        LegendOptions.of(chart.legend!.options).labels.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
       expect(
-        jsGet(jsGet(chart.legend!.options, 'title'), 'color'),
+        LegendOptions.of(chart.legend!.options).title.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
     });
@@ -944,11 +943,11 @@ void main() {
         final chart = acquireChart(
           _lineChart(<String, Object?>{'display': true}),
         );
-        expect(jsGet(chart.legend!.options, 'display'), true);
+        expect(LegendOptions.of(chart.legend!.options).display, true);
 
         _legendOptions(chart)['display'] = false;
         chart.update();
-        expect(jsGet(chart.legend!.options, 'display'), false);
+        expect(LegendOptions.of(chart.legend!.options).display, false);
       });
 
       testWidgets('should update the associated layout item', (tester) async {
@@ -1004,22 +1003,22 @@ void main() {
           _pluginOptions(chart)['legend'] = <String, Object?>{};
           chart.update();
           expect(chart.legend, isNotNull);
-          final legendDefaults = _legendDefaults();
-          expect(
-            chart.legend!.options,
-            toEqualOptions(<String, Object?>{
-              // Object.assign({}, Chart.defaults.plugins.legend, ...)
-              for (final key in jsObjectKeys(legendDefaults))
-                key: jsGet(legendDefaults, key),
-              // replace scriptable options with resolved values
-              'labels': <String, Object?>{
-                'color': jsGet(Chart.defaults, 'color'),
-              },
-              'title': <String, Object?>{
-                'color': jsGet(Chart.defaults, 'color'),
-              },
-            }),
-          );
+          // `toEqualOptions` read the own keys of the defaults, and the
+          // resolved colors of the scriptable label and title colors. The
+          // legend keeps the resolved `LegendOptions` (Chart.js ADR 0182).
+          final expected = LegendOptions.of(_legendDefaults());
+          final actual = LegendOptions.of(chart.legend!.options);
+          expect(actual.display, expected.display);
+          expect(actual.position, expected.position);
+          expect(actual.align, expected.align);
+          expect(actual.fullSize, expected.fullSize);
+          expect(actual.reverse, expected.reverse);
+          expect(actual.weight, expected.weight);
+          expect(actual.onClick, same(expected.onClick));
+          expect(actual.onHover, same(expected.onHover));
+          expect(actual.onLeave, same(expected.onLeave));
+          expect(actual.labels.color, jsGet(Chart.defaults, 'color'));
+          expect(actual.title.color, jsGet(Chart.defaults, 'color'));
         },
       );
     });

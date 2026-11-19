@@ -124,7 +124,10 @@ class Legend(
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value.
   this {
-    super.options = config.options;
+    super.options = switch (config.options) {
+      null => null,
+      final Object options => LegendOptions.of(options),
+    };
   }
 
   /// plugin.legend.js:41 `class Legend` as a value (Chart.js ADR 0020,
@@ -200,7 +203,7 @@ class Legend(
   /// The options at the mark of a pending build, or Dart `null` when no build
   /// waits. `beforeUpdate` of a next update replaces [options].
   // DIVERGES(chartjs): adapt-hidden-legend-items, no upstream state.
-  OptionView? _pendingOptions;
+  LegendOptions? _pendingOptions;
 
   /// The indexed styles of the mark of a pending build, or Dart `null` when
   /// the proof of the mark was a cached entry (Chart.js ADR 0099).
@@ -280,13 +283,18 @@ class Legend(
   @override
   ScaleAxis? get axis => null;
 
-  /// plugin.legend.js:63 `options`, the resolver of the legend options.
+  /// plugin.legend.js:63 `options`, the resolved [LegendOptions] (Chart.js
+  /// ADR 0182).
   ///
   /// [LegendElement.options] is not nullable. Thus the read of a
   /// legend without options throws a [TypeError], as the first member read
   /// of `this.options` throws upstream (Chart.js ADR 0038, section 7).
+  // DIVERGES(chartjs): adapt-native-plugin-options, the resolved values.
   @override
-  Object get options => super.options!;
+  LegendOptions get options => super.options! as LegendOptions;
+
+  @override
+  set options(covariant LegendOptions? value) => super.options = value;
 
   /// plugin.legend.js:82 `update(maxWidth, maxHeight, margins)`.
   @override
@@ -309,18 +317,19 @@ class Legend(
   /// keeps the result, so a later build reads no options of the chart.
   // DIVERGES(chartjs): adapt-hidden-legend-items, the build of an unread list.
   void _buildLabelsOrMark({required bool datasetsUpdated}) {
-    final options = super.options;
+    final options = this.options;
+    final view = options.view;
     _markStyles = null;
     final waits =
-        options is OptionView &&
-        _itemsCanWait(options, datasetsUpdated: datasetsUpdated);
+        view is OptionView &&
+        _itemsCanWait(view, datasetsUpdated: datasetsUpdated);
     final styles = _markStyles;
     _markStyles = null;
     // The state that the resolve of each item of the build leaves in its arc.
     if (waits && (styles == null || styles.writeContexts())) {
       _pendingOptions = options;
       _pendingStyles = styles;
-      optionOf(optionOf(options, OptionKey.labels), OptionKey.color);
+      optionOf(optionOf(view, OptionKey.labels), OptionKey.color);
     } else {
       // Only the write of a build ends the wait of the last mark. Thus after a
       // build that throws, a read gives the last snapshot of upstream.
@@ -466,7 +475,10 @@ class Legend(
   // DIVERGES(chartjs): adapt-hidden-legend-items, the build at a read.
   void _buildPendingItems() {
     final pending = _pendingOptions;
-    if (pending == null || !_buildRunsNoUserCode(pending, atMark: false)) {
+    final view = pending?.view;
+    if (pending == null ||
+        view is! OptionView ||
+        !_buildRunsNoUserCode(view, atMark: false)) {
       return;
     }
     final current = super.options;
@@ -517,11 +529,8 @@ class Legend(
   /// stable sort of `Array.prototype.sort` ([jsSort]). `reverse` reverses the
   /// List in place.
   void buildLabels() {
-    final opts = LegendOptions(options);
-    final labels = opts.labelsValue;
-    final labelOpts = LegendLabelOptions(
-      jsTruthy(labels) ? labels : <String, Object?>{},
-    );
+    final opts = options;
+    final labelOpts = opts.labels;
     // DIVERGES(chartjs): adapt-native-callbacks, typed functions.
     final generate = functionOption<LegendLabelsGenerator>(
       labelOpts.generateLabels,
@@ -558,7 +567,7 @@ class Legend(
   /// displayed, there are no guarantees that the options are correctly
   /// formatted so we need to bail out as early as possible.
   void fit() {
-    final options = LegendOptions(this.options);
+    final options = this.options;
     final ctx = this.ctx;
 
     if (!options.display) {
@@ -604,7 +613,7 @@ class Legend(
   ) {
     final ctx = this.ctx!;
     final maxWidth = this.maxWidth;
-    final padding = _labelPadding(LegendOptions(options).labels);
+    final padding = _labelPadding(options.labels);
     final hitboxes = legendHitBoxes = [];
     // Width of each line of legend boxes. Labels wrap onto multiple lines
     // when there are too many to fit on one
@@ -664,7 +673,7 @@ class Legend(
   ) {
     final ctx = this.ctx!;
     final maxHeight = this.maxHeight;
-    final padding = _labelPadding(LegendOptions(options).labels);
+    final padding = _labelPadding(options.labels);
     final hitboxes = legendHitBoxes = [];
     final columnSizes = this.columnSizes = [];
     final heightLimit = maxHeight - titleHeight;
@@ -724,7 +733,7 @@ class Legend(
   /// plugin.legend.js:230 `adjustHitBoxes()`.
   // DIVERGES(chartjs): adapt-native-legend-hit-box, native mutable geometry.
   void adjustHitBoxes() {
-    final options = LegendOptions(this.options);
+    final options = this.options;
     if (!options.display) {
       return;
     }
@@ -811,7 +820,7 @@ class Legend(
   /// plugin.legend.js:265 `isHorizontal()`.
   @override
   bool isHorizontal() {
-    final position = LegendOptions(options).position;
+    final position = options.position;
     return position == ChartPosition.top || position == ChartPosition.bottom;
   }
 
@@ -822,7 +831,7 @@ class Legend(
   /// (Chart.js ADR 0038, section 7).
   @override
   void draw([ChartArea? chartArea]) {
-    if (LegendOptions(options).display) {
+    if (options.display) {
       final ctx = this.ctx!;
       clipArea(ctx, this);
 
@@ -834,7 +843,7 @@ class Legend(
 
   /// plugin.legend.js:283 `_draw()`.
   void _draw() {
-    final opts = LegendOptions(options);
+    final opts = options;
     final lineWidths = this.lineWidths;
     final ctx = this.ctx!;
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
@@ -1092,7 +1101,7 @@ class Legend(
   ///
   /// @protected
   void drawTitle() {
-    final opts = LegendOptions(options);
+    final opts = options;
     final titleOpts = opts.title;
     final titleFont = titleOpts.font;
     final titlePadding = titleOpts.padding;
@@ -1154,7 +1163,7 @@ class Legend(
 
   /// plugin.legend.js:493 `_computeTitleHeight()`.
   double _computeTitleHeight() {
-    final titleOpts = LegendOptions(options).title;
+    final titleOpts = options.title;
     final titleFont = titleOpts.font;
     final titlePadding = titleOpts.padding;
     return titleOpts.display
@@ -1193,7 +1202,7 @@ class Legend(
   /// Handle an event
   /// @param {ChartEvent} e - The event to handle
   void handleEvent(ChartEvent e) {
-    final opts = LegendOptions(options);
+    final opts = options;
     if (!_isListened(e.type, opts)) {
       return;
     }
@@ -1587,14 +1596,12 @@ Object? _chartColor(Object? ctx) {
 /// datasets of the user are read by name.
 List<LegendItem> _generateLabels(IChart chart) {
   final datasets = jsGet(chart.data, 'datasets');
-  final labels = LegendOptions(chart.legend!.options).labels;
+  final labels = LegendOptions.of(chart.legend!.options).labels;
   final usePointStyle = labels.usePointStyle;
   final pointStyle = labels.pointStyle;
   final textAlign = labels.textAlign;
   final color = labels.color;
-  // `useBorderRadius && (…)` (plugin.legend.js:697) gives the value of the
-  // item field, `undefined` for an absent option: the raw read.
-  final useBorderRadius = optionOf(labels.object, OptionKey.useBorderRadius);
+  final useBorderRadius = labels.useBorderRadius;
   final borderRadius = labels.borderRadius;
 
   return [
@@ -1658,11 +1665,10 @@ LegendItem _datasetItem(
 /// plugin.legend.js:601 `start(chart, _args, options)`. The box keeps the
 /// resolved options of the facade.
 void _start(IChart chart, PluginHookArgs _, LegendOptions options) {
-  final resolved = options.object!;
-  final legend = Legend((ctx: chart.ctx, options: resolved, chart: chart));
+  final legend = Legend((ctx: chart.ctx, options: options, chart: chart));
   chart.legend = legend;
   layouts
-    ..configure(chart, legend, resolved)
+    ..configure(chart, legend, options)
     ..addBox(chart, legend);
 }
 
@@ -1694,9 +1700,8 @@ void _stop(IChart chart, PluginHookArgs _, LegendOptions _) {
 /// upstream.
 bool _beforeUpdate(IChart chart, UpdateHookArgs _, LegendOptions options) {
   final legend = chart.legend! as Legend;
-  final resolved = options.object!;
-  layouts.configure(chart, legend, resolved);
-  legend.options = resolved;
+  layouts.configure(chart, legend, options);
+  legend.options = options;
   return true;
 }
 
@@ -1745,7 +1750,7 @@ final class LegendPlugin() extends Plugin<LegendOptions> {
     : super(
         id: 'legend',
         // The hooks get the facade of the resolved options (Chart.js ADR 0150).
-        options: LegendOptions.new,
+        options: LegendOptions.of,
         start: _start,
         stop: _stop,
         beforeUpdate: _beforeUpdate,

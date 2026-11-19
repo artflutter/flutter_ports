@@ -137,10 +137,15 @@ List<String> _nativeKeys<O>(Plugin<O> plugin) => [
 
 /// [f] of the plugin object [plugin] of the namespace `plugins`, with the
 /// options type of the plugin: a hook field is read through the type of its
-/// plugin. A plugin with the options of an extension type is a
-/// `Plugin<Object?>` at run time.
+/// plugin, the resolved options class of Chart.js ADR 0182.
 T _withPlugin<T>(Object? plugin, T Function<O>(Plugin<O> plugin) f) =>
     switch (plugin) {
+      final Plugin<TitleOptions> p => f<TitleOptions>(p),
+      final Plugin<LegendOptions> p => f<LegendOptions>(p),
+      final Plugin<TooltipOptions> p => f<TooltipOptions>(p),
+      final Plugin<FillerOptions> p => f<FillerOptions>(p),
+      final Plugin<DecimationOptions> p => f<DecimationOptions>(p),
+      final Plugin<ColorsPluginOptions> p => f<ColorsPluginOptions>(p),
       final Plugin<OptionView> p => f<OptionView>(p),
       final Plugin<Object?> p => f<Object?>(p),
       _ => throw ArgumentError.value(plugin, 'plugin', 'is not a Plugin'),

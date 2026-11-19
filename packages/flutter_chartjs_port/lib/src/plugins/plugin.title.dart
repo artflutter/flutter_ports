@@ -12,8 +12,8 @@
 /// Each hook is a private function of the hook type `(types.Chart chart,
 /// args, TitleOptions options)` (Chart.js ADR 0150, in place of the
 /// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
-/// class of its hook, and the facade `TitleOptions` of `plugin_options.dart`.
-/// The box keeps the resolved options and reads them through the facade.
+/// class of its hook, and the resolved `TitleOptions` of `plugin_options.dart`.
+/// The box keeps the resolved options, a [TitleOptions] (Chart.js ADR 0182).
 /// `chart.titleBlock` is a field of `types.Chart`: Dart `null` stands for JS
 /// `undefined` and for the `delete` of `plugin.title.js:136`.
 ///
@@ -43,8 +43,22 @@ class Title(
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
   /// 4). The `construct` closure of [jsClass] reads it from a JS value.
   this {
-    options = config.options;
+    options = switch (config.options) {
+      null => null,
+      final Object options => TitleOptions.of(options),
+    };
   }
+
+  /// plugin.title.js:15 `options`, the resolved [TitleOptions] of the box.
+  /// Dart `null` stands for JS `undefined`: a read of an option then throws
+  /// the [TypeError] of the null check, as the read of a member of
+  /// `undefined` throws upstream.
+  // DIVERGES(chartjs): adapt-native-plugin-options, the resolved values.
+  @override
+  TitleOptions? get options => super.options as TitleOptions?;
+
+  @override
+  set options(covariant TitleOptions? value) => super.options = value;
 
   /// plugin.title.js:7 `class Title` as a value (Chart.js ADR 0020, section
   /// 3).
@@ -133,7 +147,7 @@ class Title(
   /// margins, and the title ignores them (Chart.js ADR 0038, section 7).
   @override
   void update(double maxWidth, double maxHeight, [TRBL? margins]) {
-    final opts = TitleOptions(options);
+    final opts = options!;
 
     left = 0;
     top = 0;
@@ -162,7 +176,7 @@ class Title(
   /// plugin.title.js:54 `isHorizontal()`.
   @override
   bool isHorizontal() {
-    final pos = TitleOptions(options).position;
+    final pos = options!.position;
     return pos == ChartPosition.top || pos == ChartPosition.bottom;
   }
 
@@ -174,7 +188,7 @@ class Title(
     double offset,
   ) {
     final Title(:top, :left, :bottom, :right) = this;
-    final options = TitleOptions(this.options);
+    final options = this.options!;
     // DIVERGES(chartjs): adapt-chart-align-enum, the enum value.
     final alignName = options.align;
     var rotation = 0.0;
@@ -220,7 +234,7 @@ class Title(
   @override
   void draw([ChartArea? chartArea]) {
     final ctx = this.ctx;
-    final opts = TitleOptions(options);
+    final opts = options!;
 
     if (!opts.display) {
       return;
@@ -272,7 +286,7 @@ class Title(
 Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 
 /// plugin.title.js:108 `createTitle(chart, titleOpts)`.
-void _createTitle(IChart chart, Object titleOpts) {
+void _createTitle(IChart chart, TitleOptions titleOpts) {
   final title = Title((ctx: chart.ctx, options: titleOpts, chart: chart));
 
   layouts
@@ -282,9 +296,9 @@ void _createTitle(IChart chart, Object titleOpts) {
 }
 
 /// plugin.title.js:129 `start(chart, _args, options)`. The box keeps the
-/// resolved options of the facade.
+/// resolved options.
 void _start(IChart chart, PluginHookArgs _, TitleOptions options) {
-  _createTitle(chart, options.object!);
+  _createTitle(chart, options);
 }
 
 /// plugin.title.js:133 `stop(chart)`. Dart `null` stands for the
@@ -302,9 +316,8 @@ void _stop(IChart chart, PluginHookArgs _, TitleOptions _) {
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
 bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
   final title = chart.titleBlock! as Title;
-  final resolved = options.object!;
-  layouts.configure(chart, title, resolved);
-  title.options = resolved;
+  layouts.configure(chart, title, options);
+  title.options = options;
   return true;
 }
 
@@ -314,7 +327,7 @@ bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
 /// A native [Plugin] (Chart.js ADR 0144) with the upstream keys in the
 /// upstream order. Each hook is a private function of the hook type
 /// `(chart, args, options)` with the argument class of its hook and the
-/// facade [TitleOptions] (Chart.js ADR 0150). The key `_element: Title` of
+/// resolved [TitleOptions] (Chart.js ADR 0182). The key `_element: Title` of
 /// plugin.title.js:127 is for the tests: they read `Title.jsClass`.
 // DIVERGES(chartjs): adapt-typed-plugins, no key `_element`.
 final title = TitlePlugin();
@@ -327,8 +340,8 @@ final class TitlePlugin() extends Plugin<TitleOptions> {
   this
     : super(
         id: 'title',
-        // The hooks get the facade of the resolved options (Chart.js ADR 0150).
-        options: TitleOptions.new,
+        // The hooks get the resolved options (Chart.js ADR 0182).
+        options: TitleOptions.of,
         start: _start,
         stop: _stop,
         beforeUpdate: _beforeUpdate,

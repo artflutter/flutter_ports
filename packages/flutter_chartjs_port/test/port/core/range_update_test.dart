@@ -831,20 +831,18 @@ void main() {
       final chart = acquireChart(_small(log));
       final title = chart.titleBlock! as Title;
       // The first update laid out the title before any scale had a range.
-      expect(jsGet(title.options, 'text'), [startsWith('x undefined to')]);
+      expect(title.options!.text, [startsWith('x undefined to')]);
       for (final (min, max, was) in [
         (1.0, 4.0, '0.0 to 7.0'),
         (2.0, 6.0, '1.0 to 4.0'),
       ]) {
         _range('x', min, max)(chart);
         expect(chart.updateRanges(), isTrue);
-        expect(jsGet(title.options, 'text'), ['x $min to $max, was $was']);
+        expect(title.options!.text, ['x $min to $max, was $was']);
       }
       _reset(['x'])(chart);
       expect(chart.updateRanges(), isTrue);
-      expect(jsGet(title.options, 'text'), [
-        'x undefined to undefined, was 2.0 to 6.0',
-      ]);
+      expect(title.options!.text, ['x undefined to undefined, was 2.0 to 6.0']);
     });
 
     testWidgets('100 range updates add no cache entry and no scope', (

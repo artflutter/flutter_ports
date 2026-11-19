@@ -849,12 +849,14 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 // DIVERGES(chartjs): adapt-native-legend-item, native legend entries.
 List<LegendItem> _generateLabels(IChart chart) {
   final data = chart.data;
-  final labelsOptions = readOption(chart.legend!.options, OptionKey.labels);
-  final pointStyle = readOption(labelsOptions, OptionKey.pointStyle);
-  final textAlign = readOption(labelsOptions, OptionKey.textAlign);
-  final color = readOption(labelsOptions, OptionKey.color);
-  final useBorderRadius = readOption(labelsOptions, OptionKey.useBorderRadius);
-  final borderRadius = readOption(labelsOptions, OptionKey.borderRadius);
+  // The resolved label options of the legend (Chart.js ADR 0182).
+  // DIVERGES(chartjs): adapt-native-plugin-options, the resolved values.
+  final labelsOptions = LegendOptions.of(chart.legend!.options).labels;
+  final pointStyle = labelsOptions.pointStyle;
+  final textAlign = labelsOptions.textAlign;
+  final color = labelsOptions.color;
+  final useBorderRadius = labelsOptions.useBorderRadius;
+  final borderRadius = labelsOptions.borderRadius;
   // The data object of the user. Upstream reads `data.labels` twice: a read
   // of the data object has no side effect.
   final labelsValue = jsGet(data, 'labels');

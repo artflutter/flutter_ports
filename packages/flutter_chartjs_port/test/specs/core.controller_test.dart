@@ -239,6 +239,18 @@ void _unshift(List<Object?> array, List<Object?> items) {
   notifyArrayListeners(array, 'unshift', items);
 }
 
+/// The mode `'test'` of the specs: a mode of a program (row
+/// `adapt-interaction-mode-objects`). The specs only read it back.
+final class const _TestMode() extends InteractionMode {
+  @override
+  List<ActiveElement> itemsAt(
+    Chart chart,
+    Object e,
+    Object options, [
+    bool? useFinalPosition,
+  ]) => const [];
+}
+
 void main() {
   group('Chart', () {
     // https://github.com/chartjs/Chart.js/issues/2481
@@ -396,14 +408,14 @@ void main() {
         final defaults = Chart.defaults;
 
         defaults['onHover'] = callback;
-        _line['interaction'] = <String, Object?>{'mode': 'test'};
+        _line['interaction'] = <String, Object?>{'mode': const _TestMode()};
 
         final chart = acquireChart(<String, Object?>{'type': 'line'});
 
         final options = chart.options;
         expect(jsGet(options['font'], 'size'), jsGet(defaults['font'], 'size'));
         expect(options['onHover'], same(callback));
-        expect(jsGet(options['hover'], 'mode'), 'test');
+        expect(jsGet(options['hover'], 'mode'), const _TestMode());
 
         defaults['onHover'] = null;
         _line.jsDelete('interaction');
@@ -416,14 +428,14 @@ void main() {
         final defaults = Chart.defaults;
 
         defaults['onHover'] = callback;
-        _line['hover'] = <String, Object?>{'mode': 'test'};
+        _line['hover'] = <String, Object?>{'mode': const _TestMode()};
 
         final chart = acquireChart(<String, Object?>{'type': 'line'});
 
         final options = chart.options;
         expect(jsGet(options['font'], 'size'), jsGet(defaults['font'], 'size'));
         expect(options['onHover'], same(callback));
-        expect(jsGet(options['hover'], 'mode'), 'test');
+        expect(jsGet(options['hover'], 'mode'), const _TestMode());
 
         defaults['onHover'] = null;
         _line.jsDelete('hover');
@@ -437,7 +449,7 @@ void main() {
         final defaultSpanGaps = jsGet(lineDefaults, 'spanGaps');
 
         defaults['onHover'] = callback;
-        _line['hover'] = <String, Object?>{'mode': 'x-axis'};
+        _line['hover'] = <String, Object?>{'mode': const _TestMode()};
         lineDefaults['spanGaps'] = true;
 
         final chart = acquireChart(<String, Object?>{

@@ -741,7 +741,7 @@ void main() {
     // The tab has no plugin opt-out: the legend shows the two datasets in
     // a box above the chart area (plugin.legend.js:637-639).
     final legend = chart.legend! as Legend;
-    expect(jsGet(legend.options, 'display'), true);
+    expect(legend.options.display, isTrue);
     expect(
       [for (final item in legend.legendItems!) item.text.single],
       ['A', 'B'],

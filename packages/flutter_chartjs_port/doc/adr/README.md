@@ -152,7 +152,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0147](0147-public-theme-api.md) The public theme API: accepted, supersedes 0050, 0054, 0057, 0116, 0117, 0118, 0128, 0141.
 - [0148](0148-plugin-typing.md) Typed plugin chart, options and update mode: accepted, supersedes 0144, superseded in part by 0150, 0181.
 - [0149](0149-bar-chart-small-costs.md) Four small costs of a bar chart: proposed, supersedes 0054, 0070, 0106.
-- [0150](0150-typed-plugin-options.md) Typed plugin options: accepted, supersedes 0144, 0148.
+- [0150](0150-typed-plugin-options.md) Typed plugin options: accepted, supersedes 0144, 0148, superseded in part by 0182.
 - [0151](0151-shared-bar-animation-options.md) Shared animation options of a bar update: proposed, supersedes 0053, 0054, 0149.
 - [0152](0152-fast-bar-loop-modes-datasets-stacks.md) The fast bar loop for update modes, several datasets and stacks: proposed, supersedes 0054, 0068, 0069, 0074.
 - [0153](0153-bar-skip-null-index.md) The skipNull search in one pass: proposed, supersedes 0036, 0054, 0149.
@@ -176,4 +176,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0179](0179-no-parity-generator-or-port-order.md) No parity generator and no port-order tool: accepted, supersedes 0029.
 - [0180](0180-native-spec-matchers.md) Native matchers and recorders in the spec ports: accepted, supersedes 0030.
 - [0181](0181-plugin-classes-and-typed-get-plugin.md) A class for each plugin, and getPlugin by type: accepted, supersedes 0020, 0148.
+- [0182](0182-resolved-plugin-option-classes.md) Resolved option classes for the built-in plugins: accepted, supersedes 0150.
 <!-- adr-index:end -->

@@ -39,8 +39,8 @@ void main() {
     ]);
     final first = attachContext(resolver, {'index': 2.0});
     final second = attachContext(resolver, {'index': 5.0});
-    expect(TitleOptions(first).padding, const EdgeInsets.all(2));
-    expect(TitleOptions(second).padding, const EdgeInsets.all(5));
+    expect(TitleOptions.of(first).padding, const EdgeInsets.all(2));
+    expect(TitleOptions.of(second).padding, const EdgeInsets.all(5));
   });
 
   test('old scalar and object padding inputs are rejected in debug', () {

@@ -13,6 +13,7 @@
 /// This library is a pure layer.
 library;
 
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// An algorithm of the decimation plugin: the value of the option
@@ -36,7 +37,7 @@ import 'package:meta/meta.dart';
 ///     double start,
 ///     double count,
 ///     double availableWidth,
-///     Object options,
+///     DecimationOptions options,
 ///   ) => [
 ///     for (var i = start.toInt(); i < start + count; i += n) data[i],
 ///   ];
@@ -50,14 +51,15 @@ abstract class const DecimationAlgorithm() {
   /// The decimated items of the [count] items of [data] from the index
   /// [start], for a chart area of [availableWidth] pixels. The items are the
   /// data items of the app (the plugin needs `parsing: false`). [options]
-  /// are the options of the plugin: a built-in algorithm reads `samples`
-  /// from them, and an algorithm of a program can have its own fields.
+  /// are the resolved options of the plugin: a built-in algorithm reads
+  /// `samples` from them. An algorithm of a program keeps its own settings in
+  /// its fields.
   List<Object?> decimate(
     List<Object?> data,
     int start,
     int count,
     double availableWidth,
-    Object options,
+    DecimationOptions options,
   );
 
   /// The algorithm of [value], the value of the option `algorithm`, or Dart

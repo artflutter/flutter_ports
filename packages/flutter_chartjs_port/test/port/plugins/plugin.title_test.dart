@@ -12,8 +12,9 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/plugin_options_plain.dart';
 import '../controllers/controller_chart_harness.dart'
-    show expectNoStaleScaleKeys, plainValue;
+    show expectNoStaleScaleKeys;
 import '../scales/scale_chart_harness.dart';
 import 'plugin_chart_harness.dart';
 import 'plugin_title_reference.dart';
@@ -76,10 +77,10 @@ final Map<String, Object?> _functions = {
 Object? _observeTitle(Chart chart) {
   final titleBlock = chart.titleBlock;
   if (titleBlock == null) return null;
-  final text = jsGet(titleBlock.options, 'text');
+  final options = (titleBlock as Title).options!;
   return <String, Object?>{
-    'lines': text is List ? text.length.toDouble() : 1.0,
-    'options': plainValue(titleBlock.options),
+    'lines': options.text.length.toDouble(),
+    'options': plainTitleOptions(options),
   };
 }
 
@@ -186,7 +187,7 @@ void main() {
       expect(constructed, isA<Title>());
       final value = constructed! as Title;
       expect(value.chart, same(chart));
-      expect(value.options, same(options));
+      expect(value.options, TitleOptions.of(options));
       expect(value.ctx, isNull);
     });
 
@@ -311,7 +312,11 @@ void main() {
       // The probe stopWithoutBlock: no throw, the boxes stay.
       final chart = acquireChart(_line(false));
       final boxes = [...chart.boxes];
-      title.stop!(chart, const PluginHookArgs(), TitleOptions(chart.options));
+      title.stop!(
+        chart,
+        const PluginHookArgs(),
+        TitleOptions.of(chart.options),
+      );
       expect(chart.titleBlock, isNull);
       expect(chart.boxes, boxes);
     });
@@ -324,7 +329,7 @@ void main() {
         () => title.beforeUpdate!(
           chart,
           UpdateHookArgs(),
-          TitleOptions(chart.options),
+          TitleOptions.of(chart.options),
         ),
         throwsA(isA<TypeError>()),
       );
@@ -340,7 +345,11 @@ void main() {
       final box = chart.titleBlock;
       expect(box, isA<Title>());
       expect(chart.boxes, contains(same(box)));
-      title.stop!(chart, const PluginHookArgs(), TitleOptions(chart.options));
+      title.stop!(
+        chart,
+        const PluginHookArgs(),
+        TitleOptions.of(chart.options),
+      );
       expect(chart.titleBlock, isNull);
       expect(chart.boxes.where((b) => identical(b, box)), isEmpty);
     });

@@ -12,8 +12,9 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/plugin_options_plain.dart';
 import '../controllers/controller_chart_harness.dart'
-    show expectNoStaleScaleKeys, plainValue;
+    show expectNoStaleScaleKeys;
 import '../scales/scale_chart_harness.dart';
 import 'plugin_chart_harness.dart';
 import 'plugin_subtitle_reference.dart';
@@ -78,10 +79,10 @@ List<Title> _subtitles(Chart chart) => [
 /// options of the box.
 Object? _observeBox(LayoutItem? box) {
   if (box == null) return null;
-  final text = jsGet(box.options, 'text');
+  final options = (box as Title).options!;
   return <String, Object?>{
-    'lines': text is List ? text.length.toDouble() : 1.0,
-    'options': plainValue(box.options),
+    'lines': options.text.length.toDouble(),
+    'options': plainTitleOptions(options),
   };
 }
 
@@ -139,7 +140,7 @@ AnyObject _startOptions(String text) => <String, Object?>{
 /// so the call gives them the facade over the option values [options] of a
 /// Map, as the probe gave the Map.
 void _hook(String hook, Chart chart, [AnyObject? options]) {
-  final view = TitleOptions(options ?? <String, Object?>{});
+  final view = TitleOptions.of(options ?? <String, Object?>{});
   switch (hook) {
     case 'start':
       subTitle.start!(chart, const PluginHookArgs(), view);
@@ -294,7 +295,7 @@ void main() {
       );
       final first = _subtitles(chart);
       expect(first, hasLength(1));
-      expect(jsGet(first.single.options, 'text'), ['A']);
+      expect(first.single.options!.text, ['A']);
 
       _pluginOptions(chart)['subtitle'] = false;
       chart.update();
@@ -308,7 +309,7 @@ void main() {
       final second = _subtitles(chart);
       expect(second, hasLength(1));
       expect(second.single, isNot(same(first.single)));
-      expect(jsGet(second.single.options, 'text'), ['A2']);
+      expect(second.single.options!.text, ['A2']);
     });
 
     testWidgets('two charts each have their own subtitle', (tester) async {
@@ -329,14 +330,14 @@ void main() {
       expect(_subtitles(a), hasLength(1));
       expect(_subtitles(b), hasLength(1));
       expect(_subtitles(a).single, isNot(same(_subtitles(b).single)));
-      expect(jsGet(_subtitles(a).single.options, 'text'), ['A']);
-      expect(jsGet(_subtitles(b).single.options, 'text'), ['B']);
+      expect(_subtitles(a).single.options!.text, ['A']);
+      expect(_subtitles(b).single.options!.text, ['B']);
 
       final boxOfB = _subtitles(b).single;
       _hook('stop', a);
       expect(_subtitles(a), isEmpty);
       expect(_subtitles(b), [same(boxOfB)]);
-      expect(jsGet(boxOfB.options, 'text'), ['B']);
+      expect(boxOfB.options!.text, ['B']);
     });
 
     testWidgets('stop without start does not throw', (tester) async {
@@ -393,7 +394,7 @@ void main() {
       _hook('stop', chart);
       counts.add(_subtitles(chart).length);
       expect(counts, [1, 0, 1, 2, 1]);
-      expect(jsGet(_subtitles(chart).single.options, 'text'), ['y']);
+      expect(_subtitles(chart).single.options!.text, ['y']);
     });
 
     testWidgets('the subtitle box is a Title of the chart', (tester) async {

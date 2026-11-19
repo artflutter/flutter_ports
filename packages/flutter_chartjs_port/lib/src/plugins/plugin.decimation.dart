@@ -9,7 +9,7 @@
 /// `beforeElementsUpdate` and `destroy`. The hook `beforeElementsUpdate` is
 /// a private function of the hook type `(chart, args, options)`. `destroy`
 /// is no hook of the plugin service: it stays an extra key with the
-/// upstream parameter count. The options are read through the facade
+/// upstream parameter count. The hooks get the resolved options
 /// `DecimationOptions` of `plugin_options.dart`.
 ///
 /// The data of a dataset: upstream replaces the own property `data` of a
@@ -50,7 +50,7 @@ final class const LttbDecimationAlgorithm() extends DecimationAlgorithm {
     int start,
     int count,
     double availableWidth,
-    Object options,
+    DecimationOptions options,
   ) => lttbDecimation(
     data,
     start.toDouble(),
@@ -74,7 +74,7 @@ final class const MinMaxDecimationAlgorithm() extends DecimationAlgorithm {
     int start,
     int count,
     double availableWidth,
-    Object options,
+    DecimationOptions options,
   ) => minMaxDecimation(
     data,
     start.toDouble(),
@@ -98,7 +98,7 @@ final class const MinMaxDecimationAlgorithm() extends DecimationAlgorithm {
 /// `@internal` for the tests of the algorithm (Chart.js ADR 0012).
 ///
 /// [data] is the raw data of the dataset. [options] is the option object
-/// of the plugin: the function reads `options.samples` through the facade
+/// of the plugin: the function reads `options.samples` of the resolved
 /// [DecimationOptions]. The data items are the items of the user
 /// (`parsing: false`): their reads are by name ([jsGetKey]). An index past
 /// the end, a `null` or an `undefined` item throws a [TypeError] at the read of
@@ -109,9 +109,9 @@ List<Object?> lttbDecimation(
   double start,
   double count,
   double availableWidth,
-  Object? options,
+  DecimationOptions options,
 ) {
-  final samplesOption = DecimationOptions(options).samples;
+  final samplesOption = options.samples;
   // `samples` reaches only numeric operators (`>=`, `-`, `/`, `<`), which
   // apply ToNumber to it.
   final samples = jsToNumber(
@@ -514,7 +514,7 @@ List<Object?> _datasets(IChart chart) =>
 
 /// plugin.decimation.js:205 `beforeElementsUpdate(chart, args, options)`.
 ///
-/// The options are read through the facade [DecimationOptions], and the
+/// The hook gets the resolved [DecimationOptions], and reads the
 /// chart options through their typed reads ([optionOf]). The reads of the
 /// datasets of the user are reads by name ([_Dataset]).
 void _beforeElementsUpdate(
@@ -601,18 +601,14 @@ void _beforeElementsUpdate(
     // Point the chart to the decimated data
     // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the algorithm
     // object of the option in place of the `switch` by its name.
-    final raw = opts.algorithm;
-    final algorithm = DecimationAlgorithm.of(raw);
-    if (algorithm == null) {
-      // A JavaScript Error.
-      throw StateError("Unsupported decimation algorithm '${jsToString(raw)}'");
-    }
-    final decimated = algorithm.decimate(
+    // An option value that is not an algorithm throws the JavaScript Error
+    // of the `default` case in its `decimate`.
+    final decimated = opts.algorithm.decimate(
       data! as List<Object?>,
       start,
       count,
       availableWidth,
-      opts.object!,
+      opts,
     );
 
     target.write(OptionKey.descDecimated, decimated);
@@ -634,7 +630,7 @@ void _beforeElementsUpdate(
 /// src/plugins/index.js:2.
 ///
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
-/// ADR 0144). Its hooks get the options through the facade
+/// ADR 0144). Its hooks get the resolved
 /// [DecimationOptions].
 final decimation = DecimationPlugin();
 
@@ -647,7 +643,7 @@ final class DecimationPlugin() extends Plugin<DecimationOptions> {
   this
     : super(
         id: 'decimation',
-        options: DecimationOptions.new,
+        options: DecimationOptions.of,
         // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
         defaults: DecimationOptionsScope()
           // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the class.

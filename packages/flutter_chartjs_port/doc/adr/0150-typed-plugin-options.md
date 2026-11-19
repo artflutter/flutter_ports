@@ -5,6 +5,7 @@
 - Supersedes: of [Chart.js ADR 0144](0144-native-plugins.md), item 4 for `ResizeHookArgs.size`, item 5, and item 6
   for `events`; of [Chart.js ADR 0148](0148-plugin-typing.md), item 3 for the members of `PluginOptions`, and the
   consequence on `Plugin.events`.
+- Superseded in part by: [Chart.js ADR 0182](0182-resolved-plugin-option-classes.md) (2026-11-19), for item 2 (the facades of the built-in plugins) and item 3 (the getters of the facades)
 - Related: [native-plugin-options-design-draft.md](../native-plugin-options-design-draft.md)
 
 ## Context

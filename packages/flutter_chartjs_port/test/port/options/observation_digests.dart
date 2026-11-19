@@ -2300,7 +2300,7 @@ const Map<String, String> observationDigests = {
   'fixture plugin.title/scriptable-options.js (plain)':
       '43db555909a0398c7bbc1ec1a592ff4a47b9c87896fa65eede8f7ba911ef2e1c',
   'fixture plugin.title/scriptable-options.js (trace)':
-      '762274469c61bfb0882028057a3ab1bcec7a625d6ed71405ba8236f8b0162b02',
+      '595e27fa6acb3e597d095cb99827d61fac96aaec8add2533b93ffcf0b04ea3ed',
   'fixture plugin.tooltip/box-padding.js (plain)':
       '523de55f16aa6716246deb94b876138ffc9f3a5e9a42c8b88b5756a9d41e03d0',
   'fixture plugin.tooltip/box-padding.js (trace)':
@@ -2764,7 +2764,7 @@ const Map<String, String> observationDigests = {
   'focused fallbacks: interaction, tooltip, legend labels (plain)':
       '388ad1006ec84d39df811fd528ff02afc4f566f658ba57f2fe7bd1a289c812fe',
   'focused fallbacks: interaction, tooltip, legend labels (trace)':
-      '325bd761d1f367aaf76b221e75772f8593d9f4d902406e7bf39523b524418130',
+      'c76551b7cae7828c8bf1d7aa0d42dc83d2a8fac12d8ffc83b8c905957ead3d13',
   'focused hover prefixes (plain)':
       'ed351be5c21148698ed077caaa4cda64f062003f4e441d99e5671bd9fd7156a3',
   'focused hover prefixes (trace)':
@@ -2920,7 +2920,7 @@ const Map<String, String> observationDigests = {
   'trace plugin: a scriptable legend label color (plain)':
       '1872832f84be3526f3739b329a2ff7663e84898c19355f2d9b6ac8a0fcadb9cd',
   'trace plugin: a scriptable legend label color (trace)':
-      '85bc46e803995afa521c1fe1f92f92ae09319aad6b7d6e8a32b66ae355c03e52',
+      '6c98301f0d55531043c97a3261c676ccd1f616d437bf09e32bdc10bf9e2d5894',
   'trace plugin: an inline plugin writes the dataset colors in beforeLayout (plain)':
       '6e7891b8ff23ed8ec5b31627e5a240bb87f19ba441a4b21bb23946f6389f0408',
   'trace plugin: an inline plugin writes the dataset colors in beforeLayout (trace)':

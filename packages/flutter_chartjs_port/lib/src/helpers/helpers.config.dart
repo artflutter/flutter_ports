@@ -1677,6 +1677,7 @@ Object? readOption(Object? options, OptionKey key) => switch (options) {
   final OptionResolver resolver => resolver.readKey(key),
   final ElementOptions elementOptions => elementOptions.valueOf(key),
   final OptionScope scope => scope.readKey(key),
+  final LayoutBoxOptions box => box.layoutOption(key),
   _ => jsGet(options, key.jsName),
 };
 

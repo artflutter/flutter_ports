@@ -114,6 +114,23 @@ final class const ScaleValuePosition(
   String toString() => 'ScaleValuePosition($scaleId, $value)';
 }
 
+/// The resolved options of a layout box of a plugin (the title, the
+/// subtitle and the legend): a final options class, not a resolver.
+///
+/// `core.layouts` reads the keys `display`, `fullSize`, `position`,
+/// `stack`, `stackWeight` and `weight` of the options of each box by name
+/// (core.layouts.js:34, :331-335). [layoutOption] gives the value of such a
+/// key: the [undefined] sentinel for a key that the class has no field for.
+///
+/// ```dart
+/// final weight = readOption(title.options, OptionKey.weight);
+/// ```
+// DIVERGES(chartjs): adapt-native-plugin-options, a box of resolved values.
+abstract interface class LayoutBoxOptions() {
+  /// The value of the layout option [key], or [undefined].
+  Object? layoutOption(OptionKey key);
+}
+
 /// layout.d.ts:5 `LayoutItem`.
 ///
 /// `core.layouts.js` also reads three members that layout.d.ts does not

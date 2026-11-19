@@ -21,112 +21,111 @@ void main() {
   group('the typed getters of the plugin option facades', () {
     test('a number of a truthy value, else null', () {
       expect(
-        const LegendOptions(<String, Object?>{'maxWidth': 120.0}).maxWidth,
+        LegendOptions.of(<String, Object?>{'maxWidth': 120.0}).maxWidth,
         120,
       );
       expect(
-        const LegendOptions(<String, Object?>{'maxHeight': '80'}).maxHeight,
+        LegendOptions.of(<String, Object?>{'maxHeight': '80'}).maxHeight,
         80,
       );
       expect(
-        const LegendOptions(<String, Object?>{'maxWidth': 0.0}).maxWidth,
+        LegendOptions.of(<String, Object?>{'maxWidth': 0.0}).maxWidth,
         isNull,
       );
-      expect(const LegendOptions(<String, Object?>{}).maxHeight, isNull);
+      expect(LegendOptions.of(<String, Object?>{}).maxHeight, isNull);
       expect(
-        const LegendLabelOptions(<String, Object?>{'pointStyleWidth': 12.0})
+        LegendLabelOptions.of(<String, Object?>{'pointStyleWidth': 12.0})
             .pointStyleWidth,
         12,
       );
       expect(
-        const DecimationOptions(<String, Object?>{'samples': 50.0}).samples,
+        DecimationOptions.of(<String, Object?>{'samples': 50.0}).samples,
         50,
       );
       expect(
-        const DecimationOptions(<String, Object?>{'threshold': 0.0}).threshold,
+        DecimationOptions.of(<String, Object?>{'threshold': 0.0}).threshold,
         isNull,
       );
     });
 
     test('a number of a defined value, else null', () {
-      const labels = LegendLabelOptions(<String, Object?>{
+      final labels = LegendLabelOptions.of(<String, Object?>{
         'boxWidth': 30.0,
         'boxHeight': null,
       });
       expect(labels.boxWidth, 30);
       // `ToNumber(null)` is 0: only `undefined` takes the default.
       expect(labels.boxHeight, 0);
-      expect(const LegendLabelOptions(<String, Object?>{}).boxWidth, isNull);
+      expect(LegendLabelOptions.of(<String, Object?>{}).boxWidth, isNull);
     });
 
     test('a number', () {
-      const options = TooltipOptions(<String, Object?>{
+      final options = TooltipOptions.of(<String, Object?>{
         'caretSize': '5',
         'bodySpacing': 2.0,
       });
       expect(options.caretSize, 5);
       expect(options.bodySpacing, 2);
-      expect(const LegendLabelOptions(<String, Object?>{}).padding, isNaN);
+      expect(LegendLabelOptions.of(<String, Object?>{}).padding, isNaN);
     });
 
     test('the border width of the canvas setter', () {
-      expect(const TooltipOptions(<String, Object?>{}).borderWidth, isNull);
+      expect(TooltipOptions.of(<String, Object?>{}).borderWidth, isNull);
       expect(
-        const TooltipOptions(<String, Object?>{'borderWidth': 2.0}).borderWidth,
+        TooltipOptions.of(<String, Object?>{'borderWidth': 2.0}).borderWidth,
         2,
       );
       // JS null is no number: no ToNumber (Chart.js ADR 0174).
       expect(
-        const TooltipOptions(<String, Object?>{'borderWidth': null})
-            .borderWidth,
+        TooltipOptions.of(<String, Object?>{'borderWidth': null}).borderWidth,
         isNull,
       );
     });
 
     test('the lines of a text', () {
       expect(
-        const TitleOptions(<String, Object?>{
+        TitleOptions.of(<String, Object?>{
           'text': ['a'],
         }).text,
         ['a'],
       );
       expect(
-        const TitleOptions(<String, Object?>{
+        TitleOptions.of(<String, Object?>{
           'text': ['a', 'b'],
         }).text,
         ['a', 'b'],
       );
       expect(
-        const LegendTitleOptions(<String, Object?>{
+        LegendTitleOptions.of(<String, Object?>{
           'text': ['a'],
         }).text,
         ['a'],
       );
       expect(
-        const TitleOptions(<String, Object?>{'text': <String>[]}).text,
+        TitleOptions.of(<String, Object?>{'text': <String>[]}).text,
         isEmpty,
       );
       // A text takes its lines (row adapt-title-text-lines): a String stops
       // a debug build.
       expect(
-        () => const TitleOptions(<String, Object?>{'text': 'a'}).text,
+        () => TitleOptions.of(<String, Object?>{'text': 'a'}).text,
         throwsA(isA<AssertionError>()),
       );
     });
 
     test('a font, a text align and an enum', () {
-      final font = const TitleOptions(<String, Object?>{
-        'font': ChartTextStyle(fontSize: 20),
+      final font = TitleOptions.of(<String, Object?>{
+        'font': const ChartTextStyle(fontSize: 20),
       }).font;
       expect(font.fontSize, 20);
       expect(
-        const TooltipOptions(<String, Object?>{'bodyAlign': TextAlign.right})
+        TooltipOptions.of(<String, Object?>{'bodyAlign': TextAlign.right})
             .bodyAlign,
         TextAlign.right,
       );
-      expect(const LegendLabelOptions(<String, Object?>{}).textAlign, isNull);
+      expect(LegendLabelOptions.of(<String, Object?>{}).textAlign, isNull);
       expect(
-        const FillerOptions(<String, Object?>{
+        FillerOptions.of(<String, Object?>{
           'drawTime': FillerDrawTime.beforeDraw,
         }).drawTime,
         FillerDrawTime.beforeDraw,
@@ -135,17 +134,17 @@ void main() {
 
     test('a position', () {
       expect(
-        const TitleOptions(<String, Object?>{'position': ChartPosition.left})
+        TitleOptions.of(<String, Object?>{'position': ChartPosition.left})
             .position,
         ChartPosition.left,
       );
       expect(
-        const LegendOptions(<String, Object?>{
-          'position': ScaleValuePosition('x', 0.0),
+        LegendOptions.of(<String, Object?>{
+          'position': const ScaleValuePosition('x', 0.0),
         }).position,
         const ScaleValuePosition('x', 0.0),
       );
-      expect(const TitleOptions(<String, Object?>{}).position, isNull);
+      expect(TitleOptions.of(<String, Object?>{}).position, isNull);
     });
   });
 
