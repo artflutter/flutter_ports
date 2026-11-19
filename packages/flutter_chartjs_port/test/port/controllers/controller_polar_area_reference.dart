@@ -213,7 +213,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                 'color': 'rgba(0,0,0,0.1)',
               },
               'pointLabels': <String, Object?>{
-                'display': false,
+                'display': ScaleDisplay.off,
                 'backdropColor': undefined,
                 'backdropPadding': EdgeInsets.all(2),
                 'font': ChartTextStyle(fontSize: 10),
@@ -979,7 +979,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'pointLabels': <String, Object?>{
-                    'display': false,
+                    'display': ScaleDisplay.off,
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
                     'font': ChartTextStyle(fontSize: 10),
@@ -1860,7 +1860,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'pointLabels': <String, Object?>{
-                    'display': false,
+                    'display': ScaleDisplay.off,
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
                     'font': ChartTextStyle(fontSize: 10),
@@ -2736,7 +2736,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'pointLabels': <String, Object?>{
-                    'display': false,
+                    'display': ScaleDisplay.off,
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
                     'font': ChartTextStyle(fontSize: 10),
@@ -3612,7 +3612,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'pointLabels': <String, Object?>{
-                    'display': false,
+                    'display': ScaleDisplay.off,
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
                     'font': ChartTextStyle(fontSize: 10),
@@ -4543,7 +4543,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'pointLabels': <String, Object?>{
-                    'display': false,
+                    'display': ScaleDisplay.off,
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
                     'font': ChartTextStyle(fontSize: 10),
@@ -5529,7 +5529,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'pointLabels': <String, Object?>{
-                    'display': false,
+                    'display': ScaleDisplay.off,
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
                     'font': ChartTextStyle(fontSize: 10),
@@ -6515,7 +6515,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
                     'color': 'rgba(0,0,0,0.1)',
                   },
                   'pointLabels': <String, Object?>{
-                    'display': false,
+                    'display': ScaleDisplay.off,
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
                     'font': ChartTextStyle(fontSize: 10),
@@ -18346,7 +18346,7 @@ const List<ControllerPolarAreaReferenceCase> controllerPolarAreaReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'r': <String, Object?>{
-            'pointLabels': <String, Object?>{'display': true},
+            'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
           },
         },
       },

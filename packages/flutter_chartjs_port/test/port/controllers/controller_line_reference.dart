@@ -25,6 +25,7 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
@@ -14205,7 +14206,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     },
@@ -40153,7 +40154,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     },
@@ -40952,7 +40953,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     },

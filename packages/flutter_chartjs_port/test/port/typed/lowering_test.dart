@@ -465,7 +465,10 @@ const List<(ChartAxis, String)> _axes = [
 /// parameter with `copyWith`, and the raw twin without its `type`.
 final Map<String, (ChartAxis Function(ChartAxis), Map<String, Object?>)>
 _axisCommon = {
-  'display': ((a) => a.copyWith(display: false), {'display': false}),
+  'display': (
+    (a) => a.copyWith(display: ScaleDisplay.off),
+    {'display': ScaleDisplay.off},
+  ),
   'position': (
     (a) => a.copyWith(position: .left),
     {'position': ChartPosition.left},
@@ -475,7 +478,10 @@ _axisCommon = {
     {'position': ChartPosition.center},
   ),
   'reverse': ((a) => a.copyWith(reverse: true), {'reverse': true}),
-  'stacked': ((a) => a.copyWith(stacked: true), {'stacked': true}),
+  'stacked': (
+    (a) => a.copyWith(stacked: StackMode.on),
+    {'stacked': StackMode.on},
+  ),
   'ticks': (
     (a) => a.copyWith(ticks: const AxisTicks(display: false)),
     {
@@ -502,167 +508,166 @@ _axisCommon = {
 
 /// The cases of the parameters of the axis classes: the typed axes with
 /// one parameter and the raw twin without its `type`.
-final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
+final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)>
+_axisOwn = {
+  // The border object itself (Chart.js ADR 0141).
+  'border of a cartesian axis': (
+    const [
+      (CategoryAxis(border: _axisBorder), 'category'),
+      (LinearAxis(border: _axisBorder), 'linear'),
+      (LogarithmicAxis(border: _axisBorder), 'logarithmic'),
+      (TimeAxis(border: _axisBorder), 'time'),
+      (TimeSeriesAxis(border: _axisBorder), 'timeseries'),
+    ],
+    {'border': _axisBorder},
+  ),
+  'border of a radial axis': (
+    const [(RadialLinearAxis(border: _radialBorder), 'radialLinear')],
+    {'border': _radialBorder},
+  ),
+  'min of a category axis': (
+    const [(CategoryAxis(min: 'b'), 'category')],
+    {'min': 'b'},
+  ),
+  'max of a category axis': (
+    const [(CategoryAxis(max: 'c'), 'category')],
+    {'max': 'c'},
+  ),
+  'min': (
+    const [
+      (LinearAxis(min: -1), 'linear'),
+      (LogarithmicAxis(min: -1), 'logarithmic'),
+      (RadialLinearAxis(min: -1), 'radialLinear'),
+    ],
+    {'min': -1},
+  ),
+  'max': (
+    const [
+      (LinearAxis(max: 9), 'linear'),
+      (LogarithmicAxis(max: 9), 'logarithmic'),
+      (RadialLinearAxis(max: 9), 'radialLinear'),
+    ],
+    {'max': 9},
+  ),
+  'suggestedMin': (
+    const [
+      (LinearAxis(suggestedMin: 2), 'linear'),
+      (LogarithmicAxis(suggestedMin: 2), 'logarithmic'),
+      (RadialLinearAxis(suggestedMin: 2), 'radialLinear'),
+    ],
+    {'suggestedMin': 2},
+  ),
+  'suggestedMax': (
+    const [
+      (LinearAxis(suggestedMax: 8), 'linear'),
+      (LogarithmicAxis(suggestedMax: 8), 'logarithmic'),
+      (RadialLinearAxis(suggestedMax: 8), 'radialLinear'),
+    ],
+    {'suggestedMax': 8},
+  ),
+  'beginAtZero': (
+    const [
+      (LinearAxis(beginAtZero: true), 'linear'),
+      (RadialLinearAxis(beginAtZero: true), 'radialLinear'),
+    ],
+    {'beginAtZero': true},
+  ),
+  'min of a time axis': (
+    [
+      (TimeAxis(min: _start), 'time'),
+      (TimeSeriesAxis(min: _start), 'timeseries'),
+    ],
+    {'min': _start},
+  ),
+  'max of a time axis': (
+    [(TimeAxis(max: _end), 'time'), (TimeSeriesAxis(max: _end), 'timeseries')],
+    {'max': _end},
+  ),
+  'unit': (
+    const [
+      (TimeAxis(unit: .day), 'time'),
+      (TimeSeriesAxis(unit: .day), 'timeseries'),
+    ],
     {
-      // The border object itself (Chart.js ADR 0141).
-      'border of a cartesian axis': (
-        const [
-          (CategoryAxis(border: _axisBorder), 'category'),
-          (LinearAxis(border: _axisBorder), 'linear'),
-          (LogarithmicAxis(border: _axisBorder), 'logarithmic'),
-          (TimeAxis(border: _axisBorder), 'time'),
-          (TimeSeriesAxis(border: _axisBorder), 'timeseries'),
-        ],
-        {'border': _axisBorder},
+      'time': {'unit': TimeUnit.day},
+    },
+  ),
+  'tooltipFormat': (
+    const [
+      (TimeAxis(tooltipFormat: 'yyyy'), 'time'),
+      (TimeSeriesAxis(tooltipFormat: 'yyyy'), 'timeseries'),
+    ],
+    {
+      'time': {'tooltipFormat': 'yyyy'},
+    },
+  ),
+  'startAngle': (
+    const [(RadialLinearAxis(startAngle: 45), 'radialLinear')],
+    {'startAngle': 45},
+  ),
+  'pointLabelsDisplay': (
+    const [
+      (RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.off), 'radialLinear'),
+    ],
+    {
+      'pointLabels': {'display': ScaleDisplay.off},
+    },
+  ),
+  'pointLabelsFont': (
+    const [(RadialLinearAxis(pointLabelsFont: _font), 'radialLinear')],
+    {
+      'pointLabels': {'font': _fontValue},
+    },
+  ),
+  'pointLabelsColor': (
+    const [
+      (
+        RadialLinearAxis(pointLabelsColor: ChartPaint.solid(_blue)),
+        'radialLinear',
       ),
-      'border of a radial axis': (
-        const [(RadialLinearAxis(border: _radialBorder), 'radialLinear')],
-        {'border': _radialBorder},
+    ],
+    {
+      'pointLabels': {'color': _blueValue},
+    },
+  ),
+  'pointLabelsPadding': (
+    const [(RadialLinearAxis(pointLabelsPadding: 8), 'radialLinear')],
+    {
+      'pointLabels': {'padding': 8},
+    },
+  ),
+  'pointLabelsCallback': (
+    const [
+      (RadialLinearAxis(pointLabelsCallback: _pointLabel), 'radialLinear'),
+    ],
+    {
+      'pointLabels': {'callback': _function},
+    },
+  ),
+  'angleLinesDisplay': (
+    const [(RadialLinearAxis(angleLinesDisplay: false), 'radialLinear')],
+    {
+      'angleLines': {'display': false},
+    },
+  ),
+  'angleLinesColor': (
+    const [
+      (
+        RadialLinearAxis(angleLinesColor: ChartPaint.solid(_red)),
+        'radialLinear',
       ),
-      'min of a category axis': (
-        const [(CategoryAxis(min: 'b'), 'category')],
-        {'min': 'b'},
-      ),
-      'max of a category axis': (
-        const [(CategoryAxis(max: 'c'), 'category')],
-        {'max': 'c'},
-      ),
-      'min': (
-        const [
-          (LinearAxis(min: -1), 'linear'),
-          (LogarithmicAxis(min: -1), 'logarithmic'),
-          (RadialLinearAxis(min: -1), 'radialLinear'),
-        ],
-        {'min': -1},
-      ),
-      'max': (
-        const [
-          (LinearAxis(max: 9), 'linear'),
-          (LogarithmicAxis(max: 9), 'logarithmic'),
-          (RadialLinearAxis(max: 9), 'radialLinear'),
-        ],
-        {'max': 9},
-      ),
-      'suggestedMin': (
-        const [
-          (LinearAxis(suggestedMin: 2), 'linear'),
-          (LogarithmicAxis(suggestedMin: 2), 'logarithmic'),
-          (RadialLinearAxis(suggestedMin: 2), 'radialLinear'),
-        ],
-        {'suggestedMin': 2},
-      ),
-      'suggestedMax': (
-        const [
-          (LinearAxis(suggestedMax: 8), 'linear'),
-          (LogarithmicAxis(suggestedMax: 8), 'logarithmic'),
-          (RadialLinearAxis(suggestedMax: 8), 'radialLinear'),
-        ],
-        {'suggestedMax': 8},
-      ),
-      'beginAtZero': (
-        const [
-          (LinearAxis(beginAtZero: true), 'linear'),
-          (RadialLinearAxis(beginAtZero: true), 'radialLinear'),
-        ],
-        {'beginAtZero': true},
-      ),
-      'min of a time axis': (
-        [
-          (TimeAxis(min: _start), 'time'),
-          (TimeSeriesAxis(min: _start), 'timeseries'),
-        ],
-        {'min': _start},
-      ),
-      'max of a time axis': (
-        [
-          (TimeAxis(max: _end), 'time'),
-          (TimeSeriesAxis(max: _end), 'timeseries'),
-        ],
-        {'max': _end},
-      ),
-      'unit': (
-        const [
-          (TimeAxis(unit: .day), 'time'),
-          (TimeSeriesAxis(unit: .day), 'timeseries'),
-        ],
-        {
-          'time': {'unit': TimeUnit.day},
-        },
-      ),
-      'tooltipFormat': (
-        const [
-          (TimeAxis(tooltipFormat: 'yyyy'), 'time'),
-          (TimeSeriesAxis(tooltipFormat: 'yyyy'), 'timeseries'),
-        ],
-        {
-          'time': {'tooltipFormat': 'yyyy'},
-        },
-      ),
-      'startAngle': (
-        const [(RadialLinearAxis(startAngle: 45), 'radialLinear')],
-        {'startAngle': 45},
-      ),
-      'pointLabelsDisplay': (
-        const [(RadialLinearAxis(pointLabelsDisplay: false), 'radialLinear')],
-        {
-          'pointLabels': {'display': false},
-        },
-      ),
-      'pointLabelsFont': (
-        const [(RadialLinearAxis(pointLabelsFont: _font), 'radialLinear')],
-        {
-          'pointLabels': {'font': _fontValue},
-        },
-      ),
-      'pointLabelsColor': (
-        const [
-          (
-            RadialLinearAxis(pointLabelsColor: ChartPaint.solid(_blue)),
-            'radialLinear',
-          ),
-        ],
-        {
-          'pointLabels': {'color': _blueValue},
-        },
-      ),
-      'pointLabelsPadding': (
-        const [(RadialLinearAxis(pointLabelsPadding: 8), 'radialLinear')],
-        {
-          'pointLabels': {'padding': 8},
-        },
-      ),
-      'pointLabelsCallback': (
-        const [
-          (RadialLinearAxis(pointLabelsCallback: _pointLabel), 'radialLinear'),
-        ],
-        {
-          'pointLabels': {'callback': _function},
-        },
-      ),
-      'angleLinesDisplay': (
-        const [(RadialLinearAxis(angleLinesDisplay: false), 'radialLinear')],
-        {
-          'angleLines': {'display': false},
-        },
-      ),
-      'angleLinesColor': (
-        const [
-          (
-            RadialLinearAxis(angleLinesColor: ChartPaint.solid(_red)),
-            'radialLinear',
-          ),
-        ],
-        {
-          'angleLines': {'color': _redValue},
-        },
-      ),
-      'angleLinesLineWidth': (
-        const [(RadialLinearAxis(angleLinesLineWidth: 2), 'radialLinear')],
-        {
-          'angleLines': {'lineWidth': 2},
-        },
-      ),
-    };
+    ],
+    {
+      'angleLines': {'color': _redValue},
+    },
+  ),
+  'angleLinesLineWidth': (
+    const [(RadialLinearAxis(angleLinesLineWidth: 2), 'radialLinear')],
+    {
+      'angleLines': {'lineWidth': 2},
+    },
+  ),
+};
 
 /// The cases of the parameters of [AxisTicks] and the twin `ticks` Map.
 const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
@@ -2076,19 +2081,19 @@ void main() {
         'grace': ValueGrace(1),
       };
       const head = <String, Object?>{
-        'display': true,
+        'display': ScaleDisplay.on,
         'position': ChartPosition.right,
         'reverse': true,
-        'stacked': true,
+        'stacked': StackMode.on,
       };
       final labels = <Object>['a'];
       final cases = <(ChartAxis, Map<String, Object?>)>[
         (
           CategoryAxis(
-            display: true,
+            display: ScaleDisplay.on,
             position: .right,
             reverse: true,
-            stacked: true,
+            stacked: StackMode.on,
             labels: labels,
             min: 'a',
             max: 'b',
@@ -2108,10 +2113,10 @@ void main() {
         ),
         (
           const LinearAxis(
-            display: true,
+            display: ScaleDisplay.on,
             position: .right,
             reverse: true,
-            stacked: true,
+            stacked: StackMode.on,
             min: 0,
             max: 10,
             suggestedMin: 1,
@@ -2135,10 +2140,10 @@ void main() {
         ),
         (
           const LogarithmicAxis(
-            display: true,
+            display: ScaleDisplay.on,
             position: .right,
             reverse: true,
-            stacked: true,
+            stacked: StackMode.on,
             min: 1,
             max: 1000,
             suggestedMin: 10,
@@ -2161,10 +2166,10 @@ void main() {
         for (final (axis, type) in [
           (
             TimeAxis(
-              display: true,
+              display: ScaleDisplay.on,
               position: .right,
               reverse: true,
-              stacked: true,
+              stacked: StackMode.on,
               min: _start,
               max: _end,
               unit: .month,
@@ -2178,10 +2183,10 @@ void main() {
           ),
           (
             TimeSeriesAxis(
-              display: true,
+              display: ScaleDisplay.on,
               position: .right,
               reverse: true,
-              stacked: true,
+              stacked: StackMode.on,
               min: _start,
               max: _end,
               unit: .month,
@@ -2207,17 +2212,17 @@ void main() {
           ),
         (
           const RadialLinearAxis(
-            display: true,
+            display: ScaleDisplay.on,
             position: .right,
             reverse: true,
-            stacked: true,
+            stacked: StackMode.on,
             min: 0,
             max: 10,
             suggestedMin: 1,
             suggestedMax: 9,
             beginAtZero: true,
             startAngle: 90,
-            pointLabelsDisplay: true,
+            pointLabelsDisplay: ScaleDisplay.on,
             pointLabelsColor: ChartPaint.solid(_red),
             pointLabelsFont: _font,
             pointLabelsPadding: 4,
@@ -2239,7 +2244,7 @@ void main() {
             'beginAtZero': true,
             'startAngle': 90,
             'pointLabels': {
-              'display': true,
+              'display': ScaleDisplay.on,
               'color': _redValue,
               'font': _fontValue,
               'padding': 4,

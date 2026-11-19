@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'scale_chart_harness.dart';
@@ -123,7 +124,7 @@ JsObjectFace _scaleConfig(Chart chart, String id) {
 /// the case name. Each one changes the chart and calls `chart.update()`.
 final Map<String, void Function(Chart chart)> _actions = {
   'stacked and beginAtZero after the creation': (chart) {
-    _scaleConfig(chart, 'y')['stacked'] = true;
+    _scaleConfig(chart, 'y')['stacked'] = StackMode.on;
     chart.update();
     _scaleConfig(chart, 'y')['beginAtZero'] = true;
     chart.update();

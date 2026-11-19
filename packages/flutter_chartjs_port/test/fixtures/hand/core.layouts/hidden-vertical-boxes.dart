@@ -3,6 +3,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
@@ -21,7 +23,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'plugins': <String, Object?>{'legend': false},
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{'display': ScaleDisplay.off},
         'y': <String, Object?>{
           'type': 'linear',
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
@@ -38,31 +41,36 @@ Map<String, Object?> fixture() => <String, Object?>{
           'type': 'linear',
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
           'position': ChartPosition.left,
-          'display': false,
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'display': ScaleDisplay.off,
         },
         'y2': <String, Object?>{
           'type': 'linear',
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
           'position': ChartPosition.left,
-          'display': false,
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'display': ScaleDisplay.off,
         },
         'y3': <String, Object?>{
           'type': 'linear',
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
           'position': ChartPosition.left,
-          'display': false,
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'display': ScaleDisplay.off,
         },
         'y4': <String, Object?>{
           'type': 'linear',
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
           'position': ChartPosition.left,
-          'display': false,
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'display': ScaleDisplay.off,
         },
         'y5': <String, Object?>{
           'type': 'linear',
           // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
           'position': ChartPosition.left,
-          'display': false,
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'display': ScaleDisplay.off,
         },
       },
     },

@@ -24,7 +24,7 @@ import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
     show FillerDrawTime;
 import 'package:flutter_chartjs_port/src/types/align.dart'
@@ -33,6 +33,7 @@ import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
     show ArcBorderAlign, ArcSpacingMode;
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
     show SteppedLine;
@@ -57,8 +58,18 @@ bool isKeywordEnum(Object? value) =>
     value is SteppedLine ||
     value is BorderSkippedEdge ||
     value is TimeUnit ||
-    value is ChartPosition;
+    value is ChartPosition ||
+    value is ScaleDisplay ||
+    value is StackMode;
 
 /// The JSON text of the enum value [value]: the upstream keyword, the name
 /// of the value, as a JSON string.
-String keywordJson(Object value) => '"${(value as Enum).name}"';
+///
+/// A [ScaleDisplay] and a [StackMode] stand for a boolean or a keyword of
+/// Chart.js (rows `adapt-scale-display-enum` and
+/// `adapt-stacked-option-enum`): `on` is `true` and `off` is `false`.
+String keywordJson(Object value) => switch (value) {
+  ScaleDisplay.on || StackMode.on => 'true',
+  ScaleDisplay.off || StackMode.off => 'false',
+  _ => '"${(value as Enum).name}"',
+};

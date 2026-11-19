@@ -134,11 +134,11 @@ const List<DocProperty> barProperties = [
   DocProperty(
     'inflateAmount',
     section: 'inflateamount',
-    type: 'double or String',
+    type: 'double?',
     extra: true,
     scriptable: true,
     indexable: true,
-    fallback: "'auto'",
+    fallback: 'undefined',
   ),
   DocProperty(
     'maxBarThickness',
@@ -709,9 +709,10 @@ DocPageContent barChartPage() => DocPageContent(
                 'This option makes the rectangles of the bars larger, in '
                 'pixels. It hides the thin gaps between the bars when '
                 '[barPercentage](#barpercentage) multiplied by '
-                '[categoryPercentage](#categorypercentage) is 1. The default '
-                "value `'auto'` is correct for most charts. A number goes "
-                "through `extra: {'inflateAmount': 0.5}`.",
+                '[categoryPercentage](#categorypercentage) is 1. With no '
+                'value, the bars grow by 0.33 pixels when that product is 1, '
+                'else by 0, and this is correct for most charts. A number '
+                "goes through `extra: {'inflateAmount': 0.5}`.",
               ),
             ),
           ],

@@ -162,8 +162,8 @@ ChartConfig _stackedConfig(List<String> log, Curve? easing, int seed) =>
       ],
       indexAxis: const YAxis(),
       scales: const {
-        'x': LinearAxis(stacked: true, min: 0, max: 200),
-        'y': CategoryAxis(stacked: true),
+        'x': LinearAxis(stacked: StackMode.on, min: 0, max: 200),
+        'y': CategoryAxis(stacked: StackMode.on),
       },
       animation: _animation(log, easing),
     );

@@ -35,7 +35,8 @@ Map<String, Object?> fixture() {
         'animation': false,
         'events': <Object?>[],
         'scales': <String, Object?>{
-          'y': <String, Object?>{'display': false, 'max': 5},
+          // DIVERGES(zoom): adapt-host-scale-display, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off, 'max': 5},
           'x': <String, Object?>{
             'type': 'time',
             // DIVERGES(zoom): harness-date-zone, a local Date in the zone UTC.

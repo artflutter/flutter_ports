@@ -155,10 +155,13 @@ Map<String, Object?> _timeConfig({
       'indexAxis': horizontal ? const YAxis() : const XAxis(),
       'plugins': <String, Object?>{'legend': false, 'tooltip': false},
       'scales': <String, Object?>{
-        index: <String, Object?>{'type': type, 'display': visible},
+        index: <String, Object?>{
+          'type': type,
+          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
+        },
         value: <String, Object?>{
           'type': 'linear',
-          'display': visible,
+          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
           'min': -4.0,
           'max': 12.0,
         },
@@ -226,10 +229,13 @@ Map<String, Object?> _floatingConfig({
       'indexAxis': horizontal ? const YAxis() : const XAxis(),
       'plugins': <String, Object?>{'legend': false, 'tooltip': false},
       'scales': <String, Object?>{
-        index: <String, Object?>{'type': 'category', 'display': visible},
+        index: <String, Object?>{
+          'type': 'category',
+          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
+        },
         value: <String, Object?>{
           'type': 'linear',
-          'display': visible,
+          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
           'min': -6.0,
           'max': 10.0,
         },

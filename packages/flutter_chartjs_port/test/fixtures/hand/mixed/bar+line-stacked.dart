@@ -6,6 +6,7 @@ library;
 
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -38,7 +39,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'axis': const YAxis(),
           'labels': <Object?>['a', 'b', 'c', 'd'],
         },
-        'y': <String, Object?>{'stacked': true},
+        // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+        'y': <String, Object?>{'stacked': StackMode.on},
       },
     },
   },

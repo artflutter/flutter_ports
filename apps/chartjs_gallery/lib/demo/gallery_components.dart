@@ -5,7 +5,7 @@ import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_p
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show zoomPlugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, registerables;
+    show Chart, ScaleDisplay, registerables;
 
 bool _registered = false;
 bool _zoomRegistered = false;
@@ -68,14 +68,14 @@ void registerSankeyComponents() {
 Map<String, Object?> unitScales({bool hideTicks = false}) => <String, Object?>{
   'x': <String, Object?>{
     'type': 'linear',
-    'display': false,
+    'display': ScaleDisplay.off,
     if (hideTicks) 'ticks': <String, Object?>{'display': false},
     'suggestedMin': 0.0,
     'suggestedMax': 1.0,
   },
   'y': <String, Object?>{
     'type': 'linear',
-    'display': false,
+    'display': ScaleDisplay.off,
     if (hideTicks) 'ticks': <String, Object?>{'display': false},
     'min': 0.0,
     'max': 1.0,

@@ -890,7 +890,7 @@ ChartConfig _barTyped() => ChartConfig(
   ],
   scales: const {
     'x': CategoryAxis(
-      stacked: true,
+      stacked: StackMode.on,
       grid: AxisGrid(display: false),
       ticks: AxisTicks(
         color: ChartPaint.solid(_navy),
@@ -898,7 +898,7 @@ ChartConfig _barTyped() => ChartConfig(
       ),
     ),
     'y': LinearAxis(
-      stacked: true,
+      stacked: StackMode.on,
       beginAtZero: true,
       suggestedMax: 30,
       ticks: AxisTicks(stepSize: 5, padding: 6, callback: _units),
@@ -1008,7 +1008,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'type': 'category',
-        'stacked': true,
+        'stacked': StackMode.on,
         'grid': <String, Object?>{'display': false},
         'ticks': <String, Object?>{
           'color': const ChartPaint.solid(
@@ -1019,7 +1019,7 @@ Map<String, Object?> _barRaw() => <String, Object?>{
       },
       'y': <String, Object?>{
         'type': 'linear',
-        'stacked': true,
+        'stacked': StackMode.on,
         'beginAtZero': true,
         'suggestedMax': 30,
         'ticks': <String, Object?>{
@@ -1738,7 +1738,7 @@ ChartConfig _polarAreaTypeTyped() => const ChartConfig(
       startAngle: 30,
       ticks: AxisTicks(stepSize: 5, color: ChartPaint.solid(_navy)),
       grid: AxisGrid(color: ChartPaint.solid(_grey)),
-      pointLabelsDisplay: true,
+      pointLabelsDisplay: ScaleDisplay.on,
       pointLabelsColor: ChartPaint.solid(_navy),
       pointLabelsFont: TextStyle(fontSize: 12),
     ),
@@ -1790,7 +1790,7 @@ Map<String, Object?> _polarAreaTypeRaw() => <String, Object?>{
           ),
         },
         'pointLabels': <String, Object?>{
-          'display': true,
+          'display': ScaleDisplay.on,
           'color': const ChartPaint.solid(
             native_ui.Color.fromRGBO(27, 58, 92, 1),
           ),

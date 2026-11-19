@@ -14,6 +14,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     show getHoverColor;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
@@ -248,7 +250,7 @@ AnyObject _config(
       if (radial)
         'scales': <String, Object?>{
           'r': <String, Object?>{
-            'pointLabels': <String, Object?>{'display': true},
+            'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
             'angleLines': <String, Object?>{'display': true},
           },
         },

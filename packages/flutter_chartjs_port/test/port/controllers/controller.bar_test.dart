@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -317,8 +318,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': true},
-            'y': <String, Object?>{'stacked': true},
+            'x': <String, Object?>{'stacked': StackMode.on},
+            'y': <String, Object?>{'stacked': StackMode.on},
           },
         },
       });

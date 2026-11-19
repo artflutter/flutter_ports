@@ -4,6 +4,8 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
@@ -51,8 +53,10 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'responsive': false,
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false},
-        'y': <String, Object?>{'type': 'category', 'display': false},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{'display': ScaleDisplay.off},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{'type': 'category', 'display': ScaleDisplay.off},
       },
     },
   },

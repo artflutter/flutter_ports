@@ -251,8 +251,7 @@ void main() {
         ..addAll([OptionKey.borderSkipped, OptionKey.inflateAmount]);
       f.scope
         ..['borderColor'] = <ChartPaint>[_blue, _red]
-        ..['borderSkipped'] = 'start'
-        ..['inflateAmount'] = 'auto';
+        ..['borderSkipped'] = 'start';
     }
     for (var i = 0; i < 4; i++) {
       _same(resolve(fast, i), resolve(full, i));
@@ -266,8 +265,7 @@ void main() {
       ..backgroundColor = _red
       ..borderColor = _blue
       ..borderWidth = 1.0
-      ..borderSkipped = 'start'
-      ..inflateAmount = 'auto';
+      ..borderSkipped = 'start';
     defaults.elements = ElementOptionsByTypeScope()..bar = bar;
     final colors = <Object?>[_red, _blue];
     final dataset = <String, Object?>{

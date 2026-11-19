@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/core.datasetController.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-stacked-option-enum, the scale stacked values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -20,6 +21,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -1353,8 +1355,8 @@ void main() {
         'options': <String, Object?>{
           'parsing': false,
           'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': true},
-            'y': <String, Object?>{'stacked': true},
+            'x': <String, Object?>{'stacked': StackMode.on},
+            'y': <String, Object?>{'stacked': StackMode.on},
           },
         },
       });

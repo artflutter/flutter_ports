@@ -108,8 +108,8 @@ Map<String, Object?> config() => {
     'parsing': false,
     'plugins': <String, Object?>{'legend': false},
     'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear', 'display': false},
-      'y': <String, Object?>{'type': 'linear', 'display': false},
+      'x': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
+      'y': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
     },
   },
 };

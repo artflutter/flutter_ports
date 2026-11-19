@@ -29,8 +29,10 @@ Map<String, Object?> fixture() {
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear', 'display': false},
-          'y': <String, Object?>{'display': false},
+          // DIVERGES(zoom): adapt-host-scale-display, the enum value.
+          'x': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
+          // DIVERGES(zoom): adapt-host-scale-display, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off},
         },
         'plugins': <String, Object?>{
           'legend': false,

@@ -74,7 +74,7 @@ LinearAxis apexValueAxis({
 }) => LinearAxis(
   min: min,
   max: max,
-  stacked: stacked,
+  stacked: stacked ? StackMode.on : StackMode.off,
   grid: const AxisGrid(color: .solid(Apex.grid), drawTicks: false),
   ticks: AxisTicks(
     stepSize: stepSize,

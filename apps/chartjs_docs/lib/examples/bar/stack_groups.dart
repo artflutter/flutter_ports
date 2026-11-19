@@ -59,7 +59,10 @@ const groupedStacks = ChartConfig(
       stack: '2025',
     ),
   ],
-  scales: {'x': CategoryAxis(stacked: true), 'y': LinearAxis(stacked: true)},
+  scales: {
+    'x': CategoryAxis(stacked: StackMode.on),
+    'y': LinearAxis(stacked: StackMode.on),
+  },
 );
 // #enddocregion bar-stack-groups
 

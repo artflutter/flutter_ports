@@ -239,10 +239,10 @@ List<ChartConfig> _configs() {
       ],
       scales: {
         'x': const CategoryAxis(
-          display: true,
+          display: ScaleDisplay.on,
           position: .bottom,
           reverse: false,
-          stacked: true,
+          stacked: StackMode.on,
           labels: ['a', 'b'],
           min: 'a',
           max: 'b',
@@ -449,7 +449,7 @@ List<ChartConfig> _configs() {
       ],
       scales: const {
         'r': RadialLinearAxis(
-          display: true,
+          display: ScaleDisplay.on,
           position: .chartArea,
           min: 0,
           max: 10,
@@ -457,7 +457,7 @@ List<ChartConfig> _configs() {
           suggestedMax: 10,
           beginAtZero: true,
           startAngle: 0,
-          pointLabelsDisplay: true,
+          pointLabelsDisplay: ScaleDisplay.on,
           pointLabelsColor: ChartPaint.solid(_red),
           pointLabelsFont: _font,
           pointLabelsPadding: 5,

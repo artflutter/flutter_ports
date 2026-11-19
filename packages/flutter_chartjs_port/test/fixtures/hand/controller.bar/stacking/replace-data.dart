@@ -4,7 +4,10 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
@@ -36,8 +39,18 @@ Map<String, Object?> fixture() {
       'data': barChartData,
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'display': false, 'stacked': true},
-          'y': <String, Object?>{'display': false, 'stacked': true},
+          // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'x': <String, Object?>{
+            'display': ScaleDisplay.off,
+            'stacked': StackMode.on,
+          },
+          // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'y': <String, Object?>{
+            'display': ScaleDisplay.off,
+            'stacked': StackMode.on,
+          },
         },
       },
     },

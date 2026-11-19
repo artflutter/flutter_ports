@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart';
 import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
 import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
@@ -67,6 +68,26 @@ List<Enum>? _scaleEnumValues(String key, String? owner) =>
       _ => null,
     };
 
+/// The [ScaleDisplay] of an upstream `display` of a scale or of the point
+/// labels (row adapt-scale-display-enum): `true`, `false` or `'auto'`. Another
+/// value stays.
+Object? _scaleDisplay(Object? value) => switch (value) {
+  true => ScaleDisplay.on,
+  false => ScaleDisplay.off,
+  'auto' => ScaleDisplay.auto,
+  _ => value,
+};
+
+/// The [StackMode] of an upstream scale `stacked` (row
+/// adapt-stacked-option-enum): `true`, `false` or `'single'`. Another value
+/// stays.
+Object? _stackMode(Object? value) => switch (value) {
+  true => StackMode.on,
+  false => StackMode.off,
+  'single' => StackMode.single,
+  _ => value,
+};
+
 /// Migrates color options, an upstream easing name to its curve, and the
 /// keyword of a line cap, a line join or a scale option of
 /// `scale_option_enums.dart` to its enum value, leaving data, labels and
@@ -102,7 +123,12 @@ void nativeFixtureColors(Object? config) {
     return value;
   }
 
-  void walk(Object? value, {bool dataset = false, String? owner}) {
+  void walk(
+    Object? value, {
+    bool dataset = false,
+    String? owner,
+    String? grand,
+  }) {
     if (value is! Map<String, Object?> || !seen.add(value)) return;
     for (final key in value.keys.toList()) {
       if (dataset && (key == 'data' || key == 'label')) continue;
@@ -163,12 +189,20 @@ void nativeFixtureColors(Object? config) {
         // The filler draw time takes its enum (row
         // adapt-filler-draw-time-enum).
         value[key] = _enumValue(FillerDrawTime.values, value[key]);
+      } else if (key == 'display' &&
+          (owner == 'pointLabels' || grand == 'scales')) {
+        // The display of a scale and of its point labels takes a
+        // ScaleDisplay (row adapt-scale-display-enum).
+        value[key] = _scaleDisplay(value[key]);
+      } else if (key == 'stacked') {
+        // The scale stacked takes a StackMode (row adapt-stacked-option-enum).
+        value[key] = _stackMode(value[key]);
       } else if (_scaleEnumValues(key, owner) case final values?) {
         // A scale option takes its enum, not the upstream keyword (row
         // adapt-scale-option-enums).
         value[key] = _enumValue(values, value[key]);
       } else {
-        walk(value[key], owner: key);
+        walk(value[key], owner: key, grand: owner);
       }
     }
   }

@@ -659,7 +659,8 @@ void main() {
       expect(BarElement.defaults['borderWidth'], isA<double>());
       expect(BarElement.defaults['borderWidth'], 0);
       expect(BarElement.defaults['borderRadius'], 0);
-      expect(BarElement.defaults['inflateAmount'], 'auto');
+      // The upstream `'auto'` is `undefined` (row adapt-inflate-amount-auto).
+      expect(BarElement.defaults['inflateAmount'], same(undefined));
       expect(BarElement.defaults['pointStyle'], same(undefined));
     });
 

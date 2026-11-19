@@ -68,8 +68,8 @@ _datasetStyles = [
 /// The two hidden linear axes of the fractions 0 to 1: the typed form of
 /// `unitScales()`.
 const Map<String, ChartAxis> _unitAxes = {
-  'x': LinearAxis(display: false, suggestedMin: 0, suggestedMax: 1),
-  'y': LinearAxis(display: false, min: 0, max: 1),
+  'x': LinearAxis(display: ScaleDisplay.off, suggestedMin: 0, suggestedMax: 1),
+  'y': LinearAxis(display: ScaleDisplay.off, min: 0, max: 1),
 };
 
 /// The core modules of phase 5 in a real chart: `new Chart(canvas, config)`.

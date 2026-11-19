@@ -1027,7 +1027,7 @@ void main() {
             'scales': <String, Object?>{
               'r': <String, Object?>{
                 'type': 'arc-user-radial',
-                'display': false,
+                'display': ScaleDisplay.off,
               },
             },
           },

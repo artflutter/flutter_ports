@@ -483,7 +483,7 @@ void main() {
           () => _config(
             type,
             spanGaps: 1.5,
-            y: const {'type': 'linear', 'stacked': true},
+            y: const {'type': 'linear', 'stacked': StackMode.on},
           ),
           () => _config(
             type,

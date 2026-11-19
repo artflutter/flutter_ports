@@ -28,6 +28,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show paddingOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -913,7 +915,12 @@ void _update(
   final visibleVerticalBoxCount = _or(
     verticalBoxes.fold<double>(0, (total, wrap) {
       final options = wrap.box.options;
-      return options != null && readOption(options, OptionKey.display) == false
+      final display = options == null
+          ? null
+          : readOption(options, OptionKey.display);
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value of a
+      // scale.
+      return display == false || display == ScaleDisplay.off
           ? total
           : total + 1;
     }),

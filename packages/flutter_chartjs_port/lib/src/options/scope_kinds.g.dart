@@ -1557,7 +1557,7 @@ enum ScopeKind(
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
-            return 5;
+            return 1;
           case OptionKey.borderWidth:
             return 33;
           case OptionKey.hoverBorderWidth:
@@ -1952,7 +1952,7 @@ enum ScopeKind(
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
-            return 5;
+            return 1;
           case OptionKey.borderWidth:
             return 33;
           case OptionKey.hoverBorderWidth:
@@ -2075,7 +2075,7 @@ enum ScopeKind(
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.inflateAmount:
-            return 5;
+            return 1;
           case OptionKey.borderWidth:
             return 33;
           case OptionKey.hoverBorderWidth:
@@ -2726,7 +2726,7 @@ enum ScopeKind(
       case ScopeKind.scaleOptions:
         switch (key) {
           case OptionKey.display:
-            return 6;
+            return 5760;
           case OptionKey.alignToPixels:
             return 2;
           case OptionKey.backgroundColor:
@@ -2792,7 +2792,7 @@ enum ScopeKind(
           case OptionKey.title:
             return 32;
           case OptionKey.stacked:
-            return 6;
+            return 5632;
           case OptionKey.ticks:
             return 32;
           case OptionKey.labels:
@@ -3016,7 +3016,7 @@ enum ScopeKind(
           case OptionKey.borderRadius:
             return 33;
           case OptionKey.display:
-            return 6;
+            return 5760;
           case OptionKey.color:
             return 4864;
           case OptionKey.font:

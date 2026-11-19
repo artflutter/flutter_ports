@@ -6,6 +6,8 @@ import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show PointInteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 
@@ -43,8 +45,10 @@ Map<String, Object?> fixture() {
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'display': false},
-          'y': <String, Object?>{'display': false},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'x': <String, Object?>{'display': ScaleDisplay.off},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off},
         },
         'plugins': <String, Object?>{
           'legend': false,

@@ -347,8 +347,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'display': false},
-            'y': <String, Object?>{'display': false},
+            'x': <String, Object?>{'display': ScaleDisplay.off},
+            'y': <String, Object?>{'display': ScaleDisplay.off},
           },
           'plugins': <String, Object?>{'legend': false, 'title': false},
         },

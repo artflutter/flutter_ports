@@ -490,7 +490,7 @@ Map<String, Object?> _benchHiddenScales({
   'x': stressHiddenScale('category'),
   'y': <String, Object?>{
     ...stressHiddenScale('linear', min: min, max: max),
-    if (stacked) 'stacked': true,
+    if (stacked) 'stacked': StackMode.on,
   },
 };
 

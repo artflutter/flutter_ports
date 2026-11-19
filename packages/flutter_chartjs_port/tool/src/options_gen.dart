@@ -72,6 +72,8 @@ const Map<String, int> shapeAtoms = {
   'lineSegmentStyle': 5248,
   'scaleBorder': 5376,
   'pluginOptions': 5504,
+  'stackMode': 5632,
+  'scaleDisplay': 5760,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -276,6 +278,19 @@ const Map<String, TypedAtom> typedAtoms = {
   'pluginOptions': (
     type: 'PluginOptions',
     uri: 'package:flutter_chartjs_port/src/types/plugin.dart',
+    field: null,
+  ),
+  // The scale `stacked` (row adapt-stacked-option-enum).
+  'stackMode': (
+    type: 'StackMode',
+    uri: 'package:flutter_chartjs_port/src/types/chart_meta.dart',
+    field: null,
+  ),
+  // The scale `display` and `pointLabels.display` (row
+  // adapt-scale-display-enum).
+  'scaleDisplay': (
+    type: 'ScaleDisplay',
+    uri: 'package:flutter_chartjs_port/src/core/scale_option_enums.dart',
     field: null,
   ),
 };

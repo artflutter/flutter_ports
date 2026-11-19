@@ -5,6 +5,8 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 
 /// The upstream config, with native padding values.
 // DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.
@@ -30,8 +32,10 @@ Map<String, Object?> fixture() => <String, Object?>{
         'filler': false,
       },
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false, 'offset': true},
-        'y': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{'display': ScaleDisplay.off, 'offset': true},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{'display': ScaleDisplay.off},
       },
       'layout': <String, Object?>{'padding': const EdgeInsets.all(16)},
     },

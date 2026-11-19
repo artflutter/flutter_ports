@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/scale.logarithmic.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-stacked-option-enum, the scale stacked values.
 @TestOn('vm')
 library;
 
@@ -20,6 +21,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.logarithmic.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/geometric.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:flutter_test/flutter_test.dart';
@@ -55,8 +57,9 @@ import '../support/tick_label.dart';
 // - `chart.scales.y` is `chart.scales['y']!`. `not.toEqual(undefined)` of a
 //   scale is `isNotNull`.
 // - `toBeCloseTo` is `_toBeCloseTo`. `toEqual` is `jasmineEquals`.
-// - `chart.options.scales.y.stacked = true` writes into the resolver of the
-//   last read of the chain (`_chartScaleOptions`).
+// - `chart.options.scales.y.stacked = true` writes `StackMode.on` into the
+//   resolver of the last read of the chain (`_chartScaleOptions`, row
+//   adapt-stacked-option-enum).
 // - `chart.scales[axisID].options.reverse = true` writes through the
 //   resolver of the scale options.
 // - `chart.chartArea[side]` is `_side(chart.chartArea!, side)`.
@@ -451,7 +454,7 @@ void main() {
         expect(chart.scales['y']!.max, 5000);
 
         // Turn on stacked mode since it uses it's own
-        _chartScaleOptions(chart, 'y')['stacked'] = true;
+        _chartScaleOptions(chart, 'y')['stacked'] = StackMode.on;
         chart.update();
 
         expect(chart.scales['y']!.min, 1);
@@ -567,7 +570,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'logarithmic', 'stacked': true},
+              'y': <String, Object?>{
+                'type': 'logarithmic',
+                'stacked': StackMode.on,
+              },
               'y1': <String, Object?>{
                 'position': ChartPosition.right,
                 'type': 'logarithmic',
@@ -615,7 +621,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'logarithmic', 'stacked': true},
+              'y': <String, Object?>{
+                'type': 'logarithmic',
+                'stacked': StackMode.on,
+              },
               'y1': <String, Object?>{
                 'position': ChartPosition.right,
                 'type': 'logarithmic',
@@ -1241,7 +1250,7 @@ void main() {
         },
         <String, Object?>{
           'dataset': <Object?>[],
-          'scale': <String, Object?>{'stacked': true},
+          'scale': <String, Object?>{'stacked': StackMode.on},
           'firstTick': 1,
           'lastTick': 10,
           'describe': 'empty dataset, without min/max, with stacked: true',

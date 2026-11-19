@@ -966,7 +966,7 @@ void main() {
                   'time': <String, Object?>{'parser': 'yyyy'},
                   'ticks': <String, Object?>{'source': TickSource.labels},
                 },
-                'y': <String, Object?>{'display': false},
+                'y': <String, Object?>{'display': ScaleDisplay.off},
               },
             },
           });
@@ -1092,7 +1092,7 @@ void main() {
                   'time': <String, Object?>{'parser': 'yyyy'},
                   'ticks': <String, Object?>{'source': TickSource.labels},
                 },
-                'y': <String, Object?>{'display': false},
+                'y': <String, Object?>{'display': ScaleDisplay.off},
               },
             },
           });
@@ -1196,7 +1196,7 @@ void main() {
                     'unit': TimeUnit.day,
                   },
                 },
-                'y': <String, Object?>{'display': false},
+                'y': <String, Object?>{'display': ScaleDisplay.off},
               },
             },
           });
@@ -1244,7 +1244,7 @@ void main() {
                     'unit': TimeUnit.day,
                   },
                 },
-                'y': <String, Object?>{'display': false},
+                'y': <String, Object?>{'display': ScaleDisplay.off},
               },
             },
           });
@@ -1306,7 +1306,7 @@ void main() {
                       },
                       'ticks': <String, Object?>{'source': source},
                     },
-                    'y': <String, Object?>{'display': false},
+                    'y': <String, Object?>{'display': ScaleDisplay.off},
                   },
                 },
               });

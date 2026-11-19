@@ -35,8 +35,8 @@ final ChartConfig _config = ChartConfig(
   animation: apexAnimation,
   plugins: [apexHover, apexTooltipLook],
   scales: {
-    // chart.stacked: true: both axes stack. The value axis takes the sums.
-    'x': apexCategoryAxis().copyWith(stacked: true),
+    // chart.stacked: StackMode.on: both axes stack. The value axis takes the sums.
+    'x': apexCategoryAxis().copyWith(stacked: StackMode.on),
     'y': apexValueAxis(min: 0, max: 80, stepSize: 20, stacked: true),
   },
 );

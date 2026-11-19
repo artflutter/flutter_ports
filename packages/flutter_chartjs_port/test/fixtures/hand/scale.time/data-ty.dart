@@ -3,6 +3,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 
@@ -45,7 +47,8 @@ Map<String, Object?> fixture() {
             'position': ChartPosition.bottom,
             'ticks': <String, Object?>{'maxRotation': 0},
           },
-          'y': <String, Object?>{'display': false},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off},
         },
       },
     },

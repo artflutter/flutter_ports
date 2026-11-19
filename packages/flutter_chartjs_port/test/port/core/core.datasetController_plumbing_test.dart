@@ -203,7 +203,7 @@ Map<String, Object?> _options({
       'type': yType,
       'min': 0,
       'max': 30,
-      'stacked': stacked,
+      'stacked': stacked ? StackMode.on : StackMode.off,
     },
   },
 };

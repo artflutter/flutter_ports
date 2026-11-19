@@ -50,14 +50,14 @@ final ChartConfig _config = ChartConfig(
   scales: {
     // `StackModifier()`.
     'x': CategoryAxis(
-      stacked: true,
+      stacked: StackMode.on,
       grid: noGrid,
       ticks: graphicTicks(),
       border: bottomBorder,
       extra: bottomAxis,
     ),
     'y': LinearAxis(
-      stacked: true,
+      stacked: StackMode.on,
       min: 0,
       max: 1800,
       grid: lineGrid,

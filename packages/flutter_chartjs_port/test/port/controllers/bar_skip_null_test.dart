@@ -34,10 +34,13 @@ Map<String, Object?> _config({
   Map<String, Object?> extraScales = const {},
   bool customMaps = false,
 }) {
-  final index = <String, Object?>{'type': indexType, 'stacked': stacked};
+  final index = <String, Object?>{
+    'type': indexType,
+    'stacked': stacked ? StackMode.on : StackMode.off,
+  };
   final value = <String, Object?>{
     'type': valueType,
-    'stacked': stacked,
+    'stacked': stacked ? StackMode.on : StackMode.off,
     'min': valueType == 'linear' ? -10.0 : 1.0,
     'max': 60.0,
     ...valueScale,
@@ -314,12 +317,14 @@ Map<String, Object?> _random(math.Random r) {
   }
   final index = <String, Object?>{
     'type': linearIndex ? 'linear' : 'category',
-    if (stackedChoice != 2) 'stacked': stackedChoice == 0,
+    if (stackedChoice != 2)
+      'stacked': stackedChoice == 0 ? StackMode.on : StackMode.off,
     if (r.nextInt(5) == 0) 'reverse': true,
   };
   final valueScale = <String, Object?>{
     'type': 'linear',
-    if (stackedChoice != 2) 'stacked': stackedChoice == 0,
+    if (stackedChoice != 2)
+      'stacked': stackedChoice == 0 ? StackMode.on : StackMode.off,
   };
   return {
     'type': 'bar',
@@ -687,7 +692,10 @@ void main() {
         labels: _labels(16),
         data: [for (var d = 0; d < 3; d++) data(d, 0)],
         extraScales: {
-          'y2': <String, Object?>{'type': 'logarithmic', 'display': false},
+          'y2': <String, Object?>{
+            'type': 'logarithmic',
+            'display': ScaleDisplay.off,
+          },
         },
       ),
     );
@@ -719,7 +727,7 @@ void main() {
           (cfg['options']! as Map<String, Object?>)['scales']!
               as Map<String, Object?>;
       for (final scale in scales.values) {
-        (scale! as Map<String, Object?>)['display'] = false;
+        (scale! as Map<String, Object?>)['display'] = ScaleDisplay.off;
       }
       return cfg;
     }

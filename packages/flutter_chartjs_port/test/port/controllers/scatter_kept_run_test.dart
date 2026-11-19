@@ -49,13 +49,13 @@ Map<String, Object?> _config(int count, Map<String, Object?> dataset) => {
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'type': 'linear',
-        'display': false,
+        'display': ScaleDisplay.off,
         'min': 0.0,
         'max': 100.0,
       },
       'y': <String, Object?>{
         'type': 'linear',
-        'display': false,
+        'display': ScaleDisplay.off,
         'min': 0.0,
         'max': 100.0,
       },

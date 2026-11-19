@@ -26,6 +26,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
@@ -182,7 +184,7 @@ Map<String, Object?> _config({
           ...?angleLines,
         },
         'ticks': <String, Object?>{'display': false},
-        'pointLabels': <String, Object?>{'display': false},
+        'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
         ...?r,
       },
     },
@@ -475,7 +477,7 @@ void main() {
           'color': const ChartPaint.solid(ui.Color(0x33000000)),
         },
         'ticks': <String, Object?>{'display': true},
-        'pointLabels': <String, Object?>{'display': true},
+        'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
       };
       final fan = acquireChart(_config(r: r()));
       final ordinary = acquireChart(

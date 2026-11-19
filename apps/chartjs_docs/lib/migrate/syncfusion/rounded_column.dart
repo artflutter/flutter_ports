@@ -46,9 +46,9 @@ final ChartConfig _config = ChartConfig(
   ],
   scales: const {
     // The labels plugin above draws the labels.
-    'x': CategoryAxis(display: false),
+    'x': CategoryAxis(display: ScaleDisplay.off),
     // isVisible: false
-    'y': LinearAxis(display: false, min: 0, max: 9000),
+    'y': LinearAxis(display: ScaleDisplay.off, min: 0, max: 9000),
   },
 );
 

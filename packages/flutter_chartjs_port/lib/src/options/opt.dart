@@ -34,7 +34,7 @@ import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
@@ -64,7 +64,8 @@ import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis;
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
+    show ChartClip, StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
     show ChartShadow;
@@ -365,6 +366,14 @@ abstract final class ShapeBits() {
   /// `options.plugins` (Chart.js ADR 0148).
   static const int pluginOptions = 5504;
 
+  /// `stackMode`: a [StackMode], the scale `stacked` (row
+  /// `adapt-stacked-option-enum`).
+  static const int stackMode = 5632;
+
+  /// `scaleDisplay`: a [ScaleDisplay], the `display` of a scale and of the
+  /// point labels (row `adapt-scale-display-enum`).
+  static const int scaleDisplay = 5760;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -478,6 +487,8 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.lineSegmentStyle => classifyTyped<LineSegmentStyle>(raw),
   ShapeBits.scaleBorder => classifyTyped<ScaleBorder>(raw),
   ShapeBits.pluginOptions => classifyTyped<PluginOptions<Object?>>(raw),
+  ShapeBits.stackMode => classifyTyped<StackMode>(raw),
+  ShapeBits.scaleDisplay => classifyTyped<ScaleDisplay>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),

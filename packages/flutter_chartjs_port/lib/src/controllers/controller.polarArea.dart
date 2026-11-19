@@ -52,6 +52,8 @@ import 'package:flutter_chartjs_port/src/core/data_update.dart'
 import 'package:flutter_chartjs_port/src/core/legend_item_options.dart';
 import 'package:flutter_chartjs_port/src/core/point_options.dart'
     show nativePointChart, nativePointList;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/elements/element_options.dart'
     show ArcOptions, ElementOptions;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
@@ -254,7 +256,8 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
           ..angleLines = (AngleLineOptionsScope()..display = false)
           ..beginAtZero = true
           ..grid = (GridLineOptionsScope()..circular = true)
-          ..pointLabels = (PointLabelOptionsScope()..display = false)
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          ..pointLabels = (PointLabelOptionsScope()..display = ScaleDisplay.off)
           ..startAngle = 0.0,
       ));
 

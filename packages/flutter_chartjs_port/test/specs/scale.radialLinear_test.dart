@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/scale.radialLinear.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -13,6 +14,8 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 // flutter_chartjs_port, which does not export lib/src yet.
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -119,7 +122,7 @@ void main() {
       expect(
         defaultConfig,
         jasmineEquals(<String, Object?>{
-          'display': true,
+          'display': ScaleDisplay.on,
           'animate': true,
           'position': ChartPosition.chartArea,
 
@@ -151,7 +154,7 @@ void main() {
             'backdropColor': undefined,
             'backdropPadding': const EdgeInsets.all(2),
             'color': jsGet(Chart.defaults, 'color'),
-            'display': true,
+            'display': ScaleDisplay.on,
             'font': const ChartTextStyle(fontSize: 10),
             'callback': jsGet(jsGet(defaultConfig, 'pointLabels'), 'callback'),
             'padding': 5,
@@ -502,7 +505,7 @@ void main() {
         'options': <String, Object?>{
           'scales': <String, Object?>{
             'r': <String, Object?>{
-              'pointLabels': <String, Object?>{'display': false},
+              'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
             },
           },
         },
@@ -962,7 +965,7 @@ void main() {
           'scales': <String, Object?>{
             'r': <String, Object?>{
               'pointLabels': <String, Object?>{
-                'display': true,
+                'display': ScaleDisplay.on,
                 'padding': 5,
                 'centerPointLabels': true,
               },

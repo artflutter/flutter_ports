@@ -2,6 +2,8 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
@@ -61,8 +63,13 @@ Map<String, Object?> fixture() => <String, Object?>{
         },
       },
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false},
-        'y': <String, Object?>{'display': false, 'beginAtZero': true},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{'display': ScaleDisplay.off},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{
+          'display': ScaleDisplay.off,
+          'beginAtZero': true,
+        },
       },
     },
   },

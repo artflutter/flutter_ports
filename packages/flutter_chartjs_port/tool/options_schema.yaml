@@ -147,7 +147,7 @@ kinds:
       base: number
       borderSkipped: borderSkippedEdge | bool
       borderRadius: number | scope BorderRadius
-      inflateAmount: number | string
+      inflateAmount: number
       borderWidth: number | scope Padding
       hoverBorderWidth: number
       xAxisID: string
@@ -407,7 +407,7 @@ kinds:
       base: number
       borderSkipped: borderSkippedEdge | bool
       borderRadius: number | scope BorderRadius
-      inflateAmount: number | string
+      inflateAmount: number
       borderWidth: number | scope Padding
       hoverBorderWidth: number
       hoverBorderColor: chartPaint
@@ -499,7 +499,7 @@ kinds:
       base: number
       borderSkipped: borderSkippedEdge | bool
       borderRadius: number | scope BorderRadius
-      inflateAmount: number | string
+      inflateAmount: number
       borderWidth: number | scope Padding
       hoverBorderWidth: number
       hoverBorderColor: chartPaint
@@ -832,7 +832,7 @@ kinds:
   ScaleOptions:
     doc: index.d.ts:3829 ScaleOptions, the union of index.d.ts:1200 CoreScaleOptions, :3257 CartesianScaleOptions, :3344 CategoryScaleOptions, :3356 LinearScaleOptions, :3405 LogarithmicScaleOptions, :3484 TimeScaleOptions and :3563 RadialLinearScaleOptions, one scale and Chart.defaults.scale.
     keys:
-      display: bool | string
+      display: scaleDisplay
       alignToPixels: bool
       backgroundColor: chartPaint
       reverse: bool
@@ -865,7 +865,7 @@ kinds:
       grid: scope GridLineOptions
       border: scaleBorder
       title: scope ScaleTitleOptions
-      stacked: bool | string
+      stacked: stackMode
       ticks: scope TickOptions
       labels: list
       beginAtZero: bool
@@ -984,7 +984,7 @@ kinds:
       backdropColor: chartPaint
       backdropPadding: edgeInsets
       borderRadius: number | scope BorderRadius
-      display: bool | string
+      display: scaleDisplay
       color: chartPaint
       font: textStyle
       callback: fn

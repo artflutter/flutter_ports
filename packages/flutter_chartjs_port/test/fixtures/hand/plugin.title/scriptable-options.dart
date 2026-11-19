@@ -3,6 +3,9 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
+
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
   final data = <Object?>[];
@@ -27,8 +30,10 @@ Map<String, Object?> fixture() {
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'display': false},
-          'y': <String, Object?>{'display': false},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'x': <String, Object?>{'display': ScaleDisplay.off},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off},
         },
         'plugins': <String, Object?>{
           'legend': false,

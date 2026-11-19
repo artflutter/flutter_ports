@@ -371,6 +371,16 @@ function scaleEnum(k, x, owner) {
       return `ScaleValuePosition(${dart(id)}, ${dart(x[id])})`;
     }
   }
+  // The `display` of a scale and of the point labels (row
+  // adapt-scale-display-enum). The `display` of another object stays a bool.
+  if (
+    k === 'display' &&
+    !['angleLines', 'border', 'grid', 'legend', 'subtitle', 'ticks', 'title', 'tooltip'].includes(owner) &&
+    (typeof x === 'boolean' || x === 'auto')
+  ) {
+    usesScaleEnums = true;
+    return `ScaleDisplay.${x === true ? 'on' : x === false ? 'off' : x}`;
+  }
   const rule = SCALE_ENUMS[k];
   if (!rule || typeof x !== 'string' || !rule.values.includes(x)) return undefined;
   if (rule.owner !== null && rule.owner !== owner) return undefined;

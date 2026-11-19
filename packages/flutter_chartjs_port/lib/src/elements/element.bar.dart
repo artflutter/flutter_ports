@@ -400,7 +400,8 @@ class BarElement([AnyObject? cfg])
     ..borderSkipped = BorderSkippedEdge.start
     ..borderWidth = 0.0
     ..borderRadius = 0.0
-    ..inflateAmount = 'auto'
+    // DIVERGES(chartjs): adapt-inflate-amount-auto, `undefined` is `'auto'`.
+    ..inflateAmountCell = optUndefined
     ..pointStyleCell = optUndefined;
 
   /// element.bar.js:159 `static defaultRoutes`, in the upstream key order.

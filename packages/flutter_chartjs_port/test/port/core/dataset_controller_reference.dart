@@ -5,7 +5,8 @@
 // src/core/core.datasetController.js at the pinned Chart.js. 34 scenarios.
 
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
+    show ChartClip, StackMode;
 
 /// The Node.js version that generated the data.
 const String datasetControllerReferenceNode = 'v24.22.1';
@@ -402,7 +403,7 @@ dataChanges: [[0,"_insertElements",6,3],[0,"_insertElements",9,1],[0,"_removeEle
           'id': 'y',
           'axis': YAxis(),
           'kind': 'linear',
-          'options': <String, Object?>{'stacked': true},
+          'options': <String, Object?>{'stacked': StackMode.on},
         },
       ],
       'datasets': <Object?>[
@@ -529,7 +530,7 @@ stacks: {"x.y.1":{"0":{"0":1,"_top":0,"_bottom":null,"_visualValues":{"0":1}},"1
           'id': 'y',
           'axis': YAxis(),
           'kind': 'linear',
-          'options': <String, Object?>{'stacked': 'single'},
+          'options': <String, Object?>{'stacked': StackMode.single},
         },
       ],
       'datasets': <Object?>[
@@ -581,7 +582,7 @@ props 2 0: [0,30]''',
           'id': 'y',
           'axis': YAxis(),
           'kind': 'linear',
-          'options': <String, Object?>{'stacked': 'single'},
+          'options': <String, Object?>{'stacked': StackMode.single},
         },
       ],
       'options': <String, Object?>{'parsing': false},
@@ -628,7 +629,7 @@ minmax 2 y true: {"min":-1,"max":-1}''',
           'id': 'y',
           'axis': YAxis(),
           'kind': 'linear',
-          'options': <String, Object?>{'stacked': true},
+          'options': <String, Object?>{'stacked': StackMode.on},
         },
       ],
       'options': <String, Object?>{'parsing': false},
@@ -675,7 +676,7 @@ stacks: {"x.y.test":{"0":{"0":5,"1":1,"_top":1,"_bottom":null,"_visualValues":{"
           'id': 'y',
           'axis': YAxis(),
           'kind': 'linear',
-          'options': <String, Object?>{'stacked': true},
+          'options': <String, Object?>{'stacked': StackMode.on},
         },
       ],
       'datasets': <Object?>[
@@ -928,7 +929,7 @@ trace: ["point#3.draw","point#4.draw","point#5.draw","point#6.draw","point#7.dra
     observations: r'''
 elements 0: null [bar#0,bar#1]
 trace: ["bar#1.draw","bar#0.draw"]
-options 0 0 null: opt#0 frozen=true {"$shared":true,"borderSkipped":"start","borderWidth":0,"borderRadius":0,"inflateAmount":"auto","pointStyle":undefined,"backgroundColor":"rgba(0,0,0,0.1)","borderColor":"rgba(0,0,0,0.1)"}''',
+options 0 0 null: opt#0 frozen=true {"$shared":true,"borderSkipped":"start","borderWidth":0,"borderRadius":0,"inflateAmount":undefined,"pointStyle":undefined,"backgroundColor":"rgba(0,0,0,0.1)","borderColor":"rgba(0,0,0,0.1)"}''',
   ),
   (
     spec: <String, Object?>{
@@ -1426,7 +1427,7 @@ minmax 0 x false: {"min":Infinity,"max":-Infinity}''',
           'id': 'y',
           'axis': YAxis(),
           'kind': 'linear',
-          'options': <String, Object?>{'stacked': true},
+          'options': <String, Object?>{'stacked': StackMode.on},
         },
       ],
       'datasets': <Object?>[
@@ -1522,7 +1523,7 @@ context 0 1 false x: ctx#0 {"active":false,"dataIndex":1,"parsed":2,"raw":2,"ele
           'id': 'y',
           'axis': YAxis(),
           'kind': 'linear',
-          'options': <String, Object?>{'stacked': true},
+          'options': <String, Object?>{'stacked': StackMode.on},
         },
       ],
       'options': <String, Object?>{'parsing': false},

@@ -5,6 +5,8 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
@@ -113,8 +115,10 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'responsive': false,
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false},
-        'y': <String, Object?>{'display': false, 'min': 0, 'max': 4},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{'display': ScaleDisplay.off},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{'display': ScaleDisplay.off, 'min': 0, 'max': 4},
       },
       'elements': <String, Object?>{
         'line': <String, Object?>{

@@ -13856,7 +13856,7 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': XAxis(),
       'position': ChartPosition.bottom,
-      'display': false,
+      'display': ScaleDisplay.off,
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -13966,7 +13966,7 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': XAxis(),
       'position': ChartPosition.bottom,
-      'display': 'auto',
+      'display': ScaleDisplay.auto,
     },
     expected: <String, Object?>{
       'hooks': <Object?>[
@@ -14083,7 +14083,7 @@ const List<ScaleReferenceCase> scaleReference = [
     options: <String, Object?>{
       'axis': XAxis(),
       'position': ChartPosition.bottom,
-      'display': 'auto',
+      'display': ScaleDisplay.auto,
     },
     expected: <String, Object?>{
       'hooks': <Object?>[

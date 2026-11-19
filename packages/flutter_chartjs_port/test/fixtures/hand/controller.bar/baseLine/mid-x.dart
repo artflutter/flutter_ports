@@ -4,6 +4,8 @@
 library;
 
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
 
@@ -30,7 +32,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'y': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{'display': ScaleDisplay.off},
         'x': <String, Object?>{
           'ticks': <String, Object?>{'display': false},
           'grid': <String, Object?>{

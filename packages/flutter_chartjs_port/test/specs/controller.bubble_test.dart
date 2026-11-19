@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/controller.bubble.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -13,6 +14,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -193,8 +196,14 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'display': false},
-            'y': <String, Object?>{'type': 'linear', 'display': false},
+            'x': <String, Object?>{
+              'type': 'category',
+              'display': ScaleDisplay.off,
+            },
+            'y': <String, Object?>{
+              'type': 'linear',
+              'display': ScaleDisplay.off,
+            },
           },
         },
       });

@@ -2353,8 +2353,8 @@ void main() {
                             'r': typed.RadialLinearAxis(
                               min: 0,
                               max: 100,
-                              display: false,
-                              pointLabelsDisplay: false,
+                              display: typed.ScaleDisplay.off,
+                              pointLabelsDisplay: typed.ScaleDisplay.off,
                               angleLinesDisplay: false,
                             ),
                           }
@@ -4172,8 +4172,8 @@ void main() {
                               'r': typed.RadialLinearAxis(
                                 min: 0,
                                 max: 100,
-                                display: false,
-                                pointLabelsDisplay: false,
+                                display: typed.ScaleDisplay.off,
+                                pointLabelsDisplay: typed.ScaleDisplay.off,
                                 angleLinesDisplay: false,
                               ),
                             }

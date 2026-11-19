@@ -1,4 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/plugin.tooltip.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
+// DIVERGES(chartjs): adapt-stacked-option-enum, the scale stacked values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -22,6 +24,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show IndexInteractionMode, NearestInteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show merge;
@@ -38,6 +42,7 @@ import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart'
     show TooltipXAlign, TooltipYAlign;
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -1063,8 +1068,8 @@ void main() {
         final chart = acquireChart(
           _line(_twoDatasets(), <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
-              'y': <String, Object?>{'stacked': true},
+              'x': <String, Object?>{'stacked': StackMode.on},
+              'y': <String, Object?>{'stacked': StackMode.on},
             },
             'plugins': <String, Object?>{
               'tooltip': <String, Object?>{
@@ -1879,8 +1884,8 @@ void main() {
             },
             'options': <String, Object?>{
               'scales': <String, Object?>{
-                'x': <String, Object?>{'display': false},
-                'y': <String, Object?>{'display': false},
+                'x': <String, Object?>{'display': ScaleDisplay.off},
+                'y': <String, Object?>{'display': ScaleDisplay.off},
               },
               'layout': <String, Object?>{'padding': const EdgeInsets.all(5)},
             },

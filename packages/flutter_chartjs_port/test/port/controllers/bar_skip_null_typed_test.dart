@@ -52,11 +52,15 @@ ChartConfig _config(int count, {required bool shown}) {
     ],
     labels: [for (var i = 0; i < count; i++) 'c$i'],
     scales: {
-      'x': CategoryAxis(display: shown, grid: grid, ticks: ticks),
+      'x': CategoryAxis(
+        display: shown ? ScaleDisplay.on : ScaleDisplay.off,
+        grid: grid,
+        ticks: ticks,
+      ),
       'y': LinearAxis(
         min: 0,
         max: 100,
-        display: shown,
+        display: shown ? ScaleDisplay.on : ScaleDisplay.off,
         grid: grid,
         ticks: ticks,
       ),

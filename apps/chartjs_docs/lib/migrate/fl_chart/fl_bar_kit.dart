@@ -70,7 +70,7 @@ LinearAxis groupAxis({
   ChartPosition? position,
   bool reverse = false,
 }) => LinearAxis(
-  display: reservedSize > 0,
+  display: reservedSize > 0 ? ScaleDisplay.on : ScaleDisplay.off,
   position: position,
   reverse: reverse,
   grid: const AxisGrid(display: false, drawTicks: false),
@@ -111,12 +111,14 @@ LinearAxis valueAxis({
   bool reverse = false,
   bool stacked = false,
 }) => LinearAxis(
-  display: reservedSize > 0 || grid.display != false,
+  display: reservedSize > 0 || grid.display != false
+      ? ScaleDisplay.on
+      : ScaleDisplay.off,
   min: min,
   max: max,
   position: position,
   reverse: reverse,
-  stacked: stacked,
+  stacked: stacked ? StackMode.on : StackMode.off,
   grid: grid,
   border: border,
   ticks: ticks,

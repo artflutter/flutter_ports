@@ -119,12 +119,12 @@ Map<String, Object?> _config({
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'type': horizontal ? 'linear' : 'category',
-        'display': false,
+        'display': ScaleDisplay.off,
         if (horizontal) ...{'min': 0.0, 'max': 10.0},
       },
       'y': <String, Object?>{
         'type': horizontal ? 'category' : 'linear',
-        'display': false,
+        'display': ScaleDisplay.off,
         if (!horizontal) ...{'min': 0.0, 'max': 10.0},
       },
     },
@@ -353,7 +353,7 @@ void main() {
         _scales(cfg)['0'] = <String, Object?>{
           'type': 'category',
           'axis': const XAxis(),
-          'display': false,
+          'display': ScaleDisplay.off,
         };
         double categoryPercentage(Object? context) {
           if (armed) {

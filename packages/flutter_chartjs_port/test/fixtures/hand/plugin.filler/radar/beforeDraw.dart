@@ -5,6 +5,8 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
 
@@ -44,7 +46,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             'color': 'rgba(0,0,0,0.5)',
             'lineWidth': 2.0,
           },
-          'pointLabels': <String, Object?>{'display': false},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
           'ticks': <String, Object?>{'beginAtZero': true, 'display': false},
         },
       },

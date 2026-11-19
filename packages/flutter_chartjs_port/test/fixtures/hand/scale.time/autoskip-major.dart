@@ -42,7 +42,8 @@ Map<String, Object?> fixture() {
               'maxRotation': 0,
             },
           },
-          'y': <String, Object?>{'display': false},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off},
         },
       },
     },

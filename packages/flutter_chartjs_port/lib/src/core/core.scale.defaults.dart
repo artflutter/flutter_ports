@@ -15,7 +15,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickAlign, TickCrossAlign;
+    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign;
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
     show ValueGrace;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
@@ -46,7 +46,8 @@ void applyScaleDefaults(Defaults defaults) {
     ..set(
       'scale',
       ScaleOptionsScope()
-        ..display = true
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        ..display = ScaleDisplay.on
         ..offset = false
         ..reverse = false
         ..beginAtZero = false

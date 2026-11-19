@@ -79,6 +79,7 @@ foreign	data.datasets[].borderWidth	String
 foreign	data.datasets[].data	Map
 foreign	data.datasets[].data	String
 foreign	data.datasets[].indexAxis	double
+foreign	data.datasets[].inflateAmount	String	the upstream specs give a text ('2', 'abc'); the option is a number (row adapt-inflate-amount-auto)
 foreign	data.datasets[].inflateAmount	bool
 foreign	data.datasets[].label	int
 foreign	data.datasets[].maxBarThickness	String

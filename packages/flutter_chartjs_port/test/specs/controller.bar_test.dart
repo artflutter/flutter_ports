@@ -1,4 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/controller.bar.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
+// DIVERGES(chartjs): adapt-stacked-option-enum, the scale stacked values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -14,6 +16,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' as helpers;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -236,8 +240,8 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
-              'y': <String, Object?>{'stacked': true},
+              'x': <String, Object?>{'stacked': StackMode.on},
+              'y': <String, Object?>{'stacked': StackMode.on},
             },
           },
         });
@@ -266,8 +270,8 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': false},
-              'y': <String, Object?>{'stacked': false},
+              'x': <String, Object?>{'stacked': StackMode.off},
+              'y': <String, Object?>{'stacked': StackMode.off},
             },
           },
         });
@@ -315,8 +319,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': true},
-            'y': <String, Object?>{'stacked': true},
+            'x': <String, Object?>{'stacked': StackMode.on},
+            'y': <String, Object?>{'stacked': StackMode.on},
           },
         },
       });
@@ -342,8 +346,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': false},
-            'y': <String, Object?>{'stacked': false},
+            'x': <String, Object?>{'stacked': StackMode.off},
+            'y': <String, Object?>{'stacked': StackMode.off},
           },
         },
       });
@@ -390,8 +394,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': true},
-            'y': <String, Object?>{'stacked': true},
+            'x': <String, Object?>{'stacked': StackMode.on},
+            'y': <String, Object?>{'stacked': StackMode.on},
           },
         },
       });
@@ -417,8 +421,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': false},
-            'y': <String, Object?>{'stacked': false},
+            'x': <String, Object?>{'stacked': StackMode.off},
+            'y': <String, Object?>{'stacked': StackMode.off},
           },
         },
       });
@@ -493,8 +497,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': true},
-            'y': <String, Object?>{'stacked': true},
+            'x': <String, Object?>{'stacked': StackMode.on},
+            'y': <String, Object?>{'stacked': StackMode.on},
           },
         },
       });
@@ -523,8 +527,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': false},
-            'y': <String, Object?>{'stacked': false},
+            'x': <String, Object?>{'stacked': StackMode.off},
+            'y': <String, Object?>{'stacked': StackMode.off},
           },
         },
       });
@@ -582,8 +586,8 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
-              'y': <String, Object?>{'stacked': true},
+              'x': <String, Object?>{'stacked': StackMode.on},
+              'y': <String, Object?>{'stacked': StackMode.on},
             },
           },
         });
@@ -615,8 +619,8 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': false},
-              'y': <String, Object?>{'stacked': false},
+              'x': <String, Object?>{'stacked': StackMode.off},
+              'y': <String, Object?>{'stacked': StackMode.off},
             },
           },
         });
@@ -675,8 +679,8 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
-              'y': <String, Object?>{'stacked': true},
+              'x': <String, Object?>{'stacked': StackMode.on},
+              'y': <String, Object?>{'stacked': StackMode.on},
             },
           },
         });
@@ -708,8 +712,8 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': false},
-              'y': <String, Object?>{'stacked': false},
+              'x': <String, Object?>{'stacked': StackMode.off},
+              'y': <String, Object?>{'stacked': StackMode.off},
             },
           },
         });
@@ -782,10 +786,13 @@ void main() {
             },
           },
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'display': false},
+            'x': <String, Object?>{
+              'type': 'category',
+              'display': ScaleDisplay.off,
+            },
             'y': <String, Object?>{
               'type': 'linear',
-              'display': false,
+              'display': ScaleDisplay.off,
               'beginAtZero': false,
             },
           },
@@ -858,10 +865,13 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'display': false},
+              'x': <String, Object?>{
+                'type': 'category',
+                'display': ScaleDisplay.off,
+              },
               'y': <String, Object?>{
                 'type': 'linear',
-                'display': false,
+                'display': ScaleDisplay.off,
                 'beginAtZero': false,
               },
             },
@@ -897,12 +907,15 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'display': false},
+            'x': <String, Object?>{
+              'type': 'category',
+              'display': ScaleDisplay.off,
+            },
             'y': <String, Object?>{
               'type': 'linear',
               'min': 0,
               'max': 2,
-              'display': false,
+              'display': ScaleDisplay.off,
             },
           },
         },
@@ -941,11 +954,14 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'display': false},
+            'x': <String, Object?>{
+              'type': 'category',
+              'display': ScaleDisplay.off,
+            },
             'y': <String, Object?>{
               'type': 'linear',
-              'display': false,
-              'stacked': true,
+              'display': ScaleDisplay.off,
+              'stacked': StackMode.on,
             },
           },
         },
@@ -992,11 +1008,14 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'display': false},
+              'x': <String, Object?>{
+                'type': 'category',
+                'display': ScaleDisplay.off,
+              },
               'y': <String, Object?>{
                 'type': 'linear',
-                'display': false,
-                'stacked': true,
+                'display': ScaleDisplay.off,
+                'stacked': StackMode.on,
                 'min': 50,
                 'max': 100,
               },
@@ -1046,10 +1065,13 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'type': 'category',
-              'display': false,
-              'stacked': true,
+              'display': ScaleDisplay.off,
+              'stacked': StackMode.on,
             },
-            'y': <String, Object?>{'type': 'linear', 'display': false},
+            'y': <String, Object?>{
+              'type': 'linear',
+              'display': ScaleDisplay.off,
+            },
           },
         },
       });
@@ -1093,11 +1115,14 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'display': false},
+            'x': <String, Object?>{
+              'type': 'category',
+              'display': ScaleDisplay.off,
+            },
             'y': <String, Object?>{
               'type': 'linear',
-              'display': false,
-              'stacked': true,
+              'display': ScaleDisplay.off,
+              'stacked': StackMode.on,
             },
           },
         },
@@ -1146,11 +1171,14 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'display': false},
+              'x': <String, Object?>{
+                'type': 'category',
+                'display': ScaleDisplay.off,
+              },
               'y': <String, Object?>{
                 'type': 'linear',
-                'display': false,
-                'stacked': true,
+                'display': ScaleDisplay.off,
+                'stacked': StackMode.on,
               },
             },
           },
@@ -1198,11 +1226,14 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'category', 'display': false},
+              'x': <String, Object?>{
+                'type': 'category',
+                'display': ScaleDisplay.off,
+              },
               'y': <String, Object?>{
                 'type': 'linear',
-                'display': false,
-                'stacked': true,
+                'display': ScaleDisplay.off,
+                'stacked': StackMode.on,
               },
             },
           },
@@ -1245,11 +1276,14 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'display': false},
+            'x': <String, Object?>{
+              'type': 'category',
+              'display': ScaleDisplay.off,
+            },
             'y': <String, Object?>{
               'type': 'linear',
-              'display': false,
-              'stacked': true,
+              'display': ScaleDisplay.off,
+              'stacked': StackMode.on,
             },
           },
         },
@@ -1587,7 +1621,7 @@ void main() {
           'options': <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{'min': 'March', 'max': 'May'},
-              'y': <String, Object?>{'stacked': true},
+              'y': <String, Object?>{'stacked': StackMode.on},
             },
           },
         };
@@ -1680,7 +1714,7 @@ void main() {
           'options': <String, Object?>{
             'indexAxis': const YAxis(),
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
+              'x': <String, Object?>{'stacked': StackMode.on},
               'y': <String, Object?>{'min': 'March', 'max': 'May'},
             },
           },
@@ -1841,8 +1875,14 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
           'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'display': false},
-            'y': <String, Object?>{'type': 'linear', 'display': false},
+            'x': <String, Object?>{
+              'type': 'category',
+              'display': ScaleDisplay.off,
+            },
+            'y': <String, Object?>{
+              'type': 'linear',
+              'display': ScaleDisplay.off,
+            },
           },
         },
       });
@@ -1880,13 +1920,13 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'type': 'category',
-              'display': false,
-              'stacked': true,
+              'display': ScaleDisplay.off,
+              'stacked': StackMode.on,
             },
             'y': <String, Object?>{
               'type': 'linear',
-              'display': false,
-              'stacked': true,
+              'display': ScaleDisplay.off,
+              'stacked': StackMode.on,
             },
           },
         },

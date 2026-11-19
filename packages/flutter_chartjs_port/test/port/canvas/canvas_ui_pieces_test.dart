@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' show Chart;
 import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -1086,8 +1088,8 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'x': <String, Object?>{'display': false},
-            'y': <String, Object?>{'display': false, 'min': 0.0},
+            'x': <String, Object?>{'display': ScaleDisplay.off},
+            'y': <String, Object?>{'display': ScaleDisplay.off, 'min': 0.0},
           },
           'plugins': <String, Object?>{'legend': false, 'title': false},
         },
@@ -1180,7 +1182,7 @@ void main() {
               'type': 'linear',
               'min': 0.0,
               'max': 100.0,
-              'display': ticks,
+              'display': ticks ? ScaleDisplay.on : ScaleDisplay.off,
               'grid': <String, Object?>{'display': false},
               'ticks': <String, Object?>{'maxRotation': 0.0},
             },
@@ -1188,7 +1190,7 @@ void main() {
               'type': 'linear',
               'min': 0.0,
               'max': 100.0,
-              'display': false,
+              'display': ScaleDisplay.off,
             },
           },
           'plugins': <String, Object?>{

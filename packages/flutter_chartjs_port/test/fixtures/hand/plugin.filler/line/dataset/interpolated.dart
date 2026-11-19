@@ -4,6 +4,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -76,8 +78,10 @@ Map<String, Object?> fixture() {
           'tooltip': false,
         },
         'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear', 'display': false},
-          'y': <String, Object?>{'type': 'linear', 'display': false},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'x': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'y': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
         },
       },
     },

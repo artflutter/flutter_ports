@@ -23,7 +23,8 @@ import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
+    show ChartClip, StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -10575,7 +10576,7 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
         'plugins': <String, Object?>{
           'colors': false,

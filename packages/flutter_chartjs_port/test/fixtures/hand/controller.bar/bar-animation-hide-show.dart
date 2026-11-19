@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
 
@@ -54,8 +56,10 @@ Map<String, Object?> fixture() {
         },
         'events': <Object?>[],
         'scales': <String, Object?>{
-          'x': <String, Object?>{'display': false},
-          'y': <String, Object?>{'display': false, 'max': 4},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'x': <String, Object?>{'display': ScaleDisplay.off},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off, 'max': 4},
         },
       },
     },

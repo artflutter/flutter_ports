@@ -87,7 +87,7 @@ export 'package:flutter_chartjs_port/src/core/core.scale.dart'
 export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
     show defaultDateZone, setDefaultDateZone;
 export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
 export 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
 export 'package:flutter_chartjs_port/src/helpers/grace_length.dart'

@@ -59,7 +59,7 @@ import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
 import 'package:flutter_chartjs_port/src/core/point_bulk_update.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show TickAlign, TickCrossAlign, TickSource;
+    show ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
@@ -2100,13 +2100,11 @@ class Scale(AnyObject cfg)
   /// @return {boolean}
   /// @private
   bool _isVisible() {
-    final display = options.display;
-
-    if (display != 'auto') {
-      return jsTruthy(display);
-    }
-
-    return getMatchingVisibleMetas().isNotEmpty;
+    // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+    return switch (options.display) {
+      ScaleDisplay.auto => getMatchingVisibleMetas().isNotEmpty,
+      final display => display == ScaleDisplay.on,
+    };
   }
 
   /// core.scale.js:1013 `_computeGridLineItems(chartArea)`.

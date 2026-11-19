@@ -63,6 +63,7 @@ import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
         metaStringOf,
         parsedValueOf,
         setStackValue,
+        stackModeOf,
         stacksOf,
         visualValuesOf;
 import 'package:flutter_chartjs_port/src/core/data_update.dart'
@@ -629,18 +630,17 @@ Object? _startEnd(Object? v, BorderSkippedEdge start, BorderSkippedEdge end) {
 /// ratio)`.
 ///
 /// The element takes a number (Chart.js ADR 0017, section 5). Its only
-/// reader applies ToNumber (element.bar.js:127-140, :179-196). An absent
-/// option gives the property `undefined`, through the face of the props.
+/// reader applies ToNumber (element.bar.js:127-140, :179-196).
 void _setInflateAmount(
   BarProperties properties,
   Object? options,
   double ratio,
 ) {
   final inflateAmount = readOption(options, OptionKey.inflateAmount);
-  if (inflateAmount == 'auto') {
+  // DIVERGES(chartjs): adapt-inflate-amount-auto, an absent value is
+  // `'auto'`.
+  if (inflateAmount == null || inflateAmount is Undefined) {
     properties.inflateAmount = ratio == 1 ? 0.33 : 0.0;
-  } else if (identical(inflateAmount, undefined)) {
-    properties.jsWrite('inflateAmount', undefined);
   } else {
     properties.inflateAmount = jsToNumber(inflateAmount);
   }
@@ -1262,7 +1262,9 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     }
     final amount = representative.inflateAmountValue;
     final double inflate;
-    if (amount is String && amount == 'auto') {
+    // DIVERGES(chartjs): adapt-inflate-amount-auto, an absent value is
+    // `'auto'`.
+    if (amount == null || amount is Undefined) {
       inflate = ruler.ratio == 1 ? 0.33 : 0;
     } else if (amount is num && amount.isFinite) {
       inflate = amount.toDouble();
@@ -1559,7 +1561,8 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
               jsTruthy(readOption(meta.controller!.options, OptionKey.grouped)),
         )
         .toList();
-    final stacked = readOption(iScale.options, OptionKey.stacked);
+    // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+    final stacked = stackModeOf(readOption(iScale.options, OptionKey.stacked));
     final stacks = <Object?>[];
     // `getParsed(undefined)` is `undefined`. Dart `null` gives the same
     // result: without a data index, `skipNull` does not run.
@@ -1605,12 +1608,11 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       // false     |   x   |     x     |     x
       // true      |       |     x     |
       // undefined |       |     x     |     x
-      // Dart `null` of the meta is the `undefined` of an absent stack. The
-      // option `stacked` keeps `undefined`: a stored `null` differs from it.
+      // Dart `null` of the meta and of the option is `undefined`.
       final metaStack = meta.stack;
-      if (stacked == false ||
+      if (stacked == types.StackMode.off ||
           !stacks.any((stack) => _strictEquals(stack, metaStack)) ||
-          (identical(stacked, undefined) && metaStack == null)) {
+          (stacked == null && metaStack == null)) {
         stacks.add(metaStack);
       }
       if (meta.index == last) {

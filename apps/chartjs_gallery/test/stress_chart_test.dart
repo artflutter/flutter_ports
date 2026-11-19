@@ -531,7 +531,7 @@ void main() {
     expect((radar as Map<String, Object?>)['scales'], {
       'r': {
         'type': 'radialLinear',
-        'display': false,
+        'display': ScaleDisplay.off,
         'ticks': {'display': false},
         'min': 0,
         'max': 1,

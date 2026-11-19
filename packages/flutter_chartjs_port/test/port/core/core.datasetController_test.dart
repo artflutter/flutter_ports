@@ -45,6 +45,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -1308,7 +1309,7 @@ void main() {
           'id': 'y',
           'axis': const YAxis(),
           'kind': 'linear',
-          'options': <String, Object?>{'stacked': true},
+          'options': <String, Object?>{'stacked': StackMode.on},
         },
       ],
       'options': <String, Object?>{'parsing': false},

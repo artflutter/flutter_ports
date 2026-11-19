@@ -29,6 +29,8 @@ import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
     show ScriptableScalePointLabelContext;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
@@ -360,7 +362,7 @@ AnyObject _config({
         'ticks': <String, Object?>{'display': false},
         ...?r?.call(),
         'pointLabels': <String, Object?>{
-          'display': true,
+          'display': ScaleDisplay.on,
           'callback': ?callback,
           ...?pointLabels?.call(),
         },
@@ -656,7 +658,7 @@ final List<_Case> _cases = [
     'display auto, with overlapping labels',
     callback: null,
     n: 300,
-    pointLabels: () => {'display': 'auto'},
+    pointLabels: () => {'display': ScaleDisplay.auto},
   ),
   _Case(
     'center point labels',

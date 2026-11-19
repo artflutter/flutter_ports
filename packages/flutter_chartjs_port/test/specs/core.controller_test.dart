@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/core.controller.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -16,6 +17,8 @@ import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode, NearestInteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
@@ -672,8 +675,8 @@ void main() {
             },
             'options': <String, Object?>{
               'scales': <String, Object?>{
-                'x': <String, Object?>{'display': false},
-                'y': <String, Object?>{'display': false},
+                'x': <String, Object?>{'display': ScaleDisplay.off},
+                'y': <String, Object?>{'display': ScaleDisplay.off},
               },
             },
           });
@@ -736,8 +739,8 @@ void main() {
             },
             'options': <String, Object?>{
               'scales': <String, Object?>{
-                'x': <String, Object?>{'display': false},
-                'y': <String, Object?>{'display': false},
+                'x': <String, Object?>{'display': ScaleDisplay.off},
+                'y': <String, Object?>{'display': ScaleDisplay.off},
               },
               'layout': <String, Object?>{'padding': const EdgeInsets.all(5)},
             },

@@ -6,6 +6,8 @@ library;
 import 'dart:async';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -34,8 +36,10 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'animation': <String, Object?>{'duration': 1},
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false},
-        'y': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{'display': ScaleDisplay.off},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{'display': ScaleDisplay.off},
       },
       'plugins': <String, Object?>{
         'legend': false,

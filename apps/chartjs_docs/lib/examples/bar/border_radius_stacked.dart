@@ -41,7 +41,10 @@ const roundedStack = ChartConfig(
       borderRadius: 10,
     ),
   ],
-  scales: {'x': CategoryAxis(stacked: true), 'y': LinearAxis(stacked: true)},
+  scales: {
+    'x': CategoryAxis(stacked: StackMode.on),
+    'y': LinearAxis(stacked: StackMode.on),
+  },
 );
 // #enddocregion bar-border-radius-stacked
 

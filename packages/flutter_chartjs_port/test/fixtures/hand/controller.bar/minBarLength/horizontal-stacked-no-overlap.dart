@@ -4,7 +4,10 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.
@@ -41,11 +44,17 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false, 'stacked': true},
+        // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{
+          'display': ScaleDisplay.off,
+          'stacked': StackMode.on,
+        },
         'y': <String, Object?>{
           'type': 'linear',
           'position': 'left',
-          'stacked': true,
+          // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+          'stacked': StackMode.on,
           'ticks': <String, Object?>{'display': false},
         },
       },

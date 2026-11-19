@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/core.scale.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -14,6 +15,8 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
@@ -356,7 +359,7 @@ void main() {
                 'ticks': <String, Object?>{'display': false},
                 'offset': test.offset,
               },
-              'y': <String, Object?>{'display': false},
+              'y': <String, Object?>{'display': ScaleDisplay.off},
             },
             'plugins': <String, Object?>{'legend': false},
           },
@@ -404,7 +407,7 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'y': <String, Object?>{'display': false},
+              'y': <String, Object?>{'display': ScaleDisplay.off},
             },
             'plugins': <String, Object?>{'legend': false},
           },
@@ -444,7 +447,7 @@ void main() {
               },
               'options': <String, Object?>{
                 'scales': <String, Object?>{
-                  'x': <String, Object?>{'display': 'auto'},
+                  'x': <String, Object?>{'display': ScaleDisplay.auto},
                   'y': <String, Object?>{'type': 'category'},
                 },
               },
@@ -477,7 +480,7 @@ void main() {
               },
               'options': <String, Object?>{
                 'scales': <String, Object?>{
-                  'x': <String, Object?>{'display': 'auto'},
+                  'x': <String, Object?>{'display': ScaleDisplay.auto},
                 },
               },
             });
@@ -517,7 +520,7 @@ void main() {
               },
               'options': <String, Object?>{
                 'scales': <String, Object?>{
-                  'y': <String, Object?>{'display': 'auto'},
+                  'y': <String, Object?>{'display': ScaleDisplay.auto},
                 },
               },
             });
@@ -549,7 +552,7 @@ void main() {
               },
               'options': <String, Object?>{
                 'scales': <String, Object?>{
-                  'y': <String, Object?>{'display': 'auto'},
+                  'y': <String, Object?>{'display': ScaleDisplay.auto},
                 },
               },
             });
@@ -668,11 +671,11 @@ void main() {
                 'scales': <String, Object?>{
                   'customIDx': <String, Object?>{
                     'type': 'linear',
-                    'display': false,
+                    'display': ScaleDisplay.off,
                   },
                   'customIDy': <String, Object?>{
                     'type': 'linear',
-                    'display': false,
+                    'display': ScaleDisplay.off,
                   },
                 },
               },

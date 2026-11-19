@@ -414,7 +414,11 @@ Map<String, Object?> _liveConfig(
   dataset,
   options: {
     'scales': <String, Object?>{
-      'r': <String, Object?>{'min': 0.0, 'max': 100.0, 'display': false},
+      'r': <String, Object?>{
+        'min': 0.0,
+        'max': 100.0,
+        'display': ScaleDisplay.off,
+      },
     },
     'plugins': <String, Object?>{
       'legend': false,
@@ -676,7 +680,10 @@ void main() {
       {'backgroundColor': const ChartPaint.solid(red), 'angle': 40.0},
       options: {
         'scales': <String, Object?>{
-          'r': <String, Object?>{'startAngle': 30.0, 'display': false},
+          'r': <String, Object?>{
+            'startAngle': 30.0,
+            'display': ScaleDisplay.off,
+          },
         },
       },
     ),
@@ -692,7 +699,7 @@ void main() {
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'type': 'writes-user-radial',
-            'display': false,
+            'display': ScaleDisplay.off,
           },
         },
       },
@@ -1220,7 +1227,7 @@ void main() {
               'scales': <String, Object?>{
                 'r': <String, Object?>{
                   'type': 'writes-user-radial',
-                  'display': false,
+                  'display': ScaleDisplay.off,
                 },
               },
             },
@@ -1725,8 +1732,8 @@ void main() {
             'r': RadialLinearAxis(
               min: 0,
               max: 100,
-              display: false,
-              pointLabelsDisplay: false,
+              display: ScaleDisplay.off,
+              pointLabelsDisplay: ScaleDisplay.off,
               angleLinesDisplay: false,
             ),
           },

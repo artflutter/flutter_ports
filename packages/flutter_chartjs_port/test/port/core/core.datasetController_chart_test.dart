@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_class.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -482,7 +483,7 @@ void main() {
       'options': <String, Object?>{
         'parsing': false,
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     });

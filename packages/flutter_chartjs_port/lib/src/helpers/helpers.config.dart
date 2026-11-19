@@ -72,7 +72,7 @@ import 'package:flutter_chartjs_port/src/core/data_update.dart'
     show nativeOptionScope;
 import 'package:flutter_chartjs_port/src/core/option_call_epoch.dart';
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds;
+    show ScaleBounds, ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
@@ -2103,8 +2103,12 @@ final class OptionView._(
     final display = _cache.get(OptionKey.display);
     final grid = _cache.get(OptionKey.grid);
     if (identical(grid, _absent)) return null;
-    if (identical(display, false)) return false;
-    if (!identical(display, true) || grid is! OptionView) return null;
+    // DIVERGES(chartjs): adapt-scale-display-enum, the enum value of the
+    // scale.
+    if (identical(display, ScaleDisplay.off)) return false;
+    if (!identical(display, ScaleDisplay.on) || grid is! OptionView) {
+      return null;
+    }
     final gridDisplay = grid._cache.get(OptionKey.display);
     if (identical(gridDisplay, false)) return false;
     if (!identical(gridDisplay, true) ||
@@ -2143,7 +2147,8 @@ final class OptionView._(
   bool get hasCachedBarStacking {
     if (runtimeType != OptionView) return false;
     final value = _cache.get(OptionKey.stacked);
-    return value is bool || identical(value, undefined);
+    // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+    return value is StackMode || identical(value, undefined);
   }
 
   /// Label-source options already read by the first category callback. Never

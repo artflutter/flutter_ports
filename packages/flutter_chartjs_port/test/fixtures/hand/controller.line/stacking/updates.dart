@@ -6,9 +6,12 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
     show notifyArrayListeners;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 
@@ -42,8 +45,14 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'borderWidth': 5,
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false},
-        'y': <String, Object?>{'display': true, 'stacked': true},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{'display': ScaleDisplay.off},
+        // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{
+          'display': ScaleDisplay.on,
+          'stacked': StackMode.on,
+        },
       },
     },
   },

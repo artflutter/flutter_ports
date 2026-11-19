@@ -45,10 +45,9 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-
 import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextProxy, OptionView, boolOption, paddingOption, readOption;
 import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
@@ -57,6 +56,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/axis_border.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, chartPaintOf;
 import 'package:intl/intl.dart' show NumberFormat;
@@ -79,8 +79,9 @@ ContextProxy _setContext(Object? options, Object context) =>
 /// [bounds], [grid], [border], [title], [labels], [beginAtZero], [grace]
 /// and [fullSize].
 extension type const CoreScaleOptions(OptionView _view) implements OptionView {
-  /// index.d.ts:1205 `display: boolean | 'auto'`.
-  Object? get display => _view.readKey(OptionKey.display);
+  /// index.d.ts:1205 `display: boolean | 'auto'` (row
+  /// `adapt-scale-display-enum`).
+  ScaleDisplay get display => ScaleDisplay.of(_view.readKey(OptionKey.display));
 
   /// index.d.ts:1209 `alignToPixels: boolean`.
   bool get alignToPixels => boolOption(
@@ -235,8 +236,12 @@ extension type const CartesianScaleOptions(OptionView _view)
   /// index.d.ts:3281 `stackWeight?: number`.
   Object? get stackWeight => _view.readKey(OptionKey.stackWeight);
 
-  /// index.d.ts:3339 `stacked?: boolean | 'single'`.
-  Object? get stacked => _view.readKey(OptionKey.stacked);
+  /// index.d.ts:3339 `stacked?: boolean | 'single'`: a [StackMode], or Dart
+  /// `null` for no value (row `adapt-stacked-option-enum`).
+  StackMode? get stacked => switch (_view.readKey(OptionKey.stacked)) {
+    final StackMode value => value,
+    _ => null,
+  };
 }
 
 /// index.d.ts:3344 `CategoryScaleOptions`. Its `labels` is
@@ -595,8 +600,10 @@ extension type const PointLabelOptions(Object? raw) {
   /// index.d.ts:3630 `borderRadius`.
   Object? get borderRadius => readOption(raw, OptionKey.borderRadius);
 
-  /// index.d.ts:3636 `display: boolean | 'auto'`.
-  Object? get display => readOption(raw, OptionKey.display);
+  /// index.d.ts:3636 `display: boolean | 'auto'` (row
+  /// `adapt-scale-display-enum`).
+  ScaleDisplay get display =>
+      ScaleDisplay.of(readOption(raw, OptionKey.display));
 
   /// index.d.ts:3641 `color`: the paint of the option value, or
   /// [ChartPaint.unchanged] without one.

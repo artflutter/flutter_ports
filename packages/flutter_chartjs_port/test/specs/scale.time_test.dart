@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/scale.time.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -780,7 +781,10 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': <String, Object?>{'display': true, 'type': 'time'},
+              'x': <String, Object?>{
+                'display': ScaleDisplay.on,
+                'type': 'time',
+              },
             },
           },
         });

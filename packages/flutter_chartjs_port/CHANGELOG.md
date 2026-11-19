@@ -4,6 +4,12 @@
   `loop` a `bool` and `fn` an `Interpolator`. A value of another type, for example a text
   duration, stops a debug build. The animation option `type` is gone: the Dart type of the value
   selects the interpolator, and `fn` gives another one.
+- The scale option `display` and the radial `pointLabels.display` take a `ScaleDisplay`:
+  `on` (the default), `off` or `auto`. The scale option `stacked` takes a `StackMode`: `on`,
+  `off` or `single`, and null stacks only the datasets with a `stack`. The typed axes take the
+  same enums: `LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on)`. A `bool` or a text
+  stops a debug build.
+- The bar option `inflateAmount` is a number. A bar with no value has the upstream `'auto'`.
 
 ## 0.1.0-beta.3
 

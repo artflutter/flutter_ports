@@ -118,13 +118,13 @@ Map<String, Object?> _config({
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'type': horizontal ? 'linear' : 'category',
-        'display': visible,
+        'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
         if (horizontal) ...{'min': -8.0, 'max': 12.0},
         ...(horizontal ? valueScale : indexScale),
       },
       'y': <String, Object?>{
         'type': horizontal ? 'category' : 'linear',
-        'display': visible,
+        'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
         if (!horizontal) ...{'min': -8.0, 'max': 12.0},
         ...(horizontal ? indexScale : valueScale),
       },
@@ -406,7 +406,10 @@ void main() {
         datasets: 4,
         extra: (k) => {if (k == 1) 'xAxisID': 'x2', if (k == 2) 'xAxisID': 'x'},
         scales: {
-          'x2': <String, Object?>{'type': 'category', 'display': false},
+          'x2': <String, Object?>{
+            'type': 'category',
+            'display': ScaleDisplay.off,
+          },
         },
       );
       final ca = config();
@@ -427,8 +430,8 @@ void main() {
       Map<String, Object?> config() => _config(
         datasets: 4,
         extra: (k) => {'stack': k < 2 ? 'left' : 'right'},
-        indexScale: {'stacked': false},
-        valueScale: {'stacked': false},
+        indexScale: {'stacked': StackMode.off},
+        valueScale: {'stacked': StackMode.off},
       );
       final ca = config();
       final cb = config();
@@ -536,8 +539,8 @@ void main() {
       (
         'stacked scales',
         null,
-        const {'stacked': true},
-        const {'stacked': true},
+        const {'stacked': StackMode.on},
+        const {'stacked': StackMode.on},
         0,
       ),
       (
@@ -655,8 +658,8 @@ void main() {
           Map<String, Object?> config() => _config(
             datasets: 4,
             horizontal: horizontal,
-            indexScale: {'stacked': true},
-            valueScale: {'stacked': true},
+            indexScale: {'stacked': StackMode.on},
+            valueScale: {'stacked': StackMode.on},
             extra: (k) => {'borderSkipped': BorderSkippedEdge.middle},
           );
           final ca = config();
@@ -693,8 +696,8 @@ void main() {
       (
         'stack groups',
         (int k) => <String, Object?>{'stack': k.isEven ? 'even' : 'odd'},
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.on},
         4,
       ),
       (
@@ -707,8 +710,8 @@ void main() {
       (
         'the single stack mode',
         null,
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': 'single'},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.single},
         4,
       ),
       (
@@ -718,15 +721,15 @@ void main() {
           'barThickness': 6.0,
           'maxBarThickness': 4.0 + k,
         },
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.on},
         4,
       ),
       (
         'flex bars decline (no cached bulk options)',
         (int k) => <String, Object?>{'barThickness': 'flex'},
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.on},
         0,
       ),
       (
@@ -734,8 +737,8 @@ void main() {
         (int k) => <String, Object?>{
           'data': <Object?>[1.0 + k, null, -3.0, null, 2.0, -1.0 - k],
         },
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.on},
         4,
       ),
       (
@@ -744,23 +747,23 @@ void main() {
           'backgroundColor': (Object? ctx, Object? _) =>
               ChartPaint.solid(_colors[k]),
         },
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.on},
         0,
       ),
       (
         'a minimum bar length',
         (int k) => <String, Object?>{'minBarLength': 4.0},
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.on},
         0,
       ),
       (
         'a scriptable grid line width of the value scale',
         null,
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
         <String, Object?>{
-          'stacked': true,
+          'stacked': StackMode.on,
           'grid': <String, Object?>{
             'lineWidth': (Object? ctx, Object? _) => 2.0,
           },
@@ -770,8 +773,8 @@ void main() {
       (
         'skipNull',
         (int k) => <String, Object?>{'skipNull': true},
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.on},
         0,
       ),
       (
@@ -782,8 +785,8 @@ void main() {
               for (var i = 0; i < 6; i++) <double>[1.0 * i, 2.0 + i],
             ],
         },
-        const <String, Object?>{'stacked': true},
-        const <String, Object?>{'stacked': true},
+        const <String, Object?>{'stacked': StackMode.on},
+        const <String, Object?>{'stacked': StackMode.on},
         3,
       ),
     ]) {
@@ -816,8 +819,8 @@ void main() {
       Map<String, Object?> config() => _config(
         datasets: 3,
         animation: <String, Object?>{'duration': 0.0},
-        indexScale: {'stacked': true},
-        valueScale: {'stacked': true},
+        indexScale: {'stacked': StackMode.on},
+        valueScale: {'stacked': StackMode.on},
       )..['platform'] = _AnimatedPlatform.jsClass;
       final ca = config();
       final cb = config();
@@ -842,8 +845,8 @@ void main() {
       (Map<String, Object?>, _CountingMap) config() {
         final cfg = _config(
           datasets: 3,
-          indexScale: {'stacked': true},
-          valueScale: {'stacked': true},
+          indexScale: {'stacked': StackMode.on},
+          valueScale: {'stacked': StackMode.on},
         );
         final list = _datasets(cfg);
         final counting = _CountingMap(list[1]! as Map<String, Object?>);
@@ -867,7 +870,7 @@ void main() {
       Map<String, Object?> config() => _config(
         datasets: 4,
         extra: (k) => {'type': 'line'},
-        valueScale: {'stacked': true},
+        valueScale: {'stacked': StackMode.on},
       );
       final ca = config();
       final cb = config();
@@ -888,8 +891,8 @@ void main() {
     test('a _visualValues object of the user in a stack', () {
       Map<String, Object?> config() => _config(
         datasets: 3,
-        indexScale: {'stacked': true},
-        valueScale: {'stacked': true},
+        indexScale: {'stacked': StackMode.on},
+        valueScale: {'stacked': StackMode.on},
       );
       final ca = config();
       final cb = config();
@@ -918,8 +921,8 @@ void main() {
         Map<String, Object?> config() => _config(
           datasets: 2,
           extra: (k) => {'stack': 's$k', if (k == 1) 'data': <Object?>[]},
-          indexScale: {'stacked': stacked},
-          valueScale: {'stacked': stacked},
+          indexScale: {'stacked': stacked ? StackMode.on : StackMode.off},
+          valueScale: {'stacked': stacked ? StackMode.on : StackMode.off},
         );
         final ca = config();
         final cb = config();
@@ -943,8 +946,8 @@ void main() {
       Map<String, Object?> config() => _config(
         datasets: 20,
         extra: (k) => {'stack': k == 19 ? 'solo' : 'main'},
-        indexScale: {'stacked': true},
-        valueScale: {'stacked': true},
+        indexScale: {'stacked': StackMode.on},
+        valueScale: {'stacked': StackMode.on},
       );
       final ca = config();
       final cb = config();

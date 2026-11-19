@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -9982,7 +9983,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     },
@@ -10789,7 +10790,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     },
@@ -11555,7 +11556,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     },
@@ -13164,7 +13165,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': false},
+          'y': <String, Object?>{'stacked': StackMode.off},
         },
       },
     },
@@ -13829,7 +13830,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': 'single'},
+          'y': <String, Object?>{'stacked': StackMode.single},
         },
       },
     },
@@ -14559,8 +14560,8 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       'options': <String, Object?>{
         'indexAxis': YAxis(),
         'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': true},
-          'y': <String, Object?>{'stacked': true},
+          'x': <String, Object?>{'stacked': StackMode.on},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     },
@@ -44920,8 +44921,8 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'display': false},
-          'y': <String, Object?>{'display': false},
+          'x': <String, Object?>{'display': ScaleDisplay.off},
+          'y': <String, Object?>{'display': ScaleDisplay.off},
         },
       },
     },
@@ -46876,7 +46877,7 @@ const List<ScaleLinearReferenceCase> scaleLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'y': <String, Object?>{'stacked': true},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     },

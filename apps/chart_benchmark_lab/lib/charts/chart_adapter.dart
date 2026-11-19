@@ -414,8 +414,8 @@ class const BenchmarkChart({
             'r': cj.RadialLinearAxis(
               min: 0,
               max: 100,
-              display: false,
-              pointLabelsDisplay: false,
+              display: cj.ScaleDisplay.off,
+              pointLabelsDisplay: cj.ScaleDisplay.off,
               angleLinesDisplay: false,
             ),
           },
@@ -423,8 +423,12 @@ class const BenchmarkChart({
             'r': cj.RadialLinearAxis(
               min: 0,
               max: 100,
-              display: config.axes || config.grid,
-              pointLabelsDisplay: config.axes,
+              display: config.axes || config.grid
+                  ? cj.ScaleDisplay.on
+                  : cj.ScaleDisplay.off,
+              pointLabelsDisplay: config.axes
+                  ? cj.ScaleDisplay.on
+                  : cj.ScaleDisplay.off,
               pointLabelsFont: const TextStyle(fontSize: 10),
               pointLabelsCallback: _radarLabelCallback(radarLabelStep),
               angleLinesDisplay: config.grid,
@@ -437,21 +441,27 @@ class const BenchmarkChart({
           _ => {
             'x': config.type == ChartType.bar
                 ? cj.CategoryAxis(
-                    display: config.axes || config.grid,
+                    display: config.axes || config.grid
+                        ? cj.ScaleDisplay.on
+                        : cj.ScaleDisplay.off,
                     grid: grid,
                     ticks: ticks,
                   )
                 : cj.LinearAxis(
                     min: 0,
                     max: 100,
-                    display: config.axes || config.grid,
+                    display: config.axes || config.grid
+                        ? cj.ScaleDisplay.on
+                        : cj.ScaleDisplay.off,
                     grid: grid,
                     ticks: ticks,
                   ),
             'y': cj.LinearAxis(
               min: 0,
               max: 100,
-              display: config.axes || config.grid,
+              display: config.axes || config.grid
+                  ? cj.ScaleDisplay.on
+                  : cj.ScaleDisplay.off,
               grid: grid,
               ticks: ticks,
             ),

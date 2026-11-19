@@ -148,13 +148,13 @@ Map<String, Object?> _config({
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'type': 'linear',
-        'display': false,
+        'display': ScaleDisplay.off,
         'min': 0.0,
         'max': 8.0,
       },
       'y': <String, Object?>{
         'type': 'linear',
-        'display': false,
+        'display': ScaleDisplay.off,
         'min': -5.0,
         'max': 10.0,
       },
@@ -226,8 +226,8 @@ ChartConfig _typed(List<DataPoint> points, {ChartValue<ChartPaint>? color}) =>
         ),
       ],
       scales: const {
-        'x': LinearAxis(min: 0, max: 8, display: false),
-        'y': LinearAxis(min: -5, max: 10, display: false),
+        'x': LinearAxis(min: 0, max: 8, display: ScaleDisplay.off),
+        'y': LinearAxis(min: -5, max: 10, display: ScaleDisplay.off),
       },
       animation: ChartAnimation.none,
       extra: const {'parsing': false},

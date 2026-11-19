@@ -175,12 +175,12 @@ Map<String, Object?> _config({
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'type': horizontal ? 'linear' : 'category',
-        'display': visible,
+        'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
         if (horizontal) ...{'min': -4.0, 'max': 10.0},
       },
       'y': <String, Object?>{
         'type': horizontal ? 'category' : 'linear',
-        'display': visible,
+        'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
         if (!horizontal) ...{'min': -4.0, 'max': 10.0},
       },
     },
@@ -598,7 +598,8 @@ void main() {
       {'skipNull': true},
       {'base': '0'},
       {'categoryPercentage': -1.0},
-      {'inflateAmount': null},
+      // A null `inflateAmount` is `'auto'` (row adapt-inflate-amount-auto).
+      {'inflateAmount': '1'},
     ]) {
       final a = _chart(_config(extra: extra));
       final b = _chart(_config(extra: extra), reference: true);

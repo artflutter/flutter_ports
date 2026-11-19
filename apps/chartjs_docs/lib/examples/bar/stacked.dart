@@ -47,7 +47,10 @@ const stackedBars = ChartConfig(
       backgroundColor: .constant(.solid(red)),
     ),
   ],
-  scales: {'x': CategoryAxis(stacked: true), 'y': LinearAxis(stacked: true)},
+  scales: {
+    'x': CategoryAxis(stacked: StackMode.on),
+    'y': LinearAxis(stacked: StackMode.on),
+  },
 );
 // #enddocregion bar-stacked
 

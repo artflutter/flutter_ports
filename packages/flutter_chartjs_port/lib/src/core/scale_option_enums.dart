@@ -2,7 +2,8 @@
 
 /// The scale options whose value is one of a closed set of keywords in
 /// Chart.js (row `adapt-scale-option-enums`): `bounds`, `ticks.source`,
-/// `ticks.align` and `ticks.crossAlign`.
+/// `ticks.align` and `ticks.crossAlign`, and `display` (row
+/// `adapt-scale-display-enum`).
 ///
 /// Each option holds a value of its enum, also in a raw config. The scale
 /// code reads the set, so a scale of an app or a plugin with another rule
@@ -10,6 +11,36 @@
 ///
 /// This library is a pure layer.
 library;
+
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
+
+/// `display` of a scale (index.d.ts:1205 `boolean | 'auto'`) and of the
+/// point labels of a radial scale (index.d.ts:3636): whether the chart shows
+/// the scale or the labels (row `adapt-scale-display-enum`). The default is
+/// [on].
+enum ScaleDisplay() {
+  /// `false`: the chart does not show it.
+  off,
+
+  /// `true`: the chart shows it.
+  on,
+
+  /// `'auto'`: the chart shows the scale when one of its datasets is
+  /// visible, and hides a point label that overlaps another label.
+  auto;
+
+  /// The value of [value], the value of an option `display`. Dart `null` and
+  /// `undefined` give [off], as `!!undefined` does. Another value stops a
+  /// debug build, and a release build gives [off].
+  static ScaleDisplay of(Object? value) {
+    if (value is ScaleDisplay) return value;
+    assert(
+      value == null || value is Undefined,
+      'The option display takes a ScaleDisplay, not $value.',
+    );
+    return off;
+  }
+}
 
 /// `bounds` of a cartesian scale (index.d.ts:3265 `'ticks' | 'data'`): what
 /// the range of the scale keeps.

@@ -16,7 +16,7 @@ import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart'
     show PointLabelCallback, TickCallback;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
@@ -33,6 +33,7 @@ import 'package:flutter_chartjs_port/src/typed/props.dart';
 import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
 import 'package:flutter_chartjs_port/src/types/axis_border.dart'
     show AxisBorder, RadialAxisBorder, ScaleBorder;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
 import 'package:meta/meta.dart' show internal;
@@ -53,8 +54,10 @@ import 'package:meta/meta.dart' show internal;
 /// by identity, and [AxisTicks.callback] with `==`.
 @immutable
 abstract final class const ChartAxis({
-  /// Whether the chart shows the axis: `display`. The default is `true`.
-  final bool? display,
+  /// Whether the chart shows the axis: `display`. The default is
+  /// [ScaleDisplay.on]. [ScaleDisplay.auto] shows the axis when one of its
+  /// datasets is visible (row `adapt-scale-display-enum`).
+  final ScaleDisplay? display,
 
   /// The side of the chart area of the axis: `position`.
   ///
@@ -68,10 +71,10 @@ abstract final class const ChartAxis({
   /// Whether the axis runs in the other direction: `reverse`.
   final bool? reverse,
 
-  /// Whether the datasets of the axis stack: `stacked` as a boolean
-  /// (`docs/charts/bar.md`, "Stacked Bar Chart"). The value `'single'` goes
-  /// through [extra].
-  final bool? stacked,
+  /// Whether the datasets of the axis stack: `stacked`
+  /// (`docs/charts/bar.md`, "Stacked Bar Chart"). Null stacks the datasets
+  /// that have a `stack` (row `adapt-stacked-option-enum`).
+  final StackMode? stacked,
 
   /// The tick marks and the tick labels: `ticks`.
   final AxisTicks? ticks,
@@ -101,10 +104,10 @@ abstract final class const ChartAxis({
   /// A copy of this axis with the given parameters. A parameter that is
   /// `null` keeps its value.
   ChartAxis copyWith({
-    bool? display,
+    ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
-    bool? stacked,
+    StackMode? stacked,
     AxisTicks? ticks,
     AxisGrid? grid,
     AxisTitle? title,
@@ -213,10 +216,10 @@ final class const CategoryAxis({
 
   @override
   CategoryAxis copyWith({
-    bool? display,
+    ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
-    bool? stacked,
+    StackMode? stacked,
     List<Object>? labels,
     String? min,
     String? max,
@@ -315,10 +318,10 @@ final class const LinearAxis({
 
   @override
   LinearAxis copyWith({
-    bool? display,
+    ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
-    bool? stacked,
+    StackMode? stacked,
     double? min,
     double? max,
     double? suggestedMin,
@@ -411,10 +414,10 @@ final class const LogarithmicAxis({
 
   @override
   LogarithmicAxis copyWith({
-    bool? display,
+    ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
-    bool? stacked,
+    StackMode? stacked,
     double? min,
     double? max,
     double? suggestedMin,
@@ -542,10 +545,10 @@ final class const TimeAxis({
 
   @override
   TimeAxis copyWith({
-    bool? display,
+    ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
-    bool? stacked,
+    StackMode? stacked,
     DateTime? min,
     DateTime? max,
     TimeUnit? unit,
@@ -631,10 +634,10 @@ final class const TimeSeriesAxis({
 
   @override
   TimeSeriesAxis copyWith({
-    bool? display,
+    ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
-    bool? stacked,
+    StackMode? stacked,
     DateTime? min,
     DateTime? max,
     TimeUnit? unit,
@@ -710,8 +713,10 @@ final class const RadialLinearAxis({
   /// clockwise: `startAngle`. The default is 0.
   final double? startAngle,
 
-  /// Whether the chart shows the point labels: `pointLabels.display`.
-  final bool? pointLabelsDisplay,
+  /// Whether the chart shows the point labels: `pointLabels.display`. The
+  /// default is [ScaleDisplay.on]. [ScaleDisplay.auto] hides a label that
+  /// overlaps another label (row `adapt-scale-display-enum`).
+  final ScaleDisplay? pointLabelsDisplay,
 
   /// The color of the point labels: `pointLabels.color`.
   final ChartPaint? pointLabelsColor,
@@ -753,17 +758,17 @@ final class const RadialLinearAxis({
 
   @override
   RadialLinearAxis copyWith({
-    bool? display,
+    ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
-    bool? stacked,
+    StackMode? stacked,
     double? min,
     double? max,
     double? suggestedMin,
     double? suggestedMax,
     bool? beginAtZero,
     double? startAngle,
-    bool? pointLabelsDisplay,
+    ScaleDisplay? pointLabelsDisplay,
     ChartPaint? pointLabelsColor,
     TextStyle? pointLabelsFont,
     double? pointLabelsPadding,

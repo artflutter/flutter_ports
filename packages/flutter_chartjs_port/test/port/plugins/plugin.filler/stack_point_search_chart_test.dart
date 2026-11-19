@@ -5,9 +5,12 @@ library;
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/stack_point_search.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
@@ -41,8 +44,8 @@ void main() {
         'responsive': false,
         'plugins': {'legend': false, 'tooltip': false},
         'scales': {
-          'x': {'display': false},
-          'y': {'display': false, 'stacked': true},
+          'x': {'display': ScaleDisplay.off},
+          'y': {'display': ScaleDisplay.off, 'stacked': StackMode.on},
         },
       },
     });

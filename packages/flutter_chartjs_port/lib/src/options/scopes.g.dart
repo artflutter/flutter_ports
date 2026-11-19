@@ -20,7 +20,7 @@ import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickAlign, TickCrossAlign, TickSource;
+    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
 import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
     show CubicInterpolationMode;
 import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
@@ -51,7 +51,8 @@ import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
     show BorderSkippedEdge;
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
     show CartesianAxis, RAxis, ScaleAxis;
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
+    show ChartClip, StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
@@ -1326,13 +1327,13 @@ base class ChartOptionsScope() extends OptionScope {
   set borderRadius(Object value) =>
       store(OptionKey.borderRadius, classify(OptionKey.borderRadius, value));
 
-  Opt<Object>? _inflateAmount;
+  Opt<double>? _inflateAmount;
 
   /// The cell of `inflateAmount`, or Dart `null` when absent.
-  Opt<Object>? get inflateAmountCell => _inflateAmount;
+  Opt<double>? get inflateAmountCell => _inflateAmount;
 
   /// Stores the cell of `inflateAmount`. Dart `null` deletes the key.
-  set inflateAmountCell(Opt<Object>? cell) {
+  set inflateAmountCell(Opt<double>? cell) {
     if (cell == null) {
       delete(OptionKey.inflateAmount);
     } else {
@@ -1341,8 +1342,8 @@ base class ChartOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `inflateAmount`.
-  set inflateAmount(Object value) =>
-      store(OptionKey.inflateAmount, classify(OptionKey.inflateAmount, value));
+  set inflateAmount(double value) =>
+      store(OptionKey.inflateAmount, OptValue<double>(value));
 
   Opt<Object>? _borderWidth;
 
@@ -2588,7 +2589,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.inflateAmount:
-        _inflateAmount = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _inflateAmount = fitCell(cell, classifyNumber);
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.hoverBorderWidth:
@@ -2917,7 +2918,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.inflateAmount:
-        return classifyUnion(raw, 5);
+        return classifyNumber(raw);
       case OptionKey.borderWidth:
         return classifyUnion(raw, 33);
       case OptionKey.hoverBorderWidth:
@@ -6349,13 +6350,13 @@ base class BarOptionsScope() extends OptionScope {
   set borderRadius(Object value) =>
       store(OptionKey.borderRadius, classify(OptionKey.borderRadius, value));
 
-  Opt<Object>? _inflateAmount;
+  Opt<double>? _inflateAmount;
 
   /// The cell of `inflateAmount`, or Dart `null` when absent.
-  Opt<Object>? get inflateAmountCell => _inflateAmount;
+  Opt<double>? get inflateAmountCell => _inflateAmount;
 
   /// Stores the cell of `inflateAmount`. Dart `null` deletes the key.
-  set inflateAmountCell(Opt<Object>? cell) {
+  set inflateAmountCell(Opt<double>? cell) {
     if (cell == null) {
       delete(OptionKey.inflateAmount);
     } else {
@@ -6364,8 +6365,8 @@ base class BarOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `inflateAmount`.
-  set inflateAmount(Object value) =>
-      store(OptionKey.inflateAmount, classify(OptionKey.inflateAmount, value));
+  set inflateAmount(double value) =>
+      store(OptionKey.inflateAmount, OptValue<double>(value));
 
   Opt<Object>? _borderWidth;
 
@@ -6565,7 +6566,7 @@ base class BarOptionsScope() extends OptionScope {
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.inflateAmount:
-        _inflateAmount = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _inflateAmount = fitCell(cell, classifyNumber);
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.hoverBorderWidth:
@@ -6624,7 +6625,7 @@ base class BarOptionsScope() extends OptionScope {
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.inflateAmount:
-        return classifyUnion(raw, 5);
+        return classifyNumber(raw);
       case OptionKey.borderWidth:
         return classifyUnion(raw, 33);
       case OptionKey.hoverBorderWidth:
@@ -7765,13 +7766,13 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
   set borderRadius(Object value) =>
       store(OptionKey.borderRadius, classify(OptionKey.borderRadius, value));
 
-  Opt<Object>? _inflateAmount;
+  Opt<double>? _inflateAmount;
 
   /// The cell of `inflateAmount`, or Dart `null` when absent.
-  Opt<Object>? get inflateAmountCell => _inflateAmount;
+  Opt<double>? get inflateAmountCell => _inflateAmount;
 
   /// Stores the cell of `inflateAmount`. Dart `null` deletes the key.
-  set inflateAmountCell(Opt<Object>? cell) {
+  set inflateAmountCell(Opt<double>? cell) {
     if (cell == null) {
       delete(OptionKey.inflateAmount);
     } else {
@@ -7780,8 +7781,8 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `inflateAmount`.
-  set inflateAmount(Object value) =>
-      store(OptionKey.inflateAmount, classify(OptionKey.inflateAmount, value));
+  set inflateAmount(double value) =>
+      store(OptionKey.inflateAmount, OptValue<double>(value));
 
   Opt<Object>? _borderWidth;
 
@@ -8436,7 +8437,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.inflateAmount:
-        _inflateAmount = fitCell(cell, (raw) => classifyUnion(raw, 5));
+        _inflateAmount = fitCell(cell, classifyNumber);
       case OptionKey.borderWidth:
         _borderWidth = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.hoverBorderWidth:
@@ -8589,7 +8590,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.inflateAmount:
-        return classifyUnion(raw, 5);
+        return classifyNumber(raw);
       case OptionKey.borderWidth:
         return classifyUnion(raw, 33);
       case OptionKey.hoverBorderWidth:
@@ -15912,13 +15913,13 @@ base class ScaleOptionsScope() extends OptionScope {
   @override
   ScopeKind get kind => ScopeKind.scaleOptions;
 
-  Opt<Object>? _display;
+  Opt<ScaleDisplay>? _display;
 
   /// The cell of `display`, or Dart `null` when absent.
-  Opt<Object>? get displayCell => _display;
+  Opt<ScaleDisplay>? get displayCell => _display;
 
   /// Stores the cell of `display`. Dart `null` deletes the key.
-  set displayCell(Opt<Object>? cell) {
+  set displayCell(Opt<ScaleDisplay>? cell) {
     if (cell == null) {
       delete(OptionKey.display);
     } else {
@@ -15927,8 +15928,8 @@ base class ScaleOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `display`.
-  set display(Object value) =>
-      store(OptionKey.display, classify(OptionKey.display, value));
+  set display(ScaleDisplay value) =>
+      store(OptionKey.display, OptValue<ScaleDisplay>(value));
 
   Opt<bool>? _alignToPixels;
 
@@ -16523,13 +16524,13 @@ base class ScaleOptionsScope() extends OptionScope {
   set title(ScaleTitleOptionsScope value) =>
       store(OptionKey.title, OptScope<ScaleTitleOptionsScope>(value));
 
-  Opt<Object>? _stacked;
+  Opt<StackMode>? _stacked;
 
   /// The cell of `stacked`, or Dart `null` when absent.
-  Opt<Object>? get stackedCell => _stacked;
+  Opt<StackMode>? get stackedCell => _stacked;
 
   /// Stores the cell of `stacked`. Dart `null` deletes the key.
-  set stackedCell(Opt<Object>? cell) {
+  set stackedCell(Opt<StackMode>? cell) {
     if (cell == null) {
       delete(OptionKey.stacked);
     } else {
@@ -16538,8 +16539,8 @@ base class ScaleOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `stacked`.
-  set stacked(Object value) =>
-      store(OptionKey.stacked, classify(OptionKey.stacked, value));
+  set stacked(StackMode value) =>
+      store(OptionKey.stacked, OptValue<StackMode>(value));
 
   Opt<TickOptionsScope>? _ticks;
 
@@ -16897,7 +16898,7 @@ base class ScaleOptionsScope() extends OptionScope {
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
       case OptionKey.display:
-        _display = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _display = fitCell(cell, classifyTyped<ScaleDisplay>);
       case OptionKey.alignToPixels:
         _alignToPixels = fitCell(cell, classifyBool);
       case OptionKey.backgroundColor:
@@ -16975,7 +16976,7 @@ base class ScaleOptionsScope() extends OptionScope {
       case OptionKey.title:
         _title = fitCell(cell, classifyScope<ScaleTitleOptionsScope>);
       case OptionKey.stacked:
-        _stacked = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _stacked = fitCell(cell, classifyTyped<StackMode>);
       case OptionKey.ticks:
         _ticks = fitCell(cell, classifyScope<TickOptionsScope>);
       case OptionKey.labels:
@@ -17070,7 +17071,7 @@ base class ScaleOptionsScope() extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
       case OptionKey.display:
-        return classifyUnion(raw, 6);
+        return classifyTyped<ScaleDisplay>(raw);
       case OptionKey.alignToPixels:
         return classifyBool(raw);
       case OptionKey.backgroundColor:
@@ -17136,7 +17137,7 @@ base class ScaleOptionsScope() extends OptionScope {
       case OptionKey.title:
         return classifyScope<ScaleTitleOptionsScope>(raw);
       case OptionKey.stacked:
-        return classifyUnion(raw, 6);
+        return classifyTyped<StackMode>(raw);
       case OptionKey.ticks:
         return classifyScope<TickOptionsScope>(raw);
       case OptionKey.labels:
@@ -19371,13 +19372,13 @@ base class PointLabelOptionsScope() extends OptionScope {
   set borderRadius(Object value) =>
       store(OptionKey.borderRadius, classify(OptionKey.borderRadius, value));
 
-  Opt<Object>? _display;
+  Opt<ScaleDisplay>? _display;
 
   /// The cell of `display`, or Dart `null` when absent.
-  Opt<Object>? get displayCell => _display;
+  Opt<ScaleDisplay>? get displayCell => _display;
 
   /// Stores the cell of `display`. Dart `null` deletes the key.
-  set displayCell(Opt<Object>? cell) {
+  set displayCell(Opt<ScaleDisplay>? cell) {
     if (cell == null) {
       delete(OptionKey.display);
     } else {
@@ -19386,8 +19387,8 @@ base class PointLabelOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `display`.
-  set display(Object value) =>
-      store(OptionKey.display, classify(OptionKey.display, value));
+  set display(ScaleDisplay value) =>
+      store(OptionKey.display, OptValue<ScaleDisplay>(value));
 
   Opt<ChartPaint>? _color;
 
@@ -19515,7 +19516,7 @@ base class PointLabelOptionsScope() extends OptionScope {
       case OptionKey.borderRadius:
         _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
       case OptionKey.display:
-        _display = fitCell(cell, (raw) => classifyUnion(raw, 6));
+        _display = fitCell(cell, classifyTyped<ScaleDisplay>);
       case OptionKey.color:
         _color = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.font:
@@ -19559,7 +19560,7 @@ base class PointLabelOptionsScope() extends OptionScope {
       case OptionKey.borderRadius:
         return classifyUnion(raw, 33);
       case OptionKey.display:
-        return classifyUnion(raw, 6);
+        return classifyTyped<ScaleDisplay>(raw);
       case OptionKey.color:
         return classifyTyped<ChartPaint>(raw);
       case OptionKey.font:

@@ -206,10 +206,14 @@ bool _fits(String kind, int shape) {
     'obj:EdgeInsets' => shape & ShapeBits.typed == ShapeBits.edgeInsets,
     'obj:ChartTextStyle' => shape & ShapeBits.typed == ShapeBits.textStyle,
     // Upstream data hold a boolean or an object where the port has a fill
-    // target (Chart.js ADR 0140).
+    // target (Chart.js ADR 0140), and a boolean where the port has a
+    // ScaleDisplay or a StackMode (rows adapt-scale-display-enum and
+    // adapt-stacked-option-enum).
     'bool' =>
       shape & ShapeBits.boolean != 0 ||
-          shape & ShapeBits.typed == ShapeBits.fillTarget,
+          shape & ShapeBits.typed == ShapeBits.fillTarget ||
+          shape & ShapeBits.typed == ShapeBits.scaleDisplay ||
+          shape & ShapeBits.typed == ShapeBits.stackMode,
     'Map' =>
       shape & ShapeBits.scope != 0 ||
           shape & ShapeBits.typed == ShapeBits.edgeInsets ||
@@ -226,6 +230,12 @@ bool _fits(String kind, int shape) {
 final RegExp _animationType = RegExp(
   r'(^|\.)(animation|animations\.[^.]+)\.type$',
 );
+
+/// Whether [path] is the bar `inflateAmount` with the upstream default
+/// `'auto'`, which the port holds as `undefined` (row
+/// `adapt-inflate-amount-auto`).
+bool _isInflateAuto(String path, Object? value) =>
+    value == 'auto' && path.endsWith('bar.inflateAmount');
 
 /// Whether an inventory value [value] fits the shape bits [shape].
 bool _fitsInventory(Object? value, int shape) => switch (value) {
@@ -444,6 +454,11 @@ String? _mismatch(Object? actual, Object? expected) {
   // Upstream has the keyword of a line cap, a line join or an interaction
   // axis where the port has the enum: the name of the enum value is the
   // keyword.
+  // Upstream has a boolean where the port has a ScaleDisplay or a StackMode
+  // (keyword_enum_json.dart).
+  if (expected is bool && isKeywordEnum(actual)) {
+    return keywordJson(actual!) == '$expected' ? null : '$actual != $expected';
+  }
   if (expected is String && isKeywordEnum(actual)) {
     return (actual! as Enum).name == expected ? null : '$actual != $expected';
   }
@@ -565,6 +580,7 @@ void main() {
             continue;
           }
           if (_animationType.hasMatch(path)) continue;
+          if (_isInflateAuto(path, value)) continue;
           final walk = _walk(root, path.split('.'));
           final shape = walk.shape;
           if (walk.depth != path.split('.').length || shape == null) {
@@ -639,6 +655,7 @@ void main() {
         final problems = <String>[];
         for (final MapEntry(key: path, value: expected) in paths.entries) {
           if (_animationType.hasMatch(path)) continue;
+          if (_isInflateAuto(path, expected)) continue;
           // A field of a font object: the field of the TextStyle.
           final font = _fontField.firstMatch(path);
           final fontValue = font == null ? null : _read(root, font[1]!);

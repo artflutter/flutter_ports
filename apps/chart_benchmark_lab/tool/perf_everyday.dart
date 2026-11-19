@@ -202,8 +202,8 @@ cj.ChartConfig _config({
         ? const {'x': cj.LinearAxis(min: 0, max: 100), 'y': cj.LinearAxis()}
         : stacked
         ? const {
-            'x': cj.CategoryAxis(stacked: true),
-            'y': cj.LinearAxis(stacked: true),
+            'x': cj.CategoryAxis(stacked: cj.StackMode.on),
+            'y': cj.LinearAxis(stacked: cj.StackMode.on),
           }
         : null,
     legend: cj.ChartLegend(display: count <= 60 || xy || datasets > 1),

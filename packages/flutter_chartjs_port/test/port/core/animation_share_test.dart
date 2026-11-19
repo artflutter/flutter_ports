@@ -85,25 +85,27 @@ _Config _bar({
 
 /// A horizontal bar chart of two stacked datasets with the default
 /// animations.
-Map<String, Object?> _stacked(List<String> log, {required bool twin}) =>
-    <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': [for (var i = 0; i < _count; i++) 'l$i'],
-        'datasets': <Object?>[
-          <String, Object?>{'data': _data(1)},
-          <String, Object?>{'data': _data(5)},
-        ],
-      },
-      'options': <String, Object?>{
-        'indexAxis': const YAxis(),
-        'animation': _animation(log, null, twin: twin),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': true, 'min': 0.0, 'max': 200.0},
-          'y': <String, Object?>{'stacked': true},
-        },
-      },
-    };
+Map<String, Object?> _stacked(
+  List<String> log, {
+  required bool twin,
+}) => <String, Object?>{
+  'type': 'bar',
+  'data': <String, Object?>{
+    'labels': [for (var i = 0; i < _count; i++) 'l$i'],
+    'datasets': <Object?>[
+      <String, Object?>{'data': _data(1)},
+      <String, Object?>{'data': _data(5)},
+    ],
+  },
+  'options': <String, Object?>{
+    'indexAxis': const YAxis(),
+    'animation': _animation(log, null, twin: twin),
+    'scales': <String, Object?>{
+      'x': <String, Object?>{'stacked': StackMode.on, 'min': 0.0, 'max': 200.0},
+      'y': <String, Object?>{'stacked': StackMode.on},
+    },
+  },
+};
 
 List<core.Element> _bars(Chart chart) => [
   for (

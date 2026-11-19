@@ -262,19 +262,28 @@ List<Object?> _convertObjectDataToArray(Object data, types.ChartMeta meta) {
 
 /// core.datasetController.js:119 `isStacked`.
 ///
-/// `stacked || (stacked === undefined && meta.stack !== undefined)`: the
-/// `'single'` of the scale option is [types.StackMode.single], another truthy
-/// value [types.StackMode.on] (row `adapt-native-chart-meta`).
+/// `stacked || (stacked === undefined && meta.stack !== undefined)`.
+// DIVERGES(chartjs): adapt-stacked-option-enum, the option is a
+// [types.StackMode], and Dart `null` is `undefined`.
 types.StackMode _isStacked(types.Scale? scale, types.ChartMeta meta) {
   final stacked = scale == null
-      ? undefined
-      : readOption(scale.options, OptionKey.stacked);
-  if (jsTruthy(stacked)) {
-    return stacked == 'single' ? types.StackMode.single : types.StackMode.on;
-  }
-  return identical(stacked, undefined) && meta.stack != null
-      ? types.StackMode.on
-      : types.StackMode.off;
+      ? null
+      : stackModeOf(readOption(scale.options, OptionKey.stacked));
+  return stacked ??
+      (meta.stack != null ? types.StackMode.on : types.StackMode.off);
+}
+
+/// The value of the scale option `stacked`: a [types.StackMode], or Dart
+/// `null` for no value. Another value stops a debug build (row
+/// `adapt-stacked-option-enum`).
+@internal
+types.StackMode? stackModeOf(Object? value) {
+  if (value is types.StackMode) return value;
+  assert(
+    value == null || value is Undefined,
+    'The scale option stacked takes a StackMode, not $value.',
+  );
+  return null;
 }
 
 /// A `stack` or an axis id of a dataset as the value of the meta: Dart

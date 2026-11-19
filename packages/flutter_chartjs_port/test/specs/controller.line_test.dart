@@ -1,4 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/controller.line.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
+// DIVERGES(chartjs): adapt-stacked-option-enum, the scale stacked values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -14,6 +16,8 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show DatasetInteractionMode, NearestInteractionMode;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
@@ -26,6 +30,7 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
@@ -206,7 +211,7 @@ void main() {
         },
         'options': <String, Object?>{
           'scales': <String, Object?>{
-            'y': <String, Object?>{'stacked': true},
+            'y': <String, Object?>{'stacked': StackMode.on},
           },
         },
       });
@@ -317,8 +322,8 @@ void main() {
             },
           },
           'scales': <String, Object?>{
-            'x': <String, Object?>{'display': false},
-            'y': <String, Object?>{'display': false},
+            'x': <String, Object?>{'display': ScaleDisplay.off},
+            'y': <String, Object?>{'display': ScaleDisplay.off},
           },
         },
       });
@@ -377,8 +382,11 @@ void main() {
             'intersect': true,
           },
           'scales': <String, Object?>{
-            'x': <String, Object?>{'display': false},
-            'y': <String, Object?>{'display': false, 'beginAtZero': true},
+            'x': <String, Object?>{'display': ScaleDisplay.off},
+            'y': <String, Object?>{
+              'display': ScaleDisplay.off,
+              'beginAtZero': true,
+            },
           },
         },
       });
@@ -478,8 +486,11 @@ void main() {
         'options': <String, Object?>{
           'plugins': <String, Object?>{'legend': false, 'title': false},
           'scales': <String, Object?>{
-            'x': <String, Object?>{'display': false},
-            'y': <String, Object?>{'display': false, 'stacked': true},
+            'x': <String, Object?>{'display': ScaleDisplay.off},
+            'y': <String, Object?>{
+              'display': ScaleDisplay.off,
+              'stacked': StackMode.on,
+            },
           },
         },
       });
@@ -513,12 +524,15 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
-              'x': <String, Object?>{'display': false},
-              'y': <String, Object?>{'display': false, 'stacked': true},
+              'x': <String, Object?>{'display': ScaleDisplay.off},
+              'y': <String, Object?>{
+                'display': ScaleDisplay.off,
+                'stacked': StackMode.on,
+              },
               'y2': <String, Object?>{
                 'type': 'linear',
                 'position': ChartPosition.right,
-                'display': false,
+                'display': ScaleDisplay.off,
               },
             },
           },
@@ -560,8 +574,11 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
-              'x': <String, Object?>{'display': false},
-              'y': <String, Object?>{'display': false, 'stacked': true},
+              'x': <String, Object?>{'display': ScaleDisplay.off},
+              'y': <String, Object?>{
+                'display': ScaleDisplay.off,
+                'stacked': StackMode.on,
+              },
             },
           },
         });
@@ -591,8 +608,11 @@ void main() {
           'options': <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
-              'x': <String, Object?>{'display': false},
-              'y': <String, Object?>{'display': false, 'stacked': true},
+              'x': <String, Object?>{'display': ScaleDisplay.off},
+              'y': <String, Object?>{
+                'display': ScaleDisplay.off,
+                'stacked': StackMode.on,
+              },
             },
           },
         });

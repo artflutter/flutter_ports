@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/core.layouts.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 @TestOn('vm')
 library;
 
@@ -11,6 +12,8 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 // yet.
 import 'package:flutter_chartjs_port/src/core/core.layouts.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -366,8 +369,14 @@ void main() {
             },
             'options': <String, Object?>{
               'scales': <String, Object?>{
-                'x': <String, Object?>{'type': 'category', 'display': false},
-                'y': <String, Object?>{'type': 'linear', 'display': false},
+                'x': <String, Object?>{
+                  'type': 'category',
+                  'display': ScaleDisplay.off,
+                },
+                'y': <String, Object?>{
+                  'type': 'linear',
+                  'display': ScaleDisplay.off,
+                },
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{'padding': const EdgeInsets.all(10)},
@@ -405,8 +414,14 @@ void main() {
             },
             'options': <String, Object?>{
               'scales': <String, Object?>{
-                'x': <String, Object?>{'type': 'category', 'display': false},
-                'y': <String, Object?>{'type': 'linear', 'display': false},
+                'x': <String, Object?>{
+                  'type': 'category',
+                  'display': ScaleDisplay.off,
+                },
+                'y': <String, Object?>{
+                  'type': 'linear',
+                  'display': ScaleDisplay.off,
+                },
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{
@@ -453,8 +468,14 @@ void main() {
             },
             'options': <String, Object?>{
               'scales': <String, Object?>{
-                'x': <String, Object?>{'type': 'category', 'display': false},
-                'y': <String, Object?>{'type': 'linear', 'display': false},
+                'x': <String, Object?>{
+                  'type': 'category',
+                  'display': ScaleDisplay.off,
+                },
+                'y': <String, Object?>{
+                  'type': 'linear',
+                  'display': ScaleDisplay.off,
+                },
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{'padding': EdgeInsets.zero},
@@ -545,57 +566,57 @@ void main() {
                 'x': <String, Object?>{
                   'type': 'category',
                   'position': ChartPosition.bottom,
-                  'display': true,
+                  'display': ScaleDisplay.on,
                   'weight': 1,
                 },
                 'x1': <String, Object?>{
                   'type': 'category',
                   'position': ChartPosition.bottom,
-                  'display': true,
+                  'display': ScaleDisplay.on,
                   'weight': 2,
                 },
                 'x2': <String, Object?>{
                   'type': 'category',
                   'position': ChartPosition.bottom,
-                  'display': true,
+                  'display': ScaleDisplay.on,
                 },
                 'x3': <String, Object?>{
                   'type': 'category',
-                  'display': true,
+                  'display': ScaleDisplay.on,
                   'position': ChartPosition.top,
                   'weight': 1,
                 },
                 'x4': <String, Object?>{
                   'type': 'category',
-                  'display': true,
+                  'display': ScaleDisplay.on,
                   'position': ChartPosition.top,
                   'weight': 2,
                 },
                 'y': <String, Object?>{
                   'type': 'linear',
-                  'display': true,
+                  'display': ScaleDisplay.on,
                   'weight': 1,
                 },
                 'y1': <String, Object?>{
                   'type': 'linear',
                   'position': ChartPosition.left,
-                  'display': true,
+                  'display': ScaleDisplay.on,
                   'weight': 2,
                 },
                 'y2': <String, Object?>{
                   'type': 'linear',
                   'position': ChartPosition.left,
-                  'display': true,
+                  'display': ScaleDisplay.on,
                 },
                 'y3': <String, Object?>{
                   'type': 'linear',
-                  'display': true,
+                  'display': ScaleDisplay.on,
                   'position': ChartPosition.right,
                   'weight': 1,
                 },
                 'y4': <String, Object?>{
                   'type': 'linear',
-                  'display': true,
+                  'display': ScaleDisplay.on,
                   'position': ChartPosition.right,
                   'weight': 2,
                 },

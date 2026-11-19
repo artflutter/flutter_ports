@@ -177,7 +177,7 @@ LinearAxis shadcnValueAxis(
   return LinearAxis(
     min: min,
     max: max,
-    stacked: stacked,
+    stacked: stacked ? StackMode.on : StackMode.off,
     grid: AxisGrid(
       display: grid,
       color: const .solid(Shadcn.grid),
@@ -223,8 +223,8 @@ CategoryAxis shadcnCategoryAxis({
   bool stacked = false,
   double? autoSkipPadding,
 }) => CategoryAxis(
-  display: display,
-  stacked: stacked,
+  display: display ? ScaleDisplay.on : ScaleDisplay.off,
+  stacked: stacked ? StackMode.on : StackMode.off,
   grid: const AxisGrid(display: false, drawTicks: false),
   ticks: AxisTicks(
     color: const .solid(Shadcn.mutedForeground),
@@ -253,7 +253,7 @@ CategoryAxis shadcnCategoryYAxis({
   double width = 60,
   bool display = true,
 }) => CategoryAxis(
-  display: display,
+  display: display ? ScaleDisplay.on : ScaleDisplay.off,
   grid: const AxisGrid(display: false, drawTicks: false),
   ticks: AxisTicks(
     color: const .solid(Shadcn.mutedForeground),

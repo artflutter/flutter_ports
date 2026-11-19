@@ -56,6 +56,8 @@ import 'package:flutter_chartjs_port/src/core/point_options.dart'
 import 'package:flutter_chartjs_port/src/core/primitive_parse.dart'
     show NativeNumericParseScale;
 import 'package:flutter_chartjs_port/src/core/radial_positions.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/core/scale_options.dart';
 import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
@@ -179,7 +181,7 @@ List<String> _labelLines(Object? label) => switch (label) {
 double _getTickBackdropHeight(CoreScaleOptions opts) {
   final tickOpts = opts.ticks;
 
-  if (tickOpts.display && jsTruthy(opts.display)) {
+  if (tickOpts.display && opts.display != ScaleDisplay.off) {
     final padding = tickOpts.backdropPadding;
     final font = tickOpts.font;
     // DIVERGES(chartjs): adapt-text-style-fonts, the size of a TextStyle.
@@ -553,7 +555,7 @@ List<PointLabelItem> _buildPointLabelItems(
       ..size = labelSizes[i];
 
     final item = _createPointLabelItem(scale, i, itemOpts, positions);
-    if (display == 'auto') {
+    if (display == ScaleDisplay.auto) {
       item.visible = _isNotOverlapped(item, area);
       if (item.visible) {
         area = item;
@@ -987,7 +989,8 @@ class RadialLinearScale(super.cfg)
   /// `ScaleOptions` (Chart.js ADR 0054 §3).
 
   static final ScaleOptionsScope defaults = ScaleOptionsScope()
-    ..display = true
+    // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+    ..display = ScaleDisplay.on
     // Boolean - Whether to animate scaling the chart from the centre
     ..animate = true
     ..position = ChartPosition.chartArea
@@ -1012,7 +1015,8 @@ class RadialLinearScale(super.cfg)
       // Number - The backdrop padding above & below the label in pixels
       ..backdropPadding = const EdgeInsets.all(2)
       // Boolean - if true, show point labels
-      ..display = true
+      // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+      ..display = ScaleDisplay.on
       // Number - Point label font size in pixels
       // DIVERGES(chartjs): adapt-text-style-fonts, the font is a style.
       ..font = const ChartTextStyle(fontSize: 10)
@@ -1207,7 +1211,8 @@ class RadialLinearScale(super.cfg)
   void fit() {
     final opts = options;
 
-    if (jsTruthy(opts.display) && jsTruthy(opts.pointLabels.display)) {
+    if (opts.display != ScaleDisplay.off &&
+        opts.pointLabels.display != ScaleDisplay.off) {
       _fitWithPointLabels(this);
     } else {
       setCenterPoint(0, 0, 0, 0);
@@ -1387,7 +1392,7 @@ class RadialLinearScale(super.cfg)
     final grid = opts.grid;
     final labelCount = pointLabels.length;
 
-    if (jsTruthy(opts.pointLabels.display)) {
+    if (opts.pointLabels.display != ScaleDisplay.off) {
       _drawPointLabels(this, labelCount);
     }
 

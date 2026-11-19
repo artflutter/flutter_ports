@@ -48,7 +48,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             'source': TickSource.labels,
           },
         },
-        'y': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{'display': ScaleDisplay.off},
       },
     },
   },

@@ -137,13 +137,13 @@ void main() {
           'scales': <String, Object?>{
             'x': <String, Object?>{
               'type': 'linear',
-              'display': false,
+              'display': ScaleDisplay.off,
               'min': 0.0,
               'max': 8.0,
             },
             'y': <String, Object?>{
               'type': 'linear',
-              'display': false,
+              'display': ScaleDisplay.off,
               'min': 0.0,
               'max': 10.0,
             },

@@ -191,7 +191,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'pointLabels': <String, Object?>{
                 'backdropColor': undefined,
                 'backdropPadding': EdgeInsets.all(2),
-                'display': true,
+                'display': ScaleDisplay.on,
                 'font': ChartTextStyle(fontSize: 10),
                 'callback': '<fn>',
                 'padding': 5.0,
@@ -908,7 +908,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
-                    'display': true,
+                    'display': ScaleDisplay.on,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
                     'padding': 5.0,
@@ -1740,7 +1740,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
-                    'display': true,
+                    'display': ScaleDisplay.on,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
                     'padding': 5.0,
@@ -2567,7 +2567,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
-                    'display': true,
+                    'display': ScaleDisplay.on,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
                     'padding': 5.0,
@@ -3394,7 +3394,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
-                    'display': true,
+                    'display': ScaleDisplay.on,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
                     'padding': 5.0,
@@ -4221,7 +4221,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
-                    'display': true,
+                    'display': ScaleDisplay.on,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
                     'padding': 5.0,
@@ -5091,7 +5091,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
-                    'display': true,
+                    'display': ScaleDisplay.on,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
                     'padding': 5.0,
@@ -6001,7 +6001,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
-                    'display': true,
+                    'display': ScaleDisplay.on,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
                     'padding': 5.0,
@@ -6849,7 +6849,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'pointLabels': <String, Object?>{
                     'backdropColor': undefined,
                     'backdropPadding': EdgeInsets.all(2),
-                    'display': true,
+                    'display': ScaleDisplay.on,
                     'font': ChartTextStyle(fontSize: 10),
                     'callback': '<fn>',
                     'padding': 5.0,
@@ -17109,7 +17109,10 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
             'beginAtZero': true,
             'angleLines': <String, Object?>{'display': false},
             'grid': <String, Object?>{'circular': true},
-            'pointLabels': <String, Object?>{'display': true, 'padding': 8.0},
+            'pointLabels': <String, Object?>{
+              'display': ScaleDisplay.on,
+              'padding': 8.0,
+            },
             'ticks': <String, Object?>{'stepSize': 5.0},
           },
         },
@@ -17211,7 +17214,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                 'color': 'rgba(0,0,0,0.1)',
               },
               'pointLabels': <String, Object?>{
-                'display': true,
+                'display': ScaleDisplay.on,
                 'padding': 8.0,
                 'backdropColor': undefined,
                 'backdropPadding': EdgeInsets.all(2),

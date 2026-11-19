@@ -11,6 +11,7 @@ import 'dart:ui' show FontStyle;
 import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 import 'package:flutter_chartjs_port/src/types/layout.dart';
 
@@ -23677,7 +23678,7 @@ const List<ScaleCategoryReferenceCase> scaleCategoryReference = [
         'scales': <String, Object?>{
           'y': <String, Object?>{
             'type': 'category',
-            'stacked': true,
+            'stacked': StackMode.on,
             'bounds': ScaleBounds.data,
           },
         },

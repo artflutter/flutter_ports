@@ -42,11 +42,11 @@ Scale createCategoryScale({
         'scales': <String, Object?>{
           'x': <String, Object?>{
             'type': 'category',
-            'display': false,
+            'display': ScaleDisplay.off,
             'min': min,
             'max': max,
           },
-          'y': <String, Object?>{'display': false},
+          'y': <String, Object?>{'display': ScaleDisplay.off},
         },
       },
     },

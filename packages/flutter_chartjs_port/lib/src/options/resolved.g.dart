@@ -1583,10 +1583,10 @@ final class BarOptions extends ElementOptions {
     _borderRadius = raw;
   }
 
-  Object? _inflateAmount = null;
+  double _inflateAmount = 0;
 
   /// `inflateAmount`: the JS conversion of the value of the key.
-  Object? get inflateAmount => _inflateAmount;
+  double get inflateAmount => _inflateAmount;
 
   /// `inflateAmount`: the raw value, or [undefined] for an absent key.
   Object? get inflateAmountValue => _present & 8 == 0 ? undefined : _raw3();
@@ -1595,17 +1595,32 @@ final class BarOptions extends ElementOptions {
       ? elementOptionAbsent
       : _foreign & 8 != 0
       ? _foreignRaw![3]
+      : _int & 8 != 0
+      ? _inflateAmount.toInt()
       : _inflateAmount;
 
   void _store3(Object? raw) {
     if (identical(raw, elementOptionAbsent)) {
       _present &= ~8;
       _clearForeign(3, 8);
-      _inflateAmount = null;
+      _inflateAmount = 0;
       return;
     }
     _present |= 8;
-    _inflateAmount = raw;
+    if (raw is double) {
+      _inflateAmount = raw;
+      _int &= ~8;
+      _clearForeign(3, 8);
+    } else if (raw is int) {
+      _inflateAmount = raw * 1.0;
+      _int |= 8;
+      _clearForeign(3, 8);
+    } else {
+      _inflateAmount = jsToNumber(raw);
+      _int &= ~8;
+      _setForeign(3, 8, raw);
+      assert(auditForeign('BarOptions', 'inflateAmount', raw));
+    }
   }
 
   Object? _pointStyle = null;

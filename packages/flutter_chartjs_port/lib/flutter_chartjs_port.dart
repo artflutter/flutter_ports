@@ -82,6 +82,7 @@ export 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
         presizeParsedNumbers,
         setPointAxis,
         setStackValue,
+        stackModeOf,
         stacksOf,
         visualValuesOf;
 export 'package:flutter_chartjs_port/src/core/core.defaults.dart'

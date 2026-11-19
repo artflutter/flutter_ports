@@ -10530,7 +10530,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'pointLabels': <String, Object?>{
-              'display': 'auto',
+              'display': ScaleDisplay.auto,
               'font': ChartTextStyle(fontSize: 14),
             },
           },
@@ -11549,7 +11549,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
         'scales': <String, Object?>{
           'r': <String, Object?>{
             'pointLabels': <String, Object?>{
-              'display': 'auto',
+              'display': ScaleDisplay.auto,
               'centerPointLabels': true,
             },
           },
@@ -12433,7 +12433,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'r': <String, Object?>{
-            'pointLabels': <String, Object?>{'display': false},
+            'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
           },
         },
       },
@@ -12878,7 +12878,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'r': <String, Object?>{'display': false},
+          'r': <String, Object?>{'display': ScaleDisplay.off},
         },
       },
     },
@@ -37780,7 +37780,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'r': <String, Object?>{'display': 'auto'},
+          'r': <String, Object?>{'display': ScaleDisplay.auto},
         },
       },
     },
@@ -38342,7 +38342,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
       },
       'options': <String, Object?>{
         'scales': <String, Object?>{
-          'r': <String, Object?>{'display': 'auto'},
+          'r': <String, Object?>{'display': ScaleDisplay.auto},
         },
       },
     },

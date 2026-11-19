@@ -143,6 +143,7 @@ Scale
 ScaleAxis
 ScaleBorder
 ScaleBounds
+ScaleDisplay
 ScaleHook
 ScaleValuePosition
 ScatterController
@@ -641,6 +642,7 @@ ScaleAxis
 ScaleBorder
 ScaleBounds
 ScaleCache
+ScaleDisplay
 ScaleHook
 ScaleOptionsByIdScope
 ScaleOptionsScope

@@ -30,6 +30,8 @@ import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, NearestInteractionMode;
 import 'package:flutter_chartjs_port/src/core/core.scale.dart'
     show Scale, Tick, TickCallback;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -45,6 +47,7 @@ import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
     show fromNativeEvent;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
@@ -1214,14 +1217,14 @@ Map<String, Object?> _hidden(String type, {double? min, double? max}) =>
 Map<String, Object?> _unitScales() => <String, Object?>{
   'x': <String, Object?>{
     'type': 'linear',
-    'display': false,
+    'display': ScaleDisplay.off,
     'ticks': <String, Object?>{'display': false},
     'suggestedMin': 0.0,
     'suggestedMax': 1.0,
   },
   'y': <String, Object?>{
     'type': 'linear',
-    'display': false,
+    'display': ScaleDisplay.off,
     'ticks': <String, Object?>{'display': false},
     'min': 0.0,
     'max': 1.0,
@@ -1752,8 +1755,8 @@ final List<_Case> _focusedCases = [
       type: 'bar',
       options: <String, Object?>{
         'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': true},
-          'y': <String, Object?>{'stacked': true},
+          'x': <String, Object?>{'stacked': StackMode.on},
+          'y': <String, Object?>{'stacked': StackMode.on},
         },
       },
     ),

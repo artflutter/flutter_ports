@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/scale.linear.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-stacked-option-enum, the scale stacked values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -22,6 +23,7 @@ import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
 import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -56,7 +58,8 @@ import '../support/tick_label.dart';
 //
 // - `toBeCloseTo` is `_toBeCloseTo`. `toEqual` is `jasmineEquals`.
 // - `chart.scales.y.options.stacked = true` writes through the resolver of
-//   the scale options: `chart.scales['y']!.options['stacked'] = true`.
+//   the scale options: `chart.scales['y']!.options['stacked'] =
+//   StackMode.on` (row adapt-stacked-option-enum).
 // - `chart.options.scales.y.ticks.maxTicksLimit = 11` writes into the
 //   resolver of the last read of the chain (`_optionsY`).
 // - `chart.scales.y.start` and `end` are fields of `LinearScaleBase`.
@@ -362,7 +365,7 @@ void main() {
         expect(chart.scales['y']!.max, 90);
 
         // Scale is now stacked
-        chart.scales['y']!.options['stacked'] = true;
+        chart.scales['y']!.options['stacked'] = StackMode.on;
         chart.update();
 
         expect(chart.scales['y']!.min, 30);
@@ -540,7 +543,7 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'stacked': true},
+              'y': <String, Object?>{'type': 'linear', 'stacked': StackMode.on},
               'y2': <String, Object?>{
                 'position': ChartPosition.right,
                 'type': 'linear',
@@ -584,7 +587,7 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'stacked': true},
+              'y': <String, Object?>{'type': 'linear', 'stacked': StackMode.on},
               'y2': <String, Object?>{
                 'position': ChartPosition.right,
                 'type': 'linear',
@@ -624,7 +627,7 @@ void main() {
           },
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'stacked': true},
+              'y': <String, Object?>{'type': 'linear', 'stacked': StackMode.on},
             },
           },
         });
@@ -1478,8 +1481,8 @@ void main() {
           'options': <String, Object?>{
             'indexAxis': const YAxis(),
             'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': true},
-              'y': <String, Object?>{'stacked': true},
+              'x': <String, Object?>{'stacked': StackMode.on},
+              'y': <String, Object?>{'stacked': StackMode.on},
             },
           },
         });

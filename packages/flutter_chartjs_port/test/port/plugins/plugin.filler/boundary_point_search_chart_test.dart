@@ -5,6 +5,8 @@ library;
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
@@ -125,8 +127,8 @@ void main() {
                 'responsive': false,
                 'plugins': {'legend': false, 'tooltip': false},
                 'scales': {
-                  axis: {'display': false, 'reverse': reverse},
-                  axis == 'x' ? 'y' : 'x': {'display': false},
+                  axis: {'display': ScaleDisplay.off, 'reverse': reverse},
+                  axis == 'x' ? 'y' : 'x': {'display': ScaleDisplay.off},
                 },
               },
             });

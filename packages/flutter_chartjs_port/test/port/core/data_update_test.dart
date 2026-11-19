@@ -500,7 +500,7 @@ void main() {
       });
       final scales = (c['options']! as Map)['scales'] as Map;
       for (final scale in scales.values) {
-        (scale as Map)['stacked'] = true;
+        (scale as Map)['stacked'] = StackMode.on;
       }
       return c;
     }
@@ -1323,7 +1323,7 @@ void main() {
         });
         final scales = (cfg['options']! as Map)['scales'] as Map;
         for (final scale in scales.values) {
-          (scale as Map)['stacked'] = true;
+          (scale as Map)['stacked'] = StackMode.on;
         }
         return cfg;
       }, path: true);

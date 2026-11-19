@@ -11,8 +11,9 @@
 import 'dart:ui' show FontWeight;
 
 import 'package:flutter/painting.dart' show TextStyle;
-
 import 'package:flutter_chartjs_port/src/core/core.config.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
     show CirclePointStyle;
 import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
@@ -210,7 +211,10 @@ void main() {
     test('a list of sources: a Map, typed scopes and values', () {
       _expectTwins(
         () => mergeIf(_target(), [
-          <String, Object?>{'axis': const XAxis(), 'display': 'auto'},
+          <String, Object?>{
+            'axis': const XAxis(),
+            'display': ScaleDisplay.auto,
+          },
           _source(),
           null,
           5.0,

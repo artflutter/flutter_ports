@@ -588,6 +588,15 @@ repository.
       `AxisTicks`. Each typed atom of the option model (a native type of an option that was a name
       in Chart.js) has the cell `classifyTyped<T>` of `opt.dart`, and `ShapeBits.typed` is the
       mask of their bits; the generator lists them in its map `typedAtoms`.
+    - The `display` of a scale and of the radial point labels holds a `ScaleDisplay` (`off`,
+      `on`, `auto`; the default is `on`) of `scale_option_enums.dart` (row
+      `adapt-scale-display-enum`), and the scale option `stacked` holds a `StackMode` (`off`,
+      `on`, `single`) of `chart_meta.dart`, with Dart `null` for the upstream `undefined` (row
+      `adapt-stacked-option-enum`). Both hold the enum also in a raw config: a `bool` or a text
+      stops a debug build. The typed axes take the same enums. The bar option `inflateAmount` is
+      a number, and `undefined` or `null` is the upstream `'auto'`; the bar defaults keep the key
+      with `undefined`, because the element options take their names from the keys of the
+      defaults (row `adapt-inflate-amount-auto`).
     - A font is a Flutter `TextStyle` from the option to the canvas (Chart.js ADR 0116, row
       `adapt-text-style-fonts`), also in a raw config: the options `font`, `titleFont`,
       `bodyFont` and `footerFont`, the canvas `font`, the font of a label item and the result of

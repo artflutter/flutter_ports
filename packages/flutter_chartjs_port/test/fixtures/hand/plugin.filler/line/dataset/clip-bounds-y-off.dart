@@ -4,6 +4,8 @@
 /// hand port of a data fixture with a class value (Chart.js ADR 0115).
 library;
 
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
@@ -77,7 +79,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'axis': const YAxis(),
           'stack': 'stack',
           'max': 80,
-          'display': false,
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'display': ScaleDisplay.off,
         },
         'y1': <String, Object?>{
           'min': 50,
@@ -85,9 +88,11 @@ Map<String, Object?> fixture() => <String, Object?>{
           // class.
           'axis': const YAxis(),
           'stack': 'stack',
-          'display': false,
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'display': ScaleDisplay.off,
         },
-        'x': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{'display': ScaleDisplay.off},
       },
     },
   },

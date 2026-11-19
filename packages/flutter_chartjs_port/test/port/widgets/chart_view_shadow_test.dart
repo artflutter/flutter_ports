@@ -24,8 +24,8 @@ const ChartShadow _shadow = ChartShadow(
 );
 
 const Map<String, ChartAxis> _hiddenAxes = {
-  'x': CategoryAxis(display: false),
-  'y': LinearAxis(min: 0, max: 4, display: false),
+  'x': CategoryAxis(display: ScaleDisplay.off),
+  'y': LinearAxis(min: 0, max: 4, display: ScaleDisplay.off),
 };
 
 ChartConfig _line(List<double> data, {ChartShadow? shadow}) => ChartConfig(
@@ -60,8 +60,8 @@ Map<String, Object?> _rawLine({required bool shadow}) => <String, Object?>{
   'options': <String, Object?>{
     'animation': false,
     'scales': <String, Object?>{
-      'x': <String, Object?>{'display': false},
-      'y': <String, Object?>{'min': 0, 'max': 4, 'display': false},
+      'x': <String, Object?>{'display': ScaleDisplay.off},
+      'y': <String, Object?>{'min': 0, 'max': 4, 'display': ScaleDisplay.off},
     },
     'plugins': <String, Object?>{'legend': false},
   },

@@ -77,6 +77,7 @@ bool _sameDefault(Object? actual, String text) => switch (actual) {
   // An enum value, for example `BorderSkippedEdge.start`.
   final Enum value => '$value' == text,
   final bool value => '$value' == text,
+  Undefined() => text == 'undefined',
   _ => false,
 };
 

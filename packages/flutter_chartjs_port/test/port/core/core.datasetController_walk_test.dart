@@ -67,7 +67,10 @@ Chart _chart(
       },
       'scales': <String, Object?>{
         'x': <String, Object?>{'type': 'linear'},
-        'y': <String, Object?>{'type': 'linear', 'stacked': stacked},
+        'y': <String, Object?>{
+          'type': 'linear',
+          'stacked': stacked ? StackMode.on : StackMode.off,
+        },
       },
     },
   });

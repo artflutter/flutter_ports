@@ -102,11 +102,11 @@ Map<String, Object?> _config({
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'type': horizontal ? linear : category,
-        'stacked': stacked,
+        'stacked': stacked ? StackMode.on : StackMode.off,
       },
       'y': <String, Object?>{
         'type': horizontal ? category : linear,
-        'stacked': stacked,
+        'stacked': stacked ? StackMode.on : StackMode.off,
       },
     },
   },

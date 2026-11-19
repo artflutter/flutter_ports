@@ -645,8 +645,8 @@ void main() {
         ),
       ],
       scales: const {
-        'x': CategoryAxis(display: false),
-        'y': LinearAxis(min: 0, max: 5, display: false),
+        'x': CategoryAxis(display: ScaleDisplay.off),
+        'y': LinearAxis(min: 0, max: 5, display: ScaleDisplay.off),
       },
       animation: ChartAnimation.none,
       legend: const ChartLegend(display: false),

@@ -43,8 +43,13 @@ Map<String, Object?> fixture() => <String, Object?>{
       'backgroundColor': 'blue',
       'hoverBackgroundColor': 'red',
       'scales': <String, Object?>{
-        'x': <String, Object?>{'display': false, 'bounds': ScaleBounds.data},
-        'y': <String, Object?>{'display': false},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'x': <String, Object?>{
+          'display': ScaleDisplay.off,
+          'bounds': ScaleBounds.data,
+        },
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'y': <String, Object?>{'display': ScaleDisplay.off},
       },
       'layout': <String, Object?>{'padding': const EdgeInsets.all(24)},
     },

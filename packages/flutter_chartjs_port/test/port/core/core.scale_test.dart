@@ -10,6 +10,8 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
     show ContextResolver, attachContext, createResolver;
 import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
@@ -745,7 +747,7 @@ void main() {
         'ticks': <Object?>[],
         'min': 0,
         'max': 1,
-      })..init(options(chart, {'display': false}));
+      })..init(options(chart, {'display': ScaleDisplay.off}));
       final layers = scale.layers!();
       expect(layers, hasLength(1));
       expect(layers[0].z, 0);
@@ -756,7 +758,7 @@ void main() {
       final chart = _plainChart();
       final holder = CanvasContextHolder(MockContext());
       final scale = _DrawingScale(_cfg(chart, holder))
-        ..init(options(chart, {'display': false}));
+        ..init(options(chart, {'display': ScaleDisplay.off}));
       scale.layers!()[0].draw(chart.chartArea);
       expect(scale.draws, 1);
       // A hidden scale draws nothing.

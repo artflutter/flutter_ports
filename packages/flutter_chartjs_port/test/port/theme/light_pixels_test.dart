@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/src/core/core.config.dart'
     show themeConfigKey;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
 import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
@@ -109,7 +111,7 @@ AnyObject _config(String type, {required bool colors, Object? theme}) {
       if (radial)
         'scales': <String, Object?>{
           'r': <String, Object?>{
-            'pointLabels': <String, Object?>{'display': true},
+            'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
             'angleLines': <String, Object?>{'display': true},
           },
         },

@@ -35,7 +35,8 @@ Map<String, Object?> fixture() {
       'options': <String, Object?>{
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'display': false,
+            // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+            'display': ScaleDisplay.off,
             'type': 'time',
             'ticks': <String, Object?>{
               // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
@@ -46,7 +47,8 @@ Map<String, Object?> fixture() {
               'unit': TimeUnit.day,
             },
           },
-          'y': <String, Object?>{'display': false},
+          // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off},
         },
       },
     },

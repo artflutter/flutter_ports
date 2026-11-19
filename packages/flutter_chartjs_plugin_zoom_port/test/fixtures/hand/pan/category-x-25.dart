@@ -44,11 +44,13 @@ Map<String, Object?> fixture() {
         'events': <Object?>[],
         'scales': <String, Object?>{
           'x': <String, Object?>{
-            'display': false,
+            // DIVERGES(zoom): adapt-host-scale-display, the enum value.
+            'display': ScaleDisplay.off,
             'min': 'Label 75',
             'max': 'Label 100',
           },
-          'y': <String, Object?>{'display': false, 'max': 10},
+          // DIVERGES(zoom): adapt-host-scale-display, the enum value.
+          'y': <String, Object?>{'display': ScaleDisplay.off, 'max': 10},
         },
         'plugins': <String, Object?>{
           'legend': false,

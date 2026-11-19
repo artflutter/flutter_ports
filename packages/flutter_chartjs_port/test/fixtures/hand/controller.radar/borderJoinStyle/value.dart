@@ -5,6 +5,8 @@ library;
 import 'dart:ui' show StrokeJoin;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
+    show ScaleDisplay;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
 
 /// The upstream config, with native padding values.
@@ -43,7 +45,11 @@ Map<String, Object?> fixture() => <String, Object?>{
       },
       'layout': <String, Object?>{'padding': const EdgeInsets.all(32)},
       'scales': <String, Object?>{
-        'r': <String, Object?>{'display': false, 'beginAtZero': true},
+        // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.
+        'r': <String, Object?>{
+          'display': ScaleDisplay.off,
+          'beginAtZero': true,
+        },
       },
     },
   },

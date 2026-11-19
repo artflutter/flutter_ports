@@ -170,7 +170,7 @@ final Type _nativeMetaList =
 /// - each visible bar meta of the scale has a built-in bar controller whose
 ///   option `grouped` is a cached bool (the meta field `stack` is a `String?`,
 ///   so each stack name is a primitive);
-/// - the option `stacked` of the scale is a cached bool or absent.
+/// - the option `stacked` of the scale is a cached `StackMode` or absent.
 ///
 /// The caller declines `skipNull` before (`cachedBulkBarOptions`): the search
 /// then takes no data index.

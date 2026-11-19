@@ -480,14 +480,14 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
     'scales': <String, Object?>{
       'x': <String, Object?>{
         'bounds': ScaleBounds.data,
-        'display': false,
+        'display': ScaleDisplay.off,
         'min': 0.0,
         'offset': false,
         'type': 'linear',
       },
       'y': <String, Object?>{
         'bounds': ScaleBounds.data,
-        'display': false,
+        'display': ScaleDisplay.off,
         'min': 0.0,
         'offset': false,
         'reverse': true,

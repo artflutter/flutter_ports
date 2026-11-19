@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
 import 'package:flutter_chartjs_port/src/types/axis_border.dart';
 import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
@@ -67,7 +68,7 @@ final Map<String, Object? Function(OptionView view)> _scaleGetters = {
 /// A value of each key of [_scaleGetters], with other types than the
 /// declared ones for some of them.
 Map<String, Object?> _scaleValues() => {
-  'display': 'auto',
+  'display': ScaleDisplay.auto,
   'alignToPixels': true,
   'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
   'reverse': true,
@@ -89,7 +90,7 @@ Map<String, Object?> _scaleValues() => {
   'fullSize': false,
   'stack': 'group',
   'stackWeight': 2,
-  'stacked': 'single',
+  'stacked': StackMode.single,
   'offsetAfterAutoskip': true,
   'adapters': <String, Object?>{'date': 'utc'},
   'animate': false,
