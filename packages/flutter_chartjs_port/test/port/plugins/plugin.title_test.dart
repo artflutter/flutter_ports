@@ -92,9 +92,9 @@ const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 /// `new Title(config)` through the class value.
 Object? _construct(List<Object?> args) => jsConstruct(Title.jsClass, args);
 
-/// A line chart with the title options [titleOptions] and every other
-/// plugin off.
-AnyObject _line(Object? titleOptions) => <String, Object?>{
+/// A line chart with `plugins.title: false`: no title block.
+// A Map config: the typed API has no form for a plugin set to `false`.
+AnyObject _lineWithoutTitle() => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
     'labels': <Object?>['a', 'b'],
@@ -105,9 +105,43 @@ AnyObject _line(Object? titleOptions) => <String, Object?>{
     ],
   },
   'options': <String, Object?>{
-    'plugins': <String, Object?>{'title': titleOptions},
+    'plugins': <String, Object?>{'title': false},
   },
 };
+
+/// A line chart with the title [title].
+Chart _line(ChartTitle title) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.line,
+      labels: const ['a', 'b'],
+      datasets: const [
+        LineDataset(data: [1, 2]),
+      ],
+      title: title,
+    ),
+  ).lower(),
+);
+
+/// The resolved title options of a box that a test builds: the values of
+/// `TitleOptions.of({})` for each option that the test does not give.
+TitleOptions _titleOptions({
+  bool display = false,
+  List<String> text = const [],
+  EdgeInsets padding = EdgeInsets.zero,
+  ChartTextStyle? font,
+  ChartPosition? position,
+}) => TitleOptions(
+  align: null,
+  color: const ChartPaint.unchanged(),
+  display: display,
+  font: toFont(font),
+  fullSize: false,
+  padding: padding,
+  position: position,
+  text: text,
+  weight: null,
+);
 
 void main() {
   testReferenceOrigin(
@@ -176,6 +210,7 @@ void main() {
     });
 
     test('new Title(config) keeps a plain chart object', () {
+      // Map options: the test pins the read of a JS config object.
       final chart = <String, Object?>{'options': <String, Object?>{}};
       final options = <String, Object?>{
         'display': true,
@@ -234,11 +269,7 @@ void main() {
 
     test('draw() with display false draws nothing', () {
       final ctx = createMockContext();
-      Title((
-        chart: null,
-        options: <String, Object?>{'display': false},
-        ctx: ctx,
-      )).draw();
+      Title((chart: null, options: _titleOptions(), ctx: ctx)).draw();
       expect(ctx.getCalls(), isEmpty);
     });
 
@@ -247,10 +278,7 @@ void main() {
       // drawBeforeUpdate).
       final box = Title((
         chart: null,
-        options: <String, Object?>{
-          'display': true,
-          'text': ['a'],
-        },
+        options: _titleOptions(display: true, text: ['a']),
         ctx: createMockContext(),
       ));
       expect(box.draw, throwsA(isA<TypeError>()));
@@ -274,13 +302,13 @@ void main() {
         box.width,
         box.height,
       ];
-      AnyObject options() => <String, Object?>{
-        'display': true,
-        'text': ['a'],
-        'padding': const EdgeInsets.all(10),
-        'font': const ChartTextStyle(fontSize: 12),
-        'position': ChartPosition.top,
-      };
+      TitleOptions options() => _titleOptions(
+        display: true,
+        text: ['a'],
+        padding: const EdgeInsets.all(10),
+        font: const ChartTextStyle(fontSize: 12),
+        position: ChartPosition.top,
+      );
       final withMargins = Title((chart: null, options: options(), ctx: null))
         ..update(300, 100, _Margins(5, 7, 9, 11));
       final without = Title((chart: null, options: options(), ctx: null))
@@ -294,7 +322,7 @@ void main() {
     testWidgets('a chart with plugins.title false has no title block', (
       tester,
     ) async {
-      final chart = acquireChart(_line(false));
+      final chart = acquireChart(_lineWithoutTitle());
       expect(chart.titleBlock, isNull);
       // The seven plugins of registerables are registered (Chart.js ADR
       // 0041, section 1). Thus the one Title box is the box of the subtitle
@@ -310,13 +338,9 @@ void main() {
     testWidgets('the stop hook on a chart without a title block does not '
         'throw', (tester) async {
       // The probe stopWithoutBlock: no throw, the boxes stay.
-      final chart = acquireChart(_line(false));
+      final chart = acquireChart(_lineWithoutTitle());
       final boxes = [...chart.boxes];
-      title.stop!(
-        chart,
-        const PluginHookArgs(),
-        TitleOptions.of(chart.options),
-      );
+      title.stop!(chart, const PluginHookArgs(), _titleOptions());
       expect(chart.titleBlock, isNull);
       expect(chart.boxes, boxes);
     });
@@ -324,32 +348,19 @@ void main() {
     testWidgets('the beforeUpdate hook on a chart without a title block '
         'throws a TypeError', (tester) async {
       // The probe beforeUpdateWithoutBlock.
-      final chart = acquireChart(_line(false));
+      final chart = acquireChart(_lineWithoutTitle());
       expect(
-        () => title.beforeUpdate!(
-          chart,
-          UpdateHookArgs(),
-          TitleOptions.of(chart.options),
-        ),
+        () => title.beforeUpdate!(chart, UpdateHookArgs(), _titleOptions()),
         throwsA(isA<TypeError>()),
       );
     });
 
     testWidgets('stop removes the title box', (tester) async {
-      final chart = acquireChart(
-        _line(<String, Object?>{
-          'display': true,
-          'text': ['a'],
-        }),
-      );
+      final chart = _line(const ChartTitle(display: true, text: ['a']));
       final box = chart.titleBlock;
       expect(box, isA<Title>());
       expect(chart.boxes, contains(same(box)));
-      title.stop!(
-        chart,
-        const PluginHookArgs(),
-        TitleOptions.of(chart.options),
-      );
+      title.stop!(chart, const PluginHookArgs(), _titleOptions());
       expect(chart.titleBlock, isNull);
       expect(chart.boxes.where((b) => identical(b, box)), isEmpty);
     });

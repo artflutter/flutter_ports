@@ -107,9 +107,12 @@ final Map<String, Object? Function(Chart chart)> _observers = {
 /// `defaults`, `defaultRoutes` and `descriptors`). No `_element`.
 const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 
-/// A line chart with the subtitle options [subtitleOptions] and the
-/// plugins other than `subtitle` and `title` off.
-AnyObject _line(Object? subtitleOptions) => <String, Object?>{
+/// A line chart with the subtitle options [subtitleOptions] (`false` or a
+/// Map) and the plugins other than `subtitle` and `title` off.
+// A Map config: the typed API has no form for a plugin set to `false`, and
+// a test that writes `chart.options.plugins.subtitle` by name needs the raw
+// options of the chart.
+AnyObject _mapLine(Object? subtitleOptions) => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
     'labels': <Object?>['a', 'b'],
@@ -124,23 +127,56 @@ AnyObject _line(Object? subtitleOptions) => <String, Object?>{
   },
 };
 
+/// A line chart with a subtitle of the one line [text].
+Chart _line(String text) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.line,
+      labels: const ['a', 'b'],
+      datasets: const [
+        LineDataset(data: [1, 2]),
+      ],
+      subtitle: ChartTitle(display: true, text: [text]),
+    ),
+  ).lower(),
+);
+
+/// The resolved title options of a direct hook call: the values of
+/// `TitleOptions.of({})` for each option that the call does not give.
+TitleOptions _titleOptions({
+  bool display = false,
+  List<String> text = const [],
+  ChartPosition? position,
+  num? weight,
+  bool fullSize = false,
+}) => TitleOptions(
+  align: null,
+  color: const ChartPaint.unchanged(),
+  display: display,
+  font: toFont(null),
+  fullSize: fullSize,
+  padding: EdgeInsets.zero,
+  position: position,
+  text: text,
+  weight: weight,
+);
+
 /// The resolved options of a direct `start` call: the box reads `display`,
 /// `text`, `position`, `weight` and `fullSize`.
-AnyObject _startOptions(String text) => <String, Object?>{
-  'display': true,
-  'text': [text],
-  'position': ChartPosition.top,
-  'weight': 1500,
-  'fullSize': true,
-};
+TitleOptions _startOptions(String text) => _titleOptions(
+  display: true,
+  text: [text],
+  position: ChartPosition.top,
+  weight: 1500,
+  fullSize: true,
+);
 
 /// `plugin.<hook>(chart, args, options)`: the hook field [hook] of the
 /// native plugin (Chart.js ADR 0144) with the arguments of its hook. The
-/// hooks of the subtitle take the facade [TitleOptions] (Chart.js ADR 0150),
-/// so the call gives them the facade over the option values [options] of a
-/// Map, as the probe gave the Map.
-void _hook(String hook, Chart chart, [AnyObject? options]) {
-  final view = TitleOptions.of(options ?? <String, Object?>{});
+/// hooks of the subtitle take the resolved [TitleOptions] (Chart.js ADR
+/// 0182): [options], or the options of `{}` that the probe gave.
+void _hook(String hook, Chart chart, [TitleOptions? options]) {
+  final view = options ?? _titleOptions();
   switch (hook) {
     case 'start':
       subTitle.start!(chart, const PluginHookArgs(), view);
@@ -288,7 +324,7 @@ void main() {
         'box each time', (tester) async {
       // The probe outputs `afterStop` 0 and `afterRestart` [1, true, 'A2'].
       final chart = acquireChart(
-        _line(<String, Object?>{
+        _mapLine(<String, Object?>{
           'display': true,
           'text': ['A'],
         }),
@@ -315,18 +351,8 @@ void main() {
     testWidgets('two charts each have their own subtitle', (tester) async {
       // The probe outputs `twoCharts` [1, 1, true, 'A', 'B'] and
       // `otherAfterStop` [1, 'B'].
-      final a = acquireChart(
-        _line(<String, Object?>{
-          'display': true,
-          'text': ['A'],
-        }),
-      );
-      final b = acquireChart(
-        _line(<String, Object?>{
-          'display': true,
-          'text': ['B'],
-        }),
-      );
+      final a = _line('A');
+      final b = _line('B');
       expect(_subtitles(a), hasLength(1));
       expect(_subtitles(b), hasLength(1));
       expect(_subtitles(a).single, isNot(same(_subtitles(b).single)));
@@ -342,7 +368,7 @@ void main() {
 
     testWidgets('stop without start does not throw', (tester) async {
       // The probe output `stopWithoutStart` [3, 3]: the boxes stay.
-      final chart = acquireChart(_line(false));
+      final chart = acquireChart(_mapLine(false));
       expect(_subtitles(chart), isEmpty);
       final boxes = [...chart.boxes];
       _hook('stop', chart);
@@ -354,7 +380,7 @@ void main() {
     ) async {
       // The probe output `beforeUpdateWithoutStart`: TypeError, the write
       // of `fullSize` into undefined (core.layouts.js:332).
-      final chart = acquireChart(_line(false));
+      final chart = acquireChart(_mapLine(false));
       expect(() => _hook('beforeUpdate', chart), throwsA(isA<TypeError>()));
     });
 
@@ -363,12 +389,7 @@ void main() {
       // The output of the second probe: {before: 4, afterStop: 3,
       // beforeUpdateAfterStop: TypeError} (map.delete of
       // plugin.subtitle.js:23).
-      final chart = acquireChart(
-        _line(<String, Object?>{
-          'display': true,
-          'text': ['A'],
-        }),
-      );
+      final chart = _line('A');
       final count = chart.boxes.length;
       _hook('stop', chart);
       expect(chart.boxes, hasLength(count - 1));
@@ -381,7 +402,7 @@ void main() {
       // The probe output `startStopStartDirect` [1, 0, 1, 2, 1]: a second
       // start without stop adds a second box, and stop removes only the box
       // of the last start (map.set replaces the entry).
-      final chart = acquireChart(_line(false));
+      final chart = acquireChart(_mapLine(false));
       final counts = <int>[];
       _hook('start', chart, _startOptions('x'));
       counts.add(_subtitles(chart).length);
@@ -401,12 +422,7 @@ void main() {
       // plugin.subtitle.js:10-17: the box gets the context and the chart,
       // and `configure` writes the position, the weight and fullSize of the
       // defaults (plugin.subtitle.js:32-43).
-      final chart = acquireChart(
-        _line(<String, Object?>{
-          'display': true,
-          'text': ['A'],
-        }),
-      );
+      final chart = _line('A');
       final subtitle = _subtitles(chart).single;
       expect(subtitle.position, ChartPosition.top);
       expect(subtitle.weight, 1500);

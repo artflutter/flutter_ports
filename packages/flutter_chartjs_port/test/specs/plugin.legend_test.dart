@@ -48,8 +48,16 @@ JsObjectFace _legendOptions(Chart chart) =>
     jsGet(_pluginOptions(chart), 'legend')! as JsObjectFace;
 
 /// `Chart.defaults.plugins.legend`.
-JsObjectFace _legendDefaults() =>
-    jsGet(jsGet(Chart.defaults, 'plugins'), 'legend')! as JsObjectFace;
+LegendOptionsScope _legendDefaults() =>
+    (Chart.defaults.pluginsCell!.raw! as PluginOptionsByTypeScope)
+            .legendCell!
+            .raw!
+        as LegendOptionsScope;
+
+/// The chart of the typed config [config], with the harness options
+/// [options] of `acquireChart`.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// The point `{x, y}` at the center of the hit box [hb] (:1094-1097,
 /// :1136-1139, :1176-1179).
@@ -58,66 +66,73 @@ AnyObject _center(LegendHitBox hb) => <String, Object?>{
   'y': hb.top + (hb.height / 2),
 };
 
-/// The three datasets of `should update bar chart correctly` (:39-57),
-/// `should filter items` without its extra keys.
-List<Object?> _barDatasets() => <Object?>[
-  <String, Object?>{
-    'label': 'dataset1',
-    'backgroundColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(255, 51, 17, 1),
+/// The three datasets of `should update bar chart correctly` (:39-57).
+/// `should filter items` gives [legendHidden] to dataset 2 and
+/// [borderRadius] to dataset 3.
+List<Dataset> _barDatasets({bool? legendHidden, double? borderRadius}) => [
+  const BarDataset(
+    label: 'dataset1',
+    backgroundColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
     ),
-    'borderCapStyle': native_ui.StrokeCap.butt,
-    'borderDash': <double>[2, 2],
-    'borderDashOffset': 5.5,
-    'data': <Object?>[],
-  },
-  <String, Object?>{
-    'label': 'dataset2',
-    'hidden': true,
-    'borderJoinStyle': native_ui.StrokeJoin.miter,
-    'data': <Object?>[],
-  },
-  <String, Object?>{
-    'label': 'dataset3',
-    'borderWidth': 10,
-    'borderColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(0, 128, 0, 1),
+    data: [],
+    extra: {
+      'borderCapStyle': native_ui.StrokeCap.butt,
+      'borderDash': <double>[2, 2],
+      'borderDashOffset': 5.5,
+    },
+  ),
+  BarDataset(
+    label: 'dataset2',
+    hidden: true,
+    data: const [],
+    extra: {
+      'borderJoinStyle': native_ui.StrokeJoin.miter,
+      'legendHidden': ?legendHidden,
+    },
+  ),
+  BarDataset(
+    label: 'dataset3',
+    borderWidth: 10,
+    borderColor: const ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
     ),
+    borderRadius: borderRadius,
+    data: const [],
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-    'pointStyle': const CrossRotPointStyle(),
-    'data': <Object?>[],
-  },
+    extra: const {'pointStyle': CrossRotPointStyle()},
+  ),
 ];
 
 /// The three datasets of the line cases (:117-136, :196-215, :358-377).
-List<Object?> _lineDatasets() => <Object?>[
-  <String, Object?>{
-    'label': 'dataset1',
-    'backgroundColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(255, 51, 17, 1),
+const List<Dataset> _lineDatasets = [
+  LineDataset(
+    label: 'dataset1',
+    backgroundColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
     ),
-    'borderCapStyle': native_ui.StrokeCap.round,
-    'borderDash': <double>[2, 2],
-    'borderDashOffset': 5.5,
-    'data': <Object?>[],
-  },
-  <String, Object?>{
-    'label': 'dataset2',
-    'hidden': true,
-    'borderJoinStyle': native_ui.StrokeJoin.round,
-    'data': <Object?>[],
-  },
-  <String, Object?>{
-    'label': 'dataset3',
-    'borderWidth': 10,
-    'borderColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(0, 128, 0, 1),
+    borderCapStyle: native_ui.StrokeCap.round,
+    borderDash: [2, 2],
+    data: [],
+    extra: {'borderDashOffset': 5.5},
+  ),
+  LineDataset(
+    label: 'dataset2',
+    hidden: true,
+    borderJoinStyle: native_ui.StrokeJoin.round,
+    data: [],
+  ),
+  LineDataset(
+    label: 'dataset3',
+    borderWidth: 10,
+    borderColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
     ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-    'pointStyle': const CrossRotPointStyle(),
-    'fill': FillTarget.none,
-    'data': <Object?>[],
-  },
+    pointStyle: CrossRotPointStyle(),
+    fill: FillTarget.none,
+    data: [],
+  ),
 ];
 
 /// A legend item with the values of the spec (each key of :62-77). An
@@ -199,7 +214,9 @@ LegendItem _lineItem3() => _item(
 );
 
 /// A line chart of four labels and one dataset with the legend options
-/// [legendOptions] (the config update and callbacks cases).
+/// [legendOptions] (the config update cases).
+// A Map config: the config update cases write the raw options of the chart
+// by name, and the typed API has no form for a legend set to `false`.
 AnyObject _lineChart([Object? legendOptions]) => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
@@ -216,13 +233,26 @@ AnyObject _lineChart([Object? legendOptions]) => <String, Object?>{
     },
 };
 
+/// A line chart of four labels and one dataset with the legend [legend]
+/// (the callbacks cases).
+Chart _line(ChartLegend legend) => _acquire(
+  ChartConfig(
+    type: ChartKind.line,
+    labels: const ['A', 'B', 'C', 'D'],
+    datasets: const [
+      LineDataset(data: [10, 20, 30, 100]),
+    ],
+    legend: legend,
+  ),
+);
+
 void main() {
   // Test the rectangle element
   group('Legend block tests', () {
     group('auto', fixture.specs('plugin.legend'));
 
     test('should have the correct default config', () {
-      final actual = _legendDefaults() as LegendOptionsScope;
+      final actual = _legendDefaults();
       // `toEqual`: the own keys of each object and the value of each key.
       expect(
         actual.ownKeys,
@@ -285,13 +315,13 @@ void main() {
     });
 
     testWidgets('should update bar chart correctly', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': _barDatasets(),
-          'labels': <Object?>[],
-        },
-      });
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.bar,
+          datasets: _barDatasets(),
+          labels: const [],
+        ),
+      );
 
       expect(
         chart.legend!.legendItems,
@@ -339,13 +369,13 @@ void main() {
     });
 
     testWidgets('should update line chart correctly', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': _lineDatasets(),
-          'labels': <Object?>[],
-        },
-      });
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: _lineDatasets,
+          labels: [],
+        ),
+      );
 
       expect(
         chart.legend!.legendItems,
@@ -354,18 +384,14 @@ void main() {
     });
 
     testWidgets('should reverse correctly', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': _lineDatasets(),
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{'reverse': true},
-          },
-        },
-      });
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: _lineDatasets,
+          labels: [],
+          legend: ChartLegend(reverse: true),
+        ),
+      );
 
       expect(
         chart.legend!.legendItems,
@@ -374,28 +400,26 @@ void main() {
     });
 
     testWidgets('should filter items', (tester) async {
-      final datasets = _barDatasets();
-      (datasets[1]! as AnyObject)['legendHidden'] = true;
-      (datasets[2]! as AnyObject)['borderRadius'] = 10;
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{'datasets': datasets, 'labels': <Object?>[]},
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{
-              'labels': <String, Object?>{
-                'filter': (Object? legendItem, Object? data) {
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.bar,
+          datasets: _barDatasets(legendHidden: true, borderRadius: 10),
+          labels: const [],
+          legend: ChartLegend(
+            extra: {
+              'labels': {
+                'filter': (LegendItem legendItem, Object? data) {
                   final dataset = jsGetIndex(
                     jsGet(data, 'datasets'),
-                    (legendItem! as LegendItem).datasetIndex!.toDouble(),
+                    legendItem.datasetIndex!.toDouble(),
                   );
                   return !jsTruthy(jsGet(dataset, 'legendHidden'));
                 },
               },
             },
-          },
-        },
-      });
+          ),
+        ),
+      );
 
       expect(
         chart.legend!.legendItems,
@@ -431,26 +455,21 @@ void main() {
     });
 
     testWidgets('should sort items', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': _lineDatasets(),
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{
-              'labels': <String, Object?>{
-                'sort': (Object? a, Object? b, Object? data) =>
-                    ((b! as LegendItem).datasetIndex! as num) >
-                        ((a! as LegendItem).datasetIndex! as num)
-                    ? 1
-                    : -1,
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: _lineDatasets,
+          labels: const [],
+          legend: ChartLegend(
+            extra: {
+              'labels': {
+                'sort': (LegendItem a, LegendItem b, Object? data) =>
+                    b.datasetIndex! > a.datasetIndex! ? 1 : -1,
               },
             },
-          },
-        },
-      });
+          ),
+        ),
+      );
 
       expect(
         chart.legend!.legendItems,
@@ -462,6 +481,8 @@ void main() {
       tester,
     ) async {
       void makeChart() {
+        // A Map config: the typed API has no form for `labels: false`, a
+        // value outside the type of the key.
         acquireChart(<String, Object?>{
           'type': 'bar',
           'data': <String, Object?>{
@@ -493,22 +514,16 @@ void main() {
     testWidgets('should not draw legend items outside of the chart bounds', (
       tester,
     ) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              for (final n in [1, 2, 3])
-                <String, Object?>{'label': 'dataset$n', 'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'legend': <String, Object?>{'position': ChartPosition.right},
-            },
-          },
-        },
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            for (final n in [1, 2, 3])
+              LineDataset(label: 'dataset$n', data: const []),
+          ],
+          labels: const [],
+          legend: const ChartLegend(position: ChartPosition.right),
+        ),
         <String, Object?>{
           'canvas': <String, Object?>{'width': 512, 'height': 105},
         },
@@ -525,59 +540,43 @@ void main() {
     });
 
     testWidgets('should draw legend with multiline labels', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'labels': <Object?>[
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.doughnut,
+          labels: [
             'ABCDE',
-            <Object?>['ABCDE', 'ABCDE'],
-            <Object?>['Some Text', 'Some Text', 'Some Text'],
+            ['ABCDE', 'ABCDE'],
+            ['Some Text', 'Some Text', 'Some Text'],
             'ABCDE',
           ],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'test',
-              'data': <Object?>[73.42, 18.13, 7.54, 0.9, 0.0025, 1.8e-5],
-              'backgroundColor': <Object?>[
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(0, 120, 194, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(86, 202, 245, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(177, 227, 249, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(251, 188, 141, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(246, 163, 190, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(78, 194, 193, 1),
-                ),
-              ],
-            },
+          datasets: [
+            DoughnutDataset(
+              label: 'test',
+              data: [73.42, 18.13, 7.54, 0.9, 0.0025, 1.8e-5],
+              backgroundColor: ChartValue.indexed([
+                ChartPaint.solid(native_ui.Color.fromRGBO(0, 120, 194, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(86, 202, 245, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(177, 227, 249, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(251, 188, 141, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(246, 163, 190, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(78, 194, 193, 1)),
+              ]),
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{
-              'labels': <String, Object?>{
-                'usePointStyle': true,
-                // DIVERGES(chartjs): adapt-point-style-objects, the style
-                // class.
-                'pointStyle': const RectPointStyle(),
-              },
-              'position': ChartPosition.right,
-              'align': ChartAlign.center,
+          legend: ChartLegend(
+            usePointStyle: true,
+            position: ChartPosition.right,
+            align: ChartAlign.center,
+            extra: {
+              // DIVERGES(chartjs): adapt-point-style-objects, the style
+              // class.
+              'labels': {'pointStyle': RectPointStyle()},
               'maxWidth': 860,
             },
-          },
-          'aspectRatio': 3,
-        },
-      });
+          ),
+          aspectRatio: 3,
+        ),
+      );
 
       // Check some basic assertions about the test setup
       expect(_hitBoxes(chart).length, 4);
@@ -589,24 +588,13 @@ void main() {
     });
 
     testWidgets('should draw items with a custom boxHeight', (tester) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'label': 'dataset1', 'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'legend': <String, Object?>{
-                'position': ChartPosition.right,
-                'labels': <String, Object?>{'boxHeight': 40},
-              },
-            },
-          },
-        },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [LineDataset(label: 'dataset1', data: [])],
+          labels: [],
+          legend: ChartLegend(position: ChartPosition.right, boxHeight: 40),
+        ),
         <String, Object?>{
           'canvas': <String, Object?>{'width': 512, 'height': 105},
         },
@@ -618,35 +606,33 @@ void main() {
     testWidgets('should pick up the first item when the property is an array', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'dataset1',
-              'backgroundColor': <Object?>[
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 51, 17, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(102, 102, 102, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(17, 68, 238, 1),
-                ),
-              ],
-              'borderWidth': <Object?>[5, 10, 15],
-              'borderColor': <Object?>[
-                const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
-                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
-                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
-              ],
-              'data': <Object?>[],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(
+              label: 'dataset1',
+              backgroundColor: ChartValue.indexed([
+                ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(17, 68, 238, 1)),
+              ]),
+              borderColor: ChartValue.indexed([
+                ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+              ]),
+              data: [],
+              // The typed borderWidth is one number: an array goes through
+              // `extra`.
+              extra: {
+                'borderWidth': <Object?>[5, 10, 15],
+              },
+            ),
           ],
-          'labels': <Object?>[],
-        },
-      });
+          labels: [],
+        ),
+      );
 
       expect(
         chart.legend!.legendItems,
@@ -668,43 +654,39 @@ void main() {
     });
 
     testWidgets('should use the borderRadius in the legend', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'dataset1',
-              'backgroundColor': <Object?>[
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 51, 17, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(102, 102, 102, 1),
-                ),
-                const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(17, 68, 238, 1),
-                ),
-              ],
-              'borderWidth': <Object?>[5, 10, 15],
-              'borderColor': <Object?>[
-                const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
-                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
-                const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
-              ],
-              'borderRadius': 10,
-              'data': <Object?>[],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(
+              label: 'dataset1',
+              backgroundColor: ChartValue.indexed([
+                ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(17, 68, 238, 1)),
+              ]),
+              borderColor: ChartValue.indexed([
+                ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+                ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+              ]),
+              borderRadius: 10,
+              data: [],
+              // The typed borderWidth is one number: an array goes through
+              // `extra`.
+              extra: {
+                'borderWidth': <Object?>[5, 10, 15],
+              },
+            ),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{
-              'labels': <String, Object?>{'useBorderRadius': true},
+          labels: [],
+          legend: ChartLegend(
+            extra: {
+              'labels': {'useBorderRadius': true},
             },
-          },
-        },
-      });
+          ),
+        ),
+      );
 
       expect(
         chart.legend!.legendItems,
@@ -729,13 +711,13 @@ void main() {
     testWidgets(
       'should use the value for the first item when the property is a function',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'label': 'dataset1',
-                'backgroundColor': (Object? ctx) {
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(
+                label: 'dataset1',
+                backgroundColor: ChartValue.resolver((ctx) {
                   final value = _dataValue(ctx);
                   return ChartPaint.solid(
                     native_ui.Color.fromRGBO(
@@ -745,9 +727,8 @@ void main() {
                       1,
                     ),
                   );
-                },
-                'borderWidth': _dataValue,
-                'borderColor': (Object? ctx) {
+                }),
+                borderColor: ChartValue.resolver((ctx) {
                   final value = _dataValue(ctx);
                   return ChartPaint.solid(
                     native_ui.Color.fromRGBO(
@@ -757,13 +738,16 @@ void main() {
                       1,
                     ),
                   );
-                },
-                'data': <Object?>[5, 10, 15, 20],
-              },
+                }),
+                data: const [5, 10, 15, 20],
+                // The typed borderWidth is one number: a function goes
+                // through `extra`.
+                extra: const {'borderWidth': _dataValue},
+              ),
             ],
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-          },
-        });
+            labels: const ['A', 'B', 'C', 'D'],
+          ),
+        );
 
         expect(
           chart.legend!.legendItems,
@@ -788,20 +772,14 @@ void main() {
     testWidgets('should draw correctly when usePointStyle is true', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': _pointStyleDatasets(),
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{
-              'labels': <String, Object?>{'usePointStyle': true},
-            },
-          },
-        },
-      });
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: _pointStyleDatasets,
+          labels: [],
+          legend: ChartLegend(usePointStyle: true),
+        ),
+      );
 
       expect(
         chart.legend!.legendItems,
@@ -813,25 +791,21 @@ void main() {
       'should draw correctly when usePointStyle is true and pointStyle '
       'override is set',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': _pointStyleDatasets(),
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'legend': <String, Object?>{
-                'labels': <String, Object?>{
-                  'usePointStyle': true,
-                  // DIVERGES(chartjs): adapt-point-style-objects, the style
-                  // class.
-                  'pointStyle': const StarPointStyle(),
-                },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: _pointStyleDatasets,
+            labels: [],
+            legend: ChartLegend(
+              usePointStyle: true,
+              extra: {
+                // DIVERGES(chartjs): adapt-point-style-objects, the style
+                // class.
+                'labels': {'pointStyle': StarPointStyle()},
               },
-            },
-          },
-        });
+            ),
+          ),
+        );
 
         expect(
           chart.legend!.legendItems,
@@ -849,18 +823,15 @@ void main() {
         'plugins': <String, Object?>{'legend': false},
       });
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'dataset1',
-              'data': <Object?>[1, 2, 3, 4],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.doughnut,
+          datasets: [
+            DoughnutDataset(label: 'dataset1', data: [1, 2, 3, 4]),
           ],
-          'labels': <Object?>['', '', '', ''],
-        },
-      });
+          labels: ['', '', '', ''],
+        ),
+      );
       expect(chart, isNotNull);
 
       Chart.defaults.set(<String, Object?>{
@@ -869,71 +840,64 @@ void main() {
     });
 
     testWidgets('should not read onClick from chart options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'dataset',
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.bar,
+          labels: const ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+          datasets: const [
+            BarDataset(
+              label: 'dataset',
+              backgroundColor: ChartValue.constant(
+                ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
               ),
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+              borderColor: ChartValue.constant(
+                ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
               ),
-              'data': <Object?>[120, 23, 24, 45, 51],
-            },
+              data: [120, 23, 24, 45, 51],
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'onClick': (_, _, _) {},
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{'display': true},
-          },
-        },
-      });
+          responsive: true,
+          onClick: (_, _, _) {},
+          legend: const ChartLegend(display: true),
+        ),
+      );
       expect(
-        LegendOptions.of(chart.legend!.options).onClick,
-        same(jsGet(_legendDefaults(), 'onClick')),
+        (chart.legend! as Legend).options.onClick,
+        same(_legendDefaults().onClickCell?.raw),
       );
     });
 
     testWidgets('should read labels.color from chart options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['Jan', 'Feb', 'Mar', 'Apr', 'May'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'dataset',
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
+          datasets: [
+            BarDataset(
+              label: 'dataset',
+              backgroundColor: ChartValue.constant(
+                ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
               ),
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+              borderColor: ChartValue.constant(
+                ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
               ),
-              'data': <Object?>[120, 23, 24, 45, 51],
-            },
+              data: [120, 23, 24, 45, 51],
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'color': const ChartPaint.solid(
-            native_ui.Color.fromRGBO(0, 128, 0, 1),
-          ),
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{'display': true},
+          responsive: true,
+          legend: ChartLegend(display: true),
+          // The chart option `color` has no typed field.
+          extra: {
+            'color': ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
           },
-        },
-      });
+        ),
+      );
       expect(
-        LegendOptions.of(chart.legend!.options).labels.color,
+        (chart.legend! as Legend).options.labels.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
       expect(
-        LegendOptions.of(chart.legend!.options).title.color,
+        (chart.legend! as Legend).options.title.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
       );
     });
@@ -943,14 +907,15 @@ void main() {
         final chart = acquireChart(
           _lineChart(<String, Object?>{'display': true}),
         );
-        expect(LegendOptions.of(chart.legend!.options).display, true);
+        expect((chart.legend! as Legend).options.display, true);
 
         _legendOptions(chart)['display'] = false;
         chart.update();
-        expect(LegendOptions.of(chart.legend!.options).display, false);
+        expect((chart.legend! as Legend).options.display, false);
       });
 
       testWidgets('should update the associated layout item', (tester) async {
+        // A Map config: the spec writes the raw options of the chart by name.
         final chart = acquireChart(<String, Object?>{
           'type': 'line',
           'data': <String, Object?>{},
@@ -1007,7 +972,7 @@ void main() {
           // resolved colors of the scriptable label and title colors. The
           // legend keeps the resolved `LegendOptions` (Chart.js ADR 0182).
           final expected = LegendOptions.of(_legendDefaults());
-          final actual = LegendOptions.of(chart.legend!.options);
+          final actual = (chart.legend! as Legend).options;
           expect(actual.display, expected.display);
           expect(actual.position, expected.position);
           expect(actual.align, expected.align);
@@ -1017,8 +982,8 @@ void main() {
           expect(actual.onClick, same(expected.onClick));
           expect(actual.onHover, same(expected.onHover));
           expect(actual.onLeave, same(expected.onLeave));
-          expect(actual.labels.color, jsGet(Chart.defaults, 'color'));
-          expect(actual.title.color, jsGet(Chart.defaults, 'color'));
+          expect(actual.labels.color, Chart.defaults.colorCell?.raw);
+          expect(actual.title.color, Chart.defaults.colorCell?.raw);
         },
       );
     });
@@ -1031,18 +996,18 @@ void main() {
           Object? hoverItem;
           Object? leaveItem;
 
-          final chart = acquireChart(
-            _lineChart(<String, Object?>{
-              'onClick': (Object? _, Object? item, Object? _) {
+          final chart = _line(
+            ChartLegend(
+              onClick: (_, item, _) {
                 clickItem = item;
               },
-              'onHover': (Object? _, Object? item, Object? _) {
+              onHover: (_, item, _) {
                 hoverItem = item;
               },
-              'onLeave': (Object? _, Object? item, Object? _) {
+              onLeave: (_, item, _) {
                 leaveItem = item;
               },
-            }),
+            ),
           );
 
           final hb = _hitBoxes(chart)[0];
@@ -1069,15 +1034,15 @@ void main() {
         Object? hoverItem;
         Object? leaveItem;
 
-        final chart = acquireChart(
-          _lineChart(<String, Object?>{
-            'onHover': (Object? _, Object? item, Object? _) {
+        final chart = _line(
+          ChartLegend(
+            onHover: (_, item, _) {
               hoverItem = item;
             },
-            'onLeave': (Object? _, Object? item, Object? _) {
+            onLeave: (_, item, _) {
               leaveItem = item;
             },
-          }),
+          ),
         );
 
         final hb = _hitBoxes(chart)[0];
@@ -1095,31 +1060,21 @@ void main() {
       ) async {
         Object? clickItem;
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-                'label': 'dataset 1',
-              },
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-                'label': 'dataset 2',
-              },
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            labels: const ['A', 'B', 'C', 'D'],
+            datasets: const [
+              LineDataset(data: [10, 20, 30, 100], label: 'dataset 1'),
+              LineDataset(data: [10, 20, 30, 100], label: 'dataset 2'),
             ],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'legend': <String, Object?>{
-                'onClick': (Object? _, Object? item, Object? _) {
-                  clickItem = item;
-                },
+            legend: ChartLegend(
+              onClick: (_, item, _) {
+                clickItem = item;
               },
-            },
-          },
-        });
+            ),
+          ),
+        );
 
         final hb = _hitBoxes(chart)[0];
         final el = _center(hb);
@@ -1141,45 +1096,45 @@ num _dataValue(Object? ctx) {
 }
 
 /// The two datasets of the usePointStyle cases (:733-755, :808-830).
-List<Object?> _pointStyleDatasets() => <Object?>[
-  <String, Object?>{
-    'label': 'dataset1',
-    'backgroundColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(255, 51, 17, 1),
+const List<Dataset> _pointStyleDatasets = [
+  LineDataset(
+    label: 'dataset1',
+    backgroundColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
     ),
-    'borderCapStyle': native_ui.StrokeCap.butt,
-    'borderDash': <double>[2, 2],
-    'borderDashOffset': 5.5,
-    'borderWidth': 0,
-    'borderColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(255, 51, 17, 1),
-    ),
-    // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-    'pointStyle': const CrossRotPointStyle(),
-    'pointBackgroundColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(0, 0, 0, 0.1),
-    ),
-    'pointBorderWidth': 5,
-    'pointBorderColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(0, 128, 0, 1),
-    ),
-    'data': <Object?>[],
-  },
-  <String, Object?>{
-    'label': 'dataset2',
-    'backgroundColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(255, 51, 17, 1),
-    ),
-    'borderJoinStyle': native_ui.StrokeJoin.miter,
-    'borderWidth': 2,
-    'borderColor': const ChartPaint.solid(
-      native_ui.Color.fromRGBO(255, 51, 17, 1),
+    borderCapStyle: native_ui.StrokeCap.butt,
+    borderDash: [2, 2],
+    borderWidth: 0,
+    borderColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
     ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-    'pointStyle': const CrossRotPointStyle(),
-    'pointRotation': 15,
-    'data': <Object?>[],
-  },
+    pointStyle: CrossRotPointStyle(),
+    pointBackgroundColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
+    ),
+    pointBorderWidth: 5,
+    pointBorderColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+    ),
+    data: [],
+    extra: {'borderDashOffset': 5.5},
+  ),
+  LineDataset(
+    label: 'dataset2',
+    backgroundColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
+    ),
+    borderJoinStyle: native_ui.StrokeJoin.miter,
+    borderWidth: 2,
+    borderColor: ChartValue.constant(
+      ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
+    ),
+    // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+    pointStyle: CrossRotPointStyle(),
+    data: [],
+    extra: {'pointRotation': 15},
+  ),
 ];
 
 /// The items of the usePointStyle cases with the point style [pointStyle]

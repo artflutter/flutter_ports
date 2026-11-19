@@ -46,9 +46,16 @@ JsClass _titleClass() => Title.jsClass;
 Title _newTitle(AnyObject config) =>
     jsConstruct(_titleClass(), [config]) as Title;
 
+/// `Chart.defaults.plugins.title`.
+TitleOptionsScope _titleDefaults() =>
+    (Chart.defaults.pluginsCell!.raw! as PluginOptionsByTypeScope)
+            .titleCell!
+            .raw!
+        as TitleOptionsScope;
+
 /// `Chart.helpers.clone(Chart.defaults.plugins.title)`.
-JsObjectFace _cloneTitleDefaults() =>
-    clone(jsGet(jsGet(Chart.defaults, 'plugins'), 'title'))! as JsObjectFace;
+TitleOptionsScope _cloneTitleDefaults() =>
+    clone(_titleDefaults())! as TitleOptionsScope;
 
 /// `chart.options.plugins.title`, the option resolver of the title.
 JsObjectFace _titleOptions(Chart chart) =>
@@ -101,9 +108,7 @@ void main() {
     group('auto', fixture.specs('plugin.title'));
 
     test('Should have the correct default config', () {
-      final defaults =
-          jsGet(jsGet(Chart.defaults, 'plugins'), 'title')!
-              as TitleOptionsScope;
+      final defaults = _titleDefaults();
       // `toEqual`: the own keys of the object and the value of each key.
       expect(
         defaults.ownKeys,
@@ -140,8 +145,7 @@ void main() {
     test('should update correctly', () {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
-      final options = _cloneTitleDefaults();
-      options['text'] = ['My title'];
+      final options = _cloneTitleDefaults()..text = ['My title'];
 
       final title = _newTitle(<String, Object?>{
         'chart': chart,
@@ -152,7 +156,7 @@ void main() {
       expect(title.height, 0);
 
       // Now we have a height since we display
-      options['display'] = true;
+      options.display = true;
       title
         ..options = TitleOptions.of(options)
         ..update(400, 200);
@@ -164,9 +168,9 @@ void main() {
     test('should update correctly when vertical', () {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
-      final options = _cloneTitleDefaults();
-      options['text'] = ['My title'];
-      options['position'] = ChartPosition.left;
+      final options = _cloneTitleDefaults()
+        ..text = ['My title']
+        ..position = ChartPosition.left;
 
       final title = _newTitle(<String, Object?>{
         'chart': chart,
@@ -177,7 +181,7 @@ void main() {
       expect(title.height, 0);
 
       // Now we have a height since we display
-      options['display'] = true;
+      options.display = true;
       title
         ..options = TitleOptions.of(options)
         ..update(200, 400);
@@ -191,11 +195,11 @@ void main() {
       () {
         final chart = <String, Object?>{'options': clone(Chart.defaults)};
 
-        final options = _cloneTitleDefaults();
-        options['text'] = <String>['line1', 'line2'];
-        options['position'] = ChartPosition.left;
-        options['display'] = true;
-        options['font'] = (options['font']! as TextStyle).merge(
+        final options = _cloneTitleDefaults()
+          ..text = <String>['line1', 'line2']
+          ..position = ChartPosition.left
+          ..display = true;
+        options.font = (options.fontCell!.raw! as TextStyle).merge(
           const ChartTextStyle(height: 1.5),
         );
 
@@ -213,8 +217,7 @@ void main() {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
       final context = createMockContext();
 
-      final options = _cloneTitleDefaults();
-      options['text'] = ['My title'];
+      final options = _cloneTitleDefaults()..text = ['My title'];
 
       final title =
           _newTitle(<String, Object?>{
@@ -228,7 +231,7 @@ void main() {
       expect(context.getCalls(), equals(<Object?>[]));
 
       // Now we have a height since we display
-      options['display'] = true;
+      options.display = true;
       title
         ..options = TitleOptions.of(options)
         ..update(400, 200)
@@ -246,9 +249,9 @@ void main() {
       final chart = <String, Object?>{'options': clone(Chart.defaults)};
       final context = createMockContext();
 
-      final options = _cloneTitleDefaults();
-      options['text'] = ['My title'];
-      options['position'] = ChartPosition.left;
+      final options = _cloneTitleDefaults()
+        ..text = ['My title']
+        ..position = ChartPosition.left;
 
       final title =
           _newTitle(<String, Object?>{
@@ -262,7 +265,7 @@ void main() {
       expect(context.getCalls(), equals(<Object?>[]));
 
       // Now we have a height since we display
-      options['display'] = true;
+      options.display = true;
       title
         ..options = TitleOptions.of(options)
         ..update(200, 400)
@@ -279,7 +282,7 @@ void main() {
       );
 
       // Rotation is other way on right side
-      options['position'] = ChartPosition.right;
+      options.position = ChartPosition.right;
       title.options = TitleOptions.of(options);
 
       // Reset call tracker
@@ -302,6 +305,7 @@ void main() {
 
     group('config update', () {
       testWidgets('should update the options', (tester) async {
+        // A Map config: the spec writes the raw options of the chart by name.
         final chart = acquireChart(<String, Object?>{
           'type': 'line',
           'data': <String, Object?>{
@@ -326,6 +330,7 @@ void main() {
       });
 
       testWidgets('should update the associated layout item', (tester) async {
+        // A Map config: the spec writes the raw options of the chart by name.
         final chart = acquireChart(<String, Object?>{
           'type': 'line',
           'data': <String, Object?>{},
@@ -358,6 +363,7 @@ void main() {
       testWidgets('should remove the title if the new options are false', (
         tester,
       ) async {
+        // A Map config: the spec writes the raw options of the chart by name.
         final chart = acquireChart(<String, Object?>{
           'type': 'line',
           'data': <String, Object?>{
@@ -379,6 +385,8 @@ void main() {
       testWidgets(
         'should create the title if the title options are changed to exist',
         (tester) async {
+          // A Map config: the typed API has no form for a plugin set to
+          // `false`, and the spec writes the raw options of the chart by name.
           final chart = acquireChart(<String, Object?>{
             'type': 'line',
             'data': <String, Object?>{
@@ -401,9 +409,7 @@ void main() {
           // `toEqualOptions` reads the own keys of the defaults: the box has
           // the resolved `TitleOptions` (Chart.js ADR 0182), and `color` is a
           // route of the defaults, not an own key.
-          final expected = TitleOptions.of(
-            jsGet(jsGet(Chart.defaults, 'plugins'), 'title'),
-          );
+          final expected = TitleOptions.of(_titleDefaults());
           expect(
             plainTitleOptions((chart.titleBlock! as Title).options)!
               ..remove('color'),
