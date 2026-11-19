@@ -5,8 +5,9 @@ library;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/pixel_compare.dart';
@@ -19,49 +20,42 @@ const _fade = ChartGradient.linear(ui.Offset.zero, ui.Offset(0, 400), [
   ui.Color(0x80dd4400),
 ]);
 
-/// A scatter chart of [count] points with the dataset options [dataset].
-Map<String, Object?> _config(int count, Map<String, Object?> dataset) => {
-  'type': 'scatter',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          for (var i = 0; i < count; i++)
-            <String, Object?>{
-              'x': (i * 37 % 101).toDouble(),
-              'y': (i * 53 % 97).toDouble(),
-            },
-        ],
-        'radius': 3.0,
-        'borderWidth': 0.0,
-        'backgroundColor': _red,
-        'borderColor': _blue,
-        ...dataset,
-      },
-    ],
+/// A scatter chart of [count] points with the given styles.
+ChartConfig _config(
+  int count, {
+  ChartValue<ChartPaint> backgroundColor = const ChartValue.constant(_red),
+  ChartValue<ChartPaint> borderColor = const ChartValue.constant(_blue),
+  double borderWidth = 0,
+  ChartValue<ChartPaint>? hoverBackgroundColor,
+  List<double>? radii,
+}) => ChartConfig(
+  type: ChartKind.scatter,
+  datasets: [
+    ScatterDataset(
+      points: [
+        for (var i = 0; i < count; i++) DataPoint(i * 37 % 101, i * 53 % 97),
+      ],
+      pointRadius: radii == null ? 3 : null,
+      borderWidth: borderWidth,
+      backgroundColor: backgroundColor,
+      borderColor: borderColor,
+      hoverBackgroundColor: hoverBackgroundColor,
+      // The typed scalar radius cannot express the indexable radius case.
+      extra: {'radius': ?radii},
+    ),
+  ],
+  responsive: false,
+  animation: ChartAnimation.none,
+  scales: const {
+    'x': LinearAxis(display: ScaleDisplay.off, min: 0, max: 100),
+    'y': LinearAxis(display: ScaleDisplay.off, min: 0, max: 100),
   },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
+  extra: const {
     'parsing': false,
     'events': <String>[],
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': 'linear',
-        'display': ScaleDisplay.off,
-        'min': 0.0,
-        'max': 100.0,
-      },
-      'y': <String, Object?>{
-        'type': 'linear',
-        'display': ScaleDisplay.off,
-        'min': 0.0,
-        'max': 100.0,
-      },
-    },
+    'plugins': {'legend': false, 'tooltip': false},
   },
-};
+);
 
 String _describe(Object? value) => switch (value) {
   final ui.Paint p =>
@@ -98,7 +92,7 @@ final class _LogCanvas(final List<String> _log, ui.PictureRecorder recorder)
 /// colors: the native calls, the styles after the draw, the kept circles and
 /// the pixels.
 Future<(List<String>, List<Object?>, int, Render)> _draw(
-  Map<String, Object?> config, {
+  ChartConfig config, {
   required bool keep,
   List<ActiveElement> active = const [],
 }) async {
@@ -106,7 +100,7 @@ Future<(List<String>, List<Object?>, int, Render)> _draw(
   UiCanvasContext.debugKeepRunColors = keep;
   final calls = <String>[];
   final canvas = UiCanvasElement(width: 320, height: 200);
-  final chart = Chart(canvas, config);
+  final chart = Chart(canvas, ChartConfigLowering(config).lower());
   try {
     if (active.isNotEmpty) chart.setActiveElements(active);
     UiCanvasContext.debugRecordingCanvas = (recorder) =>
@@ -136,7 +130,7 @@ Future<(List<String>, List<Object?>, int, Render)> _draw(
 /// Expects the same native calls, styles and pixels with and without the
 /// kept colors, and gives the count of kept circles of the kept form.
 Future<int> _expectTwins(
-  Map<String, Object?> Function() config, {
+  ChartConfig Function() config, {
   List<ActiveElement> active = const [],
 }) async {
   final kept = await _draw(config(), keep: true, active: active);
@@ -157,29 +151,32 @@ Future<int> _expectTwins(
 
 void main() {
   test('one color: each point has its own options, one run', () async {
-    final kept = await _expectTwins(() => _config(2000, {}));
+    final kept = await _expectTwins(() => _config(2000));
     expect(kept, greaterThan(1900));
   });
 
   test('two alternating colors with a border', () async {
     final kept = await _expectTwins(
-      () => _config(2000, {
-        'backgroundColor': <ChartPaint>[_red, _green],
-        'borderColor': <ChartPaint>[_blue, _red],
-        'borderWidth': 1.0,
-      }),
+      () => _config(
+        2000,
+        backgroundColor: const ChartValue.indexed([_red, _green]),
+        borderColor: const ChartValue.indexed([_blue, _red]),
+        borderWidth: 1,
+      ),
     );
     expect(kept, greaterThan(1900));
   });
 
   test('a scriptable color', () async {
-    Map<String, Object?> config() {
+    ChartConfig config() {
       // The calls run in the order of the points in both twins.
       var calls = 0;
-      return _config(500, {
-        'backgroundColor': (Object? context) =>
-            calls++ % 3 == 0 ? _green : _red,
-      });
+      return _config(
+        500,
+        backgroundColor: ChartValue.resolver(
+          (context) => calls++ % 3 == 0 ? _green : _red,
+        ),
+      );
     }
 
     final kept = await _expectTwins(config);
@@ -187,14 +184,17 @@ void main() {
   });
 
   test('a gradient in the middle ends the run', () async {
-    Map<String, Object?> config() {
+    ChartConfig config() {
       var calls = 0;
-      return _config(300, {
-        'backgroundColor': (Object? context) => switch (calls++) {
-          150 => _fade,
-          final n => n.isEven ? _red : _green,
-        },
-      });
+      return _config(
+        300,
+        backgroundColor: ChartValue.resolver(
+          (context) => switch (calls++) {
+            150 => _fade,
+            final n => n.isEven ? _red : _green,
+          },
+        ),
+      );
     }
 
     final kept = await _expectTwins(config);
@@ -203,19 +203,21 @@ void main() {
 
   test('a list of radii breaks the run at each change', () async {
     await _expectTwins(
-      () => _config(300, {
-        'radius': <double>[2, 3, 3, 4],
-        'backgroundColor': <ChartPaint>[_red, _green],
-      }),
+      () => _config(
+        300,
+        radii: const [2, 3, 3, 4],
+        backgroundColor: const ChartValue.indexed([_red, _green]),
+      ),
     );
   });
 
   test('a hovered point draws on top in its hover style', () async {
     final kept = await _expectTwins(
-      () => _config(800, {
-        'backgroundColor': <ChartPaint>[_red, _green],
-        'hoverBackgroundColor': _blue,
-      }),
+      () => _config(
+        800,
+        backgroundColor: const ChartValue.indexed([_red, _green]),
+        hoverBackgroundColor: const ChartValue.constant(_blue),
+      ),
       active: const [
         ActiveElement(datasetIndex: 0, index: 7),
         ActiveElement(datasetIndex: 0, index: 400),

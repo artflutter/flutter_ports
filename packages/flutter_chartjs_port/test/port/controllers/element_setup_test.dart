@@ -4,14 +4,9 @@ library;
 
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 class _ObservedConfig(super.config) extends Config {
@@ -61,7 +56,7 @@ class _ObservedConfig(super.config) extends Config {
 }
 
 class _ConfigChart(Object item, final Config supplied) extends Chart {
-  this : super(item, <String, Object?>{});
+  this : super(item, ChartConfigurationScope());
   @override
   Config get config => supplied;
 }
@@ -88,37 +83,35 @@ final class _ObservedPointScope(final PointOptionsScope source)
   }
 }
 
-Map<String, Object?> config() => {
-  'type': 'line',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          for (var i = 0; i < 8; i++)
-            <String, Object?>{'x': i.toDouble(), 'y': i.toDouble()},
-        ],
-        'backgroundColor': (Object? ctx) =>
-            const ChartPaint.solid(Color(0xff0000ff)),
-      },
-    ],
+ChartPaint _blue(ChartContext context) =>
+    const ChartPaint.solid(Color(0xff0000ff));
+
+ChartConfig config({ChartScript<ChartPaint> color = _blue}) => ChartConfig(
+  type: ChartKind.line,
+  datasets: [
+    LineDataset(
+      points: [for (var i = 0; i < 8; i++) DataPoint(i, i)],
+      backgroundColor: ChartValue.resolver(color),
+    ),
+  ],
+  responsive: false,
+  animation: ChartAnimation.none,
+  scales: const {
+    'x': LinearAxis(display: ScaleDisplay.off),
+    'y': LinearAxis(display: ScaleDisplay.off),
   },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
+  extra: const {
     'parsing': false,
-    'plugins': <String, Object?>{'legend': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
-      'y': <String, Object?>{'type': 'linear', 'display': ScaleDisplay.off},
-    },
+    'plugins': {'legend': false},
   },
-};
+);
+
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   test(
     'custom Config keeps native virtual dispatch and fresh prefix lists',
     () {
-      final cfg = _ObservedConfig(config());
+      final cfg = _ObservedConfig(ChartConfigLowering(config()).lower());
       final chart = _ConfigChart(UiCanvasElement(width: 400, height: 300), cfg);
       addTearDown(chart.destroy);
       chart.update(UpdateMode.none);
@@ -128,7 +121,10 @@ void main() {
     },
   );
   test('custom default-key producer still enumerates for each resolution', () {
-    final chart = Chart(UiCanvasElement(width: 400, height: 300), config());
+    final chart = Chart(
+      UiCanvasElement(width: 400, height: 300),
+      ChartConfigLowering(config()).lower(),
+    );
     addTearDown(chart.destroy);
     final elements =
         Chart.defaults.elementsCell!.raw! as ElementOptionsByTypeScope;
@@ -151,13 +147,12 @@ void main() {
     final traces = <List<Object?>>[];
     for (final ordinary in [false, true]) {
       defaults.restoreState(saved);
-      final cfg = config();
       var mutate = false;
       final trace = <Object?>[];
-      ChartPaint color(Object? context) {
-        final index = (context! as ScriptableContext).index;
+      ChartPaint color(ChartContext context) {
+        final index = context.dataIndex;
         if (mutate) trace.add(index);
-        if (mutate && index == 1.0) {
+        if (mutate && index == 1) {
           defaults
             ..jsDelete('radius')
             ..jsWrite('lateOption', 7.0);
@@ -165,9 +160,7 @@ void main() {
         return const ChartPaint.solid(Color(0xff0000ff));
       }
 
-      final datasets =
-          (cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>;
-      (datasets.first! as Map<String, Object?>)['backgroundColor'] = color;
+      final cfg = ChartConfigLowering(config(color: color)).lower();
       final canvas = UiCanvasElement(width: 400, height: 300);
       final chart = ordinary
           ? _ConfigChart(canvas, _ObservedConfig(cfg))
@@ -192,7 +185,7 @@ void main() {
       }
     }
     expect(observations[0], observations[1]);
-    expect(traces[0], [0.0, 1.0, 2.0, 3.0]);
+    expect(traces[0], [0, 1, 2, 3]);
     expect(traces[0], traces[1]);
   });
 }

@@ -2,8 +2,9 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The state of the x scale of [_chart] at `afterTickToLabelConversion`.
@@ -34,28 +35,23 @@ Chart _chart(
   int? sampleSize,
 }) {
   final canvas = UiCanvasElement(width: 600, height: 300);
-  final chart = Chart(canvas, <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 0.0, 'y': 1.0},
-            <String, Object?>{'x': count - 1.0, 'y': 2.0},
-          ],
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'animation': false,
-      'events': <String>[],
-      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-      'scales': <String, Object?>{
-        'x': <String, Object?>{
-          'type': 'linear',
-          'min': 0.0,
-          'max': count - 1.0,
+  final config = ChartConfig(
+    type: ChartKind.line,
+    datasets: [
+      LineDataset(points: [DataPoint(0, 1), DataPoint(count - 1, 2)]),
+    ],
+    responsive: false,
+    animation: ChartAnimation.none,
+    scales: {
+      'x': LinearAxis(
+        min: 0,
+        max: count - 1.0,
+        ticks: AxisTicks(
+          callback: (scale, value, index, ticks) =>
+              keep(value.toInt()) ? ['$value'] : null,
+          extra: {'sampleSize': ?sampleSize},
+        ),
+        extra: {
           'afterBuildTicks': (Scale scale) {
             seen
               ..built = [
@@ -70,20 +66,16 @@ Chart _chart(
               ..sameList = identical(scale.ticks, seen.built)
               ..kept = [...scale.ticks!];
           },
-          'ticks': <String, Object?>{
-            'sampleSize': ?sampleSize,
-            'callback': (
-              Scale scale,
-              double value,
-              int index,
-              List<Tick> ticks,
-            ) => keep(value.toInt()) ? <String>['$value'] : null,
-          },
         },
-        'y': <String, Object?>{'type': 'linear'},
-      },
+      ),
+      'y': const LinearAxis(),
     },
-  });
+    extra: const {
+      'events': <String>[],
+      'plugins': {'legend': false, 'tooltip': false},
+    },
+  );
+  final chart = Chart(canvas, ChartConfigLowering(config).lower());
   addTearDown(chart.destroy);
   return chart;
 }

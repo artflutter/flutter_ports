@@ -2850,3 +2850,12 @@ keep their behavior. The same batch migrates the stack and boundary filler searc
 and `test/port/js/js_number_chart_test.dart`. The references use named tests rather than the
 former line counts. No production canvas code or deferred cut changes. The inventory, tests
 of §2.6 and §3.5, and estimates remain unchanged. No trigger occurred.
+
+## Typed kept-run test config, 2026-11-19
+
+`test/port/controllers/scatter_kept_run_test.dart` now constructs its scatter twins with
+`ChartConfig`, `ScatterDataset`, `DataPoint` and typed paint values. Its indexable radius stays
+in `extra`, and its native-call, style and pixel comparisons are unchanged. The same batch
+migrates pixel alignment, tick-label removal, single-scale parsing and controller setup tests.
+No production canvas code or deferred cut changes. The named references, inventory, tests of
+§2.6 and §3.5, and estimates remain unchanged. No trigger occurred.

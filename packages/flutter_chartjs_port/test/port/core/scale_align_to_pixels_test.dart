@@ -2,44 +2,36 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show alignPixel;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show int16Range;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 /// A line chart at the pixel ratio 2 with two linear scales, `alignToPixels`
 /// [value] on both, or no key for [undefined].
-Map<String, Object?> _config(Object? value) {
-  Map<String, Object?> scale() => <String, Object?>{
-    'type': 'linear',
-    'min': 0.0,
-    'max': 7.0,
-    if (!identical(value, undefined)) 'alignToPixels': value,
-  };
-  return <String, Object?>{
-    'type': 'line',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            for (var i = 0; i < 8; i++)
-              <String, Object?>{'x': i * 1.0, 'y': (i * 5 % 7) * 1.0},
-          ],
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'animation': false,
+ChartConfig _config(Object? value) {
+  LinearAxis scale() => LinearAxis(
+    min: 0,
+    max: 7,
+    // Keep explicit null distinct from an absent option in these cases.
+    extra: {if (!identical(value, undefined)) 'alignToPixels': value},
+  );
+  return ChartConfig(
+    type: ChartKind.line,
+    datasets: [
+      LineDataset(
+        points: [for (var i = 0; i < 8; i++) DataPoint(i, i * 5 % 7)],
+      ),
+    ],
+    responsive: false,
+    animation: ChartAnimation.none,
+    scales: {'x': scale(), 'y': scale()},
+    extra: const {
       'devicePixelRatio': 2.0,
       'events': <String>[],
-      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-      'scales': <String, Object?>{'x': scale(), 'y': scale()},
+      'plugins': {'legend': false, 'tooltip': false},
     },
-  };
+  );
 }
 
 void main() {
@@ -56,7 +48,7 @@ void main() {
   for (final (name, value, truthy) in cases) {
     test('alignToPixels $name gives its pixels', () {
       final canvas = UiCanvasElement(width: 641, height: 401);
-      final chart = Chart(canvas, _config(value));
+      final chart = Chart(canvas, ChartConfigLowering(_config(value)).lower());
       addTearDown(chart.destroy);
       expect(chart.currentDevicePixelRatio, 2.0);
       for (final scaleId in ['x', 'y']) {

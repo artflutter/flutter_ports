@@ -5,10 +5,9 @@ library;
 import 'dart:collection';
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 // The twin of the radial parse (Chart.js ADR 0095): the exact radial scale
@@ -56,26 +55,23 @@ List<String> _records(List<ParsedItem> items) => [
     '${item.jsKeys()} ${_bits(item.r)} ${item.r.runtimeType}',
 ];
 
-AnyObject _config(List<Object?> data, String? scaleType) => <String, Object?>{
-  'type': 'radar',
-  'data': <String, Object?>{
-    'labels': <Object?>[for (var i = 0; i < data.length; i++) 'L$i'],
-    'datasets': <Object?>[
-      <String, Object?>{'data': data},
-    ],
+ChartConfig _config(List<Object?> data, String? scaleType) => ChartConfig(
+  type: ChartKind.radar,
+  labels: [for (var i = 0; i < data.length; i++) 'L$i'],
+  datasets: [
+    // The guard cases need undefined, strings and the original List type.
+    RadarDataset(extra: {'data': data}),
+  ],
+  responsive: false,
+  scales: {
+    'r': RadialLinearAxis(extra: {'type': ?scaleType}),
   },
-  'options': <String, Object?>{
-    'responsive': false,
-    'scales': <String, Object?>{
-      'r': <String, Object?>{'type': ?scaleType},
-    },
-  },
-};
+);
 
 Chart _chart(List<Object?> data, String? scaleType) {
   final chart = Chart(
     UiCanvasElement(width: 200, height: 200),
-    _config(data, scaleType),
+    ChartConfigLowering(_config(data, scaleType)).lower(),
   );
   addTearDown(chart.destroy);
   return chart;
