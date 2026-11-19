@@ -6,7 +6,19 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        ChartAnimation,
+        ChartConfig,
+        ChartKind,
+        ChartValue,
+        Dataset,
+        DoughnutDataset,
+        PieDataset,
+        PolarAreaDataset;
 import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:flutter_test/flutter_test.dart';
@@ -26,36 +38,56 @@ const _colors = <ChartPaint>[
   ChartPaint.solid(ui.Color(0xFF66AA00)),
 ];
 
-Map<String, Object?> _config(String type, {required double borderWidth}) => {
-  'type': type,
-  'data': <String, Object?>{
-    'labels': <Object?>[for (var i = 0; i < 8; i++) 'L$i'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[for (var i = 0; i < 8; i++) 3.0 + i],
-        'backgroundColor': <Object?>[..._colors],
-        'borderWidth': borderWidth,
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'animation': false,
-    'plugins': <String, Object?>{
-      'legend': false,
-      'title': false,
-      'tooltip': false,
-    },
-  },
+Dataset _dataset(
+  ChartKind type, {
+  required List<num> data,
+  required ChartValue<ChartPaint> backgroundColor,
+  required double borderWidth,
+}) => switch (type) {
+  ChartKind.pie => PieDataset(
+    data: data,
+    backgroundColor: backgroundColor,
+    borderWidth: borderWidth,
+  ),
+  ChartKind.doughnut => DoughnutDataset(
+    data: data,
+    backgroundColor: backgroundColor,
+    borderWidth: borderWidth,
+  ),
+  ChartKind.polarArea => PolarAreaDataset(
+    data: data,
+    backgroundColor: backgroundColor,
+    borderWidth: borderWidth,
+  ),
+  _ => throw ArgumentError.value(type, 'type'),
 };
+
+ChartConfig _config(ChartKind type, {required double borderWidth}) =>
+    ChartConfig(
+      type: type,
+      labels: [for (var i = 0; i < 8; i++) 'L$i'],
+      datasets: [
+        _dataset(
+          type,
+          data: [for (var i = 0; i < 8; i++) 3.0 + i],
+          backgroundColor: const ChartValue.indexed(_colors),
+          borderWidth: borderWidth,
+        ),
+      ],
+      animation: ChartAnimation.none,
+      extra: const {
+        'plugins': {'legend': false, 'title': false, 'tooltip': false},
+      },
+    );
 
 Future<Uint8List> _pixels(
   WidgetTester tester,
-  Map<String, Object?> config, {
+  ChartConfig config, {
   required bool ordinary,
 }) async {
   if (ordinary) ui.Picture.onCreate = (_) {};
   addTearDown(() => ui.Picture.onCreate = null);
-  final chart = acquireChart(config);
+  final chart = acquireChartRoot(ChartConfigLowering(config).lower());
   await tester.pump();
   final canvas = chart.canvas! as UiCanvasElement;
   final (w, h) = (canvas.width, canvas.height);
@@ -73,28 +105,28 @@ Future<Uint8List> _pixels(
 }
 
 void main() {
-  for (final type in const ['pie', 'doughnut']) {
+  for (final type in const [ChartKind.pie, ChartKind.doughnut]) {
     testWidgets('$type of one color: the slices of a real chart join', (
       tester,
     ) async {
       const n = 2000;
-      final chart = acquireChart({
-        'type': type,
-        'data': <String, Object?>{
-          'labels': <Object?>[for (var i = 0; i < n; i++) i],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[for (var i = 0; i < n; i++) 1.0 + i % 37],
-              'backgroundColor': _colors.first,
-              'borderWidth': 0.0,
-            },
-          ],
+      final config = ChartConfig(
+        type: type,
+        labels: [for (var i = 0; i < n; i++) i],
+        datasets: [
+          _dataset(
+            type,
+            data: [for (var i = 0; i < n; i++) 1.0 + i % 37],
+            backgroundColor: ChartValue.constant(_colors.first),
+            borderWidth: 0,
+          ),
+        ],
+        animation: ChartAnimation.none,
+        extra: const {
+          'plugins': {'legend': false, 'tooltip': false},
         },
-        'options': <String, Object?>{
-          'animation': false,
-          'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-        },
-      });
+      );
+      final chart = acquireChartRoot(ChartConfigLowering(config).lower());
       await tester.pump();
       chart.draw();
       final context = (chart.canvas! as UiCanvasElement).getContext2d();
@@ -109,9 +141,15 @@ void main() {
     });
   }
 
-  for (final type in const ['pie', 'doughnut', 'polarArea']) {
+  for (final type in const [
+    ChartKind.pie,
+    ChartKind.doughnut,
+    ChartKind.polarArea,
+  ]) {
     testWidgets('$type with no border takes the fused route', (tester) async {
-      final chart = acquireChart(_config(type, borderWidth: 0));
+      final chart = acquireChartRoot(
+        ChartConfigLowering(_config(type, borderWidth: 0)).lower(),
+      );
       await tester.pump();
       chart.draw();
       final canvas = chart.canvas! as UiCanvasElement;

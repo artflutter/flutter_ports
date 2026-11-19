@@ -3,6 +3,8 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show ChartConfig, ChartKind, PieDataset;
 import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart';
 import 'package:flutter_chartjs_port/src/controllers/controller.pie.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -12,7 +14,8 @@ import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
     show PixelRadius;
 import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
 import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/legend_item.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:flutter_test/flutter_test.dart';
@@ -46,17 +49,16 @@ List<Object?> _generateLabels(Chart chart) =>
 
 /// The config of a pie chart with the labels a, b, c and one dataset with
 /// [data].
-AnyObject _one(List<Object?> data) => <String, Object?>{
-  'type': 'pie',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[...data],
-      },
-    ],
-  },
-};
+ChartConfig _one(List<num?> data) => ChartConfig(
+  type: ChartKind.pie,
+  labels: const ['a', 'b', 'c'],
+  datasets: [
+    PieDataset(data: [...data]),
+  ],
+);
+
+Chart _chart(ChartConfig config) =>
+    acquireChartRoot(ChartConfigLowering(config).lower());
 
 void main() {
   group('interfaces', () {
@@ -97,7 +99,7 @@ void main() {
     });
 
     testWidgets('a pie chart constructs a PieController', (tester) async {
-      final chart = acquireChart(_one(const <Object?>[1.0, 2.0, 3.0]));
+      final chart = _chart(_one(const [1.0, 2.0, 3.0]));
       final controller = chart.getDatasetMeta(0).controller;
       expect(controller, isA<PieController>());
       expect(chart.getDatasetMeta(0).type, 'pie');
@@ -107,11 +109,12 @@ void main() {
       tester,
     ) async {
       // The legend plugin is off, so it writes no `chart.legend`.
-      final chart = acquireChart(
-        _one(const <Object?>[1.0, 2.0, 3.0])
-          ..['options'] = <String, Object?>{
-            'plugins': <String, Object?>{'legend': false},
+      final chart = _chart(
+        _one(const [1.0, 2.0, 3.0]).copyWith(
+          extra: {
+            'plugins': {'legend': false},
           },
+        ),
       );
       expect(chart.legend, isNull);
       expect(() => _generateLabels(chart), throwsA(isA<TypeError>()));
@@ -120,16 +123,17 @@ void main() {
     testWidgets('onClick toggles the index of the item and updates the chart '
         'once', (tester) async {
       var updates = 0;
-      final config = _one(const <Object?>[1.0, 2.0, 3.0])
-        ..['plugins'] = <Plugin<Object?>>[
+      final config = _one(const [1.0, 2.0, 3.0]).copyWith(
+        plugins: [
           Plugin<Object?>(
             id: 'countUpdates',
             afterUpdate: (chart, args, options) {
               updates++;
             },
           ),
-        ];
-      final chart = acquireChart(config);
+        ],
+      );
+      final chart = _chart(config);
       final legend = chart.legend!;
       final before = updates;
 

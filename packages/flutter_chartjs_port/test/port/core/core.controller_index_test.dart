@@ -3,7 +3,11 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show BarDataset, ChartAnimation, ChartConfig, ChartKind;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -13,21 +17,19 @@ import 'package:flutter_test/flutter_test.dart';
 // they are.
 
 /// A bar chart with two datasets of three values.
-Chart _chart() => acquireChart(<String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[1, 2, 3],
-      },
-      <String, Object?>{
-        'data': <Object?>[4, 5, 6],
-      },
-    ],
-  },
-  'options': <String, Object?>{'animation': false},
-});
+Chart _chart() => acquireChartRoot(
+  ChartConfigLowering(
+    const ChartConfig(
+      type: ChartKind.bar,
+      labels: ['a', 'b', 'c'],
+      datasets: [
+        BarDataset(data: [1, 2, 3]),
+        BarDataset(data: [4, 5, 6]),
+      ],
+      animation: ChartAnimation.none,
+    ),
+  ).lower(),
+);
 
 void main() {
   group('adapt-int-indexes', () {

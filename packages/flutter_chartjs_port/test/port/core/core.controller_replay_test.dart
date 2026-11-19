@@ -6,11 +6,23 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        ChartAnimation,
+        ChartConfig,
+        ChartKind,
+        ChartTooltip,
+        ChartTransition,
+        HoverTransition,
+        LineDataset,
+        LinearAxis;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
     show dispatchCanvasEvent;
 import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/active_element.dart';
 import 'package:flutter_chartjs_port/src/types/plugin.dart';
 import 'package:flutter_chartjs_port/src/types/update_mode.dart';
@@ -59,39 +71,30 @@ Plugin<Object?> _counting(_Counts counts) => Plugin<Object?>(
   },
 );
 
-/// A line chart with markers and the tooltip of the defaults. [animation] is
-/// the `options.animation` of the chart. `false` is the form that the double
-/// draw of upstream occurs with on each update.
+/// A line chart with markers and the tooltip of the defaults. With
+/// [ChartAnimation.none], the double draw of upstream occurs on each update.
 Chart _chart(
   _Counts counts, {
-  Object? animation = false,
-  Map<String, Object?>? transitions,
-  Map<String, Object?>? plugins,
-}) => acquireChart(<String, Object?>{
-  'type': 'line',
-  'plugins': <Plugin<Object?>>[_counting(counts)],
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'values',
-        'data': <Object?>[1, 2, 3],
-        'pointRadius': 3,
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'animation': animation,
-    'transitions': ?transitions,
-    'plugins': ?plugins,
-    'onHover': (Object? event, Object? active, Object? chart) {
-      counts.hit('onHover');
-    },
-    'scales': <String, Object?>{
-      'y': <String, Object?>{'min': 0, 'max': 4},
-    },
-  },
-});
+  ChartAnimation animation = ChartAnimation.none,
+  List<ChartTransition>? transitions,
+  ChartTooltip? tooltip,
+}) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.line,
+      plugins: [_counting(counts)],
+      labels: const ['a', 'b', 'c'],
+      datasets: const [
+        LineDataset(label: 'values', data: [1, 2, 3], pointRadius: 3),
+      ],
+      animation: animation,
+      transitions: transitions,
+      tooltip: tooltip,
+      onHover: (event, active, chart) => counts.hit('onHover'),
+      scales: const {'y': LinearAxis(min: 0, max: 4)},
+    ),
+  ).lower(),
+);
 
 /// Moves the mouse onto the second point. Each later update replays this
 /// event, and then the counts start at zero.
@@ -166,20 +169,14 @@ void main() {
       final counts = _Counts();
       final chart = _chart(
         counts,
-        animation: <String, Object?>{
-          'duration': 0,
-          'onComplete': (Object? event) {
+        animation: ChartAnimation(
+          duration: Duration.zero,
+          onComplete: (event) {
             counts.hit('onComplete');
           },
-        },
-        transitions: <String, Object?>{
-          'active': <String, Object?>{
-            'animation': <String, Object?>{'duration': 0},
-          },
-        },
-        plugins: <String, Object?>{
-          'tooltip': <String, Object?>{'animation': false},
-        },
+        ),
+        transitions: const [HoverTransition.off()],
+        tooltip: const ChartTooltip(extra: {'animation': false}),
       );
       await _hover(chart, counts);
 
@@ -227,7 +224,10 @@ void main() {
       final counts = _Counts();
       // The elements leave their start animation before the mouse moves.
       final chart =
-          _chart(counts, animation: <String, Object?>{'duration': 1000})
+          _chart(
+              counts,
+              animation: const ChartAnimation(duration: Duration(seconds: 1)),
+            )
             ..stop()
             ..update(UpdateMode.none);
       await _hover(chart, counts);
@@ -265,8 +265,10 @@ void main() {
 
   group('adapt-live-mouse-move', () {
     /// A chart whose owner holds each mouse move for the update of its frame.
-    Chart heldChart(_Counts counts, {Object? animation = false}) =>
-        _chart(counts, animation: animation)..holdMouseMove = () => true;
+    Chart heldChart(
+      _Counts counts, {
+      ChartAnimation animation = ChartAnimation.none,
+    }) => _chart(counts, animation: animation)..holdMouseMove = () => true;
 
     /// Sends the event to the canvas and runs the frame of its listener.
     Future<void> send(
@@ -357,7 +359,10 @@ void main() {
       final counts = _Counts();
       // The elements leave their start animation before the mouse moves.
       final chart =
-          heldChart(counts, animation: <String, Object?>{'duration': 1000})
+          heldChart(
+              counts,
+              animation: const ChartAnimation(duration: Duration(seconds: 1)),
+            )
             ..stop()
             ..update(UpdateMode.none)
             ..update();

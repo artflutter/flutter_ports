@@ -4,6 +4,8 @@ library;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart' hide Element;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show ChartAnimation, ChartConfig, ChartKind, LineDataset, LinearAxis;
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 import 'package:flutter_chartjs_port/src/core/core.element.dart';
 import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
@@ -37,26 +39,17 @@ final class _Log() {
 }
 
 /// A new config object with new data, as a live chart gets in each frame.
-Map<String, Object?> _config(_Log log, int step) => <String, Object?>{
-  'type': 'line',
-  'plugins': log.plugins,
-  'data': <String, Object?>{
-    'labels': const <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[1, 2 + step * .001, 3],
-        'pointRadius': 3,
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'animation': false,
-    'maintainAspectRatio': false,
-    'scales': <String, Object?>{
-      'y': <String, Object?>{'min': 0, 'max': 4},
-    },
-  },
-};
+ChartConfig _config(_Log log, int step) => ChartConfig(
+  type: ChartKind.line,
+  plugins: log.plugins,
+  labels: const ['a', 'b', 'c'],
+  datasets: [
+    LineDataset(data: [1, 2 + step * .001, 3], pointRadius: 3),
+  ],
+  animation: ChartAnimation.none,
+  maintainAspectRatio: false,
+  scales: const {'y': LinearAxis(min: 0, max: 4)},
+);
 
 Widget _view(_Log log, int step) => Directionality(
   textDirection: TextDirection.ltr,
@@ -65,10 +58,7 @@ Widget _view(_Log log, int step) => Directionality(
     child: SizedBox(
       width: 400,
       height: 300,
-      child: ChartView.raw(
-        updateMode: UpdateMode.none,
-        config: _config(log, step),
-      ),
+      child: ChartView(updateMode: UpdateMode.none, config: _config(log, step)),
     ),
   ),
 );
