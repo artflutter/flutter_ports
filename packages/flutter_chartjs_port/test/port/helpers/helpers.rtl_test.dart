@@ -100,6 +100,7 @@ void main() {
       expect(legend.readKey(OptionKey.textDirection), TextDirection.rtl);
       expect(LegendOptions.of(legend).textDirection, TextDirection.rtl);
       expect(TooltipOptions.of(tooltip).textDirection, TextDirection.ltr);
+      // Maps: the subject is the raw options path of `of`.
       expect(
         LegendOptions.of({'textDirection': TextDirection.rtl}).textDirection,
         TextDirection.rtl,
@@ -109,6 +110,7 @@ void main() {
     });
 
     test('a scriptable direction resolves at its context', () {
+      // A Map: the subject is a scriptable option of a raw resolver.
       final resolver = createResolver([
         {
           'textDirection': (Object? ctx, Object? _) =>

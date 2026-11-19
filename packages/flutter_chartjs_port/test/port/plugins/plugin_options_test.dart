@@ -18,6 +18,8 @@ final class const _NoEvents() extends PluginOptions<_NoEvents> {
 // resolved options: a getter reads it by name, as the facade reads a Map of
 // a spec.
 void main() {
+  // Maps: the subject is `of`, the read of raw resolved options into the
+  // classes of Chart.js ADR 0182.
   group('the typed getters of the plugin option facades', () {
     test('a number of a truthy value, else null', () {
       expect(

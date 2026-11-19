@@ -31,6 +31,7 @@ void main() {
   });
 
   test('a scriptable padding returns a native value at each context', () {
+    // A Map: the subject is a scriptable option of a raw resolver.
     final resolver = createResolver([
       {
         'padding': (Object? ctx, Object? _) =>

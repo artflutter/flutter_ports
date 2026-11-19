@@ -897,14 +897,28 @@ void main() {
                 );
               }
               if (config == 'A') {
-                final plugins = chart.options['plugins'];
-                expect(jsGet(jsGet(plugins, 'legend'), 'display'), false);
-                expect(jsGet(jsGet(plugins, 'title'), 'display'), false);
-                expect(jsGet(jsGet(plugins, 'subtitle'), 'display'), false);
-                expect(jsGet(jsGet(plugins, 'colors'), 'enabled'), false);
-                expect(jsGet(jsGet(plugins, 'decimation'), 'enabled'), false);
                 // The legend builds its box, also with `display: false`.
                 expect(chart.legend, isNotNull, reason: reason);
+                // The resolved option classes of Chart.js ADR 0182: the
+                // boxes keep theirs, and the other plugins have no box.
+                final plugins = chart.options['plugins'];
+                expect((chart.legend! as Legend).options.display, isFalse);
+                expect(
+                  (chart.titleBlock! as chartjs.Title).options!.display,
+                  isFalse,
+                );
+                expect(
+                  TitleOptions.of(jsGet(plugins, 'subtitle')).display,
+                  isFalse,
+                );
+                expect(
+                  ColorsPluginOptions.of(jsGet(plugins, 'colors')).enabled,
+                  isFalse,
+                );
+                expect(
+                  DecimationOptions.of(jsGet(plugins, 'decimation')).enabled,
+                  isFalse,
+                );
               } else {
                 expect(chart.options['plugins'], false, reason: reason);
                 expect(chart.legend, isNull, reason: reason);

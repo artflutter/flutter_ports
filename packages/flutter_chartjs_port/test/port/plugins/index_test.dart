@@ -463,6 +463,7 @@ void main() {
             <O>(plugin) => _recordHooks(plugin, calls, upstream[plugin.id]),
           );
         }
+        // A Map: the config comes from the generated reference data.
         final config = copyReference(c.config)! as AnyObject;
         config['plugins'] = [_recorder(notifies)];
         final options = copyReference(c.options)! as AnyObject;

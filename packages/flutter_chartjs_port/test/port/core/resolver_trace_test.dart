@@ -311,6 +311,7 @@ void _runCase(ResolverTraceReferenceCase c) {
   final trace = <Object?>[];
   final functions = resolverTraceFunctions(trace);
   if (c.setup case final setup?) resolverTraceSetups[setup]!(functions);
+  // A Map: the config comes from the generated reference data.
   final config = copyReference(c.config, functions)! as AnyObject;
   nativeFixtureColors(config);
   final expected = c.expected;
