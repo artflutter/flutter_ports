@@ -1,10 +1,7 @@
 // Original code, not ported from Chart.js: a chart fake for platform tests.
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart';
-import 'package:flutter_chartjs_port/src/platform/index.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// A chart with the platform calls of core.controller.js: the constructor
 /// (:122-196), `_resize` (:258-300), `bindEvents` (:964-1049),
@@ -24,7 +21,7 @@ final class FakeChart(
     'touchstart',
     'touchmove',
   ],
-}) implements types.Chart {
+}) implements IChart {
   /// `new Chart(item, {options})`.
   this {
     platform = detectPlatform(item)();
@@ -84,7 +81,7 @@ final class FakeChart(
   bool attached = false;
 
   /// The events of `_eventHandler`.
-  final List<types.ChartEvent> events = [];
+  final List<ChartEvent> events = [];
 
   /// The sizes of the `resize` plugin hook.
   final List<({double width, double height})> resizes = [];
@@ -157,7 +154,7 @@ final class FakeChart(
   /// core.controller.js:964 `bindEvents`.
   void bindEvents() {
     for (final type in options['events']! as List<String>) {
-      void listener(types.ChartEvent e) => events.add(e);
+      void listener(ChartEvent e) => events.add(e);
       platform.addEventListener(this, type, listener);
       _listeners[type] = listener;
     }

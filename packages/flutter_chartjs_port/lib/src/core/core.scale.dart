@@ -50,55 +50,7 @@ import 'dart:math' as math;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
-import 'package:flutter_chartjs_port/src/core/point_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
-import 'package:flutter_chartjs_port/src/core/scale_options.dart';
-import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength, ValueGrace;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show alignPixel, clipArea, measureText, renderText, unclipArea;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextProxy, OptionView, functionOption, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show finiteOrDefault, isFinite, valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
-    show alignStartEnd, toLeftRightCenter;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show MinMax, halfPi, int16Range, limitValue, toDegrees, toRadians;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScaleContext, addGrace, createContext, toFont;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart'
-    as types
-    show
-        LayoutItemBeforeLayout,
-        LayoutItemConfigure,
-        LayoutItemPadding,
-        LayoutLayer;
-import 'package:flutter_chartjs_port/src/types/layout.dart'
-    show ChartPosition, ScaleValuePosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginHook;
-import 'package:flutter_chartjs_port/src/types/tick.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/types/tick.dart' show Tick;
@@ -197,7 +149,6 @@ typedef ScaleHook = void Function(Scale scale);
 /// Upstream calls only a function (helpers.core.ts:138). `false`, the
 /// default of a time scale, and an absent value are no callback. A function
 /// of another type stops a debug build.
-@internal
 TickCallback? tickCallbackOf(Object? value) {
   if (value is TickCallback) return value;
   assert(
@@ -526,8 +477,8 @@ final class _LabelItem(
   @override final Object? label,
   @override final ChartTextStyle font,
   @override final double textOffset,
-  @override final types.RenderTextOpts options,
-) implements types.LabelItem;
+  @override final RenderTextOpts options,
+) implements LabelItem;
 
 /// The area of `_computeLabelArea` (core.scale.js:1432, :1434): the object
 /// `{top, left, bottom, right}`.
@@ -536,7 +487,7 @@ final class _LabelArea(
   @override final double left,
   @override final double bottom,
   @override final double right,
-) implements types.TRBL;
+) implements TRBL;
 
 /// A layer of `_layers` (core.scale.js:1647-1669): the object literal
 /// `{z, draw}`.
@@ -546,10 +497,10 @@ final class _ScaleLayer(
   @override final double z,
 
   /// The `draw` function of the literal.
-  final void Function(types.ChartArea chartArea) _draw,
-) implements types.LayoutLayer {
+  final void Function(ChartArea chartArea) _draw,
+) implements LayoutLayer {
   @override
-  void draw(types.ChartArea chartArea) => _draw(chartArea);
+  void draw(ChartArea chartArea) => _draw(chartArea);
 
   @override
   double idx = double.nan;
@@ -576,10 +527,10 @@ abstract class _ScalePrototype() extends Element {
   /// core.scale.js:1623 `draw(chartArea)`. [Scale] has the body.
   ///
   /// Dart `null` for [chartArea] stands for JS `undefined`.
-  void draw([types.ChartArea? chartArea]) => _draw(chartArea);
+  void draw([ChartArea? chartArea]) => _draw(chartArea);
 
   /// The body of `draw`.
-  void _draw(types.ChartArea? chartArea);
+  void _draw(ChartArea? chartArea);
 }
 
 /// core.scale.js:168 `Scale`.
@@ -588,13 +539,13 @@ abstract class _ScalePrototype() extends Element {
 class Scale(AnyObject cfg)
     extends _ScalePrototype
     implements
-        types.Scale,
+        IScale,
         NativeBarIndexReads,
         BulkBarScale,
         LinearPixelScale,
-        types.LayoutItemBeforeLayout,
-        types.LayoutItemConfigure,
-        types.LayoutItemPadding,
+        LayoutItemBeforeLayout,
+        LayoutItemConfigure,
+        LayoutItemPadding,
         MinMax {
   /// core.scale.js:171 `constructor(cfg)`.
   ///
@@ -632,7 +583,7 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:183 `chart`.
   @override
-  final types.Chart chart = cfg['chart']! as types.Chart;
+  final IChart chart = cfg['chart']! as IChart;
 
   // implements box
 
@@ -739,7 +690,6 @@ class Scale(AnyObject cfg)
   /// core.scale.js:224 `_range`: the result of `_addGrace`
   /// (core.scale.js:429). Dart `null` stands for JS `undefined`, the start
   /// value. scale.linearbase.js:268 reads it.
-  @internal
   ({double min, double max})? range;
 
   /// core.scale.js:226 `ticks`.
@@ -753,19 +703,17 @@ class Scale(AnyObject cfg)
   List<_GridLineItem>? _gridLineItems;
 
   /// core.scale.js:230 `_labelItems`.
-  List<types.LabelItem>? _labelItems;
+  List<LabelItem>? _labelItems;
 
   /// core.scale.js:232 `_labelSizes`.
   _LabelSizes? _labelSizes;
 
   /// core.scale.js:233 `_length`. core.scale.autoskip.js:52 and
   /// controller.bar.js:27 read it.
-  @internal
   @override
   double length = 0;
 
   /// core.scale.js:234 `_maxLength`. core.scale.autoskip.js:53 reads it.
-  @internal
   @override
   double maxLength = 0;
 
@@ -775,13 +723,11 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:237 `_startPixel`. NaN stands for JS `undefined`.
   /// controller.bar.js:549 reads it.
-  @internal
   @override
   double startPixel = double.nan;
 
   /// core.scale.js:239 `_endPixel`. NaN stands for JS `undefined`.
   /// controller.bar.js:550 reads it.
-  @internal
   @override
   double endPixel = double.nan;
 
@@ -791,18 +737,15 @@ class Scale(AnyObject cfg)
   /// reader tests it for truthiness or negates it (core.scale.js:921,
   /// :935, scale.category.js:128, core.interaction.js:28). Thus it is the
   /// `ToBoolean` of that value.
-  @internal
   @override
   bool reversePixels = false;
 
   /// core.scale.js:241 `_userMax`, the parsed `max` option.
   /// scale.logarithmic.js:165 and scale.time.js:376 read it.
-  @internal
   Object? userMax = undefined;
 
   /// core.scale.js:242 `_userMin`, the parsed `min` option.
   /// scale.logarithmic.js:164 and scale.time.js:375 read it.
-  @internal
   Object? userMin = undefined;
 
   /// core.scale.js:243 `_suggestedMax`, the parsed `suggestedMax` option.
@@ -810,7 +753,6 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:244 `_suggestedMin`, the parsed `suggestedMin` option.
   /// scale.logarithmic.js:124 reads it.
-  @internal
   Object? suggestedMin = undefined;
 
   /// core.scale.js:245 `_ticksLength`.
@@ -825,9 +767,8 @@ class Scale(AnyObject cfg)
   /// core.scale.js:247 `_cache`, the data caches of the scale.
   /// scale.time.js:251, scale.timeseries.js:138 and controller.bar.js:8 read
   /// and write it.
-  @internal
   @override
-  types.ScaleCache cache = types.ScaleCache();
+  ScaleCache cache = ScaleCache();
 
   /// core.scale.js:248 `_dataLimitsCached`.
   bool _dataLimitsCached = false;
@@ -872,30 +813,25 @@ class Scale(AnyObject cfg)
   /// A JavaScript method is a property with a function value. The start
   /// value is the tear-off of the method [_layers]. `layouts.addBox` keeps
   /// it (core.layouts.js:301).
-  @internal
   @override
-  late List<types.LayoutLayer> Function()? layers = _layers;
+  late List<LayoutLayer> Function()? layers = _layers;
 
   /// Unknown scale classes retain their virtual topology reads.
   // DIVERGES(chartjs): adapt-live-bar-layout, unknown scales retain reads.
   @override
-  @internal
   bool get supportsNativeBarIndexReads => false;
 
   /// Unknown scales retain all their virtual projection/grid calls.
   @override
-  @internal
   bool get supportsBulkBarUpdate => false;
 
   /// Unknown scales retain their virtual pixel calls (Chart.js ADR 0166).
   @override
-  @internal
   // DIVERGES(chartjs): adapt-bulk-point-update, the exact linear scale only.
   LinearPixels? get linearPixels => null;
 
   /// The inputs of the pixel of a number for the exact linear scale, with the
   /// value range [startValue] and [valueRange] of that scale.
-  @internal
   // DIVERGES(chartjs): adapt-bulk-point-update, read once for a bulk run.
   LinearPixels linearPixelsOf(double startValue, double valueRange) =>
       LinearPixels(
@@ -909,7 +845,6 @@ class Scale(AnyObject cfg)
       );
 
   /// Only native category or explicitly bounded numeric scales opt in.
-  @internal
   bool get supportsDataUpdates => false;
 
   static final _bulkTickLists = <Type>{
@@ -921,7 +856,6 @@ class Scale(AnyObject cfg)
   /// Inspect cached settings and the tick container without resolving options
   /// or creating contexts. The first bulk item's normal lookup does that.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-bulk-bar-update, prove grid lookup purity.
   bool get hasStaticBulkBarGrid {
     if (!supportsBulkBarUpdate) return false;
@@ -1059,7 +993,7 @@ class Scale(AnyObject cfg)
   /// `ToNumber` of `value || 0`, the number that `Math.max` of the reader
   /// takes (core.layouts.js:111, :113).
   @override
-  types.TRBL getPadding() {
+  TRBL getPadding() {
     return _LabelArea(
       jsOrZero(paddingTop),
       _orZero(paddingLeft),
@@ -1111,7 +1045,7 @@ class Scale(AnyObject cfg)
   ///
   /// Dart `null` for [chartArea] stands for JS `undefined`, which takes the
   /// default.
-  List<types.LabelItem> getLabelItems([types.ChartArea? chartArea]) {
+  List<LabelItem> getLabelItems([ChartArea? chartArea]) {
     chartArea ??= chart.chartArea;
     final items = _labelItems ?? (_labelItems = _computeLabelItems(chartArea));
     return items;
@@ -1122,7 +1056,7 @@ class Scale(AnyObject cfg)
   /// When a new layout is created, reset the data limits cache
   @override
   void beforeLayout() {
-    cache = types.ScaleCache();
+    cache = ScaleCache();
     _dataLimitsCached = false;
   }
 
@@ -1151,7 +1085,7 @@ class Scale(AnyObject cfg)
   /// `Object.assign` ignores. `Object.assign` copies the four edges of
   /// [margins] into a new object.
   @override
-  void update(double maxWidth, double maxHeight, [types.TRBL? margins]) {
+  void update(double maxWidth, double maxHeight, [TRBL? margins]) {
     final options = this.options;
     final beginAtZero = options.beginAtZero;
     final grace = options.grace;
@@ -1924,7 +1858,6 @@ class Scale(AnyObject cfg)
 
   /// Whether the exact built-in scale permits scalar label-metric reuse.
   /// Custom scale subclasses retain their original virtual font behavior.
-  @internal
   bool get supportsStaticLabelPlan => false;
 
   static final Type _nativeTickListType = <Tick>[].runtimeType;
@@ -2068,7 +2001,6 @@ class Scale(AnyObject cfg)
   /// `padding` is the raw `autoSkipPadding || 0`. A string padding joins
   /// the label size ([jsAdd]), and the arithmetic after it takes the
   /// [jsToNumber]: `6.673828125 + '3'` gives `'6.6738281253'`.
-  @internal
   @override
   double tickSize() {
     final optionTicks = options.ticks;
@@ -2119,7 +2051,7 @@ class Scale(AnyObject cfg)
   /// number, for example `this.top + '8'` gives `'4848'` for the top 484.
   /// The canvas call that draws the tick mark applies `ToNumber` to the
   /// coordinate, so the item keeps the [jsToNumber] of the result.
-  List<_GridLineItem> _computeGridLineItems(types.ChartArea? chartArea) {
+  List<_GridLineItem> _computeGridLineItems(ChartArea? chartArea) {
     final axis = this.axis;
     final chart = this.chart;
     final options = this.options;
@@ -2310,7 +2242,7 @@ class Scale(AnyObject cfg)
   /// item is the [jsToNumber] of `x` and `y`, the values that the canvas
   /// call `translate` takes. Upstream keeps a joined string in the
   /// translation (differences.md row `adapt-scale-option-types`).
-  List<types.LabelItem> _computeLabelItems(types.ChartArea? chartArea) {
+  List<LabelItem> _computeLabelItems(ChartArea? chartArea) {
     final axis = this.axis;
     final options = this.options;
     final position = options.position;
@@ -2326,7 +2258,7 @@ class Scale(AnyObject cfg)
     final tickAndPadding = jsAdd(tl, padding);
     final hTickAndPadding = mirror ? -jsToNumber(padding) : tickAndPadding;
     final rotation = -_rotationRadians;
-    final items = <types.LabelItem>[];
+    final items = <LabelItem>[];
     Tick tick;
     List<String>? label;
     Object x = double.nan;
@@ -2456,7 +2388,7 @@ class Scale(AnyObject cfg)
         textOffset = (1 - lineCount) * lineHeight / 2;
       }
 
-      types.BackdropOptions? backdrop;
+      BackdropOptions? backdrop;
 
       if (optsAtIndex.showLabelBackdrop) {
         final labelPadding = optsAtIndex.backdropPadding;
@@ -2494,7 +2426,7 @@ class Scale(AnyObject cfg)
             break;
         }
 
-        backdrop = types.BackdropOptions(
+        backdrop = BackdropOptions(
           left: left,
           top: top,
           width: width + labelPadding.horizontal,
@@ -2510,7 +2442,7 @@ class Scale(AnyObject cfg)
           textOffset,
           // `strokeWidth` is the `canvasNumber` of the option value:
           // `renderText` compares it with 0 and gives it to `lineWidth`.
-          types.RenderTextOpts(
+          RenderTextOpts(
             rotation: rotation,
             color: color,
             strokeColor: strokeColor,
@@ -2704,7 +2636,7 @@ class Scale(AnyObject cfg)
   ///
   /// @protected
   @protected
-  void drawGrid([types.ChartArea? chartArea]) {
+  void drawGrid([ChartArea? chartArea]) {
     final grid = options.grid;
     final ctx = this.ctx;
     final items =
@@ -2814,7 +2746,7 @@ class Scale(AnyObject cfg)
   ///
   /// @protected
   @protected
-  void drawLabels([types.ChartArea? chartArea]) {
+  void drawLabels([ChartArea? chartArea]) {
     final optionTicks = options.ticks;
 
     if (!optionTicks.display) {
@@ -2849,7 +2781,7 @@ class Scale(AnyObject cfg)
   /// `index.d.ts:1324` declares a [chartArea] parameter. The upstream body
   /// does not read it.
   @protected
-  void drawTitle([types.ChartArea? chartArea]) {
+  void drawTitle([ChartArea? chartArea]) {
     final ctx = this.ctx;
     final options = this.options;
     final position = options.position;
@@ -2888,7 +2820,7 @@ class Scale(AnyObject cfg)
       0,
       0,
       font,
-      types.RenderTextOpts(
+      RenderTextOpts(
         color: title.color,
         maxWidth: maxWidth,
         rotation: rotation,
@@ -2904,7 +2836,7 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:1623 `draw(chartArea)`: the body. [draw] calls it.
   @override
-  void _draw(types.ChartArea? chartArea) {
+  void _draw(ChartArea? chartArea) {
     if (!_isVisible()) {
       return;
     }
@@ -2921,10 +2853,10 @@ class Scale(AnyObject cfg)
   /// @return {object[]}
   /// @private
   ///
-  /// A layer is the object literal `{z, draw}`, a [types.LayoutLayer]. `z`
+  /// A layer is the object literal `{z, draw}`, a [LayoutLayer]. `z`
   /// is a number. The test of an overridden `draw` compares two tear-offs
   /// (see [_ScalePrototype]).
-  List<types.LayoutLayer> _layers() {
+  List<LayoutLayer> _layers() {
     final opts = options;
     final ticks = opts.ticks;
     final grid = opts.grid;
@@ -2967,10 +2899,10 @@ class Scale(AnyObject cfg)
   /// by the class of the axis. An axis of another class names no property
   /// of a meta: JavaScript reads `undefined`, which equals no scale id.
   @override
-  List<types.ChartMeta> getMatchingVisibleMetas([String? type]) {
+  List<ChartMeta> getMatchingVisibleMetas([String? type]) {
     final metas = chart.getSortedVisibleDatasetMetas();
     final axis = this.axis;
-    final result = <types.ChartMeta>[];
+    final result = <ChartMeta>[];
 
     for (var i = 0, ilen = metas.length; i < ilen; ++i) {
       final meta = metas[i];
@@ -2993,7 +2925,6 @@ class Scale(AnyObject cfg)
   /// @param {number} index
   /// @return {object}
   /// @protected
-  @internal
   ChartTextStyle resolveTickFontOptions(int index) {
     // DIVERGES(chartjs): adapt-static-tick-font, guarded scalar font reuse.
     final ticks = options.ticks;
@@ -3011,7 +2942,6 @@ class Scale(AnyObject cfg)
   /// core.scale.js:1708 `_maxDigits()`. scale.linearbase.js:263 reads it.
   ///
   /// @protected
-  @internal
   double maxDigits() {
     final fontSize = resolveTickFontOptions(0).lineHeight!;
     return (isHorizontal() ? width : height) / fontSize;

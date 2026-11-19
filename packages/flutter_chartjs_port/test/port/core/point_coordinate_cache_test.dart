@@ -1,10 +1,7 @@
 // Original code, not ported from Chart.js: weak coordinate cache tests.
 import 'dart:collection';
 
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 class _ObservedMap() extends MapBase<String, Object?> {

@@ -36,13 +36,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
-    show requestAnimFrame;
-import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// core.animator.js:132-133 the type of the `cb` of [Animator.listen]: a
 /// function of an [AnimationEvent].
@@ -56,11 +50,11 @@ typedef AnimationListener = void Function(AnimationEvent event);
 /// [currentStep]. `core.controller.js:694` passes `{chart: this}` only. JS
 /// `null` never reaches these fields.
 final class AnimationEvent({
-  @override required final types.Chart chart,
+  @override required final IChart chart,
   @override final bool? initial,
   @override final double? numSteps,
   @override final double? currentStep,
-}) implements types.AnimationEvent {
+}) implements IAnimationEvent {
   /// The object literal `{chart, initial, numSteps, currentStep}`.
   this;
 }
@@ -71,8 +65,10 @@ final class AnimationEvent({
 ///
 /// It is not private, because [Animator.getAnims] returns it to the fixtures
 /// (Chart.js ADR 0029, section 6).
-@internal
 final class Anims() {
+  /// The record of a chart that `_getAnims` creates (core.animator.js:116).
+  this;
+
   /// core.animator.js:117 `running: false`.
   bool running = false;
 
@@ -114,11 +110,11 @@ class Animator() {
   /// core.animator.js:15 `_charts`, a JS `Map` from each chart to its
   /// record. A Dart `Map` keeps the insertion order. A `types.Chart` does
   /// not override `==`, so the keys compare by identity, as in a JS `Map`.
-  final Map<types.Chart, Anims> _charts = {};
+  final Map<IChart, Anims> _charts = {};
 
   /// The charts whose record [getAnims] creates while [update] walks the
   /// charts, or Dart `null` outside [update] (`adapt-animator-chart-list`).
-  List<types.Chart>? _added;
+  List<IChart>? _added;
 
   /// core.animator.js:16 `_running`.
   bool _running = false;
@@ -139,7 +135,7 @@ class Animator() {
   ///
   /// It walks the listeners by index up to their length at the start, as
   /// `Array.prototype.forEach` does.
-  void _notify(types.Chart chart, Anims anims, double date, String type) {
+  void _notify(IChart chart, Anims anims, double date, String type) {
     final callbacks = anims.listeners[type]!;
     final numSteps = anims.duration;
 
@@ -168,7 +164,6 @@ class Animator() {
   /// calls the field too. The initializer gives the tear-off of a private
   /// method with the upstream body (Chart.js ADR 0029, section 6).
   // DIVERGES(chartjs): harness-method-fields, a fixture replaces it.
-  @internal
   late void Function() refresh = _refreshMethod;
 
   /// The upstream body of `_refresh` (core.animator.js:38-52).
@@ -203,14 +198,13 @@ class Animator() {
   /// waits (Chart.js ADR 0016, decision 7). It does not count in
   /// `remaining`. It drops the underscore, because a fixture calls it
   /// (Chart.js ADR 0029, section 6).
-  @internal
   void update([double? date]) {
     date ??= clock.now().millisecondsSinceEpoch.toDouble();
     var remaining = 0;
 
     // DIVERGES(chartjs): adapt-animator-chart-list, a copy of the chart list.
     final outerAdded = _added;
-    final added = _added = <types.Chart>[];
+    final added = _added = <IChart>[];
     // DIVERGES(chartjs): adapt-animation-ease-table, one solve for an input.
     easeTableBegin();
     try {
@@ -287,8 +281,7 @@ class Animator() {
   ///
   /// It drops the underscore, because a fixture reads it (Chart.js ADR 0029,
   /// section 6).
-  @internal
-  Anims getAnims(types.Chart chart) {
+  Anims getAnims(IChart chart) {
     final charts = _charts;
     var anims = charts[chart];
     if (anims == null) {
@@ -307,7 +300,7 @@ class Animator() {
   ///
   /// An [event] other than `'complete'` and `'progress'` throws a
   /// [TypeError], as the `undefined.push` of JavaScript does.
-  void listen(types.Chart chart, String event, AnimationListener cb) {
+  void listen(IChart chart, String event, AnimationListener cb) {
     getAnims(chart).listeners[event]!.add(cb);
   }
 
@@ -318,7 +311,7 @@ class Animator() {
   ///
   /// Dart `null` for [items] stands for `undefined`
   /// (core.animator.tests.js:43).
-  void add(types.Chart chart, List<Animation>? items) {
+  void add(IChart chart, List<Animation>? items) {
     if (items == null || items.isEmpty) {
       return;
     }
@@ -331,14 +324,14 @@ class Animator() {
   /// @param {Chart} chart
   ///
   /// It creates the record of [chart], as [getAnims] does.
-  bool has(types.Chart chart) {
+  bool has(IChart chart) {
     return getAnims(chart).items.isNotEmpty;
   }
 
   /// core.animator.js:163 `start(chart)`: Start animating (all charts)
   ///
   /// @param {Chart} chart
-  void start(types.Chart chart) {
+  void start(IChart chart) {
     final anims = _charts[chart];
     if (anims == null) {
       return;
@@ -354,7 +347,7 @@ class Animator() {
   }
 
   /// core.animator.js:174 `running(chart)`.
-  bool running(types.Chart chart) {
+  bool running(IChart chart) {
     if (!_running) {
       return false;
     }
@@ -371,7 +364,7 @@ class Animator() {
   ///
   /// It gives the chart a new empty list (:200). A running [update] keeps
   /// the old list.
-  void stop(types.Chart chart) {
+  void stop(IChart chart) {
     final anims = _charts[chart];
     if (anims == null || anims.items.isEmpty) {
       return;
@@ -396,7 +389,7 @@ class Animator() {
   /// @param {Chart} chart
   ///
   /// True when the animator had a record of [chart], as `Map.delete` gives.
-  bool remove(types.Chart chart) {
+  bool remove(IChart chart) {
     // A record is never Dart null, so null means that no key was removed.
     return _charts.remove(chart) != null;
   }
@@ -411,7 +404,7 @@ class Animator() {
   /// While a chart is muted, its `onComplete` and `onProgress` callbacks
   /// wait.
   // DIVERGES(chartjs): platform-animator-mute, the TickerMode mute.
-  void mute(types.Chart chart) {
+  void mute(IChart chart) {
     _muted[chart] = true;
   }
 
@@ -427,7 +420,7 @@ class Animator() {
   /// whose record `remove` deleted, creates no record, and [_charts] keeps
   /// no destroyed chart alive.
   // DIVERGES(chartjs): platform-animator-mute, the TickerMode mute.
-  void unmute(types.Chart chart) {
+  void unmute(IChart chart) {
     _muted[chart] = null;
     final anims = _charts[chart];
     if (anims != null && anims.items.isNotEmpty) {

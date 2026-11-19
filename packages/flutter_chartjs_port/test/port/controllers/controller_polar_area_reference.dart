@@ -37,14 +37,7 @@
 import 'dart:ui' show FontStyle, TextAlign;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
 const String controllerPolarAreaReferenceNode = 'v24.22.1';

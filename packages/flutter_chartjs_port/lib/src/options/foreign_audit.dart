@@ -14,17 +14,13 @@
 /// This library is a pure layer.
 library;
 
-import 'package:meta/meta.dart';
-
 /// The function that receives each foreign value: the owner (the Dart name
 /// of a scope class or of a resolved options class), the JS property name
 /// and the raw value. Dart `null` turns the audit off.
-@internal
 void Function(String owner, String key, Object? raw)? foreignAudit;
 
 /// Gives the foreign value [raw] of the key [key] of [owner] to
 /// [foreignAudit]. Returns true, for a call inside `assert`.
-@internal
 bool auditForeign(String owner, String key, Object? raw) {
   foreignAudit?.call(owner, key, raw);
   return true;

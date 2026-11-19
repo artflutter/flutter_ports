@@ -13,51 +13,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show registerDataUpdateTypes;
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show DefaultCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey, OptionScope;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        BarControllerDatasetOptionsScope,
-        BubbleControllerDatasetOptionsScope,
-        DoughnutControllerDatasetOptionsScope,
-        GenericDatasetOptionsScope,
-        LineControllerDatasetOptionsScope,
-        PolarAreaControllerDatasetOptionsScope,
-        RadarControllerDatasetOptionsScope,
-        TooltipDatasetOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget;
-import 'package:flutter_chartjs_port/src/typed/chart_value.dart'
-    show ChartValue;
-import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartKind;
-import 'package:flutter_chartjs_port/src/typed/lower.dart';
-import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BarThickness;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
-    show CartesianAxis;
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_shadow.dart';
-import 'package:flutter_chartjs_port/src/types/data_item.dart'
-    show TypedDataItem;
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
-    show LineSegmentStyle;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// A dataset of a chart: an item of `data.datasets` of a Chart.js config.
 ///
@@ -239,7 +195,6 @@ abstract final class const Dataset({
 /// Thus a bar chart lowers to the docs form, and a [LineDataset] in a bar
 /// chart lowers to the form of `docs/charts/mixed.md`. [Dataset.extra]
 /// merges last. [Dataset.key] does not lower.
-@internal
 OptionScope lowerDataset(
   Dataset dataset,
   ChartKind chartType, {
@@ -1843,7 +1798,6 @@ final class DataPoint implements TypedDataItem {
 
   /// `point[name]`: [x], [y] (Dart `null` is JS `null`), [r] when the point
   /// has it, else `undefined`.
-  @internal
   @override
   Object? jsRead(String name) => switch (name) {
     'x' => x,
@@ -1854,34 +1808,28 @@ final class DataPoint implements TypedDataItem {
 
   /// `point[name] = value`: a data point is frozen. A `TypeError`, as a
   /// write into a frozen object in strict mode.
-  @internal
   @override
   void jsWrite(String name, Object? value) => throw TypeError();
 
   /// `point[name]`: [jsRead].
-  @internal
   @override
   Object? operator [](String name) => jsRead(name);
 
   /// `point[name] = value`: [jsWrite], a `TypeError`.
-  @internal
   @override
   void operator []=(String name, Object? value) => jsWrite(name, value);
 
   /// `Object.keys(point)`: `x`, `y` and, for a bubble, `r`.
-  @internal
   @override
   List<String> jsKeys() => r == null ? const ['x', 'y'] : const ['x', 'y', 'r'];
 
   /// Whether the point has the key [name].
-  @internal
   @override
   bool jsHas(String name) =>
       name == 'x' || name == 'y' || (name == 'r' && r != null);
 
   /// `delete point[name]`: a data point is frozen. A `TypeError` for an own
   /// key, as a delete of a key of a frozen object in strict mode.
-  @internal
   @override
   bool jsDelete(String name) {
     if (jsHas(name)) throw TypeError();

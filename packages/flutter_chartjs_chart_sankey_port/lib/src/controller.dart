@@ -21,8 +21,6 @@ import 'package:flutter/animation.dart';
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/helpers.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 const ChartPaint _black = ChartPaint.solid(Color(0xFF000000));
 const ChartPaint _transparent = ChartPaint.solid(Color(0x00000000));

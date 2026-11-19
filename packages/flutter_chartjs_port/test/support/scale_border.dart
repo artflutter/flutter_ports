@@ -9,10 +9,7 @@
 /// [upstreamBorderOf] gives that object for a border of the port.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The upstream form of the resolved border [border], or [border] itself
 /// for another value.

@@ -2,24 +2,7 @@
 import 'dart:collection';
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionAxis, NearestInteractionMode, XInteractionMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show clone, each, merge, mergeIf, resolveObjectKey;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show ScopeRoute;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartOptionsScope, InteractionOptionsScope;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream behavior that test/specs/helpers.config.tests.js does not check
@@ -55,7 +38,7 @@ Object? _tenTimesIndex(Object? ctx) => jsToNumber(_read(ctx, 'index')) * 10;
 typedef _Parsed = (Object?, double?);
 
 /// A scale whose `parse` returns its arguments.
-final class _Scale() implements Scale {
+final class _Scale() implements IScale {
   @override
   Object? parse(Object? raw, [int? index]) => (raw, index);
 
@@ -64,14 +47,14 @@ final class _Scale() implements Scale {
 }
 
 /// A chart meta with an index scale.
-final class _Meta(@override final Scale? iScale) implements ChartMeta {
+final class _Meta(@override final IScale? iScale) implements ChartMeta {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A dataset controller with the `_parsing` option.
 final class _Controller(@override final Object? parsing)
-    implements DatasetController {
+    implements IDatasetController {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -486,7 +469,7 @@ void main() {
       }
 
       test('a null _allKeys is a value', () {
-        final descriptor = descriptors(
+        final descriptor = descriptorsOf(
           createResolver([
             <String, Object?>{'_allKeys': null},
           ]),

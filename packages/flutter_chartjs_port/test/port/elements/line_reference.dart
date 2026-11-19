@@ -7,9 +7,7 @@
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated [lineReference].
 const String lineReferenceNode = 'v24.22.1';

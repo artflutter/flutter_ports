@@ -35,32 +35,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show lookupByAxis;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show resolve;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_math.dart' show jsToInt32;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsAdd, jsLessThan, jsToNumber, jsToString, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey, OptionScope;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show DecimationOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show DecimationOptions, optionOf;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show Plugin, PluginHookArgs;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// plugin.decimation.js:270 `case 'lttb'`: the Largest Triangle Three
 /// Buckets algorithm ([lttbDecimation]). It reads the option `samples`.
@@ -129,7 +104,6 @@ final class const MinMaxDecimationAlgorithm() extends DecimationAlgorithm {
 /// the end, a `null` or an `undefined` item throws a [TypeError] at the read of
 /// its `x`, as the destructuring of `:50` and the reads of `:40-41` and
 /// `:61-62` do.
-@internal
 List<Object?> lttbDecimation(
   List<Object?> data,
   double start,
@@ -235,7 +209,6 @@ List<Object?> lttbDecimation(
 /// The `y` values stay raw until the compare of `:101` and `:104`, which
 /// compares two strings by their code units ([jsLessThan]). A new item of
 /// `:124-133` is a new Map with the own keys of the item and `x` ([_withX]).
-@internal
 List<Object?> minMaxDecimation(
   List<Object?> data,
   double start,
@@ -484,7 +457,7 @@ void _cleanDecimatedDataset(Object? dataset) {
 /// plugin.decimation.js:170 `cleanDecimatedData(chart)`.
 ///
 /// `forEach` visits the indices below the length at its start.
-void _cleanDecimatedData(types.Chart chart) {
+void _cleanDecimatedData(IChart chart) {
   final datasets = _datasets(chart);
   for (var k = 0, length = datasets.length; k < length; k++) {
     _cleanDecimatedDataset(datasets[k]);
@@ -493,7 +466,7 @@ void _cleanDecimatedData(types.Chart chart) {
 
 /// `chart.data.datasets`, a read of the data of the user: a value that is
 /// not an array throws a [TypeError] at the call of `forEach`.
-List<Object?> _datasets(types.Chart chart) =>
+List<Object?> _datasets(IChart chart) =>
     jsGet(chart.data, 'datasets')! as List<Object?>;
 
 // DIVERGES(chartjs): js-semantics-decimation-data, the data is an array.
@@ -505,7 +478,7 @@ List<Object?> _datasets(types.Chart chart) =>
 /// the raw data of the dataset. Data that is not an array throws a
 /// [TypeError] here (differences.md row `js-semantics-decimation-data`).
 ({int start, int count}) _getStartAndCountOfVisiblePointsSimplified(
-  types.ChartMeta meta,
+  ChartMeta meta,
   Object? points,
 ) {
   final table = points! as List<Object?>;
@@ -545,7 +518,7 @@ List<Object?> _datasets(types.Chart chart) =>
 /// chart options through their typed reads ([optionOf]). The reads of the
 /// datasets of the user are reads by name ([_Dataset]).
 void _beforeElementsUpdate(
-  types.Chart chart,
+  IChart chart,
   PluginHookArgs args,
   DecimationOptions opts,
 ) {

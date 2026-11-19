@@ -8,34 +8,7 @@ import 'dart:ui' show FontWeight;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction, isObject;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show AnimationOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
-    show DecimationAlgorithm;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
-    show TooltipPositioner;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart' show ScaleAxis;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart';
 
 // The schema drift test of Chart.js ADR 0054 §2 and §15. It walks the

@@ -19,8 +19,6 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
-import 'package:flutter_chartjs_port/helpers.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// The values of [scales] in the order of `Object.values`: the order of
 /// `Object.keys`, with the array index keys first.

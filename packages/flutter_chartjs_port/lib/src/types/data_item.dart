@@ -5,7 +5,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A data item with typed fields: `DataPoint` of the typed API
 /// (`lib/src/typed/`) implements it. The interface is here, because ported

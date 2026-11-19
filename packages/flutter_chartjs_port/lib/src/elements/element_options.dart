@@ -24,13 +24,7 @@
 /// `package:flutter`.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 export 'package:flutter_chartjs_port/src/options/element_options_base.dart'
     show ElementOptions, GenericElementOptions;
@@ -75,7 +69,6 @@ ElementOptions createElementOptions(Object? elementType) =>
 
 /// Whether the typed field of [key] holds the raw value of [options]: the
 /// key is present and its value is not foreign.
-@internal
 @pragma('vm:prefer-inline')
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
@@ -85,7 +78,6 @@ bool plainOption(ElementOptions options, OptionKey key) =>
 /// `ToNumber(options[key])` for the `double` field [field] of [key]: the
 /// field, or NaN, the `ToNumber` of `undefined`, for an absent key. A
 /// foreign value has its `ToNumber` in the field.
-@internal
 @pragma('vm:prefer-inline')
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
@@ -96,7 +88,6 @@ double numberOption(ElementOptions options, OptionKey key, double field) =>
 /// [undefined] for an absent key, the foreign value, else [field]. A
 /// `double` field gives a `double` for an `int` value: the JS number is the
 /// same.
-@internal
 Object? rawOption(ElementOptions options, OptionKey key, Object? field) {
   if (!options.isPresent(key)) return undefined;
   return options.isForeign(key) ? options.foreignOf(key) : field;

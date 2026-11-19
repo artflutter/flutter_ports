@@ -11,20 +11,7 @@ library;
 
 import 'dart:convert';
 
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';

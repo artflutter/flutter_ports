@@ -16,21 +16,7 @@
 import 'dart:ui' show Color;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.drawing.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import 'filler_target_reference.dart';
@@ -39,7 +25,7 @@ import 'filler_target_reference.dart';
 // The fakes of the generator.
 
 /// The chart area of the description `d`.
-final class _Area(Map<String, Object?> d) implements types.ChartArea {
+final class _Area(Map<String, Object?> d) implements ChartArea {
   @override
   final double left = _n(d['left']);
   @override
@@ -60,13 +46,12 @@ double _n(Object? value) => (value! as num).toDouble();
 /// The fake chart: `getDatasetMeta`, `isDatasetVisible` and `chartArea`.
 final class _FakeChart(
   final List<bool> _visible,
-  @override final types.ChartArea? chartArea,
-) implements types.Chart {
+  @override final ChartArea? chartArea,
+) implements IChart {
   List<_FakeMeta> metas = const [];
 
   @override
-  types.ChartMeta getDatasetMeta(num datasetIndex) =>
-      metas[datasetIndex.toInt()];
+  ChartMeta getDatasetMeta(num datasetIndex) => metas[datasetIndex.toInt()];
 
   @override
   bool isDatasetVisible(num datasetIndex) => _visible[datasetIndex.toInt()];
@@ -80,11 +65,11 @@ final class _FakeMeta({
   @override required final int index,
   @override required final String type,
   @override required final bool? hidden,
-  @override required var types.Element? dataset,
-  @override required var types.Scale? iScale,
-}) implements types.ChartMeta {
+  @override required var IElement? dataset,
+  @override required var IScale? iScale,
+}) implements ChartMeta {
   @override
-  types.ChartClip clip = types.ChartClip.none;
+  ChartClip clip = ChartClip.none;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -92,7 +77,7 @@ final class _FakeMeta({
 
 /// The fake linear scale of the generator.
 final class _FakeLinearScale(Map<String, Object?> d, final _FakeChart _chart)
-    implements types.Scale {
+    implements IScale {
   final bool _horizontal = d['horizontal']! as bool;
   final double _baseValue = _n(d['baseValue']);
 
@@ -115,7 +100,7 @@ final class _FakeLinearScale(Map<String, Object?> d, final _FakeChart _chart)
     'reverse': d['reverse'],
   };
   @override
-  types.Chart get chart => _chart;
+  IChart get chart => _chart;
   @override
   bool isHorizontal() => _horizontal;
   @override
@@ -126,7 +111,7 @@ final class _FakeLinearScale(Map<String, Object?> d, final _FakeChart _chart)
   @override
   double getBaseValue() => _baseValue;
   @override
-  List<types.ChartMeta> getMatchingVisibleMetas([String? type]) => [
+  List<ChartMeta> getMatchingVisibleMetas([String? type]) => [
     for (final meta in _chart.metas)
       if (meta.type == type && _chart.isDatasetVisible(meta.index)) meta,
   ];
@@ -137,7 +122,7 @@ final class _FakeLinearScale(Map<String, Object?> d, final _FakeChart _chart)
 
 /// The fake radial linear scale of the generator.
 final class _FakeRadialScale(Map<String, Object?> d, final _FakeChart _chart)
-    implements types.RadialLinearScale {
+    implements IRadialLinearScale {
   final int _n5 = _n(d['n']).toInt();
   final bool _reverse = d['reverse']! as bool;
   final double _baseValue = _n(d['baseValue']);
@@ -154,7 +139,7 @@ final class _FakeRadialScale(Map<String, Object?> d, final _FakeChart _chart)
     'grid': <String, Object?>{'circular': d['circular']},
   };
   @override
-  types.Chart get chart => _chart;
+  IChart get chart => _chart;
   @override
   List<Object?> getLabels() => [for (var i = 0; i < _n5; i++) 'l$i'];
   @override
@@ -185,7 +170,7 @@ final class _FakeRadialScale(Map<String, Object?> d, final _FakeChart _chart)
 }
 
 /// The fake scale of the description [d], or Dart `null` for `null`.
-types.Scale? _makeScale(Object? d, _FakeChart chart) => switch (d) {
+IScale? _makeScale(Object? d, _FakeChart chart) => switch (d) {
   null => null,
   final Map<String, Object?> map when map['kind'] == 'radial' =>
     _FakeRadialScale(map, chart),
@@ -194,7 +179,7 @@ types.Scale? _makeScale(Object? d, _FakeChart chart) => switch (d) {
 };
 
 /// The element of the line description [d] (`makeLine` of the generator).
-types.Element _makeLine(Map<String, Object?> d) {
+IElement _makeLine(Map<String, Object?> d) {
   if (d['element'] == 'point') {
     return PointElement()
       ..x = 1
@@ -244,7 +229,7 @@ types.Element _makeLine(Map<String, Object?> d) {
       chart: chart,
       axis: source['axis'],
       scale: scale,
-      line: chart.metas[index].dataset! as types.LineElement,
+      line: chart.metas[index].dataset! as ILineElement,
     ),
   );
 }
@@ -253,13 +238,13 @@ types.Element _makeLine(Map<String, Object?> d) {
 // The results of the generator.
 
 /// A point read by name: `[x, y, angle]`.
-List<Object?> _byName(types.PointElement point) {
+List<Object?> _byName(IPointElement point) {
   final element = point as Element;
   return [element['x'], element['y'], element['angle']];
 }
 
 /// A segment: `[start, end, loop]`.
-List<Object?> _seg(types.Segment segment) => [
+List<Object?> _seg(Segment segment) => [
   segment.start,
   segment.end,
   segment.loop,
@@ -277,7 +262,7 @@ Object? _describeTarget(Object? target) {
       'radius': target.radius,
     };
   }
-  if (target is! types.LineElement) {
+  if (target is! ILineElement) {
     return <String, Object?>{'kind': 'element'};
   }
   final line = target as Element;
@@ -303,7 +288,7 @@ List<Object?> _describeParts(List<FillPart> parts) => [
             'start': bounds.start,
             'end': bounds.end,
           },
-        final types.Segment segment => _seg(segment),
+        final Segment segment => _seg(segment),
         _ => throw StateError('A target of ${target.runtimeType}'),
       },
       'start': _byName(start),

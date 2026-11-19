@@ -26,17 +26,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsFreezable, JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
-import 'package:flutter_chartjs_port/src/types/data_item.dart'
-    show TypedDataItem;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginDefaults;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/options/opt.dart';
@@ -81,12 +71,10 @@ abstract base class OptionScope()
   /// scope that counts its reads), so the typed walks of `helpers.core` and
   /// `helpers.config` take such a scope by name. `Defaults` keeps the face
   /// and overrides this getter.
-  @internal
   bool get nativeFace => runtimeType == kind.scopeType;
 
   /// Whether a key of the scope has a route ([addRoute]): then [lookup]
   /// reads the route of that key.
-  @internal
   bool get hasRoutes => _routeNames?.isNotEmpty ?? false;
 
   /// The cell of the declared key [key], or Dart `null` when the scope does
@@ -114,7 +102,6 @@ abstract base class OptionScope()
 
   /// Immutable own-key snapshot for exact native scope producers. Consumers
   /// must retain virtual jsOwnKeys calls for custom scope implementations.
-  @internal
   List<Object> get nativeOwnKeySnapshot =>
       _ownKeySnapshot ??= List<Object>.unmodifiable(jsOwnKeys());
 
@@ -144,7 +131,6 @@ abstract base class OptionScope()
   /// [OptionKey], or the name of an extra. The typed walks of `helpers.core`
   /// pass it to [ownNormalized], [lookupNormalized], [classifyNormalized]
   /// and [storeNormalized], which read no name for a declared key.
-  @internal
   Object normalizeKey(Object key) => _normalize(key);
 
   /// The index of the extra [name], or -1.
@@ -156,7 +142,6 @@ abstract base class OptionScope()
   Opt<Object?>? lookup(Object key) => lookupNormalized(_normalize(key));
 
   /// [lookup] of the key [k] in the form of this scope ([normalizeKey]).
-  @internal
   Opt<Object?>? lookupNormalized(Object k) {
     final own = _own(k);
     final names = _routeNames;
@@ -183,7 +168,6 @@ abstract base class OptionScope()
   Opt<Object?>? ownCell(Object key) => _own(_normalize(key));
 
   /// [ownCell] of the key [k] in the form of this scope ([normalizeKey]).
-  @internal
   Opt<Object?>? ownNormalized(Object k) => _own(k);
 
   /// The names of the routed keys. Dart `null` before the first route.
@@ -258,7 +242,6 @@ abstract base class OptionScope()
   }
 
   /// [store] of the key [k] in the form of this scope ([normalizeKey]).
-  @internal
   void storeNormalized(Object k, Opt<Object?> cell) {
     // A JavaScript TypeError: a write into a frozen object.
     if (_frozen) throw TypeError();
@@ -381,7 +364,6 @@ abstract base class OptionScope()
 
   /// [classifyName] of the key [k] in the form of this scope
   /// ([normalizeKey]), with the same audit of a foreign cell.
-  @internal
   Opt<Object?> classifyNormalized(Object k, Object? raw) {
     final cell = k is OptionKey ? classify(k, raw) : kind.classifyOther(raw);
     assert(
@@ -400,7 +382,6 @@ abstract base class OptionScope()
   /// the order of [jsKeys] ([nativeOwnKeySnapshot]), or Dart `null` when the
   /// merge reads the scope by name: a scope without [nativeFace], or with an
   /// extra whose name is an array index (`Object.keys` puts it first).
-  @internal
   List<Object>? get typedMergeKeys {
     // DIVERGES(chartjs): adapt-typed-scope-merge, the keys of the typed walk.
     if (!debugTypedMerge || !nativeFace) return null;
@@ -414,7 +395,6 @@ abstract base class OptionScope()
   /// Whether the typed merge of `helpers.core` can read and write this
   /// scope by its typed keys as a target: [nativeFace] and no route (a
   /// routed key reads its route, and its own cell is the local value).
-  @internal
   bool get typedMergeTarget => debugTypedMerge && nativeFace && !hasRoutes;
 
   /// Whether [typedMergeKeys] and [typedMergeTarget] offer the typed merge.

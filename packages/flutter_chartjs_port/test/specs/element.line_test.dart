@@ -5,11 +5,7 @@ library;
 import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -29,7 +25,7 @@ void main() {
     test('should be constructed', () {
       // `points: [1, 2, 3, 4]`: a `List<PointElement>` does not take
       // numbers, so the spec passes four point elements.
-      final points = <types.PointElement>[
+      final points = <IPointElement>[
         for (var i = 1; i <= 4; i++) PointElement({'x': i, 'y': i}),
       ];
       final line = LineElement({'points': points});

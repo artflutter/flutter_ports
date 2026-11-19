@@ -13,11 +13,9 @@ import 'dart:ui';
 import 'package:flutter/painting.dart' show TextStyle;
 // The harness implements the canvas interface. flutter_chartjs_port does not
 // export lib/src.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+
 // The pure harness consumes paint value types without importing widgets.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 
 /// context.js:157 the object that `record` pushes: `{name, args}`.
 ///

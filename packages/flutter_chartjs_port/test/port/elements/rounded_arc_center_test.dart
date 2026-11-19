@@ -4,11 +4,7 @@ library;
 
 import 'dart:ui';
 
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/pixel_compare.dart';

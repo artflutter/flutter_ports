@@ -8,7 +8,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The chart theme of a subtree (Chart.js ADR 0147).
 ///

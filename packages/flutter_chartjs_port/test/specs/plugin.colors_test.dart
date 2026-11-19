@@ -8,11 +8,7 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;

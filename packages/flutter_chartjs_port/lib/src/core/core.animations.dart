@@ -31,40 +31,12 @@
 library;
 
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
-import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions, copyOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray, isObject;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey, OptionScope;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show PropertyAnimation;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show ArcProperties, BarProperties, LineProperties, PointProperties;
-import 'package:flutter_chartjs_port/src/options/typed_record.dart'
-    show TypedRecord;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// core.animations.js:6 `Animations`.
 class Animations(
   /// core.animations.js:8 `_chart`.
-  final types.Chart _chart,
+  final IChart _chart,
   Object? config, {
   List<PropertyAnimation>? items,
   List<PropertyAnimation>? modeItems,
@@ -95,7 +67,7 @@ class Animations(
   static final JsClass jsClass = JsClass(
     'Animations',
     construct: (newTarget, args) => Animations(
-      (args.isNotEmpty ? args[0] : undefined)! as types.Chart,
+      (args.isNotEmpty ? args[0] : undefined)! as IChart,
       args.length > 1 ? args[1] : undefined,
     ),
   );
@@ -110,7 +82,6 @@ class Animations(
   /// core.animations.js:9 `_properties`, a JS `Map` from each property to
   /// its animation options, as a new Map in the key order of the JS `Map`.
   /// The specs read it (core.animations.tests.js:13).
-  @internal
   Map<Object?, AnimationSpec> get properties => {
     for (final MapEntry(:key, :value) in _properties.entries)
       key is AnimatedProp ? key.name : key: value,
@@ -122,7 +93,6 @@ class Animations(
   /// that read it).
   /// The items of the app are immutable objects (Chart.js ADR 0151).
   // DIVERGES(chartjs): adapt-shared-bar-animations, no value with a context.
-  @internal
   bool get holdsPlainValues {
     for (final MapEntry(:key, :value) in _properties.entries) {
       if (key is! AnimatedProp || !value.everyValue(_isPlain)) return false;
@@ -147,7 +117,6 @@ class Animations(
   /// that the app made. The type of an item selects its property
   /// ([AnimatedProp.itemIn]). An item of the update mode goes before an item
   /// of the chart.
-  @internal
   PropertyAnimation? itemOf(AnimatedProp prop) =>
       prop.itemIn(_modeItems) ?? prop.itemIn(_chartItems);
 
@@ -479,7 +448,6 @@ class Animations(
 /// The tables follow the field slots of `lib/src/options/props.dart`.
 /// `test/port/core/core.animations_test.dart` checks each name against
 /// [TypedRecord.keyAt].
-@internal
 AnimatedProp animatedPropOf(TypedRecord values, int position) {
   final slot = values.slotAt(position);
   if (slot >= 0) {
@@ -560,7 +528,7 @@ Map<String, Object?> _runningOf(Object target) {
   if (target is Element) {
     return target.$animations ??= <String, Animation>{};
   }
-  if (target is types.ChartMeta) {
+  if (target is ChartMeta) {
     return target.animations ??= <String, Animation>{};
   }
   var running = readProperty(target, r'$animations');

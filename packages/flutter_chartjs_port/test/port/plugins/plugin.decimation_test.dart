@@ -3,19 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
-    show DecimationAlgorithm;
-import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -78,7 +66,7 @@ List<Object?> _series(int n, int Function(int i) f) => <Object?>[
 /// The `beforeUpdate` hook `writeData` of the inline plugin `writer` of the
 /// generator: when its option `write` is true, it writes 80 new items into
 /// `data` of the dataset 0.
-void _writeData(types.Chart chart, Object? args, Object? options) {
+void _writeData(IChart chart, Object? args, Object? options) {
   if (jsTruthy(jsGet(options, 'write'))) {
     final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
     (datasets[0]! as AnyObject)['data'] = _series(80, (i) => (i * 11) % 19);

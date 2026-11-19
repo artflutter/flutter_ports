@@ -12,7 +12,7 @@
 /// cancelable hook cancels when the function returns `false`.
 library;
 
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 import 'drop_extra_args.dart';
 

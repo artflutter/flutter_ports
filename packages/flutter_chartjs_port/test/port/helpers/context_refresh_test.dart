@@ -1,6 +1,5 @@
 // Original code, not ported from Chart.js: the bulk refresh of a data context.
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 const _names = ['parsed', 'raw', 'dataIndex', 'index', 'active', 'mode'];

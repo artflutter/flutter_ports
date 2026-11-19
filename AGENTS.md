@@ -69,12 +69,14 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   `flutter_chartjs_port`. The port has no JS-semantics check (Chart.js ADR 0178).
   Each check can also run alone:
   - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
-    the web legs compile. It also fails when a ported file imports `lib/src/theme/`, and when a
-    file of `lib/src/widgets/` imports a file of `controllers/`, `scales/`, `elements/` or
-    `plugins/`, or `lib/src/index.dart`: the widget registers no
-    component (Chart.js ADR 0048 §3). It fails when a ported file imports `lib/src/typed/`, and
-    when a file of `lib/src/typed/` imports a library outside the allowlist of Chart.js ADR 0052
-    §8. It fails when a core layer imports `package:flutter/painting.dart` with a name other
+    the web legs compile. It fails when a file of `flutter_chartjs_port` (`lib/` or `test/`)
+    imports a file of `lib/src/` (ADR 0012). It resolves the names that each file of `lib/src/`
+    and each ported test uses (`tool/src/name_uses.dart`, `package:analyzer`), and it fails when a
+    ported file uses a name of `lib/src/theme/` or `lib/src/typed/` or exports a file of them, and
+    when a file of `lib/src/widgets/` uses a name of `controllers/`, `scales/`, `elements/`,
+    `plugins/` or `lib/src/index.dart`: the widget registers no component (Chart.js ADR 0048 §3).
+    It fails when a file of `lib/src/typed/` imports a library of another package outside the
+    allowlist of Chart.js ADR 0052 §8 or uses a name outside it. It fails when a core layer imports `package:flutter/painting.dart` with a name other
     than `EdgeInsets`, `TextStyle` and `TextOverflow` (Chart.js ADRs 0123 and 0116). It keeps the
     `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer. An
     add-on port names its host in the top-level key `host` of its `tool/port_sources.yaml`. Its
@@ -336,12 +338,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the height, with `maintainAspectRatio: false`. The keys `core.host` and `axes.host` are on the
     box.
   - The gallery imports the app library `package:flutter_chartjs_port/flutter_chartjs_port.dart`,
-    and `helpers.dart` with a `show` list. `lib/demo/elements_demo.dart` also imports
-    `package:flutter_chartjs_port/chartjs.dart` `as chartjs show Element`. A file of `lib/` with an
-    import of `package:flutter_chartjs_port/src/` has `// ignore_for_file: implementation_imports`
-    after the line `// The reason of each import of lib/src is the comment above it.`, and one
-    reason line above each such import. A test file has only the reason lines: the lint reports
-    only `lib/`.
+    and `helpers.dart` with a `show` list. A file that also needs a name that the app library hides
+    (`Animation`, `Element`, `FilterCallback`, `Title`, `Tooltip`) or a name that the gallery
+    declares too (`PointOptions`) imports `package:flutter_chartjs_port/chartjs.dart` `as chartjs`,
+    with a reason line above the import. No file imports `package:flutter_chartjs_port/src/`
+    (ADR 0012).
     `lib/demo/demo_common.dart` has `jsNumberText`, the JS text of a number for the readouts.
   - `lib/demo/chart_canvas.dart` hosts a real chart for the stress host `HOST=canvas` (the side A
     of the night series A-N1 of Chart.js ADR 0049) and for `_StressChart`, a chart class that
@@ -1306,8 +1307,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   exponent of an exact power of ten (Chart.js ADR 0146 §3): the last bit can differ from V8, and a
   reference test gives a tolerance there or lists a hit point on an arc border (`hitBorders`).
 - The four theming invariants (specs run unthemed, no forui or Material in `lib/`, no
-  `Chart.defaults` writes for theming, no `lib/src/theme/` import in ported files): Chart.js ADR
-  0147 §19. `check:lib-imports` already fails on the two import invariants.
+  `Chart.defaults` writes for theming, no name of `lib/src/theme/` in ported files): Chart.js ADR
+  0147 §19 and ADR 0012. `check:lib-imports` already fails on invariants 2 and 4.
 
 The D3 port applies the rules above with these changes. D3 ADRs 0001 to 0006 are proposed, D3
 ADRs 0007 to 0011 are accepted. The doc paths
@@ -1786,9 +1787,15 @@ sankey ADRs are proposed. The doc paths are relative to
   `apps/<library>_gallery`. A design-system adapter is `<library package>_<system>`, for example
   `flutter_chartjs_port_forui`. The directory and the commit scope of a package are its name.
   Before a change adds a name, examine `https://pub.dev/api/packages/<name>`: it must give 404.
-- Imports (ADR 0011): the public library of each package of `packages/` except
-  `flutter_chartjs_port` exports each file of `lib/src/`, and each file of the package imports that
-  library, not a file of `lib/src/`. An import has no `show` list, no `hide` list and no prefix,
+- Imports (ADR 0012): the public library of each package of `packages/` exports each file of
+  `lib/src/`, and each file of the package imports that library, not a file of `lib/src/`.
+  `flutter_chartjs_port` has three libraries: `chartjs_core.dart` (each core file, Chart.js ADR
+  0061), `chartjs.dart` (each file, no `hide`) and the app library `flutter_chartjs_port.dart`
+  (`chartjs.dart` without `Animation`, `Element`, `FilterCallback`, `Title` and `Tooltip`). A core
+  file and a browser test import `chartjs_core.dart`; another file imports the app library, or
+  `chartjs.dart` when it uses a hidden name. Each public top-level name of `lib/src/` is unique: an
+  interface of `lib/src/types/` with the name of a class has the prefix `I` (`IChart`, `IScale`,
+  row `adapt-public-library-names`). An import has no `show` list, no `hide` list and no prefix,
   except for a clash of two names, a local name that hides an imported name, or a check that needs
   the list (`show TextStyle` on `package:flutter/painting.dart` in a core layer). A package import
   hides a `dart:` name with no error: a file that reads `pi` of `dart:math` next to the host

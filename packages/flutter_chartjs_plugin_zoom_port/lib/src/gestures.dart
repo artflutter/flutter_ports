@@ -29,8 +29,6 @@ import 'dart:math' hide Point;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
-import 'package:flutter_chartjs_port/helpers.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// gestures.ts:13 `GestureEvent`: the normalized gesture event of the pan
 /// and pinch callbacks (`onPanStart`, `onPanRejected`).

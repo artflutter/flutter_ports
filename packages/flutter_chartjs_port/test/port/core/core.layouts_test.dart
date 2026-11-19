@@ -1,13 +1,7 @@
 // Original code, not ported from Chart.js: core.layouts cases with no spec.
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.layouts.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import 'layouts_reference.dart';
@@ -163,7 +157,7 @@ _Box _box(LayoutsReferenceBox spec, List<(String, String, List<double>)> log) =>
     };
 
 /// A chart with the members that core.layouts.js reads and writes.
-final class _Chart(Object? padding) implements types.Chart {
+final class _Chart(Object? padding) implements IChart {
   @override
   final Map<String, Object?> options = {
     'layout': <String, Object?>{'padding': padding},

@@ -5,29 +5,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve, Curves;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartOptionsScope;
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 

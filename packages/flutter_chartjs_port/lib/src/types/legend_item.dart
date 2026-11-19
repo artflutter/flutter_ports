@@ -5,10 +5,7 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBLCorners;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A legend entry shared by generation, rendering and interaction.
 ///

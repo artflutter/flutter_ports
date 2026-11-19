@@ -7,8 +7,6 @@ import 'dart:ui';
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/helpers.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const ChartPaint _red = ChartPaint.solid(Color(0xFFFF0000));

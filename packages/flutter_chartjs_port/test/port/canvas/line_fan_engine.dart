@@ -13,7 +13,7 @@ library;
 import 'dart:io';
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// Whether this run has to be on Impeller: `CHART_IMPELLER=1`, which the CI job

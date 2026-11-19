@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: tests of the port-only native event.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Chart.js ADR 0108: the DOM fields of the native event with the defaults of

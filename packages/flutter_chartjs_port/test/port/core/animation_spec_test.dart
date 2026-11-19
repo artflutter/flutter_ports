@@ -3,13 +3,7 @@ import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curves;
-import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart' show jsAssign;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The face of AnimationSpec (Chart.js ADR 0054 §5: the reads and writes by

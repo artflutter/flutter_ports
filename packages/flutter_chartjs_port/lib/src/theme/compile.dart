@@ -31,16 +31,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsFreezable, jsObjectFreeze;
-import 'package:flutter_chartjs_port/src/options/opt.dart' show OptScope;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionScope;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/axis_border.dart'
-    show AxisBorder, RadialAxisBorder;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The background alpha of the palette when the theme gives none: the 0.5
 /// of `BACKGROUND_COLORS` (`plugin.colors.ts:25`).

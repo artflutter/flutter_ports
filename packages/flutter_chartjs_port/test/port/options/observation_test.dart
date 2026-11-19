@@ -12,48 +12,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        LegendItem,
-        LegendItemComparator,
-        LegendItemFilter,
-        LegendLabelsGenerator,
-        LineSegmentStyle,
-        ScriptableLineSegmentContext,
-        TooltipCallbacks,
-        TooltipItem;
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionAxis, NearestInteractionMode;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart'
-    show Scale, Tick, TickCallback;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show CirclePointStyle;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show JsProxyObject, jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart'
-    show fromNativeEvent;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint, SolidChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show handFixtures;
@@ -531,8 +490,8 @@ void _observe(
       if (k > 0) {
         // JS `===` of the options of two neighbor elements: the shared
         // options of core.datasetController.js:804-831 and :885-891.
-        final previous = meta.data[k - 1] as types.ElementPropertyRead;
-        final current = meta.data[k] as types.ElementPropertyRead;
+        final previous = meta.data[k - 1] as ElementPropertyRead;
+        final current = meta.data[k] as ElementPropertyRead;
         out.writeln(
           '    same-options-as-previous '
           '${identical(current['options'], previous['options'])}',
@@ -572,9 +531,9 @@ void _observe(
 }
 
 /// Writes the observation of one element.
-void _observeElement(String label, types.Element element, StringBuffer out) {
+void _observeElement(String label, IElement element, StringBuffer out) {
   out.writeln('$label ${element.runtimeType}');
-  final read = element as types.ElementPropertyRead;
+  final read = element as ElementPropertyRead;
   final options = read['options'];
   out
     ..writeln('    options ${_guarded(() => _canon(options))}')
@@ -595,7 +554,7 @@ void _observeElement(String label, types.Element element, StringBuffer out) {
     out.writeln('    \$context ${_canon(context)}');
   }
   final animations = read[r'$animations'];
-  if (animations is Map<String, types.Animation>) {
+  if (animations is Map<String, IAnimation>) {
     final keys = jsObjectKeys(animations);
     out.writeln('    \$animations ${_canon(keys)}');
     for (final key in keys) {
@@ -615,7 +574,7 @@ void _observeElement(String label, types.Element element, StringBuffer out) {
 /// The text of `element.getProps(_propNames, true)`: `self` when the result
 /// is the element (core.element.ts:35-37), else `object`, then the value of
 /// each name.
-String _props(types.Element element) {
+String _props(IElement element) {
   final props = (element as Element).getProps(_propNames, true);
   final kind = identical(props, element) ? 'self' : 'object';
   return '$kind {${[for (final name in _propNames) '${jsonEncode(name)}: ${_guarded(() => _canon(props[name]))}'].join(', ')}}';
@@ -689,7 +648,7 @@ String _canon(Object? value, [int depth = 0, int maxDepth = 4]) {
       return '<class ${c.name}>';
     case final DateTime d:
       return 'Date(${d.millisecondsSinceEpoch})';
-    case final types.Element e:
+    case final IElement e:
       return '<element ${e.runtimeType}>';
   }
   if (depth >= maxDepth) {
@@ -1292,7 +1251,7 @@ Map<String, Object?> _benchConfig(
             'pointStyle': const CirclePointStyle(),
             'radius': 3.0,
             'showLine': false,
-            'clip': types.ChartClip.none,
+            'clip': ChartClip.none,
           },
         },
       ],

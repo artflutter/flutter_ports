@@ -5,15 +5,7 @@ library;
 
 import 'dart:ui' show Offset;
 
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {

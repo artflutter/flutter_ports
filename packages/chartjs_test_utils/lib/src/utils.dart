@@ -26,46 +26,22 @@
 /// host and `dom.dart`.
 library;
 
-// The harness replaces a member of the chart that only the harness reads.
-// ignore_for_file: invalid_use_of_internal_member
-
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
 // flutter_chartjs_port does not export lib/src. The harness reads the canvas
 // interface,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // the canvas element of the canvas layer,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
 // the chart,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
 // the line element, which has no upstream getCenterPoint,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
 // Object.keys,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
 // ToBoolean, ToNumber and ToString,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 // the JS property read,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
 // the undefined sentinel,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 // the EventTarget and the box of the canvas,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
 // the native event,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
 // and the interfaces of the elements and points.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 // utils.js:1 imports spritingOn and spritingOff: n/a. The port compares no
@@ -286,8 +262,8 @@ void afterEvent(Chart chart, String type, void Function() callback) {
 /// where Dart `null` stands for JS `null`. A Map gives [jsGet]. Any other
 /// value gives [undefined].
 Object? _property(Object el, String key) => switch (el) {
-  final types.ElementPropertyRead element => element[key],
-  final types.Point point => key == 'x' ? point.x : point.y,
+  final ElementPropertyRead element => element[key],
+  final Point point => key == 'x' ? point.x : point.y,
   _ => jsGet(el, key),
 };
 
@@ -301,7 +277,7 @@ Object? _property(Object el, String key) => switch (el) {
 ({double x, double y}) _resolveElementPoint(Object? el) {
   var point = (x: 0.0, y: 0.0);
   if (el != null && jsTruthy(el)) {
-    if (el is types.VisualElement && el is! LineElement) {
+    if (el is VisualElement && el is! LineElement) {
       final center = el.getCenterPoint();
       point = (x: jsToNumber(center.x), y: jsToNumber(center.y));
     } else if (!identical(_property(el, 'x'), undefined) &&

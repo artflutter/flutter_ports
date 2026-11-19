@@ -1,23 +1,7 @@
 // Original code, not ported from Chart.js: native arc option twins.
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 const red = Color(0xffff0000);
@@ -81,8 +65,8 @@ class _Fixture({required bool ordinary}) {
     immutableKeys: true,
   );
 
-  helpers.OptionResolver get resolver =>
-      config.createResolver(scopes, null, prefixes) as helpers.OptionResolver;
+  OptionResolver get resolver =>
+      config.createResolver(scopes, null, prefixes) as OptionResolver;
 }
 
 Object? plain(Object? value) {
@@ -316,7 +300,7 @@ void main() {
       });
       _expectTwins((f, trace) {
         ChartPaint color(Object? ctx, Object? options) {
-          trace.add((options! as helpers.OptionView).readKey(OptionKey.offset));
+          trace.add((options! as OptionView).readKey(OptionKey.offset));
           return const ChartPaint.solid(green);
         }
 

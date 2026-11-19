@@ -6,10 +6,8 @@ import 'dart:math' as math;
 import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../helpers/rounded_rect_upstream.dart';

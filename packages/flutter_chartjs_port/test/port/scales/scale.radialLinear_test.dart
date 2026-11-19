@@ -5,21 +5,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'scale_chart_harness.dart';
@@ -525,7 +511,7 @@ void main() {
       final r = _r(_chart(['A', 'B', 'C', 'D'], [1.0, 5.0, 9.0, 2.0]));
       expect(r.pointLabelItems, hasLength(4));
       for (var i = 0; i < 4; i++) {
-        final types.TRBL item = r.pointLabelItems[i];
+        final TRBL item = r.pointLabelItems[i];
         final p = r.getPointLabelPosition(i);
         expect(
           [p.left, p.top, p.right, p.bottom],

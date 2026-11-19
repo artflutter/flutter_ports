@@ -1,8 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.easing.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// Jasmine `toEqual` for an array of numbers: the same length, and each
@@ -432,7 +430,7 @@ void main() {
       };
 
       List<double> generate(String method) {
-        final fn = helpers.easingEffects[method]!;
+        final fn = easingEffects[method]!;
         // Math.pow(10, 8) is exact: 1e8.
         const accuracy = 1e8;
         const count = 10;
@@ -445,7 +443,7 @@ void main() {
         return values;
       }
 
-      for (final method in jsObjectKeys(helpers.easingEffects)) {
+      for (final method in jsObjectKeys(easingEffects)) {
         test('"$method" should return expected values', () {
           expect(generate(method), _toEqual(expected[method]!));
         });

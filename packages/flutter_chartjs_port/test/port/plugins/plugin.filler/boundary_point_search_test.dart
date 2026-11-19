@@ -2,18 +2,14 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 PointElement _point(double x, double y) => PointElement()
   ..x = x
   ..y = y;
 
-LineElement _line(List<types.PointElement> points) => LineElement({
+LineElement _line(List<IPointElement> points) => LineElement({
   'points': points,
   'options': <String, Object?>{'tension': 0.0},
 });
@@ -25,7 +21,7 @@ class _UnreadPoint() extends PointElement {
 
 class _UnreadLine() extends LineElement {
   @override
-  List<types.PointElement> get points => throw StateError('custom line read');
+  List<IPointElement> get points => throw StateError('custom line read');
 }
 
 void main() {
@@ -36,7 +32,7 @@ void main() {
     for (final axis in ['x', 'y']) {
       for (var sample = 0; sample < 100; sample++) {
         var value = -1000.0;
-        final points = <types.PointElement>[];
+        final points = <IPointElement>[];
         final count = 20 + 5 * random.nextInt(6);
         for (var i = 0; i < count; i++) {
           value += 0.1 + random.nextDouble() * 20;
@@ -90,7 +86,7 @@ void main() {
     () {
       expect(BoundaryPointSearch.create(_line([_point(0, 3)]), 'x'), isNull);
       for (var kind = 0; kind < 5; kind++) {
-        final points = <types.PointElement>[
+        final points = <IPointElement>[
           for (var i = 0; i < 4; i++) _point(i.toDouble(), 3),
         ];
         final line = _line(points);

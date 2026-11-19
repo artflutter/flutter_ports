@@ -7,46 +7,7 @@ import 'dart:ui' as native_ui;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        AxisTitle,
-        BarDataset,
-        BubbleDataset,
-        CategoryAxis,
-        ChartConfig,
-        ChartKind,
-        ChartLegend,
-        ChartTitle,
-        ChartTooltip,
-        DataPoint,
-        Dataset,
-        DoughnutDataset,
-        LineDataset,
-        LinearAxis,
-        PieDataset,
-        PolarAreaDataset,
-        RadarDataset,
-        RadialLinearAxis,
-        ScatterDataset;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
-    show getHoverColor;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint, SolidChartPaint;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 

@@ -8,17 +8,7 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -59,10 +49,10 @@ import '../support/jasmine.dart';
 /// The event object `{type: 'click', chart, native: true, x, y}` of the
 /// spec.
 final class _Event(
-  @override final types.Chart? chart,
+  @override final IChart? chart,
   @override final double? x,
   @override final double? y,
-) implements types.ChartEvent {
+) implements ChartEvent {
   @override
   String get type => 'click';
 
@@ -76,7 +66,7 @@ List<Object?> _elements(List<ActiveElement> items) => [
 ];
 
 /// `meta.data[index]` of [meta], an element of core.element.dart.
-Element _data(types.ChartMeta meta, int index) => meta.data[index] as Element;
+Element _data(ChartMeta meta, int index) => meta.data[index] as Element;
 
 /// `chart.data.datasets[index]`.
 AnyObject _dataset(Chart chart, int index) =>
@@ -323,8 +313,7 @@ void main() {
 
           final meta0 = chart.getDatasetMeta(0);
           final meta1 = chart.getDatasetMeta(1);
-          final center = (meta0.data[0] as types.VisualElement)
-              .getCenterPoint();
+          final center = (meta0.data[0] as VisualElement).getCenterPoint();
 
           final evt = _Event(chart, center.x, center.y! + 30);
 

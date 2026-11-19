@@ -7,46 +7,9 @@ import 'dart:typed_data' show ByteData;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter/widgets.dart' hide Element;
+import 'package:flutter/widgets.dart' hide Animation, Element;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.pie.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.polarArea.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart' as core;
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show StarPointStyle;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionResolver, createResolver, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet, jsSet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
-    show foreignAudit;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/legend_item.dart';
@@ -130,7 +93,7 @@ Map<String, Object?> _eager(
 Legend _legendOf(Chart chart) => chart.legend! as Legend;
 
 /// Native snapshots of the items at this observation point.
-List<LegendItem> _items(types.LegendElement legend) => [
+List<LegendItem> _items(LegendElement legend) => [
   for (final item in legend.legendItems!) item.copyWith(),
 ];
 
@@ -354,7 +317,7 @@ const _indexedColors = <String, Object?>{
 /// The plain form of a value that user code can read.
 Object? _plain(Object? value) {
   if (value is Function) return 'function';
-  if (value is core.Animation) return 'animation';
+  if (value is Animation) return 'animation';
   if (value is double && !value.isFinite) return '$value';
   if (value is JsObjectFace) {
     return {for (final k in value.jsKeys()) k: _plain(value.jsRead(k))};

@@ -12,11 +12,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/scope_kinds.g.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A user Map read as an option scope.
 extension type const RawScope(Map<String, Object?> map) implements Object {

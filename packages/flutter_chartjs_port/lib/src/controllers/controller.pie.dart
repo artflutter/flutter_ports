@@ -27,15 +27,7 @@
 /// `core.datasetController.dart`. Thus it is not a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart'
-    show DoughnutController;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show controllerArgs;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show PercentRadius, PixelRadius;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show DoughnutControllerDatasetOptionsScope;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// controller.pie.js:4 `PieController extends DoughnutController`.
 ///

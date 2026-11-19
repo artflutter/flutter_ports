@@ -6,9 +6,7 @@ library;
 import 'dart:async';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///

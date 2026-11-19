@@ -17,7 +17,7 @@ library;
 
 import 'dart:ui' show Color, Image, Offset, TileMode;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart' show immutable;
 
 /// The renderer interprets these values; they cannot mutate canvas state.

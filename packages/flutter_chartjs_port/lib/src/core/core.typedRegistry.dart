@@ -18,19 +18,7 @@
 /// `package:flutter`.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show merge;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToString, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet, jsIsObjectLike, jsSet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionScope;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show Plugin, PluginOptions;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// core.typedRegistry.js:8 `TypedRegistry`, the default export.
 final class TypedRegistry(

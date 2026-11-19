@@ -12,7 +12,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `display` of a scale (index.d.ts:1205 `boolean | 'auto'`) and of the
 /// point labels of a radial scale (index.d.ts:3636): whether the chart shows

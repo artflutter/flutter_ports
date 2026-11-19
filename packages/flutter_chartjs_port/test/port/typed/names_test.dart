@@ -192,7 +192,7 @@ void main() {
   test('rule 3: no typed name is another name of the port libraries', () async {
     final typed = await _exportsOf('lib/src/typed/typed.dart');
     final port = {
-      ...await _exportsOf('lib/chartjs.dart'),
+      ...(await _exportsOf('lib/chartjs.dart')).difference(typed),
       ...await _exportsOf('lib/helpers.dart'),
       ...(await _exportsOf('lib/flutter_chartjs_port.dart')).difference(typed),
     };

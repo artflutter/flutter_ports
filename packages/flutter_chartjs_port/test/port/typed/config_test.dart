@@ -8,8 +8,6 @@ import 'dart:ui' show Color;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'twin.dart';

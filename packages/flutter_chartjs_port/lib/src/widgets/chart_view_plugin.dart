@@ -12,21 +12,9 @@
 /// palette key, and the chart shows no focus ring.
 library;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/chart_shadow.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show DatasetDrawHookArgs, Plugin;
-import 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The id of the inline plugin of `ChartView`. The id is reserved.
-@internal
 const String chartViewPluginId = r'$chartView';
 
 /// The internal inline plugin of a `ChartView`: a native [Plugin]
@@ -36,7 +24,6 @@ const String chartViewPluginId = r'$chartView';
 /// [keys] (Chart.js ADR 0051, section 6). Its `beforeDatasetDraw` and
 /// `afterDatasetDraw` draw the shadow of a dataset (Chart.js ADR 0107). The
 /// cancelable hooks continue the step.
-@internal
 Plugin<OptionView> createChartViewPlugin(
   ChartThemeSwitch theme,
   ChartKeyboard keys,
@@ -86,7 +73,7 @@ Plugin<OptionView> createChartViewPlugin(
 /// plugin reads the dataset only: the shadow does not cascade from
 /// `options.datasets` or from `options`. A dataset with no shadow keeps the
 /// context as it is. Another value stops a debug build.
-bool _beginShadow(types.Chart chart, DatasetDrawHookArgs args) {
+bool _beginShadow(IChart chart, DatasetDrawHookArgs args) {
   final ctx = chart.ctx;
   if (ctx == null) return false;
   final shadow = readOption(

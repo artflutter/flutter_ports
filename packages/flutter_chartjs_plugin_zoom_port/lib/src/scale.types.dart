@@ -19,8 +19,6 @@ import 'dart:math' as math;
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
-import 'package:flutter_chartjs_port/helpers.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// scale.types.ts:7 `ZoomFunction`: zooms [scale] by the factor [zoom]
 /// around [center], within [limits]. The result is true if the range

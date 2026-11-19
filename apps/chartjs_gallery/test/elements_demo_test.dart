@@ -5,7 +5,6 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/elements_demo.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: ChartHost, the internal host of ChartView (a white-box test).
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 

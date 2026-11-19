@@ -6,20 +6,10 @@
 library;
 
 // Test-only access to the native color bridge.
-// ignore_for_file: implementation_imports
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart';
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 final _callbacks = Expando<Object>('fixture native color callback');
 

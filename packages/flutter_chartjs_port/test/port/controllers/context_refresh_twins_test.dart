@@ -6,10 +6,6 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, ScriptableContext;
-import 'package:flutter_chartjs_port/src/options/props.dart' show BorderSkipped;
 import 'package:flutter_test/flutter_test.dart';
 
 const red = ui.Color(0xffff0000);

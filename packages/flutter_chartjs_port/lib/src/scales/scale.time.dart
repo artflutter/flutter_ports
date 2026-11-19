@@ -42,37 +42,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, TickSource;
-import 'package:flutter_chartjs_port/src/core/scale_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show arrayUnique, filterBetween, lookup;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFinite, isNullOrUndef, mergeIf, valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show isNumber, limitValue, toRadians;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        DisplayFormatsScope,
-        MajorTickOptionsScope,
-        ScaleOptionsScope,
-        TickOptionsScope,
-        TimeScaleTimeOptionsScope;
-import 'package:flutter_chartjs_port/src/types/index.dart'
-    as types
-    show ScaleCache;
-import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
 /// scale.time.js:9 `Interval`: `{common: boolean, size: number, steps?:
@@ -386,7 +356,7 @@ void _reverse<T>(List<T> list) {
 /// timestamps, the label timestamps and the timestamps of the lookup table
 /// of the timeseries scale. A label timestamp can be Dart `null` (JS
 /// `null`).
-types.ScaleCache _newCache() => types.ScaleCache()
+ScaleCache _newCache() => ScaleCache()
   ..data = <double>[]
   ..labels = <double?>[]
   ..all = <double?>[];
@@ -464,7 +434,6 @@ class TimeScale(super.cfg) extends Scale {
 
   /// This exact built-in scale has ordinary axis and metadata reads.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
   bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
 
@@ -479,7 +448,6 @@ class TimeScale(super.cfg) extends Scale {
   ///
   /// The unit of the labels (scale.time.js:387).
   // DIVERGES(chartjs): adapt-time-unit-enum, the enum value.
-  @internal
   TimeUnit unit = TimeUnit.day;
 
   /// scale.time.js:260 `_majorUnit`. Dart `null` stands for JS `undefined`.
@@ -488,7 +456,6 @@ class TimeScale(super.cfg) extends Scale {
   /// scale.time.js:261 `_offsets`. scale.timeseries.js:171 reads it.
   ///
   /// The start value `{}` reads `undefined` for each member, thus NaN.
-  @internal
   ({double start, double end, double factor}) offsets = (
     start: double.nan,
     end: double.nan,
@@ -506,7 +473,6 @@ class TimeScale(super.cfg) extends Scale {
 
   /// scale.time.js:269 `_adapter`. The spec reads it (scale.time.tests.js:448,
   /// :453). Chart.js ADR 0024 decides its type. [init] sets it.
-  @internal
   late DateAdapter adapter;
 
   /// scale.time.js:266 `init(scaleOpts, opts = {})`.
@@ -725,7 +691,9 @@ class TimeScale(super.cfg) extends Scale {
     // Offsets for bar charts need to be handled with the auto skipped
     // ticks. Once ticks have been skipped, we re-compute the offsets.
     if (jsTruthy(options.offsetAfterAutoskip)) {
-      initOffsets([for (final tick in ticks!) jsToNumber(_tickValue(tick))]);
+      initOffsets([
+        for (final tick in this.ticks!) jsToNumber(_tickValue(tick)),
+      ]);
     }
   }
 
@@ -787,7 +755,6 @@ class TimeScale(super.cfg) extends Scale {
   ///
   /// The loop throws a [StateError] when a step does not advance (row
   /// `adapt-time-generate-no-advance`).
-  @internal
   @protected
   List<double> generate() {
     final adapter = this.adapter;

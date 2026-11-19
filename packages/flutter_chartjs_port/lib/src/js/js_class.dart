@@ -30,10 +30,7 @@
 /// `package:flutter`.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The type of [_absent].
 final class const _Absent();

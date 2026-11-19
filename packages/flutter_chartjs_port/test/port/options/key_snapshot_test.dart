@@ -1,7 +1,5 @@
 // Original code, not ported from Chart.js: immutable native key snapshots.
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 void main() {

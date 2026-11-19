@@ -5,7 +5,6 @@ library;
 
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/helpers.dart';
 
 import '../../observe.dart' as observe;
 

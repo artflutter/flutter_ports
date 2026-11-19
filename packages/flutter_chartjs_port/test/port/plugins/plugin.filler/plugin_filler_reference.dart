@@ -16,17 +16,7 @@
 import 'dart:ui' show FontStyle, StrokeCap, StrokeJoin;
 
 import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
-    show ChartClip, StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
 const String pluginFillerReferenceNode = 'v24.22.1';

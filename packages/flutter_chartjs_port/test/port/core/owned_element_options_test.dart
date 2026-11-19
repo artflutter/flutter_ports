@@ -1,18 +1,7 @@
 // Original code, not ported from Chart.js: owned option result and setup twins.
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 const red = ChartPaint.solid(Color(0xffff0000));
@@ -78,12 +67,12 @@ class _Fixture({bool ordinary = false, final bool point = true}) {
         point: point,
         immutableKeys: true,
       );
-  helpers.OptionResolver get resolver =>
-      config.createResolver(scopes, null, prefixes) as helpers.OptionResolver;
+  OptionResolver get resolver =>
+      config.createResolver(scopes, null, prefixes) as OptionResolver;
 }
 
 Object? plain(Object? value) {
-  if (value is helpers.OptionView) {
+  if (value is OptionView) {
     return {for (final key in value.jsKeys()) key: plain(value.jsRead(key))};
   }
   if (value is List<Object?>) return value.map(plain).toList();
@@ -170,7 +159,7 @@ void main() {
             if (mutate) {
               switch (mutation) {
                 case 'resolver':
-                  (opts! as helpers.OptionView).jsWrite('borderColor', red);
+                  (opts! as OptionView).jsWrite('borderColor', red);
                 case 'clear':
                   f.scope['borderColor'] = red;
                   f.config.clearCache();

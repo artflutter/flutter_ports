@@ -5,9 +5,7 @@
 // src/core/core.interaction.js at the pinned Chart.js. 37 scenes,
 // 704 queries.
 
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
 const String interactionReferenceNode = 'v24.22.1';

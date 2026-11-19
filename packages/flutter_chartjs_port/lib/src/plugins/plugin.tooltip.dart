@@ -28,7 +28,7 @@
 /// The tooltip reads its options through the facade [TooltipOptions] of
 /// `plugin_options.dart` (Chart.js ADR 0054 §4), in the upstream order of
 /// the reads. The tooltip items and the body items are the native
-/// [types.TooltipItem] and [types.TooltipBodyItem] (row
+/// [TooltipItem] and [TooltipBodyItem] (row
 /// `adapt-native-tooltip-item`). The label colors, the label point styles
 /// and the positions of the built-in positioners are typed classes
 /// ([TooltipLabelStyle], [TooltipLabelPointStyle] and [TooltipPosition]). A
@@ -46,67 +46,7 @@ import 'dart:ui' show TextAlign;
 
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart'
-    show canvasStyle;
-import 'package:flutter_chartjs_port/src/core/core.animations.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show DatasetInteractionMode;
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show CirclePointStyle, addRoundedRectPath, drawPoint;
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show arrayUnique;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionResolver, OptionView;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show elementsEqual, isNullOrUndef, isObject;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show distanceBetweenPoints, limitValue;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, createContext, toTRBLCorners;
-import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
-    show RTLAdapter, getRtlAdapter, overrideTextDirection, restoreTextDirection;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show jsObjectKeys, jsSort;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsIsObjectLike, jsObjectFreeze, jsObjectOrNull;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart'
-    show OptFunction, optNull;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AnimationOptionsScope,
-        AnimationsSpecScope,
-        DescriptorsScope,
-        TooltipOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show TooltipOptions, optionOf;
-import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show
-        EventHookArgs,
-        Plugin,
-        PluginHook,
-        PluginHookArgs,
-        TooltipDrawHookArgs,
-        UpdateHookArgs;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 export 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
     show TooltipLabelPointStyle, TooltipLabelStyle;
@@ -120,8 +60,8 @@ final class const AverageTooltipPositioner() extends TooltipPositioner {
 
   @override
   TooltipPosition? positionOf(
-    types.TooltipModel tooltip,
-    List<types.ActiveElement> items,
+    TooltipModel tooltip,
+    List<ActiveElement> items,
     Object? eventPosition,
   ) => _positionOrNull(_average(items));
 }
@@ -135,8 +75,8 @@ final class const NearestTooltipPositioner() extends TooltipPositioner {
 
   @override
   TooltipPosition? positionOf(
-    types.TooltipModel tooltip,
-    List<types.ActiveElement> items,
+    TooltipModel tooltip,
+    List<ActiveElement> items,
     Object? eventPosition,
   ) => _positionOrNull(_nearest(items, eventPosition));
 }
@@ -173,7 +113,7 @@ Object? _readY(Object? value) => switch (value) {
 /// removes the copies with SameValueZero (Chart.js ADR 0039, section 4).
 /// The sum keeps the insertion order. The elements cast to [Element] at
 /// `hasValue` and `tooltipPosition` (Chart.js ADR 0038, section 6).
-Object? _average(List<types.ActiveElement> items) {
+Object? _average(List<ActiveElement> items) {
   if (items.isEmpty) {
     return false;
   }
@@ -213,7 +153,7 @@ Object? _average(List<types.ActiveElement> items) {
 /// `x` and `y` start as the raw `eventPosition.x` and `.y` ([_readX]).
 /// `distanceBetweenPoints` gets their `ToNumber`, the conversion of the
 /// upstream subtraction (Chart.js ADR 0039, section 4).
-Object? _nearest(List<types.ActiveElement> items, Object? eventPosition) {
+Object? _nearest(List<ActiveElement> items, Object? eventPosition) {
   if (items.isEmpty) {
     return false;
   }
@@ -226,7 +166,7 @@ Object? _nearest(List<types.ActiveElement> items, Object? eventPosition) {
   for (var i = 0, len = items.length; i < len; ++i) {
     final el = items[i].element;
     if (el != null && (el as Element).hasValue()) {
-      final center = (el as types.VisualElement).getCenterPoint();
+      final center = (el as VisualElement).getCenterPoint();
       final d = distanceBetweenPoints(
         _NumberPoint(
           jsToNumber(_readX(eventPosition)),
@@ -268,19 +208,16 @@ final class const _NumberPoint(
 /// the tooltip item for
 /// @return new tooltip item
 ///
-/// The item is a native [types.TooltipItem]. `label` is the List of the
+/// The item is a native [TooltipItem]. `label` is the List of the
 /// lines of the label of `getLabelAndValue`. A meta without a controller
 /// throws the [TypeError] of the null check, as the call on JS `null`
 /// throws. `raw` is a read of the data of the user, by name.
-types.TooltipItem _createTooltipItem(
-  types.Chart chart,
-  types.ActiveElement item,
-) {
-  final types.ActiveElement(:element, :datasetIndex, :index) = item;
+TooltipItem _createTooltipItem(IChart chart, ActiveElement item) {
+  final ActiveElement(:element, :datasetIndex, :index) = item;
   final controller = chart.getDatasetMeta(datasetIndex).controller!;
   final (:label, :value) = controller.getLabelAndValue(index);
 
-  return types.TooltipItem(
+  return TooltipItem(
     chart: chart,
     label: label,
     parsed: _orNull(controller.getParsed(index)),
@@ -459,7 +396,7 @@ TooltipYAlign? _readYAlign(Object? position) => switch (position) {
 
 /// plugin.tooltip.js:223 `determineYAlign(chart, size)`.
 // DIVERGES(chartjs): adapt-tooltip-align-enums, the enum value.
-TooltipYAlign _determineYAlign(types.Chart chart, _PositionAndSize size) {
+TooltipYAlign _determineYAlign(IChart chart, _PositionAndSize size) {
   final (:y, :height, x: _, width: _, xAlign: _, yAlign: _) = size;
 
   if (y < height / 2) {
@@ -474,7 +411,7 @@ TooltipYAlign _determineYAlign(types.Chart chart, _PositionAndSize size) {
 /// size)`. Upstream returns `true` or `undefined`: here `true` or `false`.
 bool _doesNotFitWithAlign(
   TooltipXAlign xAlign,
-  types.Chart chart,
+  IChart chart,
   TooltipOptions options,
   _PositionAndSize size,
 ) {
@@ -495,7 +432,7 @@ bool _doesNotFitWithAlign(
 /// A chart without a chart area throws the [TypeError] of the null check,
 /// as the destructuring of `undefined` throws.
 TooltipXAlign _determineXAlign(
-  types.Chart chart,
+  IChart chart,
   TooltipOptions options,
   _PositionAndSize size,
   TooltipYAlign yAlign,
@@ -530,7 +467,7 @@ TooltipXAlign _determineXAlign(
 /// `adapt-tooltip-align-enums`), as a falsy value falls through upstream.
 // DIVERGES(chartjs): adapt-tooltip-align-enums, the enum values.
 ({TooltipXAlign xAlign, TooltipYAlign yAlign}) _determineAlignment(
-  types.Chart chart,
+  IChart chart,
   TooltipOptions options,
   _PositionAndSize size,
 ) {
@@ -582,7 +519,7 @@ double _alignY(
   TooltipOptions options,
   _PositionAndSize size,
   ({TooltipXAlign xAlign, TooltipYAlign yAlign}) alignment,
-  types.Chart chart,
+  IChart chart,
 ) {
   final caretSize = options.caretSize;
   final caretPadding = options.caretPadding;
@@ -630,7 +567,7 @@ double _getAlignedX(Tooltip tooltip, TextAlign? align, TooltipOptions options) {
 ContextObject _createTooltipContext(
   Object? parent,
   Tooltip tooltip,
-  List<types.TooltipItem> tooltipItems,
+  List<TooltipItem> tooltipItems,
 ) {
   return createContext(parent, <String, Object?>{
     'tooltip': tooltip,
@@ -641,7 +578,7 @@ ContextObject _createTooltipContext(
 
 /// The per-item callback overlay. The dataset only participates at the
 /// six per-item call sites, never in the title/body/footer group hooks.
-TooltipCallbacks _callbacksFor(TooltipOptions options, types.TooltipItem item) {
+TooltipCallbacks _callbacksFor(TooltipOptions options, TooltipItem item) {
   final datasetOptions = optionOf(item.dataset, OptionKey.tooltip);
   if (isNullOrUndef(datasetOptions) || datasetOptions == false) {
     return options.callbacks;
@@ -651,7 +588,7 @@ TooltipCallbacks _callbacksFor(TooltipOptions options, types.TooltipItem item) {
   );
 }
 
-bool _isDatasetMode(types.TooltipModel tooltip) =>
+bool _isDatasetMode(TooltipModel tooltip) =>
     TooltipOptions(tooltip.options).mode is DatasetInteractionMode;
 
 /// plugin.tooltip.js:364 the default `title(tooltipItems)`. Args are:
@@ -660,10 +597,7 @@ bool _isDatasetMode(types.TooltipModel tooltip) =>
 /// A label of one line splits at each line break, as `splitNewlines` splits
 /// a string label. The labels and the datasets are data of the user, read
 /// by name.
-List<String> _defaultTitle(
-  types.TooltipModel tooltip,
-  List<types.TooltipItem> items,
-) {
+List<String> _defaultTitle(TooltipModel tooltip, List<TooltipItem> items) {
   if (items.isNotEmpty) {
     final item = items[0];
     final labels = jsGet(item.chart.data, 'labels');
@@ -689,7 +623,7 @@ List<String> _defaultTitle(
 ///
 /// In the mode `dataset`, the lines of the label join with a comma, as the
 /// string form of a JS array does.
-List<String> _defaultLabel(types.TooltipModel tooltip, types.TooltipItem item) {
+List<String> _defaultLabel(TooltipModel tooltip, TooltipItem item) {
   if (_isDatasetMode(tooltip)) {
     return ['${item.label.join(',')}: ${item.formattedValue}'];
   }
@@ -709,17 +643,14 @@ List<String> _defaultLabel(types.TooltipModel tooltip, types.TooltipItem item) {
 /// `tooltipItem.chart.getDatasetMeta(tooltipItem.datasetIndex)` and
 /// `meta.controller.getStyle(tooltipItem.dataIndex)` of
 /// plugin.tooltip.js:405-406 and :420-421.
-Object _styleOf(types.TooltipItem item) {
+Object _styleOf(TooltipItem item) {
   final meta = item.chart.getDatasetMeta(item.datasetIndex);
   return meta.controller!.getStyle(item.dataIndex);
 }
 
 /// plugin.tooltip.js:404 the default `labelColor(tooltipItem)`: a
 /// [TooltipLabelStyle]. The style keys are the typed reads of the options.
-TooltipLabelStyle _defaultLabelColor(
-  types.TooltipModel tooltip,
-  types.TooltipItem item,
-) {
+TooltipLabelStyle _defaultLabelColor(TooltipModel tooltip, TooltipItem item) {
   final options = _styleOf(item);
   final width = optionOf(options, OptionKey.borderWidth);
   final dash = optionOf(options, OptionKey.borderDash);
@@ -740,14 +671,12 @@ TooltipLabelStyle _defaultLabelColor(
   );
 }
 
-ChartPaint _defaultLabelTextColor(
-  types.TooltipModel tooltip,
-  types.TooltipItem item,
-) => chartPaintOf(TooltipOptions(tooltip.options).bodyColor, strict: false);
+ChartPaint _defaultLabelTextColor(TooltipModel tooltip, TooltipItem item) =>
+    chartPaintOf(TooltipOptions(tooltip.options).bodyColor, strict: false);
 
 TooltipLabelPointStyle _defaultLabelPointStyle(
-  types.TooltipModel tooltip,
-  types.TooltipItem item,
+  TooltipModel tooltip,
+  TooltipItem item,
 ) {
   final options = _styleOf(item);
   final style = optionOf(options, OptionKey.pointStyle);
@@ -766,12 +695,9 @@ List<String> _defaultText(Object? value) {
   return jsToString(value).split('\n');
 }
 
-List<String> _emptyItems(
-  types.TooltipModel tooltip,
-  List<types.TooltipItem> items,
-) => const [];
-List<String> _emptyItem(types.TooltipModel tooltip, types.TooltipItem item) =>
+List<String> _emptyItems(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
+List<String> _emptyItem(TooltipModel tooltip, TooltipItem item) => const [];
 
 /// The 14 built-in callbacks in their upstream declaration order.
 const TooltipCallbacks _defaultCallbacks = TooltipCallbacks(
@@ -801,16 +727,16 @@ bool _strictEquals(Object? a, Object? b) {
 }
 
 /// The element `meta.data[index]`, or Dart `null` for JS `undefined`.
-types.Element? _elementAt(List<types.Element> data, int index) =>
+IElement? _elementAt(List<IElement> data, int index) =>
     switch (jsGetIndex(data, index)) {
-      final types.Element element => element,
+      final IElement element => element,
       _ => null,
     };
 
 /// `active.reverse()`: reverses [list] in place. The items come from the
 /// same list, so the covariant store of a `List<InteractionItem>` accepts
 /// them, and the list keeps its identity (Chart.js ADR 0039, section 12).
-void _reverseInPlace(List<types.ActiveElement> list) {
+void _reverseInPlace(List<ActiveElement> list) {
   for (var i = 0, j = list.length - 1; i < j; i++, j--) {
     final item = list[i];
     list[i] = list[j];
@@ -885,9 +811,9 @@ final class _RoundedRect({
 /// `harness-method-fields`): a spec replaces it on one tooltip
 /// (`plugin.tooltip.tests.js:964`, `:1027`). Each internal call goes
 /// through the field.
-class Tooltip(({types.Chart chart, Object? options}) config)
+class Tooltip(({IChart chart, Object? options}) config)
     extends Element
-    implements types.TooltipModel {
+    implements TooltipModel {
   /// plugin.tooltip.js:464 `constructor(config)`.
   ///
   /// The upstream `config` object is a record (Chart.js ADR 0038, section
@@ -917,7 +843,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// plugin.tooltip.js:475 `chart`. Not final: the access by name writes it
   /// (Chart.js ADR 0039, section 2).
   @override
-  types.Chart chart = config.chart;
+  IChart chart = config.chart;
 
   double? _opacity;
   double? _width;
@@ -926,10 +852,10 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   double? _caretY;
   TooltipXAlign? _xAlign;
   TooltipYAlign? _yAlign;
-  List<types.TooltipItem>? _dataPoints;
+  List<TooltipItem>? _dataPoints;
   List<String>? _title;
   List<String>? _beforeBody;
-  List<types.TooltipBodyItem>? _body;
+  List<TooltipBodyItem>? _body;
   List<String>? _afterBody;
   List<String>? _footer;
   List<Object?>? _labelColors;
@@ -937,7 +863,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   List<Object?>? _labelTextColors;
 
   /// plugin.tooltip.js:468 `_active`, the active elements of the tooltip.
-  List<types.ActiveElement> _active = const [];
+  List<ActiveElement> _active = const [];
 
   /// plugin.tooltip.js:469 `_eventPosition`, any JS value. The [undefined]
   /// sentinel stands for the start value.
@@ -951,7 +877,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   Animations? _cachedAnimations;
 
   /// plugin.tooltip.js:472 `_tooltipItems`.
-  List<types.TooltipItem> _tooltipItems = const [];
+  List<TooltipItem> _tooltipItems = const [];
 
   /// plugin.tooltip.js:474 `$context`. Dart `null` stands for JS
   /// `undefined`. The value is an object: the tooltip context, or an object
@@ -1007,9 +933,9 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// plugin.tooltip.js:477 `dataPoints`, the tooltip items. Dart `null` for
   /// JS `undefined`.
   @override
-  List<types.TooltipItem>? get dataPoints => _dataPoints;
+  List<TooltipItem>? get dataPoints => _dataPoints;
 
-  set dataPoints(List<types.TooltipItem> value) => _dataPoints = value;
+  set dataPoints(List<TooltipItem> value) => _dataPoints = value;
 
   /// plugin.tooltip.js:478 `title`. Dart `null` for JS `undefined`.
   @override
@@ -1025,9 +951,9 @@ class Tooltip(({types.Chart chart, Object? options}) config)
 
   /// plugin.tooltip.js:480 `body`. Dart `null` for JS `undefined`.
   @override
-  List<types.TooltipBodyItem>? get body => _body;
+  List<TooltipBodyItem>? get body => _body;
 
-  set body(List<types.TooltipBodyItem> value) => _body = value;
+  set body(List<TooltipBodyItem> value) => _body = value;
 
   /// plugin.tooltip.js:481 `afterBody`. Dart `null` for JS `undefined`.
   @override
@@ -1150,7 +1076,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   // DIVERGES(chartjs): adapt-tooltip-positioner-objects, the positioner.
   Object? _position(
     TooltipOptions options,
-    List<types.ActiveElement> active,
+    List<ActiveElement> active,
     Object? eventPosition,
   ) {
     final positioner = options.position;
@@ -1161,7 +1087,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   }
 
   /// plugin.tooltip.js:533 `getTitle(context, options)`.
-  List<String> getTitle(List<types.TooltipItem> items, TooltipOptions options) {
+  List<String> getTitle(List<TooltipItem> items, TooltipOptions options) {
     return <String>[
       ...?options.callbacks.beforeTitle?.call(this, items),
       ...(options.callbacks.title?.call(this, items) ??
@@ -1171,21 +1097,19 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   }
 
   /// plugin.tooltip.js:548 `getBeforeBody`.
-  List<String> getBeforeBody(
-    List<types.TooltipItem> items,
-    TooltipOptions options,
-  ) => [...?options.callbacks.beforeBody?.call(this, items)];
+  List<String> getBeforeBody(List<TooltipItem> items, TooltipOptions options) =>
+      [...?options.callbacks.beforeBody?.call(this, items)];
 
   /// plugin.tooltip.js:554 `getBody`: direct calls, with dataset overlays.
-  List<types.TooltipBodyItem> getBody(
-    List<types.TooltipItem> items,
+  List<TooltipBodyItem> getBody(
+    List<TooltipItem> items,
     TooltipOptions options,
   ) {
-    final bodies = <types.TooltipBodyItem>[];
+    final bodies = <TooltipBodyItem>[];
     for (final item in items) {
       final callbacks = _callbacksFor(options, item);
       bodies.add(
-        types.TooltipBodyItem(
+        TooltipBodyItem(
           before: <String>[...?callbacks.beforeLabel?.call(this, item)],
           lines: <String>[
             ...(callbacks.label?.call(this, item) ?? _defaultLabel(this, item)),
@@ -1198,16 +1122,11 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   }
 
   /// plugin.tooltip.js:575 `getAfterBody`.
-  List<String> getAfterBody(
-    List<types.TooltipItem> items,
-    TooltipOptions options,
-  ) => [...?options.callbacks.afterBody?.call(this, items)];
+  List<String> getAfterBody(List<TooltipItem> items, TooltipOptions options) =>
+      [...?options.callbacks.afterBody?.call(this, items)];
 
   /// plugin.tooltip.js:582 `getFooter`.
-  List<String> getFooter(
-    List<types.TooltipItem> items,
-    TooltipOptions options,
-  ) {
+  List<String> getFooter(List<TooltipItem> items, TooltipOptions options) {
     return <String>[
       ...?options.callbacks.beforeFooter?.call(this, items),
       ...?options.callbacks.footer?.call(this, items),
@@ -1220,13 +1139,13 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// `options.filter` gets the item, its index, the List of each item and
   /// the chart data. `options.itemSort` goes through [jsSort], the stable
   /// `Array.prototype.sort`. Both are typed functions, called directly.
-  List<types.TooltipItem> _createItems(TooltipOptions options) {
+  List<TooltipItem> _createItems(TooltipOptions options) {
     final active = _active;
     final data = chart.data;
     final labelColors = <Object?>[];
     final labelPointStyles = <Object?>[];
     final labelTextColors = <Object?>[];
-    var tooltipItems = <types.TooltipItem>[];
+    var tooltipItems = <TooltipItem>[];
 
     for (var i = 0, len = active.length; i < len; ++i) {
       tooltipItems.add(_createTooltipItem(chart, active[i]));
@@ -1283,7 +1202,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
 
   TooltipLabelStyle _withDefaultPaints(
     TooltipLabelStyle style,
-    types.TooltipItem item,
+    TooltipItem item,
   ) {
     if (style.borderColor is! UnchangedChartPaint &&
         style.backgroundColor is! UnchangedChartPaint) {
@@ -1332,7 +1251,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
     final options = _resolveOptions();
     final active = _active;
     AnyObject? properties;
-    var tooltipItems = <types.TooltipItem>[];
+    var tooltipItems = <TooltipItem>[];
 
     if (active.isEmpty) {
       if (!_strictEquals(_opacity ?? undefined, 0)) {
@@ -1675,7 +1594,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
     }
 
     final bodyAlignForCalculation = rtlHelper.textAlign(bodyAlign);
-    types.TooltipBodyItem bodyItem;
+    TooltipBodyItem bodyItem;
     Object? textColor;
     List<String> lines;
 
@@ -1943,7 +1862,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// the tooltip. @returns {Array} Array of elements that are active in the
   /// tooltip
   @override
-  List<types.ActiveElement> getActiveElements() {
+  List<ActiveElement> getActiveElements() {
     return _active;
   }
 
@@ -1959,19 +1878,19 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// occur.
   @override
   void setActiveElements(
-    List<types.ActiveElement> activeElements, [
+    List<ActiveElement> activeElements, [
     Object? eventPosition = undefined,
   ]) {
     final lastActive = _active;
     final active = activeElements.map((item) {
       // DIVERGES(chartjs): adapt-native-active-element, int indexes.
-      final types.ActiveElement(:datasetIndex, :index) = item;
+      final ActiveElement(:datasetIndex, :index) = item;
       final meta = chart.getDatasetMeta(datasetIndex);
 
       // `if (!meta) throw new Error('Cannot find a dataset at index ' + ...)`:
       // getDatasetMeta always gives a meta.
 
-      return types.ActiveElement(
+      return ActiveElement(
         datasetIndex: datasetIndex,
         element: _elementAt(meta.data, index),
         index: index,
@@ -1989,7 +1908,6 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   }
 
   // DIVERGES(chartjs): adapt-live-mouse-move, a held move is a real move.
-  @internal
   @override
   void endIgnoredReplays() => _ignoreReplayEvents = false;
 
@@ -2005,7 +1923,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// default parameter. [replay] is read with ToBoolean, and the call of
   /// [update] gets it as it is.
   bool handleEvent(
-    types.ChartEvent e, [
+    ChartEvent e, [
     Object? replay = undefined,
     Object? inChartArea = undefined,
   ]) {
@@ -2054,9 +1972,9 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// The result of `getElementsAtEventForMode` can be a covariant
   /// `List<InteractionItem>`: `options.reverse` reverses it in place, with
   /// the items of the same list.
-  List<types.ActiveElement> _getActiveElements(
-    types.ChartEvent e,
-    List<types.ActiveElement> lastActive,
+  List<ActiveElement> _getActiveElements(
+    ChartEvent e,
+    List<ActiveElement> lastActive,
     Object? replay,
     Object? inChartArea,
   ) {
@@ -2112,7 +2030,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
   /// @param {array} active - Active elements
   /// @param {ChartEvent} e - Event that triggered the position change
   /// @returns {boolean} True if the position has changed
-  bool _positionChanged(List<types.ActiveElement> active, Object? e) {
+  bool _positionChanged(List<ActiveElement> active, Object? e) {
     final caretX = _caretX ?? undefined;
     final caretY = _caretY ?? undefined;
     final position = _position(TooltipOptions(options ?? undefined), active, e);
@@ -2196,13 +2114,13 @@ class Tooltip(({types.Chart chart, Object? options}) config)
       case 'beforeBody':
         _beforeBody = _listProp<String>(prop, value);
       case 'body':
-        _body = _listProp<types.TooltipBodyItem>(prop, value);
+        _body = _listProp<TooltipBodyItem>(prop, value);
       case 'afterBody':
         _afterBody = _listProp<String>(prop, value);
       case 'footer':
         _footer = _listProp<String>(prop, value);
       case 'dataPoints':
-        _dataPoints = _listProp<types.TooltipItem>(prop, value);
+        _dataPoints = _listProp<TooltipItem>(prop, value);
       case 'labelColors':
         _labelColors = toObjectProp<List<Object?>>(prop, value);
       case 'labelPointStyles':
@@ -2211,12 +2129,12 @@ class Tooltip(({types.Chart chart, Object? options}) config)
         _labelTextColors = toObjectProp<List<Object?>>(prop, value);
       case 'chart':
         chart = switch (value) {
-          final types.Chart chart => chart,
+          final IChart chart => chart,
           _ => throw ArgumentError.value(value, prop, 'Not a Chart'),
         };
       case '_active':
         _active = switch (value) {
-          final List<types.ActiveElement> active => active,
+          final List<ActiveElement> active => active,
           _ => throw ArgumentError.value(
             value,
             prop,
@@ -2231,7 +2149,7 @@ class Tooltip(({types.Chart chart, Object? options}) config)
         _cachedAnimations = toObjectProp<Animations>(prop, value);
       case '_tooltipItems':
         _tooltipItems = switch (value) {
-          final List<types.TooltipItem> items => items,
+          final List<TooltipItem> items => items,
           _ => throw ArgumentError.value(
             value,
             prop,
@@ -2262,10 +2180,10 @@ class Tooltip(({types.Chart chart, Object? options}) config)
 /// an `options` that is not an object (a Map or a typed object) throw a
 /// [TypeError]. Upstream stores such a value and reads its members later.
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-({types.Chart chart, Object? options}) _tooltipConfig(List<Object?> args) {
+({IChart chart, Object? options}) _tooltipConfig(List<Object?> args) {
   final config = args.isEmpty ? undefined : args[0];
   return (
-    chart: _orNull(jsGet(config, 'chart'))! as types.Chart,
+    chart: _orNull(jsGet(config, 'chart'))! as IChart,
     options: jsObjectOrNull(jsGet(config, 'options')),
   );
 }
@@ -2290,7 +2208,7 @@ bool _scriptableDescriptor(String name) =>
     name != 'filter' && name != 'itemSort' && name != 'external';
 
 /// plugin.tooltip.js:1228 `afterInit(chart, _args, options)`.
-void _afterInit(types.Chart chart, PluginHookArgs _, TooltipOptions options) {
+void _afterInit(IChart chart, PluginHookArgs _, TooltipOptions options) {
   if (jsTruthy(options.object)) {
     chart.tooltip = Tooltip((chart: chart, options: options.object));
   }
@@ -2298,11 +2216,7 @@ void _afterInit(types.Chart chart, PluginHookArgs _, TooltipOptions options) {
 
 /// plugin.tooltip.js:1234 `beforeUpdate(chart, _args, options)`. The hook
 /// continues the update: `true` is the `undefined` result of upstream.
-bool _beforeUpdate(
-  types.Chart chart,
-  UpdateHookArgs _,
-  TooltipOptions options,
-) {
+bool _beforeUpdate(IChart chart, UpdateHookArgs _, TooltipOptions options) {
   if (chart.tooltip != null) {
     (chart.tooltip! as Tooltip).initialize(options.object);
   }
@@ -2310,7 +2224,7 @@ bool _beforeUpdate(
 }
 
 /// plugin.tooltip.js:1240 `reset(chart, _args, options)`.
-void _reset(types.Chart chart, PluginHookArgs _, TooltipOptions options) {
+void _reset(IChart chart, PluginHookArgs _, TooltipOptions options) {
   if (chart.tooltip != null) {
     (chart.tooltip! as Tooltip).initialize(options.object);
   }
@@ -2321,7 +2235,7 @@ void _reset(types.Chart chart, PluginHookArgs _, TooltipOptions options) {
 /// are [TooltipDrawHookArgs]: `{...args, cancelable: true}` is a new object
 /// with the keys of `args` and `cancelable`, and `afterTooltipDraw` gets
 /// `args` itself.
-void _afterDraw(types.Chart chart, PluginHookArgs _, TooltipOptions _) {
+void _afterDraw(IChart chart, PluginHookArgs _, TooltipOptions _) {
   final tooltip = chart.tooltip as Tooltip?;
 
   if (tooltip != null && tooltip._willRender()) {
@@ -2344,7 +2258,7 @@ void _afterDraw(types.Chart chart, PluginHookArgs _, TooltipOptions _) {
 /// plugin.tooltip.js:1264 `afterEvent(chart, args)`: the typed `replay`,
 /// `event` and `inChartArea` of [EventHookArgs], and the typed write of
 /// `changed`.
-void _afterEvent(types.Chart chart, EventHookArgs args, TooltipOptions _) {
+void _afterEvent(IChart chart, EventHookArgs args, TooltipOptions _) {
   if (chart.tooltip != null) {
     // If the event is replayed from `update`, we should evaluate with the
     // final positions.

@@ -9,15 +9,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasCompositeOperation;
-import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/pixel_compare.dart';

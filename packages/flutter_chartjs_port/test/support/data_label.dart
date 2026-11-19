@@ -4,11 +4,7 @@
 /// `adapt-native-tooltip-item`).
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart'
-    show TooltipBodyItem, TooltipItem;
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
-    show dataLabelLinesOf;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The native label of the label [upstream] of generated reference data,
 /// the `label` of `getLabelAndValue` and of a tooltip item: a string is one

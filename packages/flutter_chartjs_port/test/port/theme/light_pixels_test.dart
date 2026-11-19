@@ -6,39 +6,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show TooltipCallbacks;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        AxisTitle,
-        BarDataset,
-        BubbleDataset,
-        CategoryAxis,
-        ChartConfig,
-        ChartKind,
-        ChartLegend,
-        ChartTitle,
-        ChartTooltip,
-        DataPoint,
-        Dataset,
-        DoughnutDataset,
-        LineDataset,
-        LinearAxis,
-        PieDataset,
-        PolarAreaDataset,
-        RadarDataset,
-        RadialLinearAxis,
-        ScatterDataset;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartOptionsScope;
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The light identity of Chart.js ADR 0147 §11 and §18: a

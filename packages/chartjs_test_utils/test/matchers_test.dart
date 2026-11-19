@@ -1,13 +1,6 @@
 // Original code, not ported from Chart.js: tests of the harness matchers.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart'
-    as elements;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The pass and fail results follow chartjs-test-utils 0.4.0
@@ -79,7 +72,7 @@ final class _Context(@override final HTMLCanvasElement canvas)
     extends MockContext;
 
 /// A platform with the device pixel ratio [ratio].
-final class _Platform(final double ratio) implements types.BasePlatform {
+final class _Platform(final double ratio) implements IBasePlatform {
   @override
   double getDevicePixelRatio() => ratio;
 
@@ -96,7 +89,7 @@ final class _Chart({
   bool noContext = false,
   Object? devicePixelRatio,
   double platformRatio = 1,
-}) implements types.Chart {
+}) implements IChart {
   @override
   final CanvasRenderingContext2D? ctx = noContext
       ? null
@@ -106,7 +99,7 @@ final class _Chart({
   final Map<String, Object?> options = {'devicePixelRatio': devicePixelRatio};
 
   @override
-  final types.BasePlatform platform = _Platform(platformRatio);
+  final IBasePlatform platform = _Platform(platformRatio);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -376,7 +369,7 @@ void main() {
     // results come from a probe of phase 8: the pinned Chart.js build and
     // matchers.options.js at v0.4.0 in Node.js v24.12.0 on x64.
     group('an element', () {
-      elements.PointElement point() => elements.PointElement({
+      PointElement point() => PointElement({
         'x': 1,
         'y': 2,
         'options': <String, Object?>{

@@ -6,21 +6,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        ChartAnimation,
-        ChartConfig,
-        ChartKind,
-        ChartValue,
-        Dataset,
-        DoughnutDataset,
-        PieDataset,
-        PolarAreaDataset;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // A picture observer makes the native canvas decline its fused draws, so one

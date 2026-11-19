@@ -41,60 +41,7 @@ import 'dart:math' as math;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
-import 'package:flutter_chartjs_port/src/core/arc_options.dart'
-    show NativeArcScale;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeDataUpdateList;
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show nativePointChart;
-import 'package:flutter_chartjs_port/src/core/primitive_parse.dart'
-    show NativeNumericParseScale;
-import 'package:flutter_chartjs_port/src/core/radial_positions.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/core/scale_options.dart';
-import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show addRoundedRectPath, isPointInArea, longestText, renderText;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, functionOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFinite, isNullOrUndef, valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show halfPi, normalizeAngle, pi, tau, toDegrees, toRadians;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScalePointLabelContext, toFont, toTRBLCorners;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AngleLineOptionsScope,
-        DescriptorsScope,
-        GridLineOptionsScope,
-        PointLabelOptionsScope,
-        ScaleOptionsScope,
-        TickOptionsScope;
-import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
-import 'package:flutter_chartjs_port/src/types/axis_border.dart'
-    show RadialAxisBorder, ScaleBorder;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show chartPaintOf;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' as types;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
 /// The object `{w, h}` of `measureLabelSize` (scale.radialLinear.js:21-24):
@@ -151,7 +98,7 @@ final class _Limits {
 /// The object literal `{x, y}` of `isNotOverlapped`
 /// (scale.radialLinear.js:171-172), a corner of a label box.
 final class _Point(@override final double x, @override final double y)
-    implements types.Point;
+    implements Point;
 
 /// The object literal `{x, y, w, h, radius}` of `drawPointLabelBox`
 /// (scale.radialLinear.js:247-253).
@@ -160,8 +107,8 @@ final class _RoundedRect({
   @override required final double y,
   @override required final double w,
   @override required final double h,
-  @override required final types.TRBLCorners radius,
-}) implements types.RoundedRect;
+  @override required final TRBLCorners radius,
+}) implements RoundedRect;
 
 /// The lines of the item [label] of `data.labels` (Chart.js ADR 0131): the
 /// lines of [labelLinesOf]. An item that Chart.js draws as `''` (the falsy
@@ -673,7 +620,7 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
       x,
       y + (plFont.lineHeight! / 2),
       plFont,
-      types.RenderTextOpts(
+      RenderTextOpts(
         color: optsAtIndex.color,
         textAlign: textAlign,
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
@@ -735,7 +682,7 @@ int _drawStaticPointLabels(
       item.x,
       item.y + middle,
       font,
-      types.RenderTextOpts(
+      RenderTextOpts(
         color: paint,
         textAlign: item.textAlign,
         // DIVERGES(chartjs): adapt-canvas-text-baseline-enum, the enum value.
@@ -874,7 +821,7 @@ ScriptableScalePointLabelContext _createPointLabelContext(
 /// It is a class, not a record: the specs read [x] and [y]
 /// (scale.radialLinear.tests.js:651-652), and `buildPointLabelItems` writes
 /// [visible] (Chart.js ADR 0025, section 6). `isNotOverlapped` gives it to
-/// `_isPointInArea` as the area. Thus it implements [types.TRBL].
+/// `_isPointInArea` as the area. Thus it implements [TRBL].
 final class PointLabelItem({
   /// scale.radialLinear.js:152 `x`, the text position.
   required final double x,
@@ -898,7 +845,7 @@ final class PointLabelItem({
 
   /// scale.radialLinear.js:162 `bottom`, the bounding box.
   @override required final double bottom,
-}) implements types.TRBL {
+}) implements TRBL {
   /// The item of a label at ([x], [y]) with the alignment [textAlign] and
   /// the box [left], [top], [right] and [bottom].
   this;
@@ -917,7 +864,7 @@ final class PointLabelItem({
 class RadialLinearScale(super.cfg)
     extends LinearScaleBase
     implements
-        types.RadialLinearScale,
+        IRadialLinearScale,
         NativeArcScale,
         NativeNumericParseScale,
         NativeRadialPositionScale {
@@ -946,7 +893,6 @@ class RadialLinearScale(super.cfg)
       options.cachedFixedDataBounds;
 
   /// The exact class, for the options of a polar area loop (Chart.js ADR 0093).
-  @internal
   @override
   // DIVERGES(chartjs): adapt-arc-native-options, native scale contract.
   bool get supportsNativeArcOptions => super.runtimeType == RadialLinearScale;
@@ -954,7 +900,6 @@ class RadialLinearScale(super.cfg)
   /// The number parse of [LinearScaleBase], with no override (Chart.js ADR
   /// 0095). Unknown subclasses keep their ordinary parse calls.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-radial-numeric-parse, native parse contract.
   bool get supportsNativeNumericParse => super.runtimeType == RadialLinearScale;
 
@@ -962,7 +907,6 @@ class RadialLinearScale(super.cfg)
   /// (Chart.js ADR 0095). Only the exact class qualifies, and only after an
   /// ordinary read resolved both options.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-radial-static-plans, the inputs of one pure loop.
   RadialPositions? prepareRadialPositions() {
     final opts = options;
@@ -1097,12 +1041,10 @@ class RadialLinearScale(super.cfg)
   /// (scale.radialLinear.tests.js:330, :355, :369, :385). Each entry is the
   /// lines of one point label (Chart.js ADR 0131).
   // DIVERGES(chartjs): adapt-native-point-labels, the lines of each label.
-  @internal
   List<List<String>> pointLabels = [];
 
   /// scale.radialLinear.js:423 `_pointLabelItems`. The spec reads it
   /// (scale.radialLinear.tests.js:630).
-  @internal
   List<PointLabelItem> pointLabelItems = [];
 
   /// scale.radialLinear.js:428 `_padding`, the padding of the tick
@@ -1385,7 +1327,7 @@ class RadialLinearScale(super.cfg)
   /// does not read it.
   @override
   @protected
-  void drawGrid([types.ChartArea? chartArea]) {
+  void drawGrid([ChartArea? chartArea]) {
     final ctx = this.ctx;
     final opts = options;
     final angleLines = opts.angleLines;
@@ -1539,7 +1481,7 @@ class RadialLinearScale(super.cfg)
   /// `ToString` to the label ([jsToString]).
   @override
   @protected
-  void drawLabels([types.ChartArea? chartArea]) {
+  void drawLabels([ChartArea? chartArea]) {
     final ctx = this.ctx;
     final opts = options;
     final tickOpts = opts.ticks;
@@ -1591,7 +1533,7 @@ class RadialLinearScale(super.cfg)
         0,
         -offset,
         tickFont,
-        types.RenderTextOpts(
+        RenderTextOpts(
           color: optsAtIndex.color,
           strokeColor: optsAtIndex.textStrokeColor,
           strokeWidth: canvasNumber(optsAtIndex.textStrokeWidth),
@@ -1607,5 +1549,5 @@ class RadialLinearScale(super.cfg)
   /// @protected
   @override
   @protected
-  void drawTitle([types.ChartArea? chartArea]) {}
+  void drawTitle([ChartArea? chartArea]) {}
 }

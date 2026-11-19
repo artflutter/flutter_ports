@@ -8,11 +8,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/core/animation_share.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart' as core;
-import 'package:flutter_chartjs_port/src/core/option_call_epoch.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/animation_spec_input.dart';
@@ -45,9 +40,9 @@ Map<String, Object?> _animation(
   Map<String, Object?>? extra, {
   required bool twin,
 }) => <String, Object?>{
-  'onProgress': (AnimationEvent event) =>
+  'onProgress': (IAnimationEvent event) =>
       log.add('progress ${event.currentStep} of ${event.numSteps}'),
-  'onComplete': (AnimationEvent event) =>
+  'onComplete': (IAnimationEvent event) =>
       log.add('complete ${event.currentStep} of ${event.numSteps}'),
   if (twin) 'delay': _twinDelay,
   ...?extra,
@@ -107,13 +102,13 @@ Map<String, Object?> _stacked(
   },
 };
 
-List<core.Element> _bars(Chart chart) => [
+List<Element> _bars(Chart chart) => [
   for (
     var i = 0;
     i < (jsGet(chart.data, 'datasets')! as List<Object?>).length;
     i++
   )
-    ...chart.getDatasetMeta(i).data.cast<core.Element>(),
+    ...chart.getDatasetMeta(i).data.cast<Element>(),
 ];
 
 /// The geometry of each bar.
@@ -512,12 +507,12 @@ final class _SubBarController(
       'overrides': BarController.overrides,
     },
     construct: (newTarget, args) =>
-        _SubBarController(args[0]! as types.Chart, args[1]! as int, newTarget),
+        _SubBarController(args[0]! as IChart, args[1]! as int, newTarget),
   );
 }
 
 /// A chart for [Animations]: its members throw.
-final class _FakeChart() implements types.Chart {
+final class _FakeChart() implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

@@ -1,12 +1,7 @@
 // Original code, not ported from Chart.js: tests of lib/src/js/js_object.dart.
 import 'dart:collection';
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show attachContext, createResolver;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The expected values come from Node.js v24.12.0: obj[key] for each input,

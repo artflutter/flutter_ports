@@ -1,27 +1,14 @@
 // Original code, not ported from Chart.js: shared native point preparation.
 
-import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show dataUpdateField, nativeDataUpdateList, nativeDataUpdateObject;
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show IndexedPointPlan;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// Prepare color reuse after the caller's exact-controller check and two
 /// ordinary resolutions. The returned function belongs to one synchronous loop;
 /// the caller must end reuse before active/custom points or foreign coordinates.
 /// Reads retain their order: chart, owned arrays, class/index, then config.
-@internal
 PointOptions Function(int)? prepareNativePointColors(
   DatasetController controller,
-  List<types.Element> points, {
+  List<IElement> points, {
   required String controllerType,
 }) {
   final owner = controller.chart;
@@ -48,11 +35,10 @@ PointOptions Function(int)? prepareNativePointColors(
 /// [prepareNativePointColors], where `radius`, `hoverRadius` and
 /// `borderWidth` can also vary with the index (Chart.js ADR 0163). With
 /// [sizes] false, only the colors can vary. The same reads in the same order.
-@internal
 // DIVERGES(chartjs): adapt-scatter-indexed-sizes, the plan of one loop.
 IndexedPointPlan? prepareNativePointPlan(
   DatasetController controller,
-  List<types.Element> points, {
+  List<IElement> points, {
   required String controllerType,
   bool sizes = true,
 }) {
@@ -81,7 +67,6 @@ IndexedPointPlan? prepareNativePointPlan(
 /// A context reader beside a prepared plan, for the same synchronous loop. It
 /// reads the native data chain once, without routes, as the plan does; a chain
 /// that does not qualify keeps the ordinary `getContext` of each point.
-@internal
 NativePointContextReader? prepareNativePointContexts(
   DatasetController controller,
   String mode,
@@ -118,7 +103,6 @@ NativePointContextReader? prepareNativePointContexts(
 /// The size fields of the frozen entry that `resolveDataElementOptions(index)`
 /// would copy, after the caller's exact-controller check. With that entry the
 /// ordinary resolve reads no chart, context or user value: it only copies it.
-@internal
 NativePointSizeFields? cachedNativePointSizeFields(
   DatasetController controller,
 ) => nativePointClass(controller.dataElementType)
@@ -137,15 +121,14 @@ NativePointSizeFields? cachedNativePointSizeFields(
 /// stays for the loop: the classes do not change, and the loop reads its
 /// locals. The live identity of the parsed list and the per-pass guards stay
 /// with [NativeGapReads] and the loop.
-@internal
 NativeGapReads? prepareNativeGapReads(
   DatasetController controller,
-  List<types.Element> points, {
+  List<IElement> points, {
   required bool directUpdate,
   required bool hasStack,
   required bool hasSegment,
-  required types.Scale iScale,
-  required types.Scale vScale,
+  required IScale iScale,
+  required IScale vScale,
   required double maxGapLength,
 }) {
   if (!directUpdate || hasStack || hasSegment) return null;
@@ -168,7 +151,6 @@ bool _gapAxis(ScaleAxis axis) => axis is XAxis || axis is YAxis;
 /// The controller's owner guard still runs before each use. The plan validates
 /// its sources before context work. Config/resolver checks during callbacks
 /// remain with the executor and must not be replaced with a one-time check.
-@internal
 NativePointResolution? prepareNativePointResolution(
   DatasetController controller,
 ) {

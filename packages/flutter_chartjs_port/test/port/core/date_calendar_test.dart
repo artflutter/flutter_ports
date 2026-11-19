@@ -1,8 +1,7 @@
 // Original code, not ported from Chart.js: the date calendar tests.
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The integer calendar of the default date adapter (Chart.js ADR 0024,

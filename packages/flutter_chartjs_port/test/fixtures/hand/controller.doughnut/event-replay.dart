@@ -8,12 +8,7 @@ import 'dart:math' as math;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///

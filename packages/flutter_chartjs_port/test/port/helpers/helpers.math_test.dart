@@ -2,10 +2,7 @@
 import 'dart:math' as js_math;
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' as math;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream behaviour that test/specs/helpers.math.tests.js does not check
@@ -16,12 +13,12 @@ import 'package:test/test.dart';
 final class const _Point(@override final double? x, @override final double? y)
     implements Point;
 
-/// A JavaScript object literal `{min, max}`, passed as a [math.MinMax].
+/// A JavaScript object literal `{min, max}`, passed as a [MinMax].
 final class _Target(@override var double min, @override var double max)
-    implements math.MinMax;
+    implements MinMax;
 
-/// A tick `{value}` of a scale, passed as a [types.Tick].
-final class _Tick(double value) extends types.Tick {
+/// A tick `{value}` of a scale, passed as a [Tick].
+final class _Tick(double value) extends Tick {
   this : super(value: value);
 }
 
@@ -71,14 +68,14 @@ List<double?> _coordinates() {
 void main() {
   group('helpers.math constants', () {
     test('have the upstream values', () {
-      expect(math.pi, 3.141592653589793);
-      expect(math.tau, 6.283185307179586);
-      expect(math.piTau, 9.42477796076938);
-      expect(math.infinity, double.infinity);
-      expect(math.radPerDeg, 0.017453292519943295);
-      expect(math.halfPi, 1.5707963267948966);
-      expect(math.quarterPi, 0.7853981633974483);
-      expect(math.twoThirdsPi, 2.0943951023931953);
+      expect(pi, 3.141592653589793);
+      expect(tau, 6.283185307179586);
+      expect(piTau, 9.42477796076938);
+      expect(infinity, double.infinity);
+      expect(radPerDeg, 0.017453292519943295);
+      expect(halfPi, 1.5707963267948966);
+      expect(quarterPi, 0.7853981633974483);
+      expect(twoThirdsPi, 2.0943951023931953);
     });
   });
 
@@ -106,27 +103,27 @@ void main() {
     ];
     for (final (range, expected) in cases) {
       test('niceNum($range) is $expected', () {
-        expect(math.niceNum(range), _isSameNumber(expected));
+        expect(niceNum(range), _isSameNumber(expected));
       });
     }
   });
 
   group('factorize', () {
     test('handles squares, 1, 0 and primes', () {
-      expect(math.factorize(36), <double>[1, 2, 3, 4, 6, 9, 12, 18]);
-      expect(math.factorize(1), <double>[]);
-      expect(math.factorize(0), <double>[]);
-      expect(math.factorize(49), <double>[1, 7]);
-      expect(math.factorize(2), <double>[1]);
+      expect(factorize(36), <double>[1, 2, 3, 4, 6, 9, 12, 18]);
+      expect(factorize(1), <double>[]);
+      expect(factorize(0), <double>[]);
+      expect(factorize(49), <double>[1, 7]);
+      expect(factorize(2), <double>[1]);
     });
   });
 
   group('isNumber', () {
     test('is true for a finite num only (Chart.js ADR 0175)', () {
-      expect(math.isNumber(5), isTrue);
-      expect(math.isNumber(1.5), isTrue);
-      expect(math.isNumber(double.infinity), isFalse);
-      expect(math.isNumber(double.nan), isFalse);
+      expect(isNumber(5), isTrue);
+      expect(isNumber(1.5), isTrue);
+      expect(isNumber(double.infinity), isFalse);
+      expect(isNumber(double.nan), isFalse);
       for (final value in <Object?>[
         [5],
         ' 12 ',
@@ -135,37 +132,37 @@ void main() {
         true,
         null,
       ]) {
-        expect(math.isNumber(value), isFalse, reason: '$value');
+        expect(isNumber(value), isFalse, reason: '$value');
       }
     });
   });
 
   group('sign', () {
     test('keeps -0 and NaN', () {
-      expect(math.sign(-0), _isSameNumber(-0));
-      expect(math.sign(double.nan), isNaN);
-      expect(math.sign(-3), -1);
-      expect(math.sign(0.5), 1);
+      expect(sign(-0), _isSameNumber(-0));
+      expect(sign(double.nan), isNaN);
+      expect(sign(-3), -1);
+      expect(sign(0.5), 1);
     });
   });
 
   group('decimalPlaces', () {
     test('counts the places of small and inexact numbers', () {
-      expect(math.decimalPlaces(1e-7), 7);
-      expect(math.decimalPlaces(0.1 + 0.2), 17);
-      expect(math.decimalPlaces(1.5e-10), 11);
-      expect(math.decimalPlaces(-12.25), 2);
-      expect(math.decimalPlaces(123.456), 3);
-      expect(math.decimalPlaces(double.infinity), isNull);
-      expect(math.decimalPlaces(double.nan), isNull);
-      expect(math.decimalPlaces(5), 0);
+      expect(decimalPlaces(1e-7), 7);
+      expect(decimalPlaces(0.1 + 0.2), 17);
+      expect(decimalPlaces(1.5e-10), 11);
+      expect(decimalPlaces(-12.25), 2);
+      expect(decimalPlaces(123.456), 3);
+      expect(decimalPlaces(double.infinity), isNull);
+      expect(decimalPlaces(double.nan), isNull);
+      expect(decimalPlaces(5), 0);
     });
   });
 
   group('setMinAndMaxByKey', () {
     test('coerces values, counts null as 0 and skips absent keys and NaN', () {
       final target = _Target(double.infinity, double.negativeInfinity);
-      math.setMinAndMaxByKey(
+      setMinAndMaxByKey(
         [
           {'value': 3},
           {'value': null},
@@ -182,7 +179,7 @@ void main() {
 
     test('counts a lone null as 0', () {
       final target = _Target(double.infinity, double.negativeInfinity);
-      math.setMinAndMaxByKey(
+      setMinAndMaxByKey(
         [
           {'value': null},
         ],
@@ -194,7 +191,7 @@ void main() {
 
     test('leaves the target alone when no value is a number', () {
       final target = _Target(double.infinity, double.negativeInfinity);
-      math.setMinAndMaxByKey(
+      setMinAndMaxByKey(
         [
           {},
           {'value': 'x'},
@@ -207,7 +204,7 @@ void main() {
 
     test('coerces arrays through their join', () {
       final target = _Target(1, 2);
-      math.setMinAndMaxByKey(
+      setMinAndMaxByKey(
         [
           {'v': 5},
           {
@@ -225,7 +222,7 @@ void main() {
     // (Chart.js ADR 0025, section 7).
     test('reads the value of a tick and skips NaN', () {
       final target = _Target(double.infinity, double.negativeInfinity);
-      math.setMinAndMaxByKey(
+      setMinAndMaxByKey(
         [_Tick(3), _Tick(double.nan), _Tick(-2), _Tick(7)],
         target,
         'value',
@@ -235,14 +232,14 @@ void main() {
 
     test('keeps a NaN target, as Math.min(NaN, x) does', () {
       final target = _Target(double.nan, double.nan);
-      math.setMinAndMaxByKey([_Tick(1), _Tick(2)], target, 'value');
+      setMinAndMaxByKey([_Tick(1), _Tick(2)], target, 'value');
       expect(target.min, isNaN);
       expect(target.max, isNaN);
     });
 
     test('reads a mixed list of ticks and objects', () {
       final target = _Target(double.infinity, double.negativeInfinity);
-      math.setMinAndMaxByKey(
+      setMinAndMaxByKey(
         [
           _Tick(4),
           {'value': -1},
@@ -256,22 +253,16 @@ void main() {
 
     test('gives undefined for another key of a tick, without a throw', () {
       final target = _Target(1, 2);
-      math.setMinAndMaxByKey([_Tick(5), _Tick(-5)], target, 'label');
+      setMinAndMaxByKey([_Tick(5), _Tick(-5)], target, 'label');
       expect((target.min, target.max), (1, 2));
     });
   });
 
   group('distanceBetweenPoints', () {
     test('measures the distance, with null coordinates as 0', () {
+      expect(distanceBetweenPoints(const _Point(0, 0), const _Point(3, 4)), 5);
       expect(
-        math.distanceBetweenPoints(const _Point(0, 0), const _Point(3, 4)),
-        5,
-      );
-      expect(
-        math.distanceBetweenPoints(
-          const _Point(null, 0),
-          const _Point(3, null),
-        ),
+        distanceBetweenPoints(const _Point(null, 0), const _Point(3, null)),
         3,
       );
     });
@@ -291,7 +282,7 @@ void main() {
             for (final y2 in coordinates) {
               final pt2 = _Point(x2, y2);
               expect(
-                _bits(math.distanceBetweenPoints(pt1, pt2)),
+                _bits(distanceBetweenPoints(pt1, pt2)),
                 _bits(before(pt1, pt2)),
                 reason: '($x1, $y1) to ($x2, $y2)',
               );
@@ -309,11 +300,8 @@ void main() {
         for (final y1 in coordinates) {
           for (final x2 in coordinates) {
             for (final y2 in coordinates) {
-              final actual = math.getAngleFromPoint(
-                _Point(x1, y1),
-                _Point(x2, y2),
-              );
-              final expected = math.getAngleFromPoint(
+              final actual = getAngleFromPoint(_Point(x1, y1), _Point(x2, y2));
+              final expected = getAngleFromPoint(
                 _Point(jsToNumber(x1), jsToNumber(y1)),
                 _Point(jsToNumber(x2), jsToNumber(y2)),
               );
@@ -335,18 +323,18 @@ void main() {
     });
 
     test('keeps the angle in (-PI/2, 3PI/2]', () {
-      expect(
-        math.getAngleFromPoint(const _Point(null, null), const _Point(0, -1)),
-        (angle: -1.5707963267948966, distance: 1.0),
-      );
-      expect(math.getAngleFromPoint(const _Point(0, 0), const _Point(-1, 0)), (
+      expect(getAngleFromPoint(const _Point(null, null), const _Point(0, -1)), (
+        angle: -1.5707963267948966,
+        distance: 1.0,
+      ));
+      expect(getAngleFromPoint(const _Point(0, 0), const _Point(-1, 0)), (
         angle: js_math.pi,
         distance: 1.0,
       ));
-      expect(
-        math.getAngleFromPoint(const _Point(0, 0), const _Point(-1, -1e-9)),
-        (angle: 3.141592654589793, distance: 1.0),
-      );
+      expect(getAngleFromPoint(const _Point(0, 0), const _Point(-1, -1e-9)), (
+        angle: 3.141592654589793,
+        distance: 1.0,
+      ));
     });
   });
 
@@ -356,70 +344,70 @@ void main() {
       () {
         for (var e = -15; e <= 22; e++) {
           final x = js_math.pow(10.0, e).toDouble();
-          expect(math.log10(x), e.toDouble(), reason: '10^$e');
+          expect(log10(x), e.toDouble(), reason: '10^$e');
         }
         // log(1000) / ln10 is 2.9999999999999996.
-        expect(math.log10(1000), 3);
+        expect(log10(1000), 3);
       },
     );
 
     test('handles the special values', () {
-      expect(math.log10(0), double.negativeInfinity);
-      expect(math.log10(-0), double.negativeInfinity);
-      expect(math.log10(-1), isNaN);
-      expect(math.log10(double.negativeInfinity), isNaN);
-      expect(math.log10(double.infinity), double.infinity);
-      expect(math.log10(double.nan), isNaN);
-      expect(math.log10(1), _isSameNumber(0));
+      expect(log10(0), double.negativeInfinity);
+      expect(log10(-0), double.negativeInfinity);
+      expect(log10(-1), isNaN);
+      expect(log10(double.negativeInfinity), isNaN);
+      expect(log10(double.infinity), double.infinity);
+      expect(log10(double.nan), isNaN);
+      expect(log10(1), _isSameNumber(0));
     });
 
     test('is the logarithm between the powers of ten', () {
-      expect(math.log10(2), closeTo(0.3010299956639812, 1e-15));
-      expect(math.log10(0.5), closeTo(-0.3010299956639812, 1e-15));
+      expect(log10(2), closeTo(0.3010299956639812, 1e-15));
+      expect(log10(0.5), closeTo(-0.3010299956639812, 1e-15));
     });
   });
 
   group('limitValue and int16Range', () {
     test('clamp like Math.max(min, Math.min(max, value))', () {
-      expect(math.limitValue(5, 0, 3), 3);
-      expect(math.limitValue(-1, 0, 3), 0);
-      expect(math.limitValue(double.nan, 0, 3), isNaN);
-      expect(math.limitValue(-0, 0, 3), _isSameNumber(0));
+      expect(limitValue(5, 0, 3), 3);
+      expect(limitValue(-1, 0, 3), 0);
+      expect(limitValue(double.nan, 0, 3), isNaN);
+      expect(limitValue(-0, 0, 3), _isSameNumber(0));
       // min > max: unlike num.clamp, no error, and min wins.
-      expect(math.limitValue(2, 3, 0), 3);
-      expect(math.int16Range(1000000), 32767);
-      expect(math.int16Range(-1000000), -32768);
-      expect(math.int16Range(12.5), 12.5);
-      expect(math.int16Range(double.nan), isNaN);
+      expect(limitValue(2, 3, 0), 3);
+      expect(int16Range(1000000), 32767);
+      expect(int16Range(-1000000), -32768);
+      expect(int16Range(12.5), 12.5);
+      expect(int16Range(double.nan), isNaN);
     });
   });
 
   group('isBetween', () {
     test('includes the epsilon and accepts reversed bounds', () {
-      expect(math.isBetween(1, 0, 2), isTrue);
-      expect(math.isBetween(2.0000001, 0, 2), isTrue);
-      expect(math.isBetween(2.1, 0, 2), isFalse);
-      expect(math.isBetween(1, 2, 0), isTrue);
-      expect(math.isBetween(-0.0000009, 0, 1), isTrue);
-      expect(math.isBetween(2.05, 0, 2, 0.1), isTrue);
-      expect(math.isBetween(double.nan, 0, 1), isFalse);
+      expect(isBetween(1, 0, 2), isTrue);
+      expect(isBetween(2.0000001, 0, 2), isTrue);
+      expect(isBetween(2.1, 0, 2), isFalse);
+      expect(isBetween(1, 2, 0), isTrue);
+      expect(isBetween(-0.0000009, 0, 1), isTrue);
+      expect(isBetween(2.05, 0, 2, 0.1), isTrue);
+      expect(isBetween(double.nan, 0, 1), isFalse);
     });
   });
 
   group('angleBetween', () {
     test('treats equal bounds as a full circle only on request', () {
-      expect(math.angleBetween(1, 2, 2, true), isTrue);
-      expect(math.angleBetween(1, 2, 2, false), isFalse);
-      expect(math.angleBetween(2, 2, 2, false), isTrue);
-      expect(math.angleBetween(1, 0, 2 * js_math.pi), isFalse);
-      expect(math.angleBetween(7, 0, 1), isTrue);
+      expect(angleBetween(1, 2, 2, true), isTrue);
+      expect(angleBetween(1, 2, 2, false), isFalse);
+      expect(angleBetween(2, 2, 2, false), isTrue);
+      expect(angleBetween(1, 0, 2 * js_math.pi), isFalse);
+      expect(angleBetween(7, 0, 1), isTrue);
     });
   });
 
   group('angleDiff and normalizeAngle', () {
     test('return +0 for zero angles', () {
-      expect(math.normalizeAngle(-0), _isSameNumber(0));
-      expect(math.angleDiff(0, 0), _isSameNumber(0));
+      expect(normalizeAngle(-0), _isSameNumber(0));
+      expect(angleDiff(0, 0), _isSameNumber(0));
     });
   });
 }

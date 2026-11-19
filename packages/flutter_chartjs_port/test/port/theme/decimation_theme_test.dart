@@ -5,18 +5,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartConfig, ChartKind, DecimationAlgorithm, LineDataset, LinearAxis;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
-    show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';

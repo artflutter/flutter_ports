@@ -19,10 +19,7 @@
 library;
 
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
-import 'package:flutter_chartjs_port/src/core/date_format.dart';
-import 'package:flutter_chartjs_port/src/core/date_zone.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// One minute in ms.
 const int _minuteMs = 60000;

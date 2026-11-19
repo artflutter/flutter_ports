@@ -12,31 +12,7 @@ library;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart'
-    show PointLabelCallback, TickCallback;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AngleLineOptionsScope,
-        GridLineOptionsScope,
-        PointLabelOptionsScope,
-        ScaleOptionsScope,
-        ScaleTitleOptionsScope,
-        TickOptionsScope,
-        TimeScaleTimeOptionsScope;
-import 'package:flutter_chartjs_port/src/typed/lower.dart';
-import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart'
-    show AxisBorder, RadialAxisBorder, ScaleBorder;
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// An axis of a chart: an entry of `options.scales` of a Chart.js config
 /// (`docs/axes/index.md`).
@@ -161,7 +137,6 @@ abstract final class const ChartAxis({
 /// The axis scope of [axis] (Chart.js ADR 0052, section 2; Chart.js ADR
 /// 0054 §7): a new `ScaleOptionsScope` with `type` first, then the keys in
 /// parameter order, and [ChartAxis.extra] last.
-@internal
 ScaleOptionsScope lowerAxis(ChartAxis axis) {
   final scope = ScaleOptionsScope()..type = axis._type;
   put(scope, OptionKey.display, axis.display);

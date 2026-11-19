@@ -1,17 +1,10 @@
 // Original code, not ported from Chart.js: the walk of a curved line.
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
-List<types.PointElement> _points(int seed) {
+List<IPointElement> _points(int seed) {
   final r = math.Random(seed);
   return [
     for (var i = 0; i < 2 + r.nextInt(40); i++)

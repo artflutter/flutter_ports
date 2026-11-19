@@ -5,12 +5,7 @@ library;
 
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 // `ctx.p0` and `ctx.p1` are point elements: `ctx.p0.skip || ctx.p1.skip`.
 bool _skipped(ScriptableLineSegmentContext ctx) =>

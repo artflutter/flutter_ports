@@ -9,11 +9,7 @@
 /// [HTMLCanvasElement.getContext] of the canvas interface.
 library;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsSet;
-import 'package:flutter_chartjs_port/src/platform/platform.base.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// platform.basic.js:13 `BasicPlatform`.
 ///
@@ -59,7 +55,7 @@ class BasicPlatform() extends BasePlatform {
 
   /// platform.basic.js:20 `updateConfig(config)`.
   @override
-  void updateConfig(types.ChartConfiguration config) {
+  void updateConfig(ChartConfiguration config) {
     jsSet(config.options, 'animation', false);
   }
 }

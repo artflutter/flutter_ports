@@ -42,40 +42,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape, nativeDataUpdateList, nativeDataUpdateObject;
-import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions, PointOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show valueOrDefault;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show PointProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AnimationOptionsScope,
-        AnimationsSpecScope,
-        BubbleControllerDatasetOptionsScope,
-        ChartOptionsScope,
-        ScaleOptionsByIdScope,
-        ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/data_item.dart'
-    show TypedDataItem;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
-    show dataLabelLinesOf;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// `options.radius` of the resolved options of a data element: the raw
 /// value ([ElementOptions.valueOf]), typed for a [PointOptions].
@@ -310,7 +277,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// @protected
   @override
   List<ParsedItem> parsePrimitiveData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -331,7 +298,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// (Chart.js ADR 0036, section 5).
   @override
   List<ParsedItem> parseArrayData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -362,7 +329,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// the user.
   @override
   List<ParsedItem> parseObjectData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -428,7 +395,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
     var indexed = false;
     final last = data.length - 1;
     for (var i = last; i >= 0; --i) {
-      final point = data[i] as types.PointElement;
+      final point = data[i] as IPointElement;
       if (i == last) fields = _cachedSizeFields();
       final plan = fields;
       if (plan != null) {
@@ -528,7 +495,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   /// its parsed item first, and the plan ends for good before user code.
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,
@@ -606,7 +573,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
 
       // DIVERGES(chartjs): adapt-direct-element-writes, the assign of the
       // properties with no object: the writes stay after the resolve above.
-      if (point case final types.PointElementWrites target
+      if (point case final PointElementWrites target
           when direct && options != null && target.typedWrites) {
         if (iAxis is XAxis) {
           target.x = iPixel;
@@ -653,7 +620,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   // The existing numeric-scale capability guarantees built-in projection and
   // base-pixel reads. The scale's chart must provide the same native DPR reads.
   // DIVERGES(chartjs): adapt-bubble-point-options, the guard of a native loop.
-  bool _nativeProjection(types.Scale scale) =>
+  bool _nativeProjection(IScale scale) =>
       nativePointProjection(scale) && identical(scale.chart, chart);
 
   /// The size fields of the frozen `point-default` entry for the exact
@@ -680,7 +647,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   }
 
   // DIVERGES(chartjs): adapt-native-point-contracts, shared preparation rules.
-  PointOptions Function(int)? _preparePointColors(List<types.Element> points) {
+  PointOptions Function(int)? _preparePointColors(List<IElement> points) {
     if (!_exact || type != 'bubble') return null;
     return prepareNativePointColors(this, points, controllerType: 'bubble');
   }

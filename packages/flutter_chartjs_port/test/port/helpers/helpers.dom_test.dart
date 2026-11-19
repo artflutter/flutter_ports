@@ -2,13 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart'
-    show effects;
-import 'package:flutter_chartjs_port/src/helpers/index.dart' as helpers;
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart';
 
 // test/specs/helpers.dom.tests.js tests getMaximumSize with integer sizes
@@ -121,7 +115,7 @@ final class _Chart(
   @override var double width,
   @override var double height, {
   _Style? style,
-}) implements Chart {
+}) implements IChart {
   @override
   double currentDevicePixelRatio = double.nan;
 
@@ -539,12 +533,12 @@ void main() {
 
   group('helpers/index', () {
     test('easingEffects is the default export of helpers.easing', () {
-      expect(identical(helpers.easingEffects, effects), isTrue);
+      expect(identical(easingEffects, effects), isTrue);
     });
 
     test('exports helpers.dom', () {
-      expect(helpers.getMaximumSize, same(getMaximumSize));
-      expect(helpers.retinaScale, same(retinaScale));
+      expect(getMaximumSize, same(getMaximumSize));
+      expect(retinaScale, same(retinaScale));
     });
   });
 }

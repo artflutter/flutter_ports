@@ -5,30 +5,7 @@ library;
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        CategoryAxis,
-        ChartAnimation,
-        ChartConfig,
-        ChartKind,
-        ChartValue,
-        LineDataset,
-        LinearAxis,
-        ScaleDisplay;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../scales/scale_chart_harness.dart' show drawCalls;
@@ -43,7 +20,7 @@ class _ObservedLine(LineElement original) extends LineElement {
   int calls = 0;
 
   @override
-  Object? interpolate(types.Point point, String property) {
+  Object? interpolate(Point point, String property) {
     calls++;
     return super.interpolate(point, property);
   }
@@ -151,7 +128,7 @@ void main() {
             );
             final chart = acquireChartRoot(ChartConfigLowering(config).lower());
             final source = fillerSourceOf(chart.getDatasetMeta(0))!;
-            final target = getTarget(source)! as types.LineElement;
+            final target = getTarget(source)! as ILineElement;
             final search = BoundaryPointSearch.create(target, axis);
             if (!reverse) {
               expect(search, isNotNull);

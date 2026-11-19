@@ -6,22 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart' as animation;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode, NearestInteractionMode, PointInteractionMode;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -61,7 +46,7 @@ Object? _pointAngles(Chart chart) => [
   for (var i = 0; i < _datasetCount(chart); i++)
     [
       for (final element in chart.getDatasetMeta(i).data)
-        (element as types.ElementPropertyRead)['angle'],
+        (element as ElementPropertyRead)['angle'],
     ],
 ];
 
@@ -180,7 +165,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       expect(meta.data, hasLength(3));
       for (final point in meta.data) {
-        final read = point as types.ElementPropertyRead;
+        final read = point as ElementPropertyRead;
         expect(point.x, isNaN);
         expect(point.y, isNaN);
         expect(read['skip'], isTrue);
@@ -331,7 +316,7 @@ void main() {
                 beforeLayout: (chart, args, options) {
                   final data = (chart as Chart).getDatasetMeta(0).data;
                   if (data.length > 3 && beforeLayout == null) {
-                    final point = data[3] as types.ElementPropertyRead;
+                    final point = data[3] as ElementPropertyRead;
                     beforeLayout = {
                       'x': point['x'],
                       'y': point['y'],
@@ -355,8 +340,8 @@ void main() {
       expect(identical(beforeLayout!['y'], undefined), isTrue);
       expect(beforeLayout!['skip'], isTrue);
       final point = meta.data[3] as Element;
-      final x = point.$animations!['x']! as animation.Animation;
-      final y = point.$animations!['y']! as animation.Animation;
+      final x = point.$animations!['x']! as Animation;
+      final y = point.$animations!['y']! as Animation;
       expect([x.from, x.to], [41.0, 41.0]);
       expect([y.from, y.to], [272.0, 272.0]);
       // At 500 ms the new point is at its target, drawn and hit
@@ -400,19 +385,19 @@ void main() {
       dataset['rAxisID'] = 'r2';
       chart.update();
       await tester.pump(const Duration(milliseconds: 5000));
-      expect((meta.rScale! as types.RadialLinearScale).xCenter, isNaN);
+      expect((meta.rScale! as IRadialLinearScale).xCenter, isNaN);
 
       chart.reset();
-      final read = point as types.ElementPropertyRead;
+      final read = point as ElementPropertyRead;
       expect(read['x'], isNaN);
       expect(read['y'], isNaN);
       expect(read['skip'], isTrue);
 
       dataset['rAxisID'] = 'r';
       chart.update();
-      expect((meta.rScale! as types.RadialLinearScale).xCenter, 376.0);
-      final x = point.$animations!['x']! as animation.Animation;
-      final y = point.$animations!['y']! as animation.Animation;
+      expect((meta.rScale! as IRadialLinearScale).xCenter, 376.0);
+      final x = point.$animations!['x']! as Animation;
+      final y = point.$animations!['y']! as Animation;
       expect(x.from, isNaN);
       expect(x.to, closeTo(389.4495078835456, 1e-9));
       expect(y.from, isNaN);
@@ -448,7 +433,7 @@ void main() {
       );
       await tester.pump(const Duration(milliseconds: 5000));
       final point = chart.getDatasetMeta(0).data[1] as Element;
-      final read = point as types.ElementPropertyRead;
+      final read = point as ElementPropertyRead;
       expect(read['x'], isNaN);
       expect(read['y'], isNaN);
       expect(read['skip'], isTrue);
@@ -456,8 +441,8 @@ void main() {
       _data0(chart)[1] = 2.0;
       chart.update();
       expect(read['skip'], isFalse);
-      final x = point.$animations!['x']! as animation.Animation;
-      final y = point.$animations!['y']! as animation.Animation;
+      final x = point.$animations!['x']! as Animation;
+      final y = point.$animations!['y']! as Animation;
       expect(x.from, isNaN);
       expect(x.to, 363.5);
       expect(y.from, isNaN);

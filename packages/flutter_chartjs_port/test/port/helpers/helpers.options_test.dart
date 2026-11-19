@@ -3,15 +3,7 @@ import 'dart:ui' show FontStyle, FontWeight;
 
 import 'package:flutter/painting.dart' show TextStyle;
 
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show PercentGrace, ValueGrace;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show createResolver;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream behaviour that test/specs/helpers.options.tests.js does not check

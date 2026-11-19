@@ -36,8 +36,7 @@
 /// [LayoutItemConfigure] has the same form.
 library;
 
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart' show immutable;
 
 /// layout.d.ts:3 `LayoutPosition`: the position of a box in the layout of a

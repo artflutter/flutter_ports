@@ -1,10 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.interpolation.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// A JavaScript object literal `{x, y}`, passed as a [Point].

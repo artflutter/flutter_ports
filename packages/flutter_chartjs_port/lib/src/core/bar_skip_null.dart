@@ -1,12 +1,6 @@
 // Original code, not ported from Chart.js: the index of the skipNull search.
 
-import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/option_functions.dart'
-    show appFunctionCalls;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
 /// The `find` of `skipNull` in `_getStacks` (controller.bar.js:443-450) as
@@ -65,7 +59,7 @@ final class BarSkipNullIndex(
   /// [vScale] can take the index: a direct mode makes no animation for a bar
   /// (core.datasetController.js:229, :901), and the exact category or
   /// linear scale runs no code of another class in a pixel read.
-  static bool applies(String mode, types.Scale? iScale, types.Scale? vScale) =>
+  static bool applies(String mode, IScale? iScale, IScale? vScale) =>
       (mode == 'none' || mode == 'reset') &&
       exactScale(iScale) &&
       exactScale(vScale);
@@ -129,7 +123,7 @@ final class BarSkipNullIndex(
   /// lists can run code of the app: then the caller declines the index. The
   /// caller gives each meta whose list the search, or the read of the
   /// current item, can reach in this update.
-  bool proveAll(Iterable<types.ChartMeta> metas, ScaleAxis axis) {
+  bool proveAll(Iterable<ChartMeta> metas, ScaleAxis axis) {
     for (final meta in metas) {
       final parsed = meta.parsed;
       if (_proven.containsKey(parsed)) continue;
@@ -143,7 +137,7 @@ final class BarSkipNullIndex(
   /// The first item of the parsed list of [meta] whose value of [axis] is
   /// `===` [value], or `undefined` when a proven list has no such item, or
   /// [scan] when this object cannot prove the answer.
-  Object? find(types.ChartMeta meta, ScaleAxis axis, Object? value) {
+  Object? find(ChartMeta meta, ScaleAxis axis, Object? value) {
     // `===` of a value that is not a number: the upstream search decides.
     if (_dropped || value is! num) return scan;
     if (!_started) {
@@ -207,7 +201,7 @@ final class BarSkipNullIndex(
   /// The length of [parsed] when it is positional, -1 when it is not, or
   /// [_unsafe] when a read of the list, of an item or of a value of an item
   /// can run code of the app.
-  int _prove(types.ChartMeta meta, List<Object?> parsed, ScaleAxis axis) {
+  int _prove(ChartMeta meta, List<Object?> parsed, ScaleAxis axis) {
     // With `parsing: false` the list is the data List of the app
     // (core.datasetController.js:461). Another List class can run code of
     // the app in a read.

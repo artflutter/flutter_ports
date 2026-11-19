@@ -4,11 +4,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The spec constructs Chart.elements.ArcElement. Here it is the ArcElement

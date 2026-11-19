@@ -8,29 +8,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/foundation.dart'
     show TargetPlatform, debugDefaultTargetPlatformOverride;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        AxisGrid,
-        AxisTicks,
-        CategoryAxis,
-        Chart,
-        ChartConfig,
-        ChartKind,
-        ChartLegend,
-        ChartValue,
-        DataPoint,
-        LineDataset,
-        LinearAxis;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';

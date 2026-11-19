@@ -16,16 +16,7 @@ library;
 
 import 'dart:collection';
 
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show capitalize;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.collection.ts:10 `_lookup`.
 ///
@@ -74,13 +65,13 @@ import 'package:meta/meta.dart';
 ///   arguments). The read gives the value of an own key, else [undefined].
 /// - elements: the point elements of helpers.extras.ts:105, :121, and the
 ///   `meta.data` elements of any type in core.interaction.js:28-59. An entry
-///   is an [Element]. The read gives [Element.x] for `'x'` and [Element.y]
-///   for `'y'`, else [undefined].
+///   is an [IElement]. The read gives [IElement.x] for `'x'` and
+///   [IElement.y] for `'y'`, else [undefined].
 ///
 /// A parsed item of the typed model ([ParsedItem], Chart.js ADR 0054 §8)
 /// reads by name through its face. [jsGet] reads every other entry that is
-/// not an [Element]: an item of the user data (`parsing: false`). An
-/// [Element] is a Dart object, not a Map, so it has its own branch. A key of
+/// not an [IElement]: an item of the user data (`parsing: false`). An
+/// [IElement] is a Dart object, not a Map, so it has its own branch. A key of
 /// these tables is never `length` or an array index. Thus any other entry
 /// gives [undefined]. `null` and [undefined] throw a [TypeError], as
 /// JavaScript does.
@@ -88,7 +79,7 @@ import 'package:meta/meta.dart';
 /// The tables of an axis read by the axis class: [_readAxis].
 Object? _readKey(Object? entry, String key) {
   if (entry is ParsedItem) return entry.jsRead(key);
-  if (entry is Element) {
+  if (entry is IElement) {
     return switch (key) {
       'x' => entry.x,
       'y' => entry.y,
@@ -100,12 +91,12 @@ Object? _readKey(Object? entry, String key) {
 
 /// The JavaScript read `table[index][axis]` of [lookupByAxis] and
 /// [rlookupByAxis] (row `adapt-axis-objects`): the typed field of a
-/// [ParsedItem], [Element.x] or [Element.y] of an element, else the read of
-/// the key of the axis ([axisDataKey]) of an item of the user data, as
+/// [ParsedItem], [IElement.x] or [IElement.y] of an element, else the read
+/// of the key of the axis ([axisDataKey]) of an item of the user data, as
 /// [_readKey] does. An axis of another class gives [undefined].
 Object? _readAxis(Object? entry, ScaleAxis axis) {
   if (entry is ParsedItem) return entry.valueOf(axis);
-  if (entry is Element) {
+  if (entry is IElement) {
     return switch (axis) {
       XAxis() => entry.x,
       YAxis() => entry.y,
@@ -230,24 +221,19 @@ abstract mixin class ArrayListener<T>() {
   this;
 
   /// helpers.collection.ts:103 `_onDataPush?(...item: T[])`.
-  @internal
   void onDataPush(List<T> items) {}
 
   /// helpers.collection.ts:104 `_onDataPop?()`.
-  @internal
   void onDataPop() {}
 
   /// helpers.collection.ts:105 `_onDataShift?()`.
-  @internal
   void onDataShift() {}
 
   /// helpers.collection.ts:106 `_onDataSplice?(index, deleteCount,
   /// ...items)`.
-  @internal
   void onDataSplice(int index, int deleteCount, List<T> items) {}
 
   /// helpers.collection.ts:107 `_onDataUnshift?(...item: T[])`.
-  @internal
   void onDataUnshift(List<T> items) {}
 }
 

@@ -27,31 +27,7 @@ library;
 import 'dart:ui' show FontWeight;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show renderText;
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
-    show alignStartEnd, toLeftRightCenter;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show pi;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsObjectOrNull;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show DescriptorsScope, TitleOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show TitleOptions;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show Plugin, PluginHookArgs, UpdateHookArgs;
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// plugin.title.js:7 `class Title extends Element`.
 ///
@@ -144,7 +120,6 @@ class Title(
   /// core.layouts.js:301 `_layers`. Dart `null` stands for JS `undefined`,
   /// the start value: `layouts.addBox` writes the default layer.
   @override
-  @internal
   List<LayoutLayer> Function()? layers;
 
   /// core.layouts.js:15 `box.axis`. The title has no axis: Dart `null`
@@ -258,7 +233,7 @@ class Title(
 
     // The arguments of renderText, in the upstream order of their reads.
     final text = opts.text;
-    final textOpts = types.RenderTextOpts(
+    final textOpts = RenderTextOpts(
       color: opts.color,
       maxWidth: maxWidth,
       rotation: rotation,
@@ -297,7 +272,7 @@ class Title(
 Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 
 /// plugin.title.js:108 `createTitle(chart, titleOpts)`.
-void _createTitle(types.Chart chart, Object titleOpts) {
+void _createTitle(IChart chart, Object titleOpts) {
   final title = Title((ctx: chart.ctx, options: titleOpts, chart: chart));
 
   layouts
@@ -308,7 +283,7 @@ void _createTitle(types.Chart chart, Object titleOpts) {
 
 /// plugin.title.js:129 `start(chart, _args, options)`. The box keeps the
 /// resolved options of the facade.
-void _start(types.Chart chart, PluginHookArgs _, TitleOptions options) {
+void _start(IChart chart, PluginHookArgs _, TitleOptions options) {
   _createTitle(chart, options.object!);
 }
 
@@ -316,7 +291,7 @@ void _start(types.Chart chart, PluginHookArgs _, TitleOptions options) {
 /// `undefined` of a chart without a title block: `removeBox` then changes
 /// nothing (core.layouts.js:318-323). `delete chart.titleBlock` is the write
 /// of Dart `null`.
-void _stop(types.Chart chart, PluginHookArgs _, TitleOptions _) {
+void _stop(IChart chart, PluginHookArgs _, TitleOptions _) {
   final titleBlock = chart.titleBlock;
   layouts.removeBox(chart, titleBlock);
   chart.titleBlock = null;
@@ -325,7 +300,7 @@ void _stop(types.Chart chart, PluginHookArgs _, TitleOptions _) {
 /// plugin.title.js:139 `beforeUpdate(chart, _args, options)`. Without a
 /// title block, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-bool _beforeUpdate(types.Chart chart, UpdateHookArgs _, TitleOptions options) {
+bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
   final title = chart.titleBlock! as Title;
   final resolved = options.object!;
   layouts.configure(chart, title, resolved);

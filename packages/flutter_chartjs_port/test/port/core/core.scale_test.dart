@@ -7,30 +7,7 @@ import 'dart:ui' as native_ui;
 import 'dart:ui' show FontStyle;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextResolver, attachContext, createResolver;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show setMinAndMaxByKey;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, createContext;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart'
-    show ChartPosition, ScaleValuePosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginHook;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -70,7 +47,7 @@ final class _Area(
   @override final double top,
   @override final double right,
   @override final double bottom,
-) implements types.ChartArea {
+) implements ChartArea {
   @override
   double get width => right - left;
 
@@ -80,9 +57,9 @@ final class _Area(
 
 /// The controller of a fake meta: `getMinMax` gives a fixed range.
 final class _Controller(final double min, final double max)
-    implements types.DatasetController {
+    implements IDatasetController {
   @override
-  ({double min, double max}) getMinMax(types.Scale scale, [bool? canStack]) {
+  ({double min, double max}) getMinMax(IScale scale, [bool? canStack]) {
     _log.add('getMinMax:${(scale as Scale).id}:$canStack');
     return (min: min, max: max);
   }
@@ -92,7 +69,7 @@ final class _Controller(final double min, final double max)
 }
 
 /// A fake meta `{type, xAxisID, yAxisID, controller}`.
-final class _Meta(Map<String, Object?> spec) implements types.ChartMeta {
+final class _Meta(Map<String, Object?> spec) implements ChartMeta {
   @override
   final String type = spec['type']! as String;
 
@@ -106,7 +83,7 @@ final class _Meta(Map<String, Object?> spec) implements types.ChartMeta {
   String? get rAxisID => null;
 
   @override
-  final types.DatasetController controller = _Controller(
+  final IDatasetController controller = _Controller(
     (spec['min']! as num).toDouble(),
     (spec['max']! as num).toDouble(),
   );
@@ -117,7 +94,7 @@ final class _Meta(Map<String, Object?> spec) implements types.ChartMeta {
 
 /// A scale of `chart.scales` for an object position:
 /// `getPixelForValue(v) = offset + ToNumber(v)`.
-final class _OtherScale(final double offset) implements types.Scale {
+final class _OtherScale(final double offset) implements IScale {
   @override
   double getPixelForValue(Object? value, [int? index]) =>
       offset + jsToNumber(value);
@@ -127,7 +104,7 @@ final class _OtherScale(final double offset) implements types.Scale {
 }
 
 /// The fake chart of a case.
-final class _Chart(Map<String, Object?> spec) implements types.Chart {
+final class _Chart(Map<String, Object?> spec) implements IChart {
   this : options = <String, Object?>{'font': defaults['font']};
 
   @override
@@ -137,7 +114,7 @@ final class _Chart(Map<String, Object?> spec) implements types.Chart {
   double height = _number(spec['height']);
 
   @override
-  types.ChartArea chartArea = _areaOf(spec['chartArea']! as List<Object?>);
+  ChartArea chartArea = _areaOf(spec['chartArea']! as List<Object?>);
 
   @override
   double currentDevicePixelRatio = spec.containsKey('dpr')
@@ -152,13 +129,13 @@ final class _Chart(Map<String, Object?> spec) implements types.Chart {
   final AnyObject options;
 
   @override
-  final Map<String, types.Scale> scales = {
+  final Map<String, IScale> scales = {
     for (final MapEntry(:key, :value)
         in ((spec['otherScales'] ?? <String, Object?>{}) as AnyObject).entries)
       key: _OtherScale(_number(value)),
   };
 
-  final List<types.ChartMeta> _metas = [
+  final List<ChartMeta> _metas = [
     for (final meta in (spec['metas'] ?? <Object?>[]) as List<Object?>)
       _Meta(meta! as AnyObject),
   ];
@@ -176,7 +153,7 @@ final class _Chart(Map<String, Object?> spec) implements types.Chart {
       _context ??= createContext(null, {'chart': this, 'type': 'chart'});
 
   @override
-  List<types.ChartMeta> getSortedVisibleDatasetMetas() => _metas;
+  List<ChartMeta> getSortedVisibleDatasetMetas() => _metas;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -375,7 +352,7 @@ List<Object?> _jsonLines(Object? text) => [
 ];
 
 /// A label item as the plain object of the reference.
-Map<String, Object?> _labelItem(types.LabelItem item) {
+Map<String, Object?> _labelItem(LabelItem item) {
   final o = item.options;
   final backdrop = o.backdrop;
   return {
@@ -583,7 +560,7 @@ _Chart _plainChart() => _Chart(<String, Object?>{
 
 /// A scale of `chart.scales` that records the values of
 /// `getPixelForValue`.
-final class _RecordingScale() implements types.Scale {
+final class _RecordingScale() implements IScale {
   /// The values of the calls, in order, unchanged.
   final List<Object?> values = [];
 
@@ -602,7 +579,7 @@ final class _DrawingScale(super.cfg) extends Scale {
   int draws = 0;
 
   @override
-  void draw([types.ChartArea? chartArea]) {
+  void draw([ChartArea? chartArea]) {
     draws++;
     super.draw(chartArea);
   }

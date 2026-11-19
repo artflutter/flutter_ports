@@ -45,7 +45,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
 const double _tau = 2 * math.pi;
@@ -446,7 +446,6 @@ final class UiPathBuilder(
   /// The caller expects no read: a fill that a partitioned path replaces
   /// (Chart.js ADR 0104). A read makes the same `ui.Path` calls in the same
   /// order, at a small cost for the two passes.
-  @internal
   void deferLongPath() {
     _longPath = true;
     _deferredLimit = _codes.length;
@@ -848,7 +847,6 @@ final class UiPathBuilder(
   /// Makes the path the sector of `ArcElement.draw` with no offset, spacing or
   /// rounded corner, without its commands: `beginPath()` and the calls of
   /// [_materializeSector]. [t] is the current transform of the draw.
-  @internal
   void setPendingSector(
     double x,
     double y,
@@ -976,25 +974,20 @@ final class UiPathBuilder(
       _circle ? (x: _circleX, y: _circleY, radius: _circleR) : null;
 
   /// Whether scalar circle geometry is available without creating a record.
-  @internal
   bool get hasSingleCircle => _circle;
 
   /// Bitmap-space center x; read only when [hasSingleCircle] is true.
-  @internal
   double get circleX => _circleX;
 
   /// Bitmap-space center y; read only when [hasSingleCircle] is true.
-  @internal
   double get circleY => _circleY;
 
   /// Bitmap-space radius; read only when [hasSingleCircle] is true.
-  @internal
   double get circleRadius => _circleR;
 
   /// Whether the deferred commands are one `moveTo` and one `lineTo`: the
   /// context strokes them with `drawLine` (Chart.js ADR 0097). The commands
   /// stay deferred for a later read of the path.
-  @internal
   bool get hasSingleLine =>
       _deferred == 2 &&
       !_built &&
@@ -1004,19 +997,15 @@ final class UiPathBuilder(
       _codes[1] == _lineCode;
 
   /// Bitmap-space start x; read only when [hasSingleLine] is true.
-  @internal
   double get lineX0 => _numbers[0];
 
   /// Bitmap-space start y; read only when [hasSingleLine] is true.
-  @internal
   double get lineY0 => _numbers[1];
 
   /// Bitmap-space end x; read only when [hasSingleLine] is true.
-  @internal
   double get lineX1 => _numbers[2];
 
   /// Bitmap-space end y; read only when [hasSingleLine] is true.
-  @internal
   double get lineY1 => _numbers[3];
 
   /// The circular sector of the path in bitmap space, when the deferred
@@ -1412,7 +1401,6 @@ final class UiPathBuilder(
   /// The fused rounded bar of the context (Chart.js ADR 0158) calls it with
   /// the rounded rectangle that it drew, so that its final path equals the
   /// path of [roundRect].
-  @internal
   void addRoundRect(double x, double y, RoundRectGeometry g, ui.RRect? rrect) {
     if (_sector) _materializeSector();
     final t = transform;
@@ -1437,7 +1425,6 @@ final class UiPathBuilder(
   /// with its mapped rounded rectangle [rrect]: the path gets [rrect]. The
   /// fused rounded bar (Chart.js ADR 0158) calls it, so that it makes no
   /// geometry record.
-  @internal
   void addClockwiseRRect(double x, double y, ui.RRect rrect) {
     if (_sector) _materializeSector();
     final t = transform;
@@ -1453,7 +1440,6 @@ final class UiPathBuilder(
   /// The rounded rectangle of [g] in bitmap space, for an axis-aligned
   /// transform. A mirror moves each radius to the mirrored corner, and a
   /// scale makes it elliptical.
-  @internal
   ui.RRect mappedRRect(RoundRectGeometry g) => mappedRRectOf(
     g.left,
     g.top,
@@ -1469,7 +1455,6 @@ final class UiPathBuilder(
   /// and [height] and the radii [ul], [ur], [lr] and [ll] of its upper-left,
   /// upper-right, lower-right and lower-left corners, with no record. The
   /// fused rounded bar (Chart.js ADR 0158) calls it.
-  @internal
   ui.RRect mappedRRectOf(
     double left,
     double top,

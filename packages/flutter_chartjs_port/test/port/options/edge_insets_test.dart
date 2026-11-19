@@ -1,12 +1,6 @@
 // Original code, not ported from Chart.js: native padding option tests.
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/data_update.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 void main() {

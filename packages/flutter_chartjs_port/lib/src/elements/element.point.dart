@@ -28,39 +28,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasRenderingContext2D;
-import 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions, numberOption, plainOption, rawOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show CirclePointStyle, DrawPointOptions, drawPoint, isPointInArea;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show tau;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedProp;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show PointProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show PointOptionsScope;
-import 'package:flutter_chartjs_port/src/options/typed_record.dart'
-    show TypedRecord;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show SolidChartPaint;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// element.point.ts:11 `inRange`, the hit test of [el] on one [axis].
 ///
@@ -165,7 +133,7 @@ typedef PointProps = Point;
 ///   passes the points).
 /// - [angle], the angle that the radar controller assigns
 ///   (controller.radar.js:96). Thus a point element is a
-///   [types.RadialPointElement], and `helpers.segment.js` reads its `angle`.
+///   [RadialPointElement], and `helpers.segment.js` reads its `angle`.
 ///
 /// The other properties that a controller adds, for example `$context`, go
 /// to the Map of extra properties of [Element].
@@ -177,10 +145,10 @@ typedef PointProps = Point;
 class PointElement([AnyObject? cfg])
     extends Element
     implements
-        types.RadialPointElement,
-        types.VisualElementRange,
-        types.PointElementWrites,
-        types.PointCircleRun,
+        RadialPointElement,
+        VisualElementRange,
+        PointElementWrites,
+        PointCircleRun,
         NativePointElement {
   /// element.point.ts:49 `constructor(cfg)`.
   ///
@@ -363,7 +331,7 @@ class PointElement([AnyObject? cfg])
   }
 
   /// controller.radar.js:96 `angle: pointPosition.angle`, the angle of a
-  /// radar point ([types.RadialPointElement.angle]).
+  /// radar point ([RadialPointElement.angle]).
   ///
   /// Dart `null` stands for JS `undefined`, the value of a point that the
   /// radar controller does not update. JS `null` never reaches it.
@@ -416,19 +384,16 @@ class PointElement([AnyObject? cfg])
   late final bool _builtIn = super.runtimeType == PointElement;
 
   /// [Element.typedWrites]: true for the class [PointElement] itself.
-  @internal
   @override
   bool get typedWrites => _builtIn;
 
   /// Native size/context reads as well as property writes (ADR 0079).
-  @internal
   @override
   // DIVERGES(chartjs): adapt-scatter-point-options, native element contract.
   bool get supportsNativePointOptions => _builtIn;
 
   /// [Element.takesProperties]: a [PointProperties], for an element of the
   /// class [PointElement] itself.
-  @internal
   @override
   bool takesProperties(TypedRecord props) =>
       props is PointProperties && _builtIn;
@@ -440,7 +405,6 @@ class PointElement([AnyObject? cfg])
   /// key at [position]. An extra key, a foreign value
   /// and a value that the setter does not take (JS `null` or `undefined`)
   /// go by name ([assignKey]).
-  @internal
   @override
   void writePropertyAt(TypedRecord props, int position) {
     final values = props as PointProperties;
@@ -699,10 +663,10 @@ class PointElement([AnyObject? cfg])
   int drawCircleRun(
     CanvasRenderingContext2D ctx,
     ChartArea area,
-    List<types.Element> elements,
+    List<IElement> elements,
     int start,
     int end,
-    List<types.Element> active, {
+    List<IElement> active, {
     required bool activeOnTop,
   }) {
     if (ctx is! CircleRunCanvas) return start;

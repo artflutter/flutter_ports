@@ -7,10 +7,7 @@ library;
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasCompositeOperation;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';

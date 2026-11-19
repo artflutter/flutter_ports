@@ -11,7 +11,7 @@
 /// not depend on the cache.
 library;
 
-import 'package:flutter_chartjs_port/src/core/date_zone.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 import 'date_adapter_reference.dart';
 

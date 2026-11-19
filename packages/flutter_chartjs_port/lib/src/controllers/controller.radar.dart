@@ -36,39 +36,7 @@
 /// `core.animations.dart`. Thus it is not a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs, parsedValueOf;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape, nativeDataUpdateList;
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show nativePointClass, nativePointDatasetIndex, nativePointList;
-import 'package:flutter_chartjs_port/src/core/radial_positions.dart'
-    show NativeRadialPositionScale;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, parseObjectDataRadialScaleOf;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetIndex;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show LineProperties, PointProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        ChartOptionsScope,
-        ElementOptionsByTypeScope,
-        LineOptionsScope,
-        RadarControllerDatasetOptionsScope,
-        ScaleOptionsByIdScope,
-        ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
-    show dataLabelLinesOf;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// controller.radar.js:4 `RadarController extends DatasetController`.
 class RadarController(super.chart, super.datasetIndex, [super.newTarget])
@@ -156,7 +124,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   /// `{r}`.
   @override
   List<ParsedItem> parseObjectData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -173,7 +141,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   /// controller.radar.js:53 `update(mode)`.
   ///
   /// `meta.data || []`: `meta.data` is always a List. `line.points =
-  /// points` is the typed setter of [types.LineElementWrites] for a line of
+  /// points` is the typed setter of [LineElementWrites] for a line of
   /// the built-in class, and a write by name through `types.PropertyAccess`
   /// for a line of another class (Chart.js ADR 0054 §9): the setter of
   /// `LineElement` copies the elements into a typed list (row
@@ -189,10 +157,10 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
 
     // Update Line
     final target = line!;
-    if (target case final types.LineElementWrites line when line.typedWrites) {
+    if (target case final LineElementWrites line when line.typedWrites) {
       line.points = points;
     } else {
-      _setProperty(target as types.PropertyAccess, 'points', points);
+      _setProperty(target as PropertyAccess, 'points', points);
     }
     // In resize mode only point locations change, so no need to set the
     // points or options.
@@ -238,7 +206,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   /// property object (Chart.js ADR 0095). [undefined] keeps the object.
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,
@@ -255,7 +223,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
         i,
         point.active ? 'active' : mode,
       );
-      final radial = scale! as types.RadialLinearScale;
+      final radial = scale! as IRadialLinearScale;
       final pointPosition = radial.getPointPositionForValue(
         i,
         parsedValueOf(getParsed(i), const RAxis()),
@@ -265,7 +233,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
       final y = reset ? radial.yCenter : pointPosition.y;
 
       if (directWrites && x != null && y != null) {
-        if (point case final types.PointElementWrites writes
+        if (point case final PointElementWrites writes
             when writes.typedWrites) {
           writes
             ..x = x
@@ -317,10 +285,10 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
   /// It returns the first index that it did not treat: the ordinary loop
   /// continues there.
   int _updateStaticPoints(
-    List<types.Element> points,
+    List<IElement> points,
     int next,
     int end,
-    types.RadialLinearScale radial,
+    IRadialLinearScale radial,
   ) {
     final cached = cachedPointNoneOptions;
     final parsed = cachedMeta.parsed;
@@ -341,8 +309,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
     var i = next;
     for (; i < stop; i++) {
       final point = points[i];
-      if (point case final types.PointElementWrites writes
-          when writes.typedWrites) {
+      if (point case final PointElementWrites writes when writes.typedWrites) {
         if (point.active || i >= parsed.length) break;
         final item = parsed[i];
         if (item is! ParsedItem) break;
@@ -370,6 +337,6 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
 
 /// The JS write `element[key] = value` by name into an element of a user
 /// element class (Chart.js ADR 0017, section 5).
-void _setProperty(types.PropertyAccess element, String key, Object? value) {
+void _setProperty(PropertyAccess element, String key, Object? value) {
   element[key] = value;
 }

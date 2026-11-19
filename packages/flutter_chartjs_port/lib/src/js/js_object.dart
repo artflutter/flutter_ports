@@ -6,10 +6,7 @@
 /// frozen state of `Object.freeze` (Chart.js ADR 0021, section 5).
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The face by name of a typed object of the typed internal model
 /// (Chart.js ADR 0054 §5): the typed option scopes, the resolved options,

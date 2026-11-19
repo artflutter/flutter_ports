@@ -1,5 +1,5 @@
 // Original code, not ported from Chart.js: chunked path storage contracts.
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 void _fill(Path2D path, int count, [double shift = 0]) {

@@ -12,10 +12,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// platform.base.js:9 `BasePlatform`.
 ///
@@ -25,7 +22,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// Upstream exports a plain class, which `Chart.platforms.BasePlatform`
 /// exposes and which a user can pass as `config.platform`. The Dart class is
 /// not abstract, so that `BasePlatform()` gives the same object.
-class BasePlatform() implements types.BasePlatform {
+class BasePlatform() implements IBasePlatform {
   /// platform.base.js:9 the implicit constructor.
   this;
 
@@ -70,18 +67,14 @@ class BasePlatform() implements types.BasePlatform {
   ///
   /// Registers the specified listener on the given chart.
   @override
-  void addEventListener(types.Chart chart, String type, Function listener) {}
+  void addEventListener(IChart chart, String type, Function listener) {}
 
   /// platform.base.js:43 `removeEventListener(chart, type, listener)`.
   ///
   /// Removes the specified listener previously registered with
   /// addEventListener.
   @override
-  void removeEventListener(
-    types.Chart chart,
-    String type, [
-    Function? listener,
-  ]) {}
+  void removeEventListener(IChart chart, String type, [Function? listener]) {}
 
   /// platform.base.js:48 `getDevicePixelRatio()`.
   ///
@@ -133,7 +126,7 @@ class BasePlatform() implements types.BasePlatform {
   ///
   /// Updates config with platform specific requirements
   @override
-  void updateConfig(types.ChartConfiguration config) {
+  void updateConfig(ChartConfiguration config) {
     // no-op
   }
 }

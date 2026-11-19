@@ -5,16 +5,7 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBLCorners;
-import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
-    show TooltipCornerRadii;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import 'color_json.dart';

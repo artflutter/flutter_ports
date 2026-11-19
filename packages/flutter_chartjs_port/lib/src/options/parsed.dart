@@ -17,13 +17,7 @@ library;
 
 import 'dart:collection' show SplayTreeMap;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/typed_record.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// One parsed item of a dataset (U `core.datasetController.js:502-578`):
 /// the object that `getParsed(index)` gives each time, and that a
@@ -504,7 +498,6 @@ final class IndexValues() implements JsObjectFace {
   }
 
   /// The slots of the dense list, 0 in the tree form. For tests.
-  @internal
   int get denseSlots => _dense?.length ?? 0;
 
   /// The owned indices in ascending order.

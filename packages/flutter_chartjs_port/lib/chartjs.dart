@@ -1,230 +1,91 @@
 // Original code, not ported from Chart.js: the chart.js entry of the package.
-/// The `chart.js` entry: the chart API, the components and their types, for
-/// code that extends Chart.js (a plugin, a controller subclass, a scale).
+/// The `chart.js` entry: each file of `lib/src/`, with no `hide`. It exports
+/// the core library `package:flutter_chartjs_port/chartjs_core.dart` and the
+/// files that use the Flutter framework.
 ///
-/// Next to Flutter, import it with a prefix or with `hide Animation,
-/// Element`: `Animation` and `Element` are also Flutter names. An app
-/// imports `package:flutter_chartjs_port/flutter_chartjs_port.dart`, which
-/// exports this library without the two names.
+/// A file with no import of `package:flutter/widgets.dart` imports this
+/// library. Next to Flutter, an app imports
+/// `package:flutter_chartjs_port/flutter_chartjs_port.dart`: it exports this
+/// library without `Animation`, `Element`, `FilterCallback`, `Title` and
+/// `Tooltip`, the names that Flutter also has.
 ///
-/// The library mirrors the code entry `.` of the `package.json` of Chart.js
-/// (`src/types.ts`, Chart.js ADR 0048, section 5): the controllers, the
-/// elements, the scales, the plugin objects, the platforms, the core
-/// modules, the four namespaces and `registerables`, and the types of
-/// `src/types/index.d.ts` that the port declares. Register the components
-/// before the first chart: `Chart.register(registerables)`, or a List of
-/// the class values and plugin Maps that the app needs (Chart.js ADR 0048,
-/// section 3).
-///
-/// It also exports these port-only names: the Canvas 2D interface that a
-/// plugin draws on (`chart.ctx`), the concrete `ChartMeta` of
-/// `getDatasetMeta`, the zone functions of the default date adapter
-/// (Chart.js ADR 0024), `notifyArrayListeners` (a change of a data array,
-/// differences.md row `platform-array-events`), `JsClass` (the class value
-/// of a user subclass, Chart.js ADR 0020) and `undefined` (the third state
-/// of a config value, Chart.js ADR 0043).
-///
-/// It also exports the native plugin API (Chart.js ADRs 0108 and 0144):
-/// `Plugin`, the hooks `PluginHook`, the hook types `PluginHookFunction` and
-/// `CancelableHookFunction` and the argument classes of the hooks. A plugin
-/// of user code or of an add-on port is a `Plugin`, never a Map. A hook
-/// function can declare its chart parameter as `Object` and cast it to
-/// `Chart` once: `bool beforeEvent(Object chart, EventHookArgs args,
-/// ZoomPluginOptions options)`.
-///
-/// It also exports the input surface of the canvas for plugins that listen
-/// to the input themselves (Chart.js ADR 0108): `NativeEvent` (the DOM event
-/// with its fields, `preventDefault()` and `stopPropagation()`),
-/// `NativeTouch`, `NativeEventListener`, `NativeEventTarget`, `DOMRect`, the
-/// extension `CanvasEventTarget` (`canvas.addEventListener`,
-/// `removeEventListener`, `dispatchEvent`, `ownerDocument`, `eventTarget`
-/// and `getBoundingClientRect()`) and the extension `CssStyleProperties`
-/// (`style.touchAction`, `style.userSelect` and `removeProperty`).
-///
-/// It also exports the names that a chart type of user code or of an add-on
-/// port needs (Chart.js ADR 0132): `ParsedItem`, the parsed item of the
-/// parse functions of `DatasetController`, `ElementPoint`, the result of
-/// `Element.tooltipPosition`, and `VisualElementRange`, the interface of an
-/// element with `getRange`. `controllerArgs`, `elementCfgArg` and
-/// `scaleCfgArg` read the arguments of the `construct` closure of the class
-/// value of a controller, an element or a scale (Chart.js ADR 0133).
-///
-/// It exports `LineSegmentStyle`, the value of the line option `segment`,
-/// and `ScriptableLineSegmentContext`, the argument of its functions
-/// (Chart.js ADR 0142).
-///
-/// The Dart names of the upstream `_` exports, the other port-only
-/// declarations of `lib/src/types/` and `LayoutItem` stay internal (Chart.js
-/// ADR 0048, section 6).
+/// Register the components before the first chart:
+/// `Chart.register(registerables)`, or a List of the class values and the
+/// plugins that the app needs (Chart.js ADR 0048, section 3).
 library;
 
-export 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show
-        CSSStyleDeclaration,
-        CanvasCompositeOperation,
-        CanvasImageSource,
-        CanvasPath,
-        CanvasRenderingContext2D,
-        CanvasTextBaseline,
-        CssStyleProperties,
-        HTMLCanvasElement,
-        Path2D,
-        TextMetrics;
-export 'package:flutter_chartjs_port/src/core/core.animation.dart'
-    show Interpolator;
-export 'package:flutter_chartjs_port/src/core/core.controller.dart'
-    show
-        AnimationEventHandler,
-        ChartEventHandler,
-        ChartPlugin,
-        ChartResizeHandler;
-export 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show controllerArgs;
-export 'package:flutter_chartjs_port/src/core/core.element.dart'
-    show ElementPoint, elementCfgArg;
-export 'package:flutter_chartjs_port/src/core/core.scale.dart'
-    show PointLabelCallback, ScaleHook, TickCallback, scaleCfgArg;
-export 'package:flutter_chartjs_port/src/core/date_adapter.dart'
-    show defaultDateZone, setDefaultDateZone;
-export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
-export 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-export 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength, PercentGrace, ValueGrace;
-export 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show
-        CirclePointStyle,
-        CrossPointStyle,
-        CrossRotPointStyle,
-        DashPointStyle,
-        ImagePointStyle,
-        LinePointStyle,
-        RectPointStyle,
-        RectRotPointStyle,
-        RectRoundedPointStyle,
-        StarPointStyle,
-        TrianglePointStyle;
-export 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-export 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
-export 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-export 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PathPointStyle, PointStyle;
-export 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show PercentRadius, PixelRadius, RadiusLength;
-export 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
-export 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-export 'package:flutter_chartjs_port/src/js/js_undefined.dart'
-    show Undefined, undefined;
-export 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-export 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show CanvasEventTarget;
-export 'package:flutter_chartjs_port/src/platform/native_event.dart'
-    show
-        DOMRect,
-        NativeEvent,
-        NativeEventListener,
-        NativeEventTarget,
-        NativeTouch;
-export 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
-    show DecimationAlgorithm;
-export 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show
-        DatasetFill,
-        EndFill,
-        FillTarget,
-        NoFill,
-        OriginFill,
-        RelativeFill,
-        ShapeFill,
-        SplitFill,
-        StackFill,
-        StartFill,
-        ValueFill;
-export 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
-    show FillerDrawTime;
-export 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
-    show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
-export 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show LegendLabelsGenerator;
-export 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
-    show AverageTooltipPositioner, NearestTooltipPositioner;
-export 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
-    show TooltipPosition, TooltipPositioner;
-export 'package:flutter_chartjs_port/src/scales/scale.time.dart'
-    show TimeParser;
-export 'package:flutter_chartjs_port/src/types.dart'
-    hide
-        ArcElementWrites,
-        ElementPropertyRead,
-        LayoutItem,
-        LineElementWrites,
-        PluginService,
-        PointCircleRun,
-        PointElementProperty,
-        PointElementWrites,
-        PropertyAccess,
-        RadialPointElement,
-        ScaleCache,
-        ScaleRanges,
-        SimpleArc,
-        adapters,
-        detectPlatform;
-export 'package:flutter_chartjs_port/src/types/align.dart'
-    show ChartAlign, TooltipXAlign, TooltipYAlign;
-export 'package:flutter_chartjs_port/src/types/animation.dart'
-    show AnimationEvent;
-export 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-export 'package:flutter_chartjs_port/src/types/axis_border.dart'
-    show AxisBorder, RadialAxisBorder, ScaleBorder;
-export 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BarThickness, BarThicknessFlex, BarThicknessPixels, BorderSkippedEdge;
-export 'package:flutter_chartjs_port/src/types/chart_axis.dart'
-    show CartesianAxis, RAxis, ScaleAxis, XAxis, YAxis;
-export 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    hide chartPaintOf;
-export 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
-    show ChartShadow;
-export 'package:flutter_chartjs_port/src/types/chart_text_style.dart'
-    show ChartTextStyle;
-export 'package:flutter_chartjs_port/src/types/geometric.dart'
-    show SplinePoint, TRBLCorners;
-export 'package:flutter_chartjs_port/src/types/layout.dart'
-    show ChartPosition, LayoutPosition, ScaleValuePosition;
-export 'package:flutter_chartjs_port/src/types/legend_callbacks.dart';
-export 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
-export 'package:flutter_chartjs_port/src/types/legend_item.dart';
-export 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
-export 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
-    show LineSegmentStyle;
-export 'package:flutter_chartjs_port/src/types/option_functions.dart'
-    show
-        DescriptorPredicate,
-        ResolverFallback,
-        ScriptableOption,
-        ScriptableOptionWithResolver;
-export 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show
-        CancelableHookFunction,
-        DatasetDrawHookArgs,
-        DatasetUpdateHookArgs,
-        EventHookArgs,
-        Plugin,
-        PluginDefaults,
-        PluginHook,
-        PluginHookArgs,
-        PluginHookFunction,
-        PluginOf,
-        PluginOptions,
-        ResizeHookArgs,
-        TooltipDrawHookArgs,
-        UpdateHookArgs;
-export 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
-    hide tooltipCallbacksOf, tooltipCallbacksPresence;
-export 'package:flutter_chartjs_port/src/types/update_mode.dart';
+export 'package:flutter_chartjs_port/chartjs_core.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_ui_shadow.dart';
+export 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
+export 'package:flutter_chartjs_port/src/controllers/controller.bar.dart';
+export 'package:flutter_chartjs_port/src/controllers/controller.bubble.dart';
+export 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart';
+export 'package:flutter_chartjs_port/src/controllers/controller.line.dart';
+export 'package:flutter_chartjs_port/src/controllers/controller.pie.dart';
+export 'package:flutter_chartjs_port/src/controllers/controller.polarArea.dart';
+export 'package:flutter_chartjs_port/src/controllers/controller.radar.dart';
+export 'package:flutter_chartjs_port/src/controllers/controller.scatter.dart';
+export 'package:flutter_chartjs_port/src/controllers/index.dart';
+export 'package:flutter_chartjs_port/src/core/animation_share.dart';
+export 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart';
+export 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart';
+export 'package:flutter_chartjs_port/src/core/bar_skip_null.dart';
+export 'package:flutter_chartjs_port/src/core/core.animations.dart';
+export 'package:flutter_chartjs_port/src/core/core.animator.dart';
+export 'package:flutter_chartjs_port/src/core/core.controller.dart';
+export 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
+export 'package:flutter_chartjs_port/src/core/core.plugins.dart';
+export 'package:flutter_chartjs_port/src/core/core.registry.dart';
+export 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
+export 'package:flutter_chartjs_port/src/core/core.scale.dart';
+export 'package:flutter_chartjs_port/src/core/index.dart';
+export 'package:flutter_chartjs_port/src/core/legend_item_options.dart';
+export 'package:flutter_chartjs_port/src/core/point_bulk_update.dart';
+export 'package:flutter_chartjs_port/src/core/point_option_preparation.dart';
+export 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
+export 'package:flutter_chartjs_port/src/core/radial_positions.dart';
+export 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
+export 'package:flutter_chartjs_port/src/helpers/index.dart';
+export 'package:flutter_chartjs_port/src/index.dart';
+export 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+export 'package:flutter_chartjs_port/src/platform/index.dart';
+export 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+export 'package:flutter_chartjs_port/src/plugins/index.dart';
+export 'package:flutter_chartjs_port/src/plugins/plugin.colors.dart';
+export 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
+export 'package:flutter_chartjs_port/src/plugins/plugin.subtitle.dart';
+export 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
+export 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
+export 'package:flutter_chartjs_port/src/scales/index.dart';
+export 'package:flutter_chartjs_port/src/scales/scale.category.dart';
+export 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
+export 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
+export 'package:flutter_chartjs_port/src/scales/scale.logarithmic.dart';
+export 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
+export 'package:flutter_chartjs_port/src/scales/scale.time.dart';
+export 'package:flutter_chartjs_port/src/scales/scale.timeseries.dart';
+export 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
+export 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+export 'package:flutter_chartjs_port/src/typed/axes.dart';
+export 'package:flutter_chartjs_port/src/typed/callbacks.dart';
+export 'package:flutter_chartjs_port/src/typed/chart_value.dart';
+export 'package:flutter_chartjs_port/src/typed/config.dart';
+export 'package:flutter_chartjs_port/src/typed/datasets.dart';
+export 'package:flutter_chartjs_port/src/typed/elements.dart';
+export 'package:flutter_chartjs_port/src/typed/groups.dart';
+export 'package:flutter_chartjs_port/src/typed/lower.dart';
+export 'package:flutter_chartjs_port/src/typed/props.dart';
+export 'package:flutter_chartjs_port/src/typed/typed.dart';
+export 'package:flutter_chartjs_port/src/types.dart';
 export 'package:flutter_chartjs_port/src/upstream.dart';
+export 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart';
+export 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
+export 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
+export 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';

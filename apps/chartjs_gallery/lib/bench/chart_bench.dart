@@ -1,8 +1,5 @@
 // Original code, not ported from Chart.js: the frameless chart benchmark.
 
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 /// The cases and the timing loop of the frameless chart benchmark
 /// (`lib/main_bench.dart`).
 ///
@@ -78,13 +75,9 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
         ZoomOptions,
         ZoomPluginOptions,
         zoomPlugin;
+// FilterCallback of the port has a Flutter name.
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: FilterCallback, the filter of the notifyPlugins override.
-import 'package:flutter_chartjs_port/src/core/core.plugins.dart'
-    show FilterCallback;
-// Not public: ChartThemeSwitch, the theme switch of ChartView (Chart.js ADR
-// 0147 §13), which the cases of the mode theme run without a widget.
-import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
 
 /// The width of the bitmap of the benchmark canvas, in device pixels.
 const int chartBenchWidth = 800;
@@ -620,7 +613,6 @@ void _benchEvent(Chart chart, String type, double x, double y) {
   // The benchmark calls the event handler of the chart at once. It skips the
   // host input path of Chart.js ADR 0037: the pointer conversion of the
   // chart host and the throttled proxy of the platform listener.
-  // ignore: invalid_use_of_internal_member
   chart.eventHandler(fromNativeEvent(event, chart));
 }
 
@@ -628,7 +620,6 @@ void _benchEvent(Chart chart, String type, double x, double y) {
 /// (core.animator.js:57-110). The frameless benchmark has no frame.
 void _benchTick(double date) {
   // The benchmark ticks the animator as its frame callback does.
-  // ignore: invalid_use_of_internal_member
   animator.update(date);
 }
 
@@ -1273,7 +1264,6 @@ final class _BenchTheme(
   }
 
   // The bench runs the switch of the widget without a widget.
-  // ignore: invalid_use_of_internal_member
   final ChartThemeSwitch _switch = ChartThemeSwitch();
 
   /// The inline plugin of the palette records: the hooks `beforeUpdate` and
@@ -2168,7 +2158,7 @@ final class _BenchChart(super.item, [super.userConfig]) extends Chart {
   bool? notifyPlugins<A extends Object>(
     PluginHook<A> hook, [
     A? args,
-    FilterCallback? filter,
+    chartjs.FilterCallback? filter,
   ]) {
     notifies++;
     return super.notifyPlugins(hook, args, filter);

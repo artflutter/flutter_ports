@@ -5,43 +5,24 @@
 /// ADR 0152).
 library;
 
-import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show dataUpdateField, nativeDataUpdateList, nativeDataUpdateObject;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The count of the fast loops that ran in an update mode other than `none`.
 /// Only tests read it.
-@internal
 int fastBarModesTaken = 0;
 
 /// The count of the fast loops that ran with the layout of several datasets
 /// (one for each dataset and update). Only tests read it.
-@internal
 int fastBarMultiTaken = 0;
 
 /// The count of the ordinary bar loops that took one search of the axes and
 /// the stacks for the update of a dataset. Only tests read it.
-@internal
 int fastBarPlansTaken = 0;
 
 /// Whether the reads of the option `hidden` of each dataset object of
 /// [chart] (`Chart.isDatasetVisible`) run no user code: the dataset List and
 /// each dataset are native containers with no route for `hidden`.
-bool fastBarHiddenReadsAreNative(types.Chart chart) {
+bool fastBarHiddenReadsAreNative(IChart chart) {
   final owner = chart;
   if (owner is! Chart) return false;
   final Object config = owner.config;
@@ -94,7 +75,6 @@ bool fastStackLoopIsNative(DatasetController controller, List<Object?> parsed) {
 
 /// The count of the data-only updates of several controllers that kept the
 /// rulers of the bar controllers. Only tests read it.
-@internal
 int fastBarRulersKept = 0;
 
 /// Whether `updateElement` of a dataset controller of [chart] writes the
@@ -117,7 +97,7 @@ int fastBarRulersKept = 0;
 /// option is in the cache of the chart options: the read runs no user code.
 /// The mode `reset` has another geometry, and the mode `active` reads the
 /// hover options of each bar: both keep the ordinary loop.
-bool fastBarModeWritesDirectly(types.Chart chart, String mode) {
+bool fastBarModeWritesDirectly(IChart chart, String mode) {
   if (mode == 'reset' || mode == 'active') return false;
   final options = chart.options;
   return options.runtimeType == OptionView &&
@@ -147,8 +127,7 @@ bool fastBarKeepsRulers(List<DatasetController> controllers) {
   return true;
 }
 
-final Type _nativeMetaList =
-    <types.ChartMeta<DatasetController>?>[].runtimeType;
+final Type _nativeMetaList = <ChartMeta<DatasetController>?>[].runtimeType;
 
 /// Whether the search of `_calculateBarIndexPixels` for the axes and the
 /// stacks (`_getAxisCount`, `_getAxis`, `getFirstScaleIdForIndexAxis` and
@@ -174,7 +153,7 @@ final Type _nativeMetaList =
 ///
 /// The caller declines `skipNull` before (`cachedBulkBarOptions`): the search
 /// then takes no data index.
-bool fastBarSearchIsNative(DatasetController controller, types.Scale scale) {
+bool fastBarSearchIsNative(DatasetController controller, IScale scale) {
   final owner = controller.chart;
   if (owner is! Chart ||
       !owner.supportsNativeBarIndexReads ||

@@ -1,13 +1,7 @@
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'dart:math' as math;
 
 import 'package:chartjs_gallery/demo/demo_common.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Tick, ticks;
-// Not public: the interfaces types.Chart and types.Scale of the stand-ins.
-import 'package:flutter_chartjs_port/src/types/index.dart' show Chart, Scale;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
 /// The locales of the locale menu.
@@ -23,7 +17,7 @@ const List<Locale> tickLocales = [
 /// `chart.options.locale`. The same stand-in as the ported spec
 /// `test/specs/core.ticks_test.dart` uses, until `core.controller` lands.
 final class _DemoChart(@override final Map<String, Object?> options)
-    implements Chart {
+    implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -31,9 +25,9 @@ final class _DemoChart(@override final Map<String, Object?> options)
 /// The scale that the formatters get as `this`: they read only `chart` and
 /// `options.ticks.format`.
 final class _DemoScale(
-  @override final Chart chart,
+  @override final IChart chart,
   @override final Map<String, Object?> options,
-) implements Scale {
+) implements IScale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

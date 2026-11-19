@@ -6,21 +6,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The typed element options of Chart.js ADR 0021, section 7, on real charts
@@ -79,7 +65,7 @@ final class _TypedController extends DatasetController {
 
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,
@@ -496,7 +482,7 @@ void main() {
       ];
       final chart = stackedChart(items);
       final meta = chart.getDatasetMeta(0);
-      expect(meta.stacked, types.StackMode.on);
+      expect(meta.stacked, StackMode.on);
       expect(identical(meta.parsed, items), isTrue);
       for (final item in items) {
         final itemStacks = stacksOf(item);
@@ -515,7 +501,7 @@ void main() {
       registerController();
       final items = <Object?>[DateTime.utc(1970), DateTime.utc(1971)];
       final chart = stackedChart(items);
-      expect(chart.getDatasetMeta(0).stacked, types.StackMode.on);
+      expect(chart.getDatasetMeta(0).stacked, StackMode.on);
       for (final item in items) {
         final itemStacks = stacksOf(item);
         expect(itemStacks, isA<JsObjectFace>());

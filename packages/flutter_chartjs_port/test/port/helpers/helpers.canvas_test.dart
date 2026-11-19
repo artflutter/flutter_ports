@@ -2,18 +2,7 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import 'draw_point_reference.dart';
@@ -165,7 +154,7 @@ final class const _PointOptions({
 
 /// A chart that has only a device pixel ratio.
 final class _Chart(@override var double currentDevicePixelRatio)
-    implements Chart {
+    implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

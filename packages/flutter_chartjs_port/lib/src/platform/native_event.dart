@@ -283,7 +283,6 @@ final class NativeEvent({
 /// Calls [listener] with [event] as a listener with the `passive` flag
 /// [passive]: [NativeEvent.preventDefault] does nothing while a passive
 /// listener runs. The dispatch of a target calls it.
-@internal
 void invokeNativeEventListener(
   NativeEventListener listener,
   NativeEvent event, {
@@ -301,7 +300,6 @@ void invokeNativeEventListener(
 /// Starts the dispatch of [event] on [target]: sets [NativeEvent.target]
 /// and clears the stop flag of an earlier dispatch, as the DOM clears it at
 /// the end of each dispatch.
-@internal
 void setNativeEventTarget(NativeEvent event, Object? target) {
   event
     .._target = target
@@ -310,5 +308,4 @@ void setNativeEventTarget(NativeEvent event, Object? target) {
 
 /// Whether a listener called [NativeEvent.stopPropagation] in the current
 /// dispatch of [event].
-@internal
 bool nativeEventStopped(NativeEvent event) => event._stopped;

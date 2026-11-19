@@ -16,10 +16,7 @@ import 'dart:ui' show Color, lerpDouble;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/painting.dart' show ColorProperty, TextStyle;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartOptionsScope;
-import 'package:flutter_chartjs_port/src/theme/compile.dart';
-import 'package:flutter_chartjs_port/src/theme/presets.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The tokens of a chart theme (Chart.js ADR 0147, theming.md §4).
 ///
@@ -320,7 +317,6 @@ List<Color>? _lerpPalette(List<Color>? a, List<Color>? b, double t) {
 /// Each call compiles [data]: no memo (judge-c §3.9, Chart.js ADR 0054 §4).
 /// The theme switch of `ChartView` keeps the compiled theme of its current
 /// theme and compiles again only for a new theme.
-@internal
 ChartOptionsScope? compileThemeData(ChartThemeData? data) {
   if (data == null) return null;
   return compileChartTheme(

@@ -5,42 +5,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show CirclePointStyle;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
@@ -258,8 +223,8 @@ void _setUpScopeTypes() {
     });
 }
 
-/// A [types.ChartConfiguration] that is not a [Config], for `chartThemeOf`.
-final class _OtherConfiguration() implements types.ChartConfiguration {
+/// A [ChartConfiguration] that is not a [Config], for `chartThemeOf`.
+final class _OtherConfiguration() implements ChartConfiguration {
   @override
   final Map<String, Object?> options = {
     themeConfigKey: <String, Object?>{'color': 'T'},
@@ -365,7 +330,7 @@ void main() {
     });
 
     test('reads a resolver', () {
-      final options = helpers.createResolver([
+      final options = createResolver([
         <String, Object?>{'indexAxis': const YAxis()},
       ]);
       expect(getIndexAxis('nothing', options), isA<YAxis>());
@@ -820,11 +785,11 @@ void main() {
           'type': 'tline',
           'options': <String, Object?>{
             'scales': <String, Object?>{
-              'x': helpers.attachContext(
-                helpers.createResolver([<String, Object?>{}]),
+              'x': attachContext(
+                createResolver([<String, Object?>{}]),
                 <String, Object?>{},
               ),
-              'y': helpers.createResolver([
+              'y': createResolver([
                 <String, Object?>{'a': 1.0},
               ]),
             },
@@ -1793,7 +1758,7 @@ void main() {
         <String, Object?>{'a': 1.0},
       ];
       final resolver = config.createResolver(scopes);
-      expect(resolver, isA<helpers.Resolver>());
+      expect(resolver, isA<Resolver>());
       expect(config.createResolver(scopes), same(resolver));
       expect(config.createResolver(scopes, undefined, ['']), same(resolver));
       expect(
@@ -1831,7 +1796,7 @@ void main() {
       final context = config.createResolver(scopes, <String, Object?>{
         'index': 1.0,
       });
-      expect(context, isA<helpers.ContextResolver>());
+      expect(context, isA<ContextResolver>());
       expect(
         identical(
           config.createResolver(scopes, <String, Object?>{'index': 1.0}),
@@ -1856,14 +1821,13 @@ void main() {
         [<String, Object?>{}],
         <String, Object?>{'index': 1.0},
         [''],
-        const helpers.DescriptorDefaults(
+        const DescriptorDefaults(
           scriptable: false,
           indexable: false,
           allKeys: true,
         ),
       );
-      final descriptors =
-          jsGet(resolver, '_descriptors')! as helpers.Descriptor;
+      final descriptors = jsGet(resolver, '_descriptors')! as Descriptor;
       expect(
         [descriptors.scriptable, descriptors.indexable, descriptors.allKeys],
         [false, false, true],
@@ -2600,7 +2564,7 @@ void main() {
           scopes,
           <String, Object?>{},
           [''],
-          const helpers.DescriptorDefaults(
+          const DescriptorDefaults(
             scriptable: false,
             indexable: false,
             allKeys: true,

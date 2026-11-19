@@ -4,9 +4,7 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // src/core/core.datasetController.js at the pinned Chart.js. 34 scenarios.
 
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
-    show ChartClip, StackMode;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
 const String datasetControllerReferenceNode = 'v24.22.1';

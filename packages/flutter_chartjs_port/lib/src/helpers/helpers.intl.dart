@@ -11,7 +11,7 @@ library;
 
 import 'dart:ui' show Locale;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart';
 
 /// helpers.intl.ts:2 `intlCache`.

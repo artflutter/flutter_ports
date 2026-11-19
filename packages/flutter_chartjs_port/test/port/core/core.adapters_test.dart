@@ -1,11 +1,5 @@
 // Original code, not ported from Chart.js: core.adapters cases with no spec.
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
-import 'package:flutter_chartjs_port/src/core/date_adapter.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/drop_extra_args.dart';

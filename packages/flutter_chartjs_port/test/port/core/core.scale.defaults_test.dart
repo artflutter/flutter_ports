@@ -1,14 +1,7 @@
 // Original code, not ported from Chart.js: core.scale.defaults tests.
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/core/core.scale.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show createResolver;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';

@@ -6,20 +6,6 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Cubic, Curve, Curves;
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        BarDataset,
-        CategoryAxis,
-        ChartAnimation,
-        ChartConfig,
-        ChartKind,
-        LinearAxis;
-import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
-import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart' show Animator;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 // `Animator.update` with the table of `lib/src/core/animation_ease.dart`
@@ -46,7 +32,7 @@ final class const _TwinCubic(super.a, super.b, super.c, super.d) extends Cubic {
 
 /// A chart for the animator: [onDraw] runs in its draw, inside
 /// `Animator.update`. Its other members throw.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   void Function()? onDraw;
 
   @override

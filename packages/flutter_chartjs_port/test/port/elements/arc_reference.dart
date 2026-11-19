@@ -7,8 +7,7 @@
 
 import 'dart:ui' show StrokeJoin;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the reference data.
 const String arcReferenceNode = 'v24.22.1';

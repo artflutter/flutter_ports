@@ -17,33 +17,7 @@ import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show DefaultCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        ArcOptionsScope,
-        BarOptionsScope,
-        ElementOptionsByTypeScope,
-        LineOptionsScope,
-        PointOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget;
-import 'package:flutter_chartjs_port/src/typed/lower.dart';
-import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
-    show LineSegmentStyle;
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The options of the element types: `options.elements`
 /// (`docs/configuration/elements.md`).
@@ -116,7 +90,6 @@ final class const ChartElements({
 
 /// The `elements` scope of [elements] (Chart.js ADR 0054 §7): the keys in
 /// parameter order, `extra` last.
-@internal
 ElementOptionsByTypeScope lowerElements(ChartElements elements) {
   final scope = ElementOptionsByTypeScope();
   if (elements.point case final point?) scope.point = point._lower();

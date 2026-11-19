@@ -7,8 +7,7 @@ library;
 import 'dart:ui';
 
 // The test harness decodes frozen upstream input through internal primitives.
-// ignore_for_file: implementation_imports
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 RGBA? _function(String value) => value.isNotEmpty && value.codeUnitAt(0) == 114

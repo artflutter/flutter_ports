@@ -309,6 +309,10 @@ const Map<String, TypedAtom> typedAtoms = {
   ),
 };
 
+/// The core library of the package (Chart.js ADR 0061): each generated file
+/// is a core file and imports it.
+const String coreLibrary = 'package:flutter_chartjs_port/chartjs_core.dart';
+
 /// The import lines of the typed atoms whose types [types] lists, and of
 /// the libraries [others] with no `show` list: one line for each library,
 /// the `dart:` libraries first, then a blank line and the others in order.
@@ -318,7 +322,11 @@ String typedAtomImports(
 ]) {
   final byUri = <String, Set<String>>{for (final uri in others) uri: {}};
   for (final atom in typedAtoms.values) {
-    if (types.contains(atom.type) && atom.uri != 'dart:core') {
+    if (!types.contains(atom.type) || atom.uri == 'dart:core') continue;
+    // A type of the package comes from the core library, with no list.
+    if (atom.uri.startsWith('package:flutter_chartjs_port/')) {
+      byUri[coreLibrary] ??= <String>{};
+    } else {
       (byUri[atom.uri] ??= <String>{}).add(atom.type);
     }
   }
@@ -764,15 +772,7 @@ String _resolved(Schema schema) {
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
       '${typedAtomImports([for (final a in typedAtoms.values)
-        if (a.field != null) a.type])}\n'
-      "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'\n"
-      '    show DrawPointOptions;\n'
-      "import 'package:flutter_chartjs_port/src/js/js_number.dart'\n"
-      '    show jsToNumber, jsTruthy;\n'
-      "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/element_options_base.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n",
+        if (a.field != null) a.type], [coreLibrary])}',
     );
   for (final kind in schema.kinds) {
     final resolved = kind.resolved;
@@ -1064,10 +1064,7 @@ String _scopeKinds(Schema schema) {
       '///\n'
       '/// This is a framework-free Flutter core library (ADR 0061).\n'
       'library;\n\n'
-      "import 'package:flutter_chartjs_port/src/options/opt.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/option_scope.dart';\n"
-      "import 'package:flutter_chartjs_port/src/options/scopes.g.dart';\n\n"
+      "import '$coreLibrary';\n\n"
       '/// A kind of option scope.\n'
       'enum ScopeKind(\n'
       '  /// The kind name of the schema.\n'
@@ -1198,12 +1195,7 @@ String _scopeKinds(Schema schema) {
 }
 
 /// The imports of `scopes.g.dart` besides the typed atoms.
-const _scopesImports = [
-  'package:flutter_chartjs_port/src/options/opt.dart',
-  'package:flutter_chartjs_port/src/options/option_keys.g.dart',
-  'package:flutter_chartjs_port/src/options/option_scope.dart',
-  'package:flutter_chartjs_port/src/options/scope_kinds.g.dart',
-];
+const List<String> _scopesImports = [coreLibrary];
 
 String _scopes(Schema schema) {
   final imports = typedAtomImports([

@@ -8,8 +8,7 @@ import 'dart:convert';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart' show referenceColor;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 

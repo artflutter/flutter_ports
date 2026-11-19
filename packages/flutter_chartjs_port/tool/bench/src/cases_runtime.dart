@@ -4,12 +4,7 @@
 /// `jsToString`, `jsObjectKeys` and `jsSort`.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/option_functions.dart'
-    show callScriptable;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 import 'harness.dart';
 

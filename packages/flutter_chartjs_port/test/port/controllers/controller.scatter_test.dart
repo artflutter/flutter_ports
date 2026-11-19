@@ -7,24 +7,7 @@ import 'dart:io';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.scatter.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -112,7 +95,7 @@ List<Object?> _points(Chart chart) => [
       for (final point in chart.getDatasetMeta(i).data)
         [
           for (final key in const ['x', 'y', 'skip', 'stop'])
-            (point as types.ElementPropertyRead)[key],
+            (point as ElementPropertyRead)[key],
         ],
     ],
 ];
@@ -257,14 +240,13 @@ void main() {
       );
 
       final without = chart(<String, Object?>{'y': 5.0});
-      final point =
-          without.getDatasetMeta(0).data[0] as types.ElementPropertyRead;
+      final point = without.getDatasetMeta(0).data[0] as ElementPropertyRead;
       expect(point['x'], without.scales['x']!.getPixelForDecimal(0));
       expect(point['skip'], isFalse);
 
       final withNull = chart(<String, Object?>{'x': null, 'y': 5.0});
       final nullPoint =
-          withNull.getDatasetMeta(0).data[0] as types.ElementPropertyRead;
+          withNull.getDatasetMeta(0).data[0] as ElementPropertyRead;
       expect(nullPoint['x'], isNaN);
       expect(nullPoint['skip'], isTrue);
     });

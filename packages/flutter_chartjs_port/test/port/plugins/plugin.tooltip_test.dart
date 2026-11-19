@@ -8,44 +8,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        ChartPaint,
-        TooltipCallbacks,
-        TooltipCornerRadii,
-        TooltipItemsCallback,
-        TooltipLabelStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CSSStyleDeclaration, HTMLCanvasElement;
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/core/core.animations.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show DatasetInteractionMode, IndexInteractionMode;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
-import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show SolidChartPaint;
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
-    show tooltipCallbacksOf;
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -97,7 +60,7 @@ import 'plugin_tooltip_reference.dart';
 final Expando<List<String>> _logs = Expando<List<String>>('tooltip log');
 
 /// Adds [entry] to the log of [chart] (`log` of the generator).
-void _log(types.Chart chart, String entry) =>
+void _log(IChart chart, String entry) =>
     (_logs[chart] ??= <String>[]).add(entry);
 
 /// The named functions of the configs of the generator, with the same
@@ -105,30 +68,36 @@ void _log(types.Chart chart, String entry) =>
 final Map<String, Object?> _functions = {
   // The custom positioner of the generator, `position: 'custom'`.
   'positioner:custom': const _CustomPositioner(),
-  'cbTitle': (types.TooltipModel tooltip, List<TooltipItem> items) => <String>[
+  'cbTitle': (TooltipModel tooltip, List<TooltipItem> items) => <String>[
     'Title A',
     'Title B',
   ],
-  'cbAfterTitle': (types.TooltipModel tooltip, List<TooltipItem> items) =>
-      <String>['After 1', 'After 2'],
-  'cbBeforeBody': (types.TooltipModel tooltip, List<TooltipItem> items) =>
-      <String>['5'],
-  'cbBeforeLabel': (types.TooltipModel tooltip, TooltipItem item) => <String>[
+  'cbAfterTitle': (TooltipModel tooltip, List<TooltipItem> items) => <String>[
+    'After 1',
+    'After 2',
+  ],
+  'cbBeforeBody': (TooltipModel tooltip, List<TooltipItem> items) => <String>[
+    '5',
+  ],
+  'cbBeforeLabel': (TooltipModel tooltip, TooltipItem item) => <String>[
     'Item ${item.datasetIndex}.${item.dataIndex}',
   ],
-  'cbLabel': (types.TooltipModel tooltip, TooltipItem item) =>
+  'cbLabel': (TooltipModel tooltip, TooltipItem item) =>
       item.datasetIndex == 0 ? <String>['Line 1', 'Line 2'] : null,
-  'cbAfterLabel': (types.TooltipModel tooltip, TooltipItem item) => <String>[],
-  'cbAfterBody': (types.TooltipModel tooltip, List<TooltipItem> items) =>
-      <String>['End 1', 'End 2'],
-  'cbBeforeFooter': (types.TooltipModel tooltip, List<TooltipItem> items) =>
-      <String>['Before footer'],
-  'cbFooter': (types.TooltipModel tooltip, List<TooltipItem> items) => <String>[
+  'cbAfterLabel': (TooltipModel tooltip, TooltipItem item) => <String>[],
+  'cbAfterBody': (TooltipModel tooltip, List<TooltipItem> items) => <String>[
+    'End 1',
+    'End 2',
+  ],
+  'cbBeforeFooter': (TooltipModel tooltip, List<TooltipItem> items) => <String>[
+    'Before footer',
+  ],
+  'cbFooter': (TooltipModel tooltip, List<TooltipItem> items) => <String>[
     'Count: ${items.length}',
   ],
-  'cbAfterFooter': (types.TooltipModel tooltip, List<TooltipItem> items) =>
+  'cbAfterFooter': (TooltipModel tooltip, List<TooltipItem> items) =>
       <String>[],
-  'cbLabelTextColor': (types.TooltipModel tooltip, TooltipItem item) =>
+  'cbLabelTextColor': (TooltipModel tooltip, TooltipItem item) =>
       ChartPaint.solid(
         item.datasetIndex == 0
             ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
@@ -149,7 +118,7 @@ final Map<String, Object?> _functions = {
   // `adapt-native-tooltip-item`). It writes the text of the upstream log:
   // the `replay` of upstream is `true` or `undefined`, `context.tooltip` is
   // `this`, and the keys of the context are `chart,tooltip,replay`.
-  'tooltipExternal': (types.TooltipModel tooltip, bool replay) {
+  'tooltipExternal': (TooltipModel tooltip, bool replay) {
     _log(
       tooltip.chart,
       'external ${replay ? 'true' : 'undefined'} true chart,tooltip,replay',
@@ -158,7 +127,7 @@ final Map<String, Object?> _functions = {
   // (item) => ({borderColor: item.datasetIndex === 0 ? 'red' : 'green',
   // backgroundColor: 'blue', borderWidth: {top: 1, left: 2}, borderDash:
   // [2, 1], borderDashOffset: 1, borderRadius: 3})
-  'roundLabelColor': (types.TooltipModel tooltip, TooltipItem item) =>
+  'roundLabelColor': (TooltipModel tooltip, TooltipItem item) =>
       TooltipLabelStyle(
         borderColor: ChartPaint.solid(
           item.datasetIndex == 0
@@ -189,8 +158,8 @@ final Map<String, Object?> _functions = {
 final class const _CustomPositioner() extends TooltipPositioner {
   @override
   TooltipPosition? positionOf(
-    types.TooltipModel tooltip,
-    List<types.ActiveElement> items,
+    TooltipModel tooltip,
+    List<ActiveElement> items,
     Object? eventPosition,
   ) {
     if (items.isEmpty) {
@@ -208,16 +177,16 @@ final class const _CustomPositioner() extends TooltipPositioner {
 /// A positioner of a test: it gives the result of its function.
 final class const _TestPositioner(
   final TooltipPosition? Function(
-    types.TooltipModel tooltip,
-    List<types.ActiveElement> items,
+    TooltipModel tooltip,
+    List<ActiveElement> items,
     Object? eventPosition,
   )
   _position,
 ) extends TooltipPositioner {
   @override
   TooltipPosition? positionOf(
-    types.TooltipModel tooltip,
-    List<types.ActiveElement> items,
+    TooltipModel tooltip,
+    List<ActiveElement> items,
     Object? eventPosition,
   ) => _position(tooltip, items, eventPosition);
 }
@@ -231,7 +200,7 @@ final class const _TestPositioner(
 Object? _observeTooltip(Chart chart) {
   final model = chart.tooltip;
   if (model == null) return null;
-  final byName = model as types.ElementPropertyRead;
+  final byName = model as ElementPropertyRead;
   return <String, Object?>{
     for (final key in const [
       'opacity',
@@ -455,14 +424,14 @@ Object? _construct(List<Object?> args) => jsConstruct(Tooltip.jsClass, args);
 
 /// A chart that is a `types.Chart` and nothing else. A member that a test
 /// does not stub throws a `NoSuchMethodError`.
-final class _FakeChart() implements types.Chart {
+final class _FakeChart() implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// The chart of the cache test: `getContext()` and `options` with an
 /// animation object, as a chart whose `chart.options.animation` is truthy.
-final class _CacheChart() implements types.Chart {
+final class _CacheChart() implements IChart {
   @override
   AnyObject getContext() => <String, Object?>{};
 
@@ -525,7 +494,7 @@ void _activate(Chart chart, [int index = 1]) => _tooltipOf(chart)
 AnyObject _point(num x, num y) => <String, Object?>{'x': x, 'y': y};
 
 /// The active items of [items] as `[datasetIndex, index]`.
-List<Object?> _pairs(List<types.ActiveElement> items) => [
+List<Object?> _pairs(List<ActiveElement> items) => [
   for (final item in items) [item.datasetIndex, item.index],
 ];
 
@@ -700,11 +669,9 @@ void main() {
     }
 
     test('merge uses each supplied field and retains the others', () {
-      List<String> title(types.TooltipModel t, List<TooltipItem> items) => [
-        'title',
-      ];
-      List<String> label(types.TooltipModel t, TooltipItem item) => ['label'];
-      List<String> replacement(types.TooltipModel t, TooltipItem item) => [
+      List<String> title(TooltipModel t, List<TooltipItem> items) => ['title'];
+      List<String> label(TooltipModel t, TooltipItem item) => ['label'];
+      List<String> replacement(TooltipModel t, TooltipItem item) => [
         'replacement',
       ];
       final base = TooltipCallbacks(title: title, label: label);
@@ -1008,9 +975,9 @@ void main() {
       final chart = _FakeChart();
       final list = <Object?>['a'];
       final lines = <String>['a'];
-      final body = <types.TooltipBodyItem>[];
+      final body = <TooltipBodyItem>[];
       final items = <TooltipItem>[];
-      final active = <types.ActiveElement>[];
+      final active = <ActiveElement>[];
       final animations = Animations(chart, false);
       final context = <String, Object?>{};
       final values = <String, Object?>{
@@ -1101,7 +1068,7 @@ void main() {
       final chart = acquireChart(_probeChart());
       final t = _tooltipOf(chart);
       final element = chart.getDatasetMeta(0).data[2];
-      final items = <types.ActiveElement>[
+      final items = <ActiveElement>[
         ActiveElement(datasetIndex: 0, index: 2, element: element),
       ];
       t['_active'] = items;
@@ -1160,7 +1127,7 @@ void main() {
         'position', (tester) async {
       // The probe output `thisIsTooltip` true, `thisArgs` [true, 150], and
       // `pos_thisProbe`: caretX 10, caretY 20, xAlign left, yAlign top.
-      types.TooltipModel? self;
+      TooltipModel? self;
       List<Object?>? args;
       final chart = acquireChart(
         _probeChart(<String, Object?>{
@@ -1740,7 +1707,7 @@ void main() {
       late final Chart chart;
       chart = acquireChart(
         _probeChart(<String, Object?>{
-          'external': (types.TooltipModel tooltip, bool replay) {
+          'external': (TooltipModel tooltip, bool replay) {
             entries.add('$replay ${identical(tooltip, chart.tooltip)}');
           },
         }),

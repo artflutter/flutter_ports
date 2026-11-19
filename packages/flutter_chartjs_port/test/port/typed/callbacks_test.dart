@@ -7,11 +7,6 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart'
-    as animator
-    show AnimationEvent;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/drop_extra_args.dart';
@@ -654,7 +649,7 @@ void main() {
     });
 
     testWidgets('an animation callback gets the event', (tester) async {
-      final details = <AnimationEvent>[];
+      final details = <IAnimationEvent>[];
       final lowering = ChartConfigLowering(
         ChartConfig(
           type: .bar,
@@ -666,16 +661,14 @@ void main() {
       final onComplete = (options['animation']! as JsObjectFace)['onComplete'];
       final chart = acquireChart(_bar(const <String, Object?>{}));
       callDroppingExtraArgs(onComplete, [
-        animator.AnimationEvent(
+        AnimationEvent(
           chart: chart,
           initial: true,
           numSteps: 1000,
           currentStep: 250,
         ),
       ]);
-      callDroppingExtraArgs(onComplete, [
-        animator.AnimationEvent(chart: chart),
-      ]);
+      callDroppingExtraArgs(onComplete, [AnimationEvent(chart: chart)]);
       expect(
         [
           for (final d in details)

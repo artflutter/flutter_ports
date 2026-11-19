@@ -1,7 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/element.bar.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Test the bar element

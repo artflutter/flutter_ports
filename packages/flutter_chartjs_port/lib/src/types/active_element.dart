@@ -3,7 +3,7 @@
 /// The native active element contract.
 library;
 
-import 'package:flutter_chartjs_port/src/types/index.dart' show Element;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// An active element of a chart: the object `{element, datasetIndex, index}`
@@ -27,7 +27,7 @@ class const ActiveElement({
   /// The data element. Null for an index with no element
   /// (core.controller.js:1106), and for an item that an app gives to
   /// `setActiveElements`.
-  final Element? element,
+  final IElement? element,
 }) {
   /// Creates an active element. An item for `setActiveElements` needs no
   /// [element]: the chart finds it.

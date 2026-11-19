@@ -47,29 +47,8 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds;
-import 'package:flutter_chartjs_port/src/core/scale_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show finiteOrDefault, isFinite;
-import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show formatNumber, localeOf;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show MinMax, log10, setMinAndMaxByKey;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show MajorTickOptionsScope, ScaleOptionsScope, TickOptionsScope;
-import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart'
-    show LinearScaleBase;
 import 'package:meta/meta.dart';
 
 /// scale.logarithmic.js:8 `log10Floor`.

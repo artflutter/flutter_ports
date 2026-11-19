@@ -23,9 +23,7 @@
 /// last test, and no check fails.
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Whether the run prints the pairs and checks nothing
 /// (`--dart-define=O2_COLLECT=true`).

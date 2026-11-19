@@ -6,9 +6,7 @@
 /// same behavior.
 library;
 
-import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 import 'easing_json.dart';
 

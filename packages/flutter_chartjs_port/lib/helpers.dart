@@ -69,7 +69,7 @@ export 'package:flutter_chartjs_port/src/helpers/index.dart'
         cubicInterpolationModeOf,
         decimalPlaces,
         deprecated,
-        descriptors,
+        descriptorsOf,
         elementsEqual,
         factorize,
         filterBetween,

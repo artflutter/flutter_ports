@@ -7,25 +7,8 @@ import 'dart:ui';
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
-
-// The tests replace and call `Chart.eventHandler`, which only the harness
-// reads.
-// ignore_for_file: invalid_use_of_internal_member
 
 // The chart helpers of chartjs-test-utils 0.4.0 src/utils.js (Chart.js ADR
 // 0022, sections 4 to 6).
@@ -42,7 +25,7 @@ import 'package:flutter_test/flutter_test.dart';
 // built-in component: the charts have no type and no dataset.
 
 /// A chart event of [type] at (10, 10).
-final class _Event(@override final String type) implements types.ChartEvent {
+final class _Event(@override final String type) implements ChartEvent {
   @override
   final NativeEvent native = NativeEvent(type: type, offsetX: 10, offsetY: 10);
 
@@ -53,7 +36,7 @@ final class _Event(@override final String type) implements types.ChartEvent {
   double? get y => 10;
 
   @override
-  types.Chart? get chart => null;
+  IChart? get chart => null;
 }
 
 /// A chart on a new canvas whose `onResize` and `onHover` log into [log].

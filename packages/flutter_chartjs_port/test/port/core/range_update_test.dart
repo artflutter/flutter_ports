@@ -6,43 +6,7 @@ import 'dart:ui' show Color;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.line.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show Config, themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show controllerArgs;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show
-        DatasetInteractionMode,
-        IndexInteractionMode,
-        InteractionAxis,
-        InteractionMode,
-        NearestInteractionMode,
-        PointInteractionMode,
-        XInteractionMode,
-        YInteractionMode;
-import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
-    show defaultDateZone, setDefaultDateZone;
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
-    show LttbDecimationAlgorithm;
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';

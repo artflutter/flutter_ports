@@ -3,8 +3,7 @@
 import 'dart:collection';
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// The store of `IndexValues` before Chart.js ADR 0152: a tree by index and

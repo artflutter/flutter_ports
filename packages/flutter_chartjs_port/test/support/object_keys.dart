@@ -4,7 +4,7 @@
 /// tests, on a `Map` or a typed object with a face (Chart.js ADR 0175).
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Whether [object] has the own key [key]: a `Map` key or a key of the face.
 bool hasOwnKey(Object? object, String key) => switch (object) {

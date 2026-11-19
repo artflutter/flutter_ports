@@ -146,7 +146,7 @@
 
 import 'dart:ui' show FontStyle, FontWeight;
 
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
 const String chartHostInputReferenceNode = 'v24.22.1';

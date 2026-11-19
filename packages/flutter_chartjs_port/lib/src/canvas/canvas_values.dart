@@ -25,7 +25,7 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The `fillStyle` or `strokeStyle` of the option value [value]
 /// (element.point.ts:96-98, element.bar.js:191, :197, element.arc.ts:489-490,

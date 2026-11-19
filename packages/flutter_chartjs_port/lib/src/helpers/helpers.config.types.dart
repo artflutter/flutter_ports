@@ -32,10 +32,7 @@
 ///   object with a face, so it is true without it.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show JsProxyObject;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.config.types.ts:4 `ResolverObjectKey`: `string | boolean`.
 ///
@@ -48,24 +45,19 @@ typedef ResolverObjectKey = Object?;
 /// `_createResolver` proxy.
 abstract interface class ResolverCache() {
   /// helpers.config.types.ts:11 `_cacheable: boolean`.
-  @internal
   bool get cacheable;
 
   /// helpers.config.types.ts:12 `_scopes: T`.
-  @internal
   List<Object?> get scopes;
 
   /// helpers.config.types.ts:13 `_rootScopes: T | R`.
-  @internal
   List<Object?> get rootScopes;
 
   /// helpers.config.types.ts:14 `_fallback: ResolverObjectKey`.
-  @internal
   ResolverObjectKey get fallback;
 
   /// helpers.config.types.ts:20 `_getTarget(): T[number]`: the scope that
   /// takes the values that a caller sets.
-  @internal
   Object? Function() get getTarget;
 
   /// helpers.config.types.ts:21 `override(scope)`.
@@ -116,32 +108,26 @@ abstract interface class Descriptor() implements DescriptorDefaults {
 /// `_attachContext` proxy.
 abstract interface class ContextCache() {
   /// helpers.config.types.ts:47 `_cacheable: boolean`.
-  @internal
   bool get cacheable;
 
   /// helpers.config.types.ts:48 `_proxy: ResolverProxy<T, R>`.
   ///
   /// It is `Object?`: `_resolveArray` can attach a context to the `false`
   /// that `createSubResolver` returns (helpers.config.ts:291-292).
-  @internal
   Object? get proxy;
 
   /// helpers.config.types.ts:49 `_context: AnyObject`: a `Map` or a typed
   /// context.
-  @internal
   Object get context;
 
   /// helpers.config.types.ts:50 `_subProxy: ResolverProxy<T, R>`. The
   /// `undefined` sentinel when the caller gives none.
-  @internal
   Object? get subProxy;
 
   /// helpers.config.types.ts:51 `_stack: Set<string>`.
-  @internal
   Set<String> get stack;
 
   /// helpers.config.types.ts:52 `_descriptors: Descriptor`.
-  @internal
   Descriptor get descriptors;
 
   /// helpers.config.types.ts:53 `setContext(ctx)`.

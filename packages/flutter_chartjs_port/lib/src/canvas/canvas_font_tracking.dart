@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: native font cache invalidation.
 
 import 'package:flutter/painting.dart' show PaintingBinding;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 bool _listening = false;
 

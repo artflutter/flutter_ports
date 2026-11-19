@@ -3,12 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScaleContext;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart'
-    show ScaleValuePosition;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() => <String, Object?>{

@@ -6,8 +6,7 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The font weights of the canvas layer (Chart.js ADR 0015, section 1). A

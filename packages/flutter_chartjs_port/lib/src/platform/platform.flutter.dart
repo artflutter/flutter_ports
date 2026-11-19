@@ -33,23 +33,9 @@ library;
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart'
-    show getParentNode, getRelativePosition, readUsedSize;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // The method FlutterPlatform.getMaximumSize has the name of the helper.
-import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart'
-    as helpers
-    show getMaximumSize;
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
-    show throttled;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.base.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as chartjs;
 
 /// platform.dom.js:14 `EXPANDO_KEY`, the property `$chartjs` of the canvas.
 ///
@@ -202,7 +188,7 @@ void _addListener(
 }
 
 /// platform.dom.js:103 `removeListener(chart, type, listener)`.
-void _removeListener(types.Chart chart, String type, Object? listener) {
+void _removeListener(IChart chart, String type, Object? listener) {
   final canvas = chart.canvas;
   if (canvas != null && listener is NativeEventListener) {
     canvas.removeEventListener(type, listener);
@@ -214,7 +200,7 @@ void _removeListener(types.Chart chart, String type, Object? listener) {
 /// `x !== undefined ? x : null`: the position of a [NativeEvent] is never
 /// `undefined` (`getRelativePosition` of `helpers.dom.dart`). A `touchend`
 /// without touches gives NaN, which stays NaN, as upstream.
-types.ChartEvent fromNativeEvent(NativeEvent event, types.Chart chart) {
+ChartEvent fromNativeEvent(NativeEvent event, IChart chart) {
   final type = eventTypes[event.type] ?? event.type;
   final position = getRelativePosition(event, chart);
   return _ChartEvent(
@@ -230,11 +216,11 @@ types.ChartEvent fromNativeEvent(NativeEvent event, types.Chart chart) {
 /// of `fromNativeEvent`.
 final class _ChartEvent({
   @override required final String type,
-  @override required final types.Chart chart,
+  @override required final IChart chart,
   @override required final NativeEvent native,
   @override required final double? x,
   @override required final double? y,
-}) implements types.ChartEvent {
+}) implements ChartEvent {
   @override
   String toString() => 'ChartEvent($type, $x, $y)';
 }
@@ -251,7 +237,7 @@ final class _ChartEvent({
 /// together (Chart.js ADR 0016, decision 9). The first layout of the host
 /// reports it at once.
 CanvasMutationObserver createAttachObserver(
-  types.Chart chart,
+  IChart chart,
   String type,
   Function listener,
 ) {
@@ -272,7 +258,7 @@ CanvasMutationObserver createAttachObserver(
 /// [listener] is the `detached` function of core.controller.js:1032, a
 /// `void Function()`.
 CanvasMutationObserver createDetachObserver(
-  types.Chart chart,
+  IChart chart,
   String type,
   Function listener,
 ) {
@@ -307,7 +293,7 @@ CanvasMutationObserver createDetachObserver(
 /// host. An unbounded side is `double.infinity`: [FlutterPlatform] gives it
 /// a size (see [FlutterPlatform.getMaximumSize]).
 ContainerResizeObserver? createResizeObserver(
-  types.Chart chart,
+  IChart chart,
   String type,
   Function listener,
 ) {
@@ -351,7 +337,7 @@ ContainerResizeObserver? createResizeObserver(
 ///
 /// The `unlistenDevicePixelRatioChanges` call of :235-237 has no port: the
 /// [ContainerResizeObserver] also carries the device pixel ratio.
-void releaseObserver(types.Chart chart, String type, Object? observer) {
+void releaseObserver(IChart chart, String type, Object? observer) {
   switch (observer) {
     case final CanvasMutationObserver observer:
       observer.disconnect();
@@ -367,12 +353,12 @@ void releaseObserver(types.Chart chart, String type, Object? observer) {
 /// events of one type coalesce to the last one in each frame (Chart.js ADR
 /// 0016, decision 9).
 void Function(NativeEvent) createProxyAndListen(
-  types.Chart chart,
+  IChart chart,
   String type,
   Function listener,
 ) {
   final canvas = chart.canvas;
-  final eventListener = listener as void Function(types.ChartEvent);
+  final eventListener = listener as void Function(ChartEvent);
   final proxy = throttled<NativeEvent>((event) {
     // This case can occur if the chart is destroyed while waiting
     // for the throttled function to occur. We prevent crashes by checking
@@ -488,7 +474,7 @@ class FlutterPlatform() extends BasePlatform {
 
   /// platform.dom.js:331 `addEventListener(chart, type, listener)`.
   @override
-  void addEventListener(types.Chart chart, String type, Function listener) {
+  void addEventListener(IChart chart, String type, Function listener) {
     // Can have only one listener per type, so make sure previous is removed
     removeEventListener(chart, type);
 
@@ -496,7 +482,7 @@ class FlutterPlatform() extends BasePlatform {
     const handlers =
         <
           String,
-          Object? Function(types.Chart chart, String type, Function listener)
+          Object? Function(IChart chart, String type, Function listener)
         >{
           'attach': createAttachObserver,
           'detach': createDetachObserver,
@@ -511,11 +497,7 @@ class FlutterPlatform() extends BasePlatform {
   /// `proxies[type] = undefined` keeps the key. Dart `null` stands for that
   /// `undefined`.
   @override
-  void removeEventListener(
-    types.Chart chart,
-    String type, [
-    Function? listener,
-  ]) {
+  void removeEventListener(IChart chart, String type, [Function? listener]) {
     final proxies = chart.platformProxies ??= <String, Object?>{};
     final proxy = proxies[type];
 
@@ -524,7 +506,7 @@ class FlutterPlatform() extends BasePlatform {
     }
 
     const handlers =
-        <String, void Function(types.Chart chart, String type, Object? proxy)>{
+        <String, void Function(IChart chart, String type, Object? proxy)>{
           'attach': releaseObserver,
           'detach': releaseObserver,
           'resize': releaseObserver,
@@ -566,7 +548,7 @@ class FlutterPlatform() extends BasePlatform {
     double? height,
     double? aspectRatio,
   ]) {
-    final size = helpers.getMaximumSize(canvas, width, height, aspectRatio);
+    final size = chartjs.getMaximumSize(canvas, width, height, aspectRatio);
     if (size.width.isFinite && size.height.isFinite) {
       return size;
     }
@@ -576,7 +558,7 @@ class FlutterPlatform() extends BasePlatform {
     final unboundedWidth = !containerWidth.isFinite;
     final unboundedHeight = !containerHeight.isFinite;
     final ratio = jsTruthy(aspectRatio);
-    final unbounded = helpers.getMaximumSize(
+    final unbounded = chartjs.getMaximumSize(
       canvas,
       unboundedWidth && (unboundedHeight || !ratio)
           ? _defaultWidth
@@ -590,7 +572,7 @@ class FlutterPlatform() extends BasePlatform {
       return unbounded;
     }
     // A zero bounded side and an aspect ratio: the default canvas box.
-    return helpers.getMaximumSize(
+    return chartjs.getMaximumSize(
       canvas,
       _defaultWidth,
       _defaultHeight,

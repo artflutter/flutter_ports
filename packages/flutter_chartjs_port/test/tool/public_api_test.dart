@@ -25,24 +25,20 @@ import '../../tool/src/dart_sdk.dart';
 //    `doc/public_api.txt`. After a change of the public API, write the list
 //    again with `PUBLIC_API_UPDATE=1 flutter test test/tool/public_api_test.dart`
 //    and review its diff: after 0.1.0, each public name is a commitment.
-// 2. The app library shares no name with `package:flutter/widgets.dart`,
-//    `material.dart`, `cupertino.dart` or `dart:ui`. A file of an app imports
-//    it next to Flutter with no prefix and no `hide`.
-// 3. No exported top-level declaration has `@internal`. Each member of an
-//    exported concrete class whose first `///` line names an upstream `_`
-//    member (the form "<file>:<line> `_name`") has `@internal`, because the
-//    analyzer then reports a use from another package
-//    (`invalid_use_of_internal_member`). `_internalFalseHits` lists the
-//    members whose `_` name is not the member itself, and `_publicUnderscore`
-//    the members that are public by design.
-// 4. `chartjs.dart` covers each runtime export of `src/index.ts` and each
-//    declaration of `src/types/*.d.ts` that a file of `lib/src/` declares as
-//    a type of the same name, and `helpers.dart` covers each runtime export of
-//    `src/helpers/index.ts` (the `exports` of `doc/upstream/manifest.json`,
-//    tool 4). A `_` export of upstream stays internal, except a name of
-//    `_addOnHelpers` (Chart.js ADR 0108). A covered name is an export of the
-//    library, a name of its hide list, or a name of `_notExported` with its
-//    reason.
+// 2. The app library exports `chartjs.dart` without the names that
+//    `package:flutter/widgets.dart`, `material.dart`, `cupertino.dart` or
+//    `dart:ui` also have ([_flutterNames]), and it shares no name with them.
+//    A file of an app imports it next to Flutter with no prefix and no
+//    `hide`.
+// 3. No exported top-level declaration has `@internal`.
+// 4. `chartjs.dart` exports each public top-level declaration of each file
+//    of `lib/src/` (ADR 0012). It covers each runtime export of
+//    `src/index.ts`, a `_` export under its name without the `_`, and each
+//    declaration of `src/types/*.d.ts` that a file of `lib/src/` declares.
+//    `helpers.dart` covers each runtime export of `src/helpers/index.ts` (the
+//    `exports` of `doc/upstream/manifest.json`, tool 4). A `_` export of
+//    upstream stays out of it, except a name of `_addOnHelpers` (Chart.js ADR
+//    0108).
 
 /// The four public libraries, by their path in the package.
 const List<String> _libraries = [
@@ -113,93 +109,14 @@ const Map<String, String> _helperConstants = {
   'TWO_THIRDS_PI': 'twoThirdsPi',
 };
 
-/// The names of `src/types/*.d.ts` that a library of `lib/src/` declares
-/// and `chartjs.dart` does not export, each with its reason.
-const Map<String, String> _notExported = {
-  // Another declaration under the upstream name.
-  'Legend':
-      'the element class of plugin.legend; the upstream Legend is the '
-      'plugin object, the export legend',
-  'Title':
-      'the element class of plugin.title; the upstream Title is the '
-      'plugin object, the export title',
-  'Tooltip':
-      'the element class of plugin.tooltip; the upstream Tooltip is '
-      'the plugin object, the export tooltip',
-  // Not in the export list of Chart.js ADR 0048, section 5: a later export
-  // is an addition (Open point of the phase 9 report).
-  'AnimationSpec': 'not in the ADR 0048 export list',
-  'Animator': 'not in the ADR 0048 export list',
-  'AnyObject': 'not in the ADR 0048 export list',
-  'ArcOptions': 'not in the ADR 0048 export list',
-  'ArcProps': 'not in the ADR 0048 export list',
-  'BarOptions': 'not in the ADR 0048 export list',
-  'EasingFunction': 'not in the ADR 0048 export list',
-  'InteractionModeFunction': 'not in the ADR 0048 export list',
-  'LineOptions': 'not in the ADR 0048 export list',
-  'PointOptions': 'not in the ADR 0048 export list',
-  'PointProps': 'not in the ADR 0048 export list',
-  'Registry': 'not in the ADR 0048 export list',
-  'RoundedRect': 'not in the ADR 0048 export list',
-  'TypedRegistry': 'not in the ADR 0048 export list',
-  // The typed contexts of Chart.js ADR 0054 section 11: internal, a context
-  // is a ContextObject of lib/helpers.dart.
-  'ScriptableChartContext': 'a typed context of ADR 0054',
-  'ScriptableContext': 'a typed context of ADR 0054',
-  'ScriptableScaleContext': 'a typed context of ADR 0054',
-  'ScriptableScalePointLabelContext': 'a typed context of ADR 0054',
-  'ScriptableTooltipContext': 'a typed context of ADR 0054',
-  // The typed plugin types of Chart.js ADR 0054 section 12 (the option
-  // facades, the legend and tooltip items): internal in 0.1.0.
-  'DecimationOptions': 'an internal typed plugin type of Chart.js ADR 0054',
-  'FillerOptions': 'an internal typed plugin type of Chart.js ADR 0054',
-  'LegendOptions': 'an internal typed plugin type of Chart.js ADR 0054',
-  'TitleOptions': 'an internal typed plugin type of Chart.js ADR 0054',
-  'TooltipOptions': 'an internal typed plugin type of Chart.js ADR 0054',
-  // The typed scale option facades of Chart.js ADR 0054 section 4
-  // (lib/src/core/scale_options.dart, extension types over the resolver
-  // view): internal in 0.1.0.
-  'CartesianScaleOptions':
-      'an internal typed scale facade of Chart.js ADR 0054',
-  'CategoryScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',
-  'CoreScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',
-  'GridLineOptions': 'an internal typed scale facade of Chart.js ADR 0054',
-  'LinearScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',
-  'LogarithmicScaleOptions':
-      'an internal typed scale facade of Chart.js ADR 0054',
-  'RadialLinearScaleOptions':
-      'an internal typed scale facade of Chart.js ADR 0054',
-  'TickOptions': 'an internal typed scale facade of Chart.js ADR 0054',
-  'TimeScaleOptions': 'an internal typed scale facade of Chart.js ADR 0054',
-  'TimeScaleTimeOptions': 'an internal typed scale facade of Chart.js ADR 0054',
+/// The names that the app library hides: Flutter has them too.
+const Set<String> _flutterNames = {
+  'Animation',
+  'Element',
+  'FilterCallback',
+  'Title',
+  'Tooltip',
 };
-
-/// The members of an exported concrete class whose `_` doc name is not the
-/// member itself, each with its reason.
-const Map<String, String> _internalFalseHits = {};
-
-/// The members of an exported concrete class with an upstream `_` name that
-/// are public by design, each with its reason.
-const Map<String, String> _publicUnderscore = {
-  'DatasetController.cachedMeta':
-      'a controller of another package reads the meta, as an upstream '
-      'subclass reads the protected `_cachedMeta` (Chart.js ADR 0133)',
-  'ChartMeta.clip': _metaParseState,
-  'ChartMeta.parsed': _metaParseState,
-  'ChartMeta.sorted': _metaParseState,
-  'ChartMeta.stacked': _metaParseState,
-};
-
-/// The reason of the public parse state of the meta.
-const String _metaParseState =
-    'an add-on controller writes the parse state of the meta '
-    '(row adapt-native-chart-meta)';
-
-/// The first line of a doc comment that names an upstream `_` member:
-/// `/// <file>:<line> \`_name...\``.
-final RegExp _underscoreDoc = RegExp(
-  r'^///\s*\S+\.(?:js|ts):[\d, :-]*\s*`(_[A-Za-z$][\w$]*)',
-);
 
 /// The absolute, normalized form of [path] for the analyzer.
 String _normalized(String path) {
@@ -234,13 +151,6 @@ Set<String> _exportNames(LibraryElement library) => {
     if (!name.endsWith('=')) name,
 };
 
-/// The names of the `hide` combinators of the exports of [library].
-Set<String> _hiddenNames(LibraryElement library) => {
-  for (final directive in library.firstFragment.libraryExports)
-    for (final combinator in directive.combinators)
-      if (combinator is HideElementCombinator) ...combinator.hiddenNames,
-};
-
 /// A top-level type declaration of a Dart file: a class, mixin, enum,
 /// typedef, extension or extension type, and its name.
 final RegExp _typeDeclaration = RegExp(
@@ -261,16 +171,21 @@ Set<String> _declaredNames() => {
         match[1]!,
 };
 
-/// The public members of [element] that its source declares.
-Iterable<Element> _members(ClassElement element) => [
-  for (final member in <Element>[
-    ...element.fields.where((f) => f.isOriginDeclaration),
-    ...element.getters.where((g) => g.isOriginDeclaration),
-    ...element.setters.where((s) => s.isOriginDeclaration),
-    ...element.methods,
-  ])
-    if (member.isPublic) member,
-];
+/// The public top-level names that the files of `lib/src/` declare.
+Future<Set<String>> _sourceNames() async {
+  final names = <String>{};
+  for (final entity in Directory('lib/src').listSync(recursive: true)) {
+    if (entity is! File || !entity.path.endsWith('.dart')) continue;
+    final library = await _library(entity.path);
+    for (final element in library.children) {
+      final name = element.name;
+      if (name != null && element.isPublic && !name.endsWith('=')) {
+        names.add(name);
+      }
+    }
+  }
+  return names;
+}
 
 void main() {
   setUpAll(() {
@@ -307,13 +222,15 @@ void main() {
 
   test('the app library shares no name with Flutter', () async {
     final app = _exportNames(await _library('lib/flutter_chartjs_port.dart'));
+    final chartjs = _exportNames(await _library('lib/chartjs.dart'));
+    expect(chartjs.difference(app), _flutterNames);
     for (final uri in _flutterLibraries) {
       final flutter = _exportNames(await _libraryByUri(uri));
       expect(app.intersection(flutter), isEmpty, reason: uri);
     }
   }, timeout: const Timeout(Duration(minutes: 3)));
 
-  test('no export is internal, and each upstream _ member is', () async {
+  test('no export is internal', () async {
     final findings = <String>{};
     for (final path in _libraries) {
       final names = (await _library(path)).exportNamespace.definedNames2;
@@ -321,18 +238,6 @@ void main() {
         if (name.endsWith('=')) continue;
         if (element.metadata.hasInternal) {
           findings.add('$name has @internal');
-        }
-        if (element is! ClassElement || element.isAbstract) continue;
-        for (final member in _members(element)) {
-          final doc = member.documentationComment?.split('\n').first;
-          final match = doc == null ? null : _underscoreDoc.firstMatch(doc);
-          if (match == null) continue;
-          final key = '$name.${member.displayName}';
-          if (_internalFalseHits.containsKey(key)) continue;
-          if (_publicUnderscore.containsKey(key)) continue;
-          if (!member.metadata.hasInternal) {
-            findings.add('$key (upstream ${match[1]}) has no @internal');
-          }
         }
       }
     }
@@ -350,40 +255,31 @@ void main() {
         name! as String,
     ];
 
-    final chartjs = await _library('lib/chartjs.dart');
-    final chartjsNames = _exportNames(chartjs);
-    final hidden = _hiddenNames(chartjs);
+    final chartjsNames = _exportNames(await _library('lib/chartjs.dart'));
     final findings = <String>[];
 
-    // src/index.ts: each runtime export, a `_` export as a hidden name.
+    // Each public top-level name of lib/src/.
+    for (final name in await _sourceNames()) {
+      if (!chartjsNames.contains(name)) {
+        findings.add('chartjs.dart: $name is not exported');
+      }
+    }
+
+    // src/index.ts: each runtime export, a `_` export without the `_`.
     for (final name in list('index')) {
-      if (name.startsWith('_')) {
-        final dart = name.substring(1);
-        if (chartjsNames.contains(dart) || !hidden.contains(dart)) {
-          findings.add('chartjs.dart: $name is not hidden as $dart');
-        }
-      } else {
-        final dart = _dartNames[name] ?? name;
-        if (!chartjsNames.contains(dart)) {
-          findings.add('chartjs.dart: $name ($dart) is not exported');
-        }
+      final dart = name.startsWith('_')
+          ? name.substring(1)
+          : _dartNames[name] ?? name;
+      if (!chartjsNames.contains(dart)) {
+        findings.add('chartjs.dart: $name ($dart) is not exported');
       }
     }
 
     // src/types/*.d.ts: each declaration that lib/src/ declares.
     final declared = _declaredNames();
     for (final name in list('types')) {
-      if (!declared.contains(name)) continue;
-      if (chartjsNames.contains(name) ||
-          hidden.contains(name) ||
-          _notExported.containsKey(name)) {
-        continue;
-      }
-      findings.add('chartjs.dart: the type $name is not exported');
-    }
-    for (final name in _notExported.keys) {
-      if (!declared.contains(name) || chartjsNames.contains(name)) {
-        findings.add('_notExported: $name is stale');
+      if (declared.contains(name) && !chartjsNames.contains(name)) {
+        findings.add('chartjs.dart: the type $name is not exported');
       }
     }
 

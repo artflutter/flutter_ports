@@ -7,10 +7,7 @@ import 'dart:ui' show Locale;
 import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' as core;
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show ticks;
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -29,26 +26,26 @@ import '../support/tick_label.dart';
 // - `toEqual` of an array is `jasmineEquals`.
 
 /// core.ticks.tests.js:1-3 `getLabels(scale)`.
-List<Object?> _getLabels(core.Scale scale) => [
+List<Object?> _getLabels(Scale scale) => [
   for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
 
 /// The `chart` of the JavaScript object literal
-/// `{chart: {options: {locale}}, ...}`, passed as a [Chart]. The formatters
+/// `{chart: {options: {locale}}, ...}`, passed as a [IChart]. The formatters
 /// read only its options.
 final class _Chart(@override final Map<String, Object?> options)
-    implements Chart {
+    implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// The JavaScript object literal `{chart, options}` that the spec passes as
-/// `this`, passed as a [Scale]. The formatters read only `chart` and
+/// `this`, passed as a [IScale]. The formatters read only `chart` and
 /// `options`.
 final class _Scale(
-  @override final Chart chart,
+  @override final IChart chart,
   @override final Map<String, Object?> options,
-) implements Scale {
+) implements IScale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

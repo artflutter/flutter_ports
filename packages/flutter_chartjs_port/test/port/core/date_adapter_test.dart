@@ -1,11 +1,5 @@
 // Original code, not ported from Chart.js: the default date adapter tests.
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
-import 'package:flutter_chartjs_port/src/core/date_adapter.dart';
-import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
-import 'package:flutter_chartjs_port/src/core/date_format.dart';
-import 'package:flutter_chartjs_port/src/core/date_parse.dart';
-import 'package:flutter_chartjs_port/src/core/date_zone.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import 'date_adapter_reference.dart';

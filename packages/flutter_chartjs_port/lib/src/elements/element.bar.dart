@@ -36,44 +36,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_rect_bar.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show BarOptions, rawOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show addRoundedRectPath;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isObject;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show isBetween, limitValue;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext, toTRBL, toTRBLCorners;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedBy, AnimatedProp;
-import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show BaseAnimation, HeightAnimation, WidthAnimation;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show BarProperties, BorderSkipped;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show BarOptionsScope;
-import 'package:flutter_chartjs_port/src/options/typed_record.dart'
-    show TypedRecord;
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `object[name]` of an object that is not typed: the read by name of a
 /// plain object of user code or of a spec (the face, Chart.js ADR 0054 §5),
@@ -378,7 +341,7 @@ _Rect _inflateRect(_Rect rect, double amount, [_Rect? refRect]) {
 /// [getRange] (element.bar.js:223, Chart.js ADR 0020, section 9).
 class BarElement([AnyObject? cfg])
     extends Element
-    implements types.VisualElementRange, BulkBarElement {
+    implements VisualElementRange, BulkBarElement {
   /// element.bar.js:164 `constructor(cfg)`.
   ///
   /// `options`, [horizontal], [base], [width], [height] and [inflateAmount]
@@ -585,19 +548,16 @@ class BarElement([AnyObject? cfg])
   late final bool _builtIn = runtimeType == BarElement;
 
   /// [Element.typedWrites]: true for the class [BarElement] itself.
-  @internal
   @override
   bool get typedWrites => _builtIn;
 
   /// A subclass must retain the ordinary property assignment path.
   @override
-  @internal
   bool get supportsBulkBarWrites => super.runtimeType == BarElement;
 
   /// The controller's seven geometry fields, options and final edge fields,
   /// assigned in the original order without an intermediate property record.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-bulk-bar-update, exact native element writes.
   void writeBulkBar({
     required bool horizontal,
@@ -625,7 +585,6 @@ class BarElement([AnyObject? cfg])
 
   /// [Element.takesProperties]: a [BarProperties], for an element of the
   /// class [BarElement] itself.
-  @internal
   @override
   bool takesProperties(TypedRecord props) => props is BarProperties && _builtIn;
 
@@ -635,7 +594,6 @@ class BarElement([AnyObject? cfg])
   /// key at [position]. An extra key, a foreign value
   /// and a value that the setter does not take (JS `null` or `undefined`)
   /// go by name ([assignKey]).
-  @internal
   @override
   void writePropertyAt(TypedRecord props, int position) {
     final values = props as BarProperties;

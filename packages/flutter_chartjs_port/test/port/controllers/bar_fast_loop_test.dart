@@ -7,22 +7,7 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart' show ValueKey;
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        BarDataset,
-        CategoryAxis,
-        ChartAnimation,
-        ChartConfig,
-        ChartKind,
-        ChartValue,
-        LinearAxis;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show StackEntry;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Each case builds two charts from equal configs. Chart `a` is a `Chart`: it
@@ -57,7 +42,7 @@ final class _AnimatedPlatform() extends BasicPlatform {
   );
 
   @override
-  void updateConfig(types.ChartConfiguration config) {}
+  void updateConfig(ChartConfiguration config) {}
 }
 
 class _CountingMap(final Map<String, Object?> fields)
@@ -178,7 +163,7 @@ Object _observe(Chart chart) => [
               'borderSkipped',
               'inflateAmount',
             ])
-              _plain((e as types.ElementPropertyRead)[key]),
+              _plain((e as ElementPropertyRead)[key]),
             _plain(e.options),
             i > 0 && identical(e.options, meta.data[i - 1].options),
             if ((e as BarElement).$context case final context?)

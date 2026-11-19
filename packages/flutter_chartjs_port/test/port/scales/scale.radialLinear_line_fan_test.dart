@@ -10,29 +10,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter/widgets.dart' as widgets show TextDirection;
 import 'package:flutter/widgets.dart' show Directionality, SizedBox;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        AxisGrid,
-        ChartAnimation,
-        ChartConfig,
-        ChartKind,
-        ChartLegend,
-        ChartThemeData,
-        ChartView,
-        RadarDataset,
-        RadialLinearAxis;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/line_fan_engine.dart';

@@ -36,7 +36,6 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:meta/meta.dart';
 
 /// plugin.colors.ts:14 `BORDER_COLORS`.
 final List<ui.Color> _borderColors = [
@@ -59,11 +58,9 @@ final List<ui.Color> _backgroundColors = [
 // DIVERGES(chartjs): theme-H4a, the theme palette keys, variables and reader.
 /// The key of the border palette under `plugins.colors` of a theme map
 /// (Chart.js ADR 0147, theming.md §3.5).
-@internal
 const String themeBorderColorsKey = r'$borderColors';
 
 /// The key of the background palette under `plugins.colors` of a theme map.
-@internal
 const String themeBackgroundColorsKey = r'$backgroundColors';
 
 /// The border palette of the theme of the chart of the current colorizer

@@ -73,7 +73,6 @@ int _misses = 0;
 
 /// Whether an `Animator.update` call runs now, so that a tick can take
 /// [easeTableAt].
-@internal
 @pragma('vm:prefer-inline')
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
@@ -81,7 +80,6 @@ bool get easeTableActive => _depth != 0;
 
 /// Starts the table for one `Animator.update` call. Each call needs one
 /// [easeTableEnd] call, in a `finally` block.
-@internal
 void easeTableBegin() {
   _depth++;
 }
@@ -89,7 +87,6 @@ void easeTableBegin() {
 /// Ends the table of one `Animator.update` call. The end of the last call
 /// that runs removes each entry, so the table keeps no curve object and no
 /// result for a later frame.
-@internal
 void easeTableEnd() {
   assert(_depth > 0, 'easeTableEnd without easeTableBegin.');
   if (--_depth != 0) return;
@@ -107,7 +104,6 @@ void easeTableEnd() {
 /// The caller reads [easeTableActive] first. [factor] is a value that
 /// `curve.transform` takes: the result and each error are those of that
 /// call.
-@internal
 double easeTableAt(Curve curve, double factor) {
   // The second and the third test are false for 0, 1 and NaN.
   if (!identical(curve, _other) && factor > 0.0 && factor < 1.0) {

@@ -3,12 +3,7 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/props.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 const _blue = ui.Color(0xFF4F6BED);

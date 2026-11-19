@@ -6,9 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart';
-import 'package:flutter_chartjs_port/src/core/date_adapter.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:intl/intl.dart';
 import 'package:test/test.dart';
 

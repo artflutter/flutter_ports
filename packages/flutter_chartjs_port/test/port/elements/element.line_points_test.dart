@@ -3,17 +3,13 @@
 // Keep each step of a test as its own statement.
 // ignore_for_file: cascade_invocations
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart' show Path2D;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // differences.md `adapt-line-points-identity`: a write of the same elements
 // keeps the last typed copy. Each write still drops the derived state.
 
-List<types.Element> _points(int n) => <types.Element>[
+List<IElement> _points(int n) => <IElement>[
   for (var i = 0; i < n; i++)
     PointElement(<String, Object?>{'x': i.toDouble(), 'y': 1.0}),
 ];
@@ -26,7 +22,7 @@ void main() {
       final first = line.points;
       line.points = points;
       expect(identical(line.points, first), isTrue);
-      expect(first, isA<List<types.PointElement>>());
+      expect(first, isA<List<IPointElement>>());
       expect(first, points);
     });
 
@@ -34,7 +30,7 @@ void main() {
       final points = _points(3);
       final line = LineElement()..points = points;
       final first = line.points;
-      line.points = <types.Element>[...points];
+      line.points = <IElement>[...points];
       expect(identical(line.points, first), isTrue);
     });
 
@@ -42,7 +38,7 @@ void main() {
       final points = _points(3);
       final line = LineElement()..points = points;
       line
-        ..['_segments'] = <types.Segment>[]
+        ..['_segments'] = <Segment>[]
         ..['_path'] = Path2D()
         ..['_pointsUpdated'] = true
         ..points = points;
@@ -86,10 +82,10 @@ void main() {
     );
 
     test('a typed list stays the value and is never the copy of a write', () {
-      final typed = <types.PointElement>[PointElement(), PointElement()];
+      final typed = <IPointElement>[PointElement(), PointElement()];
       final line = LineElement()..points = typed;
       expect(identical(line.points, typed), isTrue);
-      final same = <types.Element>[...typed];
+      final same = <IElement>[...typed];
       line.points = same;
       expect(identical(line.points, typed), isFalse);
       expect(line.points, typed);
@@ -99,14 +95,14 @@ void main() {
       final points = _points(2);
       final line = LineElement()..points = points;
       final first = line.points;
-      final other = <types.PointElement>[...first];
+      final other = <IPointElement>[...first];
       line['_points'] = other;
       line.points = points;
       expect(identical(line.points, other), isFalse);
       expect(identical(line.points, first), isFalse);
       expect(line.points, points);
       final second = line.points;
-      line['points'] = <types.Element>[...points];
+      line['points'] = <IElement>[...points];
       final byName = line.points;
       expect(identical(byName, second), isFalse);
       line.points = points;
@@ -115,9 +111,9 @@ void main() {
     });
 
     test('an empty list keeps a copy too', () {
-      final line = LineElement()..points = <types.Element>[];
+      final line = LineElement()..points = <IElement>[];
       final first = line.points;
-      line.points = <types.Element>[];
+      line.points = <IElement>[];
       expect(identical(line.points, first), isTrue);
       expect(first, isEmpty);
     });

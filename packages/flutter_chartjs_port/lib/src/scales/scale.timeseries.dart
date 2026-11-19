@@ -22,16 +22,8 @@
 /// Thus this library is not a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show lookupByKey;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
 import 'package:meta/meta.dart';
 
 /// An entry of the lookup table: `{time, pos}` (scale.timeseries.js:95-96,
@@ -129,7 +121,6 @@ class TimeSeriesScale(super.cfg) extends TimeScale {
 
   /// This exact built-in scale has ordinary axis and metadata reads.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
   bool get supportsNativeBarIndexReads => _nativeSeriesBarIndexReads;
 
@@ -218,7 +209,6 @@ class TimeSeriesScale(super.cfg) extends TimeScale {
   ///
   /// The result is the List of the data timestamps of the cache: the method
   /// adds [min] and [max] to it and sorts it in place, as upstream.
-  @internal
   @protected
   @override
   List<double> generate() {

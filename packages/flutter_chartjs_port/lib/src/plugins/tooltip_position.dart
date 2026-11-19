@@ -12,11 +12,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/typed_record.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// A tooltip positioner: the value of the option `position` of the tooltip.
@@ -59,8 +55,8 @@ abstract class const TooltipPositioner() {
   /// [TooltipPosition] or a `Point`, or the value that a program gave to
   /// `setActiveElements`.
   TooltipPosition? positionOf(
-    types.TooltipModel tooltip,
-    List<types.ActiveElement> items,
+    TooltipModel tooltip,
+    List<ActiveElement> items,
     Object? eventPosition,
   );
 

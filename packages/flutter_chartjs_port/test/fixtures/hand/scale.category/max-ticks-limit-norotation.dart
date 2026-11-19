@@ -5,8 +5,7 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The upstream config, with native padding values.
 // DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.

@@ -1,5 +1,5 @@
 // Original code, not ported from Chart.js: tests of the pure Path2D.
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Parse at runtime: some JavaScript constant paths canonicalize negative zero.

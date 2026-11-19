@@ -5,10 +5,8 @@
 library;
 
 import 'package:flutter/foundation.dart' show listEquals;
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/typed/callbacks.dart'
-    show ChartContext, ChartScript;
-import 'package:meta/meta.dart' show immutable, internal;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+import 'package:meta/meta.dart' show immutable;
 
 /// One of the supported forms of a typed chart option.
 ///
@@ -38,7 +36,6 @@ sealed class const ChartValue<T>._() {
 
   /// Preserves this variant directly in an internal option cell.
   /// No callback is executed during lowering.
-  @internal
   Opt<T> toOptionCell();
 }
 
@@ -50,7 +47,6 @@ final class const ChartConstant<T>(
   /// A value shared by the dataset.
   this : super._();
 
-  @internal
   @override
   Opt<T> toOptionCell() => OptValue<T>(value);
 
@@ -73,7 +69,6 @@ final class const ChartIndexed<T>(
   /// A repeating list of option values.
   this : super._();
 
-  @internal
   @override
   Opt<T> toOptionCell() => OptList<T>(<Object?>[...values]);
 
@@ -97,7 +92,6 @@ final class const ChartResolver<T>(
   /// A function of each option resolution's typed context.
   this : super._();
 
-  @internal
   @override
   Opt<T> toOptionCell() {
     // A fresh two-argument bridge, preserving the previous typed callback

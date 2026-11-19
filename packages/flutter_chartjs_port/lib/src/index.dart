@@ -21,26 +21,7 @@
 /// which is not a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/controllers/controller.bar.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.bubble.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.line.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.pie.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.polarArea.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.radar.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.scatter.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/plugins/index.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.logarithmic.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.time.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.timeseries.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 export 'package:flutter_chartjs_port/src/controllers/index.dart';
 export 'package:flutter_chartjs_port/src/core/index.dart';

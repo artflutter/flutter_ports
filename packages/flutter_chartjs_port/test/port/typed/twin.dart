@@ -20,14 +20,7 @@
 /// A helper library of the typed tests, not a test file.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show AnimationSettings;
-import 'package:flutter_chartjs_port/src/types/data_item.dart'
-    show TypedDataItem;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/object_keys.dart';

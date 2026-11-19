@@ -1,14 +1,8 @@
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    hide Chart, ChartMeta, Scale;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart'
     as helpers
     show isPointInArea;
-// Not public: the interfaces types.Chart and others that DemoChart implements.
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// Draws one frame of a [DemoChart] on its context. The transform is the
 /// one of `retinaScale`, so the units are logical pixels, and the canvas is
@@ -42,11 +36,11 @@ final class DemoChart(
   List<String> events = const [],
 
   /// Called with each event that the platform delivers.
-  var void Function(types.ChartEvent event)? onEvent,
+  var void Function(ChartEvent event)? onEvent,
 
   /// Called after each resize that changed the canvas.
   var VoidCallback? onResize,
-}) implements types.Chart {
+}) implements IChart {
   /// `new Chart(item, {options})`: a responsive chart on [item].
   this {
     platform = detectPlatform(item)();
@@ -83,10 +77,7 @@ final class DemoChart(
 
   /// The configuration `{options, data}` of the chart.
   @override
-  late final types.ChartConfiguration config = _DemoConfiguration(
-    options,
-    data,
-  );
+  late final ChartConfiguration config = _DemoConfiguration(options, data);
 
   /// No stacks: the demo has no datasets.
   @override
@@ -128,11 +119,11 @@ final class DemoChart(
 
   /// No layout boxes.
   @override
-  List<types.LayoutItem> get boxes => const [];
+  List<LayoutItem> get boxes => const [];
 
   /// No scales.
   @override
-  Map<String, types.Scale> get scales => const {};
+  Map<String, IScale> get scales => const {};
 
   /// The data of a chart without datasets.
   @override
@@ -150,7 +141,7 @@ final class DemoChart(
   /// no datasets, so no mode finds an item. The result is a new list, as the
   /// `[]` of core.controller.js:826: a reader can reorder it in place.
   @override
-  List<types.ActiveElement> getElementsAtEventForMode(
+  List<ActiveElement> getElementsAtEventForMode(
     Object e,
     Object? mode,
     Object? options, [
@@ -159,16 +150,16 @@ final class DemoChart(
 
   /// No datasets.
   @override
-  List<types.ChartMeta> getSortedVisibleDatasetMetas() => const [];
+  List<ChartMeta> getSortedVisibleDatasetMetas() => const [];
 
   /// No datasets: every index throws.
   @override
-  types.ChartMeta getDatasetMeta(num datasetIndex) =>
+  ChartMeta getDatasetMeta(num datasetIndex) =>
       throw RangeError('The demo chart has no datasets.');
 
   /// No datasets.
   @override
-  List<types.ChartMeta> getSortedDatasetMetas(bool filterVisible) => const [];
+  List<ChartMeta> getSortedDatasetMetas(bool filterVisible) => const [];
 
   /// core.controller.js:885 `getDataVisibility(index)`:
   /// `!this._hiddenIndices[index]`. The demo chart hides no index.
@@ -236,17 +227,17 @@ final class DemoChart(
   /// index.d.ts:543 `legend`. The demo chart has no legend plugin, so it
   /// stays `null`.
   @override
-  types.LegendElement? legend;
+  LegendElement? legend;
 
   /// plugin.title.js:117 `titleBlock`. The demo chart has no title plugin,
   /// so it stays `null`.
   @override
-  types.LayoutItem? titleBlock;
+  LayoutItem? titleBlock;
 
   /// index.d.ts:544 `tooltip`. The demo chart has no tooltip plugin, so it
   /// stays `null`.
   @override
-  types.TooltipModel? tooltip;
+  TooltipModel? tooltip;
 
   double? _aspectRatio;
 
@@ -329,7 +320,7 @@ final class DemoChart(
   /// core.controller.js:964 `bindEvents`.
   void _bindEvents() {
     for (final type in options['events']! as List<String>) {
-      void listener(types.ChartEvent e) => onEvent?.call(e);
+      void listener(ChartEvent e) => onEvent?.call(e);
       platform.addEventListener(this, type, listener);
       _listeners[type] = listener;
     }
@@ -410,7 +401,7 @@ final class DemoChart(
 final class _DemoConfiguration(
   @override final Map<String, Object?> options,
   @override final Map<String, Object?> data,
-) implements types.ChartConfiguration;
+) implements ChartConfiguration;
 
 /// A [ChartHost] that shows a [DemoChart].
 ///
@@ -435,7 +426,7 @@ class const DemoCanvas({
   final List<String> events = const [],
 
   /// Called with each event that the platform delivers.
-  final void Function(types.ChartEvent event)? onEvent,
+  final void Function(ChartEvent event)? onEvent,
 
   /// Called once the chart exists.
   final ValueChanged<DemoChart>? onChart,

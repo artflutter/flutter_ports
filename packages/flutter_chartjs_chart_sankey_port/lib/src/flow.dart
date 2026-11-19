@@ -18,8 +18,6 @@ import 'dart:ui';
 
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/helpers.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 typedef _FlowPoint = ({double x, double y});
 typedef _ControlPoints = ({_FlowPoint cp1, _FlowPoint cp2});

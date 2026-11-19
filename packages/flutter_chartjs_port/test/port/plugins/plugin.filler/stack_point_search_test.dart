@@ -2,37 +2,27 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.stack.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/stack_point_search.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class _Meta(
-  @override final int index,
-  @override final types.Element dataset,
-) implements types.ChartMeta {
+final class _Meta(@override final int index, @override final IElement dataset)
+    implements ChartMeta {
   @override
   bool get hidden => false;
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class _Scale(final List<types.ChartMeta> metas) implements types.Scale {
+final class _Scale(final List<ChartMeta> metas) implements IScale {
   @override
   double get bottom => 100;
   @override
-  List<types.ChartMeta> getMatchingVisibleMetas([String? type]) => metas;
+  List<ChartMeta> getMatchingVisibleMetas([String? type]) => metas;
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -76,7 +66,7 @@ void _compare(List<LineElement> lines) {
   stackPointSearchEnabled = true;
   final actual = buildStackLine(source).points;
   expect(actual, hasLength(expected.length));
-  final originals = Set<types.PointElement>.identity()
+  final originals = Set<IPointElement>.identity()
     ..addAll(lines.expand((line) => line.points));
   for (var i = 0; i < expected.length; i++) {
     if (originals.contains(expected[i])) expect(actual[i], same(expected[i]));
@@ -88,7 +78,7 @@ void _compare(List<LineElement> lines) {
 class _CustomLine() extends LineElement {
   int calls = 0;
   @override
-  Object? interpolate(types.Point point, String property) {
+  Object? interpolate(Point point, String property) {
     calls++;
     return super.interpolate(point, property);
   }
@@ -96,8 +86,7 @@ class _CustomLine() extends LineElement {
 
 class _UnreadLine() extends LineElement {
   @override
-  List<types.PointElement> get points =>
-      throw StateError('unreachable line read');
+  List<IPointElement> get points => throw StateError('unreachable line read');
 }
 
 void main() {

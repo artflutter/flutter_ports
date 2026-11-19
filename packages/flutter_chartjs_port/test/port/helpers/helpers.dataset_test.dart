@@ -1,8 +1,5 @@
 // Original code, not ported from Chart.js: helpers.dataset cases with no spec.
-import 'package:flutter_chartjs_port/src/helpers/helpers.dataset.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream has no spec for helpers.dataset.ts (AGENTS.md rule 3). The
@@ -24,18 +21,18 @@ final class const _ChartArea(
   double get height => bottom - top;
 }
 
-/// A JavaScript object `{width, height, chartArea}`, passed as a [Chart].
+/// A JavaScript object `{width, height, chartArea}`, passed as a [IChart].
 final class const _Chart(
   @override final double width,
   @override final double height,
   @override final ChartArea chartArea,
-) implements Chart {
+) implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A JavaScript object `{left, top, right, bottom, options: {clip}}`,
-/// passed as a [Scale]. The `clip` argument is the option value, and
+/// passed as a [IScale]. The `clip` argument is the option value, and
 /// [undefined] leaves the key out.
 final class _Scale(
   @override final double left,
@@ -43,7 +40,7 @@ final class _Scale(
   @override final double right,
   @override final double bottom,
   Object? clip,
-) implements Scale {
+) implements IScale {
   @override
   final Map<String, Object?> options = {
     if (!identical(clip, undefined)) 'clip': clip,
@@ -83,8 +80,8 @@ ChartClip _clip(
 /// A JavaScript object `{_clip, xScale, yScale}`, passed as a [ChartMeta].
 final class _Meta(
   @override final ChartClip clip, [
-  @override final Scale? xScale,
-  @override final Scale? yScale,
+  @override final IScale? xScale,
+  @override final IScale? yScale,
 ]) implements ChartMeta {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

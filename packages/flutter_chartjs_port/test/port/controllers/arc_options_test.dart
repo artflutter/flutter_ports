@@ -8,24 +8,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/widgets.dart'
     show Align, Alignment, Directionality, SizedBox, TextDirection;
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartThemeData, ChartView;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeOptionScope;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartOptionsScope;
-import 'package:flutter_chartjs_port/src/typed/chart_value.dart';
-import 'package:flutter_chartjs_port/src/typed/config.dart';
-import 'package:flutter_chartjs_port/src/typed/datasets.dart';
-import 'package:flutter_chartjs_port/src/typed/groups.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const red = ChartPaint.solid(ui.Color(0xffff0000));

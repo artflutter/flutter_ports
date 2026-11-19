@@ -9,24 +9,7 @@ import 'dart:ui' show Color, ColorSpace, FontStyle, FontWeight;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartConfig, ChartKind, DataPoint, ScatterDataset;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show PointInteractionMode;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show SolidChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -250,10 +233,10 @@ const Map<String, Set<String>> _tokenPaths = {
 
 /// A chart event at ([x], [y]) for `getElementsAtEventForMode`.
 final class _Event(
-  @override final types.Chart? chart,
+  @override final IChart? chart,
   @override final double? x,
   @override final double? y,
-) implements types.ChartEvent {
+) implements ChartEvent {
   @override
   String get type => 'mousemove';
 

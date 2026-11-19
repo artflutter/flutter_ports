@@ -1,8 +1,6 @@
 // Original code, not ported from Chart.js: platform.base has no own spec.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.base.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // test/specs has no platform.base.tests.js. These tests cover the methods of
@@ -22,7 +20,7 @@ final class _Canvas(@override var int width, @override var int height)
 }
 
 /// A chart object. The base platform reads none of its members.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -34,7 +32,7 @@ final class _Context() implements CanvasRenderingContext2D {
 }
 
 /// A config object `{options, data}`.
-final class _Config() implements types.ChartConfiguration {
+final class _Config() implements ChartConfiguration {
   @override
   final Map<String, Object?> options = {'animation': true};
 

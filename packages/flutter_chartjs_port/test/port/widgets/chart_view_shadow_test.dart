@@ -7,7 +7,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart' hide Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADRs 0107 and 0139: `Dataset.shadow` lowers to the dataset option

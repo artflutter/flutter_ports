@@ -5,28 +5,7 @@ import 'dart:typed_data';
 import 'dart:ui' show Color, Locale;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart';
-import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget, SplitFill;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
-    show ChartShadow;
-import 'package:flutter_chartjs_port/src/types/data_item.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginOptions;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 final _maps = <Type>{
   <String, Object?>{}.runtimeType, <String, Object>{}.runtimeType,
@@ -97,26 +76,22 @@ final _lists = <Type>{
 final _points = <Type>{};
 
 /// Typed lowering registers only standard containers and immutable point types.
-@internal
 void registerDataUpdateTypes(Iterable<Type> lists, Iterable<Type> points) {
   _lists.addAll(lists);
   _points.addAll(points);
 }
 
 /// No custom Map/scope getters run merely to qualify the new lifecycle.
-@internal
 bool nativeDataUpdateObject(Object? value) =>
     _maps.contains(value.runtimeType) || _scopes.contains(value.runtimeType);
 
 /// A scope of a resolver whose reads by key run no user code: a native object
 /// or the root of the defaults. A custom Map or a subclass of a scope class can
 /// run any code in a read.
-@internal
 bool nativeOptionScope(Object? value) =>
     nativeDataUpdateObject(value) || identical(value, defaults);
 
 /// Root routes could run callbacks during metadata checks.
-@internal
 bool nativeDataUpdateRoot(Object value) =>
     nativeDataUpdateObject(value) &&
     (value is! OptionScope ||
@@ -127,17 +102,14 @@ bool nativeDataUpdateRoot(Object value) =>
         ].every((key) => value.routeOf(key) == null));
 
 /// Native container eligibility, including the typed facade's point lists.
-@internal
 bool nativeDataUpdateList(Object? value) =>
     _lists.contains(value.runtimeType) || value is TypedDataList<num>;
 
 /// Immutable point implementations registered by the typed facade.
-@internal
 bool nativeDataUpdatePoint(TypedDataItem value) =>
     _points.contains(value.runtimeType);
 
 /// Read only after native object qualification; routes cannot qualify.
-@internal
 Object? dataUpdateField(Object object, String key) {
   if (object is OptionScope) {
     if (object.routeOf(key) != null) return undefined;
@@ -159,7 +131,6 @@ bool _nativeFillPaint(ChartPaint? paint) =>
 
 /// Static user settings only. Scale settings are frozen by the separate native
 /// scale contract; event handlers remain live and are not layout/style inputs.
-@internal
 bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
   final seen = HashSet<Object>.identity();
   bool visit(Object? node, Set<String> skip) {
@@ -222,17 +193,22 @@ bool _numericPoint(TypedDataItem point) =>
     _number(point.x) && _number(point.y) && _number(point.r);
 
 /// The fields read by native default parsers. Custom parsing keys fall back.
-@internal
 enum DataUpdateShape() {
+  /// The fields `x` and `y`.
   cartesian,
+
+  /// The fields `x`, `y` and `r`.
   bubble,
+
+  /// The field `r` of a radial chart.
   radial,
+
+  /// One number for each item.
   scalar,
 }
 
 /// Preflight values without executing user conversions. Null means fallback;
 /// true means primitive numeric data, false means supported structured data.
-@internal
 bool? dataUpdateValues(
   Object? source, {
   DataUpdateShape shape = DataUpdateShape.cartesian,
@@ -292,12 +268,20 @@ bool? dataUpdateValues(
 /// The last full configuration generation. Data arrays may be replaced while
 /// dataset identities, counts and label containers stay stable. In-place edits
 /// to options/labels are explicitly outside updateData's caller contract.
-@internal
 final class DataUpdateSnapshot._(
+  /// The `data` object of the configuration.
   final Object data,
+
+  /// The `options` object of the configuration.
   final Object options,
+
+  /// The dataset objects, in their order.
   final List<Object> datasets,
+
+  /// The label containers and their lengths.
   final List<({Object? source, int length})> labels,
+
+  /// The data count of each dataset.
   final List<int> counts,
 ) {
   List<Object?>? _validatedSources;
@@ -329,6 +313,7 @@ final class DataUpdateSnapshot._(
     return result;
   }
 
+  /// Whether [validateSettings] accepted the settings.
   bool settingsValidated = false;
 
   /// Full updates record identity/count tokens; settings are checked lazily.
@@ -342,6 +327,8 @@ final class DataUpdateSnapshot._(
     return true;
   }
 
+  /// The snapshot of [data] and [options], or null when a data-only update
+  /// cannot use them.
   static DataUpdateSnapshot? capture(Object data, Object options) {
     if (!nativeDataUpdateObject(data) || !nativeDataUpdateObject(options)) {
       return null;
@@ -381,6 +368,8 @@ final class DataUpdateSnapshot._(
     return DataUpdateSnapshot._(data, options, datasets, labels, counts);
   }
 
+  /// Whether [currentData] and [currentOptions] keep the identities and the
+  /// counts of this snapshot.
   bool matches(Object currentData, Object currentOptions) {
     if (!identical(data, currentData) || !identical(options, currentOptions)) {
       return false;
@@ -417,7 +406,6 @@ final class DataUpdateSnapshot._(
 /// Unlike [DataUpdateSnapshot], it keeps no value List and no labels: a
 /// range update parses the data as `update` does, so new values, a new data
 /// List and new labels are allowed.
-@internal
 final class RangeUpdateSnapshot._(
   /// The `data` object of the config.
   final Object data,

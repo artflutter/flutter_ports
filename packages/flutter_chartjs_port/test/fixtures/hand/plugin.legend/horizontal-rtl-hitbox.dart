@@ -8,9 +8,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
 ///

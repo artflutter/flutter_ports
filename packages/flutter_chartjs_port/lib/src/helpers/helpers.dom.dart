@@ -26,12 +26,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show infinity;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.dom.ts:9 `_isDomSupported`.
 /// @private
@@ -126,7 +121,7 @@ String getStyle(HTMLCanvasElement el, String property) {
 /// `floor(round1(width * dpr)) / (width * dpr)`. For a fractional device
 /// width the result can differ from upstream by 1 px
 /// (`platform-relative-position`, differences.md).
-Point getRelativePosition(Object event, Chart chart) {
+Point getRelativePosition(Object event, IChart chart) {
   if (event is ChartEvent) {
     return _ChartEventPosition(event);
   }
@@ -273,7 +268,7 @@ int _toUint32(double value) {
 /// The `dart:ui` context paints its bitmap with
 /// `scale(1 / devicePixelRatio)`, so the `setTransform` of the pixel ratio
 /// gives the identity in logical pixels (Chart.js ADR 0055).
-bool retinaScale(Chart chart, double? forceRatio, [bool? forceStyle]) {
+bool retinaScale(IChart chart, double? forceRatio, [bool? forceStyle]) {
   final pixelRatio = jsTruthy(forceRatio) ? forceRatio! : 1.0;
   final deviceHeight = _round1(chart.height * pixelRatio);
   final deviceWidth = _round1(chart.width * pixelRatio);

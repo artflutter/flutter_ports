@@ -9,34 +9,7 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show toFont;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show dispatchCanvasEvent;
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show LegendOptions;
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBL;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show Plugin, PluginHookArgs, UpdateHookArgs;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -90,9 +63,9 @@ final Expando<List<String>> _logs = Expando<List<String>>('legend log');
 
 /// Adds the entry of the callback [name] to the log of the chart of
 /// [legend] (`log` of the generator).
-void _log(String name, Object? e, Object? item, types.LegendElement legend) {
+void _log(String name, Object? e, Object? item, LegendElement legend) {
   (_logs[legend.chart] ??= <String>[]).add(
-    '$name ${(e! as types.ChartEvent).type} '
+    '$name ${(e! as ChartEvent).type} '
     '${jsToString((item! as LegendItem).text)}',
   );
 }
@@ -101,13 +74,13 @@ void _log(String name, Object? e, Object? item, types.LegendElement legend) {
 /// bodies.
 final Map<String, Object?> _functions = {
   // (e, item, legend) => log('onClick', e, item, legend)
-  'logClick': (Object? e, Object? item, types.LegendElement legend) =>
+  'logClick': (Object? e, Object? item, LegendElement legend) =>
       _log('onClick', e, item, legend),
   // (e, item, legend) => log('onHover', e, item, legend)
-  'logHover': (Object? e, Object? item, types.LegendElement legend) =>
+  'logHover': (Object? e, Object? item, LegendElement legend) =>
       _log('onHover', e, item, legend),
   // (e, item, legend) => log('onLeave', e, item, legend)
-  'logLeave': (Object? e, Object? item, types.LegendElement legend) =>
+  'logLeave': (Object? e, Object? item, LegendElement legend) =>
       _log('onLeave', e, item, legend),
   // (item) => !String(item.text).endsWith('2')
   'legendFilter': (Object? item, Object? _) =>
@@ -989,11 +962,11 @@ void main() {
       final chart = acquireChart(
         _line(<String, Object?>{
           'onHover': (Object? e, Object? item, Object? l) => log.add(
-            'hover ${(e! as types.ChartEvent).type} '
+            'hover ${(e! as ChartEvent).type} '
             '${jsToString((item! as LegendItem).text)}',
           ),
           'onLeave': (Object? e, Object? item, Object? l) => log.add(
-            'leave ${(e! as types.ChartEvent).type} '
+            'leave ${(e! as ChartEvent).type} '
             '${jsToString((item! as LegendItem).text)}',
           ),
         }),
@@ -1018,13 +991,13 @@ void main() {
 }
 
 /// A `types.Chart` that no test reads.
-final class _FakeChart() implements types.Chart {
+final class _FakeChart() implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A `types.LegendElement` that is not a [Legend].
-final class _ForeignLegend() implements types.LegendElement {
+final class _ForeignLegend() implements LegendElement {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -1034,7 +1007,7 @@ final class _Event(
   @override final String type,
   @override final double? x,
   @override final double? y,
-) implements types.ChartEvent {
+) implements ChartEvent {
   @override
   NativeEvent? get native => null;
 

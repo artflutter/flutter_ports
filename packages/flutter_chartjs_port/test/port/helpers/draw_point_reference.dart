@@ -4,7 +4,7 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // src/helpers/helpers.canvas.ts at the pinned Chart.js. 64 cases.
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated [drawPointReference].
 const String drawPointReferenceNode = 'v24.22.1';

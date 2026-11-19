@@ -22,23 +22,7 @@ import 'dart:math' as math;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show lookupByAxis;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // DIVERGES(chartjs): adapt-text-style-fonts, no fontString.
 // helpers.extras.ts:7 `fontString` builds a CSS font text. In the port, a
@@ -214,7 +198,7 @@ double textX(TextAlign? align, double left, double right, bool rtl) {
 /// section 3).
 ({int start, int count}) getStartAndCountOfVisiblePoints(
   ChartMeta meta,
-  List<Element> points,
+  List<IElement> points,
   bool animationsDisabled,
 ) {
   final pointCount = points.length;

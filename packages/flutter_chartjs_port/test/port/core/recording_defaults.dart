@@ -3,21 +3,7 @@ import 'dart:convert';
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
@@ -27,14 +13,14 @@ import '../../support/length_json.dart';
 import '../../support/mode_json.dart';
 import '../../support/scale_border.dart';
 
-/// A [Defaults] that records each call with its arguments, as
+/// A [IDefaults] that records each call with its arguments, as
 /// `[method, ...arguments]`. It changes nothing.
 ///
 /// It stands in for the `core.defaults` singleton. Thus each test sees only
 /// the calls of one `apply*Defaults` function. The tests compare
 /// the recorded calls with the calls that the upstream functions make on a
 /// recording object in Node.js v24.12.0 on x64.
-final class RecordingDefaults() implements Defaults {
+final class RecordingDefaults() implements IDefaults {
   /// The recorded calls, in call order.
   final List<List<Object?>> calls = [];
 

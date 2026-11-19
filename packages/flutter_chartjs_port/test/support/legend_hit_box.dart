@@ -3,7 +3,7 @@
 /// Decoding of frozen upstream hit-box expectations.
 library;
 
-import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Decodes a frozen upstream result into a native expected box.
 LegendHitBox legendHitBoxFromReference(Map<String, Object?> reference) {

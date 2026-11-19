@@ -1,5 +1,5 @@
 // Original code, not ported from Chart.js: tests of the reduced-motion flag.
-import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The reduced-motion flag of Chart.js ADR 0049, section 7 (row

@@ -7,28 +7,7 @@ import 'dart:io';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show stacksOf;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -98,7 +77,7 @@ final Map<String, Object? Function(Chart chart)> _extras = {
 /// point of the dataset 0.
 Object? _pointParsed(Chart chart) => [
   for (final point in chart.getDatasetMeta(0).data)
-    (point as types.ElementPropertyRead)['parsed'],
+    (point as ElementPropertyRead)['parsed'],
 ];
 
 /// The probe `stackKeys` of the generator: the keys of `_stacks` of each
@@ -145,7 +124,7 @@ List<Object?> _points(Chart chart) => [
       for (final point in chart.getDatasetMeta(i).data)
         [
           for (final key in const ['x', 'y', 'skip', 'stop'])
-            (point as types.ElementPropertyRead)[key],
+            (point as ElementPropertyRead)[key],
         ],
     ],
 ];
@@ -241,8 +220,8 @@ void main() {
         ],
       });
       final meta = chart.getDatasetMeta(0);
-      final line = meta.dataset! as types.PropertyAccess;
-      expect(line, isNot(isA<types.LineElement>()));
+      final line = meta.dataset! as PropertyAccess;
+      expect(line, isNot(isA<ILineElement>()));
       expect(line['_chart'], same(chart));
       expect(line['_datasetIndex'], 0);
       expect(line['_decimated'], isFalse);
@@ -348,7 +327,7 @@ void main() {
         expect(jsObjectKeys(stacksOf(item)), ['y']);
       }
       for (final point in meta.data) {
-        final read = point as types.ElementPropertyRead;
+        final read = point as ElementPropertyRead;
         expect(read['x'], isNaN);
         expect(read['skip'], isTrue);
       }
@@ -519,7 +498,7 @@ void main() {
       group('the draw does not throw', () {
         for (final (name, dataset) in <(String, Map<String, Object?>)>[
           ('no tension', {}),
-          ('clip none', {'clip': types.ChartClip.none}),
+          ('clip none', {'clip': ChartClip.none}),
           (
             'tension 0.4 and capBezierPoints false',
             {'tension': 0.4, 'capBezierPoints': false},

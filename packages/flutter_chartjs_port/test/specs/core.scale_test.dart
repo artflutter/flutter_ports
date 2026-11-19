@@ -13,20 +13,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -83,7 +70,7 @@ List<Object?> _getLabels(Scale scale) {
 /// core.scale.tests.js:514-519 `class CustomScale extends Chart.Scale`.
 final class _CustomScale(super.cfg) extends Scale {
   @override
-  void draw([types.ChartArea? chartArea]) {}
+  void draw([ChartArea? chartArea]) {}
 
   /// core.scale.tests.js:516 `convertTicksToLabels()`. Scale of v4.5.1 has
   /// no member with this name, and nothing calls it.
@@ -95,7 +82,7 @@ final class _CustomScale(super.cfg) extends Scale {
 /// core.scale.tests.js:547-552 `class CustomScale1 extends Chart.Scale`.
 final class _CustomScale1(super.cfg) extends Scale {
   @override
-  void draw([types.ChartArea? chartArea]) {}
+  void draw([ChartArea? chartArea]) {}
 
   /// core.scale.tests.js:549 `convertTicksToLabels()`. Scale of v4.5.1 has
   /// no member with this name, and nothing calls it.
@@ -107,7 +94,7 @@ final class _CustomScale1(super.cfg) extends Scale {
 /// core.scale.tests.js:580-582 `class CustomScale2 extends Chart.Scale`.
 final class _CustomScale2(super.cfg) extends Scale {
   @override
-  void draw([types.ChartArea? chartArea]) {}
+  void draw([ChartArea? chartArea]) {}
 }
 
 /// The eight items of `gridLineTests` (core.scale.tests.js:110-150). The
@@ -1060,7 +1047,7 @@ void main() {
           },
         });
         // `parseFloat(value.toFixed(2))`.
-        double mapper(types.LabelItem item) =>
+        double mapper(LabelItem item) =>
             double.parse(item.options.translation!.$1.toStringAsFixed(2));
         const expected = <double>[20.15, 113.6, 207.05, 300.5, 393.95, 487.4];
         final actual = chart.scales['x']!.getLabelItems().map(mapper).toList();

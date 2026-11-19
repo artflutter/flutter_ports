@@ -3,11 +3,7 @@
 import 'dart:math' as math;
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show halfPi, normalizeAngle;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// A radial scale whose position methods have the built-in behavior.
 abstract interface class NativeRadialPositionScale() {
@@ -24,7 +20,6 @@ abstract interface class NativeRadialPositionScale() {
 /// keeps this object after that loop: a later loop reads the inputs again.
 /// The arithmetic is the arithmetic of the methods, in their order, so each
 /// result has the bits of the method result.
-@internal
 final class const RadialPositions({
   /// `TAU / (this._pointLabels.length || 1)`.
   required final double angleStep,
@@ -82,7 +77,6 @@ final class const RadialPositions({
 
 /// A resolved option value that a contextual view gives unchanged for each
 /// context: no function, array or object, and no color class of user code.
-@internal
 bool plainOptionValue(Object? value) =>
     value == null ||
     value is Undefined ||

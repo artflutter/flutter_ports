@@ -404,7 +404,6 @@ final class ResetTransition extends ChartTransition {
 
 /// The update mode of the class of [transition], as `Chart.update` names
 /// it, or Dart `null` for a class of another library.
-@internal
 String? transitionModeOf(ChartTransition transition) => switch (transition) {
   HoverTransition() => 'active',
   ShowTransition() => 'show',
@@ -416,7 +415,6 @@ String? transitionModeOf(ChartTransition transition) => switch (transition) {
 
 /// The item of [transitions] for the update mode [mode], or Dart `null`:
 /// the object that the app made.
-@internal
 ChartTransition? transitionIn(
   List<ChartTransition>? transitions,
   String? mode,

@@ -4,10 +4,7 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.

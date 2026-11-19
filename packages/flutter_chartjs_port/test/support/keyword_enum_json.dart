@@ -20,23 +20,7 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionAxis;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
-    show FillerDrawTime;
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show ChartAlign, TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Whether [value] is a value of an enum whose names are upstream keywords.
 bool isKeywordEnum(Object? value) =>

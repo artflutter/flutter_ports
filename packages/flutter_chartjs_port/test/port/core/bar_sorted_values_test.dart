@@ -1,8 +1,6 @@
 // Original code, not ported from Chart.js: sorted bar-value parity tests.
 
-import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show arrayUnique;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 void main() {

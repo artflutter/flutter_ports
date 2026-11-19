@@ -3,36 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show
-        CirclePointStyle,
-        CrossPointStyle,
-        CrossRotPointStyle,
-        DashPointStyle,
-        DrawPointOptions,
-        LinePointStyle,
-        RectPointStyle,
-        RectRotPointStyle,
-        RectRoundedPointStyle,
-        StarPointStyle,
-        TrianglePointStyle;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show JsProxyObject, jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart' show jsAssign;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet, jsObjectFreeze, jsSet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
-    show foreignAudit;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The typed element options of Chart.js ADR 0054 §9 have no upstream source

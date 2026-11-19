@@ -1,18 +1,6 @@
 // Original code, not ported from Chart.js: guarded compound baseline fills.
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_partitioned_fill.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/elements/line_dense_curve.dart'
-    show writeDenseCurve;
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show DefaultCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
-    show createBoundarySegment;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// Differential benchmark/test switch; not a chart option.
@@ -27,10 +15,10 @@ bool partitionedBaselineFillEnabled = const bool.fromEnvironment(
 int partitionedBaselineFillDraws = 0;
 
 final Type _nativeSegment = createBoundarySegment(0, 0).runtimeType;
-final Type _growablePoints = <types.PointElement>[].runtimeType;
-final Type _fixedPoints = List<types.PointElement>.empty().runtimeType;
+final Type _growablePoints = <IPointElement>[].runtimeType;
+final Type _fixedPoints = List<IPointElement>.empty().runtimeType;
 
-bool _nativePoints(List<types.PointElement> points) =>
+bool _nativePoints(List<IPointElement> points) =>
     points.runtimeType == _growablePoints || points.runtimeType == _fixedPoints;
 
 /// Keeps the original path of [line] out of the engine when a partitioned fill
@@ -38,7 +26,7 @@ bool _nativePoints(List<types.PointElement> points) =>
 /// list. A fill that the partition declines reads the same path.
 void deferPathOfPartitionedFill(
   CanvasRenderingContext2D ctx,
-  types.LineElement line,
+  ILineElement line,
 ) {
   if (partitionedBaselineFillEnabled &&
       ctx is PartitionedFillCanvas &&
@@ -58,11 +46,11 @@ void deferPathOfPartitionedFill(
 /// evaluated during preflight.
 bool tryPartitionedBaselineFill(
   CanvasRenderingContext2D ctx, {
-  required types.LineElement line,
+  required ILineElement line,
   required Object target,
-  required types.Segment source,
-  required types.PointElement start,
-  required types.PointElement end,
+  required Segment source,
+  required IPointElement start,
+  required IPointElement end,
 }) {
   if (!partitionedBaselineFillEnabled ||
       ctx is! PartitionedFillCanvas ||

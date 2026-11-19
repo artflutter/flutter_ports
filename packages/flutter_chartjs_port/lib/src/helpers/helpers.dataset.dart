@@ -9,12 +9,7 @@
 /// (filler.drawing.js:13, :188).
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.dataset.ts:10 and :27 the object literal
 /// `{left, right, top, bottom}`.
@@ -45,7 +40,7 @@ double _edgeOf(Object item, String field) => switch ((item, field)) {
 /// ADR 0054 §4), and the test is its ToBoolean. Dart `null` for [chartArea]
 /// stands for the JS `undefined` of a chart before its first layout: the
 /// read of its edge throws a `TypeError`, as in JavaScript.
-double _getSizeForArea(Scale scale, ChartArea? chartArea, String field) {
+double _getSizeForArea(IScale scale, ChartArea? chartArea, String field) {
   return jsTruthy(readOption(scale.options, OptionKey.clip))
       ? _edgeOf(scale, field)
       : _edgeOf(chartArea!, field);
@@ -74,7 +69,7 @@ TRBL? _getDatasetArea(ChartMeta meta, ChartArea? chartArea) {
 /// `meta._clip.disabled` is true. A side of Dart `null` (JS `false`) gives
 /// the chart edge, and a number moves the dataset area edge outwards by the
 /// number: `true` is 0 (row `adapt-native-chart-meta`, [ChartClip]).
-TRBL? getDatasetClipArea(Chart chart, ChartMeta meta) {
+TRBL? getDatasetClipArea(IChart chart, ChartMeta meta) {
   final clip = meta.clip;
   if (clip.disabled) {
     return null;

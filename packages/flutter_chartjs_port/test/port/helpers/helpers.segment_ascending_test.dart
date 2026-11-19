@@ -2,15 +2,13 @@
 import 'dart:collection';
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// A point of a user class: it takes the loop of `boundSegment`.
 class _UserPoint() extends PointElement;
 
-List<Object?> _trace(List<types.Segment> segments) => [
+List<Object?> _trace(List<Segment> segments) => [
   for (final s in segments) (s.start, s.end, s.loop, s.style),
 ];
 
@@ -22,10 +20,8 @@ void _compare(
   int? from,
   int? to,
 }) {
-  final native = <types.PointElement>[
-    for (final x in xs) PointElement()..x = x,
-  ];
-  final user = <types.PointElement>[for (final x in xs) _UserPoint()..x = x];
+  final native = <IPointElement>[for (final x in xs) PointElement()..x = x];
+  final user = <IPointElement>[for (final x in xs) _UserPoint()..x = x];
   if (skip && xs.length > 2) {
     (native[1] as PointElement).skip = true;
     (user[1] as PointElement).skip = true;
@@ -102,7 +98,7 @@ void main() {
   });
 
   test('an index that is not finite gives what the loop gives', () {
-    final points = <types.PointElement>[
+    final points = <IPointElement>[
       for (final x in [1.0, 2.0, 3.0]) PointElement()..x = x,
     ];
     for (final (start, end) in [
@@ -127,8 +123,8 @@ void main() {
 
   test('a negative zero index gives what the loop gives', () {
     final zero = double.parse('-0');
-    final native = <types.PointElement>[PointElement()..x = 0];
-    final user = <types.PointElement>[_UserPoint()..x = 0];
+    final native = <IPointElement>[PointElement()..x = 0];
+    final user = <IPointElement>[_UserPoint()..x = 0];
     for (final (start, end) in [(zero, 0.0), (0.0, zero), (zero, zero)]) {
       final segment = _RawSegment(start, end);
       const bounds = (property: 'x', start: 0.0, end: 0.0);
@@ -155,7 +151,7 @@ void main() {
 
   test('a point of a user class reads no coordinate in the proof', () {
     var reads = 0;
-    final points = <types.PointElement>[
+    final points = <IPointElement>[
       _CountingPoint(() => reads++, 1),
       _CountingPoint(() => reads++, 2),
     ];
@@ -172,7 +168,7 @@ void main() {
 final class _RawSegment(
   @override final double start,
   @override final double end,
-) implements types.Segment {
+) implements Segment {
   @override
   bool get loop => false;
   @override
@@ -180,22 +176,21 @@ final class _RawSegment(
 }
 
 final class _CountingList(
-  final List<types.PointElement> _items,
+  final List<IPointElement> _items,
   final List<int> _reads,
-) extends ListBase<types.PointElement> {
+) extends ListBase<IPointElement> {
   @override
   int get length => _items.length;
   @override
   set length(int value) => _items.length = value;
   @override
-  types.PointElement operator [](int index) {
+  IPointElement operator [](int index) {
     _reads.add(index);
     return _items[index];
   }
 
   @override
-  void operator []=(int index, types.PointElement value) =>
-      _items[index] = value;
+  void operator []=(int index, IPointElement value) => _items[index] = value;
 }
 
 class _CountingPoint(final void Function() _read, final double _x)

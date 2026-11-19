@@ -13,8 +13,7 @@ library;
 import 'dart:collection' show ListBase;
 
 import 'package:collection/collection.dart' show mergeSort;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `array.sort(compare)`: sorts [list] in place with a stable sort and
 /// returns it, as `Array.prototype.sort` does.

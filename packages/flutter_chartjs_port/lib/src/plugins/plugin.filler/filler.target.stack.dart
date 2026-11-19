@@ -17,18 +17,7 @@
 /// This library is a pure layer (Chart.js ADR 0038, section 9).
 library;
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart'
-    show LineElement;
-import 'package:flutter_chartjs_port/src/elements/element.point.dart'
-    show PointElement;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show isBetween;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart'
-    show createBoundaryLine;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
-    show FillerSource;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/stack_point_search.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// filler.target.stack.js:15 `_buildStackLine(source)`.
@@ -41,11 +30,11 @@ import 'package:meta/meta.dart';
 /// `scale.getMatchingVisibleMetas`, as upstream. A point index of a
 /// segment past the end of `line.points` is the `undefined` of upstream,
 /// and `findPoint` throws a [TypeError] for it.
-types.LineElement buildStackLine(FillerSource source) {
+ILineElement buildStackLine(FillerSource source) {
   final scale = source.scale;
   final index = source.index;
   final line = source.line;
-  final points = <types.PointElement>[];
+  final points = <IPointElement>[];
   final segments = line.segments;
   final sourcePoints = line.points;
   final linesBelow = _getLinesBelow(scale!, index)
@@ -84,8 +73,8 @@ types.LineElement buildStackLine(FillerSource source) {
 /// The items are the `dataset` elements of the metas: Dart `null` for the
 /// JS `null` of a meta without one. The boundary line of
 /// filler.target.stack.js:21 can be Dart `null` too.
-List<types.Element?> _getLinesBelow(types.Scale scale, int index) {
-  final below = <types.Element?>[];
+List<IElement?> _getLinesBelow(IScale scale, int index) {
+  final below = <IElement?>[];
   final metas = scale.getMatchingVisibleMetas('line');
 
   for (var i = 0; i < metas.length; i++) {
@@ -110,12 +99,12 @@ List<types.Element?> _getLinesBelow(types.Scale scale, int index) {
 /// Dart `null` for [sourcePoint] is the `undefined` of an index past the
 /// end of the points.
 void _addPointsBelow(
-  List<types.PointElement> points,
-  types.PointElement? sourcePoint,
-  List<types.Element?> linesBelow,
+  List<IPointElement> points,
+  IPointElement? sourcePoint,
+  List<IElement?> linesBelow,
   StackPointSearch? search,
 ) {
-  final postponed = <types.PointElement>[];
+  final postponed = <IPointElement>[];
   for (var j = 0; j < linesBelow.length; j++) {
     final line = linesBelow[j];
     final (:first, :last, :point) =
@@ -154,13 +143,13 @@ void _addPointsBelow(
 /// [TypeError] of the read `point[property]` of `undefined`
 /// (element.line.js:353). The upstream `{}` is the record with `false`,
 /// `false` and Dart `null`.
-({bool first, bool last, types.PointElement? point}) _findPoint(
+({bool first, bool last, IPointElement? point}) _findPoint(
   Object? line,
-  types.PointElement? sourcePoint,
+  IPointElement? sourcePoint,
   String property,
 ) {
   // DIVERGES(chartjs): adapt-filler-target-classes, a line below is a cast.
-  final target = line! as types.LineElement;
+  final target = line! as ILineElement;
   final point = stackResultPoint(
     target.interpolate(sourcePoint ?? (throw TypeError()), property),
   );
@@ -199,10 +188,10 @@ void _addPointsBelow(
 /// It is not an upstream function. The tests read it.
 // DIVERGES(chartjs): adapt-line-points-elements, the results are points.
 @visibleForTesting
-types.PointElement? stackResultPoint(Object? result) => switch (result) {
+IPointElement? stackResultPoint(Object? result) => switch (result) {
   null => null,
-  final types.PointElement point => point,
-  final types.Point point =>
+  final IPointElement point => point,
+  final Point point =>
     PointElement()
       ..x = point.x ?? 0
       ..y = point.y ?? 0,

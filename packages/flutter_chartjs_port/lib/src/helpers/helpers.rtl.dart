@@ -10,8 +10,7 @@ library;
 
 import 'dart:ui' show TextAlign, TextDirection;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.rtl.ts:1 `RTLAdapter`.
 ///

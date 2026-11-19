@@ -6,22 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0049: the widget starts its chart in the first layout of
@@ -602,7 +587,7 @@ void main() {
       var hovers = 0;
       Map<String, Object?> make() => _config(
         options: <String, Object?>{
-          'onHover': (types.ChartEvent event, List<Object?> active, Chart c) {
+          'onHover': (ChartEvent event, List<Object?> active, Chart c) {
             hovers++;
             parent.write('hover $hovers');
           },
@@ -1052,20 +1037,12 @@ void main() {
       final config = _config(
         options: <String, Object?>{
           'onHover':
-              (
-                types.ChartEvent event,
-                List<types.ActiveElement> active,
-                Chart chart,
-              ) {
+              (ChartEvent event, List<ActiveElement> active, Chart chart) {
                 calls.add('hover ${event.type} ${active.length}');
                 parent.write(calls.last);
               },
           'onClick':
-              (
-                types.ChartEvent event,
-                List<types.ActiveElement> active,
-                Chart chart,
-              ) {
+              (ChartEvent event, List<ActiveElement> active, Chart chart) {
                 calls.add('click ${event.type} ${active.length}');
                 parent.write(calls.last);
               },

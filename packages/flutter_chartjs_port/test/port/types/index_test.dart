@@ -3,19 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show BarDataset, ChartConfig, ChartKind, PolarAreaDataset;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
-import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The members that Chart.js ADR 0028 (section 1) adds to the interfaces of
@@ -87,7 +75,7 @@ void main() {
       final labels = ['a', 'b', 'c'];
       final data = <num?>[1.0, 2.0, 3.0];
       final chart = _chart(ChartKind.bar, labels, data);
-      final types.Chart t = chart;
+      final IChart t = chart;
       expect(t.isDatasetVisible(0), isTrue);
       expect(t.isDatasetVisible(0), chart.isDatasetVisible(0));
       expect(t.isDatasetVisible(1), isFalse);
@@ -133,7 +121,7 @@ void main() {
     testWidgets('datasetConfig', (tester) async {
       final chart = _chart(ChartKind.bar, ['a', 'b'], [1.0, 2.0]);
       final meta = chart.getDatasetMeta(0);
-      final types.ChartMeta t = meta;
+      final ChartMeta t = meta;
       final dataset = jsGet(jsGet(chart.data, 'datasets'), 0.0);
       expect(identical(t.datasetConfig, dataset), isTrue);
       expect(t.type, 'bar');
@@ -147,7 +135,7 @@ void main() {
     ) async {
       final chart = _chart(ChartKind.bar, ['a', 'b'], [1.0, 2.0]);
       final controller = chart.getDatasetMeta(0).controller!;
-      final types.DatasetController t = controller;
+      final IDatasetController t = controller;
       expect(identical(t.options, controller.options), isTrue);
       expect(identical(t.getParsed(0), controller.getParsed(0)), isTrue);
       expect(jsGet(t.getParsed(1), 'y'), 2.0);
@@ -178,7 +166,7 @@ void main() {
     testWidgets('active and hidden', (tester) async {
       final chart = _chart(ChartKind.bar, ['a', 'b'], [1.0, 2.0]);
       final element = chart.getDatasetMeta(0).data[0] as Element;
-      final types.Element t = element;
+      final IElement t = element;
       expect(t.active, isFalse);
       expect(t.active, element.active);
       expect(t.hidden, same(undefined));
@@ -195,7 +183,7 @@ void main() {
       final chart = _chart(ChartKind.bar, ['a', 'b', 'c'], [1.0, 5.0, 3.0]);
       for (final id in ['x', 'y']) {
         final scale = chart.scales[id]!;
-        final types.Scale t = scale;
+        final IScale t = scale;
         expect(identical(t.cache, scale.cache), isTrue, reason: id);
         expect(identical(t.ticks, scale.ticks), isTrue, reason: id);
         expect(t.ticks, isNotEmpty, reason: id);
@@ -233,10 +221,10 @@ void main() {
         ['a', 'b', 'c'],
         [1.0, 5.0, 3.0],
       );
-      expect(chart.scales['r'] is types.RadialLinearScale, isTrue);
+      expect(chart.scales['r'] is IRadialLinearScale, isTrue);
       expect(chart.scales['x'], isNull);
       final scale = chart.scales['r']! as RadialLinearScale;
-      final t = chart.scales['r']! as types.RadialLinearScale;
+      final t = chart.scales['r']! as IRadialLinearScale;
       // Dart null is the undefined start value before the first layout
       // (scale.radialLinear.js:416-418). Thus the laid-out center is a
       // number: the center of the chart area of the 512 x 512 canvas of
@@ -269,8 +257,8 @@ void main() {
       tester,
     ) async {
       final chart = _chart(ChartKind.bar, ['a'], [1.0]);
-      expect(chart.scales['x'] is types.RadialLinearScale, isFalse);
-      expect(chart.scales['y'] is types.RadialLinearScale, isFalse);
+      expect(chart.scales['x'] is IRadialLinearScale, isFalse);
+      expect(chart.scales['y'] is IRadialLinearScale, isFalse);
     });
   });
 

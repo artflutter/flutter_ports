@@ -2,23 +2,7 @@
 import 'dart:ui' as ui;
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
-import 'package:flutter_chartjs_port/src/core/scale_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show PercentGrace;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:test/test.dart';
 

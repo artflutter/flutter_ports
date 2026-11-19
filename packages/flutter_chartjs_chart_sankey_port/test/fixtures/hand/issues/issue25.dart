@@ -6,7 +6,6 @@ library;
 import 'dart:ui';
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// `export default` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {

@@ -39,31 +39,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show Opt, OptionKey;
-import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartConfigurationScope;
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/typed/config.dart' show ChartConfig;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_keyboard.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// Shows one Chart.js chart: `new Chart(canvas, config)` on a canvas that the
 /// widget owns. Register the components first: `Chart.register(registerables)`.

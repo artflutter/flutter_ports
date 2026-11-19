@@ -23,8 +23,7 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter/painting.dart' show TextStyle, kDefaultFontSize;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasTextBaseline;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The size of [font] in pixels: its `fontSize`, or the default size of
 /// Flutter text, [kDefaultFontSize], with which the engine lays it out.

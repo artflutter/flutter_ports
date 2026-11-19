@@ -26,25 +26,7 @@ library;
 import 'dart:typed_data';
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey, OptionScope, ScopeKind;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart'
-    show ScaleBorder;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/data_item.dart'
-    show TypedDataItem;
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
-    show LineSegmentStyle;
-import 'package:flutter_chartjs_port/src/types/option_functions.dart'
-    show appFunctionCalls;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 // DIVERGES(chartjs): adapt-tooltip-callback-objects, no noop.
 // helpers.core.ts:11 `noop` is the default of 9 tooltip callbacks
@@ -705,7 +687,6 @@ void mergerIf(
 /// [mergeIf], the resolver and `Defaults.route` merge two values of one
 /// kind with [mergeNativeOptionValues].
 // DIVERGES(chartjs): adapt-text-style-fonts, the native option objects merge.
-@internal
 int nativeMergeKind(Object? value) => switch (value) {
   TooltipCallbacks() => 1,
   TextStyle() => 2,
@@ -717,7 +698,6 @@ int nativeMergeKind(Object? value) => switch (value) {
 /// [higher] merged over [lower] when both have one kind of
 /// [nativeMergeKind]: a field that [higher] sets wins, and [lower] fills the
 /// others. Dart `null` for another pair.
-@internal
 Object? mergeNativeOptionValues(Object? lower, Object? higher) =>
     switch ((lower, higher)) {
       (final TooltipCallbacks l, final TooltipCallbacks h) => l.merge(h),

@@ -6,16 +6,7 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show registerDataUpdateTypes;
-import 'package:flutter_chartjs_port/src/core/point_bulk_update.dart'
-    show bulkPointUpdatesEnabled, bulkPointUpdatesTaken;
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show nativeGapReadsTaken;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/typed/datasets.dart' show DataPoint;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _red = ChartPaint.solid(ui.Color(0xffff0000));

@@ -13,9 +13,7 @@
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 void main() {
@@ -99,8 +97,8 @@ void main() {
     'SimpleArc is not a types.LineElement (Chart.js ADR 0040, section 4)',
     () {
       final Object arc = SimpleArc(x: 0, y: 0, radius: 0);
-      expect(arc, isNot(isA<types.LineElement>()));
-      expect(arc, isA<types.SimpleArc>());
+      expect(arc, isNot(isA<ILineElement>()));
+      expect(arc, isA<ISimpleArc>());
     },
   );
 }

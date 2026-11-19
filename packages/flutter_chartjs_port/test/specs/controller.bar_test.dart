@@ -12,26 +12,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/controllers/controller.bar.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show DatasetInteractionMode;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' as helpers;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BarThickness, BorderSkippedEdge;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -1473,13 +1454,13 @@ void main() {
       meta.controller!.setHoverStyle(bar, 1, 0);
       expect(
         jsGet(bar.options, 'backgroundColor'),
-        helpers.getHoverColor(
+        getHoverColor(
           const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1)),
         ),
       );
       expect(
         jsGet(bar.options, 'borderColor'),
-        helpers.getHoverColor(
+        getHoverColor(
           const ChartPaint.solid(native_ui.Color.fromRGBO(15, 15, 15, 1)),
         ),
       );
@@ -1519,13 +1500,13 @@ void main() {
       meta.controller!.setHoverStyle(bar, 1, 0);
       expect(
         jsGet(bar.options, 'backgroundColor'),
-        helpers.getHoverColor(
+        getHoverColor(
           const ChartPaint.solid(native_ui.Color.fromRGBO(255, 255, 255, 1)),
         ),
       );
       expect(
         jsGet(bar.options, 'borderColor'),
-        helpers.getHoverColor(
+        getHoverColor(
           const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1)),
         ),
       );

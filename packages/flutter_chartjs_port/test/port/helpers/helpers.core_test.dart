@@ -4,16 +4,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/elements/element.point.dart'
-    as elements;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/option_functions.dart'
-    show appFunctionCalls;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream behavior that test/specs/helpers.core.tests.js does not check
@@ -70,63 +61,57 @@ void main() {
     test('is false for a class instance, unlike JavaScript', () {
       // Port difference (Chart.js ADR 0043): in JavaScript an instance of a
       // class gives '[object Object]', so isObject is true.
-      expect(helpers.isObject(const _Instance()), isFalse);
+      expect(isObject(const _Instance()), isFalse);
     });
 
     test('is true only for a Map with String keys', () {
-      expect(helpers.isObject(jsonDecode('{"a": 1}')), isTrue);
-      expect(helpers.isObject(<String, int>{'a': 1}), isTrue);
-      expect(helpers.isObject(<dynamic, dynamic>{'a': 1}), isFalse);
-      expect(helpers.isObject(<Object, Object?>{'a': 1}), isFalse);
+      expect(isObject(jsonDecode('{"a": 1}')), isTrue);
+      expect(isObject(<String, int>{'a': 1}), isTrue);
+      expect(isObject(<dynamic, dynamic>{'a': 1}), isFalse);
+      expect(isObject(<Object, Object?>{'a': 1}), isFalse);
     });
   });
 
   group('finiteOrDefault', () {
     test('returns finite numbers and else the default', () {
-      expect(helpers.finiteOrDefault(1.5, 2), 1.5);
-      expect(helpers.finiteOrDefault(double.nan, 2), 2);
-      expect(helpers.finiteOrDefault(double.infinity, 2), 2);
-      expect(helpers.finiteOrDefault('3', 2), 2);
-      expect(helpers.finiteOrDefault(null, 2), 2);
-      expect(helpers.finiteOrDefault(undefined, 2), 2);
-      expect(helpers.finiteOrDefault(-0.0, 2).isNegative, isTrue);
+      expect(finiteOrDefault(1.5, 2), 1.5);
+      expect(finiteOrDefault(double.nan, 2), 2);
+      expect(finiteOrDefault(double.infinity, 2), 2);
+      expect(finiteOrDefault('3', 2), 2);
+      expect(finiteOrDefault(null, 2), 2);
+      expect(finiteOrDefault(undefined, 2), 2);
+      expect(finiteOrDefault(-0.0, 2).isNegative, isTrue);
     });
 
     test('returns an int value as a double', () {
-      expect(helpers.finiteOrDefault(3, 2), isA<double>());
-      expect(helpers.finiteOrDefault(3, 2), 3);
+      expect(finiteOrDefault(3, 2), isA<double>());
+      expect(finiteOrDefault(3, 2), 3);
     });
   });
 
   group('valueOrDefault', () {
     test('returns the default for undefined only', () {
-      expect(helpers.valueOrDefault<Object?>(undefined, 1), 1);
-      expect(helpers.valueOrDefault<Object?>(null, 1), isNull);
-      expect(helpers.valueOrDefault<Object?>(double.nan, 1), isNaN);
+      expect(valueOrDefault<Object?>(undefined, 1), 1);
+      expect(valueOrDefault<Object?>(null, 1), isNull);
+      expect(valueOrDefault<Object?>(double.nan, 1), isNaN);
     });
   });
 
   group('callback', () {
     test('passes no argument for null args', () {
-      final result = helpers.callback(([Object? a = 'none']) => [a]);
+      final result = callback(([Object? a = 'none']) => [a]);
       expect(result, ['none']);
     });
 
     test('passes the exact arguments (Chart.js ADR 0173)', () {
-      expect(helpers.callback((Object? a, Object? b) => [a, b], [1, 2]), [
-        1,
-        2,
-      ]);
-      expect(
-        () => helpers.callback((Object? a) => a, [1, 2]),
-        throwsNoSuchMethodError,
-      );
+      expect(callback((Object? a, Object? b) => [a, b], [1, 2]), [1, 2]);
+      expect(() => callback((Object? a) => a, [1, 2]), throwsNoSuchMethodError);
     });
 
     test('counts each call of a function', () {
       final before = appFunctionCalls;
-      helpers.callback(() => 1);
-      helpers.callback('no function');
+      callback(() => 1);
+      callback('no function');
       expect(appFunctionCalls, before + 1);
     });
   });
@@ -135,7 +120,7 @@ void main() {
     test('visits object keys in the Object.keys order', () {
       final keys = <Object?>[];
       final values = <Object?>[];
-      helpers.each<Object?, Object?>(_ordered(), (value, key) {
+      each<Object?, Object?>(_ordered(), (value, key) {
         keys.add(key);
         values.add(value);
       });
@@ -146,7 +131,7 @@ void main() {
     test('reads a removed key as undefined', () {
       final object = <String, Object?>{'a': 1, 'b': 2};
       final seen = <Object?>[];
-      helpers.each<Object?, Object?>(object, (value, key) {
+      each<Object?, Object?>(object, (value, key) {
         seen.add([key, value]);
         object.remove('b');
       });
@@ -159,7 +144,7 @@ void main() {
     test('reads an index past a shortened array as undefined', () {
       final array = <Object?>[1, 2, 3];
       final seen = <Object?>[];
-      helpers.each<Object?, Object?>(array, (value, index) {
+      each<Object?, Object?>(array, (value, index) {
         seen.add([value, index]);
         array.length = 1;
       });
@@ -172,7 +157,7 @@ void main() {
 
     test('passes the index as an int', () {
       final indices = <Object?>[];
-      helpers.each<Object?, Object?>(<Object?>['a'], (value, index) {
+      each<Object?, Object?>(<Object?>['a'], (value, index) {
         indices.add(index);
       });
       expect(indices.single, isA<int>());
@@ -181,21 +166,21 @@ void main() {
     test('casts the item and the key to the parameter types', () {
       final items = <String>[];
       final keys = <int>[];
-      helpers.each<String, int>(<Object?>['a', 'b'], (item, key) {
+      each<String, int>(<Object?>['a', 'b'], (item, key) {
         items.add(item);
         keys.add(key);
       });
       expect(items, ['a', 'b']);
       expect(keys, [0, 1]);
       expect(
-        () => helpers.each<String, int>(<Object?>[1], (item, key) {}),
+        () => each<String, int>(<Object?>[1], (item, key) {}),
         throwsA(isA<TypeError>()),
       );
     });
 
     test('iterates over a typed list', () {
       final items = <Object?>[];
-      helpers.each<Object?, Object?>(
+      each<Object?, Object?>(
         Float64List.fromList([1.5, 2]),
         (item, _) => items.add(item),
       );
@@ -205,28 +190,28 @@ void main() {
 
   group('_elementsEqual', () {
     test('compares null and empty lists as upstream', () {
-      expect(helpers.elementsEqual(null, []), isFalse);
-      expect(helpers.elementsEqual([], null), isFalse);
-      expect(helpers.elementsEqual([], []), isTrue);
+      expect(elementsEqual(null, []), isFalse);
+      expect(elementsEqual([], null), isFalse);
+      expect(elementsEqual([], []), isTrue);
     });
 
     test('compares the two indexes of each item', () {
-      expect(helpers.elementsEqual([_active(0, 1)], [_active(0, 1)]), isTrue);
-      expect(helpers.elementsEqual([_active(0, 1)], [_active(1, 1)]), isFalse);
-      expect(helpers.elementsEqual([_active(0, 1)], [_active(0, 2)]), isFalse);
+      expect(elementsEqual([_active(0, 1)], [_active(0, 1)]), isTrue);
+      expect(elementsEqual([_active(0, 1)], [_active(1, 1)]), isFalse);
+      expect(elementsEqual([_active(0, 1)], [_active(0, 2)]), isFalse);
     });
   });
 
   group('clone', () {
     test('copies the keys in the Object.keys order', () {
-      final output = helpers.clone(_ordered())! as Map<String, Object?>;
+      final output = clone(_ordered())! as Map<String, Object?>;
       expect(output.keys, ['2', '10', 'b', 'a']);
       expect(jsObjectKeys(output), ['2', '10', 'b', 'a']);
     });
 
     test('copies the key __proto__ as an own key', () {
       final output =
-          helpers.clone(jsonDecode('{"__proto__":{"polluted": true}}'))!
+          clone(jsonDecode('{"__proto__":{"polluted": true}}'))!
               as Map<String, Object?>;
       expect(output.keys, ['__proto__']);
       expect(output['__proto__'], {'polluted': true});
@@ -234,7 +219,7 @@ void main() {
 
     test('copies a typed list into a new list of the same type', () {
       final input = Float32List.fromList([1.5, 2]);
-      final output = helpers.clone(input);
+      final output = clone(input);
       expect(output, isA<Float32List>());
       expect(output, isNot(same(input)));
       expect(output, [1.5, 2]);
@@ -242,7 +227,7 @@ void main() {
 
     test('gives plain lists and objects', () {
       final output =
-          helpers.clone(<String, Object?>{
+          clone(<String, Object?>{
                 'list': <double>[1, 2],
                 'map': <String, int>{'a': 1},
               })!
@@ -256,7 +241,7 @@ void main() {
     test('keeps the reference of a leaf', () {
       const instance = _Instance();
       final untyped = <dynamic, dynamic>{'a': 1};
-      final output = helpers.clone(<Object?>[instance, untyped])! as List;
+      final output = clone(<Object?>[instance, untyped])! as List;
       expect(output[0], same(instance));
       expect(output[1], same(untyped));
     });
@@ -265,7 +250,7 @@ void main() {
   group('merge', () {
     test('skips the keys __proto__, prototype and constructor', () {
       final output =
-          helpers.merge(
+          merge(
                 <String, Object?>{},
                 jsonDecode(
                   '{"__proto__":{"p":1},"prototype":2,"constructor":3,"ok":4}',
@@ -278,7 +263,7 @@ void main() {
     test('merges the names that only resemble the reserved keys', () {
       // isValidKey compares with ===: only the three exact names are skipped.
       final output =
-          helpers.merge(
+          merge(
                 <String, Object?>{},
                 jsonDecode(
                   '{"__proto":1,"Prototype":2,"constructor ":3,"":4, '
@@ -297,13 +282,12 @@ void main() {
 
     test('merges the keys in the Object.keys order', () {
       final output =
-          helpers.merge(<String, Object?>{'z': 0}, _ordered())!
-              as Map<String, Object?>;
+          merge(<String, Object?>{'z': 0}, _ordered())! as Map<String, Object?>;
       expect(jsObjectKeys(output), ['2', '10', 'z', 'b', 'a']);
     });
 
     test('skips the sources that are not objects in a list', () {
-      final output = helpers.merge(
+      final output = merge(
         <String, Object?>{'a': 1},
         <Object?>[
           null,
@@ -316,13 +300,13 @@ void main() {
 
     test('calls the merger of the options, also for nested objects', () {
       final calls = <String>[];
-      final options = helpers.MergeOptions(
+      final options = MergeOptions(
         merger: (key, target, source, options) {
           calls.add(key);
-          helpers.merger(key, target, source, options);
+          merger(key, target, source, options);
         },
       );
-      final output = helpers.merge(
+      final output = merge(
         <String, Object?>{
           'a': <String, Object?>{'b': 1},
         },
@@ -341,7 +325,7 @@ void main() {
 
     test('does not enter a class instance', () {
       const instance = _Instance();
-      final output = helpers.merge(
+      final output = merge(
         <String, Object?>{'a': 1},
         <String, Object?>{'a': instance},
       );
@@ -353,7 +337,7 @@ void main() {
     test('keeps a key that holds the undefined sentinel', () {
       // Chart.js ADR 0043: a stored sentinel blocks mergeIf.
       final output =
-          helpers.mergeIf(
+          mergeIf(
                 <String, Object?>{'a': undefined},
                 <String, Object?>{
                   'a': <String, Object?>{'b': 1},
@@ -365,9 +349,7 @@ void main() {
 
     test('adds a key that the target does not own', () {
       final output =
-          helpers.mergeIf(<String, Object?>{}, <String, Object?>{
-                'a': undefined,
-              })!
+          mergeIf(<String, Object?>{}, <String, Object?>{'a': undefined})!
               as Map<String, Object?>;
       expect(output.containsKey('a'), isTrue);
       expect(output['a'], same(undefined));
@@ -375,7 +357,7 @@ void main() {
 
     test('skips the keys __proto__, prototype and constructor', () {
       final output =
-          helpers.mergeIf(
+          mergeIf(
                 <String, Object?>{},
                 jsonDecode(
                   '{"__proto__":{"p":1},"prototype":2,"constructor":3,"ok":4}',
@@ -401,7 +383,7 @@ void main() {
         },
         'title': <Object?>['t1'],
       };
-      expect(helpers.merge(target, view1), same(target));
+      expect(merge(target, view1), same(target));
       expect(target['x'], 100.0);
       expect(target['options'], isNot(same(view1['options'])));
       expect(target['options'], {
@@ -419,7 +401,7 @@ void main() {
         },
         'title': <Object?>['t2'],
       };
-      expect(helpers.merge(target, view2), same(target));
+      expect(merge(target, view2), same(target));
       expect(target['options'], same(options1));
       expect(target['options'], {
         'a': 1,
@@ -432,7 +414,7 @@ void main() {
     }
 
     test('merges into an element target, as upstream', () {
-      final element = elements.PointElement({'x': 1, 'y': 2});
+      final element = PointElement({'x': 1, 'y': 2});
       mergeTwice(element);
       expect(element.x, 100.0);
       expect(element.y, 2.0);
@@ -446,10 +428,10 @@ void main() {
     });
 
     test('the default merger enters a PropertyAccess value', () {
-      final element = elements.PointElement({'x': 1});
+      final element = PointElement({'x': 1});
       final host = <String, Object?>{'el': element};
       final output =
-          helpers.merge(host, <String, Object?>{
+          merge(host, <String, Object?>{
                 'el': <String, Object?>{
                   'x': 5,
                   'options': <String, Object?>{'r': 1},
@@ -461,34 +443,31 @@ void main() {
       expect(element.options, {'r': 1});
 
       // A leaf source value replaces the element.
-      helpers.merge(host, <String, Object?>{'el': 3});
+      merge(host, <String, Object?>{'el': 3});
       expect(host['el'], 3);
     });
 
     test('a target that is not an object is the result', () {
-      expect(helpers.merge(5, <String, Object?>{'a': 1}), 5);
+      expect(merge(5, <String, Object?>{'a': 1}), 5);
       const instance = _Instance();
-      expect(
-        helpers.merge(instance, <String, Object?>{'a': 1}),
-        same(instance),
-      );
+      expect(merge(instance, <String, Object?>{'a': 1}), same(instance));
     });
 
     test('clone keeps an element as a reference, unlike upstream', () {
       // Port difference: upstream clone(element) gives a new object without
       // a prototype, with the own keys of the element.
-      final element = elements.PointElement({'x': 1});
-      expect(helpers.clone(element), same(element));
-      final list = helpers.clone(<Object?>[element])! as List;
+      final element = PointElement({'x': 1});
+      expect(clone(element), same(element));
+      final list = clone(<Object?>[element])! as List;
       expect(list.single, same(element));
     });
 
     test('mergeIf writes nothing into an element, unlike upstream', () {
       // Port difference: upstream mergeIf(element, {x: 5, z: 7}) keeps x 1
       // and adds z 7.
-      final element = elements.PointElement({'x': 1});
+      final element = PointElement({'x': 1});
       expect(
-        helpers.mergeIf(element, <String, Object?>{'x': 5, 'z': 7}),
+        mergeIf(element, <String, Object?>{'x': 5, 'z': 7}),
         same(element),
       );
       expect(element.x, 1.0);
@@ -500,9 +479,9 @@ void main() {
     test('merge skips an element source, unlike upstream', () {
       // Port difference: upstream merge({}, element) copies the 8 own keys
       // x, y, active, options, $animations, parsed, skip and stop.
-      final element = elements.PointElement({'x': 1, 'y': 2});
+      final element = PointElement({'x': 1, 'y': 2});
       final output =
-          helpers.merge(<String, Object?>{}, element)! as Map<String, Object?>;
+          merge(<String, Object?>{}, element)! as Map<String, Object?>;
       expect(jsObjectKeys(output), isEmpty);
     });
 
@@ -510,10 +489,10 @@ void main() {
         'unlike upstream', () {
       // Port difference: upstream merge({el: t}, {el: s}) keeps t in el,
       // writes x 9 into t (the own key of s) and writes y undefined into t.
-      final t = elements.PointElement({'x': 1, 'y': 2});
-      final s = elements.PointElement({'x': 9});
+      final t = PointElement({'x': 1, 'y': 2});
+      final s = PointElement({'x': 9});
       final host = <String, Object?>{'el': t};
-      helpers.merge(host, <String, Object?>{'el': s});
+      merge(host, <String, Object?>{'el': s});
       expect(host['el'], same(s));
       expect(t.x, 1.0);
       expect(t.y, 2.0);
@@ -523,35 +502,35 @@ void main() {
       // Upstream gives the own keys of the element. The merger gets the
       // element itself, which has no list of own keys: `Object.keys` gives
       // none, and the own-key test of mergerIf throws.
-      final element = elements.PointElement({'x': 1});
+      final element = PointElement({'x': 1});
       final listed = <List<String>>[];
       void keysMerger(
         String key,
         Object target,
         Object source,
-        helpers.MergeOptions options,
+        MergeOptions options,
       ) {
         listed.add(jsObjectKeys(target));
       }
 
-      helpers.merge(element, <String, Object?>{
+      merge(element, <String, Object?>{
         'q': 1,
-      }, helpers.MergeOptions(merger: keysMerger));
+      }, MergeOptions(merger: keysMerger));
       expect(listed, [<String>[]]);
       expect(
-        () => helpers.merge(element, <String, Object?>{
+        () => merge(element, <String, Object?>{
           'q': 1,
-        }, const helpers.MergeOptions(merger: helpers.mergerIf)),
+        }, const MergeOptions(merger: mergerIf)),
         throwsUnsupportedError,
       );
     });
 
     test('a custom merger that reads and writes by name works', () {
-      final element = elements.PointElement({'x': 1});
-      helpers.merge(
+      final element = PointElement({'x': 1});
+      merge(
         element,
         <String, Object?>{'x': 2},
-        helpers.MergeOptions(
+        MergeOptions(
           merger: (key, target, source, options) {
             final element = target as PropertyAccess;
             element[key] =
@@ -563,7 +542,7 @@ void main() {
     });
 
     test('the Map path gives the upstream config merge', () {
-      final output = helpers.merge(
+      final output = merge(
         <String, Object?>{
           'a': <String, Object?>{
             'b': 1,
@@ -600,10 +579,10 @@ void main() {
   group('_deprecated', () {
     test('warns unless the value is undefined', () {
       final lines = _printed(() {
-        helpers.deprecated('Chart', 1, 'old', 'new');
-        helpers.deprecated('Chart', undefined, 'a', 'b');
-        helpers.deprecated('Chart', null, 'x', 'y');
-        helpers.deprecated('Chart', 0, 'p', 'q');
+        deprecated('Chart', 1, 'old', 'new');
+        deprecated('Chart', undefined, 'a', 'b');
+        deprecated('Chart', null, 'x', 'y');
+        deprecated('Chart', 0, 'p', 'q');
       });
       expect(lines, [
         'Chart: "old" is deprecated. Please use "new" instead',
@@ -619,44 +598,35 @@ void main() {
         'a': <Object?>[10, 20],
         's': 'xyz',
       };
-      expect(helpers.resolveObjectKey(data, 'a.1'), 20);
-      expect(helpers.resolveObjectKey(data, 'a.length'), 2);
-      expect(helpers.resolveObjectKey(data, 'a.2'), same(undefined));
-      expect(helpers.resolveObjectKey(data, 'a.01'), same(undefined));
-      expect(helpers.resolveObjectKey(data, 's.1'), 'y');
-      expect(helpers.resolveObjectKey(data, 's.length'), 3);
+      expect(resolveObjectKey(data, 'a.1'), 20);
+      expect(resolveObjectKey(data, 'a.length'), 2);
+      expect(resolveObjectKey(data, 'a.2'), same(undefined));
+      expect(resolveObjectKey(data, 'a.01'), same(undefined));
+      expect(resolveObjectKey(data, 's.1'), 'y');
+      expect(resolveObjectKey(data, 's.length'), 3);
     });
 
     test('returns a falsy value on the path', () {
-      expect(helpers.resolveObjectKey(<String, Object?>{'a': 0}, 'a.b'), 0);
+      expect(resolveObjectKey(<String, Object?>{'a': 0}, 'a.b'), 0);
+      expect(resolveObjectKey(<String, Object?>{'a': null}, 'a.b'), isNull);
+      expect(resolveObjectKey(<String, Object?>{'a': ''}, 'a.b'), '');
       expect(
-        helpers.resolveObjectKey(<String, Object?>{'a': null}, 'a.b'),
-        isNull,
-      );
-      expect(helpers.resolveObjectKey(<String, Object?>{'a': ''}, 'a.b'), '');
-      expect(
-        helpers.resolveObjectKey(<String, Object?>{'a': true}, 'a.b'),
+        resolveObjectKey(<String, Object?>{'a': true}, 'a.b'),
         same(undefined),
       );
-      expect(helpers.resolveObjectKey(undefined, 'a'), same(undefined));
-      expect(helpers.resolveObjectKey(null, 'a.b'), isNull);
-      expect(helpers.resolveObjectKey(undefined, ''), same(undefined));
+      expect(resolveObjectKey(undefined, 'a'), same(undefined));
+      expect(resolveObjectKey(null, 'a.b'), isNull);
+      expect(resolveObjectKey(undefined, ''), same(undefined));
     });
 
     test('reads x and y with the default resolvers', () {
       final point = <String, Object?>{'x': 1, 'y': 2};
-      expect(helpers.resolveObjectKey(point, 'x'), 1);
-      expect(helpers.resolveObjectKey(point, 'y'), 2);
-      expect(helpers.resolveObjectKey(5, 'x'), same(undefined));
+      expect(resolveObjectKey(point, 'x'), 1);
+      expect(resolveObjectKey(point, 'y'), 2);
+      expect(resolveObjectKey(5, 'x'), same(undefined));
       // `o.x` of undefined or null throws a TypeError in JavaScript.
-      expect(
-        () => helpers.resolveObjectKey(undefined, 'x'),
-        throwsA(isA<TypeError>()),
-      );
-      expect(
-        () => helpers.resolveObjectKey(null, 'y'),
-        throwsA(isA<TypeError>()),
-      );
+      expect(() => resolveObjectKey(undefined, 'x'), throwsA(isA<TypeError>()));
+      expect(() => resolveObjectKey(null, 'y'), throwsA(isA<TypeError>()));
     });
   });
 
@@ -673,29 +643,29 @@ void main() {
         'hasOwnProperty',
         'valueOf',
       ]) {
-        expect(helpers.resolveObjectKey(<String, Object?>{key: 5}, key), 5);
+        expect(resolveObjectKey(<String, Object?>{key: 5}, key), 5);
       }
     });
   });
 
   group('_splitKey', () {
     test('handles a trailing backslash and empty parts', () {
-      expect(helpers.splitKey(r'a\'), <String>[]);
-      expect(helpers.splitKey(r'\'), <String>[]);
-      expect(helpers.splitKey(r'a\\.b'), [r'a\.b']);
-      expect(helpers.splitKey('.'), ['', '']);
-      expect(helpers.splitKey(r'a\.'), ['a.']);
+      expect(splitKey(r'a\'), <String>[]);
+      expect(splitKey(r'\'), <String>[]);
+      expect(splitKey(r'a\\.b'), [r'a\.b']);
+      expect(splitKey('.'), ['', '']);
+      expect(splitKey(r'a\.'), ['a.']);
     });
   });
 
   group('_capitalize', () {
     test('upper-cases the first code unit', () {
-      expect(helpers.capitalize('register'), 'Register');
-      expect(helpers.capitalize(''), '');
-      expect(helpers.capitalize('a'), 'A');
-      expect(helpers.capitalize('éclair'), 'Éclair');
-      expect(helpers.capitalize('1abc'), '1abc');
-      expect(helpers.capitalize('Abc'), 'Abc');
+      expect(capitalize('register'), 'Register');
+      expect(capitalize(''), '');
+      expect(capitalize('a'), 'A');
+      expect(capitalize('éclair'), 'Éclair');
+      expect(capitalize('1abc'), '1abc');
+      expect(capitalize('Abc'), 'Abc');
     });
   });
 
@@ -704,38 +674,38 @@ void main() {
       // Pins a port difference: JavaScript gives 'SSa' and 'FIx' (the full
       // Unicode case mappings). The Dart VM gives 'ßa' and 'ﬁx'. dart2js
       // and dart2wasm call the toUpperCase of the JavaScript engine.
-      expect(helpers.capitalize('ßa'), '${'ß'.toUpperCase()}a');
-      expect(helpers.capitalize('ﬁx'), '${'ﬁ'.toUpperCase()}x');
+      expect(capitalize('ßa'), '${'ß'.toUpperCase()}a');
+      expect(capitalize('ﬁx'), '${'ﬁ'.toUpperCase()}x');
       // ASCII names give the JavaScript result on every platform.
-      expect(helpers.capitalize('backgroundColor'), 'BackgroundColor');
-      expect(helpers.capitalize('zIndex'), 'ZIndex');
+      expect(capitalize('backgroundColor'), 'BackgroundColor');
+      expect(capitalize('zIndex'), 'ZIndex');
     });
   });
 
   group('defined', () {
     test('is false only for undefined', () {
-      expect(helpers.defined(undefined), isFalse);
-      expect(helpers.defined(null), isTrue);
-      expect(helpers.defined(0), isTrue);
-      expect(helpers.defined(''), isTrue);
+      expect(defined(undefined), isFalse);
+      expect(defined(null), isTrue);
+      expect(defined(0), isTrue);
+      expect(defined(''), isTrue);
     });
   });
 
   group('isFunction', () {
     test('is true for a Dart function', () {
-      expect(helpers.isFunction(() => 1), isTrue);
-      expect(helpers.isFunction(<String, Object?>{}), isFalse);
-      expect(helpers.isFunction(null), isFalse);
-      expect(helpers.isFunction(undefined), isFalse);
-      expect(helpers.isFunction('f'), isFalse);
+      expect(isFunction(() => 1), isTrue);
+      expect(isFunction(<String, Object?>{}), isFalse);
+      expect(isFunction(null), isFalse);
+      expect(isFunction(undefined), isFalse);
+      expect(isFunction('f'), isFalse);
     });
   });
 
   group('setsEqual', () {
     test('compares string sets in any order', () {
-      expect(helpers.setsEqual(<String>{}, <String>{}), isTrue);
-      expect(helpers.setsEqual({'a', 'b'}, {'b', 'a'}), isTrue);
-      expect(helpers.setsEqual({'a'}, {'a', 'b'}), isFalse);
+      expect(setsEqual(<String>{}, <String>{}), isTrue);
+      expect(setsEqual({'a', 'b'}, {'b', 'a'}), isTrue);
+      expect(setsEqual({'a'}, {'a', 'b'}), isFalse);
     });
   });
 
@@ -746,9 +716,9 @@ void main() {
       Set<double> strict() =>
           HashSet<double>(equals: (a, b) => a == b, hashCode: (_) => 0)
             ..add(double.nan);
-      expect(helpers.setsEqual(strict(), strict()), isFalse);
+      expect(setsEqual(strict(), strict()), isFalse);
       // 0 and -0 are the same element, as in a JavaScript Set.
-      expect(helpers.setsEqual({0.0}, {-0.0}), isTrue);
+      expect(setsEqual({0.0}, {-0.0}), isTrue);
     });
   });
 
@@ -764,7 +734,7 @@ void main() {
         '',
       ];
       expect(
-        [for (final type in types) helpers.isClickEvent(_Event(type))],
+        [for (final type in types) isClickEvent(_Event(type))],
         [true, true, true, false, false, false, false],
       );
     });

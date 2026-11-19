@@ -9,12 +9,7 @@
 /// [detectPlatform].
 library;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart'
-    show getParentNode;
-import 'package:flutter_chartjs_port/src/platform/platform.base.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 export 'package:flutter_chartjs_port/src/platform/platform.base.dart'
     show BasePlatform;

@@ -10,8 +10,7 @@ library;
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 
 /// helpers.color.ts:3 `isPatternOrGradient`.

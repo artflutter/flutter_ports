@@ -11,30 +11,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show DatasetInteractionMode, NearestInteractionMode;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -133,18 +110,16 @@ List<Object?> _activeElements(Chart chart) => [
 /// `tooltip._active`, the active elements of [tooltip], read by name
 /// (core.controller.tests.js:1719). The `Tooltip` class of
 /// plugin.tooltip.dart extends `Element` and gives the property by name.
-List<types.ActiveElement> _tooltipActive(types.TooltipModel tooltip) =>
-    (tooltip as Element)['_active']! as List<types.ActiveElement>;
+List<ActiveElement> _tooltipActive(TooltipModel tooltip) =>
+    (tooltip as Element)['_active']! as List<ActiveElement>;
 
 /// The plugin of the cases of the plugin order (:1817-1826, :1865-1874):
 /// the id [id] and each hook of the table `hooks` of the group
 /// `plugin.extensions`, which calls [record] with its name.
 Plugin<Object?> _sequencePlugin(String id, void Function(String name) record) {
-  void Function(types.Chart chart, Object args, Object? options) hook(
-    String name,
-  ) =>
+  void Function(IChart chart, Object args, Object? options) hook(String name) =>
       (_, _, _) => record(name);
-  bool Function(types.Chart chart, Object args, Object? options) cancelable(
+  bool Function(IChart chart, Object args, Object? options) cancelable(
     String name,
   ) => (_, _, _) {
     record(name);
@@ -185,7 +160,7 @@ Plugin<Object?> _sequencePlugin(String id, void Function(String name) record) {
 }
 
 /// `point.y` of a data element.
-double _y(types.Element point) => (point as Element).y;
+double _y(IElement point) => (point as Element).y;
 
 /// `chart.data.labels`.
 List<Object?> _labels(Chart chart) =>
@@ -795,16 +770,16 @@ void main() {
       // they read no chart. The restore of flutter_test_config.dart also
       // puts back `defaults` after each test.
       setUp(() {
-        helpers.merge(defaults['scale'], <String, Object?>{
+        merge(defaults['scale'], <String, Object?>{
           '_jasmineCheckA': 'a0',
           '_jasmineCheckB': 'b0',
           '_jasmineCheckC': 'c0',
         });
 
-        helpers.merge(
-          jsGet(defaults['scales'], 'logarithmic'),
-          <String, Object?>{'_jasmineCheckB': 'b1', '_jasmineCheckC': 'c1'},
-        );
+        merge(jsGet(defaults['scales'], 'logarithmic'), <String, Object?>{
+          '_jasmineCheckB': 'b1',
+          '_jasmineCheckC': 'c1',
+        });
       });
 
       tearDown(() {

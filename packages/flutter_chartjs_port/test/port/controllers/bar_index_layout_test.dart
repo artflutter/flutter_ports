@@ -6,18 +6,7 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show arrayUnique;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show attachContext, createResolver;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/props.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _ReferenceChart(super.item, super.userConfig) extends Chart {
@@ -73,7 +62,7 @@ class _ObservedCategory(super.cfg) extends CategoryScale {
     construct: (_, args) => _ObservedCategory(scaleCfgArg(args)),
   );
   @override
-  List<types.ChartMeta> getMatchingVisibleMetas([String? type]) {
+  List<ChartMeta> getMatchingVisibleMetas([String? type]) {
     matches++;
     return super.getMatchingVisibleMetas(type);
   }
@@ -92,7 +81,7 @@ class _ValuesController(super.chart, super.datasetIndex, super.newTarget)
     },
   );
   @override
-  List<double> getAllParsedValues(types.Scale scale) => values;
+  List<double> getAllParsedValues(IScale scale) => values;
 }
 
 Map<String, Object?> _config({
@@ -178,7 +167,7 @@ Object _observe(Chart chart, int datasets) => [
             'borderSkipped',
             'inflateAmount',
           ])
-            _plain((e as types.ElementPropertyRead)[key]),
+            _plain((e as ElementPropertyRead)[key]),
         ],
     ],
 ];

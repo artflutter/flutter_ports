@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: drawPointLegend of the circle class.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 final class const _Options(

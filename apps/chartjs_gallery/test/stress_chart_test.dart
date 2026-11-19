@@ -15,7 +15,6 @@ import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: Legend, the element class of plugin.legend (hit boxes).
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -138,10 +137,8 @@ void _expectAllDrawn(Chart chart, StressChartScene scene, int n, String at) {
   final controller = meta.controller!;
   // The test reads `_drawStart` and `_drawCount` of the controller, as the
   // draw does (core.datasetController.js:723-736).
-  // ignore: invalid_use_of_internal_member
   final drawStart = controller.drawStart;
   // See drawStart.
-  // ignore: invalid_use_of_internal_member
   final drawCount = controller.drawCount;
   expect(drawStart == null || drawStart == 0, isTrue, reason: at);
   expect(drawCount == null || drawCount == n, isTrue, reason: at);

@@ -20,7 +20,6 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
 // state: the generator reads them from src/handlers.ts and src/state.ts.
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// The chart of the running fixture and its observations, or null outside a
 /// run.

@@ -8,21 +8,6 @@ import 'dart:ui' as ui;
 
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
-    show ArcOptions;
-import 'package:flutter_chartjs_port/src/typed/axes.dart';
-import 'package:flutter_chartjs_port/src/typed/chart_value.dart';
-import 'package:flutter_chartjs_port/src/typed/config.dart';
-import 'package:flutter_chartjs_port/src/typed/datasets.dart';
-import 'package:flutter_chartjs_port/src/typed/groups.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 const red = ui.Color(0xffff0000);
@@ -98,7 +83,7 @@ class _CountingPie(super.chart, super.datasetIndex, [super.newTarget])
   );
   @override
   void updateElement(
-    types.Element element,
+    IElement element,
     int? index,
     Object properties,
     String mode,
@@ -193,16 +178,15 @@ class _UserRadial(super.cfg) extends RadialLinearScale {
   );
 }
 
-class _CustomList(final List<types.Element> values)
-    extends ListBase<types.Element> {
+class _CustomList(final List<IElement> values) extends ListBase<IElement> {
   @override
   int get length => values.length;
   @override
   set length(int value) => values.length = value;
   @override
-  types.Element operator [](int index) => values[index];
+  IElement operator [](int index) => values[index];
   @override
-  void operator []=(int index, types.Element value) => values[index] = value;
+  void operator []=(int index, IElement value) => values[index] = value;
 }
 
 /// A parsed list of the user: the loop must not treat it as a native list.
@@ -1271,7 +1255,7 @@ void main() {
         armed = false;
         meta.controller!.options.jsWrite('spacing', 9.0);
       };
-      final arcs = <types.Element>[...meta.data]..[5] = probe;
+      final arcs = <IElement>[...meta.data]..[5] = probe;
       armed = true;
       meta.controller!.updateElements(arcs, 0, 8, 'none');
       expect(armed, isFalse);

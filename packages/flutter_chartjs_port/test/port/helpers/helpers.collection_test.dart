@@ -1,7 +1,5 @@
 // Original code, not ported from Chart.js: helpers.collection port tests.
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream behavior that test/specs/helpers.collection.tests.js does not
@@ -11,7 +9,7 @@ import 'package:test/test.dart';
 /// A point element with only the members that the lookups read. The
 /// control points are NaN, which stands for JS `undefined` (`SplinePoint`).
 final class _Point(@override final double x, @override final double y)
-    implements PointElement {
+    implements IPointElement {
   @override
   Map<String, Object?>? get options => null;
 

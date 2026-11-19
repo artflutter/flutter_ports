@@ -16,9 +16,7 @@
 /// `hand/`, as `index.dart` is.
 library;
 
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The chart event that getRelativePosition (helpers.dom.ts:105-130) gives
 /// for the raw `mousemove` of a tooltip fixture at [point]: at DPR 1 and
@@ -29,7 +27,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// One value differs: upstream `tooltip._eventPosition` is `{x: undefined,
 /// y: undefined}` for the raw event, and here it has the numbers. Only the
 /// positioner `nearest` reads it, and the 8 fixtures use `average`.
-types.ChartEvent fixtureMouseMove(Point point) => _FixtureEvent(
+ChartEvent fixtureMouseMove(Point point) => _FixtureEvent(
   (point.x ?? 0).roundToDouble(),
   (point.y ?? 0).roundToDouble(),
 );
@@ -38,7 +36,7 @@ types.ChartEvent fixtureMouseMove(Point point) => _FixtureEvent(
 /// relative position. The form of `_PointEvent` of
 /// `test/specs/controller.line_test.dart`.
 final class _FixtureEvent(@override final double? x, @override final double? y)
-    implements types.ChartEvent {
+    implements ChartEvent {
   @override
   String get type => 'mousemove';
 
@@ -46,5 +44,5 @@ final class _FixtureEvent(@override final double? x, @override final double? y)
   NativeEvent? get native => null;
 
   @override
-  types.Chart? get chart => null;
+  IChart? get chart => null;
 }

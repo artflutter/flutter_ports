@@ -23,19 +23,7 @@ import 'dart:ui'
         TextDirection;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart';
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart';
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
 const String pluginTooltipReferenceNode = 'v24.22.1';

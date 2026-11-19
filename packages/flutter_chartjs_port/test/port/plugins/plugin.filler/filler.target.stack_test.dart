@@ -12,14 +12,7 @@
 // `x` and `y` it gives `[0, 2]` and `[3, 5]`. The file is a pure layer
 // test: test:web runs it too.
 
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.stack.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// A point element at ([x], [y]).
@@ -29,7 +22,7 @@ PointElement _pe(double x, double y) => PointElement()
 
 /// The points of the stack line of the style case, with [odd] at the
 /// indexes 2 and 3 (p4_bare_point.mjs).
-List<types.PointElement> _make(types.PointElement Function() odd) => [
+List<IPointElement> _make(IPointElement Function() odd) => [
   _pe(30.681640625, 483.6),
   _pe(30.681640625, 483.6),
   odd(),
@@ -40,7 +33,7 @@ List<types.PointElement> _make(types.PointElement Function() odd) => [
 ];
 
 /// `[start, end, loop]` of each segment.
-List<List<Object?>> _segs(List<types.Segment> segments) => [
+List<List<Object?>> _segs(List<Segment> segments) => [
   for (final s in segments) [s.start, s.end, s.loop],
 ];
 
@@ -95,8 +88,7 @@ void main() {
     });
 
     test('a List result gives a bare point', () {
-      final point =
-          stackResultPoint(<types.Point>[_pe(1, 2), _pe(3, 4)])! as Element;
+      final point = stackResultPoint(<Point>[_pe(1, 2), _pe(3, 4)])! as Element;
       expect(point, isA<PointElement>());
       for (final key in ['x', 'y', 'angle', 'skip', 'stop']) {
         expect(point[key], same(undefined), reason: key);

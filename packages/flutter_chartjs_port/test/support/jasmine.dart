@@ -26,32 +26,7 @@ library;
 
 import 'package:chartjs_test_utils/pure.dart' show equalColorValues;
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasRenderingContext2D;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show ArrayListener, listenArrayEvents, unlistenArrayEvents;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextResolver, Resolver;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show ChartArea;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import 'data_label.dart';
@@ -158,10 +133,10 @@ final class const _JasmineEquals(final Object? expected) extends Matcher {
     if (a is LegendHitBox && b is Map<String, Object?>) {
       return a.equalsTo(legendHitBoxFromReference(b));
     }
-    if (a is types.TooltipBodyItem && b is Map<String, Object?>) {
+    if (a is TooltipBodyItem && b is Map<String, Object?>) {
       return _eq(plainBodyItem(a), b, aStack, bStack, path);
     }
-    if (a is Map<String, Object?> && b is types.TooltipBodyItem) {
+    if (a is Map<String, Object?> && b is TooltipBodyItem) {
       return _eq(a, plainBodyItem(b), aStack, bStack, path);
     }
     if (a is LegendItem && b is Map<String, Object?>) {
@@ -376,16 +351,16 @@ final class JasmineSpy._(
 
   /// The spy as a hook of a native plugin that cannot cancel (Chart.js ADR
   /// 0144): each call records `(chart, args, options)`.
-  late final void Function(types.Chart chart, Object args, Object? options)
-  hook = _register((chart, args, options) {
-    calls.add([chart, args, options]);
-    if (_callThrough) _callOriginal(_original, [chart, args, options]);
-  });
+  late final void Function(IChart chart, Object args, Object? options) hook =
+      _register((chart, args, options) {
+        calls.add([chart, args, options]);
+        if (_callThrough) _callOriginal(_original, [chart, args, options]);
+      });
 
   /// The spy as a cancelable hook of a native plugin (Chart.js ADR 0144):
   /// each call records `(chart, args, options)` and gives `true`, or the
   /// result of the original hook after `and.callThrough()`.
-  late final bool Function(types.Chart chart, Object args, Object? options)
+  late final bool Function(IChart chart, Object args, Object? options)
   cancelableHook = _register((chart, args, options) {
     calls.add([chart, args, options]);
     return !_callThrough ||
@@ -650,7 +625,7 @@ final class _LineSpy(
 /// (core.datasetController.js:712-741), and an update keeps the slot. The
 /// element must be a `PointElement`, a `BarElement` or an `ArcElement`.
 JasmineCalls spyOnElementDraw(
-  types.ChartMeta meta,
+  ChartMeta meta,
   int index, {
   bool callThrough = false,
 }) {
@@ -678,7 +653,7 @@ JasmineCalls spyOnElementDraw(
 /// [callThrough] is `.and.callThrough()` for both methods. A line with a
 /// running animation throws a [StateError], as in [spyOnElementDraw].
 ({JasmineCalls draw, JasmineCalls updateControlPoints}) spyOnDataset(
-  types.ChartMeta meta, {
+  ChartMeta meta, {
   bool callThrough = false,
 }) {
   final line = meta.dataset;

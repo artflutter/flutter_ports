@@ -3,12 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../../../support/list_splice.dart';
 

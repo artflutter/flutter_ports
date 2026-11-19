@@ -2,16 +2,13 @@
 
 import 'dart:ui' show Size;
 
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/plugin_defaults.dart';
 
 /// A chart for the calls: each member throws.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -172,7 +169,7 @@ void main() {
 }
 
 /// An event for [EventHookArgs]: each member throws.
-final class _Event() implements types.ChartEvent {
+final class _Event() implements ChartEvent {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

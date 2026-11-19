@@ -1,12 +1,7 @@
 // Original code, not ported from Chart.js: tests of the curve of `easing`.
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve, Curves;
-import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/animation_spec_input.dart';

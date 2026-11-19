@@ -35,15 +35,9 @@ import 'dart:ui';
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/foundation.dart' show kIsWeb;
-import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
-    show setDefaultDateZone;
+import 'package:flutter_chartjs_port/chartjs.dart';
 // The specs run on the UMD entry of Chart.js, which registers the built-in
 // components. flutter_chartjs_port does not export lib/src/index.dart yet.
-import 'package:flutter_chartjs_port/src/index.dart'
-    show Chart, controllers, defaults, elements, plugins, scales;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart'
-    show foreignAudit;
 import 'package:flutter_test/flutter_test.dart';
 
 import 'port/options/foreign_audit.dart';

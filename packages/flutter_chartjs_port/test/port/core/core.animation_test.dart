@@ -2,21 +2,9 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
-    as color_helpers;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint, SolidChartPaint;
-import 'package:flutter_chartjs_port/src/types/color.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+// The color of the kurkle library has the name of the helper color.
+import 'package:flutter_chartjs_port/chartjs_core.dart' as color_helpers;
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 

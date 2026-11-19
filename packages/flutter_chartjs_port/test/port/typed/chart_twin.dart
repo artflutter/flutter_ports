@@ -36,7 +36,6 @@ library;
 import 'package:flutter/gestures.dart' show PointerDeviceKind;
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -138,7 +137,7 @@ Future<List<ChartState>> _run(WidgetTester tester, Widget view) async {
   await _settle(tester, chart);
   final initial = _state(chart);
 
-  final element = chart.getDatasetMeta(0).data[1] as types.VisualElement;
+  final element = chart.getDatasetMeta(0).data[1] as VisualElement;
   final center = element.getCenterPoint(true);
   final target = Offset(center.x!, center.y!);
   final origin = tester.getTopLeft(find.byType(ChartHost));

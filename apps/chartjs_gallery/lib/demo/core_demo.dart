@@ -7,7 +7,6 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/demo/gallery_components.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: the frozen state of the options (Chart.js ADR 0021, §5).
 import 'package:material_ui/material_ui.dart';
 
 /// A mode of the selector: the id of its segment, the short text of the
@@ -261,7 +260,7 @@ class CoreDemoState() extends State<CoreDemo> {
   }
 
   /// The `onProgress` and `onComplete` of the animation.
-  void _onAnimationFrame(AnimationEvent event) => _readout.value++;
+  void _onAnimationFrame(IAnimationEvent event) => _readout.value++;
 
   /// Five value lines over the chart area, with no scale.
   static void _drawValueLines(Chart chart) {

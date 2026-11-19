@@ -1,8 +1,6 @@
 // Original code, not ported from Chart.js: BasicPlatform without a chart.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // test/specs/platform.basic_test.dart covers the chart cases. These tests
@@ -32,7 +30,7 @@ final class _Context() implements CanvasRenderingContext2D {
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class _Config() implements types.ChartConfiguration {
+final class _Config() implements ChartConfiguration {
   @override
   final Map<String, Object?> options = {'animation': <String, Object?>{}};
 

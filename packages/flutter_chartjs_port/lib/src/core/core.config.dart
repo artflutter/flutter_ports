@@ -31,47 +31,8 @@
 /// options, as upstream imports no element module.
 library;
 
-import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/data_update.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show NativePointResolution;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray, isFunction, isObject, mergeIf, resolveObjectKey;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    as core
-    show valueOrDefault;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show JsProxyObject, jsObjectKeys, jsOwnPropertyNames;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToString, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet, jsSet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
-    show ElementOptions;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey, OptionScope;
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
-    show ArcOptions, BarOptions, PointOptions;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        ArcOptionsScope,
-        BarOptionsScope,
-        ElementOptionsByTypeScope,
-        PointOptionsScope,
-        ScaleOptionsByIdScope,
-        ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
 import 'package:meta/meta.dart';
 
 /// core.config.js:5 `getIndexAxis`.
@@ -356,7 +317,7 @@ void _initOptions(Object config) {
   jsSet(
     options,
     'plugins',
-    core.valueOrDefault(jsGet(options, 'plugins'), <String, Object?>{}),
+    valueOrDefault(jsGet(options, 'plugins'), <String, Object?>{}),
   );
   jsSet(options, 'scales', _mergeScaleConfig(config, options!));
 }
@@ -461,14 +422,14 @@ Object? _themeOf(Object config) {
 /// Dart `null` (hunk H0, Chart.js ADR 0147). Hunk H5 of `plugin.colors` reads
 /// the palette from it. A configuration that is not a [Config] has no
 /// theme.
-Object? chartThemeOf(types.ChartConfiguration config) =>
+Object? chartThemeOf(ChartConfiguration config) =>
     config is Config ? _themeOf(config._config) : null;
 
 /// core.config.js:158 `class Config`, the default export.
 ///
-/// It implements [types.ChartConfiguration], the type of the configuration
+/// It implements [ChartConfiguration], the type of the configuration
 /// that `core.controller.js:137` gives to `platform.updateConfig`.
-class Config([Object? config]) implements types.ChartConfiguration {
+class Config([Object? config]) implements ChartConfiguration {
   /// core.config.js:159 `constructor(config)`.
   ///
   /// [config] is the raw configuration: a Map of the user or a typed root
@@ -484,7 +445,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
 
   /// The generation of the scope and resolver caches. Each clear of them
   /// changes it (Chart.js ADR 0092).
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the same cached resolver.
   int get resolutionGeneration => _resolutionGeneration;
 
@@ -530,7 +490,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
 
   /// Native category labels after the ordinary first callback has resolved the
   /// source. Config subclasses and custom containers retain normal reads.
-  @internal
   // DIVERGES(chartjs): adapt-category-label-dispatch, native container guard.
   List<Object?>? categoryLabels(
     Object? explicitLabels, {
@@ -540,7 +499,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
       : null;
 
   /// A live, effect-free proof of the ordinary single bar dataset container.
-  @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, native source guard.
   bool hasNativeSingleBarDataset(CartesianAxis axis) =>
       _barDatasetSource?.read(axis) ?? false;
@@ -558,7 +516,7 @@ class Config([Object? config]) implements types.ChartConfiguration {
   @override
   Object get data {
     // DIVERGES(chartjs): adapt-config-objects, the data object is an object.
-    final data = helpers.readOption(_config, OptionKey.data);
+    final data = readOption(_config, OptionKey.data);
     return data is OptionScope || _isConfigObject(data)
         ? data!
         : throw TypeError();
@@ -586,13 +544,11 @@ class Config([Object? config]) implements types.ChartConfiguration {
   }
 
   /// Native root reads only; unknown configuration objects keep full updates.
-  @internal
   bool get supportsDataUpdates =>
       super.runtimeType == Config && nativeDataUpdateRoot(_config);
 
   /// A cached color-only plan for the exact native single-dataset bar loop.
   /// All reads used by context refresh must be ordinary native reads too.
-  @internal
   // DIVERGES(chartjs): adapt-prepared-indexed-options, native qualification.
   BarOptions Function(int)? prepareIndexedBarColors() {
     if (super.runtimeType != Config ||
@@ -635,7 +591,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
 
   /// A warmed point resolver over native context sources. No option getter
   /// or context callback runs merely to qualify this synchronous loop.
-  @internal
   // DIVERGES(chartjs): adapt-scatter-point-options, cached point inputs.
   PointOptions Function(int)? prepareIndexedPointColors(
     int datasetIndex, {
@@ -649,9 +604,8 @@ class Config([Object? config]) implements types.ChartConfiguration {
   /// [prepareIndexedPointColors], where the three size fields can also vary
   /// with the index (Chart.js ADR 0163). With [sizes] false only the colors
   /// can vary.
-  @internal
   // DIVERGES(chartjs): adapt-scatter-indexed-sizes, cached point inputs.
-  helpers.IndexedPointPlan? prepareIndexedPointPlan(
+  IndexedPointPlan? prepareIndexedPointPlan(
     int datasetIndex, {
     required String controllerType,
     bool sizes = true,
@@ -663,7 +617,7 @@ class Config([Object? config]) implements types.ChartConfiguration {
 
   /// The warmed point resolver of dataset [datasetIndex] and its keys, or
   /// Dart `null`. No option getter or context callback runs.
-  ({helpers.OptionResolver resolver, List<Object> keys})? _warmPointResolver(
+  ({OptionResolver resolver, List<Object> keys})? _warmPointResolver(
     int datasetIndex,
     String controllerType,
   ) {
@@ -709,7 +663,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
   /// A warmed arc resolver over native context sources, as
   /// [prepareIndexedPointColors]. No option getter or context callback runs
   /// merely to qualify a synchronous loop.
-  @internal
   // DIVERGES(chartjs): adapt-arc-native-options, cached arc inputs.
   ArcOptions Function(int)? prepareIndexedArcColors(
     int datasetIndex, {
@@ -759,9 +712,8 @@ class Config([Object? config]) implements types.ChartConfiguration {
   /// legend proves with it that each `getStyle(i)` of a build runs no user code
   /// (Chart.js ADR 0099). Each step here is a step of the first `getStyle` of
   /// an ordinary build: the caches that it fills are the caches of that call.
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
-  helpers.IndexedElementStyles? prepareIndexedArcStyles(
+  IndexedElementStyles? prepareIndexedArcStyles(
     int datasetIndex, {
     required String controllerType,
     required int count,
@@ -813,7 +765,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
   /// `OptionResolver.hasStaticIndexedOptions` proves. The plan read the keys of
   /// `defaults.elements[elementType]` through all scopes of the resolver. No
   /// option getter or context callback runs merely to qualify.
-  @internal
   // DIVERGES(chartjs): adapt-data-update-indexed-plan, cached element inputs.
   bool hasStaticIndexedElementOptions(
     int datasetIndex, {
@@ -862,7 +813,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
 
   /// Captures a warmed point resolver for one native line loop. Every use
   /// checks the source identities, key snapshot and cache generation again.
-  @internal
   // DIVERGES(chartjs): adapt-native-line-resolution, guarded cached sources.
   NativePointResolution? prepareLineResolution(int datasetIndex) {
     final root = _config;
@@ -1267,7 +1217,7 @@ class Config([Object? config]) implements types.ChartConfiguration {
       final subResolver = createResolver(scopes, context, subPrefixes);
       // DIVERGES(chartjs): adapt-config-objects, the context is an object.
       if (!isObject(context)) throw TypeError();
-      options = helpers.attachContext(resolver, context!, subResolver);
+      options = attachContext(resolver, context!, subResolver);
     }
 
     for (final prop in names) {
@@ -1305,7 +1255,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
   /// classes receive their original virtual option-resolution call.
   /// With [allowReplacement], the caller owns [into] without exposing it to
   /// [context]; a prepared result may replace it.
-  @internal
   // DIVERGES(chartjs): adapt-indexed-element-options, owned containers.
   ElementOptions resolveNativeElementNamedOptions(
     List<Object?> scopes,
@@ -1334,7 +1283,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
   /// Resolves a controller-owned point/bar result without allocating a temporary
   /// result when a native template can return the final fresh options directly.
   /// [immutableKeys] is reserved for native immutable own-key snapshots.
-  @internal
   ElementOptions resolveOwnedElementNamedOptions(
     List<Object?> scopes,
     List<Object> keys,
@@ -1363,7 +1311,6 @@ class Config([Object? config]) implements types.ChartConfiguration {
         );
 
   /// [resolveOwnedElementNamedOptions] for an arc result (Chart.js ADR 0093).
-  @internal
   // DIVERGES(chartjs): adapt-owned-option-result, the private arc type token.
   ElementOptions resolveOwnedArcNamedOptions(
     List<Object?> scopes,
@@ -1425,10 +1372,10 @@ class Config([Object? config]) implements types.ChartConfiguration {
     // the scriptable subresolver. Hover resolution keeps its ordinary reads.
     final samePrefixes =
         preparedResolver != null ||
-        helpers.OptionResolver.nativeIndexedResult(into) &&
+        OptionResolver.nativeIndexedResult(into) &&
             (nativeInputs ||
-                (helpers.OptionResolver.nativeIndexedList(prefixes) &&
-                    helpers.OptionResolver.nativeIndexedList(scopes))) &&
+                (OptionResolver.nativeIndexedList(prefixes) &&
+                    OptionResolver.nativeIndexedList(scopes))) &&
             _samePrefixes(prefixes, subPrefixes);
     // DIVERGES(chartjs): adapt-indexed-element-options, native cached values.
     final indexed =
@@ -1472,9 +1419,9 @@ class Config([Object? config]) implements types.ChartConfiguration {
                   )
             : null);
     if (indexed?.resolved ?? false) return indexed?.prepared ?? into;
-    final result = owned ? helpers.OptionResolver.newNativeResult(into) : into;
+    final result = owned ? OptionResolver.newNativeResult(into) : into;
     if (owned) result.storeKey(OptionKey.dollarShared, true);
-    helpers.OptionView? view;
+    OptionView? view;
     if (indexed != null || _needContextKeys(resolver, keys)) {
       // A declined native fill already stored $shared before its context call.
       if (indexed == null || owned) {
@@ -1484,7 +1431,7 @@ class Config([Object? config]) implements types.ChartConfiguration {
       // subResolver is passed to scriptable options. It should not resolve to
       // hover options.
       final subResolver = createResolver(scopes, ctx, subPrefixes);
-      view = helpers.attachContext(resolver, ctx, subResolver);
+      view = attachContext(resolver, ctx, subResolver);
     }
 
     for (final key in keys) {
@@ -1527,7 +1474,7 @@ class Config([Object? config]) implements types.ChartConfiguration {
     List<Object?> scopes, [
     Object? context,
     List<String> prefixes = const [''],
-    helpers.DescriptorDefaults? descriptorDefaults,
+    DescriptorDefaults? descriptorDefaults,
   ]) {
     final (:resolver, subPrefixes: _) = _getResolver(
       _resolverCache,
@@ -1535,22 +1482,14 @@ class Config([Object? config]) implements types.ChartConfiguration {
       prefixes,
     );
     return isObject(context)
-        ? helpers.attachContext(
-            resolver,
-            context!,
-            undefined,
-            descriptorDefaults,
-          )
+        ? attachContext(resolver, context!, undefined, descriptorDefaults)
         : resolver;
   }
 }
 
 /// The object `{resolver, subPrefixes}` of the resolver cache
 /// (core.config.js:393-396).
-typedef _CachedResolver = ({
-  helpers.Resolver resolver,
-  List<String> subPrefixes,
-});
+typedef _CachedResolver = ({Resolver resolver, List<String> subPrefixes});
 
 /// core.config.js:383 `getResolver`.
 ///
@@ -1571,7 +1510,7 @@ _CachedResolver _getResolver(
   cacheKey ??= prefixes.join(',');
   var cached = cache[cacheKey];
   if (cached == null) {
-    final resolver = helpers.createResolver(scopes, prefixes);
+    final resolver = createResolver(scopes, prefixes);
     cached = (
       resolver: resolver,
       subPrefixes: prefixes
@@ -1606,8 +1545,8 @@ bool _hasFunction(Object? value) {
 ///
 /// `isScriptable` and `isIndexable` give the ToBoolean of their result
 /// (`helpers.config.dart`). The callers test only its truth.
-bool _needContext(helpers.Resolver proxy, List<String> names) {
-  final descriptors = helpers.descriptors(proxy);
+bool _needContext(Resolver proxy, List<String> names) {
+  final descriptors = descriptorsOf(proxy);
 
   for (final prop in names) {
     final scriptable = descriptors.isScriptable(prop);
@@ -1624,8 +1563,8 @@ bool _needContext(helpers.Resolver proxy, List<String> names) {
 /// core.config.js:405 `needContext` over the typed keys of the element
 /// step: the result of `needContext` for their names, with the typed read
 /// `readKey` of a key of the schema.
-bool _needContextKeys(helpers.OptionResolver proxy, List<Object> keys) {
-  final descriptors = helpers.descriptors(proxy);
+bool _needContextKeys(OptionResolver proxy, List<Object> keys) {
+  final descriptors = descriptorsOf(proxy);
 
   for (final key in keys) {
     final prop = key is OptionKey ? key.jsName : key as String;

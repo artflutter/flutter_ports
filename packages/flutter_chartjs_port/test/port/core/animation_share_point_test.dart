@@ -7,10 +7,6 @@ import 'dart:ui' show Color;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/core/animation_share.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart' as core;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 // `ScatterController.update` with one resolution of the animation options
@@ -64,9 +60,9 @@ _Config _scatter({
       },
       'options': <String, Object?>{
         'animation': <String, Object?>{
-          'onProgress': (AnimationEvent event) =>
+          'onProgress': (IAnimationEvent event) =>
               log.add('progress ${event.currentStep} of ${event.numSteps}'),
-          'onComplete': (AnimationEvent event) =>
+          'onComplete': (IAnimationEvent event) =>
               log.add('complete ${event.currentStep} of ${event.numSteps}'),
           if (twin) 'delay': _twinDelay,
           ...?animation,
@@ -78,13 +74,13 @@ _Config _scatter({
       },
     };
 
-List<core.Element> _points(Chart chart) => [
+List<Element> _points(Chart chart) => [
   for (
     var i = 0;
     i < (jsGet(chart.data, 'datasets')! as List<Object?>).length;
     i++
   )
-    ...chart.getDatasetMeta(i).data.cast<core.Element>(),
+    ...chart.getDatasetMeta(i).data.cast<Element>(),
 ];
 
 const List<String> _optionNames = [
@@ -462,10 +458,7 @@ final class _SubScatterController(
       'defaults': ScatterController.defaults,
       'overrides': ScatterController.overrides,
     },
-    construct: (newTarget, args) => _SubScatterController(
-      args[0]! as types.Chart,
-      args[1]! as int,
-      newTarget,
-    ),
+    construct: (newTarget, args) =>
+        _SubScatterController(args[0]! as IChart, args[1]! as int, newTarget),
   );
 }

@@ -2,19 +2,7 @@
 import 'dart:collection';
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 const _red = ChartPaint.solid(Color(0xffff0000));
@@ -110,8 +98,8 @@ class _Fixture({bool ordinary = false, Object? colors = const [_red, _blue]}) {
         allowReplacement: true,
       ) as PointOptions;
 
-  helpers.OptionResolver get resolver =>
-      config.createResolver(scopes, null, prefixes) as helpers.OptionResolver;
+  OptionResolver get resolver =>
+      config.createResolver(scopes, null, prefixes) as OptionResolver;
 
   bool probe([int index = 0]) =>
       resolver
@@ -127,9 +115,7 @@ class _Fixture({bool ordinary = false, Object? colors = const [_red, _blue]}) {
 }
 
 Object? _plain(Object? value) => switch (value) {
-  final helpers.OptionView v => {
-    for (final k in v.jsKeys()) k: _plain(v.jsRead(k)),
-  },
+  final OptionView v => {for (final k in v.jsKeys()) k: _plain(v.jsRead(k))},
   final List<Object?> l => l.map(_plain).toList(),
   _ => value,
 };

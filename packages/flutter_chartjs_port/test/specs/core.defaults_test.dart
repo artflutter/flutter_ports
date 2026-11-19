@@ -1,8 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/core.defaults.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // `Chart.defaults` is the default export of core.defaults.js, [defaults].

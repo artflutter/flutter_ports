@@ -1,10 +1,6 @@
 // Original code, not ported from Chart.js: tests of the typed properties.
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
-import 'package:flutter_chartjs_port/src/options/props.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 void main() {

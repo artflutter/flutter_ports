@@ -1,18 +1,5 @@
 // Original code, not ported from Chart.js: core.element cases with no spec.
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isObject;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext, ScriptableScaleContext;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
-import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The spec core.element.tests.js tests only getProps with x and y. These
@@ -28,7 +15,7 @@ import 'package:test/test.dart';
 
 /// A test animation with the two members that getProps reads.
 final class _Animation(@override final Object? to, {final bool _active = true})
-    implements types.Animation {
+    implements IAnimation {
   @override
   bool active() => _active;
 }
@@ -176,7 +163,7 @@ void main() {
 
     test('the setters leave the undefined state', () {
       final options = <String, Object?>{'radius': 2.0};
-      final animations = <String, types.Animation>{};
+      final animations = <String, IAnimation>{};
       final elem = Element()
         ..x = 10
         ..y = -1.5
@@ -312,7 +299,7 @@ void main() {
 
     test('a bool and the declared objects are written by name', () {
       final options = <String, Object?>{'radius': 3.0};
-      final animations = <String, types.Animation>{'x': _Animation(4.0)};
+      final animations = <String, IAnimation>{'x': _Animation(4.0)};
       final elem = Element()
         ..['active'] = true
         ..['options'] = options
@@ -729,7 +716,7 @@ void main() {
   group('ElementPoint', () {
     test('is a Point that compares by value', () {
       const point = ElementPoint(1, 2);
-      expect(point, isA<types.Point>());
+      expect(point, isA<Point>());
       expect(point.x, 1.0);
       expect(point.y, 2.0);
       expect(point, const ElementPoint(1, 2));
@@ -761,10 +748,10 @@ void main() {
       final elem = Element()
         ..x = 3
         ..y = 4;
-      expect(elem, isA<types.Element>());
-      expect(elem, isA<types.Point>());
+      expect(elem, isA<IElement>());
+      expect(elem, isA<Point>());
       expect(elem, isA<ElementProps>());
-      final types.Point point = elem;
+      final Point point = elem;
       expect(point.x, 3.0);
       expect(point.y, 4.0);
     });

@@ -14,7 +14,7 @@ library;
 import 'dart:ui' show Color, FontStyle;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The tokens of the light preset at their Chart.js v4.5.1 values
 /// (theming.md §4). A chart with them equals an unthemed chart. The tokens

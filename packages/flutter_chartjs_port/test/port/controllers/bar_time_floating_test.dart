@@ -6,11 +6,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show FloatingBar;
-import 'package:flutter_chartjs_port/src/options/props.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The ordinary path of Chart.js ADR 0157: a subclass of Chart takes neither
@@ -101,7 +97,7 @@ Object _observe(Chart chart) => [
         'borderSkipped',
         'inflateAmount',
       ])
-        _plain((e as types.ElementPropertyRead)[key]),
+        _plain((e as ElementPropertyRead)[key]),
       _plain((e as BarElement).options),
     ],
 ];

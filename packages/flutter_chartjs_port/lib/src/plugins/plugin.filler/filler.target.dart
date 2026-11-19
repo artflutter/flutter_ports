@@ -18,27 +18,7 @@
 library;
 
 // DIVERGES(chartjs): adapt-line-points-elements, the wraps make point elements.
-import 'package:flutter_chartjs_port/src/elements/element.point.dart'
-    show PointElement;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFinite;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show DatasetFill, ShapeFill, StackFill;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart'
-    show createBoundaryLine;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart'
-    show getTargetPixel, getTargetValue;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.stack.dart'
-    show buildStackLine;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
-    show FillerSource;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart'
-    show SimpleArc;
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show optionOf;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// filler.target.js:13 `_getTarget(source)`.
 ///
@@ -79,7 +59,7 @@ Object? getTarget(FillerSource source) {
 ///
 /// `getDatasetMeta` always gives a meta. Dart `null` is the JS `null` of a
 /// hidden dataset, and of a meta without a `dataset` element.
-types.Element? _getLineByIndex(types.Chart chart, int index) {
+IElement? _getLineByIndex(IChart chart, int index) {
   final meta = chart.getDatasetMeta(index);
   final visible = chart.isDatasetVisible(index);
   return visible ? meta.dataset : null;
@@ -92,7 +72,7 @@ types.Element? _getLineByIndex(types.Chart chart, int index) {
 Object? _computeBoundary(FillerSource source) {
   final scale = source.scale;
 
-  if (scale is types.RadialLinearScale) {
+  if (scale is IRadialLinearScale) {
     return _computeCircularBoundary(source, scale);
   }
   return _computeLinearBoundary(source);
@@ -120,10 +100,7 @@ Object? _computeBoundary(FillerSource source) {
 ///
 /// The result is a [SimpleArc] on a circular grid, else the points of the
 /// polygon as point elements.
-Object _computeCircularBoundary(
-  FillerSource source,
-  types.RadialLinearScale scale,
-) {
+Object _computeCircularBoundary(FillerSource source, IRadialLinearScale scale) {
   final fill = source.fill;
   final options = scale.options;
   final length = scale.getLabels().length;
@@ -131,7 +108,7 @@ Object _computeCircularBoundary(
       ? scale.max
       : scale.min;
   final value = getTargetValue(fill, scale, start);
-  final target = <types.PointElement>[];
+  final target = <IPointElement>[];
 
   if (jsTruthy(
     optionOf(optionOf(options, OptionKey.grid), OptionKey.circular),

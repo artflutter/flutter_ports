@@ -17,42 +17,7 @@ import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart'
-    show AnimationEventHandler;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionAxis, InteractionMode;
-import 'package:flutter_chartjs_port/src/options/opt.dart' show OptScope;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show AnimationSettings, ChartTransition, transitionModeOf;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AnimationOptionsScope,
-        FillerOptionsScope,
-        InteractionOptionsScope,
-        LegendLabelOptionsScope,
-        LegendOptionsScope,
-        TitleOptionsScope,
-        TooltipOptionsScope,
-        TransitionOptionsScope,
-        TransitionsSpecScope;
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
-    show FillerDrawTime;
-import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
-    show TooltipPositioner;
-import 'package:flutter_chartjs_port/src/typed/lower.dart';
-import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show ChartAlign, TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart'
-    show TooltipItem, TooltipModel;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/legend_callbacks.dart'
-    show LegendEventHandler;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The legend: the options of the legend plugin, `options.plugins.legend`
 /// (`docs/configuration/legend.md`).
@@ -197,7 +162,6 @@ final class const ChartLegend({
 /// The `legend` scope of [legend] (Chart.js ADR 0052, section 2; Chart.js
 /// ADR 0054 §7). The handlers lower to trampolines that call the handler of
 /// the newest config of [lowering].
-@internal
 LegendOptionsScope lowerLegend(
   ChartLegend legend,
   ChartConfigLowering lowering,
@@ -324,7 +288,6 @@ final class const ChartTitle({
 }
 
 /// The `title` or `subtitle` scope of [title].
-@internal
 TitleOptionsScope lowerTitle(ChartTitle title) {
   final scope = TitleOptionsScope();
   put(scope, OptionKey.display, title.display);
@@ -531,7 +494,6 @@ final class const ChartTooltip({
 
 /// The `tooltip` scope of [tooltip]. The text callbacks lower to
 /// trampolines that call the callback of the newest config of [lowering].
-@internal
 TooltipOptionsScope lowerTooltip(
   ChartTooltip tooltip,
   ChartConfigLowering lowering,
@@ -654,7 +616,6 @@ final class const ChartInteraction({
 }
 
 /// The `interaction` scope of [interaction].
-@internal
 InteractionOptionsScope lowerInteraction(ChartInteraction interaction) {
   final scope = InteractionOptionsScope();
   put(scope, OptionKey.mode, interaction.mode);
@@ -721,7 +682,6 @@ final class const ChartFiller({
 }
 
 /// The `filler` scope of [filler].
-@internal
 FillerOptionsScope lowerFiller(ChartFiller filler) {
   final scope = FillerOptionsScope();
   put(scope, OptionKey.propagate, filler.propagate);
@@ -846,7 +806,6 @@ void _putSettings(AnimationOptionsScope scope, AnimationSettings settings) {
 ///
 /// The items of `ChartTransition.animations` are not in the options: the
 /// animations of the chart read them from the item.
-@internal
 TransitionsSpecScope? lowerTransitions(List<ChartTransition> transitions) {
   TransitionsSpecScope? spec;
   final modes = <String>{};
@@ -878,7 +837,6 @@ TransitionsSpecScope? lowerTransitions(List<ChartTransition> transitions) {
 /// holds [animation], the object of the app. The callbacks
 /// lower to trampolines that call the callback of the newest config of
 /// [lowering].
-@internal
 Object lowerAnimation(ChartAnimation animation, ChartConfigLowering lowering) {
   if (animation._none) return false;
   final scope = AnimationOptionsScope();

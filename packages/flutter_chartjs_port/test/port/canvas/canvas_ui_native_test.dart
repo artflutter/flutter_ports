@@ -13,13 +13,7 @@ import 'dart:ui' as ui;
 // form with the same drawing on another path.
 
 import 'package:flutter/painting.dart' show HSLColor;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart'
-    show maxAtlasInstances;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'pixel_compare.dart';

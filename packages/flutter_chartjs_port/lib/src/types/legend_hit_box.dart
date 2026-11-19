@@ -5,8 +5,7 @@ library;
 
 import 'dart:ui' show Offset;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show isBetween;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The native, extensible hit box of a legend entry.
 ///

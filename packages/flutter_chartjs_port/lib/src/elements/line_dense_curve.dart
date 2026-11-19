@@ -28,13 +28,7 @@ library;
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart' show CanvasPath;
-import 'package:flutter_chartjs_port/src/canvas/canvas_dense_curve.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart'
-    show PointElement;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show bezierCurveTo;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// Differential test switch of Chart.js ADR 0114; not a chart option. With it
@@ -73,8 +67,8 @@ double? denseCurveScaleOf(CanvasPath ctx) =>
 /// ends and the two control points lie within [width] units of x.
 @pragma('vm:prefer-inline')
 bool _narrow(
-  types.PointElement previous,
-  types.PointElement point,
+  IPointElement previous,
+  IPointElement point,
   double c1x,
   double c1y,
   double c2x,
@@ -120,7 +114,7 @@ bool _narrow(
 /// True when at least one curve went out as lines.
 bool writeDenseCurve(
   CanvasPath ctx,
-  List<types.PointElement> points, {
+  List<IPointElement> points, {
   required double start,
   required double count,
   required double ilen,
@@ -134,7 +128,7 @@ bool writeDenseCurve(
   var first = move;
   var curves = 0;
   var replaced = 0;
-  types.PointElement? prev;
+  IPointElement? prev;
 
   for (var i = 0.0; i <= ilen; ++i) {
     final point =

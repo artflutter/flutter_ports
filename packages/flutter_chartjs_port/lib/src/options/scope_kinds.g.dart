@@ -9,10 +9,7 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
-import 'package:flutter_chartjs_port/src/options/opt.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A kind of option scope.
 enum ScopeKind(

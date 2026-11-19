@@ -1,15 +1,7 @@
 // Original code, not ported from Chart.js: the host of a gallery Chart.
 
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, animator;
-// Not public: UiCanvasElement, the canvas of the host (Chart.js ADR 0048).
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-// Not public: ChartHost, the internal host of ChartView (Chart.js ADR 0048).
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// Makes the chart of a [ChartCanvas] on its [canvas]: `new Chart(canvas,
 /// config)`.

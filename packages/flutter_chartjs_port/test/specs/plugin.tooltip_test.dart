@@ -12,41 +12,9 @@ import 'dart:ui' show TextAlign;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/chartjs.dart'
-    show
-        ChartPaint,
-        TooltipCallbacks,
-        TooltipLabelPointStyle,
-        TooltipLabelStyle;
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show IndexInteractionMode, NearestInteractionMode;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show CirclePointStyle;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' show merge;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show toFont;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';
-import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
-    show TooltipPosition, TooltipPositioner;
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show Point;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -120,7 +88,7 @@ AnyObject _point(num x, num y) => <String, Object?>{'x': x, 'y': y};
 /// The active elements [items] as the objects `{datasetIndex, index,
 /// element}` of a Jasmine `toEqual`. Dart `null` of an element is JS
 /// `undefined`.
-List<Object?> _activeItems(List<types.ActiveElement> items) => [
+List<Object?> _activeItems(List<ActiveElement> items) => [
   for (final item in items)
     <String, Object?>{
       'datasetIndex': item.datasetIndex,
@@ -262,7 +230,7 @@ ChartTextStyle get _normalFont => toFont(_modelFont());
 
 /// The chart of the text align cases (:1487-1496): `getContext` and
 /// `options` only. The draw of these cases reads only `getContext()`.
-final class _TextAlignChart() implements types.Chart {
+final class _TextAlignChart() implements IChart {
   @override
   AnyObject getContext() => <String, Object?>{};
 
@@ -1292,7 +1260,7 @@ void main() {
         Future<void> testSlice(int slice, int count) async {
           final meta = chart.getDatasetMeta(0);
           final element = meta.data[slice];
-          final center = (element as types.VisualElement).getCenterPoint();
+          final center = (element as VisualElement).getCenterPoint();
           final point = _point(center.x!, center.y!);
           final tooltipPosition = (meta.data[slice] as Element)
               .tooltipPosition();
@@ -2181,18 +2149,14 @@ void main() {
 final class _RecordingPositioner() extends TooltipPositioner {
   /// The calls, in order.
   final List<
-    ({
-      types.TooltipModel tooltip,
-      List<types.ActiveElement> items,
-      Object? eventPosition,
-    })
+    ({TooltipModel tooltip, List<ActiveElement> items, Object? eventPosition})
   >
   calls = [];
 
   @override
   TooltipPosition? positionOf(
-    types.TooltipModel tooltip,
-    List<types.ActiveElement> items,
+    TooltipModel tooltip,
+    List<ActiveElement> items,
     Object? eventPosition,
   ) {
     calls.add((tooltip: tooltip, items: items, eventPosition: eventPosition));
@@ -2203,12 +2167,12 @@ final class _RecordingPositioner() extends TooltipPositioner {
 }
 
 /// A chart that no positioner of the tests reads.
-final class _NoChart() implements types.Chart {
+final class _NoChart() implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class const _CallbackTooltip() implements types.TooltipModel {
+final class const _CallbackTooltip() implements TooltipModel {
   @override
   Object get options => const <String, Object?>{};
   @override

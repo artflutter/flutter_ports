@@ -26,18 +26,7 @@ library;
 import 'dart:ui' show FontWeight;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show DescriptorsScope, TitleOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show TitleOptions;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show Plugin, PluginHookArgs, UpdateHookArgs;
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// plugin.subtitle.js:4 `const map = new WeakMap()`.
 ///
@@ -47,7 +36,7 @@ final Expando<Title> _map = Expando<Title>('subtitle');
 
 /// plugin.subtitle.js:9 `start(chart, _args, options)`. The box keeps the
 /// resolved options of the facade.
-void _start(types.Chart chart, PluginHookArgs _, TitleOptions options) {
+void _start(IChart chart, PluginHookArgs _, TitleOptions options) {
   final resolved = options.object!;
   final title = Title((ctx: chart.ctx, options: resolved, chart: chart));
 
@@ -61,7 +50,7 @@ void _start(types.Chart chart, PluginHookArgs _, TitleOptions options) {
 /// `undefined` of `map.get` on a chart without a subtitle: `removeBox` then
 /// changes nothing (core.layouts.js:318-323). `map.delete(chart)` is the
 /// write of Dart `null`.
-void _stop(types.Chart chart, PluginHookArgs _, TitleOptions _) {
+void _stop(IChart chart, PluginHookArgs _, TitleOptions _) {
   layouts.removeBox(chart, _map[chart]);
   _map[chart] = null;
 }
@@ -69,7 +58,7 @@ void _stop(types.Chart chart, PluginHookArgs _, TitleOptions _) {
 /// plugin.subtitle.js:26 `beforeUpdate(chart, _args, options)`. Without a
 /// subtitle, the null check throws the TypeError of the write into
 /// `undefined` in `layouts.configure` (core.layouts.js:332).
-bool _beforeUpdate(types.Chart chart, UpdateHookArgs _, TitleOptions options) {
+bool _beforeUpdate(IChart chart, UpdateHookArgs _, TitleOptions options) {
   final title = _map[chart]!;
   final resolved = options.object!;
   layouts.configure(chart, title, resolved);

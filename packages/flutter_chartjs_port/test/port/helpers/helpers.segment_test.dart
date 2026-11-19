@@ -1,19 +1,7 @@
 // Original code, not ported from Chart.js: segment cases with no spec.
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/elements/element.point.dart'
-    as element_point;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show pi;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream behaviour that test/specs/helpers.segment.tests.js does not check
@@ -28,7 +16,7 @@ final class _Point(
   @override final double y, {
   @override final bool? skip,
   @override final bool? stop,
-}) implements PointElement {
+}) implements IPointElement {
   @override
   Map<String, Object?>? get options => null;
 
@@ -99,7 +87,7 @@ final class _RadialPoint(@override final double? angle)
 
 /// The points of a pattern: `o` is a point, `s` a skipped point and `t` a
 /// `stop` point. Point `i` is `{x: i * 10, y: i}`.
-List<PointElement> _points(String pattern) => [
+List<IPointElement> _points(String pattern) => [
   for (var i = 0; i < pattern.length; i++)
     _Point(
       i * 10.0,
@@ -109,8 +97,8 @@ List<PointElement> _points(String pattern) => [
     ),
 ];
 
-/// A JavaScript object `{getContext}`, passed as a [Chart].
-final class _Chart() implements Chart {
+/// A JavaScript object `{getContext}`, passed as a [IChart].
+final class _Chart() implements IChart {
   @override
   Map<String, Object?> getContext() => {'chart': 'c', 'type': 'chart'};
 
@@ -119,16 +107,16 @@ final class _Chart() implements Chart {
 }
 
 /// A JavaScript object `{points, options, _chart, _loop, _fullLoop,
-/// _datasetIndex, segments}`, passed as a [LineElement]. The options get
+/// _datasetIndex, segments}`, passed as a [ILineElement]. The options get
 /// `spanGaps: false` first, as in the probe.
 final class _Line(
-  @override final List<PointElement> points, {
+  @override final List<IPointElement> points, {
   Map<String, Object?> options = const {},
-  @override final Chart? chart,
+  @override final IChart? chart,
   @override final bool? loop,
   @override final bool? fullLoop,
   @override final int? datasetIndex,
-}) implements LineElement {
+}) implements ILineElement {
   @override
   final Map<String, Object?> options = {'spanGaps': false, ...options};
 
@@ -402,10 +390,10 @@ void main() {
         boundSegment(
           const _Segment(0, 3, loop: false),
           [
-            element_point.PointElement({'y': 0}),
-            element_point.PointElement({'y': 1}),
-            element_point.PointElement({'x': 5, 'y': 2}),
-            element_point.PointElement({'x': 20, 'y': 3}),
+            PointElement({'y': 0}),
+            PointElement({'y': 1}),
+            PointElement({'x': 5, 'y': 2}),
+            PointElement({'x': 20, 'y': 3}),
           ],
           (property: 'x', start: 0, end: 10),
         ),
@@ -415,11 +403,11 @@ void main() {
         boundSegment(
           const _Segment(0, 4, loop: false),
           [
-            element_point.PointElement({'x': 0, 'y': 0}),
-            element_point.PointElement({'y': 1}),
-            element_point.PointElement({'y': 2}),
-            element_point.PointElement({'x': 5, 'y': 3}),
-            element_point.PointElement({'x': 20, 'y': 4}),
+            PointElement({'x': 0, 'y': 0}),
+            PointElement({'y': 1}),
+            PointElement({'y': 2}),
+            PointElement({'x': 5, 'y': 3}),
+            PointElement({'x': 20, 'y': 4}),
           ],
           (property: 'x', start: 4, end: 10),
         ),
@@ -434,10 +422,10 @@ void main() {
         boundSegment(
           const _Segment(0, 3, loop: false),
           [
-            element_point.PointElement({'x': double.nan, 'y': 0}),
-            element_point.PointElement({'x': double.nan, 'y': 1}),
-            element_point.PointElement({'x': 5, 'y': 2}),
-            element_point.PointElement({'x': 20, 'y': 3}),
+            PointElement({'x': double.nan, 'y': 0}),
+            PointElement({'x': double.nan, 'y': 1}),
+            PointElement({'x': 5, 'y': 2}),
+            PointElement({'x': 20, 'y': 3}),
           ],
           (property: 'x', start: 0, end: 10),
         ),
@@ -447,10 +435,10 @@ void main() {
         boundSegment(
           const _Segment(0, 3, loop: false),
           [
-            element_point.PointElement({'y': 0}),
-            element_point.PointElement({'x': double.nan, 'y': 1}),
-            element_point.PointElement({'x': 5, 'y': 2}),
-            element_point.PointElement({'x': 20, 'y': 3}),
+            PointElement({'y': 0}),
+            PointElement({'x': double.nan, 'y': 1}),
+            PointElement({'x': 5, 'y': 2}),
+            PointElement({'x': 20, 'y': 3}),
           ],
           (property: 'x', start: 0, end: 10),
         ),

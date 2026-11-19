@@ -7,10 +7,7 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main_stress.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: Tooltip, the element class of plugin.tooltip.
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
-    show Tooltip;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart' hide Tooltip;
 

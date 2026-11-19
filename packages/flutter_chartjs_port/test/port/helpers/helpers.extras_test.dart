@@ -7,12 +7,7 @@ import 'dart:async';
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // test/specs has no helpers.extras.tests.js. These tests cover the nine
@@ -25,7 +20,7 @@ import 'package:flutter_test/flutter_test.dart';
 // this file runs on the VM only (Chart.js ADR 0016, decision 10).
 
 /// A scale object literal `{axis, getUserBounds, getPixelForValue}` (or
-/// `{min, max}`), passed as a [Scale]. The other members are absent.
+/// `{min, max}`), passed as a [IScale]. The other members are absent.
 final class _Scale({
   @override final ScaleAxis axis = const XAxis(),
   @override var double min = 0,
@@ -37,7 +32,7 @@ final class _Scale({
     maxDefined: false,
   ),
   final double Function(double value) pixel = _times10,
-}) implements Scale {
+}) implements IScale {
   static double _times10(double value) => value * 10;
 
   @override
@@ -52,9 +47,9 @@ final class _Scale({
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// A dataset element with an `options` object, passed as an [Element].
+/// A dataset element with an `options` object, passed as an [IElement].
 final class _Dataset(@override final Map<String, Object?>? options)
-    implements Element {
+    implements IElement {
   @override
   double get x => 0;
 
@@ -69,10 +64,10 @@ final class _Dataset(@override final Map<String, Object?>? options)
   Object? get hidden => undefined;
 }
 
-/// A point element `{x, y}`, passed as a [PointElement]. The control points
+/// A point element `{x, y}`, passed as a [IPointElement]. The control points
 /// are NaN, which stands for JS `undefined` (`SplinePoint`).
 final class _Point(@override final double x, @override final double y)
-    implements PointElement {
+    implements IPointElement {
   @override
   Map<String, Object?>? get options => null;
 
@@ -108,12 +103,12 @@ final class _Point(@override final double x, @override final double y)
 /// A dataset meta object literal, passed as a [ChartMeta].
 final class _Meta({
   @override final bool sorted = true,
-  @override final Scale? iScale,
-  @override final Scale? vScale,
+  @override final IScale? iScale,
+  @override final IScale? vScale,
   @override final List<Map<String, Object?>> parsed = const [],
-  @override final Element? dataset,
-  @override final Scale? xScale,
-  @override final Scale? yScale,
+  @override final IElement? dataset,
+  @override final IScale? xScale,
+  @override final IScale? yScale,
 }) implements ChartMeta {
   @override
   ScaleRanges? scaleRanges;
@@ -126,12 +121,12 @@ const List<double> _xs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
 /// The meta and the points of the probe `mk(xs, ys, bounds, opts)`: the
 /// parsed values are `{x, y}`, and each point is at the pixel `x * 10`.
-(ChartMeta, List<PointElement>) _visible(
+(ChartMeta, List<IPointElement>) _visible(
   List<Object?> ys,
   ({double min, double max, bool minDefined, bool maxDefined}) bounds, {
   List<double> xs = _xs,
   bool sorted = true,
-  Element? dataset,
+  IElement? dataset,
   double Function(double value) pixel = _Scale._times10,
 }) {
   final meta = _Meta(
@@ -256,7 +251,7 @@ void main() {
         (value) => value * 5,
       ]) {
         final (meta, points) = _visible(_xs, both, pixel: pixel);
-        final elements = <Element>[...points];
+        final elements = <IElement>[...points];
         for (final disabled in [true, false]) {
           expect(
             getStartAndCountOfVisiblePoints(meta, elements, disabled),

@@ -3,20 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Scale;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScaleContext;
-import 'package:flutter_chartjs_port/src/index.dart' show plugins;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart';

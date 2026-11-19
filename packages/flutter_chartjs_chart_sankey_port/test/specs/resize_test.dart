@@ -60,7 +60,7 @@ void main() {
             },
             'options': <String, Object?>{
               'animation': <String, Object?>{
-                'onComplete': (AnimationEvent event) => done(),
+                'onComplete': (IAnimationEvent event) => done(),
               },
               'maintainAspectRatio': false,
               'responsive': true,

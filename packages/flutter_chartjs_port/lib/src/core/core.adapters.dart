@@ -36,12 +36,7 @@ library;
 import 'dart:core';
 import 'dart:core' as core show override;
 
-import 'package:flutter_chartjs_port/src/core/date_adapter.dart'
-    show dateAdapterMembers;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// core.adapters.ts:10 `TimeUnit`: `'millisecond' | 'second' | 'minute' |
 /// 'hour' | 'day' | 'week' | 'month' | 'quarter' | 'year'`.

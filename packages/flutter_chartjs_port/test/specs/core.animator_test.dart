@@ -3,12 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart'
-    hide AnimationEvent;
-import 'package:flutter_chartjs_port/src/types/animation.dart'
-    show AnimationEvent;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // `Chart.animator` is `animator` of core.animator.dart. The first case makes
@@ -22,7 +17,7 @@ import 'package:flutter_test/flutter_test.dart';
 // no option names.
 
 /// The chart object `{}` of the spec. Its members throw.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -33,7 +28,7 @@ void main() {
       await waitForDone((done) {
         var count = 0;
         var drawCount = 0;
-        void progress(AnimationEvent animation) {
+        void progress(IAnimationEvent animation) {
           count++;
           expect(animation.numSteps, 250);
           expect(animation.currentStep! <= 250, isTrue);

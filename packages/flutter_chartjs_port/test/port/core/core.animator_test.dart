@@ -6,15 +6,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:clock/clock.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show HTMLCanvasElement;
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/core/core.animations.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/animation_spec_input.dart';
@@ -36,7 +28,7 @@ import '../../support/animation_spec_input.dart';
 // requestAnimationFrame that runs the promise jobs after each callback).
 
 /// A chart for the animator: it counts its draws. Its other members throw.
-final class _Chart([final String name = 'chart']) implements types.Chart {
+final class _Chart([final String name = 'chart']) implements IChart {
   int draws = 0;
 
   // The chart object of the test has no canvas: JS `undefined`. The
@@ -76,7 +68,7 @@ Future<void> _frames(WidgetTester tester, int count) async {
 /// A number animation of `target.value` from 0 to 10 over [duration] ms,
 /// added to [chart] and started.
 Animation _start(
-  types.Chart chart,
+  IChart chart,
   Map<String, Object?> target, {
   double duration = 100,
   bool loop = false,

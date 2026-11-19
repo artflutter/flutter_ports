@@ -4,8 +4,7 @@ library;
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // theming.md §8 test 7, the inherited part (Chart.js ADR 0147 §10):

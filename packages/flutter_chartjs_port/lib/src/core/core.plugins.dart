@@ -23,21 +23,7 @@
 /// section 10).
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
-import 'package:flutter_chartjs_port/src/core/core.registry.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show DescriptorDefaults, OptionView, attachContext, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef, valueOrDefault;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// core.plugins.js:12 the descriptor `{plugin: object, options: object}`
 /// of a plugin: the plugin and its options resolver.
@@ -74,12 +60,10 @@ final class PluginService() {
   ///
   /// `isPluginEnabled` reads it (core.controller.js:1139). Thus it drops the
   /// underscore (Chart.js ADR 0012).
-  @internal
   List<PluginDescriptor>? cache;
 
   /// Unknown plugins use the full lifecycle unless they explicitly opt in.
   /// A registry/config invalidation must first rebuild the descriptors normally.
-  @internal
   bool get supportsDataUpdates {
     final descriptors = cache;
     if (descriptors == null) return false;
@@ -99,7 +83,6 @@ final class PluginService() {
   /// each hook and the layout, so it does not call it. No cache (a
   /// [invalidate] since the last notify) gives false, and so does the options
   /// object of a descriptor that is not a view of `createResolver`.
-  @internal
   // DIVERGES(chartjs): adapt-range-updates, the plugin opt-in of a range.
   bool get supportsRangeUpdates {
     final descriptors = cache;
@@ -126,9 +109,8 @@ final class PluginService() {
   /// would find no change: no `start` or `stop`. The old descriptors become
   /// `_oldCache`, as after [invalidate]. The caller tested
   /// [supportsRangeUpdates].
-  @internal
   // DIVERGES(chartjs): adapt-range-updates, new views over kept resolvers.
-  void refreshDescriptorViews(types.Chart chart) {
+  void refreshDescriptorViews(IChart chart) {
     final cached = cache!;
     final context = chart.getContext();
     _oldCache = cached;
@@ -178,7 +160,7 @@ final class PluginService() {
   /// for the `undefined` of a notify before the hook `install`
   /// (core.plugins.js:41-43).
   bool? notify<A extends Object>(
-    types.Chart chart,
+    IChart chart,
     PluginHook<A> hook, [
     A? args,
     FilterCallback? filter,
@@ -217,7 +199,7 @@ final class PluginService() {
   /// `args.cancelable` of upstream: the kind of the hook is that flag.
   bool _notify<A extends Object>(
     List<PluginDescriptor> descriptors,
-    types.Chart chart,
+    IChart chart,
     PluginHook<A> hook,
     A args,
   ) {
@@ -249,7 +231,7 @@ final class PluginService() {
   ///
   /// @param {Chart} chart
   /// @private
-  List<PluginDescriptor> _descriptors(types.Chart chart) {
+  List<PluginDescriptor> _descriptors(IChart chart) {
     final cached = cache;
     if (cached != null) {
       return cached;
@@ -265,10 +247,7 @@ final class PluginService() {
   /// core.plugins.js:101 `_createDescriptors`.
   ///
   /// An absent [all] is false.
-  List<PluginDescriptor> _createDescriptors(
-    types.Chart chart, [
-    bool all = false,
-  ]) {
+  List<PluginDescriptor> _createDescriptors(IChart chart, [bool all = false]) {
     final config = chart.config as Config;
     // `config.options && config.options.plugins`: the getter gives a Map,
     // which is truthy.
@@ -294,7 +273,7 @@ final class PluginService() {
   /// The ids compare with `==`. For the Dart values of JavaScript values, it
   /// gives the result of `===`: strings and numbers compare by value, and
   /// the other values by identity.
-  void _notifyStateChanges(types.Chart chart) {
+  void _notifyStateChanges(IChart chart) {
     final previousDescriptors = _oldCache ?? const <PluginDescriptor>[];
     final descriptors = cache!;
     List<PluginDescriptor> diff(
@@ -379,7 +358,7 @@ Object? _getOpts(Object? options, bool all) {
 /// method `_createDescriptors` of [PluginService] (core.plugins.js:101)
 /// hides a private library function with the same name.
 List<PluginDescriptor> createDescriptors(
-  types.Chart chart,
+  IChart chart,
   ({List<Plugin<Object?>> plugins, Map<String, bool> localIds}) allPlugins,
   Object? options,
   bool all,

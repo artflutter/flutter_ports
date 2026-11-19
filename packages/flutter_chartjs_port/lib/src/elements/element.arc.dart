@@ -40,62 +40,12 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
-import 'package:flutter_chartjs_port/src/core/arc_options.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show Defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ArcOptions, numberOption, plainOption, rawOption;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+
 // Upstream imports _angleBetween, getAngleFromPoint, TAU, HALF_PI and
 // valueOrDefault from helpers/index.js. helpers/index.dart exports
 // helpers.extras, which is not a pure layer. Thus the port imports the
 // helper files.
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isObject, valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show
-        angleBetween,
-        getAngleFromPoint,
-        halfPi,
-        isBetween,
-        limitValue,
-        normalizeAngle,
-        pi,
-        tau;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedBy, AnimatedProp;
-import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show
-        CircumferenceAnimation,
-        EndAngleAnimation,
-        InnerRadiusAnimation,
-        OuterRadiusAnimation,
-        StartAngleAnimation;
-import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ArcOptionsScope, DescriptorsScope;
-import 'package:flutter_chartjs_port/src/options/typed_record.dart'
-    show TypedRecord;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
 
 /// `object[name]` of an object that is not typed: the read by name of a
 /// plain object of user code or of a spec (the face, Chart.js ADR 0054 §5).
@@ -898,11 +848,7 @@ abstract interface class ArcProps() implements Point {
 /// difference `adapt-arc-axis-range`).
 class ArcElement([AnyObject? cfg])
     extends Element
-    implements
-        types.VisualElement,
-        types.ArcElementWrites,
-        ArcProps,
-        NativeArcElement {
+    implements VisualElement, ArcElementWrites, ArcProps, NativeArcElement {
   /// element.arc.ts:411 `constructor(cfg)`.
   ///
   /// [options], [circumference], [startAngle], [endAngle], [innerRadius]
@@ -956,7 +902,6 @@ class ArcElement([AnyObject? cfg])
   static bool _indexableDescriptor(String name) => name != 'borderDash';
 
   /// Native context reads as well as property writes (Chart.js ADR 0093).
-  @internal
   @override
   // DIVERGES(chartjs): adapt-arc-native-options, native element contract.
   bool get supportsNativeArcOptions => _builtIn;
@@ -1166,13 +1111,11 @@ class ArcElement([AnyObject? cfg])
   late final bool _builtIn = super.runtimeType == ArcElement;
 
   /// [Element.typedWrites]: true for the class [ArcElement] itself.
-  @internal
   @override
   bool get typedWrites => _builtIn;
 
   /// [Element.takesProperties]: an [ArcProperties], for an element of the
   /// class [ArcElement] itself.
-  @internal
   @override
   bool takesProperties(TypedRecord props) => props is ArcProperties && _builtIn;
 
@@ -1181,7 +1124,6 @@ class ArcElement([AnyObject? cfg])
   /// the typed setter of the key at [position]. An extra key, a foreign
   /// value and a value that the setter does not take (JS `null`) go by name
   /// ([assignKey]).
-  @internal
   @override
   void writePropertyAt(TypedRecord props, int position) {
     final values = props as ArcProperties;

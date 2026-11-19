@@ -4,9 +4,7 @@
 /// `adapt-native-chart-meta`).
 library;
 
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart'
-    show DatasetController, Element, Scale, ScaleRanges;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// core.controller.js:835-848 the dataset meta, index.d.ts:471
@@ -25,7 +23,7 @@ import 'package:meta/meta.dart';
 /// final _sources = Expando<FillerSource>('filler');
 /// _sources[meta] = source;
 /// ```
-class ChartMeta<C extends DatasetController>({
+class ChartMeta<C extends IDatasetController>({
   /// core.controller.js:844 `index`, the dataset index. Each update writes it
   /// again (core.controller.js:434).
   required var int index,
@@ -67,11 +65,11 @@ class ChartMeta<C extends DatasetController>({
   C? controller;
 
   /// core.controller.js:837 `data`, the data elements.
-  final List<Element> data = [];
+  final List<IElement> data = [];
 
   /// core.controller.js:838 `dataset`, the dataset element, for example the
   /// line of a line chart. Null for no dataset element.
-  Element? dataset;
+  IElement? dataset;
 
   /// core.controller.js:840 `hidden`, the visibility of the chart for the
   /// dataset. Null: the dataset option `hidden` decides
@@ -107,19 +105,19 @@ class ChartMeta<C extends DatasetController>({
   String? vAxisID;
 
   /// core.datasetController.js:312 `xScale`.
-  Scale? xScale;
+  IScale? xScale;
 
   /// core.datasetController.js:313 `yScale`.
-  Scale? yScale;
+  IScale? yScale;
 
   /// core.datasetController.js:314 `rScale`.
-  Scale? rScale;
+  IScale? rScale;
 
   /// core.datasetController.js:315 `iScale`, the index scale.
-  Scale? iScale;
+  IScale? iScale;
 
   /// core.datasetController.js:316 `vScale`, the value scale.
-  Scale? vScale;
+  IScale? vScale;
 
   /// core.controller.js:846 `_parsed`: the parsed items, the numbers of a
   /// doughnut or pie, or the data List of the app itself with
@@ -133,12 +131,10 @@ class ChartMeta<C extends DatasetController>({
 
   /// helpers.extras.ts:153 `_scaleRanges`: the scale ranges of the last
   /// update of a line or scatter controller.
-  @internal
   ScaleRanges? scaleRanges;
 
   /// core.animations.js:71 `$animations`: the running animation of
   /// [visible], by property name. Null: no animation ran yet.
-  @internal
   Map<String, Object?>? animations;
 }
 

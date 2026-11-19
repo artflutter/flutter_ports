@@ -1,15 +1,7 @@
 // Original code, not ported from Chart.js: ordered color resolution twins.
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 class _Ordinary() extends Config;
@@ -19,7 +11,7 @@ const blue = Color(0xff0000ff);
 const green = Color(0xff00ff00);
 
 Object? _plain(Object? value) {
-  if (value is helpers.OptionView) {
+  if (value is OptionView) {
     return {for (final key in value.jsKeys()) key: _plain(value.jsRead(key))};
   }
   return value;
@@ -61,9 +53,8 @@ void main() {
           ];
           final trace = <Object?>[];
           var armed = false;
-          helpers.OptionResolver raw() =>
-              config.createResolver(scopes, null, prefixes)
-                  as helpers.OptionResolver;
+          OptionResolver raw() =>
+              config.createResolver(scopes, null, prefixes) as OptionResolver;
           Object? background(Object? context) {
             final ctx = context! as ScriptableContext;
             if (armed) {
@@ -109,7 +100,7 @@ void main() {
 
           Object wrap(Object? Function(Object?) callback) {
             Object? withOptions(Object? context, Object? options) {
-              final view = options! as helpers.OptionView;
+              final view = options! as OptionView;
               expect(view.descriptors.allKeys, same(undefined));
               return callback(context);
             }

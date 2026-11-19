@@ -3,8 +3,7 @@
 import 'dart:ui';
 
 // The pure harness consumes paint value types without importing widgets.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Color value equality, or null when neither operand is a native color.
 /// Other objects keep their JavaScript identity semantics in the test matchers.

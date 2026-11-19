@@ -5,8 +5,7 @@
 /// [RadialAxisBorder].
 library;
 
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart' show immutable;
 
 /// The value of the scale option `border` (index.d.ts:3042

@@ -10,11 +10,7 @@ library;
 // `--dart-define=filter=<regexp>` and the other defines of
 // `src/harness.dart` apply. These are JIT measurements with assertions enabled.
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'bench.dart' as core;
@@ -24,7 +20,7 @@ import 'src/harness.dart';
 final class _Scale(
   @override final ScaleAxis axis,
   final ({double min, double max, bool minDefined, bool maxDefined}) bounds,
-) implements Scale {
+) implements IScale {
   @override
   ({double min, double max, bool minDefined, bool maxDefined})
   getUserBounds() => bounds;
@@ -39,7 +35,7 @@ final class _Scale(
 /// A point element `{x, y}`. The control points are NaN, which stands for
 /// JS `undefined` (`SplinePoint`).
 final class _Point(@override final double x, @override final double y)
-    implements PointElement {
+    implements IPointElement {
   @override
   Map<String, Object?>? get options => null;
 
@@ -74,15 +70,15 @@ final class _Point(@override final double x, @override final double y)
 
 /// A dataset meta object.
 final class _Meta(
-  @override final Scale? iScale,
-  @override final Scale? vScale,
+  @override final IScale? iScale,
+  @override final IScale? vScale,
   @override final List<Map<String, Object?>> parsed,
 ) implements ChartMeta {
   @override
   bool get sorted => true;
 
   @override
-  Element? get dataset => null;
+  IElement? get dataset => null;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -109,7 +105,7 @@ List<BenchCase> _extrasCases() => [
           <String, Object?>{'x': i.toDouble(), 'y': (i % 31).toDouble()},
       ],
     );
-    final points = <PointElement>[
+    final points = <IPointElement>[
       for (var i = 0; i < count; i++) _Point(i * 3.0, (i % 31).toDouble()),
     ];
     return (n) {

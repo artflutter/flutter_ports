@@ -12,14 +12,7 @@ import 'dart:collection';
 
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show axisStackOf, stacksOf;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeDataUpdateList;
-import 'package:flutter_chartjs_port/src/options/parsed.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A custom List of data points: its iterator is user code.

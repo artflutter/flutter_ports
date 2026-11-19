@@ -17,8 +17,7 @@
 /// also removes U+0085.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// ECMAScript `ToNumber(value)`, the coercion of unary `+` and `Number()`.
 ///

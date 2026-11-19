@@ -1,16 +1,7 @@
 // Original code, not ported from Chart.js: scriptable option template twins.
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 const red = ChartPaint.solid(Color(0xffff0000));
@@ -22,7 +13,7 @@ class _Fixture({bool ordinary = false}) {
   this {
     scopes = [scope];
     Object? background(Object? ctx, Object? options) {
-      final view = options! as helpers.OptionView;
+      final view = options! as OptionView;
       retained.add(view);
       calls.add((ctx! as ScriptableContext).index);
       action?.call(view);
@@ -48,8 +39,8 @@ class _Fixture({bool ordinary = false}) {
   ];
   final prefixes = <String>['point', ''];
   final calls = <Object?>[];
-  final retained = <helpers.OptionView>[];
-  void Function(helpers.OptionView)? action;
+  final retained = <OptionView>[];
+  void Function(OptionView)? action;
   void Function()? beforeContext;
   Object? color = red;
   PointOptions resolve([int index = 0]) =>
@@ -64,8 +55,8 @@ class _Fixture({bool ordinary = false}) {
         PointOptions(),
         allowReplacement: true,
       ) as PointOptions;
-  helpers.OptionResolver get resolver =>
-      config.createResolver(scopes, null, prefixes) as helpers.OptionResolver;
+  OptionResolver get resolver =>
+      config.createResolver(scopes, null, prefixes) as OptionResolver;
   bool probe() =>
       resolver
           .resolveScriptableElementOptions(
@@ -79,7 +70,7 @@ class _Fixture({bool ordinary = false}) {
       false;
 }
 
-Object? plain(Object? value) => value is helpers.OptionView
+Object? plain(Object? value) => value is OptionView
     ? {for (final key in value.jsKeys()) key: plain(value.jsRead(key))}
     : value;
 void same(ElementOptions a, ElementOptions b) {
@@ -247,7 +238,7 @@ void main() {
     final seen = <Object?>[];
     ChartPaint background(Object? ctx, [Object? options]) {
       seen.add(options);
-      expect(options, isA<helpers.OptionView>());
+      expect(options, isA<OptionView>());
       return red;
     }
 

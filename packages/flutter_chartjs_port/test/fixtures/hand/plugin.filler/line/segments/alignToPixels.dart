@@ -4,13 +4,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 // `ctx.p0` is a point element. `ctx.p0.parsed` is the access by name of the
 // element (Chart.js ADR 0017, section 5): `jsGet` gives `undefined` for an

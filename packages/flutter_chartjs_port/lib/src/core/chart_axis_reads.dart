@@ -13,7 +13,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `a === b` of two axes: both [XAxis], both [YAxis] or both [RAxis]. An
 /// axis of another class is the same only as itself.

@@ -6,12 +6,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_chart.dart';
@@ -264,10 +259,10 @@ void main() {
       final platform = chart.platform;
       final received = <String>[];
       platform
-        ..addEventListener(chart, 'click', (types.ChartEvent e) {
+        ..addEventListener(chart, 'click', (ChartEvent e) {
           received.add('first');
         })
-        ..addEventListener(chart, 'click', (types.ChartEvent e) {
+        ..addEventListener(chart, 'click', (ChartEvent e) {
           received.add('second');
         });
       final proxy = chart.platformProxies!['click'];

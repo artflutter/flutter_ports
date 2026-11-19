@@ -10,13 +10,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show TextStyle;
 // The spec builds charts of flutter_chartjs_port and reads the UMD entry of
 // lib/src, which no public library exports (Chart.js ADR 0048, section 1).
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // platform.flutter.dart replaces platform.dom.js (Chart.js ADR 0037). Each
@@ -472,7 +466,7 @@ void main() {
         expect(notifiedEvent, isNot(same(undefined)));
 
         // Is type correctly translated
-        final event = notifiedEvent! as types.ChartEvent;
+        final event = notifiedEvent! as ChartEvent;
         expect(event.type, 'click');
 
         // Relative Position

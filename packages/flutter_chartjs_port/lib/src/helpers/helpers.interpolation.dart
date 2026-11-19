@@ -9,9 +9,7 @@
 /// `options.stepped` is an option value (Chart.js ADR 0043).
 library;
 
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The object literal `{x, y}` that the three functions return
 /// (helpers.interpolation.ts:7-10, :21-26), and the control-point literals

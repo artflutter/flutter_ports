@@ -5,9 +5,7 @@
 // src/plugins/plugin.filler/ at the pinned Chart.js. 124 cases.
 
 import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
 const String fillerTargetReferenceNode = 'v24.22.1';

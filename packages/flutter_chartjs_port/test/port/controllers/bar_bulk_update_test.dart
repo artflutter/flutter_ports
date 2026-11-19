@@ -6,11 +6,7 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/props.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 class _ReferenceChart(super.item, super.userConfig) extends Chart {
@@ -91,7 +87,7 @@ class _CustomController(super.chart, super.datasetIndex, super.newTarget)
   );
   @override
   void updateElement(
-    types.Element element,
+    IElement element,
     int? index,
     Object properties,
     String mode,
@@ -236,7 +232,7 @@ Object _observe(Chart chart) => [
         'borderSkipped',
         'inflateAmount',
       ])
-        _plain((e as types.ElementPropertyRead)[key]),
+        _plain((e as ElementPropertyRead)[key]),
     ],
 ];
 

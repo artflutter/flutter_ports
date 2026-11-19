@@ -23,30 +23,7 @@
 /// This library is a pure layer (Chart.js ADR 0038, section 9).
 library;
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart'
-    show LineElement;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show FillerOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show DatasetFill, FillTarget, NoFill, ValueFill, fillTargetTruthy;
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
-    show FillerDrawTime;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.drawing.dart'
-    show drawfill;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart'
-    show shouldApplyFill;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart'
-    show decodeFill, resolveTarget;
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show FillerOptions, optionOf;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show DatasetDrawHookArgs, Plugin, PluginHookArgs, UpdateHookArgs;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// index.js:26-34, the source object of a dataset. The fields keep the
 /// upstream key order. `index.js:47` writes [fill].
@@ -69,17 +46,17 @@ final class FillerSource({
   required var FillTarget fill,
 
   /// index.js:30 `chart`.
-  required final types.Chart chart,
+  required final IChart chart,
 
   /// index.js:31 `axis: meta.controller.options.indexAxis`: any option
   /// value.
   required final Object? axis,
 
   /// index.js:32 `scale: meta.vScale`. Dart `null` is JS `undefined`.
-  required final types.Scale? scale,
+  required final IScale? scale,
 
   /// index.js:33 `line`, a `LineElement` (index.js:25).
-  required final types.LineElement line,
+  required final ILineElement line,
 }) {
   /// index.js:26 the object literal.
   this;
@@ -92,7 +69,7 @@ final class FillerSource({
 final _fillerSources = Expando<FillerSource>('filler');
 
 /// The source of [meta] (`meta.$filler`), or Dart `null`. The specs read it.
-FillerSource? fillerSourceOf(types.ChartMeta meta) => _fillerSources[meta];
+FillerSource? fillerSourceOf(ChartMeta meta) => _fillerSources[meta];
 
 /// The axis argument of `source.line.updateControlPoints(area, source.axis)`
 /// (index.js:61): the [ScaleAxis] of the option, else Dart `null`, the
@@ -103,7 +80,7 @@ ScaleAxis? _axisArgument(Object? axis) => axis is ScaleAxis ? axis : null;
 ///
 /// `chart.data.datasets` is the data of the user, read by name.
 void _afterDatasetsUpdate(
-  types.Chart chart,
+  IChart chart,
   UpdateHookArgs _,
   FillerOptions options,
 ) {
@@ -149,7 +126,7 @@ void _afterDatasetsUpdate(
 /// type test: the port writes only Dart `null` and a [FillerSource], and an
 /// absent property reads `undefined` (Chart.js ADR 0040, section 6). The
 /// hook continues the draw: `true` is the `undefined` result of upstream.
-bool _beforeDraw(types.Chart chart, PluginHookArgs _, FillerOptions options) {
+bool _beforeDraw(IChart chart, PluginHookArgs _, FillerOptions options) {
   // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
   final draw = FillerDrawTime.of(options.drawTime) == FillerDrawTime.beforeDraw;
   final metasets = chart.getSortedVisibleDatasetMetas();
@@ -171,7 +148,7 @@ bool _beforeDraw(types.Chart chart, PluginHookArgs _, FillerOptions options) {
 /// index.js:68 `beforeDatasetsDraw(chart, _args, options)`. The hook
 /// continues the draw: `true` is the `undefined` result of upstream.
 bool _beforeDatasetsDraw(
-  types.Chart chart,
+  IChart chart,
   PluginHookArgs _,
   FillerOptions options,
 ) {
@@ -197,7 +174,7 @@ bool _beforeDatasetsDraw(
 /// [DatasetDrawHookArgs]. The hook continues the draw: `true` is the
 /// `undefined` result of upstream.
 bool _beforeDatasetDraw(
-  types.Chart chart,
+  IChart chart,
   DatasetDrawHookArgs args,
   FillerOptions options,
 ) {

@@ -1,14 +1,6 @@
 // Original code, not ported from Chart.js: exact-point stack search experiment.
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show DefaultCubicInterpolationMode, MonotoneCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
-    show nativeSegmentType;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// Allows differential tests to run the original stack search unchanged.
@@ -16,14 +8,14 @@ import 'package:meta/meta.dart';
 bool stackPointSearchEnabled = true;
 
 final _pointListTypes = <Type>{
-  <types.PointElement>[].runtimeType,
-  List<types.PointElement>.empty().runtimeType,
+  <IPointElement>[].runtimeType,
+  List<IPointElement>.empty().runtimeType,
   <PointElement>[].runtimeType,
   List<PointElement>.empty().runtimeType,
 };
 final _segmentListTypes = <Type>{
-  <types.Segment>[].runtimeType,
-  List<types.Segment>.empty().runtimeType,
+  <Segment>[].runtimeType,
+  List<Segment>.empty().runtimeType,
 };
 
 /// Search state owned by one synchronous buildStackLine call, never by a chart.
@@ -32,9 +24,9 @@ final class StackPointSearch._(int count) {
   /// A foreign source/list/segment can run user code while the stack is built.
   /// Preserve its reads and side effects by using the original algorithm.
   static StackPointSearch? create(
-    types.LineElement line,
-    List<types.PointElement> points,
-    List<types.Segment> segments,
+    ILineElement line,
+    List<IPointElement> points,
+    List<Segment> segments,
     int targetCount,
   ) {
     if (!stackPointSearchEnabled ||
@@ -53,10 +45,10 @@ final class StackPointSearch._(int count) {
 
   /// Returns null to run the original interpolate call. The final boundary
   /// line is port-created and excluded from the slots; it needs no index.
-  ({bool first, bool last, types.PointElement point})? find(
+  ({bool first, bool last, IPointElement point})? find(
     int index,
-    types.Element? target,
-    types.PointElement? source,
+    IElement? target,
+    IPointElement? source,
   ) {
     if (!_enabled || index >= _slots.length) return null;
     if (source == null || source.runtimeType != PointElement) {
@@ -78,11 +70,11 @@ final class StackPointSearch._(int count) {
   }
 }
 
-final class _Cursor(final List<types.PointElement> points) {
+final class _Cursor(final List<IPointElement> points) {
   int _index = 0;
   double _last = double.negativeInfinity;
 
-  static _Cursor? create(types.Element? target) {
+  static _Cursor? create(IElement? target) {
     if (target.runtimeType != LineElement) return null;
     final line = target! as LineElement;
     final options = line.options;
@@ -141,7 +133,7 @@ final class _Cursor(final List<types.PointElement> points) {
     return _Cursor(points);
   }
 
-  ({bool first, bool last, types.PointElement point})? find(double x) {
+  ({bool first, bool last, IPointElement point})? find(double x) {
     if (!x.isFinite) return null;
     var index = _index;
     if (x < _last) {

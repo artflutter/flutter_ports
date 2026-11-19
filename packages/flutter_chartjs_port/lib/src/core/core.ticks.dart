@@ -12,16 +12,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/scale_options.dart'
-    show TickOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show log10;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A tick formatter: a function of [formatters].
 ///
@@ -30,7 +21,7 @@ import 'package:flutter_chartjs_port/src/types/index.dart';
 /// arguments `tickValue`, `index` and `ticks` of index.d.ts:1552. The
 /// result is the lines of the label.
 typedef TickFormatter = List<String>? Function(
-  Scale scale,
+  IScale scale,
   double tickValue,
   int index,
   List<Tick> ticks,
@@ -61,7 +52,7 @@ final Map<String, TickFormatter> formatters = {
 /// @return {string|string[]} the label to display
 ///
 /// `'' + value` is [jsToString]: the label text changes the layout.
-List<String>? _values(Scale scale, double value, int index, List<Tick> ticks) {
+List<String>? _values(IScale scale, double value, int index, List<Tick> ticks) {
   return <String>[jsToString(value)];
 }
 
@@ -75,7 +66,7 @@ List<String>? _values(Scale scale, double value, int index, List<Tick> ticks) {
 /// @param ticks {object[]} the list of ticks being converted
 /// @return {string} string representation of the tickValue parameter
 List<String>? _numeric(
-  Scale self,
+  IScale self,
   double tickValue,
   int index,
   List<Tick> ticks,
@@ -143,7 +134,7 @@ List<String>? _numeric(
 ///
 /// Returns the result of `formatters['numeric']` or the empty line.
 List<String>? _logarithmic(
-  Scale self,
+  IScale self,
   double tickValue,
   int index,
   List<Tick> ticks,

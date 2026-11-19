@@ -6,36 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.polarArea.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart' as animation;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show controllerArgs;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
-    show overrides;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show
-        IndexInteractionMode,
-        InteractionAxis,
-        InteractionMode,
-        NearestInteractionMode,
-        PointInteractionMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/drop_extra_args.dart';
@@ -495,7 +466,7 @@ void main() {
           beforeLayout: (chart, args, options) {
             final data = (chart as Chart).getDatasetMeta(0).data;
             if (data.length > 3 && beforeLayout == null) {
-              final arc = data[3] as types.ElementPropertyRead;
+              final arc = data[3] as ElementPropertyRead;
               beforeLayout = {'x': arc['x'], 'y': arc['y']};
             }
             return true;
@@ -514,8 +485,8 @@ void main() {
       expect(identical(beforeLayout!['x'], undefined), isTrue);
       expect(identical(beforeLayout!['y'], undefined), isTrue);
       final arc = meta.data[3] as Element;
-      final x = arc.$animations!['x']! as animation.Animation;
-      final y = arc.$animations!['y']! as animation.Animation;
+      final x = arc.$animations!['x']! as Animation;
+      final y = arc.$animations!['y']! as Animation;
       expect([x.from, x.to], [256.0, 256.0]);
       expect([y.from, y.to], [272.0, 272.0]);
       // At 500 ms the new arc is drawn and hit at the middle of its final
@@ -586,9 +557,9 @@ void main() {
       chart.update();
 
       expect(meta.rScale!.id, 'r2');
-      final radial = meta.rScale! as types.RadialLinearScale;
+      final radial = meta.rScale! as IRadialLinearScale;
       expect(radial.xCenter, isNaN);
-      final x = arc.$animations!['x']! as animation.Animation;
+      final x = arc.$animations!['x']! as Animation;
       expect(x.from, 256.0);
       expect(x.to, isNaN);
     });
@@ -620,16 +591,16 @@ void main() {
       await tester.pump(const Duration(milliseconds: 5000));
 
       chart.reset();
-      expect((meta.rScale! as types.RadialLinearScale).xCenter, isNaN);
-      final read = arc as types.ElementPropertyRead;
+      expect((meta.rScale! as IRadialLinearScale).xCenter, isNaN);
+      final read = arc as ElementPropertyRead;
       expect(read['x'], isNaN);
       expect(read['y'], isNaN);
 
       dataset['rAxisID'] = 'r';
       chart.update();
-      expect((meta.rScale! as types.RadialLinearScale).xCenter, 376.0);
-      final x = arc.$animations!['x']! as animation.Animation;
-      final y = arc.$animations!['y']! as animation.Animation;
+      expect((meta.rScale! as IRadialLinearScale).xCenter, 376.0);
+      final x = arc.$animations!['x']! as Animation;
+      final y = arc.$animations!['y']! as Animation;
       expect(x.from, isNaN);
       expect(x.to, 376.0);
       expect(y.from, isNaN);

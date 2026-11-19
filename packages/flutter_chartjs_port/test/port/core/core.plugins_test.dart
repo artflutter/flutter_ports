@@ -5,16 +5,7 @@ library;
 import 'dart:ui' show Size;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.plugins.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, createContext;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -49,7 +40,7 @@ import 'registry_reference.dart' hide registryReference;
 /// A fake chart: the `Config` of [config], and `getContext()` as
 /// `core.controller.js:1083-1085` gives it. The other members of
 /// `types.Chart` throw.
-final class _Chart(Object? config) implements types.Chart {
+final class _Chart(Object? config) implements IChart {
   @override
   final Config config = Config(config);
 
@@ -85,7 +76,7 @@ String _short(_Record r) => '${r.hook} ${r.plugin}';
 void _setHook(
   Plugin<Object?> plugin,
   PluginHook<PluginHookArgs> hook,
-  void Function(types.Chart chart, Object args, Object? options) body,
+  void Function(IChart chart, Object args, Object? options) body,
 ) {
   switch (hook) {
     case PluginHook.install:

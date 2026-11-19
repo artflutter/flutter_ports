@@ -8,7 +8,6 @@ import 'dart:math';
 import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/helpers.dart' hide pi;
 
 import '../../../flutter_test_config.dart';
 import '../../observe.dart';

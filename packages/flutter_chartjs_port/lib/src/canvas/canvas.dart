@@ -27,7 +27,6 @@ import 'dart:typed_data';
 import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:meta/meta.dart';
 
 /// Optional internal capability for a context with deterministic text metrics.
 /// A generation changes whenever existing font/text measurements become stale.
@@ -334,7 +333,6 @@ RoundRectGeometry? roundRectGeometry(
 /// The fused rounded bar of the `dart:ui` canvas calls it with the corners of
 /// `addRoundedRectPath` (helpers.canvas.ts:498, Chart.js ADR 0158), so that
 /// its rounded rectangles equal those of the path.
-@internal
 RoundRectGeometry roundRectCornersGeometry(
   double x,
   double y,
@@ -402,7 +400,6 @@ RoundRectGeometry roundRectCornersGeometry(
 /// upper-left, upper-right, lower-right and lower-left corners: 1, or the
 /// smallest ratio of the length of a side to the sum of its radii. The radii
 /// scale by it when it is below 1.
-@internal
 double roundRectRadiusScale(
   double width,
   double height,
@@ -1091,7 +1088,6 @@ final class Path2D() implements CanvasPath {
   }
 
   /// Whether a reader got the list of [commands]: outside code can change it.
-  @internal
   bool get isExposed => _commands != null;
 
   /// Replays private scalar storage to a synchronous native path builder.
@@ -1099,7 +1095,6 @@ final class Path2D() implements CanvasPath {
   /// The caller must ensure [target] cannot run user code or inspect this path.
   /// Public/custom replay uses [replay], preserving live-list iteration and
   /// callback mutation behavior. Exposed or mixed paths also use that path.
-  @internal
   void replayNative(CanvasPath target) {
     if (_commands != null) {
       replay(target);

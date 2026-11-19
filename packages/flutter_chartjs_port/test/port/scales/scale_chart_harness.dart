@@ -64,25 +64,7 @@ import 'dart:math' as math;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
-import 'package:flutter_chartjs_port/src/upstream.dart' show chartJsVersion;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -118,7 +100,7 @@ final class ScaleTestController(
 
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,
@@ -198,7 +180,7 @@ typedef RadialPointPosition = ({double x, double y, double angle});
 /// [value] is the parsed value r, unchanged: any JS value (Chart.js ADR
 /// 0025, section 9).
 typedef RadialPointPositionOf = RadialPointPosition Function(
-  types.Scale scale,
+  IScale scale,
   int index,
   Object? value,
 );
@@ -231,7 +213,7 @@ final class RadialTestController(
 
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,

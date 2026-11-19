@@ -8,15 +8,9 @@ import 'dart:ui' show FontStyle, TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' hide Chart;
+import 'package:flutter_chartjs_port/chartjs.dart';
+// The local isPointInArea hides the helper.
+import 'package:flutter_chartjs_port/chartjs.dart' as helpers;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -113,7 +107,7 @@ void main() {
 
         _spyOnClearRect(chart);
 
-        helpers.clearCanvas(chart.canvas, chart.ctx);
+        clearCanvas(chart.canvas, chart.ctx);
 
         expect(_clearRectCalls(chart.ctx).count(), 1);
         expect(_clearRectCalls(chart.ctx).first().object, same(chart.ctx));
@@ -128,7 +122,7 @@ void main() {
             ..canvas = null
             ..ctx = null;
 
-          helpers.clearCanvas(chart.canvas, chart.ctx);
+          clearCanvas(chart.canvas, chart.ctx);
         }
 
         expect(createAndClearChart, returnsNormally);
@@ -137,7 +131,7 @@ void main() {
 
     group('isPointInArea', () {
       test('should return true when no area is provided', () {
-        expect(helpers.isPointInArea(const _Point(1, 1), null), true);
+        expect(isPointInArea(const _Point(1, 1), null), true);
       });
       test('should determine if a point is in the area', () {
         const isPointInArea = helpers.isPointInArea;
@@ -174,21 +168,11 @@ void main() {
         // Regardless 'FooBar' is the longest label it should return
         // (characters * 10)
         expect(
-          helpers.longestText(
-            context,
-            font,
-            arrayOfThings1D,
-            helpers.LongestTextCache(),
-          ),
+          longestText(context, font, arrayOfThings1D, LongestTextCache()),
           60,
         );
         expect(
-          helpers.longestText(
-            context,
-            font,
-            arrayOfThings2D,
-            helpers.LongestTextCache(),
-          ),
+          longestText(context, font, arrayOfThings2D, LongestTextCache()),
           80,
         );
         // We check to make sure we made the right calls to the canvas.
@@ -235,9 +219,9 @@ void main() {
       final gc = <String>[];
       const longest = 70.0;
 
-      expect(helpers.measureText(context, data, gc, longest, 'foobar'), 70);
-      expect(helpers.measureText(context, data, gc, longest, 'foobar_'), 70);
-      expect(helpers.measureText(context, data, gc, longest, 'foobar_1'), 80);
+      expect(measureText(context, data, gc, longest, 'foobar'), 70);
+      expect(measureText(context, data, gc, longest, 'foobar_'), 70);
+      expect(measureText(context, data, gc, longest, 'foobar_1'), 80);
       // We check to make sure we made the right calls to the canvas.
       expect(context.getCalls(), [
         {
@@ -263,7 +247,7 @@ void main() {
       test('should render multiple lines of text', () {
         final context = createMockContext();
         const font = _arial;
-        helpers.renderText(context, ['foo', 'foo2'], 0, 0, font);
+        renderText(context, ['foo', 'foo2'], 0, 0, font);
 
         expect(context.getCalls(), [
           {'name': 'save', 'args': <Object?>[]},
@@ -286,7 +270,7 @@ void main() {
       test('should accept the text maxWidth', () {
         final context = createMockContext();
         const font = _arial;
-        helpers.renderText(
+        renderText(
           context,
           'foo',
           0,
@@ -311,7 +295,7 @@ void main() {
       test('should underline the text', () {
         final context = createMockContext();
         const font = _arial;
-        helpers.renderText(
+        renderText(
           context,
           'foo',
           0,
@@ -362,7 +346,7 @@ void main() {
       test('should strikethrough the text', () {
         final context = createMockContext();
         const font = _arial;
-        helpers.renderText(
+        renderText(
           context,
           'foo',
           0,
@@ -413,7 +397,7 @@ void main() {
       test('should set the fill style if supplied', () {
         final context = createMockContext();
         const font = _arial;
-        helpers.renderText(
+        renderText(
           context,
           'foo',
           0,
@@ -445,7 +429,7 @@ void main() {
       test('should set the stroke style if supplied', () {
         final context = createMockContext();
         const font = _arial;
-        helpers.renderText(
+        renderText(
           context,
           'foo',
           0,
@@ -487,7 +471,7 @@ void main() {
       test('should set the text alignment', () {
         final context = createMockContext();
         const font = _arial;
-        helpers.renderText(
+        renderText(
           context,
           'foo',
           0,
@@ -524,7 +508,7 @@ void main() {
       test('should translate and rotate text', () {
         final context = createMockContext();
         const font = _arial;
-        helpers.renderText(
+        renderText(
           context,
           'foo',
           0,

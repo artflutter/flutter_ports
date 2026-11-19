@@ -29,37 +29,7 @@ library;
 import 'dart:ui' show TextAlign, TextDirection;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart'
-    show canvasNumber, canvasTextAlign;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show
-        boolOption,
-        functionOption,
-        paddingOption,
-        readOption,
-        textDirectionOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show toFont;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
-    show FillerDrawTime;
-import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
-    show TooltipPositioner;
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show ChartAlign, TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint, chartPaintOf;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart'
-    show ChartTextStyle;
-import 'package:flutter_chartjs_port/src/types/layout.dart'
-    show ChartPosition, LayoutPosition;
-import 'package:flutter_chartjs_port/src/types/legend_callbacks.dart';
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The option [key] of the options object [options]: `options[key]`, the
 /// shared typed read [readOption] of `helpers.config.dart`.

@@ -6,10 +6,6 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/widgets.dart' show TextStyle, ValueKey;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/core/bar_skip_null.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 /// The bar config of the bench window `skipnull`: three typed datasets with
@@ -71,11 +67,11 @@ ChartConfig _config(int count, {required bool shown}) {
 Object? _plain(Object? value) =>
     value is double && !value.isFinite ? value.toString() : value;
 
-Object _observe(types.ChartMeta meta) => [
+Object _observe(ChartMeta meta) => [
   for (final e in meta.data)
     [
       for (final key in ['x', 'y', 'base', 'width', 'height'])
-        _plain((e as types.ElementPropertyRead)[key]),
+        _plain((e as ElementPropertyRead)[key]),
     ],
 ];
 

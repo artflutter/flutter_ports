@@ -4,10 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../support/animation_spec_input.dart';

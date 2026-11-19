@@ -2,7 +2,7 @@
 import 'dart:math' as dart_math;
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // differences.md `adapt-normalize-angle-range`: the form in range gives the

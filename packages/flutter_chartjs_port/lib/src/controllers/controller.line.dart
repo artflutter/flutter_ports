@@ -40,47 +40,12 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs, parsedValueOf, setPointAxis;
-import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions, LineOptions, PointOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
-    show getStartAndCountOfVisiblePoints, scaleRangesChanged;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show isNumber;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show LineProperties, PointProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        ChartOptionsScope,
-        LineControllerDatasetOptionsScope,
-        ScaleOptionsByIdScope,
-        ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
-    show lineSegmentStyleOf;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The JS write `element[key] = value` by name into an element of a user
 /// element class (Chart.js ADR 0017, section 5), or of a property that the
 /// element class does not declare.
-void _setProperty(types.PropertyAccess element, String key, Object? value) {
+void _setProperty(PropertyAccess element, String key, Object? value) {
   element[key] = value;
 }
 
@@ -89,7 +54,7 @@ void _setProperty(types.PropertyAccess element, String key, Object? value) {
 ///
 /// `properties` is the point of a direct update and a new object in the
 /// other modes (:91). The new object is a [PointProperties]. A point of the
-/// built-in class takes the typed setters of [types.PointElementWrites]. A
+/// built-in class takes the typed setters of [PointElementWrites]. A
 /// point of another class (a user element class) takes the writes by name of
 /// [_setProperty], in the same order. The writes reach the point at once,
 /// as upstream: the scriptable options of the user that run between two
@@ -102,31 +67,31 @@ final class _PointWrites({
   PointProperties? object;
 
   /// The point of a direct update that takes the typed writes: a point
-  /// whose [types.PointElementWrites.typedWrites] is true, the class
+  /// whose [PointElementWrites.typedWrites] is true, the class
   /// `PointElement` itself.
-  types.PointElementWrites? _element;
+  PointElementWrites? _element;
 
   /// The point of a direct update, for the writes by name: a point of
   /// another class, and the keys and values that the typed setters do not
   /// take.
-  late types.PropertyAccess _access;
+  late PropertyAccess _access;
 
   /// Whether the point of this pass takes the typed writes: an exact point of
   /// a direct update, whose reads and writes run no user code.
   bool get typed => _element != null;
 
   /// :91 `const properties = directUpdate ? point : {};`.
-  void begin(types.Element point) {
+  void begin(IElement point) {
     if (!direct) {
       object = PointProperties();
     } else {
       _element = switch (point) {
-        final types.PointElementWrites point when point.typedWrites => point,
+        final PointElementWrites point when point.typedWrites => point,
         _ => null,
       };
       // Each data element is an Element: the cast of `_insertElements`
       // (row adapt-component-class-role).
-      _access = point as types.PropertyAccess;
+      _access = point as PropertyAccess;
     }
   }
 
@@ -139,9 +104,9 @@ final class _PointWrites({
     }
     final element = _element;
     switch ((element, axis)) {
-      case (final types.PointElementWrites point, XAxis()):
+      case (final PointElementWrites point, XAxis()):
         point.x = value;
-      case (final types.PointElementWrites point, YAxis()):
+      case (final PointElementWrites point, YAxis()):
         point.y = value;
       default:
         // The write by the key of the axis ([axisDataKey]).
@@ -279,7 +244,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
   /// elements of the meta are a List (the default `[]` does not occur).
   ///
   /// The four writes of :57-60 are the typed setters of
-  /// [types.LineElementWrites] for a line of the built-in class, and writes
+  /// [LineElementWrites] for a line of the built-in class, and writes
   /// by name of an untyped property for a
   /// line of another class (Chart.js ADR 0017, section 5; Chart.js ADR 0028,
   /// section 1). The null check throws a [TypeError] for Dart `null`, as
@@ -312,14 +277,14 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     // Update Line
     final target = line!;
     final decimated = jsTruthy(jsGetKey(dataset, '_decimated'));
-    if (target case final types.LineElementWrites line when line.typedWrites) {
+    if (target case final LineElementWrites line when line.typedWrites) {
       line
         ..chart = chart
         ..datasetIndex = index
         ..decimated = decimated
         ..points = points;
     } else {
-      final access = target as types.PropertyAccess;
+      final access = target as PropertyAccess;
       _setProperty(access, '_chart', chart);
       _setProperty(access, '_datasetIndex', index);
       _setProperty(access, '_decimated', decimated);
@@ -378,7 +343,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
   ///   new object of another mode goes to no element (:93-95).
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,
@@ -397,7 +362,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     final segment = lineSegmentStyleOf(options.readKey(OptionKey.segment));
     // DIVERGES(chartjs): adapt-loop-invariant-truthiness, `_stacked ?` (:101)
     // and `if (segment)` (:105) test two locals of this call: once here.
-    final hasStack = stacked != types.StackMode.off;
+    final hasStack = stacked != StackMode.off;
     final hasSegment = segment != null;
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)
@@ -588,11 +553,11 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     return prepareNativePointResolution(this);
   }
 
-  bool _nativeProjection(types.Scale scale) =>
+  bool _nativeProjection(IScale scale) =>
       nativePointProjection(scale) && identical(scale.chart, chart);
 
   // DIVERGES(chartjs): adapt-native-point-contracts, shared preparation rules.
-  PointOptions Function(int)? _preparePointColors(List<types.Element> points) {
+  PointOptions Function(int)? _preparePointColors(List<IElement> points) {
     if (super.runtimeType != LineController || type != 'line') return null;
     return prepareNativePointColors(this, points, controllerType: 'line');
   }
@@ -625,10 +590,10 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     if (data.isEmpty) {
       return jsToNumber(border);
     }
-    final firstPoint = (data[0] as types.PointElement).size(
+    final firstPoint = (data[0] as IPointElement).size(
       resolveDataElementOptions(0),
     );
-    final lastPoint = (data[data.length - 1] as types.PointElement).size(
+    final lastPoint = (data[data.length - 1] as IPointElement).size(
       resolveDataElementOptions(data.length - 1),
     );
     return math.max(math.max(jsToNumber(border), firstPoint), lastPoint) / 2;
@@ -651,7 +616,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void draw() {
     final meta = cachedMeta;
-    (meta.dataset! as types.LineElement).updateControlPoints(
+    (meta.dataset! as ILineElement).updateControlPoints(
       chart.chartArea,
       meta.iScale!.axis,
     );

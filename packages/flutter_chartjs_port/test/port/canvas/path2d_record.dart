@@ -15,7 +15,7 @@
 library;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The ids of the Path2D objects of one record, in the order of the first
 /// sight, as the generators number them.

@@ -9,10 +9,6 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/chartjs.dart' as core show Animation;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_chartjs_port/helpers.dart' as helpers;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
-    as core_defaults;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 const _blue = ui.Color(0xFF2050C0);
@@ -43,18 +39,13 @@ void _destroy(Chart chart, UiCanvasElement canvas) {
 
 void main() {
   test('raw defaults are native before chart construction', () {
-    final before = core_defaults.defaults
-        .lookup(OptionKey.backgroundColor)!
-        .raw;
+    final before = defaults.lookup(OptionKey.backgroundColor)!.raw;
     expect(before, const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)));
-    expect(core_defaults.defaults['backgroundColor'], same(before));
+    expect(defaults['backgroundColor'], same(before));
     final canvas = UiCanvasElement(width: 120, height: 80);
     final chart = Chart(canvas, _raw());
-    expect(
-      core_defaults.defaults.lookup(OptionKey.backgroundColor)!.raw,
-      same(before),
-    );
-    expect(core_defaults.defaults['backgroundColor'], same(before));
+    expect(defaults.lookup(OptionKey.backgroundColor)!.raw, same(before));
+    expect(defaults['backgroundColor'], same(before));
     _destroy(chart, canvas);
   });
   test(

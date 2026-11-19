@@ -3,21 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
-    show overrides;
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/drop_extra_args.dart';
@@ -204,7 +190,7 @@ List<Object?> _arcs(Chart chart) => [
         'innerRadius',
         'outerRadius',
       ])
-        (element as types.ElementPropertyRead)[key],
+        (element as ElementPropertyRead)[key],
     ],
 ];
 
@@ -318,7 +304,7 @@ void main() {
       expect(
         [
           for (final arc in meta.data)
-            (arc as types.ElementPropertyRead)['circumference'],
+            (arc as ElementPropertyRead)['circumference'],
         ],
         [0, 0, 0],
       );
@@ -336,7 +322,7 @@ void main() {
       expect(
         [
           for (final arc in meta.data)
-            (arc as types.ElementPropertyRead)['circumference'],
+            (arc as ElementPropertyRead)['circumference'],
         ],
         [1.0471975511965976, 2.0943951023931953, 3.141592653589793],
       );

@@ -11,12 +11,7 @@
 // too.
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.drawing.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// A chart area.
@@ -25,7 +20,7 @@ final class const _Area(
   @override final double top,
   @override final double right,
   @override final double bottom,
-) implements types.ChartArea {
+) implements ChartArea {
   @override
   double get width => right - left;
   @override
@@ -37,7 +32,7 @@ final class _IndexScale({
   required final bool horizontal,
   @override required final double min,
   @override required final double max,
-}) implements types.Scale {
+}) implements IScale {
   @override
   bool isHorizontal() => horizontal;
   @override
@@ -49,13 +44,13 @@ final class _IndexScale({
 }
 
 /// A radial scale that the code tests by its type only.
-final class _RadialScale() implements types.RadialLinearScale {
+final class _RadialScale() implements IRadialLinearScale {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// `[left, top, right, bottom]` of [trbl].
-List<double> _edges(types.TRBL trbl) => [
+List<double> _edges(TRBL trbl) => [
   trbl.left,
   trbl.top,
   trbl.right,

@@ -10,22 +10,7 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.animations.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -73,11 +58,10 @@ AnyObject _dataset(Chart chart, int index) =>
     (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
 
 /// `meta.data[index]`, an element of core.element.dart.
-Element _element(types.ChartMeta meta, int index) =>
-    meta.data[index] as Element;
+Element _element(ChartMeta meta, int index) => meta.data[index] as Element;
 
 /// `meta._parsed.map(p => p[key])`.
-List<Object?> _parsedOf(types.ChartMeta meta, String key) => [
+List<Object?> _parsedOf(ChartMeta meta, String key) => [
   for (final p in meta.parsed) jsGet(p, key),
 ];
 
@@ -577,9 +561,9 @@ void main() {
 
         final meta = chart.getDatasetMeta(0);
         List<Object?> parsedYValues() => _parsedOf(meta, 'y');
-        late types.Element first;
-        late types.Element second;
-        late types.Element last;
+        late IElement first;
+        late IElement second;
+        late IElement last;
 
         first = meta.data[0];
         last = meta.data[5];

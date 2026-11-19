@@ -2,10 +2,7 @@
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// A solid canvas color. CSS strings and all other values fail explicitly.
 ui.Color requireUiColor(Object? value, String argument) {

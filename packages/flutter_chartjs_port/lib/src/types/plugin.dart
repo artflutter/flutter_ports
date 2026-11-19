@@ -19,15 +19,7 @@ library;
 
 import 'dart:ui' show Size;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextResolver;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScaleContext;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show DescriptorsScope;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The function of a hook that cannot cancel: `hook(chart, args, options)`.
 ///
@@ -41,7 +33,7 @@ import 'package:meta/meta.dart';
 /// );
 /// ```
 typedef PluginHookFunction<A extends Object, O> = void Function(
-  types.Chart chart,
+  IChart chart,
   A args,
   O options,
 );
@@ -57,7 +49,7 @@ typedef PluginHookFunction<A extends Object, O> = void Function(
 /// );
 /// ```
 typedef CancelableHookFunction<A extends Object, O> = bool Function(
-  types.Chart chart,
+  IChart chart,
   A args,
   O options,
 );
@@ -221,7 +213,7 @@ final class UpdateHookArgs({
   /// Whether this update kept the layout of the last update, so no box ran its
   /// `update`: the data-only lifecycle of Chart.js ADR 0074. It is not a key of
   /// the object, because upstream always runs the layout.
-  @internal final bool layoutKept = false,
+  final bool layoutKept = false,
 }) extends PluginHookArgs {
   /// The arguments of an update.
   this;
@@ -235,7 +227,7 @@ final class UpdateHookArgs({
 /// ```
 final class DatasetUpdateHookArgs({
   /// `meta`: the meta of the dataset.
-  required final types.ChartMeta meta,
+  required final ChartMeta meta,
 
   /// `index`: the index of the dataset.
   required final int index,
@@ -255,7 +247,7 @@ final class DatasetUpdateHookArgs({
 /// ```
 final class DatasetDrawHookArgs({
   /// `meta`: the meta of the dataset.
-  required final types.ChartMeta meta,
+  required final ChartMeta meta,
 
   /// `index`: the index of the dataset.
   required final int index,
@@ -274,7 +266,7 @@ final class DatasetDrawHookArgs({
 /// ```
 final class EventHookArgs({
   /// `event`: the chart event.
-  required final types.ChartEvent event,
+  required final ChartEvent event,
 
   /// `replay`: whether the chart replays the last event in an update.
   required final bool replay,
@@ -312,7 +304,7 @@ final class ResizeHookArgs({
 /// ```
 final class TooltipDrawHookArgs({
   /// `tooltip`: the tooltip of the chart.
-  required final types.TooltipModel tooltip,
+  required final TooltipModel tooltip,
 }) extends PluginHookArgs {
   /// The arguments of the draw of the tooltip.
   this;
@@ -324,7 +316,7 @@ final class TooltipDrawHookArgs({
 /// ```dart
 /// final probe = Plugin<Object?>(id: 'probe', afterDraw: (chart, args, _) {});
 /// ```
-typedef Plugin<O> = PluginOf<O, types.Chart>;
+typedef Plugin<O> = PluginOf<O, IChart>;
 
 /// The defaults of a plugin: a typed scope of a built-in plugin, or the
 /// [PluginOptions] of an add-on (Chart.js ADR 0148).
@@ -372,7 +364,6 @@ abstract class const PluginOptions<T extends PluginOptions<T>>()
 
   /// [merge] for options of any type: [over] of another class replaces these
   /// options.
-  @internal
   PluginOptions<Object?> mergeOptions(PluginOptions<Object?> over) =>
       over is T ? merge(over) : over;
 }
@@ -396,7 +387,7 @@ abstract class const PluginOptions<T extends PluginOptions<T>>()
 /// );
 /// Chart.register([crosshair]);
 /// ```
-final class PluginOf<O, C extends types.Chart>({
+final class PluginOf<O, C extends IChart>({
   /// `id`: the id of the plugin, the key of its options in
   /// `options.plugins`.
   required final String id,
@@ -606,7 +597,6 @@ final class PluginOf<O, C extends types.Chart>({
   /// `forceOverride` writes new color Lists into the datasets in each layout,
   /// and a kept dataset resolver would keep the old List. It must be
   /// observational only. It is a Dart field outside the JavaScript own keys.
-  @internal
   // DIVERGES(chartjs): adapt-range-updates, the guard of a built-in plugin.
   bool Function(O options)? rangeUpdateGuard;
 
@@ -617,10 +607,9 @@ final class PluginOf<O, C extends types.Chart>({
   /// absent hook continues. The plugin service calls it. The hook fields are
   /// read here, where their type has the [O] of this plugin: a read through
   /// `Plugin<Object?>` fails the covariance check of Dart.
-  @internal
   bool notify<A extends Object>(
     PluginHook<A> hook,
-    types.Chart chart,
+    IChart chart,
     A args,
     Object view,
   ) => switch (hook) {
@@ -813,13 +802,11 @@ final class PluginOf<O, C extends types.Chart>({
 
   /// Whether the data-only lifecycle can run this plugin with the resolved
   /// options [view] (Chart.js ADR 0074).
-  @internal
   bool allowsDataUpdates(Object view) =>
       supportsDataUpdates && (dataUpdateGuard?.call(_optionsOf(view)) ?? true);
 
   /// Whether `Chart.updateRanges` can keep this plugin with the resolved
   /// options [view] (Chart.js ADR 0111).
-  @internal
   bool allowsRangeUpdates(Object view) =>
       supportsDataUpdates && (rangeUpdateGuard?.call(_optionsOf(view)) ?? true);
 
@@ -834,7 +821,7 @@ final class PluginOf<O, C extends types.Chart>({
   /// one checked cast of the chart.
   bool _call<A extends Object>(
     void Function(C chart, A args, O options)? function,
-    types.Chart chart,
+    IChart chart,
     A args,
     Object view,
   ) {
@@ -845,7 +832,7 @@ final class PluginOf<O, C extends types.Chart>({
   /// Calls the cancelable hook [function].
   bool _cancel<A extends Object>(
     bool Function(C chart, A args, O options)? function,
-    types.Chart chart,
+    IChart chart,
     A args,
     Object view,
   ) => function == null || function(chart as C, args, _optionsOf(view));

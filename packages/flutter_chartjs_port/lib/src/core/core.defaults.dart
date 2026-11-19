@@ -30,26 +30,7 @@ import 'dart:core';
 import 'dart:ui' as ui;
 import 'dart:ui' show FontStyle;
 
-import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show NearestInteractionMode;
-import 'package:flutter_chartjs_port/src/core/core.layouts.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// core.defaults.js:7 `overrides`, `Object.create(null)`.
 ///
@@ -156,7 +137,7 @@ Object _scopeObject(Object? node) =>
 base class Defaults(
   Object? descriptorValues,
   List<void Function(Defaults)> appliers,
-) extends ChartOptionsScope implements types.Defaults {
+) extends ChartOptionsScope implements IDefaults {
   /// core.defaults.js:39 `constructor(_descriptors, _appliers)`.
   ///
   /// [descriptorValues] is `_descriptors`. [appliers] is `_appliers`.
@@ -168,8 +149,8 @@ base class Defaults(
     datasets = DatasetOptionsByTypeScope();
     devicePixelRatioCell = OptFunction<double>(
       _fn1(
-        (context) => (jsGet(context, 'chart')! as types.Chart).platform
-            .getDevicePixelRatio(),
+        (context) =>
+            (jsGet(context, 'chart')! as IChart).platform.getDevicePixelRatio(),
       ),
     );
     elements = ElementOptionsByTypeScope();
@@ -230,7 +211,6 @@ base class Defaults(
   }
 
   /// Recognizes side-effect-free built-in element descriptor predicates.
-  @internal
   // DIVERGES(chartjs): adapt-indexed-element-options, exact predicate identity.
   static bool nativeElementDescriptors(Object? scriptable, Object? indexable) =>
       (scriptable is bool ||
@@ -248,7 +228,6 @@ base class Defaults(
   /// Names the built-in descriptor predicate [predicate] of an element or
   /// controller class, which this library does not import, for
   /// [nativeElementDescriptors]. It must be a pure function of its key.
-  @internal
   // DIVERGES(chartjs): adapt-arc-native-options, exact predicate identity.
   static T nativeElementPredicate<T extends Object>(T predicate) {
     _nativeElementPredicates.add(predicate);
@@ -257,7 +236,6 @@ base class Defaults(
 
   /// [Defaults] keeps the face by name of its scope class: it overrides no
   /// read, write or key of the face. A subclass of it can.
-  @internal
   @core.override
   bool get nativeFace => runtimeType == Defaults;
 

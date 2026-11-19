@@ -40,34 +40,7 @@ import 'dart:convert';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart'
-    show DoughnutController;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -87,7 +60,7 @@ import '../scales/scale_time_harness.dart' show atNow;
 final class const ReferenceEvent(
   @override final double x,
   @override final double y,
-) implements types.ChartEvent {
+) implements ChartEvent {
   /// The event at the point ([x], [y]).
   this;
 
@@ -99,7 +72,7 @@ final class const ReferenceEvent(
 
   /// The event of the generator has no `chart` key.
   @override
-  types.Chart? get chart => null;
+  IChart? get chart => null;
 }
 
 /// The `items` of the `hits` of the generator: one JSON line `items[p]` for
@@ -221,7 +194,7 @@ Object? plainValue(Object? value, [int depth = 0]) {
     final LineSegmentStyle style => segmentStyleMarker(style),
     // A side of Dart `null` is the JS `false` of `toClip` (row
     // `adapt-native-chart-meta`).
-    final types.ChartClip clip => <String, Object?>{
+    final ChartClip clip => <String, Object?>{
       'top': clip.top ?? false,
       'right': clip.right ?? false,
       'bottom': clip.bottom ?? false,
@@ -272,7 +245,7 @@ Map<String, Object?> _scaleOptions(Scale scale) {
 }
 
 /// The properties of a data element of its class.
-List<String> _elementProperties(types.Element element) => switch (element) {
+List<String> _elementProperties(IElement element) => switch (element) {
   PointElement() => const ['x', 'y', 'skip', 'stop'],
   BarElement() => const ['x', 'y', 'base', 'horizontal', 'width', 'height'],
   ArcElement() => const [
@@ -290,7 +263,7 @@ List<String> _elementProperties(types.Element element) => switch (element) {
 };
 
 /// `[x, y]` of a point.
-List<Object?> _xy(types.Point point) => [point.x, point.y];
+List<Object?> _xy(Point point) => [point.x, point.y];
 
 /// The plain copy of a parsed item: `_stacks` as its keys only.
 Object? _parsedItem(Object? item) => switch (item) {
@@ -304,7 +277,7 @@ Object? _parsedItem(Object? item) => switch (item) {
 };
 
 /// The line element of a dataset, or Dart `null`.
-Map<String, Object?>? _datasetElement(types.Element? element) {
+Map<String, Object?>? _datasetElement(IElement? element) {
   if (element == null) {
     return null;
   }
@@ -335,7 +308,7 @@ Object? _nativeClip(Object? clip) => switch (clip) {
 
 /// The plain `_clip` of [meta], or [undefined] before the first update writes
 /// it: the read of a meta with no clip throws.
-Object? _clipOf(types.ChartMeta meta) {
+Object? _clipOf(ChartMeta meta) {
   try {
     return plainValue(meta.clip);
     // The read of a `late` field before its first write.
@@ -388,10 +361,10 @@ Map<String, Object?> _observeDataset(Chart chart, int index) {
       for (final element in data)
         <String, Object?>{
           for (final key in _elementProperties(element))
-            key: (element as types.ElementPropertyRead)[key],
+            key: (element as ElementPropertyRead)[key],
           'active': element.active,
           'hidden': element.hidden,
-          'center': _xy((element as types.VisualElement).getCenterPoint(false)),
+          'center': _xy((element as VisualElement).getCenterPoint(false)),
           'tooltipPosition': _xy((element as Element).tooltipPosition(false)),
         },
     ],

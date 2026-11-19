@@ -13,29 +13,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show DatasetInteractionMode, NearestInteractionMode;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show MonotoneCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -110,7 +88,7 @@ AnyObject _minMax(({double min, double max}) range) => <String, Object?>{
 /// `true` has no Dart form there. `getRelativePosition` tests only that the
 /// event has a `native` key, which each `types.ChartEvent` has. Thus Dart
 /// `null` stands for it.
-final class _PointEvent(types.Point point) implements types.ChartEvent {
+final class _PointEvent(Point point) implements ChartEvent {
   @override
   String get type => 'mousemove';
 
@@ -124,7 +102,7 @@ final class _PointEvent(types.Point point) implements types.ChartEvent {
   final double? y = point.y;
 
   @override
-  types.Chart? get chart => null;
+  IChart? get chart => null;
 }
 
 void main() {
@@ -664,7 +642,7 @@ void main() {
       late Object? defaults;
 
       setUp(() {
-        defaults = helpers.clone(jsGet(_datasetDefaults(), 'line'));
+        defaults = clone(jsGet(_datasetDefaults(), 'line'));
       });
 
       tearDown(() {
@@ -675,7 +653,7 @@ void main() {
       testWidgets('should utilize the dataset global default options', (
         tester,
       ) async {
-        helpers.merge(jsGet(_datasetDefaults(), 'line'), <String, Object?>{
+        merge(jsGet(_datasetDefaults(), 'line'), <String, Object?>{
           'spanGaps': true,
           'tension': 0.231,
           'backgroundColor': const ChartPaint.solid(
@@ -736,7 +714,7 @@ void main() {
       testWidgets('should be overridden by user-supplied values', (
         tester,
       ) async {
-        helpers.merge(jsGet(_datasetDefaults(), 'line'), <String, Object?>{
+        merge(jsGet(_datasetDefaults(), 'line'), <String, Object?>{
           'spanGaps': true,
           'tension': 0.231,
         });
@@ -976,7 +954,7 @@ void main() {
         beforeEach();
         final point = chart.getDatasetMeta(0).data[0];
 
-        helpers.merge(_dataset(chart, 0), <String, Object?>{
+        merge(_dataset(chart, 0), <String, Object?>{
           'hoverBackgroundColor': const ChartPaint.solid(
             native_ui.Color.fromRGBO(200, 100, 150, 1),
           ),
@@ -1020,7 +998,7 @@ void main() {
         beforeEach();
         final point = chart.getDatasetMeta(0).data[0];
 
-        helpers.merge(
+        merge(
           jsGet(jsGet(chart.options, 'elements'), 'point'),
           <String, Object?>{
             'hoverBackgroundColor': const ChartPaint.solid(
@@ -1068,7 +1046,7 @@ void main() {
           final point = chart.getDatasetMeta(0).data[0];
           final dataset = chart.getDatasetMeta(0).dataset!;
 
-          helpers.merge(_dataset(chart, 0), <String, Object?>{
+          merge(_dataset(chart, 0), <String, Object?>{
             'backgroundColor': const ChartPaint.solid(
               native_ui.Color.fromRGBO(170, 170, 170, 1),
             ),
@@ -1316,7 +1294,7 @@ void main() {
       final visiblePoints = chart
           .getSortedVisibleDatasetMetas()[0]
           .data
-          .where((p) => !jsTruthy((p as types.PointElement).skip))
+          .where((p) => !jsTruthy((p as IPointElement).skip))
           .toList();
 
       expect(visiblePoints.length, 6);

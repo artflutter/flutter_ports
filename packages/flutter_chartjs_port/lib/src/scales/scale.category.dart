@@ -25,28 +25,8 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds;
-import 'package:flutter_chartjs_port/src/core/scale_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show limitValue;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ScaleOptionsScope, TickOptionsScope;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
 import 'package:meta/meta.dart';
 
 /// An item of `_addedLabels`: the object literal `{index, label}` of
@@ -249,7 +229,6 @@ class CategoryScale(super.cfg)
   this;
 
   @override
-  @internal
   // DIVERGES(chartjs): adapt-numeric-category-parse, same native label source.
   bool supportsNativeCategoryParse(List<Object?> labels) {
     if (super.runtimeType != CategoryScale || chart is! CategoryLabelSource) {
@@ -295,7 +274,6 @@ class CategoryScale(super.cfg)
   static final Type _nativeTickListType = <Tick>[].runtimeType;
 
   @override
-  @internal
   bool get supportsStaticLabelPlan => runtimeType == CategoryScale;
 
   /// Resolve the built-in formatter directly, retaining its getLabels read
@@ -371,7 +349,6 @@ class CategoryScale(super.cfg)
 
   /// This exact built-in scale has ordinary axis and metadata reads.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
   bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
 

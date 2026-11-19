@@ -8,11 +8,11 @@
 /// imports `AnimationEvent` (index.d.ts:7) and re-exports all four (:18).
 ///
 /// `core.element.ts:3` imports `Animation`. Thus this library declares
-/// [Animation] with the two members that `getProps` reads
+/// [IAnimation] with the two members that `getProps` reads
 /// (core.element.ts:41). Its other members wait for their first ported
 /// caller.
 ///
-/// [AnimationEvent] is the event of the animator listeners
+/// [IAnimationEvent] is the event of the animator listeners
 /// (core.animator.js:27-32). The concrete class of `core.animator.dart`
 /// implements it (Chart.js ADR 0019, section 1).
 ///
@@ -24,15 +24,16 @@
 /// that needs two of them imports this library with the prefix `types`.
 library;
 
-import 'package:flutter_chartjs_port/src/types/index.dart' show Chart;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// animation.d.ts:4 `Animation`, the type of one running animation of a
 /// property. The concrete class is `core.animation.js:27`.
 ///
 /// An element keeps its animations in `$animations`, a Map from the
-/// property name to the [Animation] (core.element.ts:15). `getProps` reads
+/// property name to the [IAnimation] (core.element.ts:15). `getProps` reads
 /// [active] and [to] (core.element.ts:41).
-abstract interface class Animation() {
+abstract interface class IAnimation() {
   /// animation.d.ts:6 `active(): boolean`. True while the animation runs.
   bool active();
 
@@ -46,15 +47,16 @@ abstract interface class Animation() {
   Object? get to;
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// animation.d.ts:13 `AnimationEvent`, the event that the animator gives to
 /// its `progress` and `complete` listeners (core.animator.js:27-32).
 ///
 /// Dart `null` stands for JS `undefined` in [initial], [numSteps] and
 /// [currentStep]. `core.controller.js:694` passes `{chart: this}` only. JS
 /// `null` never reaches these members.
-abstract interface class AnimationEvent() {
+abstract interface class IAnimationEvent() {
   /// animation.d.ts:14 `chart: Chart`.
-  Chart get chart;
+  IChart get chart;
 
   /// animation.d.ts:15 `numSteps: number`: the duration of the animations
   /// of the chart, in milliseconds (core.animator.js:25).

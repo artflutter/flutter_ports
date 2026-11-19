@@ -2,9 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.scale.autoskip.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' show Tick;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'scale_autoskip_reference.dart';
@@ -21,13 +19,13 @@ import 'scale_autoskip_reference.dart';
 // a pure layer. Thus this file runs on the VM only.
 
 /// The scale object `{options, _tickSize(), _length, _maxLength}` of a
-/// case, passed as a [types.Scale]. autoSkip reads no other member.
+/// case, passed as a [IScale]. autoSkip reads no other member.
 final class _Scale(
   @override final Map<String, Object?> options,
   final double _tickSize,
   @override final double length,
   @override final double maxLength,
-) implements types.Scale {
+) implements IScale {
   @override
   double tickSize() => _tickSize;
 

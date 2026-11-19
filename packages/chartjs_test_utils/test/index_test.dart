@@ -5,8 +5,7 @@ library;
 import 'dart:ui';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // acquireChart, releaseChart and releaseCharts of chartjs-test-utils 0.4.0

@@ -9,6 +9,7 @@ import 'dart:io';
 
 import 'src/check_support.dart';
 import 'src/lib_imports.dart';
+import 'src/name_uses.dart';
 import 'src/port_headers.dart' show withHarnessPackage;
 
 const String _usage = '''
@@ -31,7 +32,7 @@ Future<void> main(List<String> args) async {
     name: 'check:lib-imports',
     usage: _usage,
     out: stdout,
-    check: (packages) {
+    check: (packages) async {
       final findings = <Finding>[];
       var files = 0;
       final harness = withHarnessPackage(packages)
@@ -45,6 +46,8 @@ Future<void> main(List<String> args) async {
       for (final (index, package) in packages.indexed) {
         final result = checkLibImports(
           package,
+          nameUses: await resolveNameUses(package, packageNameOf(package)),
+          publicImportsOnly: index == 0,
           displayPrefix: display(package),
           harnessDirectory: index == 0 ? harness : null,
           harnessDisplayPrefix: harness == null ? '' : display(harness),

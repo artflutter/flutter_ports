@@ -6,7 +6,6 @@ library;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Same energy data as resize.spec.js: column 0 has five nodes (Oil, Natural

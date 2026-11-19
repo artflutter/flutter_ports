@@ -10,13 +10,7 @@ import 'dart:math' as math;
 
 // Upstream imports isFinite as isFiniteNumber, to keep the global isFinite
 // that isNumber calls. The port's isNumber needs no global isFinite.
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFinite;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types show Tick;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.math.ts:9 `PI`.
 const double pi = math.pi;
@@ -141,7 +135,7 @@ abstract interface class MinMax() {
 
 /// helpers.math.ts:79 `_setMinAndMaxByKey`.
 ///
-/// The read `array[i][property]` gives [types.Tick.value] for a tick and
+/// The read `array[i][property]` gives [Tick.value] for a tick and
 /// the key `'value'`: the form of the two upstream callers
 /// (scale.linearbase.js:274, scale.logarithmic.js:172). Another item gives
 /// the read of [jsGet]: `undefined` for an absent key of a Map, and
@@ -149,7 +143,7 @@ abstract interface class MinMax() {
 void setMinAndMaxByKey(List<Object?> array, MinMax target, String property) {
   for (var i = 0, ilen = array.length; i < ilen; i++) {
     final item = array[i];
-    final value = item is types.Tick && property == 'value'
+    final value = item is Tick && property == 'value'
         ? item.value
         : jsGet(item, property);
     if (!jsIsNaN(value)) {

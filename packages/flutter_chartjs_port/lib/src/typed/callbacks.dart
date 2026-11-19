@@ -18,12 +18,7 @@
 /// another type.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, ScriptableChartContext, ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/types/index.dart' show ActiveElement;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// A scriptable option: a function of the context of the element, the
 /// dataset or the chart that gives the value.

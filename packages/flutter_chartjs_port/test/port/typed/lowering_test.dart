@@ -9,11 +9,6 @@ import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/foundation.dart' show ValueKey;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
-import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/index.dart' as callback_types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/drop_extra_args.dart';
@@ -442,7 +437,7 @@ String? _title2(List<TooltipItem> items) => 'T';
 String? _label(TooltipItem item) => 'L';
 
 /// An animation callback.
-void _onAnimation(AnimationEvent event) {}
+void _onAnimation(IAnimationEvent event) {}
 
 /// A point label callback (Chart.js ADR 0131).
 List<String> _pointLabel(Scale scale, List<String> label, int index) => label;
@@ -2753,12 +2748,12 @@ void main() {
   });
 }
 
-final class _NoChart() implements callback_types.Chart {
+final class _NoChart() implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class const _CallbackTooltip() implements callback_types.TooltipModel {
+final class const _CallbackTooltip() implements TooltipModel {
   @override
   Object get options => const <String, Object?>{};
   @override

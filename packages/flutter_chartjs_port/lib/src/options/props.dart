@@ -22,11 +22,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/typed_record.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Whether [value] is an options object for the `options` field: a typed
 /// object with a face (resolved options, a view) or a Map.

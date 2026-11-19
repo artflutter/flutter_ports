@@ -3,10 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show Registry;
-import 'package:flutter_chartjs_port/src/index.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The namespaces and `registerables` of src/index.ts:8-25 (Chart.js ADR

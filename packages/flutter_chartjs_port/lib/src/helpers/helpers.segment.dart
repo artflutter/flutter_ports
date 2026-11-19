@@ -28,20 +28,7 @@
 /// object with the keys of the object literal of `readStyle`.
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
-    show isPatternOrGradient;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show angleBetween, angleDiff, isBetween, normalizeAngle;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// helpers.segment.js:8 `@typedef Segment`: the plain object
@@ -58,13 +45,11 @@ final class _Segment({
 }) implements Segment;
 
 /// Type identity for the stack guard without constructing a dummy line.
-@internal
 const Type nativeSegmentType = _Segment;
 
 // DIVERGES(chartjs): adapt-boundary-segment-search, retain the native segment
 // representation for exact bounds of a private, unstyled linear boundary.
 /// An internal segment for validated, non-wrapping private boundary indices.
-@internal
 Segment createBoundarySegment(int start, int end) =>
     _Segment(start: start.toDouble(), end: end.toDouble(), loop: false);
 
@@ -109,7 +94,7 @@ Segment _normalizeSegment({
 /// helpers.segment.js:35 `getSegment`.
 ({double start, double end, bool loop, Object? style}) _getSegment(
   Segment segment,
-  List<PointElement> points,
+  List<IPointElement> points,
   ({String property, double start, double end}) bounds,
 ) {
   final (:property, start: startBound, end: endBound) = bounds;
@@ -144,8 +129,8 @@ Segment _normalizeSegment({
   return (start: start, end: end, loop: loop, style: segment.style);
 }
 
-final Type _growablePoints = <PointElement>[].runtimeType;
-final Type _fixedPoints = List<PointElement>.empty().runtimeType;
+final Type _growablePoints = <IPointElement>[].runtimeType;
+final Type _fixedPoints = List<IPointElement>.empty().runtimeType;
 
 /// Whether the loop of [boundSegment] gives one segment from [start] to [end]:
 /// points of the built-in class with no skip and strictly ascending finite x,
@@ -154,7 +139,7 @@ final Type _fixedPoints = List<PointElement>.empty().runtimeType;
 /// early.
 /// It reads nothing of a point of another class.
 bool _boundsCoverAscendingPoints(
-  List<PointElement> points,
+  List<IPointElement> points,
   double start,
   double end,
   double startBound,
@@ -217,7 +202,7 @@ bool _boundsCoverAscendingPoints(
 /// `lib/src/types/index.dart`.
 List<Segment> boundSegment(
   Segment segment,
-  List<PointElement> points, [
+  List<IPointElement> points, [
   ({String property, double start, double end})? bounds,
 ]) {
   if (bounds == null) {
@@ -249,7 +234,7 @@ List<Segment> boundSegment(
   var inside = false;
   double? subStart;
   late double value;
-  PointElement point;
+  IPointElement point;
   // prevValue starts JS `undefined`. The closures pass it to a number
   // function, which makes it NaN, so NaN stands for it there. But the `x`
   // and `y` getters of an element give NaN for `undefined`, and
@@ -342,7 +327,7 @@ List<Segment> boundSegment(
 ///
 /// Dart `null` [bounds] stands for JS `undefined`.
 List<Segment> boundSegments(
-  LineElement line, [
+  ILineElement line, [
   ({String property, double start, double end})? bounds,
 ]) {
   final result = <Segment>[];
@@ -364,7 +349,7 @@ List<Segment> boundSegments(
 /// [spanGaps] is the option value `line.options.spanGaps`: a `bool` or a
 /// number (Chart.js ADR 0043).
 ({double start, double end}) _findStartAndEnd(
-  List<PointElement> points,
+  List<IPointElement> points,
   double count,
   bool loop,
   Object? spanGaps,
@@ -416,7 +401,7 @@ List<Segment> boundSegments(
 /// `ToNumber(null) % count`. This happens after a skipped point and a
 /// `stop` point.
 List<Segment> _solidSegments(
-  List<PointElement> points,
+  List<IPointElement> points,
   double? start,
   double max,
   bool loop,
@@ -477,7 +462,7 @@ List<Segment> _solidSegments(
 /// [LineSegmentStyle], or Dart `null` for no segment styles (Chart.js ADR
 /// 0142).
 List<Segment> computeSegments(
-  LineElement line, [
+  ILineElement line, [
   LineSegmentStyle? segmentOptions,
 ]) {
   final points = line.points;
@@ -523,9 +508,9 @@ List<Segment> computeSegments(
 /// always truthy.
 // DIVERGES(chartjs): adapt-native-line-segment-style, a style with no function.
 List<Segment> _splitByStyles(
-  LineElement line,
+  ILineElement line,
   List<Segment> segments,
-  List<PointElement> points,
+  List<IPointElement> points,
   LineSegmentStyle? segmentOptions,
 ) {
   if (segmentOptions == null || !_hasFunctions(segmentOptions)) {
@@ -555,13 +540,13 @@ bool _hasFunctions(LineSegmentStyle style) =>
 /// `readStyle(segmentOptions.setContext(ctx))` is [_readSegmentStyle]: it
 /// calls each function of the [LineSegmentStyle] with the typed context of
 /// the part (Chart.js ADR 0142). A `null` `line._datasetIndex` is JS
-/// `undefined` (see [LineElement.datasetIndex]). The context gets it as the
+/// `undefined` (see [ILineElement.datasetIndex]). The context gets it as the
 /// [undefined] sentinel.
 // DIVERGES(chartjs): adapt-native-line-segment-style, typed calls.
 List<Segment> _doSplitByStyles(
-  LineElement line,
+  ILineElement line,
   List<Segment> segments,
-  List<PointElement> points,
+  List<IPointElement> points,
   LineSegmentStyle segmentOptions,
 ) {
   final chartContext = line.chart!.getContext();

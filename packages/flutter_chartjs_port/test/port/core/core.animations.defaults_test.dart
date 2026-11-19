@@ -1,11 +1,6 @@
 // Original code, not ported from Chart.js: core.animations.defaults tests.
 import 'package:flutter/animation.dart' show Curves;
-import 'package:flutter_chartjs_port/src/core/core.animation.dart'
-    show Interpolator;
-import 'package:flutter_chartjs_port/src/core/core.animations.defaults.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/drop_extra_args.dart';

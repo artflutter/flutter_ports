@@ -18,15 +18,9 @@ library;
 // DIVERGES(chartjs): adapt-line-points-elements, the wraps make point elements.
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/elements/element.point.dart'
-    show PointElement;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show normalizeAngle;
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
-    show boundSegment, boundSegments;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+
 // DIVERGES(chartjs): adapt-boundary-segment-search, per-draw private boundary.
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 
 /// The bounds object of `_getBounds` (filler.segment.js:62).
 typedef _Bounds = ({String property, double start, double end});
@@ -37,10 +31,10 @@ typedef _Bounds = ({String property, double start, double end});
 /// (Dart `null` for `undefined`) of a target that is not a line
 /// (filler.segment.js:15-24).
 typedef FillPart = ({
-  types.Segment source,
+  Segment source,
   Object? target,
-  types.PointElement start,
-  types.PointElement end,
+  IPointElement start,
+  IPointElement end,
 });
 
 /// filler.segment.js:3 `_segments(line, target, property)`.
@@ -49,14 +43,14 @@ typedef FillPart = ({
 /// value of `_getTarget`. `!target.segments` (:15) is the type test
 /// `target is! types.LineElement` (Chart.js ADR 0040, section 4).
 List<FillPart> segments(
-  types.LineElement line,
+  ILineElement line,
   Object target,
   String property, {
   BoundaryPointSearch? boundarySearch,
 }) {
   final segments = line.segments;
   final points = line.points;
-  final tpoints = target is types.LineElement ? target.points : null;
+  final tpoints = target is ILineElement ? target.points : null;
   final parts = <FillPart>[];
 
   for (final segment in segments) {
@@ -71,7 +65,7 @@ List<FillPart> segments(
     );
 
     // DIVERGES(chartjs): adapt-filler-target-classes, a type test.
-    if (target is! types.LineElement) {
+    if (target is! ILineElement) {
       // Special case for boundary not supporting `segments` (simpleArc)
       // Bounds are provided as `target` for partial circle, or undefined for
       // full circle
@@ -126,8 +120,8 @@ List<FillPart> segments(
 /// gives the same result in `_boundSegment` (Chart.js ADR 0040, section 3).
 ({String property, double start, double end})? getBounds(
   String property,
-  types.PointElement first,
-  types.PointElement last, [
+  IPointElement first,
+  IPointElement last, [
   bool? loop,
 ]) {
   if (loop ?? false) {
@@ -147,14 +141,14 @@ List<FillPart> segments(
 ///
 /// Dart `null` for [boundary] is `boundary || {}`, and a Dart `null` member
 /// is the default `null` of the destructuring.
-List<types.PointElement> pointsFromSegments(
+List<IPointElement> pointsFromSegments(
   ({double? x, double? y})? boundary,
-  types.LineElement line,
+  ILineElement line,
 ) {
   final x = boundary?.x;
   final y = boundary?.y;
   final linePoints = line.points;
-  final points = <types.PointElement>[];
+  final points = <IPointElement>[];
   for (final segment in line.segments) {
     final start = segment.start;
     final end = findSegmentEnd(start, segment.end, linePoints);
@@ -195,11 +189,7 @@ List<types.PointElement> pointsFromSegments(
 ///
 /// The getters `x` and `y` give NaN for the `undefined` state, as
 /// `isNaN(undefined)` is true.
-double findSegmentEnd(
-  double start,
-  double end,
-  List<types.PointElement> points,
-) {
+double findSegmentEnd(double start, double end, List<IPointElement> points) {
   var result = end;
   for (; result > start; result--) {
     final point = points[result.toInt()];

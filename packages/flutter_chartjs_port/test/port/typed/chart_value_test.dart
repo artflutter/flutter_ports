@@ -5,7 +5,6 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/typed/datasets.dart' show lowerDataset;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/drop_extra_args.dart';

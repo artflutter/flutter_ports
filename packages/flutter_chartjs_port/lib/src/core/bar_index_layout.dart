@@ -1,11 +1,6 @@
 // Original code, not ported from Chart.js: live native bar topology guards.
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Explicit contract for ordinary controller/scale metadata reads. Unknown
 /// subclasses must retain their virtual methods and user getter behavior.
@@ -18,10 +13,7 @@ abstract interface class NativeBarIndexReads() {
 /// instant. The caller rechecks after option resolution; nothing is frozen.
 abstract interface class SingleBarIndexSource() {
   /// True only when the axis count is one and axis/stack indices are zero.
-  bool hasSingleBarIndexLayout(
-    types.DatasetController controller,
-    types.Scale scale,
-  );
+  bool hasSingleBarIndexLayout(IDatasetController controller, IScale scale);
 }
 
 final _maps = <Type>{

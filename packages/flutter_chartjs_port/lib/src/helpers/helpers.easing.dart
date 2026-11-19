@@ -10,8 +10,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show halfPi, pi, tau;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.easing.ts:3 `atEdge`.
 bool _atEdge(double t) => t == 0 || t == 1;

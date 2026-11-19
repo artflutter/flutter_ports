@@ -33,28 +33,7 @@
 /// neither `dart:ui` nor `package:flutter`.
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show isNumber;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedBy, AnimatedProp;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show XAnimation, YAnimation;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show GenericElementOptionsScope;
-import 'package:flutter_chartjs_port/src/options/typed_record.dart'
-    show TypedRecord;
-import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// core.element.ts:6 `Element<T = AnyObject, O = AnyObject>`.
@@ -182,7 +161,7 @@ import 'package:meta/meta.dart';
 ///   // draw, inRange, inXRange, inYRange and getCenterPoint.
 /// }
 /// ```
-class Element() implements types.Element, types.PropertyAccess, ElementProps {
+class Element() implements IElement, PropertyAccess, ElementProps {
   /// core.element.ts:6 the implicit constructor of `Element`.
   ///
   /// [x], [y], [options] and [$animations] start in the `undefined` state.
@@ -295,7 +274,7 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   ///
   /// Dart `null` stands for JS `undefined`, the start value.
   /// `core.animations.js` creates the Map. JS `null` never reaches it.
-  Map<String, types.Animation>? $animations;
+  Map<String, IAnimation>? $animations;
 
   /// core.datasetController.js:730 `element.hidden`: a truthy value hides
   /// the data element in the draw of its dataset.
@@ -343,7 +322,6 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// A numeric property gets NaN and its bit. A subclass handles the ids of
   /// its own numeric properties and passes the other ids to `super`. Another
   /// property is the write by name `this[prop] = undefined`.
-  @internal
   void markUndefined(AnimatedProp prop) => prop.markUndefined(this);
 
   /// Whether the property [prop] is in the `undefined` state, or the element
@@ -352,7 +330,6 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// A numeric property gives its bit. A subclass handles the ids of its own
   /// numeric properties and passes the other ids to `super`. Another
   /// property is the read by name.
-  @internal
   bool isUndefined(AnimatedProp prop) => prop.isUndefined(this);
 
   /// `getProps([prop], useFinalPosition)[prop]` for the numeric property
@@ -364,7 +341,6 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// (core.element.ts:41). Else the result is [current], the typed getter
   /// of [prop]: NaN in the `undefined` state is the `ToNumber` of the
   /// `undefined` that upstream reads.
-  @internal
   double finalNumber(
     AnimatedProp prop,
     double current,
@@ -378,7 +354,6 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// `getProps([prop], useFinalPosition)[prop]` for the property [prop] with
   /// the current value [current] (the value by name): as [finalNumber], with
   /// the target value as it is.
-  @internal
   Object? finalValue(
     AnimatedProp prop,
     Object? current,
@@ -479,7 +454,7 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
           _ => throw ArgumentError.value(value, prop, 'Not an object'),
         };
       case r'$animations':
-        $animations = toObjectProp<Map<String, types.Animation>>(prop, value);
+        $animations = toObjectProp<Map<String, IAnimation>>(prop, value);
       case 'hidden':
         hidden = value;
       default:
@@ -524,7 +499,6 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// no property object: it gives false. An element class gives true for
   /// its own object. [writePropertyAt] writes an extra key and a foreign
   /// value by name, at its position of the `Object.keys` order.
-  @internal
   bool takesProperties(TypedRecord props) => false;
 
   /// Whether the element is of a built-in element class itself, not of a
@@ -535,14 +509,12 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// controllers (Chart.js ADR 0102), and the properties of another element
   /// by name, so that its `operator []=` sees each write.
   /// [Element] itself gives false.
-  @internal
   bool get typedWrites => false;
 
   /// The typed write of the own key at [position] of [props], an object
   /// that the element [takesProperties]: `this[key] = props[key]`
   /// (Chart.js ADR 0054 §9). A key that the element class does not type
   /// goes through [assignKey].
-  @internal
   void writePropertyAt(TypedRecord props, int position) =>
       assignKey(props, position);
 
@@ -563,7 +535,6 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// [x] and [y] take their setters. An element class handles the ids of its
   /// own numeric properties and passes the other ids to `super`. Another
   /// property is the write by name.
-  @internal
   void writeNumber(AnimatedProp prop, double value) => prop.write(this, value);
 
   /// The `ToNumber` of the read `this[prop]` of the property [prop]: the
@@ -575,7 +546,6 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// getters of its own numeric properties and passes the other ids to
   /// `super`. Another property is the read by name: NaN for an absent
   /// property, the `ToNumber` of `undefined`.
-  @internal
   double numberOf(AnimatedProp prop) => prop.read(this);
 
   /// The value that a write by name of [value] stores in the numeric
@@ -633,7 +603,6 @@ class Element() implements types.Element, types.PropertyAccess, ElementProps {
   /// Whether the element has a Map of extra properties: the properties
   /// that its class does not declare, for example `skip` of a bar. The typed
   /// hover scan of `bar_hover_scan.dart` reads `skip` by name only then.
-  @internal
   bool get hasExtras => _extras != null;
 
   /// The read of the extra property [prop]: its value, or [undefined] when

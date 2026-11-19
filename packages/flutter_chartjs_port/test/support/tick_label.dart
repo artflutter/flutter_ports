@@ -3,9 +3,7 @@
 /// The tick label forms of the tests (differences.md row `adapt-native-tick`).
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' show Scale, Tick;
-import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The label of [tick] in the form of an upstream expectation: the line of a
 /// label of one line, else the List of lines. Null is no label.
@@ -26,7 +24,7 @@ List<String>? nativeTickLabel(Object? upstream) => labelLinesOf(upstream);
 /// The tick callback `value => '' + value` of the upstream specs
 /// (`value.toString()`).
 List<String>? valueTickLabel(
-  Scale scale,
+  IScale scale,
   double value,
   int index,
   List<Tick> ticks,
@@ -35,7 +33,7 @@ List<String>? valueTickLabel(
 /// The tick callback `(value, index) => '' + index` of the upstream specs
 /// (`index.toString()`).
 List<String>? indexTickLabel(
-  Scale scale,
+  IScale scale,
   double value,
   int index,
   List<Tick> ticks,

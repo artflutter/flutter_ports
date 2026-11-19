@@ -1,8 +1,7 @@
 // Original code, not ported from Chart.js: helpers.intl cases with no spec.
 import 'dart:ui' show Locale;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart';
 import 'package:test/test.dart';
 

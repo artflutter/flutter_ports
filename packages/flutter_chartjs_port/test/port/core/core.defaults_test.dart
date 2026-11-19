@@ -5,29 +5,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show attachContext, createResolver;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionScope;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/axis_json.dart';
@@ -125,7 +103,7 @@ Defaults _defaults() => Defaults(<String, Object?>{}, const []);
 
 /// A platform whose device pixel ratio is 2. Only `getDevicePixelRatio` is
 /// read.
-final class _Platform() implements types.BasePlatform {
+final class _Platform() implements IBasePlatform {
   @override
   double getDevicePixelRatio() => 2;
 
@@ -134,9 +112,9 @@ final class _Platform() implements types.BasePlatform {
 }
 
 /// A chart with a [_Platform]. Only `platform` is read.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   @override
-  final types.BasePlatform platform = _Platform();
+  final IBasePlatform platform = _Platform();
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

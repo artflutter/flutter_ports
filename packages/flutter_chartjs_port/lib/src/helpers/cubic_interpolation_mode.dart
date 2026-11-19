@@ -15,8 +15,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show SplinePoint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The mode of the control points of a curved line: the option
 /// `cubicInterpolationMode`.

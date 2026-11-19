@@ -32,22 +32,11 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionAxis, InteractionHandler;
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions, plainOption;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `binarySearch` of `core.interaction.dart` (core.interaction.js:22).
 typedef InteractionRangeSearch = ({int lo, int hi}) Function(
-  types.ChartMeta metaset,
+  ChartMeta metaset,
   InteractionAxis axis,
   double? value, [
   bool? intersect,
@@ -134,12 +123,12 @@ double _pointReach(Object? options) {
 
 /// Whether [element] is of the class [PointElement] itself.
 @pragma('vm:prefer-inline')
-bool _isBuiltInPoint(types.Element element) =>
+bool _isBuiltInPoint(IElement element) =>
     element is PointElement && element.typedWrites;
 
 /// Whether [element] is of the class [BarElement] itself.
 @pragma('vm:prefer-inline')
-bool _isBuiltInBar(types.Element element) =>
+bool _isBuiltInBar(IElement element) =>
     element is BarElement && element.typedWrites;
 
 /// `evaluateInteractionItems` of `core.interaction.dart` for a [handler]
@@ -156,9 +145,8 @@ bool _isBuiltInBar(types.Element element) =>
 /// with `$animations` and a true [useFinalPosition] takes the handler at
 /// once too. A dataset whose first element is neither a built-in bar nor a
 /// built-in point takes the loop of upstream as it is.
-@internal
 void scanBarInteractionItems(
-  types.Chart chart,
+  IChart chart,
   InteractionAxis axis,
   Point position,
   InteractionHandler handler, {
@@ -177,7 +165,7 @@ void scanBarInteractionItems(
   var px = position.x;
   var py = position.y;
   for (var i = 0, ilen = metasets.length; i < ilen; ++i) {
-    final types.ChartMeta(:index, :data) = metasets[i];
+    final ChartMeta(:index, :data) = metasets[i];
     final (:lo, :hi) = search(metasets[i], axis, value, intersect);
     if (data.isNotEmpty && _isBuiltInPoint(data[0])) {
       _scanPoints(
@@ -235,7 +223,7 @@ void scanBarInteractionItems(
 /// of an element of another class: these calls can run code of a program.
 /// It keeps no value from one point to the next.
 void _scanPoints(
-  List<types.Element> data,
+  List<IElement> data,
   int datasetIndex,
   int lo,
   int hi,

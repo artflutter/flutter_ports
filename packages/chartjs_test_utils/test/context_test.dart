@@ -3,7 +3,7 @@ import 'dart:ui';
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The recordings follow chartjs-test-utils 0.4.0 src/context.js. Where Dart

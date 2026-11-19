@@ -12,7 +12,6 @@ import 'dart:ui';
 
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 /// labels.ts:13 `DrawLabelOptions`.
 final class const DrawLabelOptions({

@@ -12,7 +12,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart' show immutable;
 
 /// `borderSkipped` of a bar (index.d.ts:2158 `'start' | 'end' | 'left' |

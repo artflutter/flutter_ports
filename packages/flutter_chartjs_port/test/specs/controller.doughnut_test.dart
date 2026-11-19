@@ -10,23 +10,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
-import 'package:flutter_chartjs_port/src/controllers/controller.doughnut.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show DatasetInteractionMode;
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show PercentRadius;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -529,7 +513,7 @@ void main() {
         beforeEach();
         final arc = chart.getDatasetMeta(0).data[0];
 
-        helpers.merge(_dataset(chart, 0), <String, Object?>{
+        merge(_dataset(chart, 0), <String, Object?>{
           'hoverBackgroundColor': const ChartPaint.solid(
             native_ui.Color.fromRGBO(200, 100, 150, 1),
           ),
@@ -570,18 +554,15 @@ void main() {
         beforeEach();
         final arc = chart.getDatasetMeta(0).data[0];
 
-        helpers.merge(
-          jsGet(jsGet(chart.options, 'elements'), 'arc'),
-          <String, Object?>{
-            'hoverBackgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(200, 100, 150, 1),
-            ),
-            'hoverBorderColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(150, 50, 100, 1),
-            ),
-            'hoverBorderWidth': 8.4,
-          },
-        );
+        merge(jsGet(jsGet(chart.options, 'elements'), 'arc'), <String, Object?>{
+          'hoverBackgroundColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(200, 100, 150, 1),
+          ),
+          'hoverBorderColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(150, 50, 100, 1),
+          ),
+          'hoverBorderWidth': 8.4,
+        });
 
         chart.update();
 

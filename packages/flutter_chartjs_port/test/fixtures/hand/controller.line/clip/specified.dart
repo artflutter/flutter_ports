@@ -3,8 +3,7 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartClip;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The upstream config, with native padding and clip values.
 // DIVERGES(chartjs): adapt-edge-insets-padding, the native padding value.

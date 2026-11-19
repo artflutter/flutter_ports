@@ -7,7 +7,6 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     hide PointOptions;
-// Not public: the DOM listeners of the internal chart host.
 import 'package:material_ui/material_ui.dart';
 
 /// The event types of the demo chart: the Chart.js default `events` option

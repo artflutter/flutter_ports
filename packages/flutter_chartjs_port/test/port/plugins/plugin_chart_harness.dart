@@ -33,10 +33,7 @@
 /// imports it needs `@TestOn('vm')`.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show Plugin, PluginHook;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../controllers/controller_chart_harness.dart';
@@ -48,7 +45,7 @@ import '../scales/scale_chart_harness.dart';
 /// plugin_chart_common.mjs). No plugin case adds a user box. The subtitle
 /// map is private on both sides (plugin.subtitle.js:4, Chart.js ADR 0038,
 /// section 5), so each other box is the subtitle.
-String _boxKind(Chart chart, types.LayoutItem box) {
+String _boxKind(Chart chart, LayoutItem box) {
   if (identical(box, chart.legend)) {
     return 'legend';
   }

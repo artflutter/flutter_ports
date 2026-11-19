@@ -27,25 +27,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show paddingOption, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show each, isObject;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show toPadding;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// core.layouts.js:8 `STATIC_POSITIONS`.
 // DIVERGES(chartjs): adapt-chart-position-enum, the enum values.
@@ -782,7 +764,7 @@ void _placeBoxes(
 /// `!chart.boxes` of :292-294 has no Dart form. The form `value || d`
 /// keeps a truthy value ([jsTruthy]). `item._layers || function() {...}`
 /// keeps a function that the box has.
-void _addBox(types.Chart chart, LayoutItem item) {
+void _addBox(IChart chart, LayoutItem item) {
   // initialize item with default values
   item
     // `item.fullSize || false` (:297) is `item.fullSize` for a bool.
@@ -809,7 +791,7 @@ void _addBox(types.Chart chart, LayoutItem item) {
 /// Dart null stands for JS `undefined`: `indexOf` gives -1, and nothing
 /// changes (core.layouts.js:318-323). A `List<LayoutItem>` does not take
 /// null, so the index of null is -1 without the call.
-void _removeBox(types.Chart chart, LayoutItem? layoutItem) {
+void _removeBox(IChart chart, LayoutItem? layoutItem) {
   final index = layoutItem == null ? -1 : chart.boxes.indexOf(layoutItem);
   if (index != -1) {
     chart.boxes.removeAt(index);
@@ -829,7 +811,7 @@ void _removeBox(types.Chart chart, LayoutItem? layoutItem) {
 /// `core.layouts` test only its truthiness. [LayoutItem.weight] is an
 /// `Object?`: `configure` stores the `weight` option as it is, as upstream
 /// does, because `sortByWeight` compares the raw values with `===`.
-void _configure(types.Chart chart, LayoutItem item, Object options) {
+void _configure(IChart chart, LayoutItem item, Object options) {
   item
     // DIVERGES(chartjs): adapt-layout-configure-types, a bool, not the value.
     ..fullSize = jsTruthy(readOption(options, OptionKey.fullSize))
@@ -855,7 +837,7 @@ void _configure(types.Chart chart, LayoutItem item, Object options) {
 /// chart.chartArea)` (:451) writes the six keys of the chart area in the
 /// order of the literal of :439.
 void _update(
-  types.Chart? chart,
+  IChart? chart,
   double width,
   double height, [
   Object? minPadding = undefined,
@@ -1016,11 +998,11 @@ void _update(
 /// Thus it is a record of the four functions (Chart.js ADR 0003).
 /// `layouts.addBox(chart, item)` calls a function as upstream does.
 const ({
-  void Function(types.Chart chart, LayoutItem item) addBox,
-  void Function(types.Chart chart, LayoutItem? layoutItem) removeBox,
-  void Function(types.Chart chart, LayoutItem item, Object options) configure,
+  void Function(IChart chart, LayoutItem item) addBox,
+  void Function(IChart chart, LayoutItem? layoutItem) removeBox,
+  void Function(IChart chart, LayoutItem item, Object options) configure,
   void Function(
-    types.Chart? chart,
+    IChart? chart,
     double width,
     double height, [
     Object? minPadding,

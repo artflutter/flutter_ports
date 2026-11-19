@@ -6,13 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -143,7 +137,7 @@ void main() {
         ),
       );
       for (final point in chart.getDatasetMeta(0).data) {
-        final read = point as types.ElementPropertyRead;
+        final read = point as ElementPropertyRead;
         expect(read['x'], isNaN);
         expect(read['y'], isNaN);
         expect(read['skip'], isTrue);

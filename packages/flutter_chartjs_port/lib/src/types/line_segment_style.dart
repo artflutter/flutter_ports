@@ -5,11 +5,8 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:meta/meta.dart' show immutable, internal;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:meta/meta.dart' show immutable;
 
 /// The style functions of the parts of a line: the value of the line option
 /// `segment` (index.d.ts:2004, Chart.js ADR 0142).
@@ -121,7 +118,6 @@ final class const LineSegmentStyle({
 /// takes as no segment styles (helpers.segment.js:266). A Map, a constant
 /// or another truthy value stops a debug build, and a release build takes
 /// it as no segment styles.
-@internal
 LineSegmentStyle? lineSegmentStyleOf(Object? value) {
   if (value is LineSegmentStyle) return value;
   assert(

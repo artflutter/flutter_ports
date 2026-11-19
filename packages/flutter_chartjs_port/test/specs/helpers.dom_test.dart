@@ -3,10 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart' as helpers;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -79,7 +76,7 @@ void main() {
       // A div of 200px x 300px holds the node.
       final innerDiv = _nodeIn(200, 300);
 
-      expect(helpers.getMaximumSize(innerDiv), _size(200, 300));
+      expect(getMaximumSize(innerDiv), _size(200, 300));
     });
 
     test(
@@ -162,7 +159,7 @@ void main() {
 
         // retinaScale(chart, true): JavaScript multiplies with the ratio
         // `true`, which ToNumber makes 1. The Dart ratio is a `double?`.
-        helpers.retinaScale(chart, 1);
+        retinaScale(chart, 1);
 
         final canvas = chart.canvas!;
 
@@ -179,7 +176,7 @@ void main() {
         'canvas': <String, Object?>{'width': chartWidth, 'height': chartHeight},
       });
 
-      helpers.retinaScale(chart, devicePixelRatio, true);
+      retinaScale(chart, devicePixelRatio, true);
 
       final canvas = chart.canvas!;
       expect(canvas.width, (chartWidth * devicePixelRatio).roundToDouble());
@@ -235,7 +232,7 @@ void main() {
           },
           'options': <String, Object?>{
             'onHover': (Object e, Object? _, Object? _) {
-              final canvasPosition = helpers.getRelativePosition(e, chart);
+              final canvasPosition = getRelativePosition(e, chart);
 
               dataX = canvasPosition.x;
               dataY = canvasPosition.y;
@@ -270,7 +267,7 @@ void main() {
             },
             'options': <String, Object?>{
               'onHover': (Object chartEvent, Object? _, Object? _) {
-                chartPosition = helpers.getRelativePosition(chartEvent, chart);
+                chartPosition = getRelativePosition(chartEvent, chart);
               },
             },
           });
@@ -281,10 +278,7 @@ void main() {
             'mousemove',
             point,
           );
-          final nativePosition = helpers.getRelativePosition(
-            nativeEvent,
-            chart,
-          );
+          final nativePosition = getRelativePosition(nativeEvent, chart);
 
           expect(chartPosition, isNotNull);
           expect(
@@ -302,28 +296,28 @@ void main() {
       // A container of 200px x 500px holds the target.
       final target = _nodeIn(200, 500);
 
-      expect(helpers.getMaximumSize(target, 200, 500, 1), _size(200, 200));
+      expect(getMaximumSize(target, 200, 500, 1), _size(200, 200));
     });
 
     test('should respect aspect ratio and container height', () {
       // A container of 500px x 200px holds the target.
       final target = _nodeIn(500, 200);
 
-      expect(helpers.getMaximumSize(target, 500, 200, 1), _size(200, 200));
+      expect(getMaximumSize(target, 500, 200, 1), _size(200, 200));
     });
 
     test('should respect aspect ratio and skip container height', () {
       // A container of 500px x 200px holds the target.
       final target = _nodeIn(500, 200);
 
-      expect(helpers.getMaximumSize(target, null, null, 1), _size(500, 500));
+      expect(getMaximumSize(target, null, null, 1), _size(500, 500));
     });
 
     test('should round non-integer container dimensions', () {
       // A container of 799.999px x 299.999px holds the target.
       final target = _nodeIn(799.999, 299.999);
 
-      expect(helpers.getMaximumSize(target, null, null, 2), _size(800, 400));
+      expect(getMaximumSize(target, null, null, 2), _size(800, 400));
     });
   });
 }

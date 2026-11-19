@@ -6,13 +6,7 @@ import 'dart:collection';
 import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const red = Color(0xffff0000);
@@ -67,7 +61,7 @@ Object? plain(Object? value) {
   return value;
 }
 
-Object observe(List<types.Element> points) => [
+Object observe(List<IElement> points) => [
   for (final p in points.cast<PointElement>())
     [
       plain(p.x),
@@ -235,7 +229,7 @@ void main() {
                 );
                 final resolver =
                     (config.createResolver(scopes, null, ['point', ''])
-                          as helpers.OptionResolver)
+                          as OptionResolver)
                       ..jsWrite(
                         'backgroundColor',
                         const ChartPaint.solid(blue),

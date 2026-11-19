@@ -5,10 +5,7 @@ library;
 
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The config of the upstream file, as tool 4 decoded it. Each call
 /// makes new objects.

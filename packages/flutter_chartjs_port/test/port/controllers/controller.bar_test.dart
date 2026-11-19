@@ -6,21 +6,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show stacksOf;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BarThickness;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -64,12 +50,12 @@ Object? _barEdges(Chart chart) => [
   for (var i = 0; i < _datasetCount(chart); i++)
     [
       for (final element in chart.getDatasetMeta(i).data)
-        _edges(element as types.ElementPropertyRead),
+        _edges(element as ElementPropertyRead),
     ],
 ];
 
 /// `[enableBorderRadius, borderSkipped, Number(inflateAmount)]` of [bar].
-List<Object?> _edges(types.ElementPropertyRead bar) => [
+List<Object?> _edges(ElementPropertyRead bar) => [
   bar['enableBorderRadius'],
   bar['borderSkipped'],
   jsToNumber(bar['inflateAmount']),
@@ -114,7 +100,7 @@ List<Object?> _bars(Chart chart) => [
   for (final element in chart.getDatasetMeta(0).data)
     [
       for (final key in const ['x', 'y', 'base', 'width', 'height'])
-        (element as types.ElementPropertyRead)[key],
+        (element as ElementPropertyRead)[key],
     ],
 ];
 
@@ -340,10 +326,10 @@ void main() {
         expect(jsObjectKeys(stacksOf(item)), ['y']);
       }
       for (final bar in meta.data) {
-        final edges = _edges(bar as types.ElementPropertyRead);
+        final edges = _edges(bar as ElementPropertyRead);
         expect(edges[0], isFalse);
         expect(plainValue(edges[1]), {'bottom': true});
-        expect((bar as types.ElementPropertyRead)['x'], isNaN);
+        expect((bar as ElementPropertyRead)['x'], isNaN);
       }
     });
   });

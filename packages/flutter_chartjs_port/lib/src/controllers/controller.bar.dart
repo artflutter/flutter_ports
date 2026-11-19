@@ -43,75 +43,7 @@ library;
 import 'dart:math' as math;
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/core/animation_share.dart'
-    show SharedBarAnimations;
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart';
-import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/core/bar_skip_null.dart';
-import 'package:flutter_chartjs_port/src/core/bar_sorted_values.dart';
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
-
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show
-        DatasetController,
-        DatasetStack,
-        axisStackOf,
-        controllerArgs,
-        dataItemValue,
-        metaStringOf,
-        parsedValueOf,
-        setStackValue,
-        stackModeOf,
-        stacksOf,
-        visualValuesOf;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeDataUpdateList, nativeDataUpdateObject;
-import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'
-    show prepareNativePointContexts;
-import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show BarOptions, ElementOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show arrayUnique;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show defined, isArray, isNullOrUndef, valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show MinMax, sign;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show jsObjectKeys, jsSort;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionScope;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show FloatingBar, ParsedItem, StackEntry;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show BarProperties, BorderSkipped;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AnimationOptionsScope,
-        AnimationsSpecScope,
-        BarControllerDatasetOptionsScope,
-        ChartOptionsScope,
-        GridLineOptionsScope,
-        ScaleOptionsByIdScope,
-        ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BarThickness, BarThicknessFlex, BarThicknessPixels, BorderSkippedEdge;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
-    show dataLabelLinesOf;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// controller.bar.js:546-556 the object of `_getRuler` (Chart.js ADR 0003).
 ///
@@ -124,7 +56,7 @@ typedef _Ruler = ({
   double start,
   double end,
   double stackCount,
-  types.Scale scale,
+  IScale scale,
   Object? grouped,
   double ratio,
 });
@@ -152,7 +84,7 @@ typedef _BarPixels = ({double size, double base, double head, double center});
 /// `ScaleCache.bar` (Chart.js ADR 0054 §4). Only this function writes it. An
 /// array is truthy in JavaScript, thus `!scale._cache.$bar` is true only for
 /// an absent entry, Dart `null`.
-List<double> _getAllScaleValues(types.Scale scale, String type) {
+List<double> _getAllScaleValues(IScale scale, String type) {
   final cached = scale.cache.bar;
   if (cached != null) {
     return cached;
@@ -181,7 +113,7 @@ List<double> _getAllScaleValues(types.Scale scale, String type) {
 ///
 /// `curr` is Dart `null` for the JS `null` of `getPixelForTick`. `prev`
 /// starts as [undefined]. `curr - prev` applies `ToNumber` to both.
-double _computeMinSampleSize(types.ChartMeta meta) {
+double _computeMinSampleSize(ChartMeta meta) {
   final scale = meta.iScale!;
   final values = _getAllScaleValues(scale, meta.type);
   var min = scale.length;
@@ -305,7 +237,7 @@ _CategoryTraits _computeFlexCategoryTraits(
 /// [entry] is a List (`isArray`, :145). `Math.min` and `Math.max` apply
 /// `ToNumber` to the parsed values. `_custom` is a [FloatingBar]: it keeps
 /// the parsed values as they are in `start` and `end`.
-void _parseFloatBar(Object? entry, ParsedItem item, types.Scale vScale, int i) {
+void _parseFloatBar(Object? entry, ParsedItem item, IScale vScale, int i) {
   final startValue = vScale.parse(jsGetIndex(entry, 0), i);
   final endValue = vScale.parse(jsGetIndex(entry, 1), i);
   final custom = _floatingBarOf(startValue, endValue);
@@ -344,12 +276,7 @@ FloatingBar _floatingBarOf(Object? startValue, Object? endValue) {
 }
 
 /// controller.bar.js:144 `parseValue(entry, item, vScale, i)`.
-ParsedItem _parseValue(
-  Object? entry,
-  ParsedItem item,
-  types.Scale vScale,
-  int i,
-) {
+ParsedItem _parseValue(Object? entry, ParsedItem item, IScale vScale, int i) {
   if (isArray(entry)) {
     _parseFloatBar(entry, item, vScale, i);
   } else {
@@ -363,7 +290,7 @@ ParsedItem _parseValue(
 /// Each item is a [ParsedItem]: the key of the index axis first, then the
 /// key of the value axis and `_custom` (Chart.js ADR 0054 §8).
 List<ParsedItem> _parseArrayOrPrimitive(
-  types.ChartMeta meta,
+  ChartMeta meta,
   List<Object?> data,
   int start,
   int count,
@@ -450,7 +377,7 @@ Object? _stackBottom(Object? stack) => stack is StackEntry
 /// `vScale.min >= actualBase` compares the number `min` with the
 /// `ToNumber` of [actualBase], as the JavaScript `>=` does for a number
 /// operand.
-double _barSign(double size, types.Scale vScale, Object? actualBase) {
+double _barSign(double size, IScale vScale, Object? actualBase) {
   if (size != 0) {
     return sign(size);
   }
@@ -718,7 +645,6 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
 
   /// Unknown subclasses retain their getDataset/getParsed/stack overrides.
   @override
-  @internal
   bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
 
   /// controller.bar.js:306 `parsePrimitiveData(meta, data, start, count)`.
@@ -728,7 +654,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// @protected
   @override
   List<ParsedItem> parsePrimitiveData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -743,7 +669,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// @protected
   @override
   List<ParsedItem> parseArrayData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -775,7 +701,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// typed field for the default key ([dataItemValue]).
   @override
   List<ParsedItem> parseObjectData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -817,7 +743,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   @override
   void updateRangeFromParsed(
     MinMax range,
-    types.Scale scale,
+    IScale scale,
     Object? parsed,
     DatasetStack? stack,
   ) {
@@ -888,7 +814,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
 
   /// `parsed[scale.axis]`: [parsedValueOf] with the key of the axis of
   /// [scale].
-  static Object? _axisValueOf(Object? parsed, types.Scale scale) {
+  static Object? _axisValueOf(Object? parsed, IScale scale) {
     final axis = scale.axis;
     return parsedValueOf(parsed, axis);
   }
@@ -1018,7 +944,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       return false;
     }
     // Each bar controller: `_getStacks` reads its options and its meta.
-    final barMetas = <types.ChartMeta>[];
+    final barMetas = <ChartMeta>[];
     for (final other in chart.getSortedDatasetMetas(false)) {
       final controller = other.controller;
       if (controller == null) return false;
@@ -1079,12 +1005,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// `Math.abs(vpixels.size)` (:413-414) is NaN. The record gives NaN for
   /// both. No code reads `center`.
   @override
-  void updateElements(
-    List<types.Element> bars,
-    int start,
-    int count,
-    String mode,
-  ) {
+  void updateElements(List<IElement> bars, int start, int count, String mode) {
     final reset = mode == 'reset';
     final index = this.index;
     final vScale = cachedMeta.vScale;
@@ -1192,7 +1113,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         plan = _searchPlan(bars, i + 1, start + count, ruler, vScale);
         if (plan != null) {
           fastBarPlansTaken++;
-          if (cachedMeta.stacked != types.StackMode.off) {
+          if (cachedMeta.stacked != StackMode.off) {
             stackIndexes = sortedVisibleDatasetIndices();
           }
         }
@@ -1203,11 +1124,11 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// Preflight the entire remaining range before direct native writes. There
   /// can be no callback between the captured settings and the final element.
   bool _updateBulk(
-    List<types.Element> bars,
+    List<IElement> bars,
     int first,
     int end,
     _Ruler ruler,
-    types.Scale valueScale,
+    IScale valueScale,
     ScaleAxis valueAxis,
     bool horizontal,
     BarOptions shared, {
@@ -1233,7 +1154,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         !identical(cachedMeta.vScale, valueScale) ||
         !sameAxis(valueScale.axis, valueAxis) ||
         !(valueAxis is XAxis || valueAxis is YAxis) ||
-        cachedMeta.stacked != types.StackMode.off ||
+        cachedMeta.stacked != StackMode.off ||
         !identical(ruler.grouped, true)) {
       return false;
     }
@@ -1496,11 +1417,11 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// objects are native containers. Then the visible datasets, the stacks and
   /// the axes do not change until the last bar.
   _SearchPlan? _searchPlan(
-    List<types.Element> bars,
+    List<IElement> bars,
     int first,
     int end,
     _Ruler ruler,
-    types.Scale valueScale,
+    IScale valueScale,
   ) {
     if (super.runtimeType != BarController || first >= end) return null;
     final owner = chart;
@@ -1576,7 +1497,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         : currentParsed;
 
     // :443-450: `true`, or Dart `null` for the JS `undefined` of no return.
-    bool? skipNull(types.ChartMeta meta) {
+    bool? skipNull(ChartMeta meta) {
       // `Array.prototype.find` gives `undefined` when no item matches.
       // DIVERGES(chartjs): adapt-bar-skip-null-index, the item of a proven
       // positional list, else the upstream search.
@@ -1611,7 +1532,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       // undefined |       |     x     |     x
       // Dart `null` of the meta and of the option is `undefined`.
       final metaStack = meta.stack;
-      if (stacked == types.StackMode.off ||
+      if (stacked == StackMode.off ||
           !stacks.any((stack) => _strictEquals(stack, metaStack)) ||
           (stacked == null && metaStack == null)) {
         stacks.add(metaStack);
@@ -1641,7 +1562,6 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// Dart `null` for [index] stands for JS `undefined`. The spec reads it
   /// (controller.bar.tests.js:85, :1803). Thus it drops the underscore
   /// (Chart.js ADR 0012).
-  @internal
   double getStackCount([int? index]) {
     return _getStacks(null, index).length.toDouble();
   }
@@ -1723,7 +1643,6 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// with `===` ([_strictEquals]). The spec reads it with one argument
   /// (controller.bar.tests.js:325). Thus it drops the underscore (Chart.js
   /// ADR 0012).
-  @internal
   double getStackIndex(int datasetIndex, [Object? name, int? dataIndex]) {
     final stacks = _getStacks(datasetIndex, dataIndex);
     final index = name != null
@@ -1838,7 +1757,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     final vAxis = vScale!.axis;
     var value = parsedValueOf(parsed, vAxis);
     Object? start = 0.0;
-    var length = stacked != types.StackMode.off
+    var length = stacked != StackMode.off
         ? (stackIndexes != null
               ? applyStackWith(vScale, parsed, stacked, stackIndexes)
               : applyStack(vScale, parsed, stacked))
@@ -1900,7 +1819,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       base = math.max(math.min(base, max), min);
       head = base + size;
 
-      if (stacked != types.StackMode.off && !floating) {
+      if (stacked != StackMode.off && !floating) {
         // visual data coordinates after applying minBarLength
         // :615 `parsed._stacks[vScale.axis]._visualValues[datasetIndex] =
         // ...`. DC writes `_visualValues` as an IndexValues
@@ -2047,7 +1966,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     for (; i < ilen; ++i) {
       if (parsedValueOf(getParsed(i), vScale!.axis) != null &&
           !jsTruthy(rects[i].hidden)) {
-        (rects[i] as types.VisualElement).draw(ctx!);
+        (rects[i] as VisualElement).draw(ctx!);
       }
     }
   }

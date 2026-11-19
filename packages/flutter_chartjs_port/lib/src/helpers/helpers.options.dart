@@ -22,26 +22,8 @@
 library;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray, isObject, valueOrDefault;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' show PointElement;
-import 'package:flutter_chartjs_port/src/types/option_functions.dart'
-    show callScriptable;
-import 'package:meta/meta.dart' show internal, protected;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:meta/meta.dart' show protected;
 
 /// helpers.options.ts:43 `numberOrZero`: `+v || 0`.
 double _numberOrZero(Object? v) {
@@ -729,7 +711,6 @@ final class ScriptableContext extends ContextObject {
 
   /// `hasOwnProperty('index')`, with no lookup of the name.
   // DIVERGES(chartjs): adapt-context-key-presence, the bit of one known name.
-  @internal
   bool get hasIndexKey => _presentNames & 128 != 0;
 
   /// The six writes of `getContext` (core.datasetController.js:772-785) for a
@@ -739,7 +720,6 @@ final class ScriptableContext extends ContextObject {
   /// all of them. After a `delete` of user code, the setters reinsert the keys
   /// in the order of `getContext`, as each write of a JS object does.
   // DIVERGES(chartjs): adapt-context-bulk-refresh, one test for six writes.
-  @internal
   void refresh(
     Object? parsed,
     Object? raw,
@@ -768,7 +748,6 @@ final class ScriptableContext extends ContextObject {
   /// (core.datasetController.js:773), whose read of `raw` can run user code:
   /// [refresh] with the same rule. A `delete` of `parsed` in that read stays.
   // DIVERGES(chartjs): adapt-context-bulk-refresh, one test for five writes.
-  @internal
   void refreshAfterParsed(
     Object? raw,
     int index,
@@ -1024,8 +1003,8 @@ final class ScriptableLineSegmentContext extends ContextObject {
   // DIVERGES(chartjs): adapt-native-line-segment-style, typed fields.
   new segment(
     Object? prototype, {
-    required PointElement this._p0,
-    required PointElement this._p1,
+    required IPointElement this._p0,
+    required IPointElement this._p1,
     required int this._p0DataIndex,
     required int this._p1DataIndex,
     required int? datasetIndex,
@@ -1048,10 +1027,10 @@ final class ScriptableLineSegmentContext extends ContextObject {
   Object? _datasetIndex = _unset;
 
   /// `p0`: the point at the start of the part.
-  PointElement get p0 => _fieldRead(_p0, 'p0')! as PointElement;
+  IPointElement get p0 => _fieldRead(_p0, 'p0')! as IPointElement;
 
   /// `p1`: the point at the end of the part.
-  PointElement get p1 => _fieldRead(_p1, 'p1')! as PointElement;
+  IPointElement get p1 => _fieldRead(_p1, 'p1')! as IPointElement;
 
   /// `p0DataIndex`: the data index of [p0].
   int get p0DataIndex => _fieldRead(_p0DataIndex, 'p0DataIndex')! as int;

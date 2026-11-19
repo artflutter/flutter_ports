@@ -5,26 +5,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.animation.dart'
-    show readProperty, writeProperty;
-import 'package:flutter_chartjs_port/src/core/core.element.dart'
-    show Element, ElementXProp, ElementYProp;
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart'
-    show
-        ArcCircumferenceProp,
-        ArcEndAngleProp,
-        ArcInnerRadiusProp,
-        ArcOuterRadiusProp,
-        ArcStartAngleProp;
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart'
-    show BarBaseProp, BarHeightProp, BarWidthProp;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
-    show ElementOptions;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// An animated property of a target of an animation (an element or the
@@ -54,11 +35,9 @@ import 'package:meta/meta.dart';
 @immutable
 base class AnimatedProp {
   /// A built-in property with the name [name].
-  @internal
   const new builtIn(String name) : _name = name;
 
   /// A built-in property that gives its own [name].
-  @internal
   const new keyed() : _name = null;
 
   /// A name that is not built in.
@@ -251,12 +230,10 @@ base class AnimatedProp {
 /// `ChartConfig.animations` selects the property.
 base class AnimatedBy<T extends PropertyAnimation> extends AnimatedProp {
   /// A built-in property with the animation class [T].
-  @internal
   const new(super.name) : super.builtIn();
 
   /// A built-in property with the animation class [T] that gives its own
   /// name.
-  @internal
   const new keyed() : super.keyed();
 
   @override
@@ -277,7 +254,6 @@ base class const StyleProp<T extends PropertyAnimation>(
   final OptionKey key,
 ) extends AnimatedBy<T> {
   /// The style property of the option [key].
-  @internal
   this : super.keyed();
 
   /// The name of [key]: a style property has no name of its own.

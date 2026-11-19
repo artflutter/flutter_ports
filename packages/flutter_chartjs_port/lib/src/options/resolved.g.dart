@@ -18,21 +18,7 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show DrawPointOptions;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToNumber, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// index.d.ts:2055 PointOptions and index.d.ts:2083 PointHoverOptions, the
 /// options of a point element.

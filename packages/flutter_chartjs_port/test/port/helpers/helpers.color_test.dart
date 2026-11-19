@@ -1,9 +1,7 @@
 // Original code, not ported from Chart.js: helpers.color tests.
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
     hide color;
 import 'package:test/test.dart';

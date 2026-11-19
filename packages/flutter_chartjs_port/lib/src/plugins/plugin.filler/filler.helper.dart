@@ -8,17 +8,7 @@
 /// This library is a pure layer (Chart.js ADR 0038, section 9).
 library;
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart'
-    show LineElement;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget, NoFill;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart'
-    show pointsFromSegments;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
-    show FillerSource;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// filler.helper.js:16 `_createBoundaryLine(boundary, line)`.
 ///
@@ -30,16 +20,13 @@ import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 /// filler.target.js:90-93), the record of `computeLinearBoundary` or of
 /// filler.target.stack.js:21, or Dart `null`. The line config is the
 /// literal upstream form (Chart.js ADR 0040, section 1).
-types.LineElement? createBoundaryLine(
-  Object? boundary,
-  types.LineElement line,
-) {
-  var points = <types.PointElement>[];
+ILineElement? createBoundaryLine(Object? boundary, ILineElement line) {
+  var points = <IPointElement>[];
   var loop = false;
 
   if (isArray(boundary)) {
     loop = true;
-    points = boundary! as List<types.PointElement>;
+    points = boundary! as List<IPointElement>;
   } else {
     points = pointsFromSegments(boundary as ({double? x, double? y})?, line);
   }

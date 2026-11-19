@@ -2,20 +2,7 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/props.dart' show BorderSkipped;
-import 'package:flutter_chartjs_port/src/types/animation.dart';
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BorderSkippedEdge;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -55,7 +42,7 @@ final class _Animation({
   /// The result of [active].
   required final bool isActive,
   @override required final Object? to,
-}) implements Animation {
+}) implements IAnimation {
   @override
   bool active() => isActive;
 }
@@ -712,14 +699,14 @@ void main() {
     test('a BarElement is an Element and a VisualElement', () {
       final bar = BarElement();
       expect(bar, isA<Element>());
-      expect(bar, isA<types.Element>());
-      expect(bar, isA<types.VisualElement>());
+      expect(bar, isA<IElement>());
+      expect(bar, isA<VisualElement>());
     });
   });
 }
 
 /// A chart area, which [BarElement.draw] ignores.
-final class _Area() implements types.ChartArea {
+final class _Area() implements ChartArea {
   @override
   double get top => 0;
 

@@ -9,8 +9,6 @@ import 'dart:ui' show Color;
 import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0052, section 13: the key check. A typed key that lowers to
@@ -118,7 +116,7 @@ List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>
 ChartPaint _colorFor(ChartContext context) => const ChartPaint.solid(_red);
 void _onEvent(ChartEvent event, List<ActiveElement> hits, Chart chart) {}
 void _onLegend(ChartEvent event, LegendItem item, LegendElement legend) {}
-void _onAnimation(AnimationEvent event) {}
+void _onAnimation(IAnimationEvent event) {}
 
 const AxisTicks _ticks = AxisTicks(
   display: true,

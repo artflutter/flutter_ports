@@ -1,8 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.curve.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart' as helpers;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// A JavaScript object literal `{x, y, skip}`, passed as a [SplinePoint]. A
@@ -101,7 +99,7 @@ void main() {
   group('Curve helper tests', () {
     test('should spline curves', () {
       expect(
-        helpers.splineCurve(
+        splineCurve(
           _SplinePoint(0, 0),
           _SplinePoint(1, 1),
           _SplinePoint(2, 0),
@@ -111,7 +109,7 @@ void main() {
       );
 
       expect(
-        helpers.splineCurve(
+        splineCurve(
           _SplinePoint(0, 0),
           _SplinePoint(1, 1),
           _SplinePoint(2, 0),
@@ -138,7 +136,7 @@ void main() {
         _SplinePoint(33, 110, skip: false),
         _SplinePoint(36, 170, skip: false),
       ];
-      helpers.splineCurveMonotone(dataPoints);
+      splineCurveMonotone(dataPoints);
       expect(dataPoints, [
         _toEqualSplinePoint(x: 0, y: 0, skip: false, cp2x: 1, cp2y: 2),
         _toEqualSplinePoint(

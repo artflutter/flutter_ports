@@ -15,7 +15,7 @@
 library;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// The record of [font]: `{font: {family, fallback, size, weight, style}}`,

@@ -18,9 +18,7 @@
 /// `package:flutter`.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/date_zone.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// One second in ms.
 const int _second = 1000;

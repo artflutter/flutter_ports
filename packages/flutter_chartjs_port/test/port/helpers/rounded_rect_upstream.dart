@@ -13,7 +13,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.canvas.ts:504-526: the four arcs and four lines of the rectangle
 /// (x, y, w, h) with the corner radii of `TRBLCorners`.

@@ -7,29 +7,15 @@ import 'dart:math' as math;
 import 'package:chartjs_test_utils/flutter.dart';
 // The test reads the elements, the modes and the scan of
 // flutter_chartjs_port, which does not export lib/src.
-import 'package:flutter_chartjs_port/src/core/core.animator.dart' show animator;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show isPointInArea;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// A chart event at a position, as the spec of the interaction makes it.
 final class _Event(
-  @override final types.Chart? chart,
+  @override final IChart? chart,
   @override final double? x,
   @override final double? y,
-) implements types.ChartEvent {
+) implements ChartEvent {
   @override
   String get type => 'mousemove';
 
@@ -39,10 +25,10 @@ final class _Event(
 
 /// A chart event whose position code of a program changes during a search.
 final class _MovingEvent(
-  @override final types.Chart? chart,
+  @override final IChart? chart,
   @override var double? x,
   @override var double? y,
-) implements types.ChartEvent {
+) implements ChartEvent {
   @override
   String get type => 'mousemove';
 
@@ -144,7 +130,7 @@ ActiveElement _item(Element element, int datasetIndex, int index) =>
 /// change: it visits each bar that `binarySearch` gives.
 List<ActiveElement> _intersectItems(
   Chart chart,
-  types.ChartEvent position,
+  ChartEvent position,
   InteractionAxis axis,
   bool? useFinalPosition, {
   required bool includeInvisible,
@@ -159,7 +145,7 @@ List<ActiveElement> _intersectItems(
     if (!includeInvisible && !isPointInArea(element, chart.chartArea, 0)) {
       return;
     }
-    if ((element as types.VisualElement).inRange(
+    if ((element as VisualElement).inRange(
       position.x,
       position.y,
       useFinalPosition,
@@ -181,7 +167,7 @@ double _distance(Point a, Point b, InteractionAxis axis) {
 /// the public loop.
 List<ActiveElement> _nearestItems(
   Chart chart,
-  types.ChartEvent position,
+  ChartEvent position,
   InteractionAxis axis,
   bool? useFinalPosition, {
   required bool includeInvisible,
@@ -194,7 +180,7 @@ List<ActiveElement> _nearestItems(
     datasetIndex,
     index,
   ) {
-    final visual = element as types.VisualElement;
+    final visual = element as VisualElement;
     if (!visual.inRange(position.x, position.y, useFinalPosition)) return;
     final distance = _distance(
       position,
@@ -216,7 +202,7 @@ List<ActiveElement> _expected(
   Chart chart,
   InteractionMode mode,
   Map<String, Object?> options,
-  types.ChartEvent e,
+  ChartEvent e,
   bool? useFinalPosition,
 ) {
   final includeInvisible = options['includeInvisible'] == true;

@@ -7,10 +7,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/bar_skip_null.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/option_functions.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _colors = [
@@ -169,7 +166,7 @@ Object _observe(Chart chart, int datasets) => [
             'borderSkipped',
             'inflateAmount',
           ])
-            _plain((e as types.ElementPropertyRead)[key]),
+            _plain((e as ElementPropertyRead)[key]),
         ],
     ],
 ];
@@ -787,7 +784,7 @@ void main() {
     const y = YAxis();
 
     /// The meta of dataset 0 of a chart, with [items] as its parsed list.
-    types.ChartMeta metaOf(List<Object?> items) {
+    ChartMeta metaOf(List<Object?> items) {
       final chart = _chart(
         _config(
           labels: _labels(3),
@@ -1164,7 +1161,7 @@ void main() {
               controller.updateElements(meta.data, 0, meta.data.length, mode);
               search = [
                 for (final e in meta.data)
-                  _plain((e as types.ElementPropertyRead)['x']),
+                  _plain((e as ElementPropertyRead)['x']),
                 _observe(chart, sets.length),
               ];
             } on Object catch (e) {
@@ -1178,7 +1175,7 @@ void main() {
               controller.update(mode);
               fast = [
                 for (final e in meta.data)
-                  _plain((e as types.ElementPropertyRead)['x']),
+                  _plain((e as ElementPropertyRead)['x']),
                 _observe(chart, sets.length),
               ];
             } on Object catch (e) {

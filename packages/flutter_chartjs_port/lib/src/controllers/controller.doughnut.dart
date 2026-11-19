@@ -42,56 +42,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart'
-    show prepareNativeArcColors;
-import 'package:flutter_chartjs_port/src/core/arc_options.dart'
-    show nativeArcClass, nativeArcElement;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs, presizeParsedNumbers;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show Defaults;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape, nativeDataUpdateList;
-import 'package:flutter_chartjs_port/src/core/legend_item_options.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show nativePointChart, nativePointList;
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ArcOptions, ElementOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isObject, resolveObjectKey, valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show formatNumber, localeOf;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show angleBetween, halfPi, pi, tau, toRadians;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show PercentRadius, PixelRadius, RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show JsStringList;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AnimationOptionsScope,
-        AnimationsSpecScope,
-        ChartOptionsScope,
-        DescriptorsScope,
-        DoughnutControllerDatasetOptionsScope,
-        LegendLabelOptionsScope,
-        LegendOptionsScope,
-        PluginOptionsByTypeScope;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
-    show dataLabelLinesOf;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// controller.doughnut.js:34 the object `{ratioX, ratioY, offsetX,
 /// offsetY}` of `getRatioAndOffset` (Chart.js ADR 0003).
@@ -541,12 +492,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// `null` for JS `undefined` before the first [update]: the property gets
   /// [undefined], and `centerX + this.offsetX` is NaN.
   @override
-  void updateElements(
-    List<types.Element> arcs,
-    int start,
-    int count,
-    String mode,
-  ) {
+  void updateElements(List<IElement> arcs, int start, int count, String mode) {
     final reset = mode == 'reset';
     final chart = this.chart;
     final chartArea = chart.chartArea!;
@@ -622,7 +568,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 
       // DIVERGES(chartjs): adapt-direct-element-writes, the assign of the
       // literal with no object: the writes stay after the resolve above.
-      if (arc case final types.ArcElementWrites target
+      if (arc case final ArcElementWrites target
           when direct &&
               outerRadius != null &&
               innerRadius != null &&
@@ -672,7 +618,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// controller and chart, native arrays, and parsed numbers. The arcs stay a
   /// live check at their own iteration.
   // DIVERGES(chartjs): adapt-arc-native-options, the guard of the native loops.
-  bool _nativeArcLoop(List<types.Element> arcs, String mode) =>
+  bool _nativeArcLoop(List<IElement> arcs, String mode) =>
       mode == 'none' &&
       supportsDataUpdates &&
       nativePointChart(chart) &&
@@ -783,10 +729,10 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// visible dataset. With [arcs], `controller` stays `undefined`, and the
   /// first arc throws a [TypeError] at `controller.resolveDataElementOptions`,
   /// as upstream. `options.borderWidth || 0` in `Math.max` is [jsOrZero].
-  double getMaxBorderWidth([List<types.Element>? arcs]) {
+  double getMaxBorderWidth([List<IElement>? arcs]) {
     var max = 0.0;
     final chart = this.chart;
-    types.DatasetController? controller;
+    IDatasetController? controller;
 
     if (arcs == null) {
       // Find the outmost visible dataset
@@ -826,7 +772,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// `options.offset || 0` in `Math.max` is [jsOrZero] of the raw value
   /// ([ElementOptions.valueOf]).
-  double getMaxOffset(List<types.Element> arcs) {
+  double getMaxOffset(List<IElement> arcs) {
     var max = 0.0;
 
     for (var i = 0, ilen = arcs.length; i < ilen; ++i) {
@@ -901,7 +847,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
 /// Dart `null` legend throws a [TypeError], as `undefined.options` does. A
 /// legend item is the shared native object.
 // DIVERGES(chartjs): adapt-native-legend-item, native legend entries.
-List<LegendItem> _generateLabels(types.Chart chart) {
+List<LegendItem> _generateLabels(IChart chart) {
   final data = chart.data;
   final labelsOptions = readOption(chart.legend!.options, OptionKey.labels);
   final pointStyle = readOption(labelsOptions, OptionKey.pointStyle);
@@ -943,7 +889,7 @@ List<LegendItem> _generateLabels(types.Chart chart) {
 /// of the default `borderJoinStyle`. `index` is an `int` (Chart.js ADR
 /// 0129), and the native item stores it.
 LegendItem _labelItem(
-  types.Chart chart,
+  IChart chart,
   Object? label,
   int i,
   Object? pointStyle,
@@ -983,7 +929,7 @@ LegendItem _labelItem(
 ///
 /// A native item identifies a data entry with an integer. A descriptive
 /// item has no index and leaves visibility unchanged.
-void _onClick(Object? e, LegendItem legendItem, types.LegendElement legend) {
+void _onClick(Object? e, LegendItem legendItem, LegendElement legend) {
   final index = legendItem.index;
   if (index == null) return;
   legend.chart.toggleDataVisibility(index);

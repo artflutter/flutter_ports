@@ -13,13 +13,7 @@
 
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.options.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// `_decodeFill` of a line whose `fill` option is [fill] (absent for
@@ -42,7 +36,7 @@ FillTarget _decode(
 );
 
 /// A chart that the sources of [resolveTarget] name and never read.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

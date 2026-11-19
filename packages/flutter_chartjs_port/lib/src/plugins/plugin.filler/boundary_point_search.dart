@@ -1,10 +1,6 @@
 // Original code, not ported from Chart.js: fill boundary endpoint search.
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
-    show createBoundarySegment;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// Allows differential tests to use the original boundary interpolation.
@@ -21,7 +17,7 @@ bool boundarySegmentSearchEnabled = true;
 /// have no user callbacks, and cannot be reached by user code during the draw.
 /// This index must not be retained on a chart or used for dataset targets.
 final class BoundaryPointSearch._(
-  final List<types.PointElement> _points,
+  final List<IPointElement> _points,
   final bool _horizontal,
 ) {
   int _boundCursor = 0;
@@ -40,7 +36,7 @@ final class BoundaryPointSearch._(
     // createBoundaryLine makes this ordinary growable list itself. Never read
     // a user list or overridden point getter while validating the shortcut.
     if (line.loop == true ||
-        points.runtimeType != <types.PointElement>[].runtimeType ||
+        points.runtimeType != <IPointElement>[].runtimeType ||
         points.length < 4 ||
         points.any((point) => point.runtimeType != PointElement)) {
       return null;
@@ -71,7 +67,7 @@ final class BoundaryPointSearch._(
   /// Returns the same single segment as boundSegments for exact ascending
   /// bounds. The target is the same private, unstyled boundary used by [find].
   /// Source geometry and source callbacks are still handled by boundSegment.
-  types.Segment? bound(({String property, double start, double end})? bounds) {
+  Segment? bound(({String property, double start, double end})? bounds) {
     if (!boundarySegmentSearchEnabled ||
         bounds == null ||
         bounds.property != (_horizontal ? 'x' : 'y') ||
@@ -119,7 +115,7 @@ final class BoundaryPointSearch._(
 
   /// Returns the same point as interpolate's single [i, i] result. A miss
   /// leaves interpolation, including its tolerance and arithmetic, unchanged.
-  types.PointElement? find(types.PointElement point) {
+  IPointElement? find(IPointElement point) {
     if (point.runtimeType != PointElement) return null;
     final value = _horizontal ? point.x : point.y;
     if (!value.isFinite) return null;

@@ -9,26 +9,7 @@ import 'package:clock/clock.dart';
 import 'package:flutter/widgets.dart'
     show Directionality, SizedBox, TextDirection;
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        BubbleDataset,
-        ChartAnimation,
-        ChartConfig,
-        ChartThemeData,
-        ChartValue,
-        ChartView,
-        DataPoint;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show registerDataUpdateTypes;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
-    show PointOptions;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const red = ChartPaint.solid(ui.Color(0xffff0000));

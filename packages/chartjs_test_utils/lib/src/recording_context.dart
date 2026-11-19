@@ -8,8 +8,7 @@ library;
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show TextStyle;
 // flutter_chartjs_port does not export lib/src.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A [MockContext] that records each call and forwards the text state to
 /// the real context [target]: `font`, `save`, `restore`, `measureText`,

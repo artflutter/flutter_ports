@@ -1,7 +1,6 @@
 // Original code, not ported from Chart.js: the exports of elements/index.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // src/elements/index.js exports the four element classes, and no spec tests

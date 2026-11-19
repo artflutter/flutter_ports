@@ -10,16 +10,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 import 'harness.dart';
 
@@ -62,7 +53,7 @@ final class _PointElement(
   @override final double x,
   @override final double y, {
   @override final bool? skip,
-}) implements PointElement {
+}) implements IPointElement {
   @override
   bool? get stop => null;
 
@@ -93,7 +84,7 @@ final class _PointElement(
 }
 
 /// A chart `{getContext}`.
-final class _Chart() implements Chart {
+final class _Chart() implements IChart {
   final Map<String, Object?> _context = {'chart': 'chart', 'type': 'chart'};
 
   @override
@@ -105,10 +96,10 @@ final class _Chart() implements Chart {
 
 /// A line element `{points, options, _chart, _loop, _fullLoop, segments}`.
 final class _Line(
-  @override final List<PointElement> points,
+  @override final List<IPointElement> points,
   @override final Map<String, Object?> options, {
-  @override final Chart? chart,
-}) implements LineElement {
+  @override final IChart? chart,
+}) implements ILineElement {
   @override
   bool? get loop => false;
 
@@ -135,7 +126,7 @@ List<SplinePoint> _splinePoints(int count) => [
 ];
 
 /// [count] point elements with a skipped point every 50 points.
-List<PointElement> _linePoints(int count) => [
+List<IPointElement> _linePoints(int count) => [
   for (var i = 0; i < count; i++)
     _PointElement(
       i * 10.0,

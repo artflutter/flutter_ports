@@ -22,27 +22,9 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart'
-    show canvasStyle;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show
-        CanvasEventTarget,
-        dispatchCanvasEvent,
-        domKeyValue,
-        hasCanvasEventListener;
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The group of the legend targets. A data group has its dataset index.
 const int _legendGroup = -1;
@@ -62,7 +44,6 @@ const _Point _outside = (x: -1.0, y: -1.0);
 /// The keyboard state of the chart of one `ChartView` (Chart.js ADR 0051,
 /// sections 2 to 6): the target, the virtual mouse, the key events of
 /// `options.events` and the focus ring.
-@internal
 final class ChartKeyboard({
   /// The canvas of the chart: the target of the events.
   required final HTMLCanvasElement _canvas,
@@ -128,7 +109,7 @@ final class ChartKeyboard({
   /// a 2 px `strokeRect` 2 px outside the hit box of a legend target, or
   /// 1 px inside the canvas box with no target, in the resolved
   /// `chart.options.color`. A data target has no ring.
-  void paintRing(types.Chart chart) {
+  void paintRing(IChart chart) {
     if (!_ringVisible) return;
     final ctx = chart.ctx;
     final rect = _ringRect(chart);
@@ -309,7 +290,7 @@ final class ChartKeyboard({
     final elements = chart.getDatasetMeta(group).data;
     final points = <_Point>[];
     for (var j = 0; j < elements.length; j++) {
-      if (elements[j] case final types.VisualElement element
+      if (elements[j] case final VisualElement element
           when chart.getDataVisibility(j)) {
         final center = element.getCenterPoint(true);
         final x = center.x;
@@ -325,7 +306,7 @@ final class ChartKeyboard({
   /// The hit boxes of the legend (plugin.legend.js:52), or Dart `null`
   /// when the chart has no legend, the legend does not show, or it has no
   /// hit box. A hidden legend keeps the hit boxes of its last fit.
-  static List<LegendHitBox>? _legendBoxes(types.Chart chart) {
+  static List<LegendHitBox>? _legendBoxes(IChart chart) {
     final legend = chart.legend;
     if (legend == null ||
         !jsTruthy(readOption(legend.options, OptionKey.display))) {
@@ -345,7 +326,7 @@ final class ChartKeyboard({
   }
 
   /// The ring rectangle of section 6, or Dart `null` for no ring.
-  _Rect? _ringRect(types.Chart chart) {
+  _Rect? _ringRect(IChart chart) {
     final group = _group;
     if (group == null) {
       return (

@@ -58,17 +58,10 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/src/utils.dart' as utils;
 // The harness keeps the charts of flutter_chartjs_port, which does not export
 // lib/src.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // ToBoolean,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
 // the JS property read,
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
 // and the undefined sentinel.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The tag of each fixture test (Chart.js ADR 0029, section 10).

@@ -1,8 +1,6 @@
 // Original code, not ported from Chart.js: the pure helpers.dom cases on web.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // test/specs/helpers.dom_test.dart runs on the VM only: its retinaScale and
@@ -94,7 +92,7 @@ final class _Chart(
   @override var double width,
   @override var double height, {
   _Style? style,
-}) implements Chart {
+}) implements IChart {
   @override
   double currentDevicePixelRatio = double.nan;
 

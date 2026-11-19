@@ -14,15 +14,7 @@
 /// This library is a pure layer (Chart.js ADR 0038, section 9).
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
-    show FillerSource;
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show optionOf;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// filler.options.js:10 `_resolveTarget(sources, index, propagate)`.
 ///
@@ -82,7 +74,7 @@ FillTarget resolveTarget(
 /// The port has no text: a [RelativeFill] is the relative index, as `'+n'`
 /// or `'-n'` upstream, and a [DatasetFill] is the absolute index, a number
 /// upstream, whose `fill[0]` is no sign.
-FillTarget decodeFill(types.LineElement line, int index, double count) {
+FillTarget decodeFill(ILineElement line, int index, double count) {
   // @type {string | {value: number}}
   final fill = _parseFillOption(line);
 
@@ -137,7 +129,7 @@ FillTarget _decodeTargetIndex(
 /// `undefined` of `{}.bottom` and `{}.top`, which is not finite either. A
 /// [ValueFill] throws a [TypeError], as `{}.getPixelForValue(...)` does.
 /// Another fill gives Dart `null`, because `{}.getBasePixel` is falsy.
-double? getTargetPixel(FillTarget fill, types.Scale? scale) {
+double? getTargetPixel(FillTarget fill, IScale? scale) {
   double? pixel;
   if (fill is StartFill) {
     pixel = scale?.bottom;
@@ -157,7 +149,7 @@ double? getTargetPixel(FillTarget fill, types.Scale? scale) {
 /// @param {Scale} scale
 /// @param {number} startValue
 /// @returns {number | undefined}
-double getTargetValue(FillTarget fill, types.Scale scale, double startValue) {
+double getTargetValue(FillTarget fill, IScale scale, double startValue) {
   double value;
 
   if (fill is StartFill) {
@@ -181,7 +173,7 @@ double getTargetValue(FillTarget fill, types.Scale scale, double startValue) {
 /// `fillOption && fillOption.target` reads `target` of a [SplitFill] only:
 /// no other value of `fill` has the key. `valueOrDefault` takes the option
 /// itself for `undefined`.
-FillTarget _parseFillOption(types.LineElement line) {
+FillTarget _parseFillOption(ILineElement line) {
   final options = line.options;
   final fillOption = optionOf(options, OptionKey.fill);
   // DIVERGES(chartjs): adapt-fill-target-objects, the object `{target}` is a

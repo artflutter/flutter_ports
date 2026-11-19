@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: the load of core.defaults.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The JavaScript import of src/core/core.defaults.js runs the constructor of

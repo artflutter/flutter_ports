@@ -1,9 +1,5 @@
 // Original code, not ported from Chart.js: native point contract lifetimes.
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 class _Capability() implements NativePointChart, NativePointElement {
@@ -16,7 +12,7 @@ class _Capability() implements NativePointChart, NativePointElement {
   }
 }
 
-class _Scale() implements types.Scale, BulkBarScale {
+class _Scale() implements IScale, BulkBarScale {
   bool allowed = true;
   int reads = 0;
   @override
@@ -30,7 +26,7 @@ class _Scale() implements types.Scale, BulkBarScale {
       throw StateError('Unexpected ${invocation.memberName}');
 }
 
-class _UnknownScale() implements types.Scale {
+class _UnknownScale() implements IScale {
   @override
   dynamic noSuchMethod(Invocation invocation) =>
       throw StateError('Unexpected ${invocation.memberName}');

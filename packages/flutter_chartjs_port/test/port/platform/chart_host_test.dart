@@ -11,13 +11,7 @@ import 'package:flutter/rendering.dart'
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/index.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'fake_chart.dart';
@@ -3658,7 +3652,7 @@ void main() {
       final chartA = Chart(a, config());
       final chartB = Chart(b, config());
       await tester.pump();
-      List<String> items(List<types.ActiveElement> active) => [
+      List<String> items(List<ActiveElement> active) => [
         for (final item in active) '${item.datasetIndex}:${item.index}',
       ];
       Offset point(Chart chart, double left) {

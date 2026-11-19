@@ -42,62 +42,12 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/animation_share.dart'
-    show SharedBarAnimations;
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show
-        DatasetController,
-        HeldElementOptions,
-        controllerArgs,
-        parsedValueOf,
-        setPointAxis;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show PointInteractionMode;
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/core/point_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions, LineOptions, PointOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show IndexedPointPlan, OptionView, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
-    show getStartAndCountOfVisiblePoints, scaleRangesChanged;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show isNumber;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show LineProperties, PointProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        ChartOptionsScope,
-        InteractionOptionsScope,
-        LineControllerDatasetOptionsScope,
-        ScaleOptionsByIdScope,
-        ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
-    show lineSegmentStyleOf;
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
-    show dataLabelLinesOf;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The JS write `element[key] = value` by name into an element of a user
 /// element class (Chart.js ADR 0017, section 5), or of a property that the
 /// element class does not declare.
-void _setProperty(types.PropertyAccess element, String key, Object? value) {
+void _setProperty(PropertyAccess element, String key, Object? value) {
   element[key] = value;
 }
 
@@ -106,7 +56,7 @@ void _setProperty(types.PropertyAccess element, String key, Object? value) {
 ///
 /// `properties` is the point of a direct update and a new object in the
 /// other modes (:127). The new object is a [PointProperties]. A point of
-/// the built-in class takes the typed setters of [types.PointElementWrites].
+/// the built-in class takes the typed setters of [PointElementWrites].
 /// A point of another class (a user element class) takes the writes by name
 /// of
 /// [_setProperty], in the same order. The writes reach the point at once,
@@ -120,31 +70,31 @@ final class _PointWrites({
   PointProperties? object;
 
   /// The point of a direct update that takes the typed writes: a point
-  /// whose [types.PointElementWrites.typedWrites] is true, the class
+  /// whose [PointElementWrites.typedWrites] is true, the class
   /// `PointElement` itself.
-  types.PointElementWrites? _element;
+  PointElementWrites? _element;
 
   /// The point of a direct update, for the writes by name: a point of
   /// another class, and the keys and values that the typed setters do not
   /// take.
-  late types.PropertyAccess _access;
+  late PropertyAccess _access;
 
   /// Whether the point of this pass takes the typed writes: an exact point of
   /// a direct update, whose reads and writes run no user code.
   bool get typed => _element != null;
 
   /// :127 `const properties = directUpdate ? point : {};`.
-  void begin(types.Element point) {
+  void begin(IElement point) {
     if (!direct) {
       object = PointProperties();
     } else {
       _element = switch (point) {
-        final types.PointElementWrites point when point.typedWrites => point,
+        final PointElementWrites point when point.typedWrites => point,
         _ => null,
       };
       // Each data element is an Element: the cast of `_insertElements`
       // (row adapt-component-class-role).
-      _access = point as types.PropertyAccess;
+      _access = point as PropertyAccess;
     }
   }
 
@@ -157,9 +107,9 @@ final class _PointWrites({
     }
     final element = _element;
     switch ((element, axis)) {
-      case (final types.PointElementWrites point, XAxis()):
+      case (final PointElementWrites point, XAxis()):
         point.x = value;
-      case (final types.PointElementWrites point, YAxis()):
+      case (final PointElementWrites point, YAxis()):
         point.y = value;
       default:
         // The write by the key of the axis ([axisDataKey]).
@@ -326,7 +276,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// - With a truthy `showLine`, the update adds the dataset element when
   ///   [datasetElementType] is falsy (:74-76, Chart.js issue #11333). The
   ///   four writes of :80-83 are the typed setters of
-  ///   [types.LineElementWrites] for a line of the built-in class, and writes
+  ///   [LineElementWrites] for a line of the built-in class, and writes
   ///   by name of an untyped property for a
   ///   line of another class (Chart.js ADR 0017, section 5; Chart.js ADR
   ///   0028, section 1). The null check throws a [TypeError] for Dart
@@ -372,15 +322,14 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       // Update Line
       final target = line!;
       final decimated = jsTruthy(jsGetKey(dataset, '_decimated'));
-      if (target case final types.LineElementWrites line
-          when line.typedWrites) {
+      if (target case final LineElementWrites line when line.typedWrites) {
         line
           ..chart = chart
           ..datasetIndex = index
           ..decimated = decimated
           ..points = points;
       } else {
-        final access = target as types.PropertyAccess;
+        final access = target as PropertyAccess;
         _setProperty(access, '_chart', chart);
         _setProperty(access, '_datasetIndex', index);
         _setProperty(access, '_decimated', decimated);
@@ -483,7 +432,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   ///   shows the upstream result.
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,
@@ -507,7 +456,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final segment = lineSegmentStyleOf(options.readKey(OptionKey.segment));
     // DIVERGES(chartjs): adapt-loop-invariant-truthiness, `_stacked ?` (:130)
     // and `if (segment)` (:134) test two locals of this call: once here.
-    final hasStack = stacked != types.StackMode.off;
+    final hasStack = stacked != StackMode.off;
     final hasSegment = segment != null;
     final maxGapLength = isNumber(spanGaps)
         ? jsToNumber(spanGaps)
@@ -732,14 +681,14 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// code, as in the pass of the loop.
   // DIVERGES(chartjs): adapt-bulk-point-update, one loop with no user code.
   int _bulkPoints(
-    List<types.Element> points,
+    List<IElement> points,
     int i,
     int end,
     String mode,
     NativeGapReads gaps,
     HeldElementOptions hold,
-    types.Scale iScale,
-    types.Scale vScale,
+    IScale iScale,
+    IScale vScale,
   ) {
     final iPixels = iScale is LinearPixelScale
         ? (iScale as LinearPixelScale).linearPixels
@@ -751,8 +700,8 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     var j = i;
     while (j < end) {
       final element = points[j];
-      final point = element is types.PointElementWrites
-          ? element as types.PointElementWrites
+      final point = element is PointElementWrites
+          ? element as PointElementWrites
           : null;
       if (point == null || !point.typedWrites || element.active) break;
       final parsed = getParsed(j);
@@ -818,7 +767,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   /// until the pass, so the lists give the same items then.
   // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the window of the proof.
   _OverflowPass? _prepareOverflowPass(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     IndexedPointPlan plan,
@@ -898,7 +847,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       var indexed = false;
       final last = data.length - 1;
       for (var i = last; i >= 0; --i) {
-        final point = data[i] as types.PointElement;
+        final point = data[i] as IPointElement;
         if (i == last) nativeSize = _cachedPointSize();
         if ((nativeSize != null || sizes != null) &&
             !nativePointElement(point)) {
@@ -950,10 +899,10 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       return jsToNumber(border);
     }
 
-    final firstPoint = (data[0] as types.PointElement).size(
+    final firstPoint = (data[0] as IPointElement).size(
       resolveDataElementOptions(0),
     );
-    final lastPoint = (data[data.length - 1] as types.PointElement).size(
+    final lastPoint = (data[data.length - 1] as IPointElement).size(
       resolveDataElementOptions(data.length - 1),
     );
     return math.max(math.max(jsToNumber(border), firstPoint), lastPoint) / 2;
@@ -976,12 +925,12 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
 
   // The existing numeric-scale capability guarantees built-in projection and
   // base-pixel reads. The scale's chart must provide the same native DPR reads.
-  bool _nativeProjection(types.Scale scale) =>
+  bool _nativeProjection(IScale scale) =>
       nativePointProjection(scale) && identical(scale.chart, chart);
 
   // DIVERGES(chartjs): adapt-native-point-contracts, shared preparation rules.
   // DIVERGES(chartjs): adapt-scatter-indexed-sizes, also the size fields.
-  IndexedPointPlan? _preparePointPlan(List<types.Element> points) {
+  IndexedPointPlan? _preparePointPlan(List<IElement> points) {
     if (super.runtimeType != ScatterController || type != 'scatter') {
       return null;
     }

@@ -2,7 +2,7 @@
 @TestOn('vm')
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The namespace spec has no chart: each case is a `test()` case. It runs on

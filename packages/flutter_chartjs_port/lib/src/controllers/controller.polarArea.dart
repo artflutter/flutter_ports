@@ -41,57 +41,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/arc_option_preparation.dart'
-    show prepareNativeArcColors;
-import 'package:flutter_chartjs_port/src/core/arc_options.dart'
-    show nativeArcClass, nativeArcElement, nativeArcScale;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController, controllerArgs, parsedValueOf;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape, nativeDataUpdateList;
-import 'package:flutter_chartjs_port/src/core/legend_item_options.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show nativePointChart, nativePointList;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ArcOptions, ElementOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, parseObjectDataRadialScaleOf, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show formatNumber, localeOf;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show pi, toRadians;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/options/props.dart' show ArcProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AngleLineOptionsScope,
-        AnimationOptionsScope,
-        AnimationsSpecScope,
-        ChartOptionsScope,
-        GridLineOptionsScope,
-        LegendLabelOptionsScope,
-        LegendOptionsScope,
-        PluginOptionsByTypeScope,
-        PointLabelOptionsScope,
-        PolarAreaControllerDatasetOptionsScope,
-        ScaleOptionsByIdScope,
-        ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
-    show dataLabelLinesOf;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// controller.polarArea.js:38 `generateLabels(chart)` of
 /// `overrides.plugins.legend.labels` (Chart.js ADR 0028, section 6).
@@ -105,7 +55,7 @@ import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
 /// `chart.data` is the data object of the user: its reads go by name. The
 /// legend options read typed ([readOption]).
 // DIVERGES(chartjs): adapt-native-legend-item, native legend entries.
-List<LegendItem> _generateLabels(types.Chart chart) {
+List<LegendItem> _generateLabels(IChart chart) {
   final data = chart.data;
   final labels = jsGet(data, 'labels');
   if (jsTruthy(_lengthOf(labels)) &&
@@ -138,7 +88,7 @@ Object? _lengthOf(Object? value) => switch (value) {
 /// [ElementOptions], and [readOption] gives its raw value. `index` is an
 /// `int` (Chart.js ADR 0129).
 LegendItem _item(
-  types.Chart chart,
+  IChart chart,
   Object? label,
   int i,
   Object? pointStyle,
@@ -166,7 +116,7 @@ LegendItem _item(
 ///
 /// A native item identifies a data entry with an integer. A descriptive
 /// item has no index and leaves visibility unchanged.
-void _onClick(Object? e, LegendItem legendItem, types.LegendElement legend) {
+void _onClick(Object? e, LegendItem legendItem, LegendElement legend) {
   final index = legendItem.index;
   if (index == null) return;
   legend.chart.toggleDataVisibility(index);
@@ -327,7 +277,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   /// `{r}`.
   @override
   List<ParsedItem> parseObjectData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -365,7 +315,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   /// The record holds the `ToNumber` of each end: the only caller,
   /// core.scale.js:315 and :318, applies `Math.min` and `Math.max` to them.
   @override
-  ({double min, double max}) getMinMax(types.Scale scale, [bool? canStack]) {
+  ({double min, double max}) getMinMax(IScale scale, [bool? canStack]) {
     final meta = cachedMeta;
     // :125 `range = {min: Number.POSITIVE_INFINITY, max:
     // Number.NEGATIVE_INFINITY}`.
@@ -444,18 +394,13 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   /// animation of `x` and `y` starts at the target, as upstream
   /// (core.animation.js:32).
   @override
-  void updateElements(
-    List<types.Element> arcs,
-    int start,
-    int count,
-    String mode,
-  ) {
+  void updateElements(List<IElement> arcs, int start, int count, String mode) {
     final reset = mode == 'reset';
     final chart = this.chart;
     final opts = chart.options;
     final animationOpts = readOption(opts, OptionKey.animation);
     // `const scale = this._cachedMeta.rScale;`
-    final scale = cachedMeta.rScale! as types.RadialLinearScale;
+    final scale = cachedMeta.rScale! as IRadialLinearScale;
     final centerX = scale.xCenter;
     final centerY = scale.yCenter;
     final datasetStartAngle = scale.getIndexAngle(0) - 0.5 * pi;
@@ -542,7 +487,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
 
       // DIVERGES(chartjs): adapt-direct-element-writes, the assign of the
       // literal with no object: the writes stay after the resolve above.
-      if (arc case final types.ArcElementWrites target
+      if (arc case final ArcElementWrites target
           when direct &&
               centerX != null &&
               centerY != null &&
@@ -631,8 +576,8 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   /// `configure`.
   // DIVERGES(chartjs): adapt-polar-constant-options, the guard of the plan.
   ArcOptions? _frozenEntryTemplate(
-    types.Element arc,
-    List<types.Element> arcs,
+    IElement arc,
+    List<IElement> arcs,
     String mode,
   ) {
     final entry = cachedDataElementOptions(mode);
@@ -665,7 +610,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   /// The exact radial scale with a scalar `reverse`: its value projection runs
   /// no user code. Port-only.
   // DIVERGES(chartjs): adapt-arc-native-options, the guard of the plan.
-  bool _nativeRadialScale(types.RadialLinearScale scale) {
+  bool _nativeRadialScale(IRadialLinearScale scale) {
     if (!nativeArcScale(scale)) return false;
     final view = scale.options;
     return view is OptionView &&

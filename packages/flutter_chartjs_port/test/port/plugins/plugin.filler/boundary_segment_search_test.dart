@@ -2,26 +2,19 @@
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
-    show boundSegments, nativeSegmentType;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.helper.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 PointElement _point(double x, double y) => PointElement()
   ..x = x
   ..y = y;
 
-LineElement _line(List<types.PointElement> points) => LineElement({
+LineElement _line(List<IPointElement> points) => LineElement({
   'points': points,
   'options': <String, Object?>{'tension': 0.0},
 });
 
-List<Object?> _segment(types.Segment segment) => [
+List<Object?> _segment(Segment segment) => [
   segment.start,
   segment.end,
   segment.loop,
@@ -34,7 +27,7 @@ List<Object?> _parts(List<FillPart> parts) => [
   for (final part in parts)
     [
       _segment(part.source),
-      _segment(part.target! as types.Segment),
+      _segment(part.target! as Segment),
       _number(part.start.x),
       _number(part.start.y),
       _number(part.end.x),
@@ -53,7 +46,7 @@ void main() {
     for (final axis in ['x', 'y']) {
       for (var sample = 0; sample < 100; sample++) {
         var coordinate = -100.0;
-        final points = <types.PointElement>[];
+        final points = <IPointElement>[];
         for (var i = 0; i < 30; i++) {
           coordinate += 0.1 + random.nextDouble() * 10;
           final point = axis == 'x'
@@ -126,7 +119,7 @@ void main() {
       final random = math.Random(600);
       for (final axis in ['x', 'y']) {
         for (var sample = 0; sample < 100; sample++) {
-          final points = <types.PointElement>[
+          final points = <IPointElement>[
             for (var i = 0; i < 30; i++)
               (axis == 'x' ? _point(i * 2.0, 1) : _point(1, i * 2.0))
                 ..skip = i % 5 == 2,

@@ -40,41 +40,7 @@
 library;
 
 import 'package:flutter/foundation.dart' show Key, listEquals;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart'
-    show AnimationEventHandler, ChartEventHandler;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptScope, OptionKey, OptionScope, ScopeKind;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        ChartConfigurationScope,
-        ChartDataScope,
-        ChartOptionsScope,
-        LayoutOptionsScope,
-        PluginOptionsByTypeScope,
-        ScaleOptionsByIdScope,
-        ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/typed/axes.dart' show lowerAxis;
-import 'package:flutter_chartjs_port/src/typed/config.dart'
-    show ChartConfig, ChartKind, optionFieldsEqual, pluginsEqual;
-import 'package:flutter_chartjs_port/src/typed/datasets.dart'
-    show Dataset, lowerDataset;
-import 'package:flutter_chartjs_port/src/typed/elements.dart'
-    show lowerElements;
-import 'package:flutter_chartjs_port/src/typed/groups.dart'
-    show
-        lowerAnimation,
-        lowerFiller,
-        lowerInteraction,
-        lowerLegend,
-        lowerTitle,
-        lowerTooltip,
-        lowerTransitions;
-import 'package:flutter_chartjs_port/src/typed/props.dart' show byEntries;
-import 'package:flutter_chartjs_port/src/types/legend_callbacks.dart'
-    show LegendEventHandler;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginOptions;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The lowering of a typed config to the root scope of a Chart.js config
 /// `{type, data, options, plugins}` (Chart.js ADR 0052, sections 2, 3 and
@@ -89,7 +55,6 @@ import 'package:meta/meta.dart' show internal;
 /// keys and the cells that the lowering wrote into it. [apply] reconciles a
 /// new config with these scopes (the keyed reconcile of Chart.js ADR 0052,
 /// section 3).
-@internal
 final class ChartConfigLowering(
   /// The newest config. The trampolines read its callbacks.
   var ChartConfig config,
@@ -467,7 +432,6 @@ OptionScope _shallowCopy(OptionScope scope) {
 
 /// Keeps typed tooltip callbacks connected to the newest config.
 /// Internal lowering detail, matching the existing event trampolines.
-@internal
 TooltipCallbacks tooltipCallbacksTrampoline(
   TooltipCallbacks callbacks,
   TooltipCallbacks? Function() newest,

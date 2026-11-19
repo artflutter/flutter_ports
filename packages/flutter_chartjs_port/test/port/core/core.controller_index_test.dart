@@ -3,12 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show BarDataset, ChartAnimation, ChartConfig, ChartKind;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The six visibility and meta methods of `Chart` take an `int` index, as
@@ -86,7 +81,7 @@ void main() {
     testWidgets('the interface types.Chart takes int variables', (
       tester,
     ) async {
-      final types.Chart chart = _chart();
+      final IChart chart = _chart();
       const datasetIndex = 1;
       expect(chart.getDatasetMeta(datasetIndex), same(chart.getDatasetMeta(1)));
       expect(chart.isDatasetVisible(datasetIndex), isTrue);

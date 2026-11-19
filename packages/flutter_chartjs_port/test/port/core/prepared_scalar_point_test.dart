@@ -1,15 +1,7 @@
 // Original code, not ported from Chart.js: prepared scalar point continuations.
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 class _Ordinary(super.config) extends Config;
@@ -17,7 +9,7 @@ class _Ordinary(super.config) extends Config;
 const red = ChartPaint.solid(Color(0xffff0000));
 const blue = ChartPaint.solid(Color(0xff0000ff));
 
-Object? _plain(Object? value) => value is helpers.OptionView
+Object? _plain(Object? value) => value is OptionView
     ? {for (final key in value.jsKeys()) key: _plain(value.jsRead(key))}
     : value;
 
@@ -74,9 +66,8 @@ void main() {
           );
           final keys = point.nativeOwnKeySnapshot;
           final prefixes = <String>['point', ''];
-          helpers.OptionResolver raw() =>
-              config.createResolver(scopes, null, prefixes)
-                  as helpers.OptionResolver;
+          OptionResolver raw() =>
+              config.createResolver(scopes, null, prefixes) as OptionResolver;
           final trace = <Object?>[];
           var armed = false;
           var nested = false;

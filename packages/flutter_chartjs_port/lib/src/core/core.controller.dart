@@ -36,93 +36,10 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' show Size;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart'
-    show fastBarKeepsRulers;
-import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart';
-import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show Config, datasetIndexAxis, determineAxis, getIndexAxis;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
-    as core_defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-import 'package:flutter_chartjs_port/src/core/core.layouts.dart';
-import 'package:flutter_chartjs_port/src/core/core.plugins.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart'
-    as core_registry;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/data_update.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView, attachContext, functionOption, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show
-        each,
-        elementsEqual,
-        isClickEvent,
-        isNullOrUndef,
-        setsEqual,
-        uid,
-        valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
-    show Debounced, debounce;
-import 'package:flutter_chartjs_port/src/helpers/index.dart'
-    as helpers
-    show isPointInArea;
-import 'package:flutter_chartjs_port/src/helpers/index.dart'
-    show
-        ContextObject,
-        clearCanvas,
-        clipArea,
-        createContext,
-        getDatasetClipArea,
-        isDomSupported,
-        retinaScale,
-        unclipArea;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsObjectFace, jsGet, jsGetIndex;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey, OptionScope;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show ChartAnimationItems, ChartTransition, PropertyAnimation;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show OverridesByTypeScope;
-import 'package:flutter_chartjs_port/src/platform/index.dart'
-    show BasePlatform, detectPlatform;
-import 'package:flutter_chartjs_port/src/types/animation.dart'
-    as animation_types
-    show AnimationEvent;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ChartMeta;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart'
-    show ChartPosition, LayoutItem, LayoutItemConfigure, LayoutLayer;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show
-        DatasetDrawHookArgs,
-        DatasetUpdateHookArgs,
-        EventHookArgs,
-        PluginHook,
-        PluginHookArgs,
-        PluginOf,
-        PluginOptions,
-        ResizeHookArgs,
-        UpdateHookArgs;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
-import 'package:flutter_chartjs_port/src/upstream.dart'
-    show chartJsPackageVersion;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+// The statics defaults, overrides and registry and the method isPointInArea
+// of Chart have the names of the module values.
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 
 // core.controller.js:15-18: the JSDoc typedefs `ChartEvent` and `Point` are
 // the interfaces of lib/src/types/index.dart.
@@ -176,8 +93,8 @@ typedef ChartPlugin<O> = PluginOf<O, Chart>;
 /// the event in the order of the interaction mode, and the chart. Chart.js
 /// also gives the chart as `this` (Chart.js ADR 0130).
 typedef ChartEventHandler = void Function(
-  types.ChartEvent event,
-  List<types.ActiveElement> elements,
+  ChartEvent event,
+  List<ActiveElement> elements,
   Chart chart,
 );
 
@@ -190,9 +107,7 @@ typedef ChartResizeHandler = void Function(Chart chart, Size size);
 /// The animation options `onProgress` and `onComplete` (index.d.ts:1802,
 /// :1806, core.controller.js:33-46): the event of the animator. Chart.js
 /// also gives the chart as `this` (Chart.js ADR 0130).
-typedef AnimationEventHandler = void Function(
-  animation_types.AnimationEvent event,
-);
+typedef AnimationEventHandler = void Function(IAnimationEvent event);
 
 /// The callback [key] of the animation options [animationOptions]:
 /// `animationOptions && animationOptions[key]`. A falsy `animation` option
@@ -261,7 +176,7 @@ Object? _getCanvas(Object? item) {
 /// the `canvas` of a context and of a chart, else [jsGet].
 Object? _canvasOf(Object? item) => switch (item) {
   final CanvasRenderingContext2D context => context.canvas,
-  final types.Chart chart => chart.canvas,
+  final IChart chart => chart.canvas,
   _ => jsGet(item, 'canvas'),
 };
 
@@ -321,9 +236,9 @@ void _moveNumericKeys(Map<String, Object?> obj, int start, int move) {
 ///
 /// [inChartArea] is the value of `args.inChartArea`, which a plugin can
 /// change. The test is its ToBoolean.
-types.ChartEvent? _determineLastEvent(
-  types.ChartEvent e,
-  types.ChartEvent? lastEvent,
+ChartEvent? _determineLastEvent(
+  ChartEvent e,
+  ChartEvent? lastEvent,
   Object? inChartArea,
   bool isClick,
 ) {
@@ -355,7 +270,7 @@ class Chart(
   /// modes, or Dart `null`.
   @override var List<ChartTransition>? chartTransitions,
 ]) implements
-    types.Chart,
+    IChart,
     CategoryLabelSource,
     SingleBarIndexSource,
     NativeBarIndexReads,
@@ -466,17 +381,17 @@ class Chart(
   }
 
   /// core.controller.js:105 `static defaults = defaults`.
-  static final core_defaults.Defaults defaults = core_defaults.defaults;
+  static final Defaults defaults = chartjs.defaults;
 
   /// core.controller.js:106 `static instances = instances`: the charts by
   /// the `ToString` of their [id] (index.d.ts:594).
   static final Map<String, Chart> instances = _instances;
 
   /// core.controller.js:107 `static overrides = overrides`.
-  static final OverridesByTypeScope overrides = core_defaults.overrides;
+  static final OverridesByTypeScope overrides = chartjs.overrides;
 
   /// core.controller.js:108 `static registry = registry`.
-  static final core_registry.Registry registry = core_registry.registry;
+  static final Registry registry = chartjs.registry;
 
   /// core.controller.js:109 `static version = version`. Upstream reads the
   /// version from `package.json` (core.controller.js:12). The port has
@@ -578,11 +493,9 @@ class Chart(
   /// hole of the JS array: `_destroyDatasetMeta` deletes an item
   /// (core.controller.js:924). The specs read it
   /// (core.controller.tests.js:1969).
-  @internal
   final List<ChartMeta<DatasetController>?> metasets = [];
 
   /// core.controller.js:156 `_stacks = undefined`. See `types.Chart.stacks`.
-  @internal
   @override
   AnyObject? stacks;
 
@@ -599,19 +512,17 @@ class Chart(
   /// core.controller.js:159 `chartArea = undefined`. Dart `null` stands for
   /// JS `undefined` until the first layout.
   @override
-  types.ChartArea? chartArea;
+  ChartArea? chartArea;
 
   /// core.controller.js:160 `_active = []`: the active elements. The specs
   /// read it (core.controller.tests.js:1718).
-  @internal
-  List<types.ActiveElement> active = [];
+  List<ActiveElement> active = [];
 
   /// core.controller.js:161 `_lastEvent = undefined`. Dart `null` stands for
   /// JS `null` and `undefined`. The readers test its truthiness. The input
   /// reference test reads it after each step
   /// (`test/port/platform/chart_host_input_test.dart`).
-  @internal
-  types.ChartEvent? lastEvent;
+  ChartEvent? lastEvent;
 
   /// core.controller.js:162 `_listeners = {}`: the event listeners by type.
   Map<String, Function> _listeners = {};
@@ -624,7 +535,6 @@ class Chart(
 
   /// core.controller.js:165 `_sortedMetasets = []`: the metas in the drawing
   /// order. The specs read it (core.controller.tests.js:1984).
-  @internal
   List<ChartMeta<DatasetController>?> sortedMetasets = [];
 
   /// core.controller.js:166 `scales = {}`: the scales by id.
@@ -633,7 +543,6 @@ class Chart(
 
   /// core.controller.js:167 `_plugins = new PluginService()`. The specs read
   /// it (core.controller.tests.js:1944).
-  @internal
   final PluginService plugins = PluginService();
 
   /// core.controller.js:168 `$proxies = {}`. See
@@ -650,7 +559,6 @@ class Chart(
 
   /// core.controller.js:171 `_animationsDisabled = undefined`. See
   /// `types.Chart.animationsDisabled`.
-  @internal
   @override
   bool? animationsDisabled;
 
@@ -663,7 +571,6 @@ class Chart(
 
   /// core.controller.js:174 `_dataChanges = []`. See
   /// `types.Chart.dataChanges`.
-  @internal
   @override
   List<List<Object?>> dataChanges = [];
 
@@ -680,7 +587,7 @@ class Chart(
   /// `undefined`, the start value. The legend plugin writes it
   /// (plugin.legend.js:602) and deletes it (:609).
   @override
-  types.LegendElement? legend;
+  LegendElement? legend;
 
   /// plugin.title.js:117 `titleBlock`: the layout box of the title plugin.
   /// Dart `null` stands for JS `undefined`, the start value, and for the
@@ -693,7 +600,7 @@ class Chart(
   /// (plugin.tooltip.js:1230). This file does not import the plugin, as
   /// core.controller.js does not (Chart.js ADR 0039, section 1).
   @override
-  types.TooltipModel? tooltip;
+  TooltipModel? tooltip;
 
   /// core.controller.js:197 `get aspectRatio()`.
   ///
@@ -723,11 +630,9 @@ class Chart(
 
   /// Internal eligibility for native label-source reads. A subclass with
   /// effectful data/config getters must retain the ordinary per-label path.
-  @internal
   bool get supportsNativeCategoryLabels => runtimeType == Chart;
 
   @override
-  @internal
   // DIVERGES(chartjs): adapt-category-label-dispatch, trusted data getter.
   List<Object?>? categoryLabels(
     Object? explicitLabels, {
@@ -739,19 +644,16 @@ class Chart(
   /// Timing wrappers may opt in only when config/options/scales/metas and
   /// their virtual enumeration methods retain Chart's ordinary behavior.
   @override
-  @internal
   bool get supportsNativeBarIndexReads => runtimeType == Chart;
 
   /// Bulk updates additionally require ordinary context, pixel-ratio and
   /// visibility behavior. Timing-only wrappers may explicitly opt in.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-bulk-bar-update, ordinary native chart reads.
   bool get supportsBulkBarUpdate => super.runtimeType == Chart;
 
   /// Ordinary data/config/context and DPR reads for a native point loop.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-scatter-point-options, native chart contract.
   bool get supportsNativePointOptions => super.runtimeType == Chart;
 
@@ -764,12 +666,8 @@ class Chart(
   /// Recheck live topology at the original observation point. There is no
   /// snapshot of dataset/scale/stack values that can survive a callback.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, single-dataset topology proof.
-  bool hasSingleBarIndexLayout(
-    types.DatasetController controller,
-    types.Scale scale,
-  ) {
+  bool hasSingleBarIndexLayout(IDatasetController controller, IScale scale) {
     if (!supportsNativeBarIndexReads ||
         controller is! NativeBarIndexReads ||
         !(controller as NativeBarIndexReads).supportsNativeBarIndexReads ||
@@ -1406,7 +1304,6 @@ class Chart(
 
   /// Timing-only chart wrappers may opt in if all metadata/config reads remain
   /// ordinary. Unknown subclasses retain their virtual full update behavior.
-  @internal
   bool get supportsDataUpdates => super.runtimeType == Chart;
 
   /// Update numeric data while retaining unchanged settings, ticks and layout.
@@ -1554,7 +1451,7 @@ class Chart(
       }
       // Invalidate data-derived caches while preserving scale layout and ticks.
       for (final scale in scales.values) {
-        scale.cache = types.ScaleCache();
+        scale.cache = ScaleCache();
       }
       final keepRulers = reuseLayout && fastBarKeepsRulers(controllers);
       for (final controller in controllers) {
@@ -2074,7 +1971,6 @@ class Chart(
   /// `meta.visible` is a ToBoolean test: the `hide` animation writes
   /// numbers (Chart.js ADR 0019, section 9). A hole of the sorted metas
   /// throws a [TypeError], as the read `meta.visible` of `undefined` does.
-  @internal
   @override
   List<ChartMeta<DatasetController>> getSortedDatasetMetas(bool filterVisible) {
     final metasets = sortedMetasets;
@@ -2157,8 +2053,8 @@ class Chart(
   /// getRelativePosition)
   /// @returns {boolean}
   @override
-  bool isPointInArea(types.Point point) {
-    return helpers.isPointInArea(point, chartArea, _minPadding);
+  bool isPointInArea(Point point) {
+    return chartjs.isPointInArea(point, chartArea, _minPadding);
   }
 
   /// core.controller.js:820 `getElementsAtEventForMode(e, mode, options,
@@ -2171,7 +2067,7 @@ class Chart(
   /// the upstream table. A mode needs the options as a Map or a view:
   /// another value throws a [TypeError].
   @override
-  List<types.ActiveElement> getElementsAtEventForMode(
+  List<ActiveElement> getElementsAtEventForMode(
     Object e,
     InteractionMode? mode,
     Object? options, [
@@ -2254,7 +2150,6 @@ class Chart(
   /// The meta that [getDatasetMeta] finds, or Dart `null`: this read adds no
   /// meta (Chart.js ADR 0092). The caller has checked the List of the datasets.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, a read with no write.
   ChartMeta<DatasetController>? existingDatasetMeta(int datasetIndex) {
     final dataset = jsGetIndex(_datasets, datasetIndex);
@@ -2476,7 +2371,7 @@ class Chart(
       listeners[type] = listener;
     }
 
-    void listener(types.ChartEvent e) {
+    void listener(ChartEvent e) {
       // DIVERGES(chartjs): adapt-live-mouse-move, the update handles the move.
       if (e.type == 'mousemove' &&
           !animator.has(this) &&
@@ -2575,7 +2470,7 @@ class Chart(
   /// 0012), and `setHoverStyle` or `removeHoverStyle`. An item without an
   /// element throws a [TypeError], as the hover style of `undefined` does.
   void updateHoverStyle(
-    List<types.ActiveElement> items,
+    List<ActiveElement> items,
     InteractionMode? mode,
     bool enabled,
   ) {
@@ -2611,7 +2506,7 @@ class Chart(
   ///
   /// Get active (hovered) elements
   /// @returns array
-  List<types.ActiveElement> getActiveElements() {
+  List<ActiveElement> getActiveElements() {
     return active;
   }
 
@@ -2623,16 +2518,16 @@ class Chart(
   /// An item is an `ActiveElement` with the two indexes (row
   /// `adapt-native-active-element`). The chart does not read its `element`:
   /// it takes the element of the meta.
-  void setActiveElements(List<types.ActiveElement> activeElements) {
+  void setActiveElements(List<ActiveElement> activeElements) {
     final lastActive = active;
     final newActive = activeElements.map((item) {
       // DIVERGES(chartjs): adapt-native-active-element, int indexes.
-      final types.ActiveElement(:datasetIndex, :index) = item;
+      final ActiveElement(:datasetIndex, :index) = item;
       final meta = getDatasetMeta(datasetIndex);
       // `if (!meta) throw new Error('No dataset found at index ' + ...)`:
       // getDatasetMeta always gives a meta. Thus upstream never throws here.
 
-      return types.ActiveElement(
+      return ActiveElement(
         datasetIndex: datasetIndex,
         element: _elementAt(meta.data, index),
         index: index,
@@ -2698,15 +2593,12 @@ class Chart(
   /// replay)`.
   /// @private
   void _updateHoverStyles(
-    List<types.ActiveElement> active,
-    List<types.ActiveElement> lastActive, [
+    List<ActiveElement> active,
+    List<ActiveElement> lastActive, [
     bool? replay,
   ]) {
     final hoverOptions = _options.readKey(OptionKey.hover);
-    List<types.ActiveElement> diff(
-      List<types.ActiveElement> a,
-      List<types.ActiveElement> b,
-    ) => a
+    List<ActiveElement> diff(List<ActiveElement> a, List<ActiveElement> b) => a
         .where(
           (x) => !b.any(
             (y) => x.datasetIndex == y.datasetIndex && x.index == y.index,
@@ -2740,8 +2632,7 @@ class Chart(
   /// 0022, section 5). Each upstream call of `this._eventHandler` calls
   /// this field. Dart `null` for `replay` stands for an absent argument.
   // DIVERGES(chartjs): harness-method-fields, a test replaces it per chart.
-  @internal
-  late void Function(types.ChartEvent e, [bool? replay]) eventHandler =
+  late void Function(ChartEvent e, [bool? replay]) eventHandler =
       _eventHandlerMethod;
 
   /// The upstream body of `_eventHandler` (core.controller.js:1163-1186).
@@ -2749,7 +2640,7 @@ class Chart(
   /// The event filter reads `plugin.options.events || this.options.events`
   /// and `includes` the type of the native event: the options of an add-on
   /// give their `events` field (Chart.js ADR 0150). Upstream returns `this`.
-  void _eventHandlerMethod(types.ChartEvent e, [bool? replay]) {
+  void _eventHandlerMethod(ChartEvent e, [bool? replay]) {
     final args = EventHookArgs(
       event: e,
       replay: replay ?? false,
@@ -2785,15 +2676,13 @@ class Chart(
   /// Whether the owner of a live chart holds this mouse move for the update
   /// of its frame (Chart.js ADR 0091). The owner calls [releaseHeldMove] when
   /// no update takes the move. Dart `null` never holds a move.
-  @internal
   bool Function()? holdMouseMove;
 
   /// The mouse move that waits for the update of its frame.
-  types.ChartEvent? _heldMove;
+  ChartEvent? _heldMove;
 
   /// Handles a mouse move that no update took, as a real event. An event of
   /// another type calls it first, so the events keep their order.
-  @internal
   void releaseHeldMove() {
     final held = _heldMove;
     if (held == null) return;
@@ -2808,7 +2697,7 @@ class Chart(
   /// that work and one draw. A real move also ends the state of the tooltip
   /// that ignores replays after `setActiveElements`.
   // DIVERGES(chartjs): adapt-live-mouse-move, one pass for each live frame.
-  types.ChartEvent? _eventToReplay() {
+  ChartEvent? _eventToReplay() {
     final held = _heldMove;
     if (held == null) return lastEvent;
     _heldMove = null;
@@ -2827,7 +2716,7 @@ class Chart(
   /// its draw. With a queued animation, each render only starts the animator,
   /// and the replay keeps its call.
   // DIVERGES(chartjs): adapt-replay-single-draw, one draw for each update.
-  void _replayLastEvent(types.ChartEvent event) {
+  void _replayLastEvent(ChartEvent event) {
     final outer = _drawFollowsReplay;
     _drawFollowsReplay = true;
     try {
@@ -2849,8 +2738,7 @@ class Chart(
   /// It drops the underscore, because a spec reads it
   /// (controller.line.tests.js:1067, Chart.js ADR 0012). [inChartArea] is the
   /// value of `args.inChartArea`: the tests are ToBoolean tests.
-  @internal
-  bool handleEvent(types.ChartEvent e, [bool? replay, Object? inChartArea]) {
+  bool handleEvent(ChartEvent e, [bool? replay, Object? inChartArea]) {
     final lastActive = this.active;
     final options = _options;
 
@@ -2928,9 +2816,9 @@ class Chart(
   /// @returns {import('../types/index.js').ActiveElement[]} - The active
   /// elements
   /// @pravate
-  List<types.ActiveElement> _getActiveElements(
-    types.ChartEvent e,
-    List<types.ActiveElement> lastActive,
+  List<ActiveElement> _getActiveElements(
+    ChartEvent e,
+    List<ActiveElement> lastActive,
     Object? inChartArea, [
     bool? useFinalPosition,
   ]) {
@@ -2971,7 +2859,7 @@ void _invalidatePlugins() {
 
 /// The read `meta.data[index]` of a data element: the element at a whole
 /// index below the length, else Dart `null` for JS `undefined`.
-types.Element? _elementAt(List<types.Element> data, int index) {
+IElement? _elementAt(List<IElement> data, int index) {
   return index >= 0 && index < data.length ? data[index] : null;
 }
 

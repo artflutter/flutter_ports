@@ -3,19 +3,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -46,7 +34,7 @@ import 'arc_reference.dart';
 final class const _Animation(
   @override final Object? to, {
   required final bool _active,
-}) implements types.Animation {
+}) implements IAnimation {
   @override
   bool active() => _active;
 }
@@ -401,8 +389,8 @@ void main() {
       final arc = ArcElement();
       expect(arc, isA<Element>());
       expect(arc, isA<ArcProps>());
-      expect(arc, isA<types.VisualElement>());
-      expect(arc, isA<types.Element>());
+      expect(arc, isA<VisualElement>());
+      expect(arc, isA<IElement>());
       expect(arc, isA<Point>());
     });
 

@@ -8,7 +8,6 @@ library;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/js_semantics.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';

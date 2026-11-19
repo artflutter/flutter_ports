@@ -3,7 +3,6 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // The demo calls pure resolvers without constructing a Chart first.
-// Not public: _createResolver and _attachContext, upstream `_` helpers.
 import 'package:material_ui/material_ui.dart';
 
 /// One dataset scope of the three-state table.

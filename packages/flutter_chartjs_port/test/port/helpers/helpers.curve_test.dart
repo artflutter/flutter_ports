@@ -1,11 +1,5 @@
 // Original code, not ported from Chart.js: helpers.curve cases with no spec.
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show createResolver;
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream behaviour that test/specs/helpers.curve.tests.js does not check

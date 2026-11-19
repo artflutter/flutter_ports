@@ -12,19 +12,6 @@ import 'dart:collection';
 
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show axisStackOf, controllerArgs, dataItemValue, parsedValueOf, stacksOf;
-import 'package:flutter_chartjs_port/src/core/data_update.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGetKey;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 /// A value of a parsed item whose `toString` is user code.
@@ -107,7 +94,7 @@ final class _ShortController(super.chart, super.datasetIndex, [super.newTarget])
 
   @override
   List<ParsedItem> parsePrimitiveData(
-    covariant types.ChartMeta meta,
+    covariant ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -273,7 +260,7 @@ Object? _plain(Object? value) {
 }
 
 /// The parsed items as plain lists of their keys and values, and `sorted`.
-Object _parsedOf(types.ChartMeta meta) => [
+Object _parsedOf(ChartMeta meta) => [
   meta.sorted,
   [for (final item in meta.parsed) _plain(item)],
 ];

@@ -9,10 +9,9 @@ import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+// The prefix keeps the port names that Flutter also has apart.
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: Title, the element class of plugin.title.
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart'
-    as title_plugin;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -473,7 +472,7 @@ void main() {
         expect(readByName(dataset, 'fill'), fill, reason: variant.key);
         // line-boundaries.md:106: `'Fill: ' + ctx.chart.data.datasets[0]
         // .fill`.
-        final title = chart.titleBlock! as title_plugin.Title;
+        final title = chart.titleBlock! as chartjs.Title;
         expect(jsGet(title.options, 'text'), [
           'Fill: ${variant.key}',
         ], reason: variant.key);

@@ -9,17 +9,7 @@
 /// invariant 4).
 library;
 
-import 'package:flutter/foundation.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey, OptionScope;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartConfigurationScope, ChartOptionsScope;
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The value of an absent key in the records of [ChartThemeSwitch].
 const Object _absent = _Absent();
@@ -92,8 +82,10 @@ final class _Write(
 /// of the options (step 3) and the records of the palette keys that the
 /// colors plugin wrote (step 4). The inline plugin of the widget feeds the
 /// records in each update (`chart_view_plugin.dart`).
-@internal
 final class ChartThemeSwitch() {
+  /// A switch with no theme yet.
+  this;
+
   /// The effective theme of the start or of the last switch.
   ChartThemeData? _applied;
 
@@ -157,7 +149,7 @@ final class ChartThemeSwitch() {
   ///    else `'themeFrame'` with [reducedMotion], else `'theme'`. Never
   ///    `'none'` or `'resize'`.
   UpdateMode? apply(
-    types.Chart chart,
+    IChart chart,
     Object root,
     ChartThemeData? theme, {
     required bool reducedMotion,
@@ -180,7 +172,7 @@ final class ChartThemeSwitch() {
 
   /// The `beforeUpdate` hook of the widget plugin: the values of the two
   /// palette keys of each dataset Map before the colors plugin runs.
-  void beforeUpdate(types.Chart chart) {
+  void beforeUpdate(IChart chart) {
     final before = _before..clear();
     final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List) return;
@@ -198,7 +190,7 @@ final class ChartThemeSwitch() {
   /// palette key that changed in this update gets a record, with its value
   /// before the first write. A key that changed again from its last written
   /// value keeps the first value (`forceOverride` writes in each update).
-  void afterColorize(types.Chart chart) {
+  void afterColorize(IChart chart) {
     final before = _before;
     for (var i = 0; i < before.length; i += 3) {
       final dataset = before[i]!;
@@ -224,7 +216,7 @@ final class ChartThemeSwitch() {
 
   /// Step 4: the palette keys of the datasets of [chart] that still hold the
   /// written value go back to their values before the first write.
-  void _restorePalette(types.Chart chart) {
+  void _restorePalette(IChart chart) {
     final datasets = readOption(chart.data, OptionKey.datasets);
     if (datasets is! List) return;
     for (final Object? dataset in datasets) {

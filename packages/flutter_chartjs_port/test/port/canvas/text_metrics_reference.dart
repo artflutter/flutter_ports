@@ -6,9 +6,7 @@
 
 import 'dart:ui' show FontStyle, FontWeight;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasTextBaseline;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Chrome version that generated the reference.
 const String textMetricsChrome = 'Google Chrome 155.0.8059.80';

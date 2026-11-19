@@ -45,20 +45,7 @@
 library;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show ContextProxy, OptionView, boolOption, paddingOption, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show numberFormatOf;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint, chartPaintOf;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// `options.setContext(context)` of a nested option object: a view of the

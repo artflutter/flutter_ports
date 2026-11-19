@@ -30,55 +30,7 @@ import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign, TextDirection;
 
 import 'package:flutter/animation.dart' show Curve;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionAxis, InteractionMode;
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign, TickSource;
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
-    show DecimationAlgorithm;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget;
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
-    show FillerDrawTime;
-import 'package:flutter_chartjs_port/src/plugins/tooltip_position.dart'
-    show TooltipPositioner;
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show ChartAlign, TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart'
-    show ScaleBorder;
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BarThickness, BorderSkippedEdge;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
-    show CartesianAxis, RAxis, ScaleAxis;
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
-    show ChartClip, StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
-    show ChartShadow;
-import 'package:flutter_chartjs_port/src/types/data_item.dart'
-    show TypedDataItem;
-import 'package:flutter_chartjs_port/src/types/layout.dart'
-    show ChartPosition, LayoutPosition;
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
-    show LineSegmentStyle;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginOptions;
-import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
 /// One option value of a typed scope (Chart.js ADR 0054 §1).

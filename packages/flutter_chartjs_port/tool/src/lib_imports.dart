@@ -8,13 +8,15 @@
 /// - A test without `@TestOn('vm')` compiles for the web legs, so it and its
 ///   test imports use only pure layers, `package:test` and
 ///   `package:chartjs_test_utils/pure.dart`.
-/// - Ported files do not import `lib/src/theme/` (Chart.js ADR 0147).
-/// - A file of `lib/src/widgets/` imports no component and no index of the
-///   components: the widget registers no component (Chart.js ADR 0048,
-///   section 3).
-/// - A file of `lib/src/typed/` imports only the allowlist of the typed API,
-///   and ported files do not import `lib/src/typed/` (Chart.js ADR 0052,
-///   section 8).
+/// - No file of the Chart.js port imports a file of `lib/src/`: each file
+///   imports a public library (ADR 0012).
+/// - Ported files use no name of `lib/src/theme/` (Chart.js ADR 0147).
+/// - A file of `lib/src/widgets/` uses no name of a component or of an index
+///   of the components: the widget registers no component (Chart.js ADR
+///   0048, section 3).
+/// - A file of `lib/src/typed/` imports only the allowlist of the typed API
+///   and uses only the names of its allowlist, and ported files use no name
+///   of `lib/src/typed/` (Chart.js ADR 0052, section 8).
 /// - `lib/` imports `package:collection/collection.dart` only with
 ///   `show mergeSort` (Chart.js ADR 0146, Sort).
 /// - The `lib/pure.dart` closure of the harness package `chartjs_test_utils`
@@ -34,6 +36,7 @@ import 'dart:io';
 import 'check_support.dart';
 import 'dart_source.dart';
 import 'headers.dart';
+import 'name_uses.dart';
 import 'port_headers.dart'
     show harnessPackageName, parsePortSourcesFile, portSourcesPath;
 
@@ -340,6 +343,11 @@ final class _Edge(
 /// Runs the guard over the package in [packageDirectory]. The paths in the
 /// findings start with [displayPrefix].
 ///
+/// [nameUses] gives the names of the package that each file of `lib/src/`
+/// uses ([resolveNameUses]). The rules on the theme, the typed API and the
+/// widgets read them. With [publicImportsOnly], no file imports a file of
+/// `lib/src/` (ADR 0012).
+///
 /// When [harnessDirectory] holds a [harnessPureRoot], the guard also checks
 /// the closure of that file. Its paths start with [harnessDisplayPrefix].
 /// The guard skips the closure for an add-on port: the harness imports the
@@ -349,8 +357,10 @@ final class _Edge(
   String displayPrefix = '',
   String? harnessDirectory,
   String harnessDisplayPrefix = '',
+  Map<String, List<NameUse>>? nameUses,
+  bool publicImportsOnly = false,
 }) {
-  final packageName = _packageName(packageDirectory);
+  final packageName = packageNameOf(packageDirectory);
   final libraries = _load(packageDirectory, packageName, const ['lib', 'test']);
 
   final findings = <Finding>[];
@@ -510,47 +520,92 @@ final class _Edge(
     }
   }
 
-  // Ported files, the theme and the typed API.
-  for (final library in libraries.values) {
-    if (library.header.kind != HeaderKind.ported) continue;
-    for (final edge in library.edges) {
-      if (edge.target?.startsWith(themeDirectory) ?? false) {
+  // With [publicImportsOnly], no file imports a file of lib/src/: each file
+  // imports a public library (ADR 0012). An index of lib/src/
+  // exports its module files. An add-on port follows ADR 0011.
+  for (final library
+      in publicImportsOnly ? libraries.values : const <_Library>[]) {
+    for (final directive in library.source.directives) {
+      if (directive.keyword != 'import') continue;
+      for (final uri in directive.uris) {
+        if (!uri.startsWith('package:$packageName/src/')) continue;
         report(
           library,
-          edge.line,
-          'imports ${edge.target}, but ported files never import '
-          '$themeDirectory (Chart.js ADR 0147).',
-        );
-      }
-      if (edge.target?.startsWith(typedDirectory) ?? false) {
-        report(
-          library,
-          edge.line,
-          'imports ${edge.target}, but ported files never import '
-          '$typedDirectory (Chart.js ADR 0052 §8).',
+          directive.line,
+          'imports $uri, but a file imports a public library, never a file '
+          'of lib/src/ (ADR 0012).',
         );
       }
     }
   }
 
-  // The allowlist of the typed API.
+  // The names that each file uses ([nameUses], ADR 0012).
+  List<NameUse> uses(_Library library) => nameUses?[library.path] ?? const [];
+  bool inTargets(String path, List<String> targets) => targets.any(
+    (entry) => entry.endsWith('/') ? path.startsWith(entry) : path == entry,
+  );
+
+  // Ported files, the theme and the typed API.
+  for (final library in libraries.values) {
+    if (library.header.kind != HeaderKind.ported) continue;
+    for (final directive in library.source.directives) {
+      if (directive.keyword != 'export') continue;
+      for (final uri in directive.uris) {
+        final target = _resolve(packageName, library.path, uri);
+        for (final directory in [themeDirectory, typedDirectory]) {
+          if (target?.startsWith(directory) ?? false) {
+            report(
+              library,
+              directive.line,
+              'exports $target, but ported files never export $directory '
+              '(Chart.js ADRs 0147 and 0052 §8).',
+            );
+          }
+        }
+      }
+    }
+    for (final use in uses(library)) {
+      if (use.target.startsWith(themeDirectory)) {
+        report(
+          library,
+          use.line,
+          'uses ${use.name} of ${use.target}, but ported files use no name '
+          'of $themeDirectory (Chart.js ADR 0147).',
+        );
+      }
+      if (use.target.startsWith(typedDirectory)) {
+        report(
+          library,
+          use.line,
+          'uses ${use.name} of ${use.target}, but ported files use no name '
+          'of $typedDirectory (Chart.js ADR 0052 §8).',
+        );
+      }
+    }
+  }
+
+  // The allowlist of the typed API: the libraries of other packages that it
+  // imports, and the files of the package whose names it uses.
   for (final library in libraries.values) {
     if (!library.path.startsWith(typedDirectory)) continue;
     for (final edge in library.edges) {
-      final target = edge.target;
-      final allowed = target == null
-          ? typedLibraries.contains(edge.uri)
-          : typedTargets.any(
-              (entry) => entry.endsWith('/')
-                  ? target.startsWith(entry)
-                  : target == entry,
-            );
-      if (!allowed) {
+      if (edge.target != null) continue;
+      if (!typedLibraries.contains(edge.uri)) {
         report(
           library,
           edge.line,
-          'imports ${target ?? edge.uri}, which is not on the allowlist of '
+          'imports ${edge.uri}, which is not on the allowlist of '
           '$typedDirectory (Chart.js ADR 0052 §8).',
+        );
+      }
+    }
+    for (final use in uses(library)) {
+      if (!inTargets(use.target, typedTargets)) {
+        report(
+          library,
+          use.line,
+          'uses ${use.name} of ${use.target}, which is not on the allowlist '
+          'of $typedDirectory (Chart.js ADR 0052 §8).',
         );
       }
     }
@@ -559,19 +614,13 @@ final class _Edge(
   // The widgets and the components.
   for (final library in libraries.values) {
     if (!library.path.startsWith(widgetsDirectory)) continue;
-    for (final edge in library.edges) {
-      final target = edge.target;
-      if (target == null) continue;
-      final forbidden = widgetForbiddenTargets.any(
-        (entry) =>
-            entry.endsWith('/') ? target.startsWith(entry) : target == entry,
-      );
-      if (forbidden) {
+    for (final use in uses(library)) {
+      if (inTargets(use.target, widgetForbiddenTargets)) {
         report(
           library,
-          edge.line,
-          'imports $target, but the widget registers no component '
-          '(Chart.js ADR 0048 §3).',
+          use.line,
+          'uses ${use.name} of ${use.target}, but the widget registers no '
+          'component (Chart.js ADR 0048 §3).',
         );
       }
     }
@@ -632,7 +681,7 @@ int _checkHarness(
   List<Finding> findings,
   String displayPrefix,
 ) {
-  final harnessName = _packageName(harnessDirectory);
+  final harnessName = packageNameOf(harnessDirectory);
   final libraries = _load(harnessDirectory, harnessName, const ['lib']);
   final closure = _closure(
     [harnessPureRoot],
@@ -696,7 +745,7 @@ _Host? _readHost(
   final lib = Directory('$directory/lib');
   String? actual;
   try {
-    actual = _packageName(directory);
+    actual = packageNameOf(directory);
   } on FileSystemException {
     actual = null;
   } on FormatException {
@@ -733,7 +782,8 @@ String _hostMessage(String uri, _Host host) {
       'of its host ${host.name}$libraries (ADR 0009, item 3).';
 }
 
-String _packageName(String packageDirectory) {
+/// The name of the package in [packageDirectory], from its `pubspec.yaml`.
+String packageNameOf(String packageDirectory) {
   final pubspec = File('$packageDirectory/pubspec.yaml').readAsLinesSync();
   for (final line in pubspec) {
     final match = RegExp(r'^name:\s*(\S+)').firstMatch(line);

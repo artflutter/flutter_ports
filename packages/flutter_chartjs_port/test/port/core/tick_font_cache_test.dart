@@ -1,11 +1,6 @@
 // Original code, not ported from Chart.js: tick font cache guards.
 import 'package:chartjs_test_utils/pure.dart' show setUpDefaultsRestore;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // A font is a ChartTextStyle (Chart.js ADR 0116): one immutable value. The

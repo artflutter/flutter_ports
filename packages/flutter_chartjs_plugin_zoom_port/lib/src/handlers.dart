@@ -20,9 +20,7 @@ import 'dart:math' as math;
 
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/src/state.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
-import 'package:flutter_chartjs_port/helpers.dart' hide debounce;
-import 'package:flutter_chartjs_port/js_semantics.dart';
+import 'package:flutter_chartjs_port/chartjs.dart' hide Point, debounce;
 
 /// handlers.ts:9 `clamp(x, from, to)`.
 double _clamp(double x, double from, double to) =>

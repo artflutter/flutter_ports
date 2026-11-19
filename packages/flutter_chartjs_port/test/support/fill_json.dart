@@ -14,7 +14,7 @@
 ///   gives each of their `fill: false` its `FillTarget.none`.
 library;
 
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The text that stands for the value of `fill` on both sides of a compare
 /// with upstream JSON text.

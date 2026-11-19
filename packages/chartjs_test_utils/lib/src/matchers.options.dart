@@ -20,16 +20,11 @@ library;
 
 // The harness reads the JS runtime of flutter_chartjs_port, which does not
 // export lib/src.
-// ignore_for_file: implementation_imports
 
 import 'dart:convert';
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// matchers.options.js:1-3 `isObject`: `Object.prototype.toString.call(value)
@@ -38,13 +33,13 @@ import 'package:test/test.dart';
 /// Upstream it is true for a plain object and for an instance of a class,
 /// for example an element or a tooltip (`plugin.tooltip.tests.js:1350`).
 /// Here a JS object is a `Map<String, Object?>`, a typed object with a face
-/// ([JsObjectFace], Chart.js ADR 0054 §5) or a [types.ElementPropertyRead],
+/// ([JsObjectFace], Chart.js ADR 0054 §5) or a [ElementPropertyRead],
 /// the read by name of a class instance. A Dart object of another class has
 /// no properties that the matcher can read. Thus it is not an object here.
 bool _isObject(Object? value) {
   return value is Map<String, Object?> ||
       value is JsObjectFace ||
-      value is types.ElementPropertyRead;
+      value is ElementPropertyRead;
 }
 
 /// matchers.options.js:6 `isArray`.
@@ -155,7 +150,7 @@ _Comparison _compareObject(
       continue;
     }
     // `actual[key]`: the access by name of a class instance, else jsGet.
-    final act = object is types.ElementPropertyRead
+    final act = object is ElementPropertyRead
         ? object[key]
         : jsGet(object, key);
     final exp = jsGet(expected, key);
@@ -176,7 +171,7 @@ _Comparison _compareObject(
 /// matchers.options.js:94 `compareOption`: the [_Comparison] of an object or
 /// an array, or the `===` result of any other value with a null message.
 ///
-/// An expected [types.ElementPropertyRead] has no list of its own keys. Thus
+/// An expected [ElementPropertyRead] has no list of its own keys. Thus
 /// it compares with `===` ([strictEquals]), where upstream compares its own
 /// keys (the row `harness-expected-element`). Another element or a plain
 /// object with the same own keys fails here and passes upstream. No ported

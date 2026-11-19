@@ -11,13 +11,7 @@
 // values here are the values that the probe logged. The file is a pure
 // layer test: test:web runs it too.
 
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// A point element with [x], [y] and [angle].
@@ -62,7 +56,7 @@ LineElement _radarTarget() => LineElement(<String, Object?>{
 });
 
 /// `[x, y, angle]` of [point], read by name.
-List<Object?> _byName(types.PointElement point) {
+List<Object?> _byName(IPointElement point) {
   final element = point as Element;
   return [element['x'], element['y'], element['angle']];
 }
@@ -80,7 +74,7 @@ void main() {
         [part.source.start, part.source.end, part.source.loop],
         [3, 1, false],
       );
-      expect(part.target, isA<types.Segment>());
+      expect(part.target, isA<Segment>());
       // Math.max and Math.min of the bounds and the sub-bounds
       // (filler.segment.js:38-43): only the property `angle`.
       expect(_byName(part.start), [undefined, undefined, 2.199114857512855]);
@@ -181,7 +175,7 @@ void main() {
   });
 
   test('findSegmentEnd skips the points with a NaN x or y', () {
-    final points = <types.PointElement>[
+    final points = <IPointElement>[
       for (final (x, y) in [(1.0, 1.0), (2.0, double.nan), (double.nan, 3.0)])
         PointElement()
           ..x = x

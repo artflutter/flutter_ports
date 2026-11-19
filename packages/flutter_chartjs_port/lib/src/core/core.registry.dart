@@ -20,18 +20,7 @@
 /// section 10).
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show capitalize, each;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToString, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// core.registry.js:11 `Registry`.
 ///

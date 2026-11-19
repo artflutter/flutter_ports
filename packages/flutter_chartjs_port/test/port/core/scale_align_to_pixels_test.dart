@@ -3,8 +3,6 @@
 library;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 /// A line chart at the pixel ratio 2 with two linear scales, `alignToPixels`

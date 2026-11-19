@@ -9,12 +9,7 @@
 /// in Node.js at 37 ns and 1,760 ns.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 import 'fixtures.dart';
 import 'harness.dart';
@@ -28,7 +23,7 @@ bool _hasFunction(Object? value) {
 
 /// `needContext` of `core.config.js:405-418`.
 bool _needContext(Object proxy, List<String> names) {
-  final d = descriptors(proxy);
+  final d = descriptorsOf(proxy);
   for (final prop in names) {
     final scriptable = d.isScriptable(prop);
     final indexable = d.isIndexable(prop);
@@ -198,11 +193,11 @@ List<BenchCase> resolverCases() => [
   BenchCase('resolver', 'resolver/descriptors', () {
     final scopes = barElementScopes(staticBarDataset(0), barChartOptions());
     final resolver = createResolver(scopes, ['bar', '']);
-    descriptors(resolver);
+    descriptorsOf(resolver);
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        final d = descriptors(resolver);
+        final d = descriptorsOf(resolver);
         acc += d.isScriptable('backgroundColor') ? 1 : 0;
         acc += d.isIndexable('backgroundColor') ? 1 : 0;
       }

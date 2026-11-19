@@ -6,12 +6,10 @@ import 'package:chartjs_gallery/canvas_host_demo.dart';
 import 'package:chartjs_gallery/demo/axes_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
-
 import 'package:flutter/gestures.dart';
+// The prefix keeps the port names that Flutter also has apart.
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: Tooltip, the element class of plugin.tooltip.
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
-    as plugin_tooltip;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -709,7 +707,7 @@ void main() {
     addTearDown(mouse.removePointer);
     await mouse.moveTo(tester.getTopLeft(_host) + Offset(point.x, point.y));
     await _frames(tester, 3);
-    final tooltip = chart.tooltip! as plugin_tooltip.Tooltip;
+    final tooltip = chart.tooltip! as chartjs.Tooltip;
     final items = tooltip.dataPoints!;
     expect(items, isNotEmpty);
     final expected = chart.getDatasetMeta(0).controller!.getLabelAndValue(5);

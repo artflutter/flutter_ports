@@ -17,8 +17,7 @@
 /// `package:flutter`.
 library;
 
-import 'package:flutter_chartjs_port/src/core/date_calendar.dart'
-    show daysFromCivil;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// One day in milliseconds.

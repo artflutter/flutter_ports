@@ -140,9 +140,7 @@ import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // The EventTarget of the canvas.
 
@@ -765,8 +763,10 @@ class const ChartHost({
 /// holds no picture that the context can dispose. Each engine layer of a scene
 /// keeps its own reference to its picture. A clean layer is retained: the scene
 /// keeps what the last paint added.
-@internal
 final class ChartPicturesLayer() extends Layer {
+  /// A layer with no context.
+  this;
+
   final Float64List _matrix = Float64List(16)
     ..[10] = 1
     ..[15] = 1;

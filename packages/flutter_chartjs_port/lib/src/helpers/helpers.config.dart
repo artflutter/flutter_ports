@@ -67,58 +67,8 @@ import 'dart:typed_data' show Uint16List;
 import 'dart:ui' show Color, Locale, StrokeJoin, TextDirection;
 
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart';
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeOptionScope;
-import 'package:flutter_chartjs_port/src/core/option_call_epoch.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show
-        capitalize,
-        isArray,
-        isFunction,
-        isObject,
-        mergeNativeOptionValues,
-        nativeMergeKind,
-        resolveObjectKey;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, ScriptableContext;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
-    show ElementOptions;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/options/resolved.g.dart'
-    show ArcOptions, BarOptions, PointOptions;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget, SplitFill;
-import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart'
-    show ArcBorderAlign, ArcSpacingMode;
-import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart'
-    show BarThickness, BarThicknessFlex, BarThicknessPixels;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_shadow.dart'
-    show ChartShadow;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/option_functions.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart' show NumberFormat;
-import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/helpers/helpers.config.types.dart';
 
@@ -571,7 +521,6 @@ final class _VaryingColors(
 /// that vary with it (Chart.js ADR 0163). Each list is a native SDK list of
 /// numbers, nonempty. The lists stay live: the caller stops using the plan
 /// before any user code can run.
-@internal
 // DIVERGES(chartjs): adapt-scatter-indexed-sizes, the sizes of a loop plan.
 final class IndexedPointPlan._(
   /// The static fields, with `$shared: false`.
@@ -651,7 +600,6 @@ int _indexedSlot(double index, int length) => index < 9007199254740992.0
 /// after the update of that plan (Chart.js ADR 0099). The plan keeps the values
 /// that the resolver cached when it qualified, and [at] gives the result of the
 /// resolve of a context with this index. The items of the lists stay live.
-@internal
 // DIVERGES(chartjs): adapt-hidden-legend-items, the styles of a later build.
 final class IndexedElementStyles._(
   final OptionResolver _resolver,
@@ -797,18 +745,15 @@ final class OptionResolver._(
   int _indexedRejectedSize = -1;
 
   /// True only for ordinary SDK lists supported by indexed option probing.
-  @internal
   static bool nativeIndexedList(Object? value) =>
       _nativeIndexedLists.contains(value.runtimeType);
 
   /// Exact native result classes, all final. Other kinds skip all list guards.
-  @internal
   static bool nativeIndexedResult(ElementOptions into) =>
       into is PointOptions || into is BarOptions || into is ArcOptions;
 
   /// A new result of the class of the native result [kind]: a private type
   /// token or the supplied result of the owned path.
-  @internal
   // DIVERGES(chartjs): adapt-owned-option-result, the class of a type token.
   static ElementOptions newNativeResult(ElementOptions kind) => switch (kind) {
     PointOptions() => PointOptions(),
@@ -818,7 +763,6 @@ final class OptionResolver._(
 
   /// True only for an already-prepared, unshared point plan. No raw option,
   /// custom descriptor or context is evaluated to qualify a loop.
-  @internal
   // DIVERGES(chartjs): adapt-native-line-resolution, inspect only warm plans.
   bool hasPreparedPointOptions(List<Object> keys) {
     if (_slotsTouched) return false;
@@ -848,7 +792,6 @@ final class OptionResolver._(
   /// overrides, and the plan holds no function. A resolve then runs no user
   /// code. This reads cached values only and never invokes a descriptor or a
   /// resolver.
-  @internal
   // DIVERGES(chartjs): adapt-data-update-indexed-plan, the plan as the proof.
   bool hasStaticIndexedOptions(List<Object> keys) {
     final plan = _indexedElementPlan;
@@ -864,7 +807,6 @@ final class OptionResolver._(
   /// [keys] must be the native immutable key snapshot used by its source plan.
   /// Null results decline before context. Later failure uses the supplied
   /// continuation, consuming the original context exactly once.
-  @internal
   // DIVERGES(chartjs): adapt-prepared-scalar-point-resolution, owned executor.
   ElementOptions? Function(Object Function(), Object Function()?)?
   prepareScalarPointResolution(
@@ -900,7 +842,6 @@ final class OptionResolver._(
   /// Captures a color-only bar plan for a synchronous native loop. The caller
   /// must prove that no user code or mutation can run until the loop finishes.
   /// This reads cached values only and never invokes a descriptor or resolver.
-  @internal
   // DIVERGES(chartjs): adapt-prepared-indexed-options, native bulk color plan.
   BarOptions Function(int)? prepareIndexedBarColors(List<Object> keys) {
     final template = BarOptions()..storeKey(OptionKey.dollarShared, false);
@@ -915,7 +856,6 @@ final class OptionResolver._(
 
   /// A fresh options copy per native point, with static fields prepared once.
   /// The caller must stop using it before any user code can run.
-  @internal
   // DIVERGES(chartjs): adapt-scatter-point-options, loop-local color plan.
   PointOptions Function(int)? prepareIndexedPointColors(List<Object> keys) {
     final template = PointOptions()..storeKey(OptionKey.dollarShared, false);
@@ -933,7 +873,6 @@ final class OptionResolver._(
   /// each as a native list of numbers (Chart.js ADR 0163). With [sizes]
   /// false, only the colors can vary. The caller must stop using it before
   /// any user code can run.
-  @internal
   // DIVERGES(chartjs): adapt-scatter-indexed-sizes, loop-local size plan.
   IndexedPointPlan? prepareIndexedPointPlan(
     List<Object> keys, {
@@ -1015,7 +954,6 @@ final class OptionResolver._(
   /// Only the colors vary and each of their entries is native: the result for
   /// each index differs only in the colors. The caller must stop using it
   /// before any user code can run.
-  @internal
   // DIVERGES(chartjs): adapt-arc-native-options, loop-local color plan.
   ArcOptions Function(int)? prepareIndexedArcColors(List<Object> keys) {
     final template = ArcOptions()..storeKey(OptionKey.dollarShared, false);
@@ -1082,7 +1020,6 @@ final class OptionResolver._(
   /// Whether a read of a plain value through this resolver runs no user code:
   /// `operator []` of a custom Map scope is user code, and a write or a delete
   /// of a slot can replace the scopes. [peekKey] needs this.
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
   bool get scopesAreNative =>
       !_slotsTouched && _scopes.every(nativeOptionScope);
@@ -1091,7 +1028,6 @@ final class OptionResolver._(
   /// resolver for an object, whose creation can call a function `_fallback` and
   /// read a custom Map. A proof that fails on this value leaves the read for
   /// its own point of the ordinary path. Only with [scopesAreNative].
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
   Object? peekKey(OptionKey key) {
     final cached = _cache.get(key);
@@ -1113,7 +1049,6 @@ final class OptionResolver._(
   /// of that resolve. Else the ordinary resolve does each read at its own
   /// point. The scopes are native (their check is for the caller).
   /// [descriptorGuard] and [kind] are the ones of a resolve of the caller.
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
   IndexedElementStyles? prepareIndexedStyles(
     List<Object> keys,
@@ -1124,7 +1059,7 @@ final class OptionResolver._(
     if (_slotsTouched) return null;
     final warm = _indexedElementPlan;
     if (warm == null || !warm.matches(keys, immutable: true)) {
-      descriptors(this);
+      descriptorsOf(this);
       if (!descriptorGuard(
         _cache.get(OptionKey.descScriptable),
         _cache.get(OptionKey.descIndexable),
@@ -1162,7 +1097,6 @@ final class OptionResolver._(
   /// at its original position, with fresh contextual views and live callbacks.
   /// [replacementOnly] treats [into] only as a type token; it is never written
   /// or returned. [immutableKeys] requires a native immutable key snapshot.
-  @internal
   // DIVERGES(chartjs): adapt-scriptable-element-template, static fields.
   ({bool resolved, Object context, ElementOptions? prepared})?
   resolveScriptableElementOptions(
@@ -1342,7 +1276,6 @@ final class OptionResolver._(
   /// context call so the ordinary path can continue at attachContext.
   /// [replacementOnly] prevents writes/fill into a private type token. The
   /// caller must allocate its final result if this method declines.
-  @internal
   // DIVERGES(chartjs): adapt-indexed-element-options, guarded cached plan.
   ({bool resolved, Object context, ElementOptions? prepared})?
   resolveIndexedElementOptions(
@@ -1679,27 +1612,22 @@ final class OptionResolver._(
   }
 
   /// helpers.config.types.ts:11 `_cacheable`: `true`.
-  @internal
   @core.override
   bool get cacheable => jsTruthy(this['_cacheable']);
 
   /// helpers.config.types.ts:12 `_scopes`.
-  @internal
   @core.override
   List<Object?> get scopes => this['_scopes']! as List<Object?>;
 
   /// helpers.config.types.ts:13 `_rootScopes`.
-  @internal
   @core.override
   List<Object?> get rootScopes => this['_rootScopes']! as List<Object?>;
 
   /// helpers.config.types.ts:14 `_fallback`.
-  @internal
   @core.override
   ResolverObjectKey get fallback => this['_fallback'];
 
   /// helpers.config.types.ts:20 `_getTarget()`.
-  @internal
   @core.override
   Object? Function() get getTarget =>
       () => (this['_getTarget']! as Object? Function())();
@@ -1827,7 +1755,7 @@ OptionView attachContext(
     proxy,
     context,
     subProxy,
-    descriptors(proxy, descriptorDefaults),
+    descriptorsOf(proxy, descriptorDefaults),
     descriptorDefaults,
   );
 }
@@ -1861,7 +1789,6 @@ final class OptionView._(
   /// `_attachContext`. A range update of the chart attaches a new context to
   /// it where `update` makes a new resolver (Chart.js ADR 0111). The read
   /// takes the field: a delete of the slot `_proxy` does not hide it.
-  @internal
   // DIVERGES(chartjs): adapt-range-updates, the kept resolver of a view.
   Object? get resolver => _proxy;
 
@@ -1903,7 +1830,6 @@ final class OptionView._(
   /// still creates the tick context, checks the global font fallback and
   /// compares the font on every call; resolver writes/deletes are visible.
   /// A font function stays in the cache as a function: no static font.
-  @internal
   TextStyle? cachedStaticFont([TextStyle? fallback]) {
     // DIVERGES(chartjs): adapt-static-tick-font, cached static fonts only.
     final proxy = _staticProxy;
@@ -1936,7 +1862,6 @@ final class OptionView._(
   /// The caller accepts only values that pass `_resolveWithContext` unchanged
   /// (a number, a string, ...): a function or an array is a value of this
   /// probe, which it must decline.
-  @internal
   // DIVERGES(chartjs): adapt-radial-static-plans, inspect only resolved values.
   Object? cachedStaticValue(OptionKey key) {
     final proxy = _staticProxy;
@@ -1945,7 +1870,6 @@ final class OptionView._(
 
   /// Whether a read of [key] gives a value of this view's cache: no resolution
   /// and no user code run. The value may come from a scriptable option.
-  @internal
   // DIVERGES(chartjs): adapt-radial-static-plans, inspect only resolved values.
   bool hasCachedValue(OptionKey key) => !identical(_cache.get(key), _absent);
 
@@ -1961,7 +1885,6 @@ final class OptionView._(
   /// them through this view, also its first, runs no user code and stores the
   /// raw value. `operator []` of a custom Map scope is user code: its reads
   /// keep their original order and position.
-  @internal
   // DIVERGES(chartjs): adapt-arc-native-options, no user code until a rewrite.
   bool rawOptionsAreScalar(List<OptionKey> keys) {
     final proxy = _proxy;
@@ -1981,7 +1904,6 @@ final class OptionView._(
   /// value that is no function, in native scopes: a data-only update keeps the
   /// results of this view, and a scriptable option would run again in a full
   /// update. The scopes include the defaults and the overrides.
-  @internal
   // DIVERGES(chartjs): adapt-data-update-indexed-plan, the dataset options.
   bool get readsNoFunctionValue {
     final proxy = _proxy;
@@ -2004,7 +1926,6 @@ final class OptionView._(
   }
 
   /// A cached cartesian index axis, without resolving or invoking anything.
-  @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, inspect only resolved values.
   CartesianAxis? get cachedBarIndexAxis {
     if (runtimeType != OptionView) return null;
@@ -2017,7 +1938,6 @@ final class OptionView._(
 
   /// True only when category-trait reads are cached primitives. The normal
   /// range computation then cannot invoke user code between topology reads.
-  @internal
   bool get hasCachedStaticBarTraits {
     if (runtimeType != OptionView) return false;
     final thickness = _cache.get(OptionKey.barThickness);
@@ -2030,7 +1950,6 @@ final class OptionView._(
 
   /// Already-resolved inputs for a numeric, uniform-category bulk update.
   /// Missing values are rejected rather than resolved during qualification.
-  @internal
   // DIVERGES(chartjs): adapt-bulk-bar-update, cached scalar probes only.
   BulkBarOptions? get cachedBulkBarOptions {
     final base = _cache.get(OptionKey.base);
@@ -2104,7 +2023,6 @@ final class OptionView._(
 
   /// Null means unsupported; false means the cached visibility/display path
   /// returns zero before reading ticks; true means a static numeric grid.
-  @internal
   bool? get cachedBulkBarGridUsesTicks {
     final display = _cache.get(OptionKey.display);
     final grid = _cache.get(OptionKey.grid);
@@ -2134,14 +2052,12 @@ final class OptionView._(
   }
 
   /// Whether the normal grouped read is already a cached boolean.
-  @internal
   bool get hasCachedBarGrouping =>
       runtimeType == OptionView && _cache.get(OptionKey.grouped) is bool;
 
   /// The view of the sub resolver of [key] that an earlier read of this view
   /// stored in its cache, else Dart `null`. It reads nothing else and runs
   /// no code of the app.
-  @internal
   // DIVERGES(chartjs): adapt-bar-skip-null-index, inspect only a cached view.
   OptionView? cachedSubView(OptionKey key) {
     final value = _cache.get(key);
@@ -2149,7 +2065,6 @@ final class OptionView._(
   }
 
   /// Whether the normal stacked read is cached and cannot call user code.
-  @internal
   bool get hasCachedBarStacking {
     if (runtimeType != OptionView) return false;
     final value = _cache.get(OptionKey.stacked);
@@ -2159,7 +2074,6 @@ final class OptionView._(
 
   /// Label-source options already read by the first category callback. Never
   /// execute a scriptable option merely to qualify a bulk-label fast path.
-  @internal
   ({Object? labels, ChartPosition? position})? cachedCategoryLabelSource() {
     // DIVERGES(chartjs): adapt-category-label-dispatch, cached source inputs.
     final labels = _cache.get(OptionKey.labels);
@@ -2173,7 +2087,6 @@ final class OptionView._(
 
   /// A fixed numeric range must come from numeric inputs, not a callback that
   /// happened to resolve to a number in the preceding full update.
-  @internal
   bool get cachedFixedDataBounds {
     final proxy = _proxy;
     if (proxy is! OptionResolver || _removedSlots != null) return false;
@@ -2185,7 +2098,6 @@ final class OptionView._(
   /// Category bounds/source may be absent, but cannot be scriptable inputs.
   /// The limits of a category scale come from the data unless `bounds` is
   /// `'ticks'` (scale.category.js:84).
-  @internal
   bool get cachedCategoryDataInputs {
     final proxy = _proxy;
     if (proxy is! OptionResolver || _removedSlots != null) return false;
@@ -2375,32 +2287,26 @@ final class OptionView._(
   }
 
   /// helpers.config.types.ts:47 `_cacheable`: `false`.
-  @internal
   @core.override
   bool get cacheable => jsTruthy(this['_cacheable']);
 
   /// helpers.config.types.ts:48 `_proxy`.
-  @internal
   @core.override
   Object? get proxy => this['_proxy'];
 
   /// helpers.config.types.ts:49 `_context`.
-  @internal
   @core.override
   Object get context => this['_context']!;
 
   /// helpers.config.types.ts:50 `_subProxy`.
-  @internal
   @core.override
   Object? get subProxy => this['_subProxy'];
 
   /// helpers.config.types.ts:51 `_stack`.
-  @internal
   @core.override
   Set<String> get stack => this['_stack']! as Set<String>;
 
   /// helpers.config.types.ts:52 `_descriptors`.
-  @internal
   @core.override
   Descriptor get descriptors => this['_descriptors']! as Descriptor;
 
@@ -2442,13 +2348,14 @@ final class OptionView._(
   String toString() => 'ContextResolver(cache: ${_targetNames.join(', ')})';
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// helpers.config.ts:200 `_descriptors`.
 /// @private
 ///
 /// The destructuring defaults of upstream apply to the [undefined]
 /// sentinel. Dart `null` (JS `null`) is a value. A null [defaults] is an
 /// absent argument: JS `null` never reaches it.
-Descriptor descriptors(Object? proxy, [DescriptorDefaults? defaults]) {
+Descriptor descriptorsOf(Object? proxy, [DescriptorDefaults? defaults]) {
   final descriptorDefaults =
       defaults ?? const DescriptorDefaults(scriptable: true, indexable: true);
   var scriptable = jsGet(proxy, '_scriptable');
@@ -3034,7 +2941,7 @@ List<String> _resolveKeysFromAllScopes(List<Object?> scopes) {
 /// parsed item (Chart.js ADR 0054 §8) with the one key `r`.
 // DIVERGES(chartjs): adapt-option-function-types, `this` as a parameter.
 List<ParsedItem> parseObjectDataRadialScale(
-  DatasetController self,
+  IDatasetController self,
   ChartMeta meta,
   List<Object?> data,
   int start,
@@ -3049,9 +2956,8 @@ List<ParsedItem> parseObjectDataRadialScale(
 /// controller, the two values that upstream reads from `meta` and `this`. A
 /// caller reads them in that order, as the argument order is. The result
 /// is the one of [parseObjectDataRadialScale].
-@internal
 List<ParsedItem> parseObjectDataRadialScaleOf(
-  Scale? iScale,
+  IScale? iScale,
   Object? parsing,
   List<Object?> data,
   int start,

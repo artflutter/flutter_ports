@@ -2,10 +2,9 @@
 import 'dart:math' as js_math;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' as math;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+// The locals factorize and decimalPlaces hide the helpers.
+import 'package:flutter_chartjs_port/chartjs_core.dart' as helpers;
 import 'package:test/test.dart';
 
 // The spec names Chart.helpers `math` and the JavaScript global `Math`. Here
@@ -27,8 +26,8 @@ Matcher _toBeCloseTo(double expected, int precision) =>
 void main() {
   setUpSpecs();
   group('Chart.helpers.math', () {
-    const factorize = math.factorize;
-    const decimalPlaces = math.decimalPlaces;
+    const factorize = helpers.factorize;
+    const decimalPlaces = helpers.decimalPlaces;
 
     test('should factorize', () {
       expect(factorize(1000), <double>[
@@ -58,12 +57,12 @@ void main() {
     });
 
     test('should do a log10 operation', () {
-      expect(math.log10(0), double.negativeInfinity);
+      expect(log10(0), double.negativeInfinity);
 
       // Check all allowed powers of 10, which should return integer values
-      final maxPowerOf10 = math.log10(double.maxFinite).floorToDouble();
+      final maxPowerOf10 = log10(double.maxFinite).floorToDouble();
       for (var i = 0.0; i < maxPowerOf10; i += 1) {
-        expect(math.log10(js_math.pow(10.0, i).toDouble()), i);
+        expect(log10(js_math.pow(10.0, i).toDouble()), i);
       }
     });
 
@@ -84,21 +83,18 @@ void main() {
     test('should get an angle from a point', () {
       const center = _Point(0, 0);
 
-      expect(math.getAngleFromPoint(center, const _Point(0, 10)), (
+      expect(getAngleFromPoint(center, const _Point(0, 10)), (
         angle: js_math.pi / 2,
         distance: 10.0,
       ));
 
       expect(
-        math.getAngleFromPoint(
-          center,
-          _Point(js_math.sqrt(2), js_math.sqrt(2)),
-        ),
+        getAngleFromPoint(center, _Point(js_math.sqrt(2), js_math.sqrt(2))),
         (angle: js_math.pi / 4, distance: 2.0),
       );
 
       expect(
-        math.getAngleFromPoint(
+        getAngleFromPoint(
           center,
           _Point(-1.0 * js_math.sqrt(2), -1.0 * js_math.sqrt(2)),
         ),
@@ -107,85 +103,79 @@ void main() {
     });
 
     test('should convert between radians and degrees', () {
-      expect(math.toRadians(180), js_math.pi);
-      expect(math.toRadians(90), 0.5 * js_math.pi);
-      expect(math.toDegrees(js_math.pi), 180);
-      expect(math.toDegrees(js_math.pi * 3 / 2), 270);
+      expect(toRadians(180), js_math.pi);
+      expect(toRadians(90), 0.5 * js_math.pi);
+      expect(toDegrees(js_math.pi), 180);
+      expect(toDegrees(js_math.pi * 3 / 2), 270);
     });
 
     test('should correctly determine if two numbers are essentially equal', () {
-      expect(math.almostEquals(0, numberEpsilon, 2 * numberEpsilon), true);
-      expect(math.almostEquals(1, 1.1, 0.0001), false);
-      expect(math.almostEquals(1e30, 1e30 + numberEpsilon, 0), false);
-      expect(
-        math.almostEquals(1e30, 1e30 + numberEpsilon, 2 * numberEpsilon),
-        true,
-      );
+      expect(almostEquals(0, numberEpsilon, 2 * numberEpsilon), true);
+      expect(almostEquals(1, 1.1, 0.0001), false);
+      expect(almostEquals(1e30, 1e30 + numberEpsilon, 0), false);
+      expect(almostEquals(1e30, 1e30 + numberEpsilon, 2 * numberEpsilon), true);
     });
 
     test('should get the correct sign', () {
-      expect(math.sign(0), 0);
-      expect(math.sign(10), 1);
-      expect(math.sign(-5), -1);
+      expect(sign(0), 0);
+      expect(sign(10), 1);
+      expect(sign(-5), -1);
     });
 
     test('should correctly determine if a numbers are essentially whole', () {
-      expect(math.almostWhole(0.99999, 0.0001), true);
-      expect(math.almostWhole(0.9, 0.0001), false);
-      expect(math.almostWhole(1234567890123, 0.0001), true);
-      expect(math.almostWhole(1234567890123.001, 0.0001), false);
+      expect(almostWhole(0.99999, 0.0001), true);
+      expect(almostWhole(0.9, 0.0001), false);
+      expect(almostWhole(1234567890123, 0.0001), true);
+      expect(almostWhole(1234567890123.001, 0.0001), false);
     });
 
     test('should detect a number', () {
-      expect(math.isNumber(123.0), true);
+      expect(isNumber(123.0), true);
       // DIVERGES(chartjs): adapt-typed-number-test, a string is no number.
-      expect(math.isNumber('123'), false);
-      expect(math.isNumber(null), false);
-      expect(math.isNumber(double.nan), false);
-      expect(math.isNumber(undefined), false);
-      expect(math.isNumber('cbc'), false);
+      expect(isNumber('123'), false);
+      expect(isNumber(null), false);
+      expect(isNumber(double.nan), false);
+      expect(isNumber(undefined), false);
+      expect(isNumber('cbc'), false);
       // Symbol(): a symbol without a description.
-      expect(math.isNumber(Symbol.empty), false);
+      expect(isNumber(Symbol.empty), false);
       // Object.create(null): a Map is the Dart value of a JavaScript object.
-      expect(math.isNumber(<String, Object?>{}), false);
+      expect(isNumber(<String, Object?>{}), false);
     });
 
     test('should compute shortest distance between angles', () {
-      expect(math.angleDiff(1, 2), -1);
-      expect(math.angleDiff(2, 1), 1);
-      expect(math.angleDiff(0, 3.15), _toBeCloseTo(3.13, 2));
-      expect(math.angleDiff(0, 3.13), -3.13);
-      expect(math.angleDiff(6.2, 0), _toBeCloseTo(-0.08, 2));
-      expect(math.angleDiff(6.3, 0), _toBeCloseTo(0.02, 2));
+      expect(angleDiff(1, 2), -1);
+      expect(angleDiff(2, 1), 1);
+      expect(angleDiff(0, 3.15), _toBeCloseTo(3.13, 2));
+      expect(angleDiff(0, 3.13), -3.13);
+      expect(angleDiff(6.2, 0), _toBeCloseTo(-0.08, 2));
+      expect(angleDiff(6.3, 0), _toBeCloseTo(0.02, 2));
+      expect(angleDiff(4 * js_math.pi, -4 * js_math.pi), _toBeCloseTo(0, 4));
       expect(
-        math.angleDiff(4 * js_math.pi, -4 * js_math.pi),
-        _toBeCloseTo(0, 4),
-      );
-      expect(
-        math.angleDiff(4 * js_math.pi, -3 * js_math.pi),
+        angleDiff(4 * js_math.pi, -3 * js_math.pi),
         _toBeCloseTo(-3.14, 2),
       );
-      expect(math.angleDiff(6.28, 3.1), _toBeCloseTo(-3.1, 2));
-      expect(math.angleDiff(6.28, 3.2), _toBeCloseTo(3.08, 2));
+      expect(angleDiff(6.28, 3.1), _toBeCloseTo(-3.1, 2));
+      expect(angleDiff(6.28, 3.2), _toBeCloseTo(3.08, 2));
     });
 
     test('should normalize angles correctly', () {
-      expect(math.normalizeAngle(-js_math.pi), js_math.pi);
-      expect(math.normalizeAngle(js_math.pi), js_math.pi);
-      expect(math.normalizeAngle(2), 2);
-      expect(math.normalizeAngle(5 * js_math.pi), js_math.pi);
-      expect(math.normalizeAngle(-50 * js_math.pi), _toBeCloseTo(6.28, 2));
+      expect(normalizeAngle(-js_math.pi), js_math.pi);
+      expect(normalizeAngle(js_math.pi), js_math.pi);
+      expect(normalizeAngle(2), 2);
+      expect(normalizeAngle(5 * js_math.pi), js_math.pi);
+      expect(normalizeAngle(-50 * js_math.pi), _toBeCloseTo(6.28, 2));
     });
 
     test('should determine if angle is between boundaries', () {
-      expect(math.angleBetween(2, 1, 3), isTrue);
-      expect(math.angleBetween(2, 3, 1), isFalse);
-      expect(math.angleBetween(-3.14, 2, 4), isTrue);
-      expect(math.angleBetween(-3.14, 4, 2), isFalse);
-      expect(math.angleBetween(0, -1, 1), isTrue);
-      expect(math.angleBetween(-1, 0, 1), isFalse);
-      expect(math.angleBetween(-15 * js_math.pi, 3.1, 3.2), isTrue);
-      expect(math.angleBetween(15 * js_math.pi, -3.2, -3.1), isTrue);
+      expect(angleBetween(2, 1, 3), isTrue);
+      expect(angleBetween(2, 3, 1), isFalse);
+      expect(angleBetween(-3.14, 2, 4), isTrue);
+      expect(angleBetween(-3.14, 4, 2), isFalse);
+      expect(angleBetween(0, -1, 1), isTrue);
+      expect(angleBetween(-1, 0, 1), isFalse);
+      expect(angleBetween(-15 * js_math.pi, 3.1, 3.2), isTrue);
+      expect(angleBetween(15 * js_math.pi, -3.2, -3.1), isTrue);
     });
   });
 }

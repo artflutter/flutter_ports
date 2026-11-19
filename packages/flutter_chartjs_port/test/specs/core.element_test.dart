@@ -1,7 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/core.element.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/types/animation.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../support/jasmine.dart';
@@ -11,11 +10,11 @@ import '../support/jasmine.dart';
 
 /// The object literal `{active: () => true, _to: 20}`. A
 /// `Map<String, Animation>` does not accept an object literal, so the spec
-/// passes a test [Animation] with the same members.
+/// passes a test [IAnimation] with the same members.
 final class _Animation({
   required final bool Function() _active,
   @override required final double to,
-}) implements Animation {
+}) implements IAnimation {
   @override
   bool active() => _active();
 }

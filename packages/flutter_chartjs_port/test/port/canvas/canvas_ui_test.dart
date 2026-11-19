@@ -10,11 +10,8 @@ import 'dart:ui' as ui;
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The rendered RGBA pixels of a canvas.

@@ -6,26 +6,7 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        ChartAnimation,
-        ChartConfig,
-        ChartKind,
-        ChartTooltip,
-        ChartTransition,
-        HoverTransition,
-        LineDataset,
-        LinearAxis;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show dispatchCanvasEvent;
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The calls of each hook of the counting plugin, and of the callbacks.

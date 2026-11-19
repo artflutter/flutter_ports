@@ -26,21 +26,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart' show formatters;
-import 'package:flutter_chartjs_port/src/core/point_bulk_update.dart'
-    show LinearPixels;
-import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
-import 'package:flutter_chartjs_port/src/core/scale_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFinite;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show toRadians;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ScaleOptionsScope, TickOptionsScope;
-import 'package:flutter_chartjs_port/src/scales/scale.linearbase.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
 /// scale.linear.js:6 `LinearScale extends LinearScaleBase`.
@@ -93,27 +79,23 @@ class LinearScale(super.cfg)
 
   /// This exact built-in scale has ordinary axis and metadata reads.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-live-bar-layout, opt in only the built-in class.
   bool get supportsNativeBarIndexReads => _nativeBarIndexReads;
 
   /// Only this exact built-in class has the numeric projection contract.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-bulk-bar-update, native linear projection.
   bool get supportsBulkBarUpdate => super.runtimeType == LinearScale;
 
   /// The inputs of [getPixelForValue] of a number, for the bulk point loop
   /// of Chart.js ADR 0166: only this exact built-in class.
   @override
-  @internal
   // DIVERGES(chartjs): adapt-bulk-point-update, the exact class only.
   LinearPixels? get linearPixels => super.runtimeType == LinearScale
       ? linearPixelsOf(startValue, valueRange)
       : null;
 
   @override
-  @internal
   // DIVERGES(chartjs): adapt-numeric-category-parse, exact numeric semantics.
   bool get supportsNativeNumericParse => super.runtimeType == LinearScale;
 

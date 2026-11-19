@@ -1,10 +1,7 @@
 // Original code, not ported from Chart.js: core.ticks cases with no spec.
 import 'dart:ui' show Locale;
 
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart';
 import 'package:test/test.dart';
 
@@ -17,16 +14,16 @@ import 'package:test/test.dart';
 
 /// The `chart` of a `this` object `{chart: {options}, options}`.
 final class _Chart(@override final Map<String, Object?> options)
-    implements Chart {
+    implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-/// A `this` object `{chart, options}`, passed as a [Scale].
+/// A `this` object `{chart, options}`, passed as a [IScale].
 final class _Scale(
-  @override final Chart chart,
+  @override final IChart chart,
   @override final Map<String, Object?> options,
-) implements Scale {
+) implements IScale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -53,7 +50,7 @@ String _apply(
   double tickValue,
   int index,
   List<Tick> ticks, [
-  Scale? scale,
+  IScale? scale,
 ]) => formatter!(
   scale ?? _scale(const Locale('en', 'US')),
   tickValue,

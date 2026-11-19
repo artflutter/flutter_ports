@@ -11,8 +11,7 @@
 //   src/core/core.adapters.ts: 9235858d173d421a30d14cb22b43378b99b87325600d21951b262493b5893a68
 //   chartjs-adapter-moment/dist/chartjs-adapter-moment.esm.js: 88e847fa03efac3bfc365edbe7d983e01b3caeb3628a852f1ef77a0de6440268
 
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// NaN, short for the lists below.
 const double _nan = double.nan;

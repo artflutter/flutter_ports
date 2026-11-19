@@ -6,24 +6,10 @@ import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/controllers/controller.radar.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Keep each step of a twin as its own statement.
 // ignore_for_file: cascade_invocations
 
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The twins of Chart.js ADR 0095: the exact controller takes the typed writes
@@ -62,7 +48,7 @@ final class _ObservedRadar(super.chart, super.datasetIndex, [super.newTarget])
 
   @override
   void updateElement(
-    types.Element element,
+    IElement element,
     int? index,
     Object properties,
     String mode,
@@ -528,7 +514,7 @@ void main() {
       tester,
     ) async {
       final chart = acquireChart(_config('radar', n: 2));
-      final scale = chart.scales['r']! as types.RadialLinearScale;
+      final scale = chart.scales['r']! as IRadialLinearScale;
       expect(scale.xCenter, isNotNull);
       chart.update(UpdateMode.reset);
       final point = chart.getDatasetMeta(0).data.first as PointElement;

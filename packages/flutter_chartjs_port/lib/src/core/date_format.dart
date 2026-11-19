@@ -14,10 +14,7 @@
 /// `package:flutter`.
 library;
 
-import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
-import 'package:flutter_chartjs_port/src/core/date_zone.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart';
 
 /// The `FORMATS` of chartjs-adapter-moment 1.0.1 as ICU patterns

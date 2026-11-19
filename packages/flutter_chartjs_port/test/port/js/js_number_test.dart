@@ -2,8 +2,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The expected values come from Node.js v24.12.0 (V8 13.6): Number(s) and

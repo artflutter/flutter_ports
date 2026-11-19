@@ -11,7 +11,6 @@ import 'package:flutter/services.dart' show LogicalKeyboardKey;
 import 'package:flutter/widgets.dart' hide Element;
 import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0098: with `dataOnlyUpdates`, a new typed config that differs
@@ -307,7 +306,7 @@ Object _observe(Chart chart) {
           'skip',
           'stop',
         ])
-          _plain((element as types.ElementPropertyRead)[key]),
+          _plain((element as ElementPropertyRead)[key]),
       ]);
     }
   }
@@ -315,7 +314,7 @@ Object _observe(Chart chart) {
 }
 
 /// The option [key] of [element].
-Object? _option(types.Element element, String key) =>
+Object? _option(IElement element, String key) =>
     (element.options! as JsObjectFace)[key];
 
 /// [_observe] with the options, their key order and the context of each
@@ -869,8 +868,7 @@ void main() {
         await tester.pumpWidget(view(2));
         expect(spy.modes, [null]);
         final point =
-            _chart(tester).getDatasetMeta(0).data[0]
-                as types.ElementPropertyRead;
+            _chart(tester).getDatasetMeta(0).data[0] as ElementPropertyRead;
         final seen = <Object?>[
           (point['options']! as JsObjectFace)['radius'],
           await _pixels(tester, _chart(tester)),
@@ -1598,8 +1596,7 @@ void main() {
     /// A point inside each bar at [index]: above the base of the bars.
     Offset point(WidgetTester tester, int index) {
       final chart = _chart(tester);
-      final bar =
-          chart.getDatasetMeta(0).data[index] as types.ElementPropertyRead;
+      final bar = chart.getDatasetMeta(0).data[index] as ElementPropertyRead;
       return tester.getTopLeft(find.byType(ChartView)) +
           Offset(bar['x']! as double, chart.chartArea!.bottom - 2);
     }
@@ -1929,8 +1926,7 @@ void main() {
         await _warm(tester, view);
         final chart = _chart(tester);
         final mouse = await _mouse(tester);
-        final bar =
-            chart.getDatasetMeta(0).data[1] as types.ElementPropertyRead;
+        final bar = chart.getDatasetMeta(0).data[1] as ElementPropertyRead;
         await mouse.moveTo(
           tester.getTopLeft(find.byType(ChartView)) +
               Offset(bar['x']! as double, chart.chartArea!.bottom - 2),

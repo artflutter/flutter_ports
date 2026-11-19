@@ -1,8 +1,6 @@
 // Original code, not ported from Chart.js: native numeric bar update contracts.
 
-import 'package:flutter_chartjs_port/src/options/parsed.dart' show ParsedItem;
-import 'package:flutter_chartjs_port/src/options/props.dart' show BorderSkipped;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A chart with ordinary context, pixel-ratio and visibility reads. Unknown
 /// subclasses must not opt in merely because their topology reads are native.
@@ -53,8 +51,8 @@ typedef BulkBarOptions = ({
 });
 
 final _elementLists = <Type>{
-  <types.Element>[].runtimeType,
-  List<types.Element>.empty().runtimeType,
+  <IElement>[].runtimeType,
+  List<IElement>.empty().runtimeType,
 };
 final _parsedLists = <Type>{
   <Object?>[].runtimeType,
@@ -64,9 +62,9 @@ final _parsedLists = <Type>{
 };
 
 /// Only native arrays are preflighted; unknown List getters are never probed.
-bool nativeBulkBarLists(List<types.Element> bars, List<Object?> parsed) =>
+bool nativeBulkBarLists(List<IElement> bars, List<Object?> parsed) =>
     nativeBulkBarElements(bars) && _parsedLists.contains(parsed.runtimeType);
 
 /// Native element containers; prepared inputs are qualified by updateData.
-bool nativeBulkBarElements(List<types.Element> bars) =>
+bool nativeBulkBarElements(List<IElement> bars) =>
     _elementLists.contains(bars.runtimeType);

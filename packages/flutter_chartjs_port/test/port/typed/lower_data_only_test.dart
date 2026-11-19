@@ -6,8 +6,6 @@ import 'dart:ui' show Color, Locale;
 
 import 'package:flutter/widgets.dart' show EdgeInsets, ValueKey;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0098: `ChartConfigLowering.apply` reports a new config that

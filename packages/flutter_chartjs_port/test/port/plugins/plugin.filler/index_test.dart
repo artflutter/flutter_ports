@@ -4,20 +4,7 @@ library;
 
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart'
-    show FillerDrawTime;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../../support/light_theme.dart';
@@ -71,7 +58,7 @@ Object? _observeFiller(Chart chart) {
 }
 
 /// The entry of [_observeFiller] for one meta.
-Object? _observeSource(types.ChartMeta meta) {
+Object? _observeSource(ChartMeta meta) {
   final source = fillerSourceOf(meta);
   if (source == null) {
     return null;
@@ -101,7 +88,7 @@ Object? _describeTarget(Object? target) {
       'radius': target.radius,
     };
   }
-  if (target is! types.LineElement) {
+  if (target is! ILineElement) {
     return <String, Object?>{'kind': 'element'};
   }
   final line = target as Element;

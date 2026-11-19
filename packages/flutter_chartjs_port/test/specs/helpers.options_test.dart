@@ -2,13 +2,7 @@
 import 'dart:ui' show FontStyle;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
-    as chart
-    show defaults;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../support/jasmine.dart';
@@ -405,9 +399,9 @@ void main() {
 
     group('toFont', () {
       test('should return a font with default values', () {
-        final defaultFont = chart.defaults['font'];
+        final defaultFont = defaults['font'];
 
-        chart.defaults['font'] = const ChartTextStyle(
+        defaults['font'] = const ChartTextStyle(
           fontFamily: 'foobar',
           fontFamilyFallback: [],
           fontSize: 42,
@@ -427,7 +421,7 @@ void main() {
           }),
         );
 
-        chart.defaults['font'] = defaultFont;
+        defaults['font'] = defaultFont;
       });
       test('should return a font with given values', () {
         expect(

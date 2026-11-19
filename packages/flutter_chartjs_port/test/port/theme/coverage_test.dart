@@ -7,14 +7,7 @@ import 'dart:io';
 import 'dart:ui' as native_ui;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart';
 
 // dart:io reads the manifest and the snapshot, so the web legs

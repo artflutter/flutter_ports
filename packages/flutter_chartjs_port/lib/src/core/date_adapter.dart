@@ -24,14 +24,7 @@
 /// `package:flutter`.
 library;
 
-import 'package:flutter_chartjs_port/src/core/core.adapters.dart' show TimeUnit;
-import 'package:flutter_chartjs_port/src/core/date_calendar.dart';
-import 'package:flutter_chartjs_port/src/core/date_format.dart';
-import 'package:flutter_chartjs_port/src/core/date_parse.dart';
-import 'package:flutter_chartjs_port/src/core/date_zone.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The default members of `DateAdapterBase.prototype` (Chart.js ADR 0024):
 /// the rules of chartjs-adapter-moment 1.0.1 on moment 2.29.4, with ICU

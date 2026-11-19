@@ -1,7 +1,7 @@
 // Original code, not ported from Chart.js: tests of the jsToString number text.
 import 'dart:typed_data';
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import 'number_to_string_reference.dart';

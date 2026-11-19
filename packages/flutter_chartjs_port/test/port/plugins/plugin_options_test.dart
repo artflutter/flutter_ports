@@ -1,11 +1,7 @@
 // Original code, not ported from Chart.js: the typed plugin option getters.
 import 'dart:ui' show TextAlign;
 
-import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 /// Options of an add-on with no field `events`.

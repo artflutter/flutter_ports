@@ -89,4 +89,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0009](0009-add-on-ports.md) Ports of add-on libraries: proposed.
 - [0010](0010-primary-constructors.md) Primary constructors: accepted.
 - [0011](0011-public-library-exports-every-file.md) The public library exports every file: accepted.
+- [0012](0012-public-libraries-export-every-file.md) The public libraries export every file: proposed, supersedes 0011.
 <!-- adr-index:end -->

@@ -1,12 +1,7 @@
 // Original code, not ported from Chart.js: guarded reuse of static tick fonts.
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show OptionView;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show toFont;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// One previously resolved font per scale. The static font option and the
 /// global font are checked on every read; there is no cache of a scriptable

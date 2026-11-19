@@ -5,19 +5,10 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show CirclePointStyle, RectPointStyle;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Canvas observations are deliberately separate from mutations.
 // ignore_for_file: cascade_invocations
 
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../canvas/pixel_compare.dart';
@@ -77,7 +68,7 @@ Object _options(math.Random r) {
   return kind == 4 ? values : PointOptions(values);
 }
 
-List<types.Element> _elements(int seed) {
+List<IElement> _elements(int seed) {
   final r = math.Random(seed);
   final options = [for (var i = 0; i <= r.nextInt(3); i++) _options(r)];
   final mixed = r.nextInt(3) == 0;
@@ -128,9 +119,9 @@ void _state(UiCanvasContext ctx, int kind) {
 /// The loop of `DatasetController.draw`, from the element [from].
 void _loop(
   UiCanvasContext ctx,
-  List<types.Element> elements,
+  List<IElement> elements,
   int from,
-  List<types.Element> active, {
+  List<IElement> active, {
   required bool activeOnTop,
 }) {
   final area = _Area();
@@ -184,7 +175,7 @@ void main() {
       final run = await renderContext((ctx) {
         _state(ctx, kind);
         final elements = _elements(seed);
-        final active = <types.Element>[];
+        final active = <IElement>[];
         final next = (elements.first as PointElement).drawCircleRun(
           ctx,
           _Area(),
@@ -214,7 +205,7 @@ void main() {
       'backgroundColor': ChartPaint.solid(_colors[0]),
       'borderColor': ChartPaint.solid(_colors[1]),
     });
-    final elements = <types.Element>[
+    final elements = <IElement>[
       for (var i = 0; i < 2000; i++)
         PointElement()
           ..x = 10.0 + i % 100
@@ -242,7 +233,7 @@ void main() {
   test('a point with no options goes to the ordinary loop', () {
     final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
     addTearDown(ctx.dispose);
-    final elements = <types.Element>[
+    final elements = <IElement>[
       PointElement()
         ..x = 40
         ..y = 40,
@@ -267,7 +258,7 @@ void main() {
   test('a class that overrides runtimeType ends the run', () {
     final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
     addTearDown(ctx.dispose);
-    final elements = <types.Element>[
+    final elements = <IElement>[
       _DisguisedPoint()
         ..x = 40
         ..y = 40
@@ -297,7 +288,7 @@ void main() {
     final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
     addTearDown(ctx.dispose);
     ctx.fillStyle = _colors[2];
-    final elements = <types.Element>[
+    final elements = <IElement>[
       PointElement()
         ..x = 500
         ..y = 500
@@ -333,7 +324,7 @@ void main() {
       'borderWidth': 0.0,
       'backgroundColor': color,
     });
-    final elements = <types.Element>[
+    final elements = <IElement>[
       PointElement()
         ..x = 40
         ..y = 40

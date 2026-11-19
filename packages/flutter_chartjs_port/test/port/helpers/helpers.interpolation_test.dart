@@ -1,9 +1,5 @@
 // Original code, not ported from Chart.js: interpolation cases with no spec.
-import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // Upstream behaviour that test/specs/helpers.interpolation.tests.js does not

@@ -21,8 +21,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A scriptable option with one parameter: `(context) => value`.
 ///
@@ -53,7 +52,6 @@ typedef ResolverFallback = Object? Function(Object? name, Object? value);
 /// through this library. An equal count at two moments proves that no such
 /// call ran between them. The index of the `skipNull` search of a bar update
 /// reads it (row `adapt-bar-skip-null-index`).
-@internal
 int appFunctionCalls = 0;
 
 /// Calls the scriptable option [function] with [context], and with

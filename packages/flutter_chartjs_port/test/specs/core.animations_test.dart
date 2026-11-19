@@ -3,12 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart' show setTimeout, waitForDone;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show HTMLCanvasElement;
-import 'package:flutter_chartjs_port/src/core/core.animations.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/jasmine.dart';
@@ -27,7 +22,7 @@ import '../support/jasmine.dart';
 
 /// The chart objects of the spec: `{}` and `{draw: function() {}, options:
 /// {}}`. `draw()` does nothing. The other members of `types.Chart` throw.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   @override
   final Map<String, Object?> options = {};
 

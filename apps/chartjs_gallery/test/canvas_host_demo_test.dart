@@ -6,14 +6,7 @@ import 'package:chartjs_gallery/demo/stress_demo.dart';
 import 'package:chartjs_gallery/main.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/rendering.dart';
-// Not public: UiCanvasElement and UiImageSource of the canvas layer.
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show CanvasTextBaseline;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart'
-    show UiCanvasElement, UiImageSource;
-// Not public: ChartHost, the internal host of ChartView (a white-box test).
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart'
-    show ChartHost;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 

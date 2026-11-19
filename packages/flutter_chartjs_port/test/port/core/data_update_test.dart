@@ -9,21 +9,6 @@ import 'dart:ui' as ui;
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart'
-    show invalidateCanvasTextMetrics;
-import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
-    show defaults, overrides;
-import 'package:flutter_chartjs_port/src/core/data_update.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet, jsSet;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show ScopeRoute;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/data_item.dart'
-    show TypedDataItem;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/legend_item.dart';
@@ -71,7 +56,7 @@ final class _OtherPoint() implements TypedDataItem {
 }
 
 final class _Event(@override final double? x, @override final double? y)
-    implements types.ChartEvent {
+    implements ChartEvent {
   @override
   String get type => 'mousemove';
   @override
@@ -81,7 +66,7 @@ final class _Event(@override final double? x, @override final double? y)
     offsetY: y!,
   );
   @override
-  types.Chart? get chart => null;
+  IChart? get chart => null;
 }
 
 // The user subclasses of Chart.js ADR 0100: the same results, the full path.
@@ -259,7 +244,7 @@ Object observe(Chart chart) {
           'skip',
           'stop',
         ])
-          plain((e as types.ElementPropertyRead)[key]),
+          plain((e as ElementPropertyRead)[key]),
       ],
     for (var i = 0; i < meta.data.length; i++)
       switch (meta.controller!.getLabelAndValue(i)) {

@@ -1,9 +1,7 @@
 // Original code, not ported from Chart.js: tests of lib/src/canvas/canvas_values.dart.
 import 'dart:ui' show Color, Offset, StrokeCap, StrokeJoin;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // A canvas value is the option value when it has the type of the setter

@@ -5,8 +5,7 @@
 
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The scale option border holds a ScaleBorder (Chart.js ADR 0141, row

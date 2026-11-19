@@ -11,7 +11,6 @@ import 'dart:async';
 
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' hide Point;
-import 'package:flutter_chartjs_port/js_semantics.dart';
 
 // utils.ts:5 `eventKey(key)`: the flag ``event[`${key}Key`]`` of a modifier
 // key is `ModifierKey.pressedIn`, the field of the enum value.

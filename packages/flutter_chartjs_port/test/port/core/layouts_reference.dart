@@ -5,9 +5,7 @@
 // src/core/core.layouts.js at the pinned Chart.js. 23 scenes.
 import 'package:flutter/painting.dart' show EdgeInsets;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
 const String layoutsReferenceNode = 'v24.22.1';

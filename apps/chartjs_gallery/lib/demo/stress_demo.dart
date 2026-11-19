@@ -1,6 +1,3 @@
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
@@ -26,10 +23,9 @@ import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     hide PointOptions;
-// Not public: the typed options of Chart.js ADR 0054. The prefix keeps them
-// apart from the PointOptions of demo_chart.dart (the primitives mode).
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    as element_options;
+// The PointOptions of demo_chart.dart (the primitives mode) has the name of
+// the typed point options of the port.
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as chartjs;
 import 'package:material_ui/material_ui.dart';
 
 export 'package:chartjs_gallery/demo/stress_chart_config.dart'
@@ -976,44 +972,43 @@ class StressDemoState() extends State<StressDemo> {
   /// element.point.ts and the colors of the [StressMode.primitives] points,
   /// as typed options (Chart.js ADR 0054). All points share the object, as
   /// the shared options of a dataset are.
-  static final element_options.PointOptions _pointElementOptions =
-      element_options.PointOptions({
-        ..._plainDefaults(PointElement.defaults),
-        'backgroundColor': const ChartPaint.solid(
-          ui.Color.fromRGBO(54, 162, 235, 0.45),
-        ),
-        'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
-        'borderWidth': 1.0,
-        'pointStyle': const CirclePointStyle(),
-        'radius': 3.0,
-      });
+  static final chartjs.PointOptions _pointElementOptions = chartjs.PointOptions(
+    {
+      ..._plainDefaults(PointElement.defaults),
+      'backgroundColor': const ChartPaint.solid(
+        ui.Color.fromRGBO(54, 162, 235, 0.45),
+      ),
+      'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
+      'borderWidth': 1.0,
+      'pointStyle': const CirclePointStyle(),
+      'radius': 3.0,
+    },
+  );
 
   /// The resolved options of the line: the defaults of element.line.js and
   /// the color and width of the [StressMode.primitives] polyline, as typed
   /// options (Chart.js ADR 0054). A `List<double>` dash goes to
   /// `setLineDash` without a copy.
-  static final element_options.LineOptions _lineElementOptions =
-      element_options.LineOptions({
-        ..._plainDefaults(LineElement.defaults),
-        'borderColor': const ChartPaint.solid(ui.Color(0xFFFF6384)),
-        'borderDash': const <double>[],
-        'borderWidth': 1.5,
-        'tension': 0.0,
-      });
+  static final LineOptions _lineElementOptions = LineOptions({
+    ..._plainDefaults(LineElement.defaults),
+    'borderColor': const ChartPaint.solid(ui.Color(0xFFFF6384)),
+    'borderDash': const <double>[],
+    'borderWidth': 1.5,
+    'tension': 0.0,
+  });
 
   /// The resolved options of each bar: the defaults of element.bar.js with
   /// a border and rounded corners, as typed options (Chart.js ADR 0054). All
   /// bars share the object, as the shared options of a dataset are.
-  static final element_options.BarOptions _barOptions =
-      element_options.BarOptions({
-        ..._plainDefaults(BarElement.defaults),
-        'backgroundColor': const ChartPaint.solid(
-          ui.Color.fromRGBO(54, 162, 235, 0.45),
-        ),
-        'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
-        'borderWidth': 1.0,
-        'borderRadius': 4.0,
-      });
+  static final BarOptions _barOptions = BarOptions({
+    ..._plainDefaults(BarElement.defaults),
+    'backgroundColor': const ChartPaint.solid(
+      ui.Color.fromRGBO(54, 162, 235, 0.45),
+    ),
+    'borderColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
+    'borderWidth': 1.0,
+    'borderRadius': 4.0,
+  });
 
   /// controller.bar.js:202-232 `setBorderSkipped` for the option
   /// `borderSkipped: 'start'` of a vertical bar with a value above its
@@ -1030,7 +1025,7 @@ class StressDemoState() extends State<StressDemo> {
   /// element.arc.ts with the spacing and the rounded corners, and the
   /// colors of the Chart.js colors plugin, as typed options (Chart.js ADR
   /// 0054). A `List<double>` dash goes to `setLineDash` without a copy.
-  static final List<element_options.ArcOptions> _arcOptions = [
+  static final List<ArcOptions> _arcOptions = [
     for (final color in const [
       ui.Color.fromRGBO(54, 162, 235, 0.5),
       ui.Color.fromRGBO(255, 99, 132, 0.5),
@@ -1038,7 +1033,7 @@ class StressDemoState() extends State<StressDemo> {
       ui.Color.fromRGBO(255, 205, 86, 0.5),
       ui.Color.fromRGBO(75, 192, 192, 0.5),
     ])
-      element_options.ArcOptions({
+      ArcOptions({
         ..._plainDefaults(ArcElement.defaults),
         'backgroundColor': ChartPaint.solid(color),
         'borderDash': const <double>[],
@@ -1543,7 +1538,6 @@ class StressDemoState() extends State<StressDemo> {
     final (type, x, y) = event;
     // A direct call, as `_benchEvent` of the benchmark: no ChartHost pointer
     // conversion and no throttled proxy of the platform (Chart.js ADR 0037).
-    // ignore: invalid_use_of_internal_member
     chart.eventHandler(
       fromNativeEvent(
         NativeEvent(type: type, offsetX: x, offsetY: y, target: chart.canvas),

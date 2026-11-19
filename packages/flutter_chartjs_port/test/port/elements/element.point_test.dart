@@ -2,25 +2,7 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show CirclePointStyle, ImagePointStyle;
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show updateBezierControlPoints;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show PointProperties;
-import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -51,7 +33,7 @@ final class _Animation(
 
   /// The result of [active].
   required final bool isActive,
-}) implements types.Animation {
+}) implements IAnimation {
   @override
   bool active() => isActive;
 }
@@ -427,7 +409,7 @@ void main() {
 
     test(r'Element handles x, y, active, options and $animations', () {
       final options = <String, Object?>{'radius': 1};
-      final animations = <String, types.Animation>{};
+      final animations = <String, IAnimation>{};
       final point = PointElement()
         ..['x'] = 1
         ..['y'] = 2
@@ -447,11 +429,11 @@ void main() {
       () {
         final point = PointElement();
         expect(point, isA<Element>());
-        expect(point, isA<types.Element>());
-        expect(point, isA<types.PointElement>());
-        expect(point, isA<types.RadialPointElement>());
+        expect(point, isA<IElement>());
+        expect(point, isA<IPointElement>());
+        expect(point, isA<RadialPointElement>());
         expect(point, isA<SplinePoint>());
-        expect(point, isA<types.VisualElement>());
+        expect(point, isA<VisualElement>());
       },
     );
   });
@@ -495,8 +477,8 @@ void main() {
 
   group('angle', () {
     test('the property read of helpers.segment gives the radar angle', () {
-      final types.PointElement radar = PointElement({'angle': 1.5});
-      final types.PointElement other = PointElement();
+      final IPointElement radar = PointElement({'angle': 1.5});
+      final IPointElement other = PointElement();
       // PointElementProperty, the read of helpers.segment.js:47 and :104.
       expect(radar['angle'], 1.5);
       expect(other['angle'], isNaN);

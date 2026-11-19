@@ -8,47 +8,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/core/core.animations.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.typedRegistry.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart'
-    show CubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show GraceLength;
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show MinMax;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, createContext;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/helpers/radius_length.dart'
-    show RadiusLength;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
@@ -120,7 +80,7 @@ final class _SpyPoint() extends PointElement implements _Tagged {
   final String tag;
 
   @override
-  void draw(CanvasRenderingContext2D ctx, [types.ChartArea? area]) {
+  void draw(CanvasRenderingContext2D ctx, [ChartArea? area]) {
     _trace.add('$tag.draw');
   }
 }
@@ -134,7 +94,7 @@ final class _SpyLine() extends LineElement implements _Tagged {
   @override
   void draw(
     CanvasRenderingContext2D ctx, [
-    types.ChartArea? area,
+    ChartArea? area,
     int? start,
     int? count,
   ]) {
@@ -151,7 +111,7 @@ final class _SpyBar() extends BarElement implements _Tagged {
   final String tag;
 
   @override
-  void draw(CanvasRenderingContext2D ctx, [types.ChartArea? area]) {
+  void draw(CanvasRenderingContext2D ctx, [ChartArea? area]) {
     _trace.add('$tag.draw');
   }
 }
@@ -163,21 +123,19 @@ final class _SpyArc() extends ArcElement implements _Tagged {
   final String tag;
 
   @override
-  void draw(CanvasRenderingContext2D ctx, [types.ChartArea? area]) {
+  void draw(CanvasRenderingContext2D ctx, [ChartArea? area]) {
     _trace.add('$tag.draw');
   }
 }
 
-final class _SpyCustom()
-    extends Element
-    implements types.VisualElement, _Tagged {
+final class _SpyCustom() extends Element implements VisualElement, _Tagged {
   this : tag = _newTag('custom');
 
   @override
   final String tag;
 
   @override
-  void draw(CanvasRenderingContext2D ctx, [types.ChartArea? area]) {
+  void draw(CanvasRenderingContext2D ctx, [ChartArea? area]) {
     _trace.add('$tag.draw');
   }
 
@@ -269,7 +227,7 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
 
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,
@@ -291,7 +249,7 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
         i,
       );
       properties[axisDataKey(vAxis)!] = vScale.getPixelForValue(
-        stacked != types.StackMode.off
+        stacked != StackMode.off
             ? applyStack(vScale, parsed, stacked)
             : parsedValueOf(parsed, vAxis),
         i,
@@ -322,7 +280,7 @@ final class _Area(
   @override final double top,
   @override final double right,
   @override final double bottom,
-) implements types.ChartArea {
+) implements ChartArea {
   @override
   double get width => right - left;
 
@@ -333,8 +291,8 @@ final class _Area(
 /// A fake scale: a linear, category or raw parse, labels and user bounds.
 /// The raw parse returns the value as it is, for the `<` of the sorted
 /// test.
-final class _FakeScale(@override final types.Chart chart, AnyObject spec)
-    implements types.Scale {
+final class _FakeScale(@override final IChart chart, AnyObject spec)
+    implements IScale {
   @override
   final String id = spec['id']! as String;
 
@@ -408,9 +366,9 @@ final class _FakeScale(@override final types.Chart chart, AnyObject spec)
   }
 
   @override
-  List<types.ChartMeta> getMatchingVisibleMetas([String? type]) {
+  List<ChartMeta> getMatchingVisibleMetas([String? type]) {
     final metas = chart.getSortedVisibleDatasetMetas();
-    final result = <types.ChartMeta>[];
+    final result = <ChartMeta>[];
     for (final meta in metas) {
       final axisID = switch (axis) {
         XAxis() => meta.xAxisID,
@@ -434,11 +392,11 @@ final class _FakeScale(@override final types.Chart chart, AnyObject spec)
 }
 
 /// The meta of core.controller.js:835-848: the native meta of the chart.
-typedef _Meta = types.ChartMeta<DatasetController>;
+typedef _Meta = ChartMeta<DatasetController>;
 
 /// A fake chart: the members that core.datasetController.js reads.
 final class _FakeChart(@override final Config config, AnyObject spec)
-    implements types.Chart {
+    implements IChart {
   this {
     for (final scale in spec['scales']! as List<Object?>) {
       final scaleSpec = scale! as AnyObject;
@@ -459,10 +417,10 @@ final class _FakeChart(@override final Config config, AnyObject spec)
   Object get data => config.data;
 
   @override
-  final Map<String, types.Scale> scales = {};
+  final Map<String, IScale> scales = {};
 
   @override
-  types.ChartArea chartArea = _Area(0, 0, 100, 100);
+  ChartArea chartArea = _Area(0, 0, 100, 100);
 
   @override
   AnyObject? stacks;
@@ -492,7 +450,7 @@ final class _FakeChart(@override final Config config, AnyObject spec)
 
   // core.controller.js:829-853.
   @override
-  types.ChartMeta getDatasetMeta(num index) {
+  ChartMeta getDatasetMeta(num index) {
     final datasetIndex = index.toInt();
     final dataset = jsGet(jsGet(data, 'datasets'), datasetIndex);
     final metasets = _metasets;
@@ -523,7 +481,7 @@ final class _FakeChart(@override final Config config, AnyObject spec)
 
   // core.controller.js:737-750, with the sort of :397.
   @override
-  List<types.ChartMeta> getSortedDatasetMetas(bool filterVisible) {
+  List<ChartMeta> getSortedDatasetMetas(bool filterVisible) {
     final metasets = jsSort(
       List<_Meta>.of(_metasets),
       (a, b) => a.order == b.order ? a.index - b.index : a.order - b.order,
@@ -535,8 +493,7 @@ final class _FakeChart(@override final Config config, AnyObject spec)
   }
 
   @override
-  List<types.ChartMeta> getSortedVisibleDatasetMetas() =>
-      getSortedDatasetMetas(true);
+  List<ChartMeta> getSortedVisibleDatasetMetas() => getSortedDatasetMetas(true);
 
   // core.controller.js:866-875.
   @override
@@ -693,7 +650,7 @@ final class _Run(final AnyObject spec) {
 
   List<Object?> _dataOf(Object? ds) => _dataset(ds)['data']! as List<Object?>;
 
-  types.Element? _element(Object? ds, Object? index) =>
+  IElement? _element(Object? ds, Object? index) =>
       index == null ? meta(ds).dataset : meta(ds).data[_int(index)];
 
   /// Runs each step of the spec, and ends the animations of the chart.
@@ -851,7 +808,7 @@ final class _Run(final AnyObject spec) {
         out.add('allParsed ${_s(args[0])} ${args[1]}: ${_enc(values)}');
       case 'meta':
         final m = meta(args[0]);
-        Object scale(types.Scale? s) => s?.id ?? 'none';
+        Object scale(IScale? s) => s?.id ?? 'none';
         final fields = <String, Object?>{
           'xAxisID': _none(m.xAxisID),
           'yAxisID': _none(m.yAxisID),
@@ -1005,25 +962,25 @@ final class _Run(final AnyObject spec) {
   }
 }
 
-/// The [types.StackMode] of the JS `_stacked` value of the reference data
+/// The [StackMode] of the JS `_stacked` value of the reference data
 /// (row `adapt-native-chart-meta`): Dart `null` for `undefined`.
-types.StackMode? _stackModeOf(Object? value) => switch (value) {
-  'single' => types.StackMode.single,
-  true => types.StackMode.on,
-  false => types.StackMode.off,
+StackMode? _stackModeOf(Object? value) => switch (value) {
+  'single' => StackMode.single,
+  true => StackMode.on,
+  false => StackMode.off,
   _ => null,
 };
 
-/// The JS value of a side of a [types.ChartClip], as the reference data
+/// The JS value of a side of a [ChartClip], as the reference data
 /// writes it: Dart `null` is `false` (rows `adapt-native-chart-meta` and
 /// `adapt-chart-clip-option`).
 Object? _jsClipSide(double? side) => side ?? false;
 
 /// The JS `_stacked` value of [mode], as the reference data writes it.
-Object _jsStacked(types.StackMode mode) => switch (mode) {
-  types.StackMode.off => false,
-  types.StackMode.on => true,
-  types.StackMode.single => 'single',
+Object _jsStacked(StackMode mode) => switch (mode) {
+  StackMode.off => false,
+  StackMode.on => true,
+  StackMode.single => 'single',
 };
 
 /// The `int` of a step argument.

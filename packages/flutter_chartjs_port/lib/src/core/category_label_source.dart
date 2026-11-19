@@ -1,9 +1,6 @@
 // Original code, not ported from Chart.js: guarded native category label reads.
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/options/raw_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartConfigurationScope, ChartDataScope;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Internal host contract: its data/config getters have ordinary read behavior.
 /// Unknown Chart subclasses do not opt in, preserving effectful getter reads.

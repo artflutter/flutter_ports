@@ -3,26 +3,7 @@
 import 'dart:collection' show LinkedHashMap;
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
-    show BulkBarScale;
-import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
-import 'package:flutter_chartjs_port/src/core/data_update.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show PointOptions, plainOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show IndexedPointPlan;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_class.dart' show JsClass;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart'
-    show ElementOptions;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/data_item.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// A chart whose config/data/context, metadata and DPR reads run no user code.
@@ -36,7 +17,7 @@ abstract interface class NativePointChart() {
 abstract interface class DatasetMetaSource() {
   /// The meta of `getDatasetMeta(datasetIndex)` when it has one, or Dart
   /// `null`. `getDatasetMeta` adds a meta for a dataset that has none.
-  types.ChartMeta? existingDatasetMeta(int datasetIndex);
+  ChartMeta? existingDatasetMeta(int datasetIndex);
 }
 
 /// Native point size/context/property reads and writes, without user callbacks.
@@ -48,41 +29,35 @@ abstract interface class NativePointElement() {
 
 /// Read the chart capability at the current observation point. A previous
 /// result does not authorize new config, context or metadata reads.
-@internal
 bool nativePointChart(Object? chart) =>
     chart is NativePointChart && chart.supportsNativePointOptions;
 
 /// Read the point capability where the ordinary loop would use the point.
 /// Active state is a separate live check: overflow does not require inactivity.
-@internal
 bool nativePointElement(Object? point) =>
     point is NativePointElement && point.supportsNativePointOptions;
 
 /// The existing numeric-scale capability, without bar-specific grid checks.
 /// Callers must check scale/chart ownership afterward, in the original order.
-@internal
-bool nativePointProjection(types.Scale scale) =>
+bool nativePointProjection(IScale scale) =>
     scale is BulkBarScale && (scale as BulkBarScale).supportsBulkBarUpdate;
 
 /// Native class metadata only. Keep the two id reads and their short circuit;
 /// unknown class objects are never inspected merely to qualify a shortcut.
-@internal
 bool nativePointClass(Object? value) =>
     value is JsClass && value.id is String && value.id == 'point';
 
 /// A dataset index already read from an exact native controller.
-@internal
 bool nativePointDatasetIndex(int index) => index >= 0;
 
 /// Common line/scatter prerequisites over already-read loop inputs. This is
 /// permission to attempt preparation, not a reusable proof about the dataset.
 /// Point activity, coordinates, projections and source plans stay live.
-@internal
 bool canPrepareNativePointUpdate({
   required String mode,
   required Object? sharedOptions,
   required bool includeOptions,
-  required types.StackMode stacked,
+  required StackMode stacked,
   required Object? segment,
   required ScaleAxis iAxis,
   required ScaleAxis vAxis,
@@ -92,7 +67,7 @@ bool canPrepareNativePointUpdate({
     mode == 'none' &&
     sharedOptions == null &&
     includeOptions &&
-    stacked == types.StackMode.off &&
+    stacked == StackMode.off &&
     !jsTruthy(segment) &&
     (iAxis is XAxis || iAxis is YAxis) &&
     (vAxis is XAxis || vAxis is YAxis) &&
@@ -104,14 +79,14 @@ bool canPrepareNativePointUpdate({
     count == count.truncateToDouble();
 
 final _pointLists = <Type>{
-  <types.Element>[].runtimeType,
-  List<types.Element>.empty().runtimeType,
-  <types.PointElement>[].runtimeType,
-  List<types.PointElement>.empty().runtimeType,
+  <IElement>[].runtimeType,
+  List<IElement>.empty().runtimeType,
+  <IPointElement>[].runtimeType,
+  List<IPointElement>.empty().runtimeType,
 };
 
 /// Only native list indexing may occur between prepared option reads.
-bool nativePointList(List<types.Element> points) =>
+bool nativePointList(List<IElement> points) =>
     _pointLists.contains(points.runtimeType);
 
 /// The truthiness of a number with no foreign value: not 0 and not NaN.
@@ -120,7 +95,6 @@ bool _truthy(double value) => value != 0 && !value.isNaN;
 /// element.point.ts:81-87 `size` over plain numbers: the `||` and `&&` of
 /// upstream on numbers, with no box. The plain branch of `PointElement.size`
 /// and the native overflow loops share it.
-@internal
 @pragma('vm:prefer-inline')
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
@@ -137,7 +111,6 @@ double nativePointSize(double radius, double hoverRadius, double borderWidth) {
 /// The three plain fields that `size` reads, taken once from one options object
 /// inside one synchronous native loop. Absent or foreign values decline: their
 /// JS conversions stay with the ordinary options object and `size`.
-@internal
 final class NativePointSizeFields._(
   /// `options.radius`.
   final double radius,
@@ -166,7 +139,6 @@ final class NativePointSizeFields._(
 /// the plan gives for an index, with no options object (Chart.js ADR 0163).
 /// A static field comes from the template, a varying one from its list. The
 /// lists stay live; the caller reads them inside the loop of the plan only.
-@internal
 // DIVERGES(chartjs): adapt-scatter-indexed-sizes, the size of each index.
 final class NativePointSizes._(
   final double _radius,
@@ -226,8 +198,10 @@ final class NativePointSizes._(
 /// Weak identities of maps already accepted by the native container contract.
 /// Values are never cached. Slots follow point indexes, and fill is bounded to
 /// avoid allocating a weak reference for every point in replacement workloads.
-@internal
 final class NativePointCoordinateCache() {
+  /// An empty cache.
+  this;
+
   List<WeakReference<Object>?> _maps = [];
   int _remaining = 0;
 
@@ -264,8 +238,10 @@ final class NativePointCoordinateCache() {
 
 /// One loop's classifier of typed data items: the implementation class is
 /// cached by type, and the fields of an item stay live.
-@internal
 final class NativeTypedItems() {
+  /// A classifier with no class seen yet.
+  this;
+
   Type? _lastType;
   bool _native = false;
 
@@ -360,9 +336,8 @@ const bool _sameTypeIsCheap = !bool.fromEnvironment('dart.tool.dart2wasm');
 /// test from that x ([stopOf]) in place of the read of `prevParsed[iAxis]`:
 /// between the two reads no code wrote the item, so the read would give the
 /// same value, with no effect and no throw, and its `ToNumber` is the held x.
-@internal
 final class NativeGapReads._(
-  final types.ChartMeta _meta,
+  final ChartMeta _meta,
   final List<Object?> _parsed,
   final double _maxGapLength,
 ) {
@@ -370,7 +345,7 @@ final class NativeGapReads._(
   /// `ToNumber` of `maxGapLength` [maxGapLength], or Dart `null` unless the
   /// switch is on and the parsed list is native. The caller has proved the
   /// loop-wide guards.
-  static NativeGapReads? of(types.ChartMeta meta, double maxGapLength) {
+  static NativeGapReads? of(ChartMeta meta, double maxGapLength) {
     if (!nativeGapReadsEnabled) return null;
     final parsed = meta.parsed;
     return nativeDataUpdateList(parsed)
@@ -457,9 +432,11 @@ final class NativeGapReads._(
 /// A loop-local resolution over native sources. The validator must run before
 /// every scope shortcut. Its context shortcut is used only in a proven native
 /// resolver window; ordinary fallback keeps the ordinary context factory.
-@internal
 final class NativePointResolution({
+  /// The data object of the dataset.
   required final Object data,
+
+  /// The raw data items, by index.
   required final List<Object?> raw,
 
   /// Diagnostic source check; [resolve] always invokes it itself.
@@ -467,6 +444,9 @@ final class NativePointResolution({
   required final ElementOptions? Function(Object Function(), Object Function()?)
   _resolve,
 }) {
+  /// A resolution over [data] and [raw].
+  this;
+
   /// Revalidate before touching contexts or resolving options. The executor
   /// still owns its finer-grained generation checks during user callbacks.
   ElementOptions? resolve(
@@ -482,16 +462,17 @@ final class NativePointResolution({
 /// context or reads coordinate properties. Its writes are those of `getContext`
 /// on a data context, of any element class: the capability check of [read] is
 /// for points, and a loop over other elements calls [readQualified].
-@internal
 final class NativePointContextReader._(
-  final types.ChartMeta _meta,
-  final List<types.Element> _points,
+  final ChartMeta _meta,
+  final List<IElement> _points,
   final List<Object?> _parsed,
   final List<Object?> _raw,
   final String _mode,
 ) {
+  /// The reader of the data contexts of [meta], or null when a context of a
+  /// point needs the ordinary factory.
   static NativePointContextReader? prepare(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> raw,
     String mode,
   ) {
@@ -519,10 +500,10 @@ final class NativePointContextReader._(
 
   /// [read] for the [element] at [index] of the native list of a loop that has
   /// read its capability at this iteration, so that no second read is needed.
-  ScriptableContext? readQualified(types.Element element, int index) =>
+  ScriptableContext? readQualified(IElement element, int index) =>
       _sourcesLive ? _refresh(element, index) : null;
 
-  ScriptableContext? _refresh(types.Element element, int index) {
+  ScriptableContext? _refresh(IElement element, int index) {
     if (element is! Element) return null;
     final context = element.$context;
     if (context is! ScriptableContext) return null;

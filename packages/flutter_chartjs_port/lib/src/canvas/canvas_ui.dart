@@ -48,21 +48,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/foundation.dart'
     show TargetPlatform, defaultTargetPlatform;
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_arc_sector.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_circle_run.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_colors.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_dense_curve.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_font_tracking.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_line_fan.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_partitioned_fill.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_rect_bar.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_batch.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_shadow.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/canvas/canvas_ui_paint.dart'
@@ -697,7 +683,6 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   /// False when the content needs the `saveLayer` of [paint], which the host
   /// then calls: a composite operation or a partial clear blends with the
   /// content and must not reach what is below the canvas.
-  @internal
   bool beginScenePaint() {
     _notified = false;
     if (_disposed) return true;
@@ -707,11 +692,9 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   }
 
   /// Whether [addPicturesToScene] adds a picture.
-  @internal
   bool get hasScenePictures => _pictures.isNotEmpty;
 
   /// The bitmap in its own space: the clip of the pictures in a scene.
-  @internal
   ui.Rect get bitmapBounds => _bitmapBounds;
 
   /// Adds the pictures to [builder], in bitmap space.
@@ -721,7 +704,6 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   ///
   /// More than one picture asks the raster cache of the Skia backends to skip
   /// them: it would keep one bitmap of the chart for each picture.
-  @internal
   void addPicturesToScene(ui.SceneBuilder builder) {
     final pictures = _pictures;
     final n = pictures.length;
@@ -1641,7 +1623,6 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   /// Fused ordinary bars (ADR 0070). The logical style stack is untouched;
   /// the final inner path and each successful fill's recording count remain.
   @override
-  @internal
   bool tryDrawRectBar({
     required double outerX,
     required double outerY,
@@ -1767,7 +1748,6 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   /// finite, a transform that is not axis-aligned, and each observer of
   /// [tryDrawRectBar].
   @override
-  @internal
   bool tryDrawRoundedBar({
     required bool border,
     required double outerX,
@@ -1981,7 +1961,6 @@ final class UiCanvasContext._(final UiCanvasElement _element)
 
   /// `translate(0, 0)` adds 0 to the translation of a finite matrix.
   @override
-  @internal
   bool get zeroTranslateIsNoOp {
     final t = _s.transform;
     return t.a.isFinite && t.b.isFinite && t.c.isFinite && t.d.isFinite;
@@ -1996,7 +1975,6 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   /// `srcOver` mode draw once, when the run ends: the seams between them
   /// disappear (differences.md row `adapt-sector-run-seams`).
   @override
-  @internal
   bool tryDrawArcSector({
     required double x,
     required double y,
@@ -2743,7 +2721,6 @@ final class UiCanvasContext._(final UiCanvasElement _element)
   /// draw would notify, and an observer of a picture or an image: a fan makes
   /// fewer pictures.
   @override
-  @internal
   bool tryStrokeLineFan(
     double x,
     double y,

@@ -1,9 +1,7 @@
 // Original code, not ported from Chart.js: native category-source guards.
 import 'dart:collection';
 
-import 'package:flutter_chartjs_port/src/core/category_label_source.dart';
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 final class _ObservedMap(final Map<String, Object?> entriesByKey)

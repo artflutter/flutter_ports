@@ -5,10 +5,9 @@ import 'package:chartjs_gallery/demo/core_demo.dart';
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter/gestures.dart';
+// The prefix keeps the port names that Flutter also has apart.
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: Tooltip, the element class of plugin.tooltip.
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
-    as plugin_tooltip;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -783,7 +782,7 @@ void main() {
     // The tooltip shows the points that the mode finds: its options fall
     // back to `interaction` (plugin.tooltip.js:1348-1349).
     await _tap(tester, 'core.mode.index');
-    final tooltip = chart.tooltip! as plugin_tooltip.Tooltip;
+    final tooltip = chart.tooltip! as chartjs.Tooltip;
     expect(tooltip.getActiveElements(), isEmpty);
     final point = _point(chart, 0, 7);
     final mouse = await _mouse(tester);

@@ -13,40 +13,7 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart'
     show Directionality, SizedBox, TextDirection, TextStyle, TickerMode, Widget;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
-    as core_defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show notifyArrayListeners;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction;
-import 'package:flutter_chartjs_port/src/index.dart' show registerables;
-import 'package:flutter_chartjs_port/src/js/js_array.dart';
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.base.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.basic.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
@@ -154,7 +121,7 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
 
   @override
   void updateElements(
-    List<types.Element> points,
+    List<IElement> points,
     int start,
     int count,
     String mode,
@@ -387,9 +354,8 @@ String _n(num value) => jsToString(value);
 /// The text of a chart area or a box: `left,top,right,bottom`.
 String _edges(Object? area) => switch (area) {
   null => 'undefined',
-  final types.TRBL a =>
-    '${_n(a.left)},${_n(a.top)},${_n(a.right)},${_n(a.bottom)}',
-  final types.LayoutItem b =>
+  final TRBL a => '${_n(a.left)},${_n(a.top)},${_n(a.right)},${_n(a.bottom)}',
+  final LayoutItem b =>
     '${_n(b.left)},${_n(b.top)},${_n(b.right)},${_n(b.bottom)}',
   _ => throw ArgumentError.value(area, 'area'),
 };
@@ -401,7 +367,7 @@ String _metas(List<ChartMeta?> list) => list
 
 /// The text of the active elements [items].
 String _activeText(List<Object?> items, Observations o) => items
-    .cast<types.ActiveElement>()
+    .cast<ActiveElement>()
     .map((item) {
       final element = item.element;
       final name = o.labelOf(element) ?? (element == null ? 'undefined' : '?');
@@ -436,17 +402,17 @@ final class _Event(
   @override final String type,
   @override final double? x,
   @override final double? y,
-) implements types.ChartEvent {
+) implements ChartEvent {
   @override
   final NativeEvent native = NativeEvent(type: type, offsetX: x!, offsetY: y!);
 
   @override
-  types.Chart? get chart => null;
+  IChart? get chart => null;
 }
 
 /// A point `{x, y}`.
 final class const _Point(@override final double? x, @override final double? y)
-    implements types.Point;
+    implements Point;
 
 /// Runs the scenario [name] of the reference: [body] observes, and the
 /// charts of [body] are destroyed at the end, as in the generator.
@@ -914,14 +880,14 @@ void main() {
         // argument only (Chart.js ADR 0130).
         'onHover': (Object? e, Object? active, Object? chart) {
           hover.add(
-            'hover ${(e! as types.ChartEvent).type} '
+            'hover ${(e! as ChartEvent).type} '
             '${_activeText(active! as List<Object?>, o)} '
             '${chart is Chart}',
           );
         },
         'onClick': (Object? e, Object? active, Object? _) {
           hover.add(
-            'click ${(e! as types.ChartEvent).type} '
+            'click ${(e! as ChartEvent).type} '
             '${_activeText(active! as List<Object?>, o)}',
           );
         },
@@ -952,7 +918,7 @@ void main() {
       charts.add(chart);
       _labelElements(chart, o);
       final p1 = chart.getDatasetMeta(0).data[1];
-      void run(String name, types.ChartEvent e) {
+      void run(String name, ChartEvent e) {
         log.clear();
         hover.clear();
         chart.eventHandler(e);
@@ -1540,8 +1506,8 @@ void main() {
 
   group('statics and the forms of Chart.register', () {
     test('the statics are the objects of the modules', () {
-      expect(Chart.defaults, same(core_defaults.defaults));
-      expect(Chart.overrides, same(core_defaults.overrides));
+      expect(Chart.defaults, same(defaults));
+      expect(Chart.overrides, same(overrides));
       expect(Chart.version, '4.6.1');
     });
 

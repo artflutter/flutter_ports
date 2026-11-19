@@ -9,9 +9,7 @@
 /// it reads the object.
 library;
 
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show GenericPluginOptionsScope;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show PluginDefaults;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The defaults with the entries of [entries], in their order.
 ///

@@ -1,20 +1,11 @@
 // Original code, not ported from Chart.js: the chart of the stress mode chart.
 
-// The reason of each import of lib/src is the comment above it.
-// ignore_for_file: implementation_imports
-
 import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/gallery_components.dart';
-import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, Plugin;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartClip, CirclePointStyle, ScaleDisplay;
-// Not public: jsToNumber of case (c), kept for the series before phase 9.
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToNumber;
-// Not public: jsGet of case (c), kept for the series before phase 9.
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The duration of the looping animation of the call `animate` of the
 /// stress mode chart, in ms.

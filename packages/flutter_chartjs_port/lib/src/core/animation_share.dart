@@ -64,26 +64,7 @@
 /// properties)` call.
 library;
 
-import 'package:flutter_chartjs_port/src/core/bar_bulk_update.dart'
-    show BulkBarChart;
-import 'package:flutter_chartjs_port/src/core/bar_index_layout.dart'
-    show NativeBarIndexReads;
-import 'package:flutter_chartjs_port/src/core/core.animations.dart'
-    show Animations;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController;
-import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
-import 'package:flutter_chartjs_port/src/core/option_call_epoch.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show BarProperties, PointProperties;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:meta/meta.dart';
 
 /// The kept animation options of one `BarController.update` or
@@ -134,7 +115,7 @@ final class SharedBarAnimations._(
   /// `resolveAnimations(index, mode).update(element, properties)` of
   /// `DatasetController.updateElement` (core.datasetController.js:905), with
   /// the kept object where the guard holds.
-  void updateElement(types.Element element, int index, Object properties) {
+  void updateElement(IElement element, int index, Object properties) {
     final controller = _controller;
     final sharable = _sharable(element, properties);
     final kept = _kept;
@@ -163,7 +144,7 @@ final class SharedBarAnimations._(
   /// Whether [element] with [properties] is a built-in bar whose property
   /// object has no foreign value and no element options of its own, or a
   /// built-in point whose property object has no foreign value.
-  static bool _sharable(types.Element element, Object properties) {
+  static bool _sharable(IElement element, Object properties) {
     if (properties is PointProperties) {
       // DIVERGES(chartjs): adapt-shared-point-animations, a point with
       // options of its own (Chart.js ADR 0160).

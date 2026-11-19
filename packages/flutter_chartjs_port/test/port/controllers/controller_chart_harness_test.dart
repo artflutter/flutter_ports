@@ -6,15 +6,7 @@ import 'dart:convert';
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show IndexInteractionMode, InteractionAxis, PointInteractionMode;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.legend.dart'
-    show Legend;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/jasmine.dart';
@@ -100,8 +92,7 @@ List<Object?> _data(Chart chart, int index) =>
 
 /// The rounded center of the element [index] of the dataset [dataset].
 (double, double) _center(Chart chart, int dataset, int index) {
-  final element =
-      chart.getDatasetMeta(dataset).data[index] as types.VisualElement;
+  final element = chart.getDatasetMeta(dataset).data[index] as VisualElement;
   final center = element.getCenterPoint();
   return (center.x!.roundToDouble(), center.y!.roundToDouble());
 }

@@ -1,10 +1,6 @@
 // Original code, not ported from Chart.js: guarded numeric category parsing.
 
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show nativeDataUpdateList;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/parsed.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// A category scale with ordinary, already-resolved label-source reads.
 abstract interface class NativeCategoryParseScale() {
@@ -73,8 +69,8 @@ bool _nativePair(Object? value) {
 /// numbers, and the record gets it as `_custom` after its two axis keys, in
 /// the key order of `parseArrayOrPrimitive` (controller.bar.js:153-168).
 List<ParsedItem>? tryParseNumericCategories(
-  types.Scale iScale,
-  types.Scale? vScale,
+  IScale iScale,
+  IScale? vScale,
   List<Object?> labels,
   List<Object?> data,
   int start,
@@ -152,7 +148,7 @@ List<ParsedItem>? tryParseNumericCategories(
 /// value of the second key of the literal `{[iAxis]: true, [vAxis]: value}`
 /// replaces the first. Records stay fresh, with one own key.
 List<ParsedItem>? tryParseNumericSingleScale(
-  types.Scale scale,
+  IScale scale,
   List<Object?> data,
   int start,
   int count,

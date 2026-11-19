@@ -4,26 +4,7 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        ChartConfig,
-        ChartKind,
-        ChartLegend,
-        ChartPlugin,
-        LegendEventHandler,
-        LineDataset;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.dom.dart';
-import 'package:flutter_chartjs_port/src/index.dart' show defaults;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart';
@@ -160,11 +141,11 @@ ChartConfig _config(Map<String, Object?> reference, _Logs logs) {
 }
 
 /// `<name>:<e.type>:<item.text>`.
-String _entry(String name, types.ChartEvent e, LegendItem item) =>
+String _entry(String name, ChartEvent e, LegendItem item) =>
     '$name:${e.type}:${jsToString(item.text)}';
 
 /// `[datasetIndex, index]` of each active element of [elements].
-List<Object?> _activeItems(List<types.ActiveElement> elements) => [
+List<Object?> _activeItems(List<ActiveElement> elements) => [
   for (final element in elements) [element.datasetIndex, element.index],
 ];
 

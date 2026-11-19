@@ -6,17 +6,7 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show heldElementOptionsEnabled;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show registerDataUpdateTypes;
-import 'package:flutter_chartjs_port/src/core/point_option_preparation.dart'
-    show prepareNativeGapReads;
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show NativeGapReads, nativeGapReadsEnabled, nativeGapReadsTaken;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/typed/datasets.dart' show DataPoint;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The x values of `gapData` of tool/reference/controller_line_reference.mjs:

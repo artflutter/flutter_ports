@@ -8,34 +8,12 @@ import 'dart:ui' as ui;
 
 import 'package:flutter/foundation.dart' show ValueKey;
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show
-        BezierCurveToCommand,
-        CanvasRenderingContext2D,
-        LineToCommand,
-        MoveToCommand,
-        Path2D,
-        PathCommand;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/line_dense_curve.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show MonotoneCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show undefined;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/typed/typed.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // The twins of Chart.js ADR 0114: a line chart with the merge of the narrow
 // curves off against on. Below the threshold the bytes are the same. Above
 // it, each pixel that differs is on the line or next to it, and the count has
 // a bound. Each guard keeps the commands of upstream.
 
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _blue = ui.Color(0xff4f6bed);

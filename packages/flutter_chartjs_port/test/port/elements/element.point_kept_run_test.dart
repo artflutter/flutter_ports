@@ -6,14 +6,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show CirclePointStyle, RectPointStyle;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meta/meta.dart' show immutable;
 
@@ -63,7 +56,7 @@ ChartPaint _solid(math.Random r, ui.Color color) =>
 /// Points with options of their own, as a scatter chart gives them: equal
 /// values, a color for each point, and now and then another size, another
 /// style, a paint that is not solid or a color that the batch does not keep.
-List<types.Element> _elements(int seed) {
+List<IElement> _elements(int seed) {
   final r = math.Random(seed);
   final radius = const [2.0, 3.0, 4.5][r.nextInt(3)];
   final border = r.nextInt(3) == 0 ? 0.0 : 1.5;
@@ -78,7 +71,7 @@ List<types.Element> _elements(int seed) {
   };
   final mode = r.nextInt(3);
   final rare = 8 + r.nextInt(60);
-  final elements = <types.Element>[];
+  final elements = <IElement>[];
   PointOptions? last;
   for (var i = 0; i < 1 + r.nextInt(150); i++) {
     final values = Map<String, Object?>.of(base);
@@ -156,9 +149,9 @@ void _state(UiCanvasContext ctx, int kind) {
 /// The loop of `DatasetController.draw`, from the element [from].
 void _loop(
   UiCanvasContext ctx,
-  List<types.Element> elements,
+  List<IElement> elements,
   int from,
-  List<types.Element> active, {
+  List<IElement> active, {
   required bool activeOnTop,
 }) {
   final area = _Area();
@@ -179,11 +172,11 @@ void _loop(
 /// that the ordinary loop does not take to a new run.
 void _runLoop(
   UiCanvasContext ctx,
-  List<types.Element> elements, {
+  List<IElement> elements, {
   required bool activeOnTop,
 }) {
   final area = _Area();
-  final active = <types.Element>[];
+  final active = <IElement>[];
   var i = 0;
   while (i < elements.length) {
     final next = (elements[i] as PointElement).drawCircleRun(
@@ -273,7 +266,7 @@ final class _LogCanvas(final List<String> _log, ui.PictureRecorder recorder)
 /// The native calls, the pending circles and the styles after a run loop of
 /// [elements], with or without the kept colors.
 (List<String>, int, List<Object?>, int) _observe(
-  List<types.Element> elements,
+  List<IElement> elements,
   int kind, {
   required bool keep,
   required bool activeOnTop,
@@ -409,7 +402,7 @@ void main() {
     test('holds one run over options of equal values', () {
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
-      final elements = <types.Element>[
+      final elements = <IElement>[
         for (var i = 0; i < 400; i++)
           _point(
             12.0 + i % 120,
@@ -448,7 +441,7 @@ void main() {
     test('keeps the run when only the colors change', () {
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
-      final elements = <types.Element>[
+      final elements = <IElement>[
         for (var i = 0; i < 300; i++)
           _point(
             12.0 + i % 120,
@@ -476,7 +469,7 @@ void main() {
     test('a gradient in the middle takes the setters and ends the run', () {
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
-      final elements = <types.Element>[
+      final elements = <IElement>[
         _point(20, 20, _options(ChartPaint.solid(_colors[0]))),
         _point(30, 30, _options(ChartPaint.solid(_colors[1]))),
         _point(40, 40, _options(_gradient)),
@@ -501,7 +494,7 @@ void main() {
     test('a break by another style leaves the styles of the last circle', () {
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
-      final elements = <types.Element>[
+      final elements = <IElement>[
         _point(20, 20, _options(ChartPaint.solid(_colors[0]))),
         _point(30, 30, _options(ChartPaint.solid(_colors[1]))),
         _point(40, 40, _options(ChartPaint.solid(_colors[2]))),
@@ -531,7 +524,7 @@ void main() {
     test('an unchanged paint takes the setters after the owed ones', () {
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
-      final elements = <types.Element>[
+      final elements = <IElement>[
         _point(20, 20, _options(ChartPaint.solid(_colors[0]))),
         _point(30, 30, _options(ChartPaint.solid(_colors[1]))),
         _point(35, 35, _options(ChartPaint.solid(_colors[0]))),
@@ -559,7 +552,7 @@ void main() {
       // the second run draws the color as it is then, as each element
       // draw does.
       final changing = _ChangingColor()..argb = 0xff4f6bed;
-      final elements = <types.Element>[
+      final elements = <IElement>[
         for (var i = 0; i < 40; i++)
           _point(
             12.0 + i * 3,
@@ -595,7 +588,7 @@ void main() {
     test('a color that the batch does not keep ends the run', () {
       final ctx = UiCanvasElement(width: 160, height: 160).getContext2d();
       addTearDown(ctx.dispose);
-      final elements = <types.Element>[
+      final elements = <IElement>[
         _point(20, 20, _options(ChartPaint.solid(_colors[0]))),
         _point(30, 30, _options(const ChartPaint.solid(_wide))),
       ];

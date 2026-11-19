@@ -2,8 +2,9 @@
 import 'dart:convert';
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart' as helpers;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+// The local uid hides the helper.
+import 'package:flutter_chartjs_port/chartjs_core.dart' as helpers;
 import 'package:test/test.dart';
 
 // The spec reads `window.Chart.helpers` in a beforeAll. Here `helpers` is the
@@ -36,7 +37,7 @@ void main() {
         final source = jsonDecode(
           '{"__proto__":{"polluted": true}}',
         ) as Map<String, Object?>;
-        final test = helpers.clone(source)! as Map<String, Object?>;
+        final test = clone(source)! as Map<String, Object?>;
         // test.prototype
         expect(_get(test, 'prototype'), same(undefined));
         // Object.prototype.polluted: Dart has no shared prototype that a key

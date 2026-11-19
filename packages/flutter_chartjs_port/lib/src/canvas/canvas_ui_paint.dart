@@ -19,8 +19,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// CSS color parsing is unsupported. Supply a Flutter Color instead.
 ui.Color? parseCssColor(String value) => throw ArgumentError.value(

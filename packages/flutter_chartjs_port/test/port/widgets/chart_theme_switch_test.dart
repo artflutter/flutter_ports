@@ -6,31 +6,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartConfigurationScope;
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart'
-    show LttbDecimationAlgorithm, MinMaxDecimationAlgorithm;
-import 'package:flutter_chartjs_port/src/theme/chart_theme.dart';
-import 'package:flutter_chartjs_port/src/theme/theme_data.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show SolidChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_theme_switch.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_view_plugin.dart';
-import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
-    hide color;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // theming.md §8 test 8: the runtime theme switch of ChartView (Chart.js ADR
@@ -957,7 +933,7 @@ List<Object?> _datasetsOf(Map<String, Object?> config) =>
     (config['data']! as AnyObject)['datasets']! as List<Object?>;
 
 /// A chart for the unit case of `ChartThemeSwitch`: only [data].
-final class _FakeChart(@override final AnyObject data) implements types.Chart {
+final class _FakeChart(@override final AnyObject data) implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

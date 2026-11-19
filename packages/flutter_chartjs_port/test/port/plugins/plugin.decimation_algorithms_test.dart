@@ -1,14 +1,6 @@
 // Original code, not ported from Chart.js: tests of the decimation algorithms.
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show DecimationOptions;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The pure tests of `lttbDecimation` and `minMaxDecimation` of
@@ -77,7 +69,7 @@ AnyObject _p(Object? x, Object? y) => <String, Object?>{'x': x, 'y': y};
 /// The chart members that `beforeElementsUpdate` reads before its switch
 /// on `algorithm`: one line dataset with [data] on a linear x scale, with
 /// `parsing: false`.
-final class _Chart(List<Object?> data) implements types.Chart {
+final class _Chart(List<Object?> data) implements IChart {
   @override
   final Object data = <String, Object?>{
     'datasets': <Object?>[
@@ -92,30 +84,29 @@ final class _Chart(List<Object?> data) implements types.Chart {
   double width = 10;
 
   @override
-  final Map<String, types.Scale> scales = {'x': _Scale()};
+  final Map<String, IScale> scales = {'x': _Scale()};
 
   @override
-  types.ChartMeta getDatasetMeta(num datasetIndex) => _Meta(scales['x']);
+  ChartMeta getDatasetMeta(num datasetIndex) => _Meta(scales['x']);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// The meta of a line dataset on the scale `x`.
-final class _Meta(@override var types.Scale? iScale)
-    implements types.ChartMeta {
+final class _Meta(@override var IScale? iScale) implements ChartMeta {
   @override
   String? xAxisID = 'x';
 
   @override
-  final types.DatasetController controller = _Controller();
+  final IDatasetController controller = _Controller();
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A controller that supports the decimation, as the line controller does.
-final class _Controller() implements types.DatasetController {
+final class _Controller() implements IDatasetController {
   @override
   bool get supportsDecimation => true;
 
@@ -124,7 +115,7 @@ final class _Controller() implements types.DatasetController {
 }
 
 /// A linear scale `x` without user bounds.
-final class _Scale() implements types.Scale {
+final class _Scale() implements IScale {
   @override
   String get type => 'linear';
 

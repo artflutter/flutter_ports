@@ -2,26 +2,7 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show DefaultCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart'
-    show InterpolatedPoint;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
@@ -59,7 +40,7 @@ final class const _Area(
 
 /// The chart `{getContext}` of a line with segment styles: the `_chart` of
 /// helpers.segment.js:280.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   @override
   Map<String, Object?> getContext() => {'chart': 'chart', 'type': 'chart'};
 
@@ -106,7 +87,7 @@ const Map<String, Object Function(AnyObject options)> _optionsForms = {
 /// form [form].
 LineElement _line(
   LineReferenceCase c,
-  List<types.PointElement> points,
+  List<IPointElement> points,
   Object Function(AnyObject) form,
 ) {
   final options = c.options == null
@@ -162,7 +143,7 @@ double? _arg(List<Object?> args, int index) =>
 
 /// The encoded point of an interpolate result: the index of a point of
 /// [points], or its `x` and `y`.
-LineReferencePoint _encode(Point point, List<types.PointElement> points) {
+LineReferencePoint _encode(Point point, List<IPointElement> points) {
   final index = points.indexWhere((p) => identical(p, point));
   return index >= 0
       ? (index: index, x: null, y: null)
@@ -178,7 +159,7 @@ Matcher _expectedPoint(LineReferencePoint point) => isA<LineReferencePoint>()
 /// Runs the steps of the reference case [c], with the options in the form
 /// [form], and compares each record.
 void _run(LineReferenceCase c, Object Function(AnyObject) form) {
-  final points = <types.PointElement>[for (final p in c.points) _point(p)];
+  final points = <IPointElement>[for (final p in c.points) _point(p)];
   final line = _line(c, points, form);
   final ids = PathIds();
 
@@ -265,7 +246,7 @@ Path2D? _pathOf(LineElement line) => switch (line['_path']) {
 };
 
 /// The index of [point] in [points], or null for no point.
-int? _indexOf(types.PointElement? point, List<types.PointElement> points) =>
+int? _indexOf(IPointElement? point, List<IPointElement> points) =>
     point == null ? null : points.indexWhere((p) => identical(p, point));
 
 /// The matcher of the result of [step].
@@ -296,7 +277,7 @@ Object? _expectedResult(LineReferenceStep step) {
 /// A line of the points `(0, 10)`, `(10, 20)` and `(20, 15)` with the
 /// options [options].
 LineElement _simpleLine([AnyObject? options]) => LineElement({
-  'points': <types.PointElement>[
+  'points': <IPointElement>[
     PointElement({'x': 0, 'y': 10}),
     PointElement({'x': 10, 'y': 20}),
     PointElement({'x': 20, 'y': 15}),
@@ -500,7 +481,7 @@ void main() {
     test('writes the declared properties', () {
       final chart = _Chart();
       final path = Path2D();
-      final segments = <types.Segment>[];
+      final segments = <Segment>[];
       final line = LineElement()
         ..['animated'] = false
         ..['_chart'] = chart
@@ -545,7 +526,7 @@ void main() {
       line
         ..['_path'] = path
         ..['_pointsUpdated'] = true
-        ..['_points'] = <types.PointElement>[
+        ..['_points'] = <IPointElement>[
           PointElement({'x': 0, 'y': 0}),
         ];
       expect(line.segments, same(segments));
@@ -566,7 +547,7 @@ void main() {
       final line = _simpleLine(_options());
       expect(line['_segments'], same(undefined));
       final segments = line['segments'];
-      expect(segments, isA<List<types.Segment>>());
+      expect(segments, isA<List<Segment>>());
       expect(line['_segments'], same(segments));
       expect(line.segments, same(segments));
     });
@@ -575,13 +556,10 @@ void main() {
       // Upstream: Cannot set property segments of #<LineElement> which has
       // only a getter. Object.assign throws the same TypeError.
       expect(
-        () => LineElement()['segments'] = <types.Segment>[],
+        () => LineElement()['segments'] = <Segment>[],
         throwsArgumentError,
       );
-      expect(
-        () => LineElement({'segments': <types.Segment>[]}),
-        throwsArgumentError,
-      );
+      expect(() => LineElement({'segments': <Segment>[]}), throwsArgumentError);
     });
 
     test('throws an ArgumentError for a value outside the type', () {
@@ -621,9 +599,9 @@ void main() {
     test('is a types.LineElement and a types.VisualElement', () {
       final line = LineElement();
       expect(line, isA<Element>());
-      expect(line, isA<types.LineElement>());
-      expect(line, isA<types.VisualElement>());
-      expect(line, isA<types.Element>());
+      expect(line, isA<ILineElement>());
+      expect(line, isA<VisualElement>());
+      expect(line, isA<IElement>());
     });
 
     test('has no hit test and no center point, as upstream', () {
@@ -642,7 +620,7 @@ void main() {
       // Upstream: true for `_loop: true` and no points, false without it.
       expect(
         LineElement({
-          'points': <types.PointElement>[],
+          'points': <IPointElement>[],
           'options': <String, Object?>{},
           '_loop': true,
         }).path(createMockContext()),
@@ -650,7 +628,7 @@ void main() {
       );
       expect(
         LineElement({
-          'points': <types.PointElement>[],
+          'points': <IPointElement>[],
           'options': <String, Object?>{},
         }).path(createMockContext()),
         isFalse,
@@ -701,9 +679,7 @@ void main() {
 
     /// The names and the arguments of the calls of pathSegment over the
     /// first segment of a line of [points] with the default options.
-    (List<Object?>, List<List<Object?>>) fastPath(
-      List<types.PointElement> points,
-    ) {
+    (List<Object?>, List<List<Object?>>) fastPath(List<IPointElement> points) {
       final line = LineElement({
         'points': points,
         'options': _plain(LineElement.defaults),
@@ -801,13 +777,13 @@ void main() {
     // ADR 0028, section 3): a `List<types.PointElement>` stays as it is, and
     // another list gives a typed copy with the same elements.
     test('a List<types.PointElement> stays the same list', () {
-      final list = <types.PointElement>[
+      final list = <IPointElement>[
         PointElement({'x': 0, 'y': 1}),
         PointElement({'x': 2, 'y': 3}),
       ];
       final line = LineElement()..points = list;
       expect(identical(line.points, list), isTrue);
-      final other = <types.PointElement>[
+      final other = <IPointElement>[
         PointElement({'x': 4, 'y': 5}),
       ];
       line['points'] = other;
@@ -816,7 +792,7 @@ void main() {
     });
 
     test('a List<types.Element> of point elements gives a typed copy', () {
-      final elements = <types.Element>[
+      final elements = <IElement>[
         PointElement({'x': 0, 'y': 10}),
         PointElement({'x': 10, 'y': 20}),
         PointElement({'x': 20, 'y': 15}),
@@ -832,7 +808,7 @@ void main() {
           ..['_pointsUpdated'] = true;
         write(line);
         final points = line.points;
-        expect(points, isA<List<types.PointElement>>());
+        expect(points, isA<List<IPointElement>>());
         expect(identical(points, elements), isFalse);
         expect(points, hasLength(3));
         for (var i = 0; i < 3; i++) {
@@ -850,7 +826,7 @@ void main() {
     });
 
     test('an element that is not a point element throws a TypeError', () {
-      final elements = <types.Element>[
+      final elements = <IElement>[
         PointElement({'x': 0, 'y': 10}),
         Element(),
       ];
@@ -876,7 +852,7 @@ void main() {
       // first() is {x: 1, y: 2}, and path draws moveTo(1,2) lineTo(1,2)
       // lineTo(3,4).
       final line = LineElement({
-        'points': <types.PointElement>[
+        'points': <IPointElement>[
           PointElement({'x': 1, 'y': 2}),
           PointElement({'x': 3, 'y': 4}),
         ],

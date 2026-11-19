@@ -15,10 +15,7 @@ library;
 
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableLineSegmentContext;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The keys of a segment style, in the order of the fields of
 /// [LineSegmentStyle].

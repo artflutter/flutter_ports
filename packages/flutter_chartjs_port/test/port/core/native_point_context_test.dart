@@ -1,16 +1,13 @@
 // Original code, not ported from Chart.js: native context refresh boundaries.
 import 'dart:collection';
 
-import 'package:flutter_chartjs_port/src/core/point_options.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 class _Meta(
-  @override var List<types.Element> data,
+  @override var List<IElement> data,
   @override var List<Object?> parsed,
-) implements types.ChartMeta {
+) implements ChartMeta {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -60,7 +57,7 @@ void main() {
     final parsed = <Object?>[
       <String, Object?>{'parsed': 1},
     ];
-    final meta = _Meta(<types.Element>[point], parsed);
+    final meta = _Meta(<IElement>[point], parsed);
     final reader = NativePointContextReader.prepare(meta, raw, 'none')!;
     expect(reader.read(0), same(context));
     expect(context.raw, same(raw[0]));
@@ -90,7 +87,7 @@ void main() {
   test('custom sources decline without indexing', () {
     final point = PointElement();
     final custom = _ObservedList();
-    final meta = _Meta(<types.Element>[point], custom);
+    final meta = _Meta(<IElement>[point], custom);
     expect(NativePointContextReader.prepare(meta, <Object?>[], 'none'), isNull);
     expect(custom.reads, 0);
     meta.parsed = <Object?>[];
@@ -102,7 +99,7 @@ void main() {
     () {
       final point = _CustomPoint();
       final native = PointElement();
-      final meta = _Meta(<types.Element>[point, native], <Object?>[1, 2]);
+      final meta = _Meta(<IElement>[point, native], <Object?>[1, 2]);
       final reader = NativePointContextReader.prepare(meta, <Object?>[
         1,
         2,

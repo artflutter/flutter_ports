@@ -10,8 +10,7 @@ library;
 // RangeError (canvas/canvas_ui_path.dart). The mock context of Node.js does
 // not throw (Chart.js ADR 0040, section 5).
 
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {

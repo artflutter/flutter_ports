@@ -8,21 +8,7 @@ import 'package:chartjs_test_utils/flutter.dart' show triggerMouseEvent;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show IndexInteractionMode;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/platform/platform.flutter.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart' show Plugin;
-import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../scales/scale_chart_harness.dart' show drawCalls;
@@ -79,7 +65,7 @@ Map<String, Object?> _config(
 }) {
   void entry(String name, Object? e, Object? item) {
     log?.add(
-      '$name ${(e! as types.ChartEvent).type} '
+      '$name ${(e! as ChartEvent).type} '
       '${(item! as LegendItem).text.join('\n')}',
     );
   }
@@ -157,7 +143,7 @@ Widget _pair(Widget keys, Widget mouse) => _top(
     final box = chart.legend!.legendHitBoxes[item];
     return (x: box.left + box.width / 2, y: box.top + box.height / 2);
   }
-  final element = chart.getDatasetMeta(group).data[item] as types.VisualElement;
+  final element = chart.getDatasetMeta(group).data[item] as VisualElement;
   final center = element.getCenterPoint(true);
   return (x: center.x!, y: center.y!);
 }
@@ -170,7 +156,7 @@ AnyObject _at(Chart chart, _Target target) {
 }
 
 /// The active items of a list of `getActiveElements()`.
-List<String> _items(List<types.ActiveElement> active) => [
+List<String> _items(List<ActiveElement> active) => [
   for (final item in active) '${item.datasetIndex}:${item.index}',
 ];
 
@@ -289,7 +275,7 @@ void main() {
     final focus = FocusNode();
     addTearDown(focus.dispose);
     late Chart chart;
-    types.ChartEvent? hovered;
+    ChartEvent? hovered;
     await tester.pumpWidget(
       _top(
         _view(
@@ -297,11 +283,7 @@ void main() {
             'bar',
             legend: {
               'onHover':
-                  (
-                    types.ChartEvent event,
-                    LegendItem item,
-                    types.LegendElement legend,
-                  ) {
+                  (ChartEvent event, LegendItem item, LegendElement legend) {
                     hovered = event;
                   },
             },
@@ -414,11 +396,11 @@ void main() {
     });
 
     testWidgets('a custom legend onClick gets legendItems[1]', (tester) async {
-      final clicks = <(Object?, types.LegendElement)>[];
+      final clicks = <(Object?, LegendElement)>[];
       final charts = _Charts(
         'bar',
         legend: <String, Object?>{
-          'onClick': (Object? e, Object? item, types.LegendElement legend) =>
+          'onClick': (Object? e, Object? item, LegendElement legend) =>
               clicks.add((item, legend)),
         },
       );
@@ -442,8 +424,8 @@ void main() {
         'bar',
         options: <String, Object?>{
           'onClick': (
-            types.ChartEvent event,
-            List<types.ActiveElement> active,
+            ChartEvent event,
+            List<ActiveElement> active,
             Chart chart,
           ) => log.add([event.type, ..._items(active)]),
         },
@@ -499,8 +481,8 @@ void main() {
         options: <String, Object?>{
           'events': <Object?>['click'],
           'onClick': (
-            types.ChartEvent event,
-            List<types.ActiveElement> active,
+            ChartEvent event,
+            List<ActiveElement> active,
             Chart chart,
           ) => clicks.add(_items(active)),
         },
@@ -905,11 +887,7 @@ void main() {
             },
           },
           'onHover':
-              (
-                types.ChartEvent event,
-                List<types.ActiveElement> active,
-                Chart chart,
-              ) {
+              (ChartEvent event, List<ActiveElement> active, Chart chart) {
                 if (armed) setOuter(() => label = 'hover ${active.length}');
               },
         },

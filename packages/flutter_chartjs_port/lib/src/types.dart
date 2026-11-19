@@ -26,13 +26,4 @@ library;
 
 export 'package:flutter_chartjs_port/src/index.dart';
 // DIVERGES(chartjs): adapt-types-entry, the classes take the 8 shared names.
-export 'package:flutter_chartjs_port/src/types/index.dart'
-    hide
-        BasePlatform,
-        Chart,
-        DatasetController,
-        Element,
-        LineElement,
-        PointElement,
-        RadialLinearScale,
-        Scale;
+export 'package:flutter_chartjs_port/src/types/index.dart';

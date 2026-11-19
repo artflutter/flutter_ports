@@ -16,13 +16,7 @@
 library;
 
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter_chartjs_port/src/core/core.animation.dart'
-    show Interpolator;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The resolved animation options of one config entry: a typed object with a
 /// typed field for each key of `defaults.animation` (Chart.js ADR 0019,

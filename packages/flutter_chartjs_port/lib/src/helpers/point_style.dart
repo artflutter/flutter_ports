@@ -14,8 +14,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasRenderingContext2D;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The style of a point: the option `pointStyle`.
 ///

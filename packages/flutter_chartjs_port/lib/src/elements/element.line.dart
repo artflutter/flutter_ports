@@ -45,54 +45,7 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show LineOptions, plainOption, rawOption;
-import 'package:flutter_chartjs_port/src/elements/line_dense_curve.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show bezierCurveTo, steppedLineTo;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show
-        DefaultCubicInterpolationMode,
-        cubicInterpolationModeOf,
-        updateBezierControlPoints;
-import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart'
-    show
-        InterpolatedPoint,
-        bezierInterpolation,
-        pointInLine,
-        steppedInterpolation;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableContext;
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
-    show SegmentStyle, boundSegments, computeSegments;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedProp;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show LineProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show DescriptorsScope, LineOptionsScope;
-import 'package:flutter_chartjs_port/src/options/typed_record.dart'
-    show TypedRecord;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/line_segment_style.dart'
-    show LineSegmentStyle, lineSegmentStyleOf;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `object[name]` of an object that is not typed: the read by name of a
 /// plain object of user code or of a spec (the face, Chart.js ADR 0054 §5).
@@ -242,7 +195,7 @@ LineSegmentStyle? _segment(Object? options) => lineSegmentStyleOf(
 ///
 /// Dart `null` for [style] stands for JS `undefined`, which gives the
 /// default [options]. A segment without a style has the style `undefined`
-/// ([types.Segment.style]).
+/// ([Segment.style]).
 ///
 /// The canvas setters take typed values. An option value goes to them through
 /// [canvasLineDash], [canvasNumber] and [canvasStyle] of
@@ -294,8 +247,8 @@ void _setStyle(CanvasRenderingContext2D ctx, Object? options, [Object? style]) {
 /// does not read them.
 void _lineTo(
   CanvasPath ctx,
-  types.PointElement? previous,
-  types.PointElement target, [
+  IPointElement? previous,
+  IPointElement target, [
   Object? _,
   Object? _,
 ]) {
@@ -307,8 +260,8 @@ void _lineTo(
 /// argument `options.stepped`.
 void _bezierCurveTo(
   CanvasPath ctx,
-  types.PointElement? previous,
-  types.PointElement target, [
+  IPointElement? previous,
+  IPointElement target, [
   bool? flip,
   Object? _,
 ]) {
@@ -325,8 +278,8 @@ void _bezierCurveTo(
 /// option value `options.stepped`.
 void Function(
   CanvasPath ctx,
-  types.PointElement? previous,
-  types.PointElement target,
+  IPointElement? previous,
+  IPointElement target,
   bool flip,
   Object? mode,
 )
@@ -383,8 +336,8 @@ _PathParams _pathParams(AnyObject? params) {
 
 /// element.line.js:40 `pathVars(points, segment, params = {})`.
 ({double count, double start, bool loop, double ilen}) _pathVars(
-  List<types.PointElement> points,
-  types.Segment segment,
+  List<IPointElement> points,
+  Segment segment,
   _PathParams params,
 ) {
   final count = points.length.toDouble();
@@ -428,7 +381,7 @@ _PathParams _pathParams(AnyObject? params) {
 bool? _pathSegment(
   CanvasPath ctx,
   LineElement line,
-  types.Segment segment,
+  Segment segment,
   _PathParams params,
 ) {
   final points = line.points;
@@ -440,8 +393,8 @@ bool? _pathSegment(
   final curve = options is LineOptions && identical(lineMethod, _bezierCurveTo);
   var move = params.move ?? true;
   final reverse = params.reverse;
-  types.PointElement point;
-  types.PointElement? prev;
+  IPointElement point;
+  IPointElement? prev;
 
   for (var i = 0.0; i <= ilen; ++i) {
     point = points[(start + (reverse ? ilen - i : i)).remainder(count).toInt()];
@@ -473,8 +426,8 @@ bool? _pathSegment(
 ///
 /// The numeric getters give NaN for `undefined`. An [Element] keeps the
 /// state in a bit ([Element.isUndefined], Chart.js ADR 0054 §9). Another
-/// implementation of [types.PointElement] has no `undefined` state.
-bool _isUndefinedY(types.PointElement point) => switch (point) {
+/// implementation of [IPointElement] has no `undefined` state.
+bool _isUndefinedY(IPointElement point) => switch (point) {
   final Element element => element.isUndefined(AnimatedProp.y),
   _ => false,
 };
@@ -508,7 +461,7 @@ bool _isUndefinedY(types.PointElement point) => switch (point) {
 bool? _fastPathSegment(
   CanvasPath ctx,
   LineElement line,
-  types.Segment segment,
+  Segment segment,
   _PathParams params,
 ) {
   final points = line.points;
@@ -517,7 +470,7 @@ bool? _fastPathSegment(
   final reverse = params.reverse;
   var avgX = 0.0;
   var countX = 0.0;
-  types.PointElement point;
+  IPointElement point;
   // JS `undefined` before the first point of a group. `x | 0` is a number,
   // so `truncX === prevX` is false for `undefined`, as `==` is for null.
   double? prevX;
@@ -605,7 +558,7 @@ bool? _fastPathSegment(
 bool? Function(
   CanvasPath ctx,
   LineElement line,
-  types.Segment segment,
+  Segment segment,
   _PathParams params,
 )
 _getSegmentMethod(LineElement line) {
@@ -648,7 +601,7 @@ _getSegmentMethod(LineElement line) {
 bool? _denseCurveSegment(
   CanvasPath ctx,
   LineElement line,
-  types.Segment segment,
+  Segment segment,
   _PathParams params,
 ) {
   final scale = line._denseScale;
@@ -675,7 +628,6 @@ bool? _denseCurveSegment(
 /// The bitmap scale of x for the merge of the narrow curves of [line] on
 /// [ctx], or null when [line] writes its curves there as upstream does. The
 /// partitioned fill writes the same vertices as the path of the line.
-@internal
 double? denseCurveScaleOfLine(LineElement line, CanvasPath ctx) {
   final scale = denseCurveScaleOf(ctx);
   if (scale == null) return null;
@@ -693,8 +645,8 @@ double? denseCurveScaleOfLine(LineElement line, CanvasPath ctx) {
 /// The result is called as `_interpolate(p1, p2, t, options.stepped)`
 /// (element.line.js:373).
 InterpolatedPoint Function(
-  types.PointElement p1,
-  types.PointElement p2,
+  IPointElement p1,
+  IPointElement p2,
   double t,
   Object? mode,
 )
@@ -815,9 +767,9 @@ void _draw(
 /// element.line.js:243 `LineElement`.
 ///
 /// The line of a line or radar dataset (Chart.js ADR 0017). It extends
-/// [Element] and implements [types.LineElement], the interface that
-/// `helpers.segment` reads, [types.VisualElement] and
-/// [types.LineElementWrites], the typed writes of the line, scatter and
+/// [Element] and implements [ILineElement], the interface that
+/// `helpers.segment` reads, [VisualElement] and
+/// [LineElementWrites], the typed writes of the line, scatter and
 /// radar controllers (Chart.js ADR 0054 §9).
 ///
 /// ## Properties
@@ -843,7 +795,7 @@ void _draw(
 /// `_datasetIndex`, and pass the other names to [Element].
 class LineElement([AnyObject? cfg])
     extends Element
-    implements types.LineElement, types.VisualElement, types.LineElementWrites {
+    implements ILineElement, VisualElement, LineElementWrites {
   /// element.line.js:279 `constructor(cfg)`.
   ///
   /// The properties get the start values of element.line.js:282-292. Then
@@ -920,7 +872,7 @@ class LineElement([AnyObject? cfg])
   bool animated = true;
 
   /// The value of [chart]. Dart `null` stands for JS `undefined`.
-  types.Chart? _chart;
+  IChart? _chart;
 
   /// The value of [loop]. Dart `null` stands for JS `undefined`.
   bool? _loop;
@@ -954,19 +906,18 @@ class LineElement([AnyObject? cfg])
 
   /// element.line.js:288 `_points`, the value of [points]. Dart `null`
   /// stands for JS `undefined`, the start value.
-  List<types.PointElement>? _points;
+  List<IPointElement>? _points;
 
   /// element.line.js:289 `_segments`, the cache of [segments]. Dart `null`
   /// stands for JS `undefined`, the start value and the value after
   /// `delete this._segments`.
-  List<types.Segment>? _segments;
+  List<Segment>? _segments;
 
   /// element.line.js:290 `_decimated = false`.
   ///
   /// The dataset controller writes `!!_dataset._decimated`
   /// (controller.line.js:59). Upstream never writes `undefined` to it.
   /// Thus a write by name accepts only a `bool`.
-  @internal
   @override
   bool decimated = false;
 
@@ -984,32 +935,26 @@ class LineElement([AnyObject? cfg])
   /// element.line.js:284 `_chart`. Dart `null` stands for JS `undefined`,
   /// the start value. `controller.line.js:57` sets it. JS `null` never
   /// reaches it.
-  @internal
   @override
-  types.Chart? get chart => _chart;
+  IChart? get chart => _chart;
 
-  @internal
   @override
-  set chart(types.Chart value) => _chart = value;
+  set chart(IChart value) => _chart = value;
 
   /// element.line.js:285 `_loop`. Dart `null` stands for JS `undefined`, the
   /// start value. `controller.radar.js:69` sets it. JS `null` never reaches
   /// it.
-  @internal
   @override
   bool? get loop => _loop;
 
-  @internal
   set loop(bool value) => _loop = value;
 
   /// element.line.js:286 `_fullLoop`. Dart `null` stands for JS
   /// `undefined`, the start value. `controller.radar.js:70` sets it. JS
   /// `null` never reaches it.
-  @internal
   @override
   bool? get fullLoop => _fullLoop;
 
-  @internal
   set fullLoop(bool value) => _fullLoop = value;
 
   /// element.line.js:292 `_datasetIndex`. Dart `null` stands for JS
@@ -1019,11 +964,9 @@ class LineElement([AnyObject? cfg])
   /// The getter gives `null`, not NaN, in the `undefined` state:
   /// `helpers.segment` copies the `undefined` into the segment context
   /// (helpers.segment.js:282, :321).
-  @internal
   @override
   int? get datasetIndex => _datasetIndexUndefined ? null : _datasetIndex;
 
-  @internal
   @override
   set datasetIndex(int value) {
     _datasetIndex = value;
@@ -1080,18 +1023,18 @@ class LineElement([AnyObject? cfg])
   /// [TypeError] (the difference `adapt-line-points-elements`).
   // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
   @override
-  set points(List<types.Element> points) => _setPoints(_typedPoints(points));
+  set points(List<IElement> points) => _setPoints(_typedPoints(points));
 
   /// The typed copy that the last write of [points] made.
-  List<types.PointElement>? _pointsCopy;
+  List<IPointElement>? _pointsCopy;
 
   /// [_pointElements], with the last copy of this line when it is the current
   /// value of [points] and holds the same elements in the same order. Nothing
   /// else holds that copy unless a reader of [points] kept it: upstream keeps
   /// one array across updates (differences.md `adapt-line-points-identity`).
   // DIVERGES(chartjs): adapt-line-points-identity, no copy for the same points.
-  List<types.PointElement> _typedPoints(List<types.Element> points) {
-    if (points is List<types.PointElement>) return points;
+  List<IPointElement> _typedPoints(List<IElement> points) {
+    if (points is List<IPointElement>) return points;
     final copy = _pointsCopy;
     if (copy != null &&
         identical(copy, _points) &&
@@ -1117,11 +1060,11 @@ class LineElement([AnyObject? cfg])
   /// as upstream reads `this.points || []`. A reader that must tell the
   /// `undefined` state reads `line['points']`.
   @override
-  List<types.PointElement> get points => _points ?? (throw TypeError());
+  List<IPointElement> get points => _points ?? (throw TypeError());
 
   /// element.line.js:309-312, the body of `set points(points)`. Dart `null`
   /// for [points] stands for JS `undefined`.
-  void _setPoints(List<types.PointElement>? points) {
+  void _setPoints(List<IPointElement>? points) {
     _points = points;
     _segments = null;
     _path = null;
@@ -1134,7 +1077,7 @@ class LineElement([AnyObject? cfg])
   /// at the first read. A write of [points] drops them. Throws a
   /// [TypeError] when [options] or [points] is in the `undefined` state.
   @override
-  List<types.Segment> get segments =>
+  List<Segment> get segments =>
       _segments ??= computeSegments(this, _segment(options));
 
   /// element.line.js:327 `first()`.
@@ -1146,7 +1089,7 @@ class LineElement([AnyObject? cfg])
   /// without segments, which `index.d.ts:2028` declares as `false`. Dart
   /// `null` stands for that falsy value.
   @override
-  types.PointElement? first() {
+  IPointElement? first() {
     final segments = this.segments;
     final points = this.points;
     return segments.isNotEmpty ? points[segments[0].start.toInt()] : null;
@@ -1159,7 +1102,7 @@ class LineElement([AnyObject? cfg])
   ///
   /// Dart `null` stands for the falsy number 0 of a line without segments,
   /// as for [first].
-  types.PointElement? last() {
+  IPointElement? last() {
     final segments = this.segments;
     final points = this.points;
     final count = segments.length;
@@ -1203,7 +1146,7 @@ class LineElement([AnyObject? cfg])
     // Upstream: _interpolate.
     final interpolateMethod = _getInterpolationMethod(options);
     for (var i = 0, ilen = segments.length; i < ilen; ++i) {
-      final types.Segment(:start, :end) = segments[i];
+      final Segment(:start, :end) = segments[i];
       final p1 = points[start.toInt()];
       final p2 = points[end.toInt()];
       if (identical(p1, p2)) {
@@ -1247,11 +1190,7 @@ class LineElement([AnyObject? cfg])
   /// reverse, start, end}`. Dart `null` stands for JS `undefined`, for
   /// [params] and for the result.
   @override
-  bool? pathSegment(
-    CanvasPath ctx,
-    types.Segment segment, [
-    AnyObject? params,
-  ]) {
+  bool? pathSegment(CanvasPath ctx, Segment segment, [AnyObject? params]) {
     _denseScale = denseCurveScaleOf(ctx);
     final segmentMethod = _getSegmentMethod(this);
     final result = segmentMethod(ctx, this, segment, _pathParams(params));
@@ -1322,7 +1261,7 @@ class LineElement([AnyObject? cfg])
     int? count,
   ]) {
     final options = this.options ?? const <String, Object?>{};
-    final points = _points ?? const <types.PointElement>[];
+    final points = _points ?? const <IPointElement>[];
 
     if (points.isNotEmpty && _borderWidthTruthy(options)) {
       ctx.save();
@@ -1400,13 +1339,11 @@ class LineElement([AnyObject? cfg])
   late final bool _builtIn = runtimeType == LineElement;
 
   /// [Element.typedWrites]: true for the class [LineElement] itself.
-  @internal
   @override
   bool get typedWrites => _builtIn;
 
   /// [Element.takesProperties]: a [LineProperties], for an element of the
   /// class [LineElement] itself.
-  @internal
   @override
   bool takesProperties(TypedRecord props) =>
       props is LineProperties && _builtIn;
@@ -1417,7 +1354,6 @@ class LineElement([AnyObject? cfg])
   /// key at [position]. An extra key, a foreign value
   /// and a value that the setter does not take (JS `null` or `undefined`)
   /// go by name ([assignKey]).
-  @internal
   @override
   void writePropertyAt(TypedRecord props, int position) {
     final values = props as LineProperties;
@@ -1490,7 +1426,7 @@ class LineElement([AnyObject? cfg])
       case 'animated':
         animated = toDefinedBoolProp(prop, value);
       case '_chart':
-        _chart = toObjectProp<types.Chart>(prop, value);
+        _chart = toObjectProp<IChart>(prop, value);
       case '_loop':
         _loop = toBoolProp(prop, value);
       case '_fullLoop':
@@ -1502,15 +1438,15 @@ class LineElement([AnyObject? cfg])
       case 'points':
         // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
         _setPoints(
-          value is List<types.Element>
+          value is List<IElement>
               ? _pointElements(value)
-              : toObjectProp<List<types.PointElement>>(prop, value),
+              : toObjectProp<List<IPointElement>>(prop, value),
         );
       case '_points':
         // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
-        _points = toObjectProp<List<types.PointElement>>(prop, value);
+        _points = toObjectProp<List<IPointElement>>(prop, value);
       case '_segments':
-        _segments = toObjectProp<List<types.Segment>>(prop, value);
+        _segments = toObjectProp<List<Segment>>(prop, value);
       case 'segments':
         throw ArgumentError.value(value, prop, 'The property has no setter');
       case '_decimated':
@@ -1538,7 +1474,7 @@ class LineElement([AnyObject? cfg])
 /// applies `ToNumber`. Another name gives NaN, the `ToNumber` of the
 /// absent property.
 double _pointValue(Point point, String property) => switch (point) {
-  final types.PointElement element => element[property],
+  final IPointElement element => element[property],
   _ => switch (property) {
     'x' => point.x ?? 0,
     'y' => point.y ?? 0,
@@ -1549,11 +1485,11 @@ double _pointValue(Point point, String property) => switch (point) {
 /// The points of [LineElement.points]: [points] itself when it is a
 /// `List<types.PointElement>`, else a typed copy (Chart.js ADR 0028,
 /// section 3). `List.generate` is the fastest copy on AOT and wasm.
-List<types.PointElement> _pointElements(List<types.Element> points) =>
-    points is List<types.PointElement>
+List<IPointElement> _pointElements(List<IElement> points) =>
+    points is List<IPointElement>
     ? points
-    : List<types.PointElement>.generate(
+    : List<IPointElement>.generate(
         points.length,
-        (i) => points[i] as types.PointElement,
+        (i) => points[i] as IPointElement,
         growable: false,
       );

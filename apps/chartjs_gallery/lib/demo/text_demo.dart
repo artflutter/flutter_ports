@@ -8,7 +8,6 @@ import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:chartjs_gallery/demo/demo_controls.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     hide PointOptions;
-// Not public: _longestText, an upstream `_` helper (Chart.js ADR 0048).
 import 'package:material_ui/material_ui.dart';
 
 /// The `textAlign` values of the canvas.

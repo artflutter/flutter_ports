@@ -30,28 +30,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.intl.dart'
-    show formatNumber, localeOf;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show
-        almostEquals,
-        almostWhole,
-        decimalPlaces,
-        niceNum,
-        setMinAndMaxByKey,
-        sign,
-        toRadians;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
 /// The object `generationOptions` of [_generateTicks]
@@ -338,17 +317,14 @@ class LinearScaleBase(super.cfg) extends Scale {
 
   /// scale.linearbase.js:164 `_startValue`. NaN stands for JS `undefined`.
   /// scale.linear.js:45, :49 read it.
-  @internal
   double startValue = double.nan;
 
   /// scale.linearbase.js:166 `_endValue`. NaN stands for JS `undefined`.
   /// scale.radialLinear.js:556 reads it.
-  @internal
   double endValue = double.nan;
 
   /// scale.linearbase.js:167 `_valueRange`. scale.linear.js:45, :49 read
   /// it.
-  @internal
   double valueRange = 0;
 
   /// scale.linearbase.js:170 `parse(raw, index)`.
@@ -369,7 +345,6 @@ class LinearScaleBase(super.cfg) extends Scale {
   /// ([jsToNumber]), also NaN for a string that is not a number. Dart has
   /// no `Number` wrapper objects, so `raw instanceof Number` has no
   /// counterpart.
-  @internal
   static Object? prototypeParse(Object? raw, [int? index]) {
     if (isNullOrUndef(raw)) {
       return null;

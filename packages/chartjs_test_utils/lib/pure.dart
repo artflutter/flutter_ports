@@ -19,14 +19,9 @@ import 'dart:collection';
 
 // The harness reads the global scopes of core.defaults.
 // flutter_chartjs_port does not export lib/src.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 // The harness sets the zone of the default date adapter.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/core/date_adapter.dart';
 // The typed scopes of the defaults (Chart.js ADR 0054).
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/options/option_scope.dart';
 import 'package:test/test.dart';
 
 export 'package:chartjs_test_utils/src/color_reference.dart';

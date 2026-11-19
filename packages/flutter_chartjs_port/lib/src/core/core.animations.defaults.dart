@@ -7,25 +7,14 @@
 /// option scopes of the kind of their path (Chart.js ADR 0054 §3).
 /// `undefined` is the [optUndefined] cell and numbers are `double` (Chart.js
 /// ADR 0146). A function value is a Dart closure
-/// (`lib/src/types/option_functions.dart`). [Defaults] is the interface of the
+/// (`lib/src/types/option_functions.dart`). [IDefaults] is the interface of the
 /// `defaults` object of `core.defaults.js`.
 library;
 
 import 'dart:ui' as ui;
 
 import 'package:flutter/animation.dart' show Curves;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart' show optUndefined;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        AnimationOptionsScope,
-        AnimationsSpecScope,
-        DescriptorsScope,
-        TransitionOptionsScope,
-        TransitionsSpecScope;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// core.animations.defaults.js:1 `numbers`.
 const List<String> _numbers = ['x', 'y', 'borderWidth', 'radius', 'tension'];
@@ -37,7 +26,7 @@ const List<String> _colors = ['color', 'borderColor', 'backgroundColor'];
 ///
 /// `defaults.set` copies the values with `merge`. Thus the const lists
 /// [_numbers] and [_colors] reach the defaults as new lists.
-void applyAnimationsDefaults(Defaults defaults) {
+void applyAnimationsDefaults(IDefaults defaults) {
   defaults
     ..set(
       'animation',

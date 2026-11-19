@@ -38,32 +38,7 @@ library;
 // libraries (Chart.js ADR 0055, Chart.js ADR 0037).
 import 'dart:ui' show TextAlign;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show
-        CanvasPath,
-        CanvasRenderingContext2D,
-        CanvasTextBaseline,
-        HTMLCanvasElement;
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
-    show InteractionMode;
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/align.dart'
-    show TooltipXAlign, TooltipYAlign;
-import 'package:flutter_chartjs_port/src/types/basic.dart' show AnyObject;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_meta.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/layout.dart';
-import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show PluginHook, PluginHookArgs;
-import 'package:flutter_chartjs_port/src/types/tick.dart';
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 export 'package:flutter_chartjs_port/src/types/active_element.dart'
@@ -94,10 +69,11 @@ abstract interface class ScaleRanges() {
   abstract double ymax;
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// index.d.ts:524 `Chart`.
-abstract interface class Chart() {
+abstract interface class IChart() {
   /// index.d.ts:529 `readonly platform: BasePlatform`.
-  BasePlatform get platform;
+  IBasePlatform get platform;
 
   /// index.d.ts:531 `readonly canvas: HTMLCanvasElement`.
   ///
@@ -197,7 +173,7 @@ abstract interface class Chart() {
   /// index.d.ts:540 `readonly scales: { [key: string]: Scale }`, the scales
   /// by id. `core.scale.js:144`, `:1064` and `:1182` read the scale of an
   /// object position from it.
-  Map<String, Scale> get scales;
+  Map<String, IScale> get scales;
 
   /// index.d.ts:546 `data: ChartData`, the data object of the
   /// configuration: a Map of the user, or the typed `ChartDataScope` of a
@@ -329,8 +305,9 @@ abstract interface class Chart() {
   void show(int datasetIndex, [int? dataIndex]);
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// index.d.ts:622 `DatasetController`.
-abstract interface class DatasetController() {
+abstract interface class IDatasetController() {
   /// index.d.ts:631 `readonly index: number`, the dataset index.
   /// `clearStacks` reads it from the meta (core.datasetController.js:210).
   int get index;
@@ -361,7 +338,7 @@ abstract interface class DatasetController() {
 
   /// index.d.ts:640 `getAllParsedValues(scale: Scale): number[]`. The time
   /// scale calls it (scale.time.js:638, :642).
-  List<double> getAllParsedValues(Scale scale);
+  List<double> getAllParsedValues(IScale scale);
 
   /// index.d.ts:641 `getLabelAndValue(index)`. plugin.tooltip.js:130 calls
   /// it.
@@ -384,7 +361,7 @@ abstract interface class DatasetController() {
   ///
   /// Dart `null` for [canStack] stands for JS `undefined`. The result is a
   /// record.
-  ({double min, double max}) getMinMax(Scale scale, [bool? canStack]);
+  ({double min, double max}) getMinMax(IScale scale, [bool? canStack]);
 
   /// core.datasetController.js:262 `options`, the resolver of the dataset
   /// options. index.d.ts does not declare it. controller.bar.js:437 reads it.
@@ -402,6 +379,7 @@ abstract interface class DatasetController() {
   Object resolveDataElementOptions(int index, [String? mode]);
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// index.d.ts:706 `Defaults`, the type of the `defaults` object of
 /// `core.defaults.js`.
 ///
@@ -411,7 +389,7 @@ abstract interface class DatasetController() {
 /// `PluginChartOptions` (index.d.ts:706) wait for their first ported caller.
 /// The concrete class of `core.defaults.js` has the same name. Thus that file
 /// imports this library with the prefix `types`.
-abstract interface class Defaults() {
+abstract interface class IDefaults() {
   /// index.d.ts:714 `set(scope: string, values: AnyObject): AnyObject`.
   ///
   /// The overload `set(values)` (index.d.ts:713) has the same name. The
@@ -435,8 +413,9 @@ abstract interface class Defaults() {
   void route(String scope, String name, String targetScope, String targetName);
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// index.d.ts:1303 `Scale`.
-abstract interface class Scale() implements Element, LayoutItem {
+abstract interface class IScale() implements IElement, LayoutItem {
   /// index.d.ts:1304 `readonly id: string`. `getStackKey` reads it
   /// (core.datasetController.js:125).
   String get id;
@@ -446,7 +425,7 @@ abstract interface class Scale() implements Element, LayoutItem {
   String get type;
 
   /// index.d.ts:1307 `readonly chart: Chart`.
-  Chart get chart;
+  IChart get chart;
 
   /// index.d.ts:1317 `axis: string`: the axis class (row
   /// `adapt-axis-objects`).
@@ -551,11 +530,12 @@ abstract interface class Scale() implements Element, LayoutItem {
   double getLineWidthForValue(Object? value);
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// index.d.ts:3676 `RadialLinearScale`. `RadialLinearScale` of
 /// `scale.radialLinear.dart` implements it. The filler tests
 /// `scale is RadialLinearScale` for `if (scale.getPointPositionForValue)`
 /// (filler.target.js:50, filler.drawing.js:28).
-abstract interface class RadialLinearScale() implements Scale {
+abstract interface class IRadialLinearScale() implements IScale {
   /// index.d.ts:3677 `xCenter`. controller.polarArea.js:167 and
   /// controller.radar.js:90 read it.
   ///
@@ -742,7 +722,7 @@ abstract interface class ChartEvent() implements Point {
   /// `platform.dom.js:114` `chart`, the chart of the event.
   /// `index.d.ts` does not declare it. Dart `null` stands for JS
   /// `undefined`, an event that `fromNativeEvent` did not make.
-  Chart? get chart;
+  IChart? get chart;
 }
 
 // DIVERGES(chartjs): adapt-text-style-fonts, index.d.ts:1812 `FontSpec` and
@@ -835,9 +815,10 @@ abstract interface class Segment() {
   Object? get style;
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// index.d.ts:2022 `LineElement`, with the fields of the class
 /// (element.line.js:243) that `helpers.segment.js` reads.
-abstract interface class LineElement() implements Element {
+abstract interface class ILineElement() implements IElement {
   /// index.d.ts:2026 `points: Point[]`. The port narrows it to point
   /// elements: `helpers.segment.js` reads their `skip` and `stop`, and
   /// `helpers.curve` writes their control points, which the line reads.
@@ -846,7 +827,7 @@ abstract interface class LineElement() implements Element {
   /// plain point in a point element (Chart.js ADR 0040, section 1). See the
   /// difference `adapt-line-points-elements`.
   // DIVERGES(chartjs): adapt-line-points-elements, point elements only.
-  List<PointElement> get points;
+  List<IPointElement> get points;
 
   /// index.d.ts:2027 `readonly segments: Segment[]`.
   List<Segment> get segments;
@@ -855,7 +836,7 @@ abstract interface class LineElement() implements Element {
   /// (index.d.ts:2023).
   ///
   /// Dart `null` stands for JS `undefined`, the start value
-  /// (element.line.js:283), as in [Element.options]. `helpers.segment.js`
+  /// (element.line.js:283), as in [IElement.options]. `helpers.segment.js`
   /// reads it through `jsGet`, which throws a `TypeError` for `null`, as a
   /// JavaScript property read of `undefined` does. JS `null` never reaches
   /// it.
@@ -865,7 +846,7 @@ abstract interface class LineElement() implements Element {
   /// element.line.js:284 `_chart`. Dart `null` stands for JS `undefined`,
   /// the start value. `controller.line.js:57` sets it. JS `null` never
   /// reaches it.
-  Chart? get chart;
+  IChart? get chart;
 
   /// element.line.js:285 `_loop`. Dart `null` stands for JS `undefined`, the
   /// start value. JS `null` never reaches it.
@@ -900,7 +881,7 @@ abstract interface class LineElement() implements Element {
   ///
   /// Dart `null` stands for the upstream `0` of a line without segments
   /// (element.line.js:327-331), which `index.d.ts` declares as `false`.
-  PointElement? first();
+  IPointElement? first();
 
   /// index.d.ts:2030 `interpolate(point, property)`. filler.drawing.js:201
   /// calls it.
@@ -929,9 +910,9 @@ abstract interface class LineElement() implements Element {
 ///
 /// The concrete `PointElement` of `element.point.dart` implements it. Thus
 /// a controller writes a point with no import of the concrete module
-/// (Chart.js ADR 0028 §1). The fakes of the tests implement [PointElement],
-/// so [PointElement] does not declare the setters, and this interface does
-/// not implement [PointElement]: the class `PointElement` stays its one
+/// (Chart.js ADR 0028 §1). The fakes of the tests implement [IPointElement],
+/// so [IPointElement] does not declare the setters, and this interface does
+/// not implement [IPointElement]: the class `PointElement` stays its one
 /// implementer (Chart.js ADR 0040 §11). A controller writes through this
 /// interface only when [typedWrites] is true. An element of a user subclass
 /// takes the writes by name, so that its `operator []=` sees each write.
@@ -994,9 +975,9 @@ abstract interface class LineElementWrites() {
   bool get typedWrites;
 
   /// element.line.js:284 `_chart`. Dart `null` stands for JS `undefined`.
-  Chart? get chart;
+  IChart? get chart;
 
-  set chart(Chart value);
+  set chart(IChart value);
 
   /// element.line.js:292 `_datasetIndex`. Dart `null` stands for JS
   /// `undefined`.
@@ -1010,9 +991,9 @@ abstract interface class LineElementWrites() {
   /// element.line.js:315 `get points()` and :308 `set points(points)`: the
   /// setter copies the elements into a typed list (row
   /// `adapt-line-points-elements`).
-  List<PointElement> get points;
+  List<IPointElement> get points;
 
-  set points(List<Element> value);
+  set points(List<IElement> value);
 }
 
 /// The typed writes of a controller into an arc element, a port-only interface
@@ -1076,11 +1057,12 @@ abstract interface class ArcElementWrites() {
 /// `index.d.ts`. The class `SimpleArc` of `plugin.filler/simpleArc.dart`
 /// implements it (Chart.js ADR 0040, sections 4 and 5).
 ///
-/// It does not implement [LineElement]. Thus `_segments`
+/// It does not implement [ILineElement]. Thus `_segments`
 /// (filler.segment.js:15) takes the `simpleArc` branch for each target that
-/// is not a [LineElement].
+/// is not a [ILineElement].
 // DIVERGES(chartjs): adapt-filler-target-classes, a port-only target interface.
-abstract interface class SimpleArc() {
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
+abstract interface class ISimpleArc() {
   /// simpleArc.js:11 `pathSegment(ctx, bounds, opts)`. Dart `null` for
   /// [bounds] is JS `undefined`.
   bool pathSegment(
@@ -1091,7 +1073,7 @@ abstract interface class SimpleArc() {
 
   /// simpleArc.js:18 `interpolate(point)`. The reader reads only `x` and
   /// `y` of the result (filler.drawing.js:203).
-  Point interpolate(PointElement point);
+  Point interpolate(IPointElement point);
 }
 
 /// core.scale.js:247 `_cache`, the data caches of a scale, as a typed
@@ -1107,21 +1089,17 @@ final class ScaleCache() {
 
   /// scale.time.js:627-648 `_cache.data`: the sorted unique parsed values
   /// of the visible datasets.
-  @internal
   List<double>? data;
 
   /// scale.time.js:651-668 `_cache.labels`: the timestamps of the labels.
-  @internal
   List<double?>? labels;
 
   /// scale.timeseries.js:137-157 `_cache.all`: the timestamps of the
   /// lookup table.
-  @internal
   List<double?>? all;
 
   /// controller.bar.js:7-20 `_cache.$bar`: the sorted unique values of the
   /// bar datasets of the scale.
-  @internal
   List<double>? bar;
 }
 
@@ -1139,7 +1117,7 @@ final class ScaleCache() {
 /// (Chart.js ADR 0038, section 6).
 abstract interface class LegendElement() implements TRBL {
   /// index.d.ts:2415 `chart`.
-  Chart get chart;
+  IChart get chart;
 
   /// index.d.ts:2417 `legendItems?: LegendItem[]`. Dart `null` stands for
   /// JS `undefined`, the value before the first `buildLabels`
@@ -1161,16 +1139,16 @@ abstract interface class LegendElement() implements TRBL {
 /// index.d.ts:2648 `TooltipModel`, with the members of Chart.js ADR 0039,
 /// section 14. The `Tooltip` class of `plugin.tooltip.dart` implements it.
 ///
-/// [x], [y] and [options] come from [Element]. A line of text is a
+/// [x], [y] and [options] come from [IElement]. A line of text is a
 /// `String`. The items of [dataPoints] are [TooltipItem]s, and the items of
 /// [body] are [TooltipBodyItem]s (row `adapt-native-tooltip-item`). The
 /// constructor sets `undefined` for these members, and `0` for [opacity]
 /// (plugin.tooltip.js:467-494). Dart `null` for a list or an alignment
 /// stands for JS `undefined`. A number getter gives NaN for JS `undefined`
 /// (Chart.js ADR 0039, section 2).
-abstract interface class TooltipModel() implements Element {
+abstract interface class TooltipModel() implements IElement {
   /// index.d.ts:2649 `readonly chart`.
-  Chart get chart;
+  IChart get chart;
 
   /// index.d.ts:2652 `dataPoints`: the tooltip items.
   List<TooltipItem>? get dataPoints;
@@ -1244,8 +1222,9 @@ abstract interface class TooltipModel() implements Element {
   ]);
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// index.d.ts:2212 `BasePlatform`.
-abstract interface class BasePlatform() {
+abstract interface class IBasePlatform() {
   /// index.d.ts:2219 `acquireContext(canvas, options?)`.
   ///
   /// The JS code passes `options.aspectRatio` as the second argument
@@ -1269,11 +1248,11 @@ abstract interface class BasePlatform() {
   /// event of `options.events`, `void Function([double? width,
   /// double? height])` for `'resize'`, and `void Function()` for
   /// `'attach'` and `'detach'`.
-  void addEventListener(Chart chart, String type, Function listener);
+  void addEventListener(IChart chart, String type, Function listener);
 
   /// index.d.ts:2244 `removeEventListener(chart, type, listener)`. The
   /// upstream platforms ignore [listener] (`platform.dom.js:350`).
-  void removeEventListener(Chart chart, String type, [Function? listener]);
+  void removeEventListener(IChart chart, String type, [Function? listener]);
 
   /// index.d.ts:2248 `getDevicePixelRatio`.
   double getDevicePixelRatio();
@@ -1316,6 +1295,7 @@ abstract interface class ChartConfiguration() {
   Object get data;
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// core.element.ts:6 `Element`, which index.d.ts:10 imports.
 ///
 /// It implements [Point], because ported code passes an element where
@@ -1326,9 +1306,9 @@ abstract interface class ChartConfiguration() {
 /// The access by name (`element[prop]`) is a member of the concrete
 /// `Element` of `core.element.dart`, not of this interface. Thus the
 /// extension [PointElementProperty] stays the property read of a
-/// [PointElement] here. A helper that must tell `undefined` from NaN tests
+/// [IPointElement] here. A helper that must tell `undefined` from NaN tests
 /// the element against [ElementPropertyRead].
-abstract interface class Element() implements Point {
+abstract interface class IElement() implements Point {
   /// core.element.ts:11 `x: number`. The concrete classes give NaN, the
   /// `ToNumber` of JS `undefined`, before the first write (Chart.js ADR
   /// 0017, section 4).
@@ -1363,17 +1343,18 @@ abstract interface class PointCircleRun() {
   int drawCircleRun(
     CanvasRenderingContext2D ctx,
     ChartArea area,
-    List<Element> elements,
+    List<IElement> elements,
     int start,
     int end,
-    List<Element> active, {
+    List<IElement> active, {
     required bool activeOnTop,
   });
 }
 
+// DIVERGES(chartjs): adapt-public-library-names, one name in the package.
 /// element.point.ts:20 `PointElement`, which index.d.ts:17 re-exports.
 ///
-/// It implements [SplinePoint], as [Element] implements [Point]:
+/// It implements [SplinePoint], as [IElement] implements [Point]:
 /// `_updateBezierControlPoints` takes `SplinePoint[]`
 /// (helpers.curve.ts:186-187), and `updateControlPoints` passes the point
 /// elements of the line (element.line.js:303). TypeScript accepts them by
@@ -1382,7 +1363,7 @@ abstract interface class PointCircleRun() {
 /// `cp2x` and `cp2y` are the members of [SplinePoint]: NaN stands for JS
 /// `undefined`, the value before `helpers.curve` writes them (Chart.js ADR
 /// 0017, section 3).
-abstract interface class PointElement() implements Element, SplinePoint {
+abstract interface class IPointElement() implements IElement, SplinePoint {
   /// element.point.ts:25 `skip?: boolean`. Dart `null` stands for JS
   /// `undefined` (Chart.js ADR 0043). JS `null` never reaches it.
   @override
@@ -1396,32 +1377,32 @@ abstract interface class PointElement() implements Element, SplinePoint {
   double size([Object? options]);
 }
 
-/// controller.radar.js:96 the property `angle` of a radar [PointElement].
+/// controller.radar.js:96 the property `angle` of a radar [IPointElement].
 ///
 /// The radar controller assigns `angle` to its point elements with the
 /// other properties (controller.radar.js:93-99). `index.d.ts` does not
 /// declare it. `helpers.segment.js` and `plugin.filler` read it by name as
-/// `point[property]` (see [PointElementProperty]). A [PointElement] that is
+/// `point[property]` (see [PointElementProperty]). A [IPointElement] that is
 /// not a [RadialPointElement] has no `angle`.
 ///
 /// The concrete `PointElement` of `element.point.dart` implements this
 /// interface. Its `angle` stays Dart `null` until the radar controller
 /// assigns it (Chart.js ADR 0017, sections 3 and 4).
-abstract interface class RadialPointElement() implements PointElement {
+abstract interface class RadialPointElement() implements IPointElement {
   /// controller.radar.js:96 `angle: pointPosition.angle`. Dart `null` stands
   /// for JS `undefined`, the value before the first update. JS `null` never
   /// reaches it.
   double? get angle;
 }
 
-/// The JS property read `point[property]` of a [PointElement] with the
+/// The JS property read `point[property]` of a [IPointElement] with the
 /// property name `'x'`, `'y'` or `'angle'`.
 ///
 /// `helpers.segment.js` reads `points[i][property]` (:47, :104), and the
 /// `property` of the bounds is `'x'`, `'y'` or `'angle'` (:72). This
 /// extension keeps that read as one expression. It is not a declaration of
 /// `index.d.ts`.
-extension PointElementProperty on PointElement {
+extension PointElementProperty on IPointElement {
   /// `point[property]` for `'x'`, `'y'` and `'angle'`.
   ///
   /// `'angle'` gives NaN when the point is not a [RadialPointElement] or has

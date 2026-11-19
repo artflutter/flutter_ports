@@ -3,11 +3,7 @@
 /// The native tick contract.
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScaleContext;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The lines of a label of the app, for example an item of `data.labels`:
 /// the label of a tick of a category scale (scale.category.js:25-31).
@@ -17,7 +13,6 @@ import 'package:meta/meta.dart';
 /// line, and another value is the line of its string form. Null gives null:
 /// the scale removes the tick. A null line of a List is not a line, as in
 /// the measure of upstream (core.scale.js:842).
-@internal
 List<String>? labelLinesOf(Object? label) => switch (label) {
   null || Undefined() => null,
   final String line => <String>[line],
@@ -87,7 +82,6 @@ class Tick({
   /// Make the same fresh context available on first access after a static
   /// measurement-plan hit. Capture the original parent/index before auto-skip;
   /// a hook-supplied context or an earlier preparation always wins.
-  @internal
   void prepareContextForLayout(ScriptableScaleContext parent, int index) {
     // DIVERGES(chartjs): adapt-lazy-tick-context, materialize on observation.
     if (_context != null || _contextParent != null) return;

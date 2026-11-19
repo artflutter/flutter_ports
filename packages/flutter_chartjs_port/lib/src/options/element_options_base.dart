@@ -17,13 +17,7 @@
 /// This library is a pure layer.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsArrayIndex;
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show JsFreezable, JsObjectFace;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The type of [_absent].
 final class const _Absent();
@@ -287,7 +281,6 @@ abstract class ElementOptions implements JsFreezable, JsObjectFace {
   /// Stores the resolved value of `$shared` of options that are not frozen:
   /// the case of [storeKey] in a generated subclass (Chart.js ADR 0093).
   /// `$shared` is a known key of each generated class.
-  @internal
   // The generated `storeKey` calls one store for each of its cases.
   // ignore: use_setters_to_change_properties
   void storeShared(Object? raw) {

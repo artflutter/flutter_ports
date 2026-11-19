@@ -11,17 +11,9 @@ import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:chartjs_gallery/main_bench.dart';
 import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
     show ZoomChart;
+// The prefix keeps the port names that Flutter also has apart.
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: Animation, the class of the animations of an element. The
-// prefix keeps it apart from the Animation of Flutter.
-import 'package:flutter_chartjs_port/src/core/core.animation.dart'
-    as port
-    show Animation;
-// Not public: Title, the element class of plugin.title.
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart' show Title;
-// Not public: Tooltip, the element class of plugin.tooltip.
-import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart'
-    show Tooltip;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart' hide Title, Tooltip;
 
@@ -967,7 +959,7 @@ void main() {
             // The mode index makes the point of each dataset active.
             expect(chart.getActiveElements(), hasLength(datasets));
             if (tooltip) {
-              final model = chart.tooltip! as Tooltip;
+              final model = chart.tooltip! as chartjs.Tooltip;
               expect(model.opacity, 1, reason: reason);
               expect(model.getActiveElements(), hasLength(datasets));
             } else {
@@ -1013,7 +1005,7 @@ void main() {
     final indexes = <Object?>[];
     for (var i = 0; i < 7; i++) {
       scene.frame!(chart);
-      final active = (chart.tooltip! as Tooltip).getActiveElements();
+      final active = (chart.tooltip! as chartjs.Tooltip).getActiveElements();
       indexes.add(active.first.index);
     }
     expect(indexes, [1, 2, 3, 4, 5, 0, 1]);
@@ -1036,7 +1028,7 @@ void main() {
           expect(animator.running(chart), isFalse);
           expect(chart.getActiveElements(), hasLength(3));
           if (tooltip) {
-            final model = chart.tooltip! as Tooltip;
+            final model = chart.tooltip! as chartjs.Tooltip;
             expect(model.opacity, 1);
             expect(model.getActiveElements().first.index, 6);
             // The ended animations stay in `$animations`.
@@ -1071,7 +1063,7 @@ void main() {
     final opacities = <double>[];
     for (var i = 0; i < 3 * chartBenchFadeFrames; i++) {
       scene.frame!(chart);
-      opacities.add((chart.tooltip! as Tooltip).opacity);
+      opacities.add((chart.tooltip! as chartjs.Tooltip).opacity);
     }
     const f = chartBenchFadeFrames;
     // The fade c ticks at the frames i + 1 + phase(c), phase(c) the
@@ -1236,7 +1228,7 @@ void main() {
             }
             // The title plugin and the subtitle plugin each add a box,
             // also with `display: false` (plugin.title.js:108-118, :129-131).
-            final block = chart.titleBlock! as Title;
+            final block = chart.titleBlock! as chartjs.Title;
             expect(chart.boxes, contains(block));
             expect(jsGet(block.options, 'display'), title, reason: reason);
             if (title) {
@@ -1614,9 +1606,8 @@ void main() {
         final points = chart.getDatasetMeta(0).data;
         double start(int index) {
           final point = points[index] as PointElement;
-          final animation = point.$animations!['x']! as port.Animation;
+          final animation = point.$animations!['x']! as chartjs.Animation;
           // The start time of the animation (core.animation.js:37).
-          // ignore: invalid_use_of_internal_member
           return animation.start;
         }
 

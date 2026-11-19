@@ -4,24 +4,7 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart' show EffectCurve;
 import 'package:flutter/animation.dart' show Curve, Curves;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show HTMLCanvasElement;
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/core/core.animations.dart';
-import 'package:flutter_chartjs_port/src/core/core.animator.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
-import 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.easing.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart';
-import 'package:flutter_chartjs_port/src/options/props.dart';
-import 'package:flutter_chartjs_port/src/options/typed_record.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
@@ -44,7 +27,7 @@ import 'animation_reference.dart';
 // of 16 ms: the fake clock of clock.now() moves by 16 ms in each one.
 
 /// A chart for the animator: it counts its draws. Its other members throw.
-final class _Chart() implements types.Chart {
+final class _Chart() implements IChart {
   int draws = 0;
 
   // The chart object of the test has no canvas: JS `undefined`. The
@@ -91,7 +74,7 @@ Map<String, Object?> _xConfig() => <String, Object?>{
 /// [easing] is the `animation.easing` of the chart options. The frame tests
 /// give the upstream formula ([EffectCurve]): their expected values come
 /// from upstream.
-Animations _resolveAnimations(types.Chart chart, String mode, {Curve? easing}) {
+Animations _resolveAnimations(IChart chart, String mode, {Curve? easing}) {
   final config = Config(<String, Object?>{
     'type': 'line',
     if (easing != null)

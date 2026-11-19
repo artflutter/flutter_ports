@@ -1,6 +1,6 @@
 // Original code, not ported from Chart.js: alternate native fill capability.
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// Optional native fill of an equivalent compound path. The current Canvas 2D
 /// path remains unchanged. A false result draws nothing and calls no writer.

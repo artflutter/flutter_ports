@@ -5,8 +5,7 @@
 // src/elements/element.point.ts at the pinned Chart.js, with the mock context
 // of chartjs-test-utils. 127 cases.
 
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated this file.
 const String pointReferenceNode = 'v24.22.1';

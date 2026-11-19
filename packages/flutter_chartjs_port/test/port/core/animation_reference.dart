@@ -8,8 +8,7 @@
 
 import 'dart:ui' show Offset;
 
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated this file.
 const String animationReferenceNode = 'v24.22.1';

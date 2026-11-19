@@ -5,8 +5,6 @@ library;
 import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
 import 'package:flutter_test/flutter_test.dart';
 
 class _ObservedConfig(super.config) extends Config {

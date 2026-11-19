@@ -1,7 +1,6 @@
 // Original code, not ported from Chart.js: the eased factors of one tick loop.
 import 'package:flutter/animation.dart' show Cubic, Curve, Curves;
-import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/animation_spec_input.dart';

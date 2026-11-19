@@ -10,21 +10,7 @@ import 'package:chartjs_test_utils/pure.dart' show RecordingContext;
 
 import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        ChartAnimation,
-        ChartConfig,
-        ChartValue,
-        DataPoint,
-        LinearAxis,
-        ScatterDataset;
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/options/element_options_base.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const red = ChartPaint.solid(ui.Color(0xffff0000));

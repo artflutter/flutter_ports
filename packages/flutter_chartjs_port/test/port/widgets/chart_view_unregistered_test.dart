@@ -4,9 +4,7 @@ library;
 
 import 'package:chartjs_test_utils/pure.dart' show removeBuiltins;
 import 'package:flutter/widgets.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, ChartConfig, ChartKind, ChartView, LineDataset;
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0048, section 3: no library code and no widget code

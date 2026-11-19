@@ -1,17 +1,14 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.segment.tests.js (MIT, Chart.js Contributors).
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
-/// A JavaScript object literal `{x, y}`, passed as a [PointElement]. The
+/// A JavaScript object literal `{x, y}`, passed as a [IPointElement]. The
 /// members that the literal does not set are `null`, which stands for JS
 /// `undefined` (index.dart). The control points are NaN, which stands for JS
 /// `undefined` (`SplinePoint`).
 final class _Point(@override final double x, @override final double y)
-    implements PointElement {
+    implements IPointElement {
   @override
   bool? get skip => null;
 

@@ -13,35 +13,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter/widgets.dart' as widgets show TextDirection;
 import 'package:flutter/widgets.dart' show Directionality, SizedBox, TextStyle;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        AxisGrid,
-        AxisTicks,
-        ChartAnimation,
-        ChartConfig,
-        ChartKind,
-        ChartLegend,
-        ChartThemeData,
-        ChartView,
-        RadarDataset,
-        RadialLinearAxis;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleDisplay;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScalePointLabelContext;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/options/foreign_audit.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.radialLinear.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The twins of Chart.js ADR 0095. Two forms of one chart go through the same

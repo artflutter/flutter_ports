@@ -30,14 +30,9 @@ library;
 
 // The harness reads the JS runtime of flutter_chartjs_port, which does not
 // export lib/src.
-// ignore_for_file: implementation_imports
 
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 export 'package:chartjs_test_utils/src/matchers.options.dart';
@@ -149,7 +144,7 @@ final class const _ToBeValidChart() extends Matcher {
     String? message;
 
     // DIVERGES(chartjs): harness-chart-matchers, Dart types for the tags.
-    if (actual is! types.Chart) {
+    if (actual is! IChart) {
       message = 'Expected ${jsToString(actual)} to be an instance of Chart';
     } else if (actual.canvas is! HTMLCanvasElement) {
       message = 'Expected canvas to be an instance of HTMLCanvasElement';
@@ -209,7 +204,7 @@ final class const _ToBeChartOfSize(final Map<String, Object?> expected)
       return false;
     }
 
-    final chart = actual! as types.Chart;
+    final chart = actual! as IChart;
     String? message;
     final canvas = chart.ctx!.canvas;
     // DIVERGES(chartjs): harness-chart-matchers, the display size rule.

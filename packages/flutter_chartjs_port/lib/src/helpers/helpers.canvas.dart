@@ -19,19 +19,7 @@ library;
 import 'dart:math' as math;
 
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray, isNullOrUndef;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show halfPi, pi, quarterPi, radPerDeg, tau, twoThirdsPi;
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart';
-
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart';
-import 'package:flutter_chartjs_port/src/types/line_option_enums.dart'
-    show SteppedLine;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 // DIVERGES(chartjs): adapt-text-style-fonts, helpers.canvas.ts:25
 // `toFontString` is gone: the canvas takes the ChartTextStyle itself.
@@ -185,7 +173,7 @@ double longestText(
 /// @private
 ///
 /// `Math.round` is `roundToDouble()` (Chart.js ADR 0146 §7).
-double alignPixel(Chart chart, double pixel, double width) {
+double alignPixel(IChart chart, double pixel, double width) {
   final devicePixelRatio = chart.currentDevicePixelRatio;
   final halfWidth = width != 0 ? math.max(width / 2, 0.5) : 0.0;
   // DIVERGES(chartjs): adapt-dart-round, a line at 0 draws at -0.5.

@@ -15,18 +15,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/helpers/cubic_interpolation_mode.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show isPointInArea;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show almostEquals, distanceBetweenPoints, sign;
-import 'package:flutter_chartjs_port/src/js/js_math.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.curve.ts:6 `EPSILON`. `Number.EPSILON` is truthy, so the
 /// fallback `1e-14` never applies.

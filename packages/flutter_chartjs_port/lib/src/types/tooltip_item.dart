@@ -3,10 +3,7 @@
 /// The native tooltip item contract.
 library;
 
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show JsObjectFace;
-import 'package:flutter_chartjs_port/src/types/index.dart' show Chart, Element;
-import 'package:flutter_chartjs_port/src/types/tick.dart' show labelLinesOf;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
 
 /// The lines of the label of a data item, the `label` of
@@ -18,7 +15,6 @@ import 'package:meta/meta.dart';
 /// one line, a List is the List of its lines, and another value is the line
 /// of its string form ([labelLinesOf]). A falsy value (`''`, `0`, JS `null`,
 /// `undefined`) is no label: the empty List.
-@internal
 List<String> dataLabelLinesOf(Object? label) =>
     jsTruthy(label) ? labelLinesOf(label)! : const <String>[];
 
@@ -33,7 +29,7 @@ List<String> dataLabelLinesOf(Object? label) =>
 @immutable
 class const TooltipItem({
   /// The chart of the tooltip (index.d.ts:2982).
-  required final Chart chart,
+  required final IChart chart,
 
   /// The index of the dataset in `data.datasets` (index.d.ts:3012).
   required final int datasetIndex,
@@ -60,7 +56,7 @@ class const TooltipItem({
   required final Object? raw,
 
   /// The data element (index.d.ts:3022). Null for an index with no element.
-  final Element? element,
+  final IElement? element,
 }) {
   /// Creates a tooltip item.
   this;

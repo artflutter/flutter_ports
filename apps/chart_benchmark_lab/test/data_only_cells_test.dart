@@ -3,9 +3,9 @@ import 'package:chart_benchmark_lab/benchmark/controller.dart'
     show chartJsDataOnlyUpdates;
 import 'package:chart_benchmark_lab/benchmark/data.dart';
 import 'package:chart_benchmark_lab/charts/chart_adapter.dart';
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 // The test reads the chart of the widget, as the tests of the package do.
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as cj;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 

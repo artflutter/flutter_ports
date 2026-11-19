@@ -1,20 +1,8 @@
 // Original code, not ported from Chart.js: core.interaction cases with no spec.
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.interaction.dart';
-import 'package:flutter_chartjs_port/src/elements/element.arc.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    as helpers;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/platform/native_event.dart';
-import 'package:flutter_chartjs_port/src/types/active_element.dart';
-import 'package:flutter_chartjs_port/src/types/animation.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
+// The method isPointInArea hides the helper.
+import 'package:flutter_chartjs_port/chartjs_core.dart' as helpers;
 import 'package:test/test.dart';
 
 import 'interaction_reference.dart';
@@ -44,7 +32,7 @@ final class _Animation({
   /// The result of [active].
   required final bool isActive,
   @override required final Object? to,
-}) implements Animation {
+}) implements IAnimation {
   @override
   bool active() => isActive;
 }
@@ -149,7 +137,7 @@ final class _Area(
   @override final double top,
   @override final double right,
   @override final double bottom,
-) implements types.ChartArea {
+) implements ChartArea {
   @override
   double get width => right - left;
 
@@ -159,22 +147,22 @@ final class _Area(
 
 /// A position `{x, y}`.
 final class const _Point(@override final double x, @override final double y)
-    implements types.Point;
+    implements Point;
 
 /// A scale with the two members that core.interaction.js reads.
 final class _Scale(
   @override final ScaleAxis axis, {
   @override final bool reversePixels = false,
-}) implements types.Scale {
+}) implements IScale {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 /// A controller with `_cachedMeta` and `_sharedOptions`.
 final class _Controller(@override final Map<String, Object?>? sharedOptions)
-    implements types.DatasetController {
+    implements IDatasetController {
   @override
-  late final types.ChartMeta cachedMeta;
+  late final ChartMeta cachedMeta;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -184,13 +172,13 @@ final class _Controller(@override final Map<String, Object?>? sharedOptions)
 final class _Meta({
   @override required final int index,
   @override required final bool sorted,
-  @override required final List<types.Element> data,
+  @override required final List<IElement> data,
   @override required final List<Map<String, Object?>> parsed,
-  @override required final types.Element? dataset,
-  @override required final types.Scale? iScale,
-  @override required final types.Scale? vScale,
-  @override required final types.DatasetController controller,
-}) implements types.ChartMeta {
+  @override required final IElement? dataset,
+  @override required final IScale? iScale,
+  @override required final IScale? vScale,
+  @override required final IDatasetController controller,
+}) implements ChartMeta {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
@@ -199,19 +187,19 @@ final class _Meta({
 /// `isPointInArea` is `_isPointInArea(point, chartArea, minPadding)`, as
 /// core.controller.js:816-818.
 final class _Chart(
-  @override var types.ChartArea chartArea,
+  @override var ChartArea chartArea,
   final double _minPadding,
-  final List<types.ChartMeta> _metas,
-) implements types.Chart {
+  final List<ChartMeta> _metas,
+) implements IChart {
   @override
-  List<types.ChartMeta> getSortedVisibleDatasetMetas() => [..._metas];
+  List<ChartMeta> getSortedVisibleDatasetMetas() => [..._metas];
 
   @override
-  types.ChartMeta getDatasetMeta(num datasetIndex) =>
+  ChartMeta getDatasetMeta(num datasetIndex) =>
       _metas.firstWhere((meta) => meta.index == datasetIndex.toDouble());
 
   @override
-  bool isPointInArea(types.Point point) =>
+  bool isPointInArea(Point point) =>
       helpers.isPointInArea(point, chartArea, _minPadding);
 
   @override
@@ -222,8 +210,8 @@ final class _Chart(
 final class _Event(
   @override final double? x,
   @override final double? y,
-  @override final types.Chart? chart,
-) implements types.ChartEvent {
+  @override final IChart? chart,
+) implements ChartEvent {
   @override
   String get type => 'click';
 
@@ -258,7 +246,7 @@ Element _element(
 /// The fake chart of [scene], whose elements record their calls in [trace].
 _Chart _chart(InteractionReferenceScene scene, List<String> trace) {
   final (left, top, right, bottom) = scene.chartArea;
-  final metas = <types.ChartMeta>[];
+  final metas = <ChartMeta>[];
   for (final m in scene.metas) {
     final controller = _Controller(
       m.sharedOptions ? <String, Object?>{} : null,
@@ -464,13 +452,13 @@ void main() {
 
   group('getRange (Chart.js ADR 0020, section 9)', () {
     test('PointElement and BarElement implement VisualElementRange', () {
-      expect(PointElement(), isA<types.VisualElementRange>());
-      expect(BarElement(), isA<types.VisualElementRange>());
+      expect(PointElement(), isA<VisualElementRange>());
+      expect(BarElement(), isA<VisualElementRange>());
     });
 
     test('ArcElement and LineElement do not implement it', () {
-      expect(ArcElement(), isNot(isA<types.VisualElementRange>()));
-      expect(LineElement(), isNot(isA<types.VisualElementRange>()));
+      expect(ArcElement(), isNot(isA<VisualElementRange>()));
+      expect(LineElement(), isNot(isA<VisualElementRange>()));
     });
 
     test('a BarElement with shared options gives the range of the binary '
@@ -554,7 +542,7 @@ void main() {
 final class const _NoItemsMode() extends InteractionMode {
   @override
   List<ActiveElement> itemsAt(
-    types.Chart chart,
+    IChart chart,
     Object e,
     Object options, [
     bool? useFinalPosition,

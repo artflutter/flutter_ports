@@ -1,13 +1,10 @@
 // Original code, not ported from Chart.js: the scalar control point writes.
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
-List<types.PointElement> _points(int seed) {
+List<IPointElement> _points(int seed) {
   final r = math.Random(seed);
   var x = 0.0;
   return [
@@ -70,7 +67,7 @@ void main() {
   });
 
   test('a write ends the undefined state of a control point', () {
-    final points = <types.PointElement>[
+    final points = <IPointElement>[
       PointElement()
         ..x = 0
         ..y = 0,

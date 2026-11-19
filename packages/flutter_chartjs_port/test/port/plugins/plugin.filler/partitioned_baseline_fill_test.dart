@@ -8,19 +8,7 @@ library;
 import 'dart:math' as math;
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_path.dart'
-    show deferredPathCommands;
-import 'package:flutter_chartjs_port/src/elements/element.line.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart'
-    show DefaultCubicInterpolationMode;
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/partitioned_baseline_fill.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../canvas/pixel_compare.dart';
@@ -36,7 +24,7 @@ LineElement _line() => LineElement()
     'stepped': false,
     'cubicInterpolationMode': const DefaultCubicInterpolationMode(),
   })
-  ..points = <types.PointElement>[
+  ..points = <IPointElement>[
     for (var i = 0; i < 1057; i++)
       PointElement()
         ..x = 10 + i * .12
@@ -49,7 +37,7 @@ LineElement _line() => LineElement()
 
 LineElement _boundary(LineElement line) =>
     LineElement()
-      ..points = <types.PointElement>[
+      ..points = <IPointElement>[
         PointElement()
           ..x = line.points.first.x
           ..y = 125,
@@ -193,7 +181,7 @@ void main() {
     // The fill path stays out of the engine from a lower count of points.
     final short = LineElement()
       ..options = LineOptions(<String, Object?>{'tension': .4})
-      ..points = <types.PointElement>[
+      ..points = <IPointElement>[
         for (var i = 0; i < 300; i++)
           PointElement()
             ..x = i * .5
@@ -214,7 +202,7 @@ void main() {
     addTearDown(ctx.dispose);
     final short = LineElement()
       ..options = LineOptions(<String, Object?>{'tension': .4})
-      ..points = <types.PointElement>[
+      ..points = <IPointElement>[
         for (var i = 0; i < 100; i++)
           PointElement()
             ..x = i.toDouble()

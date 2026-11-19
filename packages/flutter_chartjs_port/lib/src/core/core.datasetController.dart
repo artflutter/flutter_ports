@@ -43,79 +43,18 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasRenderingContext2D;
-import 'package:flutter_chartjs_port/src/core/animation_share.dart'
-    show SharedBarAnimations;
-import 'package:flutter_chartjs_port/src/core/bar_fast_loop.dart'
-    show fastStackLoopIsNative;
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/core/core.animations.dart';
-import 'package:flutter_chartjs_port/src/core/core.config.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
+// The static defaults of DatasetController has the name of the module value.
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 // DatasetController has a static `defaults`. Inside the class, upstream
 // `defaults` is the import of core.defaults.js.
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart'
-    as core_defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show DataUpdateShape, nativeDataUpdateList;
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show nativePointDatasetIndex;
-import 'package:flutter_chartjs_port/src/core/primitive_parse.dart';
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    show ElementOptions, PointOptions, createElementOptions;
-import 'package:flutter_chartjs_port/src/helpers/helpers.collection.dart'
-    show ArrayListener, listenArrayEvents, unlistenArrayEvents;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show IndexedElementStyles, OptionView, attachContext, readOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isArray, isFinite, isObject, resolveObjectKey, valueOrDefault;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show MinMax, sign;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ContextObject, ScriptableContext;
-import 'package:flutter_chartjs_port/src/js/js_array.dart'
-    show JsStringList, jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsGetKey, jsObjectFreeze, jsSet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/option_scope.dart'
-    show OptionScope;
-import 'package:flutter_chartjs_port/src/options/parsed.dart'
-    show IndexValues, ItemStacks, ParsedItem, StackEntry;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show ChartAnimationItems, transitionIn;
-import 'package:flutter_chartjs_port/src/options/props.dart'
-    show PointProperties;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        ArcOptionsScope,
-        BarOptionsScope,
-        GenericDatasetOptionsScope,
-        PointOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show FillTarget, fillTargetTruthy;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/data_item.dart'
-    show TypedDataItem;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/tooltip_item.dart'
-    show dataLabelLinesOf;
 import 'package:meta/meta.dart';
 
 /// core.datasetController.js:12 `scaleClip`.
 ///
 /// `scale && scale.options || {}`: the options of a scale are always an
 /// object. The edges are [allowedOverflow] or 0.
-({double start, double end}) _scaleClip(
-  types.Scale? scale,
-  double allowedOverflow,
-) {
+({double start, double end}) _scaleClip(IScale? scale, double allowedOverflow) {
   final opts = scale?.options ?? const <String, Object?>{};
   final reverse = readOption(opts, OptionKey.reverse);
   final min = identical(readOption(opts, OptionKey.min), undefined)
@@ -133,29 +72,24 @@ import 'package:meta/meta.dart';
 /// core.datasetController.js:23 `defaultClip`, with the `toClip` of its
 /// result.
 ///
-/// No overflow (Dart `null`, the JS `false`) gives [types.ChartClip.none].
+/// No overflow (Dart `null`, the JS `false`) gives [ChartClip.none].
 // DIVERGES(chartjs): adapt-chart-clip-option, the edges are a ChartClip.
-types.ChartClip _defaultClip(
-  types.Scale? xScale,
-  types.Scale? yScale,
+ChartClip _defaultClip(
+  IScale? xScale,
+  IScale? yScale,
   double? allowedOverflow,
 ) {
   if (allowedOverflow == null) {
-    return types.ChartClip.none;
+    return ChartClip.none;
   }
   final x = _scaleClip(xScale, allowedOverflow);
   final y = _scaleClip(yScale, allowedOverflow);
 
-  return types.ChartClip(
-    top: y.end,
-    right: x.end,
-    bottom: y.start,
-    left: x.start,
-  );
+  return ChartClip(top: y.end, right: x.end, bottom: y.start, left: x.start);
 }
 
 /// core.datasetController.js:59 `getSortedDatasetIndices`.
-List<int> _getSortedDatasetIndices(types.Chart chart, bool filterVisible) {
+List<int> _getSortedDatasetIndices(IChart chart, bool filterVisible) {
   final keys = <int>[];
   final metasets = chart.getSortedDatasetMetas(filterVisible);
 
@@ -179,11 +113,11 @@ Object? _applyStack(
   DatasetStack stack,
   Object? value,
   int dsIndex, {
-  types.StackMode? mode,
+  StackMode? mode,
   bool all = false,
 }) {
   final keys = stack.keys;
-  final singleMode = mode == types.StackMode.single;
+  final singleMode = mode == StackMode.single;
   int datasetIndex;
   Object? otherValue;
 
@@ -239,7 +173,7 @@ Object _plus(Object? value, num other) {
 /// values through its face. `Object.keys` gives the JS key order. Each item
 /// is a plain object of the data, as upstream: with `parsing: false` it is
 /// the parsed item.
-List<Object?> _convertObjectDataToArray(Object data, types.ChartMeta meta) {
+List<Object?> _convertObjectDataToArray(Object data, ChartMeta meta) {
   final iScale = meta.iScale!;
   final vScale = meta.vScale!;
   // `iScale.axis === 'x' ? 'x' : 'y'`: the keys of the plain data objects.
@@ -264,21 +198,19 @@ List<Object?> _convertObjectDataToArray(Object data, types.ChartMeta meta) {
 ///
 /// `stacked || (stacked === undefined && meta.stack !== undefined)`.
 // DIVERGES(chartjs): adapt-stacked-option-enum, the option is a
-// [types.StackMode], and Dart `null` is `undefined`.
-types.StackMode _isStacked(types.Scale? scale, types.ChartMeta meta) {
+// [StackMode], and Dart `null` is `undefined`.
+StackMode _isStacked(IScale? scale, ChartMeta meta) {
   final stacked = scale == null
       ? null
       : stackModeOf(readOption(scale.options, OptionKey.stacked));
-  return stacked ??
-      (meta.stack != null ? types.StackMode.on : types.StackMode.off);
+  return stacked ?? (meta.stack != null ? StackMode.on : StackMode.off);
 }
 
-/// The value of the scale option `stacked`: a [types.StackMode], or Dart
+/// The value of the scale option `stacked`: a [StackMode], or Dart
 /// `null` for no value. Another value stops a debug build (row
 /// `adapt-stacked-option-enum`).
-@internal
-types.StackMode? stackModeOf(Object? value) {
-  if (value is types.StackMode) return value;
+StackMode? stackModeOf(Object? value) {
+  if (value is StackMode) return value;
   assert(
     value == null || value is Undefined,
     'The scale option stacked takes a StackMode, not $value.',
@@ -290,7 +222,6 @@ types.StackMode? stackModeOf(Object? value) {
 /// `null` for JS `undefined` and `null`, else the string. The schema shape of
 /// both is `string`: another value stops a debug build, and a release build
 /// takes no id (row `adapt-native-chart-meta`, Chart.js ADR 0176).
-@internal
 String? metaStringOf(Object? value, String option) {
   if (value is String) return value;
   if (value == null || value is Undefined) return null;
@@ -299,18 +230,14 @@ String? metaStringOf(Object? value, String option) {
 }
 
 /// core.datasetController.js:124 `getStackKey`.
-String _getStackKey(
-  types.Scale indexScale,
-  types.Scale valueScale,
-  types.ChartMeta meta,
-) {
+String _getStackKey(IScale indexScale, IScale valueScale, ChartMeta meta) {
   final stack = meta.stack;
   return '${indexScale.id}.${valueScale.id}.'
       '${stack != null && stack.isNotEmpty ? stack : meta.type}';
 }
 
 /// core.datasetController.js:128 `getUserBounds`.
-({double min, double max}) _getUserBounds(types.Scale scale) {
+({double min, double max}) _getUserBounds(IScale scale) {
   final (:min, :max, :minDefined, :maxDefined) = scale.getUserBounds();
   return (
     min: minDefined ? min : double.negativeInfinity,
@@ -360,7 +287,7 @@ StackEntry _getOrCreateSubStackEntry(
 
 /// The dataset indexes of `vScale.getMatchingVisibleMetas(type).reverse()`
 /// of `getLastIndexInStack`.
-List<int> _reversedVisibleIndices(types.Scale vScale, String type) => [
+List<int> _reversedVisibleIndices(IScale vScale, String type) => [
   for (final meta in vScale.getMatchingVisibleMetas(type).reversed) meta.index,
 ];
 
@@ -384,7 +311,7 @@ int? _lastIndexIn(StackEntry stack, List<int> reversed, bool positive) {
 /// Dart `null` stands for the JS `null` result.
 int? _getLastIndexInStack(
   StackEntry stack,
-  types.Scale vScale,
+  IScale vScale,
   bool positive,
   String type,
 ) {
@@ -446,7 +373,6 @@ Object? _stackValueOf(Object? stack, int datasetIndex) => switch (stack) {
 /// `_visualValues` (controller.bar.js:615). Another value is a `_stacks`
 /// object of a user data item: a Map, else the cast throws a [TypeError],
 /// as the JS write into a primitive does.
-@internal
 void setStackValue(Object? stack, int datasetIndex, Object? value) {
   switch (stack) {
     case final StackEntry entry:
@@ -476,7 +402,6 @@ void _deleteStackValue(Object? stack, int datasetIndex) {
 /// :222; controller.bar.js:615). A [StackEntry] reads typed; a value of
 /// another class that user code wrote reads through the face. Another stack
 /// object is a `_stacks` object of a user data item: it reads by name.
-@internal
 Object? visualValuesOf(Object? stack) => stack is StackEntry
     ? stack.visualValues ?? stack.jsRead('_visualValues')
     : jsGetKey(stack, '_visualValues');
@@ -488,7 +413,6 @@ Object? visualValuesOf(Object? stack) => stack is StackEntry
 /// that user code gave a data item of `parsing: false`: it reads by the key
 /// of the axis ([axisDataKey]), and Dart `null` and [undefined] throw a
 /// [TypeError]. An axis of another class has no key: [undefined].
-@internal
 Object? axisStackOf(Object? itemStacks, ScaleAxis axis) {
   final key = axisDataKey(axis);
   if (itemStacks is ItemStacks) {
@@ -626,7 +550,7 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
 /// core.datasetController.js:177 `getFirstScaleId`: the first key of
 /// `chart.scales` whose scale has [axis] ([sameAxis]), or Dart `null` for
 /// `undefined`.
-String? _getFirstScaleId(types.Chart chart, ScaleAxis axis) {
+String? _getFirstScaleId(IChart chart, ScaleAxis axis) {
   final scales = chart.scales;
   return jsObjectKeys(scales)
       .where((key) => sameAxis(scales[key]!.axis, axis))
@@ -661,7 +585,7 @@ ScriptableContext _createDataContext(
 ///
 /// The loop continues after a parsed item without a value of the dataset in
 /// its stack (:220, ledger row #12155). v4.5.1 returns there.
-void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
+void _clearStacks(ChartMeta meta, [List<Object?>? items]) {
   // Not using meta.index here, because it might be already updated if the
   // dataset changed location
   final datasetIndex = meta.controller!.index;
@@ -701,7 +625,6 @@ void _clearStacks(types.ChartMeta meta, [List<Object?>? items]) {
 /// The cache entry of the element options that the last call of one loop
 /// read, for [DatasetController.resolveHeldDataElementOptions] (Chart.js ADR
 /// 0165). A loop makes one and drops it at its end.
-@internal
 // DIVERGES(chartjs): adapt-held-element-options, it lives inside one loop.
 final class HeldElementOptions._() {
   /// A hold for one loop, or Dart `null` when [heldElementOptionsEnabled] is
@@ -762,14 +685,10 @@ ElementOptions _cloneIfNotShared(ElementOptions cached, bool shared) =>
 /// core.datasetController.js:231 `createStack`.
 ///
 /// Dart `null` stands for each falsy result of the `&&` chain.
-DatasetStack? _createStack(
-  Object? canStack,
-  types.ChartMeta meta,
-  types.Chart chart,
-) =>
+DatasetStack? _createStack(Object? canStack, ChartMeta meta, IChart chart) =>
     jsTruthy(canStack) &&
         !jsTruthy(meta.hidden) &&
-        meta.stacked != types.StackMode.off
+        meta.stacked != StackMode.off
     ? DatasetStack(_getSortedDatasetIndices(chart, true), null)
     : null;
 
@@ -855,7 +774,6 @@ bool _presizeParsed(
 /// [_presizeParsed] for a parse that writes the numbers of the native List
 /// [data] in a loop with no user code (controller.doughnut.js:153-165).
 /// Another [data] keeps the growth by one.
-@internal
 void presizeParsedNumbers(
   List<Object?> items,
   Object? data,
@@ -895,7 +813,6 @@ String _numberKey(double value) {
 /// gives [undefined] for a number or a boolean and throws a [TypeError] for
 /// `null` and [undefined]. An axis of another class has no key: [undefined]
 /// (row `adapt-axis-objects`).
-@internal
 @pragma('vm:prefer-inline')
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
@@ -914,7 +831,6 @@ Object? parsedValueOf(Object? item, ScaleAxis axis) {
 /// setter for [XAxis] or [YAxis], else the write by the key of the axis
 /// ([axisDataKey]) of the face. An axis of another class has no key: no
 /// write.
-@internal
 void setPointAxis(PointProperties properties, ScaleAxis axis, double value) {
   switch (axis) {
     case XAxis():
@@ -933,7 +849,6 @@ void setPointAxis(PointProperties properties, ScaleAxis axis, double value) {
 /// A [TypedDataItem] gives its typed field for the parsing key `x` or `y`
 /// (Chart.js ADR 0054 §7). Another key, and an item of another class, read
 /// by the key path of [resolveObjectKey].
-@internal
 Object? dataItemValue(Object? item, String key) => item is TypedDataItem
     ? switch (key) {
         'x' => item.x,
@@ -977,7 +892,6 @@ bool _isPrimitive(Object? item) =>
 /// [undefined] for a number, a [TypeError] for `null`. Each other value, for
 /// example a List or a [DateTime], gives the entry that `_updateStacks`
 /// wrote for it, or Dart `null` (Chart.js ADR 0036).
-@internal
 Object? stacksOf(Object? item) {
   if (item is ParsedItem) {
     return item.hasSlot(4) ? item.stacks ?? item.jsRead('_stacks') : undefined;
@@ -1015,11 +929,11 @@ void _consoleWarn(String message) {
 /// `chartjs.dart` exports it: the class value of a controller of another
 /// package reads its arguments with it (Chart.js ADR 0133).
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-({types.Chart chart, int datasetIndex}) controllerArgs(List<Object?> args) {
+({IChart chart, int datasetIndex}) controllerArgs(List<Object?> args) {
   final chart = args.isEmpty ? undefined : args[0];
   final datasetIndex = args.length < 2 ? undefined : args[1];
   return switch (chart) {
-    final types.Chart value => (
+    final IChart value => (
       chart: value,
       // An absent or another argument is no dataset index, -1.
       datasetIndex: datasetIndex is num && datasetIndex.isFinite
@@ -1035,10 +949,10 @@ void _consoleWarn(String message) {
 /// core.datasetController.js:234 `DatasetController`.
 class DatasetController(
   /// core.datasetController.js:256 `chart` (index.d.ts:630).
-  final types.Chart chart,
+  final IChart chart,
   int datasetIndex, [
   JsClass? newTarget,
-]) with ArrayListener<Object?> implements types.DatasetController {
+]) with ArrayListener<Object?> implements IDatasetController {
   /// core.datasetController.js:255 `constructor(chart, datasetIndex)`.
   ///
   /// @param {Chart} chart
@@ -1096,7 +1010,6 @@ class DatasetController(
   /// controller.bar.js:677 reads it. Dart `null` stands for the JS `null` of
   /// a chart without a context. It is writable, as the JS property: the
   /// reference tests put a recording context here.
-  @internal
   CanvasRenderingContext2D? ctx = chart.ctx;
 
   /// core.datasetController.js:258 `index`, the dataset index
@@ -1141,11 +1054,10 @@ class DatasetController(
   /// it, as upstream subclasses read the protected `_cachedMeta` (Chart.js
   /// ADR 0133).
   @override
-  late final types.ChartMeta cachedMeta;
+  late final ChartMeta cachedMeta;
 
   /// core.datasetController.js:261 `_type`, the dataset type of the meta.
   /// controller.bar.js:436 and controller.doughnut.js:192 read it.
-  @internal
   late final String type;
 
   /// core.datasetController.js:262 `options`, the resolver of the dataset
@@ -1160,7 +1072,6 @@ class DatasetController(
 
   /// core.datasetController.js:264 `_parsing`, the `parsing` option: `false`
   /// or an object of the parsing keys. `@type {boolean | object}`.
-  @internal
   @override
   Object? parsing = false;
 
@@ -1176,48 +1087,39 @@ class DatasetController(
   /// data elements share (Chart.js ADR 0021, section 3).
   /// `core.interaction.js:49` reads it. Dart `null` stands for JS
   /// `undefined`, the start value.
-  @internal
   @override
   ElementOptions? sharedOptions;
 
   /// core.datasetController.js:268 `_drawStart`: the first data element of
   /// [draw]. controller.line.js:48 writes it. Dart `null` stands for JS
   /// `undefined`.
-  @internal
   int? drawStart;
 
   /// core.datasetController.js:269 `_drawCount`: the count of data elements
   /// of [draw]. controller.line.js:49 writes it. Dart `null` stands for JS
   /// `undefined`.
-  @internal
   int? drawCount;
 
   /// core.datasetController.js:270 `enableOptionSharing`.
   bool enableOptionSharing = false;
 
   /// Unknown controllers keep the full lifecycle.
-  @internal
   bool get supportsDataUpdates => false;
 
   /// Default native point fields used by the incremental input preflight.
-  @internal
   DataUpdateShape get dataUpdateShape => DataUpdateShape.cartesian;
 
   /// True only while the chart runs its explicit data-only lifecycle.
-  @internal
   bool updatingData = false;
 
   /// A stable layout and primitive index sequence permit controller reuse.
-  @internal
   bool reuseDataLayout = false;
 
   /// The current source is an ordinary numeric array.
-  @internal
   bool primitiveDataUpdate = false;
 
   /// Whether the ordinary full update resolved context-independent styles.
   /// The cache records this even for controllers that do not share options.
-  @internal
   bool get hasStaticDataUpdateOptions =>
       _hasCachedEntry(dataElementType) &&
       (cachedMeta.dataset == null || _hasCachedEntry(datasetElementType));
@@ -1240,7 +1142,6 @@ class DatasetController(
   /// scopes or of the resolvers changes it. `updateData` states that the
   /// options stay unchanged, so the items of the indexed lists are read once
   /// for each generation.
-  @internal
   // DIVERGES(chartjs): adapt-data-update-indexed-plan, the proof of the path.
   bool get hasDataUpdateOptions {
     final config = chart.config;
@@ -1277,12 +1178,10 @@ class DatasetController(
   /// The built-in `generateLabels` of this exact class, or Dart `null`: the
   /// doughnut, pie and polar area controllers name theirs (Chart.js ADR 0092).
   /// A subclass and another controller keep the ordinary legend builds.
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the built-in generator.
   Object? get nativeLegendGenerator => null;
 
   /// The label options that [nativeLegendGenerator] reads, in its order.
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the reads of the generator.
   List<OptionKey> get nativeLegendLabelKeys => const [];
 
@@ -1291,14 +1190,12 @@ class DatasetController(
   /// an update can rebuild the arcs before its own mark. That build runs no
   /// user code, and a read writes no context, as a read of the snapshot of
   /// upstream writes none. Dart `null` at each other time.
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, a later build, no writes.
   ({IndexedElementStyles styles, int arcCount})? legendStyles;
 
   /// Whether `getStyle(index)` of a data element reads a cached `default`
   /// entry of [_resolveElementOptions]: the read then runs no context and no
   /// option function (Chart.js ADR 0092).
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof of a legend build.
   bool get hasCachedDefaultDataOptions => _cachedElementOptions.containsKey(
     '${jsToString(_idOf(dataElementType))}-default',
@@ -1309,7 +1206,6 @@ class DatasetController(
   /// another mode came from this resolver and this `needContext` result, and no
   /// clear of the caches came after it. The entry of the mode `active` has
   /// other prefixes (Chart.js ADR 0092).
-  @internal
   // DIVERGES(chartjs): adapt-hidden-legend-items, the proof with no call.
   bool get defaultDataOptionsNeedNoContext =>
       hasStaticDataUpdateOptions &&
@@ -1427,7 +1323,7 @@ class DatasetController(
   }
 
   /// core.datasetController.js:323 `getMeta()`.
-  types.ChartMeta getMeta() {
+  ChartMeta getMeta() {
     return chart.getDatasetMeta(index);
   }
 
@@ -1439,11 +1335,11 @@ class DatasetController(
   /// Dart `null` for [scaleID] and for the result stands for JS
   /// `undefined`. A scale id is a `String` (Chart.js ADR 0176).
   // DIVERGES(chartjs): adapt-string-ids, a String id only.
-  types.Scale? getScaleForId(String? scaleID) => chart.scales[scaleID];
+  IScale? getScaleForId(String? scaleID) => chart.scales[scaleID];
 
   /// core.datasetController.js:338 `_getOtherScale(scale)`.
   /// @private
-  types.Scale? _getOtherScale(types.Scale scale) {
+  IScale? _getOtherScale(IScale scale) {
     final meta = cachedMeta;
     return identical(scale, meta.iScale) ? meta.vScale : meta.iScale;
   }
@@ -1456,14 +1352,13 @@ class DatasetController(
   /// core.datasetController.js:352 `_destroy()`. core.controller.js:922
   /// calls it.
   /// @private
-  @internal
   void destroy() {
     final meta = cachedMeta;
     final data = _data;
     if (data != null) {
       unlistenArrayEvents(data, this);
     }
-    if (meta.stacked != types.StackMode.off) {
+    if (meta.stacked != StackMode.off) {
       _clearStacks(meta);
     }
   }
@@ -1595,7 +1490,6 @@ class DatasetController(
   /// contract of `Chart.updateRanges` no option of the scopes changed, so
   /// the kept resolver gives the values of a new one, and each scriptable
   /// option runs again through the new view.
-  @internal
   // DIVERGES(chartjs): adapt-range-updates, configure with a kept resolver.
   void configureKeptResolver() {
     options = attachContext(options.resolver, getContext());
@@ -1677,7 +1571,7 @@ class DatasetController(
       meta.sorted = sorted;
     }
 
-    if (stacked != types.StackMode.off) {
+    if (stacked != StackMode.off) {
       _updateStacks(this, parsed);
     }
   }
@@ -1699,7 +1593,7 @@ class DatasetController(
   /// order (Chart.js ADR 0054 §8). With one scale for both axes, the item
   /// has one key: the second key of the object literal replaces the first.
   List<ParsedItem> parsePrimitiveData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -1754,7 +1648,7 @@ class DatasetController(
   /// Each item is a [ParsedItem] `{x, y}`. `item[0]` and `item[1]` are
   /// [jsGetIndex]: the item of a List, else the property `'0'` or `'1'`.
   List<ParsedItem> parseArrayData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -1796,7 +1690,7 @@ class DatasetController(
   /// Each item is a [ParsedItem] `{x, y}`. A [TypedDataItem] gives its typed
   /// field for the default key ([dataItemValue]).
   List<ParsedItem> parseObjectData(
-    types.ChartMeta meta,
+    ChartMeta meta,
     List<Object?> data,
     int start,
     int count,
@@ -1843,7 +1737,7 @@ class DatasetController(
   ///
   /// Dart `null` stands for the JS `undefined` of an index that names no
   /// element.
-  types.Element? getDataElement(int index) {
+  IElement? getDataElement(int index) {
     return _at(cachedMeta.data, index);
   }
 
@@ -1853,11 +1747,7 @@ class DatasetController(
   /// [mode] is the `_stacked` value of the meta. The
   /// result is the upstream result: [undefined] for a `null` value, else a
   /// number, or a string for a string value.
-  Object? applyStack(
-    types.Scale scale,
-    Object? parsed, [
-    types.StackMode? mode,
-  ]) {
+  Object? applyStack(IScale scale, Object? parsed, [StackMode? mode]) {
     final chart = this.chart;
     final meta = cachedMeta;
     final axis = scale.axis;
@@ -1871,7 +1761,6 @@ class DatasetController(
 
   /// The dataset indexes of the visible metas in their sorted order: the
   /// `getSortedDatasetIndices(chart, true)` of [applyStack].
-  @internal
   List<int> sortedVisibleDatasetIndices() =>
       _getSortedDatasetIndices(chart, true);
 
@@ -1880,11 +1769,10 @@ class DatasetController(
   /// user code (Chart.js ADR 0152). The result is the result of
   /// [applyStack].
   // DIVERGES(chartjs): adapt-bulk-bar-update, the sorted indexes read once.
-  @internal
   Object? applyStackWith(
-    types.Scale scale,
+    IScale scale,
     Object? parsed,
-    types.StackMode? mode,
+    StackMode? mode,
     List<int> indexes,
   ) {
     final axis = scale.axis;
@@ -1903,7 +1791,7 @@ class DatasetController(
   /// Dart `null` for [stack] stands for the falsy values of `createStack`.
   void updateRangeFromParsed(
     MinMax range,
-    types.Scale scale,
+    IScale scale,
     Object? parsed,
     DatasetStack? stack,
   ) {
@@ -1931,7 +1819,7 @@ class DatasetController(
   /// compares with the user bounds through `ToNumber`, as the JavaScript
   /// `>` and `<` do.
   @override
-  ({double min, double max}) getMinMax(types.Scale scale, [bool? canStack]) {
+  ({double min, double max}) getMinMax(IScale scale, [bool? canStack]) {
     final meta = cachedMeta;
     final parsedItems = meta.parsed;
     final sorted = meta.sorted && identical(scale, meta.iScale);
@@ -1980,7 +1868,7 @@ class DatasetController(
 
   /// core.datasetController.js:662 `getAllParsedValues(scale)`.
   @override
-  List<double> getAllParsedValues(types.Scale scale) {
+  List<double> getAllParsedValues(IScale scale) {
     final parsed = cachedMeta.parsed;
     final values = <double>[];
     final axis = scale.axis;
@@ -1999,7 +1887,7 @@ class DatasetController(
   ///
   /// The pixels that the elements of the dataset can draw outside the chart
   /// area. Dart `null` is the JS `false`: no overflow, and the default clip
-  /// of the dataset is [types.ChartClip.none] (row `adapt-max-overflow`).
+  /// of the dataset is [ChartClip.none] (row `adapt-max-overflow`).
   /// @protected
   // DIVERGES(chartjs): adapt-max-overflow, a double or null.
   double? getMaxOverflow() {
@@ -2041,7 +1929,7 @@ class DatasetController(
   }
 
   /// `parsed[scale.axis]`: [parsedValueOf] with the axis of [scale].
-  static Object? _axisValueOf(Object? parsed, types.Scale scale) {
+  static Object? _axisValueOf(Object? parsed, IScale scale) {
     return parsedValueOf(parsed, scale.axis);
   }
 
@@ -2051,7 +1939,6 @@ class DatasetController(
   /// @private
   ///
   /// Dart `null` for [mode] stands for JS `undefined`.
-  @internal
   void update_([String? mode]) {
     final meta = cachedMeta;
     // DIVERGES(chartjs): adapt-scatter-overflow-refresh, names this caller.
@@ -2063,17 +1950,16 @@ class DatasetController(
     final clip = options.readKey(OptionKey.clip);
     final orElse = _defaultClip(meta.xScale, meta.yScale, getMaxOverflow());
     assert(
-      clip is types.ChartClip || identical(clip, undefined) || clip == null,
+      clip is ChartClip || identical(clip, undefined) || clip == null,
       'The option clip takes a ChartClip, not $clip.',
     );
-    meta.clip = clip is types.ChartClip ? clip : orElse;
+    meta.clip = clip is ChartClip ? clip : orElse;
   }
 
   /// Whether the [update] that starts now has the [getMaxOverflow] of
   /// [update_] after it. A public call of [update] finds it false. An exact
   /// native controller takes it at its first statement (Chart.js ADR 0101).
   // DIVERGES(chartjs): adapt-scatter-overflow-refresh, the caller of `update`.
-  @internal
   bool overflowFollowsUpdate = false;
 
   /// core.datasetController.js:710 `update(mode)`.
@@ -2107,7 +1993,7 @@ class DatasetController(
 
     final dataset = meta.dataset;
     if (dataset != null) {
-      final draw = (dataset as types.VisualElement).draw;
+      final draw = (dataset as VisualElement).draw;
       // DIVERGES(chartjs): adapt-option-function-types, a typed draw call.
       // A null context throws a TypeError, as the JS call does.
       if (draw case final _RangeDraw rangeDraw) {
@@ -2127,8 +2013,8 @@ class DatasetController(
         start < last &&
         last <= elements.length) {
       final head = elements[start];
-      if (head is types.PointCircleRun) {
-        i = (head as types.PointCircleRun).drawCircleRun(
+      if (head is PointCircleRun) {
+        i = (head as PointCircleRun).drawCircleRun(
           ctx,
           area,
           elements,
@@ -2148,12 +2034,12 @@ class DatasetController(
       if (element.active && drawActiveElementsOnTop) {
         active.add(element);
       } else {
-        (element as types.VisualElement).draw(ctx!, area);
+        (element as VisualElement).draw(ctx!, area);
       }
     }
 
     for (var k = 0; k < active.length; ++k) {
-      (active[k] as types.VisualElement).draw(ctx!, area);
+      (active[k] as VisualElement).draw(ctx!, area);
     }
   }
 
@@ -2268,7 +2154,6 @@ class DatasetController(
   /// `_elementCacheKey` does. Each other call is the ordinary one, and holds
   /// its entry for the next call. [hold] lives inside one loop: no entry
   /// outlives the loop (Chart.js ADR 0054 section 4).
-  @internal
   // DIVERGES(chartjs): adapt-held-element-options, one cache read for a loop.
   ElementOptions resolveHeldDataElementOptions(
     HeldElementOptions hold,
@@ -2316,14 +2201,12 @@ class DatasetController(
   }
 
   /// Existing per-mode cache entries must retain priority over a loop plan.
-  @internal
   // DIVERGES(chartjs): adapt-native-line-resolution, retain cache precedence.
   bool get hasCachedPointNoneOptions =>
       _cachedElementOptions.containsKey('point-none');
 
   /// The cached entry of the data element type and [mode], with no copy. An
   /// exact native controller reads a value of it. Dart `null` on a miss.
-  @internal
   // DIVERGES(chartjs): adapt-arc-native-options, a read needs no clone.
   ElementOptions? cachedDataElementOptions(String mode) =>
       _cachedElementOptions[_elementCacheKey(
@@ -2334,7 +2217,6 @@ class DatasetController(
   /// Whether [options], the result of the last data element call, is its
   /// frozen cached entry. For an exact native controller, each later call
   /// before [configure] is then a hit that gives the same object.
-  @internal
   // DIVERGES(chartjs): adapt-arc-native-options, the result that must repeat.
   bool isCachedElementOptions(ElementOptions options) =>
       identical(_cachedElementOptions[_lastElementCacheKey], options);
@@ -2352,7 +2234,6 @@ class DatasetController(
   }
 
   /// The frozen `point-<mode>` entry of `_cachedDataOpts`, for native loops.
-  @internal
   // DIVERGES(chartjs): adapt-native-point-size, the entry a resolve copies.
   ElementOptions? cachedPointOptions(String mode) {
     final key = 'point-$mode';
@@ -2361,7 +2242,6 @@ class DatasetController(
 
   /// The entry that `_resolveElementOptions` gives for the type `point` in the
   /// mode `none`, without user code. Null before a shareable resolution.
-  @internal
   // DIVERGES(chartjs): adapt-radar-direct-updates, the existing cached entry.
   ElementOptions? get cachedPointNoneOptions =>
       _cachedElementOptions[_pointNoneCacheKey];
@@ -2438,7 +2318,7 @@ class DatasetController(
     final scopes = config.getOptionScopes(getDataset(), scopeKeys);
     // The names are the own keys of the typed scope (Chart.js ADR 0054 §4):
     // `defaults.elements[elementType]`.
-    final elements = core_defaults.defaults.lookup(OptionKey.elements)?.raw;
+    final elements = chartjs.defaults.lookup(OptionKey.elements)?.raw;
     final elementDefaults = elements is OptionScope
         ? elements.jsRead(typeName)
         // A user object in the defaults reads by name.
@@ -2542,7 +2422,6 @@ class DatasetController(
   /// `Object.freeze` of the cached animations is [jsObjectFreeze]. It
   /// leaves an `Animations` as it is (differences.md
   /// `js-semantics-object-freeze`).
-  @internal
   Animations resolveAnimations([int? index, String? transition, bool? active]) {
     final chart = this.chart;
     final cache = _cachedAnimations;
@@ -2595,7 +2474,6 @@ class DatasetController(
   /// Whether [resolveAnimations] holds no animations of [transition]. Then,
   /// with the chart option `animation` equal to `false`, it gives a new empty
   /// `Animations` at each call (Chart.js ADR 0152).
-  @internal
   bool hasNoCachedAnimations(String transition) =>
       !_cachedAnimations.containsKey(transition);
 
@@ -2636,7 +2514,6 @@ class DatasetController(
   ///
   /// The result is a record of the object `{sharedOptions,
   /// includeOptions}`.
-  @internal
   ({ElementOptions? sharedOptions, bool includeOptions}) getSharedOptions_(
     int start,
     String mode,
@@ -2665,7 +2542,7 @@ class DatasetController(
   /// parameter is a `types.Element`, and a controller passes its elements
   /// without a cast (Chart.js ADR 0028, section 1).
   void updateElement(
-    types.Element element,
+    IElement element,
     int? index,
     Object properties,
     String mode,
@@ -2690,7 +2567,6 @@ class DatasetController(
   /// `ScatterController.update` call that runs now, or Dart `null` (Chart.js
   /// ADRs 0151 and 0160). Only these two methods write it, and each clears it
   /// at the end of its loop.
-  @internal
   // DIVERGES(chartjs): adapt-shared-bar-animations, it lives for one loop.
   SharedBarAnimations? sharedAnimations;
 
@@ -2744,7 +2620,6 @@ class DatasetController(
   /// core.datasetController.js:940 `_removeDatasetHoverStyle()`.
   /// core.controller.js:1072 calls it by name.
   /// @private
-  @internal
   void removeDatasetHoverStyle() {
     final element = cachedMeta.dataset;
 
@@ -2756,7 +2631,6 @@ class DatasetController(
   /// core.datasetController.js:951 `_setDatasetHoverStyle()`.
   /// core.controller.js:1072 calls it by name.
   /// @private
-  @internal
   void setDatasetHoverStyle() {
     final element = cachedMeta.dataset;
 
@@ -2833,7 +2707,7 @@ class DatasetController(
       );
     }
 
-    move<types.Element>(data, _hole);
+    move<IElement>(data, _hole);
 
     for (i = start; i < end; ++i) {
       // DIVERGES(chartjs): adapt-component-class-role, the cast throws earlier.
@@ -2854,7 +2728,7 @@ class DatasetController(
   /// core.datasetController.js:1022 `updateElements(element, start, count,
   /// mode)`.
   void updateElements(
-    List<types.Element> elements,
+    List<IElement> elements,
     int start,
     int count,
     String mode,
@@ -2866,7 +2740,7 @@ class DatasetController(
     final meta = cachedMeta;
     if (jsTruthy(parsing)) {
       final removed = _removeRange(meta.parsed, start, count);
-      if (meta.stacked != types.StackMode.off) {
+      if (meta.stacked != StackMode.off) {
         _clearStacks(meta, removed);
       }
     }
@@ -2906,7 +2780,6 @@ class DatasetController(
 
   /// core.datasetController.js:1051 `_onDataPush()`. `arguments.length` is
   /// the count of [items].
-  @internal
   @override
   void onDataPush(List<Object?> items) {
     final count = items.length;
@@ -2918,14 +2791,12 @@ class DatasetController(
   }
 
   /// core.datasetController.js:1056 `_onDataPop()`.
-  @internal
   @override
   void onDataPop() {
     _sync(['_removeElements', cachedMeta.data.length - 1, 1]);
   }
 
   /// core.datasetController.js:1060 `_onDataShift()`.
-  @internal
   @override
   void onDataShift() {
     _sync(['_removeElements', 0, 1]);
@@ -2935,7 +2806,6 @@ class DatasetController(
   ///
   /// [index] is `start`, [deleteCount] is `count`, and `arguments.length -
   /// 2` is the count of [items].
-  @internal
   @override
   void onDataSplice(int index, int deleteCount, List<Object?> items) {
     if (deleteCount != 0) {
@@ -2949,7 +2819,6 @@ class DatasetController(
 
   /// core.datasetController.js:1074 `_onDataUnshift()`. `arguments.length`
   /// is the count of [items].
-  @internal
   @override
   void onDataUnshift(List<Object?> items) {
     _sync(['_insertElements', 0, items.length]);
@@ -2968,7 +2837,7 @@ bool _fillTruthy(Object? fill) => switch (FillTarget.of(fill)) {
 /// `LineElement.draw` does (element.line.js:427).
 typedef _RangeDraw = void Function(
   CanvasRenderingContext2D ctx,
-  types.ChartArea? area,
+  ChartArea? area,
   int? start,
   int? count,
 );

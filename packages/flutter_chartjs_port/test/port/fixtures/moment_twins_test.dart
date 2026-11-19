@@ -6,10 +6,7 @@ library;
 // ignore_for_file: lines_longer_than_80_chars
 
 import 'package:chartjs_test_utils/flutter.dart';
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show parsedValueOf;
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show fixtureSkips;

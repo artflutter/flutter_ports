@@ -8,28 +8,7 @@ library;
 import 'package:flutter/foundation.dart'
     show DiagnosticPropertiesBuilder, Diagnosticable, immutable;
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart'
-    show ChartEventHandler;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show ChartTransition, PropertyAnimation;
-import 'package:flutter_chartjs_port/src/typed/axes.dart' show ChartAxis;
-import 'package:flutter_chartjs_port/src/typed/datasets.dart' show Dataset;
-import 'package:flutter_chartjs_port/src/typed/elements.dart'
-    show ChartElements;
-import 'package:flutter_chartjs_port/src/typed/groups.dart'
-    show
-        ChartAnimation,
-        ChartFiller,
-        ChartInteraction,
-        ChartLegend,
-        ChartTitle,
-        ChartTooltip;
-import 'package:flutter_chartjs_port/src/typed/props.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart'
-    show CartesianAxis, XAxis, YAxis;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show Plugin, PluginOptions;
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The config of a chart: the chart type, the data and the options of a
 /// Chart.js config `{type, data, options, plugins}`
@@ -309,14 +288,12 @@ final class const ChartConfig({
 /// all parameters but `type`, `datasets`, `labels` and `plugins`, with the
 /// compare rules of `==` (Chart.js ADR 0052, section 9, step 4). Then the
 /// reconcile keeps the live `options` Map.
-@internal
 bool optionFieldsEqual(ChartConfig a, ChartConfig b) =>
     propsEqual(a._optionProps, b._optionProps) &&
     a._extraProp.$2 == b._extraProp.$2;
 
 /// Whether the [ChartConfig.plugins] of [a] and [b] are `==`, by the compare
 /// rule of `==`. Then the reconcile keeps the live `plugins` List.
-@internal
 bool pluginsEqual(ChartConfig a, ChartConfig b) =>
     a._pluginsProp.$2 == b._pluginsProp.$2;
 

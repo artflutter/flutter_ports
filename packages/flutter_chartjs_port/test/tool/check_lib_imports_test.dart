@@ -5,6 +5,7 @@ library;
 import 'package:test/test.dart';
 
 import '../../tool/src/lib_imports.dart';
+import '../../tool/src/name_uses.dart';
 import 'file_tree.dart';
 
 const String _ported =
@@ -637,162 +638,201 @@ void main() {
     ]);
   });
 
-  test('keeps ported files away from lib/src/theme/', () {
+  Future<List<String>> runResolved() async => describeFindings(
+    checkLibImports(
+      tree.root,
+      nameUses: await resolveNameUses(tree.root, 'flutter_chartjs_port'),
+    ).findings,
+  );
+
+  test('keeps ported files away from lib/src/theme/', () async {
     tree
-      ..write('lib/src/theme/theme.dart', [_portOnly])
+      ..write('lib/src/theme/theme.dart', [_portOnly, 'class ThemeA {}'])
       ..write('lib/src/helpers/helpers.math.dart', [
         _ported,
         "import '../theme/theme.dart';",
+        'Object a() => ThemeA;',
       ])
       ..write('lib/src/widget.dart', [
         _portOnly,
-        "import 'package:flutter_chartjs_port/src/theme/theme.dart';",
+        "import 'theme/theme.dart';",
+        'Object a() => ThemeA;',
       ]);
-    expect(run(), [
+    expect(await runResolved(), [
       equals(
-        'error: lib/src/helpers/helpers.math.dart:2: imports '
-        'lib/src/theme/theme.dart, but ported files never import '
+        'error: lib/src/helpers/helpers.math.dart:3: uses ThemeA of '
+        'lib/src/theme/theme.dart, but ported files use no name of '
         'lib/src/theme/ (Chart.js ADR 0147).',
       ),
     ]);
   });
 
-  test('keeps ported tests and exports away from lib/src/theme/', () {
+  test('keeps ported tests and exports away from lib/src/theme/', () async {
     tree
-      ..write('lib/src/theme/compile.dart', [_portOnly])
+      ..write('lib/src/theme/compile.dart', [_portOnly, 'void compileA() {}'])
       ..write('lib/src/helpers/helpers.math.dart', [
         _ported,
         "export 'package:flutter_chartjs_port/src/theme/compile.dart';",
       ])
       ..write('test/specs/helpers.math_test.dart', [
         _ported,
-        "import 'package:flutter_chartjs_port/src/theme/compile.dart';",
-        "import 'package:test/test.dart';",
+        "import '../../lib/src/theme/compile.dart';",
+        'void main() => compileA();',
       ])
       ..write('test/port/theme/compile_test.dart', [
         _portOnly,
-        "import 'package:flutter_chartjs_port/src/theme/compile.dart';",
-        "import 'package:test/test.dart';",
+        "import '../../../lib/src/theme/compile.dart';",
+        'void main() => compileA();',
       ]);
-    expect(run(), [
+    expect(await runResolved(), [
       equals(
-        'error: lib/src/helpers/helpers.math.dart:2: imports '
-        'lib/src/theme/compile.dart, but ported files never import '
-        'lib/src/theme/ (Chart.js ADR 0147).',
+        'error: lib/src/helpers/helpers.math.dart:2: exports '
+        'lib/src/theme/compile.dart, but ported files never export '
+        'lib/src/theme/ (Chart.js ADRs 0147 and 0052 §8).',
       ),
       equals(
-        'error: test/specs/helpers.math_test.dart:2: imports '
-        'lib/src/theme/compile.dart, but ported files never import '
+        'error: test/specs/helpers.math_test.dart:3: uses compileA of '
+        'lib/src/theme/compile.dart, but ported files use no name of '
         'lib/src/theme/ (Chart.js ADR 0147).',
       ),
     ]);
   });
 
-  test('keeps the components out of lib/src/widgets/', () {
+  test('keeps the components out of lib/src/widgets/', () async {
     tree
-      ..write('lib/src/core/core.controller.dart', [_ported])
-      ..write('lib/src/index.dart', [_ported])
-      ..write('lib/src/controllers/controller.line.dart', [_ported])
-      ..write('lib/src/scales/scale.linear.dart', [_ported])
-      ..write('lib/src/elements/element.point.dart', [_ported])
-      ..write('lib/src/plugins/plugin.legend.dart', [_ported])
+      ..write('lib/src/core/core.controller.dart', [_ported, 'class ChartA {}'])
+      ..write('lib/src/index.dart', [_ported, 'const registerablesA = [];'])
+      ..write('lib/src/controllers/controller.line.dart', [
+        _ported,
+        'class LineA {}',
+      ])
+      ..write('lib/src/scales/scale.linear.dart', [_ported, 'class ScaleA {}'])
+      ..write('lib/src/elements/element.point.dart', [
+        _ported,
+        'class PointA {}',
+      ])
+      ..write('lib/src/plugins/plugin.legend.dart', [
+        _ported,
+        'class LegendA {}',
+      ])
       ..write('lib/src/widgets/chart_view.dart', [
         _portOnly,
-        "import 'package:flutter/widgets.dart';",
-        "import 'package:flutter_chartjs_port/src/core/core.controller.dart';",
-        "import '../controllers/controller.line.dart';",
-        "import 'package:flutter_chartjs_port/src/scales/scale.linear.dart';",
-        "import '../elements/element.point.dart';",
-        "import '../plugins/plugin.legend.dart';",
-        "import '../index.dart';",
-      ]);
-    String finding(int line, String target) =>
-        'error: lib/src/widgets/chart_view.dart:$line: imports $target, but '
-        'the widget registers no component (Chart.js ADR 0048 §3).';
-    expect(run(), [
-      equals(finding(4, 'lib/src/controllers/controller.line.dart')),
-      equals(finding(5, 'lib/src/scales/scale.linear.dart')),
-      equals(finding(6, 'lib/src/elements/element.point.dart')),
-      equals(finding(7, 'lib/src/plugins/plugin.legend.dart')),
-      equals(finding(8, 'lib/src/index.dart')),
-    ]);
-  });
-
-  test('keeps lib/src/typed/ on its allowlist', () {
-    tree
-      ..write('lib/src/core/core.controller.dart', [_ported])
-      ..write('lib/src/core/core.scale.dart', [_ported])
-      ..write('lib/src/core/core.adapters.dart', [_ported])
-      ..write('lib/src/js/js_number.dart', [_portOnly])
-      ..write('lib/src/js/js_undefined.dart', [_portOnly])
-      ..write('lib/src/theme/compile.dart', [_portOnly])
-      ..write('lib/src/options/opt.dart', [_portOnly])
-      ..write('lib/src/helpers/helpers.options.dart', [_ported])
-      ..write('lib/src/controllers/controller.line.dart', [_ported])
-      ..write('lib/src/scales/scale.linear.dart', [_ported])
-      ..write('lib/src/elements/element.point.dart', [_ported])
-      ..write('lib/src/plugins/plugin.legend.dart', [_ported])
-      ..write('lib/src/typed/values.dart', [_portOnly])
-      ..write('lib/src/typed/config.dart', [
-        _portOnly,
-        "import 'dart:ui' show Color;",
-        "import 'package:flutter/foundation.dart';",
-        "import 'package:flutter/painting.dart';",
-        "import 'package:meta/meta.dart';",
-        "import 'values.dart';",
-        "import '../types/geometric.dart';",
-        "import 'package:flutter_chartjs_port/src/core/core.controller.dart';",
-        "import '../core/core.scale.dart';",
-        "import '../core/core.adapters.dart';",
-        "import '../types/option_functions.dart';",
-        "import '../js/js_number.dart';",
-        "import '../js/js_undefined.dart';",
-        "import '../options/opt.dart';",
-        "import '../helpers/helpers.options.dart';",
-        "import 'package:flutter/widgets.dart';",
-        "import 'dart:math';",
+        "import '../core/core.controller.dart';",
         "import '../controllers/controller.line.dart';",
         "import '../scales/scale.linear.dart';",
         "import '../elements/element.point.dart';",
         "import '../plugins/plugin.legend.dart';",
-        "import '../helpers/helpers.math.dart';",
-        "import '../js/js_math.dart';",
-        "import '../theme/compile.dart';",
+        "import '../index.dart';",
+        'Object a() => ChartA;',
+        'Object b() => LineA;',
+        'Object c() => ScaleA;',
+        'Object d() => PointA;',
+        'Object e() => LegendA;',
+        'Object f() => registerablesA;',
       ]);
-    String finding(int line, String target) =>
-        'error: lib/src/typed/config.dart:$line: imports $target, which is '
-        'not on the allowlist of lib/src/typed/ (Chart.js ADR 0052 §8).';
-    expect(run(), [
-      equals(finding(16, 'package:flutter/widgets.dart')),
-      equals(finding(17, 'dart:math')),
-      equals(finding(18, 'lib/src/controllers/controller.line.dart')),
-      equals(finding(19, 'lib/src/scales/scale.linear.dart')),
-      equals(finding(20, 'lib/src/elements/element.point.dart')),
-      equals(finding(21, 'lib/src/plugins/plugin.legend.dart')),
-      equals(finding(22, 'lib/src/helpers/helpers.math.dart')),
-      equals(finding(23, 'lib/src/js/js_math.dart')),
-      equals(finding(24, 'lib/src/theme/compile.dart')),
+    String finding(int line, String name, String target) =>
+        'error: lib/src/widgets/chart_view.dart:$line: uses $name of '
+        '$target, but the widget registers no component (Chart.js ADR 0048 '
+        '§3).';
+    expect(await runResolved(), [
+      equals(finding(9, 'LineA', 'lib/src/controllers/controller.line.dart')),
+      equals(finding(10, 'ScaleA', 'lib/src/scales/scale.linear.dart')),
+      equals(finding(11, 'PointA', 'lib/src/elements/element.point.dart')),
+      equals(finding(12, 'LegendA', 'lib/src/plugins/plugin.legend.dart')),
+      equals(finding(13, 'registerablesA', 'lib/src/index.dart')),
     ]);
   });
 
-  test('keeps ported files away from lib/src/typed/', () {
+  test('keeps lib/src/typed/ on its allowlist', () async {
     tree
-      ..write('lib/src/typed/config.dart', [_portOnly])
+      ..write('lib/src/core/core.controller.dart', [_ported, 'class ChartA {}'])
+      ..write('lib/src/types/geometric.dart', [_portOnly, 'class PointT {}'])
+      ..write('lib/src/controllers/controller.line.dart', [
+        _ported,
+        'class LineA {}',
+      ])
+      ..write('lib/src/theme/compile.dart', [_portOnly, 'void compileA() {}'])
+      ..write('lib/src/typed/values.dart', [_portOnly, 'class ValueA {}'])
+      ..write('lib/src/typed/config.dart', [
+        _portOnly,
+        "import 'dart:ui' show Color;",
+        "import 'package:flutter/foundation.dart';",
+        "import 'package:meta/meta.dart';",
+        "import 'package:flutter/widgets.dart';",
+        "import 'dart:math';",
+        "import 'values.dart';",
+        "import '../types/geometric.dart';",
+        "import '../core/core.controller.dart';",
+        "import '../controllers/controller.line.dart';",
+        "import '../helpers/helpers.math.dart';",
+        "import '../theme/compile.dart';",
+        'Object a() => [ValueA, PointT, ChartA];',
+        'Object b() => LineA;',
+        'Object c() => compileA;',
+      ]);
+    String finding(String what) =>
+        'error: lib/src/typed/config.dart:$what, which is not on the '
+        'allowlist of lib/src/typed/ (Chart.js ADR 0052 §8).';
+    expect(await runResolved(), [
+      equals(finding('5: imports package:flutter/widgets.dart')),
+      equals(finding('6: imports dart:math')),
+      equals(
+        finding('14: uses LineA of lib/src/controllers/controller.line.dart'),
+      ),
+      equals(finding('15: uses compileA of lib/src/theme/compile.dart')),
+    ]);
+  });
+
+  test('keeps ported files away from lib/src/typed/', () async {
+    tree
+      ..write('lib/src/typed/config.dart', [_portOnly, 'class ConfigA {}'])
       ..write('lib/src/helpers/helpers.math.dart', [
         _ported,
         "import '../typed/config.dart';",
+        'Object a() => ConfigA;',
       ])
       ..write('lib/src/widget.dart', [
         _portOnly,
-        "import 'package:flutter_chartjs_port/src/typed/config.dart';",
+        "import 'typed/config.dart';",
+        'Object a() => ConfigA;',
       ]);
-    expect(run(), [
+    expect(await runResolved(), [
       equals(
-        'error: lib/src/helpers/helpers.math.dart:2: imports '
-        'lib/src/typed/config.dart, but ported files never import '
+        'error: lib/src/helpers/helpers.math.dart:3: uses ConfigA of '
+        'lib/src/typed/config.dart, but ported files use no name of '
         'lib/src/typed/ (Chart.js ADR 0052 §8).',
       ),
     ]);
+  });
+
+  test('imports no file of lib/src/ with publicImportsOnly', () {
+    String finding(String path, String uri) =>
+        'error: $path: imports package:flutter_chartjs_port/src/$uri, but a '
+        'file imports a public library, never a file of lib/src/ (ADR '
+        '0012).';
+    tree.write('lib/src/widget.dart', [
+      _portOnly,
+      "import 'package:flutter_chartjs_port/src/upstream.dart';",
+      "import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';",
+    ]);
+    expect(
+      describeFindings(
+        checkLibImports(tree.root, publicImportsOnly: true).findings,
+      ),
+      [
+        equals(
+          finding('lib/src/helpers/helpers.math.dart:2', 'js/js_math.dart'),
+        ),
+        equals(finding('lib/src/widget.dart:2', 'upstream.dart')),
+        equals(
+          finding(
+            'test/specs/helpers.math_test.dart:3',
+            'helpers/helpers.math.dart',
+          ),
+        ),
+      ],
+    );
+    expect(run(), isEmpty);
   });
 
   test('keeps Material, Cupertino and forui out of lib/src/theme/', () {

@@ -7,23 +7,10 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show TextStyle;
-import 'package:flutter_chartjs_port/chartjs.dart' show Chart;
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui_text.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/core/core.scale.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
-import 'package:flutter_chartjs_port/src/scales/scale.category.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // Keep mutations and their subsequent verification as separate test steps.
 // ignore_for_file: cascade_invocations
 
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 const _n = 1000;
@@ -151,7 +138,7 @@ Map<String, Object?> _snapshot(Chart chart) => {
       },
   },
   'points': [
-    for (final point in chart.getDatasetMeta(0).data.cast<types.PointElement>())
+    for (final point in chart.getDatasetMeta(0).data.cast<IPointElement>())
       [point.x, point.y],
   ],
 };

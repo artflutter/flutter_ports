@@ -4,14 +4,7 @@ library;
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/widgets.dart' hide Element;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartAnimation, ChartConfig, ChartKind, LineDataset, LinearAxis;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/platform/chart_host.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart';
-import 'package:flutter_chartjs_port/src/types/update_mode.dart';
-import 'package:flutter_chartjs_port/src/widgets/chart_view.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 /// The events and the draws of the chart since the last [clear].

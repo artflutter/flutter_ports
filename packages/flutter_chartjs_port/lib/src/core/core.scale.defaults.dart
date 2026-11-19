@@ -6,42 +6,21 @@
 /// The value objects of `defaults.set` and `defaults.describe` are typed
 /// option scopes of the kind of their path (Chart.js ADR 0054 §3), and
 /// numbers are `double` (Chart.js ADR 0146). A scriptable option is a Dart
-/// closure (`lib/src/types/option_functions.dart`). [Defaults] is the interface of
+/// closure (`lib/src/types/option_functions.dart`). [IDefaults] is the interface of
 /// the `defaults` object of `core.defaults.js`.
 library;
 
 import 'dart:ui' as ui;
 
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.ticks.dart';
-import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart'
-    show ScaleBounds, ScaleDisplay, TickAlign, TickCrossAlign;
-import 'package:flutter_chartjs_port/src/helpers/grace_length.dart'
-    show ValueGrace;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart' show OptFunction;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        DescriptorsScope,
-        GridLineOptionsScope,
-        MajorTickOptionsScope,
-        MinorTickOptionsScope,
-        ScaleOptionsScope,
-        ScaleTitleOptionsScope,
-        TickOptionsScope;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart'
-    show AxisBorder;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
-    show ChartPaint;
-import 'package:flutter_chartjs_port/src/types/index.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// core.scale.defaults.js:3 `applyScaleDefaults`.
 ///
 /// The scriptable options `tickWidth` and `tickColor` read a key of their
 /// resolved `options` object, a `Map<String, Object?>`, with the JavaScript
 /// property read: an absent key gives [undefined].
-void applyScaleDefaults(Defaults defaults) {
+void applyScaleDefaults(IDefaults defaults) {
   defaults
     ..set(
       'scale',

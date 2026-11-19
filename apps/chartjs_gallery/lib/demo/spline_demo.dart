@@ -1,7 +1,6 @@
 import 'package:chartjs_gallery/demo/demo_common.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: _updateBezierControlPoints, an upstream `_` helper.
 import 'package:material_ui/material_ui.dart';
 
 /// A point `{x, y}` whose control points the curve helpers write, as the

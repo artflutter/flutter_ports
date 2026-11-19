@@ -1,5 +1,5 @@
 // Original code, not ported from Chart.js: core.layouts.defaults tests.
-import 'package:flutter_chartjs_port/src/core/core.layouts.defaults.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import 'recording_defaults.dart';

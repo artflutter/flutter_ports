@@ -40,84 +40,7 @@ import 'dart:math' as math;
 import 'dart:ui' as ui;
 import 'dart:ui' show TextAlign;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart';
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart'
-    show
-        canvasLineCap,
-        canvasLineDash,
-        canvasLineJoin,
-        canvasNumber,
-        canvasStyle,
-        canvasTextAlign;
-import 'package:flutter_chartjs_port/src/core/arc_options.dart'
-    show nativeArcClass, nativeArcElement;
-import 'package:flutter_chartjs_port/src/core/category_label_source.dart'
-    show CategoryLabelSource;
-import 'package:flutter_chartjs_port/src/core/core.config.dart' show Config;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart' show Chart;
-import 'package:flutter_chartjs_port/src/core/core.datasetController.dart'
-    show DatasetController;
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart' show defaults;
-import 'package:flutter_chartjs_port/src/core/core.element.dart';
-import 'package:flutter_chartjs_port/src/core/core.layouts.dart' show layouts;
-import 'package:flutter_chartjs_port/src/core/data_update.dart'
-    show dataUpdateField, nativeDataUpdateList, nativeDataUpdateObject;
-import 'package:flutter_chartjs_port/src/core/legend_item_options.dart';
-import 'package:flutter_chartjs_port/src/core/point_options.dart'
-    show
-        DatasetMetaSource,
-        nativePointChart,
-        nativePointDatasetIndex,
-        nativePointList;
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show
-        DrawPointOptions,
-        addRoundedRectPath,
-        clipArea,
-        drawPointLegend,
-        renderText,
-        unclipArea;
-import 'package:flutter_chartjs_port/src/helpers/helpers.config.dart'
-    show IndexedElementStyles, OptionResolver, OptionView, functionOption;
-import 'package:flutter_chartjs_port/src/helpers/helpers.core.dart'
-    show isFunction, isObject;
-import 'package:flutter_chartjs_port/src/helpers/helpers.extras.dart'
-    show alignStartEnd, textX, toLeftRightCenter;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart'
-    show isBetween;
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableChartContext, ScriptableContext, toPadding, toTRBLCorners;
-import 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart'
-    show getRtlAdapter, overrideTextDirection, restoreTextDirection;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsSort;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart'
-    show jsGet, jsGetIndex, jsObjectOrNull;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/opt.dart'
-    show OptFunction, optNull;
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show
-        DescriptorsScope,
-        LegendLabelOptionsScope,
-        LegendOptionsScope,
-        LegendTitleOptionsScope;
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show LegendLabelOptions, LegendOptions, optionOf;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart';
-import 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show EventHookArgs, Plugin, PluginHookArgs, UpdateHookArgs;
-import 'package:meta/meta.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 
 export 'package:flutter_chartjs_port/src/types/legend_callbacks.dart';
 export 'package:flutter_chartjs_port/src/types/legend_hit_box.dart';
@@ -192,8 +115,8 @@ bool _strictEquals(Object? a, Object? b) {
 /// The layout box of the chart legend. `layouts.addBox` gives it the default
 /// layer, which calls [draw] (core.layouts.js:301-308).
 class Legend(
-  ({types.Chart chart, Object? options, CanvasRenderingContext2D? ctx}) config,
-) extends Element implements types.LegendElement, LayoutItem, TRBL {
+  ({IChart chart, Object? options, CanvasRenderingContext2D? ctx}) config,
+) extends Element implements LegendElement, LayoutItem, TRBL {
   /// plugin.legend.js:46 `constructor(config)`.
   ///
   /// @param {{ ctx: any; options: any; chart: any; }} config
@@ -226,7 +149,7 @@ class Legend(
   /// `row`, `width` and `height` for a horizontal legend (:183), `left`,
   /// `top`, `col`, `width` and `height` for a vertical legend (:217).
   /// `index.d.ts` does not declare it. It implements the port-only member
-  /// [types.LegendElement.legendHitBoxes], which the keyboard of `ChartView`
+  /// [LegendElement.legendHitBoxes], which the keyboard of `ChartView`
   /// reads (Chart.js ADR 0051, section 2).
   @override
   List<LegendHitBox> legendHitBoxes = [];
@@ -238,11 +161,11 @@ class Legend(
   /// a different data type. Upstream writes it and never reads it.
   bool doughnutMode = false;
 
-  /// plugin.legend.js:62 `chart`. [types.LegendElement.chart] is a
+  /// plugin.legend.js:62 `chart`. [LegendElement.chart] is a
   /// `types.Chart`, so the constructor takes one (Chart.js ADR 0038,
   /// section 4).
   @override
-  final types.Chart chart = config.chart;
+  final IChart chart = config.chart;
 
   /// plugin.legend.js:64 `ctx`. Dart `null` stands for JS `undefined`.
   CanvasRenderingContext2D? ctx = config.ctx;
@@ -285,7 +208,6 @@ class Legend(
   _IndexedItemStyles? _pendingStyles;
 
   /// Whether a build waits for a read of [legendItems] that can run it.
-  @internal
   bool get legendItemsPending => _pendingOptions != null;
 
   /// plugin.legend.js:66 `columnSizes`: `{width, height}` of each column of
@@ -351,7 +273,6 @@ class Legend(
   /// core.layouts.js:301 `_layers`. Dart `null` stands for JS `undefined`,
   /// the start value: `layouts.addBox` writes the default layer.
   @override
-  @internal
   List<LayoutLayer> Function()? layers;
 
   /// core.layouts.js:15 `box.axis`. The legend has no axis: Dart `null`
@@ -361,7 +282,7 @@ class Legend(
 
   /// plugin.legend.js:63 `options`, the resolver of the legend options.
   ///
-  /// [types.LegendElement.options] is not nullable. Thus the read of a
+  /// [LegendElement.options] is not nullable. Thus the read of a
   /// legend without options throws a [TypeError], as the first member read
   /// of `this.options` throws upstream (Chart.js ADR 0038, section 7).
   @override
@@ -1040,7 +961,7 @@ class Legend(
         x,
         y + (itemHeight / 2),
         labelFont,
-        types.RenderTextOpts(
+        RenderTextOpts(
           strikethrough: jsTruthy(legendItem.hidden),
           // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
           textAlign: rtlHelper.textAlign(canvasTextAlign(legendItem.textAlign)),
@@ -1271,7 +1192,7 @@ class Legend(
   ///
   /// Handle an event
   /// @param {ChartEvent} e - The event to handle
-  void handleEvent(types.ChartEvent e) {
+  void handleEvent(ChartEvent e) {
     final opts = LegendOptions(options);
     if (!_isListened(e.type, opts)) {
       return;
@@ -1332,7 +1253,7 @@ bool _plainOption(Object? value) =>
 /// chart options.
 // DIVERGES(chartjs): adapt-hidden-legend-items, a proof of no user code.
 bool _labelColorIsPlain(
-  types.Chart chart,
+  IChart chart,
   OptionResolver labels, {
   required bool atMark,
 }) {
@@ -1601,11 +1522,12 @@ final class _RoundedRect({
 /// that is not a context throw a [TypeError]. Upstream stores such a value
 /// and reads its members later.
 // DIVERGES(chartjs): adapt-component-class-role, a non-Chart chart throws.
-({types.Chart chart, Object? options, CanvasRenderingContext2D? ctx})
-_legendConfig(List<Object?> args) {
+({IChart chart, Object? options, CanvasRenderingContext2D? ctx}) _legendConfig(
+  List<Object?> args,
+) {
   final config = args.isEmpty ? undefined : args[0];
   return (
-    chart: _orNull(jsGet(config, 'chart'))! as types.Chart,
+    chart: _orNull(jsGet(config, 'chart'))! as IChart,
     options: jsObjectOrNull(jsGet(config, 'options')),
     ctx: _orNull(jsGet(config, 'ctx')) as CanvasRenderingContext2D?,
   );
@@ -1619,7 +1541,7 @@ Object? _orNull(Object? value) => identical(value, undefined) ? null : value;
 ///
 /// The native integer index selects the dataset. Descriptive entries have
 /// no index and leave visibility unchanged.
-void _onClick(Object? e, LegendItem item, types.LegendElement legend) {
+void _onClick(Object? e, LegendItem item, LegendElement legend) {
   final index = item.datasetIndex;
   if (index == null) return;
   final ci = legend.chart;
@@ -1642,7 +1564,7 @@ Object? _chartColor(Object? ctx) {
       ? ctx.chart
       // A context of another class: the read by name of user code.
       : jsGet(ctx, 'chart');
-  return optionOf((chart! as types.Chart).options, OptionKey.color);
+  return optionOf((chart! as IChart).options, OptionKey.color);
 }
 
 /// plugin.legend.js:675 `generateLabels(chart)`: generates labels shown in
@@ -1663,7 +1585,7 @@ Object? _chartColor(Object? ctx) {
 /// gives [undefined]. The upstream call `_getSortedDatasetMetas()` has no
 /// argument, a falsy `filterVisible`. The items are [LegendItem]s. The
 /// datasets of the user are read by name.
-List<LegendItem> _generateLabels(types.Chart chart) {
+List<LegendItem> _generateLabels(IChart chart) {
   final datasets = jsGet(chart.data, 'datasets');
   final labels = LegendOptions(chart.legend!.options).labels;
   final usePointStyle = labels.usePointStyle;
@@ -1696,7 +1618,7 @@ List<LegendItem> _generateLabels(types.Chart chart) {
 /// a read of the dataset of the user, by name.
 LegendItem _datasetItem(
   Object? datasets,
-  types.ChartMeta meta,
+  ChartMeta meta,
   Object style,
   Object? pointStyle,
   Object? textAlign,
@@ -1735,7 +1657,7 @@ LegendItem _datasetItem(
 
 /// plugin.legend.js:601 `start(chart, _args, options)`. The box keeps the
 /// resolved options of the facade.
-void _start(types.Chart chart, PluginHookArgs _, LegendOptions options) {
+void _start(IChart chart, PluginHookArgs _, LegendOptions options) {
   final resolved = options.object!;
   final legend = Legend((ctx: chart.ctx, options: resolved, chart: chart));
   chart.legend = legend;
@@ -1747,7 +1669,7 @@ void _start(types.Chart chart, PluginHookArgs _, LegendOptions options) {
 /// plugin.legend.js:607 `stop(chart)`. core.layouts.js:318-323 compares
 /// identities only. A value that is not a LayoutItem is never in
 /// chart.boxes. `delete chart.legend` is the write of Dart `null`.
-void _stop(types.Chart chart, PluginHookArgs _, LegendOptions _) {
+void _stop(IChart chart, PluginHookArgs _, LegendOptions _) {
   final legend = chart.legend;
   // DIVERGES(chartjs): adapt-hidden-legend-items, before the box goes.
   if (legend is Legend) legend._settleItems();
@@ -1770,7 +1692,7 @@ void _stop(types.Chart chart, PluginHookArgs _, LegendOptions _) {
 ///
 /// The hook continues the update: `true` is the `undefined` result of
 /// upstream.
-bool _beforeUpdate(types.Chart chart, UpdateHookArgs _, LegendOptions options) {
+bool _beforeUpdate(IChart chart, UpdateHookArgs _, LegendOptions options) {
   final legend = chart.legend! as Legend;
   final resolved = options.object!;
   layouts.configure(chart, legend, resolved);
@@ -1785,7 +1707,7 @@ bool _beforeUpdate(types.Chart chart, UpdateHookArgs _, LegendOptions options) {
 /// `adjustHitBoxes` adds the position of the legend to the hit boxes of the
 /// last `fit`. A data update that keeps the layout runs no `fit`, so its hit
 /// boxes already have that position.
-void _afterUpdate(types.Chart chart, UpdateHookArgs args, LegendOptions _) {
+void _afterUpdate(IChart chart, UpdateHookArgs args, LegendOptions _) {
   final legend = chart.legend! as Legend
     // DIVERGES(chartjs): adapt-hidden-legend-items, the first read builds.
     .._buildLabelsOrMark(datasetsUpdated: true);
@@ -1798,7 +1720,7 @@ void _afterUpdate(types.Chart chart, UpdateHookArgs args, LegendOptions _) {
 /// `event` of [EventHookArgs]. An event of Dart `null` throws the
 /// [TypeError] of the null check, as `handleEvent` throws at `e.type` of
 /// `undefined` upstream.
-void _afterEvent(types.Chart chart, EventHookArgs args, LegendOptions _) {
+void _afterEvent(IChart chart, EventHookArgs args, LegendOptions _) {
   if (!args.replay) {
     (chart.legend! as Legend).handleEvent(args.event);
   }

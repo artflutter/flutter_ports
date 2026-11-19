@@ -14,39 +14,9 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart'
-    show CanvasPath, CanvasRenderingContext2D;
-import 'package:flutter_chartjs_port/src/canvas/canvas_values.dart'
-    show canvasStyle;
-import 'package:flutter_chartjs_port/src/core/chart_axis_reads.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart'
-    show clipArea, unclipArea;
-import 'package:flutter_chartjs_port/src/helpers/helpers.dataset.dart'
-    show getDatasetClipArea;
-import 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart'
-    show SegmentStyle;
-import 'package:flutter_chartjs_port/src/js/js_number.dart'
-    show jsToString, jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 // DIVERGES(chartjs): adapt-boundary-exact-points, private boundary endpoints.
-import 'package:flutter_chartjs_port/src/plugins/fill_target.dart'
-    show EndFill, OriginFill, SplitFill, StartFill;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/boundary_point_search.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.segment.dart'
-    show findSegmentEnd, getBounds, segments;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/filler.target.dart'
-    show getTarget;
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/index.dart'
-    show FillerSource;
 // DIVERGES(chartjs): adapt-partitioned-baseline-fill, native equivalent fill.
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/partitioned_baseline_fill.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show optionOf;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:meta/meta.dart';
 
 /// filler.drawing.js:5 `_drawfill(ctx, source, area)`.
@@ -60,7 +30,7 @@ import 'package:meta/meta.dart';
 void drawfill(
   CanvasRenderingContext2D ctx,
   FillerSource source,
-  types.ChartArea? area,
+  ChartArea? area,
 ) {
   // DIVERGES(chartjs): adapt-boundary-exact-points, capture target provenance
   // before getTarget calls a scale or any user code. These modes create a fresh
@@ -68,7 +38,7 @@ void drawfill(
   final fill = source.fill;
   final linearBoundary =
       (fill is OriginFill || fill is StartFill || fill is EndFill) &&
-      source.scale is! types.RadialLinearScale;
+      source.scale is! IRadialLinearScale;
   final target = getTarget(source);
   final chart = source.chart;
   final index = source.index;
@@ -123,10 +93,10 @@ Object? _orDefault(Object? value, Object? defaultValue) =>
 /// (helpers.canvas.ts:328-333). It is not an export of upstream. The tests
 /// read it.
 @visibleForTesting
-types.TRBL? clipToIndexBounds(types.ChartArea? area, types.Scale? iScale) {
+TRBL? clipToIndexBounds(ChartArea? area, IScale? iScale) {
   // Radial scales (e.g. radar charts) aren't cartesian: min/max pixels
   // don't correspond to a left/right or top/bottom bound.
-  if (iScale == null || iScale is types.RadialLinearScale) {
+  if (iScale == null || iScale is IRadialLinearScale) {
     return area;
   }
   final p1 = iScale.getPixelForValue(iScale.min);
@@ -155,7 +125,7 @@ final class const _Trbl({
   @override required final double right,
   @override required final double bottom,
   @override required final double left,
-}) implements types.TRBL;
+}) implements TRBL;
 
 /// The property key of `cfg.axis` (filler.drawing.js:42): the key of the
 /// axis class in a point (`x` or `y`, [axisDataKey]), else the `ToString`
@@ -167,14 +137,14 @@ String _axisKey(Object? axis) =>
 /// parameters.
 void _doFill(
   CanvasRenderingContext2D ctx, {
-  required types.LineElement line,
+  required ILineElement line,
   required Object target,
   required Object? above,
   required Object? below,
-  required types.ChartArea area,
-  required types.Scale? scale,
+  required ChartArea area,
+  required IScale? scale,
   required Object? axis,
-  required types.TRBL? clip,
+  required TRBL? clip,
   required bool linearBoundary,
 }) {
   final property = (line.loop ?? false) ? 'angle' : _axisKey(axis);
@@ -253,7 +223,7 @@ void _doFill(
 /// `lineTo(NaN, clipY)` (Chart.js ADR 0040, section 7).
 void _clipVertical(CanvasRenderingContext2D ctx, Object target, double clipY) {
   // DIVERGES(chartjs): adapt-filler-target-classes, the target classes.
-  final line = target is types.LineElement ? target : null;
+  final line = target is ILineElement ? target : null;
   final segments = line?.segments;
   final points = line?.points;
   var first = true;
@@ -297,7 +267,7 @@ void _clipHorizontal(
   double clipX,
 ) {
   // DIVERGES(chartjs): adapt-filler-target-classes, the target classes.
-  final line = target is types.LineElement ? target : null;
+  final line = target is ILineElement ? target : null;
   final segments = line?.segments;
   final points = line?.points;
   var first = true;
@@ -338,12 +308,12 @@ void _clipHorizontal(
 /// `segments` is the function of `filler.segment.dart`.
 void _fill(
   CanvasRenderingContext2D ctx, {
-  required types.LineElement line,
+  required ILineElement line,
   required Object target,
   required String property,
   required Object? color,
-  required types.Scale? scale,
-  required types.TRBL? clip,
+  required IScale? scale,
+  required TRBL? clip,
   required BoundaryPointSearch? boundarySearch,
   required bool partitionBoundary,
 }) {
@@ -435,7 +405,7 @@ void _fill(
 void _boundaryLineTo(
   CanvasRenderingContext2D ctx,
   Object target,
-  types.PointElement point,
+  IPointElement point,
   String property,
   BoundaryPointSearch? search,
 ) {
@@ -460,12 +430,8 @@ bool? _pathSegment(
   Object? tgt,
   AnyObject params,
 ) => switch (target) {
-  final types.LineElement line => line.pathSegment(
-    ctx,
-    tgt! as types.Segment,
-    params,
-  ),
-  final types.SimpleArc arc => arc.pathSegment(
+  final ILineElement line => line.pathSegment(ctx, tgt! as Segment, params),
+  final ISimpleArc arc => arc.pathSegment(
     ctx,
     tgt as ({String property, double start, double end})?,
     params,
@@ -482,8 +448,8 @@ bool? _pathSegment(
 /// `null` throws the [TypeError] of `chartArea.top` of `undefined`.
 void _clipBounds(
   CanvasRenderingContext2D ctx,
-  types.Scale? scale,
-  types.TRBL? clip,
+  IScale? scale,
+  TRBL? clip,
   ({String property, double start, double end})? bounds,
 ) {
   final chartArea = scale!.chart.chartArea;
@@ -535,19 +501,19 @@ void _clipBounds(
 void interpolatedLineTo(
   CanvasRenderingContext2D ctx,
   Object target,
-  types.PointElement point,
+  IPointElement point,
   String property,
 ) {
   // DIVERGES(chartjs): adapt-filler-target-classes, the target classes.
   final interpolatedPoint = switch (target) {
-    final types.LineElement line => line.interpolate(point, property),
-    final types.SimpleArc arc => arc.interpolate(point),
+    final ILineElement line => line.interpolate(point, property),
+    final ISimpleArc arc => arc.interpolate(point),
     _ => throw TypeError(),
   };
   switch (interpolatedPoint) {
     case null:
       return;
-    case final types.Point p:
+    case final Point p:
       ctx.lineTo(p.x ?? 0, p.y ?? 0);
     default:
       ctx.lineTo(double.nan, double.nan);

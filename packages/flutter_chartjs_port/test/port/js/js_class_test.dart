@@ -1,9 +1,7 @@
 // Original code, not ported from Chart.js: tests of lib/src/js/js_class.dart.
 import 'dart:collection';
 
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsToString;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 // The expected values come from Node.js v24.12.0 on x64 (V8 13.6), with the

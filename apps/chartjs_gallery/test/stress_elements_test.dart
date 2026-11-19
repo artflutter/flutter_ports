@@ -1,9 +1,8 @@
 import 'package:chartjs_gallery/demo/demo_chart.dart';
 import 'package:chartjs_gallery/demo/stress_demo.dart';
+// The PointOptions of the demo has the name of the port class.
+import 'package:flutter_chartjs_port/chartjs.dart' as chartjs;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
-// Not public: the typed element options of Chart.js ADR 0054.
-import 'package:flutter_chartjs_port/src/elements/element_options.dart'
-    as element_options;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -182,21 +181,18 @@ void main() {
         // The points share one typed options object, and the line has typed
         // options (Chart.js ADR 0054).
         final options = (after.first as PointElement).options;
-        expect(options, isA<element_options.PointOptions>());
+        expect(options, isA<chartjs.PointOptions>());
         expect(identical((after[1] as PointElement).options, options), isTrue);
-        expect(line.options, isA<element_options.LineOptions>());
+        expect(line.options, isA<LineOptions>());
       }
       if (mode == StressMode.bars) {
         // The bars share one typed options object (Chart.js ADR 0054).
         final options = (after.first as BarElement).options;
-        expect(options, isA<element_options.BarOptions>());
+        expect(options, isA<BarOptions>());
         expect(identical((after[1] as BarElement).options, options), isTrue);
       }
       if (mode == StressMode.arcs) {
-        expect(
-          (after.first as ArcElement).options,
-          isA<element_options.ArcOptions>(),
-        );
+        expect((after.first as ArcElement).options, isA<ArcOptions>());
       }
 
       await _tap(tester, 'stress.start');

@@ -51,25 +51,9 @@ import 'dart:ui' as ui;
 
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curve, Curves;
-import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
-import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
-import 'package:flutter_chartjs_port/src/core/core.element.dart' show Element;
-import 'package:flutter_chartjs_port/src/core/option_call_epoch.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart' show color;
-import 'package:flutter_chartjs_port/src/js/js_class.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
-    show AnimatedProp;
-import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show PropertyAnimation;
-import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
     hide color;
-import 'package:meta/meta.dart';
 
 /// core.animation.js:5 `transparent`.
 const ui.Color _transparent = ui.Color.fromRGBO(0, 0, 0, 0);
@@ -143,7 +127,7 @@ class Animation.typed(
   // ignore: use_declaring_parameters
   Object? to = undefined,
   PropertyAnimation? item,
-]) implements types.Animation {
+]) implements IAnimation {
   /// core.animation.js:28 `constructor(cfg, target, prop, to)`.
   ///
   /// [cfg] is the animation configuration, an [AnimationSpec]. [to] is the
@@ -168,7 +152,6 @@ class Animation.typed(
   /// `null`. A parameter of the item that is not `null` goes before the
   /// value of [cfg]. The animation reads the item itself: no object holds a
   /// copy of its parameters.
-  @internal
   this {
     final currentValue = prop.valueOf(_target);
 
@@ -279,27 +262,22 @@ class Animation.typed(
 
   /// core.animation.js:37 `_start`, the start time in milliseconds. The
   /// specs and the animator read it.
-  @internal
   double get start => _start;
 
   /// core.animation.js:38 `_duration`, in milliseconds. The specs and the
   /// animator read it (core.animator.js:170).
-  @internal
   double get duration => _duration;
 
   /// core.animation.js:38 `_total`, the duration since the first start. The
   /// animator reads it (core.animator.js:73).
-  @internal
   double get total => _total;
 
   /// core.animation.js:39 `_loop`. The differential test of the fast paths
   /// reads it (Chart.js ADR 0053).
-  @internal
   bool get loop => _loop;
 
   /// core.animation.js:36 `_easing`, the curve of the animation. The
   /// differential test of the fast paths reads it (Chart.js ADR 0053).
-  @internal
   Curve get easing => _easing;
 
   /// `this._easing(factor)` (core.animation.js:84): the curve at [factor].
@@ -319,12 +297,10 @@ class Animation.typed(
       : factor;
 
   /// core.animation.js:42 `_from`, the start value.
-  @internal
   Object? get from => _from;
 
   /// core.animation.js:42 `_from`: the specs write it
   /// (core.animation.tests.js:28, :32).
-  @internal
   set from(Object? value) {
     _from = value;
     // DIVERGES(chartjs): adapt-animation-number-path, two double fields.
@@ -332,13 +308,11 @@ class Animation.typed(
   }
 
   /// core.animation.js:43 `_to`, the target value (animation.d.ts:10).
-  @internal
   @override
   Object? get to => _to;
 
   /// core.animation.js:43 `_to`: the specs write it
   /// (core.animation.tests.js:33).
-  @internal
   set to(Object? value) {
     _to = value;
     // DIVERGES(chartjs): adapt-animation-number-path, two double fields.
@@ -457,7 +431,6 @@ class Animation.typed(
   /// ends, or `false` when it is updated or cancelled. It gets one call, in
   /// a frame job (Chart.js ADR 0172).
   // DIVERGES(chartjs): platform-animation-promise-checkpoint, a function.
-  @internal
   void onSettle(void Function(bool resolved) listener) {
     (_promises ??= []).add(listener);
   }
@@ -492,7 +465,6 @@ class Animation.typed(
   /// `Promise.all([])` is already settled. Two chains on one target read
   /// that order (Chart.js ADR 0172).
   // DIVERGES(chartjs): platform-animation-promise-checkpoint, no promise.
-  @internal
   static void whenAllEnd(List<Animation> running, void Function() onEnd) {
     if (running.isEmpty) {
       _queueFrameJob(onEnd);
@@ -528,7 +500,6 @@ class Animation.typed(
   /// - A job that throws does not stop the others. Its error goes to the
   ///   uncaught-error handler of the current zone.
   // DIVERGES(chartjs): platform-animation-promise-checkpoint, the frame jobs.
-  @internal
   static void runFrame(void Function() callback) {
     if (_frameJobs != null) {
       callback();
@@ -650,7 +621,6 @@ double _durationOf(PropertyAnimation? item, AnimationSpec cfg) =>
 
 /// Whether an animation with the options [cfg] has a duration:
 /// `cfg.duration` is truthy (core.animations.js:99).
-@internal
 bool animationHasDuration(AnimationSpec cfg) {
   final duration = cfg.duration;
   return duration != null && duration != 0 && !duration.isNaN;
@@ -670,10 +640,9 @@ double? _milliseconds(Duration? duration) =>
 /// [undefined]. Another target throws an [ArgumentError]: upstream declares
 /// `target: AnyObject` (animation.d.ts:5). `core.animation.js` and
 /// `core.animations.js` read their targets through this function.
-@internal
 Object? readProperty(Object target, String prop) => switch (target) {
-  final types.PropertyAccess access => access[prop],
-  final types.ChartMeta meta => _metaRead(meta, prop),
+  final PropertyAccess access => access[prop],
+  final ChartMeta meta => _metaRead(meta, prop),
   final JsObjectFace face => face.jsRead(prop),
   // `<dynamic, dynamic>` matches every Map, as in `jsGet`.
   final Map<dynamic, dynamic> map => jsGet(map, prop),
@@ -684,18 +653,18 @@ Object? readProperty(Object target, String prop) => switch (target) {
 /// (core.controller.js:903): the typed fields of the meta. Another name gives
 /// [undefined], as the meta has no such property (row
 /// `adapt-native-chart-meta`).
-Object? _metaRead(types.ChartMeta meta, String prop) => switch (prop) {
+Object? _metaRead(ChartMeta meta, String prop) => switch (prop) {
   'visible' => meta.visible,
   r'$animations' => meta.animations ?? undefined,
   _ => undefined,
 };
 
 /// The write `meta[prop] = value` of the `visible` animation of a dataset.
-/// [types.ChartMeta.visible] takes the ToBoolean of the value: the `hide`
+/// [ChartMeta.visible] takes the ToBoolean of the value: the `hide`
 /// animation writes `v | 0` (core.animations.defaults.js:67), and each
 /// reader applies ToBoolean. Another name throws an [ArgumentError]: the
 /// meta has only the typed fields.
-void _metaWrite(types.ChartMeta meta, String prop, Object? value) {
+void _metaWrite(ChartMeta meta, String prop, Object? value) {
   switch (prop) {
     case 'visible':
       meta.visible = jsTruthy(value);
@@ -714,12 +683,11 @@ void _metaWrite(types.ChartMeta meta, String prop, Object? value) {
 /// [value] under [prop]. Another target throws
 /// an [ArgumentError]. `core.animation.js` and `core.animations.js` write
 /// their targets through this function.
-@internal
 void writeProperty(Object target, String prop, Object? value) {
   switch (target) {
-    case final types.PropertyAccess access:
+    case final PropertyAccess access:
       access[prop] = value;
-    case final types.ChartMeta meta:
+    case final ChartMeta meta:
       _metaWrite(meta, prop, value);
     case final JsObjectFace face:
       face.jsWrite(prop, value);

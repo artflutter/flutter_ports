@@ -4,12 +4,7 @@ library;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
-import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
-import 'package:flutter_chartjs_port/src/core/core.animation.dart';
-import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
-import 'package:flutter_chartjs_port/src/elements/element.point.dart';
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:test/test.dart';
 
 import '../../support/animation_spec_input.dart';

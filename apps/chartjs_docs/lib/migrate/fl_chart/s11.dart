@@ -4,8 +4,6 @@
 import 'package:chartjs_docs/migrate/fl_chart/fl_kit.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // The public libraries have no way to create a tick for afterBuildTicks.
-// ignore: implementation_imports
-import 'package:flutter_chartjs_port/src/core/core.scale.dart' as core;
 import 'package:material_ui/material_ui.dart';
 
 const _bold = ChartTextStyle(fontSize: 18, fontWeight: FontWeight.bold);
@@ -24,15 +22,13 @@ class _Sample11State() extends State<Sample11> {
 
   /// fl_chart places the ticks around a baseline.
   void _ticksFrom(Object? scale, double base) {
-    final s = scale! as core.Scale;
+    final s = scale! as Scale;
     const step = 5.0;
     var value = base;
     while (value - step >= -10) {
       value -= step;
     }
-    s.ticks = [
-      for (var v = value; v <= 10.0001; v += step) core.Tick(value: v),
-    ];
+    s.ticks = [for (var v = value; v <= 10.0001; v += step) Tick(value: v)];
   }
 
   ChartAxis _axis(double base, ChartPosition position, String id) => LinearAxis(

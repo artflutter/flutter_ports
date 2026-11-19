@@ -3,13 +3,7 @@
 /// Native callbacks and result values (Chart.js ADR 0125).
 library;
 
-import 'package:flutter_chartjs_port/src/helpers/point_style.dart'
-    show PointStyle;
-import 'package:flutter_chartjs_port/src/js/js_undefined.dart' show Undefined;
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
-import 'package:flutter_chartjs_port/src/types/geometric.dart' show TRBLCorners;
-import 'package:flutter_chartjs_port/src/types/index.dart' as core;
-import 'package:meta/meta.dart' show internal;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The 14 tooltip hooks. An absent field inherits the corresponding hook.
 /// A null callback result selects its built-in default; an empty text list
@@ -83,7 +77,6 @@ final class const TooltipCallbacks({
 }
 
 /// Internal reconciliation metadata; callback bodies are read live by lowering.
-@internal
 int? tooltipCallbacksPresence(TooltipCallbacks? callbacks) => callbacks == null
     ? null
     : (callbacks.beforeTitle == null ? 0 : 1) |
@@ -102,7 +95,6 @@ int? tooltipCallbacksPresence(TooltipCallbacks? callbacks) => callbacks == null
           (callbacks.labelPointStyle == null ? 0 : 8192);
 
 /// The native option boundary, with no callback-Map compatibility path.
-@internal
 TooltipCallbacks tooltipCallbacksOf(Object? value) {
   if (value is TooltipCallbacks) return value;
   assert(
@@ -114,14 +106,14 @@ TooltipCallbacks tooltipCallbacksOf(Object? value) {
 
 /// A text hook over the ordered items, with the tooltip as explicit context.
 typedef TooltipItemsCallback = List<String>? Function(
-  core.TooltipModel tooltip,
-  List<core.TooltipItem> items,
+  TooltipModel tooltip,
+  List<TooltipItem> items,
 );
 
 /// A per-item hook. A null result requests the built-in callback.
 typedef TooltipItemCallback<T> = T? Function(
-  core.TooltipModel tooltip,
-  core.TooltipItem item,
+  TooltipModel tooltip,
+  TooltipItem item,
 );
 
 /// The option `filter` of the tooltip (index.d.ts:2821,
@@ -129,9 +121,9 @@ typedef TooltipItemCallback<T> = T? Function(
 /// [items] is the List of each item before the filter, and [data] is
 /// `chart.data`.
 typedef TooltipItemFilter = bool Function(
-  core.TooltipItem item,
+  TooltipItem item,
   int index,
-  List<core.TooltipItem> items,
+  List<TooltipItem> items,
   Object data,
 );
 
@@ -139,8 +131,8 @@ typedef TooltipItemFilter = bool Function(
 /// plugin.tooltip.js:619-621): the order of two items, as a comparator of
 /// `List.sort`. The sort is stable. [data] is `chart.data`.
 typedef TooltipItemComparator = int Function(
-  core.TooltipItem a,
-  core.TooltipItem b,
+  TooltipItem a,
+  TooltipItem b,
   Object data,
 );
 
@@ -149,7 +141,7 @@ typedef TooltipItemComparator = int Function(
 /// changed its state. Chart.js gives the tooltip as `this` and in the
 /// object `{chart, tooltip, replay}`; the chart is `tooltip.chart`.
 /// [replay] is true for the update of a replayed event.
-typedef TooltipExternal = void Function(core.TooltipModel tooltip, bool replay);
+typedef TooltipExternal = void Function(TooltipModel tooltip, bool replay);
 
 /// The four scalar radii of a tooltip label box.
 final class const TooltipCornerRadii({

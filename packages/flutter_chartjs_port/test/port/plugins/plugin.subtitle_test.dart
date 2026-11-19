@@ -8,23 +8,7 @@ import 'dart:ui' show FontWeight;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-import 'package:flutter_chartjs_port/src/core/core.config.dart'
-    show themeConfigKey;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.registry.dart' show registry;
-import 'package:flutter_chartjs_port/src/js/js_array.dart' show jsObjectKeys;
-import 'package:flutter_chartjs_port/src/js/js_object.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.subtitle.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.title.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin_options.dart'
-    show TitleOptions;
-import 'package:flutter_chartjs_port/src/types/align.dart' show ChartAlign;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
-import 'package:flutter_chartjs_port/src/types/layout.dart' show ChartPosition;
-import 'package:flutter_chartjs_port/src/types/plugin.dart'
-    show PluginHookArgs, UpdateHookArgs;
+import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
@@ -92,7 +76,7 @@ List<Title> _subtitles(Chart chart) => [
 /// (`observeBox` of the generator). `lines` is the `lineCount` of
 /// plugin.title.js:43, and `options` is the plain copy of the resolved
 /// options of the box.
-Object? _observeBox(types.LayoutItem? box) {
+Object? _observeBox(LayoutItem? box) {
   if (box == null) return null;
   final text = jsGet(box.options, 'text');
   return <String, Object?>{
@@ -247,22 +231,20 @@ void main() {
       ]) {
         expect(
           function,
-          isA<void Function(types.Chart, PluginHookArgs, TitleOptions)>(),
+          isA<void Function(IChart, PluginHookArgs, TitleOptions)>(),
           reason: hook,
         );
         expect(
           function,
           isNot(
-            isA<
-              void Function(types.Chart, PluginHookArgs, TitleOptions, Never)
-            >(),
+            isA<void Function(IChart, PluginHookArgs, TitleOptions, Never)>(),
           ),
           reason: hook,
         );
       }
       expect(
         subTitle.beforeUpdate,
-        isA<bool Function(types.Chart, UpdateHookArgs, TitleOptions)>(),
+        isA<bool Function(IChart, UpdateHookArgs, TitleOptions)>(),
       );
     });
 

@@ -9,17 +9,16 @@
 /// `LegendLabelsGenerator`, takes the chart: it is in `plugin.legend.dart`.
 library;
 
-import 'package:flutter_chartjs_port/src/types/index.dart' as core;
-import 'package:flutter_chartjs_port/src/types/legend_item.dart';
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The legend options `onClick`, `onHover` and `onLeave`
 /// (index.d.ts:2459-2467, plugin.legend.js:539-550): the chart event, the
 /// legend item under the event (for `onLeave`, the item that the pointer
 /// left) and the legend. Chart.js also gives the legend as `this`.
 typedef LegendEventHandler = void Function(
-  core.ChartEvent event,
+  ChartEvent event,
   LegendItem item,
-  core.LegendElement legend,
+  LegendElement legend,
 );
 
 /// The legend option `labels.filter` (index.d.ts:2507, plugin.legend.js:

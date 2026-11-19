@@ -6,30 +6,7 @@ import 'dart:ui' show Color;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show createMockContext;
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show
-        AxisGrid,
-        CategoryAxis,
-        ChartConfig,
-        ChartKind,
-        LineDataset,
-        RadarDataset,
-        RadialLinearAxis;
-import 'package:flutter_chartjs_port/src/core/core.controller.dart';
-import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
-import 'package:flutter_chartjs_port/src/helpers/helpers.options.dart'
-    show ScriptableScaleContext;
-import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
-    show OptionKey;
-import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
-    show ChartOptionsScope, ScaleOptionsScope;
-import 'package:flutter_chartjs_port/src/theme/compile.dart'
-    show compileChartTheme;
-import 'package:flutter_chartjs_port/src/typed/lower.dart'
-    show ChartConfigLowering;
-import 'package:flutter_chartjs_port/src/types/axis_border.dart';
-import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 // The scale option border holds one ScaleBorder (Chart.js ADR 0141, row

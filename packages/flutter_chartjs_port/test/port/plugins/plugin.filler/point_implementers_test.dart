@@ -5,8 +5,8 @@ library;
 
 // Chart.js ADR 0040, section 11: no class in lib/ other than the class
 // `PointElement` of lib/src/elements/element.point.dart implements,
-// extends or mixes in `types.PointElement`, `types.RadialPointElement` or
-// `types.SplinePoint`. A second implementer anywhere in the program makes
+// extends or mixes in `IPointElement`, `RadialPointElement` or
+// `SplinePoint`. A second implementer anywhere in the program makes
 // every curved line 64 to 70 % slower on AOT and about 2 times slower on
 // dart2wasm, also in a chart without a fill (the Benchmarks of the ADR and
 // performance.md). The test resolves the element model of lib/ with
@@ -23,15 +23,14 @@ import 'package:analyzer/dart/analysis/analysis_context_collection.dart';
 import 'package:analyzer/dart/analysis/results.dart';
 import 'package:analyzer/dart/element/element.dart';
 import 'package:analyzer/file_system/physical_file_system.dart';
-import 'package:flutter_chartjs_port/src/plugins/plugin.filler/simpleArc.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart';
 
 import '../../../../tool/src/dart_sdk.dart';
 
 /// The point interfaces: the library URI and the name of each.
 const Set<String> _pointInterfaces = {
-  'package:flutter_chartjs_port/src/types/index.dart PointElement',
+  'package:flutter_chartjs_port/src/types/index.dart IPointElement',
   'package:flutter_chartjs_port/src/types/index.dart RadialPointElement',
   'package:flutter_chartjs_port/src/types/geometric.dart SplinePoint',
 };
@@ -39,7 +38,7 @@ const Set<String> _pointInterfaces = {
 /// The allowed declarations: the interfaces of lib/src/types/ and the
 /// class of lib/src/elements/element.point.dart.
 const Set<String> _allowed = {
-  'package:flutter_chartjs_port/src/types/index.dart PointElement',
+  'package:flutter_chartjs_port/src/types/index.dart IPointElement',
   'package:flutter_chartjs_port/src/types/index.dart RadialPointElement',
   'package:flutter_chartjs_port/src/elements/element.point.dart PointElement',
 };
@@ -126,16 +125,16 @@ String _absolutePackageConfig() {
 /// does not find (the review finding F1), one direct implementer, one
 /// indirect implementer, and four forms that are not implementers.
 const String _probe = '''
-import 'package:flutter_chartjs_port/src/elements/element.point.dart' as el;
-import 'package:flutter_chartjs_port/src/types/geometric.dart' as geo;
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs.dart' as el;
+import 'package:flutter_chartjs_port/chartjs.dart' as geo;
+import 'package:flutter_chartjs_port/chartjs.dart' as types;
 
 mixin Forward {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-final class AppPoint = Object with Forward implements types.PointElement;
+final class AppPoint = Object with Forward implements types.IPointElement;
 
 typedef Spline = geo.SplinePoint;
 
@@ -145,11 +144,11 @@ final class Direct with Forward implements types.RadialPointElement {}
 
 final class Indirect extends el.PointElement {}
 
-class Bound<T extends types.PointElement> {}
+class Bound<T extends types.IPointElement> {}
 
-// class Comment implements types.PointElement {}
+// class Comment implements types.IPointElement {}
 
-const String text = 'class Text implements types.PointElement {}';
+const String text = 'class Text implements types.IPointElement {}';
 
 final class Other with Forward implements geo.Point {}
 ''';
@@ -166,12 +165,12 @@ void main() {
     final found = await pointImplementers(temp.path);
     expect(found, [
       ('$uri AliasPoint', 'SplinePoint'),
-      ('$uri AppPoint', 'PointElement'),
+      ('$uri AppPoint', 'IPointElement'),
       ('$uri AppPoint', 'SplinePoint'),
-      ('$uri Direct', 'PointElement'),
+      ('$uri Direct', 'IPointElement'),
       ('$uri Direct', 'RadialPointElement'),
       ('$uri Direct', 'SplinePoint'),
-      ('$uri Indirect', 'PointElement'),
+      ('$uri Indirect', 'IPointElement'),
       ('$uri Indirect', 'RadialPointElement'),
       ('$uri Indirect', 'SplinePoint'),
     ]);
@@ -191,7 +190,7 @@ void main() {
         found,
         isEmpty,
         reason:
-            'A second implementer of types.PointElement, RadialPointElement '
+            'A second implementer of IPointElement, RadialPointElement '
             'or SplinePoint slows every curved line (Chart.js ADR 0040, '
             'section 11, and the phase 8 figures of performance.md). Wrap '
             'the points in a PointElement instead.',
@@ -202,8 +201,8 @@ void main() {
     timeout: const Timeout(Duration(minutes: 3)),
   );
 
-  test('SimpleArc does not implement types.LineElement', () {
+  test('SimpleArc does not implement LineElementApi', () {
     final Object arc = SimpleArc(x: 0, y: 0, radius: 0);
-    expect(arc, isNot(isA<types.LineElement>()));
+    expect(arc, isNot(isA<ILineElement>()));
   });
 }

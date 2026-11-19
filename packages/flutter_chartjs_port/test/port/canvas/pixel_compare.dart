@@ -12,7 +12,7 @@ import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas_ui.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// The RGBA bytes of a render of [width] x [height] pixels.
 final class Render(

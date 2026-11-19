@@ -15,14 +15,7 @@ library;
 
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_port/src/canvas/canvas.dart' show CanvasPath;
-import 'package:flutter_chartjs_port/src/helpers/helpers.interpolation.dart'
-    show InterpolatedPoint;
-import 'package:flutter_chartjs_port/src/helpers/helpers.math.dart' show tau;
-import 'package:flutter_chartjs_port/src/js/js_number.dart' show jsTruthy;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
-import 'package:flutter_chartjs_port/src/types/index.dart' as types;
+import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// simpleArc.js:4 `class simpleArc`.
 ///
@@ -36,7 +29,7 @@ final class SimpleArc({
 
   /// simpleArc.js:8 `this.radius = opts.radius`.
   required final double radius,
-}) implements types.SimpleArc {
+}) implements ISimpleArc {
   /// simpleArc.js:5 `constructor(opts)`. The keys `x`, `y` and `radius` of
   /// `opts` are named parameters.
   this;
@@ -60,13 +53,13 @@ final class SimpleArc({
   /// simpleArc.js:18 `interpolate(point)`.
   ///
   /// `point.angle` is the typed `angle` of a radar point
-  /// ([types.RadialPointElement]): NaN for the `undefined` state and for a
+  /// ([RadialPointElement]): NaN for the `undefined` state and for a
   /// point without an angle, as `Math.cos(undefined)` is NaN. The upstream
   /// result also has `angle`. Its only reader reads `x` and `y`
   /// (filler.drawing.js:203).
   @override
-  InterpolatedPoint interpolate(types.PointElement point) {
-    final angle = point is types.RadialPointElement
+  InterpolatedPoint interpolate(IPointElement point) {
+    final angle = point is RadialPointElement
         ? (point.angle ?? double.nan)
         : double.nan;
     return InterpolatedPoint(
