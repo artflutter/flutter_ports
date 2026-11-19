@@ -862,7 +862,7 @@ class LineElement([AnyObject? cfg])
   static final LineOptionsScope defaults = LineOptionsScope()
     // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enums.
     ..borderCapStyle = ui.StrokeCap.butt
-    ..borderDash = <Object?>[]
+    ..borderDash = <double>[]
     ..borderDashOffset = 0.0
     ..borderJoinStyle = ui.StrokeJoin.miter
     ..borderWidth = 3.0

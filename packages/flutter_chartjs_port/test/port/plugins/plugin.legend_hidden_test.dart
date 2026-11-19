@@ -3984,7 +3984,7 @@ void main() {
               dataset: {
                 'backgroundColor': <Object?>[_red, _red, _red],
                 'borderWidth': <Object?>[1.0, 1.0, 1.0],
-                'borderDash': <Object?>[1.0, 1.0],
+                'borderDash': <double>[1, 1],
               },
             ),
             exact: exact,

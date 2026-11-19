@@ -339,7 +339,7 @@ void main() {
       expect(LineElement.id, 'line');
       expect(_plain(LineElement.defaults), {
         'borderCapStyle': ui.StrokeCap.butt,
-        'borderDash': <Object?>[],
+        'borderDash': <double>[],
         'borderDashOffset': 0,
         'borderJoinStyle': ui.StrokeJoin.miter,
         'borderWidth': 3,

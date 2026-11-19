@@ -86,7 +86,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -215,7 +215,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -426,7 +426,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -637,7 +637,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1560,7 +1560,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -1690,7 +1690,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1901,7 +1901,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -2112,7 +2112,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -3032,7 +3032,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -3176,7 +3176,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -3387,7 +3387,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -3601,7 +3601,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -4523,7 +4523,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -4658,7 +4658,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -4869,7 +4869,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -5080,7 +5080,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -6002,7 +6002,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -6146,7 +6146,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -6357,7 +6357,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -6571,7 +6571,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7493,7 +7493,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -7623,7 +7623,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7834,7 +7834,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -8045,7 +8045,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -8968,7 +8968,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -9098,7 +9098,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9309,7 +9309,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -9520,7 +9520,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10443,7 +10443,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -10590,7 +10590,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10801,7 +10801,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -11015,7 +11015,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -11937,7 +11937,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -12075,7 +12075,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12286,7 +12286,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -12497,7 +12497,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -13419,7 +13419,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -13549,7 +13549,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -13760,7 +13760,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -13971,7 +13971,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14897,7 +14897,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -15044,7 +15044,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -15255,7 +15255,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -15469,7 +15469,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16394,7 +16394,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -16524,7 +16524,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16735,7 +16735,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -16946,7 +16946,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17869,7 +17869,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -18016,7 +18016,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18227,7 +18227,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -18441,7 +18441,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19363,7 +19363,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -19501,7 +19501,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19712,7 +19712,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -19923,7 +19923,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -20845,7 +20845,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
           <String, Object?>{
@@ -21001,7 +21001,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21206,7 +21206,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -21414,7 +21414,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21622,7 +21622,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21830,7 +21830,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -22044,7 +22044,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -22258,7 +22258,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -22466,7 +22466,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -22680,7 +22680,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -24171,7 +24171,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
             'pointRotation': 30.0,
           },
@@ -24304,7 +24304,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -24515,7 +24515,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -24726,7 +24726,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -25656,7 +25656,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -25792,7 +25792,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -26003,7 +26003,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -26214,7 +26214,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -26632,7 +26632,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -26846,7 +26846,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -27060,7 +27060,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -27990,7 +27990,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -28122,7 +28122,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -28333,7 +28333,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -28544,7 +28544,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -29468,7 +29468,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -29615,7 +29615,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -29826,7 +29826,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -30040,7 +30040,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -30962,7 +30962,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -31094,7 +31094,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -31305,7 +31305,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -31516,7 +31516,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -32395,7 +32395,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -32527,7 +32527,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -32738,7 +32738,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -32949,7 +32949,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -33872,7 +33872,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -34010,7 +34010,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -34221,7 +34221,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -34432,7 +34432,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -35358,7 +35358,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -35508,7 +35508,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -35719,7 +35719,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -35933,7 +35933,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -36865,7 +36865,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -37017,7 +37017,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -37228,7 +37228,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -37442,7 +37442,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -38373,7 +38373,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
           <String, Object?>{
@@ -38529,7 +38529,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -38734,7 +38734,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -38942,7 +38942,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -39150,7 +39150,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -39358,7 +39358,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -39569,7 +39569,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -39783,7 +39783,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -39991,7 +39991,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -40205,7 +40205,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -41700,7 +41700,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
           <String, Object?>{
@@ -41862,7 +41862,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -42070,7 +42070,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -42278,7 +42278,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -42483,7 +42483,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -42688,7 +42688,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -42896,7 +42896,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -43104,7 +43104,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -43315,7 +43315,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -43520,7 +43520,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -44893,7 +44893,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -45022,7 +45022,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -45233,7 +45233,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -45444,7 +45444,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -45855,7 +45855,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -46069,7 +46069,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -46283,7 +46283,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -47168,7 +47168,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -47301,7 +47301,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -47512,7 +47512,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -47723,7 +47723,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -48134,7 +48134,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -48348,7 +48348,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -48562,7 +48562,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -48973,7 +48973,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -49187,7 +49187,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -49401,7 +49401,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -49812,7 +49812,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -50026,7 +50026,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -50240,7 +50240,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -50655,7 +50655,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -50869,7 +50869,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -51083,7 +51083,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -52011,7 +52011,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -52140,7 +52140,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -52351,7 +52351,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -52562,7 +52562,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -52973,7 +52973,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -53187,7 +53187,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -53401,7 +53401,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -53810,7 +53810,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -54021,7 +54021,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -54235,7 +54235,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -54646,7 +54646,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -54860,7 +54860,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -55074,7 +55074,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -55947,7 +55947,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -56077,7 +56077,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -56288,7 +56288,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -56499,7 +56499,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -56910,7 +56910,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -57124,7 +57124,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -57338,7 +57338,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -57749,7 +57749,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -57963,7 +57963,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -58177,7 +58177,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -59101,7 +59101,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -59245,7 +59245,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -59456,7 +59456,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -59670,7 +59670,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -60056,7 +60056,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -60270,7 +60270,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -60484,7 +60484,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -61409,7 +61409,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
             'borderWidth': 2.0,
           },
@@ -62994,7 +62994,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 r'$shared': false,
                 'borderAlign': ArcBorderAlign.center,
                 'borderColor': '#fff',
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': undefined,
                 'borderRadius': 0.0,
@@ -63011,7 +63011,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 r'$shared': false,
                 'borderAlign': ArcBorderAlign.center,
                 'borderColor': '#fff',
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': undefined,
                 'borderRadius': 0.0,
@@ -63028,7 +63028,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 r'$shared': false,
                 'borderAlign': ArcBorderAlign.center,
                 'borderColor': '#fff',
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': undefined,
                 'borderRadius': 0.0,
@@ -63045,7 +63045,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 r'$shared': false,
                 'borderAlign': ArcBorderAlign.center,
                 'borderColor': '#fff',
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': undefined,
                 'borderRadius': 0.0,
@@ -63064,7 +63064,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 r'$shared': false,
                 'borderAlign': ArcBorderAlign.center,
                 'borderColor': '#E6E6E6',
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': undefined,
                 'borderRadius': 0.0,
@@ -63081,7 +63081,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 r'$shared': false,
                 'borderAlign': ArcBorderAlign.center,
                 'borderColor': '#E6E6E6',
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': undefined,
                 'borderRadius': 0.0,
@@ -63098,7 +63098,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 r'$shared': false,
                 'borderAlign': ArcBorderAlign.center,
                 'borderColor': '#E6E6E6',
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': undefined,
                 'borderRadius': 0.0,
@@ -63115,7 +63115,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                 r'$shared': false,
                 'borderAlign': ArcBorderAlign.center,
                 'borderColor': '#E6E6E6',
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': undefined,
                 'borderRadius': 0.0,
@@ -63378,7 +63378,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                     r'$shared': false,
                     'borderAlign': ArcBorderAlign.center,
                     'borderColor': '#fff',
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': undefined,
                     'borderRadius': 0.0,
@@ -63395,7 +63395,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                     r'$shared': false,
                     'borderAlign': ArcBorderAlign.center,
                     'borderColor': '#fff',
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': undefined,
                     'borderRadius': 0.0,
@@ -63412,7 +63412,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                     r'$shared': false,
                     'borderAlign': ArcBorderAlign.center,
                     'borderColor': '#fff',
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': undefined,
                     'borderRadius': 0.0,
@@ -63429,7 +63429,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                     r'$shared': false,
                     'borderAlign': ArcBorderAlign.center,
                     'borderColor': '#fff',
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': undefined,
                     'borderRadius': 0.0,
@@ -63448,7 +63448,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                     r'$shared': false,
                     'borderAlign': ArcBorderAlign.center,
                     'borderColor': '#E6E6E6',
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': undefined,
                     'borderRadius': 0.0,
@@ -63465,7 +63465,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                     r'$shared': false,
                     'borderAlign': ArcBorderAlign.center,
                     'borderColor': '#E6E6E6',
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': undefined,
                     'borderRadius': 0.0,
@@ -63482,7 +63482,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                     r'$shared': false,
                     'borderAlign': ArcBorderAlign.center,
                     'borderColor': '#E6E6E6',
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': undefined,
                     'borderRadius': 0.0,
@@ -63499,7 +63499,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                     r'$shared': false,
                     'borderAlign': ArcBorderAlign.center,
                     'borderColor': '#E6E6E6',
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': undefined,
                     'borderRadius': 0.0,
@@ -63865,7 +63865,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
           <String, Object?>{
             'label': 'A longer dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': RectRotPointStyle(),
           },
         ],
@@ -63985,7 +63985,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -64196,7 +64196,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -64407,7 +64407,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -64842,7 +64842,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -65056,7 +65056,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -65270,7 +65270,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -65705,7 +65705,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -65919,7 +65919,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -66133,7 +66133,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -66568,7 +66568,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -66782,7 +66782,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 6.0,
@@ -66996,7 +66996,7 @@ const List<PluginLegendReferenceCase> pluginLegendReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,

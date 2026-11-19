@@ -1890,13 +1890,13 @@ base class ChartOptionsScope() extends OptionScope {
   set borderCapStyle(StrokeCap value) =>
       store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
-  Opt<Object>? _borderDash;
+  Opt<List<double>>? _borderDash;
 
   /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
+  Opt<List<double>>? get borderDashCell => _borderDash;
 
   /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
+  set borderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.borderDash);
     } else {
@@ -1905,8 +1905,8 @@ base class ChartOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
+  set borderDash(List<double> value) =>
+      store(OptionKey.borderDash, OptValue<List<double>>(value));
 
   Opt<double>? _borderDashOffset;
 
@@ -2055,13 +2055,13 @@ base class ChartOptionsScope() extends OptionScope {
   set hoverBorderCapStyle(StrokeCap value) =>
       store(OptionKey.hoverBorderCapStyle, OptValue<StrokeCap>(value));
 
-  Opt<Object>? _hoverBorderDash;
+  Opt<List<double>>? _hoverBorderDash;
 
   /// The cell of `hoverBorderDash`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderDashCell => _hoverBorderDash;
+  Opt<List<double>>? get hoverBorderDashCell => _hoverBorderDash;
 
   /// Stores the cell of `hoverBorderDash`. Dart `null` deletes the key.
-  set hoverBorderDashCell(Opt<Object>? cell) {
+  set hoverBorderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderDash);
     } else {
@@ -2070,10 +2070,8 @@ base class ChartOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderDash`.
-  set hoverBorderDash(Object value) => store(
-    OptionKey.hoverBorderDash,
-    classify(OptionKey.hoverBorderDash, value),
-  );
+  set hoverBorderDash(List<double> value) =>
+      store(OptionKey.hoverBorderDash, OptValue<List<double>>(value));
 
   Opt<double>? _hoverBorderDashOffset;
 
@@ -2651,7 +2649,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.borderCapStyle:
         _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _borderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
@@ -2672,7 +2670,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.hoverBorderCapStyle:
         _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
-        _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _hoverBorderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderJoinStyle:
@@ -2980,7 +2978,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.borderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
@@ -2998,7 +2996,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.hoverBorderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverBorderJoinStyle:
@@ -5705,13 +5703,13 @@ base class LineOptionsScope() extends OptionScope {
   set borderCapStyle(StrokeCap value) =>
       store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
-  Opt<Object>? _borderDash;
+  Opt<List<double>>? _borderDash;
 
   /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
+  Opt<List<double>>? get borderDashCell => _borderDash;
 
   /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
+  set borderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.borderDash);
     } else {
@@ -5720,8 +5718,8 @@ base class LineOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
+  set borderDash(List<double> value) =>
+      store(OptionKey.borderDash, OptValue<List<double>>(value));
 
   Opt<double>? _borderDashOffset;
 
@@ -5960,13 +5958,13 @@ base class LineOptionsScope() extends OptionScope {
   set hoverBorderCapStyle(StrokeCap value) =>
       store(OptionKey.hoverBorderCapStyle, OptValue<StrokeCap>(value));
 
-  Opt<Object>? _hoverBorderDash;
+  Opt<List<double>>? _hoverBorderDash;
 
   /// The cell of `hoverBorderDash`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderDashCell => _hoverBorderDash;
+  Opt<List<double>>? get hoverBorderDashCell => _hoverBorderDash;
 
   /// Stores the cell of `hoverBorderDash`. Dart `null` deletes the key.
-  set hoverBorderDashCell(Opt<Object>? cell) {
+  set hoverBorderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderDash);
     } else {
@@ -5975,10 +5973,8 @@ base class LineOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderDash`.
-  set hoverBorderDash(Object value) => store(
-    OptionKey.hoverBorderDash,
-    classify(OptionKey.hoverBorderDash, value),
-  );
+  set hoverBorderDash(List<double> value) =>
+      store(OptionKey.hoverBorderDash, OptValue<List<double>>(value));
 
   Opt<double>? _hoverBorderDashOffset;
 
@@ -6120,7 +6116,7 @@ base class LineOptionsScope() extends OptionScope {
       case OptionKey.borderCapStyle:
         _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _borderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
@@ -6151,7 +6147,7 @@ base class LineOptionsScope() extends OptionScope {
       case OptionKey.hoverBorderCapStyle:
         _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
-        _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _hoverBorderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderJoinStyle:
@@ -6209,7 +6205,7 @@ base class LineOptionsScope() extends OptionScope {
       case OptionKey.borderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
@@ -6237,7 +6233,7 @@ base class LineOptionsScope() extends OptionScope {
       case OptionKey.hoverBorderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverBorderJoinStyle:
@@ -6746,13 +6742,13 @@ base class ArcOptionsScope() extends OptionScope {
   set borderAlign(ArcBorderAlign value) =>
       store(OptionKey.borderAlign, OptValue<ArcBorderAlign>(value));
 
-  Opt<Object>? _borderDash;
+  Opt<List<double>>? _borderDash;
 
   /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
+  Opt<List<double>>? get borderDashCell => _borderDash;
 
   /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
+  set borderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.borderDash);
     } else {
@@ -6761,8 +6757,8 @@ base class ArcOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
+  set borderDash(List<double> value) =>
+      store(OptionKey.borderDash, OptValue<List<double>>(value));
 
   Opt<double>? _borderDashOffset;
 
@@ -6942,13 +6938,13 @@ base class ArcOptionsScope() extends OptionScope {
   set hoverBackgroundColor(ChartPaint value) =>
       store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBorderDash;
+  Opt<List<double>>? _hoverBorderDash;
 
   /// The cell of `hoverBorderDash`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderDashCell => _hoverBorderDash;
+  Opt<List<double>>? get hoverBorderDashCell => _hoverBorderDash;
 
   /// Stores the cell of `hoverBorderDash`. Dart `null` deletes the key.
-  set hoverBorderDashCell(Opt<Object>? cell) {
+  set hoverBorderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderDash);
     } else {
@@ -6957,10 +6953,8 @@ base class ArcOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderDash`.
-  set hoverBorderDash(Object value) => store(
-    OptionKey.hoverBorderDash,
-    classify(OptionKey.hoverBorderDash, value),
-  );
+  set hoverBorderDash(List<double> value) =>
+      store(OptionKey.hoverBorderDash, OptValue<List<double>>(value));
 
   Opt<double>? _hoverBorderDashOffset;
 
@@ -7119,7 +7113,7 @@ base class ArcOptionsScope() extends OptionScope {
       case OptionKey.borderAlign:
         _borderAlign = fitCell(cell, classifyTyped<ArcBorderAlign>);
       case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _borderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
@@ -7141,7 +7135,7 @@ base class ArcOptionsScope() extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderDash:
-        _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _hoverBorderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverOffset:
@@ -7202,7 +7196,7 @@ base class ArcOptionsScope() extends OptionScope {
       case OptionKey.borderAlign:
         return classifyTyped<ArcBorderAlign>(raw);
       case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
@@ -7224,7 +7218,7 @@ base class ArcOptionsScope() extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverOffset:
@@ -9043,13 +9037,13 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   set borderCapStyle(StrokeCap value) =>
       store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
-  Opt<Object>? _borderDash;
+  Opt<List<double>>? _borderDash;
 
   /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
+  Opt<List<double>>? get borderDashCell => _borderDash;
 
   /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
+  set borderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.borderDash);
     } else {
@@ -9058,8 +9052,8 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
+  set borderDash(List<double> value) =>
+      store(OptionKey.borderDash, OptValue<List<double>>(value));
 
   Opt<double>? _borderDashOffset;
 
@@ -9298,13 +9292,13 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   set hoverBorderCapStyle(StrokeCap value) =>
       store(OptionKey.hoverBorderCapStyle, OptValue<StrokeCap>(value));
 
-  Opt<Object>? _hoverBorderDash;
+  Opt<List<double>>? _hoverBorderDash;
 
   /// The cell of `hoverBorderDash`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderDashCell => _hoverBorderDash;
+  Opt<List<double>>? get hoverBorderDashCell => _hoverBorderDash;
 
   /// Stores the cell of `hoverBorderDash`. Dart `null` deletes the key.
-  set hoverBorderDashCell(Opt<Object>? cell) {
+  set hoverBorderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderDash);
     } else {
@@ -9313,10 +9307,8 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderDash`.
-  set hoverBorderDash(Object value) => store(
-    OptionKey.hoverBorderDash,
-    classify(OptionKey.hoverBorderDash, value),
-  );
+  set hoverBorderDash(List<double> value) =>
+      store(OptionKey.hoverBorderDash, OptValue<List<double>>(value));
 
   Opt<double>? _hoverBorderDashOffset;
 
@@ -9866,7 +9858,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderCapStyle:
         _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _borderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
@@ -9897,7 +9889,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.hoverBorderCapStyle:
         _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
-        _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _hoverBorderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderJoinStyle:
@@ -10061,7 +10053,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
@@ -10089,7 +10081,7 @@ base class LineControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.hoverBorderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverBorderJoinStyle:
@@ -11342,13 +11334,13 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
   set borderAlign(ArcBorderAlign value) =>
       store(OptionKey.borderAlign, OptValue<ArcBorderAlign>(value));
 
-  Opt<Object>? _borderDash;
+  Opt<List<double>>? _borderDash;
 
   /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
+  Opt<List<double>>? get borderDashCell => _borderDash;
 
   /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
+  set borderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.borderDash);
     } else {
@@ -11357,8 +11349,8 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
+  set borderDash(List<double> value) =>
+      store(OptionKey.borderDash, OptValue<List<double>>(value));
 
   Opt<double>? _borderDashOffset;
 
@@ -11538,13 +11530,13 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
   set hoverBackgroundColor(ChartPaint value) =>
       store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBorderDash;
+  Opt<List<double>>? _hoverBorderDash;
 
   /// The cell of `hoverBorderDash`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderDashCell => _hoverBorderDash;
+  Opt<List<double>>? get hoverBorderDashCell => _hoverBorderDash;
 
   /// Stores the cell of `hoverBorderDash`. Dart `null` deletes the key.
-  set hoverBorderDashCell(Opt<Object>? cell) {
+  set hoverBorderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderDash);
     } else {
@@ -11553,10 +11545,8 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderDash`.
-  set hoverBorderDash(Object value) => store(
-    OptionKey.hoverBorderDash,
-    classify(OptionKey.hoverBorderDash, value),
-  );
+  set hoverBorderDash(List<double> value) =>
+      store(OptionKey.hoverBorderDash, OptValue<List<double>>(value));
 
   Opt<double>? _hoverBorderDashOffset;
 
@@ -12112,7 +12102,7 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderAlign:
         _borderAlign = fitCell(cell, classifyTyped<ArcBorderAlign>);
       case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _borderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
@@ -12134,7 +12124,7 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderDash:
-        _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _hoverBorderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverOffset:
@@ -12280,7 +12270,7 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderAlign:
         return classifyTyped<ArcBorderAlign>(raw);
       case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
@@ -12302,7 +12292,7 @@ base class DoughnutControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverOffset:
@@ -12613,13 +12603,13 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
   set borderAlign(ArcBorderAlign value) =>
       store(OptionKey.borderAlign, OptValue<ArcBorderAlign>(value));
 
-  Opt<Object>? _borderDash;
+  Opt<List<double>>? _borderDash;
 
   /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
+  Opt<List<double>>? get borderDashCell => _borderDash;
 
   /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
+  set borderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.borderDash);
     } else {
@@ -12628,8 +12618,8 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
+  set borderDash(List<double> value) =>
+      store(OptionKey.borderDash, OptValue<List<double>>(value));
 
   Opt<double>? _borderDashOffset;
 
@@ -12809,13 +12799,13 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
   set hoverBackgroundColor(ChartPaint value) =>
       store(OptionKey.hoverBackgroundColor, OptValue<ChartPaint>(value));
 
-  Opt<Object>? _hoverBorderDash;
+  Opt<List<double>>? _hoverBorderDash;
 
   /// The cell of `hoverBorderDash`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderDashCell => _hoverBorderDash;
+  Opt<List<double>>? get hoverBorderDashCell => _hoverBorderDash;
 
   /// Stores the cell of `hoverBorderDash`. Dart `null` deletes the key.
-  set hoverBorderDashCell(Opt<Object>? cell) {
+  set hoverBorderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderDash);
     } else {
@@ -12824,10 +12814,8 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderDash`.
-  set hoverBorderDash(Object value) => store(
-    OptionKey.hoverBorderDash,
-    classify(OptionKey.hoverBorderDash, value),
-  );
+  set hoverBorderDash(List<double> value) =>
+      store(OptionKey.hoverBorderDash, OptValue<List<double>>(value));
 
   Opt<double>? _hoverBorderDashOffset;
 
@@ -13402,7 +13390,7 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderAlign:
         _borderAlign = fitCell(cell, classifyTyped<ArcBorderAlign>);
       case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _borderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
@@ -13424,7 +13412,7 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderDash:
-        _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _hoverBorderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverOffset:
@@ -13573,7 +13561,7 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderAlign:
         return classifyTyped<ArcBorderAlign>(raw);
       case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
@@ -13595,7 +13583,7 @@ base class PolarAreaControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverOffset:
@@ -14233,13 +14221,13 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   set borderCapStyle(StrokeCap value) =>
       store(OptionKey.borderCapStyle, OptValue<StrokeCap>(value));
 
-  Opt<Object>? _borderDash;
+  Opt<List<double>>? _borderDash;
 
   /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
+  Opt<List<double>>? get borderDashCell => _borderDash;
 
   /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
+  set borderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.borderDash);
     } else {
@@ -14248,8 +14236,8 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
+  set borderDash(List<double> value) =>
+      store(OptionKey.borderDash, OptValue<List<double>>(value));
 
   Opt<double>? _borderDashOffset;
 
@@ -14434,13 +14422,13 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   set hoverBorderCapStyle(StrokeCap value) =>
       store(OptionKey.hoverBorderCapStyle, OptValue<StrokeCap>(value));
 
-  Opt<Object>? _hoverBorderDash;
+  Opt<List<double>>? _hoverBorderDash;
 
   /// The cell of `hoverBorderDash`, or Dart `null` when absent.
-  Opt<Object>? get hoverBorderDashCell => _hoverBorderDash;
+  Opt<List<double>>? get hoverBorderDashCell => _hoverBorderDash;
 
   /// Stores the cell of `hoverBorderDash`. Dart `null` deletes the key.
-  set hoverBorderDashCell(Opt<Object>? cell) {
+  set hoverBorderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.hoverBorderDash);
     } else {
@@ -14449,10 +14437,8 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `hoverBorderDash`.
-  set hoverBorderDash(Object value) => store(
-    OptionKey.hoverBorderDash,
-    classify(OptionKey.hoverBorderDash, value),
-  );
+  set hoverBorderDash(List<double> value) =>
+      store(OptionKey.hoverBorderDash, OptValue<List<double>>(value));
 
   Opt<double>? _hoverBorderDashOffset;
 
@@ -14960,7 +14946,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderCapStyle:
         _borderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _borderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.borderJoinStyle:
@@ -14985,7 +14971,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.hoverBorderCapStyle:
         _hoverBorderCapStyle = fitCell(cell, classifyTyped<StrokeCap>);
       case OptionKey.hoverBorderDash:
-        _hoverBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _hoverBorderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.hoverBorderDashOffset:
         _hoverBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.hoverBorderJoinStyle:
@@ -15167,7 +15153,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       case OptionKey.borderJoinStyle:
@@ -15189,7 +15175,7 @@ base class RadarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.hoverBorderCapStyle:
         return classifyTyped<StrokeCap>(raw);
       case OptionKey.hoverBorderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.hoverBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.hoverBorderJoinStyle:
@@ -18142,13 +18128,13 @@ base class GridLineOptionsScope() extends OptionScope {
   set drawTicks(bool value) =>
       store(OptionKey.drawTicks, OptValue<bool>(value));
 
-  Opt<Object>? _tickBorderDash;
+  Opt<List<double>>? _tickBorderDash;
 
   /// The cell of `tickBorderDash`, or Dart `null` when absent.
-  Opt<Object>? get tickBorderDashCell => _tickBorderDash;
+  Opt<List<double>>? get tickBorderDashCell => _tickBorderDash;
 
   /// Stores the cell of `tickBorderDash`. Dart `null` deletes the key.
-  set tickBorderDashCell(Opt<Object>? cell) {
+  set tickBorderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.tickBorderDash);
     } else {
@@ -18157,10 +18143,8 @@ base class GridLineOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `tickBorderDash`.
-  set tickBorderDash(Object value) => store(
-    OptionKey.tickBorderDash,
-    classify(OptionKey.tickBorderDash, value),
-  );
+  set tickBorderDash(List<double> value) =>
+      store(OptionKey.tickBorderDash, OptValue<List<double>>(value));
 
   Opt<double>? _tickBorderDashOffset;
 
@@ -18318,7 +18302,7 @@ base class GridLineOptionsScope() extends OptionScope {
       case OptionKey.drawTicks:
         _drawTicks = fitCell(cell, classifyBool);
       case OptionKey.tickBorderDash:
-        _tickBorderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _tickBorderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.tickBorderDashOffset:
         _tickBorderDashOffset = fitCell(cell, classifyNumber);
       case OptionKey.tickColor:
@@ -18374,7 +18358,7 @@ base class GridLineOptionsScope() extends OptionScope {
       case OptionKey.drawTicks:
         return classifyBool(raw);
       case OptionKey.tickBorderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.tickBorderDashOffset:
         return classifyNumber(raw);
       case OptionKey.tickColor:
@@ -19204,13 +19188,13 @@ base class AngleLineOptionsScope() extends OptionScope {
   set lineWidth(double value) =>
       store(OptionKey.lineWidth, OptValue<double>(value));
 
-  Opt<Object>? _borderDash;
+  Opt<List<double>>? _borderDash;
 
   /// The cell of `borderDash`, or Dart `null` when absent.
-  Opt<Object>? get borderDashCell => _borderDash;
+  Opt<List<double>>? get borderDashCell => _borderDash;
 
   /// Stores the cell of `borderDash`. Dart `null` deletes the key.
-  set borderDashCell(Opt<Object>? cell) {
+  set borderDashCell(Opt<List<double>>? cell) {
     if (cell == null) {
       delete(OptionKey.borderDash);
     } else {
@@ -19219,8 +19203,8 @@ base class AngleLineOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderDash`.
-  set borderDash(Object value) =>
-      store(OptionKey.borderDash, classify(OptionKey.borderDash, value));
+  set borderDash(List<double> value) =>
+      store(OptionKey.borderDash, OptValue<List<double>>(value));
 
   Opt<double>? _borderDashOffset;
 
@@ -19268,7 +19252,7 @@ base class AngleLineOptionsScope() extends OptionScope {
       case OptionKey.lineWidth:
         _lineWidth = fitCell(cell, classifyNumber);
       case OptionKey.borderDash:
-        _borderDash = fitCell(cell, (raw) => classifyUnion(raw, 16));
+        _borderDash = fitCell(cell, classifyTypedList<double>);
       case OptionKey.borderDashOffset:
         _borderDashOffset = fitCell(cell, classifyNumber);
       default:
@@ -19300,7 +19284,7 @@ base class AngleLineOptionsScope() extends OptionScope {
       case OptionKey.lineWidth:
         return classifyNumber(raw);
       case OptionKey.borderDash:
-        return classifyUnion(raw, 16);
+        return classifyTypedList<double>(raw);
       case OptionKey.borderDashOffset:
         return classifyNumber(raw);
       default:

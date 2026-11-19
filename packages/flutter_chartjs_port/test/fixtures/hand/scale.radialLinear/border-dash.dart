@@ -29,7 +29,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'angleLines': <String, Object?>{
             'color': 'rgba(0, 0, 255, 0.5)',
             'lineWidth': 1,
-            'borderDash': <Object?>[4, 2],
+            // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
+            'borderDash': <double>[4, 2],
             'borderDashOffset': 2,
           },
           // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

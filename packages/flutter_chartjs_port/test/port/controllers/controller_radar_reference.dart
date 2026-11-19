@@ -184,7 +184,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'angleLines': <String, Object?>{
                 'display': true,
                 'lineWidth': 1.0,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'color': 'rgba(0,0,0,0.1)',
               },
@@ -238,7 +238,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -446,7 +446,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 2.0,
@@ -901,7 +901,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'angleLines': <String, Object?>{
                     'display': true,
                     'lineWidth': 1.0,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'color': 'rgba(0,0,0,0.1)',
                   },
@@ -955,7 +955,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -1163,7 +1163,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -1733,7 +1733,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'angleLines': <String, Object?>{
                     'display': true,
                     'lineWidth': 1.0,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'color': 'rgba(0,0,0,0.1)',
                   },
@@ -1787,7 +1787,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -1995,7 +1995,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -2560,7 +2560,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'angleLines': <String, Object?>{
                     'display': true,
                     'lineWidth': 1.0,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'color': 'rgba(0,0,0,0.1)',
                   },
@@ -2614,7 +2614,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -2822,7 +2822,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -3387,7 +3387,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'angleLines': <String, Object?>{
                     'display': true,
                     'lineWidth': 1.0,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'color': 'rgba(0,0,0,0.1)',
                   },
@@ -3441,7 +3441,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -3649,7 +3649,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -4214,7 +4214,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'angleLines': <String, Object?>{
                     'display': true,
                     'lineWidth': 1.0,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'color': 'rgba(0,0,0,0.1)',
                   },
@@ -4269,7 +4269,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -4515,7 +4515,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -5084,7 +5084,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'angleLines': <String, Object?>{
                     'display': true,
                     'lineWidth': 1.0,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'color': 'rgba(0,0,0,0.1)',
                   },
@@ -5139,7 +5139,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -5386,7 +5386,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -5994,7 +5994,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'angleLines': <String, Object?>{
                     'display': true,
                     'lineWidth': 1.0,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'color': 'rgba(0,0,0,0.1)',
                   },
@@ -6049,7 +6049,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -6284,7 +6284,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -6842,7 +6842,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'angleLines': <String, Object?>{
                     'display': true,
                     'lineWidth': 1.0,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'color': 'rgba(0,0,0,0.1)',
                   },
@@ -6897,7 +6897,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -7144,7 +7144,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -8271,7 +8271,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -8527,7 +8527,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -8777,7 +8777,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9762,7 +9762,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10008,7 +10008,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 2.0,
@@ -10955,7 +10955,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -11201,7 +11201,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -11447,7 +11447,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -11975,7 +11975,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -12221,7 +12221,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -12467,7 +12467,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -13045,7 +13045,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -13291,7 +13291,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -13537,7 +13537,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -14847,7 +14847,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -15096,7 +15096,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16008,7 +16008,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 0.0,
@@ -16254,7 +16254,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17209,7 +17209,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'angleLines': <String, Object?>{
                 'display': false,
                 'lineWidth': 1.0,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'color': 'rgba(0,0,0,0.1)',
               },
@@ -17264,7 +17264,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17513,7 +17513,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18369,7 +18369,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18615,7 +18615,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19068,7 +19068,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -19314,7 +19314,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -19877,7 +19877,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -20123,7 +20123,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -21173,7 +21173,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21900,7 +21900,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -22523,7 +22523,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -22691,7 +22691,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -23452,7 +23452,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -24388,7 +24388,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -25303,7 +25303,7 @@ const List<ControllerRadarReferenceCase> controllerRadarReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,

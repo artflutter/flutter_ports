@@ -753,7 +753,7 @@ void main() {
     test('a borderDash List of int becomes a List<double>', () {
       final ctx = _CanvasContext();
       _drawArc({
-        'borderDash': const [4, 2],
+        'borderDash': const <double>[4, 2],
       }).draw(ctx);
       final args = _named(ctx, 'setLineDash').single['args']! as List<Object?>;
       expect(

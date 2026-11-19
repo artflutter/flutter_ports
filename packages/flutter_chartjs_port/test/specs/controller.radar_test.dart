@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/controller.radar.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-dash-lists, the dash patterns are lists of doubles.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -225,7 +226,7 @@ void main() {
               'borderColor': const ChartPaint.solid(
                 native_ui.Color.fromRGBO(0, 255, 0, 1),
               ),
-              'borderDash': <Object?>[],
+              'borderDash': <double>[],
               'borderDashOffset': 0.1,
               'borderJoinStyle': native_ui.StrokeJoin.bevel,
               'borderWidth': 1.2,
@@ -262,7 +263,7 @@ void main() {
           'borderColor': const ChartPaint.solid(
             native_ui.Color.fromRGBO(0, 255, 0, 1),
           ),
-          'borderDash': <Object?>[],
+          'borderDash': <double>[],
           'borderDashOffset': 0.1,
           'borderJoinStyle': native_ui.StrokeJoin.bevel,
           'borderWidth': 1.2,
@@ -366,7 +367,7 @@ void main() {
           'borderColor': const ChartPaint.solid(
             native_ui.Color.fromRGBO(8, 8, 8, 1),
           ),
-          'borderDash': <Object?>[2, 3],
+          'borderDash': <double>[2, 3],
           'borderDashOffset': 7,
           'borderJoinStyle': native_ui.StrokeJoin.miter,
           'borderWidth': 0.55,

@@ -203,6 +203,16 @@ void nativeFixtureColors(Object? config) {
           ],
           final other => other,
         };
+      } else if ((key == 'borderDash' ||
+              key == 'hoverBorderDash' ||
+              key == 'tickBorderDash') &&
+          value[key] is List<Object?> &&
+          (value[key]! as List<Object?>).every((item) => item is num)) {
+        // A dash pattern takes a list of doubles (row adapt-dash-lists).
+        value[key] = <double>[
+          for (final item in value[key]! as List<Object?>)
+            (item! as num).toDouble(),
+        ];
       } else if (key == 'stacked') {
         // The scale stacked takes a StackMode (row adapt-stacked-option-enum).
         value[key] = _stackMode(value[key]);

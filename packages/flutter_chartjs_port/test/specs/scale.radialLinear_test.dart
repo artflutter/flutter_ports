@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/scale.radialLinear.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-dash-lists, the dash patterns are lists of doubles.
 // DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
@@ -132,7 +133,7 @@ void main() {
               native_ui.Color.fromRGBO(0, 0, 0, 0.1),
             ),
             'lineWidth': 1,
-            'borderDash': <Object?>[],
+            'borderDash': <double>[],
             'borderDashOffset': 0.0,
           },
 

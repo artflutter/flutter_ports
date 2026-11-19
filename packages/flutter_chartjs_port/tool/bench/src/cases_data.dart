@@ -149,7 +149,7 @@ Map<String, Object?> _lineStyle() => <String, Object?>{
   'spanGaps': false,
   'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
   'borderCapStyle': StrokeCap.butt,
-  'borderDash': <Object?>[],
+  'borderDash': <double>[],
   'borderDashOffset': 0.0,
   'borderJoinStyle': StrokeJoin.miter,
   'borderWidth': 3.0,

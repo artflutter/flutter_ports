@@ -371,6 +371,14 @@ function scaleEnum(k, x, owner) {
       return `ScaleValuePosition(${dart(id)}, ${dart(x[id])})`;
     }
   }
+  // A dash pattern is a list of doubles (row adapt-dash-lists).
+  if (
+    ['borderDash', 'hoverBorderDash', 'tickBorderDash'].includes(k) &&
+    Array.isArray(x) &&
+    x.every((v) => typeof v === 'number')
+  ) {
+    return `<double>[${x.map((v) => (Number.isInteger(v) && !Object.is(v, -0) ? String(v) : num(v))).join(', ')}]`;
+  }
   // The `text` of a scale title is its lines (row adapt-title-text-lines).
   if (k === 'text' && owner === 'title' && (typeof x === 'string' || Array.isArray(x))) {
     return `<String>[${(Array.isArray(x) ? x : [x]).map((line) => dart(String(line))).join(', ')}]`;

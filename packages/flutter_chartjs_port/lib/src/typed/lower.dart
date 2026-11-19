@@ -549,8 +549,8 @@ double? millisecondsOf(Duration? duration) =>
     duration == null ? null : duration.inMicroseconds / 1000;
 
 /// A new List of the numbers of [list], or Dart `null` for `null`.
-List<Object?>? numberList(List<double>? list) =>
-    list == null ? null : <Object?>[...list];
+List<double>? numberList(List<double>? list) =>
+    list == null ? null : List<double>.of(list);
 
 /// Writes the option value [value] under [key] of [scope] when it is not
 /// Dart `null` (Chart.js ADR 0054 §7): the cell of the shape of the key in

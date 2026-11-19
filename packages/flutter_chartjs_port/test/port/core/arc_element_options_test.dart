@@ -31,7 +31,7 @@ class _OrdinaryConfig() extends Config;
 ArcOptionsScope _keySource() => ArcOptionsScope()
   ..borderAlign = ArcBorderAlign.center
   ..borderColor = const ChartPaint.solid(blue)
-  ..borderDash = <Object?>[]
+  ..borderDash = <double>[]
   ..borderDashOffset = 0.0
   ..borderJoinStyleCell = optUndefined
   ..borderRadius = 0.0
@@ -52,7 +52,7 @@ class _Fixture({required bool ordinary}) {
     '_allKeys': false,
     'borderAlign': ArcBorderAlign.center,
     'borderColor': const ChartPaint.solid(blue),
-    'borderDash': <Object?>[],
+    'borderDash': <double>[],
     'borderDashOffset': 0.0,
     'borderRadius': 0.0,
     'borderWidth': 2.0,

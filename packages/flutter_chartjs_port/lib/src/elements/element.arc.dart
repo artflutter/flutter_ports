@@ -929,7 +929,7 @@ class ArcElement([AnyObject? cfg])
     // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
     ..borderAlign = ArcBorderAlign.center
     ..borderColor = const ChartPaint.solid(ui.Color.fromRGBO(255, 255, 255, 1))
-    ..borderDash = <Object?>[]
+    ..borderDash = <double>[]
     ..borderDashOffset = 0.0
     ..borderJoinStyleCell = optUndefined
     ..borderRadius = 0.0

@@ -601,6 +601,8 @@ repository.
       `List<String>` of its lines (row `adapt-title-text-lines`), also in a raw config; the
       default is `['']`. A typed list atom of the schema (`textLines`) has the cell
       `classifyTypedList<E>` of `opt.dart`: a list of another element type is foreign.
+    - `borderDash`, `hoverBorderDash` and `tickBorderDash` hold a `List<double>` (the typed list
+      atom `dashList`, row `adapt-dash-lists`), also in a raw config: `<double>[5, 5]`.
     - A font is a Flutter `TextStyle` from the option to the canvas (Chart.js ADR 0116, row
       `adapt-text-style-fonts`), also in a raw config: the options `font`, `titleFont`,
       `bodyFont` and `footerFont`, the canvas `font`, the font of a label item and the result of

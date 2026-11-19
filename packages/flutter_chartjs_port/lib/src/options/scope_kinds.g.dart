@@ -1619,7 +1619,7 @@ enum ScopeKind(
           case OptionKey.borderCapStyle:
             return 512;
           case OptionKey.borderDash:
-            return 16;
+            return 6016;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
@@ -1637,7 +1637,7 @@ enum ScopeKind(
           case OptionKey.hoverBorderCapStyle:
             return 512;
           case OptionKey.hoverBorderDash:
-            return 16;
+            return 6016;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
@@ -1899,7 +1899,7 @@ enum ScopeKind(
           case OptionKey.borderCapStyle:
             return 512;
           case OptionKey.borderDash:
-            return 16;
+            return 6016;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
@@ -1927,7 +1927,7 @@ enum ScopeKind(
           case OptionKey.hoverBorderCapStyle:
             return 512;
           case OptionKey.hoverBorderDash:
-            return 16;
+            return 6016;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
@@ -1985,7 +1985,7 @@ enum ScopeKind(
           case OptionKey.borderAlign:
             return 1920;
           case OptionKey.borderDash:
-            return 16;
+            return 6016;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
@@ -2007,7 +2007,7 @@ enum ScopeKind(
           case OptionKey.hoverBackgroundColor:
             return 4864;
           case OptionKey.hoverBorderDash:
-            return 16;
+            return 6016;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverOffset:
@@ -2182,7 +2182,7 @@ enum ScopeKind(
           case OptionKey.borderCapStyle:
             return 512;
           case OptionKey.borderDash:
-            return 16;
+            return 6016;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
@@ -2210,7 +2210,7 @@ enum ScopeKind(
           case OptionKey.hoverBorderCapStyle:
             return 512;
           case OptionKey.hoverBorderDash:
-            return 16;
+            return 6016;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
@@ -2364,7 +2364,7 @@ enum ScopeKind(
           case OptionKey.borderAlign:
             return 1920;
           case OptionKey.borderDash:
-            return 16;
+            return 6016;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
@@ -2386,7 +2386,7 @@ enum ScopeKind(
           case OptionKey.hoverBackgroundColor:
             return 4864;
           case OptionKey.hoverBorderDash:
-            return 16;
+            return 6016;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverOffset:
@@ -2467,7 +2467,7 @@ enum ScopeKind(
           case OptionKey.borderAlign:
             return 1920;
           case OptionKey.borderDash:
-            return 16;
+            return 6016;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
@@ -2489,7 +2489,7 @@ enum ScopeKind(
           case OptionKey.hoverBackgroundColor:
             return 4864;
           case OptionKey.hoverBorderDash:
-            return 16;
+            return 6016;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverOffset:
@@ -2608,7 +2608,7 @@ enum ScopeKind(
           case OptionKey.borderCapStyle:
             return 512;
           case OptionKey.borderDash:
-            return 16;
+            return 6016;
           case OptionKey.borderDashOffset:
             return 1;
           case OptionKey.borderJoinStyle:
@@ -2630,7 +2630,7 @@ enum ScopeKind(
           case OptionKey.hoverBorderCapStyle:
             return 512;
           case OptionKey.hoverBorderDash:
-            return 16;
+            return 6016;
           case OptionKey.hoverBorderDashOffset:
             return 1;
           case OptionKey.hoverBorderJoinStyle:
@@ -2911,7 +2911,7 @@ enum ScopeKind(
           case OptionKey.drawTicks:
             return 2;
           case OptionKey.tickBorderDash:
-            return 16;
+            return 6016;
           case OptionKey.tickBorderDashOffset:
             return 1;
           case OptionKey.tickColor:
@@ -3001,7 +3001,7 @@ enum ScopeKind(
           case OptionKey.lineWidth:
             return 1;
           case OptionKey.borderDash:
-            return 16;
+            return 6016;
           case OptionKey.borderDashOffset:
             return 1;
           default:

@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/controller.line.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-dash-lists, the dash patterns are lists of doubles.
 // DIVERGES(chartjs): adapt-scale-display-enum, the scale display values.
 // DIVERGES(chartjs): adapt-stacked-option-enum, the scale stacked values.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
@@ -685,7 +686,7 @@ void main() {
             native_ui.Color.fromRGBO(221, 170, 221, 1),
           ),
           'borderCapStyle': native_ui.StrokeCap.round,
-          'borderDash': <Object?>[0],
+          'borderDash': <double>[0],
           'borderDashOffset': 0.871,
           'borderJoinStyle': native_ui.StrokeJoin.miter,
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
@@ -794,7 +795,7 @@ void main() {
         native_ui.Color.fromRGBO(221, 170, 221, 1),
       ),
       'borderCapStyle': native_ui.StrokeCap.round,
-      'borderDash': <Object?>[0],
+      'borderDash': <double>[0],
       'borderDashOffset': 0.871,
       'borderJoinStyle': native_ui.StrokeJoin.miter,
       // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
@@ -844,7 +845,7 @@ void main() {
           'datasets': <String, Object?>{
             'line': <String, Object?>{
               ...lineOptions,
-              'borderDash': <Object?>[0],
+              'borderDash': <double>[0],
             },
           },
         },
@@ -862,7 +863,7 @@ void main() {
               'data': <Object?>[0, 0],
               'label': 'dataset1',
               ...lineOptions,
-              'borderDash': <Object?>[0],
+              'borderDash': <double>[0],
             },
           ],
           'labels': <Object?>['label1', 'label2'],

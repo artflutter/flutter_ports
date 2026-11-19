@@ -15538,7 +15538,7 @@ const List<ScaleReferenceCase> scaleReference = [
       'grid': <String, Object?>{
         'color': 'fn:colorByIndex',
         'lineWidth': 'fn:widthByIndex',
-        'tickBorderDash': <Object?>[2.0, 3.0],
+        'tickBorderDash': <double>[2, 3],
         'tickBorderDashOffset': 1.0,
         'tickColor': 'orange',
       },

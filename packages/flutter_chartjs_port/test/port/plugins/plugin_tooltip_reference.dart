@@ -104,7 +104,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -236,7 +236,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -447,7 +447,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -658,7 +658,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1010,7 +1010,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -1224,7 +1224,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -1438,7 +1438,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -2449,7 +2449,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -2581,7 +2581,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -2792,7 +2792,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -3003,7 +3003,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -3355,7 +3355,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -3569,7 +3569,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -3783,7 +3783,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -4722,7 +4722,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -4854,7 +4854,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -5065,7 +5065,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -5276,7 +5276,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -5628,7 +5628,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -5842,7 +5842,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -6056,7 +6056,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -6995,7 +6995,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -7127,7 +7127,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7338,7 +7338,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7549,7 +7549,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7901,7 +7901,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -8115,7 +8115,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -8329,7 +8329,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -9376,7 +9376,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -9508,7 +9508,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9719,7 +9719,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9930,7 +9930,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10282,7 +10282,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -10496,7 +10496,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -10710,7 +10710,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -11721,7 +11721,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -11853,7 +11853,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12064,7 +12064,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12275,7 +12275,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12627,7 +12627,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -12841,7 +12841,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -13055,7 +13055,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -13994,7 +13994,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -14127,7 +14127,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14338,7 +14338,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14549,7 +14549,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14901,7 +14901,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -15115,7 +15115,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -15329,7 +15329,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -16340,7 +16340,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -16473,7 +16473,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16684,7 +16684,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16895,7 +16895,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17247,7 +17247,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -17461,7 +17461,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -17675,7 +17675,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -18686,7 +18686,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -18838,7 +18838,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19049,7 +19049,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19260,7 +19260,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19612,7 +19612,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -19826,7 +19826,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -20040,7 +20040,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -21072,7 +21072,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -21206,7 +21206,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21417,7 +21417,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21628,7 +21628,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21980,7 +21980,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -22194,7 +22194,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -22408,7 +22408,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -23347,7 +23347,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -23479,7 +23479,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -23690,7 +23690,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -23901,7 +23901,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -24253,7 +24253,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -24467,7 +24467,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -24681,7 +24681,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -25692,7 +25692,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -25824,7 +25824,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -26035,7 +26035,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -26246,7 +26246,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -26598,7 +26598,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -26812,7 +26812,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -27026,7 +27026,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -28037,7 +28037,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -28184,7 +28184,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -28395,7 +28395,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -28609,7 +28609,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -28955,7 +28955,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -29169,7 +29169,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -29386,7 +29386,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -30247,7 +30247,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -30397,7 +30397,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -30608,7 +30608,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -30822,7 +30822,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -31168,7 +31168,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -31382,7 +31382,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -31599,7 +31599,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -32465,7 +32465,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -32598,7 +32598,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -32809,7 +32809,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -33020,7 +33020,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -33372,7 +33372,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -33586,7 +33586,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -33800,7 +33800,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -34814,7 +34814,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -34948,7 +34948,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -35159,7 +35159,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -35370,7 +35370,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -35722,7 +35722,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -35936,7 +35936,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -36150,7 +36150,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -37161,7 +37161,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -37294,7 +37294,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -37505,7 +37505,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -37716,7 +37716,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -38068,7 +38068,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -38282,7 +38282,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -38496,7 +38496,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -39479,7 +39479,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
             'pointRotation': 30.0,
           },
@@ -39615,7 +39615,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -39826,7 +39826,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -40037,7 +40037,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -40389,7 +40389,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -40603,7 +40603,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -40817,7 +40817,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -41853,7 +41853,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -41987,7 +41987,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -42198,7 +42198,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -42409,7 +42409,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -42761,7 +42761,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -42975,7 +42975,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -43189,7 +43189,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -44200,7 +44200,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -44333,7 +44333,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -44544,7 +44544,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -44755,7 +44755,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -45107,7 +45107,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -45321,7 +45321,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -45535,7 +45535,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -46511,7 +46511,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -46644,7 +46644,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -46855,7 +46855,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -47066,7 +47066,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -47418,7 +47418,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -47632,7 +47632,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -47846,7 +47846,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -48857,7 +48857,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -48995,7 +48995,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -49206,7 +49206,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -49417,7 +49417,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -49769,7 +49769,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -49983,7 +49983,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -50197,7 +50197,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -51213,7 +51213,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -51346,7 +51346,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -51557,7 +51557,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -51768,7 +51768,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -52120,7 +52120,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -52334,7 +52334,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -52548,7 +52548,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -52980,7 +52980,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -53194,7 +53194,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -53408,7 +53408,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -53848,7 +53848,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -54062,7 +54062,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -54276,7 +54276,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -55219,7 +55219,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -55352,7 +55352,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -55563,7 +55563,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -55774,7 +55774,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -56121,7 +56121,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -56335,7 +56335,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -56549,7 +56549,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -57421,7 +57421,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -57553,7 +57553,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -57764,7 +57764,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -57975,7 +57975,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -58327,7 +58327,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -58541,7 +58541,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -58755,7 +58755,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -59137,7 +59137,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -59351,7 +59351,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -59565,7 +59565,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -60461,7 +60461,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -62534,7 +62534,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
           <String, Object?>{
             'label': 'Dataset 3',
             'data': <Object?>[5.0, 15.0, 10.0, 30.0],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
             'pointStyle': TrianglePointStyle(),
           },
         ],
@@ -62667,7 +62667,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -62878,7 +62878,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -63089,7 +63089,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -63436,7 +63436,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -63650,7 +63650,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -63864,7 +63864,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -64216,7 +64216,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -64430,7 +64430,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -64644,7 +64644,7 @@ List<PluginTooltipReferenceCase> pluginTooltipReference(
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[4.0, 2.0],
+                    'borderDash': <double>[4, 2],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,

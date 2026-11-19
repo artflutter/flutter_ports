@@ -347,7 +347,7 @@ void main() {
       final chart = acquireChart(
         _config(
           angleLines: {
-            'borderDash': <Object?>[3.0, 2.0],
+            'borderDash': <double>[3, 2],
           },
         ),
       );
@@ -439,7 +439,7 @@ void main() {
       (
         'a dashed line',
         {
-          'borderDash': <Object?>[3.0, 2.0],
+          'borderDash': <double>[3, 2],
         },
       ),
       (

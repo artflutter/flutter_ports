@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/global.defaults.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-dash-lists, the dash patterns are lists of doubles.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
 @TestOn('vm')
 library;
@@ -150,7 +151,7 @@ void main() {
                   'borderColor': const ChartPaint.solid(
                     native_ui.Color.fromRGBO(0, 0, 0, 1),
                   ),
-                  'borderDash': <Object?>[1, 2, 3],
+                  'borderDash': <double>[1, 2, 3],
                   'borderDashOffset': 1,
                   'borderJoinStyle': native_ui.StrokeJoin.miter,
                   'borderRadius': 3,

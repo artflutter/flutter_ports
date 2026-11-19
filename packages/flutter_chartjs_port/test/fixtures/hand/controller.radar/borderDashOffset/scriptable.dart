@@ -19,7 +19,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           // option in dataset
           'data': <Object?>[1, 1, 1, 1],
           'borderColor': '#ff0000',
-          'borderDash': <Object?>[20],
+          // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
+          'borderDash': <double>[20],
           'borderDashOffset': (Object? ctx) {
             return jsGet(ctx, 'datasetIndex') == 0 ? 5.0 : 0.0;
           },
@@ -34,7 +35,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       'elements': <String, Object?>{
         'line': <String, Object?>{
           'borderColor': '#00ff00',
-          'borderDash': <Object?>[20],
+          // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
+          'borderDash': <double>[20],
           'borderDashOffset': (Object? ctx) {
             return jsGet(ctx, 'datasetIndex') == 0 ? 5.0 : 0.0;
           },

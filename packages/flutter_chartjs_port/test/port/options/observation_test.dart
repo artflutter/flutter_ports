@@ -1533,7 +1533,7 @@ final List<_Case> _focusedCases = [
           const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
           const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
         ],
-        'borderDash': <Object?>[4.0, 2.0],
+        'borderDash': <double>[4, 2],
       },
     ]),
   ),

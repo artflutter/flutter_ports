@@ -18,7 +18,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           'data': <Object?>[1.0, 1.0, 1.0, 1.0, 1.0, 1.0],
           'borderColor': '#ff0000',
-          'borderDash': <Object?>[20.0],
+          // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
+          'borderDash': <double>[20],
           'borderDashOffset': 5.0,
         },
         <String, Object?>{
@@ -30,7 +31,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       'elements': <String, Object?>{
         'line': <String, Object?>{
           'borderColor': '#00ff00',
-          'borderDash': <Object?>[20.0],
+          // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
+          'borderDash': <double>[20],
           'borderDashOffset': 0.0,
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
           'fill': FillTarget.none,

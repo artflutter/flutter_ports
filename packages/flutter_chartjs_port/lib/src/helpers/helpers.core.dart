@@ -330,6 +330,8 @@ Object? clone(Object? source) {
     // DIVERGES(chartjs): adapt-title-text-lines, a list of the lines of a
     // text keeps its type: clone(v) is v for each String.
     if (array is List<String>) return List<String>.of(array);
+    // DIVERGES(chartjs): adapt-dash-lists, a dash pattern keeps its type.
+    if (array is List<double>) return List<double>.of(array);
     return <Object?>[for (final value in array) clone(value)];
   }
 

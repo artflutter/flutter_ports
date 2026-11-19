@@ -612,7 +612,7 @@ final List<_Case> _cases = [
     r: () => {
       'angleLines': <String, Object?>{
         'display': true,
-        'borderDash': <Object?>[4.0, 2.0],
+        'borderDash': <double>[4, 2],
         'borderDashOffset': 1.0,
       },
     },

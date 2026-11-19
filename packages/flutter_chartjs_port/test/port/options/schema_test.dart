@@ -115,9 +115,17 @@ _Walk _walk(ScopeKind root, List<String> segments) {
     final step = _step(current, name);
     if (step == null) return (shape: null, depth: i);
     (shape, kind) = step;
-    // The item of a plain array (`list`) is any value.
+    // The item of a plain array (`list`) is any value. The item of a typed
+    // list is of its element type (rows adapt-title-text-lines and
+    // adapt-dash-lists).
     if (segment.endsWith('[]') && shape & ShapeBits.list != 0) {
       shape = ShapeBits.any;
+    } else if (segment.endsWith('[]') &&
+        shape & ShapeBits.typed == ShapeBits.dashList) {
+      shape = ShapeBits.number;
+    } else if (segment.endsWith('[]') &&
+        shape & ShapeBits.typed == ShapeBits.textLines) {
+      shape = ShapeBits.string;
     }
   }
   return (shape: shape, depth: segments.length);

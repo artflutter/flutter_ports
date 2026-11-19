@@ -294,7 +294,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -544,7 +544,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 2.0,
@@ -1089,7 +1089,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -1339,7 +1339,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -1964,7 +1964,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -2214,7 +2214,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -2839,7 +2839,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -3092,7 +3092,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -3702,7 +3702,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -3952,7 +3952,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 2.0,
@@ -5040,7 +5040,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 0.0,
@@ -6001,7 +6001,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -6243,7 +6243,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7325,7 +7325,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7642,7 +7642,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9016,7 +9016,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9266,7 +9266,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9516,7 +9516,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10620,7 +10620,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10867,7 +10867,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -11932,7 +11932,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12179,7 +12179,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -13245,7 +13245,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 2.0,
@@ -14401,7 +14401,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14671,7 +14671,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14936,7 +14936,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16086,7 +16086,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16327,7 +16327,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 1.0,
@@ -17459,7 +17459,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17776,7 +17776,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18306,7 +18306,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -18623,7 +18623,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -20013,7 +20013,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -20260,7 +20260,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 6.0,
@@ -21222,7 +21222,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21466,7 +21466,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -21710,7 +21710,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -22214,7 +22214,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -22458,7 +22458,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -22702,7 +22702,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -23243,7 +23243,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -23487,7 +23487,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -23731,7 +23731,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -25069,7 +25069,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -25972,7 +25972,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -26213,7 +26213,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -27188,7 +27188,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -27432,7 +27432,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -27877,7 +27877,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -28124,7 +28124,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -29205,7 +29205,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -29415,7 +29415,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -29789,7 +29789,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -30034,7 +30034,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -30492,7 +30492,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -30739,7 +30739,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -32036,7 +32036,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -32705,7 +32705,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -33771,7 +33771,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -34903,7 +34903,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -35441,7 +35441,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -36067,7 +36067,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -36728,7 +36728,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -38048,7 +38048,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -39346,7 +39346,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -40275,7 +40275,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -41100,7 +41100,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -42145,7 +42145,7 @@ const List<ControllerLineReferenceCase> controllerLineReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,

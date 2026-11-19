@@ -75,6 +75,7 @@ const Map<String, int> shapeAtoms = {
   'stackMode': 5632,
   'scaleDisplay': 5760,
   'textLines': 5888,
+  'dashList': 6016,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -296,6 +297,9 @@ const Map<String, TypedAtom> typedAtoms = {
   ),
   // The `text` of a title: its lines (row adapt-title-text-lines).
   'textLines': (type: 'List<String>', uri: 'dart:core', field: null),
+  // A dash pattern: `borderDash`, `hoverBorderDash` and `tickBorderDash`
+  // (row adapt-dash-lists).
+  'dashList': (type: 'List<double>', uri: 'dart:core', field: null),
 };
 
 /// The import lines of the typed atoms whose types [types] lists, and of

@@ -13117,7 +13117,7 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
             'angleLines': <String, Object?>{
               'color': 'red',
               'lineWidth': 2.0,
-              'borderDash': <Object?>[5.0, 5.0],
+              'borderDash': <double>[5, 5],
               'borderDashOffset': 2.0,
             },
           },

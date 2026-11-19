@@ -642,7 +642,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1259,7 +1259,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1876,7 +1876,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1959,7 +1959,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             'data': <Object?>[1.0, 3.0, 2.0, 4.0, 3.0],
             'pointRadius': <Object?>[2.0, 4.0, 6.0],
             'pointBackgroundColor': <Object?>['red', 'green'],
-            'borderDash': <Object?>[4.0, 2.0],
+            'borderDash': <double>[4, 2],
           },
         ],
       },
@@ -1987,7 +1987,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -2075,7 +2075,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[4.0, 2.0],
+                'borderDash': <double>[4, 2],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -2315,7 +2315,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -2421,7 +2421,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -2510,7 +2510,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -2867,7 +2867,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                   r'$shared': false,
                   'borderAlign': ArcBorderAlign.center,
                   'borderColor': '#fff',
-                  'borderDash': <Object?>[],
+                  'borderDash': <double>[],
                   'borderDashOffset': 0.0,
                   'borderJoinStyle': undefined,
                   'borderRadius': <String, Object?>{
@@ -2889,7 +2889,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                   r'$shared': false,
                   'borderAlign': ArcBorderAlign.center,
                   'borderColor': '#fff',
-                  'borderDash': <Object?>[],
+                  'borderDash': <double>[],
                   'borderDashOffset': 0.0,
                   'borderJoinStyle': undefined,
                   'borderRadius': <String, Object?>{
@@ -2911,7 +2911,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                   r'$shared': false,
                   'borderAlign': ArcBorderAlign.center,
                   'borderColor': '#fff',
-                  'borderDash': <Object?>[],
+                  'borderDash': <double>[],
                   'borderDashOffset': 0.0,
                   'borderJoinStyle': undefined,
                   'borderRadius': <String, Object?>{
@@ -2982,7 +2982,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                   r'$shared': false,
                   'borderAlign': ArcBorderAlign.center,
                   'borderColor': '#fff',
-                  'borderDash': <Object?>[],
+                  'borderDash': <double>[],
                   'borderDashOffset': 0.0,
                   'borderJoinStyle': undefined,
                   'borderRadius': <String, Object?>{
@@ -3004,7 +3004,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                   r'$shared': false,
                   'borderAlign': ArcBorderAlign.center,
                   'borderColor': '#fff',
-                  'borderDash': <Object?>[],
+                  'borderDash': <double>[],
                   'borderDashOffset': 0.0,
                   'borderJoinStyle': undefined,
                   'borderRadius': <String, Object?>{
@@ -3026,7 +3026,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                   r'$shared': false,
                   'borderAlign': ArcBorderAlign.center,
                   'borderColor': '#fff',
-                  'borderDash': <Object?>[],
+                  'borderDash': <double>[],
                   'borderDashOffset': 0.0,
                   'borderJoinStyle': undefined,
                   'borderRadius': <String, Object?>{
@@ -4634,7 +4634,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -5674,7 +5674,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -6068,7 +6068,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -6361,7 +6361,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -6654,7 +6654,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -6884,7 +6884,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7093,7 +7093,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7323,7 +7323,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7510,7 +7510,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7720,7 +7720,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7813,7 +7813,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7910,7 +7910,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -8248,7 +8248,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -8586,7 +8586,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9143,7 +9143,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9698,7 +9698,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10286,7 +10286,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10841,7 +10841,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -11212,7 +11212,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -11550,7 +11550,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -11888,7 +11888,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12259,7 +12259,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12344,7 +12344,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12538,7 +12538,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -12949,7 +12949,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -13327,7 +13327,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -13665,7 +13665,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14057,7 +14057,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14416,7 +14416,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -14982,7 +14982,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -15429,7 +15429,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16019,7 +16019,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16076,7 +16076,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16237,7 +16237,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16294,7 +16294,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16393,7 +16393,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16470,7 +16470,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16550,7 +16550,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16627,7 +16627,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16703,7 +16703,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -16780,7 +16780,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17283,7 +17283,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17420,7 +17420,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17510,7 +17510,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17637,7 +17637,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17726,7 +17726,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17803,7 +17803,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17880,7 +17880,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -17989,7 +17989,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18068,7 +18068,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18145,7 +18145,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18375,7 +18375,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18649,7 +18649,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -18894,7 +18894,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19015,7 +19015,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19091,7 +19091,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19168,7 +19168,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19245,7 +19245,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19475,7 +19475,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19551,7 +19551,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -19627,7 +19627,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
               'dataset': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,

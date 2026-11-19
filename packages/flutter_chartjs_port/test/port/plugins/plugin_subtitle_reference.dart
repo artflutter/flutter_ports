@@ -224,7 +224,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -435,7 +435,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1317,7 +1317,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1522,7 +1522,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -1878,7 +1878,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -2092,7 +2092,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -3004,7 +3004,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -3215,7 +3215,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -4103,7 +4103,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -4311,7 +4311,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -4688,7 +4688,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -4902,7 +4902,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -5289,7 +5289,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -5506,7 +5506,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -5888,7 +5888,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -6102,7 +6102,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -6471,7 +6471,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -6688,7 +6688,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
                   'options': <String, Object?>{
                     r'$shared': false,
                     'borderCapStyle': StrokeCap.butt,
-                    'borderDash': <Object?>[],
+                    'borderDash': <double>[],
                     'borderDashOffset': 0.0,
                     'borderJoinStyle': StrokeJoin.miter,
                     'borderWidth': 3.0,
@@ -7581,7 +7581,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -7789,7 +7789,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -8684,7 +8684,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -8892,7 +8892,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -9802,7 +9802,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,
@@ -10010,7 +10010,7 @@ const List<PluginSubtitleReferenceCase> pluginSubtitleReference = [
               'options': <String, Object?>{
                 r'$shared': false,
                 'borderCapStyle': StrokeCap.butt,
-                'borderDash': <Object?>[],
+                'borderDash': <double>[],
                 'borderDashOffset': 0.0,
                 'borderJoinStyle': StrokeJoin.miter,
                 'borderWidth': 3.0,

@@ -178,7 +178,7 @@ kinds:
       pointHoverBorderWidth: number
       pointHoverRadius: number
       borderCapStyle: strokeCap
-      borderDash: list
+      borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       capBezierPoints: bool
@@ -187,7 +187,7 @@ kinds:
       stepped: steppedLine | bool
       segment: lineSegmentStyle
       hoverBorderCapStyle: strokeCap
-      hoverBorderDash: list
+      hoverBorderDash: dashList
       hoverBorderDashOffset: number
       hoverBorderJoinStyle: strokeJoin
       hitRadius: number
@@ -369,7 +369,7 @@ kinds:
       borderColor: chartPaint
       backgroundColor: chartPaint
       borderCapStyle: strokeCap
-      borderDash: list
+      borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       capBezierPoints: bool
@@ -383,7 +383,7 @@ kinds:
       hoverBorderColor: chartPaint
       hoverBackgroundColor: chartPaint
       hoverBorderCapStyle: strokeCap
-      hoverBorderDash: list
+      hoverBorderDash: dashList
       hoverBorderDashOffset: number
       hoverBorderJoinStyle: strokeJoin
       $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
@@ -442,7 +442,7 @@ kinds:
       backgroundColor: chartPaint
       selfJoin: bool
       borderAlign: arcBorderAlign
-      borderDash: list
+      borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       borderRadius: number | scope BorderRadius
@@ -453,7 +453,7 @@ kinds:
       hoverBorderWidth: number
       hoverBorderColor: chartPaint
       hoverBackgroundColor: chartPaint
-      hoverBorderDash: list
+      hoverBorderDash: dashList
       hoverBorderDashOffset: number
       hoverOffset: number
       angle: number  # element.arc.ts:388 defaults
@@ -553,7 +553,7 @@ kinds:
       pointHoverBorderWidth: number
       pointHoverRadius: number
       borderCapStyle: strokeCap
-      borderDash: list
+      borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       capBezierPoints: bool
@@ -567,7 +567,7 @@ kinds:
       borderColor: chartPaint
       backgroundColor: chartPaint
       hoverBorderCapStyle: strokeCap
-      hoverBorderDash: list
+      hoverBorderDash: dashList
       hoverBorderDashOffset: number
       hoverBorderJoinStyle: strokeJoin
       hoverBorderWidth: number
@@ -645,7 +645,7 @@ kinds:
       backgroundColor: chartPaint
       selfJoin: bool
       borderAlign: arcBorderAlign
-      borderDash: list
+      borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       borderRadius: number | scope BorderRadius
@@ -656,7 +656,7 @@ kinds:
       hoverBorderWidth: number
       hoverBorderColor: chartPaint
       hoverBackgroundColor: chartPaint
-      hoverBorderDash: list
+      hoverBorderDash: dashList
       hoverBorderDashOffset: number
       hoverOffset: number
       animation: bool | scope AnimationOptions
@@ -697,7 +697,7 @@ kinds:
       backgroundColor: chartPaint
       selfJoin: bool
       borderAlign: arcBorderAlign
-      borderDash: list
+      borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       borderRadius: number | scope BorderRadius
@@ -708,7 +708,7 @@ kinds:
       hoverBorderWidth: number
       hoverBorderColor: chartPaint
       hoverBackgroundColor: chartPaint
-      hoverBorderDash: list
+      hoverBorderDash: dashList
       hoverBorderDashOffset: number
       hoverOffset: number
       animation: bool | scope AnimationOptions
@@ -768,7 +768,7 @@ kinds:
       pointHoverBorderWidth: number
       pointHoverRadius: number
       borderCapStyle: strokeCap
-      borderDash: list
+      borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
       capBezierPoints: bool
@@ -779,7 +779,7 @@ kinds:
       spanGaps: bool | number
       segment: lineSegmentStyle
       hoverBorderCapStyle: strokeCap
-      hoverBorderDash: list
+      hoverBorderDash: dashList
       hoverBorderDashOffset: number
       hoverBorderJoinStyle: strokeJoin
       animation: bool | scope AnimationOptions
@@ -928,7 +928,7 @@ kinds:
       lineWidth: number
       drawOnChartArea: bool
       drawTicks: bool
-      tickBorderDash: list
+      tickBorderDash: dashList
       tickBorderDashOffset: number
       tickColor: chartPaint
       tickLength: number
@@ -976,7 +976,7 @@ kinds:
       display: bool
       color: chartPaint
       lineWidth: number
-      borderDash: list
+      borderDash: dashList
       borderDashOffset: number
   PointLabelOptions:
     doc: Port-only name for index.d.ts:3613 RadialLinearScaleOptions `pointLabels`, the point labels of a radial scale.

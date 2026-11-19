@@ -341,7 +341,7 @@ final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
   'borderDash': (
     _lineStyle(borderDash: [5, 5]),
     {
-      'borderDash': [5, 5],
+      'borderDash': <double>[5, 5],
     },
   ),
   'spanGaps': (_lineStyle(spanGaps: true), {'spanGaps': true}),
@@ -820,7 +820,7 @@ const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
     ChartElements(line: LineElementStyle(borderDash: [4, 2])),
     {
       'line': {
-        'borderDash': [4, 2],
+        'borderDash': <double>[4, 2],
       },
     },
   ),
@@ -1434,8 +1434,9 @@ void main() {
         ),
       );
       expect(lowered['borderDash'], isNot(same(dash)));
-      expect(lowered['borderDash'], isA<List<Object?>>());
-      (lowered['borderDash']! as List<Object?>).add('x');
+      // A dash pattern is a List<double> (row adapt-dash-lists).
+      expect(lowered['borderDash'], isA<List<double>>());
+      (lowered['borderDash']! as List<double>).add(9);
       expect(dash, [4, 2]);
       expect(lowered['backgroundColor'], [_redValue]);
     });
@@ -1662,7 +1663,7 @@ void main() {
       const lineStyleTwin = <String, Object?>{
         'fill': FillTarget.toOrigin,
         'tension': 0.4,
-        'borderDash': [5, 5],
+        'borderDash': <double>[5, 5],
         'spanGaps': true,
         'showLine': true,
         'stepped': SteppedLine.before,

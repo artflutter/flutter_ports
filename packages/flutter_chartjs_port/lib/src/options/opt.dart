@@ -378,6 +378,9 @@ abstract final class ShapeBits() {
   /// `adapt-title-text-lines`).
   static const int textLines = 5888;
 
+  /// `dashList`: a `List<double>`, a dash pattern (row `adapt-dash-lists`).
+  static const int dashList = 6016;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -503,6 +506,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.stackMode => classifyTyped<StackMode>(raw),
   ShapeBits.scaleDisplay => classifyTyped<ScaleDisplay>(raw),
   ShapeBits.textLines => classifyTypedList<String>(raw),
+  ShapeBits.dashList => classifyTypedList<double>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),

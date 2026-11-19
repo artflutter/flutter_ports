@@ -1,4 +1,5 @@
 // Ported from Chart.js v4.6.1 test/specs/plugin.legend.tests.js (MIT, Chart.js Contributors).
+// DIVERGES(chartjs): adapt-dash-lists, the dash patterns are lists of doubles.
 // DIVERGES(chartjs): adapt-native-legend-hit-box, native geometry reads.
 // DIVERGES(chartjs): adapt-native-legend-item, native item access.
 // DIVERGES(chartjs): adapt-direct-colors, native color test inputs.
@@ -80,7 +81,7 @@ List<Object?> _barDatasets() => <Object?>[
       native_ui.Color.fromRGBO(255, 51, 17, 1),
     ),
     'borderCapStyle': native_ui.StrokeCap.butt,
-    'borderDash': <Object?>[2, 2],
+    'borderDash': <double>[2, 2],
     'borderDashOffset': 5.5,
     'data': <Object?>[],
   },
@@ -110,7 +111,7 @@ List<Object?> _lineDatasets() => <Object?>[
       native_ui.Color.fromRGBO(255, 51, 17, 1),
     ),
     'borderCapStyle': native_ui.StrokeCap.round,
-    'borderDash': <Object?>[2, 2],
+    'borderDash': <double>[2, 2],
     'borderDashOffset': 5.5,
     'data': <Object?>[],
   },
@@ -460,7 +461,7 @@ void main() {
                   native_ui.Color.fromRGBO(255, 51, 17, 1),
                 ),
                 'borderCapStyle': native_ui.StrokeCap.butt,
-                'borderDash': <Object?>[2, 2],
+                'borderDash': <double>[2, 2],
                 'borderDashOffset': 5.5,
                 'data': <Object?>[],
               },
@@ -1136,7 +1137,7 @@ List<Object?> _pointStyleDatasets() => <Object?>[
       native_ui.Color.fromRGBO(255, 51, 17, 1),
     ),
     'borderCapStyle': native_ui.StrokeCap.butt,
-    'borderDash': <Object?>[2, 2],
+    'borderDash': <double>[2, 2],
     'borderDashOffset': 5.5,
     'borderWidth': 0,
     'borderColor': const ChartPaint.solid(

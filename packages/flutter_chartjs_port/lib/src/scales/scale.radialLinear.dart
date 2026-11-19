@@ -997,7 +997,7 @@ class RadialLinearScale(super.cfg)
     ..angleLines = (AngleLineOptionsScope()
       ..display = true
       ..lineWidth = 1.0
-      ..borderDash = <Object?>[]
+      ..borderDash = <double>[]
       ..borderDashOffset = 0.0)
     ..grid = (GridLineOptionsScope()..circular = false)
     // DIVERGES(chartjs): adapt-native-scale-border, the radial border. The

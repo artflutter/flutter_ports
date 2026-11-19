@@ -12,6 +12,8 @@
 - The bar option `inflateAmount` is a number. A bar with no value has the upstream `'auto'`.
 - The `text` of the chart title, the subtitle, a scale title and the legend title is a
   `List<String>` of its lines: `ChartTitle(text: ['Sales'])`. A `String` stops a debug build.
+- The options `borderDash`, `hoverBorderDash` and `tickBorderDash` hold a `List<double>`, also in a
+  raw config: `'borderDash': <double>[5, 5]`.
 
 ## 0.1.0-beta.3
 

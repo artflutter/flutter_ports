@@ -87,7 +87,7 @@ Map<String, Object?> _options({
   'borderAlign': borderAlign,
   'circular': circular,
   'selfJoin': false,
-  'borderDash': <Object?>[],
+  'borderDash': <double>[],
   'borderDashOffset': 0.0,
 };
 
