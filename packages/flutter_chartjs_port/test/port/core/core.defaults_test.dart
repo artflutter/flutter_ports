@@ -192,7 +192,8 @@ void main() {
         referenceColorTokens(
           '{"animation":{"delay":"<undefined>","duration":1000,'
           '"easing":"<curve>","fn":"<undefined>","from":"<undefined>",'
-          '"loop":"<undefined>","to":"<undefined>","type":"<undefined>"},'
+          // No `type`: row adapt-animation-option-types.
+          '"loop":"<undefined>","to":"<undefined>"},'
           '"backgroundColor":"rgba(0,0,0,0.1)",'
           '"borderColor":"rgba(0,0,0,0.1)","color":"#666","datasets":{},'
           '"devicePixelRatio":"<fn>","elements":{},'
@@ -223,14 +224,14 @@ void main() {
           '0.75)","backdropPadding":{"top":2,"right":2,"bottom":2,"left":2},'
           '"color":"#666"}},"scales":{},"showLine":true,'
           '"drawActiveElementsOnTop":true,"animations":{"colors":'
-          '{"type":"color","properties":["color","borderColor",'
-          '"backgroundColor"]},"numbers":{"type":"number","properties":'
+          '{"properties":["color","borderColor",'
+          '"backgroundColor"]},"numbers":{"properties":'
           '["x","y","borderWidth","radius","tension"]}},"transitions":'
           '{"active":{"animation":{"duration":400}},"resize":{"animation":'
           '{"duration":0}},"show":{"animations":{"colors":'
-          '{"from":"transparent"},"visible":{"type":"boolean","duration":0}}},'
+          '{"from":"transparent"},"visible":{"duration":0}}},'
           '"hide":{"animations":{"colors":{"to":"transparent"},"visible":'
-          '{"type":"boolean","easing":"<curve>","fn":"<fn>"}}}},'
+          '{"easing":"<curve>","fn":"<fn>"}}}},'
           '"layout":{"autoPadding":true,"padding":{"top":0,"right":0,'
           '"bottom":0,"left":0}}}',
         ),

@@ -404,15 +404,14 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
 
   /// controller.ts:251 `static readonly defaults`.
   // DIVERGES(sankey): adapt-sankey-native-defaults, the objects of the host.
+  // DIVERGES(sankey): adapt-sankey-animation-type, no animation `type`.
   static final Map<String, Object?> defaults = <String, Object?>{
     'animations': <String, Object?>{
       'colors': <String, Object?>{
         'properties': <String>['colorFrom', 'colorTo'],
-        'type': 'color',
       },
       'numbers': <String, Object?>{
         'properties': <String>['x', 'y', 'x2', 'y2', 'height', 'width'],
-        'type': 'number',
       },
       'progress': <String, Object?>{
         'delay': _progressDelay,
@@ -436,7 +435,6 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
           'colors': <String, Object?>{
             'properties': <String>['colorFrom', 'colorTo'],
             'to': _transparent,
-            'type': 'color',
           },
         },
       },
@@ -450,7 +448,6 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
           'colors': <String, Object?>{
             'from': _transparent,
             'properties': <String>['colorFrom', 'colorTo'],
-            'type': 'color',
           },
         },
       },

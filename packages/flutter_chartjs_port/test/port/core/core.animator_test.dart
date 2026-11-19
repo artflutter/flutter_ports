@@ -17,6 +17,8 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/animation_spec_input.dart';
+
 // Behavior of Chart.js ADR 0019 that test/specs/core.animator.tests.js does
 // not check (AGENTS.md rule 3): the promise checkpoint of the animator
 // callback, the copy of the chart list in `_update`, `stop()` inside a
@@ -80,7 +82,7 @@ Animation _start(
   bool loop = false,
 }) {
   final animation = Animation(
-    {'duration': duration, 'loop': loop},
+    animationSpecOf({'duration': duration, 'loop': loop}),
     target,
     'value',
     10.0,
@@ -249,10 +251,19 @@ void main() {
     test('an update outside a frame rejects after the synchronous code', () {
       return Future<void>(() async {
         final target = <String, Object?>{'value': 0.0};
-        final animation = Animation({'duration': 100}, target, 'value', 10.0);
+        final animation = Animation(
+          animationSpecOf({'duration': 100}),
+          target,
+          'value',
+          10.0,
+        );
         Object? error = 'none';
         final wait = animation.wait().catchError((Object e) => error = e);
-        animation.update({'duration': 100}, 20.0, animation.start + 10);
+        animation.update(
+          animationSpecOf({'duration': 100}),
+          20.0,
+          animation.start + 10,
+        );
         expect(error, 'none');
         await wait;
         expect(error, same(undefined));
@@ -473,7 +484,7 @@ void main() {
       ..listen(chart, 'complete', events.add)
       ..listen(chart, 'complete', events.add)
       ..add(chart, [
-        Animation({'duration': 100}, target, 'value', 10.0),
+        Animation(animationSpecOf({'duration': 100}), target, 'value', 10.0),
       ])
       ..stop(chart);
     expect(events, hasLength(2));

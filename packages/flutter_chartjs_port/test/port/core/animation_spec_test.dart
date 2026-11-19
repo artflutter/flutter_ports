@@ -2,6 +2,7 @@
 import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/animation.dart' show Curves;
 import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.defaults.dart';
 import 'package:flutter_chartjs_port/src/js/js_array.dart';
@@ -15,17 +16,51 @@ import 'package:test/test.dart';
 // name with the JS rules) against a plain Map with the same entries
 // (Chart.js ADR 0019, section 4, the row adapt-animation-spec).
 
-/// The getters of the known keys, by key.
+/// The typed getters of the known keys, by key.
 final Map<String, Object? Function(AnimationSpec spec)> _getters = {
-  'delay': (spec) => spec.delayValue,
-  'duration': (spec) => spec.durationValue,
-  'easing': (spec) => spec.easingValue,
-  'fn': (spec) => spec.fnValue,
-  'from': (spec) => spec.fromValue,
-  'loop': (spec) => spec.loopValue,
-  'to': (spec) => spec.toValue,
-  'type': (spec) => spec.typeValue,
+  'delay': (spec) => spec.delay,
+  'duration': (spec) => spec.duration,
+  'easing': (spec) => spec.easing,
+  'fn': (spec) => spec.fn,
+  'from': (spec) => spec.from,
+  'loop': (spec) => spec.loop,
+  'to': (spec) => spec.to,
 };
+
+/// The values of each key that the spec takes: a number of milliseconds for
+/// `delay` and `duration`, a `Curve` for `easing`, an `Interpolator` for
+/// `fn`, a `bool` for `loop`, and any value for `from`, `to` and an extra
+/// key. Each key also takes `null` and [undefined].
+List<Object?> _valuesOf(String key) => [
+  undefined,
+  null,
+  ...switch (key) {
+    'delay' || 'duration' => [0.0, 1000.0],
+    'easing' => [Curves.linear, Curves.easeOutQuart],
+    'fn' => [(Object? from, Object? to, double factor) => to],
+    'loop' => [true, false],
+    _ => [
+      0.0,
+      1000.0,
+      'linear',
+      true,
+      <Object?>['x'],
+    ],
+  },
+];
+
+/// The value of the JS object [plain] for [key], as the face gives it: a
+/// known key that holds `null` gives [undefined], because Dart `null` is
+/// the absent value of a typed field.
+Object? _faceValue(AnyObject plain, String key) {
+  final value = jsGet(plain, key);
+  if (!AnimationSpec.knownKeys.contains(key)) return value;
+  return value ?? undefined;
+}
+
+/// A matcher of [expected]: equality for a number, else identity.
+Matcher _is(Object? expected) =>
+    expected is double ? equals(expected) : same(expected);
 
 /// The key order of a spec with the entries of [plain]: the present known
 /// keys in their order, then the other keys in the order of [plain].
@@ -37,7 +72,8 @@ List<String> _order(AnyObject plain) => [
 ];
 
 /// Expects that the face of [spec] gives the JS results of [plain]: the keys
-/// in the order of `Object.keys`, [undefined] for an absent key.
+/// in the order of `Object.keys`, [undefined] for an absent key, and the
+/// typed getters give the value or Dart `null`.
 void _expectSame(AnimationSpec spec, AnyObject plain, String reason) {
   final order = _order(plain);
   expect(
@@ -48,11 +84,20 @@ void _expectSame(AnimationSpec spec, AnyObject plain, String reason) {
   expect(spec.jsKeys().length, plain.length, reason: '$reason: count');
   for (final key in [...AnimationSpec.knownKeys, 'extra', 'other', '0']) {
     expect(spec.jsHas(key), plain.containsKey(key), reason: key);
-    expect(spec[key], same(jsGet(plain, key)), reason: '$reason: [$key]');
-    expect(jsGet(spec, key), same(jsGet(plain, key)), reason: '$reason: $key');
+    expect(spec[key], _is(_faceValue(plain, key)), reason: '$reason: [$key]');
+    expect(
+      jsGet(spec, key),
+      _is(_faceValue(plain, key)),
+      reason: '$reason: $key',
+    );
   }
   for (final MapEntry(:key, value: getter) in _getters.entries) {
-    expect(getter(spec), same(jsGet(plain, key)), reason: '$reason: $key');
+    final value = plain[key];
+    expect(
+      getter(spec),
+      _is(value is Undefined ? null : value),
+      reason: '$reason: $key',
+    );
   }
 }
 
@@ -64,11 +109,11 @@ void main() {
       expect(jsObjectKeys(defaults['animation']), AnimationSpec.knownKeys);
     });
 
-    test('a new spec has no key, and each getter gives undefined', () {
+    test('a new spec has no key, and each getter gives null', () {
       final spec = AnimationSpec();
       _expectSame(spec, <String, Object?>{}, 'new');
       for (final getter in _getters.values) {
-        expect(getter(spec), same(undefined));
+        expect(getter(spec), isNull);
       }
     });
 
@@ -83,29 +128,20 @@ void main() {
         'extra': undefined,
       };
       _expectSame(spec, plain, 'undefined and null');
-      expect(spec.durationValue, same(undefined));
-      expect(spec.easingValue, isNull);
+      expect(spec.duration, isNull);
+      expect(spec.easing, isNull);
     });
 
     test('the face against a plain Map over random operations', () {
       final random = math.Random(19);
       const keys = [...AnimationSpec.knownKeys, 'extra', 'other', '0'];
-      final values = <Object?>[
-        undefined,
-        null,
-        0.0,
-        1000.0,
-        'linear',
-        true,
-        <Object?>['x'],
-        (Object? v) => v,
-      ];
       final spec = AnimationSpec();
       final plain = <String, Object?>{};
       for (var i = 0; i < 600; i++) {
         final key = keys[random.nextInt(keys.length)];
         final r = random.nextInt(20);
         if (r < 12) {
+          final values = _valuesOf(key);
           final value = values[random.nextInt(values.length)];
           spec[key] = value;
           plain[key] = value;
@@ -128,7 +164,7 @@ void main() {
 
     test('jsKeys is a copy: a delete of each key does not throw', () {
       final spec = AnimationSpec()..['duration'] = 1;
-      spec['easing'] = 'linear';
+      spec['easing'] = Curves.linear;
       expect(spec.jsKeys(), ['duration', 'easing']);
       spec.jsKeys().forEach(spec.jsDelete);
       expect(spec.jsKeys(), isEmpty);
@@ -140,14 +176,48 @@ void main() {
         ..['extra'] = 'x'
         ..['delay'] = 0;
       expect(spec.jsKeys(), ['delay', 'to', 'extra']);
-      expect([for (final key in spec.jsKeys()) spec[key]], [0, 5, 'x']);
+      expect([for (final key in spec.jsKeys()) spec[key]], [0.0, 5, 'x']);
       spec
         ..['from'] = 7
-        ..['delay'] = 9;
-      expect(spec.fromValue, 7);
-      expect(spec.delayValue, 9);
+        ..['delay'] = 1000.0;
+      expect(spec.from, 7);
+      expect(spec.delay, 1000.0);
       expect(spec.jsDelete('extra'), isTrue);
       expect(spec.jsKeys(), ['delay', 'from', 'to']);
+    });
+  });
+
+  group('adapt-animation-option-types', () {
+    test('a value of another type stops a debug build', () {
+      for (final (key, value) in <(String, Object?)>[
+        ('duration', '1000'),
+        ('delay', true),
+        ('easing', 'linear'),
+        ('fn', 5),
+        ('fn', (Object? v) => v),
+        ('loop', 1.0),
+      ]) {
+        expect(
+          () => AnimationSpec()[key] = value,
+          throwsA(isA<AssertionError>()),
+          reason: '$key $value',
+        );
+      }
+    });
+
+    test('a typed setter makes its key present', () {
+      final spec = AnimationSpec()
+        ..duration = 400.0
+        ..loop = null;
+      expect(spec.jsKeys(), ['duration', 'loop']);
+      expect(spec['duration'], 400.0);
+      expect(spec['loop'], same(undefined));
+    });
+
+    test('the key type is an extra key', () {
+      final spec = AnimationSpec()..['type'] = 'number';
+      expect(spec.jsKeys(), ['type']);
+      expect(spec['type'], 'number');
     });
   });
 }

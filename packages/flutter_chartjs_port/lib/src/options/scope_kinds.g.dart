@@ -650,7 +650,6 @@ enum ScopeKind(
           OptionKey.delay,
           OptionKey.loop,
           OptionKey.properties,
-          OptionKey.type,
           OptionKey.fn,
           OptionKey.from,
           OptionKey.to,
@@ -1789,8 +1788,6 @@ enum ScopeKind(
             return 2;
           case OptionKey.properties:
             return 16;
-          case OptionKey.type:
-            return 4;
           case OptionKey.fn:
             return 8;
           case OptionKey.from:

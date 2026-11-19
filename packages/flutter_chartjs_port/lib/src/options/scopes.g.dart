@@ -4442,23 +4442,6 @@ base class AnimationOptionsScope() extends OptionScope {
   set properties(Object value) =>
       store(OptionKey.properties, classify(OptionKey.properties, value));
 
-  Opt<String>? _type;
-
-  /// The cell of `type`, or Dart `null` when absent.
-  Opt<String>? get typeCell => _type;
-
-  /// Stores the cell of `type`. Dart `null` deletes the key.
-  set typeCell(Opt<String>? cell) {
-    if (cell == null) {
-      delete(OptionKey.type);
-    } else {
-      store(OptionKey.type, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `type`.
-  set type(String value) => store(OptionKey.type, OptValue<String>(value));
-
   Opt<Object>? _fn;
 
   /// The cell of `fn`, or Dart `null` when absent.
@@ -4596,8 +4579,6 @@ base class AnimationOptionsScope() extends OptionScope {
         return _loop;
       case OptionKey.properties:
         return _properties;
-      case OptionKey.type:
-        return _type;
       case OptionKey.fn:
         return _fn;
       case OptionKey.from:
@@ -4630,8 +4611,6 @@ base class AnimationOptionsScope() extends OptionScope {
         _loop = fitCell(cell, classifyBool);
       case OptionKey.properties:
         _properties = fitCell(cell, (raw) => classifyUnion(raw, 16));
-      case OptionKey.type:
-        _type = fitCell(cell, classifyString);
       case OptionKey.fn:
         _fn = fitCell(cell, (raw) => classifyUnion(raw, 8));
       case OptionKey.from:
@@ -4659,7 +4638,6 @@ base class AnimationOptionsScope() extends OptionScope {
       case OptionKey.delay:
       case OptionKey.loop:
       case OptionKey.properties:
-      case OptionKey.type:
       case OptionKey.fn:
       case OptionKey.from:
       case OptionKey.to:
@@ -4686,8 +4664,6 @@ base class AnimationOptionsScope() extends OptionScope {
         return classifyBool(raw);
       case OptionKey.properties:
         return classifyUnion(raw, 16);
-      case OptionKey.type:
-        return classifyString(raw);
       case OptionKey.fn:
         return classifyUnion(raw, 8);
       case OptionKey.from:

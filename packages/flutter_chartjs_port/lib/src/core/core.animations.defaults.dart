@@ -49,8 +49,7 @@ void applyAnimationsDefaults(Defaults defaults) {
         ..fnCell = optUndefined
         ..fromCell = optUndefined
         ..loopCell = optUndefined
-        ..toCell = optUndefined
-        ..typeCell = optUndefined,
+        ..toCell = optUndefined,
     )
     ..describe(
       'animation',
@@ -62,12 +61,10 @@ void applyAnimationsDefaults(Defaults defaults) {
     ..set(
       'animations',
       AnimationsSpecScope()
-        ..colors = (AnimationOptionsScope()
-          ..type = 'color'
-          ..properties = _colors)
-        ..numbers = (AnimationOptionsScope()
-          ..type = 'number'
-          ..properties = _numbers),
+        // DIVERGES(chartjs): adapt-animation-option-types, no `type`: the
+        // Dart type of the value selects the interpolator.
+        ..colors = (AnimationOptionsScope()..properties = _colors)
+        ..numbers = (AnimationOptionsScope()..properties = _numbers),
     )
     ..describe('animations', DescriptorsScope()..descFallback = 'animation')
     ..set(
@@ -82,7 +79,6 @@ void applyAnimationsDefaults(Defaults defaults) {
             ..colors = (AnimationOptionsScope()
               ..from = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)))
             ..visible = (AnimationOptionsScope()
-              ..type = 'boolean'
               // show immediately
               ..duration = 0.0)))
         ..hide = (TransitionOptionsScope()
@@ -90,7 +86,6 @@ void applyAnimationsDefaults(Defaults defaults) {
             ..colors = (AnimationOptionsScope()
               ..to = const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)))
             ..visible = (AnimationOptionsScope()
-              ..type = 'boolean'
               // DIVERGES(chartjs): adapt-flutter-curves, the curve.
               ..easing = Curves.linear
               // for keeping the dataset visible all the way through the

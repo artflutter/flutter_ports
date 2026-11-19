@@ -21,6 +21,7 @@ extra	data.datasets[].xAxisId	core.scale.tests.js, the spelling with a lower-cas
 extra	data.datasets[].yAxisId	core.scale.tests.js, the spelling with a lower-case d; Chart.js reads yAxisID
 extra	data.fill	a test-only key of the data object
 extra	options._jasmineCheck	a test-only chart key
+extra	options.animations.radius.type	the animation option type of upstream, which the port does not have (row adapt-animation-option-types)
 extra	options.datasets.polarAreaSharing	the test subclass of the polar area controller with its own id
 extra	options.datasets.tbar	a custom controller type
 extra	options.elements.tbar	a custom element type

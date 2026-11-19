@@ -21,8 +21,7 @@ import 'package:flutter_chartjs_port/src/core/core.controller.dart'
     show AnimationEventHandler;
 import 'package:flutter_chartjs_port/src/core/core.interaction.dart'
     show InteractionAxis, InteractionMode;
-import 'package:flutter_chartjs_port/src/options/opt.dart'
-    show OptForeign, OptScope;
+import 'package:flutter_chartjs_port/src/options/opt.dart' show OptScope;
 import 'package:flutter_chartjs_port/src/options/option_keys.g.dart'
     show OptionKey;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
@@ -826,26 +825,19 @@ final class ChartAnimation extends AnimationSettings with Diagnosticable {
   }
 }
 
-/// Gives [scope] the object [settings] of the app in the cell of each
-/// parameter that is not `null`: `duration`, `delay`, `easing` and `loop`.
-///
-/// The cell holds [settings] itself, not a copy of the parameter. The
-/// cascade of the options gives the object to the animation of a property,
-/// and `Animation` reads the parameter from it (row
-/// adapt-property-animations).
+/// Gives [scope] each parameter of [settings] that is not `null`:
+/// `duration`, `delay`, `easing` and `loop` (row
+/// adapt-animation-option-types). A `Duration` goes as its milliseconds, the
+/// unit of the options.
 void _putSettings(AnimationOptionsScope scope, AnimationSettings settings) {
-  if (settings.duration != null) {
-    scope.durationCell = OptForeign<double>(settings);
+  if (settings.duration case final duration?) {
+    scope.duration = duration.inMicroseconds / 1000;
   }
-  if (settings.delay != null) {
-    scope.delayCell = OptForeign<double>(settings);
+  if (settings.delay case final delay?) {
+    scope.delay = delay.inMicroseconds / 1000;
   }
-  if (settings.easing != null) {
-    scope.easingCell = OptForeign<Curve>(settings);
-  }
-  if (settings.loop != null) {
-    scope.loopCell = OptForeign<bool>(settings);
-  }
+  if (settings.easing case final easing?) scope.easing = easing;
+  if (settings.loop case final loop?) scope.loop = loop;
 }
 
 /// The `transitions` option of [transitions]: for each item with a

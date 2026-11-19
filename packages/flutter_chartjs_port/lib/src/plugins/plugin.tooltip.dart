@@ -2422,8 +2422,8 @@ final tooltip = Plugin<TooltipOptions>(
       // DIVERGES(chartjs): adapt-flutter-curves, the curve of the name.
       ..easing = Curves.easeOutQuart)
     ..animations = (AnimationsSpecScope()
+      // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
       ..numbers = (AnimationOptionsScope()
-        ..type = 'number'
         ..properties = <Object?>[
           'x',
           'y',

@@ -218,8 +218,8 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
           ..animateRotate = true
           ..animateScale = true)
         ..animations = (AnimationsSpecScope()
+          // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
           ..numbers = (AnimationOptionsScope()
-            ..type = 'number'
             ..properties = <String>[
               'x',
               'y',

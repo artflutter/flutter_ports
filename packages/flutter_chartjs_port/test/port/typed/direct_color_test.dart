@@ -174,7 +174,7 @@ void main() {
       'backgroundColor': const ChartPaint.solid(_red),
     });
     final animation = core.Animation(
-      <String, Object?>{'duration': 1000, 'type': 'color'},
+      AnimationSpec()..duration = 1000.0,
       target,
       'backgroundColor',
       const ChartPaint.solid(_blue),

@@ -4,15 +4,16 @@ library;
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:clock/clock.dart';
+import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/elements/element.bar.dart';
 import 'package:flutter_chartjs_port/src/elements/element.point.dart';
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
+import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:test/test.dart';
 
+import '../../support/animation_spec_input.dart';
 import '../../support/color_json.dart';
-import '../../support/easing_json.dart';
 import 'animation_reference.dart';
 
 // The behavior of Animation.cancel() that test/specs/core.animation.tests.js
@@ -65,17 +66,15 @@ String _errorName(Object error) =>
 Clock _at(double ms) =>
     Clock.fixed(DateTime.fromMillisecondsSinceEpoch(ms.toInt()));
 
-/// The plain Map form of the cfg of one replay, with the upstream formula
-/// of its easing name ([exactEasing]).
-AnyObject _plain(Map<String, Object?> cfg) => exactEasing(cfg);
+/// The [AnimationSpec] of the cfg of one replay ([animationSpecOf]).
+AnimationSpec _plain(Map<String, Object?> cfg) => animationSpecOf(cfg);
 
 /// [cfg] with a user `fn` that gives the result of the `number`
 /// interpolator. The animation then takes the generic path.
-AnyObject _withFn(Map<String, Object?> cfg) => {
-  ...exactEasing(cfg),
-  'fn': (Object? from, Object? to, double factor) =>
-      jsToNumber(from) + (jsToNumber(to) - jsToNumber(from)) * factor,
-};
+AnimationSpec _withFn(Map<String, Object?> cfg) =>
+    animationSpecOf(cfg)
+      ..fn = (from, to, factor) =>
+          jsToNumber(from) + (jsToNumber(to) - jsToNumber(from)) * factor;
 
 /// Replays [cancelCase] on the property [prop] of [target] with the cfg
 /// form [cfgOf]. It compares each step with the reference.
@@ -83,7 +82,7 @@ void _replay(
   AnimationCancelCase cancelCase, {
   required Object target,
   required String prop,
-  required AnyObject Function(Map<String, Object?> cfg) cfgOf,
+  required AnimationSpec Function(Map<String, Object?> cfg) cfgOf,
   required String label,
 }) {
   Object? input(Object? value) =>
@@ -146,6 +145,21 @@ void _replay(
   }
 }
 
+/// Whether the port runs the reference case with [cfg], the current value
+/// [current] and the target [to]: the `type` of [cfg] names the
+/// interpolator of the Dart type of the start value (row
+/// `adapt-animation-option-types`, [animationTypeDiverges]). The start
+/// value is `resolve([cfg.from, currentValue, to])`.
+bool _kept(Map<String, Object?> cfg, Object? current, Object? to) {
+  final from = cfg['from'];
+  final start = from is! Undefined && cfg.containsKey('from')
+      ? from
+      : identical(current, animationAbsent) || current is Undefined
+      ? to
+      : current;
+  return !animationTypeDiverges(cfg, start);
+}
+
 void main() {
   setUpSpecs();
 
@@ -153,7 +167,11 @@ void main() {
     test('the cases on a plain Map give the upstream steps', () {
       // A cfg without fn takes the number path for two doubles, and the
       // generic path for the other values.
-      for (final cancelCase in animationCancelReference) {
+      final kept = animationCancelReference.where(
+        (c) => _kept(c.cfg, c.current, c.to),
+      );
+      expect(kept.length, greaterThan(animationCancelReference.length ~/ 2));
+      for (final cancelCase in kept) {
         _replay(
           cancelCase,
           target: <String, Object?>{},
@@ -165,7 +183,9 @@ void main() {
     });
 
     test('the numeric cases give the upstream steps on each path', () {
-      final numeric = animationCancelReference.where((c) => c.numeric);
+      final numeric = animationCancelReference.where(
+        (c) => c.numeric && _kept(c.cfg, c.current, c.to),
+      );
       expect(numeric, isNotEmpty);
       for (final cancelCase in numeric) {
         for (final (label, target, prop, cfgOf) in [

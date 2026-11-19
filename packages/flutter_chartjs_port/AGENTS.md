@@ -95,8 +95,8 @@ repository.
     they keep in a foreign slot. The option `easing` holds a Flutter `Curve`
     (row `adapt-flutter-curves`, the schema shape `curve`, `classifyTyped<Curve>` of `opt.dart`),
     also in a raw config. `lib/` has no easing names and no table from a name to a curve: a name is
-    a foreign value, a debug build stops on it in `_cfgEasing` of `core.animation.dart`, and a
-    release build takes `Curves.linear`. The animation calls `Curve.transform`; no animation reads
+    a foreign value, a debug build stops on it when `Animations.configure` writes it into an
+    `AnimationSpec`, and a release build takes `Curves.linear`. The animation calls `Curve.transform`; no animation reads
     `helpers.easing.dart`. An app or a plugin gives its own `Curve` class, with no registration
     (`test/port/options/curve_option_test.dart`). Upstream data hold a name in that place: no
     test compares the value of `easing` with upstream data (the markers of
@@ -942,10 +942,13 @@ repository.
     lowering copies an item: `DatasetController.resolveAnimations` gives the Lists to `Animations`,
     and `Animation` reads the parameters of the item itself. The `ChartAnimation` of
     `ChartConfig.animation` goes the same way for `duration`, `delay`, `easing` and `loop`: each of
-    these cells of `options.animation` holds the `ChartAnimation` itself, not a copy, and
-    `core.animation.dart` reads the parameter from it (`AnimationSettings`). Thus the lowering has
-    no `millisecondsOf` for an animation. A color animates with no `type` (row
-    `adapt-color-animation-by-value`). `config.dart` has `ChartConfig` and `ChartKind`; its
+    these cells of `options.animation` holds the value of the parameter, a `Duration` as its
+    milliseconds. `AnimationSpec` holds `duration` and `delay` as `double` milliseconds, `loop` as
+    a `bool`, `easing` as a `Curve` and `fn` as an `Interpolator`, and a value of another type
+    stops a debug build (row `adapt-animation-option-types`). The port has no animation option
+    `type`: the Dart type of the start value selects the interpolator (row
+    `adapt-color-animation-by-value`). In the tests, `animationSpecOf` of
+    `test/support/animation_spec_input.dart` gives the `AnimationSpec` of an upstream cfg. `config.dart` has `ChartConfig` and `ChartKind`; its
     `indexAxis` takes a `CartesianAxis` of the core. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
     and `DataPoint`, a final class that implements `TypedDataItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver

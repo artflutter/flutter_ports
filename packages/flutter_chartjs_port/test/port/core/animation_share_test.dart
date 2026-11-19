@@ -15,6 +15,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/animation_spec_input.dart';
+
 // `BarController.update` with one resolution of the animation options for
 // its bars (`lib/src/core/animation_share.dart`, row
 // `adapt-shared-bar-animations`, Chart.js ADR 0151). The twin of each run has
@@ -445,7 +447,7 @@ void main() {
     testWidgets('the cancel of an active animation adds one', (tester) async {
       final target = <String, Object?>{'value': 0.0};
       final animation = Animation(
-        <String, Object?>{'duration': 1000.0},
+        animationSpecOf(<String, Object?>{'duration': 1000.0}),
         target,
         'value',
         10.0,

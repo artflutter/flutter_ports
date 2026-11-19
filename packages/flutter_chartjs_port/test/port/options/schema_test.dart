@@ -26,6 +26,8 @@ import 'package:flutter_chartjs_port/src/js/js_object.dart'
     show JsObjectFace, jsGet;
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/option_scope.dart';
+import 'package:flutter_chartjs_port/src/options/scopes.g.dart'
+    show AnimationOptionsScope;
 import 'package:flutter_chartjs_port/src/plugins/decimation_algorithm.dart'
     show DecimationAlgorithm;
 import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';
@@ -217,6 +219,13 @@ bool _fits(String kind, int shape) {
     _ => false,
   };
 }
+
+/// The path of an animation option `type`, which the port does not have
+/// (row `adapt-animation-option-types`): `animation.type` or
+/// `animations.<entry>.type` under any prefix.
+final RegExp _animationType = RegExp(
+  r'(^|\.)(animation|animations\.[^.]+)\.type$',
+);
 
 /// Whether an inventory value [value] fits the shape bits [shape].
 bool _fitsInventory(Object? value, int shape) => switch (value) {
@@ -555,6 +564,7 @@ void main() {
           if (_isPaddingField(root, path) || _isCallbackField(root, path)) {
             continue;
           }
+          if (_animationType.hasMatch(path)) continue;
           final walk = _walk(root, path.split('.'));
           final shape = walk.shape;
           if (walk.depth != path.split('.').length || shape == null) {
@@ -628,6 +638,7 @@ void main() {
         final paths = values[name]! as Map<String, Object?>;
         final problems = <String>[];
         for (final MapEntry(key: path, value: expected) in paths.entries) {
+          if (_animationType.hasMatch(path)) continue;
           // A field of a font object: the field of the TextStyle.
           final font = _fontField.firstMatch(path);
           final fontValue = font == null ? null : _read(root, font[1]!);
@@ -757,7 +768,12 @@ void main() {
           };
         }
         if (object == null || keys == null) continue;
-        final siteKeys = keys.cast<String>();
+        // The port has no animation option `type` (row
+        // adapt-animation-option-types).
+        final siteKeys = [
+          for (final key in keys.cast<String>())
+            if (key != 'type' || object is! AnimationOptionsScope) key,
+        ];
         final actual = _keysOf(object);
         if (actual == null) {
           problems.add('$file:${site['line']} not an object');

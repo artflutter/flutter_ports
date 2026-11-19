@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint;
 import 'package:test/test.dart';
 
+import '../support/animation_spec_input.dart';
+
 // `Chart.Animation` is the class Animation of core.animation.dart. The spec
 // reads and writes `_start`, `_from`, `_to` and `_duration`: the members
 // `start`, `from`, `to` and `duration` (Chart.js ADR 0019, section 1). The
@@ -22,7 +24,12 @@ void main() {
   group('Chart.Animation', () {
     test('should animate boolean', () {
       final target = <String, Object?>{'prop': false};
-      final anim = Animation({'duration': 1000}, target, 'prop', true);
+      final anim = Animation(
+        animationSpecOf({'duration': 1000}),
+        target,
+        'prop',
+        true,
+      );
       expect(anim.active(), isTrue);
 
       anim.tick(anim.start + 500);
@@ -46,7 +53,7 @@ void main() {
       test('should fall back to transparent', () {
         final target = <String, Object?>{};
         final anim = Animation(
-          {'duration': 1000, 'type': 'color'},
+          animationSpecOf({'duration': 1000, 'type': 'color'}),
           target,
           'color',
           const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
@@ -72,7 +79,7 @@ void main() {
           'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
         };
         final anim = Animation(
-          {'duration': 1000, 'type': 'color'},
+          animationSpecOf({'duration': 1000, 'type': 'color'}),
           target,
           'color',
           'invalid',
@@ -85,7 +92,7 @@ void main() {
     test('should loop', () {
       final target = <String, Object?>{'value': 0};
       final anim = Animation(
-        {'duration': 100, 'loop': true},
+        animationSpecOf({'duration': 100, 'loop': true}),
         target,
         'value',
         10,
@@ -105,7 +112,7 @@ void main() {
         'testColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)),
       };
       final anim = Animation(
-        {'duration': 100, 'type': 'color'},
+        animationSpecOf({'duration': 100, 'type': 'color'}),
         target,
         'testColor',
         const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
@@ -119,7 +126,7 @@ void main() {
 
       anim
         ..update(
-          {'duration': 500},
+          animationSpecOf({'duration': 500}),
           const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
           clock.now().millisecondsSinceEpoch.toDouble(),
         )
@@ -141,7 +148,7 @@ void main() {
         'testColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0)),
       };
       final anim = Animation(
-        {'duration': 100, 'type': 'color'},
+        animationSpecOf({'duration': 100, 'type': 'color'}),
         target,
         'testColor',
         const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
@@ -155,7 +162,7 @@ void main() {
       expect(anim.active(), isFalse);
 
       anim.update(
-        {'duration': 500},
+        animationSpecOf({'duration': 500}),
         const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
         clock.now().millisecondsSinceEpoch.toDouble(),
       );

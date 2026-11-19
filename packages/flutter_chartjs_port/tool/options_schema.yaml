@@ -276,7 +276,6 @@ kinds:
       delay: number
       loop: bool
       properties: list
-      type: string
       fn: fn
       from: any
       to: any

@@ -63,9 +63,8 @@ import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
 import 'package:flutter_chartjs_port/src/options/animated_prop.dart'
     show AnimatedProp;
 import 'package:flutter_chartjs_port/src/options/property_animation.dart'
-    show AnimationSettings, PropertyAnimation;
+    show PropertyAnimation;
 import 'package:flutter_chartjs_port/src/types/animation.dart' as types;
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart'
@@ -116,22 +115,14 @@ Object? _number(Object? from, Object? to, double factor) {
   return jsToNumber(from) + (jsToNumber(to) - jsToNumber(from)) * factor;
 }
 
-/// core.animation.js:6 `interpolators[name]`: the interpolator of the
-/// property type [name], or Dart `null` where upstream gives `undefined`.
-Interpolator? _interpolatorNamed(String name) => switch (name) {
-  'boolean' => _boolean,
-  'color' => _color,
-  'number' => _number,
-  _ => null,
-};
-
-/// core.animation.js:35 `interpolators[typeof from]`: `typeof` gives
-/// `'number'` for a number and `'boolean'` for a boolean. No
+/// core.animation.js:35 `interpolators[cfg.type || typeof from]`: `typeof`
+/// gives `'number'` for a number and `'boolean'` for a boolean. No
 /// other `typeof` names an interpolator.
 ///
 /// A color of the port is a `dart:ui` `Color`, not a String. Thus the value
-/// also names the color interpolator: an animation of a color property needs
-/// no `type`.
+/// also names the color interpolator. The port has no option `type`: the
+/// Dart type of the value selects each built-in interpolator (row
+/// `adapt-animation-option-types`).
 Interpolator? _interpolatorOf(Object? from) => switch (from) {
   num() => _number,
   bool() => _boolean,
@@ -143,7 +134,7 @@ Interpolator? _interpolatorOf(Object? from) => switch (from) {
 /// core.animation.js:27 `Animation`, the animation of the property [_key]
 /// of the target [_target].
 class Animation.typed(
-  Object cfg,
+  AnimationSpec cfg,
 
   /// core.animation.js:40 `_target`.
   final Object _target,
@@ -155,11 +146,10 @@ class Animation.typed(
 ]) implements types.Animation {
   /// core.animation.js:28 `constructor(cfg, target, prop, to)`.
   ///
-  /// [cfg] is the animation configuration: an [AnimationSpec] or another
-  /// Map. [to] is the [undefined] sentinel when the caller passes no target
-  /// value. [prop] is the property name: [Animation.typed] with its
-  /// [AnimatedProp].
-  new(Object cfg, Object target, String prop, [Object? to = undefined])
+  /// [cfg] is the animation configuration, an [AnimationSpec]. [to] is the
+  /// [undefined] sentinel when the caller passes no target value. [prop] is
+  /// the property name: [Animation.typed] with its [AnimatedProp].
+  new(AnimationSpec cfg, Object target, String prop, [Object? to = undefined])
     : this.typed(cfg, target, AnimatedProp.of(prop), to);
 
   /// core.animation.js:28 `constructor(cfg, target, prop, to)` for the key
@@ -167,8 +157,8 @@ class Animation.typed(
   ///
   /// The constructor resolves the interpolator one time (Chart.js ADR 0019,
   /// section 5). An [Interpolator] in `cfg.fn` is the interpolator, with no
-  /// `this` (Chart.js ADR 0130). Else the interpolator of
-  /// `cfg.type || typeof from` is the built-in function, or Dart `null`
+  /// `this` (Chart.js ADR 0130). Else the interpolator of the Dart type of
+  /// `from` is the built-in function, or Dart `null`
   /// where upstream gives `undefined`. Then the first interpolation throws a
   /// [TypeError], as in JavaScript. `resolve([...])` of upstream is the
   /// first value that is not [undefined], with no list (helpers.options.ts:
@@ -183,41 +173,28 @@ class Animation.typed(
     final currentValue = prop.valueOf(_target);
 
     // `resolve([cfg.to, to, currentValue, cfg.from])`.
-    final cfgTo = _cfgTo(cfg);
-    final cfgFrom = _cfgFrom(cfg);
+    final cfgTo = cfg.to ?? undefined;
+    final cfgFrom = cfg.from ?? undefined;
     // Upstream assigns the parameter `to` (core.animation.js:31).
     // ignore: parameter_assignments
     to = _firstDefined(cfgTo, to, currentValue, cfgFrom);
     // `resolve([cfg.from, currentValue, to])`.
-    final from = _firstDefined(_cfgFrom(cfg), currentValue, to);
+    final from = _firstDefined(cfgFrom, currentValue, to);
 
     _active = true;
-    final fn = _cfgFn(cfg);
     // DIVERGES(chartjs): adapt-native-callbacks, the typed function.
-    if (fn is Interpolator) {
-      _fn = fn;
-    } else {
-      assert(
-        !jsTruthy(fn),
-        'The animation option fn holds an Interpolator (Chart.js ADR 0130), '
-        'not $fn.',
-      );
-      final type = _cfgType(cfg);
-      _fn = jsTruthy(type)
-          ? _interpolatorNamed(jsToString(type))
-          : _interpolatorOf(from);
-    }
+    // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
+    _fn = cfg.fn ?? _interpolatorOf(from);
     // DIVERGES(chartjs): adapt-flutter-curves, the curve of the config.
     // DIVERGES(chartjs): adapt-property-animations, the item of the app.
-    _easing = item?.easing ?? _cfgEasing(cfg);
+    _easing = item?.easing ?? cfg.easing ?? Curves.linear;
+    // DIVERGES(chartjs): adapt-animation-option-types, a Duration.
     _start =
         (clock.now().millisecondsSinceEpoch +
-                (_milliseconds(item?.delay) ?? jsOrZero(_cfgDelay(cfg))))
+                (_milliseconds(item?.delay) ?? cfg.delay ?? 0))
             .floorToDouble();
-    _duration = _total =
-        (_milliseconds(item?.duration) ?? jsToNumber(_cfgDuration(cfg)))
-            .floorToDouble();
-    _loop = item?.loop ?? jsTruthy(_cfgLoop(cfg));
+    _duration = _total = _durationOf(item, cfg);
+    _loop = item?.loop ?? cfg.loop ?? false;
     _from = from;
     _to = to;
     _promises = null;
@@ -237,7 +214,7 @@ class Animation.typed(
     construct: (newTarget, args) {
       Object? argument(int i) => i < args.length ? args[i] : undefined;
       return Animation(
-        argument(0)! as AnyObject,
+        argument(0)! as AnimationSpec,
         argument(1)!,
         argument(2)! as String,
         argument(3),
@@ -379,7 +356,12 @@ class Animation.typed(
   ///
   /// [item] is the item of `ChartConfig.animations` for the property, as in
   /// [Animation.typed].
-  void update(Object cfg, Object? to, double date, [PropertyAnimation? item]) {
+  void update(
+    AnimationSpec cfg,
+    Object? to,
+    double date, [
+    PropertyAnimation? item,
+  ]) {
     if (_active) {
       _notify(false);
 
@@ -388,20 +370,14 @@ class Animation.typed(
       final remain = _duration - elapsed;
       _start = date;
       // DIVERGES(chartjs): adapt-property-animations, the item of the app.
-      _duration = math
-          .max(
-            remain,
-            _milliseconds(item?.duration) ?? jsToNumber(_cfgDuration(cfg)),
-          )
-          .floorToDouble();
+      _duration = math.max(remain, _durationOf(item, cfg)).floorToDouble();
       _total += elapsed;
-      _loop = item?.loop ?? jsTruthy(_cfgLoop(cfg));
+      _loop = item?.loop ?? cfg.loop ?? false;
       // `resolve([cfg.to, to, currentValue, cfg.from])` and
       // `resolve([cfg.from, currentValue, to])`.
-      final cfgTo = _cfgTo(cfg);
-      final cfgFrom = _cfgFrom(cfg);
-      _to = _firstDefined(cfgTo, to, currentValue, cfgFrom);
-      _from = _firstDefined(_cfgFrom(cfg), currentValue, to);
+      final cfgFrom = cfg.from ?? undefined;
+      _to = _firstDefined(cfg.to ?? undefined, to, currentValue, cfgFrom);
+      _from = _firstDefined(cfgFrom, currentValue, to);
       // DIVERGES(chartjs): adapt-animation-number-path, two double fields.
       _retarget();
     }
@@ -664,86 +640,26 @@ Object? _firstDefined(
   return d;
 }
 
-/// `cfg[name]` of a `cfg` that is not an [AnimationSpec]: the read by name
-/// of a plain object, the `cfg` of `new Chart.Animation(cfg, ...)` of user
-/// code and of the specs. It gives [undefined] for an absent key.
-Object? _cfgRead(Object cfg, String name) => jsGet(cfg, name);
-
-/// `cfg.delay` (core.animation.js:37): the field of an [AnimationSpec], else
-/// [_cfgRead]. Both give [undefined] for an absent key.
-///
-/// The value can be the object of the app that sets the animation (an
-/// [AnimationSettings], row `adapt-property-animations`): then the result
-/// is its `delay` in milliseconds.
-Object? _cfgDelay(Object cfg) {
-  final value = cfg is AnimationSpec ? cfg.delayValue : _cfgRead(cfg, 'delay');
-  return value is AnimationSettings ? _milliseconds(value.delay) : value;
-}
-
-/// `cfg.duration` (core.animation.js:38, :59).
-///
-/// For an [AnimationSettings] value, its `duration` in milliseconds.
-Object? _cfgDuration(Object cfg) {
-  final value = cfg is AnimationSpec
-      ? cfg.durationValue
-      : _cfgRead(cfg, 'duration');
-  return value is AnimationSettings ? _milliseconds(value.duration) : value;
-}
+/// The duration of an animation in milliseconds, floored: the duration of
+/// [item], else `cfg.duration` (core.animation.js:38, :59). An absent
+/// duration gives NaN, the `+undefined` of upstream.
+// DIVERGES(chartjs): adapt-animation-option-types, typed milliseconds.
+double _durationOf(PropertyAnimation? item, AnimationSpec cfg) =>
+    (_milliseconds(item?.duration) ?? cfg.duration ?? double.nan)
+        .floorToDouble();
 
 /// Whether an animation with the options [cfg] has a duration:
 /// `cfg.duration` is truthy (core.animations.js:99).
 @internal
-bool animationHasDuration(Object cfg) => jsTruthy(_cfgDuration(cfg));
+bool animationHasDuration(AnimationSpec cfg) {
+  final duration = cfg.duration;
+  return duration != null && duration != 0 && !duration.isNaN;
+}
 
-/// [duration] in milliseconds, the unit of `cfg.duration` and `cfg.delay`,
-/// or Dart `null`.
+/// [duration] in milliseconds, the unit of the animation clock, or Dart
+/// `null`.
 double? _milliseconds(Duration? duration) =>
     duration == null ? null : duration.inMicroseconds / 1000;
-
-/// `effects[cfg.easing] || effects.linear` (core.animation.js:36): the
-/// curve of the config, or the linear curve for an absent key and for a
-/// value that is not a curve.
-///
-/// The value of `easing` is a Flutter [Curve]. An easing name of Chart.js is
-/// not a value of the option: a debug build stops on it.
-// DIVERGES(chartjs): adapt-flutter-curves, a Flutter curve, not a name.
-Curve _cfgEasing(Object cfg) {
-  final value = cfg is AnimationSpec
-      ? cfg.easingValue
-      : _cfgRead(cfg, 'easing');
-  assert(
-    value is! String,
-    'The option easing takes a Flutter Curve, for example '
-    'Curves.easeOutQuart, not the easing name "$value".',
-  );
-  // The object of the app that sets the animation.
-  if (value is AnimationSettings) return value.easing ?? Curves.linear;
-  return value is Curve ? value : Curves.linear;
-}
-
-/// `cfg.fn` (core.animation.js:35).
-Object? _cfgFn(Object cfg) =>
-    cfg is AnimationSpec ? cfg.fnValue : _cfgRead(cfg, 'fn');
-
-/// `cfg.from` (core.animation.js:31-32, :62-63).
-Object? _cfgFrom(Object cfg) =>
-    cfg is AnimationSpec ? cfg.fromValue : _cfgRead(cfg, 'from');
-
-/// `cfg.loop` (core.animation.js:39, :61).
-///
-/// For an [AnimationSettings] value, its `loop`.
-Object? _cfgLoop(Object cfg) {
-  final value = cfg is AnimationSpec ? cfg.loopValue : _cfgRead(cfg, 'loop');
-  return value is AnimationSettings ? value.loop : value;
-}
-
-/// `cfg.to` (core.animation.js:31, :62).
-Object? _cfgTo(Object cfg) =>
-    cfg is AnimationSpec ? cfg.toValue : _cfgRead(cfg, 'to');
-
-/// `cfg.type` (core.animation.js:35).
-Object? _cfgType(Object cfg) =>
-    cfg is AnimationSpec ? cfg.typeValue : _cfgRead(cfg, 'type');
 
 /// The JS property read `target[prop]` of an animation target (Chart.js ADR
 /// 0019, section 2).

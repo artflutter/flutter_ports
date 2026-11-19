@@ -14,15 +14,14 @@ import 'package:flutter_chartjs_port/src/helpers/helpers.color.dart'
     as color_helpers;
 import 'package:flutter_chartjs_port/src/js/js_number.dart';
 import 'package:flutter_chartjs_port/src/js/js_undefined.dart';
-import 'package:flutter_chartjs_port/src/types/basic.dart';
 import 'package:flutter_chartjs_port/src/types/chart_paint.dart'
     show ChartPaint, SolidChartPaint;
 import 'package:flutter_chartjs_port/src/types/color.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:test/test.dart';
 
+import '../../support/animation_spec_input.dart';
 import '../../support/color_json.dart';
-import '../../support/easing_json.dart';
 import 'animation_reference.dart';
 
 // The behavior of Chart.js ADR 0019 that test/specs/core.animation.tests.js
@@ -81,36 +80,24 @@ Matcher _isValue(Object? expected) => predicate<Object?>(
 String _errorName(Object error) =>
     error is TypeError ? 'TypeError' : error.runtimeType.toString();
 
-/// The plain Map form of the cfg of one replay, with the upstream formula
-/// of its easing name ([exactEasing]).
-Object _plain(Map<String, Object?> cfg) => exactEasing(cfg);
-
-/// An [AnimationSpec] with the entries of [cfg], in its key order, written
-/// through its face.
-Object _spec(Map<String, Object?> cfg) {
-  final spec = AnimationSpec();
-  for (final MapEntry(:key, :value) in exactEasing(cfg).entries) {
-    spec[key] = value;
-  }
-  return spec;
-}
+/// The [AnimationSpec] of the cfg of one replay ([animationSpecOf]).
+AnimationSpec _plain(Map<String, Object?> cfg) => animationSpecOf(cfg);
 
 /// [cfg] with a user `fn` that gives the result of the `number`
 /// interpolator. The animation then takes the generic path.
-AnyObject _withFn(Map<String, Object?> cfg) => {
-  ...exactEasing(cfg),
-  'fn': (Object? from, Object? to, double factor) =>
-      jsToNumber(from) + (jsToNumber(to) - jsToNumber(from)) * factor,
-};
+AnimationSpec _withFn(Map<String, Object?> cfg) =>
+    animationSpecOf(cfg)
+      ..fn = (from, to, factor) =>
+          jsToNumber(from) + (jsToNumber(to) - jsToNumber(from)) * factor;
 
 /// Replays [scenario] on the property [prop] of [target] with the cfg form
-/// [cfgOf]: [_plain], [_spec] or [_withFn]. It compares each step with the
+/// [cfgOf]: [_plain] or [_withFn]. It compares each step with the
 /// reference.
 void _replay(
   AnimationScenario scenario, {
   required Object target,
   required String prop,
-  required Object Function(Map<String, Object?> cfg) cfgOf,
+  required AnimationSpec Function(Map<String, Object?> cfg) cfgOf,
   required String label,
 }) {
   if (!identical(scenario.current, animationAbsent)) {
@@ -168,7 +155,7 @@ List<Object?> _colorResults(Object? from, Object? to) {
   };
   final anim =
       Animation(
-          {'duration': 1000, 'loop': true, 'type': 'color'},
+          animationSpecOf({'duration': 1000, 'loop': true, 'type': 'color'}),
           target,
           'color',
           const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
@@ -184,6 +171,29 @@ List<Object?> _colorResults(Object? from, Object? to) {
   ];
 }
 
+/// Whether the port runs the reference case with [cfg], the current value
+/// [current] and the target [to]: the `type` of [cfg] names the
+/// interpolator of the Dart type of the start value (row
+/// `adapt-animation-option-types`, [animationTypeDiverges]). The start
+/// value is `resolve([cfg.from, currentValue, to])`.
+bool _kept(Map<String, Object?> cfg, Object? current, Object? to) {
+  final from = cfg['from'];
+  final start = from is! Undefined && cfg.containsKey('from')
+      ? from
+      : identical(current, animationAbsent) || current is Undefined
+      ? to
+      : current;
+  return !animationTypeDiverges(cfg, start);
+}
+
+/// Whether a cfg of [scenario] gives `from` or `to` the JS `null`
+/// ([animationNullDiverges]).
+bool _nullCfg(AnimationScenario scenario) =>
+    animationNullDiverges(scenario.cfg) ||
+    scenario.steps.any(
+      (s) => s.$1.$4 != null && animationNullDiverges(s.$1.$4!),
+    );
+
 void main() {
   setUpSpecs();
 
@@ -194,7 +204,11 @@ void main() {
 
   group('adapt-animation-number-path', () {
     test('each scenario on a plain Map gives the upstream steps', () {
-      for (final scenario in animationScenarioReference) {
+      final kept = animationScenarioReference.where(
+        (s) => _kept(s.cfg, s.current, s.to) && !_nullCfg(s),
+      );
+      expect(kept.length, greaterThan(animationScenarioReference.length ~/ 2));
+      for (final scenario in kept) {
         _replay(
           scenario,
           target: <String, Object?>{},
@@ -206,7 +220,9 @@ void main() {
     });
 
     test('each numeric scenario on an element and on PointOptions', () {
-      final numeric = animationScenarioReference.where((s) => s.numeric);
+      final numeric = animationScenarioReference.where(
+        (s) => s.numeric && _kept(s.cfg, s.current, s.to) && !_nullCfg(s),
+      );
       expect(numeric, isNotEmpty);
       for (final scenario in numeric) {
         for (final (label, target, prop) in [
@@ -295,20 +311,6 @@ void main() {
     });
   });
 
-  group('adapt-animation-spec', () {
-    test('an AnimationSpec cfg gives the steps of a plain Map cfg', () {
-      for (final scenario in animationScenarioReference) {
-        _replay(
-          scenario,
-          target: <String, Object?>{},
-          prop: 'prop',
-          cfgOf: _spec,
-          label: 'AnimationSpec',
-        );
-      }
-    });
-  });
-
   group('interpolators.color', () {
     test('supported color pairs at 11 factors give the upstream colors', () {
       for (final (from, to, results) in animationColorReference) {
@@ -338,7 +340,7 @@ void main() {
         'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
       };
       final anim = Animation(
-        {'duration': 1000, 'loop': true, 'type': 'color'},
+        animationSpecOf({'duration': 1000, 'loop': true, 'type': 'color'}),
         target,
         'color',
         const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
@@ -380,7 +382,7 @@ void main() {
         'color': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
       };
       final anim = Animation(
-        {'duration': 1000, 'loop': true, 'type': 'color'},
+        animationSpecOf({'duration': 1000, 'loop': true, 'type': 'color'}),
         target,
         'color',
         const ChartPaint.solid(ui.Color.fromRGBO(255, 99, 132, 1)),
@@ -399,7 +401,12 @@ void main() {
       const red = ChartPaint.solid(ui.Color(0xFFFF0000));
       const blue = ChartPaint.solid(ui.Color(0xFF0000FF));
       final target = <String, Object?>{'c': red};
-      final anim = Animation({'duration': 1000}, target, 'c', blue);
+      final anim = Animation(
+        animationSpecOf({'duration': 1000}),
+        target,
+        'c',
+        blue,
+      );
       anim.tick(anim.start + 500);
       final mid = (target['c']! as SolidChartPaint).color;
       expect(mid.r, inExclusiveRange(0, 1));
@@ -412,7 +419,12 @@ void main() {
       // core.animation.js:35 `interpolators[typeof from]` is undefined, and
       // the call in tick throws a TypeError.
       final target = <String, Object?>{'s': 'a'};
-      final anim = Animation({'duration': 1000}, target, 's', 'b');
+      final anim = Animation(
+        animationSpecOf({'duration': 1000}),
+        target,
+        's',
+        'b',
+      );
       expect(() => anim.tick(anim.start + 500), throwsA(isA<TypeError>()));
     });
   });
@@ -421,7 +433,12 @@ void main() {
     test('from != to is the JS !== for NaN and -0', () {
       // NaN !== NaN is true: the animation runs until its end.
       final nan = <String, Object?>{'v': double.nan};
-      final a = Animation({'duration': 1000}, nan, 'v', double.nan);
+      final a = Animation(
+        animationSpecOf({'duration': 1000}),
+        nan,
+        'v',
+        double.nan,
+      );
       a.tick(a.start + 10);
       expect(a.active(), isTrue);
       expect(nan['v'], _isValue(double.nan));
@@ -430,13 +447,18 @@ void main() {
 
       // 0 !== -0 is false: the first tick writes the target value.
       final zero = <String, Object?>{'v': 0.0};
-      final b = Animation({'duration': 1000}, zero, 'v', -0.0);
+      final b = Animation(animationSpecOf({'duration': 1000}), zero, 'v', -0.0);
       b.tick(b.start + 10);
       expect(b.active(), isFalse);
       expect(zero['v'], _isValue(-0.0));
 
       final negativeZero = <String, Object?>{'v': -0.0};
-      final c = Animation({'duration': 1000}, negativeZero, 'v', 0.0);
+      final c = Animation(
+        animationSpecOf({'duration': 1000}),
+        negativeZero,
+        'v',
+        0.0,
+      );
       c.tick(c.start + 10);
       expect(c.active(), isFalse);
       expect(negativeZero['v'], _isValue(0.0));
@@ -445,7 +467,12 @@ void main() {
     test('a typeof without an interpolator throws at the interpolation', () {
       // typeof 'a' is 'string', and interpolators has no 'string' key.
       final target = <String, Object?>{'v': 'a'};
-      final anim = Animation({'duration': 1000}, target, 'v', 'b');
+      final anim = Animation(
+        animationSpecOf({'duration': 1000}),
+        target,
+        'v',
+        'b',
+      );
       anim.tick(anim.start - 10);
       expect(anim.active(), isTrue);
       expect(target['v'], 'a');
@@ -459,13 +486,13 @@ void main() {
       final calls = <List<Object?>>[];
       final target = <String, Object?>{'v': true};
       final anim = Animation(
-        {
+        animationSpecOf({
           'duration': 1000,
           'fn': (Object? from, Object? to, double factor) {
             calls.add([from, to, factor]);
             return 1.0;
           },
-        },
+        }),
         target,
         'v',
         false,
@@ -482,7 +509,7 @@ void main() {
       // arity and no `this`.
       expect(
         () => Animation(
-          {'duration': 1000, 'fn': (Object? v) => v},
+          animationSpecOf({'duration': 1000, 'fn': (Object? v) => v}),
           <String, Object?>{'v': true},
           'v',
           false,
@@ -494,7 +521,7 @@ void main() {
     test('a truthy fn that is not a function stops a debug build', () {
       expect(
         () => Animation(
-          {'duration': 1000, 'fn': 5},
+          animationSpecOf({'duration': 1000, 'fn': 5}),
           <String, Object?>{'v': 0.0},
           'v',
           10.0,
@@ -515,9 +542,11 @@ void main() {
             (10.0, undefined, true, double.nan),
             (true, true, false, true),
           ]) {
-        final target = <String, Object?>{'v': 'x'};
+        // A number start value selects the number interpolator (row
+        // adapt-animation-option-types); the steps then change from and to.
+        final target = <String, Object?>{'v': 0.0};
         final anim =
-            Animation({'duration': 1000, 'type': 'number'}, target, 'v', 'y')
+            Animation(AnimationSpec()..duration = 1000.0, target, 'v', 1.0)
               ..from = from
               ..to = to;
         anim.tick(anim.start + 250);
@@ -528,14 +557,28 @@ void main() {
 
     test('wait completes at the end and fails at update and cancel', () async {
       final target = <String, Object?>{'v': 0.0};
-      final ended = Animation({'duration': 100}, target, 'v', 10.0);
+      final ended = Animation(
+        animationSpecOf({'duration': 100}),
+        target,
+        'v',
+        10.0,
+      );
       final done = ended.wait();
       ended.tick(ended.start + 100);
       await expectLater(done, completes);
 
-      final updated = Animation({'duration': 100}, target, 'v', 10.0);
+      final updated = Animation(
+        animationSpecOf({'duration': 100}),
+        target,
+        'v',
+        10.0,
+      );
       final rejected = updated.wait();
-      updated.update({'duration': 100}, 20.0, updated.start + 10);
+      updated.update(
+        animationSpecOf({'duration': 100}),
+        20.0,
+        updated.start + 10,
+      );
       await expectLater(rejected, throwsA(same(undefined)));
       // The end of the updated animation resolves the list again. The first
       // future stays failed, and a new future completes.
@@ -543,7 +586,12 @@ void main() {
       updated.tick(updated.start + 200);
       await expectLater(next, completes);
 
-      final cancelled = Animation({'duration': 100000}, target, 'v', 10.0);
+      final cancelled = Animation(
+        animationSpecOf({'duration': 100000}),
+        target,
+        'v',
+        10.0,
+      );
       final failed = cancelled.wait();
       cancelled.cancel();
       expect(cancelled.active(), isFalse);

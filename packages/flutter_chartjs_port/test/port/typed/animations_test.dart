@@ -158,9 +158,9 @@ void main() {
       ),
     );
 
-    testWidgets('the options hold the object of the app, not a copy', (
-      tester,
-    ) async {
+    testWidgets('the options hold the parameters of the app', (tester) async {
+      // Row adapt-animation-option-types: a cell holds the milliseconds of
+      // the Duration and the Curve of the app.
       const animation = ChartAnimation(
         duration: Duration(milliseconds: 400),
         easing: Curves.linear,
@@ -169,10 +169,10 @@ void main() {
       final options =
           (_chart(tester).options as JsObjectFace)['animation']!
               as JsObjectFace;
-      expect(options['duration'], same(animation));
-      expect(options['easing'], same(animation));
-      // A parameter that the app did not give has no cell of the app.
-      expect(options['delay'], isNot(same(animation)));
+      expect(options['duration'], 400.0);
+      expect(options['easing'], same(Curves.linear));
+      // A parameter that the app did not give has the default.
+      expect(options['delay'], same(undefined));
       await tester.pumpAndSettle();
     });
 

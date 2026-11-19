@@ -148,14 +148,15 @@ Finder get _forbidden => find.descendant(
   ),
 );
 
-/// The [HoverTransition] of the config of [chart]: the object that the
-/// options of the mode `active` hold in the cell of the duration.
-HoverTransition _hoverTransition(Chart chart) =>
+/// The hover duration of the config of [chart] in milliseconds: the value
+/// that the options of the mode `active` hold in the cell of the duration
+/// (row adapt-animation-option-types).
+double _hoverDuration(Chart chart) =>
     jsGet(
           jsGet(jsGet(chart.options['transitions'], 'active'), 'animation'),
           'duration',
         )!
-        as HoverTransition;
+        as double;
 
 void main() {
   setUp(() => WidgetController.hitTestWarningShouldBeFatal = true);
@@ -465,7 +466,7 @@ void main() {
     await _tap(tester, 'core.hover.duration.0');
     expect(_selected(tester, 'core.hover.duration.0'), isTrue);
     expect(_selected(tester, 'core.hover.duration.400'), isFalse);
-    expect(_hoverTransition(chart).duration, Duration.zero);
+    expect(_hoverDuration(chart), 0.0);
     final point = _point(chart, 1, 5);
     final mouse = await _mouse(tester);
     await _moveTo(tester, mouse, point.x, point.y);
@@ -479,15 +480,15 @@ void main() {
       'longer', (tester) async {
     final state = await _pumpCore(tester);
     final chart = state.chart!;
-    // The resolved option of the chart holds the HoverTransition of the
-    // config itself (row adapt-property-animations).
-    Duration? resolved() => _hoverTransition(chart).duration;
-    expect(resolved(), const Duration(milliseconds: 400));
+    // The resolved option of the chart holds the milliseconds of the
+    // HoverTransition of the config (row adapt-animation-option-types).
+    double resolved() => _hoverDuration(chart);
+    expect(resolved(), 400.0);
     await _tap(tester, 'core.hover.duration.1000');
     expect(_selected(tester, 'core.hover.duration.1000'), isTrue);
     expect(_selected(tester, 'core.hover.duration.400'), isFalse);
     // The resolved option of the chart, not only the user option.
-    expect(resolved(), const Duration(seconds: 1));
+    expect(resolved(), 1000.0);
     final point = _point(chart, 0, 4);
     final mouse = await _mouse(tester);
     await _moveTo(tester, mouse, point.x, point.y);
@@ -592,13 +593,13 @@ void main() {
     final chart = state.chart!;
     await _tap(tester, 'core.animation.duration.3000');
     expect(_selected(tester, 'core.animation.duration.3000'), isTrue);
-    // The options hold the ChartAnimation of the config itself, not a copy
-    // of its duration (row adapt-property-animations).
-    final animation =
-        jsGet(readByName(chart.config.options, 'animation'), 'duration')!
-            as ChartAnimation;
-    expect(animation.duration, const Duration(milliseconds: 3000));
-    expect(jsGet(chart.options['animation'], 'duration'), same(animation));
+    // The options hold the milliseconds of the duration of the
+    // ChartAnimation (row adapt-animation-option-types).
+    expect(
+      jsGet(readByName(chart.config.options, 'animation'), 'duration'),
+      3000.0,
+    );
+    expect(jsGet(chart.options['animation'], 'duration'), 3000.0);
     await _settle(tester, chart);
 
     // A randomize animates for 3000 ms, not for the 1000 ms of the default.

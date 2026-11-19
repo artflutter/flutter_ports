@@ -29,25 +29,26 @@ void main() {
     JsObjectFace values(int index) => defaults.calls[index][2]! as JsObjectFace;
 
     test('sets and describes the animation defaults', () {
+      // The port has no option `type` (row adapt-animation-option-types).
       const setAnimation =
           '["set","animation",{"delay":"<undefined>","duration":1000,'
           '"easing":"<curve>","fn":"<undefined>","from":"<undefined>",'
-          '"loop":"<undefined>","to":"<undefined>","type":"<undefined>"}]';
+          '"loop":"<undefined>","to":"<undefined>"}]';
       const describeAnimation =
           '["describe","animation",{"_fallback":false,"_indexable":false,'
           '"_scriptable":"<fn>"}]';
       const setAnimations =
-          '["set","animations",{"colors":{"type":"color",'
+          '["set","animations",{"colors":{'
           '"properties":["color","borderColor","backgroundColor"]},'
-          '"numbers":{"type":"number",'
+          '"numbers":{'
           '"properties":["x","y","borderWidth","radius","tension"]}}]';
       const setTransitions =
           '["set","transitions",{"active":{"animation":{"duration":400}},'
           '"resize":{"animation":{"duration":0}},'
           '"show":{"animations":{"colors":{"from":"transparent"},'
-          '"visible":{"type":"boolean","duration":0}}},'
+          '"visible":{"duration":0}}},'
           '"hide":{"animations":{"colors":{"to":"transparent"},'
-          '"visible":{"type":"boolean","easing":"<curve>","fn":"<fn>"}}}}]';
+          '"visible":{"easing":"<curve>","fn":"<fn>"}}}}]';
       expect(defaults.calls.map(probeJson), [
         setAnimation,
         describeAnimation,
@@ -66,7 +67,7 @@ void main() {
 
     test('stores undefined as own keys of animation', () {
       final animation = values(0);
-      for (final key in ['delay', 'fn', 'from', 'loop', 'to', 'type']) {
+      for (final key in ['delay', 'fn', 'from', 'loop', 'to']) {
         expect(animation.jsHas(key), isTrue, reason: key);
         expect(animation[key], same(undefined), reason: key);
       }

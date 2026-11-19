@@ -6,10 +6,19 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Cubic, Curve, Curves;
 import 'package:flutter_chartjs_port/chartjs.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
+    show
+        BarDataset,
+        CategoryAxis,
+        ChartAnimation,
+        ChartConfig,
+        ChartKind,
+        LinearAxis;
 import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
+import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart' show Animator;
-import 'package:flutter_chartjs_port/src/core/core.element.dart' as core;
-import 'package:flutter_chartjs_port/src/js/js_object.dart' show jsGet;
+import 'package:flutter_chartjs_port/src/typed/lower.dart'
+    show ChartConfigLowering;
 import 'package:flutter_chartjs_port/src/types/index.dart' as types;
 import 'package:flutter_test/flutter_test.dart';
 
@@ -71,12 +80,11 @@ const double _base = 1000000;
       withClock(
         Clock.fixed(DateTime.fromMillisecondsSinceEpoch(_base.toInt() + i % 7)),
         () => Animation(
-          <String, Object?>{
-            'duration': i % 3 == 0 ? 400.0 : 1000.0,
-            'delay': i % 5 == 4 ? 48.0 : 0.0,
-            'loop': i % 10 == 9,
-            'easing': curve,
-          },
+          AnimationSpec()
+            ..duration = i % 3 == 0 ? 400.0 : 1000.0
+            ..delay = i % 5 == 4 ? 48.0 : 0.0
+            ..loop = i % 10 == 9
+            ..easing = curve,
           targets[i],
           'value',
           10.0 + i,
@@ -130,72 +138,57 @@ List<double> _data(int seed) => [
   for (var i = 0; i < _count; i++) 5.0 + ((i * 37 + seed * 11) % 90),
 ];
 
-/// A bar chart of one dataset with the default animations and a fixed value
-/// range. [easing] is the curve of the chart, or Dart `null` for the
-/// default. [log] gets a line for each animation event.
-Map<String, Object?> _config(List<String> log, Curve? easing) =>
-    <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': [for (var i = 0; i < _count; i++) 'l$i'],
-        'datasets': <Object?>[
-          <String, Object?>{'data': _data(1)},
-        ],
-      },
-      'options': <String, Object?>{
-        'animation': _animationOption(log, easing),
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'min': 0.0, 'max': 100.0},
-        },
-      },
-    };
+/// A bar chart of one dataset with the data of [seed], the default
+/// animations and a fixed value range. [easing] is the curve of the chart,
+/// or Dart `null` for the default. [log] gets a line for each animation
+/// event.
+ChartConfig _config(List<String> log, Curve? easing, int seed) => ChartConfig(
+  type: ChartKind.bar,
+  labels: [for (var i = 0; i < _count; i++) 'l$i'],
+  datasets: [BarDataset(data: _data(seed))],
+  scales: const {'y': LinearAxis(min: 0, max: 100)},
+  animation: _animation(log, easing),
+);
 
-/// A horizontal bar chart of two stacked datasets, as [_config].
-Map<String, Object?> _stackedConfig(List<String> log, Curve? easing) =>
-    <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': [for (var i = 0; i < _count; i++) 'l$i'],
-        'datasets': <Object?>[
-          <String, Object?>{'data': _data(1)},
-          <String, Object?>{'data': _data(5)},
-        ],
+/// A horizontal bar chart of two stacked datasets, as [_config]. [seed] is
+/// the data of the first dataset.
+ChartConfig _stackedConfig(List<String> log, Curve? easing, int seed) =>
+    ChartConfig(
+      type: ChartKind.bar,
+      labels: [for (var i = 0; i < _count; i++) 'l$i'],
+      datasets: [
+        BarDataset(data: _data(seed)),
+        BarDataset(data: _data(5)),
+      ],
+      indexAxis: const YAxis(),
+      scales: const {
+        'x': LinearAxis(stacked: true, min: 0, max: 200),
+        'y': CategoryAxis(stacked: true),
       },
-      'options': <String, Object?>{
-        'indexAxis': const YAxis(),
-        'animation': _animationOption(log, easing),
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'stacked': true, 'min': 0.0, 'max': 200.0},
-          'y': <String, Object?>{'stacked': true},
-        },
-      },
-    };
+      animation: _animation(log, easing),
+    );
 
-Map<String, Object?> _animationOption(List<String> log, Curve? easing) =>
-    <String, Object?>{
-      'onProgress': (AnimationEvent event) =>
-          log.add('progress ${event.currentStep} of ${event.numSteps}'),
-      'onComplete': (AnimationEvent event) =>
-          log.add('complete ${event.currentStep} of ${event.numSteps}'),
-      'easing': ?easing,
-    };
+/// The chart animation: the curve [easing], and a line in [log] for each
+/// animation event.
+ChartAnimation _animation(List<String> log, Curve? easing) => ChartAnimation(
+  easing: easing,
+  onProgress: (event) =>
+      log.add('progress ${event.currentStep} of ${event.numSteps}'),
+  onComplete: (event) =>
+      log.add('complete ${event.currentStep} of ${event.numSteps}'),
+);
 
-List<core.Element> _bars(Chart chart) => [
-  for (
-    var i = 0;
-    i < (jsGet(chart.data, 'datasets')! as List<Object?>).length;
-    i++
-  )
-    ...chart.getDatasetMeta(i).data.cast<core.Element>(),
+/// The bars of each dataset of [chart].
+List<BarElement> _bars(Chart chart) => [
+  for (final meta in chart.getSortedVisibleDatasetMetas())
+    ...meta.data.cast<BarElement>(),
 ];
 
 /// The geometry of each bar. The text of a double names one double, with
 /// the sign of a zero.
 String _geometry(Chart chart) => [
   for (final bar in _bars(chart))
-    [
-      for (final name in const ['x', 'y', 'base', 'width', 'height']) bar[name],
-    ].join(','),
+    [bar.x, bar.y, bar.base, bar.width, bar.height].join(','),
 ].join(';');
 
 /// The `$animations` entries of each bar: the key order and the state of
@@ -230,23 +223,23 @@ typedef _ChartRun = ({
 /// Makes the chart of [config] with the curve [easing], waits for the end
 /// of its first animations, gives it new data, updates it and pumps frames
 /// until the animations end. With [live], the chart gets new data and an
-/// update after the frames 3 and 5, while the animations run.
+/// update after the frames 3 and 5, while the animations run. A new config
+/// reaches the live scopes of the chart through [ChartConfigLowering.apply],
+/// as in `ChartView`.
 Future<_ChartRun> _chartRun(
-  Map<String, Object?> Function(List<String> log, Curve? easing) config,
+  ChartConfig Function(List<String> log, Curve? easing, int seed) config,
   Curve? easing, {
   bool live = false,
 }) async {
   final log = <String>[];
-  final chart = acquireChart(config(log, easing));
+  final lowering = ChartConfigLowering(config(log, easing, 1));
+  final chart = acquireChartRoot(lowering.lower());
   await pumpFrames(() => !animator.running(chart));
   log.clear();
   final hits = debugEaseTableHits;
   final misses = debugEaseTableMisses;
   var seed = 2;
-  void setData() {
-    final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-    (datasets[0]! as Map<String, Object?>)['data'] = _data(seed++);
-  }
+  void setData() => lowering.apply(config(log, easing, seed++));
 
   setData();
   final date = clock.now().millisecondsSinceEpoch.toDouble();
@@ -370,16 +363,17 @@ void main() {
         Clock.fixed(DateTime.fromMillisecondsSinceEpoch(_base.toInt())),
         () => (
           Animation(
-            <String, Object?>{'duration': 1000.0, 'fn': fail},
+            AnimationSpec()
+              ..duration = 1000.0
+              ..fn = fail,
             target,
             'other',
             10.0,
           ),
           Animation(
-            <String, Object?>{
-              'duration': 1000.0,
-              'easing': Curves.easeOutQuart,
-            },
+            AnimationSpec()
+              ..duration = 1000.0
+              ..easing = Curves.easeOutQuart,
             target,
             'value',
             10.0,
@@ -402,7 +396,9 @@ void main() {
       final animation = withClock(
         Clock.fixed(DateTime.fromMillisecondsSinceEpoch(_base.toInt())),
         () => Animation(
-          <String, Object?>{'duration': 1000.0, 'easing': Curves.easeOutQuart},
+          AnimationSpec()
+            ..duration = 1000.0
+            ..easing = Curves.easeOutQuart,
           target,
           'value',
           10.0,

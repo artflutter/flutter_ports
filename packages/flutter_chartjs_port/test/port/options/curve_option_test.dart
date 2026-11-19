@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/src/options/option_keys.g.dart';
 import 'package:flutter_chartjs_port/src/options/scopes.g.dart';
 import 'package:test/test.dart';
 
+import '../../support/animation_spec_input.dart';
+
 // The option `easing` holds a Flutter `Curve` (row adapt-flutter-curves).
 // The library has no easing names: a name is a value of the wrong type. A
 // curve class of an app or of a plugin needs no registration.
@@ -28,7 +30,12 @@ final class const StepsCurve(
 
 /// The value of `x` after a tick at [elapsed] ms of an animation of 1000 ms
 /// from 0 to 100 with the config [cfg].
-double _at(Object cfg, double elapsed) {
+double _at(Map<String, Object?> cfg, double elapsed) =>
+    _atSpec(animationSpecOf(cfg), elapsed);
+
+/// The value of `x` after a tick at [elapsed] ms of an animation from 0 to
+/// 100 with the typed config [cfg].
+double _atSpec(AnimationSpec cfg, double elapsed) {
   final target = <String, Object?>{'x': 0.0};
   final animation = Animation(cfg, target, 'x', 100.0);
   animation.tick(animation.start + elapsed);
@@ -92,17 +99,12 @@ void main() {
 
     test('stops in a debug build on an easing name', () {
       expect(
-        () => Animation(
-          {'duration': 1000, 'easing': 'easeOutQuart'},
-          <String, Object?>{'x': 0.0},
-          'x',
-          100.0,
-        ),
+        () => AnimationSpec()['easing'] = 'easeOutQuart',
         throwsA(
           isA<AssertionError>().having(
             (e) => '${e.message}',
             'message',
-            contains('takes a Flutter Curve'),
+            contains('takes a Curve'),
           ),
         ),
       );
@@ -126,8 +128,8 @@ void main() {
       final cfg = AnimationSpec()
         ..storeKey(OptionKey.duration, 1000.0)
         ..storeKey(OptionKey.easing, steps);
-      expect(_at(cfg, 260), 25);
-      expect(_at(cfg, 760), 75);
+      expect(_atSpec(cfg, 260), 25);
+      expect(_atSpec(cfg, 760), 75);
       final animation = Animation(cfg, <String, Object?>{'x': 0.0}, 'x', 1.0);
       expect(animation.easing, same(steps));
     });

@@ -4,6 +4,8 @@ import 'package:flutter_chartjs_port/src/core/animation_ease.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:test/test.dart';
 
+import '../../support/animation_spec_input.dart';
+
 // The table of `lib/src/core/animation_ease.dart` (row
 // `adapt-animation-ease-table`): each result is the result of the curve call
 // that the table stands for, and each guard declines to that call. The twin
@@ -66,7 +68,7 @@ void _inTable(void Function() body) {
 
 /// A number animation of `target.value` from 0 to 10 with [cfg].
 Animation _animation(Map<String, Object?> target, Map<String, Object?> cfg) =>
-    Animation(cfg, target, 'value', 10.0);
+    Animation(animationSpecOf(cfg), target, 'value', 10.0);
 
 void main() {
   setUp(() {

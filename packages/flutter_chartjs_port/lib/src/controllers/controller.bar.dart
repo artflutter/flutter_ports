@@ -674,8 +674,8 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         ..barPercentage = 0.9
         ..grouped = true
         ..animations = (AnimationsSpecScope()
+          // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
           ..numbers = (AnimationOptionsScope()
-            ..type = 'number'
             ..properties = <String>['x', 'y', 'base', 'width', 'height']));
 
   /// controller.bar.js:284 `static overrides`, a typed scope of the kind

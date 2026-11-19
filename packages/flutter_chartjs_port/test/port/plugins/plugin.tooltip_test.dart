@@ -49,10 +49,10 @@ import 'package:flutter_chartjs_port/src/types/tooltip_item.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/animation_spec_input.dart';
 import '../../support/color_json.dart';
 import '../../support/data_label.dart';
 import '../../support/drop_extra_args.dart';
-import '../../support/easing_json.dart';
 import '../../support/light_theme.dart';
 import '../controllers/controller_chart_harness.dart'
     show expectNoStaleScaleKeys, plainValue;
@@ -570,7 +570,7 @@ void _replay(
     writeProperty(target, prop, scenario.current);
   }
   final anim = Animation(
-    exactEasing(scenario.cfg),
+    animationSpecOf(scenario.cfg),
     target,
     prop,
     identical(scenario.to, animationAbsent) ? undefined : scenario.to,
@@ -588,7 +588,7 @@ void _replay(
         case 'to':
           anim.to = step.$3;
         case 'update':
-          anim.update(exactEasing(step.$4!), step.$3, anim.start + step.$2);
+          anim.update(animationSpecOf(step.$4!), step.$3, anim.start + step.$2);
       }
       // The steps compare the error of the port with the error of upstream.
       // ignore: avoid_catches_without_on_clauses
@@ -615,6 +615,21 @@ void _replay(
 
 /// A new tooltip of a [_FakeChart] without options.
 Tooltip _newTooltip() => Tooltip((chart: _FakeChart(), options: null));
+
+/// Whether the port runs the reference case with [cfg], the current value
+/// [current] and the target [to]: the `type` of [cfg] names the
+/// interpolator of the Dart type of the start value (row
+/// `adapt-animation-option-types`, [animationTypeDiverges]). The start
+/// value is `resolve([cfg.from, currentValue, to])`.
+bool _kept(Map<String, Object?> cfg, Object? current, Object? to) {
+  final from = cfg['from'];
+  final start = from is! Undefined && cfg.containsKey('from')
+      ? from
+      : identical(current, animationAbsent) || current is Undefined
+      ? to
+      : current;
+  return !animationTypeDiverges(cfg, start);
+}
 
 void main() {
   group('native callback objects', () {
@@ -1602,7 +1617,9 @@ void main() {
 
   group('adapt-animation-number-path', () {
     test('each numeric scenario on the tooltip x and y', () {
-      final numeric = animationScenarioReference.where((s) => s.numeric);
+      final numeric = animationScenarioReference.where(
+        (s) => s.numeric && _kept(s.cfg, s.current, s.to),
+      );
       expect(numeric, isNotEmpty);
       for (final scenario in numeric) {
         for (final prop in ['x', 'y']) {

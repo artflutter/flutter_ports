@@ -1,3 +1,10 @@
+## Unreleased
+
+- The animation options have typed values: `duration` and `delay` a number of milliseconds,
+  `loop` a `bool` and `fn` an `Interpolator`. A value of another type, for example a text
+  duration, stops a debug build. The animation option `type` is gone: the Dart type of the value
+  selects the interpolator, and `fn` gives another one.
+
 ## 0.1.0-beta.3
 
 - A scale removes the ticks with no label in one pass. Before, the removal took a time

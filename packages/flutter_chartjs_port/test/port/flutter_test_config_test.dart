@@ -5,6 +5,7 @@ library;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/src/core/animation_spec.dart';
 import 'package:flutter_chartjs_port/src/core/core.animation.dart';
 import 'package:flutter_chartjs_port/src/core/core.animator.dart';
 import 'package:flutter_chartjs_port/src/core/core.controller.dart';
@@ -141,7 +142,7 @@ void main() {
       final target = <String, Object?>{'value': 0.0};
       animator
         ..add(chart, [
-          Animation(<String, Object?>{'duration': 10000}, target, 'value', 1.0),
+          Animation(AnimationSpec()..duration = 10000.0, target, 'value', 1.0),
         ])
         ..start(chart);
       await tester.pump(frameInterval);

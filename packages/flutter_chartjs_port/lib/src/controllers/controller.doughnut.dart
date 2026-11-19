@@ -209,8 +209,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
           // Boolean - Whether we animate scaling the Doughnut from the centre
           ..animateScale = false)
         ..animations = (AnimationsSpecScope()
+          // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
           ..numbers = (AnimationOptionsScope()
-            ..type = 'number'
             ..properties = <String>[
               'circumference',
               'endAngle',

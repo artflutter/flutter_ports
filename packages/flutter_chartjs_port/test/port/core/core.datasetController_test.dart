@@ -580,6 +580,12 @@ Object? _materialize(Object? value) => switch (value) {
   _ => value,
 };
 
+/// The observation [line] without the key `type` of an animation spec: the
+/// port has no option `type` (row `adapt-animation-option-types`).
+String _withoutType(String line) => line.startsWith('animations ')
+    ? line.replaceAll(RegExp(',"type":(undefined|"[a-z]+")'), '')
+    : line;
+
 /// The text of a value in the observations, as the generator gives it.
 String _enc(Object? v) => switch (v) {
   _ when nativeColorBytes(v) != null => jsonEncode(nativeColorBytes(v)),
@@ -1081,7 +1087,7 @@ void main() {
                 withCubicModeMarkers(withCurveMarkers(observations)),
               ),
             ),
-          ).split('\n').map(referenceColorTokens).toList(),
+          ).split('\n').map(referenceColorTokens).map(_withoutType).toList(),
         );
       });
     }

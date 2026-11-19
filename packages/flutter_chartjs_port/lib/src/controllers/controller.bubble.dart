@@ -268,8 +268,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
         ..datasetElementType = false
         ..dataElementType = 'point'
         ..animations = (AnimationsSpecScope()
+          // DIVERGES(chartjs): adapt-animation-option-types, no `type`.
           ..numbers = (AnimationOptionsScope()
-            ..type = 'number'
             ..properties = <String>['x', 'y', 'borderWidth', 'radius']));
 
   /// controller.bubble.js:26 `static overrides`, a typed scope of the kind

@@ -1,6 +1,3 @@
-# The face: _cfgRead reads the cfg of new Chart.Animation(cfg, ...) of user
-# code and of the specs when it is not an AnimationSpec; readProperty reads
-# an animation target that is a Map (core.animation.js:29).
-# The mutable effects object of user easings: effects.linear
-# (core.animation.js:36).
-jsGet 2
+# The face: readProperty reads an animation target that is a Map
+# (core.animation.js:29).
+jsGet 1

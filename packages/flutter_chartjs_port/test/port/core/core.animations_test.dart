@@ -138,11 +138,9 @@ void main() {
       final anims = _resolveAnimations(_Chart(), 'active');
       final colors = anims.properties['backgroundColor']!;
       final numbers = anims.properties['radius']!;
-      expect(colors.durationValue, 400);
-      expect(colors.easingValue, same(Curves.easeOutQuart));
-      expect(colors.typeValue, 'color');
-      expect(numbers.durationValue, 400);
-      expect(numbers.typeValue, 'number');
+      expect(colors.duration, 400.0);
+      expect(colors.easing, same(Curves.easeOutQuart));
+      expect(numbers.duration, 400.0);
       expect(anims.properties['x'], same(numbers));
       expect(anims.properties['borderColor'], same(colors));
     });
