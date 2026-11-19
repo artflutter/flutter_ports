@@ -349,8 +349,8 @@ repository.
       its type. A getter gives the raw JS value, and the readers keep their JS operators. A
       nested facade (`TickOptions`, …) holds any JS value and reads with `readOption`.
       `TickOptions.format` gives the typed `NumberFormat?` of the tick option `format`. A getter
-      of an on/off key of the scale and plugin facades gives a `bool` through `boolOption` of
-      `helpers.config.dart` (Chart.js ADR 0121, row `adapt-bool-options`): an absent option is
+      of an on/off key of the scale facades, and a field of a plugin option class, gives a
+      `bool` through `boolOption` of `helpers.config.dart` (Chart.js ADR 0121, row `adapt-bool-options`): an absent option is
       `false` (`includeBounds`: `true`), and another type stops a debug build.
     - [Chart.js ADR 0074](doc/adr/0074-incremental-data-updates.md): `Chart.updateData()` is an explicit data-only
       update. It returns `true` when it takes the data-only lifecycle, and `false` when it calls `update('none')`.

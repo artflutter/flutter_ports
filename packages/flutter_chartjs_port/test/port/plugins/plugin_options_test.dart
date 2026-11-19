@@ -1,4 +1,4 @@
-// Original code, not ported from Chart.js: the typed plugin option getters.
+// Original code, not ported from Chart.js: the resolved plugin option classes.
 import 'dart:ui' show TextAlign;
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
@@ -13,14 +13,13 @@ final class const _NoEvents() extends PluginOptions<_NoEvents> {
   _NoEvents merge(_NoEvents over) => over;
 }
 
-// Each getter gives the type of its schema key, with the conversion that its
-// readers applied before (Chart.js ADR 0150). A plain Map stands for the
-// resolved options: a getter reads it by name, as the facade reads a Map of
-// a spec.
+// Each field has the type of its schema key, with the conversion that `of`
+// applies at its one read of the key (Chart.js ADR 0182). A plain Map stands
+// for the resolved options.
 void main() {
   // Maps: the subject is `of`, the read of raw resolved options into the
   // classes of Chart.js ADR 0182.
-  group('the typed getters of the plugin option facades', () {
+  group('the fields that `of` reads from the resolved options', () {
     test('a number of a truthy value, else null', () {
       expect(
         LegendOptions.of(<String, Object?>{'maxWidth': 120.0}).maxWidth,
@@ -107,10 +106,10 @@ void main() {
         TitleOptions.of(<String, Object?>{'text': <String>[]}).text,
         isEmpty,
       );
-      // A text takes its lines (row adapt-title-text-lines): a String stops
-      // a debug build.
+      // A text takes its lines (row adapt-title-text-lines): `of` stops a
+      // debug build at a String.
       expect(
-        () => TitleOptions.of(<String, Object?>{'text': 'a'}).text,
+        () => TitleOptions.of(<String, Object?>{'text': 'a'}),
         throwsA(isA<AssertionError>()),
       );
     });

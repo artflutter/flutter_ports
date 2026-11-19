@@ -259,8 +259,8 @@ void main() {
       // Each hook is a function of the hook type `(chart, args, options)`,
       // in place of the upstream parameter counts of Chart.js ADR 0038,
       // section 3: `fn.length` of a hook changes no behavior of Chart.js.
-      // A hook takes the argument class of its hook and the facade
-      // [TitleOptions] (Chart.js ADR 0150). The `Never` parameter type of
+      // A hook takes the argument class of its hook and the resolved
+      // [TitleOptions] (Chart.js ADR 0182). The `Never` parameter type of
       // the `isNot` matcher rejects each function with one more parameter.
       for (final (hook, function) in <(String, Function?)>[
         ('start', subTitle.start),

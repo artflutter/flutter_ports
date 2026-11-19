@@ -1,27 +1,23 @@
-// Original code, not ported from Chart.js: the plugin option facades.
+// Original code, not ported from Chart.js: the resolved plugin option classes.
 
-/// The typed option facades of the seven built-in plugins (Chart.js ADR 0054
-/// §4 and §12).
+/// The resolved option classes of the seven built-in plugins (Chart.js ADR
+/// 0182).
 ///
 /// The options of a plugin hook are a context resolver of
-/// `core.plugins.js:175-188` (an `OptionView`). The options of a box (`Title`,
-/// `Legend`, `Tooltip`) are the options of its last hook, or the object that
-/// a spec gives to the constructor. A facade is an extension type over that
-/// object, with no cost: each getter reads one option key with [optionOf],
-/// the typed read `readKey` of a resolver. A getter gives the type of its
-/// key in the schema (Chart.js ADR 0150): it applies the conversion that
-/// each reader applied at the read (`jsToNumber`, `toFont`,
-/// `canvasTextAlign`, ...). Each reader reads the getter at the upstream
-/// place of the read, so the reads keep their upstream order. Thus the user
-/// calls of a scriptable option keep their order. A getter that still gives
-/// the raw value says why.
+/// `core.plugins.js:175-188` (an `OptionView`). Each class is an immutable
+/// final class with one typed field for each key, `==` and `hashCode`. Its
+/// static method `of` reads each key of the resolved options once, at the
+/// first hook of an update, and applies the conversion of the key in the
+/// schema (`jsToNumber`, `toFont`, `canvasTextAlign`, ...). A scriptable
+/// option gives its value at that read. Each hook of the update gets the
+/// same object. A field that still holds the raw value says why.
 ///
-/// A facade takes the name of its `index.d.ts` interface (`LegendOptions`,
-/// `TitleOptions`, `TooltipOptions`, `TooltipCallbacks`, `FillerOptions`,
-/// `DecimationOptions`) or a port-only name for an inline type of
-/// `index.d.ts` (`LegendLabelOptions`, `LegendTitleOptions`,
-/// `ColorsPluginOptions` of `plugin.colors.ts:4`). The app library
-/// exports them: they are the `O` of the hooks of the built-in plugins.
+/// A class takes the name of its `index.d.ts` interface (`LegendOptions`,
+/// `TitleOptions`, `TooltipOptions`, `FillerOptions`, `DecimationOptions`)
+/// or a port-only name for an inline type of `index.d.ts`
+/// (`LegendLabelOptions`, `LegendTitleOptions`, `ColorsPluginOptions` of
+/// `plugin.colors.ts:4`). The app library exports them: they are the `O` of
+/// the hooks of the built-in plugins.
 ///
 /// This library is a pure layer.
 library;

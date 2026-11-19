@@ -12,14 +12,14 @@
 /// Each hook is a private function of the hook type `(types.Chart chart,
 /// args, LegendOptions options)` (Chart.js ADR 0150, in place of the
 /// upstream parameter counts of Chart.js ADR 0038, section 3): the argument
-/// class of its hook, and the facade [LegendOptions] of the resolved
-/// options. The box keeps the resolved options themselves. `chart.legend`
+/// class of its hook, and the [LegendOptions] of the resolved options
+/// (Chart.js ADR 0182). The box keeps that object. `chart.legend`
 /// is a field of `types.Chart`: Dart `null` stands for JS `undefined` and
 /// for the `delete` of `plugin.legend.js:609`.
 ///
-/// The box reads its options through the facades [LegendOptions],
-/// [LegendLabelOptions] and `LegendTitleOptions` of `plugin_options.dart`
-/// (Chart.js ADR 0150), in the upstream order of the reads.
+/// The box reads the typed fields of [LegendOptions], [LegendLabelOptions]
+/// and `LegendTitleOptions` of `plugin_options.dart` (Chart.js ADR 0182).
+/// `LegendOptions.of` read each key once, at the first hook of the update.
 ///
 /// The fields of the box start as the fields of `Scale` start: NaN for the
 /// edges, `maxWidth` and `maxHeight`, the `undefined` sentinel for
@@ -1663,7 +1663,7 @@ LegendItem _datasetItem(
 }
 
 /// plugin.legend.js:601 `start(chart, _args, options)`. The box keeps the
-/// resolved options of the facade.
+/// [LegendOptions] of the hook.
 void _start(IChart chart, PluginHookArgs _, LegendOptions options) {
   final legend = Legend((ctx: chart.ctx, options: options, chart: chart));
   chart.legend = legend;
@@ -1749,7 +1749,7 @@ final class LegendPlugin() extends Plugin<LegendOptions> {
   this
     : super(
         id: 'legend',
-        // The hooks get the facade of the resolved options (Chart.js ADR 0150).
+        // The hooks get the resolved option class (Chart.js ADR 0182).
         options: LegendOptions.of,
         start: _start,
         stop: _stop,
