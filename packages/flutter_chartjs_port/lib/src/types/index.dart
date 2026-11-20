@@ -1194,13 +1194,13 @@ abstract interface class TooltipModel() implements IElement {
   List<String>? get footer;
 
   /// index.d.ts:2688 `labelColors`.
-  List<Object?>? get labelColors;
+  List<TooltipLabelStyle>? get labelColors;
 
   /// index.d.ts:2689 `labelTextColors`.
-  List<Object?>? get labelTextColors;
+  List<ChartPaint>? get labelTextColors;
 
   /// index.d.ts:2690 `labelPointStyles`.
-  List<Object?>? get labelPointStyles;
+  List<TooltipLabelPointStyle>? get labelPointStyles;
 
   /// index.d.ts:2693 `opacity`. 0 is a hidden tooltip.
   double get opacity;

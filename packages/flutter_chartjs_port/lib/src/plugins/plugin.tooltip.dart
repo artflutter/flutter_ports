@@ -789,9 +789,12 @@ final class _RoundedRect({
 ///   goes through the write by name. Thus a value that is not a string
 ///   throws an [ArgumentError] (Chart.js ADR 0017, section 5). Upstream
 ///   stores it.
-/// - `title`, `beforeBody`, `body`, `afterBody`, `footer`, `dataPoints`,
-///   `labelColors`, `labelPointStyles`, `labelTextColors`: a
+/// - `title`, `beforeBody`, `body`, `afterBody`, `footer`, `dataPoints`: a
 ///   `List<Object?>` or [undefined]. A line of text can be any JS value.
+/// - `labelColors`, `labelPointStyles`, `labelTextColors`: a
+///   `List<TooltipLabelStyle>`, a `List<TooltipLabelPointStyle>` and a
+///   `List<ChartPaint>`, or [undefined]. A write by name of a List with an
+///   item of another type throws an [ArgumentError].
 /// - `chart`: a `types.Chart` only. Another value, also [undefined], throws
 ///   an [ArgumentError].
 /// - `_active` (start `[]`): a `List<types.ActiveElement>`, not
@@ -858,9 +861,9 @@ class Tooltip(({IChart chart, Object? options}) config)
   List<TooltipBodyItem>? _body;
   List<String>? _afterBody;
   List<String>? _footer;
-  List<Object?>? _labelColors;
-  List<Object?>? _labelPointStyles;
-  List<Object?>? _labelTextColors;
+  List<TooltipLabelStyle>? _labelColors;
+  List<TooltipLabelPointStyle>? _labelPointStyles;
+  List<ChartPaint>? _labelTextColors;
 
   /// plugin.tooltip.js:468 `_active`, the active elements of the tooltip.
   List<ActiveElement> _active = const [];
@@ -969,23 +972,24 @@ class Tooltip(({IChart chart, Object? options}) config)
 
   /// plugin.tooltip.js:493 `labelColors`. Dart `null` for JS `undefined`.
   @override
-  List<Object?>? get labelColors => _labelColors;
+  List<TooltipLabelStyle>? get labelColors => _labelColors;
 
-  set labelColors(List<Object?> value) => _labelColors = value;
+  set labelColors(List<TooltipLabelStyle> value) => _labelColors = value;
 
   /// plugin.tooltip.js:494 `labelPointStyles`. Dart `null` for JS
   /// `undefined`.
   @override
-  List<Object?>? get labelPointStyles => _labelPointStyles;
+  List<TooltipLabelPointStyle>? get labelPointStyles => _labelPointStyles;
 
-  set labelPointStyles(List<Object?> value) => _labelPointStyles = value;
+  set labelPointStyles(List<TooltipLabelPointStyle> value) =>
+      _labelPointStyles = value;
 
   /// plugin.tooltip.js:495 `labelTextColors`. Dart `null` for JS
   /// `undefined`.
   @override
-  List<Object?>? get labelTextColors => _labelTextColors;
+  List<ChartPaint>? get labelTextColors => _labelTextColors;
 
-  set labelTextColors(List<Object?> value) => _labelTextColors = value;
+  set labelTextColors(List<ChartPaint> value) => _labelTextColors = value;
 
   /// plugin.tooltip.js:498 `initialize(options)`.
   void initialize(Object? options) {
@@ -1142,9 +1146,9 @@ class Tooltip(({IChart chart, Object? options}) config)
   List<TooltipItem> _createItems(TooltipOptions options) {
     final active = _active;
     final data = chart.data;
-    final labelColors = <Object?>[];
-    final labelPointStyles = <Object?>[];
-    final labelTextColors = <Object?>[];
+    final labelColors = <TooltipLabelStyle>[];
+    final labelPointStyles = <TooltipLabelPointStyle>[];
+    final labelTextColors = <ChartPaint>[];
     var tooltipItems = <TooltipItem>[];
 
     for (var i = 0, len = active.length; i < len; ++i) {
@@ -1443,8 +1447,8 @@ class Tooltip(({IChart chart, Object? options}) config)
     RTLAdapter rtlHelper,
     TooltipOptions options,
   ) {
-    final labelColor = _labelColors![i]! as TooltipLabelStyle;
-    final labelPointStyle = _labelPointStyles![i]! as TooltipLabelPointStyle;
+    final labelColor = _labelColors![i];
+    final labelPointStyle = _labelPointStyles![i];
     final boxHeight = options.boxHeight;
     final boxWidth = options.boxWidth;
     final bodyFont = options.bodyFont;
@@ -1549,7 +1553,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     }
 
     // restore fillStyle
-    ctx.fillStyle = _labelTextColors![i]! as ChartPaint;
+    ctx.fillStyle = _labelTextColors![i];
   }
 
   /// `Math.max(...Object.values(object))` (plugin.tooltip.js:822): the
@@ -1595,7 +1599,7 @@ class Tooltip(({IChart chart, Object? options}) config)
 
     final bodyAlignForCalculation = rtlHelper.textAlign(bodyAlign);
     TooltipBodyItem bodyItem;
-    Object? textColor;
+    ChartPaint textColor;
     List<String> lines;
 
     ctx
@@ -1619,9 +1623,9 @@ class Tooltip(({IChart chart, Object? options}) config)
     // Draw body lines now
     for (var i = 0, ilen = body!.length; i < ilen; ++i) {
       bodyItem = body[i];
-      textColor = jsGetIndex(_labelTextColors ?? undefined, i);
+      textColor = _labelTextColors![i];
 
-      ctx.fillStyle = textColor! as ChartPaint;
+      ctx.fillStyle = textColor;
       bodyItem.before.forEach(fillLineOfText);
 
       lines = bodyItem.lines;
@@ -2126,11 +2130,11 @@ class Tooltip(({IChart chart, Object? options}) config)
       case 'dataPoints':
         _dataPoints = _listProp<TooltipItem>(prop, value);
       case 'labelColors':
-        _labelColors = toObjectProp<List<Object?>>(prop, value);
+        _labelColors = _listProp<TooltipLabelStyle>(prop, value);
       case 'labelPointStyles':
-        _labelPointStyles = toObjectProp<List<Object?>>(prop, value);
+        _labelPointStyles = _listProp<TooltipLabelPointStyle>(prop, value);
       case 'labelTextColors':
-        _labelTextColors = toObjectProp<List<Object?>>(prop, value);
+        _labelTextColors = _listProp<ChartPaint>(prop, value);
       case 'chart':
         chart = switch (value) {
           final IChart chart => chart,

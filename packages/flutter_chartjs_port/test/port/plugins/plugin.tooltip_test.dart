@@ -755,10 +755,10 @@ void main() {
       final chart = acquireChart(config);
       _activate(chart);
       final tooltip = _tooltipOf(chart);
-      final style = tooltip.labelColors!.single! as TooltipLabelStyle;
+      final style = tooltip.labelColors!.single;
       expect((style.backgroundColor as SolidChartPaint).color, fill);
       expect((style.borderColor as SolidChartPaint).color, border);
-      expect((tooltip.labelTextColors!.single! as SolidChartPaint).color, fill);
+      expect((tooltip.labelTextColors!.single as SolidChartPaint).color, fill);
     });
   });
 
@@ -973,8 +973,10 @@ void main() {
     test('a write by name stores the value, and the read gives it', () {
       final t = _newTooltip();
       final chart = _FakeChart();
-      final list = <Object?>['a'];
       final lines = <String>['a'];
+      final labelStyles = <TooltipLabelStyle>[];
+      final pointStyles = <TooltipLabelPointStyle>[];
+      final paints = <ChartPaint>[];
       final body = <TooltipBodyItem>[];
       final items = <TooltipItem>[];
       final active = <ActiveElement>[];
@@ -994,9 +996,9 @@ void main() {
         'afterBody': lines,
         'footer': lines,
         'dataPoints': items,
-        'labelColors': list,
-        'labelPointStyles': list,
-        'labelTextColors': list,
+        'labelColors': labelStyles,
+        'labelPointStyles': pointStyles,
+        'labelTextColors': paints,
         'chart': chart,
         '_active': active,
         '_eventPosition': 'any value',
@@ -1035,6 +1037,9 @@ void main() {
         ('yAlign', <String, Object?>{'o': 1}),
         ('title', 'a'),
         ('body', 5),
+        ('labelColors', <Object?>['a']),
+        ('labelPointStyles', <Object?>[1]),
+        ('labelTextColors', <Object?>['red']),
         ('chart', undefined),
         ('chart', <String, Object?>{}),
         ('_active', undefined),
