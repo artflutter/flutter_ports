@@ -24,16 +24,16 @@ double _ink(Chart chart) {
   return drawn / flows.length;
 }
 
-List<Object?> _data() => <Object?>[
-  <String, Object?>{'flow': 15, 'from': 'Oil', 'to': 'Fossil fuels'},
-  <String, Object?>{'flow': 20, 'from': 'Natural gas', 'to': 'Fossil fuels'},
-  <String, Object?>{'flow': 25, 'from': 'Coal', 'to': 'Fossil fuels'},
-  <String, Object?>{'flow': 60, 'from': 'Fossil fuels', 'to': 'Energy'},
-  <String, Object?>{'flow': 10, 'from': 'Nuclear', 'to': 'Energy'},
-  <String, Object?>{'flow': 30, 'from': 'Renewables', 'to': 'Energy'},
-  <String, Object?>{'flow': 40, 'from': 'Energy', 'to': 'Electricity'},
-  <String, Object?>{'flow': 35, 'from': 'Energy', 'to': 'Heat'},
-  <String, Object?>{'flow': 25, 'from': 'Energy', 'to': 'Lost'},
+List<SankeyDataPoint> _data() => [
+  const SankeyDataPoint(flow: 15, from: 'Oil', to: 'Fossil fuels'),
+  const SankeyDataPoint(flow: 20, from: 'Natural gas', to: 'Fossil fuels'),
+  const SankeyDataPoint(flow: 25, from: 'Coal', to: 'Fossil fuels'),
+  const SankeyDataPoint(flow: 60, from: 'Fossil fuels', to: 'Energy'),
+  const SankeyDataPoint(flow: 10, from: 'Nuclear', to: 'Energy'),
+  const SankeyDataPoint(flow: 30, from: 'Renewables', to: 'Energy'),
+  const SankeyDataPoint(flow: 40, from: 'Energy', to: 'Electricity'),
+  const SankeyDataPoint(flow: 35, from: 'Energy', to: 'Heat'),
+  const SankeyDataPoint(flow: 25, from: 'Energy', to: 'Lost'),
 ];
 
 void main() {
@@ -46,27 +46,26 @@ void main() {
       // Let the first render's progress animation finish before touching
       // size: this is the animation the fix must leave untouched.
       await waitForDone((done) {
-        chart = acquireChart(
-          {
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'borderWidth': 2,
-                  'colorFrom': const ChartPaint.solid(Color(0xFFFF0000)),
-                  'colorTo': const ChartPaint.solid(Color(0xFF008000)),
-                  'data': _data(),
-                },
+        chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              datasets: [
+                SankeyDataset(
+                  data: _data(),
+                  borderWidth: 2,
+                  colorFrom: const SankeyColor.constant(
+                    ChartPaint.solid(Color(0xFFFF0000)),
+                  ),
+                  colorTo: const SankeyColor.constant(
+                    ChartPaint.solid(Color(0xFF008000)),
+                  ),
+                ),
               ],
-            },
-            'options': <String, Object?>{
-              'animation': <String, Object?>{
-                'onComplete': (IAnimationEvent event) => done(),
-              },
-              'maintainAspectRatio': false,
-              'responsive': true,
-            },
-            'type': 'sankey',
-          },
+              animation: ChartAnimation(onComplete: (event) => done()),
+              maintainAspectRatio: false,
+              responsive: true,
+            ),
+          ).lower(),
           {
             'wrapper': <String, Object?>{
               'style': 'height: 400px; width: 800px;',

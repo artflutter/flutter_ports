@@ -2911,3 +2911,13 @@ event probes keep their previous behavior. The batch also migrates global defaul
 controller specs, category scales, layouts and plugin hooks. No production canvas code or
 deferred cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates
 remain unchanged. No trigger occurred.
+
+## Typed radial and range test configs, 2026-11-20
+
+`test/port/scales/scale.radialLinear_line_fan_test.dart` now constructs native typed roots,
+data and option scopes; the remaining null-label case of `scale.radialLinear_plans_test.dart`
+does too. Their call, pixel and fallback comparisons remain unchanged. The batch also
+migrates context-refresh and range-update builders and six Sankey tests. Custom dataset
+and callback inputs remain available to the probes. No production canvas code or deferred
+cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates remain
+unchanged. No trigger occurred.

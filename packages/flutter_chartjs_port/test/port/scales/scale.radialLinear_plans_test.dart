@@ -1158,36 +1158,35 @@ void main() {
         false,
         <Object?>['l'],
       ];
-      // A Map config: a null label, which the typed labels (`List<Object>`)
-      // cannot hold.
-      Map<String, Object?> config({String? scaleType}) => <String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'labels': labels,
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                for (var i = 0; i < labels.length; i++)
-                  ((i * 37) % 100).toDouble(),
+      // Preserve the null label through the native data scope.
+      ChartConfigurationScope config({String? scaleType}) =>
+          (ChartConfigurationScope()
+            ..type = 'radar'
+            ..data = mergeExtra(ChartDataScope(), {
+              'labels': labels,
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[
+                    for (var i = 0; i < labels.length; i++)
+                      ((i * 37) % 100).toDouble(),
+                  ],
+                },
               ],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': false,
-          'events': <String>[],
-          'plugins': <String, Object?>{'legend': false},
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'type': ?scaleType,
-              'min': 0.0,
-              'max': 100.0,
-              'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
-            },
-          },
-        },
-      };
-      final chart = acquireChart(config());
+            })
+            ..options = mergeExtra(ChartOptionsScope(), {
+              'responsive': false,
+              'events': <String>[],
+              'plugins': <String, Object?>{'legend': false},
+              'scales': <String, Object?>{
+                'r': <String, Object?>{
+                  'type': ?scaleType,
+                  'min': 0.0,
+                  'max': 100.0,
+                  'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
+                },
+              },
+            }));
+      final chart = acquireChartRoot(config());
       expect(_scaleOf(chart).pointLabels, <List<String>>[
         ['a'],
         [''],
@@ -1197,7 +1196,7 @@ void main() {
         [''],
         ['l'],
       ]);
-      final twin = acquireChart(config(scaleType: 'ordinaryRadial'));
+      final twin = acquireChartRoot(config(scaleType: 'ordinaryRadial'));
       expect(_scaleOf(twin).pointLabels, _scaleOf(chart).pointLabels);
     });
 

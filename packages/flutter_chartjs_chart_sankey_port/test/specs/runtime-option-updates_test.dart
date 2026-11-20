@@ -13,15 +13,15 @@ import 'package:flutter_test/flutter_test.dart';
 // produce a measurably different gap between M1 and M2 -- 'auto' inflates
 // the gap between them to clear the nodes stacked above M2 in column 0,
 // 'even' does not.
-List<Object?> _nodePaddingModeData() => <Object?>[
-  <String, Object?>{'flow': 10, 'from': 'S1', 'to': 'M1'},
-  <String, Object?>{'flow': 6, 'from': 'S2', 'to': 'M1'},
-  <String, Object?>{'flow': 14, 'from': 'S3', 'to': 'M2'},
-  <String, Object?>{'flow': 4, 'from': 'S4', 'to': 'M2'},
-  <String, Object?>{'flow': 10, 'from': 'M1', 'to': 'T1'},
-  <String, Object?>{'flow': 6, 'from': 'M1', 'to': 'T2'},
-  <String, Object?>{'flow': 4, 'from': 'M2', 'to': 'T2'},
-  <String, Object?>{'flow': 14, 'from': 'M2', 'to': 'T3'},
+List<SankeyDataPoint> _nodePaddingModeData() => [
+  const SankeyDataPoint(flow: 10, from: 'S1', to: 'M1'),
+  const SankeyDataPoint(flow: 6, from: 'S2', to: 'M1'),
+  const SankeyDataPoint(flow: 14, from: 'S3', to: 'M2'),
+  const SankeyDataPoint(flow: 4, from: 'S4', to: 'M2'),
+  const SankeyDataPoint(flow: 10, from: 'M1', to: 'T1'),
+  const SankeyDataPoint(flow: 6, from: 'M1', to: 'T2'),
+  const SankeyDataPoint(flow: 4, from: 'M2', to: 'T2'),
+  const SankeyDataPoint(flow: 14, from: 'M2', to: 'T3'),
 ];
 
 // `nodePaddingMode` and `nodePadding` are deliberately never set on the
@@ -30,26 +30,23 @@ List<Object?> _nodePaddingModeData() => <Object?>[
 // would permanently shadow the chart-level runtime changes this test makes
 // afterwards. Leaving them unset here means the controller's resolved
 // `this.options.nodePaddingMode` / `.nodePadding` come from `chart.options`.
-Chart _buildChart(Map<String, Object?> chartOptionOverrides) => acquireChart(
-  {
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{'data': _nodePaddingModeData()},
-      ],
-    },
-    'options': <String, Object?>{
-      'animation': false,
-      'devicePixelRatio': 1,
-      'maintainAspectRatio': false,
-      'nodePadding': 20,
-      ...chartOptionOverrides,
-    },
-    'type': 'sankey',
-  },
-  {
-    'canvas': <String, Object?>{'height': 400, 'width': 700},
-  },
-);
+Chart _buildChart(Map<String, Object?> chartOptionOverrides) =>
+    acquireChartRoot(
+      ChartConfigLowering(
+        ChartConfig(
+          datasets: [SankeyDataset(data: _nodePaddingModeData())],
+          extra: <String, Object?>{
+            'animation': false,
+            'devicePixelRatio': 1,
+            'nodePadding': 20,
+            ...chartOptionOverrides,
+          },
+        ),
+      ).lower(),
+      {
+        'canvas': <String, Object?>{'height': 400, 'width': 700},
+      },
+    );
 
 SankeyController _controller(Chart chart) =>
     chart.getDatasetMeta(0).controller! as SankeyController;

@@ -184,7 +184,7 @@ List<Object?> _points(int count, double shift) => <Object?>[
 /// the title, the padding and the animation of the run.
 // A Map: the typed API has no scriptable title text, padding, animation,
 // clip, ticks.color or grid.display, and `_newData` writes `chart.data`.
-Map<String, Object?> _config(
+ChartConfigurationScope _config(
   _Log log, {
   required bool animated,
   required String type,
@@ -193,18 +193,17 @@ Map<String, Object?> _config(
   String titleAxis = 'x',
   Map<String, Object?> plugins = const {},
   Map<String, Object?> extra = const {},
-}) => <String, Object?>{
-  'type': type,
-  'plugins': <Plugin<Object?>>[_recorder(log)],
-  'data': data,
-  'options': <String, Object?>{
+}) => (ChartConfigurationScope()
+  ..type = type
+  ..plugins = <Plugin<Object?>>[_recorder(log)]
+  ..data = mergeExtra(ChartDataScope(), data)
+  ..options = mergeExtra(ChartOptionsScope(), {
     'animation': _animation(log, animated: animated),
     'layout': <String, Object?>{'padding': _padding(log)},
     'scales': scales,
     'plugins': <String, Object?>{'title': _titleOf(log, titleAxis), ...plugins},
     ...extra,
-  },
-};
+  }));
 
 /// A scale option Map with the scriptable ticks and grid.
 Map<String, Object?> _scale(
@@ -264,7 +263,8 @@ _Write _newData(int index, List<Object?> Function() values, {int? labels}) =>
 /// Each step writes, then updates in the next mode of the run.
 final class const _Case(
   final String name,
-  final Map<String, Object?> Function(_Log log, {required bool animated}) build,
+  final ChartConfigurationScope Function(_Log log, {required bool animated})
+  build,
   final List<_Write> steps, {
 
   /// The default date zone of the case: Dart `null` keeps the zone of the
@@ -388,8 +388,8 @@ Future<void> _runCase(_Case c, {required bool animated}) async {
   }
   final fullLog = _Log();
   final rangeLog = _Log();
-  final full = acquireChart(c.build(fullLog, animated: animated));
-  final ranges = acquireChart(c.build(rangeLog, animated: animated));
+  final full = acquireChartRoot(c.build(fullLog, animated: animated));
+  final ranges = acquireChartRoot(c.build(rangeLog, animated: animated));
   if (animated) {
     await pumpFrames(() => !animator.has(full) && !animator.has(ranges));
   }
@@ -426,7 +426,7 @@ Future<void> _runCase(_Case c, {required bool animated}) async {
 }
 
 /// The line chart on linear axes.
-Map<String, Object?> _line(_Log log, {required bool animated}) => _config(
+ChartConfigurationScope _line(_Log log, {required bool animated}) => _config(
   log,
   animated: animated,
   type: 'line',
@@ -447,7 +447,7 @@ Map<String, Object?> _line(_Log log, {required bool animated}) => _config(
 );
 
 /// The scatter chart.
-Map<String, Object?> _scatter(_Log log, {required bool animated}) => _config(
+ChartConfigurationScope _scatter(_Log log, {required bool animated}) => _config(
   log,
   animated: animated,
   type: 'scatter',
@@ -464,7 +464,7 @@ Map<String, Object?> _scatter(_Log log, {required bool animated}) => _config(
 );
 
 /// The bar chart on a category axis.
-Map<String, Object?> _bar(_Log log, {required bool animated}) => _config(
+ChartConfigurationScope _bar(_Log log, {required bool animated}) => _config(
   log,
   animated: animated,
   type: 'bar',
@@ -489,7 +489,7 @@ double _day(int i) =>
     DateTime.utc(2026, 11, 1 + i).millisecondsSinceEpoch.toDouble();
 
 /// The line chart on a time axis.
-Map<String, Object?> _time(_Log log, {required bool animated}) => _config(
+ChartConfigurationScope _time(_Log log, {required bool animated}) => _config(
   log,
   animated: animated,
   type: 'line',
@@ -511,7 +511,7 @@ Map<String, Object?> _time(_Log log, {required bool animated}) => _config(
 );
 
 /// The line chart on a logarithmic y axis.
-Map<String, Object?> _logarithmic(_Log log, {required bool animated}) =>
+ChartConfigurationScope _logarithmic(_Log log, {required bool animated}) =>
     _config(
       log,
       animated: animated,
@@ -535,7 +535,7 @@ Map<String, Object?> _logarithmic(_Log log, {required bool animated}) =>
     );
 
 /// A radial chart: `radar` or `polarArea` on the scale `r`.
-Map<String, Object?> Function(_Log log, {required bool animated}) _radial(
+ChartConfigurationScope Function(_Log log, {required bool animated}) _radial(
   String type,
 ) =>
     (log, {required animated}) => _config(
@@ -558,7 +558,7 @@ Map<String, Object?> Function(_Log log, {required bool animated}) _radial(
     );
 
 /// Two datasets on two y axes.
-Map<String, Object?> _twoAxes(_Log log, {required bool animated}) => _config(
+ChartConfigurationScope _twoAxes(_Log log, {required bool animated}) => _config(
   log,
   animated: animated,
   type: 'line',
@@ -586,41 +586,42 @@ Map<String, Object?> _twoAxes(_Log log, {required bool animated}) => _config(
 );
 
 /// A line of 400 points with enabled decimation.
-Map<String, Object?> _decimation(_Log log, {required bool animated}) => _config(
-  log,
-  animated: animated,
-  type: 'line',
-  data: <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'a',
-        'data': <Object?>[
-          for (var i = 0; i < 400; i++)
-            <String, Object?>{
-              'x': i.toDouble(),
-              'y': ((i * 37) % 101).toDouble(),
-            },
+ChartConfigurationScope _decimation(_Log log, {required bool animated}) =>
+    _config(
+      log,
+      animated: animated,
+      type: 'line',
+      data: <String, Object?>{
+        'datasets': <Object?>[
+          <String, Object?>{
+            'label': 'a',
+            'data': <Object?>[
+              for (var i = 0; i < 400; i++)
+                <String, Object?>{
+                  'x': i.toDouble(),
+                  'y': ((i * 37) % 101).toDouble(),
+                },
+            ],
+            'pointRadius': 0.0,
+          },
         ],
-        'pointRadius': 0.0,
       },
-    ],
-  },
-  scales: <String, Object?>{
-    'x': _scale(log, 'linear'),
-    'y': _scale(log, 'linear'),
-  },
-  plugins: <String, Object?>{
-    'decimation': <String, Object?>{
-      'enabled': true,
-      'algorithm': const LttbDecimationAlgorithm(),
-      'samples': 40.0,
-    },
-  },
-  extra: <String, Object?>{'parsing': false},
-);
+      scales: <String, Object?>{
+        'x': _scale(log, 'linear'),
+        'y': _scale(log, 'linear'),
+      },
+      plugins: <String, Object?>{
+        'decimation': <String, Object?>{
+          'enabled': true,
+          'algorithm': const LttbDecimationAlgorithm(),
+          'samples': 40.0,
+        },
+      },
+      extra: <String, Object?>{'parsing': false},
+    );
 
 /// The line chart under the light theme.
-Map<String, Object?> _themed(_Log log, {required bool animated}) =>
+ChartConfigurationScope _themed(_Log log, {required bool animated}) =>
     _line(log, animated: animated)..[themeConfigKey] = compileLightTheme();
 
 /// The steps of a chart on the linear axes `x` and `y`.
@@ -700,21 +701,21 @@ final List<_Case> _cases = [
 
 /// A small line chart with the recorder, on the axes x and y.
 // A Map: the typed API has no scriptable title text, and check 6 swaps the
-// data and options Maps of `chart.config`.
-Map<String, Object?> _small(
+// data and option scopes of `chart.config`.
+ChartConfigurationScope _small(
   _Log log, {
   List<Plugin<Object?>> plugins = const [],
   Map<String, Object?> pluginOptions = const {},
   Map<String, Object?> extra = const {},
-}) => <String, Object?>{
-  'type': 'line',
-  'plugins': <Plugin<Object?>>[_recorder(log), ...plugins],
-  'data': <String, Object?>{
+}) => (ChartConfigurationScope()
+  ..type = 'line'
+  ..plugins = <Plugin<Object?>>[_recorder(log), ...plugins]
+  ..data = mergeExtra(ChartDataScope(), {
     'datasets': <Object?>[
       <String, Object?>{'label': 'a', 'data': _points(8, 0)},
     ],
-  },
-  'options': <String, Object?>{
+  })
+  ..options = mergeExtra(ChartOptionsScope(), {
     'animation': false,
     'scales': <String, Object?>{
       'x': <String, Object?>{'type': 'linear'},
@@ -722,8 +723,7 @@ Map<String, Object?> _small(
     },
     'plugins': <String, Object?>{'title': _titleOf(log, 'x'), ...pluginOptions},
     ...extra,
-  },
-};
+  }));
 
 /// Twins after a change on both: the range chart calls
 /// `updateRanges` and gets [expected], and the other chart `update`.
@@ -810,7 +810,7 @@ void main() {
   group('the range lifecycle', () {
     testWidgets('keeps the resolvers and makes new views', (tester) async {
       final log = _Log();
-      final chart = acquireChart(_small(log));
+      final chart = acquireChartRoot(_small(log));
       final options = chart.options;
       final scale = chart.scales['x']!.optionsView;
       final dataset = chart.getDatasetMeta(0).controller!.options;
@@ -831,7 +831,7 @@ void main() {
 
     testWidgets('a scriptable title shows each new range', (tester) async {
       final log = _Log();
-      final chart = acquireChart(_small(log));
+      final chart = acquireChartRoot(_small(log));
       final title = chart.titleBlock! as Title;
       // The first update laid out the title before any scale had a range.
       expect(title.options!.text, [startsWith('x undefined to')]);
@@ -852,7 +852,7 @@ void main() {
       tester,
     ) async {
       final log = _Log();
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _small(
           log,
           plugins: <Plugin<Object?>>[
@@ -907,8 +907,8 @@ void main() {
       );
       final fullLog = _Log();
       final rangeLog = _Log();
-      final full = acquireChart(_small(fullLog, plugins: [nested]));
-      final ranges = acquireChart(_small(rangeLog, plugins: [nested]));
+      final full = acquireChartRoot(_small(fullLog, plugins: [nested]));
+      final ranges = acquireChartRoot(_small(rangeLog, plugins: [nested]));
       _range('x', 2.0, 5.0)(full);
       _range('x', 2.0, 5.0)(ranges);
       enabled = true;
@@ -943,8 +943,10 @@ void main() {
         );
         final fullLog = _Log();
         final rangeLog = _Log();
-        final full = acquireChart(_small(fullLog, plugins: [canceller()]));
-        final ranges = acquireChart(_small(rangeLog, plugins: [canceller()]));
+        final full = acquireChartRoot(_small(fullLog, plugins: [canceller()]));
+        final ranges = acquireChartRoot(
+          _small(rangeLog, plugins: [canceller()]),
+        );
         cancel = true;
         full.update(UpdateMode.none);
         expect(
@@ -982,7 +984,7 @@ void main() {
         },
       );
       final log = _Log();
-      final chart = acquireChart(_small(log, plugins: [thrower]));
+      final chart = acquireChartRoot(_small(log, plugins: [thrower]));
       thrown = true;
       expect(chart.updateRanges, throwsStateError);
       expect(chart.updateRanges(), isFalse);
@@ -1011,14 +1013,14 @@ void main() {
       );
       var fullLog = _Log();
       var rangeLog = _Log();
-      var full = acquireChart(_small(fullLog, plugins: [plain()]));
-      var ranges = acquireChart(_small(rangeLog, plugins: [plain()]));
+      var full = acquireChartRoot(_small(fullLog, plugins: [plain()]));
+      var ranges = acquireChartRoot(_small(rangeLog, plugins: [plain()]));
       _expectFallbackTwins(full, fullLog, ranges, rangeLog, expected: false);
 
       fullLog = _Log();
       rangeLog = _Log();
-      full = acquireChart(_small(fullLog));
-      ranges = acquireChart(_small(rangeLog));
+      full = acquireChartRoot(_small(fullLog));
+      ranges = acquireChartRoot(_small(rangeLog));
       final registered = Plugin<Object?>(
         id: 'registered',
         supportsDataUpdates: true,
@@ -1031,7 +1033,7 @@ void main() {
       for (final (force, expected) in [(true, false), (false, true)]) {
         fullLog = _Log();
         rangeLog = _Log();
-        Map<String, Object?> colors(_Log log) => _small(
+        ChartConfigurationScope colors(_Log log) => _small(
           log,
           pluginOptions: <String, Object?>{
             'colors': <String, Object?>{
@@ -1040,8 +1042,8 @@ void main() {
             },
           },
         );
-        full = acquireChart(colors(fullLog));
-        ranges = acquireChart(colors(rangeLog));
+        full = acquireChartRoot(colors(fullLog));
+        ranges = acquireChartRoot(colors(rangeLog));
         _expectFallbackTwins(
           full,
           fullLog,
@@ -1056,7 +1058,7 @@ void main() {
     testWidgets('4. the guard of the data-only lifecycle is not called: '
         'decimation takes the range update', (tester) async {
       final log = _Log();
-      final chart = acquireChart(_decimation(log, animated: false));
+      final chart = acquireChartRoot(_decimation(log, animated: false));
       expect(chart.updateData(), isFalse);
       _range('x', 10.0, 200.0)(chart);
       expect(chart.updateRanges(), isTrue);
@@ -1065,8 +1067,8 @@ void main() {
     testWidgets('5. a notified change of a data array', (tester) async {
       final fullLog = _Log();
       final rangeLog = _Log();
-      final full = acquireChart(_small(fullLog));
-      final ranges = acquireChart(_small(rangeLog));
+      final full = acquireChartRoot(_small(fullLog));
+      final ranges = acquireChartRoot(_small(rangeLog));
       for (final chart in [full, ranges]) {
         // The upstream push, then the notification of the array listener.
         final values =
@@ -1091,8 +1093,12 @@ void main() {
         },
         'config.options': (chart) {
           final config = chart.config;
-          final options = config.options as Map<String, Object?>;
-          config.options = <String, Object?>{...options};
+          final options = config.options as JsObjectFace;
+          final replacement = ChartOptionsScope();
+          for (final key in options.jsKeys()) {
+            replacement[key] = options.jsRead(key);
+          }
+          config.options = replacement;
         },
         'a dataset at an index': (chart) {
           final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
@@ -1115,8 +1121,8 @@ void main() {
       for (final MapEntry(key: name, value: change) in changes.entries) {
         final fullLog = _Log();
         final rangeLog = _Log();
-        final full = acquireChart(_small(fullLog));
-        final ranges = acquireChart(_small(rangeLog));
+        final full = acquireChartRoot(_small(fullLog));
+        final ranges = acquireChartRoot(_small(rangeLog));
         change(full);
         change(ranges);
         _expectFallbackTwins(
@@ -1133,12 +1139,12 @@ void main() {
     testWidgets('7. a controller that is not of its exact class', (
       tester,
     ) async {
-      Map<String, Object?> user(_Log log) =>
+      ChartConfigurationScope user(_Log log) =>
           _small(log)..['type'] = 'rangeUserLine';
       final fullLog = _Log();
       final rangeLog = _Log();
-      final full = acquireChart(user(fullLog));
-      final ranges = acquireChart(user(rangeLog));
+      final full = acquireChartRoot(user(fullLog));
+      final ranges = acquireChartRoot(user(rangeLog));
       _expectFallbackTwins(full, fullLog, ranges, rangeLog, expected: false);
     });
   });
@@ -1166,7 +1172,7 @@ void main() {
         },
       );
       final log = _Log();
-      final chart = target = acquireChart(_small(log, plugins: [plugin]));
+      final chart = target = acquireChartRoot(_small(log, plugins: [plugin]));
       enabled = true;
       expect(chart.updateRanges(), isTrue);
       expect(error, isA<StateError>());
@@ -1188,8 +1194,8 @@ void main() {
       );
       final fullLog = _Log();
       final rangeLog = _Log();
-      final full = acquireChart(_small(fullLog, plugins: [plugin]));
-      final ranges = acquireChart(_small(rangeLog, plugins: [plugin]));
+      final full = acquireChartRoot(_small(fullLog, plugins: [plugin]));
+      final ranges = acquireChartRoot(_small(rangeLog, plugins: [plugin]));
       target = full;
       enabled = true;
       _range('x', 2.0, 5.0)(full);
@@ -1209,7 +1215,7 @@ void main() {
       var enabled = false;
       final log = _Log();
       late Chart chart;
-      chart = acquireChart(
+      chart = acquireChartRoot(
         _small(
           log,
           extra: <String, Object?>{
@@ -1252,8 +1258,8 @@ void main() {
       testWidgets(name, (tester) async {
         final fullLog = _Log();
         final rangeLog = _Log();
-        final full = acquireChart(_small(fullLog));
-        final ranges = acquireChart(_small(rangeLog));
+        final full = acquireChartRoot(_small(fullLog));
+        final ranges = acquireChartRoot(_small(rangeLog));
         invalidate(full);
         invalidate(ranges);
         fullLog.entries.clear();
@@ -1265,7 +1271,7 @@ void main() {
 
     testWidgets('hide and show run their own update', (tester) async {
       final log = _Log();
-      final chart = acquireChart(_small(log))..hide(0);
+      final chart = acquireChartRoot(_small(log))..hide(0);
       expect(chart.updateRanges(), isTrue);
       chart.show(0);
       expect(chart.updateRanges(), isTrue);
@@ -1273,7 +1279,7 @@ void main() {
 
     testWidgets('destroy', (tester) async {
       final log = _Log();
-      final chart = acquireChart(_small(log));
+      final chart = acquireChartRoot(_small(log));
       expect(chart.updateRanges(), isTrue);
       releaseChart(chart);
       // `destroy` drops the range state: the call is `update`, which throws
@@ -1292,8 +1298,8 @@ void main() {
     testWidgets('a direct write of meta.hidden', (tester) async {
       final fullLog = _Log();
       final rangeLog = _Log();
-      final full = acquireChart(_small(fullLog));
-      final ranges = acquireChart(_small(rangeLog));
+      final full = acquireChartRoot(_small(fullLog));
+      final ranges = acquireChartRoot(_small(rangeLog));
       full.getDatasetMeta(0).hidden = true;
       ranges.getDatasetMeta(0).hidden = true;
       _expectFallbackTwins(full, fullLog, ranges, rangeLog, expected: true);
@@ -1304,8 +1310,8 @@ void main() {
     testWidgets('a new data List and new labels equal update', (tester) async {
       final fullLog = _Log();
       final rangeLog = _Log();
-      final full = acquireChart(_bar(fullLog, animated: false));
-      final ranges = acquireChart(_bar(rangeLog, animated: false));
+      final full = acquireChartRoot(_bar(fullLog, animated: false));
+      final ranges = acquireChartRoot(_bar(rangeLog, animated: false));
       for (final count in [14, 6, 9]) {
         for (final chart in [full, ranges]) {
           _newData(

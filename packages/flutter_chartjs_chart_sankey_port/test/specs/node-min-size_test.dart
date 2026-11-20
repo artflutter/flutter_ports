@@ -11,32 +11,28 @@ import 'package:flutter_test/flutter_test.dart';
 
 // One huge node and several tiny ones in the same column, matching issue 87's
 // shape (a report with flows of 0.37 and 85024 landing in the same column).
-List<Object?> _data() => <Object?>[
-  <String, Object?>{'flow': 85024, 'from': 'Huge', 'to': 'Sink'},
-  <String, Object?>{'flow': 0.37, 'from': 'Tiny A', 'to': 'Sink'},
-  <String, Object?>{'flow': 0.5, 'from': 'Tiny B', 'to': 'Sink'},
-  <String, Object?>{'flow': 0.9, 'from': 'Tiny C', 'to': 'Sink'},
+List<SankeyDataPoint> _data() => [
+  const SankeyDataPoint(flow: 85024, from: 'Huge', to: 'Sink'),
+  const SankeyDataPoint(flow: 0.37, from: 'Tiny A', to: 'Sink'),
+  const SankeyDataPoint(flow: 0.5, from: 'Tiny B', to: 'Sink'),
+  const SankeyDataPoint(flow: 0.9, from: 'Tiny C', to: 'Sink'),
 ];
 
 const double _nodeWidth = 10;
 
-Chart _buildSankeyWithMinSize(Object? nodeMinSize) => acquireChart(
-  {
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': _data(),
-          'nodeMinSize': nodeMinSize,
-          'nodeWidth': _nodeWidth,
-        },
+Chart _buildSankeyWithMinSize(Object? nodeMinSize) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      datasets: [
+        SankeyDataset(
+          data: _data(),
+          extra: {'nodeMinSize': nodeMinSize, 'nodeWidth': _nodeWidth},
+        ),
       ],
-    },
-    'options': <String, Object?>{
-      'animation': false,
-      'maintainAspectRatio': false,
-    },
-    'type': 'sankey',
-  },
+      animation: ChartAnimation.none,
+      maintainAspectRatio: false,
+    ),
+  ).lower(),
   {
     'canvas': <String, Object?>{'height': 400, 'width': 800},
   },

@@ -24,29 +24,27 @@ void main() {
       sankey.Flow.jsClass,
     ]);
 
-    // The chart writes into its config: the Maps are not const.
-    final config = <String, Object?>{
-      'type': 'sankey',
-      'data': <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              const SankeyDataPoint(from: 'a', to: 'b', flow: 10),
-              const SankeyDataPoint(from: 'a', to: 'c', flow: 5),
-              const SankeyDataPoint(from: 'b', to: 'c', flow: 10),
-            ],
-            'colorFrom': const ChartPaint.solid(Color(0xFF4E79A7)),
-            'colorTo': const ChartPaint.solid(Color(0xFFF28E2B)),
-            'orientation': SankeyOrientation.horizontal,
-            'nodeMinSize': (SankeyNode node) => 4,
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'animation': false,
-        'maintainAspectRatio': false,
-      },
-    };
+    final config = ChartConfig(
+      datasets: [
+        SankeyDataset(
+          data: const [
+            SankeyDataPoint(from: 'a', to: 'b', flow: 10),
+            SankeyDataPoint(from: 'a', to: 'c', flow: 5),
+            SankeyDataPoint(from: 'b', to: 'c', flow: 10),
+          ],
+          colorFrom: const SankeyColor.constant(
+            ChartPaint.solid(Color(0xFF4E79A7)),
+          ),
+          colorTo: const SankeyColor.constant(
+            ChartPaint.solid(Color(0xFFF28E2B)),
+          ),
+          orientation: SankeyOrientation.horizontal,
+          nodeMinSize: SankeyNodeValue.byNode((node) => 4),
+        ),
+      ],
+      animation: ChartAnimation.none,
+      maintainAspectRatio: false,
+    );
     Chart? chart;
     await tester.pumpWidget(
       MaterialApp(
@@ -54,7 +52,7 @@ void main() {
           child: SizedBox(
             width: 400,
             height: 300,
-            child: ChartView.raw(
+            child: ChartView(
               config: config,
               onChartCreated: (created) => chart = created,
             ),

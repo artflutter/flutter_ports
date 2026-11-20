@@ -125,16 +125,16 @@ RadialLinearScale _scaleOf(Chart chart) =>
 
 /// A radar or polar area config of [n] labels with the options [r] of the
 /// scale. Each call gives new objects.
-Map<String, Object?> _config({
+ChartConfigurationScope _config({
   String type = 'radar',
   String? scaleType,
   int n = 40,
   ui.Color color = const ui.Color(0x80336699),
   Map<String, Object?>? angleLines,
   Map<String, Object?>? r,
-}) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
+}) => (ChartConfigurationScope()
+  ..type = type
+  ..data = mergeExtra(ChartDataScope(), {
     'labels': <Object?>[for (var i = 0; i < n; i++) 'Label $i'],
     'datasets': <Object?>[
       <String, Object?>{
@@ -143,8 +143,8 @@ Map<String, Object?> _config({
         ],
       },
     ],
-  },
-  'options': <String, Object?>{
+  })
+  ..options = mergeExtra(ChartOptionsScope(), {
     'responsive': false,
     'events': <String>[],
     'plugins': <String, Object?>{'legend': false},
@@ -166,8 +166,7 @@ Map<String, Object?> _config({
         ...?r,
       },
     },
-  },
-};
+  }));
 
 /// One draw of the scale of [chart] on [ctx]: the recorded calls.
 List<ContextCall> _drawWith(Chart chart, _Recorder ctx) {
@@ -231,7 +230,7 @@ void main() {
       testWidgets('$type: a fan has the calls of the ordinary lines', (
         tester,
       ) async {
-        final chart = acquireChart(_config(type: type));
+        final chart = acquireChartRoot(_config(type: type));
         final target = chart.ctx!;
         final ordinary = _drawWith(chart, _Recorder(target));
         final taken = _FanRecorder(target, takes: true);
@@ -250,7 +249,7 @@ void main() {
       testWidgets('$type: reverse, a start angle and a circular grid', (
         tester,
       ) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config(
             type: type,
             r: {
@@ -273,7 +272,7 @@ void main() {
     }
 
     testWidgets('a scale subclass gets no fan', (tester) async {
-      final chart = acquireChart(_config(scaleType: 'fanOrdinaryRadial'));
+      final chart = acquireChartRoot(_config(scaleType: 'fanOrdinaryRadial'));
       expect(_scaleOf(chart), isA<_OrdinaryRadial>());
       final ctx = _FanRecorder(chart.ctx!, takes: true);
       final calls = _drawWith(chart, ctx);
@@ -290,7 +289,7 @@ void main() {
         return const ChartPaint.solid(ui.Color(0x80336699));
       }
 
-      final chart = acquireChart(_config(angleLines: {'color': color}));
+      final chart = acquireChartRoot(_config(angleLines: {'color': color}));
       final target = chart.ctx!;
       reads = 0;
       final ordinary = _drawWith(chart, _Recorder(target));
@@ -305,7 +304,7 @@ void main() {
     });
 
     testWidgets('an indexed color gets no fan', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config(
           angleLines: {
             'color': <Object?>[
@@ -322,7 +321,7 @@ void main() {
     });
 
     testWidgets('a dash gets no fan', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config(
           angleLines: {
             'borderDash': <double>[3, 2],
@@ -336,7 +335,7 @@ void main() {
     });
 
     testWidgets('a scriptable dash offset gets no fan', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config(angleLines: {'borderDashOffset': (Object? _) => 1.0}),
       );
       final ctx = _FanRecorder(chart.ctx!, takes: true);
@@ -352,7 +351,7 @@ void main() {
         {'lineWidth': 0.0},
         {'color': ''},
       ]) {
-        final chart = acquireChart(_config(angleLines: angleLines));
+        final chart = acquireChartRoot(_config(angleLines: angleLines));
         final target = chart.ctx!;
         final ordinary = _drawWith(chart, _Recorder(target));
         final ctx = _FanRecorder(target, takes: true);
@@ -366,7 +365,7 @@ void main() {
 
     testWidgets('below three labels, the loop has no run', (tester) async {
       for (final n in const [0, 1, 2]) {
-        final chart = acquireChart(_config(n: n));
+        final chart = acquireChartRoot(_config(n: n));
         final target = chart.ctx!;
         final ordinary = _drawWith(chart, _Recorder(target));
         final ctx = _FanRecorder(target, takes: true);
@@ -374,7 +373,7 @@ void main() {
         expect(ctx.fans, isEmpty, reason: '$n');
         expect(_pathCalls(calls), _pathCalls(ordinary), reason: '$n');
       }
-      final three = acquireChart(_config(n: 3));
+      final three = acquireChartRoot(_config(n: 3));
       final ctx = _FanRecorder(three.ctx!, takes: true);
       _drawWith(three, ctx);
       expect(ctx.fans, [2]);
@@ -389,8 +388,10 @@ void main() {
           ui.Color(0xFF336699),
         ]) {
           testWidgets('$type: $n lines of $color', (tester) async {
-            final fan = acquireChart(_config(type: type, n: n, color: color));
-            final ordinary = acquireChart(
+            final fan = acquireChartRoot(
+              _config(type: type, n: n, color: color),
+            );
+            final ordinary = acquireChartRoot(
               _config(
                 type: type,
                 n: n,
@@ -436,8 +437,8 @@ void main() {
       ('no display', {'display': false}),
     ]) {
       testWidgets(name, (tester) async {
-        final fan = acquireChart(_config(angleLines: options));
-        final ordinary = acquireChart(
+        final fan = acquireChartRoot(_config(angleLines: options));
+        final ordinary = acquireChartRoot(
           _config(angleLines: options, scaleType: 'fanOrdinaryRadial'),
         );
         expect(await _pixels(tester, fan), await _pixels(tester, ordinary));
@@ -457,8 +458,8 @@ void main() {
         'ticks': <String, Object?>{'display': true},
         'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
       };
-      final fan = acquireChart(_config(r: r()));
-      final ordinary = acquireChart(
+      final fan = acquireChartRoot(_config(r: r()));
+      final ordinary = acquireChartRoot(
         _config(r: r(), scaleType: 'fanOrdinaryRadial'),
       );
       expect(await _pixels(tester, fan), await _pixels(tester, ordinary));
@@ -470,8 +471,8 @@ void main() {
       Map<String, Object?> options() => <String, Object?>{
         'canvas': <String, Object?>{'width': 8, 'height': 8},
       };
-      final fan = acquireChart(_config(), options());
-      final ordinary = acquireChart(
+      final fan = acquireChartRoot(_config(), options());
+      final ordinary = acquireChartRoot(
         _config(scaleType: 'fanOrdinaryRadial'),
         options(),
       );
@@ -482,12 +483,12 @@ void main() {
     testWidgets('a picture observer takes the ordinary strokes', (
       tester,
     ) async {
-      final fan = acquireChart(_config(n: 700));
+      final fan = acquireChartRoot(_config(n: 700));
       final fanPictures = _pictures(fan);
       final fanPixels = await _pixels(tester, fan);
       addTearDown(() => ui.Picture.onCreate = null);
       ui.Picture.onCreate = (_) {};
-      final ordinary = acquireChart(_config(n: 700));
+      final ordinary = acquireChartRoot(_config(n: 700));
       final ordinaryPictures = _pictures(ordinary);
       ui.Picture.onCreate = null;
       expect(fanPictures, lessThan(ordinaryPictures));
@@ -497,8 +498,10 @@ void main() {
 
   group('the current path after the scale', () {
     testWidgets('is the path of the last angle line', (tester) async {
-      final fan = acquireChart(_config());
-      final ordinary = acquireChart(_config(scaleType: 'fanOrdinaryRadial'));
+      final fan = acquireChartRoot(_config());
+      final ordinary = acquireChartRoot(
+        _config(scaleType: 'fanOrdinaryRadial'),
+      );
       final scale = _scaleOf(fan);
       final ordinaryScale = _scaleOf(ordinary);
       scale.draw(fan.chartArea);

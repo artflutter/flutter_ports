@@ -329,7 +329,7 @@ List<Object?> _items(String type, int round, int length) => [
     },
 ];
 
-Map<String, Object?> _config(
+ChartConfigurationScope _config(
   String type, {
   required String id,
   List<Plugin<Object?>> plugins = const [],
@@ -362,9 +362,9 @@ Map<String, Object?> _config(
     },
     _ => <String, Object?>{},
   };
-  return {
-    'type': id,
-    'data': <String, Object?>{
+  final config = ChartConfigurationScope()
+    ..type = id
+    ..data = mergeExtra(ChartDataScope(), {
       if (type != 'scatter' && type != 'bubble')
         'labels': <Object?>[for (var i = 0; i < length; i++) 'item $i'],
       'datasets': <Object?>[
@@ -383,8 +383,8 @@ Map<String, Object?> _config(
             ...dataset,
           },
       ],
-    },
-    'options': <String, Object?>{
+    })
+    ..options = mergeExtra(ChartOptionsScope(), {
       'responsive': false,
       'animation': false,
       'events': <String>[],
@@ -395,12 +395,12 @@ Map<String, Object?> _config(
       },
       if (scales.isNotEmpty) 'scales': scales,
       ...options,
-    },
-    if (plugins.isNotEmpty) 'plugins': plugins,
-  };
+    });
+  if (plugins.isNotEmpty) config.plugins = plugins;
+  return config;
 }
 
-Chart _chart(Map<String, Object?> config) {
+Chart _chart(ChartConfigurationScope config) {
   final chart = Chart(
     UiCanvasElement(width: 640, height: 400),
     withParsedDataItems(config),
@@ -410,7 +410,7 @@ Chart _chart(Map<String, Object?> config) {
 }
 
 void _replaceData(
-  Map<String, Object?> config,
+  ChartConfigurationScope config,
   String type,
   int round, {
   int? length,
@@ -441,7 +441,7 @@ const _refIds = {
 List<String> _run(
   String type,
   String id, {
-  required void Function(Chart chart, Map<String, Object?> cfg, String type)
+  required void Function(Chart chart, ChartConfigurationScope cfg, String type)
   steps,
   Map<String, Object?> dataset = const {},
   Map<String, Object?> options = const {},
@@ -511,7 +511,7 @@ List<String> _run(
   return trace;
 }
 
-void _rounds(Chart chart, Map<String, Object?> cfg, String type) {
+void _rounds(Chart chart, ChartConfigurationScope cfg, String type) {
   for (var round = 1; round <= 3; round++) {
     _replaceData(cfg, type, round);
     chart.update(UpdateMode.none);
@@ -528,7 +528,7 @@ void _rounds(Chart chart, Map<String, Object?> cfg, String type) {
 
 void _expectTwin(
   String type, {
-  void Function(Chart chart, Map<String, Object?> cfg, String type) steps =
+  void Function(Chart chart, ChartConfigurationScope cfg, String type) steps =
       _rounds,
   Map<String, Object?> dataset = const {},
   Map<String, Object?> options = const {},
@@ -780,7 +780,7 @@ void main() {
       for (final id in ['scatter', 'ref-scatter']) {
         var count = 0;
         final config = _config('scatter', id: id);
-        final data = config['data']! as Map<String, Object?>;
+        final data = config['data']! as ChartDataScope;
         final dataset =
             (data['datasets']! as List<Object?>)[0]! as Map<String, Object?>;
         final observed = _ObservedMap(Map.of(dataset));
@@ -892,7 +892,7 @@ void main() {
     });
 
     test('a partial loop keeps its writes: the visible range', () {
-      void steps(Chart chart, Map<String, Object?> cfg, String type) {
+      void steps(Chart chart, ChartConfigurationScope cfg, String type) {
         for (var round = 1; round <= 3; round++) {
           chart.update(UpdateMode.none);
         }
@@ -962,7 +962,7 @@ void main() {
     });
 
     test('other modes keep the writes of the loop', () {
-      void steps(Chart chart, Map<String, Object?> cfg, String type) {
+      void steps(Chart chart, ChartConfigurationScope cfg, String type) {
         for (final mode in ['default', 'resize', 'show', 'reset']) {
           _replaceData(cfg, type, mode.length);
           chart.update(UpdateMode(mode));
@@ -973,7 +973,7 @@ void main() {
     });
 
     test('an updateData call has the contexts of a full update', () {
-      void steps(Chart chart, Map<String, Object?> cfg, String type) {
+      void steps(Chart chart, ChartConfigurationScope cfg, String type) {
         for (var round = 1; round <= 3; round++) {
           _replaceData(cfg, type, round);
           chart.updateData();

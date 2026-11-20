@@ -947,7 +947,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `tool/reference/fixtures_reference.mjs` from the upstream sources (`test:fixtures:sankey`).
     `test/support/fake_context.dart` is the context of the two element unit tests.
     `test/port/public_library_test.dart` imports the library next to the app library of the host
-    and `material_ui.dart`, and draws a chart of `SankeyDataPoint` items in a `ChartView.raw`.
+    and `material_ui.dart`, and draws a typed `ChartView` with a `SankeyDataset` of `SankeyDataPoint` items.
     `test/port/sankey_dataset_test.dart` draws each typed case and its raw twin and compares the
     nodes, the flows and the draw calls, also of a hovered flow.
     `test/port/lib/layout_test.dart`, `test/port/controller_test.dart` and

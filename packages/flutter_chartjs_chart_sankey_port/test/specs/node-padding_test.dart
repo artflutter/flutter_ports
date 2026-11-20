@@ -10,50 +10,44 @@ import 'package:flutter_test/flutter_test.dart';
 
 // Same energy data as resize.spec.js: column 0 has five nodes (Oil, Natural
 // gas, Coal, Nuclear, Renewables), so nodePadding gaps actually show up.
-List<Object?> _data() => <Object?>[
-  <String, Object?>{'flow': 15, 'from': 'Oil', 'to': 'Fossil fuels'},
-  <String, Object?>{'flow': 20, 'from': 'Natural gas', 'to': 'Fossil fuels'},
-  <String, Object?>{'flow': 25, 'from': 'Coal', 'to': 'Fossil fuels'},
-  <String, Object?>{'flow': 60, 'from': 'Fossil fuels', 'to': 'Energy'},
-  <String, Object?>{'flow': 10, 'from': 'Nuclear', 'to': 'Energy'},
-  <String, Object?>{'flow': 30, 'from': 'Renewables', 'to': 'Energy'},
-  <String, Object?>{'flow': 40, 'from': 'Energy', 'to': 'Electricity'},
-  <String, Object?>{'flow': 35, 'from': 'Energy', 'to': 'Heat'},
-  <String, Object?>{'flow': 25, 'from': 'Energy', 'to': 'Lost'},
+List<SankeyDataPoint> _data() => [
+  const SankeyDataPoint(flow: 15, from: 'Oil', to: 'Fossil fuels'),
+  const SankeyDataPoint(flow: 20, from: 'Natural gas', to: 'Fossil fuels'),
+  const SankeyDataPoint(flow: 25, from: 'Coal', to: 'Fossil fuels'),
+  const SankeyDataPoint(flow: 60, from: 'Fossil fuels', to: 'Energy'),
+  const SankeyDataPoint(flow: 10, from: 'Nuclear', to: 'Energy'),
+  const SankeyDataPoint(flow: 30, from: 'Renewables', to: 'Energy'),
+  const SankeyDataPoint(flow: 40, from: 'Energy', to: 'Electricity'),
+  const SankeyDataPoint(flow: 35, from: 'Energy', to: 'Heat'),
+  const SankeyDataPoint(flow: 25, from: 'Energy', to: 'Lost'),
 ];
 
-Chart _buildSankey(double devicePixelRatio) => acquireChart(
-  {
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{'data': _data(), 'nodePadding': 10},
+Chart _buildSankey(double devicePixelRatio) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      datasets: [
+        SankeyDataset(data: _data(), extra: const {'nodePadding': 10}),
       ],
-    },
-    'options': <String, Object?>{
-      'animation': false,
-      'devicePixelRatio': devicePixelRatio,
-      'maintainAspectRatio': false,
-    },
-    'type': 'sankey',
-  },
+      animation: ChartAnimation.none,
+      maintainAspectRatio: false,
+      extra: <String, Object?>{'devicePixelRatio': devicePixelRatio},
+    ),
+  ).lower(),
   {
     'canvas': <String, Object?>{'height': 400, 'width': 800},
   },
 );
 
-Chart _buildSankeyWithPadding(Object? nodePadding) => acquireChart(
-  {
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{'data': _data(), 'nodePadding': nodePadding},
+Chart _buildSankeyWithPadding(Object? nodePadding) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      datasets: [
+        SankeyDataset(data: _data(), extra: {'nodePadding': nodePadding}),
       ],
-    },
-    'options': <String, Object?>{
-      'animation': false,
-      'maintainAspectRatio': false,
-    },
-    'type': 'sankey',
-  },
+      animation: ChartAnimation.none,
+      maintainAspectRatio: false,
+    ),
+  ).lower(),
   {
     'canvas': <String, Object?>{'height': 400, 'width': 800},
   },
@@ -116,10 +110,10 @@ void main() {
       // (pre-pixel, pre-axis-rescale) `y` of each source's flow isolates the
       // padding math from the y-axis's max (which shifts between the two
       // charts below, so pixel positions alone would not be comparable).
-      List<Object?> columnData() => <Object?>[
-        <String, Object?>{'flow': 10, 'from': 'A', 'to': 'Z'},
-        <String, Object?>{'flow': 10, 'from': 'B', 'to': 'Z'},
-        <String, Object?>{'flow': 10, 'from': 'C', 'to': 'Z'},
+      List<SankeyDataPoint> columnData() => [
+        const SankeyDataPoint(flow: 10, from: 'A', to: 'Z'),
+        const SankeyDataPoint(flow: 10, from: 'B', to: 'Z'),
+        const SankeyDataPoint(flow: 10, from: 'C', to: 'Z'),
       ];
 
       // A fixed CSS canvas height, matched by both charts below, makes the
@@ -128,19 +122,18 @@ void main() {
       // so a 30 CSS pixel increase in the B -> C gap is exactly a 3 flow-unit
       // increase in C's parsed y.
       List<double> fromYs(Object? nodePadding) {
-        final chart = acquireChart(
-          {
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': columnData(),
-                  'nodePadding': nodePadding,
-                },
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              datasets: [
+                SankeyDataset(
+                  data: columnData(),
+                  extra: {'nodePadding': nodePadding},
+                ),
               ],
-            },
-            'options': <String, Object?>{'animation': false},
-            'type': 'sankey',
-          },
+              animation: ChartAnimation.none,
+            ),
+          ).lower(),
           {
             'canvas': <String, Object?>{'height': 300, 'width': 300},
           },

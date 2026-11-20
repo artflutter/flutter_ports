@@ -13,22 +13,24 @@ const ChartPaint _red = ChartPaint.solid(Color(0xFFFF0000));
 const ChartPaint _green = ChartPaint.solid(Color(0xFF008000));
 const ChartPaint _orange = ChartPaint.solid(Color(0xFFFFA500));
 
-Chart _chart(Map<String, Object?> dataset) => acquireChart({
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          const SankeyDataPoint(from: 'a', to: 'b', flow: 10),
-          const SankeyDataPoint(from: 'a', to: 'c', flow: 5),
-          const SankeyDataPoint(from: 'b', to: 'c', flow: 10),
-        ],
-        ...dataset,
-      },
-    ],
-  },
-  'options': <String, Object?>{'animation': false},
-  'type': 'sankey',
-});
+Chart _chart(Map<String, Object?> dataset) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      datasets: [
+        SankeyDataset(
+          data: const [
+            SankeyDataPoint(from: 'a', to: 'b', flow: 10),
+            SankeyDataPoint(from: 'a', to: 'c', flow: 5),
+            SankeyDataPoint(from: 'b', to: 'c', flow: 10),
+          ],
+          // Keep the original callbacks for the resolver invocation probes.
+          extra: dataset,
+        ),
+      ],
+      animation: ChartAnimation.none,
+    ),
+  ).lower(),
+);
 
 Color _colorOf(Object? paint) => (paint! as SolidChartPaint).color;
 
