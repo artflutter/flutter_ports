@@ -78,18 +78,21 @@ final List<Sample> lineSamples = [
     title: 'Two datasets',
     note: 'Each dataset is one line and one legend item.',
     child: ChartView(config: twoDatasets),
+    accepted: true,
   ),
   const Sample(
     file: 'tension',
     title: 'Curved line',
     note: 'tension from 0 (straight) to 1.',
     child: ChartView(config: tension),
+    accepted: true,
   ),
   const Sample(
     file: 'monotone',
     title: 'Monotone curve',
     note: 'The monotone mode keeps the curve inside the data range.',
     child: ChartView(config: monotone),
+    accepted: true,
   ),
   const Sample(
     file: 'stepped',
@@ -98,24 +101,28 @@ final List<Sample> lineSamples = [
         'stepped takes a SteppedLine. The Chart.js form `stepped: true` is '
         '.before.',
     child: ChartView(config: stepped),
+    accepted: true,
   ),
   const Sample(
     file: 'dashed',
     title: 'Dashed line',
     note: 'borderDash in pixels, with the Flutter StrokeCap and StrokeJoin.',
     child: ChartView(config: dashed),
+    accepted: true,
   ),
   const Sample(
     file: 'fill_origin',
     title: 'Area to the origin',
     note: 'fill takes a FillTarget. backgroundColor is the area color.',
     child: ChartView(config: fillOrigin),
+    accepted: true,
   ),
   const Sample(
     file: 'fill_between',
     title: 'Area between two lines',
     note: 'FillTarget.toPrevious fills to the dataset before this one.',
     child: ChartView(config: fillBetween),
+    accepted: true,
   ),
   Sample(
     file: 'fill_split',
@@ -124,6 +131,7 @@ final List<Sample> lineSamples = [
         'split gives two colors. It is a method, so the config is not '
         'const.',
     child: ChartView(config: fillSplit),
+    accepted: true,
   ),
   const Sample(
     file: 'stacked',
