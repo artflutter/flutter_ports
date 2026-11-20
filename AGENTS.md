@@ -567,6 +567,11 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `lib/migrate/shadcn/shadcn_data.dart` are MIT copies: the
     `LICENSE` of the app and `REUSE.toml` name their holders.
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
+- `apps/chartjs_ergonomics`: atomic samples of the typed API for a review of its ergonomics (web and
+  macOS). One scroll page: each card shows one feature, its chart and the code region `sample` of
+  its file in `lib/samples/line/` (an asset). `lib/samples/line/index.dart` lists the samples; an
+  accepted sample (`accepted: true`) is a closed panel. `test/samples_test.dart` makes sure that each
+  file has its region and its entry, and that each sample draws with no error.
 - `apps/chartjs_supabase_dashboard`: a proof of concept of a live dashboard (web and macOS): one
   typed `ChartView` line chart on a time axis, on the Supabase table `metric_points`, with the
   pre-release `supabase_flutter` 3.0.0-dev.17 (an exact pin) and its typed queries: the Supabase
@@ -1804,7 +1809,8 @@ sankey ADRs are proposed. The doc paths are relative to
   `gallery-android`, `gallery-ios`, `upstream-pin`, `reuse` and `dco`. A `workflow_dispatch` run has the inputs `update_goldens` and
   `flutter_version` (`test:goldens`).
 - Releases: `.github/workflows/pages.yaml` publishes `apps/chartjs_docs` at
-  <https://artflutter.github.io/flutter_ports/docs/>, on the newest stable Flutter. If the docs do not build,
+  <https://artflutter.github.io/flutter_ports/docs/>, on the newest stable Flutter. It also publishes `apps/chartjs_ergonomics` at
+  <https://artflutter.github.io/flutter_ports/ergonomics/>, on the newest stable Flutter. If the docs do not build,
   their page shows that result, and the other pages deploy. The workflow also publishes
   `apps/chart_benchmark_lab` once for each Flutter
   channel, at <https://artflutter.github.io/flutter_ports/lab-stable/>, `lab-beta/` and `lab-master/`.

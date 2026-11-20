@@ -3,7 +3,10 @@
 Atomic samples of the typed API of `flutter_chartjs_port`. Each sample shows one feature. The page shows
 the chart of each sample and the code of the chart under it. The app is for a review of the API by eye.
 
-The first chart type is the line chart.
+The first chart type is the line chart. An accepted sample (`accepted: true` in
+`lib/samples/line/index.dart`) shows as a closed panel with a check mark.
+
+The workflow `pages` publishes the app at <https://artflutter.github.io/flutter_ports/ergonomics/>.
 
 ## Run
 
