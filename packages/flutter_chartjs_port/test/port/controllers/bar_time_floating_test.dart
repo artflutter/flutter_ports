@@ -117,7 +117,7 @@ Object _scales(Chart chart) => [
 
 final int _t0 = DateTime.utc(2026).millisecondsSinceEpoch;
 
-Map<String, Object?> _timeConfig({
+ChartConfigurationScope _timeConfig({
   required String type,
   required bool horizontal,
   required bool visible,
@@ -126,11 +126,11 @@ Map<String, Object?> _timeConfig({
 }) {
   final index = horizontal ? 'y' : 'x';
   final value = horizontal ? 'x' : 'y';
-  return {
-    'type': 'bar',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
+  return (ChartConfigurationScope()
+    ..type = 'bar'
+    ..data = (ChartDataScope()
+      ..datasets = <Object?>[
+        mergeExtra(BarControllerDatasetOptionsScope(), {
           'data': <Object?>[
             for (var i = 0; i < 12; i++)
               <String, Object?>{
@@ -146,28 +146,29 @@ Map<String, Object?> _timeConfig({
           'borderWidth': 1.0,
           'borderSkipped': BorderSkippedEdge.start,
           ...extra,
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'animation': false,
-      'indexAxis': horizontal ? const YAxis() : const XAxis(),
-      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-      'scales': <String, Object?>{
-        index: <String, Object?>{
-          'type': type,
-          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
-        },
-        value: <String, Object?>{
-          'type': 'linear',
-          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
-          'min': -4.0,
-          'max': 12.0,
+        }),
+      ])
+    ..options = mergeExtra(
+      ChartOptionsScope()
+        ..responsive = false
+        ..animation = false,
+      {
+        'indexAxis': horizontal ? const YAxis() : const XAxis(),
+        'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+        'scales': <String, Object?>{
+          index: <String, Object?>{
+            'type': type,
+            'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
+          },
+          value: <String, Object?>{
+            'type': 'linear',
+            'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
+            'min': -4.0,
+            'max': 12.0,
+          },
         },
       },
-    },
-  };
+    ));
 }
 
 List<String> _labels(int n) => [for (var i = 0; i < n; i++) 'L$i'];
@@ -200,7 +201,7 @@ List<Object?> _floatingData(int step, {bool gaps = false}) => <Object?>[
   7,
 ];
 
-Map<String, Object?> _floatingConfig({
+ChartConfigurationScope _floatingConfig({
   required bool horizontal,
   required bool visible,
   required int step,
@@ -210,38 +211,39 @@ Map<String, Object?> _floatingConfig({
 }) {
   final index = horizontal ? 'y' : 'x';
   final value = horizontal ? 'x' : 'y';
-  return {
-    'type': 'bar',
-    'data': <String, Object?>{
-      'labels': _labels(labels),
-      'datasets': <Object?>[
-        <String, Object?>{
+  return (ChartConfigurationScope()
+    ..type = 'bar'
+    ..data = (ChartDataScope()
+      ..labels = _labels(labels)
+      ..datasets = <Object?>[
+        mergeExtra(BarControllerDatasetOptionsScope(), {
           'data': data,
           'backgroundColor': const ChartPaint.solid(ui.Color(0x803366AA)),
           'borderWidth': 1.0,
           ...extra,
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'animation': false,
-      'indexAxis': horizontal ? const YAxis() : const XAxis(),
-      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-      'scales': <String, Object?>{
-        index: <String, Object?>{
-          'type': 'category',
-          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
-        },
-        value: <String, Object?>{
-          'type': 'linear',
-          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
-          'min': -6.0,
-          'max': 10.0,
+        }),
+      ])
+    ..options = mergeExtra(
+      ChartOptionsScope()
+        ..responsive = false
+        ..animation = false,
+      {
+        'indexAxis': horizontal ? const YAxis() : const XAxis(),
+        'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+        'scales': <String, Object?>{
+          index: <String, Object?>{
+            'type': 'category',
+            'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
+          },
+          value: <String, Object?>{
+            'type': 'linear',
+            'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
+            'min': -6.0,
+            'max': 10.0,
+          },
         },
       },
-    },
-  };
+    ));
 }
 
 void main() {
@@ -262,7 +264,7 @@ void main() {
           test(
             'bulk bars equal the ordinary loop $type/$horizontal/$visible',
             () {
-              Map<String, Object?> config(int step) => _timeConfig(
+              ChartConfigurationScope config(int step) => _timeConfig(
                 type: type,
                 horizontal: horizontal,
                 visible: visible,
@@ -277,12 +279,11 @@ void main() {
                 for (final cfg in [ca, cb]) {
                   final dataset =
                       (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
-                          as Map<String, Object?>;
+                          as JsObjectFace;
                   dataset['data'] =
-                      (((config(step)['data']!
-                                  as Map<String, Object?>)['datasets']!
+                      (((config(step)['data']! as ChartDataScope)['datasets']!
                               as List<Object?>)[0]!
-                          as Map<String, Object?>)['data'];
+                          as JsObjectFace)['data'];
                 }
                 if (step == 2) {
                   a.toggleDataVisibility(3);
@@ -348,7 +349,7 @@ void main() {
     });
 
     test('floating bars on a time axis equal the ordinary loop', () {
-      Map<String, Object?> config() {
+      ChartConfigurationScope config() {
         final cfg = _timeConfig(
           type: 'time',
           horizontal: false,
@@ -357,7 +358,7 @@ void main() {
         );
         final dataset =
             (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
-                as Map<String, Object?>;
+                as JsObjectFace;
         final points = dataset['data']! as List<Object?>;
         for (var i = 1; i < points.length; i++) {
           final point = points[i]! as Map<String, Object?>;
@@ -420,7 +421,7 @@ void main() {
                 for (final cfg in [ca, cb]) {
                   final dataset =
                       (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
-                          as Map<String, Object?>;
+                          as JsObjectFace;
                   dataset['data'] = _floatingData(step, gaps: gaps);
                 }
                 if (step == 2) {
@@ -629,7 +630,7 @@ void main() {
     });
 
     test('indexed colors on floating bars equal the ordinary loop', () {
-      Map<String, Object?> config() => _floatingConfig(
+      ChartConfigurationScope config() => _floatingConfig(
         horizontal: false,
         visible: true,
         step: 1,

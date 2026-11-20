@@ -2893,3 +2893,12 @@ uses typed `ChartView` configs. Plugin dispatch and legend builders use typed sc
 generated reference data and deliberately invalid inputs remain unchanged. No production
 canvas code or deferred cut changes. The named references, inventory, tests of §2.6 and §3.5,
 and estimates remain unchanged. No trigger occurred.
+
+## Typed controller guard configs, 2026-11-20
+
+`test/port/controllers/bar_bulk_update_test.dart` now builds typed configuration, data,
+dataset and option scopes. Its update-path and element-write assertions remain unchanged.
+The batch also migrates nine bar, point, arc and gap guard suites, retaining custom user
+Maps where their reads or identity are the subject of a probe. No production canvas code
+or deferred cut changes. The named references, inventory, tests of §2.6 and §3.5, and
+estimates remain unchanged. No trigger occurred.

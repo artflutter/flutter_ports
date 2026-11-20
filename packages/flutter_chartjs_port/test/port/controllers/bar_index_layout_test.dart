@@ -84,49 +84,51 @@ class _ValuesController(super.chart, super.datasetIndex, super.newTarget)
   List<double> getAllParsedValues(IScale scale) => values;
 }
 
-Map<String, Object?> _config({
+// Keep dataset Maps for the user-read and dataset-key mutation probes.
+ChartConfigurationScope _config({
   bool horizontal = false,
   bool skipNull = false,
-}) => {
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <String>['a', 'b', 'c', 'd'],
-    'datasets': <Object?>[
+}) => (ChartConfigurationScope()
+  ..type = 'bar'
+  ..data = (ChartDataScope()
+    ..labels = <String>['a', 'b', 'c', 'd']
+    ..datasets = <Object?>[
       <String, Object?>{
         'data': <double>[1, 2, 3, 4],
         'skipNull': skipNull,
         'backgroundColor': const ChartPaint.solid(ui.Color(0x803366AA)),
         'borderWidth': 1.0,
       },
-    ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'indexAxis': horizontal ? const YAxis() : const XAxis(),
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': horizontal ? 'linear' : 'category',
-        'display': ScaleDisplay.off,
-        if (horizontal) ...{'min': 0.0, 'max': 10.0},
-      },
-      'y': <String, Object?>{
-        'type': horizontal ? 'category' : 'linear',
-        'display': ScaleDisplay.off,
-        if (!horizontal) ...{'min': 0.0, 'max': 10.0},
+    ])
+  ..options = mergeExtra(
+    ChartOptionsScope()
+      ..responsive = false
+      ..animation = false,
+    {
+      'indexAxis': horizontal ? const YAxis() : const XAxis(),
+      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+      'scales': <String, Object?>{
+        'x': <String, Object?>{
+          'type': horizontal ? 'linear' : 'category',
+          'display': ScaleDisplay.off,
+          if (horizontal) ...{'min': 0.0, 'max': 10.0},
+        },
+        'y': <String, Object?>{
+          'type': horizontal ? 'category' : 'linear',
+          'display': ScaleDisplay.off,
+          if (!horizontal) ...{'min': 0.0, 'max': 10.0},
+        },
       },
     },
-  },
-};
-List<Object?> _datasets(Map<String, Object?> cfg) =>
+  ));
+List<Object?> _datasets(ChartConfigurationScope cfg) =>
     jsGet(cfg['data'], 'datasets')! as List<Object?>;
-Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
+Map<String, Object?> _dataset(ChartConfigurationScope cfg) =>
     _datasets(cfg)[0]! as Map<String, Object?>;
-Map<String, Object?> _options(Map<String, Object?> cfg) =>
-    cfg['options']! as Map<String, Object?>;
-Map<String, Object?> _scales(Map<String, Object?> cfg) =>
-    _options(cfg)['scales']! as Map<String, Object?>;
+JsObjectFace _options(ChartConfigurationScope cfg) =>
+    cfg['options']! as JsObjectFace;
+JsObjectFace _scales(ChartConfigurationScope cfg) =>
+    _options(cfg)['scales']! as JsObjectFace;
 
 Chart _chart(Object config, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
@@ -311,8 +313,7 @@ void main() {
     final ca = _config(skipNull: true);
     final cb = _config(skipNull: true);
     for (final cfg in [ca, cb]) {
-      (_scales(cfg)['x']! as Map<String, Object?>)['type'] =
-          'observed-bar-category';
+      (_scales(cfg)['x']! as JsObjectFace)['type'] = 'observed-bar-category';
     }
     final a = _chart(ca);
     final b = _chart(cb, reference: true);

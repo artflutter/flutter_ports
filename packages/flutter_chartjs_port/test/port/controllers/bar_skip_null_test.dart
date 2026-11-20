@@ -20,7 +20,8 @@ const _colors = [
 
 /// A bar chart with `skipNull`. [dataset] goes into each dataset, and
 /// [each] gives more keys of one dataset.
-Map<String, Object?> _config({
+// Keep the supplied data lists and custom dataset Maps for the read probes.
+ChartConfigurationScope _config({
   required List<Object?> labels,
   required List<List<Object?>> data,
   bool stacked = false,
@@ -44,11 +45,11 @@ Map<String, Object?> _config({
     'max': 60.0,
     ...valueScale,
   };
-  return {
-    'type': 'bar',
-    'data': <String, Object?>{
-      'labels': labels,
-      'datasets': <Object?>[
+  return (ChartConfigurationScope()
+    ..type = 'bar'
+    ..data = (ChartDataScope()
+      ..labels = labels
+      ..datasets = <Object?>[
         for (var d = 0; d < data.length; d++)
           _wrap(customMaps, <String, Object?>{
             'data': data[d],
@@ -58,20 +59,21 @@ Map<String, Object?> _config({
             ...dataset,
             ...?each?.call(d),
           }),
-      ],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'animation': false,
-      if (horizontal) 'indexAxis': const YAxis(),
-      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-      'scales': <String, Object?>{
-        'x': horizontal ? value : index,
-        'y': horizontal ? index : value,
-        ...extraScales,
+      ])
+    ..options = mergeExtra(
+      ChartOptionsScope()
+        ..responsive = false
+        ..animation = false,
+      {
+        if (horizontal) 'indexAxis': const YAxis(),
+        'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+        'scales': <String, Object?>{
+          'x': horizontal ? value : index,
+          'y': horizontal ? index : value,
+          ...extraScales,
+        },
       },
-    },
-  };
+    ));
 }
 
 /// A Map of the app whose reads run code of the app.
@@ -105,7 +107,7 @@ final class _ReadingValue(final void Function() hook) {
 Map<String, Object?> _wrap(bool custom, Map<String, Object?> map) =>
     custom ? _CustomMap(map) : map;
 
-Map<String, Object?> _dataset(Map<String, Object?> cfg, int index) =>
+Map<String, Object?> _dataset(ChartConfigurationScope cfg, int index) =>
     (jsGet(cfg['data'], 'datasets')! as List<Object?>)[index]!
         as Map<String, Object?>;
 
@@ -168,7 +170,7 @@ List<Object?> _holes(int d, int step, [int count = 16]) => <Object?>[
 /// dataset in the last one. It gives the bars after each step and the count
 /// of the visits of parsed items in the three updates.
 ({List<Object?> seen, int visits}) _run(
-  Map<String, Object?> Function(List<Object?> Function(int d, int step) data)
+  ChartConfigurationScope Function(List<Object?> Function(int d, int step) data)
   config,
   int datasets,
   List<Object?> Function(int d, int step) data,
@@ -193,7 +195,7 @@ List<Object?> _holes(int d, int step, [int count = 16]) => <Object?>[
   return (seen: seen, visits: BarSkipNullIndex.debugVisits - before);
 }
 
-typedef _Config = Map<String, Object?> Function(
+typedef _Config = ChartConfigurationScope Function(
   List<Object?> Function(int d, int step) data,
 );
 
@@ -223,7 +225,7 @@ void _modeTwin(
 /// A random bar chart of the review of 2026-11-16: category and linear
 /// index scales, labels with repeats, object and array data, named stacks,
 /// hidden and line datasets.
-Map<String, Object?> _random(math.Random r) {
+ChartConfigurationScope _random(math.Random r) {
   final datasets = 1 + r.nextInt(4);
   final count = r.nextInt(11);
   final linearIndex = r.nextInt(10) < 3;
@@ -306,20 +308,24 @@ Map<String, Object?> _random(math.Random r) {
     if (stackedChoice != 2)
       'stacked': stackedChoice == 0 ? StackMode.on : StackMode.off,
   };
-  return {
-    'type': 'bar',
-    'data': <String, Object?>{'labels': labels, 'datasets': sets},
-    'options': <String, Object?>{
-      'responsive': false,
-      'animation': false,
-      if (horizontal) 'indexAxis': const YAxis(),
-      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-      'scales': <String, Object?>{
-        'x': horizontal ? valueScale : index,
-        'y': horizontal ? index : valueScale,
+  return (ChartConfigurationScope()
+    ..type = 'bar'
+    ..data = (ChartDataScope()
+      ..labels = labels
+      ..datasets = sets)
+    ..options = mergeExtra(
+      ChartOptionsScope()
+        ..responsive = false
+        ..animation = false,
+      {
+        if (horizontal) 'indexAxis': const YAxis(),
+        'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+        'scales': <String, Object?>{
+          'x': horizontal ? valueScale : index,
+          'y': horizontal ? index : valueScale,
+        },
       },
-    },
-  };
+    ));
 }
 
 void main() {
@@ -679,7 +685,9 @@ void main() {
   });
 
   test('a dataset of another type keeps the index', () {
-    Map<String, Object?> config(List<Object?> Function(int d, int step) data) {
+    ChartConfigurationScope config(
+      List<Object?> Function(int d, int step) data,
+    ) {
       final cfg = _config(
         labels: _labels(16),
         data: [for (var d = 0; d < 3; d++) data(d, 0)],
@@ -695,16 +703,17 @@ void main() {
   });
 
   test('hidden scales, as in the bench window: the index engages', () {
-    Map<String, Object?> config(List<Object?> Function(int d, int step) data) {
+    ChartConfigurationScope config(
+      List<Object?> Function(int d, int step) data,
+    ) {
       final cfg = _config(
         labels: _labels(16),
         data: [for (var d = 0; d < 3; d++) data(d, 0)],
       );
       final scales =
-          (cfg['options']! as Map<String, Object?>)['scales']!
-              as Map<String, Object?>;
-      for (final scale in scales.values) {
-        (scale! as Map<String, Object?>)['display'] = ScaleDisplay.off;
+          (cfg['options']! as JsObjectFace)['scales']! as OptionScope;
+      for (final scale in scales.jsKeys().map(scales.jsRead)) {
+        (scale! as JsObjectFace)['display'] = ScaleDisplay.off;
       }
       return cfg;
     }

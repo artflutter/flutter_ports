@@ -39,7 +39,7 @@ Object? _item(String form, (num, num?) point) {
   };
 }
 
-Map<String, Object?> _config(
+ChartConfigurationScope _config(
   String type, {
   String form = 'parsed',
   Object? spanGaps = undefined,
@@ -47,31 +47,33 @@ Map<String, Object?> _config(
   Map<String, Object?> dataset = const {},
   Map<String, Object?> x = const {'type': 'linear'},
   Map<String, Object?> y = const {'type': 'linear'},
-}) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
+}) => (ChartConfigurationScope()
+  ..type = type
+  ..data = mergeExtra(ChartDataScope(), {
     if (x['type'] == 'category')
       'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g'],
     'datasets': <Object?>[
-      <String, Object?>{
+      mergeExtra(LineControllerDatasetOptionsScope(), {
         'data': data ?? <Object?>[for (final p in _points) _item(form, p)],
         if (!identical(spanGaps, undefined)) 'spanGaps': spanGaps,
         ...dataset,
-      },
+      }),
     ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'events': <String>[],
-    if (form != 'parsed') 'parsing': false,
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{...x},
-      'y': <String, Object?>{...y},
+  })
+  ..options = mergeExtra(
+    ChartOptionsScope()
+      ..responsive = false
+      ..animation = false,
+    {
+      'events': <String>[],
+      if (form != 'parsed') 'parsing': false,
+      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+      'scales': <String, Object?>{
+        'x': <String, Object?>{...x},
+        'y': <String, Object?>{...y},
+      },
     },
-  },
-};
+  ));
 
 /// The point properties that the loop writes: x, y, skip and stop.
 List<Object?> _observe(Chart chart) => [
@@ -91,7 +93,7 @@ List<bool?> _stops(Chart chart) => [
 /// with the gap reads, and the number of gap tests that took a held x in
 /// its update.
 ({List<Object?> observed, int takes, Chart chart}) _twins(
-  Map<String, Object?> Function() config, {
+  ChartConfigurationScope Function() config, {
   void Function(Chart chart)? before,
 }) {
   final observed = <List<Object?>>[];
@@ -189,6 +191,19 @@ class _UserPoint([final void Function()? onY]) extends PointElement {
 }
 
 void main() {
+  // These guard cases deliberately give scalar strings to typed options.
+  setUp(() {
+    final saved = foreignAudit;
+    foreignAudit = (owner, key, raw) {
+      if (owner == 'LineControllerDatasetOptionsScope' &&
+          (key == 'spanGaps' && raw == '2')) {
+        return;
+      }
+      saved?.call(owner, key, raw);
+    };
+    addTearDown(() => foreignAudit = saved);
+  });
+
   TestWidgetsFlutterBinding.ensureInitialized();
 
   const stopsOf1_5 = [false, false, true, false, false, true, false];
@@ -344,7 +359,7 @@ void main() {
           );
           _WritingScale.data =
               (jsGet(cfg['data'], 'datasets')! as List<Object?>)
-                      .cast<Map<String, Object?>>()
+                      .cast<JsObjectFace>()
                       .first['data']!
                   as List<Object?>;
           return cfg;

@@ -159,52 +159,54 @@ List<Object?> _points({double step = 0}) => [
     DataPoint.bubble(i.toDouble(), (i - 3).toDouble() + step, 2.0 + i),
 ];
 
-Map<String, Object?> _config({
+ChartConfigurationScope _config({
   String type = 'bubble',
   Object? parsing,
   List<Object?>? data,
   Object? backgroundColor = blue,
   Object? borderColor = blue,
   Map<String, Object?> dataset = const {},
-}) => withParsedDataItems({
-  'type': type,
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': data ?? _maps(),
-        'backgroundColor': backgroundColor,
-        'borderColor': borderColor,
-        'borderWidth': 1.0,
-        ...dataset,
+}) => withParsedDataItems(
+  ChartConfigurationScope()
+    ..type = type
+    ..data = (ChartDataScope()
+      ..datasets = <Object?>[
+        mergeExtra(BubbleControllerDatasetOptionsScope(), {
+          'data': data ?? _maps(),
+          'backgroundColor': backgroundColor,
+          'borderColor': borderColor,
+          'borderWidth': 1.0,
+          ...dataset,
+        }),
+      ])
+    ..options = mergeExtra(
+      ChartOptionsScope()
+        ..responsive = false
+        ..animation = false,
+      {
+        'parsing': ?parsing,
+        'events': <String>[],
+        'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+        'scales': <String, Object?>{
+          'x': <String, Object?>{
+            'type': 'linear',
+            'display': ScaleDisplay.off,
+            'min': 0.0,
+            'max': 8.0,
+          },
+          'y': <String, Object?>{
+            'type': 'linear',
+            'display': ScaleDisplay.off,
+            'min': -5.0,
+            'max': 10.0,
+          },
+        },
       },
-    ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'parsing': ?parsing,
-    'events': <String>[],
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': 'linear',
-        'display': ScaleDisplay.off,
-        'min': 0.0,
-        'max': 8.0,
-      },
-      'y': <String, Object?>{
-        'type': 'linear',
-        'display': ScaleDisplay.off,
-        'min': -5.0,
-        'max': 10.0,
-      },
-    },
-  },
-});
+    ),
+);
 
-Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
-    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
-        as Map<String, Object?>;
+JsObjectFace _dataset(ChartConfigurationScope cfg) =>
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]! as JsObjectFace;
 
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
@@ -216,8 +218,8 @@ Chart _chart(Object cfg, {bool reference = false}) {
 }
 
 /// The pair of charts of one twin: native, then the ordinary reference.
-List<Map<String, Object?>> _pair(
-  Map<String, Object?> Function(String type) config,
+List<ChartConfigurationScope> _pair(
+  ChartConfigurationScope Function(String type) config,
 ) => [config('bubble'), config('referenceBubble')];
 
 List<_ProbePoint> _probes(Chart chart) {
@@ -262,6 +264,21 @@ Object _observe(Chart chart) {
 }
 
 void main() {
+  // These guard cases deliberately give scalar strings to typed options.
+  setUp(() {
+    final saved = foreignAudit;
+    foreignAudit = (owner, key, raw) {
+      if (owner == 'BubbleControllerDatasetOptionsScope' &&
+          ((key == 'radius' && raw == '5') ||
+              (key == 'hoverRadius' && raw == '7') ||
+              (key == 'borderWidth' && raw == '3'))) {
+        return;
+      }
+      saved?.call(owner, key, raw);
+    };
+    addTearDown(() => foreignAudit = saved);
+  });
+
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
     BubbleController.jsClass,
@@ -383,7 +400,7 @@ void main() {
       withClock(Clock(() => now), () {
         final configs = _pair((type) {
           final cfg = _config(type: type);
-          (cfg['options']! as Map)['animation'] = animation;
+          (cfg['options']! as JsObjectFace)['animation'] = animation;
           cfg['platform'] = _AnimatedPlatform.value;
           return cfg;
         });
@@ -1042,8 +1059,9 @@ void main() {
       final states = <Object>[];
       for (final type in ['bubble', 'referenceBubble']) {
         final cfg = _config(type: type);
-        final scales = (cfg['options']! as Map)['scales']! as Map;
-        (scales['y']! as Map)['type'] = 'bubble-custom-scale';
+        final scales =
+            (cfg['options']! as JsObjectFace)['scales']! as JsObjectFace;
+        (scales['y']! as JsObjectFace)['type'] = 'bubble-custom-scale';
         final chart = _chart(cfg, reference: type != 'bubble');
         final probes = _probes(chart);
         final meta = chart.getDatasetMeta(0);

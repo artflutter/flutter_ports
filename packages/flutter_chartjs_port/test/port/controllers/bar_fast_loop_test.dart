@@ -74,7 +74,8 @@ const _colors = <ui.Color>[
   ui.Color(0xff9933aa),
 ];
 
-Map<String, Object?> _config({
+// Dataset Maps remain replaceable by the counting Maps used by the guards.
+ChartConfigurationScope _config({
   int datasets = 1,
   bool horizontal = false,
   bool visible = true,
@@ -84,11 +85,11 @@ Map<String, Object?> _config({
   Map<String, Object?> indexScale = const {},
   Map<String, Object?> valueScale = const {},
   Map<String, Object?> scales = const {},
-}) => {
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <String>['a', 'b', 'c', 'd', 'e', 'f'],
-    'datasets': <Object?>[
+}) => (ChartConfigurationScope()
+  ..type = 'bar'
+  ..data = (ChartDataScope()
+    ..labels = <String>['a', 'b', 'c', 'd', 'e', 'f']
+    ..datasets = <Object?>[
       for (var k = 0; k < datasets; k++)
         <String, Object?>{
           'data': <Object?>[1.0 + k, 0.0, -0.0, -2.0 - k, 3.0, 4.0 + k],
@@ -96,9 +97,8 @@ Map<String, Object?> _config({
           'borderWidth': 1.0,
           ...?extra?.call(k),
         },
-    ],
-  },
-  'options': <String, Object?>{
+    ])
+  ..options = mergeExtra(ChartOptionsScope(), {
     'responsive': false,
     if (hasAnimation) 'animation': animation,
     'indexAxis': horizontal ? const YAxis() : const XAxis(),
@@ -118,10 +118,9 @@ Map<String, Object?> _config({
       },
       ...scales,
     },
-  },
-};
+  }));
 
-List<Object?> _datasets(Map<String, Object?> cfg) =>
+List<Object?> _datasets(ChartConfigurationScope cfg) =>
     jsGet(cfg['data'], 'datasets')! as List<Object?>;
 
 Chart _chart(Object cfg, {bool reference = false, bool upstream = false}) {
@@ -201,7 +200,7 @@ Object _stackTables(Chart chart) {
 }
 
 /// New values in both configs, the same in both.
-void _step(List<Map<String, Object?>> configs, int step) {
+void _step(List<ChartConfigurationScope> configs, int step) {
   for (final cfg in configs) {
     for (final (k, dataset) in _datasets(cfg).indexed) {
       final data = (dataset! as Map<String, Object?>)['data'];
@@ -280,7 +279,7 @@ void main() {
     });
 
     test('a color for each bar keeps the mode in the context of each bar', () {
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         extra: (_) => {
           'backgroundColor': <ChartPaint>[
             const ChartPaint.solid(ui.Color(0xffff0000)),
@@ -390,7 +389,7 @@ void main() {
     }
 
     test('two index axes: the axis count and the axis number of the plan', () {
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         datasets: 4,
         extra: (k) => {if (k == 1) 'xAxisID': 'x2', if (k == 2) 'xAxisID': 'x'},
         scales: {
@@ -415,7 +414,7 @@ void main() {
     });
 
     test('stack names with stacked false on both scales', () {
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         datasets: 4,
         extra: (k) => {'stack': k < 2 ? 'left' : 'right'},
         indexScale: {'stacked': StackMode.off},
@@ -434,7 +433,7 @@ void main() {
     });
 
     test('a fixed bar thickness, a base option and a hidden dataset', () {
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         datasets: 4,
         horizontal: true,
         extra: (k) => {
@@ -460,7 +459,7 @@ void main() {
     });
 
     test('a combo chart: the bar datasets take the fast loop', () {
-      Map<String, Object?> config() =>
+      ChartConfigurationScope config() =>
           _config(datasets: 3, extra: (k) => {if (k == 1) 'type': 'line'});
       final ca = config();
       final cb = config();
@@ -561,7 +560,7 @@ void main() {
       ),
     ]) {
       test('$name: the datasets outside the guard keep the ordinary loop', () {
-        Map<String, Object?> config() => _config(
+        ChartConfigurationScope config() => _config(
           datasets: 3,
           extra: extra,
           indexScale: indexScale,
@@ -590,7 +589,7 @@ void main() {
     }
 
     test('object data in one dataset: a data-only update keeps no ruler', () {
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         datasets: 2,
         extra: (k) => {
           if (k == 1)
@@ -615,7 +614,7 @@ void main() {
     });
 
     test('a dataset object with its own reads declines with no extra read', () {
-      (Map<String, Object?>, _CountingMap) config() {
+      (ChartConfigurationScope, _CountingMap) config() {
         final cfg = _config(datasets: 3);
         final list = _datasets(cfg);
         final counting = _CountingMap(list[1]! as Map<String, Object?>);
@@ -643,7 +642,7 @@ void main() {
         test('stacked datasets take one search and give the bars and the '
             'stack tables of the ordinary loop, mode $mode, horizontal '
             '$horizontal', () {
-          Map<String, Object?> config() => _config(
+          ChartConfigurationScope config() => _config(
             datasets: 4,
             horizontal: horizontal,
             indexScale: {'stacked': StackMode.on},
@@ -779,7 +778,7 @@ void main() {
       ),
     ]) {
       test('$name: the bars and the stack tables of the ordinary loop', () {
-        Map<String, Object?> config() => _config(
+        ChartConfigurationScope config() => _config(
           datasets: 4,
           extra: extra,
           indexScale: indexScale,
@@ -804,7 +803,7 @@ void main() {
     }
 
     test('an animated update keeps the search of each bar', () {
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         datasets: 3,
         animation: <String, Object?>{'duration': 0.0},
         indexScale: {'stacked': StackMode.on},
@@ -830,7 +829,7 @@ void main() {
     });
 
     test('a dataset object with its own reads declines with no extra read', () {
-      (Map<String, Object?>, _CountingMap) config() {
+      (ChartConfigurationScope, _CountingMap) config() {
         final cfg = _config(
           datasets: 3,
           indexScale: {'stacked': StackMode.on},
@@ -855,7 +854,7 @@ void main() {
       expect(_observe(a), _observe(b));
     });
     test('stacked line datasets: the stack tables of upstream', () {
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         datasets: 4,
         extra: (k) => {'type': 'line'},
         valueScale: {'stacked': StackMode.on},
@@ -877,7 +876,7 @@ void main() {
     });
 
     test('a _visualValues object of the user in a stack', () {
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         datasets: 3,
         indexScale: {'stacked': StackMode.on},
         valueScale: {'stacked': StackMode.on},
@@ -906,7 +905,7 @@ void main() {
     test('an empty dataset in its own stack makes no sub-stack', () {
       // `getOrCreateStack` makes the sub-stack at the first item only.
       for (final stacked in [true, false]) {
-        Map<String, Object?> config() => _config(
+        ChartConfigurationScope config() => _config(
           datasets: 2,
           extra: (k) => {'stack': 's$k', if (k == 1) 'data': <Object?>[]},
           indexScale: {'stacked': stacked ? StackMode.on : StackMode.off},
@@ -931,7 +930,7 @@ void main() {
 
     test('a high dataset index alone in its stack', () {
       // Dataset 19 has a stack of its own: its stack values keep the tree.
-      Map<String, Object?> config() => _config(
+      ChartConfigurationScope config() => _config(
         datasets: 20,
         extra: (k) => {'stack': k == 19 ? 'solo' : 'main'},
         indexScale: {'stacked': StackMode.on},

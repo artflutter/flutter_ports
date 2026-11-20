@@ -107,15 +107,15 @@ class _CustomSize() extends PointElement {
   }
 }
 
-Map<String, Object?> _config({
+ChartConfigurationScope _config({
   String type = 'scatter',
   Object? backgroundColor = blue,
   Map<String, Object?> dataset = const {},
-}) => {
-  'type': type,
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
+}) => (ChartConfigurationScope()
+  ..type = type
+  ..data = (ChartDataScope()
+    ..datasets = <Object?>[
+      mergeExtra(LineControllerDatasetOptionsScope(), {
         'data': <Object?>[
           for (var i = 0; i < _length; i++)
             <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
@@ -125,35 +125,35 @@ Map<String, Object?> _config({
         'radius': 3.0,
         'borderWidth': 1.0,
         ...dataset,
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'parsing': false,
-    'events': <String>[],
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': 'linear',
-        'display': ScaleDisplay.off,
-        'min': 0.0,
-        'max': 8.0,
-      },
-      'y': <String, Object?>{
-        'type': 'linear',
-        'display': ScaleDisplay.off,
-        'min': -5.0,
-        'max': 10.0,
+      }),
+    ])
+  ..options = mergeExtra(
+    ChartOptionsScope()
+      ..responsive = false
+      ..animation = false,
+    {
+      'parsing': false,
+      'events': <String>[],
+      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+      'scales': <String, Object?>{
+        'x': <String, Object?>{
+          'type': 'linear',
+          'display': ScaleDisplay.off,
+          'min': 0.0,
+          'max': 8.0,
+        },
+        'y': <String, Object?>{
+          'type': 'linear',
+          'display': ScaleDisplay.off,
+          'min': -5.0,
+          'max': 10.0,
+        },
       },
     },
-  },
-};
+  ));
 
-Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
-    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
-        as Map<String, Object?>;
+JsObjectFace _dataset(ChartConfigurationScope cfg) =>
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]! as JsObjectFace;
 
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
@@ -397,7 +397,7 @@ void main() {
           final a = _config(backgroundColor: color);
           final b = _config(type: 'referenceScatter', backgroundColor: color);
           for (final cfg in [a, b]) {
-            (cfg['options']! as Map)['animation'] = true;
+            (cfg['options']! as JsObjectFace)['animation'] = true;
             cfg['platform'] = _AnimatedPlatform.value;
           }
           final first = _chart(a);
@@ -842,12 +842,14 @@ void main() {
   // core.datasetController.js). The twins above set both, so these twins
   // free the scales.
   group('indexed sizes in the clip of the overflow pass', () {
-    Map<String, Object?> free(Map<String, Object?> cfg) {
-      final options = cfg['options']! as Map<String, Object?>;
-      for (final axis in (options['scales']! as Map<String, Object?>).values) {
-        (axis! as Map<String, Object?>)
-          ..remove('min')
-          ..remove('max');
+    ChartConfigurationScope free(ChartConfigurationScope cfg) {
+      final options = cfg['options']! as JsObjectFace;
+      for (final axis in (options['scales']! as OptionScope).jsKeys().map(
+        (key) => jsGet(options['scales'], key),
+      )) {
+        (axis! as JsObjectFace)
+          ..jsDelete('min')
+          ..jsDelete('max');
       }
       return cfg;
     }
@@ -918,14 +920,13 @@ void main() {
 
     test('lists of the elements, a hidden dataset and an active point', () {
       for (final variant in ['elements', 'hidden', 'active']) {
-        Map<String, Object?> make(String type) {
+        ChartConfigurationScope make(String type) {
           final cfg = free(_config(type: type));
           final dataset = _dataset(cfg);
           switch (variant) {
             case 'elements':
-              dataset.remove('radius');
-              (cfg['options']!
-                  as Map<String, Object?>)['elements'] = <String, Object?>{
+              dataset.jsDelete('radius');
+              (cfg['options']! as JsObjectFace)['elements'] = <String, Object?>{
                 'point': <String, Object?>{
                   'radius': <double>[2, 9, 4],
                   'hoverRadius': <double>[2, 4],

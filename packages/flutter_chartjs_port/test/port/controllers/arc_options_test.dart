@@ -219,33 +219,35 @@ Map<String, Object?> _dataset([Map<String, Object?>? fields]) => {
   ...?fields,
 };
 
-Map<String, Object?> _config(
+// Keep supplied dataset identity; the twins mutate and observe these objects.
+ChartConfigurationScope _config(
   String type,
   List<Map<String, Object?>> datasets, [
   Map<String, Object?>? options,
-]) => {
-  'type': type,
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-    'datasets': <Object?>[...datasets],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'events': <String>[],
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    ...?options,
-  },
-};
+]) => (ChartConfigurationScope()
+  ..type = type
+  ..data = (ChartDataScope()
+    ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h']
+    ..datasets = <Object?>[...datasets])
+  ..options = mergeExtra(
+    ChartOptionsScope()
+      ..responsive = false
+      ..animation = false,
+    {
+      'events': <String>[],
+      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+      ...?options,
+    },
+  ));
 
-List<Object?> _datasets(Map<String, Object?> cfg) =>
+List<Object?> _datasets(ChartConfigurationScope cfg) =>
     jsGet(cfg['data'], 'datasets')! as List<Object?>;
-Map<String, Object?> _first(Map<String, Object?> cfg) =>
+Map<String, Object?> _first(ChartConfigurationScope cfg) =>
     _datasets(cfg)[0]! as Map<String, Object?>;
 
 String _refType(String type) => 'ref-$type';
 
-Chart _native(Map<String, Object?> cfg) {
+Chart _native(ChartConfigurationScope cfg) {
   final chart = Chart(
     UiCanvasElement(width: 640, height: 400),
     withParsedDataItems(cfg),
@@ -254,7 +256,7 @@ Chart _native(Map<String, Object?> cfg) {
   return chart;
 }
 
-Chart _reference(Map<String, Object?> cfg, _Reference reference) {
+Chart _reference(ChartConfigurationScope cfg, _Reference reference) {
   final canvas = UiCanvasElement(width: 640, height: 400);
   final Chart chart;
   if (reference == _Reference.controller) {
@@ -310,11 +312,11 @@ Object _observe(Chart chart) {
   ];
 }
 
-final _rawConfig = Expando<Map<String, Object?>>();
+final _rawConfig = Expando<ChartConfigurationScope>();
 
-typedef _Step = void Function(Chart chart, Map<String, Object?> cfg);
+typedef _Step = void Function(Chart chart, ChartConfigurationScope cfg);
 
-void _none(Chart chart, Map<String, Object?> cfg) =>
+void _none(Chart chart, ChartConfigurationScope cfg) =>
     chart.update(UpdateMode.none);
 
 /// [values] as the data of [dataset]: parsed items with each value in `r`
@@ -322,7 +324,7 @@ void _none(Chart chart, Map<String, Object?> cfg) =>
 List<Object?> _dataOf(Map<String, Object?> dataset, List<Object?> values) =>
     dataset['parsing'] == false ? _rItems(values) : values;
 
-void _newData(Chart chart, Map<String, Object?> cfg) {
+void _newData(Chart chart, ChartConfigurationScope cfg) {
   for (final dataset in _datasets(cfg)) {
     final map = dataset! as Map<String, Object?>;
     map['data'] = _dataOf(map, <Object?>[
@@ -333,7 +335,7 @@ void _newData(Chart chart, Map<String, Object?> cfg) {
 }
 
 // New data with two new arcs.
-void _growData(Chart chart, Map<String, Object?> cfg) {
+void _growData(Chart chart, ChartConfigurationScope cfg) {
   _first(cfg)['data'] = _dataOf(_first(cfg), <Object?>[
     for (var i = 0; i < 10; i++) (i * 5 + 2).toDouble(),
   ]);
@@ -343,7 +345,7 @@ void _growData(Chart chart, Map<String, Object?> cfg) {
 // New data, and a `borderColor` that the hover default of an active arc cannot
 // read: `getHoverColor(null)` throws in the update loop. The twin compares the
 // contexts after the throw.
-void _throwInActiveResolve(Chart chart, Map<String, Object?> cfg) {
+void _throwInActiveResolve(Chart chart, ChartConfigurationScope cfg) {
   _first(cfg)
     ..['data'] = _dataOf(_first(cfg), <Object?>[
       for (var i = 0; i < 8; i++) (i * 7 + 3).toDouble(),
@@ -370,13 +372,13 @@ const List<_Step> _steps = [
   _none,
 ];
 
-void _default(Chart chart, Map<String, Object?> cfg) => chart.update();
-void _reset(Chart chart, Map<String, Object?> cfg) =>
+void _default(Chart chart, ChartConfigurationScope cfg) => chart.update();
+void _reset(Chart chart, ChartConfigurationScope cfg) =>
     chart.update(UpdateMode.reset);
 
 // The public calls of the scans outside `update`: each one refreshes each
 // context, as upstream.
-void _scans(Chart chart, Map<String, Object?> cfg) {
+void _scans(Chart chart, ChartConfigurationScope cfg) {
   final controller = chart.getDatasetMeta(0).controller;
   if (controller is DoughnutController) {
     controller
@@ -388,7 +390,7 @@ void _scans(Chart chart, Map<String, Object?> cfg) {
 /// Runs a twin of each arc type against each reference.
 void _twins(
   String name,
-  Map<String, Object?> Function(String type, List<Object?> trace) build, {
+  ChartConfigurationScope Function(String type, List<Object?> trace) build, {
   List<_Step> steps = _steps,
   List<String> types = const ['pie', 'doughnut', 'polarArea'],
   List<_Reference> references = _Reference.values,
@@ -895,17 +897,17 @@ void main() {
     ('a visible dataset', <String, Object?>{}),
     ('a hidden dataset', <String, Object?>{'hidden': true}),
   ]) {
-    Map<String, Object?> observed(String type, List<Object?> trace) {
+    ChartConfigurationScope observed(String type, List<Object?> trace) {
       final cfg = _config(type, [
         _dataset({
           'backgroundColor': <ChartPaint>[red, blue, green],
           ...fields,
         }),
       ]);
-      cfg['options'] = _ObservedMap(
-        cfg['options']! as Map<String, Object?>,
-        trace,
-      );
+      cfg['options'] = _ObservedMap({
+        for (final key in (cfg['options']! as JsObjectFace).jsKeys())
+          key: jsGet(cfg['options'], key),
+      }, trace);
       return cfg;
     }
 
@@ -1158,10 +1160,10 @@ void main() {
             'backgroundColor': <ChartPaint>[red, blue, green],
           }),
         ]);
-        cfg['options'] = _ObservedMap(
-          cfg['options']! as Map<String, Object?>,
-          <Object?>[],
-        );
+        cfg['options'] = _ObservedMap({
+          for (final key in (cfg['options']! as JsObjectFace).jsKeys())
+            key: jsGet(cfg['options'], key),
+        }, <Object?>[]);
         final chart = _native(cfg);
         final data = chart.getDatasetMeta(0).data;
         final probes = <_ProbeArc>[];

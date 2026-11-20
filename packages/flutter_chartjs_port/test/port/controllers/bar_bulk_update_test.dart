@@ -129,50 +129,49 @@ class _ObservedData(final List<Object?> values) extends ListBase<Object?> {
   void operator []=(int index, Object? value) => values[index] = value;
 }
 
-Map<String, Object?> _config({
+ChartConfigurationScope _config({
   bool horizontal = false,
   bool visible = false,
   List<Object?>? values,
   Map<String, Object?> extra = const {},
-}) => {
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <String>['a', 'b', 'c', 'd', 'e', 'f'],
-    'datasets': <Object?>[
-      <String, Object?>{
+}) => (ChartConfigurationScope()
+  ..type = 'bar'
+  ..data = (ChartDataScope()
+    ..labels = <String>['a', 'b', 'c', 'd', 'e', 'f']
+    ..datasets = <Object?>[
+      mergeExtra(BarControllerDatasetOptionsScope(), {
         'data': values ?? <Object?>[1.0, 0.0, -0.0, -2.0, 3.0, 4.0],
         'backgroundColor': const ChartPaint.solid(ui.Color(0x803366AA)),
         'borderWidth': 1.0,
         ...extra,
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'indexAxis': horizontal ? const YAxis() : const XAxis(),
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': horizontal ? 'linear' : 'category',
-        'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
-        if (horizontal) ...{'min': -4.0, 'max': 10.0},
-      },
-      'y': <String, Object?>{
-        'type': horizontal ? 'category' : 'linear',
-        'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
-        if (!horizontal) ...{'min': -4.0, 'max': 10.0},
+      }),
+    ])
+  ..options = mergeExtra(
+    ChartOptionsScope()
+      ..responsive = false
+      ..animation = false,
+    {
+      'indexAxis': horizontal ? const YAxis() : const XAxis(),
+      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+      'scales': <String, Object?>{
+        'x': <String, Object?>{
+          'type': horizontal ? 'linear' : 'category',
+          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
+          if (horizontal) ...{'min': -4.0, 'max': 10.0},
+        },
+        'y': <String, Object?>{
+          'type': horizontal ? 'category' : 'linear',
+          'display': visible ? ScaleDisplay.on : ScaleDisplay.off,
+          if (!horizontal) ...{'min': -4.0, 'max': 10.0},
+        },
       },
     },
-  },
-};
-Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
-    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
-        as Map<String, Object?>;
-Map<String, Object?> _axis(Map<String, Object?> cfg, String key) =>
-    ((cfg['options']! as Map<String, Object?>)['scales']!
-            as Map<String, Object?>)[key]!
-        as Map<String, Object?>;
+  ));
+JsObjectFace _dataset(ChartConfigurationScope cfg) =>
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]! as JsObjectFace;
+JsObjectFace _axis(ChartConfigurationScope cfg, String key) =>
+    ((cfg['options']! as JsObjectFace)['scales']! as JsObjectFace)[key]!
+        as JsObjectFace;
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
   final chart = reference
@@ -239,6 +238,31 @@ Object _stylesAndContexts(Chart chart) => [
 ];
 
 void main() {
+  // These guard cases deliberately give scalar strings to typed options.
+  setUp(() {
+    final saved = foreignAudit;
+    foreignAudit = (owner, key, raw) {
+      if (owner == 'BarControllerDatasetOptionsScope' &&
+          ((key == 'base' && raw == '0') ||
+              (key == 'inflateAmount' && raw == '1') ||
+              (key == 'borderSkipped' &&
+                  const {
+                    'start',
+                    'end',
+                    'left',
+                    'right',
+                    'top',
+                    'bottom',
+                    'middle',
+                    'odd',
+                  }.contains(raw)))) {
+        return;
+      }
+      saved?.call(owner, key, raw);
+    };
+    addTearDown(() => foreignAudit = saved);
+  });
+
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
     BarController.jsClass,
@@ -251,7 +275,7 @@ void main() {
     test(
       'indexed colors retain independent options and live contexts $horizontal',
       () {
-        Map<String, Object?> config() => _config(
+        ChartConfigurationScope config() => _config(
           horizontal: horizontal,
           visible: true,
           extra: {
@@ -302,7 +326,7 @@ void main() {
     'indexed geometry fields and active bars decline the color-only loop',
     () {
       for (final active in [false, true]) {
-        Map<String, Object?> config() => _config(
+        ChartConfigurationScope config() => _config(
           extra: {
             'backgroundColor': <ChartPaint>[
               const ChartPaint.solid(ui.Color(0xffff0000)),
@@ -332,7 +356,7 @@ void main() {
     () {
       final da = _ObservedData([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
       final db = _ObservedData([1.0, 2.0, 3.0, 4.0, 5.0, 6.0]);
-      Map<String, Object?> config(List<Object?> data) => _config(
+      ChartConfigurationScope config(List<Object?> data) => _config(
         values: data,
         extra: {
           'backgroundColor': <ChartPaint>[

@@ -323,7 +323,7 @@ Object? _observeElement(Object? value) {
   ];
 }
 
-Object _observe(Chart chart, Map<String, Object?> cfg) {
+Object _observe(Chart chart, ChartConfigurationScope cfg) {
   final datasets = _datasets(cfg).length;
   return [
     for (var d = 0; d < datasets; d++)
@@ -369,34 +369,36 @@ List<Object?> _bubbles(double step, [int length = 8]) => [
 List<Object?> _data(String type, double step, [int length = 8]) =>
     type.endsWith('bubble') ? _bubbles(step, length) : _values(step, length);
 
-Map<String, Object?> _config(
+// Preserve user dataset values for the mutation and read-counting probes.
+ChartConfigurationScope _config(
   String type,
   Map<String, Object?> dataset, {
   Map<String, Object?>? options,
   int length = 8,
-}) => {
-  'type': type,
-  'data': <String, Object?>{
-    'labels': <Object?>[for (var i = 0; i < 10; i++) 'L$i'],
-    'datasets': <Object?>[
+}) => (ChartConfigurationScope()
+  ..type = type
+  ..data = (ChartDataScope()
+    ..labels = <Object?>[for (var i = 0; i < 10; i++) 'L$i']
+    ..datasets = <Object?>[
       <String, Object?>{
         'data': _parsedFor(options, _data(type, 1, length)),
         ...dataset,
       },
-    ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'events': <String>[],
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    ...?options,
-  },
-};
+    ])
+  ..options = mergeExtra(
+    ChartOptionsScope()
+      ..responsive = false
+      ..animation = false,
+    {
+      'events': <String>[],
+      'plugins': <String, Object?>{'legend': false, 'tooltip': false},
+      ...?options,
+    },
+  ));
 
 /// A config of the data-only lifecycle, as the live polar area of the benchmark
 /// lab: a fixed radial axis and no plugin.
-Map<String, Object?> _liveConfig(
+ChartConfigurationScope _liveConfig(
   String type,
   Map<String, Object?> dataset, {
   Map<String, Object?>? options,
@@ -427,20 +429,20 @@ Map<String, Object?> _liveConfig(
 /// [data] for the chart options [options]: with `parsing: false`, a number
 /// of a doughnut or a pie goes into `r` of a parsed item (row
 /// `adapt-parsed-data-items`).
-List<Object?> _parsedFor(Map<String, Object?>? options, List<Object?> data) =>
-    options?['parsing'] == false
+List<Object?> _parsedFor(Object? options, List<Object?> data) =>
+    options != null && jsGet(options, 'parsing') == false
     ? <ParsedItem?>[
         for (final value in data)
           if (value is Map) parsedItemOf(value) else ParsedItem()..r = value,
       ]
     : data;
 
-List<Object?> _datasets(Map<String, Object?> cfg) =>
+List<Object?> _datasets(ChartConfigurationScope cfg) =>
     jsGet(cfg['data'], 'datasets')! as List<Object?>;
-Map<String, Object?> _first(Map<String, Object?> cfg) =>
+Map<String, Object?> _first(ChartConfigurationScope cfg) =>
     _datasets(cfg)[0]! as Map<String, Object?>;
 
-Chart _chart(Map<String, Object?> cfg) {
+Chart _chart(ChartConfigurationScope cfg) {
   final chart = Chart(
     UiCanvasElement(width: 480, height: 320),
     withParsedDataItems(cfg),
@@ -449,92 +451,89 @@ Chart _chart(Map<String, Object?> cfg) {
   return chart;
 }
 
-String _baseType(Map<String, Object?> cfg) =>
+String _baseType(ChartConfigurationScope cfg) =>
     (cfg['type']! as String).replaceFirst('writes-ref-', '');
 
-void _setData(Map<String, Object?> cfg, double step, int length) {
+void _setData(ChartConfigurationScope cfg, double step, int length) {
   _first(cfg)['data'] = _parsedFor(
-    cfg['options'] as Map<String, Object?>?,
+    cfg['options'] as JsObjectFace?,
     _data(_baseType(cfg), step, length),
   );
 }
 
 /// The steps of a twin: each mode, and each change of the task.
-final Map<String, void Function(Chart chart, Map<String, Object?> cfg)> _steps =
-    {
-      'none': (chart, cfg) => chart.update(UpdateMode.none),
-      'new data': (chart, cfg) {
-        _setData(cfg, 2, 8);
-        chart.update(UpdateMode.none);
-      },
-      'default': (chart, cfg) => chart.update(),
-      'reset': (chart, cfg) => chart.update(UpdateMode.reset),
-      'after reset': (chart, cfg) => chart.update(UpdateMode.none),
-      'chart.reset': (chart, cfg) => chart.reset(),
-      'active mode': (chart, cfg) => chart.update(UpdateMode.active),
-      'resize mode': (chart, cfg) => chart.update(UpdateMode.resize),
-      'resize': (chart, cfg) => chart.resize(400, 300),
-      'an item hidden': (chart, cfg) {
-        chart
-          ..toggleDataVisibility(2)
-          ..update(UpdateMode.none);
-      },
-      'an element hidden': (chart, cfg) {
-        (chart.getDatasetMeta(0).data[3] as Element).hidden = true;
-        chart.update(UpdateMode.none);
-      },
-      'visible again': (chart, cfg) {
-        (chart.getDatasetMeta(0).data[3] as Element).hidden = false;
-        chart
-          ..toggleDataVisibility(2)
-          ..update(UpdateMode.none);
-      },
-      'hide a dataset item': (chart, cfg) => chart.hide(0, 1),
-      'show a dataset item': (chart, cfg) => chart.show(0, 1),
-      'an active element': (chart, cfg) {
-        chart
-          ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)])
-          ..update(UpdateMode.none);
-      },
-      'no active element': (chart, cfg) {
-        chart
-          ..setActiveElements([])
-          ..update(UpdateMode.none);
-      },
-      'growing data': (chart, cfg) {
-        _setData(cfg, 3, 10);
-        chart.update(UpdateMode.none);
-      },
-      'shrinking data': (chart, cfg) {
-        _setData(cfg, 4, 5);
-        chart.update(UpdateMode.none);
-      },
-      'a NaN and a null value': (chart, cfg) {
-        final data = _data(_baseType(cfg), 5);
-        if (_baseType(cfg) == 'bubble') {
-          data[2] = <String, Object?>{'x': double.nan, 'y': 1.0, 'r': 3.0};
-          data[5] = <String, Object?>{'x': 1.0, 'y': null, 'r': 3.0};
-        } else {
-          data[2] = double.nan;
-          data[5] = null;
-        }
-        _first(cfg)['data'] = _parsedFor(
-          cfg['options'] as Map<String, Object?>?,
-          data,
-        );
-        chart.update(UpdateMode.none);
-      },
-      'reset of a NaN value': (chart, cfg) => chart.update(UpdateMode.reset),
-      'back to numbers': (chart, cfg) {
-        _setData(cfg, 6, 8);
-        chart.update(UpdateMode.none);
-      },
-    };
+final Map<String, void Function(Chart chart, ChartConfigurationScope cfg)>
+_steps = {
+  'none': (chart, cfg) => chart.update(UpdateMode.none),
+  'new data': (chart, cfg) {
+    _setData(cfg, 2, 8);
+    chart.update(UpdateMode.none);
+  },
+  'default': (chart, cfg) => chart.update(),
+  'reset': (chart, cfg) => chart.update(UpdateMode.reset),
+  'after reset': (chart, cfg) => chart.update(UpdateMode.none),
+  'chart.reset': (chart, cfg) => chart.reset(),
+  'active mode': (chart, cfg) => chart.update(UpdateMode.active),
+  'resize mode': (chart, cfg) => chart.update(UpdateMode.resize),
+  'resize': (chart, cfg) => chart.resize(400, 300),
+  'an item hidden': (chart, cfg) {
+    chart
+      ..toggleDataVisibility(2)
+      ..update(UpdateMode.none);
+  },
+  'an element hidden': (chart, cfg) {
+    (chart.getDatasetMeta(0).data[3] as Element).hidden = true;
+    chart.update(UpdateMode.none);
+  },
+  'visible again': (chart, cfg) {
+    (chart.getDatasetMeta(0).data[3] as Element).hidden = false;
+    chart
+      ..toggleDataVisibility(2)
+      ..update(UpdateMode.none);
+  },
+  'hide a dataset item': (chart, cfg) => chart.hide(0, 1),
+  'show a dataset item': (chart, cfg) => chart.show(0, 1),
+  'an active element': (chart, cfg) {
+    chart
+      ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 4)])
+      ..update(UpdateMode.none);
+  },
+  'no active element': (chart, cfg) {
+    chart
+      ..setActiveElements([])
+      ..update(UpdateMode.none);
+  },
+  'growing data': (chart, cfg) {
+    _setData(cfg, 3, 10);
+    chart.update(UpdateMode.none);
+  },
+  'shrinking data': (chart, cfg) {
+    _setData(cfg, 4, 5);
+    chart.update(UpdateMode.none);
+  },
+  'a NaN and a null value': (chart, cfg) {
+    final data = _data(_baseType(cfg), 5);
+    if (_baseType(cfg) == 'bubble') {
+      data[2] = <String, Object?>{'x': double.nan, 'y': 1.0, 'r': 3.0};
+      data[5] = <String, Object?>{'x': 1.0, 'y': null, 'r': 3.0};
+    } else {
+      data[2] = double.nan;
+      data[5] = null;
+    }
+    _first(cfg)['data'] = _parsedFor(cfg['options'] as JsObjectFace?, data);
+    chart.update(UpdateMode.none);
+  },
+  'reset of a NaN value': (chart, cfg) => chart.update(UpdateMode.reset),
+  'back to numbers': (chart, cfg) {
+    _setData(cfg, 6, 8);
+    chart.update(UpdateMode.none);
+  },
+};
 
 /// Runs a twin of each type against its trivial user subclass.
 void _twins(
   String name,
-  Map<String, Object?> Function(String type, List<Object?> trace) build, {
+  ChartConfigurationScope Function(String type, List<Object?> trace) build, {
   List<String> types = _allTypes,
 }) {
   for (final type in types) {
@@ -568,7 +567,7 @@ void _twins(
 
 /// A chart whose arcs or points are [element], after one update.
 Chart _withElements(
-  Map<String, Object?> cfg,
+  ChartConfigurationScope cfg,
   Element Function(int index) element,
 ) {
   final chart = _chart(cfg);
@@ -800,7 +799,7 @@ void main() {
             final cfg = _config(kind, {
               'backgroundColor': const ChartPaint.solid(red),
             });
-            (cfg['options']! as Map)['animation'] = <String, Object?>{
+            (cfg['options']! as JsObjectFace)['animation'] = <String, Object?>{
               'duration': 1000.0,
             };
             cfg['platform'] = _AnimatedPlatform.value;
@@ -1105,8 +1104,8 @@ void main() {
     /// [invalidate], the write also clears the cache of the controller, for the
     /// options that no fix-up reads: an ordinary loop then resolves again.
     List<Object?> planProbe(
-      Map<String, Object?> cfg, {
-      Chart Function(Map<String, Object?>)? create,
+      ChartConfigurationScope cfg, {
+      Chart Function(ChartConfigurationScope)? create,
       OptionKey key = OptionKey.spacing,
       Object? written = 9.0,
       bool invalidate = false,
@@ -1493,17 +1492,14 @@ void main() {
       final results = <Object?>[];
       for (final kind in ['polarArea', _refType('polarArea')]) {
         final reads = <String>[];
-        final values = planProbe(
-          _config(
-            kind,
-            {'backgroundColor': const ChartPaint.solid(red)},
-            options: {
-              'datasets': <String, Object?>{
-                kind: _CountingScope(<String, Object?>{}, reads),
-              },
-            },
-          ),
-        );
+        final cfg = _config(kind, {
+          'backgroundColor': const ChartPaint.solid(red),
+        });
+        // Preserve the user scope: its reads are the subject of this probe.
+        (cfg.optionsCell!.raw! as ChartOptionsScope)['datasets'] = {
+          kind: _CountingScope(<String, Object?>{}, reads),
+        };
+        final values = planProbe(cfg);
         expect(values, ordinary, reason: kind);
         expect(reads, isNotEmpty);
         results.add(reads);
@@ -1577,7 +1573,7 @@ void main() {
       final results = <Object?>[];
       for (final kind in ['polarArea', _refType('polarArea')]) {
         var armed = false;
-        late final Map<String, Object?> cfg;
+        late final ChartConfigurationScope cfg;
         cfg = _config(kind, {
           'backgroundColor': const ChartPaint.solid(red),
           // The active arcs have their own spacing: no fix-up of the first two
