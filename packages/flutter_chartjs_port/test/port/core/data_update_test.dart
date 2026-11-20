@@ -103,7 +103,7 @@ final class _UserMap(final Map<String, Object?> store)
 /// A user subclass of a color.
 final class const _UserColor(super.value) extends ui.Color;
 
-Map<String, Object?> config(
+ChartConfigurationScope config(
   String type, {
   bool bounded = true,
   bool prepared = false,
@@ -113,9 +113,9 @@ Map<String, Object?> config(
   final radial = type == 'radar' || type == 'polarArea';
   final circle = type == 'doughnut' || type == 'pie';
   final xy = type == 'scatter' || type == 'bubble' || prepared;
-  return {
-    'type': type,
-    'data': <String, Object?>{
+  return (ChartConfigurationScope()
+    ..type = type
+    ..data = mergeExtra(ChartDataScope(), <String, Object?>{
       'labels': <String>['a', 'b', 'c', 'd'],
       'datasets': <Object?>[
         <String, Object?>{
@@ -143,8 +143,8 @@ Map<String, Object?> config(
           if (prepared) 'parsing': false,
         },
       ],
-    },
-    'options': <String, Object?>{
+    })
+    ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
       'responsive': false,
       'animation': false,
       'indexAxis': horizontal ? const YAxis() : const XAxis(),
@@ -175,14 +175,13 @@ Map<String, Object?> config(
             },
           },
         },
-    },
-    'plugins': plugins,
-  };
+    })
+    ..['plugins'] = plugins);
 }
 
-Map<String, Object?> dataset(Map<String, Object?> cfg) =>
+Map<String, Object?> dataset(ChartConfigurationScope cfg) =>
     (jsGet(cfg['data'], 'datasets')! as List).first as Map<String, Object?>;
-void change(Map<String, Object?> cfg, int step) {
+void change(ChartConfigurationScope cfg, int step) {
   final values = dataset(cfg)['data']! as List<Object?>;
   for (var i = 0; i < values.length; i++) {
     final value = (9 - i - step).toDouble();
@@ -473,16 +472,16 @@ void main() {
     expect(observe(a), observe(b));
   });
   test('stacked numeric datasets refresh totals and geometry', () {
-    Map<String, Object?> cfg() {
+    ChartConfigurationScope cfg() {
       final c = config('bar');
       final d = dataset(c);
       (jsGet(c['data'], 'datasets')! as List).add(<String, Object?>{
         ...d,
         'data': <Object?>[2.0, 3.0, 1.0, 2.0],
       });
-      final scales = (c['options']! as Map)['scales'] as Map;
-      for (final scale in scales.values) {
-        (scale as Map)['stacked'] = StackMode.on;
+      final scales = (c['options']! as JsObjectFace)['scales']! as OptionScope;
+      for (final scale in scales.jsKeys().map(scales.jsRead)) {
+        (scale! as JsObjectFace)['stacked'] = StackMode.on;
       }
       return c;
     }
@@ -535,10 +534,12 @@ void main() {
     }
 
     /// A bar chart with [onHover], and a mouse over its bar 1.
-    (Chart, Map<String, Object?>) hovered(void Function(Chart chart) onHover) {
+    (Chart, ChartConfigurationScope) hovered(
+      void Function(Chart chart) onHover,
+    ) {
       final cfg = config('bar');
       void hover(Object? e, Object? active, Object? c) => onHover(c! as Chart);
-      (cfg['options']! as Map<String, Object?>)['onHover'] = hover;
+      (cfg['options']! as JsObjectFace)['onHover'] = hover;
       final a = chart(cfg);
       move(a);
       return (a, cfg);
@@ -625,7 +626,7 @@ void main() {
         beforeLayout: (c, args, o) => !cancel,
       );
       final cfg = config(type, plugins: [plugin]);
-      ((cfg['options']! as Map)['plugins'] as Map)['legend'] =
+      ((cfg['options']! as JsObjectFace)['plugins']! as OptionScope)['legend'] =
           <String, Object?>{'display': true};
       return (chart(cfg), ({bool on = true}) => cancel = on);
     }
@@ -721,14 +722,16 @@ void main() {
   });
   test('a category scale with bounds data falls back', () {
     final cfg = config('bar');
-    (((cfg['options']! as Map)['scales'] as Map)['x'] as Map)['bounds'] =
+    (((cfg['options']! as JsObjectFace)['scales']! as OptionScope)['x']!
+            as JsObjectFace)['bounds'] =
         ScaleBounds.data;
     expect(chart(cfg).updateData(), isFalse);
   });
   test('a category scale with bounds of a function falls back', () {
     final cfg = config('bar');
     ScaleBounds bounds(Object? context) => ScaleBounds.ticks;
-    (((cfg['options']! as Map)['scales'] as Map)['x'] as Map)['bounds'] =
+    (((cfg['options']! as JsObjectFace)['scales']! as OptionScope)['x']!
+            as JsObjectFace)['bounds'] =
         bounds;
     expect(chart(cfg).updateData(), isFalse);
   });
@@ -753,12 +756,11 @@ void main() {
     expect(a.updateData(), isTrue);
   });
   test('hover, hit tests and tooltip values stay synchronized', () {
-    Map<String, Object?> cfg() {
+    ChartConfigurationScope cfg() {
       final c = config('bar');
-      ((c['options']! as Map)['plugins'] as Map).addAll(<String, Object?>{
-        'tooltip': true,
-        'legend': true,
-      });
+      ((c['options']! as JsObjectFace)['plugins']! as OptionScope).jsAddAll(
+        <String, Object?>{'tooltip': true, 'legend': true},
+      );
       return c;
     }
 
@@ -858,7 +860,8 @@ void main() {
     expect(la.reads, lb.reads);
     expect(observe(a), observe(b));
     final cfg = config('line');
-    (((cfg['options']! as Map)['scales'] as Map)['y'] as Map)['type'] =
+    (((cfg['options']! as JsObjectFace)['scales']! as OptionScope)['y']!
+            as JsObjectFace)['type'] =
         'data-custom-linear';
     final custom = chart(cfg);
     change(cfg, 0);
@@ -868,21 +871,23 @@ void main() {
     final ca = config('line');
     final cb = config('line');
     for (final cfg in [ca, cb]) {
-      ((cfg['options']! as Map)['plugins'] as Map).addAll(<String, Object?>{
-        'legend': true,
-        'title': <String, Object?>{
-          'display': true,
-          'text': ['Fixed title'],
+      ((cfg['options']! as JsObjectFace)['plugins']! as OptionScope).jsAddAll(
+        <String, Object?>{
+          'legend': true,
+          'title': <String, Object?>{
+            'display': true,
+            'text': ['Fixed title'],
+          },
+          'subtitle': <String, Object?>{
+            'display': true,
+            'text': ['Fixed subtitle'],
+          },
+          'tooltip': true,
+          'colors': true,
+          'filler': true,
+          'decimation': <String, Object?>{'enabled': false},
         },
-        'subtitle': <String, Object?>{
-          'display': true,
-          'text': ['Fixed subtitle'],
-        },
-        'tooltip': true,
-        'colors': true,
-        'filler': true,
-        'decimation': <String, Object?>{'enabled': false},
-      });
+      );
       dataset(cfg)['fill'] = FillTarget.toOrigin;
     }
     final a = chart(ca);
@@ -921,12 +926,14 @@ void main() {
   test('scriptable bounds and enabled decimation select full updates', () {
     final cfg = config('line');
     double maxBound(Object? context) => 10;
-    (((cfg['options']! as Map)['scales'] as Map)['y'] as Map)['max'] = maxBound;
+    (((cfg['options']! as JsObjectFace)['scales']! as OptionScope)['y']!
+            as JsObjectFace)['max'] =
+        maxBound;
     final a = chart(cfg);
     expect(a.updateData(), isFalse);
     final decimated = config('line', prepared: true);
-    ((decimated['options']! as Map)['plugins']
-        as Map)['decimation'] = <String, Object?>{
+    ((decimated['options']! as JsObjectFace)['plugins']!
+        as OptionScope)['decimation'] = <String, Object?>{
       'enabled': true,
       'threshold': 2,
       'algorithm': const LttbDecimationAlgorithm(),
@@ -999,7 +1006,7 @@ void main() {
       _ => 'arc',
     };
 
-    Map<String, Object?> indexed(
+    ChartConfigurationScope indexed(
       String type, {
       bool prepared = false,
       bool plugins = false,
@@ -1011,10 +1018,9 @@ void main() {
         ..['backgroundColor'] = background ?? <Object?>[red, green, blue]
         ..['borderColor'] = border ?? <Object?>[blue, red];
       if (plugins) {
-        ((cfg['options']! as Map)['plugins'] as Map).addAll(<String, Object?>{
-          'tooltip': true,
-          'legend': true,
-        });
+        ((cfg['options']! as JsObjectFace)['plugins']! as OptionScope).jsAddAll(
+          <String, Object?>{'tooltip': true, 'legend': true},
+        );
       }
       return cfg;
     }
@@ -1053,7 +1059,7 @@ void main() {
     /// `update(UpdateMode.none)` with
     /// the same values.
     void expectTwin(
-      Map<String, Object?> Function() make, {
+      ChartConfigurationScope Function() make, {
       required bool? path,
       int ticks = 3,
     }) {
@@ -1144,7 +1150,7 @@ void main() {
         });
 
         test('active elements, the legend and the tooltip', () {
-          Map<String, Object?> make() => indexed(type, plugins: true);
+          ChartConfigurationScope make() => indexed(type, plugins: true);
           final ca = make();
           final cb = make();
           final a = chart(ca);
@@ -1177,7 +1183,7 @@ void main() {
         });
 
         test('two datasets, one of them with a plain style', () {
-          Map<String, Object?> make() {
+          ChartConfigurationScope make() {
             final cfg = indexed(type);
             final datasets = jsGet(cfg['data'], 'datasets')! as List;
             final plainStyle = config(type);
@@ -1305,9 +1311,10 @@ void main() {
           ...dataset(cfg),
           'data': <Object?>[2.0, 3.0, 1.0, 2.0],
         });
-        final scales = (cfg['options']! as Map)['scales'] as Map;
-        for (final scale in scales.values) {
-          (scale as Map)['stacked'] = StackMode.on;
+        final scales =
+            (cfg['options']! as JsObjectFace)['scales']! as OptionScope;
+        for (final scale in scales.jsKeys().map(scales.jsRead)) {
+          (scale! as JsObjectFace)['stacked'] = StackMode.on;
         }
         return cfg;
       }, path: true);
@@ -1615,7 +1622,7 @@ void main() {
       });
 
       test('a function of a dataset option in the overrides', () {
-        for (final cfg in <Map<String, Object?> Function()>[
+        for (final cfg in <ChartConfigurationScope Function()>[
           () => indexed('pie'),
           () => config('pie'),
         ]) {
@@ -1820,7 +1827,7 @@ void main() {
       /// A chart of [make], with [edit] after the last full update of each
       /// twin, then one tick: no `updateData` came before the edit.
       void expectEdit(
-        Map<String, Object?> Function() make,
+        ChartConfigurationScope Function() make,
         void Function(Chart) edit,
       ) {
         final ca = make();
@@ -1842,7 +1849,7 @@ void main() {
       }
 
       /// A bar chart with a line dataset, the second type of [expectTwin].
-      Map<String, Object?> mixed() {
+      ChartConfigurationScope mixed() {
         final cfg = config('bar');
         (jsGet(cfg['data'], 'datasets')! as List).add(<String, Object?>{
           'type': 'line',
@@ -2191,4 +2198,13 @@ void main() {
       expect(a.updateData(), isTrue);
     });
   });
+}
+
+/// Shallow writes preserve the original plugin objects in mutation probes.
+extension on OptionScope {
+  void jsAddAll(Map<String, Object?> values) {
+    for (final entry in values.entries) {
+      jsWrite(entry.key, entry.value);
+    }
+  }
 }

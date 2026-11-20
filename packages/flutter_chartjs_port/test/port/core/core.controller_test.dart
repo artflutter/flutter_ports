@@ -496,6 +496,18 @@ String _positionText(Object? position) =>
     position is ChartPosition ? position.name : '$position';
 
 void main() {
+  // The invalid numeric parsing key must still fail at its reader.
+  setUp(() {
+    final saved = foreignAudit;
+    foreignAudit = (owner, key, raw) {
+      if (owner == 'ParsingOptionsScope' && key == 'yAxisKey' && raw == 5.0) {
+        return;
+      }
+      saved?.call(owner, key, raw);
+    };
+    addTearDown(() => foreignAudit = saved);
+  });
+
   Chart.register(registerables);
   Chart.register([_testController, _testScale]);
 
@@ -1301,33 +1313,33 @@ void main() {
     // A parsing key is a String (row adapt-parsing-keys): a number key stops
     // a debug build when the controller reads the option, before the parse.
     // A null key takes the default key, where upstream throws in the parse.
-    Map<String, Object?> config(List<Object?> labels, Object? key) => {
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': labels,
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 'a', 'y': 1.0},
+    ChartConfigurationScope config(List<Object?> labels, Object? key) =>
+        (ChartConfigurationScope()
+          ..type = 'line'
+          ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            'labels': labels,
+            'datasets': <Object?>[
+              <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 'a', 'y': 1.0},
+                ],
+              },
             ],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'parsing': <String, Object?>{'yAxisKey': key},
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'category'},
-          'y': <String, Object?>{'type': 'linear'},
-        },
-      },
-    };
+          })
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'parsing': <String, Object?>{'yAxisKey': key},
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category'},
+              'y': <String, Object?>{'type': 'linear'},
+            },
+          }));
 
     testWidgets('a yAxisKey 5 stops a debug build before the parse', (
       tester,
     ) async {
       final labels = <Object?>['b'];
       expect(
-        () => acquireChart(config(labels, 5.0)),
+        () => acquireChartRoot(config(labels, 5.0)),
         throwsA(isA<AssertionError>()),
       );
       expect(labels, ['b']);
@@ -1335,7 +1347,7 @@ void main() {
 
     testWidgets('a yAxisKey null takes the default key y', (tester) async {
       final labels = <Object?>['b'];
-      final chart = acquireChart(config(labels, null));
+      final chart = acquireChartRoot(config(labels, null));
       expect(labels, ['b', 'a']);
       expect(chart.getDatasetMeta(0).parsed[0]!.y, 1.0);
     });

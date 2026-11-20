@@ -143,11 +143,11 @@ AnyObject _oneDataset() => <String, Object?>{
 };
 
 /// A line chart with the data [data] and the options [options].
-AnyObject _line(AnyObject data, [AnyObject? options]) => <String, Object?>{
-  'type': 'line',
-  'data': data,
-  'options': ?options,
-};
+ChartConfigurationScope _line(AnyObject data, [AnyObject? options]) =>
+    (ChartConfigurationScope()
+      ..type = 'line'
+      ..data = mergeExtra(ChartDataScope(), data)
+      ..options = mergeExtra(ChartOptionsScope(), options));
 
 /// `{plugins: {tooltip: tooltip}}`.
 AnyObject _tooltipOptions(AnyObject tooltip) => <String, Object?>{
@@ -355,6 +355,20 @@ final class _TextAlignChart() implements IChart {
 }
 
 void main() {
+  // Upstream puts position under plugins here; it is intentionally unused.
+  setUp(() {
+    final saved = foreignAudit;
+    foreignAudit = (owner, key, raw) {
+      if (owner == 'PluginOptionsByTypeScope' &&
+          key == 'position' &&
+          raw == 'average') {
+        return;
+      }
+      saved?.call(owner, key, raw);
+    };
+    addTearDown(() => foreignAudit = saved);
+  });
+
   group('Plugin.Tooltip', () {
     group('auto', fixture.specs('plugin.tooltip'));
 
@@ -407,7 +421,7 @@ void main() {
       testWidgets('Should only use x distance when intersect is false', (
         tester,
       ) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line(_twoDatasets(), <String, Object?>{
             'plugins': <String, Object?>{
               'tooltip': <String, Object?>{
@@ -535,7 +549,7 @@ void main() {
       testWidgets('Should only display if intersecting if intersect is set', (
         tester,
       ) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line(
             _twoDatasets(),
             _tooltipOptions(<String, Object?>{
@@ -558,7 +572,7 @@ void main() {
     });
 
     testWidgets('Should display in single mode', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
@@ -652,7 +666,7 @@ void main() {
     testWidgets('Should display information from user callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
@@ -775,41 +789,45 @@ void main() {
     testWidgets('Should provide context object to user callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'Dataset 1',
-              'data': <Object?>[
-                <String, Object?>{'x': 1, 'y': 10},
-                <String, Object?>{'x': 2, 'y': 20},
-                <String, Object?>{'x': 3, 'y': 30},
-              ],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+            'datasets': <Object?>[
+              <String, Object?>{
+                'label': 'Dataset 1',
+                'data': <Object?>[
+                  <String, Object?>{'x': 1, 'y': 10},
+                  <String, Object?>{'x': 2, 'y': 20},
+                  <String, Object?>{'x': 3, 'y': 30},
+                ],
+              },
+            ],
+          })
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear'},
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear'},
-          },
-          'plugins': <String, Object?>{
-            'tooltip': <String, Object?>{
-              'mode': const IndexInteractionMode(),
-              'callbacks': TooltipCallbacks(
-                beforeLabel: (tooltip, ctx) {
-                  final parsed = ctx.parsed;
-                  return [
-                    jsToString(
-                      jsAdd(jsAdd(jsGet(parsed, 'x'), ','), jsGet(parsed, 'y')),
-                    ),
-                  ];
-                },
-              ),
+            'plugins': <String, Object?>{
+              'tooltip': <String, Object?>{
+                'mode': const IndexInteractionMode(),
+                'callbacks': TooltipCallbacks(
+                  beforeLabel: (tooltip, ctx) {
+                    final parsed = ctx.parsed;
+                    return [
+                      jsToString(
+                        jsAdd(
+                          jsAdd(jsGet(parsed, 'x'), ','),
+                          jsGet(parsed, 'y'),
+                        ),
+                      ),
+                    ];
+                  },
+                ),
+              },
             },
-          },
-        },
-      });
+          }),
+      );
 
       // Trigger an event over top of the
       final meta = chart.getDatasetMeta(0);
@@ -820,7 +838,7 @@ void main() {
     });
 
     testWidgets('Should allow sorting items', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
@@ -862,7 +880,7 @@ void main() {
     });
 
     testWidgets('Should allow reversing items', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
@@ -902,7 +920,7 @@ void main() {
     });
 
     testWidgets('Should follow dataset order', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(extra1: const {'order': 10}, extra2: const {'order': 5}),
           _tooltipOptions(<String, Object?>{
@@ -943,7 +961,7 @@ void main() {
     testWidgets('should filter items from the tooltip using the callback', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(extra1: const {'tooltipHidden': true}),
           _tooltipOptions(<String, Object?>{
@@ -1001,7 +1019,7 @@ void main() {
     testWidgets('should set the caretPadding based on a config setting', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(extra1: const {'tooltipHidden': true}),
           _tooltipOptions(<String, Object?>{'caretPadding': 10}),
@@ -1027,14 +1045,18 @@ void main() {
 
     for (final type in ['line', 'bar']) {
       testWidgets('Should have dataPoints in a $type chart', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': type,
-          'data': _twoDatasets(),
-          'options': _tooltipOptions(<String, Object?>{
-            'mode': const NearestInteractionMode(),
-            'intersect': true,
-          }),
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = type
+            ..data = mergeExtra(ChartDataScope(), _twoDatasets())
+            ..options = mergeExtra(
+              ChartOptionsScope(),
+              _tooltipOptions(<String, Object?>{
+                'mode': const NearestInteractionMode(),
+                'intersect': true,
+              }),
+            ),
+        );
 
         // Trigger an event over top of the element
         const pointIndex = 1;
@@ -1078,7 +1100,7 @@ void main() {
     testWidgets('Should not update if active element has not changed', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
@@ -1114,7 +1136,7 @@ void main() {
       'Should update if active elements are the same, but the position has '
       'changed',
       (tester) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line(_twoDatasets(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{'stacked': StackMode.on},
@@ -1167,7 +1189,7 @@ void main() {
           // the option holds a positioner object, which records its calls.
           final positioner = _RecordingPositioner();
 
-          final chart = acquireChart(
+          final chart = acquireChartRoot(
             _line(
               _twoDatasets(),
               _tooltipOptions(<String, Object?>{
@@ -1206,52 +1228,53 @@ void main() {
         'Should ignore same x position when calculating average position '
         'with index interaction on stacked bar',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'label': 'Dataset 1',
-                  'data': <Object?>[10, 20, 30],
-                  'pointHoverBorderColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(255, 0, 0, 1),
-                  ),
-                  'pointHoverBackgroundColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(0, 255, 0, 1),
-                  ),
-                  'stack': 'stack1',
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'bar'
+              ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'label': 'Dataset 1',
+                    'data': <Object?>[10, 20, 30],
+                    'pointHoverBorderColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(255, 0, 0, 1),
+                    ),
+                    'pointHoverBackgroundColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(0, 255, 0, 1),
+                    ),
+                    'stack': 'stack1',
+                  },
+                  <String, Object?>{
+                    'label': 'Dataset 2',
+                    'data': <Object?>[40, 40, 40],
+                    'pointHoverBorderColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(0, 0, 255, 1),
+                    ),
+                    'pointHoverBackgroundColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(0, 255, 255, 1),
+                    ),
+                    'stack': 'stack1',
+                  },
+                  <String, Object?>{
+                    'label': 'Dataset 3',
+                    'data': <Object?>[90, 100, 110],
+                    'pointHoverBorderColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(0, 0, 255, 1),
+                    ),
+                    'pointHoverBackgroundColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(0, 255, 255, 1),
+                    ),
+                  },
+                ],
+                'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
+              })
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'interaction': <String, Object?>{
+                  'mode': const IndexInteractionMode(),
                 },
-                <String, Object?>{
-                  'label': 'Dataset 2',
-                  'data': <Object?>[40, 40, 40],
-                  'pointHoverBorderColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(0, 0, 255, 1),
-                  ),
-                  'pointHoverBackgroundColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(0, 255, 255, 1),
-                  ),
-                  'stack': 'stack1',
-                },
-                <String, Object?>{
-                  'label': 'Dataset 3',
-                  'data': <Object?>[90, 100, 110],
-                  'pointHoverBorderColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(0, 0, 255, 1),
-                  ),
-                  'pointHoverBackgroundColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(0, 255, 255, 1),
-                  ),
-                },
-              ],
-              'labels': <Object?>['Point 1', 'Point 2', 'Point 3'],
-            },
-            'options': <String, Object?>{
-              'interaction': <String, Object?>{
-                'mode': const IndexInteractionMode(),
-              },
-              'plugins': <String, Object?>{'position': 'average'},
-            },
-          });
+                'plugins': <String, Object?>{'position': 'average'},
+              }),
+          );
 
           // Trigger an event over top of the
           const pointIndex = 1;
@@ -1304,39 +1327,40 @@ void main() {
       'Should avoid tooltip truncation in x axis if there is enough space to '
       'show tooltip without truncation',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'pie',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[50, 50],
-                'backgroundColor': <Object?>[
-                  const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(255, 0, 0, 1),
-                  ),
-                  const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(0, 255, 0, 1),
-                  ),
-                ],
-                'label': 'Dataset 1',
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'pie'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[50, 50],
+                  'backgroundColor': <Object?>[
+                    const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(255, 0, 0, 1),
+                    ),
+                    const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(0, 255, 0, 1),
+                    ),
+                  ],
+                  'label': 'Dataset 1',
+                },
+              ],
+              'labels': <Object?>[
+                'Red long tooltip text to avoid unnecessary loop steps',
+                'Green long tooltip text to avoid unnecessary loop steps',
+              ],
+            })
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'responsive': true,
+              'animation': <String, Object?>{
+                // without this slice center point is calculated wrong
+                'animateRotate': false,
               },
-            ],
-            'labels': <Object?>[
-              'Red long tooltip text to avoid unnecessary loop steps',
-              'Green long tooltip text to avoid unnecessary loop steps',
-            ],
-          },
-          'options': <String, Object?>{
-            'responsive': true,
-            'animation': <String, Object?>{
-              // without this slice center point is calculated wrong
-              'animateRotate': false,
-            },
-            'plugins': <String, Object?>{
-              'tooltip': <String, Object?>{'animation': false},
-            },
-          },
-        });
+              'plugins': <String, Object?>{
+                'tooltip': <String, Object?>{'animation': false},
+              },
+            }),
+        );
 
         Future<void> testSlice(int slice, int count) async {
           final meta = chart.getDatasetMeta(0);
@@ -1382,7 +1406,7 @@ void main() {
     testWidgets('Should split newlines into separate lines in user callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _line(
           _twoDatasets(),
           _tooltipOptions(<String, Object?>{
@@ -1840,7 +1864,7 @@ void main() {
 
     group('active elements', () {
       testWidgets('should set the active elements', (tester) async {
-        final chart = acquireChart(_line(_oneDataset()));
+        final chart = acquireChartRoot(_line(_oneDataset()));
 
         final meta = chart.getDatasetMeta(0);
         chart.tooltip!.setActiveElements([
@@ -1855,7 +1879,7 @@ void main() {
       testWidgets(
         'should not replace the user set active elements by event replay',
         (tester) async {
-          final chart = acquireChart(
+          final chart = acquireChartRoot(
             _line(_oneDataset(), <String, Object?>{
               'events': <Object?>['pointerdown', 'pointerup'],
             }),
@@ -1897,24 +1921,25 @@ void main() {
         'should not change the active elements on events outside chartArea, '
         'except for mouseout',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['A', 'B', 'C', 'D'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 20, 30, 100],
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+                'labels': <Object?>['A', 'B', 'C', 'D'],
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'data': <Object?>[10, 20, 30, 100],
+                  },
+                ],
+              })
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{'display': ScaleDisplay.off},
+                  'y': <String, Object?>{'display': ScaleDisplay.off},
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{'display': ScaleDisplay.off},
-                'y': <String, Object?>{'display': ScaleDisplay.off},
-              },
-              'layout': <String, Object?>{'padding': const EdgeInsets.all(5)},
-            },
-          });
+                'layout': <String, Object?>{'padding': const EdgeInsets.all(5)},
+              }),
+          );
 
           final point = chart.getDatasetMeta(0).data[0];
 
@@ -1948,7 +1973,7 @@ void main() {
               native_ui.Color.fromRGBO(0, 255, 0, 1),
             ),
           };
-          final chart = acquireChart(
+          final chart = acquireChartRoot(
             _line(
               <String, Object?>{
                 'datasets': <Object?>[dataset],
@@ -1993,7 +2018,7 @@ void main() {
           'label': 'Dataset 2',
           'data': <Object?>[10, 25, 35],
         };
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line(
             <String, Object?>{
               'datasets': <Object?>[dataset1, dataset2],
@@ -2039,7 +2064,7 @@ void main() {
           'label': 'Dataset 2',
           'data': <Object?>[10, 25, 35],
         };
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line(
             <String, Object?>{
               'datasets': <Object?>[dataset1, dataset2],
@@ -2079,7 +2104,7 @@ void main() {
       testWidgets('should not be called on events not in plugin events array', (
         tester,
       ) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line(
             _oneDataset(),
             _tooltipOptions(<String, Object?>{
@@ -2102,7 +2127,7 @@ void main() {
       'should use default callback if user callback returns undefined',
       (tester) async {
         Null returnsDefault(Object? tooltip, Object? arg) => null;
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line(
             _twoDatasets(),
             _tooltipOptions(<String, Object?>{

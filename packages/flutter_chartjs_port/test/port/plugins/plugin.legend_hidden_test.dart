@@ -38,7 +38,7 @@ const _black = ChartPaint.solid(Color(0xff000000));
 /// A test uses this Map form, not [_typedConfig], where it writes into the
 /// config Maps of a live chart or gives values that the typed API has no form
 /// for.
-Map<String, Object?> _config(
+ChartConfigurationScope _config(
   String type, {
   Map<String, Object?> legend = const {},
   Map<String, Object?> labels = const {},
@@ -47,9 +47,9 @@ Map<String, Object?> _config(
   Object? labelValues,
   Object? datasets,
   List<Plugin<Object?>>? plugins,
-}) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
+}) => (ChartConfigurationScope()
+  ..type = type
+  ..data = mergeExtra(ChartDataScope(), <String, Object?>{
     'labels': labelValues ?? <Object?>['a', 'b', 'c'],
     'datasets':
         datasets ??
@@ -63,8 +63,8 @@ Map<String, Object?> _config(
             ...dataset,
           },
         ],
-  },
-  'options': <String, Object?>{
+  })
+  ..options = _nativeOptions(<String, Object?>{
     'plugins': <String, Object?>{
       'legend': <String, Object?>{
         'display': false,
@@ -73,15 +73,36 @@ Map<String, Object?> _config(
       },
     },
     ...options,
-  },
-  'plugins': ?plugins,
-};
+  })
+  ..['plugins'] = plugins);
+
+/// Keep user Map subclasses at the same location in the option tree: the
+/// probes observe their runtime reads. Ordinary option Maps become scopes.
+ChartOptionsScope _nativeOptions(Map<String, Object?> source) {
+  final result = mergeExtra(ChartOptionsScope(), source);
+  void restore(Object target, Map<String, Object?> values) {
+    for (final entry in values.entries) {
+      final value = entry.value;
+      if (value is _ObservedMap) {
+        jsSet(target, entry.key, value);
+      } else if (value is Map<String, Object?>) {
+        final child = jsGet(target, entry.key);
+        if (child is JsObjectFace || child is Map<String, Object?>) {
+          restore(child!, value);
+        }
+      }
+    }
+  }
+
+  restore(result, source);
+  return result;
+}
 
 bool _keepItem(Object? item, Object? data) => true;
 
 /// The twin of a config of [_config]: it adds the `filter` that keeps each
 /// item.
-Map<String, Object?> _eager(
+ChartConfigurationScope _eager(
   String type, {
   Map<String, Object?> labels = const {},
   Map<String, Object?> legend = const {},
@@ -231,11 +252,10 @@ List<Object?> _datasetsOf(Chart chart) =>
     jsGet(chart.data, 'datasets')! as List<Object?>;
 
 /// `options.plugins.legend.labels` of the config of [chart].
-Map<String, Object?> _labelOptionsOf(Chart chart) =>
-    ((jsGet(chart.config.options, 'plugins')!
-                as Map<String, Object?>)['legend']!
-            as Map<String, Object?>)['labels']!
-        as Map<String, Object?>;
+JsObjectFace _labelOptionsOf(Chart chart) =>
+    ((jsGet(chart.config.options, 'plugins')! as JsObjectFace)['legend']!
+            as JsObjectFace)['labels']!
+        as JsObjectFace;
 
 /// An inline plugin [id] with the hooks of the names [hooks] (Chart.js ADR
 /// 0144): each calls [run] with its name and the chart. A cancelable hook
@@ -645,8 +665,8 @@ final class _TrivialConfig(super.config) extends Config;
 
 /// A chart of [config] of the exact class, or of a trivial user subclass, which
 /// takes the ordinary path at each point. Both have the same canvas size.
-Chart _chartOf(Map<String, Object?> config, {required bool exact}) {
-  (config['options']! as Map<String, Object?>)
+Chart _chartOf(ChartConfigurationScope config, {required bool exact}) {
+  (config['options']! as JsObjectFace)
     ..['animation'] = false
     ..['responsive'] = false;
   final canvas = UiCanvasElement(width: 300, height: 300);
@@ -810,13 +830,12 @@ void main() {
 
       testWidgets('$type: a toggle of display', (tester) async {
         // Raw: the test writes `display` into the legend Map of the config.
-        final chart = acquireChart(_config(type));
-        final twin = acquireChart(_eager(type));
+        final chart = acquireChartRoot(_config(type));
+        final twin = acquireChartRoot(_eager(type));
         void set(Object? display) {
           for (final each in [chart, twin]) {
-            ((jsGet(each.config.options, 'plugins')!
-                        as Map<String, Object?>)['legend']!
-                    as Map<String, Object?>)['display'] =
+            ((jsGet(each.config.options, 'plugins')! as JsObjectFace)['legend']!
+                    as JsObjectFace)['display'] =
                 display;
             each.update();
           }
@@ -1090,7 +1109,9 @@ void main() {
           tester,
         ) async {
           // Raw: a typed `display: null` sets no key.
-          final chart = acquireChart(_config(type, legend: {'display': value}));
+          final chart = acquireChartRoot(
+            _config(type, legend: {'display': value}),
+          );
           expect(_legendOf(chart).legendItemsPending, isFalse);
           expect(_legendOf(chart).height, 0);
         });
@@ -1209,7 +1230,7 @@ void main() {
       ) async {
         // Raw: the typed labels are a `List<Object>`.
         final labels = _ObservedList(['a', 'b', 'c']);
-        final chart = acquireChart(_config(type, labelValues: labels));
+        final chart = acquireChartRoot(_config(type, labelValues: labels));
         expect(_legendOf(chart).legendItemsPending, isFalse);
         expect(chart.legend!.legendItems, hasLength(3));
       });
@@ -1224,7 +1245,7 @@ void main() {
             'backgroundColor': _red,
           },
         ]);
-        final chart = acquireChart(_config(type, datasets: datasets));
+        final chart = acquireChartRoot(_config(type, datasets: datasets));
         expect(_legendOf(chart).legendItemsPending, isFalse);
       });
 
@@ -1235,7 +1256,9 @@ void main() {
         expect(_legendOf(noLabels).legendItemsPending, isFalse);
         expect(noLabels.legend!.legendItems, isEmpty);
         // Raw: a typed config needs one dataset (Chart.js ADR 0190).
-        final noDatasets = acquireChart(_config(type, datasets: <Object?>[]));
+        final noDatasets = acquireChartRoot(
+          _config(type, datasets: <Object?>[]),
+        );
         expect(_legendOf(noDatasets).legendItemsPending, isFalse);
         expect(noDatasets.legend!.legendItems, isEmpty);
       });
@@ -1246,7 +1269,7 @@ void main() {
         // Raw: the typed config has no `xLabels`.
         final config = _config(type);
         jsSet(config['data'], 'xLabels', <Object?>['x', 'y', 'z']);
-        final chart = acquireChart(config);
+        final chart = acquireChartRoot(config);
         expect(_legendOf(chart).legendItemsPending, isFalse);
         expect(chart.legend!.legendItems![0].text.single, 'a');
       });
@@ -1310,8 +1333,8 @@ void main() {
         addTearDown(() => registry.removeControllers([child]));
         // The same input through the exact class and through the subclass.
         // Raw: a typed dataset class names the controller of its own type.
-        final chart = acquireChart(_config(id));
-        final exact = acquireChart(_config(parent));
+        final chart = acquireChartRoot(_config(id));
+        final exact = acquireChartRoot(_config(parent));
         final controller = chart.getDatasetMeta(0).controller!;
         expect(controller.nativeLegendGenerator, isNull);
         expect(
@@ -1334,7 +1357,7 @@ void main() {
     testWidgets('a first dataset of another controller', (tester) async {
       // Raw: a typed config takes the chart type from its first dataset
       // (Chart.js ADR 0190).
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config('polarArea', dataset: const {'type': 'doughnut'}),
       );
       final controller = chart.getDatasetMeta(0).controller!;
@@ -1423,8 +1446,8 @@ void main() {
       for (final MapEntry(key: name, value: replace) in replacements.entries) {
         testWidgets('$type: $name', (tester) async {
           // Raw: each replacement writes a dataset Map into the config.
-          final chart = acquireChart(_config(type));
-          final twin = acquireChart(_eager(type));
+          final chart = acquireChartRoot(_config(type));
+          final twin = acquireChartRoot(_eager(type));
           expect(_legendOf(chart).legendItemsPending, isTrue);
           final metas = chart.metasets.length;
           replace(chart);
@@ -1460,8 +1483,10 @@ void main() {
               return null;
             });
         // Raw: the test writes into the dataset Map of the config.
-        final chart = acquireChart(_config(type, plugins: [reader(seen)]));
-        final twin = acquireChart(_eager(type, plugins: [reader(twinSeen)]));
+        final chart = acquireChartRoot(_config(type, plugins: [reader(seen)]));
+        final twin = acquireChartRoot(
+          _eager(type, plugins: [reader(twinSeen)]),
+        );
         armed = true;
         for (final each in [chart, twin]) {
           _labelsOf(each).add('d');
@@ -1498,8 +1523,8 @@ void main() {
       var calls = 0;
       var twinCalls = 0;
       // Raw: the test writes into the label options of the config Map.
-      final chart = acquireChart(_config(type, plugins: [reader(seen)]));
-      final twin = acquireChart(_eager(type, plugins: [reader(twinSeen)]));
+      final chart = acquireChartRoot(_config(type, plugins: [reader(seen)]));
+      final twin = acquireChartRoot(_eager(type, plugins: [reader(twinSeen)]));
       armed = true;
       // An update that the snapshot of upstream has and no build of a read.
       _labelsOf(chart)[0] = 'x';
@@ -1578,8 +1603,8 @@ void main() {
             return null;
           });
           // Raw: the test writes into the label options of the config Map.
-          final chart = acquireChart(_config(type, plugins: [reader()]));
-          final twin = acquireChart(_eager(type, plugins: [reader()]));
+          final chart = acquireChartRoot(_config(type, plugins: [reader()]));
+          final twin = acquireChartRoot(_eager(type, plugins: [reader()]));
           armed = true;
           for (final each in [chart, twin]) {
             _labelsOf(each)[0] = 'x';
@@ -1605,7 +1630,7 @@ void main() {
           type: type,
           hook: 'beforeUpdate',
           change: (chart, count) =>
-              (chart.config.options as Map<String, Object?>)['color'] = _green,
+              (chart.config.options as JsObjectFace)['color'] = _green,
           read: (chart) => chart.legend!.legendItems![0].fontColor,
         );
       });
@@ -1641,8 +1666,8 @@ void main() {
       testWidgets('$type: a read inside a new generateLabels', (tester) async {
         final seen = <Object?>[];
         // Raw: the test writes into the label options of the config Map.
-        final chart = acquireChart(_config(type));
-        final twin = acquireChart(_eager(type));
+        final chart = acquireChartRoot(_config(type));
+        final twin = acquireChartRoot(_eager(type));
         for (final each in [chart, twin]) {
           _labelsOf(each)[0] = 'x';
           each.update();
@@ -1686,8 +1711,8 @@ void main() {
             _hook('beforeUpdate', (chart) => armed ? false : null);
         var calls = 0;
         // Raw: the test writes into the label options of the config Map.
-        final chart = acquireChart(_config(type, plugins: [cancel()]));
-        final twin = acquireChart(_eager(type, plugins: [cancel()]));
+        final chart = acquireChartRoot(_config(type, plugins: [cancel()]));
+        final twin = acquireChartRoot(_eager(type, plugins: [cancel()]));
         for (final each in [chart, twin]) {
           _labelsOf(each)[0] = 'x';
           each.update();
@@ -1719,15 +1744,17 @@ void main() {
         Plugin<Object?> writer() => _hook('beforeLayout', (chart) {
           if (armed) {
             _labelOptionsOf(chart)['pointStyle'] = const StarPointStyle();
-            (chart.config.options as Map<String, Object?>)['color'] = _green;
+            (chart.config.options as JsObjectFace)['color'] = _green;
           }
           return null;
         });
         // Raw: the writer writes into the option Maps of the config.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config(type, plugins: [reader(), writer()]),
         );
-        final twin = acquireChart(_eager(type, plugins: [reader(), writer()]));
+        final twin = acquireChartRoot(
+          _eager(type, plugins: [reader(), writer()]),
+        );
         armed = true;
         for (final each in [chart, twin]) {
           // Chart.js ADR 0182: the write of `beforeLayout` shows at the next
@@ -1782,7 +1809,7 @@ void main() {
               'afterLayout', (tester) async {
             var armed = true;
             // Raw: the test writes into the label options of the config Map.
-            final chart = acquireChart(
+            final chart = acquireChartRoot(
               _config(
                 type,
                 legend: {'display': display},
@@ -1821,8 +1848,8 @@ void main() {
         });
         var calls = 0;
         // Raw: the test writes into the dataset Map of the config.
-        final chart = acquireChart(_config(type, plugins: [reader()]));
-        final twin = acquireChart(_eager(type, plugins: [reader()]));
+        final chart = acquireChartRoot(_config(type, plugins: [reader()]));
+        final twin = acquireChartRoot(_eager(type, plugins: [reader()]));
         armed = true;
         chart.update(UpdateMode(mode));
         twin.update(UpdateMode(mode));
@@ -1868,8 +1895,8 @@ void main() {
         return null;
       });
       // Raw: the test writes into the dataset Map of the config.
-      final chart = acquireChart(_config('polarArea', plugins: [clear()]));
-      final twin = acquireChart(_eager('polarArea', plugins: [clear()]));
+      final chart = acquireChartRoot(_config('polarArea', plugins: [clear()]));
+      final twin = acquireChartRoot(_eager('polarArea', plugins: [clear()]));
       chart.update(UpdateMode.none);
       twin.update(UpdateMode.none);
       armed = true;
@@ -1906,7 +1933,7 @@ void main() {
             }
 
             // Raw: a typed dataset class names the controller of its own type.
-            Map<String, Object?> make(String type) => _config(
+            ChartConfigurationScope make(String type) => _config(
               type,
               labels: where == 'labels'
                   ? {'_scriptable': descriptor}
@@ -1915,12 +1942,12 @@ void main() {
                   ? {'_scriptable': descriptor}
                   : const {},
             );
-            final chart = acquireChart(make(parent))
+            final chart = acquireChartRoot(make(parent))
               ..update(UpdateMode(mode))
               ..update(UpdateMode(mode));
             final seen = calls;
             calls = 0;
-            final twin = acquireChart(make(id))
+            final twin = acquireChartRoot(make(id))
               ..update(UpdateMode(mode))
               ..update(UpdateMode(mode));
             expect(seen, calls);
@@ -2009,8 +2036,8 @@ void main() {
         tester,
       ) async {
         // Raw: the test writes into the dataset Map of the config.
-        final chart = acquireChart(_config(type));
-        final twin = acquireChart(_eager(type));
+        final chart = acquireChartRoot(_config(type));
+        final twin = acquireChartRoot(_eager(type));
         for (final each in [chart, twin]) {
           ((jsGet(each.data, 'datasets')! as List<Object?>)[0]!
                   as Map<String, Object?>)['backgroundColor'] =
@@ -2039,8 +2066,8 @@ void main() {
             return null;
           });
       // Raw: the test writes into the dataset Map of the config.
-      final chart = acquireChart(_config('pie', plugins: [reader(seen)]));
-      final twin = acquireChart(_eager('pie', plugins: [reader(twinSeen)]));
+      final chart = acquireChartRoot(_config('pie', plugins: [reader(seen)]));
+      final twin = acquireChartRoot(_eager('pie', plugins: [reader(twinSeen)]));
       armed = true;
       for (final each in [chart, twin]) {
         ((jsGet(each.data, 'datasets')! as List<Object?>)[0]!
@@ -2064,8 +2091,8 @@ void main() {
         tester,
       ) async {
         // Raw: the test writes `labels` into the data Map of the config.
-        final chart = acquireChart(_config(type));
-        final twin = acquireChart(_eager(type));
+        final chart = acquireChartRoot(_config(type));
+        final twin = acquireChartRoot(_eager(type));
         // The last build: a, b and c.
         expect(_texts(chart), ['a', 'b', 'c']);
         for (final each in [chart, twin]) {
@@ -2093,8 +2120,8 @@ void main() {
         tester,
       ) async {
         // Raw: the test writes `labels` into the data Map of the config.
-        final chart = acquireChart(_config(type));
-        final twin = acquireChart(_eager(type));
+        final chart = acquireChartRoot(_config(type));
+        final twin = acquireChartRoot(_eager(type));
         final legend = _legendOf(chart);
         final twinLegend = _legendOf(twin);
         expect(legend.legendItems, hasLength(3));
@@ -2202,7 +2229,7 @@ void main() {
       });
       int callsOf(String type) {
         // Raw: a typed dataset class names the controller of its own type.
-        final chart = acquireChart(_config(type, plugins: [add()]))
+        final chart = acquireChartRoot(_config(type, plugins: [add()]))
           ..update(UpdateMode.none);
         calls = 0;
         armed = true;
@@ -2238,11 +2265,10 @@ void main() {
 
       testWidgets('$type: the plugin goes in an update', (tester) async {
         // Raw: the test writes into the plugin Map of the config.
-        final chart = acquireChart(_config(type));
+        final chart = acquireChartRoot(_config(type));
         final legend = _legendOf(chart);
         expect(legend.legendItemsPending, isTrue);
-        (jsGet(chart.config.options, 'plugins')!
-                as Map<String, Object?>)['legend'] =
+        (jsGet(chart.config.options, 'plugins')! as JsObjectFace)['legend'] =
             false;
         chart.update();
         expect(chart.legend, isNull);
@@ -2254,7 +2280,7 @@ void main() {
       tester,
     ) async {
       // Raw: the test writes `labels` into the data Map of the config.
-      final chart = acquireChart(_config('pie'));
+      final chart = acquireChartRoot(_config('pie'));
       final legend = _legendOf(chart);
       final built = legend.legendItems;
       chart.update();
@@ -2428,17 +2454,21 @@ void main() {
             return null;
           });
           // Raw: the test drives ChartView.raw.
-          Map<String, Object?> rawConfig(int count) => _config(
-            type,
-            labelValues: <Object?>[for (var i = 0; i < count; i++) 'l$i'],
-            datasets: <Object?>[
-              <String, Object?>{
-                'data': <Object?>[for (var i = 0; i < count; i++) 1.0 + i],
-                'backgroundColor': _red,
-              },
-            ],
-            plugins: [plugin],
-          );
+          Map<String, Object?> rawConfig(int count) {
+            final root = _config(
+              type,
+              labelValues: <Object?>[for (var i = 0; i < count; i++) 'l$i'],
+              datasets: <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[for (var i = 0; i < count; i++) 1.0 + i],
+                  'backgroundColor': _red,
+                },
+              ],
+              plugins: [plugin],
+            );
+            return {for (final key in root.jsKeys()) key: root.jsRead(key)};
+          }
+
           Widget frame(Map<String, Object?> config) => Directionality(
             textDirection: TextDirection.ltr,
             child: Align(
@@ -2604,8 +2634,10 @@ void main() {
         testWidgets('$type: the twins of each step up to: $step', (
           tester,
         ) async {
-          final chart = acquireChart(_config(type, dataset: _indexedColors));
-          final twin = acquireChart(_eager(type, dataset: _indexedColors));
+          final chart = acquireChartRoot(
+            _config(type, dataset: _indexedColors),
+          );
+          final twin = acquireChartRoot(_eager(type, dataset: _indexedColors));
           expect(_state(chart), _state(twin), reason: 'the construction');
           for (final entry in _steps.entries) {
             entry.value(chart);
@@ -2633,7 +2665,7 @@ void main() {
 
       testWidgets('$type: after an update in the mode none, an arc has the '
           'state of the last resolve of the build', (tester) async {
-        final chart = acquireChart(_config(type, dataset: _indexedColors))
+        final chart = acquireChartRoot(_config(type, dataset: _indexedColors))
           ..update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isTrue);
         final arc = chart.getDatasetMeta(0).data[2] as ArcElement;
@@ -2661,10 +2693,10 @@ void main() {
               into.add(_contexts(chart));
               return null;
             });
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config(type, dataset: _indexedColors, plugins: [probe(log)]),
         );
-        final twin = acquireChart(
+        final twin = acquireChartRoot(
           _eager(type, dataset: _indexedColors, plugins: [probe(twinLog)]),
         );
         for (final each in [chart, twin]) {
@@ -2682,8 +2714,8 @@ void main() {
         tester,
       ) async {
         final dataset = {..._indexedColors, 'data': <Object?>[]};
-        final chart = acquireChart(_config(type, dataset: dataset));
-        final twin = acquireChart(_eager(type, dataset: dataset));
+        final chart = acquireChartRoot(_config(type, dataset: dataset));
+        final twin = acquireChartRoot(_eager(type, dataset: dataset));
         chart.update(UpdateMode.none);
         twin.update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isTrue);
@@ -2710,10 +2742,10 @@ void main() {
             },
           },
         ];
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config(type, datasets: datasets(() => calls++)),
         );
-        final twin = acquireChart(
+        final twin = acquireChartRoot(
           _config(
             type,
             datasets: datasets(() => twinCalls++),
@@ -2733,11 +2765,11 @@ void main() {
         Map<String, Object?> options() => {
           'animation': <String, Object?>{'duration': 40.0},
         };
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config(type, dataset: _indexedColors, options: options()),
           <String, Object?>{'animation': true},
         );
-        final twin = acquireChart(
+        final twin = acquireChartRoot(
           _eager(type, dataset: _indexedColors, options: options()),
           <String, Object?>{'animation': true},
         );
@@ -2769,8 +2801,10 @@ void main() {
             return _black;
           },
         };
-        final chart = acquireChart(_config(type, dataset: dataset(calls)));
-        final twin = acquireChart(_eager(type, dataset: dataset(twinCalls)));
+        final chart = acquireChartRoot(_config(type, dataset: dataset(calls)));
+        final twin = acquireChartRoot(
+          _eager(type, dataset: dataset(twinCalls)),
+        );
         expect(_legendOf(chart).legendItemsPending, isTrue);
         final element = chart.getDatasetMeta(0).data[1];
         final twinElement = twin.getDatasetMeta(0).data[1];
@@ -2812,10 +2846,10 @@ void main() {
       tester,
     ) async {
       final labels = <Object?>['x', 'x', 'x'];
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config('pie', dataset: _indexedColors, labelValues: labels),
       );
-      final twin = acquireChart(
+      final twin = acquireChartRoot(
         _config(
           'pie',
           dataset: _indexedColors,
@@ -2832,7 +2866,7 @@ void main() {
     testWidgets('a function past the entries of the labels is no read', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config(
           'pie',
           dataset: {
@@ -2860,10 +2894,10 @@ void main() {
               }
               return null;
             });
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config('pie', dataset: _indexedColors, plugins: [plugin(seen)]),
         );
-        final twin = acquireChart(
+        final twin = acquireChartRoot(
           _eager('pie', dataset: _indexedColors, plugins: [plugin(twinSeen)]),
         );
         armed = true;
@@ -2897,10 +2931,10 @@ void main() {
           if (armed) _dataset0(chart)['backgroundColor'] = color;
           return null;
         });
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config('pie', dataset: _indexedColors, plugins: [plugin()]),
         );
-        final twin = acquireChart(
+        final twin = acquireChartRoot(
           _eager('pie', dataset: _indexedColors, plugins: [plugin()]),
         );
         armed = true;
@@ -2932,10 +2966,10 @@ void main() {
             }
             return null;
           });
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config('pie', dataset: _indexedColors, plugins: [plugin()]),
       );
-      final twin = acquireChart(
+      final twin = acquireChartRoot(
         _eager('pie', dataset: _indexedColors, plugins: [plugin()]),
       );
       armed = true;
@@ -2953,8 +2987,8 @@ void main() {
 
     testWidgets('a write through the resolver ends the plan', (tester) async {
       var calls = 0;
-      final chart = acquireChart(_config('pie', dataset: _indexedColors));
-      final twin = acquireChart(_eager('pie', dataset: _indexedColors));
+      final chart = acquireChartRoot(_config('pie', dataset: _indexedColors));
+      final twin = acquireChartRoot(_eager('pie', dataset: _indexedColors));
       Object? color(Object? ctx) {
         calls++;
         return _black;
@@ -3012,14 +3046,14 @@ void main() {
           var armed = false;
           final log = <Object?>[];
           final twinLog = <Object?>[];
-          final chart = acquireChart(
+          final chart = acquireChartRoot(
             _config(
               type,
               dataset: _indexedColors,
               plugins: [logger(log, () => armed, read: read)],
             ),
           );
-          final twin = acquireChart(
+          final twin = acquireChartRoot(
             _eager(
               type,
               dataset: _indexedColors,
@@ -3065,10 +3099,10 @@ void main() {
             },
           },
         };
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config(type, dataset: _indexedColors, options: options(log)),
         );
-        final twin = acquireChart(
+        final twin = acquireChartRoot(
           _config(type, dataset: _indexedColors, options: options(twinLog)),
         );
         // The twin takes the filter through its own label options.
@@ -3117,12 +3151,13 @@ void main() {
             return 1.0;
           }
 
-          final chart = acquireChart(_config(type, dataset: build(function)))
-            ..update(UpdateMode.none);
+          final chart = acquireChartRoot(
+            _config(type, dataset: build(function)),
+          )..update(UpdateMode.none);
           final seen = calls;
           expect(_legendOf(chart).legendItemsPending, isFalse);
           calls = 0;
-          final twin = acquireChart(_eager(type, dataset: build(function)))
+          final twin = acquireChartRoot(_eager(type, dataset: build(function)))
             ..update(UpdateMode.none);
           expect(seen, greaterThan(0));
           expect(seen, calls);
@@ -3142,12 +3177,12 @@ void main() {
             return 1.0;
           },
         });
-        final chart = acquireChart(_config(type, dataset: _indexedColors))
+        final chart = acquireChartRoot(_config(type, dataset: _indexedColors))
           ..update(UpdateMode.none);
         final seen = calls;
         expect(_legendOf(chart).legendItemsPending, isFalse);
         calls = 0;
-        final twin = acquireChart(_eager(type, dataset: _indexedColors))
+        final twin = acquireChartRoot(_eager(type, dataset: _indexedColors))
           ..update(UpdateMode.none);
         expect(seen, calls);
         expect(seen, greaterThan(0));
@@ -3166,12 +3201,12 @@ void main() {
                 return 1.0;
               });
         addTearDown(() => arcDefaults.jsDelete('userKey'));
-        final chart = acquireChart(_config(type, dataset: _indexedColors))
+        final chart = acquireChartRoot(_config(type, dataset: _indexedColors))
           ..update(UpdateMode.none);
         final seen = calls;
         expect(_legendOf(chart).legendItemsPending, isFalse);
         calls = 0;
-        final twin = acquireChart(_eager(type, dataset: _indexedColors))
+        final twin = acquireChartRoot(_eager(type, dataset: _indexedColors))
           ..update(UpdateMode.none);
         expect(seen, calls);
         expect(seen, greaterThan(0));
@@ -3192,13 +3227,13 @@ void main() {
             },
           },
         };
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config(type, dataset: _indexedColors, options: options()),
         )..update(UpdateMode.none);
         final seen = calls;
         expect(_legendOf(chart).legendItemsPending, isFalse);
         calls = 0;
-        final twin = acquireChart(
+        final twin = acquireChartRoot(
           _eager(type, dataset: _indexedColors, options: options()),
         )..update(UpdateMode.none);
         expect(seen, calls);
@@ -3235,7 +3270,7 @@ void main() {
           },
         ];
         for (final each in labels) {
-          final chart = acquireChart(
+          final chart = acquireChartRoot(
             _config(type, dataset: _indexedColors, labels: each),
           );
           expect(_legendOf(chart).legendItemsPending, isFalse);
@@ -3311,14 +3346,14 @@ void main() {
             ],
           },
         ]) {
-          final chart = acquireChart(_config(type, dataset: dataset))
+          final chart = acquireChartRoot(_config(type, dataset: dataset))
             ..update(UpdateMode.none);
           expect(
             _legendOf(chart).legendItemsPending,
             isFalse,
             reason: '$dataset',
           );
-          final twin = acquireChart(_eager(type, dataset: dataset))
+          final twin = acquireChartRoot(_eager(type, dataset: dataset))
             ..update(UpdateMode.none);
           expect(_state(chart), _state(twin), reason: '$dataset');
           expect(
@@ -3336,9 +3371,9 @@ void main() {
           'borderAlign': <Object?>[ArcBorderAlign.inner, ArcBorderAlign.center],
           '_indexable': false,
         };
-        final chart = acquireChart(_config(type, dataset: dataset))
+        final chart = acquireChartRoot(_config(type, dataset: dataset))
           ..update(UpdateMode.none);
-        final twin = acquireChart(_eager(type, dataset: dataset))
+        final twin = acquireChartRoot(_eager(type, dataset: dataset))
           ..update(UpdateMode.none);
         expect(_state(chart), _state(twin));
         expect(
@@ -3354,10 +3389,11 @@ void main() {
           'data': <Object?>[1.0, 2.0, 3.0],
           ..._indexedColors,
         });
-        final chart = acquireChart(_config(type, datasets: <Object?>[dataset]))
-          ..update(UpdateMode.none);
+        final chart = acquireChartRoot(
+          _config(type, datasets: <Object?>[dataset]),
+        )..update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isFalse);
-        final twin = acquireChart(
+        final twin = acquireChartRoot(
           _config(
             type,
             datasets: <Object?>[
@@ -3380,19 +3416,20 @@ void main() {
             },
           },
         });
-        final other = acquireChart(<String, Object?>{
-          'type': type,
-          'data': <String, Object?>{
-            'labels': <Object?>['a', 'b', 'c'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1.0, 2.0, 3.0],
-                ..._indexedColors,
-              },
-            ],
-          },
-          'options': options,
-        })..update(UpdateMode.none);
+        final other = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = type
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'labels': <Object?>['a', 'b', 'c'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[1.0, 2.0, 3.0],
+                  ..._indexedColors,
+                },
+              ],
+            })
+            ..['options'] = options,
+        )..update(UpdateMode.none);
         expect(_legendOf(other).legendItemsPending, isFalse);
       });
 
@@ -3408,8 +3445,8 @@ void main() {
           return reads;
         }
 
-        final chart = acquireChart(_config(type, dataset: _indexedColors));
-        final twin = acquireChart(_eager(type, dataset: _indexedColors));
+        final chart = acquireChartRoot(_config(type, dataset: _indexedColors));
+        final twin = acquireChartRoot(_eager(type, dataset: _indexedColors));
         final reads = run(chart);
         expect(reads, isNotEmpty);
         expect(reads, run(twin));
@@ -3425,8 +3462,8 @@ void main() {
       ) async {
         // A changed context gets the writes again. A value that is not a
         // context gets a new context.
-        final chart = acquireChart(_config(type, dataset: _indexedColors));
-        final twin = acquireChart(_eager(type, dataset: _indexedColors));
+        final chart = acquireChartRoot(_config(type, dataset: _indexedColors));
+        final twin = acquireChartRoot(_eager(type, dataset: _indexedColors));
         for (final each in [chart, twin]) {
           final data = each.getDatasetMeta(0).data;
           (data[0] as ArcElement).$context!.mode = null;
@@ -3449,7 +3486,7 @@ void main() {
         addTearDown(chart.destroy);
         chart.update(UpdateMode.none);
         expect(_legendOf(chart).legendItemsPending, isFalse);
-        final twin = acquireChart(_config(type, dataset: _indexedColors));
+        final twin = acquireChartRoot(_config(type, dataset: _indexedColors));
         expect(_legendOf(twin).legendItemsPending, isTrue);
       });
     }
@@ -3462,8 +3499,10 @@ void main() {
       testWidgets('a subclass of the controller: $id', (tester) async {
         registry.addControllers([child]);
         addTearDown(() => registry.removeControllers([child]));
-        final chart = acquireChart(_config(id, dataset: _indexedColors));
-        final exact = acquireChart(_config(parent, dataset: _indexedColors));
+        final chart = acquireChartRoot(_config(id, dataset: _indexedColors));
+        final exact = acquireChartRoot(
+          _config(parent, dataset: _indexedColors),
+        );
         for (final mode in ['none', 'default']) {
           chart.update(UpdateMode(mode));
           exact.update(UpdateMode(mode));
@@ -3480,7 +3519,7 @@ void main() {
     }
 
     test('the proof takes the exact Config', () {
-      Map<String, Object?> make() => _config('pie', dataset: _indexedColors);
+      ChartConfigurationScope make() => _config('pie', dataset: _indexedColors);
       expect(
         Config(make())
             .prepareIndexedArcStyles(0, controllerType: 'pie', count: 3),
@@ -3937,8 +3976,8 @@ void main() {
     testWidgets('a read after an in-place change of a color list', (
       tester,
     ) async {
-      final chart = acquireChart(_config('pie', dataset: _indexedColors));
-      final twin = acquireChart(_eager('pie', dataset: _indexedColors));
+      final chart = acquireChartRoot(_config('pie', dataset: _indexedColors));
+      final twin = acquireChartRoot(_eager('pie', dataset: _indexedColors));
       for (final each in [chart, twin]) {
         final colors = <Object?>[_red, _green];
         _dataset0(each)['backgroundColor'] = colors;
@@ -3952,7 +3991,7 @@ void main() {
     });
 
     testWidgets('a read after an entry became an object', (tester) async {
-      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final chart = acquireChartRoot(_config('pie', dataset: _indexedColors));
       final colors = <Object?>[_red, _green];
       _dataset0(chart)['backgroundColor'] = colors;
       chart.update(UpdateMode.none);
@@ -4063,8 +4102,8 @@ void main() {
 
     testWidgets('a read gives the plan of the mark after a clear of the '
         'caches, as the snapshot does', (tester) async {
-      final chart = acquireChart(_config('pie', dataset: _indexedColors));
-      final twin = acquireChart(_eager('pie', dataset: _indexedColors));
+      final chart = acquireChartRoot(_config('pie', dataset: _indexedColors));
+      final twin = acquireChartRoot(_eager('pie', dataset: _indexedColors));
       for (final each in [chart, twin]) {
         each.update(UpdateMode.none);
         _dataset0(each)['backgroundColor'] = <Object?>[_black];
@@ -4078,7 +4117,7 @@ void main() {
     });
 
     testWidgets('a read with more labels than the mark', (tester) async {
-      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final chart = acquireChartRoot(_config('pie', dataset: _indexedColors));
       final state = _state(chart);
       _labelsOf(chart).add('d');
       // No index of a new label has an arc: the index of the dataset context.
@@ -4089,7 +4128,7 @@ void main() {
     });
 
     testWidgets('a read with a new first dataset', (tester) async {
-      final chart = acquireChart(_config('pie', dataset: _indexedColors));
+      final chart = acquireChartRoot(_config('pie', dataset: _indexedColors));
       final built = _items(chart.legend!);
       chart.update(UpdateMode.none);
       _datasetsOf(chart)[0] = <String, Object?>{
@@ -4109,10 +4148,10 @@ void main() {
         (chart.getDatasetMeta(0).data[1] as Element).$context,
         'mode',
       );
-      final chart = acquireChart(_config('pie', dataset: _indexedColors))
+      final chart = acquireChartRoot(_config('pie', dataset: _indexedColors))
         ..update(UpdateMode.none)
         ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)]);
-      final twin = acquireChart(_eager('pie', dataset: _indexedColors))
+      final twin = acquireChartRoot(_eager('pie', dataset: _indexedColors))
         ..update(UpdateMode.none)
         ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)]);
       // The hover wrote the state of the mode `active` into the context.
@@ -4134,12 +4173,11 @@ void main() {
     });
 
     testWidgets('the stop hook settles the pending items', (tester) async {
-      final chart = acquireChart(_config('pie', dataset: _indexedColors))
+      final chart = acquireChartRoot(_config('pie', dataset: _indexedColors))
         ..update(UpdateMode.none);
       final legend = _legendOf(chart);
       expect(legend.legendItemsPending, isTrue);
-      (jsGet(chart.config.options, 'plugins')!
-              as Map<String, Object?>)['legend'] =
+      (jsGet(chart.config.options, 'plugins')! as JsObjectFace)['legend'] =
           false;
       chart.update(UpdateMode.none);
       // The box left the chart, with the items of the last state.

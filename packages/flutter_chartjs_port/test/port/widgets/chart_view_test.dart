@@ -37,6 +37,20 @@ Map<String, Object?> _config({
   'plugins': ?plugins,
 };
 
+/// Typed setup for ordinary lifecycle checks. Raw identity and raw-option
+/// contract tests below retain [_config].
+ChartConfig _typedConfig({
+  Map<String, Object?> options = const {},
+  List<Plugin<Object?>>? plugins,
+}) => ChartConfig(
+  datasets: const [
+    BarDataset(data: [1, 2, 3]),
+  ],
+  labels: const ['a', 'b', 'c'],
+  plugins: plugins,
+  extra: {'animation': false, ...options},
+);
+
 /// [child] at the top left of a loose box of [width] x [height].
 Widget _box(Widget child, {double width = 400, double height = 300}) =>
     Directionality(
@@ -146,7 +160,7 @@ void main() {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              ChartView.raw(config: _config()),
+              ChartView(config: _typedConfig()),
               const SizedBox(key: below, width: 10, height: 10),
             ],
           ),
@@ -168,8 +182,8 @@ void main() {
       final counts = <String, int>{};
       await tester.pumpWidget(
         _box(
-          ChartView.raw(
-            config: _config(
+          ChartView(
+            config: _typedConfig(
               options: <String, Object?>{
                 'animation': <String, Object?>{
                   'onComplete': (Object? context) => complete++,
@@ -204,8 +218,8 @@ void main() {
       bool? attachedAtInit;
       await tester.pumpWidget(
         _box(
-          ChartView.raw(
-            config: _config(
+          ChartView(
+            config: _typedConfig(
               plugins: [
                 Plugin<Object?>(
                   id: 'init',
@@ -230,7 +244,7 @@ void main() {
     testWidgets('a start under TickerMode(enabled: false) is muted, and a '
         'change unmutes it', (tester) async {
       var progress = 0;
-      final config = _config(
+      final config = _typedConfig(
         options: <String, Object?>{
           'animation': <String, Object?>{
             'onProgress': (Object? context) => progress++,
@@ -239,7 +253,7 @@ void main() {
       );
       Widget build({required bool enabled}) => TickerMode(
         enabled: enabled,
-        child: _box(ChartView.raw(config: config)),
+        child: _box(ChartView(config: config)),
       );
       await tester.pumpWidget(build(enabled: false));
       final chart = _chart(tester)!;
@@ -269,14 +283,14 @@ void main() {
       final phases = <SchedulerPhase>[];
       late StateSetter setOuter;
       var builds = 0;
-      final config = _config();
+      final config = _typedConfig();
       await tester.pumpWidget(
         StatefulBuilder(
           builder: (context, setState) {
             setOuter = setState;
             builds++;
             return _box(
-              ChartView.raw(
+              ChartView(
                 config: config,
                 onChartCreated: (chart) {
                   phases.add(SchedulerBinding.instance.schedulerPhase);
@@ -298,7 +312,7 @@ void main() {
     testWidgets('a setState in afterInit fails with "Build scheduled during '
         'frame."', (tester) async {
       late StateSetter setOuter;
-      final config = _config(
+      final config = _typedConfig(
         plugins: [
           Plugin<Object?>(
             id: 'init',
@@ -312,7 +326,7 @@ void main() {
         StatefulBuilder(
           builder: (context, setState) {
             setOuter = setState;
-            return _box(ChartView.raw(config: config));
+            return _box(ChartView(config: config));
           },
         ),
       );
@@ -336,7 +350,7 @@ void main() {
       FlutterError.onError = details.add;
       addTearDown(() => FlutterError.onError = previous);
       await tester.pumpWidget(
-        _box(ChartView.raw(config: _config(plugins: [boom]))),
+        _box(ChartView(config: _typedConfig(plugins: [boom]))),
       );
       expect(details, hasLength(1));
       expect(details.single.exception, isA<StateError>());
@@ -351,7 +365,7 @@ void main() {
       expect(Chart.instances, isEmpty);
 
       await tester.pumpWidget(
-        _box(ChartView.raw(config: _config(plugins: []))),
+        _box(ChartView(config: _typedConfig(plugins: []))),
       );
       await tester.pump();
       expect(details, hasLength(1));
@@ -378,7 +392,7 @@ void main() {
                   alignment: Alignment.topLeft,
                   child: SizedBox(
                     width: 400,
-                    child: ChartView.raw(config: _config()),
+                    child: ChartView(config: _typedConfig()),
                   ),
                 ),
               ),

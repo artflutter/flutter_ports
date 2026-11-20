@@ -2921,3 +2921,14 @@ migrates context-refresh and range-update builders and six Sankey tests. Custom 
 and callback inputs remain available to the probes. No production canvas code or deferred
 cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates remain
 unchanged. No trigger occurred.
+
+## Typed widget, controller and tooltip test configs, 2026-11-20
+
+The ordinary startup cases of `test/port/widgets/chart_view_test.dart` and the palette
+switch cases of `chart_theme_switch_test.dart` now use typed `ChartView` configs. Their
+raw identity and raw-option contract cases remain. The golden chart uses the typed entry
+without changing or regenerating its pinned images. The batch also migrates host input,
+controller, tooltip, data-update and legend builders to native scopes, retaining custom
+Map objects where the probes observe their reads. No production canvas code or deferred
+cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates remain
+unchanged. No trigger occurred.

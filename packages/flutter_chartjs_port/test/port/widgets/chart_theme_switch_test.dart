@@ -408,17 +408,37 @@ void main() {
     ]) {
       testWidgets('$type: the element colors, the scale colors and the '
           'palette', (tester) async {
-        final config = _config(type: type);
-        await tester.pumpWidget(_view(config, theme: _themeA));
+        final config = ChartConfig(
+          labels: const ['a', 'b', 'c'],
+          datasets: [
+            for (var i = 0; i < 2; i++)
+              switch (type) {
+                'bar' => BarDataset(label: 'd$i', data: [1 + i, 3, 2]),
+                'line' => LineDataset(label: 'd$i', data: [1 + i, 3, 2]),
+                _ => RadarDataset(label: 'd$i', data: [1 + i, 3, 2]),
+              },
+          ],
+          animation: ChartAnimation.none,
+          extra: const {
+            'plugins': {
+              'colors': {'enabled': true},
+            },
+          },
+        );
+        await tester.pumpWidget(
+          _box(ChartView(config: config, theme: _themeA)),
+        );
         final chart = _chart(tester);
         for (final (theme, line, palette) in [
           (_themeA, _rgba(_red), _green),
           (_themeB, _rgba(_blue), _blue),
         ]) {
-          await tester.pumpWidget(_view(config, theme: theme));
+          await tester.pumpWidget(
+            _box(ChartView(config: config, theme: theme)),
+          );
           final reason = '$type, $theme';
           expect(
-            _dataset(chart, 0)['borderColor'],
+            jsGet(_datasets(chart)[0], 'borderColor'),
             ChartPaint.solid(_rgba(palette)),
             reason: reason,
           );

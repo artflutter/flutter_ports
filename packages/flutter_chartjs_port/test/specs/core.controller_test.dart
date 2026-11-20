@@ -263,15 +263,28 @@ final class const _TestMode() extends InteractionMode {
 }
 
 void main() {
+  // These specs deliberately disable hover and interaction with false.
+  setUp(() {
+    final saved = foreignAudit;
+    foreignAudit = (owner, key, raw) {
+      if (owner == 'ChartOptionsScope' &&
+          (key == 'hover' || key == 'interaction') &&
+          raw == false) {
+        return;
+      }
+      saved?.call(owner, key, raw);
+    };
+    addTearDown(() => foreignAudit = saved);
+  });
+
   group('Chart', () {
     // https://github.com/chartjs/Chart.js/issues/2481
     // See global.deprecations.tests.js for backward compatibility
-    // A Map config: the empty config has no chart type, which a typed
-    // config needs.
+    // A native root preserves the empty config without a chart type.
     testWidgets('should be defined and prototype of chart instances', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{});
+      final chart = acquireChartRoot(ChartConfigurationScope());
       expect(Chart, isNotNull);
       expect(Chart, isA<Object>());
       // `chart.constructor` is the runtime type.
@@ -317,14 +330,13 @@ void main() {
       expect(createChart, returnsNormally);
     });
 
-    // The Map configs of this group: the cases test the raw config itself,
-    // its `data` object, the merge of `Chart.defaults` and
-    // `Chart.overrides`, or have no chart type.
+    // These cases cover config initialization, data aliases and defaults.
+    // Explicit Map-boundary cases retain their supplied Map objects.
     group('config initialization', () {
       testWidgets('should create missing config.data properties', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{});
+        final chart = acquireChartRoot(ChartConfigurationScope());
         final data = chart.data;
 
         expect(data, isA<ChartDataScope>());
@@ -345,7 +357,7 @@ void main() {
         final labels = <Object?>[0, 1, 2, 3];
         final data = <String, Object?>{'labels': labels, 'datasets': datasets};
 
-        final chart = acquireChart(<String, Object?>{
+        final chart = acquireChartRoot(<String, Object?>{
           'type': 'line',
           'data': data,
         });
@@ -376,7 +388,7 @@ void main() {
             'datasets': <Object?>[],
           },
         };
-        final chart = acquireChart(config);
+        final chart = acquireChartRoot(config);
 
         expect(chart.data, same(config['data']));
 
@@ -426,7 +438,9 @@ void main() {
         defaults['onHover'] = callback;
         _line['interaction'] = <String, Object?>{'mode': const _TestMode()};
 
-        final chart = acquireChart(<String, Object?>{'type': 'line'});
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()..type = 'line',
+        );
 
         final options = chart.options;
         expect(jsGet(options['font'], 'size'), jsGet(defaults['font'], 'size'));
@@ -446,7 +460,9 @@ void main() {
         defaults['onHover'] = callback;
         _line['hover'] = <String, Object?>{'mode': const _TestMode()};
 
-        final chart = acquireChart(<String, Object?>{'type': 'line'});
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()..type = 'line',
+        );
 
         final options = chart.options;
         expect(jsGet(options['font'], 'size'), jsGet(defaults['font'], 'size'));
@@ -468,16 +484,19 @@ void main() {
         _line['hover'] = <String, Object?>{'mode': const _TestMode()};
         lineDefaults['spanGaps'] = true;
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'options': <String, Object?>{
-            'spanGaps': false,
-            'hover': <String, Object?>{'mode': const DatasetInteractionMode()},
-            'plugins': <String, Object?>{
-              'title': <String, Object?>{'position': ChartPosition.bottom},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'spanGaps': false,
+              'hover': <String, Object?>{
+                'mode': const DatasetInteractionMode(),
+              },
+              'plugins': <String, Object?>{
+                'title': <String, Object?>{'position': ChartPosition.bottom},
+              },
+            }),
+        );
 
         final options = chart.options;
         expect(options['spanGaps'], false);
@@ -532,36 +551,36 @@ void main() {
       // update() builds the scales before the controllers. Thus the case
       // needs the linear and category scales, but no controller: the
       // expected error is the missing controller 'area'.
-      // A Map config: a typed dataset class names its own controller, and
-      // this dataset must take the unregistered type of the chart.
+      // This dataset must take the unregistered type of the native root.
       testWidgets('should throw an error if the chart type is incorrect', (
         tester,
       ) async {
         void createChart() {
-          acquireChart(<String, Object?>{
-            'type': 'area',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'label': 'first',
-                  'data': <Object?>[10, 20],
+          acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'area'
+              ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+                'datasets': <Object?>[
+                  <String, Object?>{
+                    'label': 'first',
+                    'data': <Object?>[10, 20],
+                  },
+                ],
+                'labels': <Object?>['0', '1'],
+              })
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{
+                    'type': 'linear',
+                    'position': ChartPosition.left,
+                  },
+                  'y': <String, Object?>{
+                    'type': 'category',
+                    'position': ChartPosition.bottom,
+                  },
                 },
-              ],
-              'labels': <Object?>['0', '1'],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'linear',
-                  'position': ChartPosition.left,
-                },
-                'y': <String, Object?>{
-                  'type': 'category',
-                  'position': ChartPosition.bottom,
-                },
-              },
-            },
-          });
+              }),
+          );
         }
 
         expect(
@@ -576,9 +595,9 @@ void main() {
         );
       });
 
-      // A Map config: the case writes new data objects into `chart.data`.
+      // The case replaces the native data object of the chart.
       testWidgets('should initialize the data object', (tester) async {
-        final chart = acquireChart(<String, Object?>{'type': 'bar'});
+        final chart = acquireChartRoot(ChartConfigurationScope()..type = 'bar');
         _expectEmptyData(chart);
         chart.data = ChartDataScope();
         _expectEmptyData(chart);
@@ -586,25 +605,29 @@ void main() {
         // compile (row `adapt-config-objects`).
       });
 
-      // Map configs: the cases test the merge of the keys `hover` and
-      // `interaction` of the raw options, and `interaction: false` has no
-      // typed form.
+      // These scopes retain false sentinels for hover and interaction.
       group('should disable hover', () {
         testWidgets('when options.hover=false', (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'options': <String, Object?>{'hover': false},
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'hover': false,
+              }),
+          );
           expect(chart.options['hover'], isFalse);
         });
 
         testWidgets(
           'when options.interaction=false and options.hover is not defined',
           (tester) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'options': <String, Object?>{'interaction': false},
-            });
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..type = 'line'
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                  'interaction': false,
+                }),
+            );
             expect(chart.options['hover'], isFalse);
           },
         );
@@ -612,15 +635,16 @@ void main() {
         testWidgets(
           'when options.interaction=false and options.hover is defined',
           (tester) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'options': <String, Object?>{
-                'interaction': false,
-                'hover': <String, Object?>{
-                  'mode': const NearestInteractionMode(),
-                },
-              },
-            });
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..type = 'line'
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                  'interaction': false,
+                  'hover': <String, Object?>{
+                    'mode': const NearestInteractionMode(),
+                  },
+                }),
+            );
             expect(chart.options['hover'], isFalse);
           },
         );
@@ -649,25 +673,26 @@ void main() {
         );
       });
 
-      // A Map config: the case writes `events` into `chart.options` before
+      // A native root: the case writes `events` into `chart.options` before
       // `chart.update()`.
       testWidgets('should handle changing the events at runtime', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'events': <Object?>['click'],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'labels': <Object?>['A', 'B', 'C', 'D'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[10, 20, 30, 100],
+                },
+              ],
+            })
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'events': <Object?>['click'],
+            }),
+        );
 
         final point1 = chart.getDatasetMeta(0).data[1];
         final point2 = chart.getDatasetMeta(0).data[2];
@@ -732,20 +757,22 @@ void main() {
       testWidgets('should not activate elements when hover is disabled', (
         tester,
       ) async {
-        // A Map config: `hover: false` has no typed form, and a typed scope
-        // keeps the boolean as a foreign value.
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-          'options': <String, Object?>{'hover': false},
-        });
+        // The scope keeps the disabling false sentinel as a foreign value.
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'labels': <Object?>['A', 'B', 'C', 'D'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[10, 20, 30, 100],
+                },
+              ],
+            })
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'hover': false,
+            }),
+        );
 
         final point = chart.getDatasetMeta(0).data[1];
 
@@ -809,7 +836,7 @@ void main() {
       );
     });
 
-    // Map configs: the cases test the merge of `Chart.defaults` into raw
+    // Native configs: the cases test the merge of `Chart.defaults` into raw
     // scale configs, with keys of no option (`_jasmineCheck*`), `xAxes` and a
     // resolver as scale options.
     group('when merging scale options', () {
@@ -842,17 +869,18 @@ void main() {
       testWidgets(
         'should default to "category" for x scales and "linear" for y scales',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'xFoo0': <String, Object?>{},
-                'xFoo1': <String, Object?>{},
-                'yBar0': <String, Object?>{},
-                'yBar1': <String, Object?>{},
-              },
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'scales': <String, Object?>{
+                  'xFoo0': <String, Object?>{},
+                  'xFoo1': <String, Object?>{},
+                  'yBar0': <String, Object?>{},
+                  'yBar1': <String, Object?>{},
+                },
+              }),
+          );
 
           expect(chart.scales['xFoo0']!.type, 'category');
           expect(chart.scales['xFoo1']!.type, 'category');
@@ -864,19 +892,20 @@ void main() {
       testWidgets('should correctly apply defaults on central scale', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'foo': <String, Object?>{
-                'axis': const XAxis(),
-                'type': 'logarithmic',
-                '_jasmineCheckC': 'c2',
-                '_jasmineCheckD': 'd2',
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'foo': <String, Object?>{
+                  'axis': const XAxis(),
+                  'type': 'logarithmic',
+                  '_jasmineCheckC': 'c2',
+                  '_jasmineCheckD': 'd2',
+                },
               },
-            },
-          },
-        });
+            }),
+        );
 
         // let's check a few values from the user options and defaults
 
@@ -893,23 +922,24 @@ void main() {
       testWidgets('should correctly apply defaults on xy scales', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'logarithmic',
-                '_jasmineCheckC': 'c2',
-                '_jasmineCheckD': 'd2',
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'logarithmic',
+                  '_jasmineCheckC': 'c2',
+                  '_jasmineCheckD': 'd2',
+                },
+                'y': <String, Object?>{
+                  'type': 'time',
+                  '_jasmineCheckC': 'c2',
+                  '_jasmineCheckE': 'e2',
+                },
               },
-              'y': <String, Object?>{
-                'type': 'time',
-                '_jasmineCheckC': 'c2',
-                '_jasmineCheckE': 'e2',
-              },
-            },
-          },
-        });
+            }),
+        );
 
         expect(chart.scales['x']!.type, 'logarithmic');
         _expectSameScaleOptions(chart, 'x');
@@ -933,16 +963,17 @@ void main() {
       testWidgets('should not alter defaults when merging config', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'options': <String, Object?>{
-            '_jasmineCheck': 42,
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', '_jasmineCheck': 42},
-              'y': <String, Object?>{'type': 'category', '_jasmineCheck': 42},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              '_jasmineCheck': 42,
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'linear', '_jasmineCheck': 42},
+                'y': <String, Object?>{'type': 'category', '_jasmineCheck': 42},
+              },
+            }),
+        );
 
         expect(chart.options['_jasmineCheck'], isNot(same(undefined)));
         expect(
@@ -973,23 +1004,24 @@ void main() {
         tester,
       ) async {
         var failure = false;
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <Object?>[],
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'grid': <String, Object?>{
-                  'color': (ContextObject ctx) {
-                    if (ctx is! ScriptableScaleContext || ctx.tick == null) {
-                      failure = true;
-                    }
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..['data'] = <Object?>[]
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'grid': <String, Object?>{
+                    'color': (ContextObject ctx) {
+                      if (ctx is! ScriptableScaleContext || ctx.tick == null) {
+                        failure = true;
+                      }
+                    },
                   },
                 },
               },
-            },
-          },
-        });
+            }),
+        );
         chart
           ..options['scales'] = <String, Object?>{
             'x': jsGet(chart.options['scales'], 'x'),
@@ -1005,22 +1037,23 @@ void main() {
       testWidgets('should ignore array passed as scale options', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <Object?>[],
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'xAxes': <Object?>[
-                <String, Object?>{'id': 'xAxes', 'type': 'category'},
-              ],
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..['data'] = <Object?>[]
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'xAxes': <Object?>[
+                  <String, Object?>{'id': 'xAxes', 'type': 'category'},
+                ],
+              },
+            }),
+        );
         expect(chart.scales['xAxes'], isNull);
       });
     });
 
-    // A Map config: the case writes new options into `chart.options`.
+    // A native root: the case writes new options into `chart.options`.
     group('Updating options', () {
       // :584 the config has `data: []`. Upstream writes `datasets` and
       // `labels` into the array. The port gives a new Map (row
@@ -1028,16 +1061,17 @@ void main() {
       testWidgets('update should result to same set of options as construct', (
         tester,
       ) async {
-        final chart = acquireChart({
-          'type': 'line',
-          'data': <Object?>[],
-          'options': <String, Object?>{
-            'animation': false,
-            // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
-            'locale': const native_ui.Locale('en', 'US'),
-            'responsive': false,
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..['data'] = <Object?>[]
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'animation': false,
+              // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+              'locale': const native_ui.Locale('en', 'US'),
+              'responsive': false,
+            }),
+        );
         final options = chart.options;
         chart
           ..options = <String, Object?>{
@@ -1051,17 +1085,15 @@ void main() {
       });
     });
 
-    // The Map configs of this group have no chart type, which a typed config
-    // needs, or write into `chart.options` before an update.
+    // These native roots can omit the chart type and expose mutable options.
     group('config.options.responsive: true (maintainAspectRatio: false)', () {
       testWidgets('should fill parent width and height', (tester) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'options': <String, Object?>{
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'responsive': true,
               'maintainAspectRatio': false,
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
             'wrapper': <String, Object?>{
@@ -1082,9 +1114,9 @@ void main() {
         var count = 0;
         var correctThis = false;
         final size = <String, Object?>{'width': 0, 'height': 0};
-        acquireChart(
-          <String, Object?>{
-            'options': <String, Object?>{
+        acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'responsive': true,
               'maintainAspectRatio': false,
               // Chart.js gives the chart as `this` and as the first
@@ -1096,8 +1128,7 @@ void main() {
                 size['width'] = newSize.width;
                 size['height'] = newSize.height;
               },
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
             'wrapper': <String, Object?>{
@@ -1115,13 +1146,12 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
-              },
-            },
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{'style': ''},
               'wrapper': <String, Object?>{
@@ -1160,13 +1190,12 @@ void main() {
         'should restore the original size when parent became invisible',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1224,13 +1253,12 @@ void main() {
         'should resize the canvas when parent is RTL and width changes',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1272,13 +1300,12 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
-              },
-            },
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{'style': ''},
               'wrapper': <String, Object?>{
@@ -1361,13 +1388,12 @@ void main() {
         '"none" to "block"',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': 'display: none;'},
                 'wrapper': <String, Object?>{
@@ -1395,13 +1421,12 @@ void main() {
         '"none" to "block"',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1430,13 +1455,12 @@ void main() {
         (tester) async {
           await waitForDone((done) {
             // https://github.com/chartjs/Chart.js/issues/4659
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1465,14 +1489,13 @@ void main() {
         'should resize the canvas when the devicePixelRatio changes',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
                   'devicePixelRatio': 1,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1607,13 +1630,12 @@ void main() {
         'the DOM',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'maintainAspectRatio': false,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1667,13 +1689,12 @@ void main() {
       // https://github.com/chartjs/Chart.js/issues/9875
       testWidgets('should detect detach/attach in series', (tester) async {
         await waitForDone((done) {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
-              },
-            },
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{'style': ''},
               'wrapper': <String, Object?>{
@@ -1704,13 +1725,12 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
-              },
-            },
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{'style': ''},
               'wrapper': <String, Object?>{
@@ -1740,13 +1760,12 @@ void main() {
 
       testWidgets('should detect attach/detach in series', (tester) async {
         await waitForDone((done) {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': false,
-              },
-            },
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{'style': ''},
               'wrapper': <String, Object?>{
@@ -1787,10 +1806,11 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          var chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{'responsive': true},
-            },
+          var chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'responsive': true,
+              }),
             <String, Object?>{
               'wrapper': <String, Object?>{'style': 'width: 320px'},
             },
@@ -1890,14 +1910,13 @@ void main() {
           await waitForDone((done) {
             // Raw: the upstream config has no dataset, and a typed config
             // needs one (Chart.js ADR 0190).
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   // AR == 2
                   'responsive': true,
                   'maintainAspectRatio': true,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -1937,13 +1956,12 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': true,
                 'maintainAspectRatio': true,
-              },
-            },
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{'style': ''},
               'wrapper': <String, Object?>{
@@ -1979,7 +1997,7 @@ void main() {
       });
     });
 
-    // Map configs: the configs of the next three groups have no chart type,
+    // Native configs: the configs of the next three groups have no chart type,
     // which a typed config needs.
     group('Retina scale (a.k.a. device pixel ratio)', () {
       late double devicePixelRatio;
@@ -1997,10 +2015,11 @@ void main() {
       testWidgets(
         'should scale the render size but not the "implicit" display size',
         (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{'responsive': false},
-            },
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'responsive': false,
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{'width': 320, 'height': 240},
             },
@@ -2016,10 +2035,11 @@ void main() {
       testWidgets(
         'should scale the render size but not the "explicit" display size',
         (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{'responsive': false},
-            },
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'responsive': false,
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{
                 'style': 'width: 320px; height: 240px',
@@ -2051,13 +2071,12 @@ void main() {
       testWidgets(
         'should scale the render size but not the "implicit" display size',
         (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': false,
                 'devicePixelRatio': 3,
-              },
-            },
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{'width': 320, 'height': 240},
             },
@@ -2073,13 +2092,12 @@ void main() {
       testWidgets(
         'should scale the render size but not the "explicit" display size',
         (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                 'responsive': false,
                 'devicePixelRatio': 3,
-              },
-            },
+              }),
             <String, Object?>{
               'canvas': <String, Object?>{
                 'style': 'width: 320px; height: 240px',
@@ -2100,13 +2118,12 @@ void main() {
         'should resize the canvas when the aspectRatio option changes',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChart(
-              <String, Object?>{
-                'options': <String, Object?>{
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
                   'responsive': true,
                   'aspectRatio': 1,
-                },
-              },
+                }),
               <String, Object?>{
                 'canvas': <String, Object?>{'style': '', 'width': 400},
               },
@@ -2172,18 +2189,21 @@ void main() {
     group('config update', () {
       testWidgets('should update options', (tester) async {
         final chart =
-            acquireChart(<String, Object?>{
-                'type': 'line',
-                'data': <String, Object?>{
-                  'labels': <Object?>['A', 'B', 'C', 'D'],
-                  'datasets': <Object?>[
-                    <String, Object?>{
-                      'data': <Object?>[10, 20, 30, 100],
-                    },
-                  ],
-                },
-                'options': <String, Object?>{'responsive': true},
-              })
+            acquireChartRoot(
+                ChartConfigurationScope()
+                  ..type = 'line'
+                  ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+                    'labels': <Object?>['A', 'B', 'C', 'D'],
+                    'datasets': <Object?>[
+                      <String, Object?>{
+                        'data': <Object?>[10, 20, 30, 100],
+                      },
+                    ],
+                  })
+                  ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                    'responsive': true,
+                  }),
+              )
               ..options = <String, Object?>{
                 'responsive': false,
                 'scales': <String, Object?>{
@@ -2198,18 +2218,21 @@ void main() {
       });
 
       testWidgets('should update scales options', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-          'options': <String, Object?>{'responsive': true},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'labels': <Object?>['A', 'B', 'C', 'D'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[10, 20, 30, 100],
+                },
+              ],
+            })
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'responsive': true,
+            }),
+        );
 
         final y = jsGet(chart.options['scales'], 'y')! as JsObjectFace;
         y['min'] = 0;
@@ -2224,18 +2247,21 @@ void main() {
       testWidgets('should update scales options from new object', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-          'options': <String, Object?>{'responsive': true},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'labels': <Object?>['A', 'B', 'C', 'D'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[10, 20, 30, 100],
+                },
+              ],
+            })
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'responsive': true,
+            }),
+        );
 
         final newScalesConfig = <String, Object?>{
           'y': <String, Object?>{'min': 0, 'max': 10},
@@ -2250,23 +2276,24 @@ void main() {
       });
 
       testWidgets('should remove discarded scale', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'labels': <Object?>['A', 'B', 'C', 'D'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[10, 20, 30, 100],
+                },
+              ],
+            })
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'responsive': true,
+              'scales': <String, Object?>{
+                'yAxis0': <String, Object?>{'min': 0, 'max': 10},
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'responsive': true,
-            'scales': <String, Object?>{
-              'yAxis0': <String, Object?>{'min': 0, 'max': 10},
-            },
-          },
-        });
+            }),
+        );
 
         final newScalesConfig = <String, Object?>{
           'y': <String, Object?>{'min': 0, 'max': 10},
@@ -2283,18 +2310,21 @@ void main() {
       });
 
       testWidgets('should update tooltip options', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-          'options': <String, Object?>{'responsive': true},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'labels': <Object?>['A', 'B', 'C', 'D'],
+              'datasets': <Object?>[
+                <String, Object?>{
+                  'data': <Object?>[10, 20, 30, 100],
+                },
+              ],
+            })
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'responsive': true,
+            }),
+        );
 
         final newTooltipConfig = <String, Object?>{
           'mode': const DatasetInteractionMode(),
@@ -2368,7 +2398,7 @@ void main() {
             },
           },
         };
-        final chart = acquireChart(cfg);
+        final chart = acquireChartRoot(cfg);
         var meta = chart.getDatasetMeta(0);
         expect(meta.type, 'line');
 
@@ -2470,7 +2500,7 @@ void main() {
         });
       });
 
-      // A Map config: the case writes into `chart.options.plugins` before an
+      // A native root: the case writes into `chart.options.plugins` before an
       // update.
       testWidgets('should notify initially disabled plugin in correct order', (
         tester,
@@ -2478,16 +2508,17 @@ void main() {
         var sequence = <Object?>[];
         final plugin = _sequencePlugin('plugin', (name) => sequence.add(name));
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[<String, Object?>{}],
-          },
-          'plugins': <Plugin<Object?>>[plugin],
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'plugin': false},
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'datasets': <Object?>[<String, Object?>{}],
+            })
+            ..['plugins'] = <Plugin<Object?>>[plugin]
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{'plugin': false},
+            }),
+        );
 
         expect(sequence, equals(<Object?>[...hooks['install']!]));
 
@@ -2592,19 +2623,20 @@ void main() {
       // The beforeEach acquires a chart, and the afterEach reads it: local
       // functions that each case calls first and last (Chart.js ADR 0022,
       // section 2).
-      // A Map config: the cases put new dataset Maps into `chart.data`.
+      // A native root: the cases put new dataset Maps into `chart.data`.
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'label': '1', 'order': 2},
-              <String, Object?>{'label': '2', 'order': 1},
-              <String, Object?>{'label': '3', 'order': 4},
-              <String, Object?>{'label': '4', 'order': 3},
-            ],
-          },
-        });
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = mergeExtra(ChartDataScope(), <String, Object?>{
+              'datasets': <Object?>[
+                <String, Object?>{'label': '1', 'order': 2},
+                <String, Object?>{'label': '2', 'order': 1},
+                <String, Object?>{'label': '3', 'order': 4},
+                <String, Object?>{'label': '4', 'order': 3},
+              ],
+            }),
+        );
       }
 
       void afterEach() {
@@ -3126,11 +3158,12 @@ void main() {
       ) async {
         // `Chart.platforms.BasicPlatform` (src/index.umd.ts:41) is the class
         // value `BasicPlatform.jsClass` (Chart.js ADR 0020, section 3).
-        // A Map config: the typed config has no key `platform`.
-        final chart = acquireChart(<String, Object?>{
-          'platform': BasicPlatform.jsClass,
-          'type': 'line',
-        });
+        // A native root: the typed config has no key `platform`.
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..['platform'] = BasicPlatform.jsClass
+            ..type = 'line',
+        );
         expect(chart.platform, isA<BasicPlatform>());
       });
     });

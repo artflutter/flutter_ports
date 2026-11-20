@@ -41,59 +41,35 @@ final bool _goldens = Platform.environment['CHART_GOLDENS'] == '1';
 /// The key of the repaint boundary that the goldens capture.
 const ValueKey<String> _boundary = ValueKey('goldens.boundary');
 
-/// The config of the golden chart. The chart writes into it: a new Map for
-/// each case.
-Map<String, Object?> _config() => <String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <Object?>['A', 'B', 'C', 'D', 'E'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'Dataset 1',
-        'data': <Object?>[12, 19, 3, 5, 2],
-      },
-      <String, Object?>{
-        'label': 'Dataset 2',
-        'data': <Object?>[7, 11, 15, 8, 4],
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'maintainAspectRatio': false,
-    'animation': false,
-    'plugins': <String, Object?>{
-      'colors': <String, Object?>{'enabled': true},
-      'title': <String, Object?>{
+/// The typed config of the golden chart.
+ChartConfig _config() => const ChartConfig(
+  datasets: [
+    BarDataset(label: 'Dataset 1', data: [12, 19, 3, 5, 2]),
+    BarDataset(label: 'Dataset 2', data: [7, 11, 15, 8, 4]),
+  ],
+  labels: ['A', 'B', 'C', 'D', 'E'],
+  maintainAspectRatio: false,
+  animation: ChartAnimation.none,
+  title: ChartTitle(display: true, text: ['Title']),
+  subtitle: ChartTitle(display: true, text: ['Subtitle']),
+  legend: ChartLegend(
+    extra: {
+      'title': {
         'display': true,
-        'text': ['Title'],
-      },
-      'subtitle': <String, Object?>{
-        'display': true,
-        'text': ['Subtitle'],
-      },
-      'legend': <String, Object?>{
-        'title': <String, Object?>{
-          'display': true,
-          'text': ['Legend'],
-        },
+        'text': ['Legend'],
       },
     },
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'title': <String, Object?>{
-          'display': true,
-          'text': ['Label'],
-        },
-      },
-      'y': <String, Object?>{
-        'title': <String, Object?>{
-          'display': true,
-          'text': ['Value'],
-        },
-      },
+  ),
+  scales: {
+    'x': CategoryAxis(title: AxisTitle(display: true, text: ['Label'])),
+    'y': LinearAxis(title: AxisTitle(display: true, text: ['Value'])),
+  },
+  extra: {
+    'plugins': {
+      'colors': {'enabled': true},
     },
   },
-};
+);
 
 /// Pumps the golden chart of [theme] and gives its chart, with the tooltip
 /// of index 2 of both datasets at the center of the chart area.
@@ -111,7 +87,7 @@ Future<Chart> _pumpChart(WidgetTester tester, ChartThemeData theme) async {
             child: SizedBox(
               width: 800,
               height: 600,
-              child: ChartView.raw(
+              child: ChartView(
                 config: _config(),
                 theme: theme,
                 onChartCreated: (chart) => created = chart,

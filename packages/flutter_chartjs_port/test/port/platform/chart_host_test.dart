@@ -3631,24 +3631,23 @@ void main() {
           ),
         ),
       );
-      Map<String, Object?> config() => <String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
+      ChartConfigurationScope config() => (ChartConfigurationScope()
+        ..type = 'line'
+        ..data = mergeExtra(ChartDataScope(), <String, Object?>{
           'labels': <Object?>['a', 'b', 'c'],
           'datasets': <Object?>[
             <String, Object?>{
               'data': <Object?>[1, 3, 2],
             },
           ],
-        },
-        'options': <String, Object?>{
+        })
+        ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
           'animation': false,
           'maintainAspectRatio': false,
           'plugins': <String, Object?>{
             'legend': <String, Object?>{'display': false},
           },
-        },
-      };
+        }));
       final chartA = Chart(a, config());
       final chartB = Chart(b, config());
       await tester.pump();
