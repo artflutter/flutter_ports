@@ -21,6 +21,7 @@ rules:
       - chart_benchmark_lab
       - chartjs_docs
       - chartjs_supabase_dashboard
+      - chartjs_ergonomics
       - flutter_d3_port
       - flutter_echarts_port
       - flutter_chartjs_plugin_zoom_port

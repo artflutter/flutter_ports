@@ -19,6 +19,7 @@ workspace:
   - apps/chart_benchmark_lab
   - apps/chartjs_docs
   - apps/chartjs_supabase_dashboard
+  - apps/chartjs_ergonomics
 
 dev_dependencies:
   commitlint_cli: ^0.8.1
@@ -42,6 +43,10 @@ melos:
       run: cd apps/chartjs_docs && flutter run -d chrome --web-browser-flag=--enable-blink-features=ExtendedTextMetrics
       stdio: inherit
       description: Run the documentation site in Chrome.
+    ergonomics:
+      run: cd apps/chartjs_ergonomics && flutter run -d chrome
+      stdio: inherit
+      description: Run the API ergonomics samples (a chart and its code for each feature) in Chrome.
     dashboard:
       run: cd apps/chartjs_supabase_dashboard && flutter run -d chrome --dart-define-from-file=supabase.json
       stdio: inherit

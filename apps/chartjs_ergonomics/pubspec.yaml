@@ -1,0 +1,31 @@
+name: chartjs_ergonomics
+description: Atomic samples of the typed API of flutter_chartjs_port, each a chart with its code.
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ^3.13.0
+  flutter: ">=3.47.0"
+
+resolution: workspace
+
+dependencies:
+  flutter:
+    sdk: flutter
+  flutter_chartjs_port:
+    path: ../../packages/flutter_chartjs_port
+  material_ui: ^1.10.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+
+flutter:
+  uses-material-design: true
+  assets:
+    # Each card shows the code of its chart from these source files.
+    - lib/samples/line/
+  fonts:
+    - family: RobotoMono
+      fonts:
+        - asset: assets/fonts/RobotoMono-Regular.ttf

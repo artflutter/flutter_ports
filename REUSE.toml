@@ -121,6 +121,9 @@ path = [
   "apps/chartjs_supabase_dashboard/web/favicon.png",
   "apps/chartjs_supabase_dashboard/web/icons/**",
   "apps/chartjs_supabase_dashboard/macos/Runner/Assets.xcassets/AppIcon.appiconset/*.png",
+  "apps/chartjs_ergonomics/web/favicon.png",
+  "apps/chartjs_ergonomics/web/icons/**",
+  "apps/chartjs_ergonomics/macos/Runner/Assets.xcassets/AppIcon.appiconset/*.png",
 ]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2014 The Flutter Authors"
@@ -159,9 +162,10 @@ precedence = "override"
 SPDX-FileCopyrightText = "2026 Vasiliy Ditsyak"
 SPDX-License-Identifier = "MIT"
 
-# The code font of the docs site. The font file stays unchanged.
+# The code font of the docs site and of the ergonomics app. The font files
+# stay unchanged.
 [[annotations]]
-path = "apps/chartjs_docs/assets/fonts/RobotoMono-Regular.ttf"
+path = ["apps/chartjs_docs/assets/fonts/RobotoMono-Regular.ttf", "apps/chartjs_ergonomics/assets/fonts/RobotoMono-Regular.ttf"]
 precedence = "override"
 SPDX-FileCopyrightText = "2015 Google Inc."
 SPDX-License-Identifier = "Apache-2.0"

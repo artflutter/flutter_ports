@@ -1,0 +1,24 @@
+// Original code, not ported from Chart.js: an API ergonomics sample.
+// The doc comments would show in the code panels.
+// ignore_for_file: public_member_api_docs
+
+import 'package:chartjs_ergonomics/samples/line/data.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
+
+// #docregion sample
+const dashed = ChartConfig(
+  type: .line,
+  labels: months,
+  datasets: [
+    LineDataset(
+      label: 'Forecast',
+      data: sales,
+      borderColor: .constant(.solid(blue)),
+      borderWidth: 3,
+      borderDash: [8, 6],
+      borderCapStyle: .round,
+      borderJoinStyle: .round,
+    ),
+  ],
+);
+// #enddocregion sample
