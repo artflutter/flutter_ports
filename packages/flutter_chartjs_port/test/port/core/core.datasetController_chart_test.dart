@@ -509,9 +509,6 @@ void main() {
         ],
         <Object?>[DateTime.utc(1970)],
         <Object?>[1.0, 2.0],
-        <Object?>[
-          <String, Object?>{'x': 0.0, 'y': 1.0},
-        ],
       ]) {
         expect(
           () => stackedChart(items),

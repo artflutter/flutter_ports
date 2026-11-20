@@ -69,18 +69,21 @@ Object? _or(Object? a, Object? b) => jsTruthy(a) ? a : b;
 /// its data List later sees the chart data. A typed root scope stays as it
 /// is.
 void _parseDataItems(Object? config) {
-  if (config is! Map) return;
-  final options = config['options'];
-  final chartParsing = options is Map ? options['parsing'] : null;
-  final data = config['data'];
-  final datasets = data is Map ? data['datasets'] : null;
+  if (config is! Map && config is! JsObjectFace) return;
+  final options = jsGet(config, 'options');
+  final chartParsing = options == null || options is Undefined
+      ? undefined
+      : jsGet(options, 'parsing');
+  final data = jsGet(config, 'data');
+  final datasets = data == null || data is Undefined
+      ? null
+      : jsGet(data, 'datasets');
   if (datasets is! List) return;
   for (final dataset in datasets) {
-    if (dataset is! Map) continue;
-    final parsing = dataset.containsKey('parsing')
-        ? dataset['parsing']
-        : chartParsing;
-    final items = dataset['data'];
+    if (dataset is! Map && dataset is! JsObjectFace) continue;
+    final own = jsGet(dataset, 'parsing');
+    final parsing = own is Undefined ? chartParsing : own;
+    final items = jsGet(dataset, 'data');
     if (parsing != false || items is! List || items is List<ParsedItem?>) {
       continue;
     }
@@ -91,7 +94,7 @@ void _parseDataItems(Object? config) {
       }
     } else {
       // A List of a narrower item type, for example of Maps: a new List.
-      dataset['data'] = parsed;
+      jsSet(dataset, 'data', parsed);
     }
   }
 }

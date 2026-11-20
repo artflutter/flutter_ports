@@ -172,7 +172,12 @@ ChartConfigurationScope _one(AnyObject extra, List<Object?> data) =>
         ..labels = <Object?>['a', 'b', 'c']
         ..datasets = <Object?>[
           mergeExtra(
-            DoughnutControllerDatasetOptionsScope()..data = <Object?>[...data],
+            // A List of parsed items keeps its class: the parsed List of
+            // `parsing: false` is the data List itself.
+            DoughnutControllerDatasetOptionsScope()
+              ..data = data is List<ParsedItem?>
+                  ? <ParsedItem?>[...data]
+                  : <Object?>[...data],
             extra,
           ),
         ]);
