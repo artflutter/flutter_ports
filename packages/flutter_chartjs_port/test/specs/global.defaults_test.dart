@@ -8,8 +8,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -56,26 +54,29 @@ Object? _onClick(Object? config) =>
 
 /// The config of the doughnut and polar area cases of [type] (:4-15, :98-109,
 /// :125-136, :174-185).
-AnyObject _config(String type) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
-    'labels': <Object?>['label1', 'label2', 'label3'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[10, 20, double.nan],
-        'backgroundColor': <Object?>[
-          const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
-          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
-          const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
-        ],
-        'borderWidth': 2,
-        'borderColor': const ChartPaint.solid(
-          native_ui.Color.fromRGBO(0, 0, 0, 1),
-        ),
-      },
-    ],
-  },
-};
+ChartConfigurationScope _config(String type) => (ChartConfigurationScope()
+  ..type = type
+  ..data = (ChartDataScope()
+    ..labels = <Object?>['label1', 'label2', 'label3']
+    ..datasets = [
+      mergeExtra(
+        type == 'polarArea'
+            ? PolarAreaControllerDatasetOptionsScope()
+            : DoughnutControllerDatasetOptionsScope(),
+        <String, Object?>{
+          'data': <Object?>[10, 20, double.nan],
+          'backgroundColor': <Object?>[
+            const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
+            const ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
+            const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
+          ],
+          'borderWidth': 2,
+          'borderColor': const ChartPaint.solid(
+            native_ui.Color.fromRGBO(0, 0, 0, 1),
+          ),
+        },
+      ),
+    ]));
 
 /// The colors of the expected legend items.
 const ChartPaint _red = ChartPaint.solid(
@@ -98,7 +99,7 @@ void main() {
   group('Default Configs', () {
     group('Doughnut Chart', () {
       testWidgets('should return correct legend label objects', (tester) async {
-        final chart = acquireChart(_config('doughnut'));
+        final chart = acquireChartRoot(_config('doughnut'));
 
         LegendItem item(String text, ChartPaint fillStyle, int index) =>
             LegendItem(
@@ -122,41 +123,44 @@ void main() {
       testWidgets(
         'should return correct legend label objects with border radius',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'doughnut',
-            'data': <String, Object?>{
-              'labels': <Object?>['label1'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10],
-                  'backgroundColor': <Object?>[
-                    const ChartPaint.solid(
-                      native_ui.Color.fromRGBO(255, 0, 0, 1),
-                    ),
-                  ],
-                  'borderWidth': 2,
-                  'borderColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(0, 0, 0, 1),
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'doughnut'
+              ..data = (ChartDataScope()
+                ..labels = <Object?>['label1']
+                ..datasets = [
+                  mergeExtra(
+                    DoughnutControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'data': <Object?>[10],
+                      'backgroundColor': <Object?>[
+                        const ChartPaint.solid(
+                          native_ui.Color.fromRGBO(255, 0, 0, 1),
+                        ),
+                      ],
+                      'borderWidth': 2,
+                      'borderColor': const ChartPaint.solid(
+                        native_ui.Color.fromRGBO(0, 0, 0, 1),
+                      ),
+                      'borderDash': <double>[1, 2, 3],
+                      'borderDashOffset': 1,
+                      'borderJoinStyle': native_ui.StrokeJoin.miter,
+                      'borderRadius': 3,
+                    },
                   ),
-                  'borderDash': <double>[1, 2, 3],
-                  'borderDashOffset': 1,
-                  'borderJoinStyle': native_ui.StrokeJoin.miter,
-                  'borderRadius': 3,
-                },
-              ],
-            },
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'legend': <String, Object?>{
-                  'labels': <String, Object?>{
-                    'useBorderRadius': true,
-                    'borderRadius': 5,
-                    'textAlign': TextAlign.left,
+                ])
+              ..options = mergeExtra((ChartOptionsScope()), {
+                'plugins': <String, Object?>{
+                  'legend': <String, Object?>{
+                    'labels': <String, Object?>{
+                      'useBorderRadius': true,
+                      'borderRadius': 5,
+                      'textAlign': TextAlign.left,
+                    },
                   },
                 },
-              },
-            },
-          });
+              }),
+          );
 
           expect(chart.legend!.legendItems, [
             legendItemEquals(
@@ -182,7 +186,7 @@ void main() {
         tester,
       ) async {
         final config = jsGet(Chart.overrides, 'doughnut');
-        final chart = acquireChart(_config('doughnut'));
+        final chart = acquireChartRoot(_config('doughnut'));
         final calls = _spyOnUpdate(chart);
 
         final legendItem = chart.legend!.legendItems![0];
@@ -206,7 +210,7 @@ void main() {
 
     group('Polar Area Chart', () {
       testWidgets('should return correct legend label objects', (tester) async {
-        final chart = acquireChart(_config('polarArea'));
+        final chart = acquireChartRoot(_config('polarArea'));
 
         LegendItem item(String text, ChartPaint fillStyle, int index) =>
             LegendItem(
@@ -229,7 +233,7 @@ void main() {
         tester,
       ) async {
         final config = jsGet(Chart.overrides, 'polarArea');
-        final chart = acquireChart(_config('polarArea'));
+        final chart = acquireChartRoot(_config('polarArea'));
         final calls = _spyOnUpdate(chart);
 
         final legendItem = chart.legend!.legendItems![0];

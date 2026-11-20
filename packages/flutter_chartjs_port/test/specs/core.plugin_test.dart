@@ -3,16 +3,15 @@
 @TestOn('vm')
 library;
 
-import 'package:chartjs_test_utils/flutter.dart'
-    show acquireChart, triggerMouseEvent, waitForDone;
-import 'package:chartjs_test_utils/pure.dart' show toEqualOptions;
+import 'package:chartjs_test_utils/flutter.dart';
+import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../support/drop_extra_args.dart';
 import '../support/plugin_defaults.dart';
 
-// Each case builds a chart with `acquireChart` (Chart.js ADR 0022): a chart
+// Each case builds a chart with `acquireChartRoot` (Chart.js ADR 0022): a chart
 // without a type and without datasets, with inline or registered plugins.
 // Thus it is a `testWidgets` case. `flutter_test_config.dart` registers the
 // built-in components and releases the charts at the unmount of the harness
@@ -25,8 +24,7 @@ import '../support/plugin_defaults.dart';
 // without `id` gets an id here that no option names: its options are those
 // of upstream. `Chart.register(plugin)` is `Chart.register([plugin])`, and
 // `Chart.register([a, b])` is `Chart.register([[a, b]])` (Chart.js ADR 0020,
-// section 6). A spec map literal of a JS object has the type
-// `<String, Object?>`, because `acquireChart` writes into it.
+// section 6). The chart receives mutable native configuration scopes.
 //
 // No hook has the name `hook` of upstream: `chart.notifyPlugins` takes a
 // `PluginHook`. A case that does not cancel takes the hook `reset` in place
@@ -110,9 +108,9 @@ void main() {
     group('Chart.notifyPlugins', () {
       testWidgets('should call inline plugins with arguments', (tester) async {
         final plugin = Plugin<Object?>(id: 'inline', reset: (_, _, _) {});
-        final chart = acquireChart(<String, Object?>{
-          'plugins': [plugin],
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()..plugins = [plugin],
+        );
         final args = _SpecArgs(value: 42);
 
         final calls = _spyOnReset(plugin);
@@ -126,7 +124,7 @@ void main() {
 
       testWidgets('should call global plugins with arguments', (tester) async {
         final plugin = Plugin<Object?>(id: 'a', reset: (_, _, _) {});
-        final chart = acquireChart(<String, Object?>{});
+        final chart = acquireChartRoot(ChartConfigurationScope());
         final args = _SpecArgs(value: 42);
 
         final calls = _spyOnReset(plugin);
@@ -144,9 +142,9 @@ void main() {
         'should call plugin only once even if registered multiple times',
         (tester) async {
           final plugin = Plugin<Object?>(id: 'test', reset: (_, _, _) {});
-          final chart = acquireChart(<String, Object?>{
-            'plugins': [plugin, plugin],
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()..plugins = [plugin, plugin],
+          );
 
           final calls = _spyOnReset(plugin);
 
@@ -163,28 +161,29 @@ void main() {
         tester,
       ) async {
         final results = <Object?>[];
-        final chart = acquireChart(<String, Object?>{
-          'plugins': [
-            Plugin<Object?>(
-              id: 'inline1',
-              reset: (_, _, _) {
-                results.add(1);
-              },
-            ),
-            Plugin<Object?>(
-              id: 'inline2',
-              reset: (_, _, _) {
-                results.add(2);
-              },
-            ),
-            Plugin<Object?>(
-              id: 'inline3',
-              reset: (_, _, _) {
-                results.add(3);
-              },
-            ),
-          ],
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..plugins = [
+              Plugin<Object?>(
+                id: 'inline1',
+                reset: (_, _, _) {
+                  results.add(1);
+                },
+              ),
+              Plugin<Object?>(
+                id: 'inline2',
+                reset: (_, _, _) {
+                  results.add(2);
+                },
+              ),
+              Plugin<Object?>(
+                id: 'inline3',
+                reset: (_, _, _) {
+                  results.add(3);
+                },
+              ),
+            ],
+        );
 
         final plugins = [
           Plugin<Object?>(
@@ -220,38 +219,39 @@ void main() {
       testWidgets('should return TRUE if no plugin explicitly returns FALSE', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'plugins': [
-            Plugin<Object?>(
-              id: 'inline1',
-              beforeTooltipDraw: (_, _, _) => true,
-            ),
-            Plugin<Object?>(
-              id: 'inline2',
-              beforeTooltipDraw: (_, _, _) {
-                return true;
-              },
-            ),
-            Plugin<Object?>(
-              id: 'inline3',
-              beforeTooltipDraw: (_, _, _) {
-                return true;
-              },
-            ),
-            Plugin<Object?>(
-              id: 'inline4',
-              beforeTooltipDraw: (_, _, _) {
-                return true;
-              },
-            ),
-            Plugin<Object?>(
-              id: 'inline5',
-              beforeTooltipDraw: (_, _, _) {
-                return true;
-              },
-            ),
-          ],
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..plugins = [
+              Plugin<Object?>(
+                id: 'inline1',
+                beforeTooltipDraw: (_, _, _) => true,
+              ),
+              Plugin<Object?>(
+                id: 'inline2',
+                beforeTooltipDraw: (_, _, _) {
+                  return true;
+                },
+              ),
+              Plugin<Object?>(
+                id: 'inline3',
+                beforeTooltipDraw: (_, _, _) {
+                  return true;
+                },
+              ),
+              Plugin<Object?>(
+                id: 'inline4',
+                beforeTooltipDraw: (_, _, _) {
+                  return true;
+                },
+              ),
+              Plugin<Object?>(
+                id: 'inline5',
+                beforeTooltipDraw: (_, _, _) {
+                  return true;
+                },
+              ),
+            ],
+        );
 
         final plugins = _inlinePlugins(chart);
         final calls = [for (final plugin in plugins) _spyOnTooltipDraw(plugin)];
@@ -270,38 +270,39 @@ void main() {
       testWidgets(
         'should return FALSE if any plugin explicitly returns FALSE',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'plugins': [
-              Plugin<Object?>(
-                id: 'inline1',
-                beforeTooltipDraw: (_, _, _) => true,
-              ),
-              Plugin<Object?>(
-                id: 'inline2',
-                beforeTooltipDraw: (_, _, _) {
-                  return true;
-                },
-              ),
-              Plugin<Object?>(
-                id: 'inline3',
-                beforeTooltipDraw: (_, _, _) {
-                  return false;
-                },
-              ),
-              Plugin<Object?>(
-                id: 'inline4',
-                beforeTooltipDraw: (_, _, _) {
-                  return true;
-                },
-              ),
-              Plugin<Object?>(
-                id: 'inline5',
-                beforeTooltipDraw: (_, _, _) {
-                  return true;
-                },
-              ),
-            ],
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..plugins = [
+                Plugin<Object?>(
+                  id: 'inline1',
+                  beforeTooltipDraw: (_, _, _) => true,
+                ),
+                Plugin<Object?>(
+                  id: 'inline2',
+                  beforeTooltipDraw: (_, _, _) {
+                    return true;
+                  },
+                ),
+                Plugin<Object?>(
+                  id: 'inline3',
+                  beforeTooltipDraw: (_, _, _) {
+                    return false;
+                  },
+                ),
+                Plugin<Object?>(
+                  id: 'inline4',
+                  beforeTooltipDraw: (_, _, _) {
+                    return true;
+                  },
+                ),
+                Plugin<Object?>(
+                  id: 'inline5',
+                  beforeTooltipDraw: (_, _, _) {
+                    return true;
+                  },
+                ),
+              ],
+          );
 
           final plugins = _inlinePlugins(chart);
           final calls = [
@@ -325,13 +326,14 @@ void main() {
       ) async {
         final plugin = Plugin<Object?>(id: 'foo', reset: (_, _, _) {});
 
-        final chart = acquireChart(<String, Object?>{
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'foo': <String, Object?>{'a': '123'},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{
+                'foo': <String, Object?>{'a': '123'},
+              },
+            }),
+        );
 
         final calls = _spyOnReset(plugin);
 
@@ -360,16 +362,17 @@ void main() {
 
           Chart.register([plugins['a']]);
 
-          final chart = acquireChart(<String, Object?>{
-            'plugins': <Plugin<Object?>>[plugins['b']!, plugins['c']!],
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'a': <String, Object?>{'a': '123'},
-                'b': <String, Object?>{'b': '456'},
-                'c': <String, Object?>{'c': '789'},
-              },
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..plugins = <Plugin<Object?>>[plugins['b']!, plugins['c']!]
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'plugins': <String, Object?>{
+                  'a': <String, Object?>{'a': '123'},
+                  'b': <String, Object?>{'b': '456'},
+                  'c': <String, Object?>{'c': '789'},
+                },
+              }),
+          );
 
           final callsA = _spyOnReset(plugins['a']!);
           final callsB = _spyOnReset(plugins['b']!);
@@ -408,12 +411,13 @@ void main() {
 
           Chart.register([plugins['a']]);
 
-          final chart = acquireChart(<String, Object?>{
-            'plugins': <Plugin<Object?>>[plugins['b']!, plugins['c']!],
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{'a': false, 'b': false},
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..plugins = <Plugin<Object?>>[plugins['b']!, plugins['c']!]
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'plugins': <String, Object?>{'a': false, 'b': false},
+              }),
+          );
 
           final callsA = _spyOnReset(plugins['a']!);
           final callsB = _spyOnReset(plugins['b']!);
@@ -440,11 +444,12 @@ void main() {
 
           Chart.register([plugin]);
 
-          final chart = acquireChart(<String, Object?>{
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{'a': true},
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'plugins': <String, Object?>{'a': true},
+              }),
+          );
 
           final calls = _spyOnReset(plugin);
 
@@ -476,7 +481,8 @@ void main() {
           Chart.register([plugin]);
           final calls = _spyOnReset(plugin);
 
-          acquireChart().notifyPlugins(PluginHook.reset);
+          acquireChartRoot(ChartConfigurationScope())
+              .notifyPlugins(PluginHook.reset);
 
           expect(calls, isNotEmpty);
           expect(
@@ -495,14 +501,15 @@ void main() {
           reset: (_, _, _) {},
           defaults: pluginDefaults(<String, Object?>{'bar': 'bar'}),
         );
-        final chart = acquireChart(<String, Object?>{
-          'plugins': [plugin],
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'a': <String, Object?>{'foo': 'foo'},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..plugins = [plugin]
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{
+                'a': <String, Object?>{'foo': 'foo'},
+              },
+            }),
+        );
 
         final calls = _spyOnReset(plugin);
         chart.notifyPlugins(PluginHook.reset);
@@ -519,14 +526,15 @@ void main() {
       // https://github.com/chartjs/Chart.js/issues/5111#issuecomment-355934167
       testWidgets('should update plugin options', (tester) async {
         final plugin = Plugin<Object?>(id: 'a', reset: (_, _, _) {});
-        final chart = acquireChart(<String, Object?>{
-          'plugins': [plugin],
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'a': <String, Object?>{'foo': 'foo'},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..plugins = [plugin]
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{
+                'a': <String, Object?>{'foo': 'foo'},
+              },
+            }),
+        );
 
         final calls = _spyOnReset(plugin);
 
@@ -574,16 +582,17 @@ void main() {
               },
             }),
           );
-          acquireChart(<String, Object?>{
-            'plugins': [plugin],
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'a': <String, Object?>{
-                  'l1': <String, Object?>{'l2': undefined},
+          acquireChartRoot(
+            ChartConfigurationScope()
+              ..plugins = [plugin]
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'plugins': <String, Object?>{
+                  'a': <String, Object?>{
+                    'l1': <String, Object?>{'l2': undefined},
+                  },
                 },
-              },
-            },
-          });
+              }),
+          );
 
           expect(
             jsGet(
@@ -597,11 +606,26 @@ void main() {
       );
 
       testWidgets('should disable all plugins', (tester) async {
+        // The core explicitly accepts false to disable every plugin. The
+        // scope's dictionary cell keeps that sentinel as a foreign value.
+        final saved = foreignAudit;
+        foreignAudit = (owner, key, raw) {
+          if (owner == 'ChartOptionsScope' &&
+              key == 'plugins' &&
+              raw == false) {
+            return;
+          }
+          saved?.call(owner, key, raw);
+        };
+        addTearDown(() => foreignAudit = saved);
         final plugin = Plugin<Object?>(id: 'a', reset: (_, _, _) {});
-        final chart = acquireChart(<String, Object?>{
-          'plugins': [plugin],
-          'options': <String, Object?>{'plugins': false},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..plugins = [plugin]
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': false,
+            }),
+        );
 
         final calls = _spyOnReset(plugin);
 
@@ -614,16 +638,17 @@ void main() {
         tester,
       ) async {
         final results = <Object?>[];
-        final chart = acquireChart(<String, Object?>{
-          'plugins': [
-            Plugin<Object?>(
-              id: 'inline',
-              start: (_, _, _) {
-                results.add(1);
-              },
-            ),
-          ],
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..plugins = [
+              Plugin<Object?>(
+                id: 'inline',
+                start: (_, _, _) {
+                  results.add(1);
+                },
+              ),
+            ],
+        );
 
         Chart.register([Plugin<Object?>(id: 'abc', reset: (_, _, _) {})]);
         Chart.register([Plugin<Object?>(id: 'def', reset: (_, _, _) {})]);
@@ -660,21 +685,22 @@ void main() {
               done();
             },
           );
-          acquireChart(<String, Object?>{
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'test': <String, Object?>{
-                  'fun': () => 'test',
-                  'arr': [1, 2, 3],
-                  'sub': <String, Object?>{
-                    'subfun': () => 'subtest',
-                    'subarr': [3, 2, 1],
+          acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'plugins': <String, Object?>{
+                  'test': <String, Object?>{
+                    'fun': () => 'test',
+                    'arr': [1, 2, 3],
+                    'sub': <String, Object?>{
+                      'subfun': () => 'subtest',
+                      'subarr': [3, 2, 1],
+                    },
                   },
                 },
-              },
-            },
-            'plugins': [plugin],
-          });
+              })
+              ..plugins = [plugin],
+          );
         });
       });
 
@@ -682,28 +708,29 @@ void main() {
         tester,
       ) async {
         final results = <String>[];
-        final chart = acquireChart(<String, Object?>{
-          'options': <String, Object?>{
-            'events': ['mousemove', 'test', 'test2', 'pointerleave'],
-            'plugins': <String, Object?>{
-              'testPlugin': <String, Object?>{
-                'events': ['test', 'pointerleave'],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'events': ['mousemove', 'test', 'test2', 'pointerleave'],
+              'plugins': <String, Object?>{
+                'testPlugin': <String, Object?>{
+                  'events': ['test', 'pointerleave'],
+                },
               },
-            },
-          },
-          'plugins': [
-            Plugin<Object?>(
-              id: 'testPlugin',
-              beforeEvent: (_, args, _) {
-                results.add('before${args.event.type}');
-                return true;
-              },
-              afterEvent: (_, args, _) {
-                results.add('after${args.event.type}');
-              },
-            ),
-          ],
-        });
+            })
+            ..plugins = [
+              Plugin<Object?>(
+                id: 'testPlugin',
+                beforeEvent: (_, args, _) {
+                  results.add('before${args.event.type}');
+                  return true;
+                },
+                afterEvent: (_, args, _) {
+                  results.add('after${args.event.type}');
+                },
+              ),
+            ],
+        );
         await triggerMouseEvent(chart, 'mousemove', <String, Object?>{
           'x': 0,
           'y': 0,
@@ -730,24 +757,25 @@ void main() {
 
       testWidgets('should not call plugins after uninstall', (tester) async {
         final results = <String>[];
-        final chart = acquireChart(<String, Object?>{
-          'options': <String, Object?>{
-            'events': ['test'],
-            'plugins': <String, Object?>{
-              'testPlugin': <String, Object?>{
-                'events': ['test'],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'events': ['test'],
+              'plugins': <String, Object?>{
+                'testPlugin': <String, Object?>{
+                  'events': ['test'],
+                },
               },
-            },
-          },
-          'plugins': [
-            Plugin<Object?>(
-              id: 'testPlugin',
-              reset: (_, _, _) => results.add('reset'),
-              afterDestroy: (_, _, _) => results.add('afterDestroy'),
-              uninstall: (_, _, _) => results.add('uninstall'),
-            ),
-          ],
-        })..reset();
+            })
+            ..plugins = [
+              Plugin<Object?>(
+                id: 'testPlugin',
+                reset: (_, _, _) => results.add('reset'),
+                afterDestroy: (_, _, _) => results.add('afterDestroy'),
+                uninstall: (_, _, _) => results.add('uninstall'),
+              ),
+            ],
+        )..reset();
         expect(results, ['reset']);
         chart.destroy();
         expect(results, ['reset', 'afterDestroy', 'uninstall']);

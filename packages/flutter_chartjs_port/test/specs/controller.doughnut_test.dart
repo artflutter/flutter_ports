@@ -8,8 +8,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -54,8 +52,8 @@ import '../support/draw_recorder.dart';
 // Map `chart.options['plugins']`.
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `meta.data[index]` of [meta], an arc.
 ArcElement _arc(ChartMeta meta, int index) => meta.data[index] as ArcElement;
@@ -96,15 +94,18 @@ void main() {
     });
 
     testWidgets('should be constructed', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-          ],
-          'labels': <Object?>[],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'doughnut'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{'data': <Object?>[]},
+              ),
+            ]
+            ..labels = <Object?>[]),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.type, 'doughnut');
@@ -120,17 +121,20 @@ void main() {
     testWidgets(
       'should create arc elements for each data item during initialization',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'doughnut',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10.0, 15.0, 0.0, 4.0],
-              },
-            ],
-            'labels': <Object?>[],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'doughnut'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  DoughnutControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10.0, 15.0, 0.0, 4.0],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[]),
+        );
 
         final meta = chart.getDatasetMeta(0);
         expect(meta.data.length, 4); // 4 arcs created
@@ -142,17 +146,20 @@ void main() {
     );
 
     testWidgets('should default arc spacingMode to angular', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10.0, 20.0],
-            },
-          ],
-          'labels': <Object?>['a', 'b'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'doughnut'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10.0, 20.0],
+                },
+              ),
+            ]
+            ..labels = <Object?>['a', 'b']),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.angular);
@@ -160,37 +167,46 @@ void main() {
     });
 
     testWidgets('should reset and update elements', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1.0, 2.0, 3.0, 4.0],
-              'hidden': true,
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'doughnut'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[1.0, 2.0, 3.0, 4.0],
+                  'hidden': true,
+                },
+              ),
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[5.0, 6.0, 0.0, 7.0],
+                },
+              ),
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[8.0, 9.0, 10.0, 11.0],
+                },
+              ),
+            ]
+            ..labels = <Object?>['label0', 'label1', 'label2', 'label3'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            'animation': <String, Object?>{
+              'duration': 0.0,
+              'animateRotate': true,
+              'animateScale': false,
             },
-            <String, Object?>{
-              'data': <Object?>[5.0, 6.0, 0.0, 7.0],
-            },
-            <String, Object?>{
-              'data': <Object?>[8.0, 9.0, 10.0, 11.0],
-            },
-          ],
-          'labels': <Object?>['label0', 'label1', 'label2', 'label3'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'animation': <String, Object?>{
-            'duration': 0.0,
-            'animateRotate': true,
-            'animateScale': false,
-          },
-          // DIVERGES(chartjs): adapt-length-objects, the length class.
-          'cutout': const PercentRadius(50),
-          'rotation': 0.0,
-          'circumference': 360.0,
-          'elements': _arcOptions(),
-        },
-      });
+            // DIVERGES(chartjs): adapt-length-objects, the length class.
+            'cutout': const PercentRadius(50),
+            'rotation': 0.0,
+            'circumference': 360.0,
+            'elements': _arcOptions(),
+          }),
+      );
 
       final meta = chart.getDatasetMeta(1);
 
@@ -286,32 +302,41 @@ void main() {
     });
 
     testWidgets('should rotate and limit circumference', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[2.0, 4.0],
-              'hidden': true,
-            },
-            <String, Object?>{
-              'data': <Object?>[1.0, 3.0],
-            },
-            <String, Object?>{
-              'data': <Object?>[1.0, 0.0],
-            },
-          ],
-          'labels': <Object?>['label0', 'label1', 'label2'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          // DIVERGES(chartjs): adapt-length-objects, the length class.
-          'cutout': const PercentRadius(50),
-          'rotation': 270.0,
-          'circumference': 90.0,
-          'elements': _arcOptions(),
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'doughnut'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[2.0, 4.0],
+                  'hidden': true,
+                },
+              ),
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[1.0, 3.0],
+                },
+              ),
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[1.0, 0.0],
+                },
+              ),
+            ]
+            ..labels = <Object?>['label0', 'label1', 'label2'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            // DIVERGES(chartjs): adapt-length-objects, the length class.
+            'cutout': const PercentRadius(50),
+            'rotation': 270.0,
+            'circumference': 90.0,
+            'elements': _arcOptions(),
+          }),
+      );
 
       final meta = chart.getDatasetMeta(1);
 
@@ -338,25 +363,28 @@ void main() {
     });
 
     testWidgets('should treat negative values as positive', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[-1.0, -3.0],
-            },
-          ],
-          'labels': <Object?>['label0', 'label1'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          // DIVERGES(chartjs): adapt-length-objects, the length class.
-          'cutout': const PercentRadius(50),
-          'rotation': 270.0,
-          'circumference': 90.0,
-          'elements': _arcOptions(),
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'doughnut'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[-1.0, -3.0],
+                },
+              ),
+            ]
+            ..labels = <Object?>['label0', 'label1'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            // DIVERGES(chartjs): adapt-length-objects, the length class.
+            'cutout': const PercentRadius(50),
+            'rotation': 270.0,
+            'circumference': 90.0,
+            'elements': _arcOptions(),
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -379,17 +407,20 @@ void main() {
     });
 
     testWidgets('should draw all arcs', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10.0, 15.0, 0.0, 4.0],
-            },
-          ],
-          'labels': <Object?>['label0', 'label1', 'label2', 'label3'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'doughnut'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10.0, 15.0, 0.0, 4.0],
+                },
+              ),
+            ]
+            ..labels = <Object?>['label0', 'label1', 'label2', 'label3']),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -410,30 +441,39 @@ void main() {
       'should calculate radiuses based on the border widths of the visible '
       'outermost dataset',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'doughnut',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[2.0, 4.0],
-                'borderWidth': 4.0,
-                'hidden': true,
-              },
-              <String, Object?>{
-                'data': <Object?>[1.0, 3.0],
-                'borderWidth': 8.0,
-              },
-              <String, Object?>{
-                'data': <Object?>[1.0, 0.0],
-                'borderWidth': 12.0,
-              },
-            ],
-            'labels': <Object?>['label0', 'label1'],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false, 'title': false},
-          },
-        })..update(); // :313 `chart.update()`
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'doughnut'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  DoughnutControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[2.0, 4.0],
+                    'borderWidth': 4.0,
+                    'hidden': true,
+                  },
+                ),
+                mergeExtra(
+                  DoughnutControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[1.0, 3.0],
+                    'borderWidth': 8.0,
+                  },
+                ),
+                mergeExtra(
+                  DoughnutControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[1.0, 0.0],
+                    'borderWidth': 12.0,
+                  },
+                ),
+              ]
+              ..labels = <Object?>['label0', 'label1'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{'legend': false, 'title': false},
+            }),
+        )..update(); // :313 `chart.update()`
 
         var controller =
             chart.getDatasetMeta(0).controller! as DoughnutController;
@@ -460,32 +500,35 @@ void main() {
 
       // :334 `beforeEach`: it acquires a chart.
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'doughnut',
-          'data': <String, Object?>{
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10.0, 15.0, 0.0, 4.0],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            // DIVERGES(chartjs): adapt-length-objects, the length class.
-            'cutout': const PercentRadius(50),
-            'elements': <String, Object?>{
-              'arc': <String, Object?>{
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(100, 150, 200, 1),
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'doughnut'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4']
+              ..datasets = [
+                mergeExtra(
+                  DoughnutControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10.0, 15.0, 0.0, 4.0],
+                  },
                 ),
-                'borderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(50, 100, 150, 1),
-                ),
-                'borderWidth': 2.0,
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              // DIVERGES(chartjs): adapt-length-objects, the length class.
+              'cutout': const PercentRadius(50),
+              'elements': <String, Object?>{
+                'arc': <String, Object?>{
+                  'backgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(100, 150, 200, 1),
+                  ),
+                  'borderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(50, 100, 150, 1),
+                  ),
+                  'borderWidth': 2.0,
+                },
               },
-            },
-          },
-        });
+            }),
+        );
       }
 
       testWidgets('should handle default hover styles', (tester) async {
@@ -602,26 +645,32 @@ void main() {
     testWidgets('should not override tooltip title and label callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'doughnut',
-        'data': <String, Object?>{
-          'labels': <Object?>['Label 1', 'Label 2'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[21, 79],
-              'label': 'Dataset 1',
-            },
-            <String, Object?>{
-              'data': <Object?>[33, 67],
-              'label': 'Dataset 2',
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'maintainAspectRatio': true,
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'doughnut'
+          ..data = (ChartDataScope()
+            ..labels = <Object?>['Label 1', 'Label 2']
+            ..datasets = [
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[21, 79],
+                  'label': 'Dataset 1',
+                },
+              ),
+              mergeExtra(
+                DoughnutControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[33, 67],
+                  'label': 'Dataset 2',
+                },
+              ),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'responsive': true,
+            'maintainAspectRatio': true,
+          }),
+      );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];
 

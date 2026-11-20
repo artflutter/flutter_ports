@@ -8,8 +8,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -52,8 +50,8 @@ import '../support/draw_recorder.dart';
 // Map `chart.options['plugins']`.
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `meta.data[index]` of [meta], an arc.
 ArcElement _arc(ChartMeta meta, int index) => meta.data[index] as ArcElement;
@@ -112,17 +110,20 @@ void main() {
       (tester) async {
         const expectedScaleMax = 1;
         final chart =
-            acquireChart(<String, Object?>{
-                'type': 'polarArea',
-                'data': <String, Object?>{
-                  'datasets': <Object?>[
-                    <String, Object?>{
-                      'data': <Object?>[100],
-                    },
-                  ],
-                  'labels': <Object?>['x'],
-                },
-              })
+            acquireChartRoot(
+                ChartConfigurationScope()
+                  ..type = 'polarArea'
+                  ..data = (ChartDataScope()
+                    ..datasets = [
+                      mergeExtra(
+                        PolarAreaControllerDatasetOptionsScope(),
+                        <String, Object?>{
+                          'data': <Object?>[100],
+                        },
+                      ),
+                    ]
+                    ..labels = <Object?>['x']),
+              )
               // :16-17 `chart.toggleDataVisibility(0); chart.update();`
               ..toggleDataVisibility(0)
               ..update();
@@ -136,16 +137,22 @@ void main() {
     });
 
     testWidgets('should be constructed', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
-          ],
-          'labels': <Object?>[],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'polarArea'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{'data': <Object?>[]},
+              ),
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{'data': <Object?>[]},
+              ),
+            ]
+            ..labels = <Object?>[]),
+      );
 
       final meta = chart.getDatasetMeta(1);
       expect(meta.type, 'polarArea');
@@ -162,18 +169,24 @@ void main() {
     testWidgets(
       'should create arc elements for each data item during initialization',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'polarArea',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-              },
-            ],
-            'labels': <Object?>[],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'polarArea'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  PolarAreaControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': <Object?>[]},
+                ),
+                mergeExtra(
+                  PolarAreaControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 15, 0, -4],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[]),
+        );
 
         final meta = chart.getDatasetMeta(1);
         expect(meta.data.length, 4); // 4 arcs created
@@ -187,17 +200,20 @@ void main() {
     testWidgets('should default arc spacingMode to proportional', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 20],
-            },
-          ],
-          'labels': <Object?>['a', 'b'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'polarArea'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 20],
+                },
+              ),
+            ]
+            ..labels = <Object?>['a', 'b']),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.proportional);
@@ -207,21 +223,24 @@ void main() {
     testWidgets('should respect chart-level spacingMode override', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 20],
-            },
-          ],
-          'labels': <Object?>['a', 'b'],
-        },
-        'options': <String, Object?>{
-          'spacing': 12,
-          'spacingMode': ArcSpacingMode.parallel,
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'polarArea'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 20],
+                },
+              ),
+            ]
+            ..labels = <Object?>['a', 'b'])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'spacing': 12,
+            'spacingMode': ArcSpacingMode.parallel,
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(_option(meta.data[0], 'spacingMode'), ArcSpacingMode.parallel);
@@ -231,18 +250,21 @@ void main() {
     });
 
     testWidgets('should draw all elements', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'polarArea'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset2',
+                },
+              ),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -260,33 +282,36 @@ void main() {
     });
 
     testWidgets('should update elements when modifying data', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'showLine': true,
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'elements': <String, Object?>{
-            'arc': <String, Object?>{
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'polarArea'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset2',
+                },
               ),
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(0, 255, 0, 1),
-              ),
-              'borderWidth': 1.2,
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'showLine': true,
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            'elements': <String, Object?>{
+              'arc': <String, Object?>{
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
+                'borderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(0, 255, 0, 1),
+                ),
+                'borderWidth': 1.2,
+              },
             },
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.data.length, 4);
@@ -335,38 +360,41 @@ void main() {
     testWidgets('should update elements with start angle from options', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'showLine': true,
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'startAngle': 90, // default is 0
-            },
-          },
-          'elements': <String, Object?>{
-            'arc': <String, Object?>{
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'polarArea'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset2',
+                },
               ),
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(0, 255, 0, 1),
-              ),
-              'borderWidth': 1.2,
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'showLine': true,
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            'scales': <String, Object?>{
+              'r': <String, Object?>{
+                'startAngle': 90, // default is 0
+              },
             },
-          },
-        },
-      });
+            'elements': <String, Object?>{
+              'arc': <String, Object?>{
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
+                'borderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(0, 255, 0, 1),
+                ),
+                'borderWidth': 1.2,
+              },
+            },
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.data.length, 4);
@@ -385,32 +413,35 @@ void main() {
     testWidgets('should handle number of data point changes in update', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'showLine': true,
-          'elements': <String, Object?>{
-            'arc': <String, Object?>{
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'polarArea'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, -4],
+                  'label': 'dataset2',
+                },
               ),
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(0, 255, 0, 1),
-              ),
-              'borderWidth': 1.2,
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'showLine': true,
+            'elements': <String, Object?>{
+              'arc': <String, Object?>{
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
+                'borderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(0, 255, 0, 1),
+                ),
+                'borderWidth': 1.2,
+              },
             },
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.data.length, 4);
@@ -448,31 +479,34 @@ void main() {
 
       // :305 beforeEach: acquires a chart.
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'polarArea',
-          'data': <String, Object?>{
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, 4],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'cutoutPercentage': 0,
-            'elements': <String, Object?>{
-              'arc': <String, Object?>{
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(100, 150, 200, 1),
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'polarArea'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4']
+              ..datasets = [
+                mergeExtra(
+                  PolarAreaControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 15, 0, 4],
+                  },
                 ),
-                'borderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(50, 100, 150, 1),
-                ),
-                'borderWidth': 2,
+              ])
+            ..options = mergeExtra((ChartOptionsScope()), {
+              'cutoutPercentage': 0,
+              'elements': <String, Object?>{
+                'arc': <String, Object?>{
+                  'backgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(100, 150, 200, 1),
+                  ),
+                  'borderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(50, 100, 150, 1),
+                  ),
+                  'borderWidth': 2,
+                },
               },
-            },
-          },
-        });
+            }),
+        );
       }
 
       testWidgets('should handle default hover styles', (tester) async {
@@ -589,26 +623,31 @@ void main() {
     testWidgets('should not override tooltip title and label callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'labels': <Object?>['Label 1', 'Label 2'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[21, 79],
-              'label': 'Dataset 1',
-            },
-            <String, Object?>{
-              'data': <Object?>[33, 67],
-              'label': 'Dataset 2',
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'maintainAspectRatio': true,
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'polarArea'
+          ..data = (ChartDataScope()
+            ..labels = <Object?>['Label 1', 'Label 2']
+            ..datasets = [
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[21, 79],
+                  'label': 'Dataset 1',
+                },
+              ),
+              mergeExtra(
+                PolarAreaControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[33, 67],
+                  'label': 'Dataset 2',
+                },
+              ),
+            ])
+          ..options = (ChartOptionsScope()
+            ..responsive = true
+            ..maintainAspectRatio = true),
+      );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];
 

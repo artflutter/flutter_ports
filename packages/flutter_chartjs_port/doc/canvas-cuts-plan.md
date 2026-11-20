@@ -2902,3 +2902,12 @@ The batch also migrates nine bar, point, arc and gap guard suites, retaining cus
 Maps where their reads or identity are the subject of a probe. No production canvas code
 or deferred cut changes. The named references, inventory, tests of §2.6 and §3.5, and
 estimates remain unchanged. No trigger occurred.
+
+## Typed platform and helper spec configs, 2026-11-20
+
+`test/specs/helpers.canvas_test.dart`, `helpers.dom_test.dart` and `platform.dom_test.dart`
+now construct native typed configuration scopes. Empty chart roots, host options and input
+event probes keep their previous behavior. The batch also migrates global defaults, three
+controller specs, category scales, layouts and plugin hooks. No production canvas code or
+deferred cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates
+remain unchanged. No trigger occurred.

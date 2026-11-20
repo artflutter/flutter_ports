@@ -4,8 +4,6 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -90,49 +88,49 @@ void main() {
       expect(ticks.callbackCell?.raw, same(categoryTicks.callbackCell?.raw));
     });
 
-    // A Map config: `data.xLabels` has no typed form.
+    // The native data scope preserves the separate x-axis labels.
     testWidgets('Should generate ticks from the data xLabels', (tester) async {
       final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'xLabels': labels,
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..xLabels = labels
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, 5, 0, 25, 78],
+              }),
+            ])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category'},
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category'},
-          },
-        },
-      });
+          }),
+      );
 
       final scale = chart.scales['x']!;
       expect(_getLabels(scale), equals(labels));
     });
 
-    // A Map config: `data.yLabels` has no typed form.
+    // The native data scope preserves the separate y-axis labels.
     testWidgets('Should generate ticks from the data yLabels', (tester) async {
       final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'yLabels': labels,
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..yLabels = labels
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, 5, 0, 25, 78],
+              }),
+            ])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'scales': <String, Object?>{
+              'y': <String, Object?>{'type': 'category'},
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'category'},
-          },
-        },
-      });
+          }),
+      );
 
       final scale = chart.scales['y']!;
       expect(_getLabels(scale), equals(labels));
@@ -158,24 +156,24 @@ void main() {
     // cannot hold.
     testWidgets('Should generate missing labels', (tester) async {
       final labels = <Object?>['a', 'b', 'c', 'd'];
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <String, Object?>{'a': 1, 'b': 3, 'c': -1, 'd': 10},
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <String, Object?>{'a': 1, 'b': 3, 'c': -1, 'd': 10},
+              }),
+            ])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'labels': <Object?>['a'],
+              },
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'labels': <Object?>['a'],
-            },
-          },
-        },
-      });
+          }),
+      );
 
       final scale = chart.scales['x']!;
       expect(_getLabels(scale), equals(labels));
@@ -338,32 +336,32 @@ void main() {
     testWidgets('should get the correct pixel for a value when vertical', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>['3', '5', '1', '4', '2'],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+                'data': <Object?>['3', '5', '1', '4', '2'],
+              }),
+            ]
+            ..labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5']
+            ..yLabels = <Object?>['1', '2', '3', '4', '5'])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
+              'y': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.left,
+              },
             },
-          ],
-          'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
-          'yLabels': <Object?>['1', '2', '3', '4', '5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{
-              'type': 'category',
-              'position': ChartPosition.left,
-            },
-          },
-        },
-      });
+          }),
+      );
 
       final yScale = chart.scales['y']!;
       expect(yScale.getPixelForValue(0), toBeCloseToPixel(32));
@@ -387,34 +385,37 @@ void main() {
     testWidgets(
       'should get the correct pixel for a value when vertical and zoomed',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>['3', '5', '1', '4', '2'],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'xAxisID': 'x',
+                    'yAxisID': 'y',
+                    'data': <Object?>['3', '5', '1', '4', '2'],
+                  },
+                ),
+              ]
+              ..labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5']
+              ..yLabels = <Object?>['1', '2', '3', '4', '5'])
+            ..options = mergeExtra((ChartOptionsScope()), {
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'category',
+                  'position': ChartPosition.bottom,
+                },
+                'y': <String, Object?>{
+                  'type': 'category',
+                  'position': ChartPosition.left,
+                  'min': '2',
+                  'max': '4',
+                },
               },
-            ],
-            'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
-            'yLabels': <Object?>['1', '2', '3', '4', '5'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.left,
-                'min': '2',
-                'max': '4',
-              },
-            },
-          },
-        });
+            }),
+        );
 
         final yScale = chart.scales['y']!;
 
@@ -463,42 +464,45 @@ void main() {
       },
     );
 
-    // A Map config: `data.yLabels` has no typed form.
+    // The native data scope preserves the separate y-axis labels.
     testWidgets(
       'Should get the correct pixel for an object value when vertical',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>[
-                  <String, Object?>{'x': 0, 'y': 2},
-                  <String, Object?>{'x': 1, 'y': 4},
-                  <String, Object?>{'x': 2, 'y': 0},
-                  <String, Object?>{'x': 3, 'y': 3},
-                  <String, Object?>{'x': 0, 'y': 1},
-                ],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'xAxisID': 'x',
+                    'yAxisID': 'y',
+                    'data': <Object?>[
+                      <String, Object?>{'x': 0, 'y': 2},
+                      <String, Object?>{'x': 1, 'y': 4},
+                      <String, Object?>{'x': 2, 'y': 0},
+                      <String, Object?>{'x': 3, 'y': 3},
+                      <String, Object?>{'x': 0, 'y': 1},
+                    ],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[0, 1, 2, 3]
+              ..yLabels = <Object?>[0, 1, 2, 3, 4])
+            ..options = mergeExtra((ChartOptionsScope()), {
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'category',
+                  'position': ChartPosition.bottom,
+                },
+                'y': <String, Object?>{
+                  'type': 'category',
+                  'position': ChartPosition.left,
+                },
               },
-            ],
-            'labels': <Object?>[0, 1, 2, 3],
-            'yLabels': <Object?>[0, 1, 2, 3, 4],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.left,
-              },
-            },
-          },
-        });
+            }),
+        );
 
         final yScale = chart.scales['y']!;
         expect(yScale.getPixelForValue(0), toBeCloseToPixel(32));
@@ -609,25 +613,25 @@ void main() {
     // A Map config: the data is an object by label, which a typed dataset
     // cannot hold.
     testWidgets('Should bound to ticks/data', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b', 'c', 'd'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <String, Object?>{'b': 1, 'c': 99},
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..labels = <Object?>['a', 'b', 'c', 'd']
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <String, Object?>{'b': 1, 'c': 99},
+              }),
+            ])
+          ..options = mergeExtra((ChartOptionsScope()), {
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'bounds': ScaleBounds.data,
+              },
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'bounds': ScaleBounds.data,
-            },
-          },
-        },
-      });
+          }),
+      );
 
       expect(chart.scales['x']!.min, _equalsNumber(1));
       expect(chart.scales['x']!.max, _equalsNumber(2));

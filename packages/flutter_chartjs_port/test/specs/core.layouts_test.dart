@@ -6,8 +6,6 @@ library;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -54,25 +52,23 @@ void main() {
     });
 
     testWidgets('should fit a simple chart with 2 scales', (tester) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
                 'data': <Object?>[10, 5, 0, 25, 78, -10],
-              },
-            ],
-            'labels': <Object?>[
+              }),
+            ]
+            ..labels = <Object?>[
               'tick1',
               'tick2',
               'tick3',
               'tick4',
               'tick5',
               'tick6',
-            ],
-          },
-        },
+            ]),
         <String, Object?>{
           'canvas': <String, Object?>{'height': 150, 'width': 250},
         },
@@ -101,25 +97,24 @@ void main() {
     testWidgets('should fit scales that are in the top and right positions', (
       tester,
     ) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
                 'data': <Object?>[10, 5, 0, 25, 78, -10],
-              },
-            ],
-            'labels': <Object?>[
+              }),
+            ]
+            ..labels = <Object?>[
               'tick1',
               'tick2',
               'tick3',
               'tick4',
               'tick5',
               'tick6',
-            ],
-          },
-          'options': <String, Object?>{
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'category',
@@ -130,8 +125,7 @@ void main() {
                 'position': ChartPosition.right,
               },
             },
-          },
-        },
+          }),
         <String, Object?>{
           'canvas': <String, Object?>{'height': 150, 'width': 250},
         },
@@ -160,27 +154,33 @@ void main() {
     testWidgets('should fit scales that overlap the chart area', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78, -10],
-            },
-            <String, Object?>{
-              'data': <Object?>[-19, -20, 0, -99, -50, 0],
-            },
-          ],
-          'labels': <Object?>[
-            'tick1',
-            'tick2',
-            'tick3',
-            'tick4',
-            'tick5',
-            'tick6',
-          ],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 5, 0, 25, 78, -10],
+                },
+              ),
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[-19, -20, 0, -99, -50, 0],
+                },
+              ),
+            ]
+            ..labels = <Object?>[
+              'tick1',
+              'tick2',
+              'tick3',
+              'tick4',
+              'tick5',
+              'tick6',
+            ]),
+      );
 
       expect(chart.chartArea!.bottom, toBeCloseToPixel(512));
       expect(chart.chartArea!.left, toBeCloseToPixel(0));
@@ -199,37 +199,35 @@ void main() {
     testWidgets('should fit multiple axes in the same position', (
       tester,
     ) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
                 'yAxisID': 'y',
                 'data': <Object?>[10, 5, 0, 25, 78, -10],
-              },
-              <String, Object?>{
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
                 'yAxisID': 'y2',
                 'data': <Object?>[-19, -20, 0, -99, -50, 0],
-              },
-            ],
-            'labels': <Object?>[
+              }),
+            ]
+            ..labels = <Object?>[
               'tick1',
               'tick2',
               'tick3',
               'tick4',
               'tick5',
               'tick6',
-            ],
-          },
-          'options': <String, Object?>{
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{'type': 'category'},
               'y': <String, Object?>{'type': 'linear'},
               'y2': <String, Object?>{'type': 'linear'},
             },
-          },
-        },
+          }),
         <String, Object?>{
           'canvas': <String, Object?>{'height': 150, 'width': 250},
         },
@@ -262,41 +260,41 @@ void main() {
     });
 
     testWidgets('should fit a full width box correctly', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'data': <Object?>[10, 5, 0, 25, 78, -10],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'xAxisID': 'x',
+                'data': <Object?>[10, 5, 0, 25, 78, -10],
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'xAxisID': 'x2',
+                'data': <Object?>[-19, -20, 0, -99, -50, 0],
+              }),
+            ]
+            ..labels = <Object?>[
+              'tick1',
+              'tick2',
+              'tick3',
+              'tick4',
+              'tick5',
+              'tick6',
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'category', 'offset': false},
+              'x2': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.top,
+                'fullSize': true,
+                'offset': false,
+              },
+              'y': <String, Object?>{'type': 'linear'},
             },
-            <String, Object?>{
-              'xAxisID': 'x2',
-              'data': <Object?>[-19, -20, 0, -99, -50, 0],
-            },
-          ],
-          'labels': <Object?>[
-            'tick1',
-            'tick2',
-            'tick3',
-            'tick4',
-            'tick5',
-            'tick6',
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'offset': false},
-            'x2': <String, Object?>{
-              'type': 'category',
-              'position': ChartPosition.top,
-              'fullSize': true,
-              'offset': false,
-            },
-            'y': <String, Object?>{'type': 'linear'},
-          },
-        },
-      });
+          }),
+      );
 
       expect(chart.chartArea!.bottom, toBeCloseToPixel(484));
       expect(chart.chartArea!.left, toBeCloseToPixel(39));
@@ -325,25 +323,27 @@ void main() {
       testWidgets('should apply a single padding to all dimensions', (
         tester,
       ) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 5, 0, 25, 78, -10],
-                },
-              ],
-              'labels': <Object?>[
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 5, 0, 25, 78, -10],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
                 'tick1',
                 'tick2',
                 'tick3',
                 'tick4',
                 'tick5',
                 'tick6',
-              ],
-            },
-            'options': <String, Object?>{
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -356,8 +356,7 @@ void main() {
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{'padding': const EdgeInsets.all(10)},
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 150, 'width': 250},
           },
@@ -370,25 +369,27 @@ void main() {
       });
 
       testWidgets('should apply padding in all positions', (tester) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 5, 0, 25, 78, -10],
-                },
-              ],
-              'labels': <Object?>[
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 5, 0, 25, 78, -10],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
                 'tick1',
                 'tick2',
                 'tick3',
                 'tick4',
                 'tick5',
                 'tick6',
-              ],
-            },
-            'options': <String, Object?>{
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -408,8 +409,7 @@ void main() {
                   bottom: 12,
                 ),
               },
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 150, 'width': 250},
           },
@@ -424,25 +424,27 @@ void main() {
       testWidgets('should default to 0 padding if no dimensions specified', (
         tester,
       ) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 5, 0, 25, 78, -10],
-                },
-              ],
-              'labels': <Object?>[
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 5, 0, 25, 78, -10],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
                 'tick1',
                 'tick2',
                 'tick3',
                 'tick4',
                 'tick5',
                 'tick6',
-              ],
-            },
-            'options': <String, Object?>{
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -455,8 +457,7 @@ void main() {
               },
               'plugins': <String, Object?>{'legend': false, 'title': false},
               'layout': <String, Object?>{'padding': EdgeInsets.zero},
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 150, 'width': 250},
           },
@@ -471,25 +472,27 @@ void main() {
 
     group('ordering by weight', () {
       testWidgets('should keep higher weights outside', (tester) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 5, 0, 25, 78, -10],
-                },
-              ],
-              'labels': <Object?>[
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 5, 0, 25, 78, -10],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
                 'tick1',
                 'tick2',
                 'tick3',
                 'tick4',
                 'tick5',
                 'tick6',
-              ],
-            },
-            'options': <String, Object?>{
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{
                 'legend': <String, Object?>{
                   'display': true,
@@ -500,8 +503,7 @@ void main() {
                   'position': ChartPosition.bottom,
                 },
               },
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 150, 'width': 250},
           },
@@ -519,25 +521,27 @@ void main() {
       testWidgets('should correctly set weights of scales and order them', (
         tester,
       ) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 5, 0, 25, 78, -10],
-                },
-              ],
-              'labels': <Object?>[
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 5, 0, 25, 78, -10],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
                 'tick1',
                 'tick2',
                 'tick3',
                 'tick4',
                 'tick5',
                 'tick6',
-              ],
-            },
-            'options': <String, Object?>{
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'category',
@@ -597,8 +601,7 @@ void main() {
                   'weight': 2,
                 },
               },
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 150, 'width': 250},
           },
@@ -655,27 +658,28 @@ void main() {
       testWidgets('should correctly compute y-axis width to fit labels', (
         tester,
       ) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'labels': <Object?>[
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>[
                 'tick 1',
                 'tick 2',
                 'tick 3',
                 'tick 4',
                 'tick 5',
-              ],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 2.25, 1.5, 1.25, 2.5],
-                },
-              ],
-            },
-            'options': <String, Object?>{
+              ]
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[0, 2.25, 1.5, 1.25, 2.5],
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'plugins': <String, Object?>{'legend': false},
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 256, 'width': 256},
           },

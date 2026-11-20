@@ -109,7 +109,7 @@ void main() {
 
     group('clearCanvas', () {
       testWidgets('should clear the chart canvas', (tester) async {
-        final chart = acquireChart({}, {
+        final chart = acquireChartRoot(ChartConfigurationScope(), {
           'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
         });
 
@@ -125,11 +125,12 @@ void main() {
 
       testWidgets('should not throw error when chart is null', (tester) async {
         void createAndClearChart() {
-          final chart = acquireChart({}, {'canvas': null})
-            // explicitly set canvas and ctx to null since setting it in
-            // acquireChart doesn't do anything
-            ..canvas = null
-            ..ctx = null;
+          final chart =
+              acquireChartRoot(ChartConfigurationScope(), {'canvas': null})
+                // explicitly set canvas and ctx to null since setting it in
+                // acquireChart doesn't do anything
+                ..canvas = null
+                ..ctx = null;
 
           clearCanvas(chart.canvas, chart.ctx);
         }

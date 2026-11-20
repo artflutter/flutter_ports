@@ -8,8 +8,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -59,8 +57,8 @@ import '../support/draw_recorder.dart';
 // Map `chart.options['plugins']`.
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `element.options` of [element].
 Object? _options(Object element) => (element as Element).options;
@@ -84,15 +82,18 @@ void main() {
     });
 
     testWidgets('Should be constructed', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-          ],
-          'labels': <Object?>[],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{'data': <Object?>[]},
+              ),
+            ]
+            ..labels = <Object?>[]),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.type, 'radar');
@@ -108,17 +109,20 @@ void main() {
     testWidgets(
       'Should create arc elements for each data item during initialization',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, 4],
-              },
-            ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'radar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 15, 0, 4],
+                  },
+                ),
+              ]
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+        );
 
         final meta = chart.getDatasetMeta(0);
         expect(meta.dataset, isA<LineElement>()); // line element
@@ -131,17 +135,20 @@ void main() {
     );
 
     testWidgets('should draw all elements', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, 4],
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, 4],
+                },
+              ),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -163,21 +170,24 @@ void main() {
     testWidgets(
       'should draw all elements with object notation and default key',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'r': 10},
-                  <String, Object?>{'r': 20},
-                  <String, Object?>{'r': 15},
-                ],
-              },
-            ],
-            'labels': <Object?>['label1', 'label2', 'label3'],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'radar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'r': 10},
+                      <String, Object?>{'r': 20},
+                      <String, Object?>{'r': 15},
+                    ],
+                  },
+                ),
+              ]
+              ..labels = <Object?>['label1', 'label2', 'label3']),
+        );
 
         final meta = chart.getDatasetMeta(0);
 
@@ -198,49 +208,52 @@ void main() {
     // :103 The control points come from the `beforeDraw` hook of the filler
     // plugin (plugin.filler/index.js:61).
     testWidgets('should update elements', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, 4],
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'showLine': true,
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'elements': <String, Object?>{
-            'line': <String, Object?>{
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, 4],
+                },
               ),
-              'borderCapStyle': native_ui.StrokeCap.round,
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(0, 255, 0, 1),
-              ),
-              'borderDash': <double>[],
-              'borderDashOffset': 0.1,
-              'borderJoinStyle': native_ui.StrokeJoin.bevel,
-              'borderWidth': 1.2,
-              'fill': FillTarget.toOrigin,
-              'tension': 0.1,
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'showLine': true,
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            'elements': <String, Object?>{
+              'line': <String, Object?>{
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
+                'borderCapStyle': native_ui.StrokeCap.round,
+                'borderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(0, 255, 0, 1),
+                ),
+                'borderDash': <double>[],
+                'borderDashOffset': 0.1,
+                'borderJoinStyle': native_ui.StrokeJoin.bevel,
+                'borderWidth': 1.2,
+                'fill': FillTarget.toOrigin,
+                'tension': 0.1,
+              },
+              'point': <String, Object?>{
+                'backgroundColor': jsGet(Chart.defaults, 'backgroundColor'),
+                'borderWidth': 1,
+                'borderColor': jsGet(Chart.defaults, 'borderColor'),
+                'hitRadius': 1,
+                'hoverRadius': 4,
+                'hoverBorderWidth': 1,
+                'radius': 3,
+                // DIVERGES(chartjs): adapt-point-style-objects, native style.
+                'pointStyle': const CirclePointStyle(),
+              },
             },
-            'point': <String, Object?>{
-              'backgroundColor': jsGet(Chart.defaults, 'backgroundColor'),
-              'borderWidth': 1,
-              'borderColor': jsGet(Chart.defaults, 'borderColor'),
-              'hitRadius': 1,
-              'hoverRadius': 4,
-              'hoverBorderWidth': 1,
-              'radius': 3,
-              // DIVERGES(chartjs): adapt-point-style-objects, the style class.
-              'pointStyle': const CirclePointStyle(),
-            },
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -303,7 +316,7 @@ void main() {
               )
               .having((o) => o.hitRadius, 'hitRadius', 1)
               .having((o) => o.radius, 'radius', 3)
-              // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+              // DIVERGES(chartjs): adapt-point-style-objects, native style.
               .having(
                 (o) => o.pointStyle,
                 'pointStyle',
@@ -346,7 +359,7 @@ void main() {
               )
               .having((o) => o.hitRadius, 'hitRadius', 1)
               .having((o) => o.radius, 'radius', 3)
-              // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+              // DIVERGES(chartjs): adapt-point-style-objects, native style.
               .having(
                 (o) => o.pointStyle,
                 'pointStyle',
@@ -366,7 +379,7 @@ void main() {
       );
       _dataset(chart, 0)['borderWidth'] = 0.55;
       _dataset(chart, 0)['borderCapStyle'] = native_ui.StrokeCap.butt;
-      _dataset(chart, 0)['borderDash'] = <Object?>[2, 3];
+      _dataset(chart, 0)['borderDash'] = <double>[2, 3];
       _dataset(chart, 0)['borderDashOffset'] = 7;
       _dataset(chart, 0)['borderJoinStyle'] = native_ui.StrokeJoin.miter;
       _dataset(chart, 0)['fill'] = FillTarget.none;
@@ -443,7 +456,7 @@ void main() {
               )
               .having((o) => o.hitRadius, 'hitRadius', 3.3)
               .having((o) => o.radius, 'radius', 22)
-              // DIVERGES(chartjs): adapt-point-style-objects, the style class.
+              // DIVERGES(chartjs): adapt-point-style-objects, native style.
               .having(
                 (o) => o.pointStyle,
                 'pointStyle',
@@ -458,31 +471,34 @@ void main() {
       late Chart chart;
 
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, 4],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'elements': <String, Object?>{
-              'point': <String, Object?>{
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(100, 150, 200, 1),
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'radar'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4']
+              ..datasets = [
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 15, 0, 4],
+                  },
                 ),
-                'borderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(50, 100, 150, 1),
-                ),
-                'borderWidth': 2,
-                'radius': 3,
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'elements': <String, Object?>{
+                'point': <String, Object?>{
+                  'backgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(100, 150, 200, 1),
+                  ),
+                  'borderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(50, 100, 150, 1),
+                  ),
+                  'borderWidth': 2,
+                  'radius': 3,
+                },
               },
-            },
-          },
-        });
+            }),
+        );
       }
 
       testWidgets('should handle default hover styles', (tester) async {
@@ -607,18 +623,21 @@ void main() {
     });
 
     testWidgets('should allow pointBorderWidth to be set to 0', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, 4],
-              'pointBorderWidth': 0,
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, 4],
+                  'pointBorderWidth': 0,
+                },
+              ),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+      );
 
       final meta = chart.getDatasetMeta(0);
       final point = meta.data[0];
@@ -628,23 +647,29 @@ void main() {
     testWidgets('should use the pointRadius setting over the radius setting', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, 4],
-              'pointRadius': 10,
-              'radius': 15,
-            },
-            <String, Object?>{
-              'data': <Object?>[20, 20, 20, 20],
-              'radius': 20,
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, 4],
+                  'pointRadius': 10,
+                  'radius': 15,
+                },
+              ),
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[20, 20, 20, 20],
+                  'radius': 20,
+                },
+              ),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+      );
 
       final meta0 = chart.getDatasetMeta(0);
       final meta1 = chart.getDatasetMeta(1);
@@ -653,23 +678,26 @@ void main() {
     });
 
     testWidgets('should return id for value scale', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, 4],
-              'pointBorderWidth': 0,
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 15, 0, 4],
+                  'pointBorderWidth': 0,
+                },
+              ),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'test': <String, Object?>{'axis': const RAxis()},
             },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'test': <String, Object?>{'axis': const RAxis()},
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.vScale!.id, 'test');
@@ -679,26 +707,32 @@ void main() {
     testWidgets('should not override tooltip title and label callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'labels': <Object?>['Label 1', 'Label 2'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[21, 79],
-              'label': 'Dataset 1',
-            },
-            <String, Object?>{
-              'data': <Object?>[33, 67],
-              'label': 'Dataset 2',
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'maintainAspectRatio': true,
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..labels = <Object?>['Label 1', 'Label 2']
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[21, 79],
+                  'label': 'Dataset 1',
+                },
+              ),
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[33, 67],
+                  'label': 'Dataset 2',
+                },
+              ),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'responsive': true,
+            'maintainAspectRatio': true,
+          }),
+      );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];
 

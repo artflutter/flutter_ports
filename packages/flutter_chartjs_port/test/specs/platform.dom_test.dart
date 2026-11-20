@@ -64,7 +64,9 @@ void main() {
 
       testWidgets('should use the DomPlatform by default', (tester) async {
         beforeEach();
-        final chart = acquireChart(<String, Object?>{'type': 'line'});
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()..type = 'line',
+        );
 
         // `toBeInstanceOf(Chart.platforms.DomPlatform)`: the class value is
         // the one of FlutterPlatform, and the platform is a FlutterPlatform.
@@ -139,10 +141,9 @@ void main() {
         'should use default "global" aspect ratio for render and display '
         'sizes',
         (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{'responsive': false},
-            },
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = (ChartOptionsScope()..responsive = false),
             <String, Object?>{
               'canvas': <String, Object?>{'style': 'width: 620px'},
             },
@@ -162,11 +163,10 @@ void main() {
           final ratio = jsGet(doughnut, 'aspectRatio');
           doughnut['aspectRatio'] = 1;
 
-          final chart = acquireChart(
-            <String, Object?>{
-              'type': 'doughnut',
-              'options': <String, Object?>{'responsive': false},
-            },
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'doughnut'
+              ..options = (ChartOptionsScope()..responsive = false),
             <String, Object?>{
               'canvas': <String, Object?>{'style': 'width: 425px'},
             },
@@ -184,13 +184,11 @@ void main() {
       testWidgets(
         'should use "user" aspect ratio for render and display sizes',
         (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{
-                'responsive': false,
-                'aspectRatio': 3,
-              },
-            },
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = (ChartOptionsScope()
+                ..responsive = false
+                ..aspectRatio = 3),
             <String, Object?>{
               'canvas': <String, Object?>{'style': 'width: 405px'},
             },
@@ -206,10 +204,11 @@ void main() {
       testWidgets('should not apply aspect ratio when height specified', (
         tester,
       ) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'options': <String, Object?>{'responsive': false, 'aspectRatio': 3},
-          },
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = (ChartOptionsScope()
+              ..responsive = false
+              ..aspectRatio = 3),
           <String, Object?>{
             'canvas': <String, Object?>{'style': 'width: 400px; height: 410px'},
           },
@@ -226,10 +225,9 @@ void main() {
       testWidgets(
         'should use default canvas size for render and display sizes',
         (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{'responsive': false},
-            },
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = (ChartOptionsScope()..responsive = false),
             <String, Object?>{
               'canvas': <String, Object?>{'style': ''},
             },
@@ -245,10 +243,9 @@ void main() {
       testWidgets('should use canvas attributes for render and display sizes', (
         tester,
       ) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'options': <String, Object?>{'responsive': false},
-          },
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = (ChartOptionsScope()..responsive = false),
           <String, Object?>{
             'canvas': <String, Object?>{
               'style': '',
@@ -266,10 +263,9 @@ void main() {
 
       testWidgets('should use canvas style for render and display sizes (if no '
           'attributes)', (tester) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'options': <String, Object?>{'responsive': false},
-          },
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = (ChartOptionsScope()..responsive = false),
           <String, Object?>{
             'canvas': <String, Object?>{'style': 'width: 345px; height: 125px'},
           },
@@ -285,10 +281,9 @@ void main() {
         'should use attributes for the render size and style for the display '
         'size',
         (tester) async {
-          final chart = acquireChart(
-            <String, Object?>{
-              'options': <String, Object?>{'responsive': false},
-            },
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..options = (ChartOptionsScope()..responsive = false),
             <String, Object?>{
               'canvas': <String, Object?>{
                 'style': 'width: 345px; height: 125px;',
@@ -309,10 +304,9 @@ void main() {
       testWidgets('should support decimal display width and/or height', (
         tester,
       ) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'options': <String, Object?>{'responsive': false},
-          },
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = (ChartOptionsScope()..responsive = false),
           <String, Object?>{
             'canvas': <String, Object?>{
               'style': 'width: 345.42px; height: 125.42px;',
@@ -335,13 +329,11 @@ void main() {
       testWidgets('should fit parent using aspect ratio to calculate size', (
         tester,
       ) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'options': <String, Object?>{
-              'responsive': true,
-              'maintainAspectRatio': true,
-            },
-          },
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..options = (ChartOptionsScope()
+              ..responsive = true
+              ..maintainAspectRatio = true),
           <String, Object?>{
             'canvas': <String, Object?>{'style': 'width: 150px; height: 245px'},
             'wrapper': <String, Object?>{
@@ -444,19 +436,22 @@ void main() {
             notifiedEvent = args.event;
           },
         );
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-          'options': <String, Object?>{'responsive': true},
-          'plugins': <Plugin<Object?>>[plugin],
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['A', 'B', 'C', 'D']
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 20, 30, 100],
+                  },
+                ),
+              ])
+            ..options = (ChartOptionsScope()..responsive = true)
+            ..plugins = <Plugin<Object?>>[plugin],
+        );
 
         await triggerMouseEvent(chart, 'click', <String, Object?>{
           'x': chart.width / 2,

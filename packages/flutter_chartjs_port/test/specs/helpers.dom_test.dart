@@ -141,7 +141,7 @@ void main() {
     testWidgets(
       'should leave styled height and width on canvas if explicitly set',
       (tester) async {
-        final chart = acquireChart({}, {
+        final chart = acquireChartRoot(ChartConfigurationScope(), {
           'canvas': <String, Object?>{
             'height': 200,
             'width': 200,
@@ -164,7 +164,7 @@ void main() {
       const chartWidth = 800;
       const chartHeight = 400;
       const devicePixelRatio = 0.8999999761581421; // 1.7999999523162842;
-      final chart = acquireChart({}, {
+      final chart = acquireChartRoot(ChartConfigurationScope(), {
         'canvas': <String, Object?>{'width': chartWidth, 'height': chartHeight},
       });
 
@@ -209,28 +209,31 @@ void main() {
         Object? dataX;
         Object? dataY;
         late final Chart chart;
-        chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 'first', 'y': 10},
-                  <String, Object?>{'x': 'second', 'y': 5},
-                  <String, Object?>{'x': 'third', 'y': 15},
-                ],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'onHover': (Object e, Object? _, Object? _) {
-              final canvasPosition = getRelativePosition(e, chart);
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'x': 'first', 'y': 10},
+                      <String, Object?>{'x': 'second', 'y': 5},
+                      <String, Object?>{'x': 'third', 'y': 15},
+                    ],
+                  },
+                ),
+              ])
+            ..options = mergeExtra((ChartOptionsScope()), {
+              'onHover': (Object e, Object? _, Object? _) {
+                final canvasPosition = getRelativePosition(e, chart);
 
-              dataX = canvasPosition.x;
-              dataY = canvasPosition.y;
-            },
-          },
-        });
+                dataX = canvasPosition.x;
+                dataY = canvasPosition.y;
+              },
+            }),
+        );
 
         final point = chart.getDatasetMeta(0).data[1];
         await triggerMouseEvent(chart, 'mousemove', point);
@@ -244,25 +247,28 @@ void main() {
         (tester) async {
           Point? chartPosition;
           late final Chart chart;
-          chart = acquireChart(<String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[
-                    <String, Object?>{'x': 'first', 'y': 10},
-                    <String, Object?>{'x': 'second', 'y': 5},
-                    <String, Object?>{'x': 'third', 'y': 15},
-                  ],
+          chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'bar'
+              ..data = (ChartDataScope()
+                ..datasets = [
+                  mergeExtra(
+                    BarControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'data': <Object?>[
+                        <String, Object?>{'x': 'first', 'y': 10},
+                        <String, Object?>{'x': 'second', 'y': 5},
+                        <String, Object?>{'x': 'third', 'y': 15},
+                      ],
+                    },
+                  ),
+                ])
+              ..options = mergeExtra((ChartOptionsScope()), {
+                'onHover': (Object chartEvent, Object? _, Object? _) {
+                  chartPosition = getRelativePosition(chartEvent, chart);
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'onHover': (Object chartEvent, Object? _, Object? _) {
-                chartPosition = getRelativePosition(chartEvent, chart);
-              },
-            },
-          });
+              }),
+          );
 
           final point = chart.getDatasetMeta(0).data[1];
           final nativeEvent = await triggerMouseEvent(
