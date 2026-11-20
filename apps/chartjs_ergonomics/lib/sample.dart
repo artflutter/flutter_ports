@@ -16,6 +16,10 @@ class const Sample({
 
   /// The chart, or a widget with the chart.
   required final Widget child,
+
+  /// Whether the review accepted the API of the sample. The page shows an
+  /// accepted sample as a closed panel.
+  final bool accepted = false,
 }) {
   /// Creates a sample.
   this;

@@ -61,4 +61,28 @@ void main() {
     expect(find.text('1. Minimal line'), findsOneWidget);
     expect(tester.takeException(), isNull);
   });
+
+  testWidgets('an accepted sample is a closed panel that a tap opens', (
+    tester,
+  ) async {
+    tester.view
+      ..physicalSize = const Size(900, 1600)
+      ..devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(const ErgonomicsApp());
+    await tester.pump(const Duration(seconds: 2));
+    final panel = find.byKey(const ValueKey('accepted.basic'));
+    expect(panel, findsOneWidget);
+    expect(
+      find.descendant(of: panel, matching: find.byType(ChartView)),
+      findsNothing,
+    );
+    await tester.tap(find.text('1. Minimal line'));
+    await tester.pump(const Duration(seconds: 2));
+    expect(
+      find.descendant(of: panel, matching: find.byType(ChartView)),
+      findsOneWidget,
+    );
+    expect(tester.takeException(), isNull);
+  });
 }

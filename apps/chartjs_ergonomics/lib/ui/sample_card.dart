@@ -24,21 +24,43 @@ class const SampleCard({
   @override
   Widget build(BuildContext context) {
     final text = Theme.of(context).textTheme;
+    final title = Text('$number. ${sample.title}', style: text.titleLarge);
+    final note = Text(
+      '${sample.note}  ·  ${sample.file}.dart',
+      style: text.bodyMedium?.copyWith(color: const Color(0xff64748b)),
+    );
+    final body = [
+      sample.child,
+      const SizedBox(height: 12),
+      CodePanel(path: '$folder/${sample.file}.dart'),
+    ];
+    if (sample.accepted) {
+      return Padding(
+        padding: const EdgeInsets.only(bottom: 24),
+        child: ExpansionTile(
+          key: ValueKey('accepted.${sample.file}'),
+          leading: const Icon(Icons.check_circle, color: Color(0xff16a34a)),
+          title: title,
+          subtitle: note,
+          tilePadding: EdgeInsets.zero,
+          childrenPadding: const EdgeInsets.only(top: 12),
+          shape: const Border(),
+          collapsedShape: const Border(),
+          expandedCrossAxisAlignment: CrossAxisAlignment.stretch,
+          children: body,
+        ),
+      );
+    }
     return Padding(
       padding: const EdgeInsets.only(bottom: 40),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text('$number. ${sample.title}', style: text.titleLarge),
+          title,
           const SizedBox(height: 4),
-          Text(
-            '${sample.note}  ·  ${sample.file}.dart',
-            style: text.bodyMedium?.copyWith(color: const Color(0xff64748b)),
-          ),
+          note,
           const SizedBox(height: 12),
-          sample.child,
-          const SizedBox(height: 12),
-          CodePanel(path: '$folder/${sample.file}.dart'),
+          ...body,
         ],
       ),
     );

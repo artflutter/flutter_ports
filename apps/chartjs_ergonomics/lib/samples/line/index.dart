@@ -62,6 +62,7 @@ final List<Sample> lineSamples = [
         'Labels and one dataset. With no color, the colors plugin picks '
         'one.',
     child: ChartView(config: basic),
+    accepted: true,
   ),
   const Sample(
     file: 'colors',
@@ -70,6 +71,7 @@ final List<Sample> lineSamples = [
         'A color is a ChartValue of a ChartPaint: constant, indexed or a '
         'function.',
     child: ChartView(config: lineColors),
+    accepted: true,
   ),
   const Sample(
     file: 'two_datasets',
