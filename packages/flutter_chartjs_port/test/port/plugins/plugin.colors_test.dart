@@ -120,25 +120,32 @@ Object? _observeColors(Chart chart) => [
 
 /// A chart config of [type] with [datasets] datasets of 3 items each, the
 /// colors plugin on, and the raw theme map [theme] when it is not null.
-AnyObject _config(String type, {int datasets = 2, AnyObject? theme}) =>
-    <String, Object?>{
-      'type': type,
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[
-          for (var d = 0; d < datasets; d++)
-            <String, Object?>{
-              'data': <Object?>[1, 2, 3],
-            },
-        ],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+ChartConfigurationScope _config(
+  String type, {
+  int datasets = 2,
+  AnyObject? theme,
+}) {
+  Dataset dataset() => switch (type) {
+    'bar' => const BarDataset(data: [1, 2, 3]),
+    'doughnut' => const DoughnutDataset(data: [1, 2, 3]),
+    'polarArea' => const PolarAreaDataset(data: [1, 2, 3]),
+    _ => throw ArgumentError.value(type, 'type'),
+  };
+  final root = ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind(type),
+      labels: const ['a', 'b', 'c'],
+      datasets: [for (var d = 0; d < datasets; d++) dataset()],
+      extra: const {
+        'plugins': {
+          'colors': {'enabled': true},
         },
       },
-      themeConfigKey: ?theme,
-    };
+    ),
+  ).lower();
+  if (theme != null) root.dollarTheme = theme;
+  return root;
+}
 
 /// A raw theme map with the palettes [border] and [background] under
 /// `plugins.colors` (the keys of hunk H4a).
@@ -154,24 +161,31 @@ AnyObject _paletteTheme(Object? border, Object? background) =>
 
 /// A chart config of [type] with the one dataset [dataset] and the colors
 /// plugin on when [enabled] is true.
-AnyObject _datasetConfig(String type, Object? dataset, {bool enabled = true}) =>
-    <String, Object?>{
-      'type': type,
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c'],
-        'datasets': <Object?>[dataset],
-      },
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': enabled},
+ChartConfigurationScope _datasetConfig(
+  String type,
+  Object? dataset, {
+  bool enabled = true,
+}) {
+  final root = ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind(type),
+      labels: const ['a', 'b', 'c'],
+      datasets: const [],
+      extra: {
+        'plugins': {
+          'colors': {'enabled': enabled},
         },
       },
-    };
+    ),
+  ).lower();
+  // The narrow and unmodifiable Map cases must keep the caller's dataset.
+  (root.dataCell!.raw! as ChartDataScope).datasets = <Object?>[dataset];
+  return root;
+}
 
-/// The dataset [index] of the config data of [chart].
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.config.data, 'datasets')! as List<Object?>)[index]!
-        as AnyObject;
+/// The dataset is a typed scope or the raw object of a boundary case.
+Object _dataset(Chart chart, int index) =>
+    (jsGet(chart.config.data, 'datasets')! as List<Object?>)[index]!;
 
 void main() {
   testReferenceOrigin(
@@ -212,7 +226,7 @@ void main() {
 
   group('theme palette', () {
     testWidgets('a theme palette colors the datasets', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config(
           'bar',
           datasets: 3,
@@ -229,19 +243,19 @@ void main() {
         ),
       );
       expect(
-        _dataset(chart, 0)['borderColor'],
+        jsGet(_dataset(chart, 0), 'borderColor'),
         const ChartPaint.solid(native_ui.Color(0xff000001)),
       );
       expect(
-        _dataset(chart, 1)['borderColor'],
+        jsGet(_dataset(chart, 1), 'borderColor'),
         const ChartPaint.solid(native_ui.Color(0xff000002)),
       );
       expect(
-        _dataset(chart, 2)['borderColor'],
+        jsGet(_dataset(chart, 2), 'borderColor'),
         const ChartPaint.solid(native_ui.Color(0xff000001)),
       );
       expect(
-        _dataset(chart, 2)['backgroundColor'],
+        jsGet(_dataset(chart, 2), 'backgroundColor'),
         const ChartPaint.solid(native_ui.Color(0xff000003)),
       );
     });
@@ -249,7 +263,7 @@ void main() {
     testWidgets('the doughnut and polar area colorizers read the palette', (
       tester,
     ) async {
-      final doughnut = acquireChart(
+      final doughnut = acquireChartRoot(
         _config(
           'doughnut',
           theme: _paletteTheme(
@@ -261,17 +275,17 @@ void main() {
           ),
         ),
       );
-      expect(_dataset(doughnut, 0)['backgroundColor'], [
+      expect(jsGet(_dataset(doughnut, 0), 'backgroundColor'), [
         const ChartPaint.solid(native_ui.Color(0xff000001)),
         const ChartPaint.solid(native_ui.Color(0xff000002)),
         const ChartPaint.solid(native_ui.Color(0xff000001)),
       ]);
-      expect(_dataset(doughnut, 1)['backgroundColor'], [
+      expect(jsGet(_dataset(doughnut, 1), 'backgroundColor'), [
         const ChartPaint.solid(native_ui.Color(0xff000002)),
         const ChartPaint.solid(native_ui.Color(0xff000001)),
         const ChartPaint.solid(native_ui.Color(0xff000002)),
       ]);
-      final polar = acquireChart(
+      final polar = acquireChartRoot(
         _config(
           'polarArea',
           theme: _paletteTheme(
@@ -283,12 +297,12 @@ void main() {
           ),
         ),
       );
-      expect(_dataset(polar, 0)['backgroundColor'], [
+      expect(jsGet(_dataset(polar, 0), 'backgroundColor'), [
         const ChartPaint.solid(native_ui.Color(0xff000003)),
         const ChartPaint.solid(native_ui.Color(0xff000004)),
         const ChartPaint.solid(native_ui.Color(0xff000003)),
       ]);
-      expect(_dataset(polar, 1)['backgroundColor'], [
+      expect(jsGet(_dataset(polar, 1), 'backgroundColor'), [
         const ChartPaint.solid(native_ui.Color(0xff000004)),
         const ChartPaint.solid(native_ui.Color(0xff000003)),
         const ChartPaint.solid(native_ui.Color(0xff000004)),
@@ -297,7 +311,7 @@ void main() {
 
     testWidgets('H5 resets the palette: an unthemed chart after a themed '
         'chart gets the upstream palette', (tester) async {
-      acquireChart(
+      acquireChartRoot(
         _config(
           'bar',
           theme: _paletteTheme(
@@ -306,17 +320,17 @@ void main() {
           ),
         ),
       );
-      final chart = acquireChart(_config('bar'));
+      final chart = acquireChartRoot(_config('bar'));
       expect(
-        _dataset(chart, 0)['borderColor'],
+        jsGet(_dataset(chart, 0), 'borderColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
       expect(
-        _dataset(chart, 1)['borderColor'],
+        jsGet(_dataset(chart, 1), 'borderColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
       );
       expect(
-        _dataset(chart, 1)['backgroundColor'],
+        jsGet(_dataset(chart, 1), 'backgroundColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 0.5)),
       );
     });
@@ -324,15 +338,15 @@ void main() {
     testWidgets('an empty List, a String or a Map palette gives the upstream '
         'palette', (tester) async {
       for (final value in <Object?>[<Object?>[], 'red', <String, Object?>{}]) {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config('bar', theme: _paletteTheme(value, value)),
         );
         expect(
-          _dataset(chart, 0)['borderColor'],
+          jsGet(_dataset(chart, 0), 'borderColor'),
           const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
         );
         expect(
-          _dataset(chart, 0)['backgroundColor'],
+          jsGet(_dataset(chart, 0), 'backgroundColor'),
           const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 0.5)),
         );
       }
@@ -342,14 +356,14 @@ void main() {
       tester,
     ) async {
       final config = _config('bar');
-      ((config['options']! as AnyObject)['plugins']!
-          as AnyObject)['colors'] = <String, Object?>{
+      ((config['options']! as JsObjectFace)['plugins']!
+          as JsObjectFace)['colors'] = <String, Object?>{
         'enabled': true,
         themeBorderColorsKey: <Object?>[const native_ui.Color(0xff000005)],
       };
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       expect(
-        _dataset(chart, 0)['borderColor'],
+        jsGet(_dataset(chart, 0), 'borderColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
     });
@@ -368,7 +382,7 @@ void main() {
     testWidgets('a narrow dataset Map works when the plugin is off', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _datasetConfig('bar', <String, List<int>>{
           'data': [1, 2, 3],
         }, enabled: false),
@@ -380,7 +394,7 @@ void main() {
       testWidgets('$type: a Map<String, List<int>> dataset throws a '
           'TypeError at the color write', (tester) async {
         expect(
-          () => acquireChart(
+          () => acquireChartRoot(
             _datasetConfig(type, <String, List<int>>{
               'data': [1, 2, 3],
             }),
@@ -394,7 +408,7 @@ void main() {
       tester,
     ) async {
       expect(
-        () => acquireChart(
+        () => acquireChartRoot(
           _datasetConfig(
             'bar',
             Map<String, Object?>.unmodifiable(<String, Object?>{
@@ -409,17 +423,17 @@ void main() {
     testWidgets('a Map<String, Object?> dataset takes the colors', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _datasetConfig('bar', <String, Object?>{
           'data': <Object?>[1, 2, 3],
         }),
       );
       expect(
-        _dataset(chart, 0)['borderColor'],
+        jsGet(_dataset(chart, 0), 'borderColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
       expect(
-        _dataset(chart, 0)['backgroundColor'],
+        jsGet(_dataset(chart, 0), 'backgroundColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 0.5)),
       );
     });
@@ -440,7 +454,7 @@ void main() {
       defaults['borderColor'] = const ChartPaint.solid(
         native_ui.Color.fromRGBO(255, 0, 0, 1),
       );
-      final chart = acquireChart(_config('bar'));
+      final chart = acquireChartRoot(_config('bar'));
       expect(jsGet(_dataset(chart, 1), 'borderColor'), same(undefined));
       expect(jsGet(_dataset(chart, 1), 'backgroundColor'), same(undefined));
       final options =
@@ -462,15 +476,18 @@ void main() {
         native_ui.Color.fromRGBO(255, 0, 0, 1),
       );
       final config = _config('bar');
-      ((config['options']! as AnyObject)['plugins']! as AnyObject)['colors'] =
-          <String, Object?>{'enabled': true, 'forceOverride': true};
-      final chart = acquireChart(config);
+      ((config['options']! as JsObjectFace)['plugins']!
+          as JsObjectFace)['colors'] = <String, Object?>{
+        'enabled': true,
+        'forceOverride': true,
+      };
+      final chart = acquireChartRoot(config);
       expect(
-        _dataset(chart, 1)['borderColor'],
+        jsGet(_dataset(chart, 1), 'borderColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 1)),
       );
       expect(
-        _dataset(chart, 1)['backgroundColor'],
+        jsGet(_dataset(chart, 1), 'backgroundColor'),
         const ChartPaint.solid(native_ui.Color.fromRGBO(255, 99, 132, 0.5)),
       );
     });

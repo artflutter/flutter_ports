@@ -38,43 +38,44 @@ Object? _twinDelay(Object? context, Object? options) => undefined;
 
 /// A chart config. [twin] puts the function of [_twinDelay] at
 /// `animation.delay`.
-typedef _Config = Map<String, Object?> Function(
+typedef _Config = ChartConfigurationScope Function(
   List<String> log, {
   required bool twin,
 });
 
-/// A scatter chart of [datasets] datasets with the default animations and
-/// fixed value ranges. [animation] adds keys to the `animation` options, and
-/// [dataset] adds dataset keys.
+/// A scatter config whose extra options exercise the sharing guards.
 _Config _scatter({
   Map<String, Object?>? animation,
   Map<String, Object?>? dataset,
   int datasets = 1,
   String type = 'scatter',
 }) =>
-    (log, {required twin}) => <String, Object?>{
-      'type': type,
-      'data': <String, Object?>{
-        'datasets': <Object?>[
+    (log, {required twin}) => ChartConfigLowering(
+      ChartConfig(
+        type: ChartKind(type),
+        datasets: [
           for (var d = 0; d < datasets; d++)
-            <String, Object?>{'data': _data(1 + d * 4), ...?dataset},
+            ScatterDataset(
+              extra: {
+                if (type != 'scatter') 'type': type,
+                'data': _data(1 + d * 4),
+                ...?dataset,
+              },
+            ),
         ],
-      },
-      'options': <String, Object?>{
-        'animation': <String, Object?>{
-          'onProgress': (IAnimationEvent event) =>
+        animation: ChartAnimation(
+          onProgress: (event) =>
               log.add('progress ${event.currentStep} of ${event.numSteps}'),
-          'onComplete': (IAnimationEvent event) =>
+          onComplete: (event) =>
               log.add('complete ${event.currentStep} of ${event.numSteps}'),
-          if (twin) 'delay': _twinDelay,
-          ...?animation,
+          extra: {if (twin) 'delay': _twinDelay, ...?animation},
+        ),
+        scales: const {
+          'x': LinearAxis(min: 0, max: 100),
+          'y': LinearAxis(min: 0, max: 100),
         },
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0.0, 'max': 100.0},
-          'y': <String, Object?>{'min': 0.0, 'max': 100.0},
-        },
-      },
-    };
+      ),
+    ).lower();
 
 List<Element> _points(Chart chart) => [
   for (
@@ -159,7 +160,7 @@ Future<_Run> _run(
   void Function(Chart chart)? live,
 }) async {
   final log = <String>[];
-  final chart = acquireChart(config(log, twin: twin));
+  final chart = acquireChartRoot(config(log, twin: twin));
   await pumpFrames(() => !animator.running(chart));
   log.clear();
   final hits = debugSharedBarAnimationHits;
@@ -221,7 +222,7 @@ void _newData(Chart chart) => _setData(chart, 2);
 void _setData(Chart chart, int seed, [UpdateMode? mode]) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
   for (var i = 0; i < datasets.length; i++) {
-    (datasets[i]! as Map<String, Object?>)['data'] = _data(seed + i * 4);
+    jsSet(datasets[i], 'data', _data(seed + i * 4));
   }
   chart.update(mode);
 }
@@ -259,8 +260,7 @@ void main() {
       final run = await _twins(
         _scatter(),
         change: (chart) {
-          (jsGet(chart.data, 'datasets')! as List<Object?>)[0]!
-                as Map<String, Object?>
+          (jsGet(chart.data, 'datasets')! as List<Object?>)[0]! as JsObjectFace
             ..['radius'] = 9.0
             ..['borderWidth'] = 3.0
             ..['backgroundColor'] = const ChartPaint.solid(Color(0xff3366cc));
@@ -373,7 +373,7 @@ void main() {
       // the old duration for each point of that update.
       var armed = false;
       var updates = 0;
-      Map<String, Object?> config(List<String> log, {required bool twin}) {
+      ChartConfigurationScope config(List<String> log, {required bool twin}) {
         final config = _scatter()(log, twin: twin);
         final animation = <String, Object?>{'delay': 0.0};
         final dataset = <String, Object?>{
@@ -432,8 +432,7 @@ void main() {
       final run = await _twins((log, {required twin}) {
         final config = _scatter()(log, twin: twin);
         final scales =
-            (config['options']! as Map<String, Object?>)['scales']!
-                as Map<String, Object?>;
+            (config['options']! as JsObjectFace)['scales']! as JsObjectFace;
         scales['y'] = <String, Object?>{'type': 'logarithmic'};
         return config;
       });

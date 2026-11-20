@@ -81,49 +81,46 @@ class _ObservedMap(final Map<String, Object?> fields)
   void clear() => fields.clear();
 }
 
-Map<String, Object?> _config({bool line = false, int datasets = 1}) => {
-  'type': 'scatter',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
+ChartConfigurationScope _config({
+  bool line = false,
+  int datasets = 1,
+}) => ChartConfigLowering(
+  ChartConfig(
+    type: ChartKind.scatter,
+    datasets: [
       for (var d = 0; d < datasets; d++)
-        <String, Object?>{
-          'data': <Object?>[
-            for (var i = 0; i < 8; i++)
-              <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
-          ],
-          'backgroundColor': <ChartPaint>[if (d == 0) red else green, blue],
-          'borderColor': blue,
-          'radius': 3.0,
-          'borderWidth': 1.0,
-          'showLine': line,
-        },
+        ScatterDataset(
+          borderColor: const ChartValue.constant(blue),
+          borderWidth: 1,
+          showLine: line,
+          // Tests mutate these lists, raw points and the radius alias in place.
+          extra: {
+            'data': <Object?>[
+              for (var i = 0; i < 8; i++)
+                <String, Object?>{'x': i.toDouble(), 'y': (i - 3).toDouble()},
+            ],
+            'backgroundColor': <ChartPaint>[if (d == 0) red else green, blue],
+            'radius': 3.0,
+          },
+        ),
     ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'parsing': false,
-    'events': <String>[],
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': 'linear',
-        'display': ScaleDisplay.off,
-        'min': 0.0,
-        'max': 8.0,
-      },
-      'y': <String, Object?>{
-        'type': 'linear',
-        'display': ScaleDisplay.off,
-        'min': -5.0,
-        'max': 10.0,
-      },
+    responsive: false,
+    animation: ChartAnimation.none,
+    scales: const {
+      'x': LinearAxis(display: ScaleDisplay.off, min: 0, max: 8),
+      'y': LinearAxis(display: ScaleDisplay.off, min: -5, max: 10),
     },
-  },
-};
-Map<String, Object?> _dataset(Map<String, Object?> cfg, [int index = 0]) =>
-    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[index]!
-        as Map<String, Object?>;
+    extra: const {
+      'parsing': false,
+      'events': <String>[],
+      'plugins': {'legend': false, 'tooltip': false},
+    },
+  ),
+).lower();
+
+JsObjectFace _dataset(ChartConfigurationScope cfg, [int index = 0]) =>
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[index]! as JsObjectFace;
+
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
   final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
@@ -375,8 +372,9 @@ void main() {
     final calls = <int>[];
     for (final reference in [false, true]) {
       final cfg = _config();
-      final scales = (cfg['options']! as Map)['scales']! as Map;
-      (scales['y']! as Map)['type'] = 'scatter-custom-scale';
+      final scales =
+          (cfg['options']! as JsObjectFace)['scales']! as JsObjectFace;
+      (scales['y']! as JsObjectFace)['type'] = 'scatter-custom-scale';
       final chart = _chart(cfg, reference: reference);
       final probes = _probes(chart);
       final scale = (chart.scales['y']! as _CustomScale)..calls = 0;

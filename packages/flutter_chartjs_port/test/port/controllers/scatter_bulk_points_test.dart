@@ -85,44 +85,47 @@ List<Object?> _data(String form, {double shift = 0}) => <Object?>[
       _item(form, p, shift: shift),
 ];
 
-Map<String, Object?> _config({
+ChartConfigurationScope _config({
   String type = 'scatter',
-  String form = 'parsed',
-  Object? spanGaps,
+  ChartAnimation animation = ChartAnimation.none,
   Map<String, Object?> dataset = const {},
+  Object? spanGaps,
+  String form = 'parsed',
   Map<String, Object?> x = const {},
   Map<String, Object?> y = const {},
-  Object animation = false,
-}) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': _data(form),
-        'pointRadius': 3,
-        'pointBackgroundColor': _red,
-        'pointHoverBackgroundColor': _blue,
-        'spanGaps': ?spanGaps,
-        ...dataset,
-      },
+}) => ChartConfigLowering(
+  ChartConfig(
+    type: ChartKind(type),
+    datasets: [
+      ScatterDataset(
+        pointRadius: 3,
+        pointBackgroundColor: const ChartValue.constant(_red),
+        pointHoverBackgroundColor: const ChartValue.constant(_blue),
+        // Preserve the raw data containers and the guard-specific overrides.
+        extra: {
+          if (type != 'scatter') 'type': type,
+          'data': _data(form),
+          'spanGaps': ?spanGaps,
+          ...dataset,
+        },
+      ),
     ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': animation,
-    'events': <String>[],
-    if (form != 'parsed') 'parsing': false,
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear', 'min': -1, 'max': 18, ...x},
-      'y': <String, Object?>{'type': 'linear', 'min': -1, 'max': 10, ...y},
+    responsive: false,
+    animation: animation,
+    scales: {
+      'x': LinearAxis(min: -1, max: 18, extra: x),
+      'y': LinearAxis(min: -1, max: 10, extra: y),
     },
-  },
-};
+    extra: {
+      'events': const <String>[],
+      if (form != 'parsed') 'parsing': false,
+      'plugins': const {'legend': false, 'tooltip': false},
+    },
+  ),
+).lower();
 
-Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
-    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
-        as Map<String, Object?>;
+JsObjectFace _dataset(ChartConfigurationScope cfg) =>
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]! as JsObjectFace;
 
 /// Each option key and value of [options], as text.
 List<String> _options(Object? options) {
@@ -164,8 +167,8 @@ List<Object?> _observe(Chart chart) {
 /// result has the observations and the counts of the chart with the bulk
 /// runs.
 ({int bulk, int gaps, List<Object?> observed}) _twins(
-  Map<String, Object?> Function() config, [
-  void Function(Chart chart, Map<String, Object?> cfg)? steps,
+  ChartConfigurationScope Function() config, [
+  void Function(Chart chart, ChartConfigurationScope cfg)? steps,
 ]) {
   final observed = <List<Object?>>[];
   final gapCounts = <int>[];
@@ -194,8 +197,8 @@ List<Object?> _observe(Chart chart) {
   return (bulk: bulk, gaps: gapCounts[0], observed: observed[0]);
 }
 
-void _newData(Chart chart, Map<String, Object?> cfg) {
-  final form = cfg['options']! as Map<String, Object?>;
+void _newData(Chart chart, ChartConfigurationScope cfg) {
+  final form = cfg['options']! as JsObjectFace;
   final parsing = form['parsing'];
   final data = _dataset(cfg)['data']! as List<Object?>;
   final kind = parsing == false
@@ -279,7 +282,11 @@ void main() {
     testWidgets('an update with the option animation', (tester) async {
       // A chart with no host disables its animations: each loop is direct.
       final counts = _twins(
-        () => _config(animation: <String, Object?>{'duration': 100}),
+        () => _config(
+          animation: const ChartAnimation(
+            duration: Duration(milliseconds: 100),
+          ),
+        ),
         (chart, cfg) {
           _dataset(cfg)['data'] = _data('parsed', shift: 0.5);
           chart

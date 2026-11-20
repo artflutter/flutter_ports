@@ -81,32 +81,21 @@ final Map<String, Object?> _functions = {'writeData': _writeData};
 /// data, pointRadius}` and the keys of [dataset], `parsing: false`, a linear
 /// x scale, `min-max` with `samples: 50` and `threshold: 100` and the
 /// options of [decimation], a canvas of 100 x 100.
-({Chart chart, AnyObject dataset, List<Object?> data}) _accessorChart({
+({Chart chart, JsObjectFace dataset, List<Object?> data}) _accessorChart({
   AnyObject decimation = const {},
   AnyObject dataset = const {},
   Object? theme,
 }) {
   final data = _series(2000, (i) => (i * 37) % 101);
-  final ds = <String, Object?>{
-    'label': 'd',
-    'borderWidth': 1,
-    'data': data,
-    'pointRadius': 0,
-    ...dataset,
-  };
-  final chart = acquireChart(
-    <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'datasets': <Object?>[ds],
-      },
-      'options': <String, Object?>{
+  final root = ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.line,
+      datasets: const [],
+      scales: const {'x': LinearAxis()},
+      extra: {
         'parsing': false,
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'type': 'linear'},
-        },
-        'plugins': <String, Object?>{
-          'decimation': <String, Object?>{
+        'plugins': {
+          'decimation': {
             'enabled': true,
             'algorithm': const MinMaxDecimationAlgorithm(),
             'samples': 50,
@@ -115,12 +104,22 @@ final Map<String, Object?> _functions = {'writeData': _writeData};
           },
         },
       },
-      themeConfigKey: ?theme,
-    },
-    <String, Object?>{
-      'canvas': <String, Object?>{'width': 100, 'height': 100},
-    },
+    ),
+  ).lower();
+  if (theme != null) root.dollarTheme = theme;
+  // This test pins insertion order, including a user-owned _data key.
+  final ds = mergeExtra(
+    LineControllerDatasetOptionsScope()
+      ..label = 'd'
+      ..borderWidth = 1
+      ..data = data
+      ..pointRadius = 0,
+    dataset,
   );
+  (root.dataCell!.raw! as ChartDataScope).datasets = <Object?>[ds];
+  final chart = acquireChartRoot(root, <String, Object?>{
+    'canvas': <String, Object?>{'width': 100, 'height': 100},
+  });
   return (chart: chart, dataset: ds, data: data);
 }
 
@@ -294,12 +293,12 @@ void main() {
     for (final (name, change, keys) in [
       (
         'parsing: true',
-        (Chart chart, AnyObject dataset) => chart.options['parsing'] = true,
+        (Chart chart, JsObjectFace dataset) => chart.options['parsing'] = true,
         _decimatedKeys,
       ),
       (
         'indexAxis: YAxis()',
-        (Chart chart, AnyObject dataset) =>
+        (Chart chart, JsObjectFace dataset) =>
             dataset['indexAxis'] = const YAxis(),
         [..._decimatedKeys, 'indexAxis'],
       ),
@@ -308,7 +307,7 @@ void main() {
       // probe review-upstream.
       (
         'a controller without supportsDecimation',
-        (Chart chart, AnyObject dataset) => dataset['type'] = 'bar',
+        (Chart chart, JsObjectFace dataset) => dataset['type'] = 'bar',
         [..._decimatedKeys, 'type'],
       ),
     ]) {
@@ -346,7 +345,7 @@ void main() {
     testWidgets('difference 4: a delete of data, then a write before the '
         'update', (tester) async {
       final (:chart, :dataset, :data) = _accessorChart();
-      dataset.remove('data');
+      dataset.jsDelete('data');
       final written = _series(3000, (i) => i % 7);
       dataset['data'] = written;
       chart.update();
@@ -409,7 +408,7 @@ void main() {
     testWidgets('a delete of _decimated, then the update', (tester) async {
       final (:chart, :dataset, :data) = _accessorChart();
       final decimated = dataset['data'];
-      dataset.remove('_decimated');
+      dataset.jsDelete('_decimated');
       // Difference 1 of the row: before the next hook, `data` is the old
       // decimated array. Upstream (F3c), the getter gives `undefined`.
       expect(dataset['data'], same(decimated));
@@ -430,7 +429,7 @@ void main() {
 
     testWidgets('a delete of _decimated, then enabled: false', (tester) async {
       final (:chart, :dataset, :data) = _accessorChart();
-      dataset.remove('_decimated');
+      dataset.jsDelete('_decimated');
       _decimationOptions(chart)['enabled'] = false;
       chart.update();
       // The clean sees no `_decimated` (plugin.decimation.js:157), so the
@@ -466,9 +465,18 @@ void main() {
       final (:chart, :dataset, data: _) = _accessorChart(
         decimation: {'enabled': false},
       );
+      // The invalid value is the subject of this case, not an audit leak.
+      final savedAudit = foreignAudit;
+      var invalidWrites = 0;
+      foreignAudit = (owner, key, raw) {
+        expect((owner, key, raw), ('DecimationOptionsScope', 'algorithm', 5));
+        invalidWrites++;
+      };
+      addTearDown(() => foreignAudit = savedAudit);
       _decimationOptions(chart)
         ..['enabled'] = true
         ..['algorithm'] = 5;
+      expect(invalidWrites, greaterThan(0));
       for (var k = 0; k < 2; k++) {
         // A9: the JS Error of plugin.decimation.js:277 is a StateError.
         expect(
@@ -525,7 +533,7 @@ void main() {
 
     testWidgets('a delete of data removes the accessor', (tester) async {
       final (:chart, :dataset, data: _) = _accessorChart();
-      dataset.remove('data');
+      dataset.jsDelete('data');
       for (var k = 0; k < 2; k++) {
         chart.update();
         // A11: `_dataCheck` writes a new empty array into a plain `data`.
@@ -603,19 +611,16 @@ void main() {
   group('js-semantics-narrow-datasets', () {
     /// A line chart with the dataset [dataset] and the decimation on when
     /// [enabled] is true.
-    Chart narrowChart(Object dataset, {bool enabled = true}) =>
-        acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[dataset],
-          },
-          'options': <String, Object?>{
+    Chart narrowChart(Object dataset, {bool enabled = true}) {
+      final root = ChartConfigLowering(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: const [],
+          scales: const {'x': LinearAxis()},
+          extra: {
             'parsing': false,
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear'},
-            },
-            'plugins': <String, Object?>{
-              'decimation': <String, Object?>{
+            'plugins': {
+              'decimation': {
                 'enabled': enabled,
                 'algorithm': const LttbDecimationAlgorithm(),
                 'samples': 10,
@@ -623,7 +628,12 @@ void main() {
               },
             },
           },
-        });
+        ),
+      ).lower();
+      // Preserve the dataset's Map type and mutability for the write guards.
+      (root.dataCell!.raw! as ChartDataScope).datasets = <Object?>[dataset];
+      return acquireChartRoot(root);
+    }
 
     /// 40 items `{x: i, y: i % 7}` with the narrow type `Map<String, int>`.
     List<Map<String, int>> narrowData() => [
@@ -684,45 +694,49 @@ void main() {
     /// A line chart of 60 hourly items `{x, y: (i * 37) % 23}` on the x
     /// scale [type], with `lttb`, `samples: 8` and `threshold: 10`, the
     /// other plugins off, and a canvas of 30 x 100.
-    ({Chart chart, AnyObject dataset, List<Object?> input}) typeChart(
+    ({Chart chart, JsObjectFace dataset, List<Object?> input}) typeChart(
       String type,
     ) {
       final input = <Object?>[
         for (var i = 0; i < 60; i++)
           <String, Object?>{'x': t0 + i * 3600000, 'y': (i * 37) % 23},
       ];
-      final ds = <String, Object?>{'label': 'd0', 'data': input};
-      final chart = acquireChart(
-        <String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[ds],
+      final root = ChartConfigLowering(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(label: 'd0', extra: {'data': input}),
+          ],
+          scales: {
+            'x': type == 'time' ? const TimeAxis() : const TimeSeriesAxis(),
           },
-          'options': <String, Object?>{
+          extra: const {
             'parsing': false,
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': type},
-            },
-            'plugins': <String, Object?>{
+            'plugins': {
               'colors': false,
               'filler': false,
               'legend': false,
               'subtitle': false,
               'title': false,
               'tooltip': false,
-              'decimation': <String, Object?>{
+              'decimation': {
                 'enabled': true,
-                'algorithm': const LttbDecimationAlgorithm(),
+                'algorithm': LttbDecimationAlgorithm(),
                 'samples': 8,
                 'threshold': 10,
               },
             },
           },
-        },
-        <String, Object?>{
-          'canvas': <String, Object?>{'width': 30, 'height': 100},
-        },
-      );
+        ),
+      ).lower();
+      final ds =
+          ((root.dataCell!.raw! as ChartDataScope).datasetsCell!.raw!
+                      as List<Object?>)
+                  .single!
+              as JsObjectFace;
+      final chart = acquireChartRoot(root, <String, Object?>{
+        'canvas': <String, Object?>{'width': 30, 'height': 100},
+      });
       return (chart: chart, dataset: ds, input: input);
     }
 

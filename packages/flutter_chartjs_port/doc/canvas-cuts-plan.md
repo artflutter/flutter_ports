@@ -2873,3 +2873,13 @@ config. The batch additionally migrates the hand-written linear-base and timeser
 configs; their generated reference cases and data stay in the existing harness. No production
 canvas code or deferred cut changes. The named references, inventory, tests of §2.6 and §3.5,
 and estimates remain unchanged. No trigger occurred.
+
+## Typed optimization-guard test configs, 2026-11-20
+
+The chart builders of `test/port/core/primitive_parse_test.dart`, `animation_share_test.dart`
+and `animation_share_point_test.dart` now lower typed `ChartConfig` objects. Their live
+mutations use typed scopes, while parser boundary values and callback-owned input maps keep
+their original representations. The batch also migrates the line/scatter option guards,
+bar hover scan, colors and decimation chart builders. No production canvas code or deferred
+cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates remain
+unchanged. No trigger occurred.

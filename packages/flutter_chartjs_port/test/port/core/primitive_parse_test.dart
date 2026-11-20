@@ -71,7 +71,7 @@ class _CustomCategory(super.cfg) extends CategoryScale {
   }
 }
 
-Map<String, Object?> _config({
+ChartConfigurationScope _config({
   String type = 'bar',
   bool horizontal = false,
   List<Object?>? labels,
@@ -79,39 +79,41 @@ Map<String, Object?> _config({
   String category = 'category',
   String linear = 'linear',
   bool stacked = false,
-}) => {
-  'type': type,
-  'data': <String, Object?>{
-    'labels': labels ?? <String>['a', 'a', 'c', 'd'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': values ?? <Object?>[1, -0.0, -2.0, 4],
+}) {
+  Dataset dataset(List<Object?> data) => switch (type) {
+    'bar' => BarDataset(extra: {'data': data}),
+    'line' => LineDataset(extra: {'data': data}),
+    _ => throw ArgumentError.value(type, 'type'),
+  };
+  final mode = stacked ? StackMode.on : StackMode.off;
+  final index = CategoryAxis(stacked: mode, extra: {'type': category});
+  final value = LinearAxis(stacked: mode, extra: {'type': linear});
+  final root = ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind(type),
+      datasets: [
+        dataset(values ?? <Object?>[1, -0.0, -2.0, 4]),
+        if (stacked) dataset(<Object?>[2, 3, 4, 5]),
+      ],
+      responsive: false,
+      animation: ChartAnimation.none,
+      indexAxis: horizontal ? const YAxis() : const XAxis(),
+      scales: {
+        'x': horizontal ? value : index,
+        'y': horizontal ? index : value,
       },
-      if (stacked)
-        <String, Object?>{
-          'data': <Object?>[2, 3, 4, 5],
-        },
-    ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': false,
-    'indexAxis': horizontal ? const YAxis() : const XAxis(),
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{
-        'type': horizontal ? linear : category,
-        'stacked': stacked ? StackMode.on : StackMode.off,
+      extra: const {
+        'plugins': {'legend': false, 'tooltip': false},
       },
-      'y': <String, Object?>{
-        'type': horizontal ? category : linear,
-        'stacked': stacked ? StackMode.on : StackMode.off,
-      },
-    },
-  },
-};
+    ),
+  ).lower();
+  // Preserve nullable labels and effectful List subclasses for the guards.
+  (root.dataCell!.raw! as ChartDataScope).labels =
+      labels ?? <String>['a', 'a', 'c', 'd'];
+  return root;
+}
 
-Chart _chart(Map<String, Object?> cfg, {bool reference = false}) {
+Chart _chart(ChartConfigurationScope cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
   final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
   addTearDown(chart.destroy);
@@ -198,7 +200,7 @@ void main() {
   }
 
   test('null, missing labels and nonfinite values retain null semantics', () {
-    Map<String, Object?> cfg() => _config(
+    ChartConfigurationScope cfg() => _config(
       labels: ['a', null, undefined, 'd'],
       values: [
         null,
@@ -328,12 +330,12 @@ void main() {
   test('explicit and axis labels retain source precedence', () {
     for (final explicit in [false, true]) {
       final cfg = _config();
-      final data = cfg['data']! as Map<String, Object?>;
+      final data = cfg['data']! as ChartDataScope;
       data['xLabels'] = <Object?>['axis', null, 'axis', 'axis'];
       if (explicit) {
-        final options = cfg['options']! as Map<String, Object?>;
-        final scales = options['scales']! as Map<String, Object?>;
-        (scales['x']! as Map<String, Object?>)['labels'] = <Object?>[
+        final options = cfg['options']! as JsObjectFace;
+        final scales = options['scales']! as JsObjectFace;
+        (scales['x']! as JsObjectFace)['labels'] = <Object?>[
           null,
           'explicit',
           'explicit',
@@ -378,7 +380,7 @@ void main() {
     for (final cfg in [ca, cb]) {
       final data = cfg['data']! as ChartDataScope;
       data['labels'] = <Object?>['new', null, 'new'];
-      final dataset = (data['datasets']! as List).first as Map;
+      final dataset = (data['datasets']! as List).first as JsObjectFace;
       dataset['data'] = <Object?>[9, 8, 7, 6];
     }
     a.update(UpdateMode.none);

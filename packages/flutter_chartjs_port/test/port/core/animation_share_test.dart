@@ -36,72 +36,56 @@ Object? _twinDelay(Object? context, Object? options) => undefined;
 
 /// The `animation` options of each chart: a log line for each event, and
 /// [extra].
-Map<String, Object?> _animation(
+ChartAnimation _animation(
   List<String> log,
   Map<String, Object?>? extra, {
   required bool twin,
-}) => <String, Object?>{
-  'onProgress': (IAnimationEvent event) =>
+}) => ChartAnimation(
+  onProgress: (event) =>
       log.add('progress ${event.currentStep} of ${event.numSteps}'),
-  'onComplete': (IAnimationEvent event) =>
+  onComplete: (event) =>
       log.add('complete ${event.currentStep} of ${event.numSteps}'),
-  if (twin) 'delay': _twinDelay,
-  ...?extra,
-};
+  extra: {if (twin) 'delay': _twinDelay, ...?extra},
+);
 
-/// A chart config. [twin] puts the function of [_twinDelay] at
-/// `animation.delay`.
-typedef _Config = Map<String, Object?> Function(
+typedef _Config = ChartConfigurationScope Function(
   List<String> log, {
   required bool twin,
 });
 
-/// A bar chart of one dataset with the default animations and a fixed value
-/// range. [animation] adds keys to the `animation` options, and [dataset]
-/// adds dataset keys.
+/// The guard-specific options stay in extra, including scriptable delays.
 _Config _bar({
   Map<String, Object?>? animation,
   Map<String, Object?>? dataset,
 }) =>
-    (log, {required twin}) => <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{
-        'labels': [for (var i = 0; i < _count; i++) 'l$i'],
-        'datasets': <Object?>[
-          <String, Object?>{'data': _data(1), ...?dataset},
-        ],
-      },
-      'options': <String, Object?>{
-        'animation': _animation(log, animation, twin: twin),
-        'scales': <String, Object?>{
-          'y': <String, Object?>{'min': 0.0, 'max': 100.0},
-        },
-      },
-    };
+    (log, {required twin}) => ChartConfigLowering(
+      ChartConfig(
+        type: ChartKind.bar,
+        labels: [for (var i = 0; i < _count; i++) 'l$i'],
+        datasets: [BarDataset(data: _data(1), extra: dataset)],
+        animation: _animation(log, animation, twin: twin),
+        scales: const {'y': LinearAxis(min: 0, max: 100)},
+      ),
+    ).lower();
 
-/// A horizontal bar chart of two stacked datasets with the default
-/// animations.
-Map<String, Object?> _stacked(
-  List<String> log, {
-  required bool twin,
-}) => <String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': [for (var i = 0; i < _count; i++) 'l$i'],
-    'datasets': <Object?>[
-      <String, Object?>{'data': _data(1)},
-      <String, Object?>{'data': _data(5)},
-    ],
-  },
-  'options': <String, Object?>{
-    'indexAxis': const YAxis(),
-    'animation': _animation(log, null, twin: twin),
-    'scales': <String, Object?>{
-      'x': <String, Object?>{'stacked': StackMode.on, 'min': 0.0, 'max': 200.0},
-      'y': <String, Object?>{'stacked': StackMode.on},
-    },
-  },
-};
+/// A horizontal stack with the same default animations.
+ChartConfigurationScope _stacked(List<String> log, {required bool twin}) =>
+    ChartConfigLowering(
+      ChartConfig(
+        type: ChartKind.bar,
+        labels: [for (var i = 0; i < _count; i++) 'l$i'],
+        datasets: [
+          BarDataset(data: _data(1)),
+          BarDataset(data: _data(5)),
+        ],
+        indexAxis: const YAxis(),
+        animation: _animation(log, null, twin: twin),
+        scales: const {
+          'x': LinearAxis(stacked: StackMode.on, min: 0, max: 200),
+          'y': CategoryAxis(stacked: StackMode.on),
+        },
+      ),
+    ).lower();
 
 List<Element> _bars(Chart chart) => [
   for (
@@ -173,7 +157,7 @@ Future<_Run> _run(
   void Function(Chart chart)? live,
 }) async {
   final log = <String>[];
-  final chart = acquireChart(config(log, twin: twin));
+  final chart = acquireChartRoot(config(log, twin: twin));
   await pumpFrames(() => !animator.running(chart));
   log.clear();
   final hits = debugSharedBarAnimationHits;
@@ -235,7 +219,7 @@ void _newData(Chart chart) => _setData(chart, 2);
 void _setData(Chart chart, int seed, [UpdateMode? mode]) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
   for (var i = 0; i < datasets.length; i++) {
-    (datasets[i]! as Map<String, Object?>)['data'] = _data(seed + i);
+    jsSet(datasets[i], 'data', _data(seed + i));
   }
   chart.update(mode);
 }
@@ -401,15 +385,15 @@ void main() {
     ) async {
       final log = <String>[];
       final config = _bar()(log, twin: false);
-      (config['options']! as Map<String, Object?>)['animation'] = false;
-      final chart = acquireChart(config);
+      (config['options']! as JsObjectFace)['animation'] = false;
+      final chart = acquireChartRoot(config);
       final hits = debugSharedBarAnimationHits;
       _newData(chart);
       // With `animation: false`, the fast loop of Chart.js ADR 0152 writes
       // each bar after the first one, so the shared plan gives no bar.
       expect(debugSharedBarAnimationHits - hits, 0);
       expect(animator.running(chart), isFalse);
-      final twin = acquireChart(_bar()(log, twin: false))
+      final twin = acquireChartRoot(_bar()(log, twin: false))
         ..update(UpdateMode.none);
       _setData(twin, 2, UpdateMode.none);
       expect(_geometry(chart), _geometry(twin));
@@ -423,7 +407,7 @@ void main() {
     testWidgets('a scriptable option adds one, a plain option adds none', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _bar(
           animation: <String, Object?>{
             'delay': (Object? context, Object? options) => 0.0,
@@ -435,7 +419,7 @@ void main() {
       final animations = controller.resolveAnimations(2, 'default');
       expect(optionCallEpoch, greaterThan(before));
       expect(animations.holdsPlainValues, isTrue);
-      final plain = acquireChart(_bar()(<String>[], twin: false));
+      final plain = acquireChartRoot(_bar()(<String>[], twin: false));
       final plainController = plain.getDatasetMeta(0).controller!;
       final start = optionCallEpoch;
       plainController.resolveAnimations(2, 'default');

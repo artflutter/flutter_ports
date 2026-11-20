@@ -349,7 +349,7 @@ int _expectItemsOfPublicLoop(Chart chart, {bool? useFinalPosition}) {
 }
 
 /// The values of a dataset: [count] numbers from 10 to 90.
-List<Object?> _values(int count, int seed) => <Object?>[
+List<num?> _values(int count, int seed) => <num?>[
   for (var i = 0; i < count; i++) 10 + ((i * 37 + seed * 11) % 81),
 ];
 
@@ -358,27 +358,33 @@ Chart _barChart({
   int datasets = 1,
   Map<String, Object?> options = const {},
   List<Object?> Function(int dataset)? values,
-  Object? animation = false,
-}) => acquireChart(<String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <Object?>[for (var i = 0; i < count; i++) 'c$i'],
-    'datasets': <Object?>[
-      for (var k = 0; k < datasets; k++)
-        <String, Object?>{
-          'label': 'series $k',
-          'data': values?.call(k) ?? _values(count, k),
-        },
-    ],
-  },
-  'options': <String, Object?>{'animation': animation, ...options},
-});
+  ChartAnimation animation = ChartAnimation.none,
+}) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind.bar,
+      labels: [for (var i = 0; i < count; i++) 'c$i'],
+      datasets: [
+        for (var k = 0; k < datasets; k++)
+          BarDataset(
+            label: 'series $k',
+            data: values == null ? _values(count, k) : null,
+            extra: values == null ? null : {'data': values(k)},
+          ),
+      ],
+      animation: animation,
+      extra: options,
+    ),
+  ).lower(),
+);
 
 void _setData(Chart chart, int count, int seed) {
   final data = chart.data;
   data['labels'] = <Object?>[for (var i = 0; i < count; i++) 'd$i'];
-  ((data['datasets']! as List<Object?>)[0]! as Map<String, Object?>)['data'] =
-      _values(count, seed);
+  ((data['datasets']! as List<Object?>)[0]! as JsObjectFace)['data'] = _values(
+    count,
+    seed,
+  );
 }
 
 void main() {
@@ -523,7 +529,7 @@ void main() {
     ) async {
       final chart = _barChart(
         count: 200,
-        animation: <String, Object?>{'duration': 400},
+        animation: const ChartAnimation(duration: Duration(milliseconds: 400)),
       );
       expect(animator.has(chart), isTrue);
       // Before the first tick each animation is active.

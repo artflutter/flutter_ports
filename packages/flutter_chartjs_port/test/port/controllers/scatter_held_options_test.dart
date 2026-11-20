@@ -40,38 +40,42 @@ List<Object?> _data(int n, {double shift = 0}) => <Object?>[
     },
 ];
 
-Map<String, Object?> _config({
+ChartConfigurationScope _config({
   String type = 'scatter',
-  Object animation = false,
+  ChartAnimation animation = ChartAnimation.none,
   Map<String, Object?> dataset = const {},
   Object? spanGaps,
   int n = 12,
-}) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': _data(n),
-        'pointRadius': 3,
-        'pointBackgroundColor': _red,
-        'pointHoverBackgroundColor': _blue,
-        'spanGaps': ?spanGaps,
-        ...dataset,
-      },
+}) => ChartConfigLowering(
+  ChartConfig(
+    type: ChartKind(type),
+    datasets: [
+      ScatterDataset(
+        pointRadius: 3,
+        pointBackgroundColor: const ChartValue.constant(_red),
+        pointHoverBackgroundColor: const ChartValue.constant(_blue),
+        // Preserve the raw data containers and the guard-specific overrides.
+        extra: {
+          if (type != 'scatter') 'type': type,
+          'data': _data(n),
+          'spanGaps': ?spanGaps,
+          ...dataset,
+        },
+      ),
     ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'animation': animation,
-    'events': <String>[],
-    'parsing': false,
-    'plugins': <String, Object?>{'legend': false, 'tooltip': false},
-    'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear', 'min': -1, 'max': 20},
-      'y': <String, Object?>{'type': 'linear', 'min': -1, 'max': 20},
+    responsive: false,
+    animation: animation,
+    scales: const {
+      'x': LinearAxis(min: -1, max: 20),
+      'y': LinearAxis(min: -1, max: 20),
     },
-  },
-};
+    extra: const {
+      'events': <String>[],
+      'parsing': false,
+      'plugins': {'legend': false, 'tooltip': false},
+    },
+  ),
+).lower();
 
 /// Each option key and value of [options], as text.
 List<String> _options(Object? options) {
@@ -108,16 +112,15 @@ List<Object?> _observe(Chart chart) {
   ];
 }
 
-Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
-    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
-        as Map<String, Object?>;
+JsObjectFace _dataset(ChartConfigurationScope cfg) =>
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]! as JsObjectFace;
 
 /// One chart with the held entry and one without. [config] makes new objects
 /// at each call. [steps] runs on each chart after its construction. The result
 /// has the observations and the counts of the chart with the held entry.
 ({int held, int gaps}) _twins(
-  Map<String, Object?> Function() config,
-  void Function(Chart chart, Map<String, Object?> cfg) steps, {
+  ChartConfigurationScope Function() config,
+  void Function(Chart chart, ChartConfigurationScope cfg) steps, {
   void Function(Chart chart)? end,
 }) {
   final observed = <List<Object?>>[];
@@ -176,7 +179,7 @@ List<Object?> _hookData(int at, bool Function() armed, void Function() onX) => [
     }),
 ];
 
-void _newData(Chart chart, Map<String, Object?> cfg) {
+void _newData(Chart chart, ChartConfigurationScope cfg) {
   _dataset(cfg)['data'] = _data(12, shift: 0.5);
   chart.update(UpdateMode.none);
 }
@@ -219,7 +222,11 @@ void main() {
       tester,
     ) async {
       final counts = _twins(
-        () => _config(animation: <String, Object?>{'duration': 100}),
+        () => _config(
+          animation: const ChartAnimation(
+            duration: Duration(milliseconds: 100),
+          ),
+        ),
         (chart, cfg) {
           _dataset(cfg)['data'] = _data(12, shift: 0.5);
           chart.update();
@@ -270,7 +277,7 @@ void main() {
     // of two points: each later point must read the cache as upstream does.
     late Chart chart;
     var armed = false;
-    void update(Chart c, Map<String, Object?> cfg) {
+    void update(Chart c, ChartConfigurationScope cfg) {
       chart = c;
       armed = true;
       c.update(UpdateMode.none);
@@ -278,7 +285,7 @@ void main() {
     }
 
     testWidgets('a clear of the cache ends the hold', (tester) async {
-      late Map<String, Object?> dataset;
+      late JsObjectFace dataset;
       final counts = _twins(() {
         final cfg = _config(
           dataset: <String, Object?>{
