@@ -56,24 +56,22 @@ int _datasetCount(Chart chart) =>
 
 /// The config of a radar chart with the labels [labels] and one dataset
 /// with [data] and the keys of [extra].
-AnyObject _radar(
+ChartConfigurationScope _radar(
   List<Object?> data, {
   List<Object?> labels = const ['a', 'b', 'c'],
   AnyObject extra = const {},
   AnyObject? options,
-}) => <String, Object?>{
-  'type': 'radar',
-  'data': <String, Object?>{
-    'labels': <Object?>[...labels],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[...data],
-        ...extra,
-      },
-    ],
-  },
-  'options': ?options,
-};
+}) => ChartConfigurationScope()
+  ..type = 'radar'
+  ..data = (ChartDataScope()
+    ..labels = <Object?>[...labels]
+    ..datasets = <Object?>[
+      mergeExtra(
+        RadarControllerDatasetOptionsScope()..data = <Object?>[...data],
+        extra,
+      ),
+    ])
+  ..options = mergeExtra(ChartOptionsScope(), options);
 
 /// The `[datasetIndex, index]` pairs of the hit items of [mode] at
 /// ([x], [y]) with `intersect: true` and the keys of [extra].
@@ -146,7 +144,7 @@ void main() {
           copyReference(controllerRadarReference.first.config)! as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
     });
   });
 
@@ -156,7 +154,7 @@ void main() {
     testWidgets('parsing false with numbers gives NaN points that skip', (
       tester,
     ) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _radar(
           const [5.0, 3.0, 1.0],
           extra: const <String, Object?>{'parsing': false},
@@ -176,7 +174,7 @@ void main() {
       tester,
     ) async {
       expect(
-        () => acquireChart(
+        () => acquireChartRoot(
           _radar(
             const [
               <String, Object?>{'r': 5.0},
@@ -193,7 +191,9 @@ void main() {
     testWidgets('a label index past the end gives no label line', (
       tester,
     ) async {
-      final chart = acquireChart(_radar(const [1.0, 2.0], labels: const ['a']));
+      final chart = acquireChartRoot(
+        _radar(const [1.0, 2.0], labels: const ['a']),
+      );
       final controller = chart.getDatasetMeta(0).controller!;
       expect(controller.getLabelAndValue(0).label, ['a']);
       expect(controller.getLabelAndValue(1).label, isEmpty);
@@ -205,12 +205,13 @@ void main() {
   group('interfaces', () {
     group('line.points', () {
       testWidgets('after chart.update()', (tester) async {
-        final chart = acquireChart(_radar(const [10.0, 20.0, 5.0]))..update();
+        final chart = acquireChartRoot(_radar(const [10.0, 20.0, 5.0]))
+          ..update();
         _expectLinePoints(chart, 3);
       });
 
       testWidgets('after a push and chart.update()', (tester) async {
-        final chart = acquireChart(_radar(const [10.0, 20.0, 5.0]));
+        final chart = acquireChartRoot(_radar(const [10.0, 20.0, 5.0]));
         final data = _data0(chart)..add(8.0);
         notifyArrayListeners(data, 'push', [8.0]);
         chart.update();
@@ -218,7 +219,7 @@ void main() {
       });
 
       testWidgets('after a splice and chart.update()', (tester) async {
-        final chart = acquireChart(_radar(const [10.0, 20.0, 5.0, 8.0]));
+        final chart = acquireChartRoot(_radar(const [10.0, 20.0, 5.0, 8.0]));
         final data = _data0(chart);
         spliceList(data, 1, 2, [7.0]);
         notifyArrayListeners(data, 'splice', [1.0, 2.0, 7.0]);
@@ -237,7 +238,7 @@ void main() {
       tester,
     ) async {
       final lines = <Object?>['line 1', 'line 2'];
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _radar(
           const [1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
           labels: [lines, 5.0, 0.0, null, 'e'],
@@ -257,7 +258,7 @@ void main() {
 
     testWidgets('an r scale that is not radial and no data: update does not '
         'throw', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _radar(
           const [],
           labels: const [],
@@ -274,7 +275,7 @@ void main() {
     testWidgets('an r scale that is not radial with data: update throws a '
         'TypeError', (tester) async {
       expect(
-        () => acquireChart(
+        () => acquireChartRoot(
           _radar(
             const [1.0, 2.0],
             labels: const ['a', 'b'],
@@ -327,10 +328,10 @@ void main() {
                 },
               ),
             ];
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       final meta = chart.getDatasetMeta(0);
       final dataset =
-          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
+          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as JsObjectFace;
       dataset['rAxisID'] = 'r2';
       _data0(chart).add(4.0);
       chart.update();
@@ -365,7 +366,7 @@ void main() {
     // the seven plugins registered, `E2 radar`).
     testWidgets('a reset at a NaN center keeps NaN, and the next animation '
         'starts at NaN', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _radar(
           const [65.0, 59.0, 90.0, 81.0, 56.0],
           labels: const ['a', 'b', 'c', 'd', 'e'],
@@ -376,7 +377,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       final point = meta.data[1] as Element;
       final dataset =
-          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
+          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as JsObjectFace;
       (jsGet(chart.options, 'scales')!
           as JsObjectFace)['r2'] = <String, Object?>{
         'type': 'radialLinear',
@@ -424,7 +425,7 @@ void main() {
     // the target.
     testWidgets('a point with a null value animates from NaN when it gets a '
         'value', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _radar(
           const <Object?>[1.0, null, 3.0, 2.0],
           labels: const ['a', 'b', 'c', 'd'],

@@ -79,21 +79,19 @@ int _datasetCount(Chart chart) =>
 
 /// The config of a bar chart with the labels a, b, c and one dataset with
 /// [data] and the keys of [extra] (`one` of the generator).
-AnyObject _one(
+ChartConfigurationScope _one(
   AnyObject extra, [
   List<Object?> data = const [10.0, 5.0, -3.0],
-]) => <String, Object?>{
-  'type': 'bar',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[...data],
-        ...extra,
-      },
-    ],
-  },
-};
+]) => ChartConfigurationScope()
+  ..type = 'bar'
+  ..data = (ChartDataScope()
+    ..labels = <Object?>['a', 'b', 'c']
+    ..datasets = <Object?>[
+      mergeExtra(
+        BarControllerDatasetOptionsScope()..data = <Object?>[...data],
+        extra,
+      ),
+    ]);
 
 /// `x`, `y`, `base`, `width` and `height` of each bar of the dataset 0.
 List<Object?> _bars(Chart chart) => [
@@ -106,9 +104,12 @@ List<Object?> _bars(Chart chart) => [
 
 /// Expects the bars of the chart of [config] to equal the bars of the chart
 /// of [same] (a relation of two charts of the port).
-void _expectSameBars(AnyObject config, AnyObject same) {
-  final bars = _bars(acquireChart(config));
-  expect(bars, referenceMatcher(_bars(acquireChart(same))));
+void _expectSameBars(
+  ChartConfigurationScope config,
+  ChartConfigurationScope same,
+) {
+  final bars = _bars(acquireChartRoot(config));
+  expect(bars, referenceMatcher(_bars(acquireChartRoot(same))));
 }
 
 /// The cases that the port does not run: a text `barThickness` stops a
@@ -116,6 +117,19 @@ void _expectSameBars(AnyObject config, AnyObject same) {
 const Map<String, String> _skips = {
   "parsed: barThickness '20'": 'diverges: adapt-bar-thickness-class',
 };
+
+/// Audit only the deliberately coercible input slot of the current case.
+void _coercionInput(String name, Set<Object> values) {
+  final savedAudit = foreignAudit;
+  foreignAudit = (owner, key, raw) {
+    if (owner == 'BarControllerDatasetOptionsScope' && key == name) {
+      expect(values, contains(raw));
+    } else {
+      savedAudit?.call(owner, key, raw);
+    }
+  };
+  addTearDown(() => foreignAudit = savedAudit);
+}
 
 void main() {
   testReferenceOrigin(
@@ -161,7 +175,7 @@ void main() {
           copyReference(controllerBarReference.first.config)! as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
     });
   });
 
@@ -173,9 +187,10 @@ void main() {
       "inflateAmount '2', null, true and 'abc' give the rect and clip calls "
       'of 2, 0, 1 and NaN',
       (tester) async {
+        _coercionInput('inflateAmount', {'2', true, 'abc'});
         List<Object?> calls(Object? inflateAmount) => [
           for (final call in drawCalls(
-            acquireChart(
+            acquireChartRoot(
               _one(<String, Object?>{
                 'inflateAmount': inflateAmount,
                 'borderWidth': 1.0,
@@ -198,6 +213,7 @@ void main() {
     );
 
     testWidgets('base true gives the bars of base 1', (tester) async {
+      _coercionInput('base', {true});
       _expectSameBars(
         _one(<String, Object?>{'base': true}),
         _one(<String, Object?>{'base': 1.0}),
@@ -205,6 +221,7 @@ void main() {
     });
 
     testWidgets("minBarLength '20' gives the bars of 20", (tester) async {
+      _coercionInput('minBarLength', {'20'});
       const data = <Object?>[0.01, 0.0, -0.01];
       _expectSameBars(
         _one(<String, Object?>{'minBarLength': '20'}, data),
@@ -234,7 +251,7 @@ void main() {
         ],
       };
       final config = <String, Object?>{'type': 'bar', 'data': data};
-      expect(() => acquireChart(config), throwsA(isA<TypeError>()));
+      expect(() => acquireChartRoot(config), throwsA(isA<TypeError>()));
       // The category scale parsed the label of the first item before the
       // throw (category.js addIfString): the labels hold it. The data
       // object of the chart is the scope of the boundary (row
@@ -270,7 +287,7 @@ void main() {
         final valueAxis = indexAxis == 'x' ? 'y' : 'x';
         final chartLabels = <Object?>['b'];
         expect(
-          () => acquireChart(<String, Object?>{
+          () => acquireChartRoot(<String, Object?>{
             'type': 'bar',
             'data': <String, Object?>{
               'labels': chartLabels,
@@ -299,7 +316,7 @@ void main() {
 
     testWidgets('stacked List items with parsing false take a stack object '
         'with the key of the value axis', (tester) async {
-      final chart = acquireChart(<String, Object?>{
+      final chart = acquireChartRoot(<String, Object?>{
         'type': 'bar',
         'data': <String, Object?>{
           'labels': <Object?>['a', 'b'],
@@ -340,7 +357,7 @@ void main() {
     testWidgets('getLabelAndValue gives the String label as one line', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
+      final chart = acquireChartRoot(<String, Object?>{
         'type': 'bar',
         'data': <String, Object?>{
           'labels': <Object?>[

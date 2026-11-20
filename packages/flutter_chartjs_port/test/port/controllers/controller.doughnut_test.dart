@@ -52,13 +52,14 @@ List<Object?> _datasets(Chart chart) =>
     jsGet(chart.data, 'datasets')! as List<Object?>;
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    _datasets(chart)[index]! as AnyObject;
+Object _dataset(Chart chart, int index) => _datasets(chart)[index]!;
 
 /// The probe `parsedIsData` of the generator: `meta._parsed ===
 /// dataset.data` of the dataset 0.
-Object? _parsedIsData(Chart chart) =>
-    identical(chart.getDatasetMeta(0).parsed, _dataset(chart, 0)['data']);
+Object? _parsedIsData(Chart chart) => identical(
+  chart.getDatasetMeta(0).parsed,
+  jsGet(_dataset(chart, 0), 'data'),
+);
 
 /// The probe `ringGeometry` of the generator: `[offsetX, offsetY,
 /// outerRadius, innerRadius]` of the controller of each dataset. Dart
@@ -164,18 +165,17 @@ final List<ScaleChartCase> _reference = _undefinedAxisIds(
 
 /// The config of a doughnut chart with the labels a, b, c and one dataset
 /// with [data] and the keys of [extra].
-AnyObject _one(AnyObject extra, List<Object?> data) => <String, Object?>{
-  'type': 'doughnut',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[...data],
-        ...extra,
-      },
-    ],
-  },
-};
+ChartConfigurationScope _one(AnyObject extra, List<Object?> data) =>
+    ChartConfigurationScope()
+      ..type = 'doughnut'
+      ..data = (ChartDataScope()
+        ..labels = <Object?>['a', 'b', 'c']
+        ..datasets = <Object?>[
+          mergeExtra(
+            DoughnutControllerDatasetOptionsScope()..data = <Object?>[...data],
+            extra,
+          ),
+        ]);
 
 /// The arc properties of each arc of the dataset 0.
 List<Object?> _arcs(Chart chart) => [
@@ -207,7 +207,7 @@ void main() {
         final c = _reference.firstWhere((c) => c.name == name);
         final config = copyReference(c.config)! as AnyObject;
         nativeFixtureColors(config);
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           config,
           copyReference(c.options)! as AnyObject,
         );
@@ -286,18 +286,27 @@ void main() {
     // string (core.datasetController.js:386), and `parse` reads its
     // characters. The values come from a probe of the build at the pin in
     // x64 Node.js v24.12.0.
-    AnyObject stringData(AnyObject extra, String data) {
+    ChartConfigurationScope stringData(AnyObject extra, String data) {
+      final savedAudit = foreignAudit;
+      foreignAudit = (owner, key, raw) {
+        if (owner == 'DoughnutControllerDatasetOptionsScope' && key == 'data') {
+          expect({data}, contains(raw));
+        } else {
+          savedAudit?.call(owner, key, raw);
+        }
+      };
+      addTearDown(() => foreignAudit = savedAudit);
       final config = _one(extra, const []);
       final datasets = jsGet(config['data'], 'datasets')! as List<Object?>;
-      (datasets[0]! as AnyObject)['data'] = data;
+      (datasets[0]! as JsObjectFace)['data'] = data;
       return config;
     }
 
     testWidgets("the string data 'abc' gives 3 arcs with the parsed values "
         'NaN', (tester) async {
-      final chart = acquireChart(stringData(const {}, 'abc'));
+      final chart = acquireChartRoot(stringData(const {}, 'abc'));
       final meta = chart.getDatasetMeta(0);
-      expect(_dataset(chart, 0)['data'], 'abc');
+      expect(jsGet(_dataset(chart, 0), 'data'), 'abc');
       expect(meta.data, hasLength(3));
       expect(meta.parsed, [isNaN, isNaN, isNaN]);
       expect((meta.controller! as DoughnutController).total, 0);
@@ -312,7 +321,7 @@ void main() {
 
     testWidgets("the string data '123' with parsing false gives the arcs of "
         '[1, 2, 3]', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         stringData(<String, Object?>{'parsing': false}, '123'),
       );
       final meta = chart.getDatasetMeta(0);
@@ -331,7 +340,7 @@ void main() {
         _arcs(chart),
         referenceMatcher(
           _arcs(
-            acquireChart(
+            acquireChartRoot(
               _one(
                 <String, Object?>{'parsing': false},
                 <Object?>[1.0, 2.0, 3.0],
@@ -344,24 +353,27 @@ void main() {
 
     testWidgets("parsing false with [1, '2', null] gives the arcs of "
         '[1, 2, null] and keeps the data List', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _one(<String, Object?>{'parsing': false}, <Object?>[1.0, '2', null]),
       );
       expect(
-        identical(chart.getDatasetMeta(0).parsed, _dataset(chart, 0)['data']),
+        identical(
+          chart.getDatasetMeta(0).parsed,
+          jsGet(_dataset(chart, 0), 'data'),
+        ),
         isTrue,
       );
       expect(
         _arcs(chart),
         referenceMatcher(
-          _arcs(acquireChart(_one(const {}, <Object?>[1.0, 2.0, null]))),
+          _arcs(acquireChartRoot(_one(const {}, <Object?>[1.0, 2.0, null]))),
         ),
       );
     });
 
     testWidgets('object items with a parsing key give the arcs of the '
         'numbers', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _one(
           <String, Object?>{
             'parsing': <String, Object?>{'key': 'v'},
@@ -377,7 +389,7 @@ void main() {
       expect(
         _arcs(chart),
         referenceMatcher(
-          _arcs(acquireChart(_one(const {}, <Object?>[1.0, 2.0, 3.0]))),
+          _arcs(acquireChartRoot(_one(const {}, <Object?>[1.0, 2.0, 3.0]))),
         ),
       );
     });
@@ -387,7 +399,7 @@ void main() {
   // generated value.
   group('interfaces', () {
     testWidgets('total after an update is calculateTotal()', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _one(const {}, <Object?>[10.0, -5.0, null, 20.0]),
       );
       final controller =
@@ -404,7 +416,7 @@ void main() {
     testWidgets('getLabelAndValue gives the lines of the label of '
         'chart.data.labels', (tester) async {
       final label0 = <Object?>['line 1', 'line 2'];
-      final chart = acquireChart(<String, Object?>{
+      final chart = acquireChartRoot(<String, Object?>{
         'type': 'doughnut',
         'data': <String, Object?>{
           'labels': <Object?>[label0, 5.0, 0.0, 'd', undefined],
@@ -434,7 +446,7 @@ void main() {
       tester,
     ) async {
       // The legend plugin is off, so it writes no `chart.legend`.
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _one(const {}, <Object?>[1.0, 2.0, 3.0])
           ..['options'] = <String, Object?>{
             'plugins': <String, Object?>{'legend': false},
@@ -456,7 +468,7 @@ void main() {
             },
           ),
         ];
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       final legend = chart.legend!;
       final before = updates;
 
@@ -487,7 +499,9 @@ void main() {
       testWidgets('onClick with the index $name uses the native index', (
         tester,
       ) async {
-        final chart = acquireChart(_one(const {}, <Object?>[1.0, 2.0, 3.0]));
+        final chart = acquireChartRoot(
+          _one(const {}, <Object?>[1.0, 2.0, 3.0]),
+        );
         final legend = chart.legend!;
         callDroppingExtraArgs(jsGet(_legendOverrides(), 'onClick'), [
           <String, Object?>{},
@@ -517,7 +531,7 @@ void main() {
       ]) {
         testWidgets('onClick with the index $name, then $change, moves the '
             'visibility index', (tester) async {
-          final chart = acquireChart(
+          final chart = acquireChartRoot(
             _one(const {}, <Object?>[1.0, 2.0, 3.0, 4.0]),
           );
           final legend = chart.legend!;
@@ -526,7 +540,7 @@ void main() {
             LegendItem(text: ['item'], index: index),
             legend,
           ]);
-          final data = _dataset(chart, 0)['data']! as List<Object?>;
+          final data = jsGet(_dataset(chart, 0), 'data')! as List<Object?>;
           switch (change) {
             case 'unshift':
               data.insert(0, 9.0);

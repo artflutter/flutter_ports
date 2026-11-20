@@ -68,8 +68,8 @@ final Map<String, Object?> _functions = {
 };
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+Object _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]!;
 
 /// `chart.data.datasets[index].data`.
 List<Object?> _data(Chart chart, int index) =>
@@ -81,12 +81,17 @@ List<Object?> _xy(List<(double, double?)> points) => <Object?>[
 ];
 
 /// The config of a scatter chart with the [datasets] and the [options].
-AnyObject _scatter(List<Object?> datasets, [AnyObject? options]) =>
-    <String, Object?>{
-      'type': 'scatter',
-      'data': <String, Object?>{'datasets': datasets},
-      'options': ?options,
-    };
+ChartConfigurationScope _scatter(
+  List<Object?> datasets, [
+  AnyObject? options,
+]) => ChartConfigurationScope()
+  ..type = 'scatter'
+  ..data = (ChartDataScope()
+    ..datasets = <Object?>[
+      for (final dataset in datasets)
+        mergeExtra(LineControllerDatasetOptionsScope(), dataset! as AnyObject),
+    ])
+  ..options = mergeExtra(ChartOptionsScope(), options);
 
 /// `x`, `y`, `skip` and `stop` of each point of each dataset of [chart].
 List<Object?> _points(Chart chart) => [
@@ -164,7 +169,7 @@ void main() {
       final c = controllerScatterReference.firstWhere(
         (c) => c.name == _stringClipCase,
       );
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         copyReference(c.config, _functions)! as AnyObject,
         copyReference(c.options)! as AnyObject,
       );
@@ -189,7 +194,7 @@ void main() {
               as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
     });
   });
 
@@ -201,7 +206,7 @@ void main() {
       tester,
     ) async {
       expect(
-        () => acquireChart(
+        () => acquireChartRoot(
           _scatter(<Object?>[
             <String, Object?>{
               'data': <Object?>[
@@ -219,7 +224,7 @@ void main() {
     testWidgets('a logarithmic x and parsing false: an item without x gives '
         'the min pixel and skip false, an item with x null gives NaN and '
         'skip true', (tester) async {
-      Chart chart(AnyObject first) => acquireChart(
+      Chart chart(AnyObject first) => acquireChartRoot(
         _scatter(
           <Object?>[
             <String, Object?>{
@@ -258,7 +263,7 @@ void main() {
       // The first update of an animated chart resets the points first (a
       // direct update). The second update with new data of the same length
       // has no reset: only the new object writes `raw` and `parsed`.
-      AnyObject config(Object? animation) => _scatter(
+      ChartConfigurationScope config(Object? animation) => _scatter(
         <Object?>[
           <String, Object?>{
             'data': _xy(const [
@@ -286,28 +291,36 @@ void main() {
         ],
         <String, Object?>{'animation': animation},
       );
-      final animated = acquireChart(
+      final animated = acquireChartRoot(
         config(<String, Object?>{'duration': 100.0}),
       );
-      final direct = acquireChart(config(false));
+      final direct = acquireChartRoot(config(false));
       await pumpFrames(() => !animator.running(animated));
       expect(_points(animated), referenceMatcher(_points(direct)));
 
       for (final chart in [animated, direct]) {
-        _dataset(chart, 0)['data'] = _xy(const [
-          (0.0, 2.0),
-          (1.0, 7.0),
-          (2.0, 5.0),
-          (3.0, null),
-          (4.0, 1.0),
-        ]);
-        _dataset(chart, 1)['data'] = _xy(const [
-          (0.0, 4.0),
-          (2.0, 3.0),
-          (3.0, 2.0),
-          (5.0, 1.0),
-          (6.0, 0.0),
-        ]);
+        jsSet(
+          _dataset(chart, 0),
+          'data',
+          _xy(const [
+            (0.0, 2.0),
+            (1.0, 7.0),
+            (2.0, 5.0),
+            (3.0, null),
+            (4.0, 1.0),
+          ]),
+        );
+        jsSet(
+          _dataset(chart, 1),
+          'data',
+          _xy(const [
+            (0.0, 4.0),
+            (2.0, 3.0),
+            (3.0, 2.0),
+            (5.0, 1.0),
+            (6.0, 0.0),
+          ]),
+        );
         chart.update();
       }
       expect(animator.running(animated), isTrue);
@@ -324,7 +337,7 @@ void main() {
   // generated value.
   group('interfaces', () {
     group('line.points with showLine true', () {
-      AnyObject config() => _scatter(<Object?>[
+      ChartConfigurationScope config() => _scatter(<Object?>[
         <String, Object?>{
           'data': _xy(const [(1.0, 1.0), (2.0, 4.0), (3.0, 2.0), (4.0, 3.0)]),
           'showLine': true,
@@ -332,12 +345,12 @@ void main() {
       ]);
 
       testWidgets('after chart.update()', (tester) async {
-        final chart = acquireChart(config())..update();
+        final chart = acquireChartRoot(config())..update();
         _expectLinePoints(chart);
       });
 
       testWidgets('after data.push and chart.update()', (tester) async {
-        final chart = acquireChart(config());
+        final chart = acquireChartRoot(config());
         final item = <String, Object?>{'x': 5.0, 'y': 1.0};
         final data = _data(chart, 0)..add(item);
         notifyArrayListeners(data, 'push', [item]);
@@ -347,7 +360,7 @@ void main() {
       });
 
       testWidgets('after a splice and chart.update()', (tester) async {
-        final chart = acquireChart(config());
+        final chart = acquireChartRoot(config());
         final data = _data(chart, 0);
         final item = <String, Object?>{'x': 2.5, 'y': 9.0};
         spliceList(data, 1, 2, [item]);
@@ -372,7 +385,7 @@ void main() {
     // The generator cannot give these cases: it has no step that writes an
     // option.
     group('showLine', () {
-      AnyObject config(AnyObject extra) => _scatter(<Object?>[
+      ChartConfigurationScope config(AnyObject extra) => _scatter(<Object?>[
         <String, Object?>{
           'data': _xy(const [(1.0, 2.0), (2.0, 4.0), (3.0, 1.0)]),
           ...extra,
@@ -402,28 +415,28 @@ void main() {
       }
 
       testWidgets('a dataset showLine switched on, off and on', (tester) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           config(<String, Object?>{'borderWidth': 4.0}),
         );
         expectState(chart, line: false, maxOverflow: 8);
 
-        _dataset(chart, 0)['showLine'] = true;
+        jsSet(_dataset(chart, 0), 'showLine', true);
         chart.update();
         expectState(chart, line: true, maxOverflow: 8);
         final first = chart.getDatasetMeta(0).dataset;
 
-        _dataset(chart, 0)['showLine'] = false;
+        jsSet(_dataset(chart, 0), 'showLine', false);
         chart.update();
         expectState(chart, line: false, maxOverflow: 8);
 
-        _dataset(chart, 0)['showLine'] = true;
+        jsSet(_dataset(chart, 0), 'showLine', true);
         chart.update();
         expectState(chart, line: true, maxOverflow: 8);
         expect(chart.getDatasetMeta(0).dataset, isNot(same(first)));
       });
 
       testWidgets('the root option showLine switched on', (tester) async {
-        final chart = acquireChart(config(<String, Object?>{}));
+        final chart = acquireChartRoot(config(<String, Object?>{}));
         chart.options['showLine'] = true;
         chart.update();
         expectState(chart, line: true, maxOverflow: 5);
@@ -432,10 +445,12 @@ void main() {
       testWidgets('a dataset showLine at the creation, then off', (
         tester,
       ) async {
-        final chart = acquireChart(config(<String, Object?>{'showLine': true}));
+        final chart = acquireChartRoot(
+          config(<String, Object?>{'showLine': true}),
+        );
         expectState(chart, line: true, maxOverflow: 5);
 
-        _dataset(chart, 0)['showLine'] = false;
+        jsSet(_dataset(chart, 0), 'showLine', false);
         chart.update();
         expectState(chart, line: false, maxOverflow: 5);
       });
@@ -477,7 +492,7 @@ void main() {
           ],
         ),
       ]) {
-        final chart = acquireChart(<String, Object?>{
+        final chart = acquireChartRoot(<String, Object?>{
           'type': 'scatter',
           'data': <String, Object?>{
             'labels': labels,

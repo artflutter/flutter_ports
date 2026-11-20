@@ -329,25 +329,23 @@ Plugin<Object?> _spy(
 }
 
 /// The config of a `test` chart with [datasets] on two `testlinear` scales.
-// A Map config: a typed config has no class for the controller `test` and
-// the scale `testlinear` of the generator.
-AnyObject _testConfig(
+ChartConfigurationScope _testConfig(
   List<Object?> datasets, {
   List<Plugin<Object?>>? plugins,
   AnyObject? options,
 }) {
-  return <String, Object?>{
-    'type': 'test',
-    'data': <String, Object?>{'datasets': datasets},
-    'plugins': ?plugins,
-    'options': <String, Object?>{
+  final root = ChartConfigurationScope()
+    ..type = 'test'
+    ..data = (ChartDataScope()..datasets = datasets)
+    ..options = mergeExtra(ChartOptionsScope(), {
       'scales': <String, Object?>{
         'x': <String, Object?>{'type': 'testlinear'},
         'y': <String, Object?>{'type': 'testlinear'},
       },
       ...?options,
-    },
-  };
+    });
+  if (plugins != null) root.plugins = plugins;
+  return root;
 }
 
 /// The dataset `{label, data}` of three points.
@@ -1280,7 +1278,7 @@ void main() {
     // hold.
     testWidgets('stops a debug build', (tester) async {
       expect(
-        () => acquireChart(<String, Object?>{
+        () => acquireChartRoot(<String, Object?>{
           'type': 'bar',
           'data': <String, Object?>{
             'labels': <Object?>['a', 'b'],
@@ -1312,7 +1310,7 @@ void main() {
         // typed scope keeps only as a foreign value.
         final labels = <Object?>['b'];
         expect(
-          () => acquireChart(<String, Object?>{
+          () => acquireChartRoot(<String, Object?>{
             'type': 'line',
             'data': <String, Object?>{
               'labels': labels,
@@ -1349,7 +1347,7 @@ void main() {
     testWidgets('a chart with no hidden index gives true for each index', (
       tester,
     ) async {
-      final chart = acquireChart(_testConfig([_points('a')]));
+      final chart = acquireChartRoot(_testConfig([_points('a')]));
       for (final index in indices) {
         expect(chart.getDataVisibility(index), isTrue, reason: '$index');
       }
@@ -1357,7 +1355,7 @@ void main() {
 
     testWidgets('toggleDataVisibility hides one index, and a second toggle '
         'shows it again', (tester) async {
-      final chart = acquireChart(_testConfig([_points('a')]))
+      final chart = acquireChartRoot(_testConfig([_points('a')]))
         ..toggleDataVisibility(3);
       expect(chart.getDataVisibility(3), isFalse);
       for (final index in indices) {
@@ -1377,7 +1375,7 @@ void main() {
     testWidgets('an insert or a remove moves the hidden indexes', (
       tester,
     ) async {
-      final chart = acquireChart(_testConfig([_points('a')]))
+      final chart = acquireChartRoot(_testConfig([_points('a')]))
         ..toggleDataVisibility(1);
       String visibilities(int count) => [
         for (var i = 0; i < count; i++)
@@ -1407,7 +1405,7 @@ void main() {
       final labels = <Object?>['0', '1', '2', '3'];
       final config = _testConfig([dataset(), dataset()]);
       jsSet(config['data'], 'labels', labels);
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       List<Object?> dataOf(int i) =>
           jsGet(jsGet(chart.data['datasets'], i.toDouble()), 'data')!
               as List<Object?>;
@@ -1942,7 +1940,7 @@ void main() {
 
     testWidgets('with a data Map, update gives the options of the '
         'construction (core.controller.tests.js:581)', (tester) async {
-      final chart = acquireChart(<String, Object?>{
+      final chart = acquireChartRoot(<String, Object?>{
         'type': 'line',
         'data': <String, Object?>{},
         'options': <String, Object?>{
@@ -2044,7 +2042,7 @@ void main() {
     testWidgets('a chart that fits its parent gets the container height at '
         'the first resize', (tester) async {
       await waitForDone((done) {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           <String, Object?>{
             'options': <String, Object?>{
               'responsive': true,

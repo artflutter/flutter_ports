@@ -2883,3 +2883,13 @@ their original representations. The batch also migrates the line/scatter option 
 bar hover scan, colors and decimation chart builders. No production canvas code or deferred
 cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates remain
 unchanged. No trigger occurred.
+
+## Typed controller and keyboard test configs, 2026-11-20
+
+The hand-written builders in six controller reference tests now use typed configuration,
+data and option scopes. `test/port/core/core.controller_test.dart` retains supplied dataset
+identity for its lifecycle and aliasing cases, and `test/port/widgets/chart_keyboard_test.dart`
+uses typed `ChartView` configs. Plugin dispatch and legend builders use typed scopes too;
+generated reference data and deliberately invalid inputs remain unchanged. No production
+canvas code or deferred cut changes. The named references, inventory, tests of §2.6 and §3.5,
+and estimates remain unchanged. No trigger occurred.

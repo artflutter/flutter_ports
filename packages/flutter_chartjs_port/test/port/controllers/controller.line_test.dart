@@ -107,15 +107,19 @@ List<Object?> _data(Chart chart, int index) =>
         as List<Object?>;
 
 /// The config of a line chart with the labels a to e and the [datasets].
-AnyObject _lines(List<Object?> datasets, [AnyObject? options]) =>
-    <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{
-        'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        'datasets': datasets,
-      },
-      'options': ?options,
-    };
+ChartConfigurationScope _lines(List<Object?> datasets, [AnyObject? options]) =>
+    ChartConfigurationScope()
+      ..type = 'line'
+      ..data = (ChartDataScope()
+        ..labels = <Object?>['a', 'b', 'c', 'd', 'e']
+        ..datasets = <Object?>[
+          for (final dataset in datasets)
+            mergeExtra(
+              LineControllerDatasetOptionsScope(),
+              dataset! as AnyObject,
+            ),
+        ])
+      ..options = mergeExtra(ChartOptionsScope(), options);
 
 /// `x`, `y`, `skip` and `stop` of each point of each dataset of [chart].
 List<Object?> _points(Chart chart) => [
@@ -202,7 +206,7 @@ void main() {
         'and the draw throws a TypeError', (tester) async {
       // A plugin that cancels the draw of the chart: the update runs, the
       // draw of the line controller does not.
-      final chart = acquireChart(<String, Object?>{
+      final chart = acquireChartRoot(<String, Object?>{
         'type': 'line',
         'data': <String, Object?>{
           'labels': <Object?>['a', 'b', 'c'],
@@ -248,7 +252,7 @@ void main() {
               as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
     });
   });
 
@@ -265,7 +269,16 @@ void main() {
     testWidgets("the string data '123' gives the points of [1, 2, 3]", (
       tester,
     ) async {
-      final chart = acquireChart(
+      final savedAudit = foreignAudit;
+      foreignAudit = (owner, key, raw) {
+        if (owner == 'LineControllerDatasetOptionsScope' && key == 'data') {
+          expect(const {'123'}, contains(raw));
+        } else {
+          savedAudit?.call(owner, key, raw);
+        }
+      };
+      addTearDown(() => foreignAudit = savedAudit);
+      final chart = acquireChartRoot(
         _lines(<Object?>[
           <String, Object?>{'data': '123'},
         ]),
@@ -287,7 +300,7 @@ void main() {
         _points(chart),
         referenceMatcher(
           _points(
-            acquireChart(
+            acquireChartRoot(
               _lines(<Object?>[
                 <String, Object?>{
                   'data': <Object?>[1.0, 2.0, 3.0],
@@ -301,7 +314,7 @@ void main() {
 
     testWidgets('stacked List items with parsing false take a stack object '
         'with the key of the value axis', (tester) async {
-      final chart = acquireChart(<String, Object?>{
+      final chart = acquireChartRoot(<String, Object?>{
         'type': 'line',
         'data': <String, Object?>{
           'labels': <Object?>['a', 'b'],
@@ -363,8 +376,8 @@ void main() {
           },
         },
       };
-      final points = _points(acquireChart(config('2')));
-      expect(points, referenceMatcher(_points(acquireChart(config(true)))));
+      final points = _points(acquireChartRoot(config('2')));
+      expect(points, referenceMatcher(_points(acquireChartRoot(config(true)))));
       expect(
         [for (final p in (points[0]! as List).cast<List<Object?>>()) p[3]],
         [false, false, false, false, false],
@@ -378,7 +391,7 @@ void main() {
       // first update of an animated chart resets the points first (a direct
       // update). The second update with new data of the same length has no
       // reset: only the new object writes `raw` and `parsed`.
-      AnyObject config(Object? animation) => _lines(
+      ChartConfigurationScope config(Object? animation) => _lines(
         <Object?>[
           <String, Object?>{
             'data': <Object?>[3.0, 1.0, null, 4.0, 2.0],
@@ -393,15 +406,15 @@ void main() {
         ],
         <String, Object?>{'animation': animation},
       );
-      final animated = acquireChart(
+      final animated = acquireChartRoot(
         config(<String, Object?>{'duration': 100.0}),
       );
-      final direct = acquireChart(config(false));
+      final direct = acquireChartRoot(config(false));
       await pumpFrames(() => !animator.running(animated));
       expect(_points(animated), referenceMatcher(_points(direct)));
 
       for (final chart in [animated, direct]) {
-        (jsGet(chart.data, 'datasets')! as List<Object?>).cast<AnyObject>()
+        (jsGet(chart.data, 'datasets')! as List<Object?>).cast<JsObjectFace>()
           ..[0]['data'] = <Object?>[2.0, 7.0, 5.0, null, 1.0]
           ..[1]['data'] = <Object?>[4.0, 3.0, 2.0, 1.0, 0.0];
         chart.update();
@@ -420,19 +433,19 @@ void main() {
   // generated value.
   group('interfaces', () {
     group('line.points', () {
-      AnyObject config() => _lines(<Object?>[
+      ChartConfigurationScope config() => _lines(<Object?>[
         <String, Object?>{
           'data': <Object?>[1.0, 2.0, 3.0, 4.0],
         },
       ]);
 
       testWidgets('after chart.update()', (tester) async {
-        final chart = acquireChart(config())..update();
+        final chart = acquireChartRoot(config())..update();
         _expectLinePoints(chart);
       });
 
       testWidgets('after data.push and chart.update()', (tester) async {
-        final chart = acquireChart(config());
+        final chart = acquireChartRoot(config());
         final data = _data(chart, 0)..add(5.0);
         notifyArrayListeners(data, 'push', [5.0]);
         chart.update();
@@ -441,7 +454,7 @@ void main() {
       });
 
       testWidgets('after a splice and chart.update()', (tester) async {
-        final chart = acquireChart(config());
+        final chart = acquireChartRoot(config());
         final data = _data(chart, 0);
         spliceList(data, 1, 2, [9.0]);
         notifyArrayListeners(data, 'splice', [1.0, 2.0, 9.0]);
@@ -487,7 +500,7 @@ void main() {
 
       testWidgets('tension 0.4: the draw throws a TypeError', (tester) async {
         expect(
-          () => acquireChart(config(<String, Object?>{'tension': 0.4})),
+          () => acquireChartRoot(config(<String, Object?>{'tension': 0.4})),
           throwsA(isA<TypeError>()),
         );
       });
@@ -512,7 +525,7 @@ void main() {
           ),
         ]) {
           testWidgets(name, (tester) async {
-            final chart = acquireChart(config(dataset));
+            final chart = acquireChartRoot(config(dataset));
             expect(chart.chartArea, isNull);
           });
         }
@@ -522,7 +535,7 @@ void main() {
     testWidgets('getLabelAndValue gives the String label as one line', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
+      final chart = acquireChartRoot(<String, Object?>{
         'type': 'line',
         'data': <String, Object?>{
           'labels': <Object?>[

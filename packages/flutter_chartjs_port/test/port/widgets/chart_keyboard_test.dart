@@ -56,63 +56,55 @@ const List<_Move> _moves = [
 /// no aspect ratio. The legend logs its `onHover` and `onLeave` calls in
 /// [log]. [options] and [legend] add keys to the options and to the legend
 /// options.
-Map<String, Object?> _config(
+ChartConfig _config(
   String type, {
   List<String>? log,
   Map<String, Object?> options = const {},
   Map<String, Object?> legend = const {},
   List<Plugin<Object?>>? plugins,
 }) {
-  void entry(String name, Object? e, Object? item) {
-    log?.add(
-      '$name ${(e! as ChartEvent).type} '
-      '${(item! as LegendItem).text.join('\n')}',
-    );
-  }
-
-  return <String, Object?>{
-    'type': type,
-    'data': <String, Object?>{
-      'labels': <Object?>['a', 'b', 'c'],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'label': 'd0',
-          'data': <Object?>[3, 5, 4],
-        },
-        <String, Object?>{
-          'label': 'd1',
-          'data': <Object?>[4, 2, 5],
-        },
-      ],
-    },
-    'options': <String, Object?>{
-      'animation': false,
-      'maintainAspectRatio': false,
-      'plugins': <String, Object?>{
-        'legend': <String, Object?>{
-          'onHover': (Object? e, Object? item, Object? legend) =>
-              entry('hover', e, item),
-          'onLeave': (Object? e, Object? item, Object? legend) =>
-              entry('leave', e, item),
-          ...legend,
-        },
-      },
-      ...options,
-    },
-    'plugins': ?plugins,
+  void entry(String name, ChartEvent event, LegendItem item) =>
+      log?.add('$name ${event.type} ${item.text.join('\n')}');
+  Dataset dataset(String label, List<num?> data) => switch (type) {
+    'bar' => BarDataset(label: label, data: data),
+    'line' => LineDataset(label: label, data: data),
+    'doughnut' => DoughnutDataset(label: label, data: data),
+    'radar' => RadarDataset(label: label, data: data),
+    _ => throw ArgumentError.value(type, 'type'),
   };
+  return ChartConfig(
+    type: ChartKind(type),
+    labels: const ['a', 'b', 'c'],
+    datasets: [
+      dataset('d0', [3, 5, 4]),
+      dataset('d1', [4, 2, 5]),
+    ],
+    animation: ChartAnimation.none,
+    maintainAspectRatio: false,
+    // An explicit plugins object replaces the default legend options in
+    // the original config, so it must not inherit these logging callbacks.
+    legend: options.containsKey('plugins')
+        ? null
+        : ChartLegend(
+            onHover: (event, item, legend) => entry('hover', event, item),
+            onLeave: (event, item, legend) => entry('leave', event, item),
+            extra: legend,
+          ),
+    extra: options,
+    plugins: plugins,
+  );
 }
 
 /// The chart of [config] in a box of 400 x 280 at the top left.
 Widget _view(
-  Map<String, Object?> config, {
+  ChartConfig config, {
   FocusNode? focusNode,
   bool autofocus = false,
   ValueChanged<Chart>? onChartCreated,
 }) => SizedBox(
   width: 400,
   height: 280,
-  child: ChartView.raw(
+  child: ChartView(
     config: config,
     focusNode: focusNode,
     autofocus: autofocus,
@@ -420,7 +412,7 @@ void main() {
         'of a mouse click there', (tester) async {
       final keysClicks = <List<String>>[];
       final mouseClicks = <List<String>>[];
-      Map<String, Object?> config(List<List<String>> log) => _config(
+      ChartConfig config(List<List<String>> log) => _config(
         'bar',
         options: <String, Object?>{
           'onClick': (
@@ -745,8 +737,17 @@ void main() {
     testWidgets('a new chart has no target', (tester) async {
       final node = FocusNode();
       addTearDown(node.dispose);
-      final config = _config('bar');
-      await tester.pumpWidget(_top(_view(config, focusNode: node)));
+      final root = ChartConfigLowering(_config('bar')).lower();
+      final config = <String, Object?>{
+        for (final key in root.jsKeys()) key: root.jsRead(key),
+      };
+      // The platform option is only available through the raw entry point.
+      Widget rawView(Map<String, Object?> value) => SizedBox(
+        width: 400,
+        height: 280,
+        child: ChartView.raw(config: value, focusNode: node),
+      );
+      await tester.pumpWidget(_top(rawView(config)));
       node.requestFocus();
       await tester.pump();
       await _key(tester, LogicalKeyboardKey.arrowDown);
@@ -755,12 +756,7 @@ void main() {
       await _key(tester, LogicalKeyboardKey.arrowRight);
       // A new platform makes a new chart (Chart.js ADR 0049, section 4).
       await tester.pumpWidget(
-        _top(
-          _view({
-            ...config,
-            'platform': FlutterPlatform.jsClass,
-          }, focusNode: node),
-        ),
+        _top(rawView({...config, 'platform': FlutterPlatform.jsClass})),
       );
       await tester.pump();
       expect(await _key(tester, LogicalKeyboardKey.arrowLeft), isFalse);
@@ -846,11 +842,27 @@ void main() {
       ];
       expect(
         properties(
-          ChartView.raw(config: const {}, focusNode: node, autofocus: true),
+          ChartView(
+            config: const ChartConfig(type: ChartKind.bar, datasets: []),
+            focusNode: node,
+            autofocus: true,
+          ),
         ),
-        ['type: null', startsWith('focusNode: FocusNode#'), 'autofocus'],
+        [
+          'type: bar',
+          'datasets: 0',
+          startsWith('focusNode: FocusNode#'),
+          'autofocus',
+        ],
       );
-      expect(properties(const ChartView.raw(config: {})), ['type: null']);
+      expect(
+        properties(
+          const ChartView(
+            config: ChartConfig(type: ChartKind.bar, datasets: []),
+          ),
+        ),
+        ['type: bar', 'datasets: 0'],
+      );
     });
 
     testWidgets('autofocus focuses the chart at its first build', (

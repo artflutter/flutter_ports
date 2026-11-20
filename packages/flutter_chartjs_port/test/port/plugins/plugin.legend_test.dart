@@ -264,28 +264,23 @@ const List<String> _upstreamDefaultsKeys = [
 Object? _construct(List<Object?> args) => jsConstruct(Legend.jsClass, args);
 
 /// A line chart with two datasets and the legend options [legendOptions].
-// A Map config, for the cases that the typed API cannot give: a legend set
-// to `false`, a label that is not a String, a string number option and a
-// generator of another type, which the tests pass through the raw options.
-AnyObject _mapLine(Object? legendOptions) => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'one',
-        'data': <Object?>[1, 2],
-      },
-      <String, Object?>{
-        'label': 'two',
-        'data': <Object?>[2, 1],
-      },
-    ],
-  },
-  'options': <String, Object?>{
-    'plugins': <String, Object?>{'legend': legendOptions},
-  },
-};
+// Keep the malformed legend inputs and labels that these cases exercise.
+ChartConfigurationScope _mapLine(Object? legendOptions) =>
+    ChartConfigurationScope()
+      ..type = 'line'
+      ..data = (ChartDataScope()
+        ..labels = <Object?>['a', 'b']
+        ..datasets = <Object?>[
+          LineControllerDatasetOptionsScope()
+            ..label = 'one'
+            ..data = <Object?>[1, 2],
+          LineControllerDatasetOptionsScope()
+            ..label = 'two'
+            ..data = <Object?>[2, 1],
+        ])
+      ..options = (ChartOptionsScope()
+        ..plugins = (PluginOptionsByTypeScope()
+          ..jsWrite('legend', legendOptions)));
 
 /// The typed config of a line chart with two datasets and the legend
 /// [legend].
@@ -432,7 +427,7 @@ void main() {
               as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
     });
   });
 
@@ -575,14 +570,14 @@ void main() {
     testWidgets('a chart with plugins.legend false has no legend', (
       tester,
     ) async {
-      final chart = acquireChart(_mapLine(false));
+      final chart = acquireChartRoot(_mapLine(false));
       expect(chart.legend, isNull);
       expect(chart.boxes.whereType<Legend>(), isEmpty);
     });
 
     testWidgets('stop with a foreign legend removes no box', (tester) async {
       // The probe stopForeign: [true, true].
-      final chart = acquireChart(_mapLine(false));
+      final chart = acquireChartRoot(_mapLine(false));
       final boxes = [...chart.boxes];
       chart.legend = _ForeignLegend();
       legend.stop!(chart, const PluginHookArgs(), _legendOptions());
@@ -597,7 +592,8 @@ void main() {
       // update throws a TypeError at `legend.buildLabels` (probe:
       // beforeUpdateForeign, afterUpdateForeign). Chart.js ADR 0038,
       // section 6.
-      final chart = acquireChart(_mapLine(false))..legend = _ForeignLegend();
+      final chart = acquireChartRoot(_mapLine(false))
+        ..legend = _ForeignLegend();
       expect(
         () => legend.beforeUpdate!(chart, UpdateHookArgs(), _legendOptions()),
         throwsA(isA<TypeError>()),
@@ -613,7 +609,7 @@ void main() {
 
     testWidgets('stop without a legend does not throw', (tester) async {
       // The probe stopWithoutLegend.
-      final chart = acquireChart(_mapLine(false));
+      final chart = acquireChartRoot(_mapLine(false));
       final boxes = [...chart.boxes];
       legend.stop!(chart, const PluginHookArgs(), _legendOptions());
       expect(chart.legend, isNull);
@@ -656,9 +652,9 @@ void main() {
         'position': ChartPosition.left,
       });
       ((jsGet(config['data'], 'datasets')! as List<Object?>)[0]!
-              as AnyObject)['label'] =
+              as JsObjectFace)['label'] =
           <Object?>[];
-      expect(() => acquireChart(config), throwsA(isA<TypeError>()));
+      expect(() => acquireChartRoot(config), throwsA(isA<TypeError>()));
     });
   });
 
@@ -785,7 +781,7 @@ void main() {
     ]) {
       testWidgets('a generator of $name stops a debug build', (tester) async {
         expect(
-          () => acquireChart(
+          () => acquireChartRoot(
             _mapLine(<String, Object?>{
               'labels': <String, Object?>{'generateLabels': generator},
             }),
@@ -864,7 +860,7 @@ void main() {
     /// The edges of the legend and its hit boxes for the label options
     /// [labels] on a canvas of 400 x 300.
     List<Object?> layout(Map<String, Object?> labels, [String? position]) {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _mapLine(<String, Object?>{'position': ?position, 'labels': labels}),
         <String, Object?>{
           'canvas': <String, Object?>{'width': 400, 'height': 300},

@@ -156,15 +156,14 @@ bool _isSharing(ScaleChartCase c) => c.name.startsWith('interfaces: sharing');
 
 /// The config of a polar area chart with the labels [labels] and one
 /// dataset with [data].
-AnyObject _one(List<Object?> labels, List<Object?> data) => <String, Object?>{
-  'type': 'polarArea',
-  'data': <String, Object?>{
-    'labels': labels,
-    'datasets': <Object?>[
-      <String, Object?>{'data': data},
-    ],
-  },
-};
+ChartConfigurationScope _one(List<Object?> labels, List<Object?> data) =>
+    ChartConfigurationScope()
+      ..type = 'polarArea'
+      ..data = (ChartDataScope()
+        ..labels = labels
+        ..datasets = <Object?>[
+          PolarAreaControllerDatasetOptionsScope()..data = data,
+        ]);
 
 /// The `[datasetIndex, index]` pairs of the hit items of [mode] at
 /// ([x], [y]) with `intersect: true` and the keys of [extra].
@@ -253,7 +252,7 @@ void main() {
               as AnyObject;
       config[themeConfigKey] = compileLightTheme();
       nativeFixtureColors(config);
-      expectNoStaleScaleKeys(acquireChart(config), snapshot);
+      expectNoStaleScaleKeys(acquireChartRoot(config), snapshot);
     });
   });
 
@@ -265,7 +264,7 @@ void main() {
       tester,
     ) async {
       ({double min, double max}) range(List<Object?> data) {
-        final chart = acquireChart(<String, Object?>{
+        final chart = acquireChartRoot(<String, Object?>{
           'type': 'polarArea',
           'data': <String, Object?>{
             'labels': <Object?>['a', 'b', 'c'],
@@ -304,7 +303,7 @@ void main() {
       tester,
     ) async {
       final lines = <Object?>['line 1', 'line 2'];
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _one(
           <Object?>[lines, 5.0, 0.0, 'd', undefined],
           <Object?>[1.0, 2.0, 3.0, 4.0, 5.0, 6.0],
@@ -355,7 +354,7 @@ void main() {
           },
         ),
       ];
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       final legend = chart.legend!;
       updates = 0;
       callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
@@ -382,7 +381,7 @@ void main() {
       testWidgets('onClick with the index $name uses the native index', (
         tester,
       ) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]),
         );
         callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
@@ -408,7 +407,7 @@ void main() {
     // 1101 and the outer radii 232, 25.777778, 0 and 77.333333 (rounded).
     testWidgets('onClick with the index 1, then unshift, hides the data '
         'index 2', (tester) async {
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _one(<Object?>['a', 'b', 'c'], <Object?>[1.0, 2.0, 3.0]),
       );
       callDroppingExtraArgs(jsGet(_legendFunctions(), 'onClick'), [
@@ -473,10 +472,10 @@ void main() {
           },
         ),
       ];
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       final meta = chart.getDatasetMeta(0);
       final dataset =
-          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
+          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as JsObjectFace;
       dataset['rAxisID'] = 'r2';
       (dataset['data']! as List<Object?>).add(4.0);
       chart.update();
@@ -542,7 +541,7 @@ void main() {
         <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
       );
       config['options'] = <String, Object?>{'animation': <String, Object?>{}};
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       await tester.pump(const Duration(milliseconds: 1100));
       final meta = chart.getDatasetMeta(0);
       final arc = meta.data[1] as Element;
@@ -552,7 +551,8 @@ void main() {
         'type': 'radialLinear',
         'position': ChartPosition.left,
       };
-      (jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject)['rAxisID'] =
+      (jsGetIndex(jsGet(chart.data, 'datasets'), 0)!
+              as JsObjectFace)['rAxisID'] =
           'r2';
       chart.update();
 
@@ -575,12 +575,12 @@ void main() {
         <Object?>[65.0, 59.0, 90.0, 81.0, 56.0],
       );
       config['options'] = <String, Object?>{'animation': <String, Object?>{}};
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       await tester.pump(const Duration(milliseconds: 5000));
       final meta = chart.getDatasetMeta(0);
       final arc = meta.data[1] as Element;
       final dataset =
-          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as AnyObject;
+          jsGetIndex(jsGet(chart.data, 'datasets'), 0)! as JsObjectFace;
       (jsGet(chart.options, 'scales')!
           as JsObjectFace)['r2'] = <String, Object?>{
         'type': 'radialLinear',

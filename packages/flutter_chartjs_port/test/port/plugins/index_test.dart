@@ -463,9 +463,34 @@ void main() {
             <O>(plugin) => _recordHooks(plugin, calls, upstream[plugin.id]),
           );
         }
-        // A Map: the config comes from the generated reference data.
-        final config = copyReference(c.config)! as AnyObject;
-        config['plugins'] = [_recorder(notifies)];
+        final input = copyReference(c.config)! as AnyObject;
+        if (jsGet(input['options'], 'plugins') == false) {
+          // This reference case deliberately disables the entire plugin set.
+          final savedAudit = foreignAudit;
+          foreignAudit = (owner, key, raw) {
+            if (owner == 'ChartOptionsScope' && key == 'plugins') {
+              expect(raw, isFalse);
+            } else {
+              savedAudit?.call(owner, key, raw);
+            }
+          };
+          addTearDown(() => foreignAudit = savedAudit);
+        }
+        final data = input['data']! as AnyObject;
+        final config = ChartConfigurationScope()
+          ..type = input['type']! as String
+          ..data = (ChartDataScope()
+            ..labels = data['labels']!
+            ..datasets = <Object?>[
+              for (final dataset
+                  in (data['datasets']! as List<Object?>).cast<AnyObject>())
+                mergeExtra(LineControllerDatasetOptionsScope(), dataset),
+            ])
+          ..options = mergeExtra(
+            ChartOptionsScope(),
+            input['options']! as AnyObject,
+          )
+          ..plugins = [_recorder(notifies)];
         final options = copyReference(c.options)! as AnyObject;
         Chart? chart;
         final steps = c.expected['steps']! as List<Object?>;
@@ -476,7 +501,7 @@ void main() {
           notifies.clear();
           switch (action) {
             case ['construct']:
-              chart = acquireChart(config, options);
+              chart = acquireChartRoot(config, options);
             case ['draw']:
               chart!.draw();
             case ['render']:
