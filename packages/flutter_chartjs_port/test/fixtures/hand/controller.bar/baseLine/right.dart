@@ -32,10 +32,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         'x': <String, Object?>{
           'ticks': <String, Object?>{'display': false},
           'grid': <String, Object?>{
-            'color': (Object? context) {
-              return (jsGet(context, 'tick')! as Tick).value == 0
-                  ? 'red'
-                  : 'transparent';
+            'color': (ScriptableScaleContext context) {
+              return context.tick!.value == 0 ? 'red' : 'transparent';
             },
             'lineWidth': 5,
             'tickLength': 0,

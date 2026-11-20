@@ -9,7 +9,9 @@
 ///
 /// - A scriptable option is a [ScriptableOption] (`(context) => value`), a
 ///   [ScriptableOptionWithResolver] (`(context, options) => value`) or a
-///   function with no parameter (`() => value`). [callScriptable] calls it.
+///   function with no parameter (`() => value`). The type of the context
+///   parameter accepts the class of the context, for example
+///   `ScriptableContext` for a dataset option. [callScriptable] calls it.
 /// - The descriptors `_scriptable` and `_indexable` are a
 ///   [DescriptorPredicate] (`(name) => bool`).
 /// - A function `_fallback` is a [ResolverFallback] (`(name, value) =>
@@ -25,18 +27,19 @@ import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// A scriptable option with one parameter: `(context) => value`.
 ///
-/// The context is the context object of the element, the dataset or the
-/// chart (`docs/general/options.md`, "Option Context"). Declare the
-/// parameter as `Object?` or with no type: a spec or a plugin can give a Map
-/// as the context.
-typedef ScriptableOption = Object? Function(Object? context);
+/// The context is the typed context object of the element, the dataset, the
+/// scale or the chart (`docs/general/options.md`, "Option Context"): a
+/// subclass of [ContextObject], for example `ScriptableContext` for a dataset
+/// option and `ScriptableScaleContext` for a scale option. A spec can give a
+/// Map of its own as the context: then the parameter is `Object?`.
+typedef ScriptableOption<C extends Object?> = Object? Function(C context);
 
 /// A scriptable option with two parameters: `(context, options) => value`.
 ///
 /// The second parameter gets the options resolver of the scope
 /// (helpers.config.ts:264).
-typedef ScriptableOptionWithResolver = Object? Function(
-  Object? context,
+typedef ScriptableOptionWithResolver<C extends Object?> = Object? Function(
+  C context,
   Object? options,
 );
 
@@ -66,6 +69,7 @@ Object? callScriptable(
   Object? options = undefined,
 ]) {
   appFunctionCalls++;
+  if (context is ContextObject) return context.callWith(function, options);
   return switch (function) {
     final ScriptableOptionWithResolver f => f(context, options),
     final ScriptableOption f => f(context),

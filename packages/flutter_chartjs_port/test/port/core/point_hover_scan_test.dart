@@ -10,6 +10,8 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 /// A chart event at a position, as the spec of the interaction makes it.
 final class _Event(
   @override final IChart? chart,
@@ -415,10 +417,11 @@ void main() {
         datasets: 2,
         // A scriptable radius: no typed parameter holds it.
         datasetExtra: (k) => <String, Object?>{
-          'pointRadius': (Object? ctx) => switch (jsGet(ctx, 'dataIndex')) {
-            final int i => i % 7 + k,
-            _ => 3,
-          },
+          'pointRadius': (Object? ctx) =>
+              switch (contextRead(ctx, 'dataIndex')) {
+                final int i => i % 7 + k,
+                _ => 3,
+              },
         },
       );
       final data = chart.getDatasetMeta(0).data;

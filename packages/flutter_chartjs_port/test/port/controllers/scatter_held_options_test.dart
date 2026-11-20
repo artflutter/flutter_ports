@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 const _red = ChartPaint.solid(ui.Color(0xffff0000));
 const _blue = ChartPaint.solid(ui.Color(0xff0000ff));
 
@@ -99,9 +101,9 @@ List<Object?> _observe(Chart chart) {
         p.stop,
         p.active,
         ..._options(p.options),
-        p.$context?.jsKeys(),
+        contextKeysOrNull(p.$context),
         for (final key in ['index', 'dataIndex', 'mode', 'active'])
-          p.$context?.jsRead(key),
+          contextField(p.$context, key),
       ],
   ];
 }
@@ -232,9 +234,9 @@ void main() {
       final counts = _twins(
         () => _config(
           dataset: <String, Object?>{
-            'pointRadius': (Object? ctx, Object? _) {
+            'pointRadius': (ScriptableContext ctx, Object? _) {
               calls++;
-              return 3.0 + (jsGet(ctx, 'dataIndex')! as int) % 3;
+              return 3.0 + ctx.dataIndex! % 3;
             },
           },
         ),

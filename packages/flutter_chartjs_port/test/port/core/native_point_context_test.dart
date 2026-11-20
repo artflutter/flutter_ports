@@ -42,15 +42,10 @@ class _CustomPoint() extends PointElement {
 }
 
 void main() {
-  test('refresh uses live items and original key insertion order', () {
+  test('refresh uses live items', () {
     final point = PointElement();
     final context = ScriptableContext.data(null, 0, point);
     point.$context = context;
-    context
-      ..jsDelete('parsed')
-      ..jsDelete('raw')
-      ..jsWrite('note', true)
-      ..jsWrite('1', 'first');
     final raw = <Object?>[
       <String, Object?>{'raw': 1},
     ];
@@ -62,18 +57,8 @@ void main() {
     expect(reader.read(0), same(context));
     expect(context.raw, same(raw[0]));
     expect(context.parsed, same(parsed[0]));
-    expect(context.jsKeys(), [
-      '1',
-      'active',
-      'dataIndex',
-      'element',
-      'index',
-      'mode',
-      'type',
-      'note',
-      'parsed',
-      'raw',
-    ]);
+    expect(context.mode, 'none');
+    expect(context.index, 0);
     raw[0] = null;
     parsed[0] = 7.0;
     reader.read(0);

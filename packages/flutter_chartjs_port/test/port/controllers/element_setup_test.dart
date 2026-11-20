@@ -81,7 +81,7 @@ final class _ObservedPointScope(final PointOptionsScope source)
   }
 }
 
-ChartPaint _blue(ChartContext context) =>
+ChartPaint _blue(ScriptableContext context) =>
     const ChartPaint.solid(Color(0xff0000ff));
 
 ChartConfig config({ChartScript<ChartPaint> color = _blue}) => ChartConfig(
@@ -147,7 +147,7 @@ void main() {
       defaults.restoreState(saved);
       var mutate = false;
       final trace = <Object?>[];
-      ChartPaint color(ChartContext context) {
+      ChartPaint color(ScriptableContext context) {
         final index = context.dataIndex;
         if (mutate) trace.add(index);
         if (mutate && index == 1) {

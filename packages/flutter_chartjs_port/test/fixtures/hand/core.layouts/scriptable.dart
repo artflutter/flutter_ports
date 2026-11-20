@@ -19,10 +19,10 @@ Map<String, Object?> fixture() => <String, Object?>{
     },
     'options': <String, Object?>{
       'layout': <String, Object?>{
-        'padding': (Object? ctx) {
+        'padding': (ContextObject ctx) {
           // 10% padding
-          final horizontalPadding = (jsGet(ctx, 'chart')! as Chart).width * 0.1;
-          final verticalPadding = (jsGet(ctx, 'chart')! as Chart).height * 0.1;
+          final horizontalPadding = (ctx.chart as Chart).width * 0.1;
+          final verticalPadding = (ctx.chart as Chart).height * 0.1;
           return EdgeInsets.symmetric(
             horizontal: horizontalPadding,
             vertical: verticalPadding,

@@ -189,26 +189,28 @@ List<DataPoint> _points(Chart chart) =>
             as JsObjectFace)['data']!
         as List<DataPoint>;
 
+/// A parent context for a tick with no scale: a tick context of its own.
+ScriptableScaleContext _parentContext() =>
+    ScriptableScaleContext.tick(null, Tick(value: -1), -1);
+
 void main() {
   setUpDefaultsRestore();
 
   test('prepared contexts capture their original parent and index', () {
-    final parent = ScriptableScaleContext(null)..jsWrite('type', 'scale');
+    final parent = _parentContext();
     final tick = Tick(value: 17)..prepareContextForLayout(parent, 4);
     tick.value = 23;
     final context = tick.$context!;
-    expect(context.prototype, same(parent));
+    expect(context.parent, same(parent));
     expect(context.tick, same(tick));
-    expect(context.index, 4.0);
-    expect(context.jsKeys(), ['tick', 'index', 'type']);
+    expect(context.index, 4);
+    expect(context.type, 'tick');
     expect(tick.$context, same(context));
-    context.jsWrite('extra', 'kept');
-    expect(tick.$context!.jsRead('extra'), 'kept');
   });
 
   test('explicit context writes and clears replace pending creation', () {
-    final parent = ScriptableScaleContext(null);
-    final supplied = ScriptableScaleContext(parent)..jsWrite('index', 99.0);
+    final parent = _parentContext();
+    final supplied = ScriptableScaleContext.tick(parent, Tick(value: 9), 99);
     final tick = Tick(value: 0)..prepareContextForLayout(parent, 1);
     tick.$context = supplied;
     tick.prepareContextForLayout(parent, 2);
@@ -221,14 +223,14 @@ void main() {
   });
 
   test('repeated preparation preserves the first context identity', () {
-    final first = ScriptableScaleContext(null);
-    final second = ScriptableScaleContext(null);
+    final first = _parentContext();
+    final second = _parentContext();
     final tick = Tick(value: 0)
       ..prepareContextForLayout(first, 1)
       ..prepareContextForLayout(second, 2);
     final context = tick.$context!;
-    expect(context.prototype, same(first));
-    expect(context.index, 1.0);
+    expect(context.parent, same(first));
+    expect(context.index, 1);
     tick.prepareContextForLayout(second, 3);
     expect(tick.$context, same(context));
   });
@@ -249,7 +251,7 @@ void main() {
     void afterRotation(Scale scale) {
       final ticks = scale.ticks!;
       for (var i = 0; i < ticks.length; i++) {
-        expect(ticks[i].$context!.index, i.toDouble());
+        expect(ticks[i].$context!.index, i);
         expect(ticks[i].$context!.tick, same(ticks[i]));
         after++;
       }
@@ -277,12 +279,10 @@ void main() {
     final scale = pair.fast.scales['x']!;
     expect(scale.ticks!.contains(retained), isFalse);
     final oldParent = scale.$context!;
-    scale.$context = ScriptableScaleContext(oldParent.prototype)
-      ..jsWrite('scale', scale)
-      ..jsWrite('type', 'scale');
+    scale.$context = ScriptableScaleContext.scale(oldParent.parent, scale);
     pair.update();
-    expect(retained.$context!.prototype, same(oldParent));
-    expect(retained.$context!.index, 1.0);
+    expect(retained.$context!.parent, same(oldParent));
+    expect(retained.$context!.index, 1);
     expect(retained.$context!.tick, same(retained));
   });
 
@@ -300,7 +300,7 @@ void main() {
     for (final tick in pair.fast.scales['x']!.ticks!) {
       expect(tick.$context!.tick, same(tick));
       expect(tick.$context!.index, tick.value);
-      expect(tick.$context!.jsKeys(), ['tick', 'index', 'type']);
+      expect(tick.$context!.type, 'tick');
     }
   });
 
@@ -372,10 +372,10 @@ void main() {
       ..update()
       ..update();
     var calls = 0;
-    Object font(Object? context) {
+    Object font(ScriptableScaleContext context) {
       calls++;
-      final index = (context! as ContextObject)['index']! as num;
-      return ChartTextStyle(fontSize: index.toInt().isEven ? 12 : 18);
+      final index = context.index!;
+      return ChartTextStyle(fontSize: index.isEven ? 12 : 18);
     }
 
     pair.tickOption('font', font);

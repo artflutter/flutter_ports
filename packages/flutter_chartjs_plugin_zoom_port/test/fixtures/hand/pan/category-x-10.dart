@@ -33,8 +33,8 @@ Map<String, Object?> fixture() {
             'data': data,
             'barPercentage': 1,
             'categoryPercentage': 1,
-            'backgroundColor': (Object? c) =>
-                jsToNumber(jsGet(c, 'index')) < 50 ? 'blue' : 'red',
+            'backgroundColor': (ScriptableContext c) =>
+                c.index < 50 ? 'blue' : 'red',
           },
         ],
       },

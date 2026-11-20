@@ -149,8 +149,11 @@ base class Defaults(
     datasets = DatasetOptionsByTypeScope();
     devicePixelRatioCell = OptFunction<double>(
       _fn1(
-        (context) =>
-            (jsGet(context, 'chart')! as IChart).platform.getDevicePixelRatio(),
+        (context) => switch (context) {
+          final ContextObject context => context.chart,
+          // A context of a spec: the read by name.
+          _ => jsGet(context, 'chart')! as IChart,
+        }.platform.getDevicePixelRatio(),
       ),
     );
     elements = ElementOptionsByTypeScope();

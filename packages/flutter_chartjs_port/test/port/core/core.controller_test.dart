@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
+import '../../support/context_keys.dart';
 import '../../support/data_scope.dart';
 import '../../support/list_splice.dart';
 import 'controller_reference.dart';
@@ -216,7 +217,7 @@ String _argText(Object? value, Observations o) {
 /// (core.controller.js:670-680, :786-808, :1162-1179). An absent `replay`
 /// is `undefined` upstream and `false` in the port, and upstream writes
 /// `changed` only with `true` (plugin.tooltip.js:1236-1241). The scale
-/// context keeps its face.
+/// context gives its typed members.
 List<(String, Object?)> _argEntries(PluginHook<Object> hook, Object args) {
   final before = hook.cancelable;
   return switch (args) {
@@ -249,6 +250,11 @@ List<(String, Object?)> _argEntries(PluginHook<Object> hook, Object args) {
     TooltipDrawHookArgs(:final tooltip) => [
       ('tooltip', tooltip),
       if (before) ('cancelable', true),
+    ],
+    // The scale context of the scale hooks: its typed members in the key
+    // order of the upstream literal.
+    final ContextObject context => [
+      for (final k in contextKeys(context)) (k, contextField(context, k)),
     ],
     final JsObjectFace face => [
       for (final k in jsObjectKeys(face)) (k, jsGet(face, k)),
@@ -555,8 +561,8 @@ void main() {
         ..observe('dataset element', '${meta.dataset}')
         ..observe(
           'context',
-          '${chart.getContext()['type']} '
-              '${identical(chart.getContext()['chart'], chart)}',
+          '${chart.getContext().type} '
+              '${identical(chart.getContext().chart, chart)}',
         )
         ..observe(
           'same context',
@@ -1490,8 +1496,8 @@ void main() {
       addTearDown(second.destroy);
       expect(second.id, first.id + 1);
       final context = first.getContext();
-      expect(context['chart'], same(first));
-      expect(context['type'], 'chart');
+      expect(context.chart, same(first));
+      expect(context.type, 'chart');
       expect(first.getContext(), same(context));
     });
 

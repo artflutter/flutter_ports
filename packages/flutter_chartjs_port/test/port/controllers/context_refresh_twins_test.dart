@@ -8,6 +8,8 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 const red = ui.Color(0xffff0000);
 const blue = ui.Color(0xff0000ff);
 const green = ui.Color(0xff00ff00);
@@ -119,7 +121,7 @@ class _ReadingScatter(super.chart, super.datasetIndex, [super.newTarget])
   );
 
   @override
-  ContextObject getContext([int? index, bool? active, String? mode]) {
+  ScriptableContext getContext([int? index, bool? active, String? mode]) {
     if (index != null) reads++;
     return super.getContext(index, active, mode);
   }
@@ -246,12 +248,12 @@ String _state(Chart chart) {
         continue;
       }
       out
-        ..write(context.jsKeys().join(','))
+        ..write(contextKeys(context).join(','))
         ..write('|');
-      for (final key in context.jsKeys()) {
+      for (final key in contextKeys(context)) {
         if (key == 'element') continue;
         out
-          ..write(_plain(context.jsRead(key)))
+          ..write(_plain(contextField(context, key)))
           ..write('|');
       }
       out.write(';');
@@ -260,11 +262,11 @@ String _state(Chart chart) {
     if (own != null) {
       out
         ..write('dataset:')
-        ..write(own.jsKeys().join(','))
+        ..write(contextKeys(own).join(','))
         ..write('|')
-        ..write(_plain(own.jsRead('active')))
-        ..write(_plain(own.jsRead('mode')))
-        ..write(_plain(own.jsRead('index')))
+        ..write(_plain(contextField(own, 'active')))
+        ..write(_plain(contextField(own, 'mode')))
+        ..write(_plain(contextField(own, 'index')))
         ..write(';');
     }
   }
@@ -538,24 +540,6 @@ List<_ProbePoint> _probes(Chart chart, [int dataset = 0]) {
   return [for (var i = 0; i < points.length; i++) points[i] = _ProbePoint()];
 }
 
-/// Deletes and reinserts keys of the contexts at a hook, as user code can.
-void _editContexts(Chart chart, String hook) {
-  if (hook != 'afterLayout' && hook != 'beforeDatasetUpdate') return;
-  final elements = chart.getDatasetMeta(0).data;
-  if (elements.length < 8) return;
-  final first = (elements[3] as Element).$context;
-  final second = (elements[5] as Element).$context;
-  final third = (elements[6] as Element).$context;
-  first?.jsDelete('parsed');
-  second?.jsDelete('mode');
-  second?.jsDelete('index');
-  second?.jsWrite('index', 99.0);
-  third
-    ?..jsWrite('note', hook)
-    ..jsDelete('raw')
-    ..jsDelete('active');
-}
-
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
@@ -573,10 +557,6 @@ void main() {
     for (final type in _refIds.keys) {
       test('$type: contexts at each hook and tick, key order, results', () {
         _expectTwin(type);
-      });
-
-      test('$type: deletion and reinsertion of keys by user code', () {
-        _expectTwin(type, onHook: _editContexts);
       });
 
       test('$type: two datasets read each other through the hooks', () {
@@ -601,10 +581,10 @@ void main() {
       expect(probes[5].contextReads, 1);
       for (var i = 0; i < _length; i++) {
         final context = probes[i].$context!;
-        expect(context.jsRead('mode'), 'default');
-        expect(context.jsRead('index'), i);
-        expect(context.jsRead('dataIndex'), i);
-        expect(context.jsRead('active'), false);
+        expect(contextField(context, 'mode'), 'default');
+        expect(contextField(context, 'index'), i);
+        expect(contextField(context, 'dataIndex'), i);
+        expect(contextField(context, 'active'), false);
       }
     });
 
@@ -616,12 +596,16 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       meta.controller!.update(UpdateMode.none);
       for (var i = 0; i < _length; i++) {
-        expect(probes[i].$context!.jsRead('mode'), 'none', reason: 'item $i');
+        expect(
+          contextField(probes[i].$context, 'mode'),
+          'none',
+          reason: 'item $i',
+        );
       }
       final pass = meta.controller!.getMaxOverflow();
       expect(pass, isNot(false));
       for (var i = 0; i < _length; i++) {
-        expect(probes[i].$context!.jsRead('mode'), 'default');
+        expect(contextField(probes[i].$context, 'mode'), 'default');
       }
     });
 
@@ -646,7 +630,7 @@ void main() {
                 );
                 seen.add([
                   for (final point in meta.data)
-                    (point as Element).$context?.jsRead('mode'),
+                    contextField((point as Element).$context, 'mode'),
                 ]);
               }
               return false;
@@ -709,7 +693,7 @@ void main() {
           meta.controller!.update(UpdateMode.none);
           seen.add([
             for (final point in meta.data)
-              (point as Element).$context?.jsRead('mode'),
+              contextField((point as Element).$context, 'mode'),
           ]);
         };
         chart.update(UpdateMode.none);
@@ -989,8 +973,8 @@ void main() {
       chart.getDatasetMeta(0).controller!.update_('none');
       expect(probes[7].$context, isNotNull);
       expect(identical(probes[7].$context, old), isFalse);
-      expect(probes[7].$context!.jsRead('mode'), 'default');
-      expect(probes[7].$context!.jsRead('index'), 7);
+      expect(contextField(probes[7].$context, 'mode'), 'default');
+      expect(contextField(probes[7].$context, 'index'), 7);
     });
   });
 
@@ -1005,7 +989,7 @@ void main() {
       }
       chart.update(UpdateMode.none);
       expect(probes[6].contextReads, 1);
-      expect(probes[6].$context!.jsRead('mode'), 'none');
+      expect(contextField(probes[6].$context, 'mode'), 'none');
     });
 
     test('bubble: the two scans and the loop refresh, the pass is last', () {
@@ -1013,8 +997,8 @@ void main() {
       final chart = _chart(config);
       final probes = _probes(chart);
       chart.update(UpdateMode.none);
-      expect(probes[6].$context!.jsRead('mode'), 'default');
-      expect(probes[6].$context!.jsRead('index'), 6);
+      expect(contextField(probes[6].$context, 'mode'), 'default');
+      expect(contextField(probes[6].$context, 'index'), 6);
     });
 
     test('bar: the bulk loop writes through the reader', () {
@@ -1026,10 +1010,10 @@ void main() {
       ];
       chart.update(UpdateMode.none);
       expect(probes[6].bulkWrites, greaterThan(0));
-      expect(probes[6].$context!.jsRead('mode'), 'none');
-      expect(probes[6].$context!.jsRead('index'), 6);
-      expect(probes[6].$context!.jsRead('dataIndex'), 6);
-      expect(probes[6].$context!.jsRead('raw'), isA<double>());
+      expect(contextField(probes[6].$context, 'mode'), 'none');
+      expect(contextField(probes[6].$context, 'index'), 6);
+      expect(contextField(probes[6].$context, 'dataIndex'), 6);
+      expect(contextField(probes[6].$context, 'raw'), isA<double>());
     });
   });
 }

@@ -42,7 +42,7 @@ final class const _Area(
 /// helpers.segment.js:280.
 final class _Chart() implements IChart {
   @override
-  Map<String, Object?> getContext() => {'chart': 'chart', 'type': 'chart'};
+  ScriptableChartContext getContext() => ScriptableChartContext(this);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

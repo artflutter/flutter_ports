@@ -14,12 +14,9 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           // option in dataset
           'data': <Object?>[0, 5, 10, null, -10, -5],
-          'pointBackgroundColor': (Object? ctx) {
+          'pointBackgroundColor': (ScriptableContext ctx) {
             final value = jsOrZero(
-              jsGet(
-                jsGet(jsGet(ctx, 'dataset'), 'data'),
-                jsGet(ctx, 'dataIndex'),
-              ),
+              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
             );
             return value > 8
                 ? '#ff0000'
@@ -40,12 +37,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       'elements': <String, Object?>{
         'line': <String, Object?>{'fill': FillTarget.none},
         'point': <String, Object?>{
-          'backgroundColor': (Object? ctx) {
+          'backgroundColor': (ScriptableContext ctx) {
             final value = jsOrZero(
-              jsGet(
-                jsGet(jsGet(ctx, 'dataset'), 'data'),
-                jsGet(ctx, 'dataIndex'),
-              ),
+              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
             );
             return value > 8
                 ? '#ff00ff'

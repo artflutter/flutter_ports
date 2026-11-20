@@ -9,6 +9,8 @@ import 'package:chartjs_test_utils/pure.dart' show createMockContext;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 // The typed element options of Chart.js ADR 0021, section 7, on real charts
 // of the harness (Chart.js ADR 0022). core.datasetController_test.dart runs
 // the same checks on its fake chart, and the parse paths. This file needs
@@ -276,7 +278,7 @@ void main() {
           'typedLine',
           dataset: {
             'backgroundColor': (Object? context) => ChartPaint.solid(
-              jsGet(context, 'dataIndex') == 0
+              contextRead(context, 'dataIndex') == 0
                   ? const native_ui.Color.fromRGBO(0, 0, 255, 1)
                   : const native_ui.Color.fromRGBO(255, 0, 0, 1),
             ),

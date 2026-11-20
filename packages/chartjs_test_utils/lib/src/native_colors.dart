@@ -103,6 +103,20 @@ void nativeFixtureColors(Object? config) {
           Object? b,
         ) => color(fn(a, b)),
         final Object? Function(Object?) fn => (Object? a) => color(fn(a)),
+        // A function of a typed context (row `adapt-typed-contexts`) keeps the
+        // type of its parameter.
+        final Object? Function(ContextObject) fn => (ContextObject a) => color(
+          fn(a),
+        ),
+        final Object? Function(ScriptableContext) fn => (
+          ScriptableContext a,
+        ) => color(fn(a)),
+        final Object? Function(ScriptableScaleContext) fn => (
+          ScriptableScaleContext a,
+        ) => color(fn(a)),
+        final Object? Function(ScriptableScalePointLabelContext) fn => (
+          ScriptableScalePointLabelContext a,
+        ) => color(fn(a)),
         final Object? Function() fn => () => color(fn()),
         _ => value,
       };

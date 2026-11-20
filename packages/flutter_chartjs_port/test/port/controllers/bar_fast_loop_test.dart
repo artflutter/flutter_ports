@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 // Each case builds two charts from equal configs. Chart `a` is a `Chart`: it
 // takes the fast loop where the guards allow it. Chart `b` never takes
 // the fast loop: it is the ordinary loop of upstream for each bar. The case
@@ -175,7 +177,7 @@ Object _observe(Chart chart) => [
                 'mode',
                 'active',
               ])
-                _plain(jsGet(context, key)),
+                _plain(contextField(context, key)),
           ],
       ],
 ];
@@ -297,7 +299,7 @@ void main() {
         expect(fastBarModesTaken, before + 1);
         expect(_observe(a), _observe(b));
         expect(
-          jsGet((a.getDatasetMeta(0).data[3] as BarElement).$context, 'mode'),
+          (a.getDatasetMeta(0).data[3] as BarElement).$context!.mode,
           mode,
         );
       }

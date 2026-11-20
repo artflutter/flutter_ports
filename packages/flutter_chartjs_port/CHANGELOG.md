@@ -16,6 +16,14 @@
   raw config: `'borderDash': <double>[5, 5]`.
 - The bar option `barThickness` holds a `BarThickness`: `BarThickness.pixels(12)` or
   `BarThickness.flex`, also in a raw config. A number or a text stops a debug build.
+- A scriptable option gets a typed context: `ScriptableContext` for a dataset option (`active`,
+  `dataIndex`, `datasetIndex`, `parsed`, `raw`, `element`, `index`, `mode`, `chart`),
+  `ScriptableScaleContext` for a scale or a tick (`scale`, `tick`, `index`), and
+  `ScriptableChartContext`, `ScriptableScalePointLabelContext`, `ScriptableTooltipContext` and
+  `ScriptableLineSegmentContext`. Declare the parameter with the class:
+  `(ScriptableContext context) => (context.dataIndex ?? 1).isEven ? a : b`. A context has no
+  access by name, and an absent member is `null`. `ChartContext` and `createContext` are gone:
+  `ChartScript` takes a `ScriptableContext`.
 
 ## 0.1.0-beta.3
 

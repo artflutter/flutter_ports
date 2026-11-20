@@ -49,8 +49,7 @@ export 'package:flutter_chartjs_port/src/typed/axes.dart'
         RadialLinearAxis,
         TimeAxis,
         TimeSeriesAxis;
-export 'package:flutter_chartjs_port/src/typed/callbacks.dart'
-    show ChartContext, ChartScript;
+export 'package:flutter_chartjs_port/src/typed/callbacks.dart' show ChartScript;
 export 'package:flutter_chartjs_port/src/typed/chart_value.dart'
     show ChartConstant, ChartIndexed, ChartResolver, ChartValue;
 export 'package:flutter_chartjs_port/src/typed/config.dart'

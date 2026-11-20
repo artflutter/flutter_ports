@@ -296,20 +296,20 @@ void main() {
       final items = [points, maps];
       for (final (form, chart) in [a, b].indexed) {
         final context = _controllerOf(chart).getContext(1, true, 'mode');
-        expect(context['raw'], same(items[form][1]));
-        expect(context['parsed'], same(items[form][1]));
-        expect(context['dataIndex'], 1);
-        expect(context['index'], 1);
-        expect(context['active'], isTrue);
-        expect(context['mode'], 'mode');
+        expect(context.raw, same(items[form][1]));
+        expect(context.parsed, same(items[form][1]));
+        expect(context.dataIndex, 1);
+        expect(context.index, 1);
+        expect(context.active, isTrue);
+        expect(context.mode, 'mode');
         // A write of the dataset is visible at the next read.
         final datasets =
             readOption(chart.data, OptionKey.datasets)! as List<Object?>;
         final dataset = JsObjectLike(datasets[0]!);
         final other = <Object?>['a', 'b'];
         dataset['data'] = other;
-        expect(_controllerOf(chart).getContext(1)['raw'], 'b');
-        expect(_controllerOf(chart).getContext(1)['active'], isFalse);
+        expect(_controllerOf(chart).getContext(1).raw, 'b');
+        expect(_controllerOf(chart).getContext(1).active, isFalse);
         dataset['data'] = items[form];
       }
     });
@@ -345,7 +345,7 @@ void main() {
         ..jsWrite('options', <String, Object?>{'responsive': false});
       final chart = _chart(root);
       expect(_controllerOf(chart).getDataset(), same(dataset));
-      expect(_controllerOf(chart).getContext(1)['raw'], 2.0);
+      expect(_controllerOf(chart).getContext(1).raw, 2.0);
     });
 
     test('a chart subclass keeps its data getter', () {

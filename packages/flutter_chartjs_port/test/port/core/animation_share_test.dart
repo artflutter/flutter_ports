@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/animation_spec_input.dart';
+import '../../support/context_keys.dart';
 
 // `BarController.update` with one resolution of the animation options for
 // its bars (`lib/src/core/animation_share.dart`, row
@@ -146,9 +147,9 @@ String _contexts(Chart chart) => [
     if (bar.$context case final Object context)
       [
         for (final name in const ['index', 'dataIndex', 'active', 'mode'])
-          jsGet(context, name),
-        jsGet(jsGet(context, 'parsed'), 'y'),
-        jsGet(context, 'raw'),
+          contextRead(context, name),
+        jsGet(contextRead(context, 'parsed'), 'y'),
+        contextRead(context, 'raw'),
       ].join(','),
 ].join(';');
 
@@ -349,7 +350,7 @@ void main() {
         _bar(
           animation: <String, Object?>{
             'delay': (Object? context, Object? options) =>
-                switch (jsGet(context, 'dataIndex')) {
+                switch (contextRead(context, 'dataIndex')) {
                   final num index => index * 3.0,
                   _ => 0.0,
                 },

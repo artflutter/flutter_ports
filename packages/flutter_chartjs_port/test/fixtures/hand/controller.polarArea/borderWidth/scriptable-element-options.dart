@@ -23,8 +23,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         'arc': <String, Object?>{
           'backgroundColor': 'transparent',
           'borderColor': '#888',
-          'borderWidth': (Object? ctx) {
-            return jsToNumber(jsGet(ctx, 'dataIndex')) * 2;
+          'borderWidth': (ScriptableContext ctx) {
+            return jsToNumber(ctx.dataIndex ?? undefined) * 2;
           },
         },
       },

@@ -10,6 +10,8 @@ import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 const red = ui.Color(0xffff0000);
 const blue = ui.Color(0xff0000ff);
 const green = ui.Color(0xff00ff00);
@@ -313,9 +315,9 @@ Object? _observeElement(Object? value) {
       for (final animation in element.$animations?.values ?? <Animation>[])
         animation.active(),
     ],
-    element.$context?.jsKeys(),
+    contextKeysOrNull(element.$context),
     for (final key in const ['index', 'dataIndex', 'mode', 'active', 'parsed'])
-      _plain(element.$context?.jsRead(key)),
+      _plain(contextField(element.$context, key)),
   ];
 }
 
@@ -632,7 +634,7 @@ void main() {
     (type, trace) => _config(type, {
       'backgroundColor': (Object? ctx) {
         final context = ctx! as ScriptableContext;
-        final element = context.jsRead('element')! as Element;
+        final element = contextField(context, 'element')! as Element;
         trace.add([
           context.index,
           context.mode,

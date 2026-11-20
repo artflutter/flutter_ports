@@ -433,7 +433,7 @@ final class _FakeChart() implements IChart {
 /// animation object, as a chart whose `chart.options.animation` is truthy.
 final class _CacheChart() implements IChart {
   @override
-  AnyObject getContext() => <String, Object?>{};
+  ScriptableChartContext getContext() => ScriptableChartContext(this);
 
   @override
   AnyObject get options => <String, Object?>{
@@ -977,7 +977,12 @@ void main() {
       final items = <TooltipItem>[];
       final active = <ActiveElement>[];
       final animations = Animations(chart, false);
-      final context = <String, Object?>{};
+      // The typed tooltip context (row `adapt-typed-contexts`).
+      final context = ScriptableTooltipContext(
+        null,
+        tooltip: null,
+        tooltipItems: null,
+      );
       final values = <String, Object?>{
         'opacity': 0.5,
         'width': 10.0,
@@ -1691,7 +1696,12 @@ void main() {
       final options = t.options;
       t
         ..initialize(<String, Object?>{})
-        ..[r'$context'] = <String, Object?>{};
+        // A typed context in place of `{}` (row `adapt-typed-contexts`).
+        ..[r'$context'] = ScriptableTooltipContext(
+          null,
+          tooltip: null,
+          tooltipItems: null,
+        );
       chart.reset();
       expect(identical(t.options, options), isTrue);
       expect(identical(t[r'$context'], undefined), isTrue);

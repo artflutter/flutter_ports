@@ -408,11 +408,10 @@ void main() {
           type,
           // A scriptable radius: no typed parameter holds it.
           datasetExtra: () => {
-            'pointRadius': (Object? ctx) {
-              final context = ctx! as JsObjectFace;
+            'pointRadius': (ScriptableContext context) {
               calls.add(
-                '${context.jsRead('index')} ${context.jsRead('dataIndex')} '
-                '${context.jsRead('parsed') is ParsedItem}',
+                '${context.index} ${context.dataIndex} '
+                '${context.parsed is ParsedItem}',
               );
               return 2.0;
             },
@@ -433,10 +432,9 @@ void main() {
           type,
           // A scriptable radius: no typed parameter holds it.
           datasetExtra: () => {
-            'pointRadius': (Object? ctx) {
-              final context = ctx! as JsObjectFace;
-              final index = (context.jsRead('index')! as num).toDouble();
-              final scale = context.jsRead('chart')! as Chart;
+            'pointRadius': (ScriptableContext context) {
+              final index = context.index.toDouble();
+              final scale = context.chart as Chart;
               chart = scale;
               final r = chart.scales['r']!;
               // The next points of the loop read the new range.

@@ -68,7 +68,7 @@ void main() {
                 case 'descriptor':
                   raw().jsWrite('_scriptable', false);
                 case 'array' || 'index':
-                  ctx.index = 1.0;
+                  ctx.index = 1;
                 case 'delete':
                   scope['borderWidth'] = 7.0;
                   raw().jsDelete('borderWidth');

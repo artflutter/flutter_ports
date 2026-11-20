@@ -326,7 +326,7 @@ void main() {
         ],
         [1.0471975511965976, 2.0943951023931953, 3.141592653589793],
       );
-      expect(meta.controller!.getContext(1)['raw'], '2');
+      expect(meta.controller!.getContext(1).raw, '2');
       expect(
         _arcs(chart),
         referenceMatcher(

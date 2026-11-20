@@ -302,23 +302,11 @@ Map<String, Object?> fixture() {
         'datasets': <Object?>[
           <String, Object?>{
             'color': const ChartPaint.solid(Color(0x00000000)), // transparent
-            'colorFrom': (Object? c) => getColor(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'from',
-              ),
+            'colorFrom': (ScriptableContext c) => getColor(
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'from'),
             ),
-            'colorTo': (Object? c) => getColor(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'to',
-              ),
+            'colorTo': (ScriptableContext c) => getColor(
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'to'),
             ),
             'data': data,
           },

@@ -1087,10 +1087,10 @@ void main() {
 }
 
 /// `ctx.dataset.data[ctx.dataIndex] || 0` (:693, :697, :701).
-num _dataValue(Object? ctx) {
+num _dataValue(ScriptableContext ctx) {
   final value = jsGetIndex(
-    jsGet(jsGet(ctx, 'dataset'), 'data'),
-    (jsGet(ctx, 'dataIndex')! as num).toDouble(),
+    jsGet(ctx.dataset, 'data'),
+    ctx.dataIndex!.toDouble(),
   );
   return jsTruthy(value) ? value! as num : 0;
 }

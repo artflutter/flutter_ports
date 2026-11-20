@@ -16,6 +16,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../fixtures/index.dart' show handFixtures;
+import '../../support/context_keys.dart';
 import '../../support/fill_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../core/resolver_trace_cases.dart'
@@ -545,10 +546,10 @@ void _observeElement(String label, IElement element, StringBuffer out) {
   }
   out.writeln('    getProps ${_guarded(() => _props(element))}');
   final context = read[r'$context'];
-  if (_isObject(context)) {
+  if (context is ContextObject) {
     out.writeln(
-      '    \$context keys ${_canon(jsObjectKeys(context))} '
-      '${[for (final key in _contextKeys) '$key=${_guarded(() => _canon(jsGet(context, key), 0, 1))}'].join(' ')}',
+      '    \$context keys ${_canon(contextKeys(context))} '
+      '${[for (final key in _contextKeys) '$key=${_guarded(() => _canon(upstreamContextValue(context, key), 0, 1))}'].join(' ')}',
     );
   } else {
     out.writeln('    \$context ${_canon(context)}');
@@ -1098,6 +1099,16 @@ String _traceLine(String path, List<Object?> args) {
           _ => '$key=-',
         },
     ].join(' ');
+  } else if (first is ContextObject) {
+    // A typed context in the upstream form of its keys (row
+    // `adapt-typed-contexts`).
+    head = [
+      for (final key in _contextKeys)
+        switch (upstreamContextValue(first, key)) {
+          final Object? v when identical(v, undefined) => '$key=-',
+          final v => '$key=${_canon(v, 0, 1)}',
+        },
+    ].join(' ');
   } else if (_isObject(first)) {
     head = [
       for (final key in _contextKeys)
@@ -1154,9 +1165,15 @@ const native_ui.Color _backgroundOdd = native_ui.Color.fromRGBO(
   0.45,
 );
 
+/// `context[key]` of a scriptable option of the configs: the value of the
+/// typed context in the upstream form, with [undefined] for an absent key, so
+/// that each function gives the value of its upstream twin.
+Object? _ctx(Object? context, String key) =>
+    upstreamContextValue(context! as ContextObject, key);
+
 /// `stressScriptableBackground` of the gallery.
 Object? _scriptableBackground(Object? context) =>
-    jsToNumber(jsGet(context, 'dataIndex')) % 2 == 0
+    jsToNumber(_ctx(context, 'dataIndex')) % 2 == 0
     ? _background
     : _backgroundOdd;
 
@@ -1313,7 +1330,7 @@ final List<_Case> _benchCases = [
       'line',
       animation: <String, Object?>{
         'delay': (Object? ctx) =>
-            jsGet(ctx, 'type') == 'data' ? jsGet(ctx, 'dataIndex') : 0.0,
+            _ctx(ctx, 'type') == 'data' ? _ctx(ctx, 'dataIndex') : 0.0,
       },
     ),
   ),
@@ -1350,7 +1367,7 @@ Map<String, Object?> _hazardConfig() => _line(
     <String, Object?>{
       'data': _values(8),
       'pointBorderWidth': (Object? ctx, Object? options) {
-        if (jsGet(ctx, 'dataIndex') == 2.0) {
+        if (_ctx(ctx, 'dataIndex') == 2.0) {
           (options! as JsObjectFace)['radius'] = 9.0;
         }
         return 1.0;
@@ -1363,7 +1380,7 @@ Map<String, Object?> _hazardConfig() => _line(
   },
 );
 
-Object? _dataIndex(Object? ctx) => jsGet(ctx, 'dataIndex');
+Object? _dataIndex(Object? ctx) => _ctx(ctx, 'dataIndex');
 
 /// `Chart.defaults.elements.point`.
 JsObjectFace _pointDefaults() =>
@@ -1385,7 +1402,7 @@ _Case _animationDefaultsCase() {
           <String, Object?>{
             'data': _values(6),
             'pointRadius': (Object? ctx) {
-              if (jsGet(ctx, 'dataIndex') == 3.0) {
+              if (_ctx(ctx, 'dataIndex') == 3.0) {
                 animation().jsDelete('easing');
               }
               return 3.0;
@@ -1424,7 +1441,7 @@ final List<_Case> _focusedCases = [
         'data': _values(6),
         'pointRadius': (Object? ctx) => 2 + _index(ctx) % 3,
         'borderColor': (Object? ctx, Object? options) => ChartPaint.solid(
-          jsGet(ctx, 'type') == 'dataset'
+          _ctx(ctx, 'type') == 'dataset'
               ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
               : const native_ui.Color.fromRGBO(0, 255, 0, 1),
         ),
@@ -1476,7 +1493,7 @@ final List<_Case> _focusedCases = [
       ],
       options: <String, Object?>{
         'borderWidth': (Object? ctx) =>
-            jsGet(ctx, 'datasetIndex') == 1.0 ? 3.0 : 1.0,
+            _ctx(ctx, 'datasetIndex') == 1.0 ? 3.0 : 1.0,
         'backgroundColor': _constantBackground,
       },
     ),
@@ -1503,7 +1520,7 @@ final List<_Case> _focusedCases = [
         'data': _values(6),
         'pointHoverRadius': 7.0,
         'hoverBackgroundColor': (Object? ctx) => ChartPaint.solid(
-          jsGet(ctx, 'active') == true
+          _ctx(ctx, 'active') == true
               ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
               : const native_ui.Color.fromRGBO(0, 0, 255, 1),
         ),
@@ -1577,8 +1594,8 @@ final List<_Case> _focusedCases = [
       <String, Object?>{
         'data': _values(6),
         'pointRadius': (Object? ctx) {
-          if (jsGet(ctx, 'dataIndex') == 1.0) {
-            (jsGet(ctx, 'parsed')! as JsObjectFace)['x'] = 10.0;
+          if (_ctx(ctx, 'dataIndex') == 1.0) {
+            (_ctx(ctx, 'parsed')! as JsObjectFace)['x'] = 10.0;
           }
           return 3.0;
         },
@@ -1597,7 +1614,7 @@ final List<_Case> _focusedCases = [
         'animation': <String, Object?>{
           'duration': 1000.0,
           'delay': (Object? ctx, Object? options) {
-            final i = jsGet(ctx, 'dataIndex');
+            final i = _ctx(ctx, 'dataIndex');
             return i is num ? i * 10.0 : 0.0;
           },
         },
@@ -1683,7 +1700,7 @@ final List<_Case> _focusedCases = [
       <String, Object?>{
         'data': _values(6),
         'pointRadius': (Object? ctx) {
-          if (jsGet(ctx, 'dataIndex') == 2.0) {
+          if (_ctx(ctx, 'dataIndex') == 2.0) {
             _pointDefaults()['d1Extra'] = 5.0;
           }
           return 3.0;

@@ -33,11 +33,10 @@ const List<ChartPaint> stressIndexedBackground = [
 /// its context, as the scriptable option of a user does. The option needs
 /// the context. Thus the resolver gives `$shared` false, and each update
 /// resolves the options of each point (core.config.js:355-356). The
-/// dataset context has no `dataIndex`: `ToNumber(undefined) % 2` is NaN,
-/// and the dataset gets the odd color. The JS reads stay, so that the
-/// figures of case (c) stay comparable with the series before phase 9.
-ChartPaint stressScriptableBackground(Object? context) =>
-    jsToNumber(jsGet(context, 'dataIndex')) % 2 == 0
+/// dataset context has no `dataIndex` (Dart `null`), and the dataset gets the
+/// odd color, as upstream gives it for `ToNumber(undefined) % 2`.
+ChartPaint stressScriptableBackground(ScriptableContext context) =>
+    (context.dataIndex ?? 1).isEven
     ? stressChartBackground
     : stressChartBackgroundOdd;
 

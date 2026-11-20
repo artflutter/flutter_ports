@@ -16,8 +16,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'backgroundColor': '#00ff00',
           'borderColor': '#000',
           // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
-          'borderSkipped': (Object? ctx) =>
-              jsGet(ctx, 'raw') == 0 ? false : BorderSkippedEdge.start,
+          'borderSkipped': (ScriptableContext ctx) =>
+              ctx.raw == 0 ? false : BorderSkippedEdge.start,
           'borderWidth': 4,
           'minBarLength': 20,
         },

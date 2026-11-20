@@ -49,8 +49,8 @@ import 'controller_polar_area_reference.dart';
 /// The named functions of the generator (`'fn:<name>'`), with the same
 /// bodies.
 final Map<String, Object?> _functions = {
-  'angleByIndex': (Object? ctx) =>
-      jsToNumber(jsGet(ctx, 'dataIndex')) * 30 + 30,
+  'angleByIndex': (ScriptableContext ctx) =>
+      jsToNumber(ctx.dataIndex) * 30 + 30,
   'zero': () => 0.0,
 };
 

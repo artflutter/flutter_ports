@@ -108,7 +108,6 @@ ChartConfigLowering
 ChartConfiguration
 ChartConfigurationScope
 ChartConstant
-ChartContext
 ChartDataScope
 ChartElements
 ChartEvent
@@ -680,7 +679,6 @@ createAttachObserver
 createBoundaryLine
 createBoundarySegment
 createChartViewPlugin
-createContext
 createDescriptors
 createDetachObserver
 createElementOptions
@@ -1161,7 +1159,6 @@ ChartConfigLowering
 ChartConfiguration
 ChartConfigurationScope
 ChartConstant
-ChartContext
 ChartDataScope
 ChartElements
 ChartEvent
@@ -1733,7 +1730,6 @@ createAttachObserver
 createBoundaryLine
 createBoundarySegment
 createChartViewPlugin
-createContext
 createDescriptors
 createDetachObserver
 createElementOptions
@@ -2158,7 +2154,6 @@ clearCanvas
 clipArea
 clone
 color
-createContext
 debounce
 defined
 distanceBetweenPoints

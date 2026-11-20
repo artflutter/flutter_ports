@@ -338,7 +338,7 @@ ChartTextStyle get _normalFont => toFont(_modelFont());
 /// `options` only. The draw of these cases reads only `getContext()`.
 final class _TextAlignChart() implements IChart {
   @override
-  AnyObject getContext() => <String, Object?>{};
+  ScriptableChartContext getContext() => ScriptableChartContext(this);
 
   @override
   AnyObject get options => <String, Object?>{

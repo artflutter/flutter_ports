@@ -14,12 +14,12 @@ Map<String, Object?> fixture() => <String, Object?>{
     'data': <String, Object?>{
       'datasets': <Object?>[
         <String, Object?>{
-          'colorFrom': (Object? ctx) =>
-              (jsGet(jsGet(ctx, 'raw'), 'from')! as String).startsWith('Source')
+          'colorFrom': (ScriptableContext ctx) =>
+              (jsGet(ctx.raw, 'from')! as String).startsWith('Source')
               ? const ChartPaint.solid(Color(0xFF808080)) // gray
               : const ChartPaint.solid(Color(0xFF008000)), // green
-          'colorTo': (Object? ctx) {
-            final to = jsGet(jsGet(ctx, 'raw'), 'to')! as String;
+          'colorTo': (ScriptableContext ctx) {
+            final to = jsGet(ctx.raw, 'to')! as String;
             // `to.slice(0, 2)`.
             final start = to.substring(0, to.length < 2 ? to.length : 2);
             return const ['Un', 'Fr'].contains(start)

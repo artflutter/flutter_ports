@@ -18,13 +18,13 @@ Map<String, Object?> fixture() => <String, Object?>{
         'r': <String, Object?>{
           'grid': <String, Object?>{
             'display': true,
-            'color': (Object? context) {
-              return jsToNumber(jsGet(context, 'index')).remainder(2) == 0
+            'color': (ScriptableScaleContext context) {
+              return jsToNumber(context.index ?? undefined).remainder(2) == 0
                   ? 'green'
                   : 'red';
             },
-            'lineWidth': (Object? context) {
-              return jsToNumber(jsGet(context, 'index')).remainder(2) == 0
+            'lineWidth': (ScriptableScaleContext context) {
+              return jsToNumber(context.index ?? undefined).remainder(2) == 0
                   ? 5
                   : 1;
             },

@@ -85,10 +85,10 @@ final class _PointElement(
 
 /// A chart `{getContext}`.
 final class _Chart() implements IChart {
-  final Map<String, Object?> _context = {'chart': 'chart', 'type': 'chart'};
+  late final ScriptableChartContext _context = ScriptableChartContext(this);
 
   @override
-  Map<String, Object?> getContext() => _context;
+  ScriptableChartContext getContext() => _context;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

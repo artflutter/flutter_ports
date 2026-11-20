@@ -19,8 +19,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           'data': <Object?>[6, 18, 6],
           'borderColor': '#ff0000',
           // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enum.
-          'borderJoinStyle': (Object? ctx) {
-            final index = jsToNumber(jsGet(ctx, 'datasetIndex')).remainder(3);
+          'borderJoinStyle': (ScriptableContext ctx) {
+            final index = jsToNumber(ctx.datasetIndex ?? undefined)
+                .remainder(3);
             return index == 0
                 ? StrokeJoin.round
                 : index == 1
@@ -43,8 +44,9 @@ Map<String, Object?> fixture() => <String, Object?>{
       'elements': <String, Object?>{
         'line': <String, Object?>{
           'borderColor': '#00ff00',
-          'borderJoinStyle': (Object? ctx) {
-            final index = jsToNumber(jsGet(ctx, 'datasetIndex')).remainder(3);
+          'borderJoinStyle': (ScriptableContext ctx) {
+            final index = jsToNumber(ctx.datasetIndex ?? undefined)
+                .remainder(3);
             return index == 0
                 ? StrokeJoin.round
                 : index == 1

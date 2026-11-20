@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 const red = Color(0xffff0000);
 const blue = Color(0xff0000ff);
 
@@ -69,7 +71,7 @@ Object observe(List<IElement> points) => [
       p.skip,
       p.stop,
       plain(p.options),
-      p.$context?.jsKeys(),
+      contextKeysOrNull(p.$context),
       if (p.$context case final c?)
         [plain(c.raw), plain(c.parsed), c.dataIndex, c.index, c.active, c.mode],
     ],
@@ -218,7 +220,7 @@ void main() {
                 );
               case 'points':
                 meta.data[4] = _Probe()
-                  ..$context = ScriptableContext.data(null, 4, 'replacement');
+                  ..$context = ScriptableContext.data(null, 4, null);
               case 'cache':
                 final config = chart.config;
                 final scopes = config.getOptionScopes(
@@ -246,9 +248,8 @@ void main() {
                 cfg['options'] = 42;
               case 'context-keys':
                 points[4].$context!
-                  ..jsDelete('raw')
-                  ..jsDelete('parsed')
-                  ..jsWrite('note', true);
+                  ..raw = null
+                  ..parsed = null;
               case 'none':
                 break;
             }

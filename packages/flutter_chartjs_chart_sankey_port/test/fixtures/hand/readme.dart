@@ -24,25 +24,13 @@ Map<String, Object?> fixture() {
       'data': <String, Object?>{
         'datasets': <Object?>[
           <String, Object?>{
-            'colorFrom': (Object? c) => getColor(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'from',
-              ),
+            'colorFrom': (ScriptableContext c) => getColor(
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'from'),
             ),
             // DIVERGES(sankey): adapt-sankey-option-enums, the enum value.
             'colorMode': SankeyColorMode.gradient, // or 'from' or 'to'
-            'colorTo': (Object? c) => getColor(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'to',
-              ),
+            'colorTo': (ScriptableContext c) => getColor(
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'to'),
             ),
             /* optional column overrides */
             'column': <String, Object?>{'d': 1},

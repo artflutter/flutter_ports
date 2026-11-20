@@ -393,10 +393,15 @@ final class const _Case(
 /// The user calls of the scriptable options of a run, with their contexts.
 final List<String> _userCalls = [];
 
-Object? _record(String name, Object? context, Object? value) {
-  final index = jsGet(context, 'index');
-  final label = jsGet(context, 'label');
-  final type = jsGet(context, 'type');
+Object? _record(String name, ContextObject context, Object? value) {
+  final (index, label) = switch (context) {
+    ScriptableScalePointLabelContext(:final index, :final label) => (
+      index,
+      label,
+    ),
+    _ => (undefined, undefined),
+  };
+  final type = context.type;
   _userCalls.add('$name $index $label $type');
   return value;
 }
@@ -472,11 +477,8 @@ final List<_Case> _cases = [
     'a scriptable font',
     expected: const _Expect(fit: false, labels: false),
     pointLabels: () => {
-      'font': (Object? ctx) => _record(
-        'font',
-        ctx,
-        ChartTextStyle(fontSize: 10.0 + (jsGet(ctx, 'index')! as num) % 3),
-      ),
+      'font': (ScriptableScalePointLabelContext ctx) =>
+          _record('font', ctx, ChartTextStyle(fontSize: 10.0 + ctx.index % 3)),
     },
   ),
   _Case(
@@ -506,7 +508,7 @@ final List<_Case> _cases = [
     'a scriptable color',
     expected: const _Expect(labels: false),
     pointLabels: () => {
-      'color': (Object? ctx) =>
+      'color': (ContextObject ctx) =>
           _record('color', ctx, const ChartPaint.solid(ui.Color(0xFF123456))),
     },
   ),
@@ -536,8 +538,8 @@ final List<_Case> _cases = [
     'a scriptable padding',
     expected: const _Expect(fit: false),
     pointLabels: () => {
-      'padding': (Object? ctx) =>
-          _record('padding', ctx, (jsGet(ctx, 'index')! as num) % 4),
+      'padding': (ScriptableScalePointLabelContext ctx) =>
+          _record('padding', ctx, ctx.index % 4),
     },
   ),
   _Case(
@@ -559,7 +561,7 @@ final List<_Case> _cases = [
     r: () => {
       'angleLines': <String, Object?>{
         'display': true,
-        'color': (Object? ctx) =>
+        'color': (ContextObject ctx) =>
             _record('line color', ctx, const ui.Color(0xFF445566)),
       },
     },
@@ -569,7 +571,7 @@ final List<_Case> _cases = [
     r: () => {
       'angleLines': <String, Object?>{'display': true},
       'grid': <String, Object?>{
-        'color': (Object? ctx) =>
+        'color': (ContextObject ctx) =>
             _record('grid color', ctx, const ui.Color(0xFF667788)),
       },
     },
@@ -590,7 +592,7 @@ final List<_Case> _cases = [
     r: () => {
       'angleLines': <String, Object?>{
         'display': true,
-        'lineWidth': (Object? ctx) => _record('line width', ctx, 2.0),
+        'lineWidth': (ContextObject ctx) => _record('line width', ctx, 2.0),
       },
     },
   ),
@@ -636,7 +638,7 @@ final List<_Case> _cases = [
       'angleLines': <String, Object?>{
         'display': true,
         'lineWidth': 0.0,
-        'color': (Object? ctx) =>
+        'color': (ContextObject ctx) =>
             _record('zero line color', ctx, const ui.Color(0xFF778899)),
       },
     },
@@ -909,26 +911,19 @@ void main() {
   });
 
   group('the point label context', () {
-    testWidgets('has the fields, the key order and the parent of the literal', (
-      tester,
-    ) async {
+    testWidgets('has the fields and the parent of the literal', (tester) async {
       final chart = acquireChartRoot(_config(n: 4));
       final scale = _scaleOf(chart);
       final context = scale.getPointLabelContext(2)!;
-      expect(context.jsKeys(), ['label', 'index', 'type']);
       expect(context.label, scale.pointLabels[2]);
-      expect(context.index, 2.0);
-      expect(context.jsRead('type'), 'pointLabel');
+      expect(context.index, 2);
+      expect(context.type, 'pointLabel');
       // The parent is the scale context.
       // ignore: invalid_use_of_protected_member
-      expect(identical(context.prototype, scale.getContext()), isTrue);
+      expect(identical(context.parent, scale.getContext()), isTrue);
+      expect(context.scale, same(scale));
       expect(identical(scale.getPointLabelContext(2), context), isFalse);
-      expect(jsGet(context, 'chart'), same(chart));
-      context.jsWrite('extra', 1.0);
-      expect(context.jsKeys(), ['label', 'index', 'type', 'extra']);
-      expect(context.jsDelete('index'), isTrue);
-      context.jsWrite('index', 3.0);
-      expect(context.jsKeys(), ['label', 'type', 'extra', 'index']);
+      expect(context.chart, same(chart));
       expect(scale.getPointLabelContext(4), isNull);
       expect(scale.getPointLabelContext(-1), isNull);
     });

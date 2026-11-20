@@ -14,11 +14,10 @@
 /// The typed resolver classes of Chart.js ADR 0054 keep their names of
 /// today, `Resolver` and `ContextResolver`; their class names
 /// `OptionResolver` and `OptionView` stay internal. The typed context
-/// classes (`ScriptableContext` and the others) stay internal too: a
-/// context is a `ContextObject`. So does `SegmentStyle`, the style of a
-/// line segment. `ScriptableLineSegmentContext`, the argument of the
-/// functions of a `LineSegmentStyle`, is a name of
-/// `package:flutter_chartjs_port/chartjs.dart` (Chart.js ADR 0142).
+/// classes (`ContextObject`, `ScriptableContext` and the others) are names
+/// of `package:flutter_chartjs_port/chartjs.dart` and of the app library:
+/// this library hides them, except `ContextObject`. It also hides
+/// `SegmentStyle`, the style of a line segment.
 ///
 /// Next to `package:flutter_chartjs_port/chartjs.dart`, import it with a
 /// prefix, as `src/index.umd.ts` keeps the helpers in `Chart.helpers`.

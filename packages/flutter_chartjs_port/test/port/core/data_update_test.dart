@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
 import '../../support/legend_item.dart';
 
 final class _ObservedList(final List<Object?> values)
@@ -337,7 +338,7 @@ void main() {
   test('scriptable styles fall back and see new parsed values', () {
     final cfg = config('bar');
     ChartPaint background(Object? context) => ChartPaint.solid(
-      (jsGet(jsGet(context, 'parsed'), 'y')! as num) > 5
+      (jsGet(contextRead(context, 'parsed'), 'y')! as num) > 5
           ? const ui.Color(0xffff0000)
           : const ui.Color(0xff0000ff),
     );
@@ -700,11 +701,11 @@ void main() {
       final a = chart(cfg);
       final controller = a.getDatasetMeta(0).controller!;
       final context = controller.getContext(null, true, 'resize');
-      expect(jsGet(context, 'active'), isTrue);
+      expect(contextRead(context, 'active'), isTrue);
       change(cfg, 0);
       expect(a.updateData(), isTrue, reason: type);
-      expect(jsGet(context, 'active'), isFalse, reason: type);
-      expect(jsGet(context, 'mode'), same(undefined), reason: type);
+      expect(contextRead(context, 'active'), isFalse, reason: type);
+      expect(contextRead(context, 'mode'), same(undefined), reason: type);
     }
   });
   test('the arguments of afterUpdate are the arguments {mode}', () {
@@ -1036,7 +1037,7 @@ void main() {
               plain(options),
               (options! as JsObjectFace).jsKeys(),
               element.active,
-              context?.jsKeys(),
+              contextKeysOrNull(context),
               for (final key in const [
                 'active',
                 'dataIndex',
@@ -1047,7 +1048,7 @@ void main() {
                 'raw',
                 'type',
               ])
-                plain(context?.jsRead(key)),
+                plain(contextField(context, key)),
             ];
           }(),
     ];
@@ -1226,7 +1227,7 @@ void main() {
               jsGet(jsGet(defaults, 'elements'), elementOf(type)),
               'borderWidth',
               (Object? context) {
-                calls.add(jsGet(context, 'index'));
+                calls.add(contextRead(context, 'index'));
                 return 2.0;
               },
             );
@@ -1242,7 +1243,7 @@ void main() {
         test('a function in the overrides of the type keeps the full path', () {
           final calls = <Object?>[];
           jsSet(jsGet(overrides, type), 'borderWidth', (Object? context) {
-            calls.add(jsGet(context, 'index'));
+            calls.add(contextRead(context, 'index'));
             return 2.0;
           });
           expectTwin(() {
@@ -1589,7 +1590,7 @@ void main() {
             () => indexed(
               type,
               background: (Object? context) {
-                calls.add(jsGet(context, 'index'));
+                calls.add(contextRead(context, 'index'));
                 return red;
               },
             ),
@@ -1626,7 +1627,7 @@ void main() {
           final calls = <Object?>[];
           final pie = jsGet(overrides, 'pie');
           jsSet(pie, 'rotation', (Object? context) {
-            calls.add(jsGet(jsGet(context, 'dataset'), 'data'));
+            calls.add(jsGet(contextRead(context, 'dataset'), 'data'));
             return 30.0;
           });
           expectTwin(cfg, path: false, ticks: 2);

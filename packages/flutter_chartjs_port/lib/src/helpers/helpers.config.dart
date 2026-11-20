@@ -376,10 +376,8 @@ final class _IndexedElementPlan(
   // DIVERGES(chartjs): adapt-prepared-indexed-options, copy native static
   // fields when the caller owns the result. Never retain a returned object.
   ElementOptions? prepared(Object context, ElementOptions into) {
-    if (context is! ScriptableContext || !context.hasIndexKey) return null;
-    final rawIndex = context.index;
-    if (rawIndex is! num) return null;
-    final index = rawIndex.toDouble();
+    if (context is! ScriptableContext) return null;
+    final index = context.index.toDouble();
     if (!index.isFinite ||
         index < 0 ||
         index != index.truncateToDouble() ||
@@ -459,11 +457,9 @@ final class _IndexedElementPlan(
   }
 
   bool fill(Object context, ElementOptions into) {
-    if (context is! ScriptableContext || !context.hasIndexKey) return false;
-    final rawIndex = context.index;
-    if (rawIndex is! num) return false;
+    if (context is! ScriptableContext) return false;
     // Match jsToNumber before remainder, including VM integers above 2^53.
-    final index = rawIndex.toDouble();
+    final index = context.index.toDouble();
     if (!index.isFinite ||
         index < 0 ||
         index != index.truncateToDouble() ||
@@ -607,7 +603,7 @@ final class IndexedElementStyles._(
   final ElementOptions _kind,
 ) {
   /// The `index` of the context of a resolve, with no other effect.
-  final ScriptableContext _context = ScriptableContext(null);
+  final ScriptableContext _context = ScriptableContext.data(null, 0, null);
 
   /// Whether each resolve of an index below [count] stays on this plan: it runs
   /// no user code and throws nothing, and a write through the resolver has not
@@ -2541,7 +2537,7 @@ Object? _resolveArray(
   final subProxy = target._slot('_subProxy');
   final descriptors = target._slot('_descriptors')! as Descriptor;
 
-  final index = jsGet(context, 'index');
+  final index = _contextIndex(context);
   if (!identical(index, undefined) && isIndexable(prop)) {
     // DIVERGES(chartjs): adapt-shared-bar-animations, a read by the index.
     optionCallEpoch++;
@@ -3040,9 +3036,6 @@ bool _has(Object? object, String key) {
   if (object is JsProxyObject) {
     return object.hasProperty(key);
   }
-  if (object is ContextObject) {
-    return object.hasProperty(key);
-  }
   if (object is JsObjectFace) {
     return object.jsHas(key);
   }
@@ -3115,3 +3108,13 @@ List<String> _objectKeys(Object? object) {
   }
   return [];
 }
+
+/// `context.index`: the typed index of a context, or the read by name of the
+/// context of a spec. A context with no index gives [undefined].
+Object? _contextIndex(Object? context) => switch (context) {
+  ScriptableContext(:final index) => index,
+  ScriptableScaleContext(:final index) => index ?? undefined,
+  ScriptableScalePointLabelContext(:final index) => index,
+  ContextObject() => undefined,
+  _ => jsGet(context, 'index'),
+};

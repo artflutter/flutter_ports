@@ -12,6 +12,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
 const green = ChartPaint.solid(ui.Color(0xff00ff00));
@@ -242,7 +244,7 @@ Object _observe(Chart chart) {
         point.skip,
         point.stop,
         _plain(point.options),
-        point.$context?.jsKeys(),
+        contextKeysOrNull(point.$context),
         for (final key in [
           'index',
           'dataIndex',
@@ -251,7 +253,7 @@ Object _observe(Chart chart) {
           'parsed',
           'raw',
         ])
-          _plain(point.$context?.jsRead(key)),
+          _plain(contextField(point.$context, key)),
       ],
   ];
 }
@@ -441,7 +443,7 @@ void main() {
           expect(probes[i].y, others[i].y);
           expect(probes[i].skip, others[i].skip);
           if (color is List) {
-            expect(probes[i].$context?.jsRead('mode'), 'none');
+            expect(contextField(probes[i].$context, 'mode'), 'none');
           }
         }
         probes[3].options!.storeKey(OptionKey.borderWidth, 77.0);
@@ -502,8 +504,8 @@ void main() {
       for (var i = 0; i < _length; i++) {
         expect(_plain(probes[i].options), _plain(others[i].options));
         expect(
-          probes[i].$context?.jsRead('index'),
-          others[i].$context?.jsRead('index'),
+          contextField(probes[i].$context, 'index'),
+          contextField(others[i].$context, 'index'),
         );
       }
       expect(probes[4].planReads, greaterThan(0));
@@ -557,10 +559,10 @@ void main() {
     expect(probes[_length - 2].sizeCalls, 1);
     expect(probes.take(_length - 2).every((p) => p.sizeCalls == 0), isTrue);
     for (final point in probes) {
-      expect(point.$context?.jsRead('mode'), 'default');
+      expect(contextField(point.$context, 'mode'), 'default');
     }
-    expect(probes[2].$context?.jsRead('index'), 2);
-    expect(probes[2].$context?.jsRead('active'), isFalse);
+    expect(contextField(probes[2].$context, 'index'), 2);
+    expect(contextField(probes[2].$context, 'active'), isFalse);
   });
 
   group('the parse resolve', () {
@@ -633,13 +635,15 @@ void main() {
       a.getDatasetMeta(0).controller!.buildOrUpdateElements(false);
       b.getDatasetMeta(0).controller!.buildOrUpdateElements(false);
       for (var i = 0; i < _length; i++) {
-        final context = probes[i].$context;
-        final other = others[i].$context;
-        expect(context, isNotNull);
-        expect(context!.jsKeys(), other!.jsKeys());
-        for (final key in context.jsKeys()) {
+        final context = probes[i].$context!;
+        final other = others[i].$context!;
+        expect(contextKeys(context), contextKeys(other));
+        for (final key in contextKeys(context)) {
           if (key == 'element' || key == 'dataset' || key == 'chart') continue;
-          expect(_plain(context.jsRead(key)), _plain(other.jsRead(key)));
+          expect(
+            _plain(contextField(context, key)),
+            _plain(contextField(other, key)),
+          );
         }
       }
       expect(probes.any((p) => p.planReads > 0), isTrue);
@@ -651,9 +655,9 @@ void main() {
       final states = <Object>[];
       for (final type in ['bubble', 'referenceBubble']) {
         final calls = <Object?>[];
-        double radius(Object? ctx) {
-          calls.add([jsGet(ctx, 'dataIndex'), jsGet(ctx, 'mode')]);
-          return 2 + (jsGet(ctx, 'dataIndex')! as num).toDouble();
+        double radius(ScriptableContext ctx) {
+          calls.add([ctx.dataIndex, ctx.mode]);
+          return 2 + (ctx.dataIndex! as num).toDouble();
         }
 
         final cfg = _config(type: type, dataset: {'radius': radius});
@@ -676,7 +680,7 @@ void main() {
         final cfg = _config(type: type);
         final chart = _chart(cfg, reference: type != 'bubble');
         var calls = 0;
-        double radius(Object? ctx) {
+        double radius(ScriptableContext ctx) {
           calls++;
           return 4;
         }
@@ -851,7 +855,7 @@ void main() {
         final chart = _chart(cfg, reference: type != 'bubble');
         final meta = chart.getDatasetMeta(0);
         var calls = 0;
-        double radius(Object? ctx) {
+        double radius(ScriptableContext ctx) {
           calls++;
           return 4;
         }
@@ -1027,8 +1031,8 @@ void main() {
           backgroundColor: <ChartPaint>[red, blue],
         );
         final calls = <Object?>[];
-        ChartPaint hover(Object? ctx) {
-          calls.add(jsGet(ctx, 'dataIndex'));
+        ChartPaint hover(ScriptableContext ctx) {
+          calls.add(ctx.dataIndex);
           return green;
         }
 

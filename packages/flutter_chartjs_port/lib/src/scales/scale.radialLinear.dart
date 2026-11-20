@@ -806,11 +806,11 @@ void _drawRadiusLine(
 /// The context of the type `'pointLabel'` is a
 /// [ScriptableScalePointLabelContext] (Chart.js ADR 0054 §11).
 ScriptableScalePointLabelContext _createPointLabelContext(
-  Object parent,
+  ContextObject parent,
   int index,
   List<String> label,
 ) {
-  // DIVERGES(chartjs): adapt-point-label-context-construction, no Map.
+  // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
   return ScriptableScalePointLabelContext.pointLabel(parent, label, index);
 }
 

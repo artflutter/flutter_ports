@@ -564,16 +564,17 @@ double _getAlignedX(Tooltip tooltip, TextAlign? align, TooltipOptions options) {
 
 /// plugin.tooltip.js:348 `createTooltipContext(parent, tooltip,
 /// tooltipItems)`.
-ContextObject _createTooltipContext(
-  Object? parent,
+// DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
+ScriptableTooltipContext _createTooltipContext(
+  ContextObject parent,
   Tooltip tooltip,
   List<TooltipItem> tooltipItems,
 ) {
-  return createContext(parent, <String, Object?>{
-    'tooltip': tooltip,
-    'tooltipItems': tooltipItems,
-    'type': 'tooltip',
-  });
+  return ScriptableTooltipContext(
+    parent,
+    tooltip: tooltip,
+    tooltipItems: tooltipItems,
+  );
 }
 
 /// The per-item callback overlay. The dataset only participates at the
@@ -883,9 +884,9 @@ class Tooltip(({IChart chart, Object? options}) config)
   List<TooltipItem> _tooltipItems = const [];
 
   /// plugin.tooltip.js:474 `$context`. Dart `null` stands for JS
-  /// `undefined`. The value is an object: the tooltip context, or an object
-  /// that user code writes by name.
-  Object? _context;
+  /// `undefined`. The value is the typed tooltip context (row
+  /// `adapt-typed-contexts`).
+  ScriptableTooltipContext? _context;
 
   /// plugin.tooltip.js:1127 `_ignoreReplayEvents`. Dart `null` stands for
   /// JS `undefined`, the value before the first event.
@@ -1062,7 +1063,7 @@ class Tooltip(({IChart chart, Object? options}) config)
   /// plugin.tooltip.js:528 `getContext()`. @protected
   ///
   /// The context is cached until the next [update].
-  Object getContext() {
+  ScriptableTooltipContext getContext() {
     return _context ??= _createTooltipContext(
       chart.getContext(),
       this,
@@ -2166,9 +2167,13 @@ class Tooltip(({IChart chart, Object? options}) config)
         };
       case r'$context':
         _context = switch (value) {
-          Undefined() => null,
-          _ when jsIsObjectLike(value) => value,
-          _ => throw ArgumentError.value(value, prop, 'Not an object'),
+          Undefined() || null => null,
+          final ScriptableTooltipContext context => context,
+          _ => throw ArgumentError.value(
+            value,
+            prop,
+            'Not a ScriptableTooltipContext',
+          ),
         };
       case '_ignoreReplayEvents':
         _ignoreReplayEvents = toBoolProp(prop, value);

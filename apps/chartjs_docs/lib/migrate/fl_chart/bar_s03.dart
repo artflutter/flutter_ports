@@ -30,7 +30,7 @@ class _BarSample3State() extends State<BarSample3> {
 
   /// fl_chart paints the gradient in the rect of each bar: from the base to
   /// the tip of the bar.
-  ChartPaint _gradient(ChartContext context) {
+  ChartPaint _gradient(ScriptableContext context) {
     final index = context.dataIndex;
     if (index == null) return const .solid(Fl.cyan);
     final y = context.chart.scales['y']!;

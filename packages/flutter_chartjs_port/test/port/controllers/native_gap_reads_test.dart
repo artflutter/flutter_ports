@@ -276,7 +276,9 @@ void main() {
             type,
             form: 'map',
             spanGaps: 1.5,
-            dataset: <String, Object?>{'pointRadius': (Object? ctx) => 3},
+            dataset: <String, Object?>{
+              'pointRadius': (ScriptableContext ctx) => 3,
+            },
           ),
         );
         expect(_stops(twins.chart), stopsOf1_5);
@@ -300,9 +302,9 @@ void main() {
       // writes ctx.parsed` of the controller references. Upstream reads the
       // x that the option wrote: the point 2 gets `stop`.
       test('a scriptable option that writes ctx.parsed keeps the read', () {
-        double radius(Object? ctx) {
-          if (jsGet(ctx, 'dataIndex') == 1) {
-            (jsGet(ctx, 'parsed')! as ParsedItem).x = 10.0;
+        double radius(ScriptableContext ctx) {
+          if (ctx.dataIndex == 1) {
+            (ctx.parsed! as ParsedItem).x = 10.0;
           }
           return 3;
         }

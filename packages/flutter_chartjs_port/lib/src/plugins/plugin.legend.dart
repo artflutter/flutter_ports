@@ -1404,7 +1404,7 @@ final class _IndexedItemStyles(
           i < rawLength ? raw[i] : undefined,
           i,
           false,
-          'default',
+          UpdateMode.defaultMode,
         );
       } else {
         controller.getContext(i, false, 'default');
@@ -1565,13 +1565,13 @@ void _onClick(Object? e, LegendItem item, LegendElement legend) {
 
 /// plugin.legend.js:661 and :707 `color: (ctx) => ctx.chart.options.color`.
 ///
-/// A chart context gives its typed `chart`, and another context its read
-/// by name (a child context reads the chart of its parent). The chart
-/// options give their typed read of `color`.
+/// A context gives its typed `chart` (a child context reads the chart of its
+/// parent), and a context of a spec its read by name. The chart options give
+/// their typed read of `color`.
 Object? _chartColor(Object? ctx) {
-  final chart = ctx is ScriptableChartContext
+  final chart = ctx is ContextObject
       ? ctx.chart
-      // A context of another class: the read by name of user code.
+      // A context of a spec: the read by name.
       : jsGet(ctx, 'chart');
   return optionOf((chart! as IChart).options, OptionKey.color);
 }

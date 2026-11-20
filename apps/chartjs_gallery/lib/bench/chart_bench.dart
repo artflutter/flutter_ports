@@ -1065,8 +1065,10 @@ final List<ChartBenchCase> _motionCases = [
 /// ctx.dataIndex : 0`, a scriptable `animation.delay` (the form of the
 /// progressive line of the docs, judge-r.md section 4.8). Each data element
 /// gets its own delay, so the animation options of each element differ.
-Object? stressDelayByIndex(Object? context) =>
-    jsGet(context, 'type') == 'data' ? jsGet(context, 'dataIndex') : 0.0;
+Object? stressDelayByIndex(ContextObject context) =>
+    context is ScriptableContext && context.type == 'data'
+    ? context.dataIndex!.toDouble()
+    : 0.0;
 
 /// The case `motion.line.delay` of the resolver series of phase 10
 /// (Chart.js ADR 0053): the case `motion.line` ([_motionCase]) with the

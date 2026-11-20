@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
+import '../../support/context_keys.dart';
 import '../../support/cubic_mode_json.dart';
 import '../../support/easing_json.dart';
 import '../../support/fill_json.dart';
@@ -442,11 +443,11 @@ final class _FakeChart(@override final Config config, AnyObject spec)
     getContext(),
   );
 
-  ContextObject? _context;
+  ScriptableChartContext? _context;
 
   @override
-  ContextObject getContext() =>
-      _context ??= createContext(null, {'chart': this, 'type': 'chart'});
+  ScriptableChartContext getContext() =>
+      _context ??= ScriptableChartContext(this);
 
   // core.controller.js:829-853.
   @override
@@ -517,11 +518,11 @@ final class _FakeChart(@override final Config config, AnyObject spec)
 
 /// The functions of the `{$fn: name}` markers.
 final Map<Object?, Object?> _functions = {
-  'colorByIndex': (Object? ctx) => jsGet(ctx, 'dataIndex') == 1
+  'colorByIndex': (Object? ctx) => contextRead(ctx, 'dataIndex') == 1
       ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
       : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
   'fillIsDataset': (Object? ctx) =>
-      FillTarget.toValue(jsGet(ctx, 'type') == 'dataset' ? 75 : 0),
+      FillTarget.toValue(contextRead(ctx, 'type') == 'dataset' ? 75 : 0),
 };
 
 /// A new value from a spec value: `{$fn: name}` gives a function,
@@ -571,8 +572,19 @@ String _enc(Object? v) => switch (v) {
   final List<Object?> l => '[${l.map(_enc).join(',')}]',
   final Map<String, Object?> m => _encMap(m),
   final JsObjectFace m => _encMap(m),
+  final ContextObject c => _encContext(c),
   _ => throw ArgumentError.value(v, 'v', 'No text'),
 };
+
+/// The text of the context [c]: the keys of the upstream literal of its type
+/// with the values of its typed members, [undefined] for an absent member.
+String _encContext(ContextObject c) {
+  final entries = [
+    for (final key in contextKeys(c))
+      '${jsonEncode(key)}:${_enc(contextRead(c, key))}',
+  ];
+  return '{${entries.join(',')}}';
+}
 
 /// The text of the object [m] (a Map or a typed object with a face): the
 /// keys of `Object.keys` with their values.

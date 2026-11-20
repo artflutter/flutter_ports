@@ -1,5 +1,5 @@
 // Ported from chartjs-plugin-zoom v2.2.0+fb81d331 test/fixtures/pan/category-x-1.js (MIT, chartjs-plugin-zoom contributors).
-// ignore_for_file: file_names, lines_longer_than_80_chars
+// ignore_for_file: file_names
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
@@ -33,8 +33,8 @@ Map<String, Object?> fixture() {
             'data': data,
             'barPercentage': 1,
             'categoryPercentage': 1,
-            'backgroundColor': (Object? c) =>
-                'rgba(${jsToString(255 - jsToNumber(jsGet(c, 'index')) * 4)}, 0, 0, 1)',
+            'backgroundColor': (ScriptableContext c) =>
+                'rgba(${jsToString(255 - c.index * 4)}, 0, 0, 1)',
           },
         ],
       },

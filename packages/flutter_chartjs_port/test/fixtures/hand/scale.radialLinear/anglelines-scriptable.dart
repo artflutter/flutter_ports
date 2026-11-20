@@ -18,15 +18,13 @@ Map<String, Object?> fixture() => <String, Object?>{
         'r': <String, Object?>{
           'grid': <String, Object?>{'display': true},
           'angleLines': <String, Object?>{
-            'color': (Object? context) {
-              return jsToNumber(jsGet(context, 'index')).remainder(2) == 0
+            'color': (ScriptableScalePointLabelContext context) {
+              return jsToNumber(context.index).remainder(2) == 0
                   ? 'red'
                   : 'green';
             },
-            'lineWidth': (Object? context) {
-              return jsToNumber(jsGet(context, 'index')).remainder(2) == 0
-                  ? 1
-                  : 5;
+            'lineWidth': (ScriptableScalePointLabelContext context) {
+              return jsToNumber(context.index).remainder(2) == 0 ? 1 : 5;
             },
           },
           // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

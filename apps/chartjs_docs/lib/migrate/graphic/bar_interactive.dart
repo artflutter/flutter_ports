@@ -13,8 +13,8 @@ final ({double min, double max}) _range = graphicRange([
 
 /// `ColorEncode(updaters: {'tap': {false: ...}})`: while a bar is
 /// selected, the other bars fade to the alpha 100.
-ChartPaint _color(ChartContext context) => .solid(
-  context.chart.getActiveElements().isEmpty
+ChartPaint _color(ScriptableContext context) => .solid(
+  (context.chart as Chart).getActiveElements().isEmpty
       ? Gx.primary
       : Gx.primary.withAlpha(100),
 );

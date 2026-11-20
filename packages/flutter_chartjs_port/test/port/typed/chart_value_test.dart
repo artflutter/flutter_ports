@@ -12,14 +12,14 @@ import '../../support/drop_extra_args.dart';
 const _red = ChartPaint.solid(ui.Color(0xffff0000));
 const _blue = ChartPaint.solid(ui.Color(0xff0000ff));
 
-ChartPaint _colorFor(ChartContext context) =>
+ChartPaint _colorFor(ScriptableContext context) =>
     context.dataIndex == 0 ? _red : _blue;
 
 const _derived = SolidChartPaint(ui.Color(0xff00ff00));
-SolidChartPaint _derivedFor(ChartContext context) => _derived;
+SolidChartPaint _derivedFor(ScriptableContext context) => _derived;
 
 class _Provider() {
-  ChartPaint choose(ChartContext context) => _red;
+  ChartPaint choose(ScriptableContext context) => _red;
 }
 
 List<Dataset> _datasets() => const [
@@ -175,8 +175,8 @@ void main() {
     expect(cell, isA<OptFunction<ChartPaint>>());
     expect(calls, isEmpty);
     final function = (cell! as OptFunction<ChartPaint>).function;
-    for (final index in [0.0, 1.0]) {
-      final context = createContext(null, {'type': 'data', 'dataIndex': index});
+    for (final index in [0, 1]) {
+      final context = ScriptableContext.data(null, index, null);
       expect(
         callDroppingExtraArgs(function, [context, null]),
         index == 0 ? _red : _blue,
@@ -348,7 +348,7 @@ void main() {
       final cell =
           scope.ownCell(OptionKey.borderColor)! as OptFunction<ChartPaint>;
       expect(calls, isEmpty);
-      final context = createContext(null, {'type': 'data', 'dataIndex': 1.0});
+      final context = ScriptableContext.data(null, 1, null);
       expect(callDroppingExtraArgs(cell.function, [context, null]), _blue);
       expect(calls, [1]);
       final changed = dataset.copyWith(

@@ -14,10 +14,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           // option in dataset
           'data': <Object?>[0, 5, 10, null, -10, -5],
-          'borderDash': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0
-                ? <Object?>[5]
-                : <Object?>[10];
+          'borderDash': (ScriptableContext ctx) {
+            return ctx.datasetIndex == 0 ? <Object?>[5] : <Object?>[10];
           },
         },
         <String, Object?>{
@@ -30,10 +28,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       'elements': <String, Object?>{
         'line': <String, Object?>{
           'borderColor': '#00ff00',
-          'borderDash': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0
-                ? <Object?>[5]
-                : <Object?>[10];
+          'borderDash': (ScriptableContext ctx) {
+            return ctx.datasetIndex == 0 ? <Object?>[5] : <Object?>[10];
           },
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
           'fill': FillTarget.toOrigin,

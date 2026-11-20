@@ -123,21 +123,26 @@ repository.
     (`_getKeyed`).
   - The face rules (Chart.js ADR 0054 §5, the close step): no class of `lib/src` outside
     `lib/src/js/` is a `Map`. A typed object (a typed scope, resolved options, a resolver or a
-    view, a context, a parsed item, a props or hook-argument record, a plugin, a legend or
+    view, a parsed item, a props or hook-argument record, a plugin, a legend or
     tooltip item, `AnimationSpec`) is a `JsObjectFace`: `operator []` and `jsRead` give
     `undefined` for an absent key, `jsKeys` gives the `Object.keys` order, `jsHas` and `jsDelete`
     are `hasOwnProperty` and `delete`. `JsObjectFace` is public (`chartjs.dart` and the app
-    library): raw-API code reads a context, the hook arguments or the options by name through
-    it. A `Map` of the port is an object of the user. The JS runtime (`jsGet`,
+    library): raw-API code reads the hook arguments or the options by name through it. A `Map` of the port is an object of the user. The JS runtime (`jsGet`,
     `jsObjectKeys`, `jsAssign`, `jsSet`, `jsObjectOrNull`) and
     `isObject`, `clone`, `merge`, `mergeIf` and `each` take Maps and faces.
     The walk reads a typed scope with `OptionScope.lookup`. `Config.resolveElementNamedOptions` of
     `core.config.dart` is the typed element step of `_resolveElementOptions`: it reads each own key
     of `defaults.elements.<type>` with `readKey` and stores it into the resolved class of the type.
-    `createContext` of `helpers.options.dart` gives the typed context of its `type`
-    (`ScriptableChartContext`, `ScriptableContext`, `ScriptableScaleContext`,
-    `ScriptableScalePointLabelContext`, `ScriptableTooltipContext`,
-    `ScriptableLineSegmentContext`, Chart.js ADR 0054 §11), subclasses of `ContextObject`.
+    A context is the typed class of its `type`, made with its constructor (`createContext` has no
+    port): `ScriptableChartContext`, `ScriptableContext`, `ScriptableScaleContext`,
+    `ScriptableScalePointLabelContext`, `ScriptableTooltipContext` and
+    `ScriptableLineSegmentContext` of `helpers.options.dart`, the subclasses of the sealed
+    `ContextObject` (Chart.js ADR 0054 §11, row `adapt-typed-contexts`). Each member is a typed
+    field, and `chart`, the `dataset` and `datasetIndex` of a data context and the `scale` of a tick
+    or point label context read the `parent`. A context is not a `JsObjectFace`: it has no access
+    by name, and an absent member is Dart `null`. A scriptable option declares the class of its
+    context as its parameter type (`(ScriptableContext context) => ...`); `callScriptable` calls it
+    through `ContextObject.callWith`. `chartjs.dart` and the app library export the classes.
   - The cross-lane types of Chart.js ADR 0054 (B5, pure layers; the lanes adopt them):
     `lib/src/options/typed_record.dart` (`TypedRecord`: typed fields by slot, present and foreign
     bits, extras, the JS key order, the face), `parsed.dart` (`ParsedItem`, `ItemStacks`,
@@ -238,8 +243,8 @@ repository.
       indexed point colors once for each loop. See `test/port/controllers/scatter_point_options_test.dart`. A plan
       checks each point at its original iteration, with no scan of the whole data. It ends before user code can run.
     - [Chart.js ADR 0080](doc/adr/0080-line-20k-options.md): line updates prepare indexed colors, scriptable colors
-      copy a template, and contexts track their keys with a mask. See
-      `test/port/controllers/line_point_options_test.dart` and `test/port/helpers/context_presence_test.dart`. No
+      copy a template, and contexts write typed fields. See
+      `test/port/controllers/line_point_options_test.dart`. No
       callback result is cached. Each resolver write or delete ends the plan.
     - [Chart.js ADR 0081](doc/adr/0081-option-resolution-setup.md): native default-key snapshots, kept prefixes and
       owned results cut the setup of point and bar options. See `test/port/options/key_snapshot_test.dart` and
@@ -461,10 +466,10 @@ repository.
       `test/port/core/data_update_test.dart`. A function of a chart or plugin option in the defaults or overrides
       and a tick callback stay on the data-only path, under the contract of
       [Chart.js ADR 0074](doc/adr/0074-incremental-data-updates.md).
-    - [Chart.js ADR 0101](doc/adr/0101-context-refresh.md): `ScriptableContext.refresh` writes the six keys of a
-      data context with one mask test, and the prepared scatter loop leaves its refresh to the overflow pass. See
-      `test/port/controllers/context_refresh_twins_test.dart`. A deleted key takes the setters in `getContext`
-      order. A public `update` or `updateElements` keeps each context write.
+    - [Chart.js ADR 0101](doc/adr/0101-context-refresh.md): `ScriptableContext.refresh` writes the six typed fields
+      of a data context in one call, and the prepared scatter loop leaves its refresh to the overflow pass. See
+      `test/port/controllers/context_refresh_twins_test.dart`. A public `update` or `updateElements` keeps each
+      context write.
     - [Chart.js ADR 0102](doc/adr/0102-direct-element-writes.md): in mode `none` or reset, the exact doughnut, pie,
       polar area and bubble controllers write built-in elements through typed setters. See
       `test/port/controllers/direct_element_writes_test.dart`. A user controller or element, another mode, an
@@ -1000,8 +1005,8 @@ repository.
     `RadialAxisBorder` for `RadialLinearAxis`) of `lib/chartjs.dart` (Chart.js ADR 0141).
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element
-    styles. `callbacks.dart` has `ChartScript` and the views with `int` indexes;
-    `ChartContext` is a view over the typed contexts. The event callbacks take the function types
+    styles. `callbacks.dart` has `ChartScript`, a function of the typed dataset or data context
+    (`ScriptableContext`). The event callbacks take the function types
     of the core (Chart.js ADR 0130). Each
     config class is `@immutable` and `final`, with a `const` constructor, `copyWith`, and `==`
     from its `_props` list (`props.dart`). Each class has `extra`, the Chart.js options with no

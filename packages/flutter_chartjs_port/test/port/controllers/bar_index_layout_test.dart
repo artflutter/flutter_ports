@@ -344,7 +344,7 @@ void main() {
           'axis': const XAxis(),
           'display': ScaleDisplay.off,
         };
-        double categoryPercentage(Object? context) {
+        double categoryPercentage(ContextObject context) {
           if (armed) {
             log.add('category');
             reads++;
@@ -359,10 +359,10 @@ void main() {
         }
 
         _dataset(cfg)['categoryPercentage'] = categoryPercentage;
-        double maxBarThickness(Object? context) {
+        double maxBarThickness(ContextObject context) {
           if (armed) {
             log.add('max');
-            final chart = jsGet(context, 'chart')! as Chart;
+            final chart = context.chart as Chart;
             chart.options.readKey(OptionKey.indexAxis);
             final callback = _dataset(cfg)['categoryPercentage'];
             chart
@@ -397,14 +397,14 @@ void main() {
       var busy = false;
       var reads = 0;
       final log = <String>[];
-      double categoryPercentage(Object? context) {
+      double categoryPercentage(ContextObject context) {
         if (armed && !busy) {
           reads++;
           log.add('category');
           if (reads == 2) {
             busy = true;
             log.add('reenter');
-            final chart = jsGet(context, 'chart')! as Chart;
+            final chart = context.chart as Chart;
             _dataset(cfg)['data'] = <double>[4, 3, 2, 1];
             chart.update(UpdateMode.none);
             busy = false;
@@ -414,9 +414,9 @@ void main() {
       }
 
       _dataset(cfg)['categoryPercentage'] = categoryPercentage;
-      double maxBarThickness(Object? context) {
+      double maxBarThickness(ContextObject context) {
         if (armed && !busy) {
-          final chart = jsGet(context, 'chart')! as Chart;
+          final chart = context.chart as Chart;
           final callback = _dataset(cfg)['categoryPercentage'];
           chart
               .getDatasetMeta(0)

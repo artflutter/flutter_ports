@@ -1581,10 +1581,10 @@ sankey ADRs are proposed. The doc paths are relative to
   which makes new objects at each call. Its entry in `handFixtures` has the first 12 hex digits of
   the manifest `sha256`. The import prefix is the path without the extension in lower case, with
   each run of other characters than `a-z` and `0-9` as `_`. A fixture skip is an entry of
-  `fixtureSkips`. No skip covers a defect. In a hand port, a scriptable option reads `context.tick`
-  as a `Tick` (`(jsGet(context, 'tick')! as Tick).value`) and a property of an element with the
-  access by name of `Element` (`(jsGet(ctx, 'p0')! as Element)['skip']`), because `jsGet` gives
-  `undefined` for these typed objects. A canvas as an image source is `toImageSource()` of
+  `fixtureSkips`. No skip covers a defect. In a hand port, a scriptable option takes the typed
+  context class of its option (`(ScriptableScaleContext context) => context.tick!.value`), and a
+  segment function reads a property of an element with the access by name of `Element`
+  (`(ctx.p0 as Element)['skip']`). A canvas as an image source is `toImageSource()` of
   `UiCanvasElement`. A `moment(...)` value is a `DateTime.utc(...)` of the same time value, with the
   marker of the row `harness-fixture-sources`. `test/fixtures/fixture_events.dart` gives the chart
   event of the raw `mousemove` of the 8 tooltip fixtures (`fixtureMouseMove`, row

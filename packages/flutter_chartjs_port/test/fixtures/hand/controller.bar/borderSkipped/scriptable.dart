@@ -15,12 +15,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           // option in dataset
           'data': <Object?>[0, 5, 10, null, -10, -5],
           // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
-          'borderSkipped': (Object? ctx) {
+          'borderSkipped': (ScriptableContext ctx) {
             final value = jsOrZero(
-              jsGet(
-                jsGet(jsGet(ctx, 'dataset'), 'data'),
-                jsGet(ctx, 'dataIndex'),
-              ),
+              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
             );
             return value > 8
                 ? BorderSkippedEdge.left
@@ -43,8 +40,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'backgroundColor': 'transparent',
           'borderColor': '#888',
           // DIVERGES(chartjs): adapt-border-skipped-enum, the enum value.
-          'borderSkipped': (Object? ctx) {
-            final index = jsToNumber(jsGet(ctx, 'dataIndex'));
+          'borderSkipped': (ScriptableContext ctx) {
+            final index = jsToNumber(ctx.dataIndex ?? undefined);
             return index > 4
                 ? BorderSkippedEdge.left
                 : index > 3

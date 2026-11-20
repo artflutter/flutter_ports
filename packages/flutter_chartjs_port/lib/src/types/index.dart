@@ -245,10 +245,9 @@ abstract interface class IChart() {
 
   /// index.d.ts:589 `getContext(): { chart: Chart, type: string }`.
   ///
-  /// The context is the parent of `createContext` (helpers.options.ts:204),
-  /// so it is an object, not a record. `core.controller` returns
-  /// `createContext(null, {...})`, a `ContextObject` of `helpers.options`.
-  Object getContext();
+  /// The chart context, the parent of the dataset and scale contexts: a
+  /// typed [ScriptableChartContext] (Chart.js ADR 0054 §11).
+  ScriptableChartContext getContext();
 
   /// index.d.ts:543 `readonly legend?: LegendElement`. Dart `null` stands
   /// for JS `undefined`. The legend plugin writes it (plugin.legend.js:602)

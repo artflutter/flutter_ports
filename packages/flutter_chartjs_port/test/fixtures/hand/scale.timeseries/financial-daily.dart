@@ -638,9 +638,8 @@ Map<String, Object?> fixture() {
             'ticks': <String, Object?>{
               'major': <String, Object?>{'enabled': true},
               // DIVERGES(chartjs): adapt-text-style-fonts, a style.
-              'font': (Object? context) {
-                return jsTruthy(jsGet(context, 'tick')) &&
-                        (jsGet(context, 'tick')! as Tick).major
+              'font': (ScriptableScaleContext context) {
+                return jsTruthy(context.tick) && context.tick!.major
                     ? const ChartTextStyle(fontWeight: FontWeight.bold)
                     : undefined;
               },

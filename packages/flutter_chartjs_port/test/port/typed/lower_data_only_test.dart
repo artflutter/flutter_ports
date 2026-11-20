@@ -364,7 +364,8 @@ void main() {
     });
 
     test('a resolved color: a new bridge in each lowering', () {
-      ChartPaint resolve(ChartContext context) => const ChartPaint.solid(_red);
+      ChartPaint resolve(ScriptableContext context) =>
+          const ChartPaint.solid(_red);
       Dataset colored() => BarDataset(
         data: _data(),
         backgroundColor: ChartValue.resolver(resolve),

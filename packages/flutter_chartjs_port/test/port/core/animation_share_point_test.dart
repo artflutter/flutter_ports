@@ -9,6 +9,8 @@ import 'package:clock/clock.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 // `ScatterController.update` with one resolution of the animation options
 // for its points (`lib/src/core/animation_share.dart`, row
 // `adapt-shared-point-animations`, Chart.js ADR 0160). The twin of each run
@@ -133,8 +135,8 @@ String _contexts(Chart chart) => [
     if (point.$context case final Object context)
       [
         for (final name in const ['index', 'dataIndex', 'active', 'mode'])
-          jsGet(context, name),
-        jsGet(jsGet(context, 'parsed'), 'y'),
+          contextRead(context, name),
+        jsGet(contextRead(context, 'parsed'), 'y'),
       ].join(','),
 ].join(';');
 
@@ -344,7 +346,7 @@ void main() {
         _scatter(
           animation: <String, Object?>{
             'delay': (Object? context, Object? options) =>
-                switch (jsGet(context, 'dataIndex')) {
+                switch (contextRead(context, 'dataIndex')) {
                   final num index => index * 3.0,
                   _ => 0.0,
                 },
@@ -378,7 +380,7 @@ void main() {
           'data': _data(1),
           'animation': animation,
           'radius': (Object? context, Object? options) {
-            if (armed && jsGet(context, 'dataIndex') == 10) {
+            if (armed && contextRead(context, 'dataIndex') == 10) {
               animation['duration'] = 300.0;
             }
             return 3.0;

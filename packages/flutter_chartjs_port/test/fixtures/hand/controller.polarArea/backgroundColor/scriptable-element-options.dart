@@ -21,12 +21,9 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'elements': <String, Object?>{
         'arc': <String, Object?>{
-          'backgroundColor': (Object? ctx) {
+          'backgroundColor': (ScriptableContext ctx) {
             final value = jsOrZero(
-              jsGet(
-                jsGet(jsGet(ctx, 'dataset'), 'data'),
-                jsGet(ctx, 'dataIndex'),
-              ),
+              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
             );
             return value > 8
                 ? '#ff0000'

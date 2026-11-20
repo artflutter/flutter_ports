@@ -256,23 +256,11 @@ Map<String, Object?> fixture() {
           <String, Object?>{
             'borderColor': const ChartPaint.solid(Color(0xFF000000)), // black
             'borderWidth': 2,
-            'colorFrom': (Object? c) => getColor(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'from',
-              ),
+            'colorFrom': (ScriptableContext c) => getColor(
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'from'),
             ),
-            'colorTo': (Object? c) => getColor(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'to',
-              ),
+            'colorTo': (ScriptableContext c) => getColor(
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'to'),
             ),
             'data': data,
             'labels': labels,

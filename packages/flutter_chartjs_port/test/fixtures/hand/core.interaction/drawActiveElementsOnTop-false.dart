@@ -21,8 +21,8 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': 1, 'y': 1, 'r': 20},
           ],
           'drawActiveElementsOnTop': false,
-          'backgroundColor': (Object? ctx) =>
-              jsGet(ctx, 'dataIndex') == 1 ? 'red' : 'blue',
+          'backgroundColor': (ScriptableContext ctx) =>
+              ctx.dataIndex == 1 ? 'red' : 'blue',
           'hoverBackgroundColor': 'yellow',
           'hoverRadius': 0,
         },

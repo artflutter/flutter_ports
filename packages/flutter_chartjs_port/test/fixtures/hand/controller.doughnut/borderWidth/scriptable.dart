@@ -14,12 +14,9 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           // option in dataset
           'data': <Object?>[0, 2, 4, null, 6, 8],
-          'borderWidth': (Object? ctx) {
+          'borderWidth': (ScriptableContext ctx) {
             final value = jsOrZero(
-              jsGet(
-                jsGet(jsGet(ctx, 'dataset'), 'data'),
-                jsGet(ctx, 'dataIndex'),
-              ),
+              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
             );
             return value.abs();
           },
@@ -35,8 +32,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         'arc': <String, Object?>{
           'backgroundColor': 'transparent',
           'borderColor': '#888',
-          'borderWidth': (Object? ctx) {
-            return jsToNumber(jsGet(ctx, 'dataIndex')) * 2;
+          'borderWidth': (ScriptableContext ctx) {
+            return jsToNumber(ctx.dataIndex ?? undefined) * 2;
           },
         },
       },

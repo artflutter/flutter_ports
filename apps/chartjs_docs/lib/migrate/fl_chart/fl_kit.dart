@@ -32,7 +32,7 @@ typedef Scriptable = Object? Function(Object? context);
 /// The touch of fl_chart: the spots near the x of the pointer.
 const InteractionMode flX = XInteractionMode();
 
-Chart chartOf(Object? context) => (context! as JsObjectFace)['chart']! as Chart;
+Chart chartOf(Object? context) => (context! as ContextObject).chart as Chart;
 
 /// A gradient over the chart area, from left to right.
 Scriptable horizontalGradient(List<Color> colors, [List<double>? stops]) =>
@@ -65,8 +65,8 @@ Scriptable verticalGradient(List<Color> colors, List<double> stops) =>
 /// The value of the tick of a scale context. The context of the axis line
 /// has no tick.
 double tickOf(Object? context) {
-  final tick = (context! as JsObjectFace)['tick'];
-  return tick is Tick ? tick.value : double.nan;
+  final tick = context is ScriptableScaleContext ? context.tick : null;
+  return tick?.value ?? double.nan;
 }
 
 /// The default grid line of fl_chart: a dash, and no axis line.

@@ -59,9 +59,9 @@ final Map<String, Object?> _functions = {
   //   if (ctx.dataIndex === 1) ctx.parsed.x = 10;
   //   return 3;
   // }
-  'radiusWrite': (Object? ctx) {
-    if (jsGet(ctx, 'dataIndex') == 1) {
-      (jsGet(ctx, 'parsed')! as JsObjectFace)['x'] = 10.0;
+  'radiusWrite': (ScriptableContext ctx) {
+    if (ctx.dataIndex == 1) {
+      (ctx.parsed! as JsObjectFace)['x'] = 10.0;
     }
     return 3.0;
   },
@@ -274,7 +274,7 @@ void main() {
       expect(meta.data, hasLength(3));
       expect([for (final item in meta.parsed) jsGet(item, 'y')], [1, 2, 3]);
       final controller = meta.controller!;
-      expect(controller.getContext(2)['raw'], '3');
+      expect(controller.getContext(2).raw, '3');
       final (:label, :value) = controller.getLabelAndValue(1);
       expect(
         [label, value],

@@ -986,8 +986,8 @@ void main() {
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'grid': <String, Object?>{
-                  'color': (Object? ctx) {
-                    if (!jsTruthy(jsGet(ctx, 'tick'))) {
+                  'color': (ContextObject ctx) {
+                    if (ctx is! ScriptableScaleContext || ctx.tick == null) {
                       failure = true;
                     }
                   },

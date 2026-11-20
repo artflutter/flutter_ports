@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/context_keys.dart';
 import '../../support/data_scope.dart';
 import '../../support/font_record.dart';
 import '../../support/tick_label.dart';
@@ -141,17 +142,20 @@ final class _Chart(Map<String, Object?> spec) implements IChart {
       _Meta(meta! as AnyObject),
   ];
 
-  ContextObject? _context;
+  ScriptableChartContext? _context;
 
   @override
   bool notifyPlugins<A extends Object>(PluginHook<A> hook, [A? args]) {
-    _log.add('notify:${hook.jsName}:${jsGet(args, 'type')}');
+    _log.add(
+      'notify:${hook.jsName}:'
+      '${args is ContextObject ? args.type : jsGet(args, 'type')}',
+    );
     return true;
   }
 
   @override
-  ContextObject getContext() =>
-      _context ??= createContext(null, {'chart': this, 'type': 'chart'});
+  ScriptableChartContext getContext() =>
+      _context ??= ScriptableChartContext(this);
 
   @override
   List<ChartMeta> getSortedVisibleDatasetMetas() => _metas;
@@ -251,20 +255,23 @@ final Map<String, Object> _functions = {
     '${scale.type}${jsToString(value)}',
   ],
   'colorByIndex': (Object? ctx) =>
-      jsTruthy(jsToNumber(jsGet(ctx, 'index')).remainder(2))
+      jsTruthy(jsToNumber(contextRead(ctx, 'index')).remainder(2))
       ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
       : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
-  'widthByIndex': (Object? ctx) =>
-      jsGet(ctx, 'type') == 'tick' ? jsToNumber(jsGet(ctx, 'index')) + 1 : 5.0,
+  'widthByIndex': (Object? ctx) => contextRead(ctx, 'type') == 'tick'
+      ? jsToNumber(contextRead(ctx, 'index')) + 1
+      : 5.0,
   'undefinedOddWidth': (Object? ctx) =>
-      jsTruthy(jsToNumber(jsGet(ctx, 'index')).remainder(2)) ? undefined : 2.0,
+      jsTruthy(jsToNumber(contextRead(ctx, 'index')).remainder(2))
+      ? undefined
+      : 2.0,
   'fontByIndex': (Object? ctx) => ChartTextStyle(
-    fontSize: jsGet(ctx, 'type') == 'tick'
-        ? 10 + 2 * jsToNumber(jsGet(ctx, 'index'))
+    fontSize: contextRead(ctx, 'type') == 'tick'
+        ? 10 + 2 * jsToNumber(contextRead(ctx, 'index'))
         : 12.0,
   ),
   'colorByMajor': (Object? ctx) {
-    final tick = jsGet(ctx, 'tick');
+    final tick = contextRead(ctx, 'tick');
     return tick is Tick && tick.major
         ? const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1))
         : const ChartPaint.solid(native_ui.Color.fromRGBO(128, 128, 128, 1));
@@ -682,21 +689,19 @@ void main() {
           ..resolveTickFontOptions(0);
     final tick = scale.ticks!.first;
     final context = tick.$context!;
-    expect(context.jsKeys(), ['tick', 'index', 'type']);
     expect(context.tick, same(tick));
     expect(context.index, isA<int>());
-    expect(context.index, 0.0);
+    expect(context.index, 0);
     expect(context.type, 'tick');
     expect(context.scale, same(scale));
-    expect(context.jsHas('scale'), isFalse);
-    expect(context.jsRead('chart'), same(chart));
+    expect(context.chart, same(chart));
     scale.resolveTickFontOptions(0);
     expect(tick.$context, same(context));
     scale
       ..update(300, 200)
       ..resolveTickFontOptions(0);
     expect(scale.ticks!.first.$context, isNot(same(context)));
-    expect(scale.ticks!.first.$context!.prototype, same(context.prototype));
+    expect(scale.ticks!.first.$context!.parent, same(context.parent));
   });
 
   test('the reference comes from Node.js v24.22.1 on arm64', () {

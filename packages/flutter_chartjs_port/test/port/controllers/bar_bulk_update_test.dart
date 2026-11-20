@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
   bool get supportsNativeBarIndexReads => true;
@@ -248,7 +250,7 @@ Object _stylesAndContexts(Chart chart) => [
         'mode',
         'active',
       ])
-        _plain(jsGet(e.$context, key)),
+        _plain(contextField(e.$context, key)),
     ],
 ];
 
@@ -541,15 +543,15 @@ void main() {
             const ChartPaint.solid(ui.Color(0xffff0000)),
             const ChartPaint.solid(ui.Color(0xff0000ff)),
           ];
-          double lineWidth(Object? context) {
-            calls.add(jsGet(context, 'index'));
+          double lineWidth(ScriptableScaleContext context) {
+            calls.add(context.index);
             return 1;
           }
 
           _axis(cfg, 'y')['grid'] = <String, Object?>{'lineWidth': lineWidth};
         } else {
-          ChartPaint color(Object? context) {
-            calls.add(jsGet(context, 'dataIndex'));
+          ChartPaint color(ScriptableContext context) {
+            calls.add(context.dataIndex);
             return const ChartPaint.solid(ui.Color(0xFF3366AA));
           }
 

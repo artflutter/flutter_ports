@@ -99,8 +99,10 @@ List<IPointElement> _points(String pattern) => [
 
 /// A JavaScript object `{getContext}`, passed as a [IChart].
 final class _Chart() implements IChart {
+  late final ScriptableChartContext _context = ScriptableChartContext(this);
+
   @override
-  Map<String, Object?> getContext() => {'chart': 'c', 'type': 'chart'};
+  ScriptableChartContext getContext() => _context;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -513,27 +515,17 @@ void main() {
         _segment(2, 5, false, const SegmentStyle(borderColor: red)),
       ]);
       final ctx = contexts[0];
-      expect(jsObjectKeys(ctx), [
-        'type',
-        'p0',
-        'p1',
-        'p0DataIndex',
-        'p1DataIndex',
-        'datasetIndex',
-      ]);
-      expect(ctx['chart'], 'c');
-      expect(ctx['type'], 'segment');
+      expect(ctx.chart, same(chart));
+      expect(ctx.type, 'segment');
       expect(ctx.p0, same(line.points[0]));
       expect(ctx.p1, same(line.points[1]));
       expect(ctx.p0DataIndex, 0);
       expect(ctx.p1DataIndex, 1);
       expect(ctx.datasetIndex, 1);
-      expect(ctx['p0'], same(line.points[0]));
-      expect(ctx['p1DataIndex'], 1);
       expect(contexts.map((s) => s.p1DataIndex), [1, 2, 3, 4, 5]);
     });
 
-    test('gives undefined as the datasetIndex of a line without one', () {
+    test('gives null as the datasetIndex of a line without one', () {
       final contexts = <ScriptableLineSegmentContext>[];
       computeSegments(
         _Line(_points('ooo'), options: _base, chart: chart),
@@ -544,8 +536,7 @@ void main() {
           },
         ),
       );
-      expect(jsObjectKeys(contexts[0]), contains('datasetIndex'));
-      expect(contexts[0]['datasetIndex'], same(undefined));
+      expect(contexts[0].datasetIndex, isNull);
     });
 
     test('calls the functions in the key order of readStyle', () {

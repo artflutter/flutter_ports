@@ -14,16 +14,13 @@
 /// The results of [toTRBL], [toTRBLCorners] and [toPadding] are typed
 /// objects (differences.md row `adapt-options-typed-results`). [toFont]
 /// gives a [ChartTextStyle] (Chart.js ADR 0116, row
-/// `adapt-text-style-fonts`). The
-/// result of [createContext] is a [ContextObject]: an object with a prototype
-/// (differences.md row `adapt-create-context-prototype`), of the typed
-/// class of its `type` (Chart.js ADR 0054 §11, differences.md row
-/// `adapt-typed-contexts`).
+/// `adapt-text-style-fonts`). A context of `createContext` is a
+/// [ContextObject] of the typed class of its `type` (Chart.js ADR 0054 §11,
+/// differences.md row `adapt-typed-contexts`).
 library;
 
 import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/chartjs_core.dart';
-import 'package:meta/meta.dart' show protected;
 
 /// helpers.options.ts:43 `numberOrZero`: `+v || 0`.
 double _numberOrZero(Object? v) {
@@ -345,763 +342,331 @@ Object? resolve(
 }
 
 /// helpers.options.ts:205 the object `Object.create(parentContext)` of
-/// `createContext` ([createContext]): a context object with a prototype.
+/// `createContext`: a context object with a parent context.
 ///
-/// The typed contexts of Chart.js ADR 0054 §11 extend it. Each member of
-/// the `index.d.ts` context of its `type` that the context owns is a typed
-/// field: [ScriptableChartContext], [ScriptableContext],
-/// [ScriptableScaleContext], [ScriptableScalePointLabelContext],
-/// [ScriptableTooltipContext] and [ScriptableLineSegmentContext]. Any other
-/// own key is an extra. A [ContextObject] of another type keeps each own
-/// key as an extra (differences.md row `adapt-typed-contexts`).
+/// Each context is the typed class of its `type` (Chart.js ADR 0054 §11):
+/// [ScriptableChartContext], [ScriptableContext], [ScriptableScaleContext],
+/// [ScriptableScalePointLabelContext], [ScriptableTooltipContext] and
+/// [ScriptableLineSegmentContext]. Each member of the `index.d.ts` context of
+/// the type is a typed field. A member that upstream reads through the
+/// prototype chain (`chart`, `dataset`, `datasetIndex`, `scale`) is a getter
+/// that reads the [parent]. A context has no access by name: an absent member
+/// is Dart `null` (differences.md row `adapt-typed-contexts`).
 ///
-/// A [ContextObject] keeps its own properties and reads the [prototype] for
-/// the other keys (differences.md row `adapt-create-context-prototype`). It
-/// implements [JsObjectFace], the face by name, with the JS rules (Chart.js
-/// ADR 0054 §5). It is not a `Map`:
-/// - [jsRead] and `operator []` are `[[Get]]`: the own value, also the
-///   [undefined] sentinel, else the value of the [prototype], else
-///   [undefined].
-/// - [hasProperty] is the `in` operator (`[[HasProperty]]`): an own key or
-///   a key of the [prototype] chain.
-/// - [jsHas] and [hasOwnProperty] are `Object.prototype.hasOwnProperty`.
-/// - [jsKeys] is `Object.keys`: the own keys only, in their insertion order,
-///   with the array-index keys first.
-/// - [jsWrite], `operator []=` and [jsDelete] change the own properties
-///   only, as a property assignment and `delete` do.
-// DIVERGES(chartjs): adapt-create-context-prototype, a prototype chain.
-base class ContextObject implements JsObjectFace {
-  /// `Object.create(prototype)`: an object without own properties. Dart
-  /// `null` is the `null` prototype.
-  new(this.prototype) : _names = <String>[];
+/// A scriptable option takes the context class of its option as the type of
+/// its parameter, for example `(ScriptableContext context) => ...` for a
+/// dataset option. [callScriptable] calls it with the context.
+// DIVERGES(chartjs): adapt-typed-contexts, typed fields, no access by name.
+sealed class ContextObject(
+  /// `Object.getPrototypeOf(this)`: the parent context, or Dart `null` for
+  /// the chart context.
+  final ContextObject? parent,
+) {
+  /// A context with the parent context [parent]: `Object.create(parent)`.
+  this;
 
-  new _withNames(this.prototype, this._names) {
-    for (final name in _names) {
-      _presentNames |= _nameBit(name);
-    }
-  }
+  /// `type`: `'chart'`, `'dataset'`, `'data'`, `'scale'`, `'tick'`,
+  /// `'pointLabel'`, `'tooltip'` or `'segment'`.
+  String get type;
 
-  /// `Object.getPrototypeOf(this)`: the parent context, or Dart `null`. A
-  /// parent is a [ContextObject] or a `Map` (a context object of user
-  /// code).
-  final Object? prototype;
+  /// `chart`: the chart of the chart context at the start of the chain of
+  /// parents. A context with no chart context in its chain throws.
+  IChart get chart => parent!.chart;
 
-  /// The own keys, in insertion order.
-  final List<String> _names;
-
-  // DIVERGES(chartjs): adapt-context-key-presence, a mask for frequent names.
-  // The ordered list remains authoritative for enumeration and reinsertion.
-  int _presentNames = 0;
-
-  static int _nameBit(String name) => switch (name) {
-    'active' => 1,
-    'dataset' => 2,
-    'datasetIndex' => 4,
-    'dataIndex' => 8,
-    'parsed' => 16,
-    'raw' => 32,
-    'element' => 64,
-    'index' => 128,
-    'mode' => 256,
-    'type' => 512,
-    _ => 0,
-  };
-
-  bool _hasName(String name) {
-    final bit = _nameBit(name);
-    return bit == 0 ? _names.contains(name) : _presentNames & bit != 0;
-  }
-
-  /// The own keys that are not typed fields, and their values.
-  List<String>? _extraNames;
-  List<Object?>? _extraValues;
-
-  /// The value of the typed field [name] of a subclass. A field that the
-  /// context does not own, or a name that is not a field of the subclass,
-  /// gives a private marker.
-  @protected
-  Object? fieldGet(String name) => _unset;
-
-  /// Writes the typed field [name] of a subclass (the private marker clears
-  /// it). Returns false for a name that is not a field of the subclass.
-  @protected
-  bool fieldSet(String name, Object? value) => false;
-
-  /// Makes [name] an own key: a new name goes to the end of the own-key
-  /// order, as [jsWrite] does. A typed setter of a subclass calls it
-  /// before it sets its field.
-  void _claim(String name, [int bit = 0]) {
-    final mask = bit == 0 ? _nameBit(name) : bit;
-    if (mask == 0) {
-      if (!_names.contains(name)) _names.add(name);
-    } else if (_presentNames & mask == 0) {
-      _names.add(name);
-      _presentNames |= mask;
-    }
-  }
-
-  /// `this[name]` (`[[Get]]`) for a typed field: the own [field], else the
-  /// value of the prototype chain.
-  Object? _fieldRead(Object? field, String name) =>
-      identical(field, _unset) ? jsRead(name) : field;
-
-  /// `type`.
-  Object? get type => jsRead('type');
-
-  /// The own value of [name], or [_unset].
-  Object? _own(String name) {
-    if (!_hasName(name)) return _unset;
-    final field = fieldGet(name);
-    if (!identical(field, _unset)) return field;
-    final index = _extraNames?.indexOf(name) ?? -1;
-    return index < 0 ? _unset : _extraValues![index];
-  }
-
-  /// `name in this` (`[[HasProperty]]`): an own key or a key of the
-  /// [prototype] chain.
-  bool hasProperty(String name) {
-    if (_hasName(name)) return true;
-    return switch (prototype) {
-      final ContextObject parent => parent.hasProperty(name),
-      final JsObjectFace parent => parent.jsHas(name),
-      final Map<dynamic, dynamic> parent => parent.containsKey(name),
-      _ => false,
-    };
-  }
-
-  /// `Object.prototype.hasOwnProperty.call(this, key)`.
-  bool hasOwnProperty(Object? key) => key is String && _hasName(key);
-
-  /// The count of the own keys.
-  int get ownKeyCount => _names.length;
-
-  // The face of Chart.js ADR 0054 §5.
-
-  @override
-  Object? jsRead(String name) {
-    final own = _own(name);
-    if (!identical(own, _unset)) return own;
-    return switch (prototype) {
-      null => undefined,
-      final JsObjectFace face => face.jsRead(name),
-      final Map<dynamic, dynamic> map =>
-        map.containsKey(name) ? map[name] : undefined,
-      _ => undefined,
-    };
-  }
-
-  @override
-  void jsWrite(String name, Object? value) {
-    _claim(name);
-    if (fieldSet(name, value)) return;
-    final names = _extraNames ??= <String>[];
-    final values = _extraValues ??= <Object?>[];
-    final index = names.indexOf(name);
-    if (index < 0) {
-      names.add(name);
-      values.add(value);
-    } else {
-      values[index] = value;
-    }
-  }
-
-  @override
-  Object? operator [](String name) => jsRead(name);
-
-  @override
-  void operator []=(String name, Object? value) => jsWrite(name, value);
-
-  @override
-  List<String> jsKeys() {
-    if (!_names.any((name) => jsArrayIndex(name) != null)) {
-      return List<String>.of(_names);
-    }
-    // The indices are distinct integers: an unstable sort gives one order.
-    final indices = [
-      for (final name in _names)
-        if (jsArrayIndex(name) case final int index) (index, name),
-    ]..sort((a, b) => a.$1.compareTo(b.$1));
-    return [
-      for (final (_, name) in indices) name,
-      for (final name in _names)
-        if (jsArrayIndex(name) == null) name,
-    ];
-  }
-
-  @override
-  bool jsHas(String name) => _hasName(name);
-
-  @override
-  bool jsDelete(String name) {
-    if (!_hasName(name)) return false;
-    _names.remove(name);
-    _presentNames &= ~_nameBit(name);
-    if (!fieldSet(name, _unset)) {
-      final index = _extraNames!.indexOf(name);
-      _extraNames!.removeAt(index);
-      _extraValues!.removeAt(index);
-    }
-    return true;
-  }
+  /// Calls the scriptable option [function] with this context, and with
+  /// [options] when it takes two parameters. The type of the parameter of
+  /// [function] must accept the class of this context.
+  Object? callWith(Object? function, Object? options);
 }
 
-/// The value of a typed field of a [ContextObject] that the context does
-/// not own.
-const Object _unset = _Unset();
-
-/// The type of [_unset].
-final class const _Unset();
+/// Throws for a scriptable option that is not a function of this context.
+Object? _notScriptable(Object? function, ContextObject context) {
+  assert(
+    false,
+    'A scriptable option of a ${context.runtimeType} takes '
+    '(${context.runtimeType}), (${context.runtimeType}, options) or (), not '
+    '${function.runtimeType}.',
+  );
+  return undefined;
+}
 
 /// index.d.ts:3252 `ScriptableChartContext`: the chart context `{chart,
 /// type: 'chart'}` (core.controller.js:856).
-final class ScriptableChartContext(super.prototype) extends ContextObject {
-  /// A chart context with the parent [prototype].
-  this;
-
-  Object? _chart = _unset;
-  Object? _type = _unset;
-
-  /// `chart`.
-  Object? get chart => _fieldRead(_chart, 'chart');
+final class ScriptableChartContext(@override final IChart chart)
+    extends ContextObject {
+  /// The context of [chart], with no parent.
+  this : super(null);
 
   @override
-  Object? fieldGet(String name) => switch (name) {
-    'chart' => _chart,
-    'type' => _type,
-    _ => _unset,
+  String get type => 'chart';
+
+  @override
+  Object? callWith(Object? function, Object? options) => switch (function) {
+    final Object? Function(ScriptableChartContext, Object?) f => f(
+      this,
+      options,
+    ),
+    final Object? Function(ScriptableChartContext) f => f(this),
+    final Object? Function() f => f(),
+    _ => _notScriptable(function, this),
   };
-
-  @override
-  bool fieldSet(String name, Object? value) {
-    switch (name) {
-      case 'chart':
-        _chart = value;
-      case 'type':
-        _type = value;
-      default:
-        return false;
-    }
-    return true;
-  }
 }
 
 /// index.d.ts:23 `ScriptableContext`: the dataset context `{active,
 /// dataset, datasetIndex, index, mode, type: 'dataset'}` and the data
 /// context `{active, dataIndex, parsed, raw, element, index, mode, type:
 /// 'data'}` (core.datasetController.js:182-205).
+///
+/// A data context reads [dataset] and [datasetIndex] from its parent, the
+/// dataset context, as upstream reads them through the prototype.
 final class ScriptableContext extends ContextObject {
-  /// A dataset or data context with the parent [prototype].
-  new(super.prototype);
-
   /// core.datasetController.js:182 `createDatasetContext(parent, index)`:
-  /// the keys `active` (false), `dataset` (undefined), `datasetIndex`,
-  /// `index`, `mode` ('default') and `type` ('dataset'), in this order.
-  new dataset(super.prototype, int index) {
-    this
-      ..active = false
-      ..dataset = undefined
-      ..datasetIndex = index
-      ..index = index
-      ..mode = 'default'
-      .._setType('dataset');
-  }
+  /// `active` false, `dataset` null, `datasetIndex` and `index` [index],
+  /// `mode` `default`.
+  new dataset(super.parent, int index)
+    : _isData = false,
+      _datasetIndex = index,
+      index = index;
 
   /// core.datasetController.js:195 `createDataContext(parent, index,
-  /// element)`: the keys `active` (false), `dataIndex`, `parsed`
-  /// (undefined), `raw` (undefined), `element`, `index`, `mode`
-  /// ('default') and `type` ('data'), in this order.
-  new data(super.prototype, int index, Object? element) {
-    this
-      ..active = false
-      ..dataIndex = index
-      ..parsed = undefined
-      ..raw = undefined
-      .._setElement(element)
-      ..index = index
-      ..mode = 'default'
-      .._setType('data');
-  }
+  /// element)`: `active` false, `dataIndex` and `index` [index], `parsed`
+  /// and `raw` null, `element` [element], `mode` `default`.
+  new data(super.parent, int index, this.element)
+    : _isData = true,
+      dataIndex = index,
+      index = index;
 
-  Object? _active = _unset;
-  Object? _dataset = _unset;
-  Object? _datasetIndex = _unset;
-  Object? _dataIndex = _unset;
-  Object? _parsed = _unset;
-  Object? _raw = _unset;
-  Object? _element = _unset;
-  Object? _index = _unset;
-  Object? _mode = _unset;
-  Object? _type = _unset;
+  final bool _isData;
 
-  /// `active`.
-  Object? get active => _fieldRead(_active, 'active');
+  @override
+  String get type => _isData ? 'data' : 'dataset';
 
-  /// `dataset`.
-  Object? get dataset => _fieldRead(_dataset, 'dataset');
+  /// `active`: whether the element is active (hovered).
+  bool active = false;
 
-  /// `datasetIndex`.
-  Object? get datasetIndex => _fieldRead(_datasetIndex, 'datasetIndex');
+  Object? _dataset;
 
-  /// `dataIndex`.
-  Object? get dataIndex => _fieldRead(_dataIndex, 'dataIndex');
+  /// `dataset`: the dataset of the user. A data context reads it from its
+  /// parent.
+  Object? get dataset => _isData ? _parentDataset?.dataset : _dataset;
 
-  /// `parsed`.
-  Object? get parsed => _fieldRead(_parsed, 'parsed');
+  set dataset(Object? value) => _dataset = value;
 
-  /// `raw`.
-  Object? get raw => _fieldRead(_raw, 'raw');
+  int? _datasetIndex;
 
-  /// `element`.
-  Object? get element => _fieldRead(_element, 'element');
+  /// `datasetIndex`: the index of the dataset. A data context reads it from
+  /// its parent.
+  int? get datasetIndex =>
+      _isData ? _parentDataset?.datasetIndex : _datasetIndex;
 
-  /// `index`.
-  Object? get index => _fieldRead(_index, 'index');
+  set datasetIndex(int? value) => _datasetIndex = value;
 
-  /// `mode`.
-  Object? get mode => _fieldRead(_mode, 'mode');
+  ScriptableContext? get _parentDataset => switch (parent) {
+    final ScriptableContext parent => parent,
+    _ => null,
+  };
 
-  // The typed writes of `getContext` (core.datasetController.js:762-786).
-  // Each one makes its name an own key first, as `operator []=` does. The
-  // mask test stands at the setter: `getContext` writes each key of each
-  // element at each resolve, and only the first write claims it.
+  /// `dataIndex`: the index of the data item. Dart `null` in a dataset
+  /// context.
+  int? dataIndex;
 
-  set active(Object? value) {
-    if (_presentNames & 1 == 0) _claim('active', 1);
-    _active = value;
-  }
+  /// `parsed`: the parsed item of the data item, a `ParsedItem` or the
+  /// number of a doughnut, pie or polar area chart. Dart `null` before the
+  /// first `getContext` and in a dataset context.
+  Object? parsed;
 
-  set dataset(Object? value) {
-    if (_presentNames & 2 == 0) _claim('dataset', 2);
-    _dataset = value;
-  }
+  /// `raw`: the data item as the app gave it. Dart `null` before the first
+  /// `getContext` and in a dataset context.
+  Object? raw;
 
-  set datasetIndex(Object? value) {
-    if (_presentNames & 4 == 0) _claim('datasetIndex', 4);
-    _datasetIndex = value;
-  }
+  /// `element`: the element of the data item. Dart `null` in a dataset
+  /// context.
+  IElement? element;
 
-  set dataIndex(Object? value) {
-    if (_presentNames & 8 == 0) _claim('dataIndex', 8);
-    _dataIndex = value;
-  }
+  /// `index`: the [datasetIndex] of a dataset context, or the [dataIndex] of
+  /// a data context.
+  int index;
 
-  set parsed(Object? value) {
-    if (_presentNames & 16 == 0) _claim('parsed', 16);
-    _parsed = value;
-  }
+  /// `mode`: the update mode of the resolution. Dart `null` is the
+  /// `undefined` of a `getContext` call with no mode.
+  UpdateMode? mode = UpdateMode.defaultMode;
 
-  set raw(Object? value) {
-    if (_presentNames & 32 == 0) _claim('raw', 32);
-    _raw = value;
-  }
-
-  set index(Object? value) {
-    if (_presentNames & 128 == 0) _claim('index', 128);
-    _index = value;
-  }
-
-  set mode(Object? value) {
-    if (_presentNames & 256 == 0) _claim('mode', 256);
-    _mode = value;
-  }
-
-  /// The bits in [_presentNames] of the six keys of the refresh of a data
-  /// context: `active`, `dataIndex`, `parsed`, `raw`, `index` and `mode`.
-  static const int _refreshKeys = 1 | 8 | 16 | 32 | 128 | 256;
-
-  /// `hasOwnProperty('index')`, with no lookup of the name.
-  // DIVERGES(chartjs): adapt-context-key-presence, the bit of one known name.
-  bool get hasIndexKey => _presentNames & 128 != 0;
-
-  /// The six writes of `getContext` (core.datasetController.js:772-785) for a
-  /// caller whose reads of [parsed] and [raw] run no user code: a native list.
-  ///
-  /// With the six keys present, a write adds no key, so that one test serves
-  /// all of them. After a `delete` of user code, the setters reinsert the keys
-  /// in the order of `getContext`, as each write of a JS object does.
-  // DIVERGES(chartjs): adapt-context-bulk-refresh, one test for six writes.
+  /// The writes of `getContext` (core.datasetController.js:772-785) into a
+  /// data context. Dart `null` stands for the [undefined] of an index past the
+  /// end of the lists.
   void refresh(
     Object? parsed,
     Object? raw,
     int index,
-    Object? active,
-    Object? mode,
+    bool active,
+    UpdateMode? mode,
   ) {
-    if (_presentNames & _refreshKeys != _refreshKeys) {
-      this
-        ..parsed = parsed
-        ..raw = raw
-        ..dataIndex = index
-        ..index = index
-        ..active = active
-        ..mode = mode;
-      return;
-    }
-    _parsed = parsed;
-    _raw = raw;
-    _writeIndexes(index);
-    _active = active;
-    _mode = mode;
-  }
-
-  /// The five writes of `getContext` after its write of `parsed`
-  /// (core.datasetController.js:773), whose read of `raw` can run user code:
-  /// [refresh] with the same rule. A `delete` of `parsed` in that read stays.
-  // DIVERGES(chartjs): adapt-context-bulk-refresh, one test for five writes.
-  void refreshAfterParsed(
-    Object? raw,
-    int index,
-    Object? active,
-    Object? mode,
-  ) {
-    if (_presentNames & _refreshKeys != _refreshKeys) {
-      this
-        ..raw = raw
-        ..dataIndex = index
-        ..index = index
-        ..active = active
-        ..mode = mode;
-      return;
-    }
-    _raw = raw;
-    _writeIndexes(index);
-    _active = active;
-    _mode = mode;
-  }
-
-  /// `context.index = context.dataIndex = index` of two present keys. An index
-  /// that does not change keeps its box: a live chart writes the same number
-  /// into each context several times in each update. -0 is another number:
-  /// on JavaScript it is an int equal to 0.
-  void _writeIndexes(int index) {
-    final current = _index;
-    // On dart2wasm an int in an Object? field is a box: one box for both keys,
-    // and the box of the last write when the index is the same number.
-    final Object box =
-        current is int &&
-            current == index &&
-            current.isNegative == index.isNegative
-        ? current
-        : index;
-    _dataIndex = box;
-    _index = box;
-  }
-
-  void _setElement(Object? value) {
-    _claim('element', 64);
-    _element = value;
-  }
-
-  void _setType(Object? value) {
-    _claim('type', 512);
-    _type = value;
+    this.parsed = identical(parsed, undefined) ? null : parsed;
+    this.raw = identical(raw, undefined) ? null : raw;
+    dataIndex = index;
+    this.index = index;
+    this.active = active;
+    this.mode = mode;
   }
 
   @override
-  Object? fieldGet(String name) => switch (name) {
-    'active' => _active,
-    'dataset' => _dataset,
-    'datasetIndex' => _datasetIndex,
-    'dataIndex' => _dataIndex,
-    'parsed' => _parsed,
-    'raw' => _raw,
-    'element' => _element,
-    'index' => _index,
-    'mode' => _mode,
-    'type' => _type,
-    _ => _unset,
+  Object? callWith(Object? function, Object? options) => switch (function) {
+    final Object? Function(ScriptableContext, Object?) f => f(this, options),
+    final Object? Function(ScriptableContext) f => f(this),
+    final Object? Function() f => f(),
+    _ => _notScriptable(function, this),
   };
-
-  @override
-  bool fieldSet(String name, Object? value) {
-    switch (name) {
-      case 'active':
-        _active = value;
-      case 'dataset':
-        _dataset = value;
-      case 'datasetIndex':
-        _datasetIndex = value;
-      case 'dataIndex':
-        _dataIndex = value;
-      case 'parsed':
-        _parsed = value;
-      case 'raw':
-        _raw = value;
-      case 'element':
-        _element = value;
-      case 'index':
-        _index = value;
-      case 'mode':
-        _mode = value;
-      case 'type':
-        _type = value;
-      default:
-        return false;
-    }
-    return true;
-  }
 }
 
 /// index.d.ts:1419 `ScriptableScaleContext`: the scale context `{scale,
 /// type: 'scale'}` and the tick context `{tick, index, type: 'tick'}`
-/// (core.scale.js:107-119).
+/// (core.scale.js:107-119). A tick context reads [scale] from its parent.
 final class ScriptableScaleContext extends ContextObject {
-  /// A scale or tick context with the parent [prototype].
-  new(super.prototype);
+  /// core.scale.js:107 `createScaleContext(parent, scale)`.
+  new scale(super.parent, IScale this._scale) : tick = null, index = null;
 
-  /// The fresh tick context, with the upstream literal's own-key order.
-  // DIVERGES(chartjs): adapt-tick-context-construction, direct typed fields.
-  new tick(Object? parent, Object tick, int index)
-    : _tick = tick,
-      _index = index,
-      _type = 'tick',
-      super._withNames(parent, ['tick', 'index', 'type']);
+  /// core.scale.js:114 `createTickContext(parent, index, tick)`.
+  new tick(super.parent, Tick this.tick, int this.index) : _scale = null;
 
-  Object? _scale = _unset;
-  Object? _tick = _unset;
-  Object? _index = _unset;
-  Object? _type = _unset;
-
-  /// `scale`.
-  Object? get scale => _fieldRead(_scale, 'scale');
-
-  /// `tick`.
-  Object? get tick => _fieldRead(_tick, 'tick');
-
-  /// `index`.
-  Object? get index => _fieldRead(_index, 'index');
+  final IScale? _scale;
 
   @override
-  Object? fieldGet(String name) => switch (name) {
-    'scale' => _scale,
-    'tick' => _tick,
-    'index' => _index,
-    'type' => _type,
-    _ => _unset,
+  String get type => tick == null ? 'scale' : 'tick';
+
+  /// `scale`: the scale. A tick context reads it from its parent.
+  IScale? get scale => _scale ?? _parentScale(parent);
+
+  /// `tick`: the tick of a tick context, else Dart `null`.
+  final Tick? tick;
+
+  /// `index`: the index of the tick of a tick context, else Dart `null`.
+  final int? index;
+
+  @override
+  Object? callWith(Object? function, Object? options) => switch (function) {
+    final Object? Function(ScriptableScaleContext, Object?) f => f(
+      this,
+      options,
+    ),
+    final Object? Function(ScriptableScaleContext) f => f(this),
+    final Object? Function() f => f(),
+    _ => _notScriptable(function, this),
   };
-
-  @override
-  bool fieldSet(String name, Object? value) {
-    switch (name) {
-      case 'scale':
-        _scale = value;
-      case 'tick':
-        _tick = value;
-      case 'index':
-        _index = value;
-      case 'type':
-        _type = value;
-      default:
-        return false;
-    }
-    return true;
-  }
 }
 
+/// The `scale` of a parent context, or Dart `null`.
+IScale? _parentScale(ContextObject? parent) => switch (parent) {
+  final ScriptableScaleContext parent => parent.scale,
+  _ => null,
+};
+
 /// index.d.ts:1426 `ScriptableScalePointLabelContext`: `{label, index,
-/// type: 'pointLabel'}` (scale.radialLinear.js:330-336).
-final class ScriptableScalePointLabelContext extends ContextObject {
-  /// A point label context with the parent [prototype].
-  new(super.prototype);
+/// type: 'pointLabel'}` (scale.radialLinear.js:330-336). It reads [scale]
+/// from its parent, the scale context.
+final class ScriptableScalePointLabelContext.pointLabel(
+  super.parent,
 
-  /// The fresh point label context, with the upstream literal's own-key order.
-  // DIVERGES(chartjs): adapt-point-label-context-construction, typed fields.
-  new pointLabel(Object? parent, Object? label, int index)
-    : _label = label,
-      _index = index,
-      _type = 'pointLabel',
-      super._withNames(parent, ['label', 'index', 'type']);
+  /// `label`: the lines of the point label.
+  final List<String> label,
 
-  Object? _label = _unset;
-  Object? _index = _unset;
-  Object? _type = _unset;
-
-  /// `label`.
-  Object? get label => _fieldRead(_label, 'label');
-
-  /// `index`.
-  Object? get index => _fieldRead(_index, 'index');
+  /// `index`: the index of the point label.
+  final int index,
+) extends ContextObject {
+  /// scale.radialLinear.js:330 `createPointLabelContext(parent, index,
+  /// label)`.
+  this;
 
   @override
-  Object? fieldGet(String name) => switch (name) {
-    'label' => _label,
-    'index' => _index,
-    'type' => _type,
-    _ => _unset,
+  String get type => 'pointLabel';
+
+  /// `scale`: the scale, from the parent context.
+  IScale? get scale => _parentScale(parent);
+
+  @override
+  Object? callWith(Object? function, Object? options) => switch (function) {
+    final Object? Function(ScriptableScalePointLabelContext, Object?) f => f(
+      this,
+      options,
+    ),
+    final Object? Function(ScriptableScalePointLabelContext) f => f(this),
+    final Object? Function() f => f(),
+    _ => _notScriptable(function, this),
   };
-
-  @override
-  bool fieldSet(String name, Object? value) {
-    switch (name) {
-      case 'label':
-        _label = value;
-      case 'index':
-        _index = value;
-      case 'type':
-        _type = value;
-      default:
-        return false;
-    }
-    return true;
-  }
 }
 
 /// index.d.ts:2789 `ScriptableTooltipContext`: `{tooltip, tooltipItems,
 /// type: 'tooltip'}` (plugin.tooltip.js:348-354).
-final class ScriptableTooltipContext(super.prototype) extends ContextObject {
-  /// A tooltip context with the parent [prototype].
+final class ScriptableTooltipContext(
+  super.parent, {
+
+  /// `tooltip`: the tooltip.
+  required final TooltipModel? tooltip,
+
+  /// `tooltipItems`: the items of the tooltip.
+  required final List<TooltipItem>? tooltipItems,
+}) extends ContextObject {
+  /// plugin.tooltip.js:348 `createTooltipContext(parent, tooltip,
+  /// tooltipItems)`.
   this;
 
-  Object? _tooltip = _unset;
-  Object? _tooltipItems = _unset;
-  Object? _type = _unset;
-
-  /// `tooltip`.
-  Object? get tooltip => _fieldRead(_tooltip, 'tooltip');
-
-  /// `tooltipItems`.
-  Object? get tooltipItems => _fieldRead(_tooltipItems, 'tooltipItems');
+  @override
+  String get type => 'tooltip';
 
   @override
-  Object? fieldGet(String name) => switch (name) {
-    'tooltip' => _tooltip,
-    'tooltipItems' => _tooltipItems,
-    'type' => _type,
-    _ => _unset,
+  Object? callWith(Object? function, Object? options) => switch (function) {
+    final Object? Function(ScriptableTooltipContext, Object?) f => f(
+      this,
+      options,
+    ),
+    final Object? Function(ScriptableTooltipContext) f => f(this),
+    final Object? Function() f => f(),
+    _ => _notScriptable(function, this),
   };
-
-  @override
-  bool fieldSet(String name, Object? value) {
-    switch (name) {
-      case 'tooltip':
-        _tooltip = value;
-      case 'tooltipItems':
-        _tooltipItems = value;
-      case 'type':
-        _type = value;
-      default:
-        return false;
-    }
-    return true;
-  }
 }
 
 /// index.d.ts:35 `ScriptableLineSegmentContext`: `{type: 'segment', p0, p1,
 /// p0DataIndex, p1DataIndex, datasetIndex}` (helpers.segment.js:315), the
 /// argument of each function of a `LineSegmentStyle` (Chart.js ADR 0142).
 ///
-/// The getters are typed: [p0] and [p1] are the points at the ends of the
-/// part, and the three indexes are `int`. The face (`JsObjectFace`) still
-/// gives the keys by name, in the order of the upstream literal.
-final class ScriptableLineSegmentContext extends ContextObject {
-  /// A segment context with the parent [prototype], with no own key.
-  new(super.prototype);
-
-  /// The context of the part from [p0] to [p1] (helpers.segment.js:315-321),
-  /// with the own keys of the upstream literal in its order. A null
-  /// [datasetIndex] is the `undefined` of a line without one.
-  // DIVERGES(chartjs): adapt-native-line-segment-style, typed fields.
-  new segment(
-    Object? prototype, {
-    required IPointElement this._p0,
-    required IPointElement this._p1,
-    required int this._p0DataIndex,
-    required int this._p1DataIndex,
-    required int? datasetIndex,
-  }) : _type = 'segment',
-       _datasetIndex = datasetIndex ?? undefined,
-       super._withNames(prototype, [
-         'type',
-         'p0',
-         'p1',
-         'p0DataIndex',
-         'p1DataIndex',
-         'datasetIndex',
-       ]);
-
-  Object? _type = _unset;
-  Object? _p0 = _unset;
-  Object? _p1 = _unset;
-  Object? _p0DataIndex = _unset;
-  Object? _p1DataIndex = _unset;
-  Object? _datasetIndex = _unset;
+/// [p0] and [p1] are the points at the ends of the part, and the indexes are
+/// `int`.
+final class ScriptableLineSegmentContext.segment(
+  super.parent, {
 
   /// `p0`: the point at the start of the part.
-  IPointElement get p0 => _fieldRead(_p0, 'p0')! as IPointElement;
+  required final IPointElement p0,
 
   /// `p1`: the point at the end of the part.
-  IPointElement get p1 => _fieldRead(_p1, 'p1')! as IPointElement;
+  required final IPointElement p1,
 
   /// `p0DataIndex`: the data index of [p0].
-  int get p0DataIndex => _fieldRead(_p0DataIndex, 'p0DataIndex')! as int;
+  required final int p0DataIndex,
 
   /// `p1DataIndex`: the data index of [p1].
-  int get p1DataIndex => _fieldRead(_p1DataIndex, 'p1DataIndex')! as int;
+  required final int p1DataIndex,
 
-  /// `datasetIndex`: the index of the dataset of the line.
-  int get datasetIndex => _fieldRead(_datasetIndex, 'datasetIndex')! as int;
-
-  @override
-  Object? fieldGet(String name) => switch (name) {
-    'type' => _type,
-    'p0' => _p0,
-    'p1' => _p1,
-    'p0DataIndex' => _p0DataIndex,
-    'p1DataIndex' => _p1DataIndex,
-    'datasetIndex' => _datasetIndex,
-    _ => _unset,
-  };
+  /// `datasetIndex`: the index of the dataset of the line. Dart `null` is the
+  /// `undefined` of a line without one.
+  required final int? datasetIndex,
+}) extends ContextObject {
+  /// The context of the part from [p0] to [p1] (helpers.segment.js:315-321).
+  this;
 
   @override
-  bool fieldSet(String name, Object? value) {
-    switch (name) {
-      case 'type':
-        _type = value;
-      case 'p0':
-        _p0 = value;
-      case 'p1':
-        _p1 = value;
-      case 'p0DataIndex':
-        _p0DataIndex = value;
-      case 'p1DataIndex':
-        _p1DataIndex = value;
-      case 'datasetIndex':
-        _datasetIndex = value;
-      default:
-        return false;
-    }
-    return true;
-  }
+  String get type => 'segment';
+
+  @override
+  Object? callWith(Object? function, Object? options) => switch (function) {
+    final Object? Function(ScriptableLineSegmentContext, Object?) f => f(
+      this,
+      options,
+    ),
+    final Object? Function(ScriptableLineSegmentContext) f => f(this),
+    final Object? Function() f => f(),
+    _ => _notScriptable(function, this),
+  };
 }
 
-/// helpers.options.ts:204 `createContext`.
-///
-/// Create a context inheriting parentContext
-/// @param parentContext
-/// @param context
-/// @returns
-///
-/// `Object.assign(Object.create(parentContext), context)`. Dart `null` is
-/// the JS `null` of the overload at helpers.options.ts:202. The parent is a
-/// [ContextObject] or a `Map`. `Object.assign` copies the own keys of
-/// [context] in the order of `Object.keys` ([jsObjectKeys]), and reads each
-/// value with `[[Get]]`. The context is
-/// the typed class of its `type` (Chart.js ADR 0054 §11): `chart`,
-/// `dataset` and `data`, `scale` and `tick`, `pointLabel`, `tooltip` and
-/// `segment`. Another type gives a [ContextObject].
-// DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
-ContextObject createContext(Object? parentContext, AnyObject context) {
-  final target = switch (context['type']) {
-    'chart' => ScriptableChartContext(parentContext),
-    'dataset' || 'data' => ScriptableContext(parentContext),
-    'scale' || 'tick' => ScriptableScaleContext(parentContext),
-    'pointLabel' => ScriptableScalePointLabelContext(parentContext),
-    'tooltip' => ScriptableTooltipContext(parentContext),
-    'segment' => ScriptableLineSegmentContext(parentContext),
-    _ => ContextObject(parentContext),
-  };
-  for (final key in jsObjectKeys(context)) {
-    target.jsWrite(key, context[key]);
-  }
-  return target;
-}
+// helpers.options.ts:204 `createContext(parentContext, context)` has no
+// port: each caller makes the typed context of its type with the constructor
+// of its class (row `adapt-typed-contexts`).

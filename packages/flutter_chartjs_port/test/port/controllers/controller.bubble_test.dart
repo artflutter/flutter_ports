@@ -9,6 +9,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
 import '../../support/light_theme.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_bubble_reference.dart';
@@ -44,11 +45,11 @@ final Map<String, Object?> _functions = {
 
 /// The function `radiusOfIndex` of the generator: `(ctx) => 2 +
 /// ctx.dataIndex * 3`.
-Object? _radiusOfIndex(Object? ctx) =>
-    2 + jsToNumber(jsGet(ctx, 'dataIndex')) * 3;
+Object? _radiusOfIndex(ScriptableContext ctx) =>
+    2 + jsToNumber(contextRead(ctx, 'dataIndex')) * 3;
 
 /// The function `rawRadius` of the generator: `(ctx) => ctx.raw`.
-Object? _rawRadius(Object? ctx) => jsGet(ctx, 'raw');
+Object? _rawRadius(ScriptableContext ctx) => contextRead(ctx, 'raw');
 
 /// The config of a bubble chart with one dataset with [data] and the keys of
 /// [extra] (`one` of the generator).

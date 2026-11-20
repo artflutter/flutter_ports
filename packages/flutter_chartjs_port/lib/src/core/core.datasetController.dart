@@ -543,7 +543,7 @@ String? _getFirstScaleId(IChart chart, ScaleAxis axis) {
 /// type})` is the typed context of the type `dataset`, with the keys of the
 /// literal in their order (Chart.js ADR 0054 §11).
 // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
-ScriptableContext _createDatasetContext(Object parent, int index) {
+ScriptableContext _createDatasetContext(ContextObject parent, int index) {
   return ScriptableContext.dataset(parent, index);
 }
 
@@ -554,7 +554,7 @@ ScriptableContext _createDatasetContext(Object parent, int index) {
 /// the literal in their order (Chart.js ADR 0054 §11).
 // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
 ScriptableContext _createDataContext(
-  Object parent,
+  ContextObject parent,
   int index,
   Element element,
 ) {
@@ -2051,50 +2051,38 @@ class DatasetController(
   /// typed member `$context` of the element ([Element.$context], Chart.js
   /// ADR 0054 §9).
   ///
-  /// The contexts are [ScriptableContext] objects: the writes are typed
-  /// (Chart.js ADR 0054 §11). A context of another type that user code put
-  /// into `$context` of an element of a user class takes the writes through
-  /// its face. A value that the typed member does not give (a value that is
-  /// not a context, or for a built-in element class a context that is not a
-  /// [ScriptableContext]) reads as Dart `null`, and a new data context takes
-  /// its place (row `adapt-typed-contexts`).
-  ContextObject getContext([int? index, bool? active, String? mode]) {
+  /// The contexts are typed [ScriptableContext] objects (Chart.js ADR 0054
+  /// §11). A context of another class that user code put into `$context` of
+  /// an element gives way to a new data context (row `adapt-typed-contexts`).
+  ScriptableContext getContext([int? index, bool? active, String? mode]) {
     final dataset = getDataset();
     if (index != null && index >= 0 && index < cachedMeta.data.length) {
       final element = _at(cachedMeta.data, index)! as Element;
       // A context object is truthy: Dart `null` is the falsy `undefined`
       // start state.
-      final elementContext = element.$context ??= _createDataContext(
-        getContext(),
-        index,
-        element,
-      );
+      final current = element.$context;
+      final elementContext = current is ScriptableContext
+          ? current
+          : (element.$context = _createDataContext(
+              getContext(),
+              index,
+              element,
+            ));
       // `raw` is read after the write of `parsed`, as upstream.
-      if (elementContext is ScriptableContext) {
-        return elementContext
-          ..parsed = getParsed(index)
-          // DIVERGES(chartjs): adapt-context-bulk-refresh, one presence test.
-          ..refreshAfterParsed(
-            _rawOf(dataset, index),
-            index,
-            active ?? false,
-            mode ?? undefined,
-          );
-      }
-      return elementContext
-        ..jsWrite('parsed', getParsed(index))
-        ..jsWrite('raw', _rawOf(dataset, index))
-        ..jsWrite('dataIndex', index)
-        ..jsWrite('index', index)
-        ..jsWrite('active', active ?? false)
-        ..jsWrite('mode', mode ?? undefined);
+      return elementContext..refresh(
+        getParsed(index),
+        _rawOf(dataset, index),
+        index,
+        active ?? false,
+        mode == null ? null : UpdateMode(mode),
+      );
     }
     return ($context ??= _createDatasetContext(chart.getContext(), this.index))
       ..dataset = dataset
       ..datasetIndex = this.index
       ..index = this.index
       ..active = active ?? false
-      ..mode = mode ?? undefined;
+      ..mode = mode == null ? null : UpdateMode(mode);
   }
 
   /// core.datasetController.js:788 `resolveDatasetElementOptions(mode)`.
@@ -2327,7 +2315,7 @@ class DatasetController(
     }
     // context is provided as a function, and is called only if needed,
     // so we don't create a context for each element if not needed.
-    ContextObject context() => getContext(index, active, resolvedMode);
+    ScriptableContext context() => getContext(index, active, resolvedMode);
     // DIVERGES(chartjs): adapt-typed-element-options, a typed result object.
     // DIVERGES(chartjs): adapt-owned-option-result, final results only.
     final values =

@@ -43,7 +43,7 @@ const scriptableLine = LineDataset(
   },
 );
 
-ChartPaint pointFill(ChartContext context) {
+ChartPaint pointFill(ScriptableContext context) {
   final index = context.dataIndex;
   return ChartPaint.solid(index != null && values[index]! >= 60 ? teal : red);
 }

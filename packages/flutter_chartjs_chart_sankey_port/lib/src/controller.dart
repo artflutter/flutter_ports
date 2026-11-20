@@ -346,21 +346,21 @@ const Set<String> _hoverColorOptions = {'hoverColorFrom', 'hoverColorTo'};
 
 /// The axis of the progress animation: `ctx.dataset.orientation ===
 /// 'vertical' ? 'y' : 'x'` (controller.ts:264-270).
-bool _verticalDataset(Object? ctx) =>
-    jsGet(jsGet(ctx, 'dataset'), 'orientation') == SankeyOrientation.vertical;
+bool _verticalDataset(ScriptableContext ctx) =>
+    jsGet(ctx.dataset, 'orientation') == SankeyOrientation.vertical;
 
 /// controller.ts:262 the `delay` of the animation `progress`.
-Object? _progressDelay(Object? ctx) {
-  if (jsGet(ctx, 'type') != 'data') return undefined;
-  final parsed = jsGet(ctx, 'parsed')! as ParsedItem;
+Object? _progressDelay(ContextObject ctx) {
+  if (ctx is! ScriptableContext || ctx.type != 'data') return undefined;
+  final parsed = ctx.parsed! as ParsedItem;
   final start = jsToNumber(_verticalDataset(ctx) ? parsed.y : parsed.x);
-  return start * 500 + jsToNumber(jsGet(ctx, 'dataIndex')) * 20;
+  return start * 500 + ctx.dataIndex! * 20;
 }
 
 /// controller.ts:267 the `duration` of the animation `progress`.
-Object? _progressDuration(Object? ctx) {
-  if (jsGet(ctx, 'type') != 'data') return undefined;
-  final parsed = jsGet(ctx, 'parsed')! as ParsedItem;
+Object? _progressDuration(ContextObject ctx) {
+  if (ctx is! ScriptableContext || ctx.type != 'data') return undefined;
+  final parsed = ctx.parsed! as ParsedItem;
   final custom = parsed.custom! as SankeyParsedCustom;
   final vertical = _verticalDataset(ctx);
   return ((vertical ? custom.y : custom.x) -

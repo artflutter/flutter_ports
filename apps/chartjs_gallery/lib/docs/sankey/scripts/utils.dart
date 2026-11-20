@@ -3,7 +3,7 @@
 import 'dart:ui' show Color;
 
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartPaint, JsObjectFace;
+    show ChartPaint, ScriptableContext;
 
 const List<Color> _palette = [
   Color(0xFF4F8FBA),
@@ -36,8 +36,8 @@ final class SankeyDocsColors() {
 /// `context.dataset.data[context.dataIndex]`: the data item of the
 /// scriptable context [context], a Map of a sample.
 Map<String, Object?> sankeyDataItemOf(Object? context) {
-  final ctx = context! as JsObjectFace;
-  final dataset = ctx['dataset']! as Map<String, Object?>;
-  return (dataset['data']! as List<Object?>)[ctx['dataIndex']! as int]!
+  final ctx = context! as ScriptableContext;
+  final dataset = ctx.dataset! as Map<String, Object?>;
+  return (dataset['data']! as List<Object?>)[ctx.dataIndex!]!
       as Map<String, Object?>;
 }

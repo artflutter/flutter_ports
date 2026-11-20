@@ -18,8 +18,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderColor': '#ff0000',
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
-          'cubicInterpolationMode': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0
+          'cubicInterpolationMode': (ScriptableContext ctx) {
+            return ctx.datasetIndex == 0
                 ? const MonotoneCubicInterpolationMode()
                 : const DefaultCubicInterpolationMode();
           },
@@ -37,8 +37,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderWidth': 20,
           // DIVERGES(chartjs): adapt-cubic-interpolation-mode-objects, the mode
           // class.
-          'cubicInterpolationMode': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0
+          'cubicInterpolationMode': (ScriptableContext ctx) {
+            return ctx.datasetIndex == 0
                 ? const MonotoneCubicInterpolationMode()
                 : const DefaultCubicInterpolationMode();
           },

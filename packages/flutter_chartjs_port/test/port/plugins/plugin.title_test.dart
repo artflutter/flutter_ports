@@ -64,8 +64,8 @@ import 'plugin_title_reference.dart';
 final Map<String, Object?> _functions = {
   // (ctx) => `Chart of type ${ctx.chart.config.type}`, as its one line
   // (row adapt-title-text-lines).
-  'titleText': (Object? ctx) {
-    final type = jsToString((jsGet(ctx, 'chart')! as Chart).config.type);
+  'titleText': (ContextObject ctx) {
+    final type = jsToString((ctx.chart as Chart).config.type);
     return ['Chart of type $type'];
   },
 };

@@ -83,13 +83,12 @@ AnyObject staticBarDataset(int index) => <String, Object?>{
 AnyObject scriptableBarDataset(int index) => <String, Object?>{
   'label': 'Dataset $index',
   'data': <Object?>[for (var i = 0; i < 100; i++) (i * 7 % 50).toDouble()],
-  'backgroundColor': (Object? ctx) =>
-      jsToNumber(jsGet(ctx, 'dataIndex')) % 2 == 0
+  'backgroundColor': (ScriptableContext ctx) => (ctx.dataIndex ?? 1).isEven
       ? 'rgba(255, 99, 132, 0.5)'
       : 'rgba(54, 162, 235, 0.5)',
   'borderColor': <Object?>['#ff6384', '#36a2eb', '#ffce56'],
-  'borderWidth': (Object? ctx, Object? options) =>
-      jsTruthy(jsGet(ctx, 'active')) ? 2.0 : 1.0,
+  'borderWidth': (ScriptableContext ctx, Object? options) =>
+      ctx.active ? 2.0 : 1.0,
 };
 
 /// The chart options of the bar chart config.
@@ -179,30 +178,20 @@ List<String> barOptionNames() {
 /// The chart context, the dataset context and the data contexts of
 /// [count] elements (`core.controller.js` `getContext`,
 /// `core.datasetController.js:96-121`).
-List<ContextObject> dataContexts(int count) {
-  final chartContext = createContext(null, <String, Object?>{
-    'chart': 'chart',
-    'type': 'chart',
-  });
-  final datasetContext = createContext(chartContext, <String, Object?>{
-    'active': false,
-    'dataset': 'dataset',
-    'datasetIndex': 0.0,
-    'index': 0.0,
-    'mode': 'default',
-    'type': 'dataset',
-  });
-  return <ContextObject>[
+List<ScriptableContext> dataContexts(int count) {
+  final chartContext = ScriptableChartContext(BenchChart());
+  final datasetContext = ScriptableContext.dataset(chartContext, 0)
+    ..dataset = 'dataset';
+  return <ScriptableContext>[
     for (var i = 0; i < count; i++)
-      createContext(datasetContext, <String, Object?>{
-        'active': false,
-        'dataIndex': i.toDouble(),
-        'parsed': <String, Object?>{'x': i.toDouble(), 'y': 1.0},
-        'raw': 1.0,
-        'element': 'element',
-        'index': i.toDouble(),
-        'mode': 'default',
-        'type': 'data',
-      }),
+      ScriptableContext.data(datasetContext, i, null)
+        ..parsed = <String, Object?>{'x': i.toDouble(), 'y': 1.0}
+        ..raw = 1.0,
   ];
+}
+
+/// A chart with no members: the `chart` of a context of a benchmark.
+final class BenchChart() implements IChart {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

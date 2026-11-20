@@ -36,7 +36,7 @@ const ChartPaint _blueValue = ChartPaint.solid(
 );
 
 /// A scriptable color: blue at the data index 1, else red.
-ChartPaint _colorFor(ChartContext context) =>
+ChartPaint _colorFor(ScriptableContext context) =>
     ChartPaint.solid(context.dataIndex == 1 ? _blue : _red);
 
 /// A chart of [type] with the dataset Maps [datasets] and three labels,
@@ -318,10 +318,8 @@ void main() {
         _chartOf('bar', <Object?>[
           <String, Object?>{
             'data': <Object?>[1, 2, 3],
-            'backgroundColor': (Object? context) =>
-                (context! as JsObjectFace)['dataIndex'] == 1
-                ? _blueValue
-                : _redValue,
+            'backgroundColor': (ScriptableContext context) =>
+                context.dataIndex == 1 ? _blueValue : _redValue,
           },
         ]),
       );

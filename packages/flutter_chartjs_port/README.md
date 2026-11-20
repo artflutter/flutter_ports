@@ -359,7 +359,7 @@ class _VotesPageState() extends State<VotesPage> {
   List<String> _label(TooltipModel tooltip, TooltipItem item) =>
       ['${item.datasetLabel}: ${item.formattedValue} votes'];
 
-  ChartPaint _barColor(ChartContext context) =>
+  ChartPaint _barColor(ScriptableContext context) =>
       .solid((context.raw as num? ?? 0) > 10 ? Colors.green : Colors.grey);
 
   @override
@@ -412,8 +412,11 @@ class _VotesPageState() extends State<VotesPage> {
   the radial `pointLabels.callback` is a `PointLabelCallback`, which gets the label and its `int`
   index. A function of another type stops a debug build.
 - A dataset's `backgroundColor: ChartValue.resolver(...)` and `borderColor: .resolver(...)` get a
-  `ChartContext` (`dataIndex`, `datasetIndex`, `raw`, `parsed`, `active`, `chart`)
-  for each element.
+  `ScriptableContext` (`dataIndex`, `datasetIndex`, `raw`, `parsed`, `active`, `mode`, `chart`)
+  for each element. A scriptable option of a raw config takes the context class of its option:
+  `ScriptableContext` for a dataset, `ScriptableScaleContext` for a scale or a tick, and
+  `ScriptableChartContext`, `ScriptableScalePointLabelContext` or `ScriptableTooltipContext`. A
+  context has typed members only: an absent member is `null`.
 
 The chart methods take `int` indexes: `chart.hide(hit.datasetIndex)`,
 `chart.isDatasetVisible(index)`, `chart.getDatasetMeta(index)`. The callbacks run in the phases of

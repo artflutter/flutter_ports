@@ -50,24 +50,27 @@ final Map<String, Object?> _functions = {
         3 => [...label, 'x$index'],
         _ => ['${label.join()}!'],
       },
-  'pointLabelColor': (Object? ctx) => ChartPaint.solid(
-    jsToNumber(jsGet(ctx, 'index')) % 2 != 0
+  'pointLabelColor': (ScriptableScalePointLabelContext ctx) => ChartPaint.solid(
+    ctx.index % 2 != 0
         ? const native_ui.Color.fromRGBO(255, 0, 0, 1)
         : const native_ui.Color.fromRGBO(0, 0, 255, 1),
   ),
-  'angleLineColor': (Object? ctx) => ChartPaint.solid(
-    (jsGet(ctx, 'label')! as List<String>).join() == 'B'
+  'angleLineColor': (ScriptableScalePointLabelContext ctx) => ChartPaint.solid(
+    ctx.label.join() == 'B'
         ? const native_ui.Color.fromRGBO(0, 128, 0, 1)
         : const native_ui.Color.fromRGBO(128, 128, 128, 1),
   ),
-  'gridColor': (Object? ctx) => ChartPaint.solid(
-    jsToNumber(jsGet(ctx, 'index')) > 2
+  'gridColor': (ScriptableScaleContext ctx) => ChartPaint.solid(
+    jsToNumber(ctx.index ?? undefined) > 2
         ? const native_ui.Color.fromRGBO(255, 165, 0, 1)
         : const native_ui.Color.fromRGBO(128, 0, 128, 1),
   ),
-  'pointLabelPadding': (Object? ctx) => 2 + 3 * jsToNumber(jsGet(ctx, 'index')),
-  'angleLineWidth': (Object? ctx) => jsGet(ctx, 'index') == 0 ? 0.0 : 1.0,
-  'angleLineEmptyColor': (Object? ctx) => jsGet(ctx, 'index') == 1
+  'pointLabelPadding': (ScriptableScalePointLabelContext ctx) =>
+      2 + 3 * ctx.index.toDouble(),
+  'angleLineWidth': (ScriptableScalePointLabelContext ctx) =>
+      ctx.index == 0 ? 0.0 : 1.0,
+  'angleLineEmptyColor': (ScriptableScalePointLabelContext ctx) =>
+      ctx.index == 1
       ? ''
       : const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 1)),
   'tickUnit': (Object? scale, double value, int index, Object? ticks) => [
@@ -83,11 +86,12 @@ final Map<String, Object?> _functions = {
     'x',
   ],
   // A font is a ChartTextStyle (row adapt-text-style-fonts).
-  'pointLabelFontByIndex': (Object? ctx) =>
-      ChartTextStyle(fontSize: 8 + jsToNumber(jsGet(ctx, 'index')) * 2),
+  'pointLabelFontByIndex': (ScriptableScalePointLabelContext ctx) =>
+      ChartTextStyle(fontSize: 8 + ctx.index * 2.0),
   // JS `ctx.index % 2 === 0`: the context of the scale has no index, and
   // NaN % 2 is NaN in both languages.
-  'circularEven': (Object? ctx) => jsToNumber(jsGet(ctx, 'index')) % 2 == 0,
+  'circularEven': (ScriptableScaleContext ctx) =>
+      jsToNumber(ctx.index ?? undefined) % 2 == 0,
 };
 
 /// `[x, y, angle]` of a position of the radial scale.
@@ -160,7 +164,7 @@ Map<String, Object?> _radialObservations(Scale scale, Chart chart) {
   final mid = (s.min + s.max) / 2;
   Object? context(int i) {
     final c = s.getPointLabelContext(i);
-    return c == null ? 'undefined' : [c['type'], c['index'], c['label']];
+    return c == null ? 'undefined' : [c.type, c.index, c.label];
   }
 
   return {
@@ -513,10 +517,10 @@ void main() {
       expect(r.getPointLabelContext(-1), isNull);
       expect(r.getPointLabelContext(3), isNull);
       final context = r.getPointLabelContext(1)!;
-      expect(context['type'], 'pointLabel');
-      expect(context['index'], 1.0);
-      expect(context['label'], ['B']);
-      expect(context['scale'], same(r));
+      expect(context.type, 'pointLabel');
+      expect(context.index, 1);
+      expect(context.label, ['B']);
+      expect(context.scale, same(r));
     });
 
     testWidgets('a point label item is the TRBL of getPointLabelPosition', (

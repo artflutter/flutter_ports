@@ -4,11 +4,11 @@ import 'package:chartjs_gallery/docs/sankey/scripts/utils.dart';
 import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
     show SankeyColorMode, SankeyOrientation;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show JsObjectFace;
+    show ScriptableContext;
 
 /// `context.raw`: the data item of the scriptable context [context].
 Map<String, Object?> _raw(Object? context) =>
-    (context! as JsObjectFace)['raw']! as Map<String, Object?>;
+    (context! as ScriptableContext).raw! as Map<String, Object?>;
 
 /// The sample `Vertical` of `src/content/docs/samples/vertical.md:8-38`.
 Map<String, Object?> sankeyVerticalSample() {

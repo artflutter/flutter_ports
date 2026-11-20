@@ -73,10 +73,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         'r': <String, Object?>{
           'ticks': <String, Object?>{'display': false},
           'angleLines': <String, Object?>{
-            'color': (Object? ctx) {
-              return jsToNumber(jsGet(ctx, 'index')).remainder(2) == 0
-                  ? 'green'
-                  : 'red';
+            'color': (ScriptableScalePointLabelContext ctx) {
+              return jsToNumber(ctx.index).remainder(2) == 0 ? 'green' : 'red';
             },
           },
           // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

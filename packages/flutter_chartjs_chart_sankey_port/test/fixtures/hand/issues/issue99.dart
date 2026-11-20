@@ -35,24 +35,10 @@ Map<String, Object?> fixture() {
         'datasets': <Object?>[
           <String, Object?>{
             'borderWidth': 0,
-            'colorFrom': (Object? c) => c2(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'from',
-              ),
-            ),
-            'colorTo': (Object? c) => c2(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'to',
-              ),
-            ),
+            'colorFrom': (ScriptableContext c) =>
+                c2(jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'from')),
+            'colorTo': (ScriptableContext c) =>
+                c2(jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'to')),
             'data': <Object?>[
               <String, Object?>{'flow': 5, 'from': 'Brazil', 'to': 'Portugal'},
               <String, Object?>{'flow': 1, 'from': 'Brazil', 'to': 'France'},

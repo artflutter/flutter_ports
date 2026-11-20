@@ -25,12 +25,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderColor': '#ff00ff',
           'borderWidth': 8,
           // DIVERGES(chartjs): adapt-arc-option-enums, the enum value.
-          'borderAlign': (Object? ctx) {
+          'borderAlign': (ScriptableContext ctx) {
             final value = jsOrZero(
-              jsGet(
-                jsGet(jsGet(ctx, 'dataset'), 'data'),
-                jsGet(ctx, 'dataIndex'),
-              ),
+              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
             );
             return value > 4 ? ArcBorderAlign.center : ArcBorderAlign.inner;
           },

@@ -1551,11 +1551,8 @@ void main() {
       expect(c.counts, isNull, reason: c.id);
       expect(c.primary, 'update+draw+end', reason: c.id);
     }
-    expect(
-      stressDelayByIndex(<String, Object?>{'type': 'data', 'dataIndex': 3.0}),
-      3.0,
-    );
-    expect(stressDelayByIndex(<String, Object?>{'type': 'dataset'}), 0.0);
+    expect(stressDelayByIndex(ScriptableContext.data(null, 3, null)), 3.0);
+    expect(stressDelayByIndex(ScriptableContext.dataset(null, 0)), 0.0);
   });
 
   testWidgets('a tiny run of each explicit case of phase 10 gives its keys '

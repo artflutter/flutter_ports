@@ -23,8 +23,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'backgroundColor': 'transparent',
           'borderColor': 'black',
           'borderWidth': 1,
-          'borderDash': (Object? ctx) {
-            final value = jsOrZero(jsGet(ctx, 'dataIndex')).remainder(2);
+          'borderDash': (ScriptableContext ctx) {
+            final value = jsOrZero(ctx.dataIndex ?? undefined).remainder(2);
             return value == 0 ? <Object?>[3, 3] : <Object?>[];
           },
         },

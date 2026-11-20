@@ -11,6 +11,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
 const green = ChartPaint.solid(ui.Color(0xff00ff00));
@@ -159,7 +161,7 @@ Object? _contextState(Object? element) {
   final context = (element! as ArcElement).$context;
   return context == null
       ? null
-      : [context.jsRead('mode'), context.jsRead('index')];
+      : [contextField(context, 'mode'), contextField(context, 'index')];
 }
 
 /// The context of each arc of ring 0, as user code can read it.
@@ -168,7 +170,7 @@ List<Object?> _arcContexts(Chart chart) => [
     if ((element as ArcElement).$context case final context?)
       [
         for (final key in ['index', 'mode', 'active', 'parsed', 'raw'])
-          _plain(context.jsRead(key)),
+          _plain(contextField(context, key)),
       ]
     else
       null,
@@ -282,7 +284,7 @@ Object _observe(Chart chart) {
               _plain(element.innerRadius),
               _plain(element.outerRadius),
               _plain(element.options),
-              element.$context?.jsKeys(),
+              contextKeysOrNull(element.$context),
               for (final key in [
                 'index',
                 'dataIndex',
@@ -291,7 +293,7 @@ Object _observe(Chart chart) {
                 'parsed',
                 'raw',
               ])
-                _plain(element.$context?.jsRead(key)),
+                _plain(contextField(element.$context, key)),
             ],
       ],
   ];
@@ -480,7 +482,7 @@ void main() {
     (type, _) => _config(type, [
       _dataset({
         'backgroundColor': <ChartPaint>[red, blue, green],
-        'hoverBackgroundColor': (Object? ctx) => green,
+        'hoverBackgroundColor': (ContextObject ctx) => green,
       }),
     ]),
     prepare: (chart, _) {
@@ -492,8 +494,8 @@ void main() {
     'a scriptable color with one parameter',
     (type, trace) => _config(type, [
       _dataset({
-        'backgroundColor': (Object? ctx) {
-          final context = ctx! as ScriptableContext;
+        'backgroundColor': (ContextObject ctx) {
+          final context = ctx as ScriptableContext;
           trace.add(['color', context.index, context.mode, context.active]);
           return context.index == 1 ? blue : red;
         },
@@ -505,9 +507,9 @@ void main() {
     'a scriptable color with two parameters',
     (type, trace) => _config(type, [
       _dataset({
-        'borderColor': (Object? ctx, Object? options) {
+        'borderColor': (ContextObject ctx, Object? options) {
           trace.add(jsGet(options, 'borderAlign'));
-          return (ctx! as ScriptableContext).index == 1 ? blue : red;
+          return (ctx as ScriptableContext).index == 1 ? blue : red;
         },
       }),
     ]),
@@ -678,8 +680,8 @@ void main() {
         'angle': <double>[10, 20, 30],
       }),
       _dataset({
-        'angle': (Object? ctx) {
-          trace.add((ctx! as ScriptableContext).index);
+        'angle': (ContextObject ctx) {
+          trace.add((ctx as ScriptableContext).index);
           return 45.0;
         },
       }),
@@ -733,13 +735,13 @@ void main() {
     (type, trace) => _config(type, [
       _dataset({
         'backgroundColor': <ChartPaint>[red, blue],
-        'cutout': (Object? ctx) {
-          final chart = jsGet(ctx, 'chart')! as Chart;
+        'cutout': (ContextObject ctx) {
+          final chart = ctx.chart as Chart;
           final data = chart.getDatasetMeta(0).data;
           trace.add(data.isEmpty ? null : _contextState(data.last));
           return const PercentRadius(40);
         },
-        'circumference': (Object? ctx) {
+        'circumference': (ContextObject ctx) {
           trace.add('circumference');
           return 270.0;
         },
@@ -852,8 +854,8 @@ void main() {
     (type, trace) => _config(type, [
       _dataset({
         'backgroundColor': <ChartPaint>[red, blue, green],
-        'hoverBorderWidth': (Object? ctx) {
-          trace.add(_arcContexts(jsGet(ctx, 'chart')! as Chart));
+        'hoverBorderWidth': (ContextObject ctx) {
+          trace.add(_arcContexts(ctx.chart as Chart));
           return 3.0;
         },
       }),
@@ -1085,7 +1087,7 @@ void main() {
         probeChart(
           type,
           probes,
-          fields: {'cutout': (Object? ctx) => const PercentRadius(30)},
+          fields: {'cutout': (ContextObject ctx) => const PercentRadius(30)},
         ).update(UpdateMode.none);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
@@ -1294,7 +1296,7 @@ void main() {
         ],
         {
           'scales': <String, Object?>{
-            'r': <String, Object?>{'reverse': (Object? ctx) => false},
+            'r': <String, Object?>{'reverse': (ContextObject ctx) => false},
           },
         },
       );

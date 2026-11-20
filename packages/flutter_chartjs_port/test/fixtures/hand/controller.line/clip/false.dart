@@ -26,10 +26,10 @@ Map<String, Object?> fixture() {
             'clip': ChartClip.none,
             'radius': 8,
             'borderWidth': 0,
-            'backgroundColor': (Object? ctx) =>
-                jsGet(ctx, 'type') != 'data' ||
-                    jsToNumber(jsGet(jsGet(ctx, 'raw'), 'x')) < 1 ||
-                    jsToNumber(jsGet(jsGet(ctx, 'raw'), 'x')) > 1.1
+            'backgroundColor': (ScriptableContext ctx) =>
+                ctx.type != 'data' ||
+                    jsToNumber(jsGet(ctx.raw, 'x')) < 1 ||
+                    jsToNumber(jsGet(ctx.raw, 'x')) > 1.1
                 ? 'rgba(255,0,0,0.7)'
                 : 'rgba(0,0,255,0.05)',
             'data': data,

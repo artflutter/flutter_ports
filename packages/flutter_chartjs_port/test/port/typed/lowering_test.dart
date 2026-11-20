@@ -11,7 +11,6 @@ import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../support/drop_extra_args.dart';
 import 'twin.dart';
 
 // Chart.js ADR 0052, sections 2 and 11: the lowering twins. For each typed
@@ -43,7 +42,7 @@ const ChartPaint _blueValue = ChartPaint.solid(
 );
 
 /// A scriptable color: blue at the data index 1, else red.
-ChartPaint _colorFor(ChartContext context) =>
+ChartPaint _colorFor(ScriptableContext context) =>
     ChartPaint.solid(context.dataIndex == 1 ? _blue : _red);
 
 /// The 8 dataset classes, each without a parameter, with the chart type of
@@ -1359,18 +1358,12 @@ void main() {
         for (final key in ['backgroundColor', 'borderColor']) {
           final script = lowered[key];
           // The 2 arguments of a scriptable option: the context and the
-          // options resolver. The context is a typed data context of
-          // `createContext`, as the chart gives (Chart.js ADR 0054 §11).
-          expect(script, isA<Object? Function(Object?, Object?)>());
+          // options resolver. The context is a typed data context, as the
+          // chart gives (Chart.js ADR 0054 §11).
+          expect(script, isA<Object? Function(ScriptableContext, Object?)>());
           final values = [
-            for (final index in [0.0, 1.0, 2.0])
-              callDroppingExtraArgs(script, [
-                createContext(null, <String, Object?>{
-                  'type': 'data',
-                  'dataIndex': index,
-                }),
-                undefined,
-              ]),
+            for (final index in [0, 1, 2])
+              callScriptable(script, ScriptableContext.data(null, index, null)),
           ];
           expect(values, [_redValue, _blueValue, _redValue], reason: key);
         }

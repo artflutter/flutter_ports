@@ -45,11 +45,11 @@ final class _Chart(Object? config) implements IChart {
   final Config config = Config(config);
 
   /// core.controller.js:1084 `$context`.
-  ContextObject? _context;
+  ScriptableChartContext? _context;
 
   @override
-  ContextObject getContext() =>
-      _context ??= createContext(null, {'chart': this, 'type': 'chart'});
+  ScriptableChartContext getContext() =>
+      _context ??= ScriptableChartContext(this);
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

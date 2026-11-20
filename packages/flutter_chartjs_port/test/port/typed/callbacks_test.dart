@@ -121,17 +121,16 @@ void main() {
     });
   });
 
-  group('ChartContext', () {
+  group('the typed contexts', () {
     testWidgets('a scriptable option gets the chart, dataset and data '
         'contexts', (tester) async {
-      final contexts = <ChartContext>[];
+      final contexts = <ContextObject>[];
       // Chart.js keeps one context object for each element and sets its
       // `active` at each resolution: the state at the call.
       final activeAtCall = <(int?, bool)>[];
-      ChartPaint record(Object? context, Object? options) {
-        final view = context! as ChartContext;
-        contexts.add(view);
-        activeAtCall.add((view.dataIndex, view.active));
+      ChartPaint record(ScriptableContext context, Object? options) {
+        contexts.add(context);
+        activeAtCall.add((context.dataIndex, context.active));
         return const ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1));
       }
 
@@ -150,28 +149,21 @@ void main() {
         'options': <String, Object?>{
           'animation': false,
           'layout': <String, Object?>{
-            'padding': (Object? context, Object? options) {
-              contexts.add(context! as ChartContext);
+            'padding': (ContextObject context, Object? options) {
+              contexts.add(context);
               return EdgeInsets.zero;
             },
           },
         },
       });
 
-      final chartContext = contexts.firstWhere((c) => c.type == 'chart');
+      final chartContext = contexts.whereType<ScriptableChartContext>().first;
       expect(chartContext.chart, same(chart));
-      expect(
-        [
-          chartContext.datasetIndex,
-          chartContext.dataIndex,
-          chartContext.active,
-          chartContext.raw,
-          chartContext.parsed,
-        ],
-        [null, null, false, null, null],
-      );
+      expect(chartContext.type, 'chart');
 
-      final datasetContext = contexts.firstWhere((c) => c.type == 'dataset');
+      final datasetContext = contexts.whereType<ScriptableContext>().firstWhere(
+        (c) => c.type == 'dataset',
+      );
       expect(datasetContext.chart, same(chart));
       expect(
         [
@@ -183,12 +175,10 @@ void main() {
         [0, null, false, null],
       );
 
-      final dataContext = contexts.lastWhere(
+      final dataContext = contexts.whereType<ScriptableContext>().lastWhere(
         (c) => c.type == 'data' && c.dataIndex == 1,
       );
       expect(dataContext.chart, same(chart));
-      expect(dataContext.datasetIndex, isA<int>());
-      expect(dataContext.dataIndex, isA<int>());
       expect(
         [
           dataContext.datasetIndex,
@@ -198,7 +188,7 @@ void main() {
         ],
         [0, 1, false, 7],
       );
-      expect((dataContext.parsed! as JsObjectFace)['y'], 7);
+      expect((dataContext.parsed! as ParsedItem).y, 7);
 
       activeAtCall.clear();
       await triggerMouseEvent(
@@ -210,41 +200,6 @@ void main() {
         activeAtCall,
         contains((1, true)),
         reason: 'the hover style resolves in an active context',
-      );
-    });
-
-    test('undefined, an absent key and another type give null', () {
-      // The typed context of a data item (Chart.js ADR 0054 §11).
-      final context = createContext(null, <String, Object?>{
-        'type': 'data',
-        'raw': undefined,
-        'parsed': undefined,
-        'datasetIndex': 1.0,
-        'dataIndex': 'x',
-        'active': 1,
-      }) as ChartContext;
-      expect(
-        [
-          context.type,
-          context.raw,
-          context.parsed,
-          context.datasetIndex,
-          context.dataIndex,
-          context.active,
-        ],
-        ['data', null, null, 1, null, false],
-      );
-      expect(
-        (createContext(null, <String, Object?>{}) as ChartContext).type,
-        isNull,
-      );
-      // A chart context has no member of a data context.
-      final chartContext = createContext(null, <String, Object?>{
-        'type': 'chart',
-      }) as ChartContext;
-      expect(
-        [chartContext.type, chartContext.datasetIndex, chartContext.active],
-        ['chart', null, false],
       );
     });
   });

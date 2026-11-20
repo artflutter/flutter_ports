@@ -9,6 +9,7 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
 import '../../support/data_scope.dart';
 import '../../support/light_theme.dart';
 import '../../support/plugin_defaults.dart';
@@ -31,7 +32,7 @@ final class _Log() {
   /// The context [ctx] of a scriptable option [name]: its type and indexes.
   void context(String name, Object? ctx) {
     String read(String key) {
-      final value = jsGet(ctx, key);
+      final value = contextRead(ctx, key);
       return identical(value, undefined) ? '-' : '${plainValue(value)}';
     }
 
@@ -119,7 +120,7 @@ Map<String, Object?> _titleOf(_Log log, String axis) => <String, Object?>{
   'display': true,
   'text': (Object? ctx) {
     log.context('title.text', ctx);
-    final chart = jsGet(ctx, 'chart')! as Chart;
+    final chart = contextRead(ctx, 'chart')! as Chart;
     final scale = chart.scales[axis];
     if (scale == null) return ['none'];
     final options = scale.options;
@@ -145,7 +146,7 @@ Map<String, Object?> _ticks(_Log log) => <String, Object?>{
   'color': (Object? ctx) {
     log.context('ticks.color', ctx);
     // A read through the scale view has the scale context, with no index.
-    final index = jsGet(ctx, 'index');
+    final index = contextRead(ctx, 'index');
     return ChartPaint.solid(
       index is num && index % 2 == 0
           ? const Color(0xff336699)

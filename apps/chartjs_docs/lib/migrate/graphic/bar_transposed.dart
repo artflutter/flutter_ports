@@ -14,7 +14,7 @@ final ({double min, double max}) _range = graphicRange([
 /// The `LinearGradient` of a `GradientEncode` goes from the left to the
 /// right of the region: the chart area.
 ChartPaint _gradient(
-  ChartContext context,
+  ScriptableContext context,
   List<Color> colors,
   List<double> stops,
 ) {
@@ -29,14 +29,14 @@ ChartPaint _gradient(
   );
 }
 
-ChartPaint _fill(ChartContext context) => _gradient(
+ChartPaint _fill(ScriptableContext context) => _gradient(
   context,
   const [Color(0x8883bff6), Color(0x88188df0), Color(0xcc188df0)],
   const [0, 0.5, 1],
 );
 
 /// The gradient of the `tap` updater: the fill of the selected bar.
-ChartPaint _selectedFill(ChartContext context) => _gradient(
+ChartPaint _selectedFill(ScriptableContext context) => _gradient(
   context,
   const [Color(0xee83bff6), Color(0xee3f78f7), Color(0xff3f78f7)],
   const [0, 0.7, 1],

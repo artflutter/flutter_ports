@@ -97,8 +97,7 @@ final class const ChartResolver<T>(
     // A fresh two-argument bridge, preserving the previous typed callback
     // adaptation and function-identity behavior of each lowering.
     final callback = this.callback;
-    Object? resolve(Object? context, Object? _) =>
-        callback(context! as ChartContext);
+    Object? resolve(ScriptableContext context, Object? _) => callback(context);
     return OptFunction<T>(resolve);
   }
 

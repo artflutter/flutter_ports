@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
 const green = ChartPaint.solid(ui.Color(0xff00ff00));
@@ -141,7 +143,7 @@ Object _observe(Chart chart, [int dataset = 0]) => [
       point.skip,
       point.stop,
       _plain(point.options),
-      point.$context?.jsKeys(),
+      contextKeysOrNull(point.$context),
       for (final key in [
         'index',
         'dataIndex',
@@ -150,7 +152,7 @@ Object _observe(Chart chart, [int dataset = 0]) => [
         'parsed',
         'raw',
       ])
-        _plain(point.$context?.jsRead(key)),
+        _plain(contextField(point.$context, key)),
     ],
 ];
 
@@ -237,9 +239,9 @@ void main() {
     for (final reference in [false, true]) {
       final cfg = _config();
       final calls = <Object?>[];
-      ChartPaint hover(Object? ctx) {
-        final e = jsGet(ctx, 'element')! as PointElement;
-        calls.add([jsGet(ctx, 'dataIndex'), e.x, e.y]);
+      ChartPaint hover(ScriptableContext ctx) {
+        final e = ctx.element! as PointElement;
+        calls.add([ctx.dataIndex, e.x, e.y]);
         return green;
       }
 
@@ -268,9 +270,9 @@ void main() {
       for (final reference in [false, true]) {
         final cfg = _config();
         var calls = 0;
-        double radius(Object? ctx) {
+        double radius(ScriptableContext ctx) {
           calls++;
-          return 2 + (jsGet(ctx, 'dataIndex')! as num).toDouble();
+          return 2 + (ctx.dataIndex! as num).toDouble();
         }
 
         _dataset(cfg)['radius'] = callback ? radius : <double>[2, 4];
@@ -409,8 +411,8 @@ void main() {
         final ds = _dataset(cfg);
         final calls = <Object?>[];
         var fail = false;
-        ChartPaint hover(Object? context) {
-          calls.add(jsGet(context, 'dataIndex'));
+        ChartPaint hover(ScriptableContext context) {
+          calls.add(context.dataIndex);
           if (fail) throw StateError('hover failure');
           ((ds['data']! as List<Object?>)[6]! as Map<String, Object?>)['y'] =
               '3';

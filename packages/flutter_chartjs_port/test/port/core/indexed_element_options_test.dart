@@ -440,10 +440,13 @@ void main() {
   });
 
   test('non-native contexts and exceptional indices retain fallback', () {
-    for (final index in <Object?>[-1.0, 0.5, double.nan, null, undefined]) {
+    for (final index in <Object?>[-1, 0.5, double.nan, null, undefined]) {
       final fast = _Fixture()..resolve();
       final full = _Fixture(ordinary: true)..resolve();
-      Object context() => ScriptableContext(null)..index = index;
+      // A typed context has an int index; a Map context of a spec has any.
+      Object context() => index is int
+          ? ScriptableContext.data(null, index, null)
+          : <String, Object?>{'index': index};
       fast.makeContext = context;
       full.makeContext = context;
       _same(fast.resolve(), full.resolve());
@@ -525,8 +528,7 @@ void main() {
     () {
       final fast = _Fixture()..resolve();
       final full = _Fixture(ordinary: true)..resolve();
-      fast.makeContext = () =>
-          ScriptableContext(<String, Object?>{'index': 1.0});
+      fast.makeContext = () => <String, Object?>{'index': 1.0};
       full.makeContext = fast.makeContext;
       _same(fast.resolve(), full.resolve());
       fast.makeContext = () {
@@ -555,7 +557,7 @@ void main() {
       final full = _Fixture(ordinary: true, colors: colors)..resolve();
       // Parse at runtime: JS already rounds this integer; VM/Wasm retain it.
       final index = int.parse('9007199254740993');
-      fast.makeContext = () => ScriptableContext(null)..index = index;
+      fast.makeContext = () => ScriptableContext.data(null, index, null);
       full.makeContext = fast.makeContext;
       final actual = fast.resolve();
       _same(actual, full.resolve());

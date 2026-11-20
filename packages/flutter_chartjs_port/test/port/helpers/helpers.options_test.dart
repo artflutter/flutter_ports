@@ -363,183 +363,83 @@ void main() {
     });
   });
 
-  // createContext: the Map form of the prototype chain.
-  group('adapt-create-context-prototype', () {
-    late Map<String, Object?> parent;
-    late ContextObject context;
-
-    setUp(() {
-      parent = <String, Object?>{'chart': 'c', 'type': 'chart', 'n': null};
-      context = createContext(parent, <String, Object?>{
-        'type': 'dataset',
-        'index': 1.0,
-        '2': 'two',
-        'u': undefined,
-      });
-    });
-
-    test('reads the own keys, then the prototype', () {
-      expect(context['chart'], 'c');
-      expect(context['type'], 'dataset');
-      expect(context['index'], 1);
-      expect(context['n'], isNull);
-      expect(context['u'], same(undefined));
-      expect(context['missing'], same(undefined));
-      expect(context.prototype, same(parent));
-    });
-    test('gives the own keys in the order of Object.keys', () {
-      expect(jsObjectKeys(context), ['2', 'type', 'index', 'u']);
-      expect(context.ownKeyCount, 4);
-    });
-    test('containsKey is the in operator', () {
-      expect(['chart', 'n', 'u', 'missing'].map(context.hasProperty), [
-        true,
-        true,
-        true,
-        false,
-      ]);
-      expect(['chart', 'type', 'u'].map(context.hasOwnProperty), [
-        false,
-        true,
-        true,
-      ]);
-    });
-    test('sees later changes of the prototype, and writes own keys', () {
-      parent['later'] = 'L';
-      context['chart'] = 'own';
-      expect(
-        [context['later'], context['chart'], parent['chart']],
-        ['L', 'own', 'c'],
-      );
-
-      final child = createContext(context, <String, Object?>{'dataIndex': 0.0});
-      expect(
-        [child['chart'], child['type'], child['later'], child['dataIndex']],
-        ['own', 'dataset', 'L', 0],
-      );
-      expect(jsObjectKeys(child), ['dataIndex']);
-    });
-    test('an own undefined shadows the prototype', () {
-      final shadow = createContext(parent, <String, Object?>{
-        'chart': undefined,
-      });
-      expect(shadow['chart'], same(undefined));
-      expect(shadow.hasProperty('chart'), isTrue);
-    });
-    test('has a null prototype for a null parent', () {
-      final root = createContext(null, <String, Object?>{'chart': 1.0});
-      expect(root.prototype, isNull);
-      expect(jsObjectKeys(root), ['chart']);
-    });
-    test('copies only the own keys of the context', () {
-      final source = createContext(parent, <String, Object?>{'a': 1.0});
-      // `Object.assign` reads the own keys of the context object: the plain
-      // object of its face (Chart.js ADR 0054 §5).
-      final copy = createContext(null, <String, Object?>{
-        for (final key in jsObjectKeys(source)) key: source[key],
-      });
-      expect(jsObjectKeys(copy), ['a']);
-      expect(copy.hasProperty('chart'), isFalse);
-    });
-  });
-
-  // createContext: the typed class of the type (Chart.js ADR 0054 §11).
+  // The typed contexts of Chart.js ADR 0054 §11 (row `adapt-typed-contexts`).
   group('adapt-typed-contexts', () {
-    test('gives the class of the type', () {
-      ContextObject make(String type) =>
-          createContext(null, <String, Object?>{'type': type});
-      expect(make('chart'), isA<ScriptableChartContext>());
-      expect(make('dataset'), isA<ScriptableContext>());
-      expect(make('data'), isA<ScriptableContext>());
-      expect(make('scale'), isA<ScriptableScaleContext>());
-      expect(make('tick'), isA<ScriptableScaleContext>());
-      expect(make('pointLabel'), isA<ScriptableScalePointLabelContext>());
-      expect(make('tooltip'), isA<ScriptableTooltipContext>());
-      expect(make('segment'), isA<ScriptableLineSegmentContext>());
-      final other = make('custom');
-      expect(other.runtimeType, ContextObject);
-      final none = createContext(null, <String, Object?>{'a': 1.0});
-      expect(none.runtimeType, ContextObject);
-    });
-    test('keeps the order of the literal, with fields and extras', () {
-      // core.datasetController.js:196-205, then an extra and a field write.
-      final chart = createContext(null, <String, Object?>{
-        'chart': 'c',
-        'type': 'chart',
-      });
-      final dataset = createContext(chart, <String, Object?>{
-        'active': false,
-        'dataset': undefined,
-        'datasetIndex': 0.0,
-        'index': 0.0,
-        'mode': 'default',
-        'type': 'dataset',
-      });
-      final data =
-          (createContext(dataset, <String, Object?>{
-              'active': false,
-              'dataIndex': 2.0,
-              'parsed': undefined,
-              'raw': undefined,
-              'element': 'e',
-              'index': 2.0,
-              'mode': 'default',
-              'type': 'data',
-            }) as ScriptableContext)
-            ..['extra'] = 'x'
-            ..['raw'] = 7.0;
-      expect(jsObjectKeys(data), [
-        'active',
-        'dataIndex',
-        'parsed',
-        'raw',
-        'element',
-        'index',
-        'mode',
-        'type',
-        'extra',
-      ]);
+    test('each class gives the type of upstream', () {
+      final chart = ScriptableChartContext(_FakeChart());
+      final scale = ScriptableScaleContext.scale(chart, _FakeScale());
+      final tick = ScriptableScaleContext.tick(scale, Tick(value: 1), 0);
       expect(
-        [data.raw, data.dataIndex, data.parsed, data['extra']],
-        [7.0, 2.0, same(undefined), 'x'],
+        [
+          chart.type,
+          ScriptableContext.dataset(chart, 0).type,
+          ScriptableContext.data(chart, 0, null).type,
+          scale.type,
+          tick.type,
+          ScriptableScalePointLabelContext.pointLabel(scale, ['a'], 0).type,
+          ScriptableTooltipContext(
+            chart,
+            tooltip: null,
+            tooltipItems: null,
+          ).type,
+        ],
+        ['chart', 'dataset', 'data', 'scale', 'tick', 'pointLabel', 'tooltip'],
       );
-      // The members of the parents: the dataset and the chart context.
-      expect(data.datasetIndex, 0.0);
-      expect(data['chart'], 'c');
-      expect((chart as ScriptableChartContext).chart, 'c');
-      expect(data.hasOwnProperty('datasetIndex'), isFalse);
     });
-    test('a delete of a field reads the parent again', () {
-      final parent = createContext(null, <String, Object?>{
-        'index': 1.0,
-        'type': 'scale',
-      });
-      final tick = createContext(parent, <String, Object?>{
-        'tick': 't',
-        'index': 2.0,
-        'type': 'tick',
-      }) as ScriptableScaleContext;
-      expect([tick.index, tick.tick, tick.type], [2.0, 't', 'tick']);
-      expect(tick.jsDelete('index'), isTrue);
-      expect(tick.index, 1.0);
-      expect(jsObjectKeys(tick), ['tick', 'type']);
-      tick['index'] = 3.0;
-      expect(jsObjectKeys(tick), ['tick', 'type', 'index']);
-      expect(tick.index, 3.0);
+    test('a child reads the members of its parents', () {
+      final fake = _FakeChart();
+      final chart = ScriptableChartContext(fake);
+      final dataset = ScriptableContext.dataset(chart, 3)..dataset = 'd';
+      final data = ScriptableContext.data(dataset, 2, null);
+      expect(data.chart, same(fake));
+      expect(data.datasetIndex, 3);
+      expect(data.dataset, 'd');
+      expect(data.dataIndex, 2);
+      expect(data.index, 2);
+      expect(dataset.dataIndex, isNull);
+      // The dataset context of a later update gives its new values.
+      dataset
+        ..dataset = 'e'
+        ..datasetIndex = 4;
+      expect([data.dataset, data.datasetIndex], ['e', 4]);
+
+      final scaleObject = _FakeScale();
+      final scale = ScriptableScaleContext.scale(chart, scaleObject);
+      final tick = ScriptableScaleContext.tick(scale, Tick(value: 1), 5);
+      expect(tick.scale, same(scaleObject));
+      expect([tick.index, scale.index, scale.tick], [5, null, null]);
+      final label = ScriptableScalePointLabelContext.pointLabel(scale, [
+        'a',
+      ], 1);
+      expect(label.scale, same(scaleObject));
+      expect(label.chart, same(fake));
     });
-    test('the face reads with JS rules', () {
-      final context = createContext(
-        createContext(null, <String, Object?>{'n': null, 'type': 'chart'}),
-        <String, Object?>{'p0': 'a', 'type': 'segment', '1': 'one'},
+    test('a context with no chart context throws at chart', () {
+      expect(
+        () => ScriptableContext.data(null, 0, null).chart,
+        throwsA(isA<TypeError>()),
       );
-      expect(context.jsRead('p0'), 'a');
-      expect(context.jsRead('n'), isNull);
-      expect(context.jsRead('missing'), same(undefined));
-      expect(context.jsKeys(), ['1', 'p0', 'type']);
-      expect(context.jsHas('n'), isFalse);
-      expect(context.jsDelete('p0'), isTrue);
-      expect(context.jsDelete('p0'), isFalse);
-      expect(context.jsRead('p0'), same(undefined));
+    });
+    test('callScriptable gives the typed context to a typed function', () {
+      final data = ScriptableContext.data(null, 4, null);
+      expect(callScriptable((ScriptableContext c) => c.dataIndex, data), 4);
+      expect(
+        callScriptable(
+          (ScriptableContext c, Object? options) => [c.index, options],
+          data,
+          'o',
+        ),
+        [4, 'o'],
+      );
+      expect(callScriptable((Object? c) => c, data), same(data));
+      expect(callScriptable(() => 1, data), 1);
+      // A spec gives a Map of its own as the context.
+      expect(
+        callScriptable((Object? c) => jsGet(c, 'index'), <String, Object?>{
+          'index': 1.0,
+        }),
+        1.0,
+      );
     });
   });
 
@@ -551,4 +451,16 @@ void main() {
       expect(() => (trbl as ChartArea).width, throwsA(isA<Error>()));
     });
   });
+}
+
+/// A chart with no members: the `chart` of a context of a test.
+final class _FakeChart() implements IChart {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// A scale with no members: the `scale` of a context of a test.
+final class _FakeScale() implements IScale {
+  @override
+  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

@@ -123,7 +123,8 @@ Offset _barPoint(WidgetTester tester, Chart chart, int index) {
       Offset(bar.x, (bar.y + chart.chartArea!.bottom) / 2);
 }
 
-ChartPaint _blueFor(ChartContext context) => const .solid(Color(0xFF0000FF));
+ChartPaint _blueFor(ScriptableContext context) =>
+    const .solid(Color(0xFF0000FF));
 
 void main() {
   group('the change test', () {

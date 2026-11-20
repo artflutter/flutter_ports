@@ -7,6 +7,8 @@ import 'dart:ui' as native_ui;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart' show TestOn, addTearDown;
 
+import '../../support/context_keys.dart';
+
 /// The kind of the second argument of a user function: `'absent'` for the
 /// [undefined] sentinel (an argument that the caller does not give),
 /// `'resolver'` for a resolver proxy, else `'value'`.
@@ -21,7 +23,7 @@ String traceArgKind(Object? b) => identical(b, undefined)
 Map<String, Object?> traceEntry(String name, Object? a, Object? b) =>
     <String, Object?>{
       'fn': name,
-      if (a is Map<String, Object?> || a is JsObjectFace)
+      if (a is Map<String, Object?> || a is JsObjectFace || a is ContextObject)
         'ctx': <String, Object?>{
           for (final key in const [
             'type',
@@ -31,7 +33,7 @@ Map<String, Object?> traceEntry(String name, Object? a, Object? b) =>
             'mode',
             'active',
           ])
-            key: jsGet(a, key),
+            key: contextRead(a, key),
         }
       else
         'arg0': a,
@@ -59,7 +61,7 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
         trace.add(traceEntry(name, key, undefined));
         return body(key);
       };
-  double index(Object? ctx) => jsToNumber(jsGet(ctx, 'dataIndex'));
+  double index(Object? ctx) => jsToNumber(contextRead(ctx, 'dataIndex'));
   return {
     'dsColor': fn(
       'dsColor',
@@ -80,7 +82,7 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
           ? const native_ui.Color.fromRGBO(0, 0, 0, 1)
           : const native_ui.Color.fromRGBO(255, 255, 255, 1),
     ),
-    'barRadius': fn('barRadius', (ctx, _) => jsGet(ctx, 'dataIndex')),
+    'barRadius': fn('barRadius', (ctx, _) => contextRead(ctx, 'dataIndex')),
     'arcRadius': fn('arcRadius', (ctx, _) => index(ctx) + 1),
     'listItem': fn('listItem', (_, _) => 3.0),
     'fallbackFn': fn('fallbackFn', (_, _) => 'radiusFallback'),
@@ -89,24 +91,24 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     'radiusFn': fn('radiusFn', (_, _) => 5.0),
     'selfRadius': fn('selfRadius', (_, options) => jsGet(options, 'radius')),
     'writeParsed': fn('writeParsed', (ctx, _) {
-      (ctx! as JsObjectFace)['parsed'] = <String, Object?>{
-        'x': jsGet(jsGet(ctx, 'parsed'), 'x'),
+      (ctx! as ScriptableContext).parsed = <String, Object?>{
+        'x': jsGet(contextRead(ctx, 'parsed'), 'x'),
         'y': 99.0,
       };
       return 1.0;
     }),
     'readParsed': fn(
       'readParsed',
-      (ctx, _) => jsGet(jsGet(ctx, 'parsed'), 'y') == 99.0 ? 7.0 : 3.0,
+      (ctx, _) => jsGet(contextRead(ctx, 'parsed'), 'y') == 99.0 ? 7.0 : 3.0,
     ),
     'writeRadius': fn('writeRadius', (ctx, options) {
-      if (jsGet(ctx, 'dataIndex') == 2.0) {
+      if (contextRead(ctx, 'dataIndex') == 2.0) {
         (options! as JsObjectFace)['radius'] = 9.0;
       }
       return 1.0;
     }),
     'addDefaultKey': fn('addDefaultKey', (ctx, _) {
-      if (jsGet(ctx, 'dataIndex') == 1.0) {
+      if (contextRead(ctx, 'dataIndex') == 1.0) {
         tracePointDefaults()['extraKey'] = 5.0;
       }
       return 'red';
@@ -114,23 +116,24 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     'namedRadius': fn('namedRadius', (_, _) => 4.0),
     'animDelay': fn(
       'animDelay',
-      (ctx, _) => jsGet(ctx, 'type') == 'data' ? index(ctx) * 10 : 0.0,
+      (ctx, _) => contextRead(ctx, 'type') == 'data' ? index(ctx) * 10 : 0.0,
     ),
     'animDuration': fn(
       'animDuration',
-      (ctx, _) => jsGet(ctx, 'type') == 'data' ? 500 + 100 * index(ctx) : 700.0,
+      (ctx, _) =>
+          contextRead(ctx, 'type') == 'data' ? 500 + 100 * index(ctx) : 700.0,
     ),
     'numbersDuration': fn('numbersDuration', (_, _) => 400.0),
     'animationFallback': fn('animationFallback', (_, _) => false),
     'deleteEasing': fn('deleteEasing', (ctx, _) {
-      if (jsGet(ctx, 'dataIndex') == 1.0) {
+      if (contextRead(ctx, 'dataIndex') == 1.0) {
         (jsGet(defaults, 'animation')! as JsObjectFace).jsDelete('easing');
       }
       return 'red';
     }),
     'writeOtherDataset': fn('writeOtherDataset', (ctx, _) {
-      if (jsGet(ctx, 'dataIndex') == 0.0) {
-        final chart = jsGet(ctx, 'chart')! as Chart;
+      if (contextRead(ctx, 'dataIndex') == 0.0) {
+        final chart = contextRead(ctx, 'chart')! as Chart;
         final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
         (datasets[1]! as AnyObject)['pointRadius'] = 8.0;
       }
@@ -138,14 +141,15 @@ Map<String, Object?> resolverTraceFunctions(List<Object?> trace) {
     }),
     'gridWidth': fn(
       'gridWidth',
-      (ctx, _) => jsToNumber(jsGet(ctx, 'index')) % 2 == 0 ? 2.0 : 1.0,
+      (ctx, _) => jsToNumber(contextRead(ctx, 'index')) % 2 == 0 ? 2.0 : 1.0,
     ),
     'legendColor': fn(
       'legendColor',
       (_, _) => const native_ui.Color.fromRGBO(0, 255, 0, 1),
     ),
     'writeRadiusActive': fn('writeRadiusActive', (ctx, options) {
-      if (jsTruthy(jsGet(ctx, 'active')) && jsGet(ctx, 'dataIndex') == 2.0) {
+      if (jsTruthy(contextRead(ctx, 'active')) &&
+          contextRead(ctx, 'dataIndex') == 2.0) {
         (options! as JsObjectFace)['radius'] = 9.0;
       }
       return 2.0;

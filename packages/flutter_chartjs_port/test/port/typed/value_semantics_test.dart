@@ -23,10 +23,11 @@ const Color _red = Color(0xFFFF6384);
 const Color _blue = Color(0xFF36A2EB);
 
 /// A scriptable color.
-ChartPaint _colorFor(ChartContext context) => const ChartPaint.solid(_red);
+ChartPaint _colorFor(ScriptableContext context) => const ChartPaint.solid(_red);
 
 /// Another scriptable color.
-ChartPaint _otherFor(ChartContext context) => const ChartPaint.solid(_blue);
+ChartPaint _otherFor(ScriptableContext context) =>
+    const ChartPaint.solid(_blue);
 
 /// A tick callback.
 List<String>? _format(Scale scale, double value, int index, List<Tick> ticks) =>

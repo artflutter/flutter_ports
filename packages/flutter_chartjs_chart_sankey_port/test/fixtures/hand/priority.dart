@@ -47,23 +47,11 @@ Map<String, Object?> fixture() {
       'data': <String, Object?>{
         'datasets': <Object?>[
           <String, Object?>{
-            'colorFrom': (Object? c) => getColor(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'from',
-              ),
+            'colorFrom': (ScriptableContext c) => getColor(
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'from'),
             ),
-            'colorTo': (Object? c) => getColor(
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'to',
-              ),
+            'colorTo': (ScriptableContext c) => getColor(
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'to'),
             ),
             'data': data,
             'priority': priority,

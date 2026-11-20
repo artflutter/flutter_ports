@@ -19,8 +19,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'data': <Object?>[0, 5, 10, null, -10, -5],
           'backgroundColor': '#ff0000',
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0
+          'fill': (ScriptableContext ctx) {
+            return ctx.datasetIndex == 0
                 ? FillTarget.toOrigin
                 : FillTarget.none;
           },
@@ -36,8 +36,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         'line': <String, Object?>{
           'backgroundColor': '#00ff00',
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
-          'fill': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0
+          'fill': (ScriptableContext ctx) {
+            return ctx.datasetIndex == 0
                 ? FillTarget.toOrigin
                 : FillTarget.none;
           },

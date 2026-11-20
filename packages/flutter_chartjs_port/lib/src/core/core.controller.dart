@@ -564,7 +564,7 @@ class Chart(
 
   /// core.controller.js:172 `$context = undefined`: the chart context of
   /// [getContext]. Dart `null` stands for JS `undefined`.
-  ContextObject? $context;
+  ScriptableChartContext? $context;
 
   /// core.controller.js:173 `_doResize`: the debounced update of a resize.
   late Debounced<UpdateMode?> _doResize;
@@ -2162,8 +2162,9 @@ class Chart(
 
   /// core.controller.js:855 `getContext()`.
   @override
-  ContextObject getContext() {
-    return $context ??= createContext(null, {'chart': this, 'type': 'chart'});
+  ScriptableChartContext getContext() {
+    // DIVERGES(chartjs): adapt-typed-contexts, the typed chart context.
+    return $context ??= ScriptableChartContext(this);
   }
 
   /// core.controller.js:859 `getVisibleDatasetCount()`.

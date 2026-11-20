@@ -275,11 +275,9 @@ double _getTitleHeight(ScaleTitleOptions options, Object? fallback) {
 ///
 /// `createContext` gives the typed context of the type `'scale'`, a
 /// [ScriptableScaleContext] (Chart.js ADR 0054 §11).
-ScriptableScaleContext _createScaleContext(Object parent, Scale scale) {
-  return createContext(parent, <String, Object?>{
-    'scale': scale,
-    'type': 'scale',
-  }) as ScriptableScaleContext;
+// DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
+ScriptableScaleContext _createScaleContext(ContextObject parent, Scale scale) {
+  return ScriptableScaleContext.scale(parent, scale);
 }
 
 /// core.scale.js:114 `createTickContext`.
@@ -287,8 +285,12 @@ ScriptableScaleContext _createScaleContext(Object parent, Scale scale) {
 /// The index of the context is a number, which a scriptable option reads.
 /// The context of the type `'tick'` is a [ScriptableScaleContext] (Chart.js ADR
 /// 0054 §11).
-ScriptableScaleContext _createTickContext(Object parent, int index, Tick tick) {
-  // DIVERGES(chartjs): adapt-tick-context-construction, no temporary Map.
+ScriptableScaleContext _createTickContext(
+  ContextObject parent,
+  int index,
+  Tick tick,
+) {
+  // DIVERGES(chartjs): adapt-typed-contexts, the typed class of the type.
   return ScriptableScaleContext.tick(parent, tick, index);
 }
 

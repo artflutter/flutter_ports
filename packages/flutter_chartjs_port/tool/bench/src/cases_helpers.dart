@@ -79,26 +79,10 @@ List<BenchCase> helperCases() => [
     return (n) {
       var acc = 0;
       for (var i = 0; i < n; i++) {
-        final chart = createContext(null, <String, Object?>{
-          'chart': 'chart',
-          'type': 'chart',
-        });
-        final dataset = createContext(chart, <String, Object?>{
-          'active': false,
-          'datasetIndex': 0.0,
-          'index': 0.0,
-          'mode': 'default',
-          'type': 'dataset',
-        });
-        final data = createContext(dataset, <String, Object?>{
-          'active': false,
-          'dataIndex': 1.0,
-          'raw': 1.0,
-          'index': 1.0,
-          'mode': 'default',
-          'type': 'data',
-        });
-        acc += data.ownKeyCount;
+        final chart = ScriptableChartContext(BenchChart());
+        final dataset = ScriptableContext.dataset(chart, 0);
+        final data = ScriptableContext.data(dataset, 1, null)..raw = 1.0;
+        acc += data.index;
       }
       return acc;
     };
@@ -112,16 +96,16 @@ List<BenchCase> helperCases() => [
       return (n) {
         var acc = 0;
         for (var i = 0; i < n; i++) {
-          if (jsGet(ctx, 'chart') != null) acc++; // two levels up
-          if (jsGet(ctx, 'datasetIndex') != null) acc++; // one level up
-          if (jsGet(ctx, 'dataIndex') != null) acc++; // own
-          if (identical(jsGet(ctx, 'absent'), undefined)) acc++; // miss
+          if (identical(ctx.chart, ctx.chart)) acc++; // two levels up
+          if (ctx.datasetIndex != null) acc++; // one level up
+          if (ctx.dataIndex != null) acc++; // own
+          if (ctx.element == null) acc++; // a field with no value
         }
         return acc;
       };
     },
     items: 4,
-    per: '4 reads of a data context: own, parent, root, miss',
+    per: '4 reads of a data context: own, parent, root, null',
   ),
   BenchCase('options', 'toFont/style', () {
     const options = ChartTextStyle(

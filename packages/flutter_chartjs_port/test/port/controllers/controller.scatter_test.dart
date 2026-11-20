@@ -59,9 +59,9 @@ final Map<String, Object?> _functions = {
   //   if (ctx.dataIndex === 1) ctx.parsed.x = 10;
   //   return 3;
   // }
-  'radiusWrite': (Object? ctx) {
-    if (jsGet(ctx, 'dataIndex') == 1) {
-      (jsGet(ctx, 'parsed')! as JsObjectFace)['x'] = 10.0;
+  'radiusWrite': (ScriptableContext ctx) {
+    if (ctx.dataIndex == 1) {
+      (ctx.parsed! as JsObjectFace)['x'] = 10.0;
     }
     return 3.0;
   },

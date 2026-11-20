@@ -62,7 +62,7 @@ class _BarSample5State() extends State<BarSample5> {
 
   /// The colors of an item. fl_chart paints a gradient in the rect of the
   /// item, from its top left to its bottom right corner.
-  ChartPaint _fill(ChartContext context) {
+  ChartPaint _fill(ScriptableContext context) {
     final dataset = context.datasetIndex ?? 0;
     final index = context.dataIndex;
     if (index == null) return const .solid(Fl.blue);
@@ -146,7 +146,7 @@ class _BarSample5State() extends State<BarSample5> {
   /// interval that is a multiple of 5, but not at the ends.
   bool _gridAt(Object? context) {
     final value = tickOf(context);
-    final scale = (context! as JsObjectFace)['scale']! as Scale;
+    final scale = (context! as ScriptableScaleContext).scale! as Scale;
     final step = flInterval(scale.height, 40);
     return value.abs() < 20 && value % step == 0 && value % 5 == 0;
   }

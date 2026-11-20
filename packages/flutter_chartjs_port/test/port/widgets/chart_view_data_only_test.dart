@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/chartjs.dart' as chartjs show Element;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 // Chart.js ADR 0098: with `dataOnlyUpdates`, a new typed config that differs
 // from the last one only in its data Lists calls `chart.updateData()`. The
 // layout count of a registered spy plugin tells the two paths apart: a full
@@ -148,8 +150,8 @@ ChartConfig _config(ChartKind type, int step, List<Object> labels) =>
     );
 
 /// A scriptable radius that reads the mode of its context.
-Object? _radiusOfMode(Object? context) =>
-    (context! as JsObjectFace)['mode'] == 'none' ? 2.0 : 9.0;
+Object? _radiusOfMode(ScriptableContext context) =>
+    context.mode == UpdateMode.none ? 2.0 : 9.0;
 
 /// A raw config of a bar chart with a fixed range and no animation.
 Map<String, Object?> _rawBars(int step) => <String, Object?>{
@@ -330,7 +332,7 @@ Object _observeDeep(Chart chart) => [
           _plain(options),
           options.jsKeys(),
           element.active,
-          context?.jsKeys(),
+          if (context != null) contextKeys(context) else null,
           for (final key in const [
             'active',
             'dataIndex',
@@ -341,7 +343,7 @@ Object _observeDeep(Chart chart) => [
             'raw',
             'type',
           ])
-            _plain(context?.jsRead(key)),
+            _plain(context == null ? null : upstreamContextValue(context, key)),
         ];
       }(),
 ];
@@ -1331,7 +1333,7 @@ void main() {
           final spy = _spyOnChart();
           final labels = _newLabels();
           var calls = 0;
-          ChartPaint resolve(ChartContext _) {
+          ChartPaint resolve(ScriptableContext _) {
             calls++;
             return const ChartPaint.solid(_red);
           }

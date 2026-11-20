@@ -1233,7 +1233,7 @@ class Config([Object? config]) implements ChartConfiguration {
       // hover options.
       final subResolver = createResolver(scopes, context, subPrefixes);
       // DIVERGES(chartjs): adapt-config-objects, the context is an object.
-      if (!isObject(context)) throw TypeError();
+      if (context is! ContextObject && !isObject(context)) throw TypeError();
       options = attachContext(resolver, context!, subResolver);
     }
 
@@ -1498,7 +1498,7 @@ class Config([Object? config]) implements ChartConfiguration {
       scopes,
       prefixes,
     );
-    return isObject(context)
+    return context is ContextObject || isObject(context)
         ? attachContext(resolver, context!, undefined, descriptorDefaults)
         : resolver;
   }

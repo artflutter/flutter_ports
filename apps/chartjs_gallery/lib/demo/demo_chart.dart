@@ -174,7 +174,7 @@ final class DemoChart(
   bool isPluginEnabled(String pluginId) => false;
 
   @override
-  Map<String, Object?> getContext() => {'chart': this, 'type': 'chart'};
+  ScriptableChartContext getContext() => ScriptableChartContext(this);
 
   /// core.controller.js:863 `isDatasetVisible(datasetIndex)`. The demo
   /// chart has no datasets.

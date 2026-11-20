@@ -17,7 +17,14 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
         ZoomPluginOptions;
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, UpdateMode;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ActiveElement, Chart, ChartEvent, ChartPosition, JsObjectFace, Scale;
+    show
+        ActiveElement,
+        Chart,
+        ChartEvent,
+        ChartPosition,
+        ContextObject,
+        Scale,
+        ScriptableScaleContext;
 
 /// A sample of the docs of chartjs-plugin-zoom: the `module.exports` of its
 /// `chart-editor` block (`{actions, config, output}`).
@@ -296,14 +303,13 @@ void setZoomSampleOptions(
 }
 
 /// `(ctx) => ctx.scale.axis + ' axis'`, the scale title of the samples: its
-/// one line. The context is a typed object, read by name through its face.
+/// one line.
 List<String> zoomAxisTitle(Object? ctx) => [
-  '${((ctx! as JsObjectFace)['scale']! as Scale).axis} axis',
+  '${((ctx! as ScriptableScaleContext).scale! as Scale).axis} axis',
 ];
 
-/// `ctx.chart` of a scriptable context: a typed object, read by name
-/// through its face.
-Chart _chartOf(Object? ctx) => (ctx! as JsObjectFace)['chart']! as Chart;
+/// `ctx.chart` of a scriptable context.
+Chart _chartOf(Object? ctx) => (ctx! as ContextObject).chart as Chart;
 
 /// A point `{x, y}` of `Utils.points` (`docs/scripts/utils.js:46`).
 Map<String, Object?> _p(double x, double y) => <String, Object?>{

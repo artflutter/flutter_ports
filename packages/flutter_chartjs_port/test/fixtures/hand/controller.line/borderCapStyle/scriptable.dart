@@ -18,8 +18,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           // option in dataset
           'data': <Object?>[null, 3, 3],
           // DIVERGES(chartjs): adapt-flutter-stroke-enums, the Flutter enum.
-          'borderCapStyle': (Object? ctx) {
-            final index = jsToNumber(jsGet(ctx, 'datasetIndex')).remainder(2);
+          'borderCapStyle': (ScriptableContext ctx) {
+            final index = jsToNumber(ctx.datasetIndex ?? undefined)
+                .remainder(2);
             return index == 0
                 ? StrokeCap.round
                 : index == 1
@@ -40,8 +41,9 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'elements': <String, Object?>{
         'line': <String, Object?>{
-          'borderCapStyle': (Object? ctx) {
-            final index = jsToNumber(jsGet(ctx, 'datasetIndex')).remainder(3);
+          'borderCapStyle': (ScriptableContext ctx) {
+            final index = jsToNumber(ctx.datasetIndex ?? undefined)
+                .remainder(3);
             return index == 0
                 ? StrokeCap.round
                 : index == 1

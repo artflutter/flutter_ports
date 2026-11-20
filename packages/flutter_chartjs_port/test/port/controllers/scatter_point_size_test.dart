@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
+
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
 const _length = 8;
@@ -186,7 +188,7 @@ Object _observe(Chart chart) {
         point.skip,
         point.stop,
         _plain(point.options),
-        point.$context?.jsKeys(),
+        contextKeysOrNull(point.$context),
         for (final key in [
           'index',
           'dataIndex',
@@ -195,7 +197,7 @@ Object _observe(Chart chart) {
           'parsed',
           'raw',
         ])
-          _plain(point.$context?.jsRead(key)),
+          _plain(contextField(point.$context, key)),
       ],
   ];
 }
@@ -327,8 +329,8 @@ void main() {
       expect(probes[_length - 2].sizeCalls, 1);
       expect(probes.take(_length - 2).every((p) => p.sizeCalls == 0), isTrue);
       for (var i = 0; i < _length; i++) {
-        expect(probes[i].$context?.jsRead('index'), i);
-        expect(probes[i].$context?.jsRead('mode'), 'default');
+        expect(contextField(probes[i].$context, 'index'), i);
+        expect(contextField(probes[i].$context, 'mode'), 'default');
       }
     });
 
@@ -536,10 +538,9 @@ void main() {
       final states = <Object>[];
       for (final type in ['scatter', 'referenceScatter']) {
         final calls = <Object?>[];
-        double radius(Object? ctx) {
-          final context = ctx! as JsObjectFace;
-          calls.add([context.jsRead('dataIndex'), context.jsRead('mode')]);
-          return 2 + (context.jsRead('dataIndex')! as num).toDouble();
+        double radius(ScriptableContext context) {
+          calls.add([context.dataIndex, context.mode]);
+          return 2 + context.dataIndex!.toDouble();
         }
 
         final chart = _chart(
@@ -593,11 +594,11 @@ void main() {
         for (var i = 0; i < _length; i++) {
           final context = probes[i].$context!;
           final reference = others[i].$context!;
-          expect(context.jsKeys(), reference.jsKeys());
+          expect(contextKeys(context), contextKeys(reference));
           for (final key in ['index', 'dataIndex', 'mode', 'active']) {
-            expect(context.jsRead(key), reference.jsRead(key));
+            expect(contextField(context, key), contextField(reference, key));
           }
-          expect(context.jsRead('mode'), 'default');
+          expect(contextField(context, 'mode'), 'default');
         }
         // A prepared point reads its capability once in each loop.
         final meta = a.getDatasetMeta(0);
@@ -609,7 +610,7 @@ void main() {
         expect(probes[_length - 2].planReads, 0);
         expect(probes[0].planReads, 1);
         meta.controller!.updateElements(meta.data, 0, _length, 'none');
-        expect(probes[3].$context?.jsRead('mode'), 'none');
+        expect(contextField(probes[3].$context, 'mode'), 'none');
         expect(probes[3].planReads, greaterThanOrEqualTo(2));
       });
     }
@@ -624,7 +625,7 @@ void main() {
       meta.controller!.getMaxOverflow();
       expect(probes[1].$context, isNotNull);
       expect(identical(probes[1].$context, context), isFalse);
-      expect(probes[1].$context?.jsRead('index'), 1);
+      expect(contextField(probes[1].$context, 'index'), 1);
     });
 
     test('a store into a result stays with that result', () {
@@ -713,8 +714,8 @@ void main() {
       // The radius 4 at the indexes 2 and 5, with the border 1: (4 + 1) / 1.
       expect(overflow, 5);
       for (var i = 0; i < _length; i++) {
-        expect(probes[i].$context?.jsRead('index'), i);
-        expect(probes[i].$context?.jsRead('mode'), 'default');
+        expect(contextField(probes[i].$context, 'index'), i);
+        expect(contextField(probes[i].$context, 'mode'), 'default');
       }
       for (final probe in probes) {
         probe.sizeCalls = 0;
@@ -787,10 +788,9 @@ void main() {
       final states = <Object>[];
       for (final type in ['scatter', 'referenceScatter']) {
         final calls = <Object?>[];
-        double radius(Object? ctx) {
-          final context = ctx! as JsObjectFace;
-          calls.add([context.jsRead('dataIndex'), context.jsRead('mode')]);
-          return 2 + (context.jsRead('dataIndex')! as num).toDouble();
+        double radius(ScriptableContext context) {
+          calls.add([context.dataIndex, context.mode]);
+          return 2 + context.dataIndex!.toDouble();
         }
 
         final chart = _chart(

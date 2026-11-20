@@ -24,27 +24,15 @@ Map<String, Object?> fixture() {
       'data': <String, Object?>{
         'datasets': <Object?>[
           <String, Object?>{
-            'colorFrom': (Object? c) => jsGet(
+            'colorFrom': (ScriptableContext c) => jsGet(
               colors,
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'from',
-              ),
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'from'),
             ),
             // DIVERGES(sankey): adapt-sankey-option-enums, the enum value.
             'colorMode': SankeyColorMode.from,
-            'colorTo': (Object? c) => jsGet(
+            'colorTo': (ScriptableContext c) => jsGet(
               colors,
-              jsGet(
-                jsGet(
-                  jsGet(jsGet(c, 'dataset'), 'data'),
-                  jsGet(c, 'dataIndex'),
-                ),
-                'to',
-              ),
+              jsGet(jsGet(jsGet(c.dataset, 'data'), c.dataIndex), 'to'),
             ),
             'data': <Object?>[
               <String, Object?>{'flow': 20, 'from': 'a', 'to': 'b'},

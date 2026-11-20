@@ -4,8 +4,6 @@
 #   (helpers.options.ts:41-80).
 # - stringIndex 1: resolve writes the cacheable flag of the info object
 #   (helpers.options.ts:185-199).
-# - stringIndex 1, jsObjectKeys 1: createContext reads the type and the own
-#   keys of the object literal of its caller (helpers.options.ts:204).
 jsGet 3
-stringIndex 10
-jsObjectKeys 2
+stringIndex 9
+jsObjectKeys 1

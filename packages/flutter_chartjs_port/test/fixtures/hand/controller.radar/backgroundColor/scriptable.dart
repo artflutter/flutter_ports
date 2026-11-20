@@ -14,8 +14,8 @@ Map<String, Object?> fixture() => <String, Object?>{
         <String, Object?>{
           // option in dataset
           'data': <Object?>[0, 5, 10, null, -10, -5],
-          'backgroundColor': (Object? ctx) {
-            final index = jsGet(ctx, 'index');
+          'backgroundColor': (ScriptableContext ctx) {
+            final index = ctx.index;
             return index == 0
                 ? '#ff0000'
                 : index == 1
@@ -32,8 +32,8 @@ Map<String, Object?> fixture() => <String, Object?>{
     'options': <String, Object?>{
       'elements': <String, Object?>{
         'line': <String, Object?>{
-          'backgroundColor': (Object? ctx) {
-            final index = jsGet(ctx, 'index');
+          'backgroundColor': (ScriptableContext ctx) {
+            final index = ctx.index;
             return index == 0
                 ? '#ff0000'
                 : index == 1

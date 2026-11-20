@@ -467,7 +467,7 @@ final class NativePointContextReader._(
   final List<IElement> _points,
   final List<Object?> _parsed,
   final List<Object?> _raw,
-  final String _mode,
+  final UpdateMode? _mode,
 ) {
   /// The reader of the data contexts of [meta], or null when a context of a
   /// point needs the ordinary factory.
@@ -483,7 +483,13 @@ final class NativePointContextReader._(
         !nativeDataUpdateList(raw)) {
       return null;
     }
-    return NativePointContextReader._(meta, points, parsed, raw, mode);
+    return NativePointContextReader._(
+      meta,
+      points,
+      parsed,
+      raw,
+      UpdateMode(mode),
+    );
   }
 
   bool get _sourcesLive =>

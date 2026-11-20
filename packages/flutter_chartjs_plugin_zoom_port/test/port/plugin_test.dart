@@ -146,8 +146,8 @@ ChartConfig _rangeConfig(
   title: ChartTitle(
     display: true,
     extra: {
-      'text': (Object? ctx) {
-        final chart = (ctx! as JsObjectFace).jsRead('chart')! as Chart;
+      'text': (ScriptableChartContext ctx) {
+        final chart = ctx.chart as Chart;
         final level = 'Zoom level ${chart.getZoomLevel()}';
         titles.add(level);
         return [level];

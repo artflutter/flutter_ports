@@ -117,7 +117,7 @@ void main() {
 
   group(r'$context', () {
     test('the typed read gives a context object only', () {
-      final context = ScriptableContext(null)..['type'] = 'data';
+      final context = ScriptableContext.data(null, 0, null);
       final elem = Element();
       expect(elem.$context, isNull);
       elem.$context = context;
@@ -135,8 +135,8 @@ void main() {
     });
 
     test('a data element narrows it to a ScriptableContext', () {
-      final scale = ScriptableScaleContext(null)..['type'] = 'scale';
-      final data = ScriptableContext(null)..['type'] = 'data';
+      final scale = ScriptableScaleContext.tick(null, Tick(value: 0), 0);
+      final data = ScriptableContext.data(null, 0, null);
       final point = PointElement()..[r'$context'] = scale;
       expect(point.$context, isNull);
       expect(point[r'$context'], same(scale));

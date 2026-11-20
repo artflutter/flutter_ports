@@ -18,8 +18,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderColor': '#ff0000',
           // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
           'borderDash': <double>[20],
-          'borderDashOffset': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0 ? 5.0 : 0.0;
+          'borderDashOffset': (ScriptableContext ctx) {
+            return ctx.datasetIndex == 0 ? 5.0 : 0.0;
           },
         },
         <String, Object?>{
@@ -34,8 +34,8 @@ Map<String, Object?> fixture() => <String, Object?>{
           'borderColor': '#00ff00',
           // DIVERGES(chartjs): adapt-dash-lists, a list of doubles.
           'borderDash': <double>[20],
-          'borderDashOffset': (Object? ctx) {
-            return jsGet(ctx, 'datasetIndex') == 0 ? 5.0 : 0.0;
+          'borderDashOffset': (ScriptableContext ctx) {
+            return ctx.datasetIndex == 0 ? 5.0 : 0.0;
           },
           // DIVERGES(chartjs): adapt-fill-target-objects, the target value.
           'fill': FillTarget.none,

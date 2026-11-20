@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/context_keys.dart';
 import '../../support/data_scope.dart';
 import '../../support/legend_item.dart';
 import '../../support/object_keys.dart';
@@ -462,8 +463,9 @@ const _contextKeys = [
 Object? _contextState(ContextObject? context) => context == null
     ? null
     : [
-        context.jsKeys(),
-        for (final key in _contextKeys) _plain(jsGet(context, key)),
+        contextKeys(context),
+        for (final key in _contextKeys)
+          _plain(upstreamContextValue(context, key)),
       ];
 
 /// The context of each arc of dataset [index], and of the dataset itself.
@@ -3052,8 +3054,8 @@ void main() {
           'plugins': <String, Object?>{
             'title': <String, Object?>{
               'display': true,
-              'text': (Object? ctx) {
-                into.add(_contexts(jsGet(ctx, 'chart')! as Chart));
+              'text': (ContextObject ctx) {
+                into.add(_contexts(ctx.chart as Chart));
                 return ['title'];
               },
             },
@@ -3421,17 +3423,17 @@ void main() {
       testWidgets('$type: the scalar context and a user context', (
         tester,
       ) async {
-        // A deleted key takes its place at the end of the keys again. A value
-        // that is not a context gets a new context.
+        // A changed context gets the writes again. A value that is not a
+        // context gets a new context.
         final chart = acquireChart(_config(type, dataset: _indexedColors));
         final twin = acquireChart(_eager(type, dataset: _indexedColors));
         for (final each in [chart, twin]) {
           final data = each.getDatasetMeta(0).data;
-          (data[0] as ArcElement).$context!.jsDelete('mode');
+          (data[0] as ArcElement).$context!.mode = null;
           (data[1] as ArcElement)[r'$context'] = 'text';
           (data[2] as ArcElement).$context!
-            ..jsWrite('index', -0.0)
-            ..jsWrite('dataIndex', 7.0);
+            ..index = 0
+            ..dataIndex = 7;
           each.update(UpdateMode.none);
         }
         expect(_legendOf(chart).legendItemsPending, isTrue);
@@ -3568,9 +3570,9 @@ void main() {
                   'plugins': <String, Object?>{
                     'title': <String, Object?>{
                       'display': true,
-                      'text': (Object? ctx) {
+                      'text': (ContextObject ctx) {
                         if (armed) {
-                          log.add(_fillStyles(jsGet(ctx, 'chart')! as Chart));
+                          log.add(_fillStyles(ctx.chart as Chart));
                         }
                         return ['title'];
                       },
@@ -4103,8 +4105,10 @@ void main() {
     testWidgets('a direct build writes the contexts of a resolve', (
       tester,
     ) async {
-      Object? mode(Chart chart) =>
-          jsGet((chart.getDatasetMeta(0).data[1] as Element).$context, 'mode');
+      Object? mode(Chart chart) => upstreamContextValue(
+        (chart.getDatasetMeta(0).data[1] as Element).$context,
+        'mode',
+      );
       final chart = acquireChart(_config('pie', dataset: _indexedColors))
         ..update(UpdateMode.none)
         ..setActiveElements([const ActiveElement(datasetIndex: 0, index: 1)]);

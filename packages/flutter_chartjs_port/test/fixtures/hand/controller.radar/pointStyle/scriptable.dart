@@ -17,12 +17,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           'pointBackgroundColor': '#ff0000',
           'pointBorderColor': '#ff0000',
           // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
-          'pointStyle': (Object? ctx) {
+          'pointStyle': (ScriptableContext ctx) {
             final value = jsOrZero(
-              jsGet(
-                jsGet(jsGet(ctx, 'dataset'), 'data'),
-                jsGet(ctx, 'dataIndex'),
-              ),
+              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
             );
             return value > 8
                 ? const RectPointStyle()
@@ -46,12 +43,9 @@ Map<String, Object?> fixture() => <String, Object?>{
           'backgroundColor': '#0000ff',
           'borderColor': '#0000ff',
           // DIVERGES(chartjs): adapt-point-style-objects, the style classes.
-          'pointStyle': (Object? ctx) {
+          'pointStyle': (ScriptableContext ctx) {
             final value = jsOrZero(
-              jsGet(
-                jsGet(jsGet(ctx, 'dataset'), 'data'),
-                jsGet(ctx, 'dataIndex'),
-              ),
+              jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex),
             );
             return value > 8
                 ? const TrianglePointStyle()

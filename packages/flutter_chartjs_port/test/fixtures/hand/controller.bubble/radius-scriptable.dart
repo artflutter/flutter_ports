@@ -21,15 +21,9 @@ Map<String, Object?> fixture() => <String, Object?>{
             <String, Object?>{'x': 4, 'y': 0},
             <String, Object?>{'x': 5, 'y': 0},
           ],
-          'radius': (Object? ctx) {
+          'radius': (ScriptableContext ctx) {
             return jsToNumber(
-                  jsGet(
-                    jsGet(
-                      jsGet(jsGet(ctx, 'dataset'), 'data'),
-                      jsGet(ctx, 'dataIndex'),
-                    ),
-                    'x',
-                  ),
+                  jsGet(jsGet(jsGet(ctx.dataset, 'data'), ctx.dataIndex), 'x'),
                 ) *
                 4;
           },
