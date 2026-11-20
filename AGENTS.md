@@ -291,8 +291,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     the zoom page and the input probe call it, so the stress entry and the benchmark cases
     outside the mode `zoom` run no zoom hook) and `unitScales` (the two hidden unit scales).
   - After the tile "Zoom and pan", the home list has the tile "Sankey" (key
-    `gallery.chart.sankey`). It opens `lib/plugins/sankey_page.dart`, a `ChartView.raw` of the type
-    `sankey`. Its variants are the ports of four samples of the docs of chartjs-chart-sankey
+    `gallery.chart.sankey`). It opens `lib/plugins/sankey_page.dart`, a typed `ChartView` with a
+    `SankeyDataset` (Sankey ADR 0004). Its variants are the ports of four samples of the docs of chartjs-chart-sankey
     (`src/content/docs/samples/basic.md`, `vertical.md`, `flow-colors.md` and `node-labels.md`) in
     `lib/docs/sankey/samples/`, with rule-2 headers; `lib/docs/sankey/scripts/utils.dart` ports
     `docs/scripts/utils.js`. Only that page calls `registerSankeyComponents` of
@@ -417,8 +417,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   Only the Chart.js port has the sankey chart, through
   `flutter_chartjs_chart_sankey_port`: `sankeyFlows` of `lib/benchmark/data.dart` gives
   one flow for each item between nodes in three columns, and `_chartJsSankey` of the
-  adapter registers `sankeyRegisterables` once and draws a `ChartView.raw` (the typed
-  config takes no dataset of another package), so each tick is a full update. The
+  adapter registers `sankeyRegisterables` once and draws a typed `ChartView` with a
+  `SankeyDataset` (Chart.js ADR 0189); `updateData` declines it, so each tick is a full update. The
   sankey chart has no visible axes and no shadow (`ChartType.hasShadow`,
   `BenchmarkConfig.shadows`); its zoom and pan act on its hidden x scale, the node columns.
   `ChartLibrary.runs` applies the same rule to the series shadow: fl_chart draws it
@@ -894,12 +894,15 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `FromToElement`, `SankeyNodeGap`, `SankeyNodeCallback`, `SankeyParsedCustom` and the six
     enums) and `lib/src/upstream.dart` (`chartjsChartSankeyVersion`, `0.19.1`), and has the
     port-only List `sankeyRegisterables`. An app calls `Chart.register(sankeyRegisterables)` once
-    and gives a `ChartView.raw` the type `sankey`: the typed `ChartConfig` takes no dataset class
-    of another package (seam S9). `Flow` is also a Flutter widget name: a library that imports Flutter
+    and gives a typed `ChartView` a `ChartConfig` with `type: ChartKind(SankeyController.id)` and a
+    `SankeyDataset`; `ChartView.raw` with a Map config also works. `Flow` is also a Flutter widget name: a library that imports Flutter
     and names the element imports the port with a prefix (seam S21).
   - `lib/src/`: the files of `src/` at their mapped paths: `types`, `lib/helpers`, `lib/core`,
     `lib/layout`, `labels`, `flow`, `controller` and `index.esm`; `src/index.ts`, the entry that
-    registers at its import, has no Dart file (Sankey ADR 0002).
+    registers at its import, has no Dart file (Sankey ADR 0002). The port-only
+    `sankey_dataset.dart` has the typed `SankeyDataset` and its option types `SankeyColor`,
+    `SankeyNodeValue`, `SankeyFlowValue`, `SankeyNodeLabels` and `SankeyFlowLabels` (Sankey ADR
+    0004): `lowerOwn` writes the values of a raw sankey dataset Map.
     - A string union of an option is an enum (`SankeyOrientation`, `SankeyLabelPosition`,
       `SankeyColorMode`, `SankeyModeX`, `SankeyNodePaddingMode`, `SankeySize`, row
       `adapt-sankey-option-enums`); a name in a raw config stops a debug build. A color is a
@@ -940,6 +943,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `test/support/fake_context.dart` is the context of the two element unit tests.
     `test/port/public_library_test.dart` imports the library next to the app library of the host
     and `material_ui.dart`, and draws a chart of `SankeyDataPoint` items in a `ChartView.raw`.
+    `test/port/sankey_dataset_test.dart` draws each typed case and its raw twin and compares the
+    nodes, the flows and the draw calls, also of a hovered flow.
     `test/port/lib/layout_test.dart`, `test/port/controller_test.dart` and
     `test/port/flow_test.dart` pin the four faster forms of `doc/performance.md`.
   - `test/upstream_test.dart` (`@TestOn('vm')`) compares the entry of `tool/port_sources.yaml`

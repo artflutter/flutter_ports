@@ -193,15 +193,18 @@ class const BenchmarkChart({
 
   /// One node order per item count: the nodes of a count do not change with
   /// the step.
-  static final Map<int, Map<String, int>> _sankeyOrders = {};
+  static final Map<int, Map<String, double>> _sankeyOrders = {};
 
-  static Map<String, int> _sankeyOrderFor(List<SankeyFlow> flows) =>
-      _sankeyOrders.putIfAbsent(flows.length, () => sankeyNodeOrder(flows));
+  static Map<String, double> _sankeyOrderFor(List<SankeyFlow> flows) =>
+      _sankeyOrders.putIfAbsent(flows.length, () {
+        final order = sankeyNodeOrder(flows);
+        return {for (final e in order.entries) e.key: e.value.toDouble()};
+      });
 
   /// The sankey chart of the Chart.js port: one flow for each item
-  /// ([sankeyFlows]). The typed config has no dataset class of another
-  /// package (seam S9 of the sankey port), so the chart takes the raw config,
-  /// and each tick of new data is a full update. The flows have a gradient
+  /// ([sankeyFlows]), in a typed `SankeyDataset` of the sankey port (Chart.js
+  /// ADR 0189). Each tick of new data is a full update. The flows have a
+  /// gradient
   /// from the first to the second item color, or one color.
   ///
   /// The option `priority` gives each node a fixed place in its column
@@ -212,45 +215,42 @@ class const BenchmarkChart({
     _registerSankey();
     const blue = ChartPaint.solid(chartBlue);
     final flows = sankeyFlows(frame.values);
-    final view = cj.ChartView.raw(
-      config: <String, Object?>{
-        'type': sk.SankeyController.id,
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'Values',
-              'data': <Object?>[
-                for (final f in flows)
-                  sk.SankeyDataPoint(from: f.from, to: f.to, flow: f.flow),
-              ],
-              'priority': _sankeyOrderFor(flows),
-              'colorFrom': blue,
-              'colorTo': config.alternateColors
-                  ? const ChartPaint.solid(chartTeal)
-                  : blue,
-              'borderWidth': 0,
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'animation': false,
-          'responsive': true,
-          'maintainAspectRatio': false,
-          'plugins': <String, Object?>{
-            'tooltip': <String, Object?>{'enabled': config.tooltips},
-            if (config.zooms) 'zoom': _chartJsZoom,
-          },
+    final view = cj.ChartView(
+      config: cj.ChartConfig(
+        type: const cj.ChartKind(sk.SankeyController.id),
+        datasets: [
+          sk.SankeyDataset(
+            key: const ValueKey('series'),
+            label: 'Values',
+            data: [
+              for (final f in flows)
+                sk.SankeyDataPoint(from: f.from, to: f.to, flow: f.flow),
+            ],
+            priority: _sankeyOrderFor(flows),
+            colorFrom: const .constant(blue),
+            colorTo: config.alternateColors
+                ? const .constant(ChartPaint.solid(chartTeal))
+                : const .constant(blue),
+            borderWidth: 0,
+          ),
+        ],
+        animation: cj.ChartAnimation.none,
+        tooltip: cj.ChartTooltip(enabled: config.tooltips),
+        responsive: true,
+        maintainAspectRatio: false,
+        pluginOptions: config.zooms ? [_chartJsZoom] : null,
+        extra: {
           'events': config.tooltips
-              ? <String>[
+              ? const [
                   'mousemove',
                   'mouseout',
                   'click',
                   'touchstart',
                   'touchmove',
                 ]
-              : <String>[],
+              : const <String>[],
         },
-      },
+      ),
       updateMode: UpdateMode.none,
       theme: const cj.ChartThemeData(),
       excludeFromSemantics: true,

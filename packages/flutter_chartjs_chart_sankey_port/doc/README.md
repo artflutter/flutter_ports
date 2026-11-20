@@ -19,9 +19,8 @@ package.
   [Chart.js ADR 0132](../../flutter_chartjs_port/doc/adr/0132-exports-for-add-on-chart-types.md) is
   the host change for this port.
 - **Host seams:** [host-seams.md](host-seams.md) lists each place where a chart type of another
-  package needs a part of the host. 13 seams connect, 7 need a Dart form in this port that the host
-  API can remove, and 2 are gaps: the typed config has no dataset class of another package,
-  and the theme has no extension for its colors.
+  package needs a part of the host. 14 seams connect, 7 need a Dart form in this port that the host
+  API can remove, and 1 is a gap: the theme has no extension for its colors.
 - **Progress:** [parity.md](parity.md), one row for each upstream file.
 - **Differences:** [differences.md](differences.md), one row for each `DIVERGES` difference.
 - **Performance:** [performance.md](performance.md), the figures of each form that is faster than
@@ -36,34 +35,31 @@ package.
 ## Use
 
 ```dart
-import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart';
+import 'package:flutter_chartjs_chart_sankey_port/flutter_chartjs_chart_sankey_port.dart'
+    hide Flow;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // Once, before the first sankey chart.
 Chart.register(sankeyRegisterables);
 
-final chart = ChartView.raw(
-  config: <String, Object?>{
-    'type': 'sankey',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            const SankeyDataPoint(from: 'Coal', to: 'Energy', flow: 25),
-            const SankeyDataPoint(from: 'Gas', to: 'Energy', flow: 20),
-            const SankeyDataPoint(from: 'Energy', to: 'Heat', flow: 45),
-          ],
-          'colorFrom': const ChartPaint.solid(Color(0xFF4E79A7)),
-          'colorTo': const ChartPaint.solid(Color(0xFFF28E2B)),
-          'orientation': SankeyOrientation.horizontal,
-          'nodePadding': <String, Object?>{
-            'Energy': const SankeyNodeGap(before: 20),
-          },
-          'nodeMinSize': (SankeyNode node) => node.inFlow == 0 ? 6 : 0,
-        },
-      ],
-    },
-  },
+final chart = ChartView(
+  config: ChartConfig(
+    type: const ChartKind(SankeyController.id),
+    datasets: [
+      SankeyDataset(
+        data: const [
+          SankeyDataPoint(from: 'Coal', to: 'Energy', flow: 25),
+          SankeyDataPoint(from: 'Gas', to: 'Energy', flow: 20),
+          SankeyDataPoint(from: 'Energy', to: 'Heat', flow: 45),
+        ],
+        colorFrom: const .constant(.solid(Color(0xFF4E79A7))),
+        colorTo: const .constant(.solid(Color(0xFFF28E2B))),
+        orientation: .horizontal,
+        nodePadding: const .byKey({'Energy': SankeyNodeGap(before: 20)}),
+        nodeMinSize: .byNode((node) => node.inFlow == 0 ? 6 : 0),
+      ),
+    ],
+  ),
 );
 ```
 
@@ -76,4 +72,4 @@ final chart = ChartView.raw(
 | 2 | `labels`, `flow`, `controller` and `index.esm` on the public libraries of the host, with Chart.js ADR 0132; the specs | done (2026-11-13) |
 | 3 | The 44 fixtures against the JavaScript chart: each number of the nodes, the flows and the draw calls is equal | done (2026-11-13) |
 | 4 | The gallery page | done (2026-11-13) |
-| 5 | The typed config (seam S9) and the theme extension (seam S15), each after its Chart.js ADR; the other seams, with the work on the public API of the host | next |
+| 5 | The typed config (seam S9, `SankeyDataset`, Sankey ADR 0004, done 2026-11-20) and the theme extension (seam S15), each after its Chart.js ADR; the other seams, with the work on the public API of the host | next |

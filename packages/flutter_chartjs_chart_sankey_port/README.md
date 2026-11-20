@@ -13,31 +13,35 @@ lists each place where the chart type needs a part of the host port.
 
 ## Use
 
-Register the controller and the element once. Then give a chart the type `sankey`.
+Register the controller and the element once. Then give a typed `ChartView` a `SankeyDataset`.
 
 ```dart
 Chart.register(sankeyRegisterables);
 
-ChartView.raw(
-  config: <String, Object?>{
-    'type': 'sankey',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            const SankeyDataPoint(from: 'Coal', to: 'Energy', flow: 25),
-            const SankeyDataPoint(from: 'Gas', to: 'Energy', flow: 20),
-            const SankeyDataPoint(from: 'Energy', to: 'Heat', flow: 45),
-          ],
-        },
-      ],
-    },
-  },
+ChartView(
+  config: ChartConfig(
+    type: const ChartKind(SankeyController.id),
+    datasets: [
+      SankeyDataset(
+        data: const [
+          SankeyDataPoint(from: 'Coal', to: 'Energy', flow: 25),
+          SankeyDataPoint(from: 'Gas', to: 'Energy', flow: 20),
+          SankeyDataPoint(from: 'Energy', to: 'Heat', flow: 45),
+        ],
+        colorFrom: .byNode(nodeColor),
+        colorTo: .byNode(nodeColor),
+      ),
+    ],
+  ),
 );
+
+Color nodeColor(String node) =>
+    node == 'Energy' ? const Color(0xFFF28E2B) : const Color(0xFF4E79A7);
 ```
 
 An option that is a keyword in JavaScript is an enum here, for example
-`'orientation': SankeyOrientation.vertical`. A color is a `ChartPaint` of the host.
+`orientation: .vertical`. A color is a `SankeyColor`: one `ChartPaint`, a color for each node key or
+a paint for each flow. `ChartView.raw` with a Map config also works.
 
 ## Upstream
 

@@ -2,9 +2,6 @@
 
 import 'dart:ui' show Color;
 
-import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show ChartPaint, ScriptableContext;
-
 const List<Color> _palette = [
   Color(0xFF4F8FBA),
   Color(0xFFF28E2B),
@@ -24,20 +21,11 @@ final class SankeyDocsColors() {
   /// A new assignment of the palette, with no name.
   this;
 
-  final Map<String, ChartPaint> _assigned = {};
+  final Map<String, Color> _assigned = {};
 
-  /// utils.js:4 `getColor(name)`.
-  ChartPaint getColor(String name) => _assigned.putIfAbsent(
+  /// utils.js:4 `getColor(name)`. Its tear-off is a `SankeyColor.byNode`.
+  Color getColor(String name) => _assigned.putIfAbsent(
     name,
-    () => ChartPaint.solid(_palette[_assigned.length % _palette.length]),
+    () => _palette[_assigned.length % _palette.length],
   );
-}
-
-/// `context.dataset.data[context.dataIndex]`: the data item of the
-/// scriptable context [context], a Map of a sample.
-Map<String, Object?> sankeyDataItemOf(Object? context) {
-  final ctx = context! as ScriptableContext;
-  final dataset = ctx.dataset! as Map<String, Object?>;
-  return (dataset['data']! as List<Object?>)[ctx.dataIndex!]!
-      as Map<String, Object?>;
 }

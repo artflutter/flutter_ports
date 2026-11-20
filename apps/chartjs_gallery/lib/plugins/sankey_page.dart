@@ -17,7 +17,7 @@ typedef SankeyPageVariant = ({
   String text,
   String source,
   String help,
-  Map<String, Object?> Function() sample,
+  ChartConfig Function() sample,
 });
 
 /// The variants of the page, in the order of the segment line.
@@ -79,7 +79,7 @@ class SankeyPageState() extends State<SankeyPage> {
   Chart? _chart;
   final ValueNotifier<int> _readout = ValueNotifier(0);
 
-  late Map<String, Object?> _config = _makeConfig();
+  late ChartConfig _config = _makeConfig();
 
   /// The chart of the current variant, or null before its first layout.
   @visibleForTesting
@@ -87,15 +87,13 @@ class SankeyPageState() extends State<SankeyPage> {
 
   SankeyPageVariant get _current => sankeyPageVariants[_variant];
 
-  Map<String, Object?> _makeConfig() {
+  ChartConfig _makeConfig() {
     registerSankeyComponents();
-    final config = _current.sample();
-    config['options'] = <String, Object?>{
-      'onHover': (ChartEvent event, List<ActiveElement> elements, Chart chart) {
-        _readout.value++;
-      },
-    };
-    return config;
+    return _current.sample().copyWith(onHover: _onHover);
+  }
+
+  void _onHover(ChartEvent event, List<ActiveElement> elements, Chart chart) {
+    _readout.value++;
   }
 
   void _onChart(Chart chart) {
@@ -168,7 +166,7 @@ class SankeyPageState() extends State<SankeyPage> {
           ),
           KeyedSubtree(
             key: ValueKey(_variant),
-            child: ChartView.raw(
+            child: ChartView(
               key: const ValueKey('sankey.host'),
               config: _config,
               onChartCreated: _onChart,

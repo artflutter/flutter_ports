@@ -241,15 +241,11 @@ void main() {
               final view = tester.widget<cj.ChartView>(
                 find.byType(cj.ChartView),
               );
-              // The sankey chart is a ChartView.raw: its zoom options are in
-              // `options.plugins` of the raw config. A typed config gives
-              // them in `pluginOptions` (Chart.js ADR 0148).
-              final options = view.rawConfig != null
-                  ? ((view.rawConfig!['options']! as Map)['plugins']
-                        as Map)['zoom']
-                  : view.config!.pluginOptions
-                        ?.whereType<zp.ZoomPluginOptions>()
-                        .firstOrNull;
+              // A typed config gives the zoom options in `pluginOptions`
+              // (Chart.js ADR 0148), also the sankey chart (Chart.js ADR 0189).
+              final options = view.config!.pluginOptions
+                  ?.whereType<zp.ZoomPluginOptions>()
+                  .firstOrNull;
               expect(options is zp.ZoomPluginOptions, zoom, reason: reason);
               expect(_zoomRegistered, zoom, reason: reason);
               expect(_chart().isPluginEnabled('zoom'), zoom, reason: reason);

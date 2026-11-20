@@ -23,9 +23,9 @@ States:
 
 | State | Seams |
 |---|---|
-| `connects` | S1, S2, S3, S5, S6, S7, S8, S13, S16, S17, S18, S19, S20 |
+| `connects` | S1, S2, S3, S5, S6, S7, S8, S9, S13, S16, S17, S18, S19, S20 |
 | `sankey-side` | S4, S10, S11, S12, S14, S21, S22 |
-| `gap` | S9, S15 |
+| `gap` | S15 |
 
 ## A controller of another package
 
@@ -52,7 +52,7 @@ States:
 
 | Id | Upstream use | Host port | State | Next step |
 |---|---|---|---|---|
-| S9 | `new Chart(ctx, {type: 'sankey', data: {datasets: [{data: [{from, to, flow}]}]}})`. | `ChartKind` is an extension type over a `String` with a public constructor: `ChartKind('sankey')` is a valid kind. The closed part is `Dataset`, an `abstract final` class: a package cannot give a dataset class for its chart type, and `lowerDataset` of `lib/src/typed/lower.dart` reads private members of it. A sankey chart runs only through `ChartView.raw` with a Map config. This is seam H18 of the zoom port for a chart type. | `gap` | A Chart.js ADR for a dataset class of another package. |
+| S9 | `new Chart(ctx, {type: 'sankey', data: {datasets: [{data: [{from, to, flow}]}]}})`. | `Dataset` is an `abstract base class` with the public `@protected` members `kind`, `chartData`, `lowerOwn` and `props` ([Chart.js ADR 0189](../../flutter_chartjs_port/doc/adr/0189-open-dataset-class.md)). `SankeyDataset` of `lib/src/sankey_dataset.dart` extends it ([Sankey ADR 0004](adr/0004-typed-sankey-dataset.md)), so a sankey chart runs in the typed `ChartView`. `ChartView.raw` with a Map config stays. Test: `test/port/sankey_dataset_test.dart`. | `connects` | - |
 | S15 | The default colors of the nodes, the flows and the labels (`'black'`, `'red'`, `'green'`). | The theme of the host compiles the tokens of the host options. It has no extension for the options of an add-on. The sankey defaults are fixed colors under each theme. This is seam H19 of the zoom port. | `gap` | The theme extension of the host (`theming.md` §5.2). |
 | S16 | `Chart.register(SankeyController, Flow)` (`src/index.ts:6`). | `Chart.register` takes the two class values. The registry merges the Map `defaults`, `overrides` and `descriptors`, with the Dart objects of the host options in them. | `connects` | None. |
 | S21 | `export { Flow, SankeyController }` (`src/index.esm.ts:20-21`). | `Flow` is also the name of a widget of `package:flutter/widgets.dart`. A library that imports Flutter and this port, and names `Flow`, has an ambiguous import. The host has this case for `Element` and `Animation`, and its app library leaves the two names out. The port keeps the upstream name and gives `sankeyRegisterables`, so an app registers the chart type with no use of the name. `apps/chartjs_gallery/test/sankey_page_test.dart` imports the port with a prefix. | `sankey-side` | A rule for the names of an add-on that collide with Flutter names, as the host has for its app library. |

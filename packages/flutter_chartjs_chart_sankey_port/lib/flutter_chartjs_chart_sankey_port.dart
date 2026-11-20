@@ -42,6 +42,7 @@ export 'package:flutter_chartjs_chart_sankey_port/src/labels.dart';
 export 'package:flutter_chartjs_chart_sankey_port/src/lib/core.dart';
 export 'package:flutter_chartjs_chart_sankey_port/src/lib/helpers.dart';
 export 'package:flutter_chartjs_chart_sankey_port/src/lib/layout.dart';
+export 'package:flutter_chartjs_chart_sankey_port/src/sankey_dataset.dart';
 export 'package:flutter_chartjs_chart_sankey_port/src/types.dart';
 export 'package:flutter_chartjs_chart_sankey_port/src/upstream.dart';
 
