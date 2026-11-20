@@ -212,12 +212,6 @@ enum OptionKey(
   /// The key `bottom`.
   bottom('bottom'),
 
-  /// The key `bottomLeft`.
-  bottomLeft('bottomLeft'),
-
-  /// The key `bottomRight`.
-  bottomRight('bottomRight'),
-
   /// The key `bounds`.
   bounds('bounds'),
 
@@ -898,12 +892,6 @@ enum OptionKey(
 
   /// The key `top`.
   top('top'),
-
-  /// The key `topLeft`.
-  topLeft('topLeft'),
-
-  /// The key `topRight`.
-  topRight('topRight'),
 
   /// The key `transitions`.
   transitions('transitions'),

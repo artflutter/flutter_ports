@@ -3,6 +3,7 @@
 - Status: accepted (2026-11-12): the implementation, specs, fixtures and native/browser tests pass.
 - Date: 2026-11-12
 - Supersedes: the padding option representation of ADR 0054 and the padding lowering of ADR 0052.
+- Superseded in part by: [Chart.js ADR 0187](0187-flutter-border-radius-corners.md) item 6 (the imports of `package:flutter/painting.dart`)
 - Related: [ADR 0116](0116-text-style-fonts.md), [ADR 0115](0115-hand-ports-of-typed-data-fixtures.md).
 - Difference: `adapt-edge-insets-padding`.
 

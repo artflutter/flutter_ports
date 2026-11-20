@@ -187,6 +187,7 @@ bool _fits(String kind, int shape) {
     'obj:TooltipCallbacks' =>
       shape & ShapeBits.typed == ShapeBits.tooltipCallbacks,
     'obj:EdgeInsets' => shape & ShapeBits.typed == ShapeBits.edgeInsets,
+    'obj:BorderRadius' => shape & ShapeBits.typed == ShapeBits.borderRadius,
     'obj:ChartTextStyle' => shape & ShapeBits.typed == ShapeBits.textStyle,
     // Upstream data hold a boolean or an object where the port has a fill
     // target (Chart.js ADR 0140), and a boolean where the port has a
@@ -200,6 +201,9 @@ bool _fits(String kind, int shape) {
     'Map' =>
       shape & ShapeBits.scope != 0 ||
           shape & ShapeBits.typed == ShapeBits.edgeInsets ||
+          // The object form of a corner option is a BorderRadius (row
+          // adapt-flutter-border-radius).
+          shape & ShapeBits.typed == ShapeBits.borderRadius ||
           shape & ShapeBits.typed == ShapeBits.tooltipCallbacks ||
           shape & ShapeBits.typed == ShapeBits.fillTarget,
     _ when kind.startsWith('NarrowMap') => shape & ShapeBits.scope != 0,
@@ -286,6 +290,29 @@ bool _isSegmentField(String path) {
     (w) =>
         w.shape != null &&
         w.shape! & ShapeBits.typed == ShapeBits.lineSegmentStyle,
+  );
+}
+
+// The fields of an upstream corner object belong to one native atom, a
+// Flutter BorderRadius (row adapt-flutter-border-radius). An indexable
+// option has `[]` before the field.
+final RegExp _cornerField = RegExp(
+  r'^(.+\.(?:borderRadius|hoverBorderRadius|cornerRadius))(?:\[\])?'
+  r'\.(topLeft|topRight|bottomLeft|bottomRight)$',
+);
+
+/// Whether [path] is a field of the object form of a corner option, whose
+/// key holds the typed atom `borderRadius` in the port.
+bool _isCornerField(String path) {
+  final match = _cornerField.firstMatch(path);
+  if (match == null) return false;
+  final prefix = match[1]!.split('.');
+  final walks = path.startsWith('data.datasets[].')
+      ? [for (final kind in _datasetKinds) _walk(kind, prefix.sublist(2))]
+      : [_walk(ScopeKind.chartConfiguration, prefix)];
+  return walks.any(
+    (w) =>
+        w.shape != null && w.shape! & ShapeBits.typed == ShapeBits.borderRadius,
   );
 }
 
@@ -841,6 +868,7 @@ void main() {
         if (_skipped(path) ||
             _isSegmentField(path) ||
             _isPaddingField(ScopeKind.chartConfiguration, path) ||
+            _isCornerField(path) ||
             _isFillField(ScopeKind.chartConfiguration, path) ||
             _isCallbackField(ScopeKind.chartConfiguration, path)) {
           continue;

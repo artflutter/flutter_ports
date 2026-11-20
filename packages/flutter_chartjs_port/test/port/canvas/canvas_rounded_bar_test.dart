@@ -9,6 +9,7 @@ import 'dart:io' show Platform;
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -276,7 +277,7 @@ void main() {
     // An inflated bar and a radius object keep the ordinary sequence.
     for (final cfg in [
       _cfg(inflate: 0.33),
-      _cfg(radius: <String, Object?>{'topLeft': 5}),
+      _cfg(radius: const BorderRadius.only(topLeft: Radius.circular(5))),
     ]) {
       final probe = _Probe();
       BarElement(cfg).draw(probe);

@@ -3,6 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../fixture_events.dart';
@@ -62,12 +63,12 @@ Map<String, Object?> fixture() {
               afterLabel: (tooltip, arg) =>
                   'after1\nafter2\nafter3\nafter4\nafter5'.split('\n'),
             ),
-            'cornerRadius': <String, Object?>{
-              'topLeft': 10,
-              'topRight': 20,
-              'bottomRight': 5,
-              'bottomLeft': 0,
-            },
+            // DIVERGES(chartjs): adapt-flutter-border-radius, a BorderRadius.
+            'cornerRadius': const BorderRadius.only(
+              topLeft: Radius.circular(10),
+              topRight: Radius.circular(20),
+              bottomRight: Radius.circular(5),
+            ),
           },
         },
       },

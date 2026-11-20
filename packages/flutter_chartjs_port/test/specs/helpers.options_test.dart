@@ -1,7 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/helpers.options.tests.js (MIT, Chart.js Contributors).
-import 'dart:ui' show FontStyle;
-
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
@@ -21,11 +20,11 @@ import 'package:test/test.dart';
 // style `'oblique'` is `FontStyle.italic`. The cases of a text form skip.
 
 /// The members of a TRBL corners object, as the keys of the upstream object.
-Map<String, Object?> _corners(TRBLCorners o) => {
-  'topLeft': o.topLeft,
-  'topRight': o.topRight,
-  'bottomLeft': o.bottomLeft,
-  'bottomRight': o.bottomRight,
+Map<String, Object?> _corners(BorderRadius o) => {
+  'topLeft': o.topLeft.x,
+  'topRight': o.topRight.x,
+  'bottomLeft': o.bottomLeft.x,
+  'bottomRight': o.bottomRight.x,
 };
 
 /// The members of a padding object, as the keys of the upstream object.
@@ -126,15 +125,20 @@ void main() {
           }),
         );
       });
+      // DIVERGES(chartjs): adapt-flutter-border-radius, a BorderRadius object.
+      // The object form is a Flutter BorderRadius: its corners are numbers,
+      // so the upstream object of strings has no Dart form.
       test('should support object values', () {
         expect(
           _corners(
-            toTRBLCorners(<String, Object?>{
-              'topLeft': 1.0,
-              'topRight': 2.0,
-              'bottomLeft': 3.0,
-              'bottomRight': 4.0,
-            }),
+            toTRBLCorners(
+              const BorderRadius.only(
+                topLeft: Radius.circular(1),
+                topRight: Radius.circular(2),
+                bottomLeft: Radius.circular(3),
+                bottomRight: Radius.circular(4),
+              ),
+            ),
           ),
           equals({
             'topLeft': 1,
@@ -145,12 +149,14 @@ void main() {
         );
         expect(
           _corners(
-            toTRBLCorners(<String, Object?>{
-              'topLeft': 1.5,
-              'topRight': 2.5,
-              'bottomLeft': 3.5,
-              'bottomRight': 4.5,
-            }),
+            toTRBLCorners(
+              const BorderRadius.only(
+                topLeft: Radius.circular(1.5),
+                topRight: Radius.circular(2.5),
+                bottomLeft: Radius.circular(3.5),
+                bottomRight: Radius.circular(4.5),
+              ),
+            ),
           ),
           equals({
             'topLeft': 1.5,
@@ -159,23 +165,8 @@ void main() {
             'bottomRight': 4.5,
           }),
         );
-        expect(
-          _corners(
-            toTRBLCorners(<String, Object?>{
-              'topLeft': '1',
-              'topRight': '2',
-              'bottomLeft': '3',
-              'bottomRight': '4',
-            }),
-          ),
-          equals({
-            'topLeft': 1,
-            'topRight': 2,
-            'bottomLeft': 3,
-            'bottomRight': 4,
-          }),
-        );
       });
+      // DIVERGES(chartjs): adapt-flutter-border-radius, a Map stops debug.
       test('should fallback to 0 for invalid values', () {
         const zero = <String, Object?>{
           'topLeft': 0,
@@ -184,28 +175,9 @@ void main() {
           'bottomRight': 0,
         };
         expect(
-          _corners(
-            toTRBLCorners(<String, Object?>{
-              'topLeft': 'foo',
-              'topRight': 'foo',
-              'bottomLeft': 'foo',
-              'bottomRight': 'foo',
-            }),
-          ),
-          equals(zero),
+          () => toTRBLCorners(<String, Object?>{'topLeft': 'foo'}),
+          throwsA(isA<AssertionError>()),
         );
-        expect(
-          _corners(
-            toTRBLCorners(<String, Object?>{
-              'topLeft': null,
-              'topRight': null,
-              'bottomLeft': null,
-              'bottomRight': null,
-            }),
-          ),
-          equals(zero),
-        );
-        expect(_corners(toTRBLCorners(<String, Object?>{})), equals(zero));
         expect(_corners(toTRBLCorners('foo')), equals(zero));
         expect(_corners(toTRBLCorners(null)), equals(zero));
         expect(_corners(toTRBLCorners(undefined)), equals(zero));

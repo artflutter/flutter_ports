@@ -2,6 +2,7 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
@@ -180,17 +181,8 @@ final class const _RoundedRect(
   @override final double y,
   @override final double w,
   @override final double h,
-  @override final Object? radius,
+  @override final BorderRadius radius,
 ) implements RoundedRect;
-
-/// A JavaScript object literal `{topLeft, topRight, bottomLeft,
-/// bottomRight}`, passed as [TRBLCorners].
-final class const _Corners(
-  @override final double topLeft,
-  @override final double topRight,
-  @override final double bottomLeft,
-  @override final double bottomRight,
-) implements TRBLCorners;
 
 /// A font of the family `x` and the size 10 with the line height
 /// [lineHeight] (Chart.js ADR 0116, row `adapt-text-style-fonts`).
@@ -941,7 +933,18 @@ void main() {
       final ctx = createMockContext();
       addRoundedRectPath(
         ctx,
-        const _RoundedRect(10, 20, 100, 50, _Corners(1, 2, 3, 4)),
+        const _RoundedRect(
+          10,
+          20,
+          100,
+          50,
+          BorderRadius.only(
+            topLeft: Radius.circular(1),
+            topRight: Radius.circular(2),
+            bottomLeft: Radius.circular(3),
+            bottomRight: Radius.circular(4),
+          ),
+        ),
       );
       // [topLeft, topRight, bottomRight, bottomLeft]
       expect(ctx.getCalls(), [
@@ -964,7 +967,18 @@ void main() {
       final ctx = UpstreamRoundedRectContext();
       addRoundedRectPath(
         ctx,
-        const _RoundedRect(10, 20, 100, 50, _Corners(1, 2, 3, 4)),
+        const _RoundedRect(
+          10,
+          20,
+          100,
+          50,
+          BorderRadius.only(
+            topLeft: Radius.circular(1),
+            topRight: Radius.circular(2),
+            bottomLeft: Radius.circular(3),
+            bottomRight: Radius.circular(4),
+          ),
+        ),
       );
       expect(
         ctx.getCalls(),
@@ -990,7 +1004,17 @@ void main() {
       final ctx = createMockContext();
       addRoundedRectPath(
         ctx,
-        const _RoundedRect(0, 0, 10, 10, _Corners(-1, double.nan, 99, 0)),
+        const _RoundedRect(
+          0,
+          0,
+          10,
+          10,
+          BorderRadius.only(
+            topLeft: Radius.circular(-1),
+            topRight: Radius.circular(double.nan),
+            bottomLeft: Radius.circular(99),
+          ),
+        ),
       );
       final args = ctx.getCalls().single['args']! as List<Object?>;
       expect(args[4], [-1, isNaN, 0, 99]);

@@ -38,7 +38,8 @@ library;
 
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-import 'dart:ui' show TextAlign;
+
+import 'package:flutter/painting.dart';
 
 import 'package:flutter_chartjs_port/chartjs.dart';
 
@@ -930,16 +931,16 @@ class Legend(
         // Adjust position when boxHeight < fontSize (want it centered)
         final yBoxTop = y + math.max<double>((fontSize - boxHeight) / 2, 0);
         final xBoxLeft = rtlHelper.leftForLtr(x, boxWidth);
-        final borderRadius = legendItem.borderRadius ?? toTRBLCorners(0);
+        final borderRadius = legendItem.borderRadius ?? BorderRadius.zero;
 
         ctx.beginPath();
 
         // `Object.values(borderRadius).some(v => v !== 0)`, in the key order
         // topLeft, topRight, bottomLeft, bottomRight.
-        if (borderRadius.topLeft != 0 ||
-            borderRadius.topRight != 0 ||
-            borderRadius.bottomLeft != 0 ||
-            borderRadius.bottomRight != 0) {
+        if (borderRadius.topLeft.x != 0 ||
+            borderRadius.topRight.x != 0 ||
+            borderRadius.bottomLeft.x != 0 ||
+            borderRadius.bottomRight.x != 0) {
           addRoundedRectPath(
             ctx,
             _RoundedRect(
@@ -1517,7 +1518,7 @@ final class _RoundedRect({
   @override required final double y,
   @override required final double w,
   @override required final double h,
-  @override required final TRBLCorners radius,
+  @override required final BorderRadius radius,
 }) implements RoundedRect;
 
 /// The `config` of `new Legend(config)` from the arguments [args] of the
@@ -1630,8 +1631,8 @@ LegendItem _datasetItem(
   Object? pointStyle,
   Object? textAlign,
   Object? color,
-  Object? useBorderRadius,
-  Object? borderRadius,
+  bool useBorderRadius,
+  BorderRadius? borderRadius,
 ) {
   final borderWidth = toPadding(optionOf(style, OptionKey.borderWidth));
   final stylePointStyle = optionOf(style, OptionKey.pointStyle);
@@ -1652,11 +1653,9 @@ LegendItem _datasetItem(
     rotation: optionOf(style, OptionKey.rotation),
     textAlign: jsTruthy(textAlign) ? textAlign : styleTextAlign,
     // `useBorderRadius && (borderRadius || style.borderRadius)`
-    borderRadius: jsTruthy(useBorderRadius)
-        ? (jsTruthy(borderRadius)
-              ? borderRadius
-              : optionOf(style, OptionKey.borderRadius))
-        : useBorderRadius,
+    borderRadius: useBorderRadius
+        ? (borderRadius ?? optionOf(style, OptionKey.borderRadius))
+        : null,
     // Below is extra data used for toggling the datasets
     datasetIndex: meta.index,
   );

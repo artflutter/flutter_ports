@@ -3,6 +3,7 @@
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
@@ -196,7 +197,10 @@ void main() {
       'a radius': (1.0, 3.0),
       'a whole radius': (1, 3),
       'a width object': (<String, Object?>{'top': 2, 'left': 1}, 0.0),
-      'a radius object': (1.0, <String, Object?>{'topLeft': 2}),
+      'a radius object': (
+        1.0,
+        const BorderRadius.only(topLeft: Radius.circular(2)),
+      ),
       'a string as the width': ('2', 0.0),
       'a string as the radius': (1.0, '0'),
       'a null width': (null, 0.0),

@@ -976,7 +976,7 @@ export function jsonValue(v, ids = new Map()) {
     };
   }
   // A value of the Dart writer stays (row adapt-chart-position-enum).
-  if (v instanceof DartPadding || v instanceof DartClip || v instanceof DartBorder || v instanceof DartEnum || v instanceof DartStringList || v instanceof DartDoubleList || v instanceof DartBarThickness || v instanceof DartScalePosition) return v;
+  if (v instanceof DartPadding || v instanceof DartBorderRadius || v instanceof DartClip || v instanceof DartBorder || v instanceof DartEnum || v instanceof DartStringList || v instanceof DartDoubleList || v instanceof DartBarThickness || v instanceof DartScalePosition) return v;
   if (v && typeof v === 'object') {
     return Object.fromEntries(Object.entries(v).map(([k, x]) => [k, jsonValue(x, ids)]));
   }
@@ -1221,6 +1221,34 @@ class NativeTooltipPaint { constructor(value) { this.value = value; } }
 /** Native padding literal (row adapt-edge-insets-padding). */
 export class DartPadding {
   constructor(value) { this.value = value; }
+}
+
+/**
+ * The object form of a corner option as a Flutter BorderRadius (row
+ * adapt-flutter-border-radius): the keys topLeft, topRight, bottomLeft and
+ * bottomRight. A number stays a number.
+ */
+export class DartBorderRadius {
+  constructor(value) { this.value = value; }
+}
+
+/** The corner keys of a BorderRadius, in the order of its constructor. */
+const CORNER_KEYS = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+
+/** Whether [value] is the object form of a bar, legend, tooltip or point label corner option. */
+function isCornerObject(value) {
+  return value !== null && typeof value === 'object' && value.constructor === Object &&
+    Object.keys(value).length > 0 && Object.keys(value).every((k) => CORNER_KEYS.includes(k));
+}
+
+/** The Dart literal of the corners [value]: a number or an object of corners. */
+export function dartBorderRadius(value) {
+  if (typeof value === 'number') {
+    return value ? `BorderRadius.all(Radius.circular(${nativeNumber(value)}))` : 'BorderRadius.zero';
+  }
+  const corners = CORNER_KEYS.filter((k) => Number(value[k]) || 0)
+    .map((k) => `${k}: Radius.circular(${nativeNumber(Number(value[k]))})`);
+  return corners.length ? `BorderRadius.only(${corners.join(', ')})` : 'BorderRadius.zero';
 }
 
 /** A value of the dataset option `clip` as a ChartClip of the Dart data. */
@@ -1548,6 +1576,13 @@ function keyedValue(k, value, owner) {
   if (borderObjects && k === 'border' && value && value.constructor === Object) {
     return new DartBorder(value, owner === 'r');
   }
+  // The object form of a corner option (row adapt-flutter-border-radius).
+  // The arc corners (outerStart, ...) stay an object.
+  if (['borderRadius', 'hoverBorderRadius', 'cornerRadius'].includes(k)) {
+    const corner = (v) => (isCornerObject(v) ? new DartBorderRadius(v) : v);
+    if (Array.isArray(value)) return value.map(corner);
+    if (isCornerObject(value)) return corner(value);
+  }
   if (k === 'backdropPadding' || (k === 'padding' && ['layout', 'title', 'subtitle', 'tooltip'].includes(owner))) {
     if (typeof value === 'number' || (value && value.constructor === Object)) return new DartPadding(value);
   }
@@ -1858,10 +1893,11 @@ function dart(v, state, owner) {
     if (o.borderDash?.length) fields.push(`borderDash: const <double>[${o.borderDash.map(nativeNumber).join(', ')}]`);
     if (o.borderDashOffset) fields.push(`borderDashOffset: ${nativeNumber(o.borderDashOffset)}`);
     const radius = o.borderRadius;
-    if (radius && typeof radius === 'object') {
-      const corners = ['topLeft','topRight','bottomRight','bottomLeft'].filter(k => radius[k]).map(k => `${k}: ${nativeNumber(radius[k])}`);
-      if (corners.length) fields.push(`borderRadius: ${nativeConstant(() => `TooltipCornerRadii(${corners.join(', ')})`)}`);
-    } else if (radius) fields.push(`borderRadius: ${nativeConstant(() => `TooltipCornerRadii.all(${nativeNumber(radius)})`)}`);
+    const corners = radius && typeof radius === 'object' ? dartBorderRadius(radius) : radius ? dartBorderRadius(radius) : null;
+    if (corners && corners !== 'BorderRadius.zero') {
+      state.borderRadii = true;
+      fields.push(`borderRadius: ${nativeConstant(() => corners)}`);
+    }
     return `TooltipLabelStyle(${fields.join(', ')})`;
   }
   if (v instanceof NativeTooltipPointStyle) {
@@ -1889,6 +1925,11 @@ function dart(v, state, owner) {
   if (v instanceof DartPadding) {
     state.edgeInsets = true;
     return dartPadding(v.value);
+  }
+  if (v instanceof DartBorderRadius) {
+    state.borderRadii = true;
+    const literal = dartBorderRadius(v.value);
+    return constLeaves ? nativeConstant(() => literal) : literal;
   }
   if (v instanceof DartFont) {
     const literal = dartFont(v.font);
@@ -2094,7 +2135,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats || state.clips || state.stackModes || state.borders || state.fixturePaints ? '\n' : ''}${state.fixturePaints ? "import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;\n" : ''}${state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.timeUnits ? "import 'package:flutter_chartjs_port/src/core/core.adapters.dart';\n" : ''}${state.modes ? "import 'package:flutter_chartjs_port/src/core/core.interaction.dart';\n" : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.fillerEnums ? "import 'package:flutter_chartjs_port/src/plugins/filler_draw_time.dart';\n" : ''}${state.algorithms ? "import 'package:flutter_chartjs_port/src/plugins/plugin.decimation.dart';\n" : ''}${state.positioners ? "import 'package:flutter_chartjs_port/src/plugins/plugin.tooltip.dart';\n" : ''}${state.aligns ? "import 'package:flutter_chartjs_port/src/types/align.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borders ? "import 'package:flutter_chartjs_port/src/types/axis_border.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.scaleAxes ? "import 'package:flutter_chartjs_port/src/types/chart_axis.dart';\n" : ''}${state.clips || state.stackModes ? `import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show ${[state.clips && 'ChartClip', state.stackModes && 'StackMode'].filter(Boolean).join(', ')};\n` : ''}${state.tooltipCallbacks || state.tooltipValues ? "import 'package:flutter_chartjs_port/src/types/chart_paint.dart';\n" : ''}${state.textStyles ? "import 'package:flutter_chartjs_port/src/types/chart_text_style.dart';\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}${state.tooltipCallbacks || state.tooltipValues ? "import 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart';\n" : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes && !state.borderRadii ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats || state.clips || state.stackModes || state.borders || state.fixturePaints ? '\n' : ''}${state.fixturePaints ? "import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;\n" : ''}${state.borderRadii ? "import 'package:flutter/painting.dart';\n" : state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.algorithms || state.aligns || state.arcEnums || state.borderSkips || state.borders || state.clips || state.cubicModes || state.fillTargets || state.fillerEnums || state.graceLengths || state.modes || state.pointStyles || state.positioners || state.positions || state.radiusLengths || state.scaleAxes || state.scaleEnums || state.stackModes || state.steppedLines || state.textStyles || state.timeUnits || state.tooltipCallbacks || state.tooltipValues || state.undefined ? `import 'package:flutter_chartjs_port/${state.positioners ? 'chartjs' : 'chartjs_core'}.dart';\n` : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

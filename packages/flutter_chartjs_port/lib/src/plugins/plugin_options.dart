@@ -22,9 +22,7 @@
 /// This library is a pure layer.
 library;
 
-import 'dart:ui' show TextAlign, TextDirection;
-
-import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart' show immutable;
 
@@ -64,6 +62,11 @@ List<String> _textLines(Object? value) {
   );
   return const <String>[];
 }
+
+/// The corners of a truthy corner option [value] ([toTRBLCorners]), else
+/// Dart `null`: the test `borderRadius || ...` of upstream.
+BorderRadius? _truthyCorners(Object? value) =>
+    jsTruthy(value) ? toTRBLCorners(value) : null;
 
 /// The [LayoutPosition] of a `position` option value, or Dart `null` for a
 /// value that is not one. A keyword of Chart.js stops a debug build.
@@ -383,8 +386,10 @@ final class const LegendOptions({
 // DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
 @immutable
 final class const LegendLabelOptions({
-  /// `borderRadius`: a number or the corners, which the legend item keeps.
-  required final Object? borderRadius,
+  /// `borderRadius`: the corners of a truthy number or of the Flutter
+  /// [BorderRadius] of the option ([toTRBLCorners]), else Dart `null`
+  /// (`plugin.legend.js:692`, row `adapt-flutter-border-radius`).
+  required final BorderRadius? borderRadius,
 
   /// `boxHeight`: Dart `null` for an absent value, else its number
   /// (`plugin.legend.js:25`, row `adapt-legend-number-options`).
@@ -440,7 +445,7 @@ final class const LegendLabelOptions({
   /// key.
   // ignore: prefer_constructors_over_static_methods
   static LegendLabelOptions of(Object? options) => LegendLabelOptions(
-    borderRadius: optionOf(options, OptionKey.borderRadius),
+    borderRadius: _truthyCorners(optionOf(options, OptionKey.borderRadius)),
     boxHeight: _definedNumber(optionOf(options, OptionKey.boxHeight)),
     boxWidth: _definedNumber(optionOf(options, OptionKey.boxWidth)),
     color: optionOf(options, OptionKey.color),
@@ -643,9 +648,10 @@ final class const TooltipOptions({
   /// `caretSize`: its number.
   required final double caretSize,
 
-  /// `cornerRadius`, the raw value: a number or the corners, which
-  /// `toTRBLCorners` reads.
-  required final Object? cornerRadius,
+  /// `cornerRadius`: the corners of the number or the Flutter
+  /// [BorderRadius] of the option ([toTRBLCorners], row
+  /// `adapt-flutter-border-radius`).
+  required final BorderRadius cornerRadius,
 
   /// `displayColors`.
   required final bool displayColors,
@@ -759,7 +765,7 @@ final class const TooltipOptions({
       callbacks: tooltipCallbacksOf(optionOf(options, OptionKey.callbacks)),
       caretPadding: jsToNumber(optionOf(options, OptionKey.caretPadding)),
       caretSize: jsToNumber(optionOf(options, OptionKey.caretSize)),
-      cornerRadius: optionOf(options, OptionKey.cornerRadius),
+      cornerRadius: toTRBLCorners(optionOf(options, OptionKey.cornerRadius)),
       displayColors: boolOption(
         optionOf(options, OptionKey.displayColors),
         OptionKey.displayColors,

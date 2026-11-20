@@ -19,7 +19,7 @@
 /// differences.md row `adapt-typed-contexts`).
 library;
 
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// helpers.options.ts:43 `numberOrZero`: `+v || 0`.
@@ -130,37 +130,6 @@ TRBL toTRBL(Object? value) {
   );
 }
 
-/// The object of `_readValueToProps` (helpers.options.ts:52-65) that
-/// [toTRBLCorners] returns.
-// DIVERGES(chartjs): adapt-options-typed-results, the corners object.
-final class _TRBLCornersObject implements TRBLCorners {
-  new(Map<String, double> props)
-    : topLeft = props['topLeft']!,
-      topRight = props['topRight']!,
-      bottomLeft = props['bottomLeft']!,
-      bottomRight = props['bottomRight']!;
-
-  /// The object for a [value] that is not an object: the same number for
-  /// each corner (see [toTRBLCorners]).
-  new all(double value)
-    : topLeft = value,
-      topRight = value,
-      bottomLeft = value,
-      bottomRight = value;
-
-  @override
-  final double topLeft;
-
-  @override
-  final double topRight;
-
-  @override
-  final double bottomLeft;
-
-  @override
-  final double bottomRight;
-}
-
 /// helpers.options.ts:86 `toTRBLCorners`.
 ///
 /// Converts the given value into a TRBL corners object (similar with css
@@ -171,20 +140,26 @@ final class _TRBLCornersObject implements TRBLCorners {
 /// bottomRight)
 /// @since 3.0.0
 ///
-/// [value] is a `number | TRBLCorners` upstream: an option value here.
-TRBLCorners toTRBLCorners(Object? value) {
-  // Port-only fast path, as in [toTRBL]: a value that is not an object gives
-  // the same number for each corner (helpers.options.ts:55-63). The bar and
-  // arc elements call this function in each draw.
-  if (!isObject(value)) return _TRBLCornersObject.all(_numberOrZero(value));
-  return _TRBLCornersObject(
-    readValueToProps(value, const [
-      'topLeft',
-      'topRight',
-      'bottomLeft',
-      'bottomRight',
-    ]),
+/// [value] is a `number | TRBLCorners` upstream: an option value here, a
+/// number or a Flutter [BorderRadius]. The radius of a corner is its
+/// [Radius.x]. A Map stops a debug build. Another object (the arc corners of
+/// a legend item style) gives no radius, as the object of upstream without
+/// the four keys does.
+// DIVERGES(chartjs): adapt-flutter-border-radius, a Flutter BorderRadius.
+BorderRadius toTRBLCorners(Object? value) {
+  // The object form of the option is a Flutter BorderRadius: it gives its
+  // corners as they are.
+  if (value is BorderRadius) return value;
+  assert(
+    value is! Map,
+    'A corner option takes a number or a BorderRadius, not $value.',
   );
+  // A value that is not an object gives the same number for each corner
+  // (helpers.options.ts:55-63).
+  final radius = isObject(value) ? 0.0 : _numberOrZero(value);
+  return radius == 0
+      ? BorderRadius.zero
+      : BorderRadius.all(Radius.circular(radius));
 }
 
 /// helpers.options.ts:98 `toPadding`.

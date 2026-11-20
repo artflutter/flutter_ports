@@ -4,6 +4,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// `module.exports` of the upstream file. Each call runs the module body.
@@ -56,7 +57,7 @@ Map<String, Object?> fixture() => <String, Object?>{
               final items = generateLabels(chart! as Chart);
 
               for (final item in items) {
-                item.borderRadius = const TooltipCornerRadii.all(5);
+                item.borderRadius = const BorderRadius.all(Radius.circular(5));
               }
 
               return items;

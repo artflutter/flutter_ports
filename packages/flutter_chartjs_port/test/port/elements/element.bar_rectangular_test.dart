@@ -8,6 +8,7 @@ import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:meta/meta.dart';
@@ -196,7 +197,7 @@ void main() {
       null,
       '0',
       4,
-      {'topLeft': 4},
+      const BorderRadius.only(topLeft: Radius.circular(4)),
       double.nan,
     ]) {
       for (final inflation in [-0.0, 0.0, -0.33, 0.33, double.nan]) {

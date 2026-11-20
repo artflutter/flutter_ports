@@ -12,10 +12,10 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
-import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign, TextDirection;
+import 'dart:ui';
 
-import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter/animation.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
@@ -2536,7 +2536,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.borderSkipped:
         _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 2946));
       case OptionKey.borderRadius:
-        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 6305));
       case OptionKey.inflateAmount:
         _inflateAmount = fitCell(cell, classifyNumber);
       case OptionKey.borderWidth:
@@ -2568,7 +2568,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.data:
         _data = fitCell(cell, (raw) => classifyUnion(raw, 16));
       case OptionKey.hoverBorderRadius:
-        _hoverBorderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _hoverBorderRadius = fitCell(cell, (raw) => classifyUnion(raw, 6273));
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
@@ -2865,7 +2865,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.borderSkipped:
         return classifyUnion(raw, 2946);
       case OptionKey.borderRadius:
-        return classifyUnion(raw, 33);
+        return classifyUnion(raw, 6305);
       case OptionKey.inflateAmount:
         return classifyNumber(raw);
       case OptionKey.borderWidth:
@@ -2897,7 +2897,7 @@ base class ChartOptionsScope() extends OptionScope {
       case OptionKey.data:
         return classifyUnion(raw, 16);
       case OptionKey.hoverBorderRadius:
-        return classifyUnion(raw, 33);
+        return classifyUnion(raw, 6273);
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
@@ -6511,7 +6511,7 @@ base class BarOptionsScope() extends OptionScope {
       case OptionKey.borderSkipped:
         _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 2946));
       case OptionKey.borderRadius:
-        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 6273));
       case OptionKey.inflateAmount:
         _inflateAmount = fitCell(cell, classifyNumber);
       case OptionKey.borderWidth:
@@ -6523,7 +6523,7 @@ base class BarOptionsScope() extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         _hoverBackgroundColor = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.hoverBorderRadius:
-        _hoverBorderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _hoverBorderRadius = fitCell(cell, (raw) => classifyUnion(raw, 6273));
       case OptionKey.pointStyle:
         _pointStyle = fitCell(cell, (raw) => classifyUnion(raw, 3202));
       case OptionKey.dollarShared:
@@ -6570,7 +6570,7 @@ base class BarOptionsScope() extends OptionScope {
       case OptionKey.borderSkipped:
         return classifyUnion(raw, 2946);
       case OptionKey.borderRadius:
-        return classifyUnion(raw, 33);
+        return classifyUnion(raw, 6273);
       case OptionKey.inflateAmount:
         return classifyNumber(raw);
       case OptionKey.borderWidth:
@@ -6582,7 +6582,7 @@ base class BarOptionsScope() extends OptionScope {
       case OptionKey.hoverBackgroundColor:
         return classifyTyped<ChartPaint>(raw);
       case OptionKey.hoverBorderRadius:
-        return classifyUnion(raw, 33);
+        return classifyUnion(raw, 6273);
       case OptionKey.pointStyle:
         return classifyUnion(raw, 3202);
       case OptionKey.dollarShared:
@@ -7210,86 +7210,14 @@ base class GenericElementOptionsScope() extends OptionScope {
   Opt<Object?> classify(OptionKey key, Object? raw) => kind.classifyOther(raw);
 }
 
-/// Port-only kind for index.d.ts:2180 BorderRadius (bar) and index.d.ts:1873
-/// ArcBorderRadius (arc), the radius of each corner.
-base class BorderRadiusScope() extends OptionScope {
+/// index.d.ts:1873 ArcBorderRadius, the radius of each corner of an arc. The
+/// bar corners are a Flutter BorderRadius (row adapt-flutter-border-radius).
+base class ArcBorderRadiusScope() extends OptionScope {
   /// An empty scope.
   this;
 
   @override
-  ScopeKind get kind => ScopeKind.borderRadius;
-
-  Opt<double>? _topLeft;
-
-  /// The cell of `topLeft`, or Dart `null` when absent.
-  Opt<double>? get topLeftCell => _topLeft;
-
-  /// Stores the cell of `topLeft`. Dart `null` deletes the key.
-  set topLeftCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.topLeft);
-    } else {
-      store(OptionKey.topLeft, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `topLeft`.
-  set topLeft(double value) =>
-      store(OptionKey.topLeft, OptValue<double>(value));
-
-  Opt<double>? _topRight;
-
-  /// The cell of `topRight`, or Dart `null` when absent.
-  Opt<double>? get topRightCell => _topRight;
-
-  /// Stores the cell of `topRight`. Dart `null` deletes the key.
-  set topRightCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.topRight);
-    } else {
-      store(OptionKey.topRight, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `topRight`.
-  set topRight(double value) =>
-      store(OptionKey.topRight, OptValue<double>(value));
-
-  Opt<double>? _bottomLeft;
-
-  /// The cell of `bottomLeft`, or Dart `null` when absent.
-  Opt<double>? get bottomLeftCell => _bottomLeft;
-
-  /// Stores the cell of `bottomLeft`. Dart `null` deletes the key.
-  set bottomLeftCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.bottomLeft);
-    } else {
-      store(OptionKey.bottomLeft, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `bottomLeft`.
-  set bottomLeft(double value) =>
-      store(OptionKey.bottomLeft, OptValue<double>(value));
-
-  Opt<double>? _bottomRight;
-
-  /// The cell of `bottomRight`, or Dart `null` when absent.
-  Opt<double>? get bottomRightCell => _bottomRight;
-
-  /// Stores the cell of `bottomRight`. Dart `null` deletes the key.
-  set bottomRightCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.bottomRight);
-    } else {
-      store(OptionKey.bottomRight, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `bottomRight`.
-  set bottomRight(double value) =>
-      store(OptionKey.bottomRight, OptValue<double>(value));
+  ScopeKind get kind => ScopeKind.arcBorderRadius;
 
   Opt<double>? _outerStart;
 
@@ -7366,14 +7294,6 @@ base class BorderRadiusScope() extends OptionScope {
   @override
   Opt<Object?>? cellOf(OptionKey key) {
     switch (key) {
-      case OptionKey.topLeft:
-        return _topLeft;
-      case OptionKey.topRight:
-        return _topRight;
-      case OptionKey.bottomLeft:
-        return _bottomLeft;
-      case OptionKey.bottomRight:
-        return _bottomRight;
       case OptionKey.outerStart:
         return _outerStart;
       case OptionKey.outerEnd:
@@ -7390,14 +7310,6 @@ base class BorderRadiusScope() extends OptionScope {
   @override
   void setCell(OptionKey key, Opt<Object?>? cell) {
     switch (key) {
-      case OptionKey.topLeft:
-        _topLeft = fitCell(cell, classifyNumber);
-      case OptionKey.topRight:
-        _topRight = fitCell(cell, classifyNumber);
-      case OptionKey.bottomLeft:
-        _bottomLeft = fitCell(cell, classifyNumber);
-      case OptionKey.bottomRight:
-        _bottomRight = fitCell(cell, classifyNumber);
       case OptionKey.outerStart:
         _outerStart = fitCell(cell, classifyNumber);
       case OptionKey.outerEnd:
@@ -7407,17 +7319,13 @@ base class BorderRadiusScope() extends OptionScope {
       case OptionKey.innerEnd:
         _innerEnd = fitCell(cell, classifyNumber);
       default:
-        throw ArgumentError.value(key, 'key', 'Not a key of BorderRadius');
+        throw ArgumentError.value(key, 'key', 'Not a key of ArcBorderRadius');
     }
   }
 
   @override
   bool hasField(OptionKey key) {
     switch (key) {
-      case OptionKey.topLeft:
-      case OptionKey.topRight:
-      case OptionKey.bottomLeft:
-      case OptionKey.bottomRight:
       case OptionKey.outerStart:
       case OptionKey.outerEnd:
       case OptionKey.innerStart:
@@ -7431,14 +7339,6 @@ base class BorderRadiusScope() extends OptionScope {
   @override
   Opt<Object?> classify(OptionKey key, Object? raw) {
     switch (key) {
-      case OptionKey.topLeft:
-        return classifyNumber(raw);
-      case OptionKey.topRight:
-        return classifyNumber(raw);
-      case OptionKey.bottomLeft:
-        return classifyNumber(raw);
-      case OptionKey.bottomRight:
-        return classifyNumber(raw);
       case OptionKey.outerStart:
         return classifyNumber(raw);
       case OptionKey.outerEnd:
@@ -8380,7 +8280,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderSkipped:
         _borderSkipped = fitCell(cell, (raw) => classifyUnion(raw, 2946));
       case OptionKey.borderRadius:
-        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 6273));
       case OptionKey.inflateAmount:
         _inflateAmount = fitCell(cell, classifyNumber);
       case OptionKey.borderWidth:
@@ -8424,7 +8324,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.skipNull:
         _skipNull = fitCell(cell, classifyBool);
       case OptionKey.hoverBorderRadius:
-        _hoverBorderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _hoverBorderRadius = fitCell(cell, (raw) => classifyUnion(raw, 6273));
       case OptionKey.rAxisID:
         _rAxisID = fitCell(cell, classifyString);
       case OptionKey.fill:
@@ -8533,7 +8433,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.borderSkipped:
         return classifyUnion(raw, 2946);
       case OptionKey.borderRadius:
-        return classifyUnion(raw, 33);
+        return classifyUnion(raw, 6273);
       case OptionKey.inflateAmount:
         return classifyNumber(raw);
       case OptionKey.borderWidth:
@@ -8577,7 +8477,7 @@ base class BarControllerDatasetOptionsScope() extends OptionScope {
       case OptionKey.skipNull:
         return classifyBool(raw);
       case OptionKey.hoverBorderRadius:
-        return classifyUnion(raw, 33);
+        return classifyUnion(raw, 6273);
       case OptionKey.rAxisID:
         return classifyString(raw);
       case OptionKey.fill:
@@ -19449,7 +19349,7 @@ base class PointLabelOptionsScope() extends OptionScope {
       case OptionKey.backdropPadding:
         _backdropPadding = fitCell(cell, classifyTyped<EdgeInsets>);
       case OptionKey.borderRadius:
-        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 6273));
       case OptionKey.display:
         _display = fitCell(cell, classifyTyped<ScaleDisplay>);
       case OptionKey.color:
@@ -19493,7 +19393,7 @@ base class PointLabelOptionsScope() extends OptionScope {
       case OptionKey.backdropPadding:
         return classifyTyped<EdgeInsets>(raw);
       case OptionKey.borderRadius:
-        return classifyUnion(raw, 33);
+        return classifyUnion(raw, 6273);
       case OptionKey.display:
         return classifyTyped<ScaleDisplay>(raw);
       case OptionKey.color:
@@ -20194,13 +20094,13 @@ base class LegendLabelOptionsScope() extends OptionScope {
   set useBorderRadius(bool value) =>
       store(OptionKey.useBorderRadius, OptValue<bool>(value));
 
-  Opt<double>? _borderRadius;
+  Opt<Object>? _borderRadius;
 
   /// The cell of `borderRadius`, or Dart `null` when absent.
-  Opt<double>? get borderRadiusCell => _borderRadius;
+  Opt<Object>? get borderRadiusCell => _borderRadius;
 
   /// Stores the cell of `borderRadius`. Dart `null` deletes the key.
-  set borderRadiusCell(Opt<double>? cell) {
+  set borderRadiusCell(Opt<Object>? cell) {
     if (cell == null) {
       delete(OptionKey.borderRadius);
     } else {
@@ -20209,8 +20109,8 @@ base class LegendLabelOptionsScope() extends OptionScope {
   }
 
   /// Stores the plain value [value] of `borderRadius`.
-  set borderRadius(double value) =>
-      store(OptionKey.borderRadius, OptValue<double>(value));
+  set borderRadius(Object value) =>
+      store(OptionKey.borderRadius, classify(OptionKey.borderRadius, value));
 
   @override
   Opt<Object?>? cellOf(OptionKey key) {
@@ -20278,7 +20178,7 @@ base class LegendLabelOptionsScope() extends OptionScope {
       case OptionKey.useBorderRadius:
         _useBorderRadius = fitCell(cell, classifyBool);
       case OptionKey.borderRadius:
-        _borderRadius = fitCell(cell, classifyNumber);
+        _borderRadius = fitCell(cell, (raw) => classifyUnion(raw, 6273));
       default:
         throw ArgumentError.value(
           key,
@@ -20341,7 +20241,7 @@ base class LegendLabelOptionsScope() extends OptionScope {
       case OptionKey.useBorderRadius:
         return classifyBool(raw);
       case OptionKey.borderRadius:
-        return classifyNumber(raw);
+        return classifyUnion(raw, 6273);
       default:
         return kind.classifyOther(raw);
     }
@@ -21812,7 +21712,7 @@ base class TooltipOptionsScope() extends OptionScope {
       case OptionKey.caretSize:
         _caretSize = fitCell(cell, classifyNumber);
       case OptionKey.cornerRadius:
-        _cornerRadius = fitCell(cell, (raw) => classifyUnion(raw, 33));
+        _cornerRadius = fitCell(cell, (raw) => classifyUnion(raw, 6273));
       case OptionKey.multiKeyBackground:
         _multiKeyBackground = fitCell(cell, classifyTyped<ChartPaint>);
       case OptionKey.displayColors:
@@ -21964,7 +21864,7 @@ base class TooltipOptionsScope() extends OptionScope {
       case OptionKey.caretSize:
         return classifyNumber(raw);
       case OptionKey.cornerRadius:
-        return classifyUnion(raw, 33);
+        return classifyUnion(raw, 6273);
       case OptionKey.multiKeyBackground:
         return classifyTyped<ChartPaint>(raw);
       case OptionKey.displayColors:

@@ -904,10 +904,9 @@ void renderText(
 /// @param ctx - Context
 /// @param rect - Bounding rect
 ///
-/// Upstream types [rect] as `RoundedRect & { radius: TRBLCorners }`. Dart
-/// has no intersection type, so the function takes a [RoundedRect] and
-/// reads its radius as a [TRBLCorners]. Every caller passes one (see
-/// [RoundedRect]).
+/// Upstream types [rect] as `RoundedRect & { radius: TRBLCorners }`. The
+/// [RoundedRect.radius] of the port is the four corners: a Flutter
+/// `BorderRadius`, whose `Radius.x` is the radius of a corner.
 ///
 /// Upstream adds four arcs and four lines (helpers.canvas.ts:504-526). The
 /// port makes one `roundRect` call with the four radii, which the `dart:ui`
@@ -915,14 +914,13 @@ void renderText(
 /// performance rule of porting-flow.md §1.1, differences.md
 /// `adapt-rounded-rect-path`). The fill and clip area is the same.
 void addRoundedRectPath(CanvasRenderingContext2D ctx, RoundedRect rect) {
-  final RoundedRect(:x, :y, :w, :h) = rect;
-  final radius = rect.radius! as TRBLCorners;
+  final RoundedRect(:x, :y, :w, :h, :radius) = rect;
 
   // DIVERGES(chartjs): adapt-rounded-rect-path, one roundRect call.
   ctx.roundRect(x, y, w, h, [
-    radius.topLeft,
-    radius.topRight,
-    radius.bottomRight,
-    radius.bottomLeft,
+    radius.topLeft.x,
+    radius.topRight.x,
+    radius.bottomRight.x,
+    radius.bottomLeft.x,
   ]);
 }

@@ -1538,14 +1538,14 @@ void main() {
         expectTwin(
           _lower(
             const BarDataset(
-              borderRadius: 4,
+              borderWidth: 4,
               extra: {
-                'borderRadius': {'topLeft': 8},
+                'borderWidth': {'top': 8},
               },
             ),
           ),
           {
-            'borderRadius': {'topLeft': 8},
+            'borderWidth': {'top': 8},
           },
         );
       });

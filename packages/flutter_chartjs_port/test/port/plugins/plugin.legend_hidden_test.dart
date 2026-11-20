@@ -1763,7 +1763,7 @@ void main() {
       'textAlign': TextAlign.right,
       'color': _green,
       'useBorderRadius': true,
-      'borderRadius': 7,
+      'borderRadius': BorderRadius.all(Radius.circular(7)),
     };
 
     /// The resolved label option [key] of the legend of [chart].

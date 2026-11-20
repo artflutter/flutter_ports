@@ -146,7 +146,7 @@ kinds:
       hidden: bool
       base: number
       borderSkipped: borderSkippedEdge | bool
-      borderRadius: number | scope BorderRadius
+      borderRadius: number | borderRadius | scope ArcBorderRadius
       inflateAmount: number
       borderWidth: number | scope Padding
       hoverBorderWidth: number
@@ -162,7 +162,7 @@ kinds:
       tooltip: scope TooltipDatasetOptions
       type: string
       data: list
-      hoverBorderRadius: number | scope BorderRadius
+      hoverBorderRadius: number | borderRadius
       rAxisID: string
       fill: fillTarget
       datasetElementType: string | bool
@@ -406,13 +406,13 @@ kinds:
       backgroundColor: chartPaint
       base: number
       borderSkipped: borderSkippedEdge | bool
-      borderRadius: number | scope BorderRadius
+      borderRadius: number | borderRadius
       inflateAmount: number
       borderWidth: number | scope Padding
       hoverBorderWidth: number
       hoverBorderColor: chartPaint
       hoverBackgroundColor: chartPaint
-      hoverBorderRadius: number | scope BorderRadius
+      hoverBorderRadius: number | borderRadius
       pointStyle: pointStyle | bool  # element.bar.js:153 defaults
       $shared: bool  # written at core.config.js:352 and core.datasetController.js:826
       $animations: any  # written at core.animations.js:71 and :159
@@ -445,7 +445,7 @@ kinds:
       borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
-      borderRadius: number | scope BorderRadius
+      borderRadius: number | scope ArcBorderRadius
       offset: number
       circular: bool
       spacing: number
@@ -463,13 +463,9 @@ kinds:
     doc: Port-only kind (Chart.js ADR 0021 section 2), the options of a custom element type or of an element subclass with its own id.
     element: generic
     keys: none
-  BorderRadius:
-    doc: Port-only kind for index.d.ts:2180 BorderRadius (bar) and index.d.ts:1873 ArcBorderRadius (arc), the radius of each corner.
+  ArcBorderRadius:
+    doc: index.d.ts:1873 ArcBorderRadius, the radius of each corner of an arc. The bar corners are a Flutter BorderRadius (row adapt-flutter-border-radius).
     keys:
-      topLeft: number
-      topRight: number
-      bottomLeft: number
-      bottomRight: number
       outerStart: number
       outerEnd: number
       innerStart: number
@@ -498,7 +494,7 @@ kinds:
       backgroundColor: chartPaint
       base: number
       borderSkipped: borderSkippedEdge | bool
-      borderRadius: number | scope BorderRadius
+      borderRadius: number | borderRadius
       inflateAmount: number
       borderWidth: number | scope Padding
       hoverBorderWidth: number
@@ -520,7 +516,7 @@ kinds:
       type: string  # index.d.ts:3859 ChartDatasetProperties
       data: list
       skipNull: bool  # index.d.ts:149 BarControllerChartOptions
-      hoverBorderRadius: number | scope BorderRadius  # index.d.ts:2187 BarHoverOptions, the hover prefix of core.datasetController.js:815
+      hoverBorderRadius: number | borderRadius  # index.d.ts:2187 BarHoverOptions, the hover prefix of core.datasetController.js:815
       rAxisID: string  # read at core.datasetController.js:308
       fill: fillTarget  # read at core.datasetController.js:287
       drawActiveElementsOnTop: bool  # read at core.datasetController.js:721
@@ -648,7 +644,7 @@ kinds:
       borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
-      borderRadius: number | scope BorderRadius
+      borderRadius: number | scope ArcBorderRadius
       offset: number
       circular: bool
       spacing: number
@@ -700,7 +696,7 @@ kinds:
       borderDash: dashList
       borderDashOffset: number
       borderJoinStyle: strokeJoin
-      borderRadius: number | scope BorderRadius
+      borderRadius: number | scope ArcBorderRadius
       offset: number
       circular: bool
       spacing: number
@@ -983,7 +979,7 @@ kinds:
     keys:
       backdropColor: chartPaint
       backdropPadding: edgeInsets
-      borderRadius: number | scope BorderRadius
+      borderRadius: number | borderRadius
       display: scaleDisplay
       color: chartPaint
       font: textStyle
@@ -1028,7 +1024,7 @@ kinds:
       textAlign: textAlign
       usePointStyle: bool
       useBorderRadius: bool
-      borderRadius: number
+      borderRadius: number | borderRadius
   LegendTitleOptions:
     doc: Port-only name for index.d.ts:2552 LegendOptions `title`, the title of the legend.
     keys:
@@ -1084,7 +1080,7 @@ kinds:
       padding: edgeInsets
       caretPadding: number
       caretSize: number
-      cornerRadius: number | scope BorderRadius
+      cornerRadius: number | borderRadius
       multiKeyBackground: chartPaint
       displayColors: bool
       boxWidth: number

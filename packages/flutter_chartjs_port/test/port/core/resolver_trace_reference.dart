@@ -2575,7 +2575,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
     },
   ),
   (
-    name: 'object: bar borderRadius with a scriptable key',
+    name: 'object: bar borderWidth with a scriptable key',
     setup: null,
     config: <String, Object?>{
       'type': 'bar',
@@ -2584,9 +2584,9 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[1.0, 3.0, 2.0],
-            'borderRadius': <String, Object?>{
-              'topLeft': 4.0,
-              'topRight': 'fn:barRadius',
+            'borderWidth': <String, Object?>{
+              'top': 4.0,
+              'right': 'fn:barRadius',
             },
             'borderSkipped': false,
           },
@@ -2655,11 +2655,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{
-                    'topLeft': 4.0,
-                    'topRight': 0.0,
-                  },
+                  'borderWidth': <String, Object?>{'top': 4.0, 'right': 0.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -2668,11 +2665,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{
-                    'topLeft': 4.0,
-                    'topRight': 1.0,
-                  },
+                  'borderWidth': <String, Object?>{'top': 4.0, 'right': 1.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -2681,11 +2675,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{
-                    'topLeft': 4.0,
-                    'topRight': 2.0,
-                  },
+                  'borderWidth': <String, Object?>{'top': 4.0, 'right': 2.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -2743,11 +2734,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{
-                    'topLeft': 4.0,
-                    'topRight': 0.0,
-                  },
+                  'borderWidth': <String, Object?>{'top': 4.0, 'right': 0.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -2756,11 +2744,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{
-                    'topLeft': 4.0,
-                    'topRight': 1.0,
-                  },
+                  'borderWidth': <String, Object?>{'top': 4.0, 'right': 1.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -2769,11 +2754,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{
-                    'topLeft': 4.0,
-                    'topRight': 2.0,
-                  },
+                  'borderWidth': <String, Object?>{'top': 4.0, 'right': 2.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3046,7 +3028,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
     },
   ),
   (
-    name: 'array of objects: indexable bar borderRadius and a chart option',
+    name: 'array of objects: indexable bar borderWidth and a chart option',
     setup: null,
     config: <String, Object?>{
       'type': 'bar',
@@ -3055,9 +3037,9 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[1.0, 3.0, 2.0],
-            'borderRadius': <Object?>[
-              <String, Object?>{'topLeft': 2.0},
-              <String, Object?>{'topLeft': 'fn:barRadius'},
+            'borderWidth': <Object?>[
+              <String, Object?>{'top': 2.0},
+              <String, Object?>{'top': 'fn:barRadius'},
             ],
             'borderSkipped': false,
           },
@@ -3106,8 +3088,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 2.0},
+                  'borderWidth': <String, Object?>{'top': 2.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3116,8 +3098,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 1.0},
+                  'borderWidth': <String, Object?>{'top': 1.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3126,8 +3108,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 2.0},
+                  'borderWidth': <String, Object?>{'top': 2.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3161,8 +3143,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 2.0},
+                  'borderWidth': <String, Object?>{'top': 2.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3171,8 +3153,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 1.0},
+                  'borderWidth': <String, Object?>{'top': 1.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3181,8 +3163,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 2.0},
+                  'borderWidth': <String, Object?>{'top': 2.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3220,8 +3202,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 2.0},
+                  'borderWidth': <String, Object?>{'top': 2.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3230,8 +3212,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 1.0},
+                  'borderWidth': <String, Object?>{'top': 1.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3240,8 +3222,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 2.0},
+                  'borderWidth': <String, Object?>{'top': 2.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3265,7 +3247,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[1.0, 3.0, 2.0],
-            'borderRadius': <String, Object?>{'topLeft': 4.0},
+            'borderWidth': <String, Object?>{'top': 4.0},
             'borderSkipped': false,
           },
         ],
@@ -3282,7 +3264,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             'ticks': <String, Object?>{'display': false},
           },
         },
-        'radiusFallback': <String, Object?>{'topRight': 6.0},
+        'radiusFallback': <String, Object?>{'right': 6.0},
       },
     },
     expected: <String, Object?>{
@@ -3297,8 +3279,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3307,8 +3289,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3317,8 +3299,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3339,8 +3321,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3349,8 +3331,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3359,8 +3341,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3384,7 +3366,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[1.0, 3.0, 2.0],
-            'borderRadius': <String, Object?>{'topLeft': 4.0},
+            'borderWidth': <String, Object?>{'top': 4.0},
             'borderSkipped': false,
           },
         ],
@@ -3415,8 +3397,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3425,8 +3407,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3435,8 +3417,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3457,8 +3439,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3467,8 +3449,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3477,8 +3459,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': false,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3502,7 +3484,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
         'datasets': <Object?>[
           <String, Object?>{
             'data': <Object?>[1.0, 3.0, 2.0],
-            'borderRadius': <String, Object?>{'topLeft': 4.0},
+            'borderWidth': <String, Object?>{'top': 4.0},
             'borderSkipped': false,
           },
         ],
@@ -3519,7 +3501,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
             'ticks': <String, Object?>{'display': false},
           },
         },
-        'radiusFallback': <String, Object?>{'topRight': 6.0},
+        'radiusFallback': <String, Object?>{'right': 6.0},
       },
     },
     expected: <String, Object?>{
@@ -3529,7 +3511,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
           'trace': <Object?>[
             <String, Object?>{
               'fn': 'fallbackFn',
-              'arg0': 'borderRadius',
+              'arg0': 'borderWidth',
               'arg1': 'value',
             },
           ],
@@ -3540,8 +3522,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3550,8 +3532,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3560,8 +3542,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3577,7 +3559,7 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
           'trace': <Object?>[
             <String, Object?>{
               'fn': 'fallbackFn',
-              'arg0': 'borderRadius',
+              'arg0': 'borderWidth',
               'arg1': 'value',
             },
           ],
@@ -3588,8 +3570,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3598,8 +3580,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -3608,8 +3590,8 @@ const List<ResolverTraceReferenceCase> resolverTraceReference = [
                 <String, Object?>{
                   r'$shared': true,
                   'borderSkipped': false,
-                  'borderWidth': 0.0,
-                  'borderRadius': <String, Object?>{'topLeft': 4.0},
+                  'borderWidth': <String, Object?>{'top': 4.0},
+                  'borderRadius': 0.0,
                   'inflateAmount': undefined,
                   'pointStyle': undefined,
                   'backgroundColor': 'rgba(0,0,0,0.1)',

@@ -8,6 +8,7 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show MockContext;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -140,7 +141,7 @@ final Map<String, Object?> _functions = {
         borderWidth: 2,
         borderDash: [2, 1],
         borderDashOffset: 1,
-        borderRadius: const TooltipCornerRadii.all(3),
+        borderRadius: const BorderRadius.all(Radius.circular(3)),
       ),
 };
 
@@ -669,7 +670,7 @@ void main() {
               'callbacks': TooltipCallbacks(
                 labelColor: (tooltip, item) => TooltipLabelStyle(
                   borderWidth: 0,
-                  borderRadius: TooltipCornerRadii.all(radius),
+                  borderRadius: BorderRadius.all(Radius.circular(radius)),
                 ),
               ),
             }),

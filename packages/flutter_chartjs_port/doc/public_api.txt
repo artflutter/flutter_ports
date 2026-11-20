@@ -17,6 +17,7 @@ Animator
 Anims
 AnyObject
 ArcBorderAlign
+ArcBorderRadiusScope
 ArcCircumferenceProp
 ArcCommand
 ArcElement
@@ -62,7 +63,6 @@ BasePlatform
 BasicPlatform
 BezierCurveToCommand
 BorderColorAnimation
-BorderRadiusScope
 BorderSkipped
 BorderSkippedEdge
 BorderWidthAnimation
@@ -502,7 +502,6 @@ StyleProp
 SubtitlePlugin
 SweepChartGradient
 TRBL
-TRBLCorners
 TensionAnimation
 TextMetrics
 Tick
@@ -530,7 +529,6 @@ TitlePlugin
 Tooltip
 TooltipBodyItem
 TooltipCallbacks
-TooltipCornerRadii
 TooltipDatasetOptionsScope
 TooltipDrawHookArgs
 TooltipExternal
@@ -1067,6 +1065,7 @@ Animator
 Anims
 AnyObject
 ArcBorderAlign
+ArcBorderRadiusScope
 ArcCircumferenceProp
 ArcCommand
 ArcElement
@@ -1112,7 +1111,6 @@ BasePlatform
 BasicPlatform
 BezierCurveToCommand
 BorderColorAnimation
-BorderRadiusScope
 BorderSkipped
 BorderSkippedEdge
 BorderWidthAnimation
@@ -1552,7 +1550,6 @@ StyleProp
 SubtitlePlugin
 SweepChartGradient
 TRBL
-TRBLCorners
 TensionAnimation
 TextMetrics
 Tick
@@ -1578,7 +1575,6 @@ TitleOptionsScope
 TitlePlugin
 TooltipBodyItem
 TooltipCallbacks
-TooltipCornerRadii
 TooltipDatasetOptionsScope
 TooltipDrawHookArgs
 TooltipExternal

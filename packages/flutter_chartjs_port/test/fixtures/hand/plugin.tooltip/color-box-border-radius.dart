@@ -3,7 +3,7 @@
 /// A hand-ported fixture config (Chart.js ADR 0029, section 4).
 library;
 
-import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 import '../../fixture_events.dart';
@@ -61,9 +61,9 @@ Map<String, Object?> fixture() => <String, Object?>{
                 backgroundColor:
                     jsGet(options, 'backgroundColor')! as ChartPaint,
                 borderWidth: 2,
-                borderRadius: const TooltipCornerRadii(
-                  topRight: 5,
-                  bottomRight: 5,
+                borderRadius: const BorderRadius.only(
+                  topRight: Radius.circular(5),
+                  bottomRight: Radius.circular(5),
                 ),
               );
             },

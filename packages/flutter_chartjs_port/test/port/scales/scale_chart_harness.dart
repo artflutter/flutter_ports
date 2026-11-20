@@ -63,7 +63,7 @@ import 'dart:math' as math;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -488,19 +488,19 @@ Object? referenceMatcher(Object? expected) => switch (expected) {
   ),
   final ChartShaderPaint paint => same(paint),
   UnchangedChartPaint() => isA<UnchangedChartPaint>(),
-  final TooltipCornerRadii r =>
-    isA<TooltipCornerRadii>()
-        .having((v) => v.topLeft, 'topLeft', referenceMatcher(r.topLeft))
-        .having((v) => v.topRight, 'topRight', referenceMatcher(r.topRight))
+  final BorderRadius r =>
+    isA<BorderRadius>()
+        .having((v) => v.topLeft.x, 'topLeft', referenceMatcher(r.topLeft.x))
+        .having((v) => v.topRight.x, 'topRight', referenceMatcher(r.topRight.x))
         .having(
-          (v) => v.bottomLeft,
+          (v) => v.bottomLeft.x,
           'bottomLeft',
-          referenceMatcher(r.bottomLeft),
+          referenceMatcher(r.bottomLeft.x),
         )
         .having(
-          (v) => v.bottomRight,
+          (v) => v.bottomRight.x,
           'bottomRight',
-          referenceMatcher(r.bottomRight),
+          referenceMatcher(r.bottomRight.x),
         ),
   final TooltipLabelStyle s =>
     isA<TooltipLabelStyle>()

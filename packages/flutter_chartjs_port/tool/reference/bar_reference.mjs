@@ -158,6 +158,23 @@ function coord(v) {
 /** Whether the data has an `undefined` literal, which needs its import. */
 let usesUndefined = false;
 
+/** Whether the data has a BorderRadius literal, which needs its import. */
+let usesBorderRadius = false;
+
+/** The corner keys of a BorderRadius, in the order of its constructor. */
+const CORNER_KEYS = ['topLeft', 'topRight', 'bottomLeft', 'bottomRight'];
+
+/**
+ * The Dart literal of the corner object [v] of the option borderRadius: a
+ * Flutter BorderRadius (row adapt-flutter-border-radius).
+ */
+function dartCorners(v) {
+  usesBorderRadius = true;
+  const corners = CORNER_KEYS.filter((k) => Number(v[k]) || 0)
+    .map((k) => `${k}: Radius.circular(${num(Number(v[k]))})`);
+  return corners.length ? `BorderRadius.only(${corners.join(', ')})` : 'BorderRadius.zero';
+}
+
 /** The Dart literal of a recorded value or of a cfg value. */
 function dart(v) {
   if (v === ABSENT || v === null) return 'null';
@@ -169,7 +186,11 @@ function dart(v) {
   if (typeof v === 'boolean') return String(v);
   if (typeof v === 'string' && /^[\w ]*$/.test(v)) return `'${v}'`;
   if (typeof v === 'object' && Object.getPrototypeOf(v) === Object.prototype) {
-    const entries = Object.keys(v).map((k) => `${dart(k)}: ${dart(v[k])}`);
+    const entries = Object.keys(v).map((k) => {
+      const x = v[k];
+      const corners = k === 'borderRadius' && x !== null && typeof x === 'object';
+      return `${dart(k)}: ${corners ? dartCorners(x) : dart(x)}`;
+    });
     return `<String, Object?>{${entries.join(', ')}}`;
   }
   throw new Error(`No Dart literal for ${String(v)}`);
@@ -451,7 +472,7 @@ const out = `// Original code, not ported from Chart.js: BarElement reference da
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // src/elements/element.bar.js at the pinned Chart.js. ${rangeCases.length} range
 // cases, ${drawCases.length} draw cases.
-${usesUndefined ? "\nimport 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}
+${usesUndefined || usesBorderRadius ? '\n' : ''}${usesBorderRadius ? "import 'package:flutter/painting.dart';\n" : ''}${usesUndefined ? "import 'package:flutter_chartjs_port/chartjs_core.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String barReferenceNode = '${process.version}';
 

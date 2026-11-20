@@ -26,10 +26,8 @@
 /// This library is a pure layer.
 library;
 
-import 'dart:ui' show Locale, StrokeCap, StrokeJoin, TextAlign, TextDirection;
-
 import 'package:flutter/animation.dart' show Curve;
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 
@@ -336,6 +334,10 @@ abstract final class ShapeBits() {
   /// `barThickness`: a [BarThickness] (row `adapt-bar-thickness-class`).
   static const int barThickness = 6144;
 
+  /// `borderRadius`: a Flutter [BorderRadius], the object form of a corner
+  /// option (row `adapt-flutter-border-radius`).
+  static const int borderRadius = 6272;
+
   /// The bits of the index of a typed atom: the native types of options
   /// that were names in Chart.js ([classifyTyped]).
   static const int typed = 0x7FFFFF80;
@@ -463,6 +465,7 @@ Opt<Object?> classifyMask(Object? raw, int mask) => switch (mask) {
   ShapeBits.textLines => classifyTypedList<String>(raw),
   ShapeBits.dashList => classifyTypedList<double>(raw),
   ShapeBits.barThickness => classifyTyped<BarThickness>(raw),
+  ShapeBits.borderRadius => classifyTyped<BorderRadius>(raw),
   ShapeBits.textAlign => classifyTyped<TextAlign>(raw),
   ShapeBits.steppedLine => classifyTyped<SteppedLine>(raw),
   ShapeBits.borderSkippedEdge => classifyTyped<BorderSkippedEdge>(raw),

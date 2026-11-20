@@ -5,6 +5,8 @@
 // src/elements/element.bar.js at the pinned Chart.js. 12 range
 // cases, 31 draw cases.
 
+import 'package:flutter/painting.dart';
+
 /// The Node.js version that generated the data.
 const String barReferenceNode = 'v24.22.1';
 
@@ -1227,7 +1229,10 @@ const List<BarReferenceDrawCase> barDrawReference = [
         'borderColor': 'red',
         'backgroundColor': 'blue',
         'borderWidth': 2,
-        'borderRadius': <String, Object?>{'topLeft': 3, 'bottomRight': 6},
+        'borderRadius': BorderRadius.only(
+          topLeft: Radius.circular(3),
+          bottomRight: Radius.circular(6),
+        ),
       },
       'borderSkipped': <String, Object?>{},
       'enableBorderRadius': false,
@@ -1284,12 +1289,12 @@ const List<BarReferenceDrawCase> barDrawReference = [
         'borderColor': 'red',
         'backgroundColor': 'blue',
         'borderWidth': 0,
-        'borderRadius': <String, Object?>{
-          'topLeft': 4,
-          'topRight': 4,
-          'bottomLeft': 4,
-          'bottomRight': 4,
-        },
+        'borderRadius': BorderRadius.only(
+          topLeft: Radius.circular(4),
+          topRight: Radius.circular(4),
+          bottomLeft: Radius.circular(4),
+          bottomRight: Radius.circular(4),
+        ),
       },
       'borderSkipped': <String, Object?>{'bottom': true},
       'enableBorderRadius': false,

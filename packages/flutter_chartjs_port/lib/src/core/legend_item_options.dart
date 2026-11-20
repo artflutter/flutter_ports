@@ -3,6 +3,7 @@
 /// Normalization at the built-in legend generator boundary.
 library;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// Resolves raw application labels and element options once when generating
@@ -42,7 +43,7 @@ LegendItem legendItemFromOptions({
   pointStyle: PointStyle.of(pointStyle),
   rotation: _number(rotation),
   textAlign: canvasTextAlign(textAlign),
-  borderRadius: borderRadius is TRBLCorners
+  borderRadius: borderRadius is BorderRadius
       ? borderRadius
       : jsTruthy(borderRadius)
       ? toTRBLCorners(borderRadius)

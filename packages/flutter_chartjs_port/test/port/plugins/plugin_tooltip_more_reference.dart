@@ -6,9 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 8 cases, 75 widths.
 
-import 'dart:ui'
-    show Color, FontStyle, FontWeight, StrokeCap, StrokeJoin, TextAlign;
-
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 /// The Node.js version that generated the data.
@@ -6449,7 +6447,7 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
                   borderWidth: 2,
                   borderDash: const <double>[2, 1],
                   borderDashOffset: 1,
-                  borderRadius: const TooltipCornerRadii.all(3),
+                  borderRadius: const BorderRadius.all(Radius.circular(3)),
                 ),
                 TooltipLabelStyle(
                   borderColor: const ChartPaint.solid(
@@ -6461,7 +6459,7 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
                   borderWidth: 2,
                   borderDash: const <double>[2, 1],
                   borderDashOffset: 1,
-                  borderRadius: const TooltipCornerRadii.all(3),
+                  borderRadius: const BorderRadius.all(Radius.circular(3)),
                 ),
               ],
               'labelPointStyles': const <Object?>[
@@ -7160,12 +7158,11 @@ List<PluginTooltipMoreReferenceCase> pluginTooltipMoreReference(
           'tooltip': <String, Object?>{
             'mode': NearestInteractionMode(),
             'intersect': true,
-            'cornerRadius': <String, Object?>{
-              'topLeft': 2.0,
-              'topRight': 8.0,
-              'bottomLeft': 0.0,
-              'bottomRight': 4.0,
-            },
+            'cornerRadius': BorderRadius.only(
+              topLeft: Radius.circular(2),
+              topRight: Radius.circular(8),
+              bottomRight: Radius.circular(4),
+            ),
             'caretSize': 8.0,
             'borderWidth': 2.0,
             'borderColor': 'orange',

@@ -29,10 +29,10 @@
 ///
 /// Upstream reads the object members by key (`value[prop]`,
 /// helpers.options.ts:57-58), and `isObject` is true only for a Map in the
-/// port. Thus a Dart object that implements [TRBL], [TRBLCorners] or [Point]
-/// is not an accepted input. The results are typed: `toTRBL` returns a
-/// [TRBL], `toTRBLCorners` a [TRBLCorners] and `toPadding` a [ChartArea].
-/// The concrete classes of these results are private to
+/// port. Thus a Dart object that implements [TRBL] or [Point] is not an
+/// accepted input. The results are typed: `toTRBL` returns a [TRBL],
+/// `toTRBLCorners` a Flutter [BorderRadius] and `toPadding` a [ChartArea].
+/// The concrete classes of the [TRBL] results are private to
 /// `helpers.options.dart`. The object of `toTRBL` also implements
 /// [ChartArea], and its `width` and `height` are `late` fields. Thus
 /// `toPadding` assigns them as upstream does (helpers.options.ts:99-102).
@@ -54,6 +54,8 @@
 /// `JSON.stringify` tell them apart, and no upstream `src` file applies these
 /// to a control point.
 library;
+
+import 'package:flutter/painting.dart';
 
 /// geometric.d.ts:1 `ChartArea`.
 ///
@@ -102,26 +104,14 @@ abstract interface class TRBL() {
   double get left;
 }
 
-/// geometric.d.ts:22 `TRBLCorners`.
-abstract interface class TRBLCorners() {
-  /// geometric.d.ts:23 `topLeft: number`.
-  double get topLeft;
-
-  /// geometric.d.ts:24 `topRight: number`.
-  double get topRight;
-
-  /// geometric.d.ts:25 `bottomLeft: number`.
-  double get bottomLeft;
-
-  /// geometric.d.ts:26 `bottomRight: number`.
-  double get bottomRight;
-}
+// geometric.d.ts:22 `TRBLCorners` has no Dart interface: the corners are a
+// Flutter `BorderRadius` (row `adapt-flutter-border-radius`).
 
 /// geometric.d.ts:31 `RoundedRect`.
 ///
 /// `addRoundedRectPath` (helpers.canvas.ts:498) takes the intersection
 /// `RoundedRect & { radius: TRBLCorners }`. Its callers pass a rectangle
-/// whose [radius] is a [TRBLCorners] (`element.bar.js:182`,
+/// whose [radius] is the corners (`element.bar.js:182`,
 /// `plugin.legend.js:347`, `plugin.tooltip.js:835`,
 /// `scale.radialLinear.js:247`).
 abstract interface class RoundedRect() {
@@ -138,10 +128,10 @@ abstract interface class RoundedRect() {
   double get h;
 
   /// geometric.d.ts:36 `radius?: CornerRadius`, the union
-  /// `number | Partial<TRBLCorners>`. The Dart form is `Object?`: a `num`,
-  /// a [TRBLCorners], or Dart `null` for JS `undefined` (see "The unions"
-  /// above).
-  Object? get radius;
+  /// `number | Partial<TRBLCorners>`. Each caller gives the four corners: a
+  /// Flutter [BorderRadius], whose [Radius.x] is the radius of a corner.
+  // DIVERGES(chartjs): adapt-flutter-border-radius, a Flutter BorderRadius.
+  BorderRadius get radius;
 }
 
 /// geometric.d.ts:41 `SplinePoint`.

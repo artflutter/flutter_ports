@@ -5,9 +5,9 @@
 library;
 
 import 'dart:ui' as native_ui;
-import 'dart:ui' show TextAlign;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -171,7 +171,7 @@ void main() {
                 lineDash: [1, 2, 3],
                 lineDashOffset: 1,
                 lineJoin: native_ui.StrokeJoin.miter,
-                borderRadius: const TooltipCornerRadii.all(5),
+                borderRadius: const BorderRadius.all(Radius.circular(5)),
               ),
             ),
           ]);

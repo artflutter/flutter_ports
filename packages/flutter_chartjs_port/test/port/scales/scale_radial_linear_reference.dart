@@ -6,9 +6,7 @@
 // 76d8cf895a7485dc838c90ef37e2bc9d9e388fcb, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. 78 cases, 218 widths.
 
-import 'dart:ui' show FontStyle, FontWeight, TextAlign;
-
-import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
@@ -9299,10 +9297,10 @@ const List<ScaleRadialLinearReferenceCase> scaleRadialLinearReference = [
           'r': <String, Object?>{
             'pointLabels': <String, Object?>{
               'backdropColor': 'yellow',
-              'borderRadius': <String, Object?>{
-                'topLeft': 3.0,
-                'bottomRight': 6.0,
-              },
+              'borderRadius': BorderRadius.only(
+                topLeft: Radius.circular(3),
+                bottomRight: Radius.circular(6),
+              ),
             },
           },
         },

@@ -538,25 +538,14 @@ final class const Box(
   double get height => bottom - top;
 }
 
-/// The corner radii of a [RoundedBox].
-final class const Corners({
-  @override required final double topLeft,
-  @override required final double topRight,
-  @override required final double bottomLeft,
-  @override required final double bottomRight,
-}) implements TRBLCorners {
-  /// Creates the radii.
-  this;
-}
-
 /// The rectangle of `addRoundedRectPath`: a `RoundedRect` whose radius is a
-/// [Corners].
+/// Flutter [BorderRadius].
 final class const RoundedBox(
   @override final double x,
   @override final double y,
   @override final double w,
   @override final double h,
-  @override final Corners radius,
+  @override final BorderRadius radius,
 ) implements RoundedRect {
   /// Creates the rectangle.
   this;

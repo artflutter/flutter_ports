@@ -2,9 +2,8 @@
 @TestOn('vm')
 library;
 
-import 'dart:ui' show Color, StrokeCap, StrokeJoin, TextAlign;
-
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -186,7 +185,7 @@ class _PluginItem(final String owner, {required super.text})
     PointStyle? pointStyle,
     double? rotation,
     TextAlign? textAlign,
-    TRBLCorners? borderRadius,
+    BorderRadius? borderRadius,
     int? datasetIndex,
     int? index,
   }) {

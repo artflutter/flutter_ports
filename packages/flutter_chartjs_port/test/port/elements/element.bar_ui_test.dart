@@ -5,6 +5,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/pure.dart';
+import 'package:flutter/painting.dart';
 // flutter_test and dart:ui: the web legs cannot compile this file.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -186,12 +187,7 @@ void main() {
                 'bottom': 0,
                 'left': 6,
               },
-              'borderRadius': <String, Object?>{
-                'topLeft': 9,
-                'topRight': 9,
-                'bottomLeft': 9,
-                'bottomRight': 9,
-              },
+              'borderRadius': const BorderRadius.all(Radius.circular(9)),
             },
             'borderSkipped': <String, Object?>{},
           }),

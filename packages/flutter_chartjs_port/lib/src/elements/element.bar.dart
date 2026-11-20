@@ -15,7 +15,7 @@
 /// `{left, top, right, bottom}` and the border widths `{t, r, b, l}` are
 /// records, a rectangle `{x, y, w, h, radius}` is a [RoundedRect] and a
 /// corner object `{topLeft, topRight, bottomLeft, bottomRight}` is a
-/// [TRBLCorners].
+/// Flutter [BorderRadius].
 ///
 /// The options of a bar are a [BarOptions], or the [GenericElementOptions] of a
 /// user element type (Chart.js ADR 0185). Each option read of the geometry goes
@@ -36,6 +36,7 @@ library;
 
 import 'dart:math' as math;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// `object[name]` of an object that is not typed: the read by name of a
@@ -180,7 +181,7 @@ _BorderWidths _parseBorderWidth(BarElement bar, double maxW, double maxH) {
 /// `enableBorderRadius` is the typed property (`getProps` without `final`
 /// gives the element). The JS `||` operands are tested with `ToBoolean`
 /// ([jsTruthy]) in the upstream order.
-TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
+BorderRadius _parseBorderRadius(BarElement bar, double maxW, double maxH) {
   // `bar.getProps(['enableBorderRadius']).enableBorderRadius`: getProps
   // without `final` gives the element itself.
   final enableBorderRadius = bar.enableBorderRadius ?? false;
@@ -191,27 +192,33 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
 
   // If the value is an object, assume the user knows what they are doing
   // and apply as directed.
-  final enableBorder = enableBorderRadius || isObject(value);
+  // DIVERGES(chartjs): adapt-flutter-border-radius, a BorderRadius object.
+  final enableBorder = enableBorderRadius || value is BorderRadius;
   // The `||` of upstream reads the edges only when `enableBorder` is true.
   // An object of skipped edges has no getters: the reads have no effect,
   // and parseBorderWidth read the same edges before (element.bar.js:76-77).
   if (!enableBorder) {
-    return _Corners(
-      topLeft: _skipOrLimit(true, o.topLeft, 0, maxR),
-      topRight: _skipOrLimit(true, o.topRight, 0, maxR),
-      bottomLeft: _skipOrLimit(true, o.bottomLeft, 0, maxR),
-      bottomRight: _skipOrLimit(true, o.bottomRight, 0, maxR),
+    return _corners(
+      topLeft: _skipOrLimit(true, o.topLeft.x, 0, maxR),
+      topRight: _skipOrLimit(true, o.topRight.x, 0, maxR),
+      bottomLeft: _skipOrLimit(true, o.bottomLeft.x, 0, maxR),
+      bottomRight: _skipOrLimit(true, o.bottomRight.x, 0, maxR),
     );
   }
   final edges = _edges(skip);
 
-  return _Corners(
-    topLeft: _skipOrLimit(edges.top || edges.left, o.topLeft, 0, maxR),
-    topRight: _skipOrLimit(edges.top || edges.right, o.topRight, 0, maxR),
-    bottomLeft: _skipOrLimit(edges.bottom || edges.left, o.bottomLeft, 0, maxR),
+  return _corners(
+    topLeft: _skipOrLimit(edges.top || edges.left, o.topLeft.x, 0, maxR),
+    topRight: _skipOrLimit(edges.top || edges.right, o.topRight.x, 0, maxR),
+    bottomLeft: _skipOrLimit(
+      edges.bottom || edges.left,
+      o.bottomLeft.x,
+      0,
+      maxR,
+    ),
     bottomRight: _skipOrLimit(
       edges.bottom || edges.right,
-      o.bottomRight,
+      o.bottomRight.x,
       0,
       maxR,
     ),
@@ -240,22 +247,22 @@ TRBLCorners _parseBorderRadius(BarElement bar, double maxW, double maxH) {
       y: bounds.top + border.t,
       w: width - border.l - border.r,
       h: height - border.t - border.b,
-      radius: _Corners(
+      radius: _corners(
         topLeft: math.max(
           0,
-          radius.topLeft - math.max<double>(border.t, border.l),
+          radius.topLeft.x - math.max<double>(border.t, border.l),
         ),
         topRight: math.max(
           0,
-          radius.topRight - math.max<double>(border.t, border.r),
+          radius.topRight.x - math.max<double>(border.t, border.r),
         ),
         bottomLeft: math.max(
           0,
-          radius.bottomLeft - math.max<double>(border.b, border.l),
+          radius.bottomLeft.x - math.max<double>(border.b, border.l),
         ),
         bottomRight: math.max(
           0,
-          radius.bottomRight - math.max<double>(border.b, border.r),
+          radius.bottomRight.x - math.max<double>(border.b, border.r),
         ),
       ),
     ),
@@ -282,11 +289,11 @@ bool _inRange(BarElement bar, double? x, double? y, bool? useFinalPosition) {
 
 /// element.bar.js:114 `hasRadius`: whether a corner radius is truthy (not
 /// 0 and not NaN).
-bool _hasRadius(TRBLCorners radius) {
-  return jsTruthy(radius.topLeft) ||
-      jsTruthy(radius.topRight) ||
-      jsTruthy(radius.bottomLeft) ||
-      jsTruthy(radius.bottomRight);
+bool _hasRadius(BorderRadius radius) {
+  return jsTruthy(radius.topLeft.x) ||
+      jsTruthy(radius.topRight.x) ||
+      jsTruthy(radius.bottomLeft.x) ||
+      jsTruthy(radius.bottomRight.x);
 }
 
 /// element.bar.js:123 `addNormalRectPath`.
@@ -1045,13 +1052,20 @@ class BarElement([AnyObject? cfg])
 }
 
 /// element.bar.js:65-70 and :93-98 the corner literal
-/// `{topLeft, topRight, bottomLeft, bottomRight}`.
-final class const _Corners({
-  @override required final double topLeft,
-  @override required final double topRight,
-  @override required final double bottomLeft,
-  @override required final double bottomRight,
-}) implements TRBLCorners;
+/// `{topLeft, topRight, bottomLeft, bottomRight}`: a Flutter
+/// [BorderRadius] of circular corners.
+// DIVERGES(chartjs): adapt-flutter-border-radius, a Flutter BorderRadius.
+BorderRadius _corners({
+  required double topLeft,
+  required double topRight,
+  required double bottomLeft,
+  required double bottomRight,
+}) => BorderRadius.only(
+  topLeft: Radius.circular(topLeft),
+  topRight: Radius.circular(topRight),
+  bottomLeft: Radius.circular(bottomLeft),
+  bottomRight: Radius.circular(bottomRight),
+);
 
 /// element.bar.js:81-99 and :132-138 the rectangle literal
 /// `{x, y, w, h, radius}` of `boundingRects` and `inflateRect`.
@@ -1061,8 +1075,8 @@ final class const _Rect({
   @override required final double w,
   @override required final double h,
 
-  /// The corner radii. `addRoundedRectPath` reads them as a [TRBLCorners].
-  @override required final TRBLCorners radius,
+  /// The corner radii, which `addRoundedRectPath` reads.
+  @override required final BorderRadius radius,
 }) implements RoundedRect;
 
 /// The property `base` of a bar: the typed field of [BarElement]. An

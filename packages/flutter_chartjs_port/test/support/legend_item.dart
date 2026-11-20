@@ -3,8 +3,7 @@
 /// Typed item comparisons and decoding of frozen upstream expectations.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
-
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
@@ -81,24 +80,28 @@ Matcher _paintEquals(ChartPaint expected) => switch (expected) {
   UnchangedChartPaint() => isA<UnchangedChartPaint>(),
 };
 
-Matcher _cornersEqual(TRBLCorners? expected) => expected == null
+Matcher _cornersEqual(BorderRadius? expected) => expected == null
     ? isNull
-    : isA<TRBLCorners>()
-          .having((r) => r.topLeft, 'topLeft', _numberEquals(expected.topLeft))
+    : isA<BorderRadius>()
           .having(
-            (r) => r.topRight,
+            (r) => r.topLeft.x,
+            'topLeft',
+            _numberEquals(expected.topLeft.x),
+          )
+          .having(
+            (r) => r.topRight.x,
             'topRight',
-            _numberEquals(expected.topRight),
+            _numberEquals(expected.topRight.x),
           )
           .having(
-            (r) => r.bottomLeft,
+            (r) => r.bottomLeft.x,
             'bottomLeft',
-            _numberEquals(expected.bottomLeft),
+            _numberEquals(expected.bottomLeft.x),
           )
           .having(
-            (r) => r.bottomRight,
+            (r) => r.bottomRight.x,
             'bottomRight',
-            _numberEquals(expected.bottomRight),
+            _numberEquals(expected.bottomRight.x),
           );
 
 /// Matches native items inside an ordered test log without serializing them.
@@ -150,14 +153,18 @@ LegendItem legendItemFromReference(Map<String, Object?> reference) {
   );
 }
 
-TRBLCorners? _referenceCorners(Object? value) => switch (value) {
-  final TRBLCorners corners => corners,
-  final num radius => TooltipCornerRadii.all(radius.toDouble()),
-  final Map<String, Object?> corners => TooltipCornerRadii(
-    topLeft: (corners['topLeft'] as num?)?.toDouble() ?? 0,
-    topRight: (corners['topRight'] as num?)?.toDouble() ?? 0,
-    bottomLeft: (corners['bottomLeft'] as num?)?.toDouble() ?? 0,
-    bottomRight: (corners['bottomRight'] as num?)?.toDouble() ?? 0,
+BorderRadius? _referenceCorners(Object? value) => switch (value) {
+  final BorderRadius corners => corners,
+  final num radius => BorderRadius.all(Radius.circular(radius.toDouble())),
+  final Map<String, Object?> corners => BorderRadius.only(
+    topLeft: Radius.circular((corners['topLeft'] as num?)?.toDouble() ?? 0),
+    topRight: Radius.circular((corners['topRight'] as num?)?.toDouble() ?? 0),
+    bottomLeft: Radius.circular(
+      (corners['bottomLeft'] as num?)?.toDouble() ?? 0,
+    ),
+    bottomRight: Radius.circular(
+      (corners['bottomRight'] as num?)?.toDouble() ?? 0,
+    ),
   ),
   _ => null,
 };

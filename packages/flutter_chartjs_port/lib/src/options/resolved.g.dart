@@ -16,7 +16,7 @@
 /// This is a framework-free Flutter core library (ADR 0061).
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin;
+import 'dart:ui';
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 

@@ -125,7 +125,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0120](0120-no-umd-entry.md) The port has no UMD entry: accepted, supersedes 0048.
 - [0121](0121-bool-options.md) An on/off option holds a bool: accepted, supersedes 0054.
 - [0122](0122-dart-math-without-fdlibm.md) `dart:math` without the fdlibm ports: accepted, supersedes 0035, 0045, superseded by 0146.
-- [0123](0123-edge-insets-padding.md) Padding holds an EdgeInsets: accepted, supersedes 0052, 0054.
+- [0123](0123-edge-insets-padding.md) Padding holds an EdgeInsets: accepted, supersedes 0052, 0054, superseded in part by 0187.
 - [0124](0124-native-text-direction.md) Native text direction and scoped restoration: accepted.
 - [0125](0125-native-tooltip-callbacks.md) Native TooltipCallbacks: accepted, superseded in part by 0128, 0145.
 - [0126](0126-native-plugin-contract.md) A native plugin contract: superseded, superseded by 0144.
@@ -180,4 +180,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0183](0183-typed-scale-option-classes.md) Typed scale option classes: accepted, supersedes 0054.
 - [0185](0185-typed-element-options.md) Typed element options: accepted.
 - [0186](0186-typed-scale-value-methods.md) Typed scale value methods: accepted, supersedes 0025.
+- [0187](0187-flutter-border-radius-corners.md) Corner options hold a Flutter BorderRadius: accepted, supersedes 0123.
 <!-- adr-index:end -->

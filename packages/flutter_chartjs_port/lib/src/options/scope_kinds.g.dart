@@ -110,9 +110,9 @@ enum ScopeKind(
   /// element type or of an element subclass with its own id.
   genericElementOptions('GenericElementOptions', element: 'generic'),
 
-  /// Port-only kind for index.d.ts:2180 BorderRadius (bar) and index.d.ts:1873
-  /// ArcBorderRadius (arc), the radius of each corner.
-  borderRadius('BorderRadius'),
+  /// index.d.ts:1873 ArcBorderRadius, the radius of each corner of an arc. The
+  /// bar corners are a Flutter BorderRadius (row adapt-flutter-border-radius).
+  arcBorderRadius('ArcBorderRadius'),
 
   /// index.d.ts:96 BarControllerDatasetOptions (index.d.ts:66
   /// ControllerDatasetOptions, BarOptions, CommonHoverOptions,
@@ -289,8 +289,8 @@ enum ScopeKind(
         return ArcOptionsScope();
       case ScopeKind.genericElementOptions:
         return GenericElementOptionsScope();
-      case ScopeKind.borderRadius:
-        return BorderRadiusScope();
+      case ScopeKind.arcBorderRadius:
+        return ArcBorderRadiusScope();
       case ScopeKind.barControllerDatasetOptions:
         return BarControllerDatasetOptionsScope();
       case ScopeKind.lineControllerDatasetOptions:
@@ -396,8 +396,8 @@ enum ScopeKind(
         return ArcOptionsScope;
       case ScopeKind.genericElementOptions:
         return GenericElementOptionsScope;
-      case ScopeKind.borderRadius:
-        return BorderRadiusScope;
+      case ScopeKind.arcBorderRadius:
+        return ArcBorderRadiusScope;
       case ScopeKind.barControllerDatasetOptions:
         return BarControllerDatasetOptionsScope;
       case ScopeKind.lineControllerDatasetOptions:
@@ -762,12 +762,8 @@ enum ScopeKind(
         ];
       case ScopeKind.genericElementOptions:
         return const [];
-      case ScopeKind.borderRadius:
+      case ScopeKind.arcBorderRadius:
         return const [
-          OptionKey.topLeft,
-          OptionKey.topRight,
-          OptionKey.bottomLeft,
-          OptionKey.bottomRight,
           OptionKey.outerStart,
           OptionKey.outerEnd,
           OptionKey.innerStart,
@@ -1552,7 +1548,7 @@ enum ScopeKind(
           case OptionKey.borderSkipped:
             return 2946;
           case OptionKey.borderRadius:
-            return 33;
+            return 6305;
           case OptionKey.inflateAmount:
             return 1;
           case OptionKey.borderWidth:
@@ -1584,7 +1580,7 @@ enum ScopeKind(
           case OptionKey.data:
             return 16;
           case OptionKey.hoverBorderRadius:
-            return 33;
+            return 6273;
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
@@ -1947,7 +1943,7 @@ enum ScopeKind(
           case OptionKey.borderSkipped:
             return 2946;
           case OptionKey.borderRadius:
-            return 33;
+            return 6273;
           case OptionKey.inflateAmount:
             return 1;
           case OptionKey.borderWidth:
@@ -1959,7 +1955,7 @@ enum ScopeKind(
           case OptionKey.hoverBackgroundColor:
             return 4864;
           case OptionKey.hoverBorderRadius:
-            return 33;
+            return 6273;
           case OptionKey.pointStyle:
             return 3202;
           case OptionKey.dollarShared:
@@ -2020,16 +2016,8 @@ enum ScopeKind(
         }
       case ScopeKind.genericElementOptions:
         return 0;
-      case ScopeKind.borderRadius:
+      case ScopeKind.arcBorderRadius:
         switch (key) {
-          case OptionKey.topLeft:
-            return 1;
-          case OptionKey.topRight:
-            return 1;
-          case OptionKey.bottomLeft:
-            return 1;
-          case OptionKey.bottomRight:
-            return 1;
           case OptionKey.outerStart:
             return 1;
           case OptionKey.outerEnd:
@@ -2070,7 +2058,7 @@ enum ScopeKind(
           case OptionKey.borderSkipped:
             return 2946;
           case OptionKey.borderRadius:
-            return 33;
+            return 6273;
           case OptionKey.inflateAmount:
             return 1;
           case OptionKey.borderWidth:
@@ -2114,7 +2102,7 @@ enum ScopeKind(
           case OptionKey.skipNull:
             return 2;
           case OptionKey.hoverBorderRadius:
-            return 33;
+            return 6273;
           case OptionKey.rAxisID:
             return 4;
           case OptionKey.fill:
@@ -3011,7 +2999,7 @@ enum ScopeKind(
           case OptionKey.backdropPadding:
             return 4480;
           case OptionKey.borderRadius:
-            return 33;
+            return 6273;
           case OptionKey.display:
             return 5760;
           case OptionKey.color:
@@ -3093,7 +3081,7 @@ enum ScopeKind(
           case OptionKey.useBorderRadius:
             return 2;
           case OptionKey.borderRadius:
-            return 1;
+            return 6273;
           default:
             return 0;
         }
@@ -3202,7 +3190,7 @@ enum ScopeKind(
           case OptionKey.caretSize:
             return 1;
           case OptionKey.cornerRadius:
-            return 33;
+            return 6273;
           case OptionKey.multiKeyBackground:
             return 4864;
           case OptionKey.displayColors:
@@ -3347,13 +3335,11 @@ enum ScopeKind(
           case OptionKey.scale:
             return ScopeKind.scaleOptions;
           case OptionKey.borderRadius:
-            return ScopeKind.borderRadius;
+            return ScopeKind.arcBorderRadius;
           case OptionKey.borderWidth:
             return ScopeKind.padding;
           case OptionKey.tooltip:
             return ScopeKind.tooltipDatasetOptions;
-          case OptionKey.hoverBorderRadius:
-            return ScopeKind.borderRadius;
           default:
             return null;
         }
@@ -3486,32 +3472,26 @@ enum ScopeKind(
         return null;
       case ScopeKind.barOptions:
         switch (key) {
-          case OptionKey.borderRadius:
-            return ScopeKind.borderRadius;
           case OptionKey.borderWidth:
             return ScopeKind.padding;
-          case OptionKey.hoverBorderRadius:
-            return ScopeKind.borderRadius;
           default:
             return null;
         }
       case ScopeKind.arcOptions:
         switch (key) {
           case OptionKey.borderRadius:
-            return ScopeKind.borderRadius;
+            return ScopeKind.arcBorderRadius;
           default:
             return null;
         }
       case ScopeKind.genericElementOptions:
         return null;
-      case ScopeKind.borderRadius:
+      case ScopeKind.arcBorderRadius:
         return null;
       case ScopeKind.barControllerDatasetOptions:
         switch (key) {
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
-          case OptionKey.borderRadius:
-            return ScopeKind.borderRadius;
           case OptionKey.borderWidth:
             return ScopeKind.padding;
           case OptionKey.animation:
@@ -3522,8 +3502,6 @@ enum ScopeKind(
             return ScopeKind.transitionsSpec;
           case OptionKey.tooltip:
             return ScopeKind.tooltipDatasetOptions;
-          case OptionKey.hoverBorderRadius:
-            return ScopeKind.borderRadius;
           case OptionKey.elements:
             return ScopeKind.elementOptionsByType;
           default:
@@ -3568,7 +3546,7 @@ enum ScopeKind(
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
           case OptionKey.borderRadius:
-            return ScopeKind.borderRadius;
+            return ScopeKind.arcBorderRadius;
           case OptionKey.animation:
             return ScopeKind.animationOptions;
           case OptionKey.animations:
@@ -3587,7 +3565,7 @@ enum ScopeKind(
           case OptionKey.parsing:
             return ScopeKind.parsingOptions;
           case OptionKey.borderRadius:
-            return ScopeKind.borderRadius;
+            return ScopeKind.arcBorderRadius;
           case OptionKey.animation:
             return ScopeKind.animationOptions;
           case OptionKey.animations:
@@ -3681,12 +3659,7 @@ enum ScopeKind(
       case ScopeKind.angleLineOptions:
         return null;
       case ScopeKind.pointLabelOptions:
-        switch (key) {
-          case OptionKey.borderRadius:
-            return ScopeKind.borderRadius;
-          default:
-            return null;
-        }
+        return null;
       case ScopeKind.legendOptions:
         switch (key) {
           case OptionKey.labels:
@@ -3704,8 +3677,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.tooltipOptions:
         switch (key) {
-          case OptionKey.cornerRadius:
-            return ScopeKind.borderRadius;
           case OptionKey.animation:
             return ScopeKind.animationOptions;
           case OptionKey.animations:
@@ -3774,7 +3745,7 @@ enum ScopeKind(
         return 64;
       case ScopeKind.genericElementOptions:
         return 64;
-      case ScopeKind.borderRadius:
+      case ScopeKind.arcBorderRadius:
         return 64;
       case ScopeKind.barControllerDatasetOptions:
         return 64;
@@ -3881,7 +3852,7 @@ enum ScopeKind(
         return null;
       case ScopeKind.genericElementOptions:
         return null;
-      case ScopeKind.borderRadius:
+      case ScopeKind.arcBorderRadius:
         return null;
       case ScopeKind.barControllerDatasetOptions:
         return null;
@@ -3988,7 +3959,7 @@ enum ScopeKind(
         return classifyUnion(raw, 64);
       case ScopeKind.genericElementOptions:
         return classifyUnion(raw, 64);
-      case ScopeKind.borderRadius:
+      case ScopeKind.arcBorderRadius:
         return classifyUnion(raw, 64);
       case ScopeKind.barControllerDatasetOptions:
         return classifyUnion(raw, 64);

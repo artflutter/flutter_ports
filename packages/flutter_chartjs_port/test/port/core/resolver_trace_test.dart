@@ -31,6 +31,10 @@ import 'resolver_trace_reference.dart';
 /// The keys of an object option whose values the observation reads
 /// (`NESTED_KEYS` of the generator).
 const Set<String> _nestedKeys = {
+  'top',
+  'right',
+  'bottom',
+  'left',
   'topLeft',
   'topRight',
   'bottomLeft',

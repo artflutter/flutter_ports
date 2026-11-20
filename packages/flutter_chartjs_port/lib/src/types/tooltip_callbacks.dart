@@ -3,6 +3,7 @@
 /// Native callbacks and result values (Chart.js ADR 0125).
 library;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The 14 tooltip hooks. An absent field inherits the corresponding hook.
@@ -143,33 +144,6 @@ typedef TooltipItemComparator = int Function(
 /// [replay] is true for the update of a replayed event.
 typedef TooltipExternal = void Function(TooltipModel tooltip, bool replay);
 
-/// The four scalar radii of a tooltip label box.
-final class const TooltipCornerRadii({
-  /// The `topLeft` corner radius in pixels.
-  @override final double topLeft = 0,
-
-  /// The `topRight` corner radius in pixels.
-  @override final double topRight = 0,
-
-  /// The `bottomRight` corner radius in pixels.
-  @override final double bottomRight = 0,
-
-  /// The `bottomLeft` corner radius in pixels.
-  @override final double bottomLeft = 0,
-}) implements TRBLCorners {
-  /// Creates the four corner radii.
-  this;
-
-  /// The same radius for each corner.
-  const new all(double radius)
-    : this(
-        topLeft: radius,
-        topRight: radius,
-        bottomRight: radius,
-        bottomLeft: radius,
-      );
-}
-
 /// The resolved native style returned by `labelColor`.
 final class TooltipLabelStyle({
   /// The border paint; unchanged inherits the resolved item paint.
@@ -185,8 +159,9 @@ final class TooltipLabelStyle({
   /// The dash offset in pixels.
   final double borderDashOffset = 0,
 
-  /// The four corner radii.
-  final TooltipCornerRadii borderRadius = const TooltipCornerRadii(),
+  /// The four corner radii: the `Radius.x` of each corner of a Flutter
+  /// [BorderRadius] (row `adapt-flutter-border-radius`).
+  final BorderRadius borderRadius = BorderRadius.zero,
 }) {
   /// Creates a label style, copying the supplied dash pattern.
   this;

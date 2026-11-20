@@ -5,6 +5,7 @@ library;
 // flutter_test and dart:ui: the web legs cannot compile this file.
 import 'dart:ui' as ui;
 
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -19,15 +20,6 @@ import 'rounded_rect_upstream.dart';
 // anti-aliased edge pixels, and the inked areas differ by less than 1 %
 // (Chart.js ADR 0034).
 
-/// A JavaScript object literal `{topLeft, topRight, bottomLeft,
-/// bottomRight}`, passed as [TRBLCorners].
-final class const _Corners(
-  @override final double topLeft,
-  @override final double topRight,
-  @override final double bottomLeft,
-  @override final double bottomRight,
-) implements TRBLCorners;
-
 /// A JavaScript object literal `{x, y, w, h, radius}`, passed as a
 /// [RoundedRect].
 final class const _Box(
@@ -35,22 +27,61 @@ final class const _Box(
   @override final double y,
   @override final double w,
   @override final double h,
-  @override final _Corners radius,
+  @override final BorderRadius radius,
 ) implements RoundedRect {
   @override
   String toString() =>
-      '($x, $y, $w, $h, ${radius.topLeft} ${radius.topRight} '
-      '${radius.bottomLeft} ${radius.bottomRight})';
+      '($x, $y, $w, $h, ${radius.topLeft.x} ${radius.topRight.x} '
+      '${radius.bottomLeft.x} ${radius.bottomRight.x})';
 }
 
 /// The rectangles of the callers: a bar with its top corners rounded, a
 /// legend box, a tooltip color box and a point label backdrop, with
 /// fractional positions.
 const List<_Box> _boxes = [
-  _Box(20.3, 30.6, 31.7, 80.9, _Corners(4, 4, 0, 0)),
-  _Box(10, 12, 40, 12, _Corners(3, 3, 3, 3)),
-  _Box(60.5, 40.25, 12, 12, _Corners(6, 0, 6, 0)),
-  _Box(15.75, 20.5, 90, 20, _Corners(2, 8, 10, 0)),
+  _Box(
+    20.3,
+    30.6,
+    31.7,
+    80.9,
+    BorderRadius.only(
+      topLeft: Radius.circular(4),
+      topRight: Radius.circular(4),
+    ),
+  ),
+  _Box(
+    10,
+    12,
+    40,
+    12,
+    BorderRadius.only(
+      topLeft: Radius.circular(3),
+      topRight: Radius.circular(3),
+      bottomLeft: Radius.circular(3),
+      bottomRight: Radius.circular(3),
+    ),
+  ),
+  _Box(
+    60.5,
+    40.25,
+    12,
+    12,
+    BorderRadius.only(
+      topLeft: Radius.circular(6),
+      bottomLeft: Radius.circular(6),
+    ),
+  ),
+  _Box(
+    15.75,
+    20.5,
+    90,
+    20,
+    BorderRadius.only(
+      topLeft: Radius.circular(2),
+      topRight: Radius.circular(8),
+      bottomLeft: Radius.circular(10),
+    ),
+  ),
 ];
 
 /// The upstream form of `addRoundedRectPath(ctx, box)`.
@@ -60,10 +91,10 @@ void _upstream(UiCanvasContext ctx, _Box box) => upstreamRoundedRectPath(
   box.y,
   box.w,
   box.h,
-  topLeft: box.radius.topLeft,
-  topRight: box.radius.topRight,
-  bottomRight: box.radius.bottomRight,
-  bottomLeft: box.radius.bottomLeft,
+  topLeft: box.radius.topLeft.x,
+  topRight: box.radius.topRight.x,
+  bottomRight: box.radius.bottomRight.x,
+  bottomLeft: box.radius.bottomLeft.x,
 );
 
 /// The retina transform of a chart on the Pixel 8a.
@@ -161,7 +192,18 @@ void main() {
     test('a negative radius throws in both forms', () {
       // The DOM arc throws an IndexSizeError and roundRect a RangeError.
       // The canvas layer throws a RangeError for both.
-      const box = _Box(10, 10, 40, 40, _Corners(-1, 2, 2, 2));
+      const box = _Box(
+        10,
+        10,
+        40,
+        40,
+        BorderRadius.only(
+          topLeft: Radius.circular(-1),
+          topRight: Radius.circular(2),
+          bottomLeft: Radius.circular(2),
+          bottomRight: Radius.circular(2),
+        ),
+      );
       final ctx = UiCanvasElement().getContext2d()..beginPath();
       expect(() => addRoundedRectPath(ctx, box), throwsRangeError);
       expect(() => _upstream(ctx, box), throwsRangeError);
@@ -171,7 +213,18 @@ void main() {
     test('radii that overflow scale down, where the upstream arcs overlap', () {
       // A listed difference of the row: on a 20 x 20 box, the radius 15
       // gives a circle of radius 10 in the port.
-      const box = _Box(10, 10, 20, 20, _Corners(15, 15, 15, 15));
+      const box = _Box(
+        10,
+        10,
+        20,
+        20,
+        BorderRadius.only(
+          topLeft: Radius.circular(15),
+          topRight: Radius.circular(15),
+          bottomLeft: Radius.circular(15),
+          bottomRight: Radius.circular(15),
+        ),
+      );
       final ctx = UiCanvasElement().getContext2d()..beginPath();
       addRoundedRectPath(ctx, box);
       expect(
@@ -183,7 +236,18 @@ void main() {
 
     test('a NaN radius adds nothing, where upstream adds the finite parts', () {
       // A listed difference of the row.
-      const box = _Box(10, 10, 40, 40, _Corners(double.nan, 4, 4, 4));
+      const box = _Box(
+        10,
+        10,
+        40,
+        40,
+        BorderRadius.only(
+          topLeft: Radius.circular(double.nan),
+          topRight: Radius.circular(4),
+          bottomLeft: Radius.circular(4),
+          bottomRight: Radius.circular(4),
+        ),
+      );
       final port = UiCanvasElement().getContext2d()..beginPath();
       addRoundedRectPath(port, box);
       expect(port.debugPath.isEmpty, isTrue);
@@ -197,7 +261,18 @@ void main() {
     test('the current point does not join the rounded rectangle', () {
       // A listed difference of the row: upstream connects the current
       // point to the first arc with a line. The port starts a new subpath.
-      const box = _Box(10, 10, 40, 40, _Corners(4, 4, 4, 4));
+      const box = _Box(
+        10,
+        10,
+        40,
+        40,
+        BorderRadius.only(
+          topLeft: Radius.circular(4),
+          topRight: Radius.circular(4),
+          bottomLeft: Radius.circular(4),
+          bottomRight: Radius.circular(4),
+        ),
+      );
       final port = UiCanvasElement().getContext2d()
         ..beginPath()
         ..moveTo(0, 0);

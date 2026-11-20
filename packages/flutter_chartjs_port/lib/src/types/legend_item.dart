@@ -3,7 +3,7 @@
 /// The native legend item contract.
 library;
 
-import 'dart:ui' show StrokeCap, StrokeJoin, TextAlign;
+import 'package:flutter/painting.dart';
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
@@ -53,7 +53,7 @@ class LegendItem({
   var TextAlign? textAlign,
 
   /// The four box corner radii, or square corners.
-  var TRBLCorners? borderRadius,
+  var BorderRadius? borderRadius,
 
   /// The dataset index, absent for a data-item or descriptive entry.
   var int? datasetIndex,
@@ -80,7 +80,7 @@ class LegendItem({
     PointStyle? pointStyle,
     double? rotation,
     TextAlign? textAlign,
-    TRBLCorners? borderRadius,
+    BorderRadius? borderRadius,
     int? datasetIndex,
     int? index,
   }) => LegendItem(

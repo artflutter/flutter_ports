@@ -42,10 +42,9 @@ library;
 
 import 'dart:math' as math;
 import 'dart:ui' as ui;
-import 'dart:ui' show TextAlign;
 
 import 'package:flutter/animation.dart' show Curves;
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 
 export 'package:flutter_chartjs_port/src/types/tooltip_callbacks.dart'
@@ -526,8 +525,10 @@ double _alignY(
   final cornerRadius = options.cornerRadius;
   final (:xAlign, :yAlign) = alignment;
   final paddingAndSize = caretSize + caretPadding;
-  final TRBLCorners(:topLeft, :topRight, :bottomLeft, :bottomRight) =
-      toTRBLCorners(cornerRadius);
+  final topLeft = cornerRadius.topLeft.x;
+  final topRight = cornerRadius.topRight.x;
+  final bottomLeft = cornerRadius.bottomLeft.x;
+  final bottomRight = cornerRadius.bottomRight.x;
 
   var x = _alignX(size, xAlign);
   final y = _alignY(size, yAlign, paddingAndSize);
@@ -770,7 +771,7 @@ final class _RoundedRect({
   @override required final double y,
   @override required final double w,
   @override required final double h,
-  @override required final TRBLCorners radius,
+  @override required final BorderRadius radius,
 }) implements RoundedRect;
 
 /// plugin.tooltip.js:457 `class Tooltip extends Element`.
@@ -1334,8 +1335,10 @@ class Tooltip(({IChart chart, Object? options}) config)
     final Tooltip(:xAlign, :yAlign) = this;
     final caretSize = options.caretSize;
     final cornerRadius = options.cornerRadius;
-    final TRBLCorners(:topLeft, :topRight, :bottomLeft, :bottomRight) =
-        toTRBLCorners(cornerRadius);
+    final topLeft = cornerRadius.topLeft.x;
+    final topRight = cornerRadius.topRight.x;
+    final bottomLeft = cornerRadius.bottomLeft.x;
+    final bottomRight = cornerRadius.bottomRight.x;
     final ptX = tooltipPoint.x ?? 0;
     final ptY = tooltipPoint.y ?? 0;
     final (:width, :height) = size;
@@ -1504,10 +1507,10 @@ class Tooltip(({IChart chart, Object? options}) config)
       final borderRadius = labelColor.borderRadius;
 
       // `Object.values(borderRadius).some(v => v !== 0)`: the four corners.
-      if (borderRadius.topLeft != 0 ||
-          borderRadius.topRight != 0 ||
-          borderRadius.bottomLeft != 0 ||
-          borderRadius.bottomRight != 0) {
+      if (borderRadius.topLeft.x != 0 ||
+          borderRadius.topRight.x != 0 ||
+          borderRadius.bottomLeft.x != 0 ||
+          borderRadius.bottomRight.x != 0) {
         ctx
           ..beginPath()
           ..fillStyle = canvasStyle(options.multiKeyBackground);
@@ -1706,8 +1709,11 @@ class Tooltip(({IChart chart, Object? options}) config)
     final Tooltip(:xAlign, :yAlign) = this;
     final TooltipPoint(:x, :y) = pt;
     final (:width, :height) = tooltipSize;
-    final TRBLCorners(:topLeft, :topRight, :bottomLeft, :bottomRight) =
-        toTRBLCorners(options.cornerRadius);
+    final corners = options.cornerRadius;
+    final topLeft = corners.topLeft.x;
+    final topRight = corners.topRight.x;
+    final bottomLeft = corners.bottomLeft.x;
+    final bottomRight = corners.bottomRight.x;
     final caretPoint = _NumberPoint(x, y);
 
     ctx

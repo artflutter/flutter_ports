@@ -1,7 +1,6 @@
 // Original code, not ported from Chart.js: helpers.options cases with no spec.
-import 'dart:ui' show FontStyle, FontWeight;
 
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart';
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
@@ -165,24 +164,32 @@ void main() {
         ]);
         final o = toTRBLCorners(value);
         final corners = {
-          'topLeft': o.topLeft,
-          'topRight': o.topRight,
-          'bottomLeft': o.bottomLeft,
-          'bottomRight': o.bottomRight,
+          'topLeft': o.topLeft.x,
+          'topRight': o.topRight.x,
+          'bottomLeft': o.bottomLeft.x,
+          'bottomRight': o.bottomRight.x,
         };
         for (final key in props.keys) {
           expect(corners[key], _isNumber(props[key]!), reason: '$value $key');
         }
       }
     });
-    test('gives 0 for the missing corners', () {
-      final o = toTRBLCorners(<String, Object?>{
-        'topLeft': 2.0,
-        'bottomRight': '3',
-      });
+    test('gives a BorderRadius as it is (row adapt-flutter-border-radius)', () {
+      const corners = BorderRadius.only(
+        topLeft: Radius.circular(2),
+        bottomRight: Radius.circular(3),
+      );
+      final o = toTRBLCorners(corners);
+      expect(o, same(corners));
       expect(
-        [o.topLeft, o.topRight, o.bottomLeft, o.bottomRight],
+        [o.topLeft.x, o.topRight.x, o.bottomLeft.x, o.bottomRight.x],
         [2, 0, 0, 3],
+      );
+    });
+    test('stops a debug build on a Map', () {
+      expect(
+        () => toTRBLCorners(<String, Object?>{'topLeft': 2.0}),
+        throwsA(isA<AssertionError>()),
       );
     });
   });

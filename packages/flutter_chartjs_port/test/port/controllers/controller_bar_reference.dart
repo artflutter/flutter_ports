@@ -21,9 +21,7 @@
 //       .getDatasetMeta(0)
 //       ._parsed.map((p) => Object.keys(p._stacks || {}))
 
-import 'dart:ui' show FontStyle;
-
-import 'package:flutter/painting.dart' show EdgeInsets;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The Node.js version that generated the data.
@@ -24175,10 +24173,10 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
           },
           <String, Object?>{
             'data': <Object?>[1.0, -3.0, 2.0],
-            'borderRadius': <String, Object?>{
-              'topLeft': 8.0,
-              'bottomRight': 4.0,
-            },
+            'borderRadius': BorderRadius.only(
+              topLeft: Radius.circular(8),
+              bottomRight: Radius.circular(4),
+            ),
             'borderSkipped': false,
             'borderWidth': 1.0,
           },
@@ -24617,10 +24615,10 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 r'$shared': true,
                 'borderSkipped': false,
                 'borderWidth': 1.0,
-                'borderRadius': <String, Object?>{
-                  'topLeft': 8.0,
-                  'bottomRight': 4.0,
-                },
+                'borderRadius': BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(4),
+                ),
                 'inflateAmount': undefined,
                 'pointStyle': undefined,
                 'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -24630,10 +24628,10 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 r'$shared': true,
                 'borderSkipped': false,
                 'borderWidth': 1.0,
-                'borderRadius': <String, Object?>{
-                  'topLeft': 8.0,
-                  'bottomRight': 4.0,
-                },
+                'borderRadius': BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(4),
+                ),
                 'inflateAmount': undefined,
                 'pointStyle': undefined,
                 'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -24643,10 +24641,10 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 r'$shared': true,
                 'borderSkipped': false,
                 'borderWidth': 1.0,
-                'borderRadius': <String, Object?>{
-                  'topLeft': 8.0,
-                  'bottomRight': 4.0,
-                },
+                'borderRadius': BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(4),
+                ),
                 'inflateAmount': undefined,
                 'pointStyle': undefined,
                 'backgroundColor': 'rgba(0,0,0,0.1)',
@@ -24658,10 +24656,10 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 r'$shared': false,
                 'borderSkipped': false,
                 'borderWidth': 1.0,
-                'borderRadius': <String, Object?>{
-                  'topLeft': 8.0,
-                  'bottomRight': 4.0,
-                },
+                'borderRadius': BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(4),
+                ),
                 'inflateAmount': undefined,
                 'pointStyle': undefined,
                 'backgroundColor': '#00000019',
@@ -24671,10 +24669,10 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 r'$shared': false,
                 'borderSkipped': false,
                 'borderWidth': 1.0,
-                'borderRadius': <String, Object?>{
-                  'topLeft': 8.0,
-                  'bottomRight': 4.0,
-                },
+                'borderRadius': BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(4),
+                ),
                 'inflateAmount': undefined,
                 'pointStyle': undefined,
                 'backgroundColor': '#00000019',
@@ -24684,10 +24682,10 @@ const List<ControllerBarReferenceCase> controllerBarReference = [
                 r'$shared': false,
                 'borderSkipped': false,
                 'borderWidth': 1.0,
-                'borderRadius': <String, Object?>{
-                  'topLeft': 8.0,
-                  'bottomRight': 4.0,
-                },
+                'borderRadius': BorderRadius.only(
+                  topLeft: Radius.circular(8),
+                  bottomRight: Radius.circular(4),
+                ),
                 'inflateAmount': undefined,
                 'pointStyle': undefined,
                 'backgroundColor': '#00000019',

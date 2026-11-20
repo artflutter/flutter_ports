@@ -38,9 +38,8 @@
 library;
 
 import 'dart:math' as math;
-import 'dart:ui' show TextAlign;
 
-import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:meta/meta.dart';
 
@@ -107,7 +106,7 @@ final class _RoundedRect({
   @override required final double y,
   @override required final double w,
   @override required final double h,
-  @override required final TRBLCorners radius,
+  @override required final BorderRadius radius,
 }) implements RoundedRect;
 
 /// The lines of the item [label] of `data.labels` (Chart.js ADR 0131): the
@@ -574,10 +573,10 @@ void _drawPointLabelBox(
     final backdropWidth = right - left + padding.horizontal;
     final backdropHeight = bottom - top + padding.vertical;
 
-    if (borderRadius.topLeft != 0 ||
-        borderRadius.topRight != 0 ||
-        borderRadius.bottomLeft != 0 ||
-        borderRadius.bottomRight != 0) {
+    if (borderRadius.topLeft.x != 0 ||
+        borderRadius.topRight.x != 0 ||
+        borderRadius.bottomLeft.x != 0 ||
+        borderRadius.bottomRight.x != 0) {
       ctx.beginPath();
       addRoundedRectPath(
         ctx,

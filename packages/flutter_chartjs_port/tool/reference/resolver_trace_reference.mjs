@@ -300,6 +300,10 @@ const SETUPS = {
 
 /** The keys of an object option whose values the observation reads. */
 const NESTED_KEYS = new Set([
+  'top',
+  'right',
+  'bottom',
+  'left',
   'topLeft',
   'topRight',
   'bottomLeft',
@@ -657,8 +661,8 @@ const cases = [
     {steps: [['setActive', [[0, 1]]], ['update']]},
   ),
   runCase(
-    'object: bar borderRadius with a scriptable key',
-    bar({borderRadius: {topLeft: 4, topRight: F.barRadius}, borderSkipped: false}),
+    'object: bar borderWidth with a scriptable key',
+    bar({borderWidth: {top: 4, right: F.barRadius}, borderSkipped: false}),
     {steps: [['update']]},
   ),
   runCase(
@@ -667,26 +671,26 @@ const cases = [
     {steps: [['update']]},
   ),
   runCase(
-    'array of objects: indexable bar borderRadius and a chart option',
+    'array of objects: indexable bar borderWidth and a chart option',
     bar(
-      {borderRadius: [{topLeft: 2}, {topLeft: F.barRadius}], borderSkipped: false},
+      {borderWidth: [{top: 2}, {top: F.barRadius}], borderSkipped: false},
       {myList: [{a: F.listItem}, {a: 2}]},
     ),
     {steps: [['update'], ['readOption', 'myList']]},
   ),
   runCase(
     'fallback: a string _fallback of elements.bar',
-    bar({borderRadius: {topLeft: 4}, borderSkipped: false}, {radiusFallback: {topRight: 6}}),
+    bar({borderWidth: {top: 4}, borderSkipped: false}, {radiusFallback: {right: 6}}),
     {setup: 'fallbackString', steps: [['update']]},
   ),
   runCase(
     'fallback: _fallback true of elements.bar',
-    bar({borderRadius: {topLeft: 4}, borderSkipped: false}),
+    bar({borderWidth: {top: 4}, borderSkipped: false}),
     {setup: 'fallbackTrue', steps: [['update']]},
   ),
   runCase(
     'fallback: a counted _fallback function of elements.bar',
-    bar({borderRadius: {topLeft: 4}, borderSkipped: false}, {radiusFallback: {topRight: 6}}),
+    bar({borderWidth: {top: 4}, borderSkipped: false}, {radiusFallback: {right: 6}}),
     {setup: 'fallbackFunction', steps: [['update']]},
   ),
   runCase(
@@ -890,7 +894,7 @@ const out = `// Original code, not ported from Chart.js: resolver trace referenc
 // Node.js ${process.version} (${process.platform}-${process.arch}), V8 ${process.versions.v8}:
 // a build of Chart.js v${build.version} at the commit
 // ${build.commit}. ${cases.length} cases.
-${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.undefined || state.arcEnums || state.positions || state.borderSkips || state.steppedLines || state.cubicModes || state.pointStyles || state.radiusLengths || state.graceLengths || state.fillTargets || state.scaleEnums || state.stackModes ? '\n' : ''}${state.scaleEnums ? "import 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';\n" : ''}${state.graceLengths ? "import 'package:flutter_chartjs_port/src/helpers/grace_length.dart';\n" : ''}${state.pointStyles ? "import 'package:flutter_chartjs_port/src/helpers/helpers.canvas.dart';\n" : ''}${state.cubicModes ? "import 'package:flutter_chartjs_port/src/helpers/helpers.curve.dart';\n" : ''}${state.radiusLengths ? "import 'package:flutter_chartjs_port/src/helpers/radius_length.dart';\n" : ''}${state.undefined ? "import 'package:flutter_chartjs_port/src/js/js_undefined.dart';\n" : ''}${state.fillTargets ? "import 'package:flutter_chartjs_port/src/plugins/fill_target.dart';\n" : ''}${state.arcEnums ? "import 'package:flutter_chartjs_port/src/types/arc_option_enums.dart';\n" : ''}${state.borderSkips ? "import 'package:flutter_chartjs_port/src/types/bar_option_enums.dart';\n" : ''}${state.stackModes ? "import 'package:flutter_chartjs_port/src/types/chart_meta.dart' show StackMode;\n" : ''}${state.positions ? "import 'package:flutter_chartjs_port/src/types/layout.dart';\n" : ''}${state.steppedLines ? "import 'package:flutter_chartjs_port/src/types/line_option_enums.dart';\n" : ''}
+${state.strokes ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.undefined || state.arcEnums || state.positions || state.borderSkips || state.steppedLines || state.cubicModes || state.pointStyles || state.radiusLengths || state.graceLengths || state.fillTargets || state.scaleEnums || state.stackModes ? '\n' : ''}${state.undefined || state.arcEnums || state.positions || state.borderSkips || state.steppedLines || state.cubicModes || state.pointStyles || state.radiusLengths || state.graceLengths || state.fillTargets || state.scaleEnums || state.stackModes ? "import 'package:flutter_chartjs_port/chartjs_core.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String resolverTraceReferenceNode = '${process.version}';
 

@@ -9,6 +9,7 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/painting.dart';
 // The spec builds charts of flutter_chartjs_port, which does not export lib/src
 // yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
@@ -144,7 +145,7 @@ LegendItem _item({
   required double lineWidth,
   required ChartPaint strokeStyle,
   required int datasetIndex,
-  TRBLCorners? borderRadius,
+  BorderRadius? borderRadius,
   native_ui.StrokeCap? lineCap,
   List<double>? lineDash,
   double? lineDashOffset,
@@ -693,7 +694,7 @@ void main() {
         _itemsEqual([
           _item(
             text: 'dataset1',
-            borderRadius: const TooltipCornerRadii.all(10),
+            borderRadius: const BorderRadius.all(Radius.circular(10)),
             fillStyle: const ChartPaint.solid(
               native_ui.Color.fromRGBO(255, 51, 17, 1),
             ),

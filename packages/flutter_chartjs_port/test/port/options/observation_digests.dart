@@ -2781,10 +2781,10 @@ const Map<String, String> observationDigests = {
       '59a92a4c05653db860638c13ec81c27ee68dd647c800d99cd272d34df73b3027',
   'focused object option: arc borderRadius (trace)':
       'eb87605f654440d9aa9ebed2915be24121e51967e23cab841538b2eaffcb4351',
-  'focused object option: bar borderRadius (plain)':
-      '617f1ea0651e5787b8c4fd6ddc963d13e86ba8422e78efa364fd966482d9bc8f',
-  'focused object option: bar borderRadius (trace)':
-      '76519ddaf42b20cc01e37c46a2625aa119e530d7635a966a28f0bb9234a4e3ad',
+  'focused object option: bar borderWidth and a BorderRadius (plain)':
+      '79cf697dcb0daaa101bd3ea072d1c711af834cad0ee761ebf8c06d9676e439d9',
+  'focused object option: bar borderWidth and a BorderRadius (trace)':
+      '80e223ed8905f597591191babf432d0f95c9ebef8e72ad3f2d2069552ceffd76',
   'focused polar area and radar with scriptable colors (plain)':
       'ed005ece9a54678d583aaf62bcbf2cf8989b399a4f1c9f3d9b90e2c086397a3a',
   'focused polar area and radar with scriptable colors (trace)':
@@ -2849,10 +2849,10 @@ const Map<String, String> observationDigests = {
       'f850807ce403ca9c5a9a60964e25f38c1ce2250eae193f98329bda6f819bdb1c',
   'trace animation: scriptable duration (trace)':
       'f07d37d232c22f1e1a39b5e0b2f4301631fa392c40cf05ea09d238369be58122',
-  'trace array of objects: indexable bar borderRadius and a chart option (plain)':
-      'b3c6e0f6702d0f405285fdb2fa6dfed6544b2eee86422d75ce67694be480c36a',
-  'trace array of objects: indexable bar borderRadius and a chart option (trace)':
-      'd079294305fa91530a43ab655a46e3e40bfdad4fe0025e598e6104854c95b2f3',
+  'trace array of objects: indexable bar borderWidth and a chart option (plain)':
+      '51c69ab5ab45ff1eb87866fcea7b99d8ab2812f5f6247e2c886e402235b4254f',
+  'trace array of objects: indexable bar borderWidth and a chart option (trace)':
+      '1ea072e3dc08c8d580c6e5f2068341314ac27c79cedb4263e4270515cc3bdd2c',
   'trace defaults: Chart.defaults.borderColor changes between two updates (plain)':
       '79f3fe1f13807a447ef6fb4cbbb118e2884bc1ec1b53bad67e5b3c5154f3f9ae',
   'trace defaults: Chart.defaults.borderColor changes between two updates (trace)':
@@ -2874,17 +2874,17 @@ const Map<String, String> observationDigests = {
   'trace element: a user element class as the bar data element (trace)':
       'a48ae228b851b96cc774cd1c8c4fd7ac4921bd78fc1de8d27e27b92721d48058',
   'trace fallback: _fallback true of elements.bar (plain)':
-      '9d6202bdaaaef0388ccd1cef8a58c4624d473f441bbc243e8ad4634db45c4639',
+      'c5d9f21ea5d1bdeb332b1f2cbf519cc7caf8402b2d858f093a0d67de49a27759',
   'trace fallback: _fallback true of elements.bar (trace)':
-      '942114deeac7fa71aac040d2237a7fb91e8dc1a00b4e8740ac3364bc93244d44',
+      '60293eb1e72aacb2f6dd896bc55f8e9c6787d5903336deee8ef911a6d69d4632',
   'trace fallback: a counted _fallback function of elements.bar (plain)':
-      'f8c60a7efa269f841a9fd20688fafb4bd82de28803912a815248f81c417d74c7',
+      '6327c2f9210273edc1aec4e70cc7ecd7ee31e8a7e22b7149d6ef8ee438b57578',
   'trace fallback: a counted _fallback function of elements.bar (trace)':
-      'f2e4c40369e8ec6e7a10ac3d67e25d89bc671f4c6759858e9cb41f8f7887edb1',
+      'add4b7a9787898c30cfc0720f85a59eb7c5c0402e4d4f079086880b881c0a9ad',
   'trace fallback: a string _fallback of elements.bar (plain)':
-      'f8c60a7efa269f841a9fd20688fafb4bd82de28803912a815248f81c417d74c7',
+      '6327c2f9210273edc1aec4e70cc7ecd7ee31e8a7e22b7149d6ef8ee438b57578',
   'trace fallback: a string _fallback of elements.bar (trace)':
-      'f2e4c40369e8ec6e7a10ac3d67e25d89bc671f4c6759858e9cb41f8f7887edb1',
+      'add4b7a9787898c30cfc0720f85a59eb7c5c0402e4d4f079086880b881c0a9ad',
   'trace hit: a string pointRadius and the mode point (plain)':
       '6a0407d1e0ae2378ff2cef0422cbe205a69e90c25c4160864bb24b9ca6f0ab24',
   'trace hit: a string pointRadius and the mode point (trace)':
@@ -2909,10 +2909,10 @@ const Map<String, String> observationDigests = {
       '187aaefc4b89204527e9e72313f480fb26367dc35904962ee9a6879e282a1098',
   'trace object: arc borderRadius with a scriptable key (trace)':
       'feda690614f6ce4732292b2e36364110539d85297f98ef356c0ea36af7e1111c',
-  'trace object: bar borderRadius with a scriptable key (plain)':
-      '4b1de55e29047d147f46e111aa29b4eea46681d68b25e4a4cd14a9139bb08562',
-  'trace object: bar borderRadius with a scriptable key (trace)':
-      '66c8f8f72afa45f1037bc9f5b7aea412569c9b04320ea32053258481e0093e3a',
+  'trace object: bar borderWidth with a scriptable key (plain)':
+      '723233aa799c2929864ff86f17ccd45d0a7c0a0ce89371408352c8e67ff686fe',
+  'trace object: bar borderWidth with a scriptable key (trace)':
+      '8ccb129905c6dd057b77fbbb7a44681b8b7f19412431d002eecde4b785c63e49',
   'trace options: a write of plugins.legend.position through chart.options (plain)':
       '1872832f84be3526f3739b329a2ff7663e84898c19355f2d9b6ac8a0fcadb9cd',
   'trace options: a write of plugins.legend.position through chart.options (trace)':

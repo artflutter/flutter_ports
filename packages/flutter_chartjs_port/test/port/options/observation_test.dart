@@ -11,7 +11,7 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:clock/clock.dart';
 import 'package:flutter/animation.dart' show Curves;
-import 'package:flutter/painting.dart' show TextStyle;
+import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -1529,16 +1529,20 @@ final List<_Case> _focusedCases = [
     ]),
   ),
   _configCase(
-    'object option: bar borderRadius',
+    'object option: bar borderWidth and a BorderRadius',
     () => _line([
       <String, Object?>{
         'data': _values(6),
-        'borderRadius': <String, Object?>{
-          'topLeft': 4.0,
-          'topRight': _index,
-          'bottomLeft': 0.0,
-          'bottomRight': 2.0,
+        'borderWidth': <String, Object?>{
+          'top': 4.0,
+          'right': _index,
+          'bottom': 0.0,
+          'left': 2.0,
         },
+        'borderRadius': const BorderRadius.only(
+          topLeft: Radius.circular(4),
+          bottomRight: Radius.circular(2),
+        ),
         'borderSkipped': false,
       },
     ], type: 'bar'),

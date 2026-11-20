@@ -26,8 +26,9 @@ Chart.js ADR 0061: the historical "pure layer" names below now mean framework-fr
 core layers. They may use `dart:ui.Color`, but no `package:flutter` framework APIs.
 One exception: a core layer can import `package:flutter/animation.dart` for the curve
 classes (`Curve`, `Curves`), the value of the option `easing` (row `adapt-flutter-curves`).
-A second exception: a core layer can import `package:flutter/painting.dart` with `show` of
-`EdgeInsets`, `TextStyle` and `TextOverflow`, for padding and fonts (Chart.js ADRs 0123 and 0116).
+A second exception: a core layer can import `package:flutter/painting.dart`, with no `show` list,
+for padding, fonts and corners (`EdgeInsets`, `TextStyle`, `TextOverflow`, `BorderRadius`; Chart.js
+ADRs 0116 and 0187).
 The chart core and harness run through Flutter; standalone Dart execution is no
 longer supported. No global color installer exists. Paint options carry `ChartPaint` end to end (ADR 0128); solid paints contain Flutter `Color`. Theme tokens, palette entries, shadow colors and gradient stops remain `Color`.
 
@@ -1415,8 +1416,7 @@ sankey ADRs are proposed. The doc paths are relative to
 - A core (historically pure-layer) file may use `dart:ui.Color`, but reaches no
   `package:flutter` framework library through its direct or indirect imports (ADR 0061),
   except `package:flutter/animation.dart` for the curve classes of the option `easing`, and
-  `package:flutter/painting.dart` with `show EdgeInsets, TextOverflow, TextStyle` for padding and fonts (Chart.js ADRs
-  0123 and 0116). The core layers are the files that these roots reach. The roots include `lib/src/js/`,
+  `package:flutter/painting.dart` for padding, fonts and corners (Chart.js ADRs 0116 and 0187). The core layers are the files that these roots reach. The roots include `lib/src/js/`,
   `lib/src/types/`, the helpers except `helpers.extras`, the files of
   `lib/src/elements/`, `plugin.decimation` and the files of `plugin.filler/` of `lib/src/plugins/`,
   and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. Of
@@ -1769,8 +1769,9 @@ sankey ADRs are proposed. The doc paths are relative to
   `chartjs.dart` when it uses a hidden name. Each public top-level name of `lib/src/` is unique: an
   interface of `lib/src/types/` with the name of a class has the prefix `I` (`IChart`, `IScale`,
   row `adapt-public-library-names`). An import has no `show` list, no `hide` list and no prefix,
-  except for a clash of two names, a local name that hides an imported name, or a check that needs
-  the list (`show TextStyle` on `package:flutter/painting.dart` in a core layer). A package import
+  except for a clash of two names (`show NumberFormat` on `package:intl/intl.dart`, whose
+  `TextDirection` clashes with the one of `dart:ui`) or a local name that hides an imported name. A
+  core layer imports `package:flutter/painting.dart` with no list (Chart.js ADR 0187). A package import
   hides a `dart:` name with no error: a file that reads `pi` of `dart:math` next to the host
   helpers has `hide pi` on the helpers. A public library hides an internal name that clashes with
   `package:flutter/widgets.dart` (the zoom `State`).

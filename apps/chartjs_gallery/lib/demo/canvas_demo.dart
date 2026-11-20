@@ -476,11 +476,11 @@ class _RoundedRectCardState() extends State<_RoundedRectCard> {
         y,
         w.toDouble(),
         h,
-        Corners(
-          topLeft: _radii['topLeft']!,
-          topRight: _radii['topRight']!,
-          bottomLeft: _radii['bottomLeft']!,
-          bottomRight: _radii['bottomRight']!,
+        BorderRadius.only(
+          topLeft: Radius.circular(_radii['topLeft']!),
+          topRight: Radius.circular(_radii['topRight']!),
+          bottomLeft: Radius.circular(_radii['bottomLeft']!),
+          bottomRight: Radius.circular(_radii['bottomRight']!),
         ),
       ),
     );
@@ -886,12 +886,7 @@ class _PaintCardState()
               top,
               size,
               size,
-              Corners(
-                topLeft: size / 5,
-                topRight: size / 5,
-                bottomLeft: size / 5,
-                bottomRight: size / 5,
-              ),
+              BorderRadius.all(Radius.circular(size / 5)),
             ),
           );
           ctx

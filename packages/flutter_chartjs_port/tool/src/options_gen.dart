@@ -77,6 +77,7 @@ const Map<String, int> shapeAtoms = {
   'textLines': 5888,
   'dashList': 6016,
   'barThickness': 6144,
+  'borderRadius': 6272,
 };
 
 /// The bits of the index of a typed atom in a mask (`ShapeBits.typed`).
@@ -307,6 +308,13 @@ const Map<String, TypedAtom> typedAtoms = {
     uri: 'package:flutter_chartjs_port/src/types/bar_option_enums.dart',
     field: null,
   ),
+  // The corner radii of a bar, a legend label, a tooltip and a point label
+  // in the object form (row adapt-flutter-border-radius).
+  'borderRadius': (
+    type: 'BorderRadius',
+    uri: 'package:flutter/painting.dart',
+    field: null,
+  ),
 };
 
 /// The core library of the package (Chart.js ADR 0061): each generated file
@@ -314,8 +322,9 @@ const Map<String, TypedAtom> typedAtoms = {
 const String coreLibrary = 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// The import lines of the typed atoms whose types [types] lists, and of
-/// the libraries [others] with no `show` list: one line for each library,
-/// the `dart:` libraries first, then a blank line and the others in order.
+/// the libraries [others]: one line for each library, the `dart:` libraries
+/// first, then a blank line and the others in order. Only package:intl has a
+/// `show` list, for its name clash with dart:ui.
 String typedAtomImports(
   Iterable<String> types, [
   List<String> others = const [],
@@ -340,13 +349,15 @@ String typedAtomImports(
   final lines = <String>[];
   var dart = false;
   for (final uri in uris) {
-    final names = byUri[uri]!.toList()..sort();
     if (dart && !uri.startsWith('dart:')) lines.add('\n');
     dart = uri.startsWith('dart:');
+    // package:intl declares a TextDirection of its own, which clashes with
+    // the one of dart:ui: the only import with a list.
+    final names = byUri[uri]!.toList()..sort();
     lines.add(
-      names.isEmpty
-          ? "import '$uri';\n"
-          : "import '$uri' show ${names.join(', ')};\n",
+      uri == 'package:intl/intl.dart' && names.isNotEmpty
+          ? "import '$uri' show ${names.join(', ')};\n"
+          : "import '$uri';\n",
     );
   }
   return lines.join();
