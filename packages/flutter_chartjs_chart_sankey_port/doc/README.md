@@ -14,7 +14,7 @@ package.
     [`tool/port_sources.yaml`](../tool/port_sources.yaml) gives the commit, the license and the
     holder.
   - `chartjsChartSankeyVersion` in `lib/src/upstream.dart` gives the version.
-- **Host:** `flutter_chartjs_port`, a path dependency. The port imports only its public libraries
+- **Host:** `flutter_chartjs_port` from 0.1.0-beta.4. The port imports only its public libraries
   ([Sankey ADR 0003](adr/0003-host-connection.md)).
   [Chart.js ADR 0132](../../flutter_chartjs_port/doc/adr/0132-exports-for-add-on-chart-types.md) is
   the host change for this port.

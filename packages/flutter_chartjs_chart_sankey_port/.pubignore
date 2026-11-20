@@ -1,0 +1,7 @@
+# The published archive: lib/ and the package files. The docs, the tests, the
+# tools and the reference data stay in the repository.
+doc/
+test/
+tool/
+dart_test.yaml
+build/

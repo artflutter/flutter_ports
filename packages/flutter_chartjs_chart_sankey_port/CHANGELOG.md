@@ -1,4 +1,9 @@
-## Unreleased
+## 0.1.0-beta.1
+
+- The first beta release, on `flutter_chartjs_port` 0.1.0-beta.4. The API can still change
+  before 0.1.0.
+- The typed `SankeyDataset` with its option types `SankeyColor`, `SankeyNodeValue`,
+  `SankeyFlowValue`, `SankeyNodeLabels` and `SankeyFlowLabels` (Sankey ADR 0004).
 
 - Ports each module of `src/` at 0.19.1: the sankey controller, the flow element, the node layout
   and the labels, on the public libraries of `flutter_chartjs_port`.

@@ -46,7 +46,7 @@ a paint for each flow. `ChartView.raw` with a Map config also works.
 
 The port tracks chartjs-chart-sankey **0.19.1** (`chartjsChartSankeyVersion`). A git submodule
 under `third_party/` pins the repository at the release tag.
-[tool/port_sources.yaml](tool/port_sources.yaml) gives the pin with its license and holder.
+[tool/port_sources.yaml](https://github.com/artflutter/flutter_ports/blob/main/packages/flutter_chartjs_chart_sankey_port/tool/port_sources.yaml) gives the pin with its license and holder.
 
 ## License
 
