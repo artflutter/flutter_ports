@@ -16,7 +16,6 @@ import 'package:material_ui/material_ui.dart';
 DocPageContent apexChartsBarMigrationPage() => migrationPage(
   chart: 'bar',
   library: 'apexcharts_flutter',
-  navName: 'ApexCharts',
   version: '0.1.2',
   gallery: apexGallery,
   icon: Icons.swap_horiz,

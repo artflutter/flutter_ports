@@ -20,7 +20,7 @@ void main() {
     );
     expect(
       paths.where((path) => path.startsWith('lib/migrate/')),
-      hasLength(82),
+      hasLength(97),
     );
     for (final path in paths) {
       final source = archives.bundle(docs, path);

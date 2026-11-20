@@ -227,6 +227,15 @@ precedence = "override"
 SPDX-FileCopyrightText = ["2023 shadcn", "2026 Vasiliy Ditsyak"]
 SPDX-License-Identifier = "MIT"
 
+# The ApexCharts.js replicas of the docs site: new code with the data and the
+# options of samples/vanilla-js of ApexCharts.js 4.7.0 (MIT), the last release
+# under the MIT license.
+[[annotations]]
+path = "apps/chartjs_docs/lib/migrate/apexcharts_js/**"
+precedence = "override"
+SPDX-FileCopyrightText = ["2018 ApexCharts", "2026 Vasiliy Ditsyak"]
+SPDX-License-Identifier = "MIT"
+
 # The zoom plugin page of the docs site and its code panels: Dart ports of
 # docs/guide of chartjs-plugin-zoom 2.2.0+fb81d331 (MIT), so the upstream
 # notice is kept alongside ours. They port no Chart.js code.

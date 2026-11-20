@@ -26,6 +26,7 @@ const List<String> snippetFolders = [
   'lib/migrate/graphic/',
   'lib/migrate/syncfusion/',
   'lib/migrate/apexcharts/',
+  'lib/migrate/apexcharts_js/',
   'lib/migrate/shadcn/',
 ];
 

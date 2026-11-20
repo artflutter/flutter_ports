@@ -3,7 +3,9 @@
 import 'package:chartjs_docs/examples/line_examples.dart';
 import 'package:chartjs_docs/pages/bar_chart_page.dart';
 import 'package:chartjs_docs/pages/line_chart_page.dart';
+import 'package:chartjs_docs/pages/migrate_apexcharts_js_page.dart';
 import 'package:chartjs_docs/pages/migrate_apexcharts_page.dart';
+import 'package:chartjs_docs/pages/migrate_bar_apexcharts_js_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_apexcharts_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_fl_chart_page.dart';
 import 'package:chartjs_docs/pages/migrate_bar_graphic_page.dart';
@@ -59,9 +61,16 @@ final List<DocPageLink> docPages = [
   const DocPageLink(
     route: '/charts/line/migrate/apexcharts',
     group: 'Line chart',
-    navLabel: Text('From ApexCharts'),
+    navLabel: Text('From apexcharts_flutter'),
     icon: Icons.swap_horiz,
     build: apexChartsMigrationPage,
+  ),
+  const DocPageLink(
+    route: '/charts/line/migrate/apexcharts_js',
+    group: 'Line chart',
+    navLabel: Text('From ApexCharts.js'),
+    icon: Icons.swap_horiz,
+    build: apexJsMigrationPage,
   ),
   const DocPageLink(
     route: '/charts/line/migrate/shadcn',
@@ -101,9 +110,16 @@ final List<DocPageLink> docPages = [
   const DocPageLink(
     route: '/charts/bar/migrate/apexcharts',
     group: 'Bar chart',
-    navLabel: Text('From ApexCharts'),
+    navLabel: Text('From apexcharts_flutter'),
     icon: Icons.swap_horiz,
     build: apexChartsBarMigrationPage,
+  ),
+  const DocPageLink(
+    route: '/charts/bar/migrate/apexcharts_js',
+    group: 'Bar chart',
+    navLabel: Text('From ApexCharts.js'),
+    icon: Icons.swap_horiz,
+    build: apexJsBarMigrationPage,
   ),
   const DocPageLink(
     route: '/charts/bar/migrate/shadcn',

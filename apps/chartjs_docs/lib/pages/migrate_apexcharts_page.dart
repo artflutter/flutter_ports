@@ -28,7 +28,6 @@ const Text apexCredit = Text(
 DocPageContent apexChartsMigrationPage() => migrationPage(
   chart: 'line',
   library: 'apexcharts_flutter',
-  navName: 'ApexCharts',
   version: '0.1.2',
   gallery: apexGallery,
   icon: Icons.swap_horiz,

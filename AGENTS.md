@@ -541,12 +541,23 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - The apexcharts_flutter pages (`lib/pages/migrate_apexcharts_page.dart` and
     `migrate_bar_apexcharts_page.dart`, routes `/charts/<type>/migrate/apexcharts`) rebuild the 5 line and
     area demos and the 3 bar demos of the example app of apexcharts_flutter 0.1.2. The sidebar names them
-    "From ApexCharts" (`navName` of `migrationPage`): the package name does not fit. The replicas are in
+    "From apexcharts_flutter": a long sidebar label wraps (`Flexible` in `doc_page.dart`). The replicas are in
     `lib/migrate/apexcharts/`. `apex_kit.dart` has the shared parts: the axes, the legend, the tooltip
     with its title bar, the hover line and markers, the data labels and `ApexZoomChart`. `ApexZoomChart`
     gives each line and area chart the zoom of `flutter_chartjs_plugin_zoom_port` and the zoom toolbar of
     apexcharts_flutter. The stacked and the horizontal bar replicas show the chart of their options, not
     the axis defects of apexcharts_flutter 0.1.2. Their notes state the difference.
+  - The ApexCharts.js pages (`lib/pages/migrate_apexcharts_js_page.dart` and
+    `migrate_bar_apexcharts_js_page.dart`, routes `/charts/<type>/migrate/apexcharts_js`, "From
+    ApexCharts.js") rebuild 6 line and area demos and 9 column and bar demos of `samples/vanilla-js` of
+    ApexCharts.js 4.7.0, the last release under the MIT license (5.x has a license that forbids use in
+    competing chart products: never take a demo from it). The **Original** link of a demo is
+    `https://apexcharts.com/javascript-chart-demos/<folder>/<sample file name>/`. The replicas are in
+    `lib/migrate/apexcharts_js/`, one file and one region `apexjs-<file stem with ->` for each demo.
+    `apexjs_kit.dart` imports `apex_kit.dart` and adds the ApexCharts.js defaults: the palette, the
+    title, the legend, the axes with the axis line and tick marks, the line and bar series helpers, the
+    bar tooltip, the grid bands, the line and bar data labels with the stack totals and the column
+    crosshair. A replica whose original shows the zoom tools uses `ApexZoomChart`.
   - The shadcn/ui pages (`lib/pages/migrate_shadcn_page.dart` and `migrate_bar_shadcn_page.dart`, routes
     `/charts/<type>/migrate/shadcn`) rebuild the 10 line and the 10 bar chart blocks of shadcn/ui at commit
     `e62c9435` (Recharts 3.8.0). The replica of the block `chart-<name>` is
@@ -560,11 +571,13 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     archive puts both into one file. `test/shadcn_replicas_test.dart` pins the tooltip widget, the series
     buttons of the interactive line and `rechartsRange`.
   - The replicas are new code. The Syncfusion replicas use no Syncfusion code, the apexcharts_flutter
-    replicas use no apexcharts_flutter code, and the shadcn/ui replicas use no shadcn/ui or Recharts code.
+    replicas use no apexcharts_flutter code, the ApexCharts.js replicas use no ApexCharts.js code, and
+    the shadcn/ui replicas use no shadcn/ui or Recharts code.
     The data of the fl_chart
     samples 12 and 13 (`assets/flchart/`), `lib/migrate/graphic/graphic_data.dart`,
     `graphic_bar_data.dart`, `lib/migrate/apexcharts/area_datetime_data.dart` and
-    `lib/migrate/shadcn/shadcn_data.dart` are MIT copies: the
+    `lib/migrate/shadcn/shadcn_data.dart` and the data of the replicas of `lib/migrate/apexcharts_js/`
+    are MIT copies: the
     `LICENSE` of the app and `REUSE.toml` name their holders.
     `test/migrate_pages_test.dart` builds each page, also at phone width, and finds each region.
 - `apps/chartjs_ergonomics`: atomic samples of the typed API for a review of its ergonomics (web and

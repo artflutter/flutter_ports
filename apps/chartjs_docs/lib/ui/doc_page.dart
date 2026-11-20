@@ -409,12 +409,15 @@ class const _PageTile({
       children: [
         Icon(icon, size: 18, color: Colors.white),
         const SizedBox(width: 8),
-        DefaultTextStyle.merge(
-          style: const TextStyle(
-            color: Colors.white,
-            fontWeight: FontWeight.w700,
+        // A long label wraps: the row never overflows the sidebar.
+        Flexible(
+          child: DefaultTextStyle.merge(
+            style: const TextStyle(
+              color: Colors.white,
+              fontWeight: FontWeight.w700,
+            ),
+            child: label,
           ),
-          child: label,
         ),
       ],
     ),
@@ -434,9 +437,11 @@ class const _PageLink(final DocPageLink page) extends StatelessWidget {
         children: [
           Icon(page.icon, size: 18, color: DocColors.muted),
           const SizedBox(width: 8),
-          DefaultTextStyle.merge(
-            style: const TextStyle(fontWeight: FontWeight.w600),
-            child: page.navLabel,
+          Flexible(
+            child: DefaultTextStyle.merge(
+              style: const TextStyle(fontWeight: FontWeight.w600),
+              child: page.navLabel,
+            ),
           ),
         ],
       ),
