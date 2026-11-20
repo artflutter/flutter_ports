@@ -4,17 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/demo/demo_common.dart' show jsNumberText;
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show
-        Mode,
-        PanOptions,
-        PinchOptions,
-        ScaleLimit,
-        ScaleLimits,
-        WheelOptions,
-        ZoomChart,
-        ZoomOptions,
-        ZoomPluginOptions;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, UpdateMode;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show
@@ -87,18 +77,10 @@ ZoomDocsSample zoomBasicSample(ZoomDocsLog log) {
   // `zoomOptions` is a local, so that the actions read it and write a new
   // object, as the upstream handlers write into it.
   var zoomOptions = ZoomPluginOptions(
-    limits: const {
-      'x': ScaleLimits(
-        min: ScaleLimit(-200),
-        max: ScaleLimit(200),
-        minRange: 50,
-      ),
-      'y': ScaleLimits(
-        min: ScaleLimit(-200),
-        max: ScaleLimit(200),
-        minRange: 50,
-      ),
-    },
+    limits: const LimitOptions(
+      x: ScaleLimits(min: ScaleLimit(-200), max: ScaleLimit(200), minRange: 50),
+      y: ScaleLimits(min: ScaleLimit(-200), max: ScaleLimit(200), minRange: 50),
+    ),
     pan: const PanOptions(enabled: true, mode: Mode.xy),
     zoom: ZoomOptions(
       wheel: const WheelOptions(enabled: true),

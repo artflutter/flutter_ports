@@ -38,10 +38,10 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   tooltip: shadcnTooltip(tip),
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
-  scales: {
-    'x': shadcnCategoryAxis(),
-    'y': shadcnValueAxis([..._desktop, ..._mobile]),
-  },
+  scales: [
+    shadcnCategoryAxis(),
+    shadcnValueAxis([..._desktop, ..._mobile]),
+  ],
 );
 
 class const ShadcnLineMultiple({super.key}) extends StatelessWidget {

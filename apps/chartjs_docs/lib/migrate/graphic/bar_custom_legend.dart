@@ -49,8 +49,9 @@ String? _typeValue(TooltipItem item) =>
 final ChartConfig _config = ChartConfig(
   labels: _indexes,
   datasets: [for (final (i, type) in _types.indexed) _type(i, type)],
-  scales: {
-    'x': CategoryAxis(
+  scales: [
+    CategoryAxis(
+      .x,
       // `tickLine = TickLine()`: a line of 5 px under each label.
       grid: const AxisGrid(
         color: .solid(Gx.stroke),
@@ -63,7 +64,8 @@ final ChartConfig _config = ChartConfig(
       border: bottomBorder,
       extra: bottomAxis,
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: _range.min,
       max: _range.max,
       grid: lineGrid,
@@ -71,7 +73,7 @@ final ChartConfig _config = ChartConfig(
       border: leftBorder,
       extra: leftAxis,
     ),
-  },
+  ],
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,

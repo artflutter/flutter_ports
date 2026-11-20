@@ -270,7 +270,7 @@ Chart _chart(
         // Keep strings and undefined in the parser boundary cases.
         TestDataset(const ChartKind('radialTest'), extra: {'data': data}),
       ],
-      scales: {'r': r},
+      scales: [r],
     ),
   ).lower(),
 );

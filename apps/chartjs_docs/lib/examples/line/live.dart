@@ -22,10 +22,10 @@ ChartConfig liveLine(List<DataPoint> points) => ChartConfig(
       pointRadius: 0,
     ),
   ],
-  scales: const {
-    'x': LinearAxis(min: 0, max: 999),
-    'y': LinearAxis(min: -1.5, max: 1.5),
-  },
+  scales: const [
+    LinearAxis(.x, min: 0, max: 999),
+    LinearAxis(.y, min: -1.5, max: 1.5),
+  ],
   animation: ChartAnimation.none,
 );
 

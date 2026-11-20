@@ -28,5 +28,5 @@ ChartConfig mixedConfig() => const ChartConfig(
       ),
     ),
   ],
-  scales: {'y': LinearAxis(beginAtZero: true)},
+  scales: [LinearAxis(.y, beginAtZero: true)],
 );

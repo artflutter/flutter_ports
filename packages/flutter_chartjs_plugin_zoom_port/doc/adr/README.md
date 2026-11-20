@@ -7,6 +7,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0002](0002-file-naming-and-layout.md) File naming and package layout: proposed, superseded in part by 0006.
 - [0003](0003-host-connection.md) The connection to the host port: proposed, superseded in part by 0004, 0005.
 - [0004](0004-native-zoom-pan-callbacks.md) Native zoom and pan callbacks: accepted, supersedes 0003, superseded in part by 0005.
-- [0005](0005-typed-zoom-options.md) Typed zoom options: accepted, supersedes 0003, 0004.
+- [0005](0005-typed-zoom-options.md) Typed zoom options: accepted, supersedes 0003, 0004, superseded in part by 0007.
 - [0006](0006-native-test-matchers.md) Native matchers and spies in the zoom specs: accepted, supersedes 0002.
+- [0007](0007-typed-zoom-limits.md) Typed zoom limits: accepted, supersedes 0005.
 <!-- adr-index:end -->

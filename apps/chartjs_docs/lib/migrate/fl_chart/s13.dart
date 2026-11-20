@@ -133,8 +133,9 @@ class _Sample13State() extends State<Sample13> {
       interaction: const ChartInteraction(mode: flX, intersect: false),
       tooltip: const ChartTooltip(enabled: false),
       plugins: [_errorBars],
-      scales: {
-        'x': LinearAxis(
+      scales: [
+        LinearAxis(
+          .x,
           min: 0,
           max: 31,
           grid: const AxisGrid(display: false),
@@ -167,7 +168,8 @@ class _Sample13State() extends State<Sample13> {
             },
           ),
         ),
-        'y': LinearAxis(
+        LinearAxis(
+          .y,
           min: _minTemp - 5,
           max: _maxTemp + 5,
           grid: AxisGrid(
@@ -192,7 +194,7 @@ class _Sample13State() extends State<Sample13> {
             callback: (scale, value, index, ticks) => ['${value.toInt()}°'],
           ),
         ),
-      },
+      ],
     ),
   );
 

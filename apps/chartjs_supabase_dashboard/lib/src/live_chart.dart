@@ -215,7 +215,7 @@ class _LiveChartState()
       mode: Mode.x,
       onZoom: (_) => _userZoomed(),
     ),
-    limits: const {'x': ScaleLimits(minRange: _minWindow)},
+    limits: const LimitOptions(x: ScaleLimits(minRange: _minWindow)),
   );
 
   /// Draws the dashed lines after the line. It has a draw hook only, so the
@@ -382,8 +382,9 @@ class _LiveChartState()
     ),
     plugins: [zoomPlugin, _pageSplits, _gaps],
     pluginOptions: [_zoom],
-    scales: const {
-      'x': TimeAxis(
+    scales: const [
+      TimeAxis(
+        .x,
         tooltipFormat: 'HH:mm:ss',
         ticks: AxisTicks(maxRotation: 0, callback: _timeLabel),
         extra: {
@@ -395,11 +396,12 @@ class _LiveChartState()
       ),
       // No tick at the eased bounds, and whole numbers only (precision 0
       // rounds the step to an integer).
-      'y': LinearAxis(
+      LinearAxis(
+        .y,
         ticks: AxisTicks(extra: {'includeBounds': false, 'precision': 0}),
         extra: {'afterFit': _fixedWidth},
       ),
-    },
+    ],
   );
 
   /// Half the width of a time label, in pixels.

@@ -57,28 +57,33 @@ AxisTitle sfAxisTitle(String text) => AxisTitle(
 
 /// A `CategoryAxis` of Syncfusion: an axis line and tick marks between the
 /// categories, no grid lines.
-CategoryAxis sfCategoryAxis({bool reverse = false, TickCallback? callback}) =>
-    CategoryAxis(
-      reverse: reverse,
-      grid: const AxisGrid(
-        drawOnChartArea: false,
-        color: .solid(Sf.axisLine),
-        offset: true,
-        extra: {'tickLength': 5},
-      ),
-      ticks: AxisTicks(
-        color: const .solid(Sf.text),
-        font: sfLabelFont,
-        padding: 5,
-        maxRotation: 0,
-        callback: callback,
-      ),
-      border: const AxisBorder(color: ChartPaint.solid(Sf.axisLine)),
-    );
+CategoryAxis sfCategoryAxis({
+  CartesianAxis direction = .x,
+  bool reverse = false,
+  TickCallback? callback,
+}) => CategoryAxis(
+  direction,
+  reverse: reverse,
+  grid: const AxisGrid(
+    drawOnChartArea: false,
+    color: .solid(Sf.axisLine),
+    offset: true,
+    extra: {'tickLength': 5},
+  ),
+  ticks: AxisTicks(
+    color: const .solid(Sf.text),
+    font: sfLabelFont,
+    padding: 5,
+    maxRotation: 0,
+    callback: callback,
+  ),
+  border: const AxisBorder(color: ChartPaint.solid(Sf.axisLine)),
+);
 
 /// A `NumericAxis` of Syncfusion. [grid], [line] and [ticks] are the
 /// `majorGridLines`, the `axisLine` and the `majorTickLines`.
 LinearAxis sfValueAxis({
+  CartesianAxis direction = .y,
   double? min,
   double? max,
   double? stepSize,
@@ -88,6 +93,7 @@ LinearAxis sfValueAxis({
   bool ticks = false,
   String? title,
 }) => LinearAxis(
+  direction,
   min: min,
   max: max,
   grid: AxisGrid(

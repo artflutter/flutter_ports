@@ -28,7 +28,7 @@ final flexBars = ChartConfig(
       barThickness: BarThickness.flex,
     ),
   ],
-  scales: const {'x': LinearAxis()},
+  scales: const [LinearAxis(.x)],
 );
 // #enddocregion bar-thickness-flex
 

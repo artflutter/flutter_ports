@@ -61,7 +61,7 @@ const stackedLines = ChartConfig(
       fill: .toStacked,
     ),
   ],
-  scales: {'y': LinearAxis(stacked: StackMode.on, beginAtZero: true)},
+  scales: [LinearAxis(.y, stacked: StackMode.on, beginAtZero: true)],
 );
 // #enddocregion stacked
 

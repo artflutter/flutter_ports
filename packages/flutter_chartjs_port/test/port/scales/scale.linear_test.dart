@@ -153,7 +153,7 @@ final Map<String, Object?> _functions = {
 
 /// A chart of the test controller `linearTest` with the points [points]
 /// and the axes [scales].
-Chart _linearChart(List<DataPoint> points, [Map<String, ChartAxis>? scales]) =>
+Chart _linearChart(List<DataPoint> points, [List<ChartAxis>? scales]) =>
     acquireChartRoot(
       ChartConfigLowering(
         ChartConfig(
@@ -258,13 +258,13 @@ void main() {
   });
 
   group('the arithmetic (Chart.js ADR 0186)', () {
-    for (final (name, scales) in <(String, Map<String, ChartAxis>)>[
-      ('a horizontal scale', {}),
+    for (final (name, scales) in <(String, List<ChartAxis>)>[
+      ('a horizontal scale', []),
       (
         'a reversed vertical scale with offset',
-        {
-          'y': const LinearAxis(reverse: true, extra: {'offset': true}),
-        },
+        [
+          const LinearAxis(.y, reverse: true, extra: {'offset': true}),
+        ],
       ),
     ]) {
       testWidgets('a double and an int give the same pixel, $name', (

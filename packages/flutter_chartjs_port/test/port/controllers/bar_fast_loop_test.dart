@@ -488,7 +488,7 @@ void main() {
               categoryPercentage: 1,
             ),
         ],
-        scales: const {'x': CategoryAxis(), 'y': LinearAxis(min: 0, max: 10)},
+        scales: const [CategoryAxis(.x), LinearAxis(.y, min: 0, max: 10)],
         animation: ChartAnimation.none,
         responsive: false,
       );

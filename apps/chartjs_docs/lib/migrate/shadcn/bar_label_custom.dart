@@ -48,13 +48,13 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
     // <LabelList dataKey="desktop" position="right" offset={8} className="fill-foreground" />
     shadcnLabels(id: 'values', position: .right, offset: 8),
   ],
-  scales: {
+  scales: [
     // <YAxis dataKey="month" type="category" hide />
-    'y': shadcnCategoryYAxis(display: false),
+    shadcnCategoryYAxis(display: false),
     // <XAxis dataKey="desktop" type="number" hide />, and
     // <CartesianGrid horizontal={false} />: the vertical grid lines.
-    'x': shadcnValueAxis(_desktop),
-  },
+    shadcnValueAxis(direction: .x, _desktop),
+  ],
 );
 
 class const ShadcnBarLabelCustom({super.key}) extends StatelessWidget {

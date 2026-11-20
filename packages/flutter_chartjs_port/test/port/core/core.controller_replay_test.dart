@@ -71,7 +71,7 @@ Chart _chart(
       transitions: transitions,
       tooltip: tooltip,
       onHover: (event, active, chart) => counts.hit('onHover'),
-      scales: const {'y': LinearAxis(min: 0, max: 4)},
+      scales: const [LinearAxis(.y, min: 0, max: 4)],
     ),
   ).lower(),
 );

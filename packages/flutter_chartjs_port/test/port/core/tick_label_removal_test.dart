@@ -39,8 +39,9 @@ Chart _chart(
     ],
     responsive: false,
     animation: ChartAnimation.none,
-    scales: {
-      'x': LinearAxis(
+    scales: [
+      LinearAxis(
+        .x,
         min: 0,
         max: count - 1.0,
         ticks: AxisTicks(
@@ -65,8 +66,8 @@ Chart _chart(
           },
         },
       ),
-      'y': const LinearAxis(),
-    },
+      const LinearAxis(.y),
+    ],
     extra: const {
       'events': <String>[],
       'plugins': {'legend': false, 'tooltip': false},

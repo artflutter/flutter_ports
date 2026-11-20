@@ -64,10 +64,10 @@ ChartConfigurationScope _config({
     ],
     responsive: false,
     animation: animation,
-    scales: const {
-      'x': LinearAxis(min: -1, max: 20),
-      'y': LinearAxis(min: -1, max: 20),
-    },
+    scales: const [
+      LinearAxis(.x, min: -1, max: 20),
+      LinearAxis(.y, min: -1, max: 20),
+    ],
     extra: const {
       'events': <String>[],
       'parsing': false,

@@ -45,10 +45,10 @@ final ChartConfig _config = ChartConfig(
     text: (item) => '${item.label.join(' ')} : ${sfCompact(sfValue(item))}',
   ),
   plugins: [sfTooltipLook],
-  scales: {
-    'x': sfCategoryAxis(),
+  scales: [
+    sfCategoryAxis(),
     // numberFormat: NumberFormat.compact(), no grid lines, an axis line.
-    'y': sfValueAxis(
+    sfValueAxis(
       min: 56000000,
       max: 70000000,
       stepSize: 2000000,
@@ -56,7 +56,7 @@ final ChartConfig _config = ChartConfig(
       grid: false,
       line: true,
     ),
-  },
+  ],
 );
 
 class const SfBackToBackColumn({super.key}) extends StatelessWidget {

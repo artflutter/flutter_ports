@@ -41,9 +41,10 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
   pluginOptions: [zoom.options],
-  scales: {
+  scales: [
     // xaxis: {type: 'datetime'}: a tick at the start of a day, 'dd MMM'.
-    'x': const TimeAxis(
+    const TimeAxis(
+      .x,
       unit: .day,
       tooltipFormat: 'd MMM',
       grid: AxisGrid(display: false, drawTicks: false),
@@ -60,8 +61,8 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
         },
       },
     ),
-    'y': apexValueAxis(min: 40, max: 120, stepSize: 20),
-  },
+    apexValueAxis(min: 40, max: 120, stepSize: 20),
+  ],
 );
 
 class const ApexLineTimeseries({super.key}) extends StatelessWidget {

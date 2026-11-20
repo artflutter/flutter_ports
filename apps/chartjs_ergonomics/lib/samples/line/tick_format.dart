@@ -15,7 +15,7 @@ const tickFormat = ChartConfig(
       borderColor: .constant(.solid(teal)),
     ),
   ],
-  scales: {'y': LinearAxis(ticks: AxisTicks(callback: thousands))},
+  scales: [LinearAxis(.y, ticks: AxisTicks(callback: thousands))],
 );
 
 // One String for each line of the label; null removes the tick.

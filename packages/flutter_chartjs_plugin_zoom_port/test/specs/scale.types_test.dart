@@ -33,13 +33,14 @@ Scale createCategoryScale({
       datasets: const [BarDataset()],
       padding: EdgeInsets.zero,
       legend: const ChartLegend(display: false),
-      scales: {
-        'x': CategoryAxis(
+      scales: [
+        CategoryAxis(
+          .x,
           display: ScaleDisplay.off,
           extra: {'min': min, 'max': max},
         ),
-        'y': const LinearAxis(display: ScaleDisplay.off),
-      },
+        const LinearAxis(.y, display: ScaleDisplay.off),
+      ],
     ),
     <String, Object?>{
       'canvas': <String, Object?>{'width': width, 'height': 100},
@@ -220,7 +221,7 @@ void main() {
             width: 400,
           );
 
-          panFunctions['category']!(scale, 25, const <String, ScaleLimits>{});
+          panFunctions['category']!(scale, 25, const LimitOptions());
 
           expect(scale.options.min, equals(39));
           expect(scale.options.max, equals(58));
@@ -241,7 +242,7 @@ void main() {
             width: 400,
           );
 
-          panFunctions['category']!(scale, 10, const <String, ScaleLimits>{});
+          panFunctions['category']!(scale, 10, const LimitOptions());
 
           expect(scale.options.min, equals(3875));
           expect(scale.options.max, equals(8874));
@@ -256,7 +257,7 @@ void main() {
           width: 400,
         );
 
-        panFunctions['category']!(scale, 10, const <String, ScaleLimits>{});
+        panFunctions['category']!(scale, 10, const LimitOptions());
 
         expect(scale.options.min, equals(0));
         expect(scale.options.max, equals(4999));
@@ -270,7 +271,7 @@ void main() {
           width: 400,
         );
 
-        panFunctions['category']!(scale, -10, const <String, ScaleLimits>{});
+        panFunctions['category']!(scale, -10, const LimitOptions());
 
         expect(scale.options.min, equals(5000));
         expect(scale.options.max, equals(9999));

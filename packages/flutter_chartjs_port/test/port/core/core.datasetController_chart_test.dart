@@ -471,12 +471,13 @@ void main() {
             // Keep the original data List.
             TestDataset(const ChartKind('stacksPoint'), extra: {'data': data}),
           ],
-          scales: const {
-            'y': LinearAxis(
+          scales: const [
+            LinearAxis(
+              .y,
               stacked: StackMode.on,
               extra: {'type': 'typedLinear'},
             ),
-          },
+          ],
           extra: const {'parsing': false},
         ),
       ).lower(),

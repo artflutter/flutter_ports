@@ -63,7 +63,7 @@ _Config _bar({
         labels: [for (var i = 0; i < _count; i++) 'l$i'],
         datasets: [BarDataset(data: _data(1), extra: dataset)],
         animation: _animation(log, animation, twin: twin),
-        scales: const {'y': LinearAxis(min: 0, max: 100)},
+        scales: const [LinearAxis(.y, min: 0, max: 100)],
       ),
     ).lower();
 
@@ -78,10 +78,10 @@ ChartConfigurationScope _stacked(List<String> log, {required bool twin}) =>
         ],
         indexAxis: const YAxis(),
         animation: _animation(log, null, twin: twin),
-        scales: const {
-          'x': LinearAxis(stacked: StackMode.on, min: 0, max: 200),
-          'y': CategoryAxis(stacked: StackMode.on),
-        },
+        scales: const [
+          LinearAxis(.x, stacked: StackMode.on, min: 0, max: 200),
+          CategoryAxis(.y, stacked: StackMode.on),
+        ],
       ),
     ).lower();
 

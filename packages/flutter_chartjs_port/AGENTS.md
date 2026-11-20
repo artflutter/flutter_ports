@@ -1013,7 +1013,10 @@ repository.
     use `ChartValue<ChartPaint>?` (ADR 0128); lowering writes the corresponding
     `Opt` cell directly. Scalar element/text/scale fields use `ChartPaint`; raw
     configs keep value/list/function forms with paint leaves. `axes.dart` has the 6 axes,
-    `AxisTicks`, `AxisGrid` and `AxisTitle`; an axis takes its `border` as an `AxisBorder` (a
+    `AxisTicks`, `AxisGrid` and `AxisTitle`; `ChartConfig.scales` is a `List<ChartAxis>`, a cartesian
+    axis takes its direction first (`LinearAxis(.y)`), the lowering gives the scale ids (`scaleIdsOf`
+    of `lower.dart`: `x`, `y`, `r`, then `x1`, `y1`), a dataset names its axis by the axis object
+    (`yAxis`), and `chart.scaleOf(axis)` gives the scale (Chart.js ADR 0191); an axis takes its `border` as an `AxisBorder` (a
     `RadialAxisBorder` for `RadialLinearAxis`) of `lib/chartjs.dart` (Chart.js ADR 0141).
     `groups.dart` has `ChartLegend`, `ChartTitle`, `ChartTooltip`, `ChartFiller`,
     `ChartInteraction` and `ChartAnimation`. `elements.dart` has `ChartElements` and the 4 element

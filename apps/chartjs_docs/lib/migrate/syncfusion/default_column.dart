@@ -40,11 +40,11 @@ final ChartConfig _config = ChartConfig(
     // DataLabelSettings(isVisible: true, textStyle: TextStyle(fontSize: 10))
     sfDataLabels([for (final v in _growth) '${sfNumber(v)}%'], fontSize: 10),
   ],
-  scales: {
-    'x': sfCategoryAxis(),
+  scales: [
+    sfCategoryAxis(),
     // labelFormat: '{value}%', no axis line, no tick marks.
-    'y': sfValueAxis(min: 0, max: 2.5, stepSize: 0.5, callback: sfPercentTick),
-  },
+    sfValueAxis(min: 0, max: 2.5, stepSize: 0.5, callback: sfPercentTick),
+  ],
 );
 
 class const SfDefaultColumn({super.key}) extends StatelessWidget {

@@ -48,7 +48,7 @@ const verticalLine = ChartConfig(
       extra: {'axis': YAxis()},
     ),
   ],
-  scales: {'x': LinearAxis(beginAtZero: true)},
+  scales: [LinearAxis(.x, beginAtZero: true)],
 );
 // #enddocregion vertical
 

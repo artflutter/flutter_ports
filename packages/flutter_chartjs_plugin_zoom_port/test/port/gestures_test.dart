@@ -45,10 +45,10 @@ Widget _listed(
         child: ChartView(
           config: ChartConfig(
             datasets: [ScatterDataset(points: _points, pointRadius: 4)],
-            scales: const {
-              'x': LinearAxis(min: 0, max: 100),
-              'y': LinearAxis(min: 0, max: 100),
-            },
+            scales: const [
+              LinearAxis(.x, min: 0, max: 100),
+              LinearAxis(.y, min: 0, max: 100),
+            ],
             maintainAspectRatio: false,
             legend: const ChartLegend(display: false),
             animation: ChartAnimation.none,

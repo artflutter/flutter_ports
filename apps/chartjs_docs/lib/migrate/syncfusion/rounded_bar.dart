@@ -36,11 +36,11 @@ final ChartConfig _config = ChartConfig(
     text: (item) => '${item.label.join(' ')} : ${sfNumber(sfValue(item))}',
   ),
   plugins: [sfTooltipLook],
-  scales: {
-    'y': sfCategoryAxis(reverse: true),
+  scales: [
+    sfCategoryAxis(direction: .y, reverse: true),
     // minimum: -2, maximum: 2, grid lines and an axis line, no tick marks.
-    'x': sfValueAxis(min: -2, max: 2, stepSize: 0.5, line: true),
-  },
+    sfValueAxis(direction: .x, min: -2, max: 2, stepSize: 0.5, line: true),
+  ],
 );
 
 class const SfRoundedBar({super.key}) extends StatelessWidget {

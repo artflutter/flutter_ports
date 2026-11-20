@@ -43,10 +43,10 @@ final ChartConfig _config = ChartConfig(
     sfTrack(radius: 15),
     sfDataLabels([for (final m in _marks) '$m'], align: .top, fontSize: 10),
   ],
-  scales: {
-    'x': sfCategoryAxis(),
-    'y': sfValueAxis(min: 0, max: 100, stepSize: 20, grid: false),
-  },
+  scales: [
+    sfCategoryAxis(),
+    sfValueAxis(min: 0, max: 100, stepSize: 20, grid: false),
+  ],
 );
 
 class const SfTrackColumn({super.key}) extends StatelessWidget {

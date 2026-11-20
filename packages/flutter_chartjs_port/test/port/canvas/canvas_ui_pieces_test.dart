@@ -1079,10 +1079,10 @@ void main() {
                 pointRadius: 0,
               ),
             ],
-            scales: const {
-              'x': CategoryAxis(display: ScaleDisplay.off),
-              'y': LinearAxis(display: ScaleDisplay.off, min: 0),
-            },
+            scales: const [
+              CategoryAxis(.x, display: ScaleDisplay.off),
+              LinearAxis(.y, display: ScaleDisplay.off, min: 0),
+            ],
             extra: const {
               'plugins': {'legend': false, 'title': false},
             },
@@ -1173,20 +1173,17 @@ void main() {
                   pointRadius: 0,
                 ),
             ],
-            scales: {
-              'x': LinearAxis(
+            scales: [
+              LinearAxis(
+                .x,
                 min: 0,
                 max: 100,
                 display: ticks ? ScaleDisplay.on : ScaleDisplay.off,
                 grid: const AxisGrid(display: false),
                 ticks: const AxisTicks(maxRotation: 0),
               ),
-              'y': const LinearAxis(
-                min: 0,
-                max: 100,
-                display: ScaleDisplay.off,
-              ),
-            },
+              const LinearAxis(.y, min: 0, max: 100, display: ScaleDisplay.off),
+            ],
             legend: legend
                 ? const ChartLegend(position: ChartPosition.right)
                 : null,

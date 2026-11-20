@@ -45,10 +45,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   animation: shadcnLineAnimation,
   // <LabelList dataKey="browser" formatter={(value) => chartConfig[value]?.label} ...>
   plugins: [shadcnLabels(id: 'browsers', text: (i, value) => _browsers[i])],
-  scales: {
-    'x': shadcnCategoryAxis(display: false),
-    'y': shadcnValueAxis(_visitors),
-  },
+  scales: [shadcnCategoryAxis(display: false), shadcnValueAxis(_visitors)],
 );
 
 class const ShadcnLineLabelCustom({super.key}) extends StatelessWidget {

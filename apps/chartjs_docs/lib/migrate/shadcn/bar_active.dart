@@ -73,11 +73,11 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,
   plugins: [_activeOutline],
-  scales: {
+  scales: [
     // The tickFormatter gives the label of chartConfig: the whole name.
-    'x': shadcnCategoryAxis(tickMargin: 10, callback: null),
-    'y': shadcnValueAxis(_visitors),
-  },
+    shadcnCategoryAxis(tickMargin: 10, callback: null),
+    shadcnValueAxis(_visitors),
+  ],
 );
 
 class const ShadcnBarActive({super.key}) extends StatelessWidget {

@@ -64,8 +64,9 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         // The original has no tooltip and no selection.
         extra: const {'events': <String>[]},
-        scales: const {
-          'x': LinearAxis(
+        scales: const [
+          LinearAxis(
+            .x,
             min: 0,
             max: 10,
             grid: AxisGrid(
@@ -80,7 +81,8 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
             ),
             border: AxisBorder(color: ChartPaint.solid(_axisLine)),
           ),
-          'y': LinearAxis(
+          LinearAxis(
+            .y,
             min: 0,
             max: 100,
             grid: AxisGrid(
@@ -96,7 +98,7 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
             ),
             border: AxisBorder(display: false),
           ),
-        },
+        ],
       ),
     ),
   );

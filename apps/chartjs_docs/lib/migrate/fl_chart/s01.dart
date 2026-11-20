@@ -105,8 +105,9 @@ ChartConfig _config(bool main) => fills(
           )
         : const ChartTooltip(enabled: false),
     plugins: [_indicator],
-    scales: {
-      'x': LinearAxis(
+    scales: [
+      LinearAxis(
+        .x,
         min: 0,
         max: 14,
         grid: const AxisGrid(display: false),
@@ -123,7 +124,8 @@ ChartConfig _config(bool main) => fills(
           callback: _bottom,
         ),
       ),
-      'y': LinearAxis(
+      LinearAxis(
+        .y,
         min: 0,
         max: main ? 4 : 6,
         grid: const AxisGrid(display: false),
@@ -136,7 +138,7 @@ ChartConfig _config(bool main) => fills(
           callback: _left,
         ),
       ),
-    },
+    ],
   ),
 );
 

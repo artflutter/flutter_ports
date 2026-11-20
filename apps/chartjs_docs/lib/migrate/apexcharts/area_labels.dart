@@ -33,10 +33,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexDataLabels(), apexHover, apexTooltipLook]),
   pluginOptions: [zoom.options],
-  scales: {
-    'x': apexCategoryAxis(),
-    'y': apexValueAxis(min: 10, max: 60, stepSize: 10),
-  },
+  scales: [apexCategoryAxis(), apexValueAxis(min: 10, max: 60, stepSize: 10)],
 );
 
 class const ApexAreaLabels({super.key}) extends StatelessWidget {

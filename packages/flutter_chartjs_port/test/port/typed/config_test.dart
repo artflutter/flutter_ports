@@ -175,7 +175,7 @@ void main() {
               borderWidth: 1,
             ),
           ],
-          scales: const {'y': LinearAxis(beginAtZero: true)},
+          scales: const [LinearAxis(.y, beginAtZero: true)],
           animation: ChartAnimation.none,
         ),
       ).lower();
@@ -236,7 +236,7 @@ void main() {
               fill: .none,
             ),
           ],
-          scales: {'y': LinearAxis(beginAtZero: true)},
+          scales: [LinearAxis(.y, beginAtZero: true)],
           animation: ChartAnimation.none,
         ),
       ).lower();
@@ -302,7 +302,7 @@ void main() {
               ),
             ),
           ],
-          scales: const {'x': LinearAxis(position: .bottom)},
+          scales: const [LinearAxis(.x, position: .bottom)],
           tooltip: ChartTooltip(
             callbacks: TooltipCallbacks(
               label: (tooltip, arg) {

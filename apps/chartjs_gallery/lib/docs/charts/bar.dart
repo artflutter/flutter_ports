@@ -50,7 +50,7 @@ ChartConfig barVerticalConfig() => const ChartConfig(
       borderWidth: 1,
     ),
   ],
-  scales: {'y': LinearAxis(beginAtZero: true)},
+  scales: [LinearAxis(.y, beginAtZero: true)],
 );
 
 /// The horizontal bar chart of `docs/charts/bar.md:304-351`, without the

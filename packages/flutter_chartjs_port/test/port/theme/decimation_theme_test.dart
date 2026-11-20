@@ -108,7 +108,7 @@ Future<(_State, _State)> _run(
         extra: {'data': input},
       ),
     ],
-    scales: const {'x': LinearAxis()},
+    scales: const [LinearAxis(.x)],
     extra: {
       'parsing': false,
       'plugins': {

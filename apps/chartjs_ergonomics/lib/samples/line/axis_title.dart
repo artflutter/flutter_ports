@@ -15,9 +15,9 @@ const axisTitle = ChartConfig(
       borderColor: .constant(.solid(teal)),
     ),
   ],
-  scales: {
-    'x': CategoryAxis(title: AxisTitle(display: true, text: ['Month'])),
-    'y': LinearAxis(title: AxisTitle(display: true, text: ['Units sold'])),
-  },
+  scales: [
+    CategoryAxis(.x, title: AxisTitle(display: true, text: ['Month'])),
+    LinearAxis(.y, title: AxisTitle(display: true, text: ['Units sold'])),
+  ],
 );
 // #enddocregion sample

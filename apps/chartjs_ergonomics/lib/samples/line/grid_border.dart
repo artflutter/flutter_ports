@@ -16,15 +16,17 @@ const gridBorder = ChartConfig(
       borderColor: .constant(.solid(teal)),
     ),
   ],
-  scales: {
-    'x': CategoryAxis(
+  scales: [
+    CategoryAxis(
+      .x,
       grid: AxisGrid(display: false),
       border: AxisBorder(width: 2, color: .solid(Color(0xFF555555))),
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       grid: AxisGrid(color: .solid(Color(0x14000000))),
       border: AxisBorder(display: false),
     ),
-  },
+  ],
 );
 // #enddocregion sample

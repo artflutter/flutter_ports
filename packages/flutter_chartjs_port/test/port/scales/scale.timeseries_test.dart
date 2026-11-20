@@ -96,7 +96,7 @@ TimeSeriesScale _x(List<double> times, [TimeSeriesAxis? x]) {
         points: [for (final time in times) DataPoint(time, 1)],
       ),
     ],
-    scales: {'x': ?x},
+    scales: [?x],
   );
   final chart = acquireChartRoot(ChartConfigLowering(config).lower());
   return chart.scales['x']! as TimeSeriesScale;
@@ -181,9 +181,9 @@ void main() {
         datasets: [
           TestDataset(ChartKind('timeseriesTest'), data: [1.0, 2.0, 3.0]),
         ],
-        scales: {
-          'x': TimeSeriesAxis(ticks: AxisTicks(source: TickSource.labels)),
-        },
+        scales: [
+          TimeSeriesAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
+        ],
       );
       final chart = acquireChartRoot(ChartConfigLowering(config).lower());
       final x = chart.scales['x']! as TimeSeriesScale;
@@ -206,6 +206,7 @@ void main() {
       final x = _x(
         [_t0 + _day, _t0 + 3 * _day],
         TimeSeriesAxis(
+          .x,
           min: DateTime.fromMillisecondsSinceEpoch(_t0.toInt(), isUtc: true),
           max: DateTime.fromMillisecondsSinceEpoch(
             (_t0 + 5 * _day).toInt(),

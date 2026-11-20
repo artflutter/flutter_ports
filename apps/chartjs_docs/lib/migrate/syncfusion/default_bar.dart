@@ -57,11 +57,12 @@ final ChartConfig _config = ChartConfig(
     text: (item) => '${item.label.join(' ')} : ${sfCompact(sfValue(item))}',
   ),
   plugins: [sfTooltipLook],
-  scales: {
+  scales: [
     // The first category at the bottom, as in Syncfusion.
-    'y': sfCategoryAxis(reverse: true),
+    sfCategoryAxis(direction: .y, reverse: true),
     // numberFormat: NumberFormat.compact(), no grid lines.
-    'x': sfValueAxis(
+    sfValueAxis(
+      direction: .x,
       min: 0,
       max: 100000000,
       stepSize: 10000000,
@@ -70,7 +71,7 @@ final ChartConfig _config = ChartConfig(
       line: true,
       ticks: true,
     ),
-  },
+  ],
 );
 
 class const SfDefaultBar({super.key}) extends StatelessWidget {

@@ -42,10 +42,10 @@ void _setFirstX(Chart chart, double x) {
 
 ChartConfig _scatter0to100([ZoomPluginOptions? zoom]) => ChartConfig(
   datasets: const [ScatterDataset()],
-  scales: const {
-    'x': LinearAxis(min: 0, max: 100),
-    'y': LinearAxis(min: 0, max: 100),
-  },
+  scales: const [
+    LinearAxis(.x, min: 0, max: 100),
+    LinearAxis(.y, min: 0, max: 100),
+  ],
   pluginOptions: [?zoom],
 );
 
@@ -148,13 +148,13 @@ void main() {
         final chart = _acquire(
           _scatter0to100(
             const ZoomPluginOptions(
-              limits: {
-                'x': ScaleLimits(
+              limits: LimitOptions(
+                x: ScaleLimits(
                   min: ScaleLimit(0),
                   max: ScaleLimit(100),
                   minRange: 100,
                 ),
-              },
+              ),
             ),
           ),
         );
@@ -171,13 +171,13 @@ void main() {
           // DIVERGES(zoom): adapt-native-zoom-options, no extra key.
           _scatter0to100(
             const ZoomPluginOptions(
-              limits: {
-                'x': ScaleLimits(
+              limits: LimitOptions(
+                x: ScaleLimits(
                   min: ScaleLimit(0),
                   max: ScaleLimit(100),
                   minRange: 50,
                 ),
-              },
+              ),
             ),
           ),
         );
@@ -210,9 +210,9 @@ void main() {
         final chart = _acquire(
           _scatter0to100(
             const ZoomPluginOptions(
-              limits: {
-                'x': ScaleLimits(min: ScaleLimit(0), max: ScaleLimit(100)),
-              },
+              limits: LimitOptions(
+                x: ScaleLimits(min: ScaleLimit(0), max: ScaleLimit(100)),
+              ),
             ),
           ),
         );
@@ -388,7 +388,7 @@ void main() {
             datasets: [
               BarDataset(data: [1, 2, 3, 2, 1]),
             ],
-            scales: {'x': CategoryAxis(min: 'b', max: 'd')},
+            scales: [CategoryAxis(.x, min: 'b', max: 'd')],
           ),
         );
         expect(_min(chart, 'x'), equals(1));
@@ -415,18 +415,18 @@ void main() {
               BarDataset(data: [1, 2, 3, 2, 1, 0, 1]),
             ],
             indexAxis: YAxis(),
-            scales: {
-              'y': CategoryAxis(extra: {'min': 2, 'max': 4}),
-            },
+            scales: [
+              CategoryAxis(.y, extra: {'min': 2, 'max': 4}),
+            ],
             pluginOptions: [
               ZoomPluginOptions(
-                limits: {
-                  'y': ScaleLimits(
+                limits: LimitOptions(
+                  y: ScaleLimits(
                     min: ScaleLimit(1),
                     max: ScaleLimit(5),
                     minRange: 1,
                   ),
-                },
+                ),
                 zoom: ZoomOptions(
                   wheel: WheelOptions(enabled: true),
                   mode: Mode.y,
@@ -469,7 +469,7 @@ void main() {
             datasets: [
               BarDataset(data: [1, 22, 3333, 22, 1]),
             ],
-            scales: {'y': LogarithmicAxis()},
+            scales: [LogarithmicAxis(.y)],
           ),
         );
         expect(_min(chart, 'y'), equals(0.1));

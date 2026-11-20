@@ -26,15 +26,17 @@ final ChartConfig _config = ChartConfig(
       },
     ),
   ],
-  scales: {
-    'x': CategoryAxis(
+  scales: [
+    CategoryAxis(
+      .x,
       grid: noGrid,
       ticks: graphicTicks(),
       border: bottomBorder,
       extra: bottomAxis,
     ),
     // `LinearScale(min: 0, max: 160)` of both variables.
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: 0,
       max: 160,
       grid: lineGrid,
@@ -42,7 +44,7 @@ final ChartConfig _config = ChartConfig(
       border: leftBorder,
       extra: leftAxis,
     ),
-  },
+  ],
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,

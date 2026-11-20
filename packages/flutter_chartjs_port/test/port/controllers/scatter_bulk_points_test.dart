@@ -96,10 +96,10 @@ ChartConfigurationScope _config({
     ],
     responsive: false,
     animation: animation,
-    scales: {
-      'x': LinearAxis(min: -1, max: 18, extra: x),
-      'y': LinearAxis(min: -1, max: 10, extra: y),
-    },
+    scales: [
+      LinearAxis(.x, min: -1, max: 18, extra: x),
+      LinearAxis(.y, min: -1, max: 10, extra: y),
+    ],
     extra: {
       'events': const <String>[],
       if (form != 'parsed') 'parsing': false,

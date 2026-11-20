@@ -66,9 +66,9 @@ class _ZoomPageState() extends State<ZoomPage> {
       mode: Mode.x,
     ),
     pan: PanOptions(enabled: true, mode: Mode.x),
-    limits: {
-      'x': ScaleLimits(min: ScaleLimit.original, max: ScaleLimit.original),
-    },
+    limits: LimitOptions(
+      x: ScaleLimits(min: ScaleLimit.original, max: ScaleLimit.original),
+    ),
   );
 
   @override
@@ -89,7 +89,7 @@ class _ZoomPageState() extends State<ZoomPage> {
                   pointRadius: 0,
                 ),
               ],
-              scales: const {'x': LinearAxis(), 'y': LinearAxis()},
+              scales: const [LinearAxis(.x), LinearAxis(.y)],
               pluginOptions: const [_zoom],
             ),
             theme: dark

@@ -22,10 +22,10 @@ const ChartShadow _shadow = ChartShadow(
   offset: Offset(0, 20),
 );
 
-const Map<String, ChartAxis> _hiddenAxes = {
-  'x': CategoryAxis(display: ScaleDisplay.off),
-  'y': LinearAxis(min: 0, max: 4, display: ScaleDisplay.off),
-};
+const List<ChartAxis> _hiddenAxes = [
+  CategoryAxis(.x, display: ScaleDisplay.off),
+  LinearAxis(.y, min: 0, max: 4, display: ScaleDisplay.off),
+];
 
 ChartConfig _line(List<double> data, {ChartShadow? shadow}) => ChartConfig(
   labels: const ['a', 'b', 'c'],

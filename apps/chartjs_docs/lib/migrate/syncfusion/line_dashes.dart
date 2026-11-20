@@ -113,8 +113,9 @@ final ChartConfig _config = ChartConfig(
       },
     ),
   ),
-  scales: const {
-    'x': LinearAxis(
+  scales: const [
+    LinearAxis(
+      .x,
       min: 2010,
       max: 2016,
       grid: AxisGrid(
@@ -132,7 +133,8 @@ final ChartConfig _config = ChartConfig(
       border: AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
     // NumericAxis(minimum: 3, maximum: 21, interval: 3)
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: 3,
       max: 21,
       grid: AxisGrid(
@@ -149,7 +151,7 @@ final ChartConfig _config = ChartConfig(
       ),
       border: AxisBorder(display: false),
     ),
-  },
+  ],
 );
 
 class const SfLineDashes({super.key}) extends StatelessWidget {

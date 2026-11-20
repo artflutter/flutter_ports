@@ -32,12 +32,12 @@ final ChartConfig _config = ChartConfig(
   ),
   animation: apexAnimation,
   plugins: [apexHover, apexTooltipLook],
-  scales: {
+  scales: [
     // The values under the plot, with a grid line at each value, and the
     // categories on the left.
-    'x': apexValueAxis(min: 0, max: 80, stepSize: 20, horizontal: true),
-    'y': apexCategoryAxis(horizontal: true),
-  },
+    apexValueAxis(min: 0, max: 80, stepSize: 20, horizontal: true),
+    apexCategoryAxis(horizontal: true),
+  ],
 );
 
 class const ApexBarHorizontal({super.key}) extends StatelessWidget {

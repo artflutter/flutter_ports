@@ -186,10 +186,10 @@ void main() {
               ),
             ],
             labels: const ['label1', 'label2', 'label3', 'label4'],
-            scales: const {
-              'x': CategoryAxis(display: ScaleDisplay.off),
-              'y': LinearAxis(display: ScaleDisplay.off),
-            },
+            scales: const [
+              CategoryAxis(.x, display: ScaleDisplay.off),
+              LinearAxis(.y, display: ScaleDisplay.off),
+            ],
             extra: const {
               'plugins': {'legend': false, 'title': false},
             },

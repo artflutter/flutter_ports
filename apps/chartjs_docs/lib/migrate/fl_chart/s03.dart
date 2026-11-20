@@ -115,8 +115,9 @@ class _Sample3State() extends State<Sample3> {
         ),
       ),
       plugins: _plugins,
-      scales: {
-        'x': CategoryAxis(
+      scales: [
+        CategoryAxis(
+          .x,
           grid: AxisGrid(
             drawTicks: false,
             extra: {
@@ -134,7 +135,8 @@ class _Sample3State() extends State<Sample3> {
             extra: {'color': _bottomColor},
           ),
         ),
-        'y': LinearAxis(
+        LinearAxis(
+          .y,
           min: 0,
           grid: AxisGrid(
             drawTicks: false,
@@ -156,7 +158,7 @@ class _Sample3State() extends State<Sample3> {
             align: _fitLeft ? TickAlign.inner : TickAlign.center,
           ),
         ),
-      },
+      ],
     ),
   );
 

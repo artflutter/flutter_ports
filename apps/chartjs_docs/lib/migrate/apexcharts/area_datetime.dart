@@ -109,10 +109,11 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   animation: apexAnimation,
   plugins: apexZoomPlugins([_annotationPlugin, apexHover, apexTooltipLook]),
   pluginOptions: [zoom.options],
-  scales: {
+  scales: [
     // xaxis: {type: 'datetime', min: 1 Mar 2012, tickAmount: 6}: at most 7
     // labels at the starts of the days, the months or the years.
-    'x': TimeAxis(
+    TimeAxis(
+      .x,
       min: _date('2012-03-01'),
       tooltipFormat: 'dd MMM yyyy',
       grid: const AxisGrid(display: false, drawTicks: false),
@@ -137,8 +138,8 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
     ),
     // zoom.autoScaleYaxis: Chart.js fits the y axis to the points in the
     // range of the x axis.
-    'y': apexValueAxis(),
-  },
+    apexValueAxis(),
+  ],
 );
 
 /// The range buttons of the demo: each one zooms the x axis to a range.

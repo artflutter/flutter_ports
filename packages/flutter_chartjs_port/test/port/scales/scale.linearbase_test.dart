@@ -142,7 +142,7 @@ void main() {
     testWidgets('jsConstruct makes a LinearScaleBase from the cfg object', (
       tester,
     ) async {
-      final chart = _chart(_config({}));
+      final chart = _chart(_config([]));
       final scale = jsConstruct(LinearScaleBase.jsClass, [
         <String, Object?>{
           'id': 'z',
@@ -174,7 +174,7 @@ void main() {
       tester,
     ) async {
       // scale.logarithmic.js:104 calls the body with apply.
-      final chart = _chart(_config({}));
+      final chart = _chart(_config([]));
       final scale = chart.scales['y']! as LinearScaleBase;
       for (final value in _parseValues) {
         final parsed = scale.parse(value, 0);
@@ -203,11 +203,12 @@ void main() {
       tester,
     ) async {
       final chart = _chart(
-        _config({
-          'y': const LinearAxis(
+        _config([
+          const LinearAxis(
+            .y,
             extra: {'type': 'testLinearBase', 'min': '-15', 'max': '110'},
           ),
-        }),
+        ]),
       );
       final scale = chart.scales['y']!;
       expect(scale.min, -15);
@@ -234,8 +235,9 @@ void main() {
         // `_decimalPlaces('-15')` is undefined, so the factor is NaN, as
         // upstream gives.
         final chart = _chart(
-          _config({
-            'y': LinearAxis(
+          _config([
+            LinearAxis(
+              .y,
               ticks: ticks,
               extra: const {
                 'type': 'testLinearBase',
@@ -243,7 +245,7 @@ void main() {
                 'max': '110',
               },
             ),
-          }),
+          ]),
         );
         final scale = chart.scales['y']!;
         final tickValues = [for (final t in scale.ticks!) t.value];
@@ -262,13 +264,14 @@ void main() {
 
     testWidgets('number bounds give number tick values', (tester) async {
       final chart = _chart(
-        _config({
-          'y': const LinearAxis(
+        _config([
+          const LinearAxis(
+            .y,
             min: -15,
             max: 110,
             extra: {'type': 'testLinearBase'},
           ),
-        }),
+        ]),
       );
       expect(
         [for (final t in chart.scales['y']!.ticks!) upstreamTickLabel(t)],
@@ -279,7 +282,7 @@ void main() {
 }
 
 /// A chart config of the test controller with the scale options [scales].
-ChartConfig _config(Map<String, ChartAxis> scales) => ChartConfig(
+ChartConfig _config(List<ChartAxis> scales) => ChartConfig(
   datasets: [
     TestDataset(
       // The custom controller and its default testLinearBase scales.

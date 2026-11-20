@@ -35,19 +35,17 @@ const Color _green = Color(0xFF00FF00);
 const ValueKey<String> _a = ValueKey('a');
 const ValueKey<String> _b = ValueKey('b');
 
-const Map<String, ChartAxis> _cartesianAxes = {
-  'x': LinearAxis(min: 0, max: 100),
-  'y': LinearAxis(min: 0, max: 100),
-};
+const List<ChartAxis> _cartesianAxes = [
+  LinearAxis(.x, min: 0, max: 100),
+  LinearAxis(.y, min: 0, max: 100),
+];
 
-const Map<String, ChartAxis> _categoryAxes = {
-  'x': CategoryAxis(),
-  'y': LinearAxis(min: 0, max: 100),
-};
+const List<ChartAxis> _categoryAxes = [
+  CategoryAxis(.x),
+  LinearAxis(.y, min: 0, max: 100),
+];
 
-const Map<String, ChartAxis> _radialAxis = {
-  'r': RadialLinearAxis(min: 0, max: 100),
-};
+const List<ChartAxis> _radialAxis = [RadialLinearAxis(min: 0, max: 100)];
 
 /// The labels of the charts of [_count] items: one growable List for a test
 /// run, as an app with stable labels keeps it.
@@ -176,7 +174,7 @@ ChartConfig _bars(
   int step,
   List<Object> labels, {
   List<Dataset>? datasets,
-  Map<String, ChartAxis>? scales = _categoryAxes,
+  List<ChartAxis>? scales = _categoryAxes,
   ChartAnimation? animation = ChartAnimation.none,
   ChartTitle? title,
   List<Plugin<Object?>>? plugins,
@@ -1821,19 +1819,21 @@ void main() {
           borderWidth: 0,
         ),
       ],
-      scales: {
-        'x': LinearAxis(
+      scales: [
+        LinearAxis(
+          .x,
           min: 0,
           max: 100,
           grid: const AxisGrid(color: ChartPaint.solid(_red), lineWidth: 3),
           extra: xExtra,
         ),
-        'y': const LinearAxis(
+        const LinearAxis(
+          .y,
           min: 0,
           max: 100,
           grid: AxisGrid(color: ChartPaint.solid(_green), lineWidth: 3),
         ),
-      },
+      ],
       animation: ChartAnimation.none,
       legend: legend,
     );
@@ -1961,10 +1961,10 @@ void main() {
   });
 
   group('a category axis', () {
-    const dataBounds = <String, ChartAxis>{
-      'x': CategoryAxis(extra: {'bounds': ScaleBounds.data}),
-      'y': LinearAxis(min: 0, max: 100),
-    };
+    const dataBounds = <ChartAxis>[
+      CategoryAxis(.x, extra: {'bounds': ScaleBounds.data}),
+      LinearAxis(.y, min: 0, max: 100),
+    ];
 
     testWidgets('with bounds data takes the range of the prepared data of a '
         'tick', (tester) async {

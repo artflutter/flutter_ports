@@ -46,20 +46,22 @@ ChartConfig _config(int count, {required bool shown}) {
         ),
     ],
     labels: [for (var i = 0; i < count; i++) 'c$i'],
-    scales: {
-      'x': CategoryAxis(
+    scales: [
+      CategoryAxis(
+        .x,
         display: shown ? ScaleDisplay.on : ScaleDisplay.off,
         grid: grid,
         ticks: ticks,
       ),
-      'y': LinearAxis(
+      LinearAxis(
+        .y,
         min: 0,
         max: 100,
         display: shown ? ScaleDisplay.on : ScaleDisplay.off,
         grid: grid,
         ticks: ticks,
       ),
-    },
+    ],
   );
 }
 

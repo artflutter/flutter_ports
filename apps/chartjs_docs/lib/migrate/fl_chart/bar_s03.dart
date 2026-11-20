@@ -69,9 +69,10 @@ class _BarSample3State() extends State<BarSample3> {
       ),
       tooltip: const ChartTooltip(enabled: false),
       plugins: [_labels, _touch],
-      scales: {
+      scales: [
         // A category axis places the groups as `BarChartAlignment.spaceAround`.
-        'x': CategoryAxis(
+        CategoryAxis(
+          .x,
           grid: const AxisGrid(display: false, drawTicks: false),
           border: const AxisBorder(display: false),
           ticks: const AxisTicks(
@@ -81,8 +82,8 @@ class _BarSample3State() extends State<BarSample3> {
           ),
           extra: {'afterFit': reserve(30)},
         ),
-        'y': valueAxis(min: 0, max: 20),
-      },
+        valueAxis(min: 0, max: 20),
+      ],
     ),
   );
 

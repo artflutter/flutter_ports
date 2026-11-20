@@ -69,7 +69,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
-  scales: {'x': shadcnCategoryAxis(), 'y': shadcnValueAxis(_desktop)},
+  scales: [shadcnCategoryAxis(), shadcnValueAxis(_desktop)],
 );
 
 class const ShadcnLineDotsCustom({super.key}) extends StatelessWidget {

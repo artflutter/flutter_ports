@@ -24,6 +24,6 @@ const stacked = ChartConfig(
       fill: .toStacked,
     ),
   ],
-  scales: {'y': LinearAxis(stacked: .on, beginAtZero: true)},
+  scales: [LinearAxis(.y, stacked: .on, beginAtZero: true)],
 );
 // #enddocregion sample

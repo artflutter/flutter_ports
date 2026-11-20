@@ -170,11 +170,13 @@ void _straight(List<SplinePoint> points) {
 /// of its power of ten.
 LinearAxis shadcnValueAxis(
   List<num> values, {
+  CartesianAxis direction = .y,
   bool grid = true,
   bool stacked = false,
 }) {
   final (min, max, step) = rechartsRange(values);
   return LinearAxis(
+    direction,
     min: min,
     max: max,
     stacked: stacked ? StackMode.on : StackMode.off,
@@ -217,12 +219,14 @@ LinearAxis shadcnValueAxis(
 /// lines. [callback] is `tickFormatter`, by default the first three
 /// letters, and null keeps the labels. Recharts gives the axis 30 px.
 CategoryAxis shadcnCategoryAxis({
+  CartesianAxis direction = .x,
   TickCallback? callback = shortLabel,
   double tickMargin = 8,
   bool display = true,
   bool stacked = false,
   double? autoSkipPadding,
 }) => CategoryAxis(
+  direction,
   display: display ? ScaleDisplay.on : ScaleDisplay.off,
   stacked: stacked ? StackMode.on : StackMode.off,
   grid: const AxisGrid(display: false, drawTicks: false),
@@ -253,6 +257,7 @@ CategoryAxis shadcnCategoryYAxis({
   double width = 60,
   bool display = true,
 }) => CategoryAxis(
+  .y,
   display: display ? ScaleDisplay.on : ScaleDisplay.off,
   grid: const AxisGrid(display: false, drawTicks: false),
   ticks: AxisTicks(

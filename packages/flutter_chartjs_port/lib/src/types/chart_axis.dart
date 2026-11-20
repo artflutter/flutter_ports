@@ -45,6 +45,14 @@ abstract class ScaleAxis() {
 abstract class CartesianAxis() implements ScaleAxis {
   /// The constructor of the subclasses.
   this;
+
+  /// The horizontal axis, [XAxis]: the dot shorthand `.x`
+  /// (`LinearAxis(.x)`, Chart.js ADR 0191).
+  static const CartesianAxis x = XAxis();
+
+  /// The vertical axis, [YAxis]: the dot shorthand `.y`
+  /// (`LinearAxis(.y)`, Chart.js ADR 0191).
+  static const CartesianAxis y = YAxis();
 }
 
 /// The horizontal axis: `'x'` upstream.

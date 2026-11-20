@@ -223,10 +223,10 @@ void main() {
               BarDataset(data: []),
             ],
             labels: [],
-            scales: {
-              'x': CategoryAxis(stacked: StackMode.on),
-              'y': LinearAxis(stacked: StackMode.on),
-            },
+            scales: [
+              CategoryAxis(.x, stacked: StackMode.on),
+              LinearAxis(.y, stacked: StackMode.on),
+            ],
           ),
         );
 
@@ -250,10 +250,10 @@ void main() {
               BarDataset(data: []),
             ],
             labels: [],
-            scales: {
-              'x': CategoryAxis(stacked: StackMode.off),
-              'y': LinearAxis(stacked: StackMode.off),
-            },
+            scales: [
+              CategoryAxis(.x, stacked: StackMode.off),
+              LinearAxis(.y, stacked: StackMode.off),
+            ],
           ),
         );
 
@@ -295,10 +295,10 @@ void main() {
             BarDataset(data: []),
           ],
           labels: [],
-          scales: {
-            'x': CategoryAxis(stacked: StackMode.on),
-            'y': LinearAxis(stacked: StackMode.on),
-          },
+          scales: [
+            CategoryAxis(.x, stacked: StackMode.on),
+            LinearAxis(.y, stacked: StackMode.on),
+          ],
         ),
       );
 
@@ -319,10 +319,10 @@ void main() {
             BarDataset(data: []),
           ],
           labels: [],
-          scales: {
-            'x': CategoryAxis(stacked: StackMode.off),
-            'y': LinearAxis(stacked: StackMode.off),
-          },
+          scales: [
+            CategoryAxis(.x, stacked: StackMode.off),
+            LinearAxis(.y, stacked: StackMode.off),
+          ],
         ),
       );
 
@@ -363,10 +363,10 @@ void main() {
             BarDataset(data: [], stack: 'stack2'),
           ],
           labels: [],
-          scales: {
-            'x': CategoryAxis(stacked: StackMode.on),
-            'y': LinearAxis(stacked: StackMode.on),
-          },
+          scales: [
+            CategoryAxis(.x, stacked: StackMode.on),
+            LinearAxis(.y, stacked: StackMode.on),
+          ],
         ),
       );
 
@@ -387,10 +387,10 @@ void main() {
             BarDataset(data: [], stack: 'stack2'),
           ],
           labels: [],
-          scales: {
-            'x': CategoryAxis(stacked: StackMode.off),
-            'y': LinearAxis(stacked: StackMode.off),
-          },
+          scales: [
+            CategoryAxis(.x, stacked: StackMode.off),
+            LinearAxis(.y, stacked: StackMode.off),
+          ],
         ),
       );
 
@@ -458,10 +458,10 @@ void main() {
             BarDataset(data: []),
           ],
           labels: [],
-          scales: {
-            'x': CategoryAxis(stacked: StackMode.on),
-            'y': LinearAxis(stacked: StackMode.on),
-          },
+          scales: [
+            CategoryAxis(.x, stacked: StackMode.on),
+            LinearAxis(.y, stacked: StackMode.on),
+          ],
         ),
       );
 
@@ -485,10 +485,10 @@ void main() {
             BarDataset(data: []),
           ],
           labels: [],
-          scales: {
-            'x': CategoryAxis(stacked: StackMode.off),
-            'y': LinearAxis(stacked: StackMode.off),
-          },
+          scales: [
+            CategoryAxis(.x, stacked: StackMode.off),
+            LinearAxis(.y, stacked: StackMode.off),
+          ],
         ),
       );
 
@@ -540,10 +540,10 @@ void main() {
               BarDataset(data: []),
             ],
             labels: [],
-            scales: {
-              'x': CategoryAxis(stacked: StackMode.on),
-              'y': LinearAxis(stacked: StackMode.on),
-            },
+            scales: [
+              CategoryAxis(.x, stacked: StackMode.on),
+              LinearAxis(.y, stacked: StackMode.on),
+            ],
           ),
         );
 
@@ -570,10 +570,10 @@ void main() {
               BarDataset(data: []),
             ],
             labels: [],
-            scales: {
-              'x': CategoryAxis(stacked: StackMode.off),
-              'y': LinearAxis(stacked: StackMode.off),
-            },
+            scales: [
+              CategoryAxis(.x, stacked: StackMode.off),
+              LinearAxis(.y, stacked: StackMode.off),
+            ],
           ),
         );
 
@@ -626,10 +626,10 @@ void main() {
               BarDataset(data: [], stack: 'stack2'),
             ],
             labels: [],
-            scales: {
-              'x': CategoryAxis(stacked: StackMode.on),
-              'y': LinearAxis(stacked: StackMode.on),
-            },
+            scales: [
+              CategoryAxis(.x, stacked: StackMode.on),
+              LinearAxis(.y, stacked: StackMode.on),
+            ],
           ),
         );
 
@@ -656,10 +656,10 @@ void main() {
               BarDataset(data: [], stack: 'stack2'),
             ],
             labels: [],
-            scales: {
-              'x': CategoryAxis(stacked: StackMode.off),
-              'y': LinearAxis(stacked: StackMode.off),
-            },
+            scales: [
+              CategoryAxis(.x, stacked: StackMode.off),
+              LinearAxis(.y, stacked: StackMode.off),
+            ],
           ),
         );
 
@@ -720,10 +720,10 @@ void main() {
               extra: {'borderSkipped': BorderSkippedEdge.top},
             ),
           ),
-          scales: {
-            'x': CategoryAxis(display: ScaleDisplay.off),
-            'y': LinearAxis(display: ScaleDisplay.off, beginAtZero: false),
-          },
+          scales: [
+            CategoryAxis(.x, display: ScaleDisplay.off),
+            LinearAxis(.y, display: ScaleDisplay.off, beginAtZero: false),
+          ],
           extra: {
             'plugins': {'legend': false, 'title': false},
           },
@@ -788,10 +788,10 @@ void main() {
               BarDataset(data: [8, 10], label: 'dataset3'),
             ],
             labels: ['label1', 'label2'],
-            scales: {
-              'x': CategoryAxis(display: ScaleDisplay.off),
-              'y': LinearAxis(display: ScaleDisplay.off, beginAtZero: false),
-            },
+            scales: [
+              CategoryAxis(.x, display: ScaleDisplay.off),
+              LinearAxis(.y, display: ScaleDisplay.off, beginAtZero: false),
+            ],
             extra: {
               'plugins': {'legend': false, 'title': false},
             },
@@ -818,10 +818,10 @@ void main() {
             BarDataset(data: [1, 2], label: 'dataset1', hidden: true),
           ],
           labels: ['label1', 'label2'],
-          scales: {
-            'x': CategoryAxis(display: ScaleDisplay.off),
-            'y': LinearAxis(min: 0, max: 2, display: ScaleDisplay.off),
-          },
+          scales: [
+            CategoryAxis(.x, display: ScaleDisplay.off),
+            LinearAxis(.y, min: 0, max: 2, display: ScaleDisplay.off),
+          ],
           extra: {
             'plugins': {'legend': false, 'title': false},
           },
@@ -850,10 +850,10 @@ void main() {
             BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
-          scales: {
-            'x': CategoryAxis(display: ScaleDisplay.off),
-            'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
-          },
+          scales: [
+            CategoryAxis(.x, display: ScaleDisplay.off),
+            LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
+          ],
           extra: {
             'plugins': {'legend': false, 'title': false},
           },
@@ -890,15 +890,16 @@ void main() {
               BarDataset(data: [50, 80, 90, 0], label: 'dataset2'),
             ],
             labels: ['label1', 'label2', 'label3', 'label4'],
-            scales: {
-              'x': CategoryAxis(display: ScaleDisplay.off),
-              'y': LinearAxis(
+            scales: [
+              CategoryAxis(.x, display: ScaleDisplay.off),
+              LinearAxis(
+                .y,
                 display: ScaleDisplay.off,
                 stacked: StackMode.on,
                 min: 50,
                 max: 100,
               ),
-            },
+            ],
             extra: {
               'plugins': {'legend': false, 'title': false},
             },
@@ -934,10 +935,10 @@ void main() {
             BarDataset(data: [10, 15, 0, -14], label: 'dataset2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
-          scales: {
-            'x': CategoryAxis(display: ScaleDisplay.off, stacked: StackMode.on),
-            'y': LinearAxis(display: ScaleDisplay.off),
-          },
+          scales: [
+            CategoryAxis(.x, display: ScaleDisplay.off, stacked: StackMode.on),
+            LinearAxis(.y, display: ScaleDisplay.off),
+          ],
           extra: {
             'plugins': {'legend': false, 'title': false},
           },
@@ -1035,10 +1036,10 @@ void main() {
               ),
             ],
             labels: ['label1', 'label2', 'label3', 'label4'],
-            scales: {
-              'x': CategoryAxis(display: ScaleDisplay.off),
-              'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
-            },
+            scales: [
+              CategoryAxis(.x, display: ScaleDisplay.off),
+              LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
+            ],
             extra: {
               'plugins': {'legend': false, 'title': false},
             },
@@ -1076,10 +1077,10 @@ void main() {
               BarDataset(data: [1, 2], stack: 'stack2'),
             ],
             labels: ['label1', 'label2', 'label3', 'label4'],
-            scales: {
-              'x': CategoryAxis(display: ScaleDisplay.off),
-              'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
-            },
+            scales: [
+              CategoryAxis(.x, display: ScaleDisplay.off),
+              LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
+            ],
             extra: {
               'plugins': {'legend': false, 'title': false},
             },
@@ -1109,10 +1110,10 @@ void main() {
             BarDataset(data: [0.5, 1], stack: 'stack2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
-          scales: {
-            'x': CategoryAxis(display: ScaleDisplay.off),
-            'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
-          },
+          scales: [
+            CategoryAxis(.x, display: ScaleDisplay.off),
+            LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
+          ],
           extra: {
             'plugins': {'legend': false, 'title': false},
           },
@@ -1414,7 +1415,7 @@ void main() {
       testWidgets('should correctly set bar width when min and max option is '
           'set.', (tester) async {
         config = data.copyWith(
-          scales: const {'x': CategoryAxis(min: 'March', max: 'May')},
+          scales: const [CategoryAxis(.x, min: 'March', max: 'May')],
         );
         afterEach();
       });
@@ -1422,10 +1423,10 @@ void main() {
       testWidgets('should correctly set bar width when scale are stacked with '
           'min and max options.', (tester) async {
         config = data.copyWith(
-          scales: const {
-            'x': CategoryAxis(min: 'March', max: 'May'),
-            'y': LinearAxis(stacked: StackMode.on),
-          },
+          scales: const [
+            CategoryAxis(.x, min: 'March', max: 'May'),
+            LinearAxis(.y, stacked: StackMode.on),
+          ],
         );
         afterEach();
       });
@@ -1495,7 +1496,7 @@ void main() {
           'set.', (tester) async {
         config = data.copyWith(
           indexAxis: const YAxis(),
-          scales: const {'y': CategoryAxis(min: 'March', max: 'May')},
+          scales: const [CategoryAxis(.y, min: 'March', max: 'May')],
         );
         afterEach();
       });
@@ -1504,10 +1505,10 @@ void main() {
           'with min and max options.', (tester) async {
         config = data.copyWith(
           indexAxis: const YAxis(),
-          scales: const {
-            'x': LinearAxis(stacked: StackMode.on),
-            'y': CategoryAxis(min: 'March', max: 'May'),
-          },
+          scales: const [
+            LinearAxis(.x, stacked: StackMode.on),
+            CategoryAxis(.y, min: 'March', max: 'May'),
+          ],
         );
         afterEach();
       });
@@ -1527,10 +1528,10 @@ void main() {
                   BarDataset(data: [1, 2]),
                 ],
                 labels: const ['label1', 'label2', 'label3'],
-                scales: const {
-                  'x': CategoryAxis(extra: {'id': 'x'}),
-                  'y': LinearAxis(),
-                },
+                scales: const [
+                  CategoryAxis(.x, extra: {'id': 'x'}),
+                  LinearAxis(.y),
+                ],
                 extra: {
                   'legend': false,
                   'title': false,
@@ -1657,10 +1658,10 @@ void main() {
             BarDataset(data: [1, 2, 3, 4]),
           ],
           labels: ['A', 'B', 'C', 'D'],
-          scales: {
-            'x': CategoryAxis(display: ScaleDisplay.off),
-            'y': LinearAxis(display: ScaleDisplay.off),
-          },
+          scales: [
+            CategoryAxis(.x, display: ScaleDisplay.off),
+            LinearAxis(.y, display: ScaleDisplay.off),
+          ],
           extra: {
             'plugins': {'legend': false, 'title': false},
           },
@@ -1689,10 +1690,10 @@ void main() {
             BarDataset(data: [1, 2, 3, 4]),
           ],
           labels: ['A', 'B', 'C', 'D'],
-          scales: {
-            'x': CategoryAxis(display: ScaleDisplay.off, stacked: StackMode.on),
-            'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
-          },
+          scales: [
+            CategoryAxis(.x, display: ScaleDisplay.off, stacked: StackMode.on),
+            LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
+          ],
           extra: {
             'plugins': {'legend': false, 'title': false},
           },

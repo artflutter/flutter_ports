@@ -42,8 +42,9 @@ final ChartConfig _config = fills(
     ],
     tooltip: const ChartTooltip(enabled: false),
     extra: const {'events': <String>[]},
-    scales: {
-      'x': const CategoryAxis(
+    scales: [
+      const CategoryAxis(
+        .x,
         grid: AxisGrid(display: false),
         border: Fl.noBorder,
         ticks: AxisTicks(
@@ -53,7 +54,8 @@ final ChartConfig _config = fills(
           font: TextStyle(fontSize: 10, fontWeight: FontWeight.bold),
         ),
       ),
-      'y': LinearAxis(
+      LinearAxis(
+        .y,
         min: 0,
         grid: flGrid(show: (v) => v == 1 || v == 4 || v == 5 || v == 6),
         border: flGridDash,
@@ -65,7 +67,7 @@ final ChartConfig _config = fills(
           callback: (scale, value, index, ticks) => ['\$ ${value + 0.5}'],
         ),
       ),
-    },
+    ],
   ),
 );
 

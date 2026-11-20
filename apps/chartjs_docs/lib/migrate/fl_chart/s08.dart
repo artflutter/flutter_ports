@@ -89,8 +89,9 @@ final ChartConfig _config = fills(
       ),
     ),
     plugins: _plugins,
-    scales: {
-      'x': const LinearAxis(
+    scales: [
+      const LinearAxis(
+        .x,
         min: 0,
         max: 11,
         grid: AxisGrid(display: false),
@@ -101,7 +102,8 @@ final ChartConfig _config = fills(
           font: TextStyle(fontSize: 10),
         ),
       ),
-      'y': LinearAxis(
+      LinearAxis(
+        .y,
         min: 0,
         max: 6,
         grid: const AxisGrid(display: false),
@@ -119,7 +121,7 @@ final ChartConfig _config = fills(
           },
         ),
       ),
-    },
+    ],
   ),
 );
 

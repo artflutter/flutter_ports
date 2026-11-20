@@ -342,10 +342,10 @@ void main() {
             pointRadius: 0,
           ),
         ],
-        scales: const {
-          'x': CategoryAxis(display: ScaleDisplay.off),
-          'y': LinearAxis(display: ScaleDisplay.off),
-        },
+        scales: const [
+          CategoryAxis(.x, display: ScaleDisplay.off),
+          LinearAxis(.y, display: ScaleDisplay.off),
+        ],
         extra: const {
           'plugins': {'legend': false, 'title': false},
         },

@@ -86,14 +86,16 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
           extra: {'base': max(range.min, 0)},
         ),
       ],
-      scales: {
-        'x': CategoryAxis(
+      scales: [
+        CategoryAxis(
+          .x,
           grid: noGrid,
           ticks: graphicTicks(),
           border: bottomBorder,
           extra: bottomAxis,
         ),
-        'y': LinearAxis(
+        LinearAxis(
+          .y,
           min: range.min,
           max: range.max,
           grid: lineGrid,
@@ -104,7 +106,7 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
           border: leftBorder,
           extra: leftAxis,
         ),
-      },
+      ],
       padding: regionPadding,
       maintainAspectRatio: false,
       // `rebuild: false` with no transition: the bars change at once.

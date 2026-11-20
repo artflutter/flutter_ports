@@ -56,6 +56,7 @@ const Map<String, int> _allowlist = {
   'data.datasets.*.hidden': 93,
   'data.datasets.*.xAxisID': 104,
   'data.datasets.*.yAxisID': 108,
+  'options.scales.*.axis': 3286,
   'data.datasets.*.barThickness': 124,
   'data.datasets.*.maxBarThickness': 129,
   'data.datasets.*.minBarLength': 134,
@@ -170,8 +171,8 @@ List<ChartConfig> _configs() {
           hoverBackgroundColor: const .constant(.solid(_red)),
           hoverBorderColor: const .constant(.solid(_red)),
           hoverBorderWidth: 1,
-          xAxisID: 'x',
-          yAxisID: 'y',
+          xAxis: _xAxis,
+          yAxis: _yAxis,
           stack: 's',
           indexAxis: const XAxis(),
           borderRadius: 2,
@@ -186,8 +187,8 @@ List<ChartConfig> _configs() {
           points: points,
           backgroundColor: const ChartValue.indexed([ChartPaint.solid(_red)]),
           borderColor: const ChartValue.resolver(_colorFor),
-          xAxisID: 'x',
-          yAxisID: 'y',
+          xAxis: _xAxis,
+          yAxis: _yAxis,
           stack: 's',
           indexAxis: const XAxis(),
           fill: _fill,
@@ -207,8 +208,8 @@ List<ChartConfig> _configs() {
         ),
         ScatterDataset(
           points: points,
-          xAxisID: 'x',
-          yAxisID: 'y',
+          xAxis: _xAxis,
+          yAxis: _yAxis,
           stack: 's',
           fill: _fill,
           tension: 0.4,
@@ -227,52 +228,38 @@ List<ChartConfig> _configs() {
         ),
         BubbleDataset(
           points: [DataPoint.bubble(1, 2, 3)],
-          xAxisID: 'x',
-          yAxisID: 'y',
+          xAxis: _xAxis,
+          yAxis: _yAxis,
           radius: 3,
           hoverRadius: 4,
           pointStyle: const CirclePointStyle(),
         ),
       ],
-      scales: {
-        'x': const CategoryAxis(
-          display: ScaleDisplay.on,
-          position: .bottom,
-          reverse: false,
-          stacked: StackMode.on,
-          labels: ['a', 'b'],
-          min: 'a',
-          max: 'b',
-          ticks: _ticks,
-          grid: _grid,
-          title: _axisTitle,
-        ),
-        'y': const LinearAxis(
-          min: 0,
-          max: 10,
-          suggestedMin: 0,
-          suggestedMax: 10,
-          beginAtZero: true,
-        ),
-        'y2': const LogarithmicAxis(
+      scales: [
+        _xAxis,
+        _yAxis,
+        const LogarithmicAxis(
+          .y,
           min: 1,
           max: 10,
           suggestedMin: 1,
           suggestedMax: 10,
         ),
-        't': TimeAxis(
+        TimeAxis(
+          .x,
           min: DateTime.utc(2020),
           max: DateTime.utc(2021),
           unit: .month,
           tooltipFormat: 'yyyy',
         ),
-        'ts': TimeSeriesAxis(
+        TimeSeriesAxis(
+          .x,
           min: DateTime.utc(2020),
           max: DateTime.utc(2021),
           unit: .month,
           tooltipFormat: 'yyyy',
         ),
-      },
+      ],
       indexAxis: const XAxis(),
       responsive: true,
       maintainAspectRatio: true,
@@ -442,8 +429,8 @@ List<ChartConfig> _configs() {
       datasets: [
         PolarAreaDataset(data: data, offset: 1, hoverOffset: 2, spacing: 1),
       ],
-      scales: const {
-        'r': RadialLinearAxis(
+      scales: const [
+        RadialLinearAxis(
           display: ScaleDisplay.on,
           position: .chartArea,
           min: 0,
@@ -460,7 +447,7 @@ List<ChartConfig> _configs() {
           angleLinesColor: ChartPaint.solid(_red),
           angleLinesLineWidth: 1,
         ),
-      },
+      ],
     ),
     ChartConfig(
       labels: const ['a', 'b'],
@@ -658,6 +645,29 @@ Directory? _repositoryRoot() {
     dir = parent;
   }
 }
+
+/// The x axis and the y axis of the datasets (Chart.js ADR 0191).
+const _xAxis = CategoryAxis(
+  .x,
+  display: ScaleDisplay.on,
+  position: .bottom,
+  reverse: false,
+  stacked: StackMode.on,
+  labels: ['a', 'b'],
+  min: 'a',
+  max: 'b',
+  ticks: _ticks,
+  grid: _grid,
+  title: _axisTitle,
+);
+const _yAxis = LinearAxis(
+  .y,
+  min: 0,
+  max: 10,
+  suggestedMin: 0,
+  suggestedMax: 10,
+  beginAtZero: true,
+);
 
 void main() {
   late _Check check;

@@ -309,7 +309,7 @@ final Map<String, Object?> _functions = {
 
 /// A chart of the test controller with the labels A, B and C, and the
 /// axes [scales].
-Chart _abcChart([Map<String, ChartAxis>? scales]) => acquireChartRoot(
+Chart _abcChart([List<ChartAxis>? scales]) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
       // Category parsing adds labels to this list in several cases.
@@ -442,9 +442,9 @@ void main() {
         tester,
       ) async {
         final x = _x(
-          _abcChart({
-            'x': CategoryAxis(extra: {'offset': offset}),
-          }),
+          _abcChart([
+            CategoryAxis(.x, extra: {'offset': offset}),
+          ]),
         );
         final min = x.min;
         final max = x.max;
@@ -517,14 +517,15 @@ void main() {
     });
 
     testWidgets('a y axis at the position of a label', (tester) async {
-      final chart = _abcChart({
-        'y': const LinearAxis(
+      final chart = _abcChart([
+        const LinearAxis(
+          .y,
           extra: {
             'type': 'testLinear',
             'position': ScaleValuePosition('x', 'B'),
           },
         ),
-      });
+      ]);
       final pixel = _x(chart).getPixelForValue(scaleValueOf(_x(chart), 'B'));
       final items = chart.scales['y']!.getLabelItems();
       expect(items, isNotEmpty);
@@ -534,14 +535,15 @@ void main() {
     });
 
     testWidgets('a y axis at the position null', (tester) async {
-      final chart = _abcChart({
-        'y': const LinearAxis(
+      final chart = _abcChart([
+        const LinearAxis(
+          .y,
           extra: {
             'type': 'testLinear',
             'position': ScaleValuePosition('x', null),
           },
         ),
-      });
+      ]);
       final items = chart.scales['y']!.getLabelItems();
       expect(items, isNotEmpty);
       for (final item in items) {

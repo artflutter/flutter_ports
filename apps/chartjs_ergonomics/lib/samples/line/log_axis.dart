@@ -15,6 +15,6 @@ const logAxis = ChartConfig(
       borderColor: .constant(.solid(red)),
     ),
   ],
-  scales: {'y': LogarithmicAxis()},
+  scales: [LogarithmicAxis(.y)],
 );
 // #enddocregion sample

@@ -56,10 +56,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
   // No XAxis: the points go from the left to the right edge of the plot.
-  scales: {
-    'x': shadcnCategoryAxis(display: false),
-    'y': shadcnValueAxis(_visitors),
-  },
+  scales: [shadcnCategoryAxis(display: false), shadcnValueAxis(_visitors)],
 );
 
 class const ShadcnLineDotsColors({super.key}) extends StatelessWidget {

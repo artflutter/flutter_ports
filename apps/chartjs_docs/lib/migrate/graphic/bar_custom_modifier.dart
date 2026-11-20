@@ -44,8 +44,9 @@ BarDataset _type(int index, String type) {
 final ChartConfig _config = ChartConfig(
   labels: _indexes,
   datasets: [for (final (i, type) in _types.indexed) _type(i, type)],
-  scales: {
-    'x': CategoryAxis(
+  scales: [
+    CategoryAxis(
+      .x,
       // `tickLine = TickLine()`: a line of 5 px under each label.
       grid: const AxisGrid(
         color: .solid(Gx.stroke),
@@ -58,7 +59,8 @@ final ChartConfig _config = ChartConfig(
       border: bottomBorder,
       extra: bottomAxis,
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: _range.min,
       max: _range.max,
       grid: lineGrid,
@@ -66,7 +68,7 @@ final ChartConfig _config = ChartConfig(
       border: leftBorder,
       extra: leftAxis,
     ),
-  },
+  ],
   // `padding: (_) => const EdgeInsets.fromLTRB(40, 5, 10, 40)`: 20 px more
   // under the axis.
   padding: const EdgeInsets.only(top: 5, right: 10, bottom: 20),

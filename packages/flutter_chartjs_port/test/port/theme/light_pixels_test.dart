@@ -105,25 +105,29 @@ Chart _chart(String type, {required bool colors, ChartOptionsScope? theme}) {
       callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
     ),
     scales: cartesian
-        ? {
-            'x': type == 'bar' || type == 'line'
-                ? const CategoryAxis(
-                    title: AxisTitle(display: true, text: ['x axis']),
-                  )
-                : const LinearAxis(
-                    title: AxisTitle(display: true, text: ['x axis']),
-                  ),
-            'y': const LinearAxis(
+        ? [
+            if (type == 'bar' || type == 'line')
+              const CategoryAxis(
+                .x,
+                title: AxisTitle(display: true, text: ['x axis']),
+              )
+            else
+              const LinearAxis(
+                .x,
+                title: AxisTitle(display: true, text: ['x axis']),
+              ),
+            const LinearAxis(
+              .y,
               title: AxisTitle(display: true, text: ['y axis']),
             ),
-          }
+          ]
         : radial
-        ? const {
-            'r': RadialLinearAxis(
+        ? const [
+            RadialLinearAxis(
               pointLabelsDisplay: ScaleDisplay.on,
               angleLinesDisplay: true,
             ),
-          }
+          ]
         : null,
     extra: {
       'plugins': {

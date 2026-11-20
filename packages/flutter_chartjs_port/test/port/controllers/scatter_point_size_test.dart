@@ -215,10 +215,10 @@ ChartConfig _typed(List<DataPoint> points, {ChartValue<ChartPaint>? color}) =>
           pointBorderWidth: 0,
         ),
       ],
-      scales: const {
-        'x': LinearAxis(min: 0, max: 8, display: ScaleDisplay.off),
-        'y': LinearAxis(min: -5, max: 10, display: ScaleDisplay.off),
-      },
+      scales: const [
+        LinearAxis(.x, min: 0, max: 8, display: ScaleDisplay.off),
+        LinearAxis(.y, min: -5, max: 10, display: ScaleDisplay.off),
+      ],
       animation: ChartAnimation.none,
       extra: const {'parsing': false},
     );

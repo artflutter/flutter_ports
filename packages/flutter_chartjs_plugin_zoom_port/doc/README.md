@@ -63,7 +63,7 @@ ChartView(
           mode: Mode.x,
           onZoomComplete: (context) => print(context.chart.getZoomLevel()),
         ),
-        limits: const {'x': ScaleLimits(min: ScaleLimit.original, minRange: 10)},
+        limits: const LimitOptions(x: ScaleLimits(min: ScaleLimit.original, minRange: 10)),
       ),
     ],
   ),

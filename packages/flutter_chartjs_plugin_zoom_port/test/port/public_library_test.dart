@@ -119,7 +119,9 @@ void main() {
                     mode: Mode.y,
                     onZoom: (context) => triggers.add(context.trigger),
                   ),
-                  limits: const {'y': ScaleLimits(min: ScaleLimit.original)},
+                  limits: const LimitOptions(
+                    y: ScaleLimits(min: ScaleLimit.original),
+                  ),
                 ),
               ],
             ),

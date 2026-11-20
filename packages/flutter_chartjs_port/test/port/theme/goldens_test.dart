@@ -60,10 +60,10 @@ ChartConfig _config() => const ChartConfig(
       },
     },
   ),
-  scales: {
-    'x': CategoryAxis(title: AxisTitle(display: true, text: ['Label'])),
-    'y': LinearAxis(title: AxisTitle(display: true, text: ['Value'])),
-  },
+  scales: [
+    CategoryAxis(.x, title: AxisTitle(display: true, text: ['Label'])),
+    LinearAxis(.y, title: AxisTitle(display: true, text: ['Value'])),
+  ],
   extra: {
     'plugins': {
       'colors': {'enabled': true},

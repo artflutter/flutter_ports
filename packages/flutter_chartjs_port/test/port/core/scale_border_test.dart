@@ -29,7 +29,7 @@ Chart _cartesian(CategoryAxis x, {ChartOptionsScope? theme}) {
       datasets: const [
         LineDataset(data: [1, 2, 3, 4]),
       ],
-      scales: {'x': x},
+      scales: [x],
     ),
   ).lower();
   if (theme != null) root.dollarTheme = theme;
@@ -57,7 +57,7 @@ void main() {
     ) async {
       // The grid draws no line: the only stroke of the x scale is the border.
       final chart = _cartesian(
-        const CategoryAxis(grid: AxisGrid(display: false)),
+        const CategoryAxis(.x, grid: AxisGrid(display: false)),
       );
       expect(
         chart.scales['x']!.options.border,
@@ -74,7 +74,7 @@ void main() {
 
     testWidgets('the theme gives the border color', (tester) async {
       final chart = _cartesian(
-        const CategoryAxis(grid: AxisGrid(display: false)),
+        const CategoryAxis(.x, grid: AxisGrid(display: false)),
         theme: compileChartTheme(borderColor: _blue),
       );
       expect(
@@ -95,6 +95,7 @@ void main() {
     ) async {
       final chart = _cartesian(
         const CategoryAxis(
+          .x,
           grid: AxisGrid(display: false),
           border: AxisBorder(width: 3, color: ChartPaint.solid(_red)),
         ),
@@ -121,7 +122,11 @@ void main() {
         AxisBorder(width: 0),
       ]) {
         final chart = _cartesian(
-          CategoryAxis(grid: const AxisGrid(display: false), border: border),
+          CategoryAxis(
+            .x,
+            grid: const AxisGrid(display: false),
+            border: border,
+          ),
         );
         expect(_args(_xCalls(chart), 'stroke'), isEmpty, reason: '$border');
       }
@@ -144,6 +149,7 @@ void main() {
       // No tick mark: each dash of the x scale is the dash of a grid line.
       final chart = _cartesian(
         CategoryAxis(
+          .x,
           grid: const AxisGrid(drawTicks: false),
           // The border parameter accepts a value; this case needs a callback.
           extra: {'border': border},
@@ -172,7 +178,7 @@ void main() {
           datasets: const [
             RadarDataset(data: [1, 2, 3]),
           ],
-          scales: {'r': r},
+          scales: [r],
         ),
       ).lower();
       if (theme != null) root.dollarTheme = theme;

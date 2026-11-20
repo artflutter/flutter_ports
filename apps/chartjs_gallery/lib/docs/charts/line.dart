@@ -63,5 +63,5 @@ ChartConfig lineVerticalConfig() => const ChartConfig(
     ),
   ],
   indexAxis: YAxis(),
-  scales: {'x': LinearAxis(beginAtZero: true)},
+  scales: [LinearAxis(.x, beginAtZero: true)],
 );

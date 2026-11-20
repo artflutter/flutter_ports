@@ -27,7 +27,7 @@ final fitBars = ChartConfig(
       backgroundColor: const .constant(.solid(teal)),
     ),
   ],
-  scales: const {'x': LinearAxis()},
+  scales: const [LinearAxis(.x)],
 );
 // #enddocregion bar-thickness-default
 

@@ -793,7 +793,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (the ten chart methods of `bindApi`, row `adapt-chart-methods-extension`), `ZoomAmount` and
     `PanAmount` (row `adapt-amount-classes`, `chart.zoom(.all(1.5))`), `ScaleRange`, the option
     classes (`ZoomPluginOptions`, `ZoomOptions`, `PanOptions`, `WheelOptions`, `DragOptions`,
-    `PinchOptions`, `ScaleLimits`, `ScaleLimit` and the typedef `LimitOptions`, row
+    `PinchOptions`, `ScaleLimits`, `ScaleLimit` and `LimitOptions` (the limits by direction and by
+    axis object, Zoom ADR 0007), row
     `adapt-native-zoom-options`), the enums `Mode`, `ModifierKey` and `DrawTime` (row
     `adapt-zoom-option-enums`), `ZoomTrigger`, the callback contexts (records) and typedefs,
     `zoomUpdateMode` (the update mode `zoom`, an `UpdateMode` of the host), `GestureEvent`,

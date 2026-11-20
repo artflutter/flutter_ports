@@ -22,7 +22,7 @@
 ///       ZoomPluginOptions(
 ///         pan: PanOptions(enabled: true, mode: Mode.x),
 ///         zoom: ZoomOptions(wheel: WheelOptions(enabled: true), mode: Mode.x),
-///         limits: {'x': ScaleLimits(min: ScaleLimit.original)},
+///         limits: LimitOptions(x: ScaleLimits(min: ScaleLimit.original)),
 ///       ),
 ///     ],
 ///   ),

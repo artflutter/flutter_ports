@@ -100,7 +100,7 @@ class const VotesChart({super.key}) extends StatelessWidget {
             borderWidth: 1,
           ),
         ],
-        scales: {'y': LinearAxis(beginAtZero: true)},
+        scales: [LinearAxis(.y, beginAtZero: true)],
       ),
     );
   }
@@ -252,21 +252,23 @@ key `shadow` to the same `ChartShadow`.
 
 ### Axes
 
-`scales` maps an axis id to an axis. A chart type has default axes, so give only the axes with
-other options. The order of the entries is the order of the axes in the layout.
+`scales` is the List of the axes. A cartesian axis takes its direction first, `.x` or `.y`. A chart
+type has default axes, so give only the axes with other options. The order of the List is the
+order of the axes in the layout.
 
 ```dart
 ChartConfig(
   labels: labels,
   datasets: datasets,
-  scales: const {
-    'x': CategoryAxis(grid: AxisGrid(display: false)),
-    'y': LinearAxis(
+  scales: const [
+    CategoryAxis(.x, grid: AxisGrid(display: false)),
+    LinearAxis(
+      .y,
       beginAtZero: true,
       ticks: AxisTicks(stepSize: 5, callback: formatVotes),
-      title: AxisTitle(display: true, text: 'Votes'),
+      title: AxisTitle(display: true, text: ['Votes']),
     ),
-  },
+  ],
 )
 ```
 
@@ -284,7 +286,27 @@ List<String>? formatVotes(
 The result is the lines of the label. A `null` result removes the tick, and an empty list keeps
 the tick with no label. The same `TickCallback` is the value of `ticks.callback` in a raw config. The axes are `CategoryAxis`, `LinearAxis`, `LogarithmicAxis`,
 `TimeAxis`, `TimeSeriesAxis` and `RadialLinearAxis` (the axis `r` of a radar or polar area chart).
-A `TimeAxis` takes `DateTime` limits and a `unit`, for example `TimeAxis(unit: .day)`.
+A `TimeAxis` takes `DateTime` limits and a `unit`, for example `TimeAxis(.x, unit: .day)`.
+
+A dataset names its axis by the axis object. Keep the axis in a variable and give it in both
+places:
+
+```dart
+const right = LinearAxis(.y, position: .right);
+
+ChartConfig(
+  labels: labels,
+  datasets: [
+    LineDataset(label: 'Sales', data: sales),
+    LineDataset(label: 'Margin', data: margin, yAxis: right),
+  ],
+  scales: const [LinearAxis(.y), right],
+)
+```
+
+The axes of a List are distinct by `==`. The chart gives the first axis of a direction the scale
+id `x`, `y` or `r`, and the next ones `x1`, `y1` and so on. `chart.scaleOf(right)` gives the scale
+of an axis.
 
 ### Option groups
 

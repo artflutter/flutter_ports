@@ -33,10 +33,10 @@ void main() {
       ],
       animation: ChartAnimation.none,
       responsive: false,
-      scales: const {
-        'x': CategoryAxis(display: ScaleDisplay.off),
-        'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
-      },
+      scales: const [
+        CategoryAxis(.x, display: ScaleDisplay.off),
+        LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on),
+      ],
       extra: const {
         'plugins': {'legend': false, 'tooltip': false},
       },

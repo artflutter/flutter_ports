@@ -550,6 +550,8 @@ TooltipYAlign
 TransitionOptionsScope
 TransitionsSpecScope
 TrianglePointStyle
+TypedChartAxes
+TypedChartAxisIds
 TypedProperty
 TypedRecord
 TypedRegistry
@@ -682,6 +684,7 @@ createProxyAndListen
 createResizeObserver
 createResolver
 cubicInterpolationModeOf
+currentScaleIds
 dashPath
 dataItemValue
 dataLabelLinesOf
@@ -947,6 +950,7 @@ readOption
 readProperty
 readUsedSize
 readValueToProps
+recordScaleIds
 registerables
 registry
 releaseObserver
@@ -968,6 +972,8 @@ rrectContains
 sameAxis
 scaleBorderOf
 scaleCfgArg
+scaleIdOfAxis
+scaleIdsOf
 scaleLabelOf
 scaleRangesChanged
 scaleValueOf
@@ -1595,6 +1601,8 @@ TooltipYAlign
 TransitionOptionsScope
 TransitionsSpecScope
 TrianglePointStyle
+TypedChartAxes
+TypedChartAxisIds
 TypedProperty
 TypedRecord
 TypedRegistry
@@ -1729,6 +1737,7 @@ createProxyAndListen
 createResizeObserver
 createResolver
 cubicInterpolationModeOf
+currentScaleIds
 dashPath
 dataItemValue
 dataLabelLinesOf
@@ -2010,6 +2019,7 @@ readOption
 readProperty
 readUsedSize
 readValueToProps
+recordScaleIds
 registerables
 registry
 releaseObserver
@@ -2036,6 +2046,8 @@ rrectContains
 sameAxis
 scaleBorderOf
 scaleCfgArg
+scaleIdOfAxis
+scaleIdsOf
 scaleLabelOf
 scaleRangesChanged
 scaleValueOf

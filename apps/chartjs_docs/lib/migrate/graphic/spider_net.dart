@@ -76,8 +76,8 @@ final ChartConfig _config = ChartConfig(
         pointHoverRadius: 0,
       ),
   ],
-  scales: {
-    'r': RadialLinearAxis(
+  scales: [
+    RadialLinearAxis(
       min: _range.min,
       max: _range.max,
       // An ordinal scale of Graphic puts each index in the middle of a band
@@ -100,7 +100,7 @@ final ChartConfig _config = ChartConfig(
         extra: {'includeBounds': true},
       ),
     ),
-  },
+  ],
   maintainAspectRatio: false,
   animation: ChartAnimation.none,
   legend: const ChartLegend(display: false),

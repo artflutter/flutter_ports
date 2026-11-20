@@ -46,16 +46,18 @@ String? _typeValue(TooltipItem item) =>
 final ChartConfig _config = ChartConfig(
   labels: _indexes,
   datasets: [for (final (i, type) in _types.indexed) _type(i, type)],
-  scales: {
+  scales: [
     // `StackModifier()`.
-    'x': CategoryAxis(
+    CategoryAxis(
+      .x,
       stacked: StackMode.on,
       grid: noGrid,
       ticks: graphicTicks(),
       border: bottomBorder,
       extra: bottomAxis,
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       stacked: StackMode.on,
       min: 0,
       max: 1800,
@@ -67,7 +69,7 @@ final ChartConfig _config = ChartConfig(
         'afterBuildTicks': tickValues(const [0, 500, 1000, 1500]),
       },
     ),
-  },
+  ],
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,

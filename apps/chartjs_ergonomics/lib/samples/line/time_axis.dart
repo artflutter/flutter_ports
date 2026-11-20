@@ -20,6 +20,6 @@ final timeAxis = ChartConfig(
       borderColor: const .constant(.solid(blue)),
     ),
   ],
-  scales: const {'x': TimeAxis(unit: .day)},
+  scales: const [TimeAxis(.x, unit: .day)],
 );
 // #enddocregion sample

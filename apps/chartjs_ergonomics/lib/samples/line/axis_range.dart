@@ -15,6 +15,6 @@ const axisRange = ChartConfig(
       borderColor: .constant(.solid(teal)),
     ),
   ],
-  scales: {'y': LinearAxis(min: 0, max: 100, ticks: AxisTicks(stepSize: 25))},
+  scales: [LinearAxis(.y, min: 0, max: 100, ticks: AxisTicks(stepSize: 25))],
 );
 // #enddocregion sample

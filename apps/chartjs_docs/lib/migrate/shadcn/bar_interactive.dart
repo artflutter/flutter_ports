@@ -47,15 +47,15 @@ ChartConfig _config(ShadcnTip tip, int active) {
     animation: shadcnBarAnimation,
     // The cursor of the tooltip: a muted band under the hovered day.
     plugins: [shadcnCursor],
-    scales: {
-      'x': shadcnCategoryAxis(
+    scales: [
+      shadcnCategoryAxis(
         callback: (scale, value, index, ticks) => [
           shortDate(_dates[value.toInt()]),
         ],
         autoSkipPadding: 32,
       ),
-      'y': shadcnValueAxis(data),
-    },
+      shadcnValueAxis(data),
+    ],
   );
 }
 

@@ -50,7 +50,7 @@ ChartConfig _bars(
 }) => ChartConfig(
   labels: _labels,
   datasets: datasets,
-  scales: const {'y': LinearAxis(min: 0, max: 50)},
+  scales: const [LinearAxis(.y, min: 0, max: 50)],
   title: title,
   animation: animated ? null : ChartAnimation.none,
   extra: extra,
@@ -495,7 +495,7 @@ void main() {
               BarDataset(data: [4, 5, 6]),
               BarDataset(data: [7, 8, 9]),
             ],
-            scales: const {'y': LinearAxis(min: 0, max: 50)},
+            scales: const [LinearAxis(.y, min: 0, max: 50)],
             animation: ChartAnimation.none,
           ),
         ),
@@ -513,7 +513,7 @@ void main() {
       ChartConfig config(Dataset first) => ChartConfig(
         labels: _labels,
         datasets: [first, line],
-        scales: const {'x': CategoryAxis()},
+        scales: const [CategoryAxis(.x)],
         animation: ChartAnimation.none,
       );
       await tester.pumpWidget(_view(config(const BarDataset(data: [1, 2, 3]))));
@@ -578,7 +578,7 @@ void main() {
       ];
       ChartConfig config(List<DataPoint> points, String label) => ChartConfig(
         datasets: [LineDataset(label: label, points: points, pointRadius: 0)],
-        scales: const {'x': LinearAxis()},
+        scales: const [LinearAxis(.x)],
         animation: ChartAnimation.none,
         extra: const {
           'parsing': false,

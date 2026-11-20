@@ -43,12 +43,12 @@ final ChartConfig _config = ChartConfig(
       color: Colors.white,
     ),
   ],
-  scales: const {
+  scales: const [
     // The labels plugin above draws the labels.
-    'x': CategoryAxis(display: ScaleDisplay.off),
+    CategoryAxis(.x, display: ScaleDisplay.off),
     // isVisible: false
-    'y': LinearAxis(display: ScaleDisplay.off, min: 0, max: 9000),
-  },
+    LinearAxis(.y, display: ScaleDisplay.off, min: 0, max: 9000),
+  ],
 );
 
 class const SfRoundedColumn({super.key}) extends StatelessWidget {

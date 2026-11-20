@@ -176,8 +176,8 @@ class _BarSample1State() extends State<BarSample1> {
           },
         ),
         plugins: [_backRods, _touch],
-        scales: {
-          'x': groupAxis(
+        scales: [
+          groupAxis(
             count: 7,
             groupWidth: _width,
             reservedSize: 38,
@@ -188,8 +188,8 @@ class _BarSample1State() extends State<BarSample1> {
               callback: (scale, value, index, ticks) => [_letters[index]],
             ),
           ),
-          'y': valueAxis(min: 0, max: 20),
-        },
+          valueAxis(min: 0, max: 20),
+        ],
       ),
     );
   }

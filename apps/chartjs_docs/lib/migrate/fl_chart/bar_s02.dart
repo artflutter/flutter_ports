@@ -77,8 +77,8 @@ class _BarSample2State() extends State<BarSample2> {
       datasets: [_rods(_left, Fl.red), _rods(_right, Fl.yellow)],
       tooltip: const ChartTooltip(enabled: false),
       plugins: [_labels, _touch],
-      scales: {
-        'x': groupAxis(
+      scales: [
+        groupAxis(
           count: 7,
           groupWidth: 2 * _width + _barsSpace,
           reservedSize: 42,
@@ -89,7 +89,7 @@ class _BarSample2State() extends State<BarSample2> {
             callback: (scale, value, index, ticks) => [_days[index]],
           ),
         ),
-        'y': valueAxis(
+        valueAxis(
           min: 0,
           max: 20,
           interval: 1,
@@ -109,7 +109,7 @@ class _BarSample2State() extends State<BarSample2> {
             ],
           ),
         ),
-      },
+      ],
     ),
   );
 

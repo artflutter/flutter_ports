@@ -47,12 +47,12 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,
   plugins: [shadcnCursor],
-  scales: {
-    'x': shadcnCategoryAxis(tickMargin: 10, stacked: true),
-    'y': shadcnValueAxis([
+  scales: [
+    shadcnCategoryAxis(tickMargin: 10, stacked: true),
+    shadcnValueAxis([
       for (var i = 0; i < _desktop.length; i++) _desktop[i] + _mobile[i],
     ], stacked: true),
-  },
+  ],
 );
 
 class const ShadcnBarStacked({super.key}) extends StatelessWidget {

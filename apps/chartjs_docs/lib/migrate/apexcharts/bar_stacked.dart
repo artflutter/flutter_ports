@@ -33,11 +33,11 @@ final ChartConfig _config = ChartConfig(
   ),
   animation: apexAnimation,
   plugins: [apexHover, apexTooltipLook],
-  scales: {
+  scales: [
     // chart.stacked: StackMode.on: both axes stack. The value axis takes the sums.
-    'x': apexCategoryAxis().copyWith(stacked: StackMode.on),
-    'y': apexValueAxis(min: 0, max: 80, stepSize: 20, stacked: true),
-  },
+    apexCategoryAxis().copyWith(stacked: StackMode.on),
+    apexValueAxis(min: 0, max: 80, stepSize: 20, stacked: true),
+  ],
 );
 
 class const ApexBarStacked({super.key}) extends StatelessWidget {

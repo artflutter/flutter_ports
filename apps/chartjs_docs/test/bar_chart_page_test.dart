@@ -177,8 +177,8 @@ void main() {
       order: 0,
       shadow: ChartShadow(color: teal),
       stack: '',
-      xAxisID: '',
-      yAxisID: '',
+      xAxis: LinearAxis(.x),
+      yAxis: LinearAxis(.y),
     );
     expect(dataset.label, '');
     final named = {
@@ -203,8 +203,8 @@ void main() {
       'points',
       'shadow',
       'stack',
-      'xAxisID',
-      'yAxisID',
+      'xAxis',
+      'yAxis',
     };
     expect(
       barProperties.where((row) => !row.extra).map((row) => row.name).toSet(),

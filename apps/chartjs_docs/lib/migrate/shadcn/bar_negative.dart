@@ -48,10 +48,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
     ),
   ],
   // No XAxis.
-  scales: {
-    'x': shadcnCategoryAxis(display: false),
-    'y': shadcnValueAxis(_visitors),
-  },
+  scales: [shadcnCategoryAxis(display: false), shadcnValueAxis(_visitors)],
 );
 
 class const ShadcnBarNegative({super.key}) extends StatelessWidget {

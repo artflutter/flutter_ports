@@ -60,9 +60,9 @@ ChartConfig _config(List<Object?> data, String? scaleType) => ChartConfig(
     RadarDataset(extra: {'data': data}),
   ],
   responsive: false,
-  scales: {
-    'r': RadialLinearAxis(extra: {'type': ?scaleType}),
-  },
+  scales: [
+    RadialLinearAxis(extra: {'type': ?scaleType}),
+  ],
 );
 
 Chart _chart(List<Object?> data, String? scaleType) {

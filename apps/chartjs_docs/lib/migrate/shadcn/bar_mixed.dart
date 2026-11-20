@@ -44,11 +44,11 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   ),
   interaction: shadcnInteraction(horizontal: true),
   animation: shadcnBarAnimation,
-  scales: {
+  scales: [
     // The tickFormatter gives the label of chartConfig: the whole name.
-    'y': shadcnCategoryYAxis(callback: null),
-    'x': shadcnValueAxis(_visitors, grid: false),
-  },
+    shadcnCategoryYAxis(callback: null),
+    shadcnValueAxis(direction: .x, _visitors, grid: false),
+  ],
 );
 
 class const ShadcnBarMixed({super.key}) extends StatelessWidget {

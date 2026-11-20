@@ -185,14 +185,14 @@ cj.ChartConfig _config({
     ],
     labels: xy ? null : [for (var i = 0; i < count; i++) '$i'],
     scales: time
-        ? const {'x': cj.TimeAxis(), 'y': cj.LinearAxis()}
+        ? const [cj.TimeAxis(.x), cj.LinearAxis(.y)]
         : xy
-        ? const {'x': cj.LinearAxis(min: 0, max: 100), 'y': cj.LinearAxis()}
+        ? const [cj.LinearAxis(.x, min: 0, max: 100), cj.LinearAxis(.y)]
         : stacked
-        ? const {
-            'x': cj.CategoryAxis(stacked: cj.StackMode.on),
-            'y': cj.LinearAxis(stacked: cj.StackMode.on),
-          }
+        ? const [
+            cj.CategoryAxis(.x, stacked: cj.StackMode.on),
+            cj.LinearAxis(.y, stacked: cj.StackMode.on),
+          ]
         : null,
     legend: cj.ChartLegend(display: count <= 60 || xy || datasets > 1),
     animation: animated ? null : cj.ChartAnimation.none,

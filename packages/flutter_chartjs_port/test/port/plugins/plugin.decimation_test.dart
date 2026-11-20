@@ -101,7 +101,7 @@ final Map<String, Object?> _functions = {'writeData': _writeData};
   final root = ChartConfigLowering(
     ChartConfig(
       datasets: const [LineDataset()],
-      scales: const {'x': LinearAxis()},
+      scales: const [LinearAxis(.x)],
       extra: {
         'parsing': false,
         'plugins': {
@@ -634,7 +634,7 @@ void main() {
       final root = ChartConfigLowering(
         ChartConfig(
           datasets: const [LineDataset()],
-          scales: const {'x': LinearAxis()},
+          scales: const [LinearAxis(.x)],
           extra: {
             'parsing': false,
             'plugins': {
@@ -724,9 +724,12 @@ void main() {
           datasets: [
             LineDataset(label: 'd0', extra: {'data': input}),
           ],
-          scales: {
-            'x': type == 'time' ? const TimeAxis() : const TimeSeriesAxis(),
-          },
+          scales: [
+            if (type == 'time')
+              const TimeAxis(.x)
+            else
+              const TimeSeriesAxis(.x),
+          ],
           extra: const {
             'parsing': false,
             'plugins': {

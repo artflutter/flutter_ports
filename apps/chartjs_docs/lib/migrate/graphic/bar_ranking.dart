@@ -92,8 +92,9 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
           barThickness: const BarThickness.pixels(barSize),
         ),
       ],
-      scales: {
-        'x': LinearAxis(
+      scales: [
+        LinearAxis(
+          .x,
           min: -0.5,
           max: _genres.length - 0.5,
           grid: noGrid,
@@ -107,7 +108,8 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
           },
         ),
         // `LinearScale(min: 0)`: 10% of the range of the data above it.
-        'y': LinearAxis(
+        LinearAxis(
+          .y,
           min: 0,
           max: high + (high - low) * 0.1,
           grid: lineGrid,
@@ -118,7 +120,7 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
           border: leftBorder,
           extra: leftAxis,
         ),
-      },
+      ],
       padding: regionPadding,
       maintainAspectRatio: false,
       // `Transition(duration: const Duration(seconds: 1))` with no curve,

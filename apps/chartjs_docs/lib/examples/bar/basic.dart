@@ -38,7 +38,7 @@ const basicBar = ChartConfig(
       borderWidth: 1,
     ),
   ],
-  scales: {'y': LinearAxis(beginAtZero: true)},
+  scales: [LinearAxis(.y, beginAtZero: true)],
 );
 // #enddocregion bar-basic
 

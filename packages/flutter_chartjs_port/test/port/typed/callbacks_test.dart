@@ -405,7 +405,7 @@ void main() {
       ChartEventHandler? onHover,
       ChartLegend? legend,
       ChartTooltip? tooltip,
-      Map<String, ChartAxis>? scales,
+      List<ChartAxis>? scales,
     }) => ChartConfig(
       labels: const ['a', 'b', 'c'],
       datasets: const [
@@ -578,7 +578,7 @@ void main() {
       final typed = acquireChartRoot(
         ChartConfigLowering(
           typedBar(
-            scales: {'y': LinearAxis(ticks: AxisTicks(callback: callback))},
+            scales: [LinearAxis(.y, ticks: AxisTicks(callback: callback))],
           ),
         ).lower(),
       );

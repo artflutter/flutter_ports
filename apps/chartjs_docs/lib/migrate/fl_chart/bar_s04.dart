@@ -89,8 +89,8 @@ ChartConfig _config(double width) {
       ],
       tooltip: const ChartTooltip(enabled: false),
       extra: const {'events': <String>[]},
-      scales: {
-        'x': groupAxis(
+      scales: [
+        groupAxis(
           count: 4,
           groupWidth: 5 * barsWidth + 4 * barsSpace,
           alignment: .center,
@@ -103,7 +103,7 @@ ChartConfig _config(double width) {
             callback: (scale, value, index, ticks) => [_months[index]],
           ),
         ),
-        'y': valueAxis(
+        valueAxis(
           min: 0,
           max: 35000000000,
           stacked: true,
@@ -121,7 +121,7 @@ ChartConfig _config(double width) {
             callback: flTitles(hideMax: true),
           ),
         ),
-      },
+      ],
     ),
   );
 }

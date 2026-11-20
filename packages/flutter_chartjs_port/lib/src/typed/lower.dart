@@ -72,6 +72,11 @@ final class ChartConfigLowering(
   /// The live dataset scopes of [_lowered], in dataset order.
   List<_LiveDataset> _datasets = const [];
 
+  /// The scale id of each axis of the config of the last [lower] or [apply]
+  /// (Chart.js ADR 0191, item 3), by `==`.
+  Map<ChartAxis, String> get scaleIds => _scaleIds;
+  Map<ChartAxis, String> _scaleIds = const {};
+
   /// Whether the last [apply] changed only dataset data Lists (Chart.js ADR
   /// 0098): the type, the labels, the option fields and the plugins are `==`,
   /// each dataset kept its scope at its index, and each patch changed only
@@ -107,10 +112,13 @@ final class ChartConfigLowering(
     );
     _lowered = config;
     _lastApplyDataOnly = false;
-    final datasets = _datasets = [
-      for (final dataset in config.datasets)
-        _LiveDataset.lower(dataset, config.type),
-    ];
+    _scaleIds = scaleIdsOf(config.scales);
+    final datasets = _datasets = _withScaleIds(
+      () => [
+        for (final dataset in config.datasets)
+          _LiveDataset.lower(dataset, config.type),
+      ],
+    );
     final root = ChartConfigurationScope()
       ..type = config.type.name
       ..data = _data(config, datasets)
@@ -168,8 +176,14 @@ final class ChartConfigLowering(
     );
     _lowered = next;
     final sameType = next.type == last.type;
+    // The ids of the axes depend on the List of axes: an `==` dataset keeps
+    // its scope only under the same axes (Chart.js ADR 0191, item 5).
+    final sameScales = byItems(next.scales) == byItems(last.scales);
+    _scaleIds = scaleIdsOf(next.scales);
     final oldDatasets = _datasets;
-    final datasets = _datasets = _reconcile(next, sameType: sameType);
+    final datasets = _datasets = _withScaleIds(
+      () => _reconcile(next, sameType: sameType, sameScales: sameScales),
+    );
     final old = _root;
     var sameMaps =
         identical(next.labels, last.labels) &&
@@ -209,7 +223,11 @@ final class ChartConfigLowering(
   }
 
   /// The live datasets of [next] by the match rule of [apply].
-  List<_LiveDataset> _reconcile(ChartConfig next, {required bool sameType}) {
+  List<_LiveDataset> _reconcile(
+    ChartConfig next, {
+    required bool sameType,
+    required bool sameScales,
+  }) {
     final old = _datasets;
     final used = List<bool>.filled(old.length, false);
     // The index of the first live dataset of each key.
@@ -229,10 +247,29 @@ final class ChartConfigLowering(
         datasets.add(_LiveDataset.lower(dataset, next.type));
       } else {
         used[j] = true;
-        datasets.add(old[j].patch(dataset, next.type, sameType: sameType));
+        datasets.add(
+          old[j].patch(
+            dataset,
+            next.type,
+            sameType: sameType,
+            sameScales: sameScales,
+          ),
+        );
       }
     }
     return datasets;
+  }
+
+  /// The result of [lowerDatasets] while [currentScaleIds] holds the ids of
+  /// the axes of the config, for the axis fields of the datasets.
+  T _withScaleIds<T>(T Function() lowerDatasets) {
+    final outer = currentScaleIds;
+    currentScaleIds = _scaleIds;
+    try {
+      return lowerDatasets();
+    } finally {
+      currentScaleIds = outer;
+    }
   }
 
   /// The `data` scope of [config]: `labels` by reference and a new
@@ -269,8 +306,14 @@ final class ChartConfigLowering(
     final options = ChartOptionsScope();
     if (config.scales case final scales?) {
       final byId = ScaleOptionsByIdScope();
-      for (final MapEntry(key: id, value: axis) in scales.entries) {
-        byId.store(id, OptScope<ScaleOptionsScope>(lowerAxis(axis)));
+      for (final axis in scales) {
+        final id = _scaleIds[axis]!;
+        byId.store(
+          id,
+          OptScope<ScaleOptionsScope>(
+            lowerAxis(axis, writeAxis: id.length > 1),
+          ),
+        );
       }
       options.scales = byId;
     }
@@ -374,10 +417,15 @@ final class _LiveDataset(
   /// (rule 3 of [ChartConfigLowering.apply]). Two cells are equal when
   /// their JS values are `==`, as the values of the Maps of Chart.js ADR
   /// 0052: an object, a List and a function by identity.
-  _LiveDataset patch(Dataset next, ChartKind type, {required bool sameType}) {
+  _LiveDataset patch(
+    Dataset next,
+    ChartKind type, {
+    required bool sameType,
+    required bool sameScales,
+  }) {
     final scope = this.scope;
     callbacks.dataset = next;
-    if (sameType && next == dataset) {
+    if (sameType && sameScales && next == dataset) {
       return _LiveDataset(
         next,
         scope,
@@ -523,6 +571,92 @@ double? millisecondsOf(Duration? duration) =>
 /// A new List of the numbers of [list], or Dart `null` for `null`.
 List<double>? numberList(List<double>? list) =>
     list == null ? null : List<double>.of(list);
+
+/// The scale ids of the typed config of each canvas of a `ChartView`
+/// (Chart.js ADR 0191, item 6).
+final Expando<Map<ChartAxis, String>> _canvasScaleIds = Expando(
+  'ChartAxis scale ids',
+);
+
+/// Records [ids], the scale ids of the typed config of the chart on
+/// [canvas]. `ChartView` calls it at each lowering, and with Dart `null`
+/// for a raw config.
+void recordScaleIds(Object canvas, Map<ChartAxis, String>? ids) {
+  _canvasScaleIds[canvas] = ids;
+}
+
+/// The scales of the axes of a typed config (Chart.js ADR 0191, item 6).
+///
+/// ```dart
+/// const right = LinearAxis(.y, position: .right);
+/// final scale = chart.scaleOf(right); // chart.scales['y1']
+/// ```
+extension TypedChartAxes on Chart {
+  /// The scale of [axis]: `scales[scaleIdOf(axis)]`.
+  Scale? scaleOf(ChartAxis axis) => switch (scaleIdOf(axis)) {
+    final id? => this.scales[id],
+    null => null,
+  };
+}
+
+/// The scale ids of the axes of a typed config (Chart.js ADR 0191, item 6).
+/// An add-on reads them through the chart interface, as the zoom limits do.
+extension TypedChartAxisIds on IChart {
+  /// The scale id of [axis], an axis of the current typed config of the
+  /// `ChartView` of this chart, by `==`. Dart `null` for another axis, a
+  /// raw config and a chart with no `ChartView`.
+  String? scaleIdOf(ChartAxis axis) => switch (canvas) {
+    final canvas? => _canvasScaleIds[canvas]?[axis],
+    null => null,
+  };
+}
+
+/// The scale ids of the axes of the config that the lowering lowers now,
+/// for [scaleIdOfAxis]: set only while the datasets lower (Chart.js ADR
+/// 0191).
+Map<ChartAxis, String>? currentScaleIds;
+
+/// The scale id of each axis of [scales] by `==` (Chart.js ADR 0191, item
+/// 3): the first axis of a direction has the id `x`, `y` or `r`, the next
+/// ones `x1`, `x2`, `y1` and so on. The axes are distinct by `==`.
+Map<ChartAxis, String> scaleIdsOf(List<ChartAxis>? scales) {
+  final ids = <ChartAxis, String>{};
+  if (scales == null) return ids;
+  final counts = <String, int>{};
+  for (final axis in scales) {
+    final letter = switch (axis.axis) {
+      XAxis() => 'x',
+      YAxis() => 'y',
+      _ => 'r',
+    };
+    final n = counts[letter] ?? 0;
+    counts[letter] = n + 1;
+    assert(
+      !ids.containsKey(axis),
+      'The axes of ChartConfig.scales are distinct by ==, but $axis is there '
+      'twice (Chart.js ADR 0191). Give the second one a field that differs, '
+      'for example position.',
+    );
+    ids[axis] = n == 0 ? letter : '$letter$n';
+  }
+  return ids;
+}
+
+/// The scale id of the axis [axis] of a dataset (`xAxisID` or `yAxisID`),
+/// or Dart `null` for no axis: the default of Chart.js, the first scale of
+/// the direction (Chart.js ADR 0191, item 5). A dataset class of a package
+/// calls it in `lowerOwn`. The axis is `==` to an axis of
+/// `ChartConfig.scales`.
+String? scaleIdOfAxis(ChartAxis? axis) {
+  if (axis == null) return null;
+  final id = currentScaleIds?[axis];
+  assert(
+    id != null,
+    'The axis $axis of a dataset is not an axis of ChartConfig.scales '
+    '(Chart.js ADR 0191). Give the same axis object in scales.',
+  );
+  return id;
+}
 
 /// Writes the option value [value] under [key] of [scope] when it is not
 /// Dart `null` (Chart.js ADR 0054 §7): the cell of the shape of the key in

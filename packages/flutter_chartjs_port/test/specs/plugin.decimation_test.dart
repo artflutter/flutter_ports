@@ -82,7 +82,7 @@ void main() {
               datasets: [
                 LineDataset(points: _originalData(), label: 'dataset1'),
               ],
-              scales: const {'x': LinearAxis(min: 0, max: 9)},
+              scales: const [LinearAxis(.x, min: 0, max: 9)],
               extra: const {
                 'parsing': false,
                 'plugins': {
@@ -109,7 +109,7 @@ void main() {
               datasets: [
                 LineDataset(points: _originalData(), label: 'dataset1'),
               ],
-              scales: const {'x': LinearAxis()},
+              scales: const [LinearAxis(.x)],
               extra: const {
                 'parsing': false,
                 'plugins': {
@@ -135,7 +135,7 @@ void main() {
           ChartConfigLowering(
             ChartConfig(
               datasets: [LineDataset(points: originalData, label: 'dataset1')],
-              scales: const {'x': LinearAxis(min: 3, max: 6)},
+              scales: const [LinearAxis(.x, min: 3, max: 6)],
               extra: const {
                 'parsing': false,
                 'plugins': {
@@ -172,7 +172,7 @@ void main() {
           ChartConfigLowering(
             ChartConfig(
               datasets: [LineDataset(points: data)],
-              scales: const {'x': LinearAxis()},
+              scales: const [LinearAxis(.x)],
               extra: const {
                 'devicePixelRatio': 1.25,
                 'parsing': false,

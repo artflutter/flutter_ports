@@ -57,10 +57,10 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
     },
   ),
   plugins: [sfTooltipLook],
-  scales: {
+  scales: [
     // NumericAxis(minimum: 2005, maximum: 2011, interval: 1) as the index
     // axis: an axis line and tick marks, no grid lines.
-    'y': sfValueAxis(
+    sfValueAxis(
       min: 2005,
       max: 2011,
       stepSize: 1,
@@ -68,7 +68,8 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
       line: true,
       ticks: true,
     ),
-    'x': sfValueAxis(
+    sfValueAxis(
+      direction: .x,
       min: 0,
       max: 20,
       stepSize: 2,
@@ -77,7 +78,7 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
       ticks: true,
       title: 'Goods and services (% of GDP)',
     ),
-  },
+  ],
 );
 
 class const SfSpacingBar({super.key}) extends StatefulWidget {

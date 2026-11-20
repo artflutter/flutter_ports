@@ -40,7 +40,7 @@ ChartConfig _config(_Log log, int step) => ChartConfig(
   ],
   animation: ChartAnimation.none,
   maintainAspectRatio: false,
-  scales: const {'y': LinearAxis(min: 0, max: 4)},
+  scales: const [LinearAxis(.y, min: 0, max: 4)],
 );
 
 Widget _view(_Log log, int step) => Directionality(

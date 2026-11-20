@@ -209,10 +209,10 @@ typed.ChartConfig _typedConfig(List<typed.DataPoint> points) =>
       datasets: [
         typed.ScatterDataset(points: points, showLine: false, pointRadius: 3),
       ],
-      scales: const {
-        'x': typed.LinearAxis(min: 0, max: 10),
-        'y': typed.LinearAxis(min: 0, max: 30),
-      },
+      scales: const [
+        typed.LinearAxis(.x, min: 0, max: 10),
+        typed.LinearAxis(.y, min: 0, max: 30),
+      ],
       responsive: false,
       animation: typed.ChartAnimation.none,
       extra: const {

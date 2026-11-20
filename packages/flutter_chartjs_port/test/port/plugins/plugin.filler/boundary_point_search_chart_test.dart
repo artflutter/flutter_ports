@@ -114,12 +114,14 @@ void main() {
               indexAxis: indexAxis,
               animation: ChartAnimation.none,
               responsive: false,
-              scales: {
-                axis: CategoryAxis(display: ScaleDisplay.off, reverse: reverse),
-                axis == 'x' ? 'y' : 'x': const LinearAxis(
+              scales: [
+                CategoryAxis(
+                  axis == 'x' ? .x : .y,
                   display: ScaleDisplay.off,
+                  reverse: reverse,
                 ),
-              },
+                LinearAxis(axis == 'x' ? .y : .x, display: ScaleDisplay.off),
+              ],
               extra: const {
                 'plugins': {'legend': false, 'tooltip': false},
               },

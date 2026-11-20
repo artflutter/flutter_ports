@@ -639,10 +639,10 @@ void main() {
           shadow: shadow,
         ),
       ],
-      scales: const {
-        'x': CategoryAxis(display: ScaleDisplay.off),
-        'y': LinearAxis(min: 0, max: 5, display: ScaleDisplay.off),
-      },
+      scales: const [
+        CategoryAxis(.x, display: ScaleDisplay.off),
+        LinearAxis(.y, min: 0, max: 5, display: ScaleDisplay.off),
+      ],
       animation: ChartAnimation.none,
       legend: const ChartLegend(display: false),
     );

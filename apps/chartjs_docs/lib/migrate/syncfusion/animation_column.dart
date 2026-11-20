@@ -60,10 +60,7 @@ class _SfAnimationColumnState() extends State<SfAnimationColumn> {
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         // The original has no tooltip.
         extra: const {'events': <String>[]},
-        scales: {
-          'x': sfCategoryAxis(),
-          'y': sfValueAxis(min: 0, max: 100, stepSize: 20),
-        },
+        scales: [sfCategoryAxis(), sfValueAxis(min: 0, max: 100, stepSize: 20)],
       ),
     ),
   );

@@ -65,10 +65,10 @@ final ChartConfig _config = ChartConfig(
       fills: _colors,
     ),
   ],
-  scales: {
-    'x': sfCategoryAxis(),
+  scales: [
+    sfCategoryAxis(),
     // labelFormat: '{value}M', an axis title, no grid lines.
-    'y': sfValueAxis(
+    sfValueAxis(
       min: 0,
       max: 20,
       stepSize: 5,
@@ -77,7 +77,7 @@ final ChartConfig _config = ChartConfig(
       line: true,
       title: 'Shipments in million',
     ),
-  },
+  ],
 );
 
 class const SfCustomizedColumn({super.key}) extends StatelessWidget {

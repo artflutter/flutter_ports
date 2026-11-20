@@ -130,9 +130,10 @@ final ChartConfig _config = ChartConfig(
     ),
   ),
   plugins: [_zoneKey],
-  scales: const {
+  scales: const [
     // DateTimeAxis(interval: 5, intervalType: years, edge labels shifted)
-    'x': TimeAxis(
+    TimeAxis(
+      .x,
       unit: .year,
       tooltipFormat: 'yyyy',
       grid: AxisGrid(
@@ -149,7 +150,8 @@ final ChartConfig _config = ChartConfig(
       ),
       border: AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: 24,
       max: 36,
       grid: AxisGrid(
@@ -166,7 +168,7 @@ final ChartConfig _config = ChartConfig(
       ),
       border: AxisBorder(display: false),
     ),
-  },
+  ],
 );
 
 class const SfLineZone({super.key}) extends StatelessWidget {

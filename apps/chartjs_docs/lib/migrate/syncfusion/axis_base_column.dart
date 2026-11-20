@@ -60,11 +60,11 @@ ChartConfig _config(double crossAt) => ChartConfig(
       fills: _colors,
     ),
   ],
-  scales: {
+  scales: [
     // placeLabelsNearAxisLine: false: the labels stay at the bottom.
-    'x': sfCategoryAxis(callback: _wrap),
-    'y': sfValueAxis(min: -2, max: 2, stepSize: 1),
-  },
+    sfCategoryAxis(callback: _wrap),
+    sfValueAxis(min: -2, max: 2, stepSize: 1),
+  ],
 );
 
 class const SfAxisBaseColumn({super.key}) extends StatefulWidget {

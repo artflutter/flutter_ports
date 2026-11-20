@@ -40,10 +40,7 @@ void main() {
             chart = _acquire(
               ChartConfig(
                 datasets: [LineDataset(points: points())],
-                scales: const {
-                  'x': LinearAxis(min: 0, max: 10),
-                  'y': LinearAxis(),
-                },
+                scales: const [LinearAxis(.x, min: 0, max: 10), LinearAxis(.y)],
                 pluginOptions: [
                   ZoomPluginOptions(
                     zoom: ZoomOptions(
@@ -97,7 +94,7 @@ void main() {
       // chart, as `data`.
       ChartConfig config() => ChartConfig(
         datasets: [LineDataset(points: points())],
-        scales: const {'x': LinearAxis(min: 1, max: 10), 'y': LinearAxis()},
+        scales: const [LinearAxis(.x, min: 1, max: 10), LinearAxis(.y)],
         pluginOptions: const [
           ZoomPluginOptions(
             zoom: ZoomOptions(
@@ -182,7 +179,7 @@ void main() {
       // zoom.wheel.spec.js:173 `const config = {...}`, as above.
       ChartConfig config() => ChartConfig(
         datasets: [LineDataset(points: points())],
-        scales: const {'x': LinearAxis(min: 1, max: 10), 'y': LinearAxis()},
+        scales: const [LinearAxis(.x, min: 1, max: 10), LinearAxis(.y)],
         pluginOptions: const [
           ZoomPluginOptions(
             zoom: ZoomOptions(
@@ -269,7 +266,7 @@ void main() {
           datasets: [
             LineDataset(data: [1, 10, 100, 1000, 10000]),
           ],
-          scales: {'y': LogarithmicAxis()},
+          scales: [LogarithmicAxis(.y)],
           pluginOptions: [
             ZoomPluginOptions(
               zoom: ZoomOptions(
@@ -360,7 +357,7 @@ void main() {
       final chart = _acquire(
         ChartConfig(
           datasets: [LineDataset(points: points())],
-          scales: const {'x': LinearAxis(), 'y': LinearAxis()},
+          scales: const [LinearAxis(.x), LinearAxis(.y)],
           pluginOptions: const [
             ZoomPluginOptions(
               zoom: ZoomOptions(

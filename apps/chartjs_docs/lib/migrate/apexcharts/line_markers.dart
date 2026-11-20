@@ -46,16 +46,16 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
   pluginOptions: [zoom.options],
-  scales: {
-    'x': apexCategoryAxis(title: 'Week'),
-    'y': apexValueAxis(
+  scales: [
+    apexCategoryAxis(title: 'Week'),
+    apexValueAxis(
       min: 0,
       max: 150,
       stepSize: 50,
       callback: _dollarTick,
       title: 'Revenue',
     ),
-  },
+  ],
 );
 
 class const ApexLineMarkers({super.key}) extends StatelessWidget {

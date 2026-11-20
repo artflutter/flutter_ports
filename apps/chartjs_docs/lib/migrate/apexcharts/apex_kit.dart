@@ -3,20 +3,7 @@
 // #docregion apex-kit
 import 'dart:math' as math;
 
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show
-        DragOptions,
-        Mode,
-        ModifierKey,
-        PanOptions,
-        ScaleLimit,
-        ScaleLimits,
-        WheelOptions,
-        ZoomAmount,
-        ZoomChart,
-        ZoomOptions,
-        ZoomPluginOptions,
-        zoomPlugin;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -72,6 +59,7 @@ LinearAxis apexValueAxis({
   bool stacked = false,
   bool horizontal = false,
 }) => LinearAxis(
+  horizontal ? .x : .y,
   min: min,
   max: max,
   stacked: stacked ? StackMode.on : StackMode.off,
@@ -97,6 +85,7 @@ void _leftGutter(Scale scale) {
 /// line and no tick marks. A label turns when the labels do not fit.
 CategoryAxis apexCategoryAxis({String? title, bool horizontal = false}) =>
     CategoryAxis(
+      horizontal ? .y : .x,
       grid: const AxisGrid(display: false, drawTicks: false),
       ticks: AxisTicks(
         color: const .solid(Apex.label),
@@ -443,9 +432,9 @@ final class ApexZoom() {
       onPanStart: (context) => panMode.value,
       onPanComplete: (context) => _update(context.chart),
     ),
-    limits: const {
-      'x': ScaleLimits(min: ScaleLimit.original, max: ScaleLimit.original),
-    },
+    limits: const LimitOptions(
+      x: ScaleLimits(min: ScaleLimit.original, max: ScaleLimit.original),
+    ),
   );
 
   void _update(Chart chart) => zoomed.value = chart.isZoomedOrPanned();

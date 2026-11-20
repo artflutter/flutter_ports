@@ -69,10 +69,10 @@ _Config _scatter({
               log.add('complete ${event.currentStep} of ${event.numSteps}'),
           extra: {if (twin) 'delay': _twinDelay, ...?animation},
         ),
-        scales: const {
-          'x': LinearAxis(min: 0, max: 100),
-          'y': LinearAxis(min: 0, max: 100),
-        },
+        scales: const [
+          LinearAxis(.x, min: 0, max: 100),
+          LinearAxis(.y, min: 0, max: 100),
+        ],
       ),
     ).lower();
 

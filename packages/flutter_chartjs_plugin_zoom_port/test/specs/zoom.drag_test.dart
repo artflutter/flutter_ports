@@ -34,10 +34,7 @@ void main() {
         chart = _acquire(
           ChartConfig(
             datasets: [LineDataset(points: points())],
-            scales: const {
-              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
-              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
-            },
+            scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: const [
               ZoomPluginOptions(
                 zoom: ZoomOptions(
@@ -49,8 +46,8 @@ void main() {
           ),
         );
 
-        scaleX = chart.scales['xScale0']!;
-        scaleY = chart.scales['yScale0']!;
+        scaleX = chart.scales['x']!;
+        scaleY = chart.scales['y']!;
 
         triggerMouseEvent(chart, 'mousedown', (
           x: scaleX.getPixelForValue(1.5),
@@ -73,10 +70,7 @@ void main() {
         chart = _acquire(
           ChartConfig(
             datasets: [LineDataset(points: points())],
-            scales: const {
-              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
-              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
-            },
+            scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: [
               ZoomPluginOptions(
                 zoom: ZoomOptions(
@@ -90,8 +84,8 @@ void main() {
           ),
         );
 
-        scaleX = chart.scales['xScale0']!;
-        scaleY = chart.scales['yScale0']!;
+        scaleX = chart.scales['x']!;
+        scaleY = chart.scales['y']!;
 
         triggerMouseEvent(chart, 'mousedown', (
           x: scaleX.getPixelForValue(1.5),
@@ -112,10 +106,7 @@ void main() {
         chart = _acquire(
           ChartConfig(
             datasets: [LineDataset(points: points())],
-            scales: const {
-              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
-              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
-            },
+            scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: const [
               ZoomPluginOptions(
                 zoom: ZoomOptions(
@@ -127,8 +118,8 @@ void main() {
           ),
         );
 
-        scaleX = chart.scales['xScale0']!;
-        scaleY = chart.scales['yScale0']!;
+        scaleX = chart.scales['x']!;
+        scaleY = chart.scales['y']!;
 
         triggerMouseEvent(chart, 'mousedown', (
           x: scaleX.getPixelForValue(1.5),
@@ -151,10 +142,7 @@ void main() {
         chart = _acquire(
           ChartConfig(
             datasets: [LineDataset(points: points())],
-            scales: const {
-              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
-              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
-            },
+            scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: [
               ZoomPluginOptions(
                 zoom: ZoomOptions(
@@ -168,8 +156,8 @@ void main() {
           ),
         );
 
-        scaleX = chart.scales['xScale0']!;
-        scaleY = chart.scales['yScale0']!;
+        scaleX = chart.scales['x']!;
+        scaleY = chart.scales['y']!;
 
         triggerMouseEvent(chart, 'mousedown', (
           x: scaleX.getPixelForValue(1.5),
@@ -192,10 +180,7 @@ void main() {
         chart = _acquire(
           ChartConfig(
             datasets: [LineDataset(points: points())],
-            scales: const {
-              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
-              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
-            },
+            scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: const [
               ZoomPluginOptions(
                 zoom: ZoomOptions(
@@ -207,8 +192,8 @@ void main() {
           ),
         );
 
-        scaleX = chart.scales['xScale0']!;
-        scaleY = chart.scales['yScale0']!;
+        scaleX = chart.scales['x']!;
+        scaleY = chart.scales['y']!;
 
         triggerMouseEvent(chart, 'mousedown', (
           x: scaleX.getPixelForValue(1.5),
@@ -241,10 +226,7 @@ void main() {
             chart = _acquire(
               ChartConfig(
                 datasets: [LineDataset(points: points())],
-                scales: const {
-                  'x': LinearAxis(min: 0, max: 10),
-                  'y': LinearAxis(),
-                },
+                scales: const [LinearAxis(.x, min: 0, max: 10), LinearAxis(.y)],
                 pluginOptions: [
                   ZoomPluginOptions(
                     zoom: ZoomOptions(
@@ -305,10 +287,7 @@ void main() {
             chart = _acquire(
               ChartConfig(
                 datasets: [LineDataset(points: points())],
-                scales: const {
-                  'x': LinearAxis(min: 0, max: 10),
-                  'y': LinearAxis(),
-                },
+                scales: const [LinearAxis(.x, min: 0, max: 10), LinearAxis(.y)],
                 pluginOptions: [
                   ZoomPluginOptions(
                     pan: PanOptions(enabled: true, modifierKey: key),
@@ -372,10 +351,10 @@ void main() {
         chart = _acquire(
           ChartConfig(
             datasets: [LineDataset(points: points())],
-            scales: const {
-              'xScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'xScale0'}),
-              'yScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'yScale0'}),
-            },
+            scales: const [
+              LinearAxis(.x, min: 0, max: 4),
+              LinearAxis(.y, min: 0, max: 4),
+            ],
             pluginOptions: const [
               ZoomPluginOptions(
                 zoom: ZoomOptions(
@@ -392,8 +371,8 @@ void main() {
           },
         );
 
-        scaleX = chart.scales['xScale0']!;
-        scaleY = chart.scales['yScale0']!;
+        scaleX = chart.scales['x']!;
+        scaleY = chart.scales['y']!;
 
         triggerMouseEvent(chart, 'mousedown', (
           x: scaleX.getPixelForValue(1.5),
@@ -416,10 +395,10 @@ void main() {
         chart = _acquire(
           ChartConfig(
             datasets: [LineDataset(points: points())],
-            scales: const {
-              'xScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'xScale0'}),
-              'yScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'yScale0'}),
-            },
+            scales: const [
+              LinearAxis(.x, min: 0, max: 4),
+              LinearAxis(.y, min: 0, max: 4),
+            ],
             pluginOptions: const [
               ZoomPluginOptions(
                 zoom: ZoomOptions(
@@ -436,8 +415,8 @@ void main() {
           },
         );
 
-        scaleX = chart.scales['xScale0']!;
-        scaleY = chart.scales['yScale0']!;
+        scaleX = chart.scales['x']!;
+        scaleY = chart.scales['y']!;
 
         triggerMouseEvent(chart, 'mousedown', (
           x: scaleX.getPixelForValue(1.5),

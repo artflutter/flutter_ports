@@ -26,9 +26,9 @@ void main() {
             pluginOptions: const [
               ZoomPluginOptions(pan: PanOptions(enabled: true, mode: Mode.x)),
             ],
-            scales: const {
-              'x': CategoryAxis(extra: {'min': 1, 'max': 2}),
-            },
+            scales: const [
+              CategoryAxis(.x, extra: {'min': 1, 'max': 2}),
+            ],
           ),
         );
         final scale = chart.scales['x']!;
@@ -52,11 +52,11 @@ void main() {
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
               ZoomPluginOptions(
-                limits: {'x': ScaleLimits(max: ScaleLimit(4))},
+                limits: LimitOptions(x: ScaleLimits(max: ScaleLimit(4))),
                 pan: PanOptions(enabled: true, mode: Mode.x),
               ),
             ],
-            scales: const {'x': LinearAxis(min: 1, max: 3)},
+            scales: const [LinearAxis(.x, min: 1, max: 3)],
           ),
         );
         final scale = chart.scales['x']!;
@@ -81,7 +81,7 @@ void main() {
             pluginOptions: const [
               ZoomPluginOptions(pan: PanOptions(enabled: true, mode: Mode.y)),
             ],
-            scales: const {'y': LinearAxis(min: 2, max: 2)},
+            scales: const [LinearAxis(.y, min: 2, max: 2)],
           ),
         );
         final scale = chart.scales['y']!;
@@ -102,17 +102,17 @@ void main() {
             pluginOptions: const [
               ZoomPluginOptions(
                 pan: PanOptions(enabled: true, mode: Mode.x),
-                limits: {
-                  'x': ScaleLimits(
+                limits: LimitOptions(
+                  x: ScaleLimits(
                     min: ScaleLimit.original,
                     max: ScaleLimit.original,
                   ),
-                },
+                ),
               ),
             ],
-            scales: const {
-              'x': CategoryAxis(extra: {'min': 1, 'max': 2}),
-            },
+            scales: const [
+              CategoryAxis(.x, extra: {'min': 1, 'max': 2}),
+            ],
           ),
         );
         final scale = chart.scales['x']!;
@@ -133,15 +133,15 @@ void main() {
             pluginOptions: const [
               ZoomPluginOptions(
                 pan: PanOptions(enabled: true, mode: Mode.x),
-                limits: {
-                  'x': ScaleLimits(
+                limits: LimitOptions(
+                  x: ScaleLimits(
                     min: ScaleLimit.original,
                     max: ScaleLimit.original,
                   ),
-                },
+                ),
               ),
             ],
-            scales: const {'x': LogarithmicAxis(min: 1, max: 10)},
+            scales: const [LogarithmicAxis(.x, min: 1, max: 10)],
           ),
         );
         final scale = chart.scales['x']!;

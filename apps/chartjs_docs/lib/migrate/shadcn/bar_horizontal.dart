@@ -35,13 +35,13 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   ),
   interaction: shadcnInteraction(horizontal: true),
   animation: shadcnBarAnimation,
-  scales: {
+  scales: [
     // <YAxis dataKey="month" type="category" tickLine={false} tickMargin={10} axisLine={false} ...>:
     // 60 px less the margin of -20 px.
-    'y': shadcnCategoryYAxis(width: 40),
+    shadcnCategoryYAxis(width: 40),
     // <XAxis type="number" dataKey="desktop" hide />, and no CartesianGrid.
-    'x': shadcnValueAxis(_desktop, grid: false),
-  },
+    shadcnValueAxis(direction: .x, _desktop, grid: false),
+  ],
 );
 
 class const ShadcnBarHorizontal({super.key}) extends StatelessWidget {

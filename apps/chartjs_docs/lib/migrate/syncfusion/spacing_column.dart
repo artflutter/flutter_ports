@@ -43,10 +43,7 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
     text: (item) => '${item.label.join(' ')} : ${sfValue(item)}',
   ),
   plugins: [sfTooltipLook],
-  scales: {
-    'x': sfCategoryAxis(),
-    'y': sfValueAxis(min: 0, max: 20, stepSize: 4),
-  },
+  scales: [sfCategoryAxis(), sfValueAxis(min: 0, max: 20, stepSize: 4)],
 );
 
 class const SfSpacingColumn({super.key}) extends StatefulWidget {

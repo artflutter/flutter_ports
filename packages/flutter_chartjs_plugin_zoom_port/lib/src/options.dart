@@ -696,39 +696,90 @@ final class const ScaleLimits({
   String toString() => 'ScaleLimits(min: $min, max: $max, minRange: $minRange)';
 }
 
-/// options.ts:200 `LimitOptions`: the [ScaleLimits] by the id of a scale or
-/// by its axis (`x` or `y`).
+/// options.ts:200 `LimitOptions`: the [ScaleLimits] of the scales of a
+/// direction and of one axis (Zoom ADR 0007).
+///
+/// Upstream keys the limits by a scale id or by a direction. A typed config
+/// has no scale ids (Chart.js ADR 0191): [x] and [y] are the keys of a
+/// direction, and [axes] is the key of one axis object. A `const` Map
+/// cannot have an axis key, because an axis overrides `==`.
 ///
 /// ```dart
-/// const LimitOptions limits = {'x': ScaleLimits(min: ScaleLimit(0))};
+/// const LimitOptions(x: ScaleLimits(min: ScaleLimit(0)));
+/// const right = LinearAxis(.y, position: .right);
+/// LimitOptions(axes: {right: const ScaleLimits(max: ScaleLimit(500))});
 /// ```
-typedef LimitOptions = Map<String, ScaleLimits>;
+// DIVERGES(zoom): adapt-native-zoom-options, a class for the limits.
+@immutable
+final class const LimitOptions({
+  /// The key `x`: the limits of each scale of the x direction.
+  final ScaleLimits? x,
 
-/// The limits [a] with the limits of [over]: the limits of each scale id
-/// merge (`ScaleLimits.merge`).
-LimitOptions _mergeLimits(LimitOptions a, LimitOptions over) => {
-  ...a,
-  for (final MapEntry(:key, :value) in over.entries)
-    key: a[key]?.merge(value) ?? value,
-};
+  /// The key `y`: the limits of each scale of the y direction.
+  final ScaleLimits? y,
 
-/// Whether the limits [a] and [b] have the same scale ids and equal limits.
-bool _limitsEqual(LimitOptions? a, LimitOptions? b) {
-  if (identical(a, b)) return true;
-  if (a == null || b == null || a.length != b.length) return false;
-  for (final MapEntry(:key, :value) in a.entries) {
-    if (!b.containsKey(key) || b[key] != value) return false;
+  /// The key of a scale id: the limits of the scale of each axis of the
+  /// typed config, by `==` (`chart.scaleIdOf`). They win over [x] and [y].
+  final Map<ChartAxis, ScaleLimits>? axes,
+}) {
+  /// The limits of the scales.
+  this;
+
+  /// scale.types.ts:65 `limits[scale.id] || limits[scale.axis]`: the
+  /// limits of the axis of [scale], else of its direction.
+  ScaleLimits? of(Scale scale) {
+    if (axes case final axes?) {
+      for (final MapEntry(key: axis, value: limits) in axes.entries) {
+        if (scale.chart.scaleIdOf(axis) == scale.id) return limits;
+      }
+    }
+    // DIVERGES(zoom): adapt-axis-classes, the key of the axis class.
+    return switch (scale.axis) {
+      XAxis() => x,
+      YAxis() => y,
+      _ => null,
+    };
   }
-  return true;
-}
 
-/// The hash of the limits [limits], from their entries in any order.
-int _limitsHash(LimitOptions? limits) => limits == null
-    ? null.hashCode
-    : Object.hashAllUnordered([
-        for (final MapEntry(:key, :value) in limits.entries)
-          Object.hash(key, value),
-      ]);
+  /// These limits with the limits of [over]: [x] and [y] merge
+  /// (`ScaleLimits.merge`), and [axes] merges by axis.
+  LimitOptions merge(LimitOptions over) => LimitOptions(
+    x: _mergeNullable(x, over.x, (a, b) => a.merge(b)),
+    y: _mergeNullable(y, over.y, (a, b) => a.merge(b)),
+    axes: _mergeNullable(
+      axes,
+      over.axes,
+      (a, b) => {
+        ...a,
+        for (final MapEntry(:key, :value) in b.entries)
+          key: a[key]?.merge(value) ?? value,
+      },
+    ),
+  );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is LimitOptions &&
+          other.x == x &&
+          other.y == y &&
+          mapEquals(other.axes, axes);
+
+  @override
+  int get hashCode => Object.hash(
+    x,
+    y,
+    axes == null
+        ? null
+        : Object.hashAllUnordered([
+            for (final MapEntry(:key, :value) in axes!.entries)
+              Object.hash(key, value),
+          ]),
+  );
+
+  @override
+  String toString() => 'LimitOptions(x: $x, y: $y, axes: $axes)';
+}
 
 /// options.ts:205 `ZoomPluginOptions`: the options of the plugin,
 /// `options.plugins.zoom` (Chart.js ADR 0148).
@@ -791,14 +842,14 @@ final class const ZoomPluginOptions({
   String get pluginId => 'zoom';
 
   /// The limits: [limits], else `{}` (core.ts:73 `limits = {}`).
-  LimitOptions get limitsOrDefault => limits ?? const {};
+  LimitOptions get limitsOrDefault => limits ?? const LimitOptions();
 
   /// These options with each field that [over] sets. A nested object merges
-  /// its own fields, and [limits] merges the limits of each scale id.
+  /// its own fields, and [limits] merges by direction and by axis.
   @override
   ZoomPluginOptions merge(ZoomPluginOptions over) => ZoomPluginOptions(
     pan: _mergeNullable(pan, over.pan, (a, b) => a.merge(b)),
-    limits: _mergeNullable(limits, over.limits, _mergeLimits),
+    limits: _mergeNullable(limits, over.limits, (a, b) => a.merge(b)),
     zoom: _mergeNullable(zoom, over.zoom, (a, b) => a.merge(b)),
     rangeOnlyUpdates: over.rangeOnlyUpdates ?? rangeOnlyUpdates,
     events: over.events ?? events,
@@ -809,7 +860,7 @@ final class const ZoomPluginOptions({
       identical(this, other) ||
       other is ZoomPluginOptions &&
           other.pan == pan &&
-          _limitsEqual(other.limits, limits) &&
+          other.limits == limits &&
           other.zoom == zoom &&
           other.rangeOnlyUpdates == rangeOnlyUpdates &&
           listEquals(other.events, events);
@@ -817,7 +868,7 @@ final class const ZoomPluginOptions({
   @override
   int get hashCode => Object.hash(
     pan,
-    _limitsHash(limits),
+    limits,
     zoom,
     rangeOnlyUpdates,
     events == null ? null : Object.hashAll(events!),

@@ -88,6 +88,7 @@ class _BarSample7State() extends State<BarSample7> {
     final turn = _turns % 4;
     final horizontal = turn.isOdd;
     final groups = groupAxis(
+      direction: horizontal ? .y : .x,
       count: 6,
       groupWidth: 2 * _width + 2,
       alignment: .spaceBetween,
@@ -112,6 +113,7 @@ class _BarSample7State() extends State<BarSample7> {
       ),
     );
     final values = valueAxis(
+      direction: horizontal ? .x : .y,
       min: 0,
       max: 20,
       reservedSize: 30,
@@ -153,10 +155,7 @@ class _BarSample7State() extends State<BarSample7> {
         ],
         tooltip: const ChartTooltip(enabled: false),
         plugins: [_labels, _touch],
-        scales: {
-          'x': horizontal ? values : groups,
-          'y': horizontal ? groups : values,
-        },
+        scales: horizontal ? [values, groups] : [groups, values],
       ),
     );
   }

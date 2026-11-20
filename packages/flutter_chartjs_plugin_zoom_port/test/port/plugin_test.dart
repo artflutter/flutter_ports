@@ -86,10 +86,10 @@ Widget _view(
       child: ChartView(
         config: ChartConfig(
           datasets: [ScatterDataset(points: _points(step), pointRadius: 3)],
-          scales: const {
-            'x': LinearAxis(min: 0, max: 100),
-            'y': LinearAxis(min: 0, max: 100),
-          },
+          scales: const [
+            LinearAxis(.x, min: 0, max: 100),
+            LinearAxis(.y, min: 0, max: 100),
+          ],
           animation: ChartAnimation.none,
           pluginOptions: [zoomOptions],
         ),
@@ -140,7 +140,7 @@ ChartConfig _rangeConfig(
     ),
   ],
   animation: ChartAnimation.none,
-  scales: const {'x': LinearAxis(min: 0, max: 100), 'y': LinearAxis()},
+  scales: const [LinearAxis(.x, min: 0, max: 100), LinearAxis(.y)],
   title: ChartTitle(
     display: true,
     extra: {
@@ -576,7 +576,7 @@ void main() {
           datasets: [
             ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
           ],
-          scales: const {'x': LinearAxis(min: 0, max: 100)},
+          scales: const [LinearAxis(.x, min: 0, max: 100)],
         ),
       );
       final x = chart.scales['x']!;

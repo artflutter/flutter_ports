@@ -183,15 +183,15 @@ const List<DocProperty> barProperties = [
   ),
   DocProperty('stack', section: 'general', type: 'String', fallback: "'bar'"),
   DocProperty(
-    'xAxisID',
+    'xAxis',
     section: 'general',
-    type: 'String',
+    type: 'ChartAxis',
     fallback: 'first x axis',
   ),
   DocProperty(
-    'yAxisID',
+    'yAxis',
     section: 'general',
-    type: 'String',
+    type: 'ChartAxis',
     fallback: 'first y axis',
   ),
 ];
@@ -404,12 +404,12 @@ DocPageContent barChartPage() => DocPageContent(
                 ),
               ),
               (
-                Text('xAxisID'),
-                DocText('The ID of the x axis of this dataset.'),
+                Text('xAxis'),
+                DocText('The x axis of this dataset: an axis of `scales`.'),
               ),
               (
-                Text('yAxisID'),
-                DocText('The ID of the y axis of this dataset.'),
+                Text('yAxis'),
+                DocText('The y axis of this dataset: an axis of `scales`.'),
               ),
             ]),
             LiveExample(

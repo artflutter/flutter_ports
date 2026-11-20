@@ -23,7 +23,7 @@ const List<num?> values = [65, 59, 80, 81, 56, 55, 40];
 const centeredGrid = ChartConfig(
   labels: months,
   datasets: [BarDataset(label: 'Visitors', data: values)],
-  scales: {'x': CategoryAxis(grid: AxisGrid(offset: false))},
+  scales: [CategoryAxis(.x, grid: AxisGrid(offset: false))],
 );
 // #enddocregion bar-grid-centered
 

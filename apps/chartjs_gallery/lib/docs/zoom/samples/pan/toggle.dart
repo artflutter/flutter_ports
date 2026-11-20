@@ -4,18 +4,7 @@ import 'dart:ui' as ui;
 
 import 'package:chartjs_gallery/docs/zoom/samples/basic.dart';
 import 'package:chartjs_gallery/docs/zoom/scripts/defaults.dart';
-import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart'
-    show
-        Mode,
-        PanOptions,
-        PinchOptions,
-        ScaleLimit,
-        ScaleLimits,
-        WheelOptions,
-        ZoomChart,
-        ZoomOptions,
-        ZoomPluginOptions,
-        zoomUpdateMode;
+import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_port.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
     show Chart, ChartPosition, JsObjectFace;
@@ -66,18 +55,10 @@ ZoomDocsSample zoomPanToggleSample(ZoomDocsLog log) {
 
   // <block:zoom:0>
   const zoomOptions = ZoomPluginOptions(
-    limits: {
-      'x': ScaleLimits(
-        min: ScaleLimit(-200),
-        max: ScaleLimit(200),
-        minRange: 50,
-      ),
-      'y': ScaleLimits(
-        min: ScaleLimit(-200),
-        max: ScaleLimit(200),
-        minRange: 50,
-      ),
-    },
+    limits: LimitOptions(
+      x: ScaleLimits(min: ScaleLimit(-200), max: ScaleLimit(200), minRange: 50),
+      y: ScaleLimits(min: ScaleLimit(-200), max: ScaleLimit(200), minRange: 50),
+    ),
     pan: PanOptions(enabled: false, mode: Mode.xy),
     zoom: ZoomOptions(
       wheel: WheelOptions(enabled: false),

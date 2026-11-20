@@ -541,8 +541,8 @@ void main() {
                     ),
                   ],
                   labels: [for (var i = 0; i < 700; i++) ''],
-                  scales: const {
-                    'r': RadialLinearAxis(
+                  scales: const [
+                    RadialLinearAxis(
                       min: 0,
                       max: 100,
                       angleLinesColor: ChartPaint.solid(ui.Color(0x33888888)),
@@ -552,7 +552,7 @@ void main() {
                         drawTicks: false,
                       ),
                     ),
-                  },
+                  ],
                   animation: ChartAnimation.none,
                   legend: const ChartLegend(display: false),
                   maintainAspectRatio: false,

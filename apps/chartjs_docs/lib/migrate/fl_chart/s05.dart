@@ -91,8 +91,9 @@ class _Sample5State() extends State<Sample5> {
       interaction: const ChartInteraction(mode: flX, intersect: false),
       tooltip: const ChartTooltip(enabled: false),
       plugins: [_pinned, areaBorder(Fl.white54)],
-      scales: const {
-        'x': CategoryAxis(
+      scales: const [
+        CategoryAxis(
+          .x,
           grid: AxisGrid(display: false),
           border: Fl.noBorder,
           ticks: AxisTicks(
@@ -102,7 +103,8 @@ class _Sample5State() extends State<Sample5> {
             font: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
           ),
         ),
-        'y': LinearAxis(
+        LinearAxis(
+          .y,
           min: 0,
           grid: AxisGrid(display: false),
           border: Fl.noBorder,
@@ -113,7 +115,8 @@ class _Sample5State() extends State<Sample5> {
           ),
           ticks: AxisTicks(display: false),
         ),
-        'y2': LinearAxis(
+        LinearAxis(
+          .y,
           position: .right,
           grid: AxisGrid(display: false),
           border: Fl.noBorder,
@@ -124,7 +127,8 @@ class _Sample5State() extends State<Sample5> {
           ),
           ticks: AxisTicks(display: false),
         ),
-        'x2': CategoryAxis(
+        CategoryAxis(
+          .x,
           position: .top,
           grid: AxisGrid(display: false),
           border: Fl.noBorder,
@@ -135,7 +139,7 @@ class _Sample5State() extends State<Sample5> {
           ),
           ticks: AxisTicks(display: false),
         ),
-      },
+      ],
     ),
   );
 

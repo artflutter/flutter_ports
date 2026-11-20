@@ -113,8 +113,8 @@ class _BarSample8State() extends State<BarSample8> {
       tooltip: const ChartTooltip(enabled: false),
       extra: const {'events': <String>[]},
       plugins: [_dashedBars, _errorBars(_data)],
-      scales: {
-        'x': groupAxis(
+      scales: [
+        groupAxis(
           count: 7,
           groupWidth: 22,
           reservedSize: 38,
@@ -125,7 +125,7 @@ class _BarSample8State() extends State<BarSample8> {
             callback: (scale, value, index, ticks) => [_days[index]],
           ),
         ),
-        'y': valueAxis(
+        valueAxis(
           min: 0,
           max: 300,
           reservedSize: 30,
@@ -137,7 +137,7 @@ class _BarSample8State() extends State<BarSample8> {
             callback: flTitles(),
           ),
         ),
-      },
+      ],
     ),
   );
 

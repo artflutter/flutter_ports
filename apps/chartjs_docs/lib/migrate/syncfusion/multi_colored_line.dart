@@ -110,9 +110,10 @@ final ChartConfig _config = ChartConfig(
     ),
   ),
   plugins: [_trackball],
-  scales: const {
+  scales: const [
     // DateTimeAxis(intervalType: years, dateFormat: y)
-    'x': TimeAxis(
+    TimeAxis(
+      .x,
       unit: .year,
       tooltipFormat: 'yyyy',
       grid: AxisGrid(
@@ -134,7 +135,8 @@ final ChartConfig _config = ChartConfig(
       ),
       border: AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: 200,
       max: 600,
       grid: AxisGrid(
@@ -151,7 +153,7 @@ final ChartConfig _config = ChartConfig(
       ),
       border: AxisBorder(display: false),
     ),
-  },
+  ],
 );
 
 List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>

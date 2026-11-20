@@ -88,22 +88,24 @@ class _Sample10State() extends State<Sample10> {
                   animation: ChartAnimation.none,
                   tooltip: const ChartTooltip(enabled: false),
                   extra: const {'events': <String>[]},
-                  scales: {
-                    'x': LinearAxis(
+                  scales: [
+                    LinearAxis(
+                      .x,
                       min: _sin.first.x! as double,
                       max: _sin.last.x! as double,
                       grid: const AxisGrid(display: false),
                       ticks: const AxisTicks(display: false),
                       border: Fl.noBorder,
                     ),
-                    'y': LinearAxis(
+                    LinearAxis(
+                      .y,
                       min: -1,
                       max: 1,
                       grid: flGrid(show: (v) => v.abs() < 1),
                       ticks: const AxisTicks(display: false, stepSize: 0.5),
                       border: flGridDash,
                     ),
-                  },
+                  ],
                 ),
               ),
             ),

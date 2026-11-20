@@ -107,22 +107,10 @@ ScaleRange _logarithmicZoomRange(Scale scale, double zoom, Point center) {
   );
 }
 
-/// scale.types.ts:65 `getScaleLimits(scale, limits)`: the limits of the id
-/// of [scale], else of its axis, else `{}`.
-ScaleLimits _getScaleLimits(Scale scale, LimitOptions? limits) {
-  // `limits[scale.axis]`: the key of the axis class of the host (row
-  // `adapt-axis-classes`).
-  final axisKey = switch (scale.axis) {
-    XAxis() => 'x',
-    YAxis() => 'y',
-    RAxis() => 'r',
-    _ => null,
-  };
-  // DIVERGES(zoom): adapt-axis-classes, the key of the axis class.
-  return limits?[scale.id] ??
-      (axisKey == null ? null : limits?[axisKey]) ??
-      const ScaleLimits();
-}
+/// scale.types.ts:65 `getScaleLimits(scale, limits)`: the limits of the axis
+/// of [scale], else of its direction, else `{}` (`LimitOptions.of`).
+ScaleLimits _getScaleLimits(Scale scale, LimitOptions? limits) =>
+    limits?.of(scale) ?? const ScaleLimits();
 
 /// scale.types.ts:69 `getLimit(state, scale, scaleLimits, prop, fallback)`:
 /// the limit [prop] (`'min'` or `'max'`) of [scaleLimits], the original

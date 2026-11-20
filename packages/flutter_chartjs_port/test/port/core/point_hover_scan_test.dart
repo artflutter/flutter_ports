@@ -339,7 +339,7 @@ Chart _scatterChart({
   Map<String, Object?> Function(int dataset)? datasetExtra,
   List<DataPoint> Function(int dataset)? values,
   ChartInteraction? interaction,
-  Map<String, ChartAxis>? scales,
+  List<ChartAxis>? scales,
   Map<String, Object?>? extra,
   ChartAnimation animation = ChartAnimation.none,
 }) => acquireChartRoot(
@@ -439,7 +439,7 @@ void main() {
         datasets: 2,
         type: ChartKind.line,
         interaction: const ChartInteraction(mode: PointInteractionMode()),
-        scales: const {'x': LinearAxis()},
+        scales: const [LinearAxis(.x)],
       );
       final data = chart.getDatasetMeta(0).data;
       expect((data[0] as Element).options, same((data[1] as Element).options));

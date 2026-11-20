@@ -56,8 +56,9 @@ final ChartConfig _config = ChartConfig(
       pointHoverRadius: 0,
     ),
   ],
-  scales: {
-    'x': TimeAxis(
+  scales: [
+    TimeAxis(
+      .x,
       min: _min,
       max: _max,
       grid: noGrid,
@@ -65,7 +66,8 @@ final ChartConfig _config = ChartConfig(
       border: bottomBorder,
       extra: bottomAxis,
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: _range.min,
       max: _range.max,
       grid: lineGrid,
@@ -73,7 +75,7 @@ final ChartConfig _config = ChartConfig(
       border: leftBorder,
       extra: leftAxis,
     ),
-  },
+  ],
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,

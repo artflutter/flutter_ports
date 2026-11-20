@@ -55,16 +55,16 @@ ChartConfig _config(ShadcnTip tip, int active) {
     animation: shadcnLineAnimation,
     // The cursor of the tooltip: a line at the hovered day.
     plugins: [shadcnCursor],
-    scales: {
+    scales: [
       // minTickGap={32}, and the tickFormatter of the month and the day.
-      'x': shadcnCategoryAxis(
+      shadcnCategoryAxis(
         callback: (scale, value, index, ticks) => [
           shortDate(_dates[value.toInt()]),
         ],
         autoSkipPadding: 32,
       ),
-      'y': shadcnValueAxis(data),
-    },
+      shadcnValueAxis(data),
+    ],
   );
 }
 

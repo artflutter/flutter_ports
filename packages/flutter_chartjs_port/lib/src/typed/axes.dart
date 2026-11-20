@@ -4,9 +4,10 @@
 /// [ChartAxis], one axis class for each scale type of Chart.js, and the
 /// axis parts [AxisTicks], [AxisGrid] and [AxisTitle].
 ///
-/// An axis is an entry of the `scales` Map of `ChartConfig`: the key is the
-/// axis id, for example `'x'`, `'y'` or `'r'`, and the axis class gives the
-/// scale type (`docs/axes/index.md`).
+/// An axis is an item of the `scales` List of `ChartConfig`. The axis class
+/// gives the scale type (`docs/axes/index.md`), and a cartesian axis takes its
+/// direction first: `LinearAxis(.y)`. The lowering gives each axis its scale
+/// id (Chart.js ADR 0191).
 library;
 
 import 'package:flutter/foundation.dart'
@@ -20,8 +21,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// Each scale type has its axis class: [CategoryAxis], [LinearAxis],
 /// [LogarithmicAxis], [TimeAxis], [TimeSeriesAxis] and [RadialLinearAxis].
 /// The class gives the `type` of the scale. A cartesian chart (bar, line,
-/// scatter, bubble) has the axes `x` and `y`. A radial chart (polar area,
-/// radar) has the axis `r`.
+/// scatter, bubble) has x and y axes: `CategoryAxis(.x)`, `LinearAxis(.y)`.
+/// A radial chart (polar area, radar) has one [RadialLinearAxis].
 ///
 /// A parameter that is `null` is not set: the chart uses the default of
 /// Chart.js. The keys that this class does not have go through [extra].
@@ -77,6 +78,11 @@ abstract final class const ChartAxis({
   /// takes an [AxisBorder], and [RadialLinearAxis] a [RadialAxisBorder].
   ScaleBorder? get border;
 
+  /// The direction of the axis: [XAxis] or [YAxis] for a cartesian axis,
+  /// [RAxis] for [RadialLinearAxis] (Chart.js ADR 0191). The lowering gives
+  /// the first axis of a direction the scale id `x`, `y` or `r`.
+  ScaleAxis get axis;
+
   /// A copy of this axis with the given parameters. A parameter that is
   /// `null` keeps its value.
   ChartAxis copyWith({
@@ -102,6 +108,7 @@ abstract final class const ChartAxis({
 
   /// The properties of [ChartAxis] before the parameters of the class.
   List<TypedProperty> get _headProps => [
+    ('axis', axis),
     ('display', display),
     ('position', position),
     ('reverse', reverse),
@@ -136,9 +143,12 @@ abstract final class const ChartAxis({
 
 /// The axis scope of [axis] (Chart.js ADR 0052, section 2; Chart.js ADR
 /// 0054 §7): a new `ScaleOptionsScope` with `type` first, then the keys in
-/// parameter order, and [ChartAxis.extra] last.
-ScaleOptionsScope lowerAxis(ChartAxis axis) {
+/// parameter order, and [ChartAxis.extra] last. With [writeAxis], the
+/// option `axis` follows `type`: the id of the axis does not name its
+/// direction (Chart.js ADR 0191, item 3).
+ScaleOptionsScope lowerAxis(ChartAxis axis, {bool writeAxis = false}) {
   final scope = ScaleOptionsScope()..type = axis._type;
+  if (writeAxis) put(scope, OptionKey.axis, axis.axis);
   put(scope, OptionKey.display, axis.display);
   put(scope, OptionKey.position, axis.position);
   put(scope, OptionKey.reverse, axis.reverse);
@@ -155,7 +165,13 @@ ScaleOptionsScope lowerAxis(ChartAxis axis) {
 /// A category axis: the scale type `category` (`docs/axes/cartesian/
 /// category.md`). It shows the labels of the chart in order. It is the
 /// default index axis of a bar and a line chart.
-final class const CategoryAxis({
+final class const CategoryAxis(
+  /// {@template flutter_chartjs_port.typed.axisDirection}
+  /// The direction of the axis: [CartesianAxis.x] (`.x`) or
+  /// [CartesianAxis.y] (`.y`). The first axis of a direction has the
+  /// scale id `x` or `y` (Chart.js ADR 0191).
+  /// {@endtemplate}
+  @override final CartesianAxis axis, {
   super.display,
   super.position,
   super.reverse,
@@ -191,6 +207,7 @@ final class const CategoryAxis({
 
   @override
   CategoryAxis copyWith({
+    CartesianAxis? axis,
     ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
@@ -205,6 +222,7 @@ final class const CategoryAxis({
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => CategoryAxis(
+    axis ?? this.axis,
     display: display ?? this.display,
     position: position ?? this.position,
     reverse: reverse ?? this.reverse,
@@ -244,7 +262,9 @@ final class const CategoryAxis({
 
 /// A linear axis: the scale type `linear` (`docs/axes/cartesian/
 /// linear.md`). It is the default value axis of a bar and a line chart.
-final class const LinearAxis({
+final class const LinearAxis(
+  /// {@macro flutter_chartjs_port.typed.axisDirection}
+  @override final CartesianAxis axis, {
   super.display,
   super.position,
   super.reverse,
@@ -293,6 +313,7 @@ final class const LinearAxis({
 
   @override
   LinearAxis copyWith({
+    CartesianAxis? axis,
     ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
@@ -309,6 +330,7 @@ final class const LinearAxis({
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => LinearAxis(
+    axis ?? this.axis,
     display: display ?? this.display,
     position: position ?? this.position,
     reverse: reverse ?? this.reverse,
@@ -354,7 +376,9 @@ final class const LinearAxis({
 
 /// A logarithmic axis: the scale type `logarithmic` (`docs/axes/cartesian/
 /// logarithmic.md`). Its values are positive.
-final class const LogarithmicAxis({
+final class const LogarithmicAxis(
+  /// {@macro flutter_chartjs_port.typed.axisDirection}
+  @override final CartesianAxis axis, {
   super.display,
   super.position,
   super.reverse,
@@ -389,6 +413,7 @@ final class const LogarithmicAxis({
 
   @override
   LogarithmicAxis copyWith({
+    CartesianAxis? axis,
     ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
@@ -404,6 +429,7 @@ final class const LogarithmicAxis({
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => LogarithmicAxis(
+    axis ?? this.axis,
     display: display ?? this.display,
     position: position ?? this.position,
     reverse: reverse ?? this.reverse,
@@ -475,7 +501,9 @@ base mixin _TimeOptions on ChartAxis {
 /// The axis places each data item at its time. The data has `DateTime`
 /// values, for example `DataPoint.time` items, or numbers in milliseconds
 /// since the epoch. The default date adapter formats the ticks.
-final class const TimeAxis({
+final class const TimeAxis(
+  /// {@macro flutter_chartjs_port.typed.axisDirection}
+  @override final CartesianAxis axis, {
   super.display,
   super.position,
   super.reverse,
@@ -520,6 +548,7 @@ final class const TimeAxis({
 
   @override
   TimeAxis copyWith({
+    CartesianAxis? axis,
     ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
@@ -535,6 +564,7 @@ final class const TimeAxis({
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => TimeAxis(
+    axis ?? this.axis,
     display: display ?? this.display,
     position: position ?? this.position,
     reverse: reverse ?? this.reverse,
@@ -574,7 +604,9 @@ final class const TimeAxis({
 ///
 /// The axis places the data items at equal distances, in time order. The
 /// data has `DateTime` values or numbers in milliseconds since the epoch.
-final class const TimeSeriesAxis({
+final class const TimeSeriesAxis(
+  /// {@macro flutter_chartjs_port.typed.axisDirection}
+  @override final CartesianAxis axis, {
   super.display,
   super.position,
   super.reverse,
@@ -609,6 +641,7 @@ final class const TimeSeriesAxis({
 
   @override
   TimeSeriesAxis copyWith({
+    CartesianAxis? axis,
     ScaleDisplay? display,
     ChartPosition? position,
     bool? reverse,
@@ -624,6 +657,7 @@ final class const TimeSeriesAxis({
     AxisTitle? title,
     Map<String, Object?>? extra,
   }) => TimeSeriesAxis(
+    axis ?? this.axis,
     display: display ?? this.display,
     position: position ?? this.position,
     reverse: reverse ?? this.reverse,
@@ -784,6 +818,9 @@ final class const RadialLinearAxis({
 
   @override
   String get _type => 'radialLinear';
+
+  @override
+  RAxis get axis => const RAxis();
 
   @override
   void _lowerOwn(ScaleOptionsScope scope) {

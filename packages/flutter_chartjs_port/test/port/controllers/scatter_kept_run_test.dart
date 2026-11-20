@@ -43,10 +43,10 @@ ChartConfig _config(
   ],
   responsive: false,
   animation: ChartAnimation.none,
-  scales: const {
-    'x': LinearAxis(display: ScaleDisplay.off, min: 0, max: 100),
-    'y': LinearAxis(display: ScaleDisplay.off, min: 0, max: 100),
-  },
+  scales: const [
+    LinearAxis(.x, display: ScaleDisplay.off, min: 0, max: 100),
+    LinearAxis(.y, display: ScaleDisplay.off, min: 0, max: 100),
+  ],
   extra: const {
     'parsing': false,
     'events': <String>[],

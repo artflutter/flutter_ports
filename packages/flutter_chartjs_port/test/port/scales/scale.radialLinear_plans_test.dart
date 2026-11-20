@@ -330,8 +330,8 @@ ChartConfigurationScope _config({
       ],
       labels: labels ?? <Object>[for (var i = 0; i < n; i++) 'Label $i'],
       responsive: false,
-      scales: {
-        'r': RadialLinearAxis(
+      scales: [
+        RadialLinearAxis(
           min: 0,
           max: 100,
           grid: const AxisGrid(color: ChartPaint.solid(ui.Color(0x33000000))),
@@ -348,7 +348,7 @@ ChartConfigurationScope _config({
             if (labelOptions.isNotEmpty) 'pointLabels': labelOptions,
           },
         ),
-      },
+      ],
       extra: const {
         'events': <String>[],
         'plugins': {'legend': false},
@@ -1335,8 +1335,8 @@ void main() {
                   ),
                 ],
                 labels: [for (var i = 0; i < 64; i++) '$i'],
-                scales: const {
-                  'r': RadialLinearAxis(
+                scales: const [
+                  RadialLinearAxis(
                     min: 0,
                     max: 100,
                     pointLabelsFont: TextStyle(fontSize: 10),
@@ -1355,7 +1355,7 @@ void main() {
                       'pointLabels': {'callback': _everyFourth},
                     },
                   ),
-                },
+                ],
                 animation: ChartAnimation.none,
                 legend: const ChartLegend(display: false),
                 maintainAspectRatio: false,

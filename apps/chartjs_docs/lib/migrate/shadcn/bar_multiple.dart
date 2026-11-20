@@ -36,10 +36,10 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(indicator: .dashed)),
   interaction: shadcnInteraction(),
   animation: shadcnBarAnimation,
-  scales: {
-    'x': shadcnCategoryAxis(tickMargin: 10),
-    'y': shadcnValueAxis([..._desktop, ..._mobile]),
-  },
+  scales: [
+    shadcnCategoryAxis(tickMargin: 10),
+    shadcnValueAxis([..._desktop, ..._mobile]),
+  ],
 );
 
 class const ShadcnBarMultiple({super.key}) extends StatelessWidget {

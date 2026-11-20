@@ -133,8 +133,8 @@ class const BenchmarkChart({
       pinch: zp.PinchOptions(enabled: true),
       mode: zp.Mode.x,
     ),
-    limits: {
-      'x': zp.ScaleLimits(
+    limits: zp.LimitOptions(
+      x: zp.ScaleLimits(
         min: zp.ScaleLimit.original,
         max: zp.ScaleLimit.original,
         // A category axis counts the bars from 0, a linear axis goes to 100,
@@ -148,7 +148,7 @@ class const BenchmarkChart({
             } /
             chartMaxZoom,
       ),
-    },
+    ),
   );
 
   @override
@@ -398,17 +398,17 @@ class const BenchmarkChart({
         },
         scales: switch (config.type) {
           ChartType.pie || ChartType.doughnut => null,
-          ChartType.polarArea => const {
-            'r': cj.RadialLinearAxis(
+          ChartType.polarArea => const [
+            cj.RadialLinearAxis(
               min: 0,
               max: 100,
               display: cj.ScaleDisplay.off,
               pointLabelsDisplay: cj.ScaleDisplay.off,
               angleLinesDisplay: false,
             ),
-          },
-          ChartType.radar => {
-            'r': cj.RadialLinearAxis(
+          ],
+          ChartType.radar => [
+            cj.RadialLinearAxis(
               min: 0,
               max: 100,
               display: config.axes || config.grid
@@ -425,26 +425,30 @@ class const BenchmarkChart({
               grid: grid.copyWith(extra: const {'circular': true}),
               ticks: ticks,
             ),
-          },
-          _ => {
-            'x': config.type == ChartType.bar
-                ? cj.CategoryAxis(
-                    display: config.axes || config.grid
-                        ? cj.ScaleDisplay.on
-                        : cj.ScaleDisplay.off,
-                    grid: grid,
-                    ticks: ticks,
-                  )
-                : cj.LinearAxis(
-                    min: 0,
-                    max: 100,
-                    display: config.axes || config.grid
-                        ? cj.ScaleDisplay.on
-                        : cj.ScaleDisplay.off,
-                    grid: grid,
-                    ticks: ticks,
-                  ),
-            'y': cj.LinearAxis(
+          ],
+          _ => [
+            if (config.type == ChartType.bar)
+              cj.CategoryAxis(
+                .x,
+                display: config.axes || config.grid
+                    ? cj.ScaleDisplay.on
+                    : cj.ScaleDisplay.off,
+                grid: grid,
+                ticks: ticks,
+              )
+            else
+              cj.LinearAxis(
+                .x,
+                min: 0,
+                max: 100,
+                display: config.axes || config.grid
+                    ? cj.ScaleDisplay.on
+                    : cj.ScaleDisplay.off,
+                grid: grid,
+                ticks: ticks,
+              ),
+            cj.LinearAxis(
+              .y,
               min: 0,
               max: 100,
               display: config.axes || config.grid
@@ -453,7 +457,7 @@ class const BenchmarkChart({
               grid: grid,
               ticks: ticks,
             ),
-          },
+          ],
         },
         animation: cj.ChartAnimation.none,
         legend: const cj.ChartLegend(display: false),

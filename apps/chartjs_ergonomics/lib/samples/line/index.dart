@@ -218,7 +218,7 @@ final List<Sample> lineSamples = [
   const Sample(
     file: 'two_axes',
     title: 'Two y axes',
-    note: 'yAxisID links a dataset to an axis id of scales.',
+    note: 'yAxis links a dataset to an axis object of scales.',
     child: ChartView(config: twoAxes),
   ),
   const Sample(

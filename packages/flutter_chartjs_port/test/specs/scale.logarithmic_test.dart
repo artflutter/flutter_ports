@@ -104,25 +104,46 @@ const List<({String id, String start, String end})> _axes = [
 /// `setup.scale` go into both axes.
 Chart _acquireWhenChart(Map<String, Object?> setup) {
   final scale = setup['scale'] as Map<String, Object?>?;
-  LogarithmicAxis axisAt(ChartPosition position) => LogarithmicAxis(
-    position: position,
-    min: (scale?['min'] as num?)?.toDouble(),
-    max: (scale?['max'] as num?)?.toDouble(),
-    stacked: scale?['stacked'] as StackMode?,
-  );
+  LogarithmicAxis axisAt(CartesianAxis direction, ChartPosition position) =>
+      LogarithmicAxis(
+        direction,
+        position: position,
+        min: (scale?['min'] as num?)?.toDouble(),
+        max: (scale?['max'] as num?)?.toDouble(),
+        stacked: scale?['stacked'] as StackMode?,
+      );
   final datasets =
       setup['data'] as List<Dataset>? ??
       [LineDataset(points: setup['dataset']! as List<DataPoint>)];
   return _acquire(
     ChartConfig(
       datasets: datasets,
-      scales: {
-        'x': axisAt(ChartPosition.bottom),
-        'y': axisAt(ChartPosition.left),
-      },
+      scales: [
+        axisAt(.x, ChartPosition.bottom),
+        axisAt(.y, ChartPosition.left),
+      ],
     ),
   );
 }
+
+// The second, third and fourth y axes of the specs. Their options are equal
+// upstream, so an `id` in `extra` makes them distinct by `==`; Chart.js
+// writes the scale id over it (core.controller.js:309, Chart.js ADR 0191).
+const _y1 = LogarithmicAxis(
+  .y,
+  position: ChartPosition.right,
+  extra: {'id': 'y1'},
+);
+const _y2 = LogarithmicAxis(
+  .y,
+  position: ChartPosition.right,
+  extra: {'id': 'y2'},
+);
+const _y3 = LogarithmicAxis(
+  .y,
+  position: ChartPosition.right,
+  extra: {'id': 'y3'},
+);
 
 void main() {
   group('Logarithmic Scale tests', () {
@@ -162,19 +183,19 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(yAxisID: 'y', data: [42, 1000, 64, 100]),
-            BarDataset(yAxisID: 'y1', data: [10, 5, 5000, 78, 450]),
-            BarDataset(yAxisID: 'y1', data: [150]),
-            BarDataset(yAxisID: 'y2', data: [20, 0, 150, 1800, 3040]),
-            BarDataset(yAxisID: 'y3', data: [67, 0.0004, 0, 820, 0.001]),
+            BarDataset(data: [42, 1000, 64, 100]),
+            BarDataset(yAxis: _y1, data: [10, 5, 5000, 78, 450]),
+            BarDataset(yAxis: _y1, data: [150]),
+            BarDataset(yAxis: _y2, data: [20, 0, 150, 1800, 3040]),
+            BarDataset(yAxis: _y3, data: [67, 0.0004, 0, 820, 0.001]),
           ],
           labels: ['a', 'b', 'c', 'd', 'e'],
-          scales: {
-            'y': LogarithmicAxis(extra: {'id': 'y'}),
-            'y1': LogarithmicAxis(position: ChartPosition.right),
-            'y2': LogarithmicAxis(position: ChartPosition.right),
-            'y3': LogarithmicAxis(position: ChartPosition.right),
-          },
+          scales: [
+            LogarithmicAxis(.y, extra: {'id': 'y'}),
+            _y1,
+            _y2,
+            _y3,
+          ],
         ),
       );
 
@@ -285,22 +306,18 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(yAxisID: 'y1', data: [10, 5, 5000, 78, 450]),
-              LineDataset(yAxisID: 'y', data: [42, 1000, 64, 100]),
-              LineDataset(yAxisID: 'y1', data: [50000], hidden: true),
-              LineDataset(yAxisID: 'y2', data: [20, 0, 7400, 14, 291]),
+              LineDataset(yAxis: _y1, data: [10, 5, 5000, 78, 450]),
+              LineDataset(data: [42, 1000, 64, 100]),
+              LineDataset(yAxis: _y1, data: [50000], hidden: true),
+              LineDataset(yAxis: _y2, data: [20, 0, 7400, 14, 291]),
               LineDataset(
-                yAxisID: 'y2',
+                yAxis: _y2,
                 data: [6, 0.0007, 9, 890, 60000],
                 hidden: true,
               ),
             ],
             labels: ['a', 'b', 'c', 'd', 'e'],
-            scales: {
-              'y': LogarithmicAxis(),
-              'y1': LogarithmicAxis(position: ChartPosition.right),
-              'y2': LogarithmicAxis(position: ChartPosition.right),
-            },
+            scales: [LogarithmicAxis(.y), _y1, _y2],
           ),
         );
 
@@ -435,10 +452,10 @@ void main() {
               ],
             ),
           ],
-          scales: const {
-            'x': LogarithmicAxis(position: ChartPosition.bottom),
-            'y': LogarithmicAxis(),
-          },
+          scales: const [
+            LogarithmicAxis(.x, position: ChartPosition.bottom),
+            LogarithmicAxis(.y),
+          ],
         ),
       );
 
@@ -465,10 +482,10 @@ void main() {
                 ],
               ),
             ],
-            scales: const {
-              'x': LogarithmicAxis(position: ChartPosition.bottom),
-              'y': LogarithmicAxis(),
-            },
+            scales: const [
+              LogarithmicAxis(.x, position: ChartPosition.bottom),
+              LogarithmicAxis(.y),
+            ],
           ),
         );
 
@@ -487,16 +504,16 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(yAxisID: 'y', data: [10, 5, 1, 5, 78, 100]),
-              BarDataset(yAxisID: 'y1', data: [0, 1000]),
-              BarDataset(yAxisID: 'y', data: [150, 10, 10, 100, 10, 9]),
-              LineDataset(yAxisID: 'y', data: [100, 100, 100, 100, 100, 100]),
+              BarDataset(data: [10, 5, 1, 5, 78, 100]),
+              BarDataset(yAxis: _y1, data: [0, 1000]),
+              BarDataset(data: [150, 10, 10, 100, 10, 9]),
+              LineDataset(data: [100, 100, 100, 100, 100, 100]),
             ],
             labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-            scales: {
-              'y': LogarithmicAxis(stacked: StackMode.on),
-              'y1': LogarithmicAxis(position: ChartPosition.right),
-            },
+            scales: [
+              LogarithmicAxis(.y, stacked: StackMode.on),
+              _y1,
+            ],
           ),
         );
 
@@ -512,20 +529,19 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(yAxisID: 'y', data: [10, 5, 1, 5, 78, 100]),
-              BarDataset(yAxisID: 'y1', data: [0, 1000]),
-              BarDataset(yAxisID: 'y', data: [150, 10, 10, 100, 10, 9]),
+              BarDataset(data: [10, 5, 1, 5, 78, 100]),
+              BarDataset(yAxis: _y1, data: [0, 1000]),
+              BarDataset(data: [150, 10, 10, 100, 10, 9]),
               BarDataset(
-                yAxisID: 'y',
                 data: [10000, 10000, 10000, 10000, 10000, 10000],
                 hidden: true,
               ),
             ],
             labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-            scales: {
-              'y': LogarithmicAxis(stacked: StackMode.on),
-              'y1': LogarithmicAxis(position: ChartPosition.right),
-            },
+            scales: [
+              LogarithmicAxis(.y, stacked: StackMode.on),
+              _y1,
+            ],
           ),
         );
 
@@ -541,7 +557,7 @@ void main() {
           const ChartConfig(
             datasets: [BarDataset(data: [])],
             labels: [],
-            scales: {'y': LogarithmicAxis()},
+            scales: [LogarithmicAxis(.y)],
           ),
         );
 
@@ -563,13 +579,14 @@ void main() {
             BarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
           labels: [],
-          scales: {
-            'y': LogarithmicAxis(
+          scales: [
+            LogarithmicAxis(
+              .y,
               min: 10,
               max: 1010,
               ticks: AxisTicks(callback: valueTickLabel),
             ),
-          },
+          ],
         ),
       );
 
@@ -588,13 +605,14 @@ void main() {
             BarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
           labels: [],
-          scales: {
-            'y': LogarithmicAxis(
+          scales: [
+            LogarithmicAxis(
+              .y,
               min: -10,
               max: -1010,
               ticks: AxisTicks(callback: valueTickLabel),
             ),
-          },
+          ],
         ),
       );
 
@@ -639,11 +657,12 @@ void main() {
             BarDataset(data: [10, 5, 2, 25, 78]),
           ],
           labels: [],
-          scales: {
-            'y': LogarithmicAxis(
+          scales: [
+            LogarithmicAxis(
+              .y,
               ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
             ),
-          },
+          ],
         ),
       );
 
@@ -685,9 +704,9 @@ void main() {
             BarDataset(data: [11, 0.8, 0, 28, 7]),
           ],
           labels: [],
-          scales: {
-            'y': LogarithmicAxis(ticks: AxisTicks(callback: valueTickLabel)),
-          },
+          scales: [
+            LogarithmicAxis(.y, ticks: AxisTicks(callback: valueTickLabel)),
+          ],
         ),
       );
 
@@ -730,12 +749,13 @@ void main() {
               LineDataset(data: [10, 5, 1, 25, 78]),
             ],
             labels: [],
-            scales: {
-              'y': LogarithmicAxis(
+            scales: [
+              LogarithmicAxis(
+                .y,
                 reverse: true,
                 ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
               ),
-            },
+            ],
           ),
         );
 
@@ -762,12 +782,13 @@ void main() {
               LineDataset(data: [21, 9, 0, 10, 25]),
             ],
             labels: [],
-            scales: {
-              'y': LogarithmicAxis(
+            scales: [
+              LogarithmicAxis(
+                .y,
                 reverse: true,
                 ticks: AxisTicks(callback: valueTickLabel),
               ),
-            },
+            ],
           ),
         );
 
@@ -793,7 +814,7 @@ void main() {
             LineDataset(data: [10, 5, 1.1, 25, 0, 78]),
           ],
           labels: [],
-          scales: {'y': LogarithmicAxis(ticks: AxisTicks(autoSkip: false))},
+          scales: [LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false))],
         ),
       );
 
@@ -815,9 +836,9 @@ void main() {
             BarDataset(data: [10, 5, 2, 25, 78]),
           ],
           labels: [],
-          scales: {
-            'y': LogarithmicAxis(ticks: AxisTicks(callback: indexTickLabel)),
-          },
+          scales: [
+            LogarithmicAxis(.y, ticks: AxisTicks(callback: indexTickLabel)),
+          ],
         ),
       );
 
@@ -849,15 +870,12 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(yAxisID: 'y', data: [10, 5, 5000, 78, 450]),
-            BarDataset(yAxisID: 'y1', data: [1, 1000, 10, 100]),
-            BarDataset(yAxisID: 'y', data: [150]),
+            BarDataset(data: [10, 5, 5000, 78, 450]),
+            BarDataset(yAxis: _y1, data: [1, 1000, 10, 100]),
+            BarDataset(data: [150]),
           ],
           labels: [],
-          scales: {
-            'y': LogarithmicAxis(),
-            'y1': LogarithmicAxis(position: ChartPosition.right),
-          },
+          scales: [LogarithmicAxis(.y), _y1],
         ),
       );
 
@@ -870,15 +888,12 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(yAxisID: 'y', data: [10, 5, 5000, 78, 450]),
-            BarDataset(yAxisID: 'y1', data: [1, 1000, 10, 100]),
-            BarDataset(yAxisID: 'y', data: [150]),
+            BarDataset(data: [10, 5, 5000, 78, 450]),
+            BarDataset(yAxis: _y1, data: [1, 1000, 10, 100]),
+            BarDataset(data: [150]),
           ],
           labels: [],
-          scales: {
-            'y': LogarithmicAxis(),
-            'y1': LogarithmicAxis(position: ChartPosition.right),
-          },
+          scales: [LogarithmicAxis(.y), _y1],
           // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
           extra: {'locale': Locale('de', 'DE')},
         ),
@@ -976,12 +991,14 @@ void main() {
         // Object.assign(scaleConfig, setup.scale) replaces it with the axis
         // object of `setup.scale` (an undefined source adds no key), and
         // the type stays logarithmic.
+        final direction = axis == 'x' ? CartesianAxis.x : CartesianAxis.y;
         final scaleConfig = switch (setup['scale']) {
           final Map<String, Object?> scale => LogarithmicAxis(
+            direction,
             min: ((scale[axis]! as Map<String, Object?>)['min']! as num)
                 .toDouble(),
           ),
-          _ => const LogarithmicAxis(extra: {'beginAtZero': false}),
+          _ => LogarithmicAxis(direction, extra: const {'beginAtZero': false}),
         };
 
         final description =
@@ -994,7 +1011,7 @@ void main() {
                 labels: const ['category 1', 'category 2'],
                 datasets: setup['data'] as List<Dataset>? ?? data,
                 indexAxis: indexAxis,
-                scales: {axis: scaleConfig},
+                scales: [scaleConfig],
               ),
             );
 
@@ -1301,9 +1318,9 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            datasets: [BarDataset(yAxisID: 'y', data: [])],
+            datasets: [BarDataset(data: [])],
             labels: ['a', 'b', 'c', 'd', 'e', 'f'],
-            scales: {'y': LogarithmicAxis(suggestedMin: 10, suggestedMax: 100)},
+            scales: [LogarithmicAxis(.y, suggestedMin: 10, suggestedMax: 100)],
           ),
         );
 
@@ -1320,7 +1337,7 @@ void main() {
           datasets: [
             LineDataset(data: [1.1, 99]),
           ],
-          scales: {'y': LogarithmicAxis(bounds: ScaleBounds.data)},
+          scales: [LogarithmicAxis(.y, bounds: ScaleBounds.data)],
         ),
       );
 

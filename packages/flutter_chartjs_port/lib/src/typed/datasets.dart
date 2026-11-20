@@ -300,17 +300,19 @@ final class const BarDataset({
   super.shadow,
   super.tooltipCallbacks,
 
-  /// {@template flutter_chartjs_port.typed.xAxisID}
-  /// The id of the x axis of the dataset, a key of `scales`: `xAxisID`.
-  /// The default is the first x axis.
+  /// {@template flutter_chartjs_port.typed.xAxis}
+  /// The x axis of the dataset: `xAxisID`. It is `==` to an axis of
+  /// `ChartConfig.scales` (Chart.js ADR 0191). The default is the first x
+  /// axis.
   /// {@endtemplate}
-  final String? xAxisID,
+  final ChartAxis? xAxis,
 
-  /// {@template flutter_chartjs_port.typed.yAxisID}
-  /// The id of the y axis of the dataset, a key of `scales`: `yAxisID`.
-  /// The default is the first y axis.
+  /// {@template flutter_chartjs_port.typed.yAxis}
+  /// The y axis of the dataset: `yAxisID`. It is `==` to an axis of
+  /// `ChartConfig.scales` (Chart.js ADR 0191). The default is the first y
+  /// axis.
   /// {@endtemplate}
-  final String? yAxisID,
+  final ChartAxis? yAxis,
 
   /// {@template flutter_chartjs_port.typed.stack}
   /// The id of the stack of the dataset: `stack`. On a stacked axis, the
@@ -378,8 +380,8 @@ final class const BarDataset({
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
-    String? xAxisID,
-    String? yAxisID,
+    ChartAxis? xAxis,
+    ChartAxis? yAxis,
     String? stack,
     CartesianAxis? indexAxis,
     double? borderRadius,
@@ -406,8 +408,8 @@ final class const BarDataset({
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
     tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
-    xAxisID: xAxisID ?? this.xAxisID,
-    yAxisID: yAxisID ?? this.yAxisID,
+    xAxis: xAxis ?? this.xAxis,
+    yAxis: yAxis ?? this.yAxis,
     stack: stack ?? this.stack,
     indexAxis: indexAxis ?? this.indexAxis,
     borderRadius: borderRadius ?? this.borderRadius,
@@ -428,8 +430,8 @@ final class const BarDataset({
 
   @override
   void lowerOwn(OptionScope scope) {
-    put(scope, OptionKey.xAxisID, xAxisID);
-    put(scope, OptionKey.yAxisID, yAxisID);
+    put(scope, OptionKey.xAxisID, scaleIdOfAxis(xAxis));
+    put(scope, OptionKey.yAxisID, scaleIdOfAxis(yAxis));
     put(scope, OptionKey.stack, stack);
     put(scope, OptionKey.indexAxis, indexAxis);
     put(scope, OptionKey.borderRadius, borderRadius);
@@ -448,8 +450,8 @@ final class const BarDataset({
     ('data', data),
     ('points', points),
     ...styleProps,
-    ('xAxisID', xAxisID),
-    ('yAxisID', yAxisID),
+    ('xAxis', xAxis),
+    ('yAxis', yAxis),
     ('stack', stack),
     ('indexAxis', indexAxis),
     ('borderRadius', borderRadius),
@@ -566,11 +568,11 @@ final class const LineDataset({
   super.shadow,
   super.tooltipCallbacks,
 
-  /// {@macro flutter_chartjs_port.typed.xAxisID}
-  final String? xAxisID,
+  /// {@macro flutter_chartjs_port.typed.xAxis}
+  final ChartAxis? xAxis,
 
-  /// {@macro flutter_chartjs_port.typed.yAxisID}
-  final String? yAxisID,
+  /// {@macro flutter_chartjs_port.typed.yAxis}
+  final ChartAxis? yAxis,
 
   /// {@macro flutter_chartjs_port.typed.stack}
   final String? stack,
@@ -707,8 +709,8 @@ final class const LineDataset({
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
-    String? xAxisID,
-    String? yAxisID,
+    ChartAxis? xAxis,
+    ChartAxis? yAxis,
     String? stack,
     CartesianAxis? indexAxis,
     FillTarget? fill,
@@ -746,8 +748,8 @@ final class const LineDataset({
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
     tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
-    xAxisID: xAxisID ?? this.xAxisID,
-    yAxisID: yAxisID ?? this.yAxisID,
+    xAxis: xAxis ?? this.xAxis,
+    yAxis: yAxis ?? this.yAxis,
     stack: stack ?? this.stack,
     indexAxis: indexAxis ?? this.indexAxis,
     fill: fill ?? this.fill,
@@ -781,8 +783,8 @@ final class const LineDataset({
 
   @override
   void lowerOwn(OptionScope scope) {
-    put(scope, OptionKey.xAxisID, xAxisID);
-    put(scope, OptionKey.yAxisID, yAxisID);
+    put(scope, OptionKey.xAxisID, scaleIdOfAxis(xAxis));
+    put(scope, OptionKey.yAxisID, scaleIdOfAxis(yAxis));
     put(scope, OptionKey.stack, stack);
     put(scope, OptionKey.indexAxis, indexAxis);
     _lowerLine(scope);
@@ -795,8 +797,8 @@ final class const LineDataset({
     ('data', data),
     ('points', points),
     ...styleProps,
-    ('xAxisID', xAxisID),
-    ('yAxisID', yAxisID),
+    ('xAxis', xAxis),
+    ('yAxis', yAxis),
     ('stack', stack),
     ('indexAxis', indexAxis),
     ..._lineProps,
@@ -830,11 +832,11 @@ final class const ScatterDataset({
   super.shadow,
   super.tooltipCallbacks,
 
-  /// {@macro flutter_chartjs_port.typed.xAxisID}
-  final String? xAxisID,
+  /// {@macro flutter_chartjs_port.typed.xAxis}
+  final ChartAxis? xAxis,
 
-  /// {@macro flutter_chartjs_port.typed.yAxisID}
-  final String? yAxisID,
+  /// {@macro flutter_chartjs_port.typed.yAxis}
+  final ChartAxis? yAxis,
 
   /// {@macro flutter_chartjs_port.typed.stack}
   final String? stack,
@@ -917,8 +919,8 @@ final class const ScatterDataset({
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
-    String? xAxisID,
-    String? yAxisID,
+    ChartAxis? xAxis,
+    ChartAxis? yAxis,
     String? stack,
     FillTarget? fill,
     double? tension,
@@ -955,8 +957,8 @@ final class const ScatterDataset({
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
     tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
-    xAxisID: xAxisID ?? this.xAxisID,
-    yAxisID: yAxisID ?? this.yAxisID,
+    xAxis: xAxis ?? this.xAxis,
+    yAxis: yAxis ?? this.yAxis,
     stack: stack ?? this.stack,
     fill: fill ?? this.fill,
     tension: tension ?? this.tension,
@@ -989,8 +991,8 @@ final class const ScatterDataset({
 
   @override
   void lowerOwn(OptionScope scope) {
-    put(scope, OptionKey.xAxisID, xAxisID);
-    put(scope, OptionKey.yAxisID, yAxisID);
+    put(scope, OptionKey.xAxisID, scaleIdOfAxis(xAxis));
+    put(scope, OptionKey.yAxisID, scaleIdOfAxis(yAxis));
     put(scope, OptionKey.stack, stack);
     _lowerLine(scope);
   }
@@ -1002,8 +1004,8 @@ final class const ScatterDataset({
     ('data', data),
     ('points', points),
     ...styleProps,
-    ('xAxisID', xAxisID),
-    ('yAxisID', yAxisID),
+    ('xAxis', xAxis),
+    ('yAxis', yAxis),
     ('stack', stack),
     ..._lineProps,
     ('extra', byEntries(extra)),
@@ -1035,11 +1037,11 @@ final class const BubbleDataset({
   super.shadow,
   super.tooltipCallbacks,
 
-  /// {@macro flutter_chartjs_port.typed.xAxisID}
-  final String? xAxisID,
+  /// {@macro flutter_chartjs_port.typed.xAxis}
+  final ChartAxis? xAxis,
 
-  /// {@macro flutter_chartjs_port.typed.yAxisID}
-  final String? yAxisID,
+  /// {@macro flutter_chartjs_port.typed.yAxis}
+  final ChartAxis? yAxis,
 
   /// The radius of a bubble without an `r` value, in pixels: `radius`.
   final double? radius,
@@ -1073,8 +1075,8 @@ final class const BubbleDataset({
     double? hoverBorderWidth,
     ChartShadow? shadow,
     TooltipCallbacks? tooltipCallbacks,
-    String? xAxisID,
-    String? yAxisID,
+    ChartAxis? xAxis,
+    ChartAxis? yAxis,
     double? radius,
     double? hoverRadius,
     PointStyle? pointStyle,
@@ -1094,8 +1096,8 @@ final class const BubbleDataset({
     hoverBorderWidth: hoverBorderWidth ?? this.hoverBorderWidth,
     shadow: shadow ?? this.shadow,
     tooltipCallbacks: tooltipCallbacks ?? this.tooltipCallbacks,
-    xAxisID: xAxisID ?? this.xAxisID,
-    yAxisID: yAxisID ?? this.yAxisID,
+    xAxis: xAxis ?? this.xAxis,
+    yAxis: yAxis ?? this.yAxis,
     radius: radius ?? this.radius,
     hoverRadius: hoverRadius ?? this.hoverRadius,
     pointStyle: pointStyle ?? this.pointStyle,
@@ -1110,8 +1112,8 @@ final class const BubbleDataset({
 
   @override
   void lowerOwn(OptionScope scope) {
-    put(scope, OptionKey.xAxisID, xAxisID);
-    put(scope, OptionKey.yAxisID, yAxisID);
+    put(scope, OptionKey.xAxisID, scaleIdOfAxis(xAxis));
+    put(scope, OptionKey.yAxisID, scaleIdOfAxis(yAxis));
     put(scope, OptionKey.radius, radius);
     put(scope, OptionKey.hoverRadius, hoverRadius);
     put(scope, OptionKey.pointStyle, pointStyle);
@@ -1123,8 +1125,8 @@ final class const BubbleDataset({
     ('label', label),
     ('points', points),
     ...styleProps,
-    ('xAxisID', xAxisID),
-    ('yAxisID', yAxisID),
+    ('xAxis', xAxis),
+    ('yAxis', yAxis),
     ('radius', radius),
     ('hoverRadius', hoverRadius),
     ('pointStyle', pointStyle),

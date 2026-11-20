@@ -143,7 +143,7 @@ void main() {
           datasets: const [
             LineDataset(data: [10, 5, 0, 25, 78]),
           ],
-          scales: {'x': CategoryAxis(labels: labels)},
+          scales: [CategoryAxis(.x, labels: labels)],
         ),
       );
 
@@ -182,13 +182,13 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
+            LineDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
-          scales: {
-            'x': CategoryAxis(position: ChartPosition.bottom),
-            'y': LinearAxis(),
-          },
+          scales: [
+            CategoryAxis(.x, position: ChartPosition.bottom),
+            LinearAxis(.y),
+          ],
         ),
       );
 
@@ -208,13 +208,13 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
+            LineDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
-          scales: {
-            'x': CategoryAxis(position: ChartPosition.bottom),
-            'y': LinearAxis(),
-          },
+          scales: [
+            CategoryAxis(.x, position: ChartPosition.bottom),
+            LinearAxis(.y),
+          ],
         ),
       );
 
@@ -229,13 +229,13 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
+            LineDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
-          scales: {
-            'x': CategoryAxis(position: ChartPosition.bottom),
-            'y': LinearAxis(),
-          },
+          scales: [
+            CategoryAxis(.x, position: ChartPosition.bottom),
+            LinearAxis(.y),
+          ],
         ),
       );
 
@@ -269,13 +269,13 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
+              LineDataset(data: [10, 5, 0, 25, 78]),
             ],
             labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
-            scales: {
-              'x': CategoryAxis(position: ChartPosition.bottom),
-              'y': LinearAxis(),
-            },
+            scales: [
+              CategoryAxis(.x, position: ChartPosition.bottom),
+              LinearAxis(.y),
+            ],
           ),
         );
 
@@ -293,17 +293,18 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
+              LineDataset(data: [10, 5, 0, 25, 78]),
             ],
             labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
-            scales: {
-              'x': CategoryAxis(
+            scales: [
+              CategoryAxis(
+                .x,
                 position: ChartPosition.bottom,
                 min: 'tick2',
                 max: 'tick4',
               ),
-              'y': LinearAxis(),
-            },
+              LinearAxis(.y),
+            ],
           ),
         );
 
@@ -431,8 +432,6 @@ void main() {
           ChartConfig(
             datasets: [
               LineDataset(
-                xAxisID: 'x',
-                yAxisID: 'y',
                 points: [
                   DataPoint(0, 10),
                   DataPoint(1, 5),
@@ -443,10 +442,10 @@ void main() {
               ),
             ],
             labels: const [0, 1, 2, 3],
-            scales: const {
-              'x': CategoryAxis(position: ChartPosition.bottom),
-              'y': LinearAxis(),
-            },
+            scales: const [
+              CategoryAxis(.x, position: ChartPosition.bottom),
+              LinearAxis(.y),
+            ],
           ),
         );
 
@@ -510,8 +509,6 @@ void main() {
           ChartConfig(
             datasets: [
               BarDataset(
-                xAxisID: 'x',
-                yAxisID: 'y',
                 points: [
                   DataPoint(0, 10),
                   DataPoint(1, 5),
@@ -522,10 +519,10 @@ void main() {
               ),
             ],
             labels: const [0, 1, 2, 3],
-            scales: const {
-              'x': CategoryAxis(position: ChartPosition.bottom),
-              'y': LinearAxis(),
-            },
+            scales: const [
+              CategoryAxis(.x, position: ChartPosition.bottom),
+              LinearAxis(.y),
+            ],
           ),
         );
 
@@ -555,10 +552,10 @@ void main() {
             ],
             labels: const [0, 1, 2, 3],
             indexAxis: const YAxis(),
-            scales: const {
-              'x': LinearAxis(position: ChartPosition.bottom),
-              'y': CategoryAxis(),
-            },
+            scales: const [
+              LinearAxis(.x, position: ChartPosition.bottom),
+              CategoryAxis(.y),
+            ],
           ),
         );
 

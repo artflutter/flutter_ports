@@ -1733,15 +1733,15 @@ void main() {
               borderWidth: 0,
             ),
           ],
-          scales: const {
-            'r': RadialLinearAxis(
+          scales: const [
+            RadialLinearAxis(
               min: 0,
               max: 100,
               display: ScaleDisplay.off,
               pointLabelsDisplay: ScaleDisplay.off,
               angleLinesDisplay: false,
             ),
-          },
+          ],
           animation: ChartAnimation.none,
           legend: const ChartLegend(display: false),
           tooltip: const ChartTooltip(enabled: false),

@@ -174,7 +174,7 @@ ChartConfigurationScope _typedConfig(
   List<Object>? labelValues,
   List<num?>? data,
   List<typed.Dataset>? datasets,
-  Map<String, typed.ChartAxis>? scales,
+  List<typed.ChartAxis>? scales,
   bool? responsive,
   typed.ChartAnimation? animation,
   Map<String, Object?>? extra,
@@ -213,7 +213,7 @@ ChartConfigurationScope _typedEager(
   typed.ChartLegend legend = const typed.ChartLegend(display: false),
   List<num?>? data,
   List<typed.Dataset>? datasets,
-  Map<String, typed.ChartAxis>? scales,
+  List<typed.ChartAxis>? scales,
   bool? responsive,
   typed.ChartAnimation? animation,
   Map<String, Object?>? extra,
@@ -890,7 +890,7 @@ void main() {
           responsive: false,
           animation: typed.ChartAnimation.none,
           scales: type == 'polarArea'
-              ? const {'r': typed.RadialLinearAxis(min: 0, max: 10)}
+              ? const [typed.RadialLinearAxis(min: 0, max: 10)]
               : null,
           // The plugins off: the typed API has no form for a plugin `false`.
           extra: const {
@@ -2401,15 +2401,15 @@ void main() {
                       },
                     ],
                     scales: kind == typed.ChartKind.polarArea
-                        ? const {
-                            'r': typed.RadialLinearAxis(
+                        ? const [
+                            typed.RadialLinearAxis(
                               min: 0,
                               max: 100,
                               display: typed.ScaleDisplay.off,
                               pointLabelsDisplay: typed.ScaleDisplay.off,
                               angleLinesDisplay: false,
                             ),
-                          }
+                          ]
                         : null,
                     animation: typed.ChartAnimation.none,
                     legend: const typed.ChartLegend(display: false),
@@ -4247,15 +4247,15 @@ void main() {
                         },
                       ],
                       scales: kind == typed.ChartKind.polarArea
-                          ? const {
-                              'r': typed.RadialLinearAxis(
+                          ? const [
+                              typed.RadialLinearAxis(
                                 min: 0,
                                 max: 100,
                                 display: typed.ScaleDisplay.off,
                                 pointLabelsDisplay: typed.ScaleDisplay.off,
                                 angleLinesDisplay: false,
                               ),
-                            }
+                            ]
                           : null,
                       animation: typed.ChartAnimation.none,
                       legend: typed.ChartLegend(

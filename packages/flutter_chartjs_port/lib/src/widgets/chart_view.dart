@@ -535,6 +535,7 @@ class _ChartViewState() extends State<ChartView> {
       _appliedRaw = null;
     }
     _appliedTyped = typed;
+    recordScaleIds(_canvas, typed == null ? null : _lowering!.scaleIds);
     // The animations of the chart read the items of the app as they are.
     _chart
       ?..propertyAnimations = typed?.animations

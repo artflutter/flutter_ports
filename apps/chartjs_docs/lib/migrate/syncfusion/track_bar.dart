@@ -35,9 +35,10 @@ final ChartConfig _config = ChartConfig(
     sfTrack(radius: 15),
     sfDataLabels([for (final h in _hours) sfNumber(h)], align: .top),
   ],
-  scales: {
-    'y': sfCategoryAxis(reverse: true),
-    'x': sfValueAxis(
+  scales: [
+    sfCategoryAxis(direction: .y, reverse: true),
+    sfValueAxis(
+      direction: .x,
       min: 0,
       max: 8,
       stepSize: 1,
@@ -45,7 +46,7 @@ final ChartConfig _config = ChartConfig(
       line: true,
       title: 'Hours',
     ),
-  },
+  ],
 );
 
 class const SfTrackBar({super.key}) extends StatelessWidget {

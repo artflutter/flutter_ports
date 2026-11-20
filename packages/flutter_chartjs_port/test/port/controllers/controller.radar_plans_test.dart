@@ -163,7 +163,7 @@ ChartConfigurationScope _config(
       ],
       labels: labels ?? [for (var i = 0; i < values.length; i++) 'L$i'],
       responsive: false,
-      scales: {'r': axis},
+      scales: [axis],
       elements: elements,
       animation: animation,
       extra: {'events': const <String>[], ...?extra},

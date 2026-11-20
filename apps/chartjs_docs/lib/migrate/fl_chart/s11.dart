@@ -31,7 +31,12 @@ class _Sample11State() extends State<Sample11> {
     s.ticks = [for (var v = value; v <= 10.0001; v += step) Tick(value: v)];
   }
 
-  ChartAxis _axis(double base, ChartPosition position, String id) => LinearAxis(
+  ChartAxis _axis(
+    CartesianAxis direction,
+    double base,
+    ChartPosition position,
+  ) => LinearAxis(
+    direction,
     min: -10,
     max: 10,
     position: position,
@@ -90,12 +95,12 @@ class _Sample11State() extends State<Sample11> {
                         datasets: const [LineDataset(points: <DataPoint>[])],
                         animation: ChartAnimation.none,
                         tooltip: const ChartTooltip(enabled: false),
-                        scales: {
-                          'x': _axis(_baseX, .bottom, 'x'),
-                          'x2': _axis(_baseX, .top, 'x2'),
-                          'y': _axis(_chartBaseY, .left, 'y'),
-                          'y2': _axis(_chartBaseY, .right, 'y2'),
-                        },
+                        scales: [
+                          _axis(.x, _baseX, .bottom),
+                          _axis(.x, _baseX, .top),
+                          _axis(.y, _chartBaseY, .left),
+                          _axis(.y, _chartBaseY, .right),
+                        ],
                       ),
                     ),
                   ),

@@ -86,8 +86,16 @@ ChartConfigurationScope _config({
     _ => throw ArgumentError.value(type, 'type'),
   };
   final mode = stacked ? StackMode.on : StackMode.off;
-  final index = CategoryAxis(stacked: mode, extra: {'type': category});
-  final value = LinearAxis(stacked: mode, extra: {'type': linear});
+  final index = CategoryAxis(
+    horizontal ? .y : .x,
+    stacked: mode,
+    extra: {'type': category},
+  );
+  final value = LinearAxis(
+    horizontal ? .x : .y,
+    stacked: mode,
+    extra: {'type': linear},
+  );
   final root = ChartConfigLowering(
     ChartConfig(
       datasets: [
@@ -97,10 +105,7 @@ ChartConfigurationScope _config({
       responsive: false,
       animation: ChartAnimation.none,
       indexAxis: horizontal ? const YAxis() : const XAxis(),
-      scales: {
-        'x': horizontal ? value : index,
-        'y': horizontal ? index : value,
-      },
+      scales: horizontal ? [value, index] : [index, value],
       extra: const {
         'plugins': {'legend': false, 'tooltip': false},
       },

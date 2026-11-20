@@ -72,10 +72,10 @@ ChartConfigurationScope _config({
     ],
     responsive: false,
     animation: ChartAnimation.none,
-    scales: const {
-      'x': LinearAxis(display: ScaleDisplay.off, min: 0, max: 8),
-      'y': LinearAxis(display: ScaleDisplay.off, min: -5, max: 10),
-    },
+    scales: const [
+      LinearAxis(.x, display: ScaleDisplay.off, min: 0, max: 8),
+      LinearAxis(.y, display: ScaleDisplay.off, min: -5, max: 10),
+    ],
     extra: const {
       'parsing': false,
       'events': <String>[],

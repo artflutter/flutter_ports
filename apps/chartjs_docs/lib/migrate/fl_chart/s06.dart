@@ -65,8 +65,9 @@ final ChartConfig _config = fills(
         label: (tooltip, i) => [i.formattedValue],
       ),
     ),
-    scales: {
-      'x': LinearAxis(
+    scales: [
+      LinearAxis(
+        .x,
         min: 0,
         max: 6,
         position: .top,
@@ -79,7 +80,8 @@ final ChartConfig _config = fills(
           font: TextStyle(fontWeight: FontWeight.bold),
         ),
       ),
-      'y': LinearAxis(
+      LinearAxis(
+        .y,
         min: 0,
         max: 6,
         reverse: true,
@@ -92,7 +94,8 @@ final ChartConfig _config = fills(
           callback: _hideBottom,
         ),
       ),
-      'y2': const LinearAxis(
+      const LinearAxis(
+        .y,
         min: 0,
         max: 6,
         reverse: true,
@@ -106,7 +109,7 @@ final ChartConfig _config = fills(
           callback: _hideBottom,
         ),
       ),
-    },
+    ],
   ),
 );
 

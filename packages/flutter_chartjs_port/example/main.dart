@@ -90,7 +90,7 @@ class _VotesPageState() extends State<VotesPage> {
               datasets: [
                 BarDataset(label: '# of Votes', data: _votes, borderWidth: 1),
               ],
-              scales: const {'y': LinearAxis(beginAtZero: true)},
+              scales: const [LinearAxis(.y, beginAtZero: true)],
               onClick: _onClick,
             ),
             theme: dark

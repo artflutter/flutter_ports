@@ -151,7 +151,7 @@ ChartConfig _config({
       events: events,
     ),
   ],
-  scales: const {'y': LinearAxis(min: 0, max: 4)},
+  scales: const [LinearAxis(.y, min: 0, max: 4)],
 );
 
 Chart _chart(ChartConfig config) =>

@@ -39,7 +39,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   animation: shadcnLineAnimation,
   // <LabelList position="top" offset={12} className="fill-foreground" fontSize={12} />
   plugins: [shadcnLabels(id: 'values')],
-  scales: {'x': shadcnCategoryAxis(), 'y': shadcnValueAxis(_desktop)},
+  scales: [shadcnCategoryAxis(), shadcnValueAxis(_desktop)],
 );
 
 class const ShadcnLineLabel({super.key}) extends StatelessWidget {

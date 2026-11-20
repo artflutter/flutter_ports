@@ -18,10 +18,10 @@ Chart _acquireChart(ZoomPluginOptions options) {
         ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
       ],
       legend: const ChartLegend(display: false),
-      scales: const {
-        'x': LinearAxis(min: 0, max: 100),
-        'y': LinearAxis(min: 0, max: 100),
-      },
+      scales: const [
+        LinearAxis(.x, min: 0, max: 100),
+        LinearAxis(.y, min: 0, max: 100),
+      ],
     ),
   );
   getState(chart).options = options;

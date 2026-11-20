@@ -65,6 +65,23 @@ import '../support/tick_label.dart';
 Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
     acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
+/// The raw config of a scatter chart with [datasets] and the scales
+/// [scales] by id: the specs of the scale ids (Chart.js ADR 0191 leaves the
+/// ids of Chart.js to the raw configs).
+Map<String, Object?> _scatter(
+  List<Map<String, Object?>> datasets,
+  Map<String, Object?> scales,
+) => <String, Object?>{
+  'type': 'scatter',
+  'data': <String, Object?>{'datasets': datasets},
+  'options': <String, Object?>{'scales': scales},
+};
+
+/// The data points `{x, y}` of [points].
+List<Object?> _points(List<(num, num)> points) => [
+  for (final (x, y) in points) <String, Object?>{'x': x, 'y': y},
+];
+
 /// The member read `object.key` of the option object [object]: a resolver,
 /// read through its face (Chart.js ADR 0054 §5).
 Object? _member(Object? object, String key) => (object! as JsObjectFace)[key];
@@ -200,7 +217,7 @@ void main() {
           ChartConfig(
             labels: labels,
             datasets: [LineDataset(data: data)],
-            scales: const {'x': CategoryAxis(ticks: AxisTicks(autoSkip: true))},
+            scales: const [CategoryAxis(.x, ticks: AxisTicks(autoSkip: true))],
           ),
         );
       }
@@ -210,14 +227,15 @@ void main() {
           ChartConfig(
             labels: List<Object>.filled(300, 'red'),
             datasets: [LineDataset(data: List<num?>.filled(300, 5))],
-            scales: {
-              'x': CategoryAxis(
+            scales: [
+              CategoryAxis(
+                .x,
                 ticks: AxisTicks(
                   autoSkip: true,
                   extra: {'maxTicksLimit': maxTicksLimit},
                 ),
               ),
-            },
+            ],
           ),
         );
       }
@@ -305,14 +323,15 @@ void main() {
           ChartConfig(
             datasets: const [LineDataset(data: [])],
             labels: test.labels,
-            scales: {
-              'x': CategoryAxis(
+            scales: [
+              CategoryAxis(
+                .x,
                 grid: AxisGrid(offset: test.offsetGridLines, drawTicks: false),
                 ticks: const AxisTicks(display: false),
                 extra: {'offset': test.offset},
               ),
-              'y': const LinearAxis(display: ScaleDisplay.off),
-            },
+              const LinearAxis(.y, display: ScaleDisplay.off),
+            ],
             extra: const {
               'plugins': {'legend': false},
             },
@@ -351,7 +370,7 @@ void main() {
           datasets: [
             LineDataset(data: [0, 1]),
           ],
-          scales: {'y': LinearAxis(display: ScaleDisplay.off)},
+          scales: [LinearAxis(.y, display: ScaleDisplay.off)],
           extra: {
             'plugins': {'legend': false},
           },
@@ -391,10 +410,10 @@ void main() {
                     },
                   ),
                 ],
-                scales: {
-                  'x': CategoryAxis(display: ScaleDisplay.auto),
-                  'y': CategoryAxis(),
-                },
+                scales: [
+                  CategoryAxis(.x, display: ScaleDisplay.auto),
+                  CategoryAxis(.y),
+                ],
               ),
             );
 
@@ -423,7 +442,7 @@ void main() {
                     },
                   ),
                 ],
-                scales: {'x': CategoryAxis(display: ScaleDisplay.auto)},
+                scales: [CategoryAxis(.x, display: ScaleDisplay.auto)],
               ),
             );
 
@@ -462,7 +481,7 @@ void main() {
                     },
                   ),
                 ],
-                scales: {'y': LinearAxis(display: ScaleDisplay.auto)},
+                scales: [LinearAxis(.y, display: ScaleDisplay.auto)],
               ),
             );
 
@@ -491,7 +510,7 @@ void main() {
                     },
                   ),
                 ],
-                scales: {'y': LinearAxis(display: ScaleDisplay.auto)},
+                scales: [LinearAxis(.y, display: ScaleDisplay.auto)],
               ),
             );
 
@@ -513,8 +532,9 @@ void main() {
         final chart = _acquire(
           ChartConfig(
             datasets: const [LineDataset()],
-            scales: {
-              'x': CategoryAxis(
+            scales: [
+              CategoryAxis(
+                .x,
                 labels: labels,
                 extra: {
                   'afterBuildTicks': (Scale scale) {
@@ -522,7 +542,7 @@ void main() {
                   },
                 },
               ),
-            },
+            ],
           ),
         );
 
@@ -535,12 +555,13 @@ void main() {
         final chart = _acquire(
           ChartConfig(
             datasets: const [LineDataset()],
-            scales: {
-              'x': CategoryAxis(
+            scales: [
+              CategoryAxis(
+                .x,
                 labels: labels,
                 extra: {'afterBuildTicks': (_) {}},
               ),
-            },
+            ],
           ),
         );
 
@@ -553,8 +574,9 @@ void main() {
         final chart = _acquire(
           ChartConfig(
             datasets: const [LineDataset()],
-            scales: {
-              'x': CategoryAxis(
+            scales: [
+              CategoryAxis(
+                .x,
                 labels: labels,
                 extra: {
                   'afterBuildTicks': (Scale scale) {
@@ -562,7 +584,7 @@ void main() {
                   },
                 },
               ),
-            },
+            ],
           ),
         );
 
@@ -576,7 +598,7 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [LineDataset()],
-            scales: {'x': LinearAxis()},
+            scales: [LinearAxis(.x)],
           ),
         );
 
@@ -589,18 +611,24 @@ void main() {
         'position options',
         (tester) async {
           Chart createChart() {
-            return _acquire(
-              ChartConfig(
-                datasets: [
-                  ScatterDataset(
-                    points: [DataPoint(0, 0), DataPoint(1, 1), DataPoint(2, 2)],
-                    xAxisID: 'customIDx',
-                    yAxisID: 'customIDy',
-                  ),
+            return acquireChart(
+              _scatter(
+                [
+                  <String, Object?>{
+                    'data': _points([(0, 0), (1, 1), (2, 2)]),
+                    'xAxisID': 'customIDx',
+                    'yAxisID': 'customIDy',
+                  },
                 ],
-                scales: const {
-                  'customIDx': LinearAxis(display: ScaleDisplay.off),
-                  'customIDy': LinearAxis(display: ScaleDisplay.off),
+                {
+                  'customIDx': <String, Object?>{
+                    'type': 'linear',
+                    'display': ScaleDisplay.off,
+                  },
+                  'customIDy': <String, Object?>{
+                    'type': 'linear',
+                    'display': ScaleDisplay.off,
+                  },
                 },
               ),
             );
@@ -719,9 +747,9 @@ void main() {
           var chart = _acquire(
             const ChartConfig(
               datasets: [LineDataset()],
-              scales: {
-                'x': LinearAxis(ticks: AxisTicks(extra: {'z': 10})),
-              },
+              scales: [
+                LinearAxis(.x, ticks: AxisTicks(extra: {'z': 10})),
+              ],
             ),
           );
 
@@ -730,9 +758,9 @@ void main() {
           chart = _acquire(
             const ChartConfig(
               datasets: [LineDataset()],
-              scales: {
-                'x': LinearAxis(grid: AxisGrid(extra: {'z': 11})),
-              },
+              scales: [
+                LinearAxis(.x, grid: AxisGrid(extra: {'z': 11})),
+              ],
             ),
           );
 
@@ -741,12 +769,13 @@ void main() {
           chart = _acquire(
             const ChartConfig(
               datasets: [LineDataset()],
-              scales: {
-                'x': LinearAxis(
+              scales: [
+                LinearAxis(
+                  .x,
                   ticks: AxisTicks(extra: {'z': 10}),
                   grid: AxisGrid(extra: {'z': 11}),
                 ),
-              },
+              ],
             ),
           );
 
@@ -765,10 +794,10 @@ void main() {
               ),
               ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
             ],
-            scales: const {
-              'x': LinearAxis(min: -20, max: 20, extra: {'id': 'x'}),
-              'y': LinearAxis(extra: {'id': 'y'}),
-            },
+            scales: const [
+              LinearAxis(.x, min: -20, max: 20, extra: {'id': 'x'}),
+              LinearAxis(.y, extra: {'id': 'y'}),
+            ],
           ),
         );
 
@@ -781,15 +810,19 @@ void main() {
 
     group('overrides', () {
       testWidgets('should create new scale', (tester) async {
-        final chart = _acquire(
-          ChartConfig(
-            datasets: [
-              ScatterDataset(
-                points: [DataPoint(100, 100), DataPoint(-100, -100)],
-              ),
-              ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
+        final chart = acquireChart(
+          _scatter(
+            [
+              <String, Object?>{
+                'data': _points([(100, 100), (-100, -100)]),
+              },
+              <String, Object?>{
+                'data': _points([(10, 10), (-10, -10)]),
+              },
             ],
-            scales: const {'x2': LinearAxis(min: -20, max: 20)},
+            {
+              'x2': <String, Object?>{'type': 'linear', 'min': -20, 'max': 20},
+            },
           ),
         );
 
@@ -800,16 +833,23 @@ void main() {
       });
 
       testWidgets('should create new scale with custom name', (tester) async {
-        final chart = _acquire(
-          ChartConfig(
-            datasets: [
-              ScatterDataset(
-                points: [DataPoint(100, 100), DataPoint(-100, -100)],
-              ),
-              ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
+        final chart = acquireChart(
+          _scatter(
+            [
+              <String, Object?>{
+                'data': _points([(100, 100), (-100, -100)]),
+              },
+              <String, Object?>{
+                'data': _points([(10, 10), (-10, -10)]),
+              },
             ],
-            scales: const {
-              'scaleX': LinearAxis(min: -20, max: 20, extra: {'axis': XAxis()}),
+            {
+              'scaleX': <String, Object?>{
+                'type': 'linear',
+                'axis': const XAxis(),
+                'min': -20,
+                'max': 20,
+              },
             },
           ),
         );
@@ -831,17 +871,23 @@ void main() {
         'should throw error on scale with custom name without axis type',
         (tester) async {
           expect(
-            () => _acquire(
-              ChartConfig(
-                datasets: [
-                  ScatterDataset(
-                    points: [DataPoint(100, 100), DataPoint(-100, -100)],
-                  ),
-                  ScatterDataset(
-                    points: [DataPoint(10, 10), DataPoint(-10, -10)],
-                  ),
+            () => acquireChart(
+              _scatter(
+                [
+                  <String, Object?>{
+                    'data': _points([(100, 100), (-100, -100)]),
+                  },
+                  <String, Object?>{
+                    'data': _points([(10, 10), (-10, -10)]),
+                  },
                 ],
-                scales: const {'scaleX': LinearAxis(min: -20, max: 20)},
+                {
+                  'scaleX': <String, Object?>{
+                    'type': 'linear',
+                    'min': -20,
+                    'max': 20,
+                  },
+                },
               ),
             ),
             throwsA(
@@ -859,16 +905,23 @@ void main() {
       testWidgets('should read options first to determine axis', (
         tester,
       ) async {
-        final chart = _acquire(
-          ChartConfig(
-            datasets: [
-              ScatterDataset(
-                points: [DataPoint(100, 100), DataPoint(-100, -100)],
-              ),
-              ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
+        final chart = acquireChart(
+          _scatter(
+            [
+              <String, Object?>{
+                'data': _points([(100, 100), (-100, -100)]),
+              },
+              <String, Object?>{
+                'data': _points([(10, 10), (-10, -10)]),
+              },
             ],
-            scales: const {
-              'xavier': LinearAxis(min: -20, max: 20, extra: {'axis': YAxis()}),
+            {
+              'xavier': <String, Object?>{
+                'type': 'linear',
+                'axis': const YAxis(),
+                'min': -20,
+                'max': 20,
+              },
             },
           ),
         );
@@ -885,9 +938,9 @@ void main() {
             datasets: [
               LineDataset(label: '# of Votes', data: [12, 19, 3, 5, 2, 3]),
             ],
-            scales: {
-              'x': CategoryAxis(ticks: AxisTicks(extra: {'minRotation': 90})),
-            },
+            scales: [
+              CategoryAxis(.x, ticks: AxisTicks(extra: {'minRotation': 90})),
+            ],
           ),
         );
         // `parseFloat(value.toFixed(2))`.
@@ -913,8 +966,9 @@ void main() {
         return _acquire(
           const ChartConfig(
             datasets: [LineDataset()],
-            scales: {
-              'x': LinearAxis(
+            scales: [
+              LinearAxis(
+                .x,
                 title: AxisTitle(
                   display: true,
                   text: ['title-x'],
@@ -929,7 +983,8 @@ void main() {
                   },
                 ),
               ),
-              'y': LinearAxis(
+              LinearAxis(
+                .y,
                 title: AxisTitle(
                   display: true,
                   text: ['title-y'],
@@ -944,7 +999,7 @@ void main() {
                   },
                 ),
               ),
-            },
+            ],
           ),
         );
       }
@@ -954,8 +1009,9 @@ void main() {
         return _acquire(
           const ChartConfig(
             datasets: [LineDataset()],
-            scales: {
-              'x': LinearAxis(
+            scales: [
+              LinearAxis(
+                .x,
                 title: AxisTitle(
                   display: true,
                   text: ['title-x'],
@@ -964,7 +1020,8 @@ void main() {
                   ),
                 ),
               ),
-              'y': LinearAxis(
+              LinearAxis(
+                .y,
                 title: AxisTitle(
                   display: true,
                   text: ['title-y'],
@@ -973,7 +1030,7 @@ void main() {
                   ),
                 ),
               ),
-            },
+            ],
           ),
         );
       }

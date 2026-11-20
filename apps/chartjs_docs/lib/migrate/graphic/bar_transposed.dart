@@ -58,8 +58,9 @@ final ChartConfig _config = ChartConfig(
       extra: {'base': _range.min},
     ),
   ],
-  scales: {
-    'x': LinearAxis(
+  scales: [
+    LinearAxis(
+      .x,
       min: _range.min,
       max: _range.max,
       grid: lineGrid,
@@ -68,14 +69,15 @@ final ChartConfig _config = ChartConfig(
       extra: bottomAxis,
     ),
     // Graphic puts the first genre at the bottom.
-    'y': CategoryAxis(
+    CategoryAxis(
+      .y,
       reverse: true,
       grid: noGrid,
       ticks: graphicTicks(),
       border: const AxisBorder(color: .solid(Gx.stroke)),
       extra: leftAxis,
     ),
-  },
+  ],
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,

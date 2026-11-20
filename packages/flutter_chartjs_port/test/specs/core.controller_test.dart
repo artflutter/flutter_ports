@@ -532,10 +532,10 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [LineDataset()],
-              scales: {
-                'x': CategoryAxis(position: ChartPosition.left),
-                'y': LinearAxis(position: ChartPosition.bottom),
-              },
+              scales: [
+                CategoryAxis(.x, position: ChartPosition.left),
+                LinearAxis(.y, position: ChartPosition.bottom),
+              ],
             ),
           ).lower(),
         );
@@ -731,10 +731,10 @@ void main() {
                     extra: {'hoverRadius': 0},
                   ),
                 ],
-                scales: {
-                  'x': CategoryAxis(display: ScaleDisplay.off),
-                  'y': LinearAxis(display: ScaleDisplay.off),
-                },
+                scales: [
+                  CategoryAxis(.x, display: ScaleDisplay.off),
+                  LinearAxis(.y, display: ScaleDisplay.off),
+                ],
               ),
             ).lower(),
           );
@@ -794,10 +794,10 @@ void main() {
                     extra: {'hoverRadius': 0},
                   ),
                 ],
-                scales: {
-                  'x': CategoryAxis(display: ScaleDisplay.off),
-                  'y': LinearAxis(display: ScaleDisplay.off),
-                },
+                scales: [
+                  CategoryAxis(.x, display: ScaleDisplay.off),
+                  LinearAxis(.y, display: ScaleDisplay.off),
+                ],
                 padding: EdgeInsets.all(5),
               ),
             ).lower(),

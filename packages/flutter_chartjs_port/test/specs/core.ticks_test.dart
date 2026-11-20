@@ -83,13 +83,14 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [LineDataset(data: [])],
-          scales: {
-            'x': LinearAxis(
+          scales: [
+            LinearAxis(
+              .x,
               position: ChartPosition.bottom,
               ticks: AxisTicks(callback: valueTickLabel),
             ),
-            'y': LinearAxis(ticks: AxisTicks(callback: valueTickLabel)),
-          },
+            LinearAxis(.y, ticks: AxisTicks(callback: valueTickLabel)),
+          ],
           extra: {
             'plugins': {'legend': false},
           },
@@ -121,19 +122,21 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [LineDataset(data: [])],
-            scales: {
-              'x': LogarithmicAxis(
+            scales: [
+              LogarithmicAxis(
+                .x,
                 position: ChartPosition.bottom,
                 min: 0.1,
                 max: 1,
                 ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
               ),
-              'y': LogarithmicAxis(
+              LogarithmicAxis(
+                .y,
                 min: 0.1,
                 max: 1,
                 ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
               ),
-            },
+            ],
             extra: {
               'plugins': {'legend': false},
             },

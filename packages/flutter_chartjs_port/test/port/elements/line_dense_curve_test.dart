@@ -130,10 +130,10 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
   return ChartConfig(
     datasets: datasets,
     indexAxis: horizontal ? const YAxis() : null,
-    scales: const {
-      'x': LinearAxis(min: 0, max: 100, grid: grid, ticks: ticks),
-      'y': LinearAxis(min: 0, max: 110, grid: grid, ticks: ticks),
-    },
+    scales: const [
+      LinearAxis(.x, min: 0, max: 100, grid: grid, ticks: ticks),
+      LinearAxis(.y, min: 0, max: 110, grid: grid, ticks: ticks),
+    ],
     animation: ChartAnimation.none,
     legend: const ChartLegend(display: false),
     tooltip: const ChartTooltip(enabled: false),

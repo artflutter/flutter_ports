@@ -71,14 +71,16 @@ String? _value(TooltipItem item) => 'points: ${item.raw}';
 final ChartConfig _config = ChartConfig(
   labels: _dates,
   datasets: [for (final (i, name) in _names.indexed) _group(i, name)],
-  scales: {
-    'x': CategoryAxis(
+  scales: [
+    CategoryAxis(
+      .x,
       grid: noGrid,
       ticks: graphicTicks(callback: _dateLabel),
       border: bottomBorder,
       extra: bottomAxis,
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: _range.min,
       max: _range.max,
       grid: lineGrid,
@@ -86,7 +88,7 @@ final ChartConfig _config = ChartConfig(
       border: leftBorder,
       extra: leftAxis,
     ),
-  },
+  ],
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,

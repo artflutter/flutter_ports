@@ -98,10 +98,11 @@ final ChartConfig _config = flBars(
     tooltip: const ChartTooltip(enabled: false),
     extra: const {'events': <String>[]},
     plugins: [_extraLines],
-    scales: {
+    scales: [
       // Without offset, the first and the last group stand at the ends of
       // the axis, as `BarChartAlignment.spaceBetween`.
-      'x': CategoryAxis(
+      CategoryAxis(
+        .x,
         grid: const AxisGrid(display: false, drawTicks: false),
         border: const AxisBorder(display: false),
         ticks: const AxisTicks(
@@ -113,8 +114,8 @@ final ChartConfig _config = flBars(
         ),
         extra: {'offset': false, 'afterFit': reserve(20)},
       ),
-      'y': valueAxis(min: 0, max: 11 + _space * 3),
-    },
+      valueAxis(min: 0, max: 11 + _space * 3),
+    ],
   ),
 );
 

@@ -18,7 +18,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// ChartConfig(
 ///   labels: const ['Red', 'Blue', 'Yellow'],
 ///   datasets: [BarDataset(label: '# of Votes', data: votes)],
-///   scales: const {'y': LinearAxis(beginAtZero: true)},
+///   scales: const [LinearAxis(.y, beginAtZero: true)],
 ///   onClick: showVotes,
 /// )
 /// ```
@@ -33,8 +33,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 ///
 /// A config is immutable. `==` compares the parameters: the Lists of the
 /// app by identity, the [datasets] by their items, the [plugins] by the
-/// identity of their items, the [scales] and the `extra` Maps by their
-/// entries, and the callbacks [onClick] and [onHover] only by their
+/// identity of their items, the [scales] by their items, the `extra` Maps
+/// by their entries, and the callbacks [onClick] and [onHover] only by their
 /// presence. The chart calls the callback of the
 /// newest config. Thus a new config that is `==` to the last one does not
 /// update the chart. For new data, give a new List. Or change the List and
@@ -62,12 +62,15 @@ final class const ChartConfig({
   /// then throws an `UnsupportedError`.
   final List<Object>? labels,
 
-  /// The axes of the chart by id: `options.scales`, for example
-  /// `{'x': CategoryAxis(), 'y': LinearAxis(beginAtZero: true)}`.
+  /// The axes of the chart: `options.scales`, for example
+  /// `[CategoryAxis(.x), LinearAxis(.y, beginAtZero: true)]`.
   ///
-  /// The order of the entries is the order of the axes in the layout. A
-  /// chart type has default axes: give only the axes with other options.
-  final Map<String, ChartAxis>? scales,
+  /// The order of the axes is the order of the layout. The first axis of a
+  /// direction has the scale id `x`, `y` or `r`, the next ones `x1`, `y1`
+  /// and so on (Chart.js ADR 0191). A dataset names its axis by the axis
+  /// object (`LineDataset.yAxis`). The axes are distinct by `==`. A chart
+  /// type has default axes: give only the axes with other options.
+  final List<ChartAxis>? scales,
 
   /// The index axis of the chart: `options.indexAxis`, [XAxis] or [YAxis].
   /// `const YAxis()` gives a horizontal bar chart. It also sets the default
@@ -192,7 +195,7 @@ final class const ChartConfig({
   ChartConfig copyWith({
     List<Dataset>? datasets,
     List<Object>? labels,
-    Map<String, ChartAxis>? scales,
+    List<ChartAxis>? scales,
     CartesianAxis? indexAxis,
     bool? responsive,
     bool? maintainAspectRatio,
@@ -250,7 +253,7 @@ final class const ChartConfig({
   /// The properties of the parameters that lower into `options`, before
   /// [plugins].
   List<TypedProperty> get _optionProps => [
-    ('scales', byEntries(scales)),
+    ('scales', byItems(scales)),
     ('indexAxis', indexAxis),
     ('responsive', responsive),
     ('maintainAspectRatio', maintainAspectRatio),

@@ -18,6 +18,6 @@ const vertical = ChartConfig(
       extra: {'axis': YAxis()},
     ),
   ],
-  scales: {'x': LinearAxis(beginAtZero: true)},
+  scales: [LinearAxis(.x, beginAtZero: true)],
 );
 // #enddocregion sample

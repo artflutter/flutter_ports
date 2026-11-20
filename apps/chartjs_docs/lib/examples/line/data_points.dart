@@ -23,7 +23,7 @@ final pointsLine = ChartConfig(
       borderColor: const .constant(.solid(teal)),
     ),
   ],
-  scales: const {'x': LinearAxis()},
+  scales: const [LinearAxis(.x)],
 );
 // #enddocregion data-points
 

@@ -8,7 +8,8 @@ import 'package:flutter_test/flutter_test.dart';
 /// A line chart at the pixel ratio 2 with two linear scales, `alignToPixels`
 /// [value] on both, or no key for [undefined].
 ChartConfig _config(Object? value) {
-  LinearAxis scale() => LinearAxis(
+  LinearAxis scale(CartesianAxis direction) => LinearAxis(
+    direction,
     min: 0,
     max: 7,
     // Keep explicit null distinct from an absent option in these cases.
@@ -22,7 +23,7 @@ ChartConfig _config(Object? value) {
     ],
     responsive: false,
     animation: ChartAnimation.none,
-    scales: {'x': scale(), 'y': scale()},
+    scales: [scale(.x), scale(.y)],
     extra: const {
       'devicePixelRatio': 2.0,
       'events': <String>[],

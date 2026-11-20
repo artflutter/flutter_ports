@@ -21,5 +21,5 @@ ChartConfig scatterConfig() => ChartConfig(
       ),
     ),
   ],
-  scales: const {'x': LinearAxis(position: .bottom)},
+  scales: const [LinearAxis(.x, position: .bottom)],
 );

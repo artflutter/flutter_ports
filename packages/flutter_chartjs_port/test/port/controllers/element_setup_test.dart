@@ -93,10 +93,10 @@ ChartConfig config({ChartScript<ChartPaint> color = _blue}) => ChartConfig(
   ],
   responsive: false,
   animation: ChartAnimation.none,
-  scales: const {
-    'x': LinearAxis(display: ScaleDisplay.off),
-    'y': LinearAxis(display: ScaleDisplay.off),
-  },
+  scales: const [
+    LinearAxis(.x, display: ScaleDisplay.off),
+    LinearAxis(.y, display: ScaleDisplay.off),
+  ],
   extra: const {
     'parsing': false,
     'plugins': {'legend': false},

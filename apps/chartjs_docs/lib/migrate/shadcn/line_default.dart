@@ -36,12 +36,12 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   tooltip: shadcnTooltip(tip, const ShadcnTooltipContent(hideLabel: true)),
   interaction: shadcnInteraction(),
   animation: shadcnLineAnimation,
-  scales: {
+  scales: [
     // <XAxis dataKey="month" tickLine={false} axisLine={false} tickMargin={8} ...>
-    'x': shadcnCategoryAxis(),
+    shadcnCategoryAxis(),
     // <CartesianGrid vertical={false} />
-    'y': shadcnValueAxis(_desktop),
-  },
+    shadcnValueAxis(_desktop),
+  ],
 );
 
 class const ShadcnLineDefault({super.key}) extends StatelessWidget {

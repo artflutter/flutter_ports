@@ -104,9 +104,10 @@ final ChartConfig _config = ChartConfig(
       },
     ),
   ),
-  scales: const {
+  scales: const [
     // NumericAxis(interval: 2, edgeLabelPlacement: shift), no grid lines.
-    'x': LinearAxis(
+    LinearAxis(
+      .x,
       min: 2005,
       max: 2011,
       grid: AxisGrid(
@@ -124,7 +125,8 @@ final ChartConfig _config = ChartConfig(
       border: AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
     // labelFormat: '{value}%', no axis line, no tick marks.
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: 0,
       max: 100,
       grid: AxisGrid(
@@ -141,7 +143,7 @@ final ChartConfig _config = ChartConfig(
       ),
       border: AxisBorder(display: false),
     ),
-  },
+  ],
 );
 
 class const SfDefaultLine({super.key}) extends StatelessWidget {

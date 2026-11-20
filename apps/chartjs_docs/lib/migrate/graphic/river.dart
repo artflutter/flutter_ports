@@ -86,14 +86,16 @@ final ChartConfig _config = ChartConfig(
       pointHoverRadius: 0,
     ),
   ],
-  scales: {
-    'x': CategoryAxis(
+  scales: [
+    CategoryAxis(
+      .x,
       grid: noGrid,
       ticks: graphicTicks(callback: _dateLabel),
       border: bottomBorder,
       extra: const {...bottomAxis, 'offset': true},
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: -120,
       max: 120,
       grid: lineGrid,
@@ -101,7 +103,7 @@ final ChartConfig _config = ChartConfig(
       border: leftBorder,
       extra: leftAxis,
     ),
-  },
+  ],
   padding: regionPadding,
   maintainAspectRatio: false,
   animation: ChartAnimation.none,

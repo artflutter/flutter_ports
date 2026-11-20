@@ -176,7 +176,7 @@ ChartConfig _barVerticalTyped() => ChartConfig(
       borderWidth: 1,
     ),
   ],
-  scales: const {'y': LinearAxis(beginAtZero: true)},
+  scales: const [LinearAxis(.y, beginAtZero: true)],
 );
 
 /// The raw twin of `barHorizontalConfig` of the gallery
@@ -393,7 +393,7 @@ ChartConfig _lineVerticalTyped() => ChartConfig(
     ),
   ],
   indexAxis: const YAxis(),
-  scales: const {'x': LinearAxis(beginAtZero: true)},
+  scales: const [LinearAxis(.x, beginAtZero: true)],
 );
 
 /// The raw twin of `mixedConfig` of the gallery
@@ -452,7 +452,7 @@ ChartConfig _mixedTyped() => const ChartConfig(
       borderColor: ChartValue.constant(.solid(_blue)),
     ),
   ],
-  scales: {'y': LinearAxis(beginAtZero: true)},
+  scales: [LinearAxis(.y, beginAtZero: true)],
 );
 
 /// The raw twin of `polarAreaConfig` of the gallery
@@ -652,7 +652,7 @@ ChartConfig _scatterTyped() => ChartConfig(
       backgroundColor: const ChartValue.constant(.solid(_red)),
     ),
   ],
-  scales: const {'x': LinearAxis(position: .bottom)},
+  scales: const [LinearAxis(.x, position: .bottom)],
 );
 
 /// The labels of `Utils.months({count: 8})` of the Area sample.
@@ -875,8 +875,9 @@ ChartConfig _barTyped() => ChartConfig(
       grouped: true,
     ),
   ],
-  scales: const {
-    'x': CategoryAxis(
+  scales: const [
+    CategoryAxis(
+      .x,
       stacked: StackMode.on,
       grid: AxisGrid(display: false),
       ticks: AxisTicks(
@@ -884,7 +885,8 @@ ChartConfig _barTyped() => ChartConfig(
         font: TextStyle(fontSize: 13),
       ),
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       stacked: StackMode.on,
       beginAtZero: true,
       suggestedMax: 30,
@@ -897,7 +899,7 @@ ChartConfig _barTyped() => ChartConfig(
         padding: EdgeInsets.symmetric(vertical: 4),
       ),
     ),
-  },
+  ],
   padding: const EdgeInsets.all(8),
   legend: const ChartLegend(
     position: .bottom,
@@ -1116,12 +1118,14 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
       pointStyle: TrianglePointStyle(),
     ),
   ],
-  scales: {
-    'x': CategoryAxis(
+  scales: [
+    CategoryAxis(
+      .x,
       grid: AxisGrid(offset: true, drawTicks: false),
       ticks: AxisTicks(maxRotation: 0, autoSkip: false),
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       min: 0,
       max: 12,
       grid: AxisGrid(
@@ -1131,7 +1135,7 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
       ),
       ticks: AxisTicks(stepSize: 2),
     ),
-  },
+  ],
   aspectRatio: 1.5,
   interaction: ChartInteraction(
     mode: IndexInteractionMode(),
@@ -1289,20 +1293,22 @@ ChartConfig _scatterTypeTyped() => ChartConfig(
       extra: const {'pointStyle': false},
     ),
   ],
-  scales: {
-    'x': TimeAxis(
+  scales: [
+    TimeAxis(
+      .x,
       unit: TimeUnit.day,
       min: DateTime.utc(2026, 2, 28),
       max: DateTime.utc(2026, 3, 7),
       tooltipFormat: 'MMM d',
       position: .bottom,
     ),
-    'y': const LogarithmicAxis(
+    const LogarithmicAxis(
+      .y,
       min: 1,
       max: 100,
       title: AxisTitle(display: true, text: ['ppm']),
     ),
-  },
+  ],
 );
 
 /// The raw twin of `_scatterTypeTyped`.
@@ -1402,17 +1408,19 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
       hoverBackgroundColor: const .constant(.solid(_red)),
     ),
   ],
-  scales: const {
-    'x': LinearAxis(
+  scales: const [
+    LinearAxis(
+      .x,
       suggestedMin: 0,
       suggestedMax: 40,
       ticks: AxisTicks(stepSize: 10),
     ),
-    'y': LinearAxis(
+    LinearAxis(
+      .y,
       reverse: true,
       title: AxisTitle(display: true, text: ['Score'], align: .end),
     ),
-  },
+  ],
   legend: const ChartLegend(display: false),
 );
 
@@ -1716,8 +1724,8 @@ ChartConfig _polarAreaTypeTyped() => const ChartConfig(
       spacing: 1,
     ),
   ],
-  scales: {
-    'r': RadialLinearAxis(
+  scales: [
+    RadialLinearAxis(
       beginAtZero: true,
       startAngle: 30,
       ticks: AxisTicks(stepSize: 5, color: ChartPaint.solid(_navy)),
@@ -1726,7 +1734,7 @@ ChartConfig _polarAreaTypeTyped() => const ChartConfig(
       pointLabelsColor: ChartPaint.solid(_navy),
       pointLabelsFont: TextStyle(fontSize: 12),
     ),
-  },
+  ],
   legend: ChartLegend(position: .left, align: .center),
 );
 
@@ -1832,8 +1840,8 @@ ChartConfig _radarTypeTyped() => ChartConfig(
       pointBackgroundColor: .constant(.solid(_orange)),
     ),
   ],
-  scales: const {
-    'r': RadialLinearAxis(
+  scales: const [
+    RadialLinearAxis(
       suggestedMin: 0,
       suggestedMax: 10,
       ticks: AxisTicks(stepSize: 2),
@@ -1844,7 +1852,7 @@ ChartConfig _radarTypeTyped() => ChartConfig(
       pointLabelsFont: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
       pointLabelsPadding: 8,
     ),
-  },
+  ],
   elements: const ChartElements(
     point: PointElementStyle(hitRadius: 6, borderWidth: 1),
     line: LineElementStyle(borderWidth: 2),

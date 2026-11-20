@@ -20,6 +20,6 @@ final xyPoints = ChartConfig(
       borderColor: const .constant(.solid(blue)),
     ),
   ],
-  scales: const {'x': LinearAxis()},
+  scales: const [LinearAxis(.x)],
 );
 // #enddocregion sample

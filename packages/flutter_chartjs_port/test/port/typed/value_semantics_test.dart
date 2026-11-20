@@ -95,8 +95,8 @@ const List<(Dataset, List<String>)> _datasets = [
       'data',
       'points',
       ..._style,
-      'xAxisID',
-      'yAxisID',
+      'xAxis',
+      'yAxis',
       'stack',
       'indexAxis',
       'borderRadius',
@@ -117,8 +117,8 @@ const List<(Dataset, List<String>)> _datasets = [
       'data',
       'points',
       ..._style,
-      'xAxisID',
-      'yAxisID',
+      'xAxis',
+      'yAxis',
       'stack',
       'indexAxis',
       ..._lineStyle,
@@ -133,8 +133,8 @@ const List<(Dataset, List<String>)> _datasets = [
       'data',
       'points',
       ..._style,
-      'xAxisID',
-      'yAxisID',
+      'xAxis',
+      'yAxis',
       'stack',
       ..._lineStyle,
       'extra',
@@ -147,8 +147,8 @@ const List<(Dataset, List<String>)> _datasets = [
       'label',
       'points',
       ..._style,
-      'xAxisID',
-      'yAxisID',
+      'xAxis',
+      'yAxis',
       'radius',
       'hoverRadius',
       'pointStyle',
@@ -416,14 +416,14 @@ void main() {
         datasets: [
           BarDataset(data: [1]),
         ],
-        scales: {'y': LinearAxis(beginAtZero: true)},
+        scales: [LinearAxis(.y, beginAtZero: true)],
         legend: ChartLegend(display: false),
       );
       const b = ChartConfig(
         datasets: [
           BarDataset(data: [1]),
         ],
-        scales: {'y': LinearAxis(beginAtZero: true)},
+        scales: [LinearAxis(.y, beginAtZero: true)],
         legend: ChartLegend(display: false),
       );
       expect(identical(a, b), isTrue);
@@ -442,10 +442,10 @@ void main() {
             ),
           ),
         ],
-        scales: {
-          'x': _runtime(const CategoryAxis()),
-          'y': LinearAxis(min: _runtime(0)),
-        },
+        scales: [
+          _runtime(const CategoryAxis(.x)),
+          LinearAxis(.y, min: _runtime(0)),
+        ],
         legend: ChartLegend(onClick: (_, _, _) {}),
         tooltip: ChartTooltip(
           callbacks: TooltipCallbacks(label: (tooltip, item) => null),
@@ -522,12 +522,12 @@ void main() {
       expect(
         const ChartConfig(
           datasets: [BarDataset()],
-          scales: {'x': CategoryAxis(), 'y': LinearAxis()},
+          scales: [CategoryAxis(.x), LinearAxis(.y)],
         ),
         isNot(
           const ChartConfig(
             datasets: [BarDataset()],
-            scales: {'y': LinearAxis(), 'x': CategoryAxis()},
+            scales: [LinearAxis(.y), CategoryAxis(.x)],
           ),
         ),
       );
@@ -586,11 +586,11 @@ void main() {
 
     test('copyWith() gives an == object, and a parameter changes', () {
       for (final axis in const <ChartAxis>[
-        CategoryAxis(),
-        LinearAxis(),
-        LogarithmicAxis(),
-        TimeAxis(),
-        TimeSeriesAxis(),
+        CategoryAxis(.x),
+        LinearAxis(.y),
+        LogarithmicAxis(.y),
+        TimeAxis(.x),
+        TimeSeriesAxis(.x),
         RadialLinearAxis(),
       ]) {
         _expectEqual(axis.copyWith(), axis);
@@ -601,17 +601,17 @@ void main() {
       }
       // The border (Chart.js ADR 0141): an AxisBorder for a cartesian axis, a
       // RadialAxisBorder for the radial axis, compared with ==.
-      const line = LinearAxis(border: AxisBorder(width: 2, dash: [4, 4]));
+      const line = LinearAxis(.y, border: AxisBorder(width: 2, dash: [4, 4]));
       _expectEqual(line.copyWith(), line);
       _expectEqual(
         line,
-        const LinearAxis(border: AxisBorder(width: 2, dash: [4, 4])),
+        const LinearAxis(.y, border: AxisBorder(width: 2, dash: [4, 4])),
       );
       expect(
         line.copyWith(border: const AxisBorder(width: 3)).border,
         const AxisBorder(width: 3),
       );
-      expect(line, isNot(const LinearAxis(border: AxisBorder(width: 3))));
+      expect(line, isNot(const LinearAxis(.y, border: AxisBorder(width: 3))));
       const radial = RadialLinearAxis(border: RadialAxisBorder(dash: [2, 2]));
       _expectEqual(radial.copyWith(), radial);
       expect(
@@ -743,6 +743,7 @@ void main() {
         'extra',
       ]);
       expect(names(const RadialLinearAxis()), [
+        'axis',
         'display',
         'position',
         'reverse',

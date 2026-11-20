@@ -107,7 +107,7 @@ ChartConfigurationScope _config() => ChartConfigLowering(
     responsive: false,
     maintainAspectRatio: false,
     animation: ChartAnimation.none,
-    scales: const {'x': CategoryAxis(), 'y': LogarithmicAxis()},
+    scales: const [CategoryAxis(.x), LogarithmicAxis(.y)],
     // `plugins: false` as one entry for each built-in plugin.
     extra: const {
       'parsing': false,

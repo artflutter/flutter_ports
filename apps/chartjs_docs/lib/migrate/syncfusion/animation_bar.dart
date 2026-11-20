@@ -57,9 +57,10 @@ class _SfAnimationBarState() extends State<SfAnimationBar> {
         tooltip: const ChartTooltip(enabled: false),
         animation: const ChartAnimation(duration: Duration(milliseconds: 1500)),
         extra: const {'events': <String>[]},
-        scales: {
-          'y': sfCategoryAxis(reverse: true),
-          'x': sfValueAxis(
+        scales: [
+          sfCategoryAxis(direction: .y, reverse: true),
+          sfValueAxis(
+            direction: .x,
             min: 0,
             max: 100,
             stepSize: 10,
@@ -67,7 +68,7 @@ class _SfAnimationBarState() extends State<SfAnimationBar> {
             line: true,
             ticks: true,
           ),
-        },
+        ],
       ),
     ),
   );

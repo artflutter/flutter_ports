@@ -43,10 +43,10 @@ final List<DataPoint> _points = [
 ChartConfig _config(ZoomPluginOptions zoom, {bool legend = false}) =>
     ChartConfig(
       datasets: [ScatterDataset(points: _points, pointRadius: 4)],
-      scales: const {
-        'x': LinearAxis(min: 0, max: 100),
-        'y': LinearAxis(min: 0, max: 100),
-      },
+      scales: const [
+        LinearAxis(.x, min: 0, max: 100),
+        LinearAxis(.y, min: 0, max: 100),
+      ],
       maintainAspectRatio: false,
       legend: ChartLegend(display: legend),
       animation: ChartAnimation.none,

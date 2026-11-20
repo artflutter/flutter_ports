@@ -63,6 +63,7 @@ ScaleHook reserve(double size) => (scale) {
 LinearAxis groupAxis({
   required int count,
   required double groupWidth,
+  CartesianAxis direction = .x,
   FlAlignment alignment = .spaceEvenly,
   double groupsSpace = 16,
   double reservedSize = 0,
@@ -70,6 +71,7 @@ LinearAxis groupAxis({
   ChartPosition? position,
   bool reverse = false,
 }) => LinearAxis(
+  direction,
   display: reservedSize > 0 ? ScaleDisplay.on : ScaleDisplay.off,
   position: position,
   reverse: reverse,
@@ -102,6 +104,7 @@ LinearAxis groupAxis({
 LinearAxis valueAxis({
   required double min,
   required double max,
+  CartesianAxis direction = .y,
   double? interval,
   double reservedSize = 0,
   AxisTicks? ticks,
@@ -111,6 +114,7 @@ LinearAxis valueAxis({
   bool reverse = false,
   bool stacked = false,
 }) => LinearAxis(
+  direction,
   display: reservedSize > 0 || grid.display != false
       ? ScaleDisplay.on
       : ScaleDisplay.off,

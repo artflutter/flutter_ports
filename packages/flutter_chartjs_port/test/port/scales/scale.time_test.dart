@@ -147,7 +147,7 @@ Chart _chart(List<DataPoint> data, [TimeAxis? x]) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
       datasets: [TestDataset(_timeTest, points: data)],
-      scales: {'x': ?x},
+      scales: [?x],
     ),
   ).lower(),
 );
@@ -343,6 +343,7 @@ void main() {
         _chart(
           _xy(times),
           TimeAxis(
+            .x,
             unit: unit,
             ticks: AxisTicks(stepSize: stepSize),
           ),
@@ -422,6 +423,7 @@ void main() {
         () => _chart(
           _xy(times),
           const TimeAxis(
+            .x,
             extra: {
               'time': {'minUnit': 7.0},
             },
@@ -437,7 +439,7 @@ void main() {
         // object has no displayFormats: "Cannot read properties of
         // undefined (reading 'undefined')" (scale.time.js:615).
         expect(
-          () => _chart(_xy(times), TimeAxis(extra: {'time': time})),
+          () => _chart(_xy(times), TimeAxis(.x, extra: {'time': time})),
           throwsA(isA<TypeError>()),
         );
       });
@@ -452,6 +454,7 @@ void main() {
           () => _chart(
             _xy(times),
             TimeAxis(
+              .x,
               unit: TimeUnit.day,
               ticks: AxisTicks(stepSize: stepSize),
             ),
@@ -483,7 +486,7 @@ void main() {
             TestDataset(_timeTest, data: [1.0, 2.0, 3.0]),
           ],
           labels: const ['2021-01-04', 'garbage', '2021-01-20'],
-          scales: {'x': x},
+          scales: [x],
         ),
       ).lower(),
     );
@@ -491,7 +494,7 @@ void main() {
     testWidgets('the label timestamps keep null and sort it as 0', (
       tester,
     ) async {
-      final x = _x(labelsChart(const TimeAxis()));
+      final x = _x(labelsChart(const TimeAxis(.x)));
       expect(x.getLabelTimestamps(), [null, _t0, _t0 + 16 * _day]);
       // Math.min(min, null) is Math.min(min, 0).
       expect(x.min, 0);
@@ -500,7 +503,7 @@ void main() {
     testWidgets('a null tick of the labels has the value NaN', (tester) async {
       final x = _x(
         labelsChart(
-          const TimeAxis(ticks: AxisTicks(source: TickSource.labels)),
+          const TimeAxis(.x, ticks: AxisTicks(source: TickSource.labels)),
         ),
       );
       final ticks = x.ticks!;
@@ -523,6 +526,7 @@ void main() {
       final x = _x(
         labelsChart(
           TimeAxis(
+            .x,
             ticks: AxisTicks(
               source: TickSource.labels,
               callback: (scale, value, index, ticks) {
@@ -541,6 +545,7 @@ void main() {
       final x = _x(
         labelsChart(
           const TimeAxis(
+            .x,
             ticks: AxisTicks(source: TickSource.labels),
             extra: {'offset': true, 'offsetAfterAutoskip': true},
           ),
@@ -557,6 +562,7 @@ void main() {
       final x = _x(
         labelsChart(
           const TimeAxis(
+            .x,
             bounds: ScaleBounds.ticks,
             ticks: AxisTicks(source: TickSource.labels),
           ),
@@ -617,6 +623,7 @@ void main() {
         _chart(
           _xy([_t0, _t0 + _day]),
           const TimeAxis(
+            .x,
             extra: {
               'time': {
                 'displayFormats': {'day': 'MMM'},
@@ -682,7 +689,7 @@ void main() {
         ChartConfigLowering(
           const ChartConfig(
             datasets: [
-              LineDataset(xAxisID: 'x', data: [null, 10, 3]),
+              LineDataset(data: [null, 10, 3]),
             ],
             labels: [
               '2015-01-01T20:00:00',
@@ -693,8 +700,9 @@ void main() {
               '2015-01-08T10:00',
               '2015-01-10T12:00',
             ], // days
-            scales: {
-              'x': TimeAxis(
+            scales: [
+              TimeAxis(
+                .x,
                 unit: TimeUnit.day,
                 position: ChartPosition.bottom,
                 ticks: AxisTicks(source: TickSource.labels, autoSkip: false),
@@ -704,7 +712,7 @@ void main() {
                   },
                 },
               ),
-            },
+            ],
           ),
         ).lower(),
       );
@@ -739,15 +747,16 @@ void main() {
                 ],
               ),
             ],
-            scales: const {
-              'x': TimeAxis(
+            scales: const [
+              TimeAxis(
+                .x,
                 unit: TimeUnit.week,
                 ticks: AxisTicks(source: TickSource.data),
                 extra: {
                   'time': {'round': TimeUnit.week, 'isoWeekday': 1},
                 },
               ),
-            },
+            ],
           ),
         ).lower(),
       );
@@ -768,14 +777,15 @@ void main() {
                 LineDataset(data: [0, 1, 2, 3, 4, 5]),
               ],
               labels: ['2017', '2019', '2020', '2025', '2042'],
-              scales: {
-                'x': TimeAxis(
+              scales: [
+                TimeAxis(
+                  .x,
                   ticks: AxisTicks(source: TickSource.labels),
                   extra: {
                     'time': {'parser': 'yyyy'},
                   },
                 ),
-              },
+              ],
             ),
           ).lower(),
         );
@@ -840,14 +850,15 @@ void main() {
                 ),
               ],
               labels: const ['2017', '2019', '2020', '2025', '2042'],
-              scales: const {
-                'x': TimeAxis(
+              scales: const [
+                TimeAxis(
+                  .x,
                   ticks: AxisTicks(source: TickSource.data),
                   extra: {
                     'time': {'parser': 'yyyy'},
                   },
                 ),
-              },
+              ],
             ),
           ).lower(),
         );
@@ -945,15 +956,16 @@ void main() {
                   LineDataset(data: [0, 1, 2, 3, 4]),
                 ],
                 labels: const ['2017', '2019', '2020', '2025', '2042'],
-                scales: const {
-                  'x': TimeSeriesAxis(
+                scales: const [
+                  TimeSeriesAxis(
+                    .x,
                     ticks: AxisTicks(source: TickSource.labels),
                     extra: {
                       'time': {'parser': 'yyyy'},
                     },
                   ),
-                  'y': LinearAxis(display: ScaleDisplay.off),
-                },
+                  LinearAxis(.y, display: ScaleDisplay.off),
+                ],
                 extra: {'normalized': normalized},
               ),
             ).lower(),
@@ -1070,15 +1082,16 @@ void main() {
                   LineDataset(data: [0, 1, 2, 3, 4, 5]),
                 ],
                 labels: ['2017', '2019', '2020', '2025', '2042'],
-                scales: {
-                  'x': TimeAxis(
+                scales: [
+                  TimeAxis(
+                    .x,
                     ticks: AxisTicks(source: TickSource.labels),
                     extra: {
                       'time': {'parser': 'yyyy'},
                     },
                   ),
-                  'y': LinearAxis(display: ScaleDisplay.off),
-                },
+                  LinearAxis(.y, display: ScaleDisplay.off),
+                ],
               ),
             ).lower(),
           );
@@ -1169,16 +1182,17 @@ void main() {
                   '02/22 10:00',
                   '02/23 11:00',
                 ],
-                scales: {
-                  'x': TimeAxis(
+                scales: [
+                  TimeAxis(
+                    .x,
                     bounds: ScaleBounds.data,
                     unit: TimeUnit.day,
                     extra: {
                       'time': {'parser': 'MM/dd HH:mm'},
                     },
                   ),
-                  'y': LinearAxis(display: ScaleDisplay.off),
-                },
+                  LinearAxis(.y, display: ScaleDisplay.off),
+                ],
               ),
             ).lower(),
           );
@@ -1213,16 +1227,17 @@ void main() {
                   '02/22 10:00',
                   '02/23 11:00',
                 ],
-                scales: {
-                  'x': TimeAxis(
+                scales: [
+                  TimeAxis(
+                    .x,
                     bounds: ScaleBounds.ticks,
                     unit: TimeUnit.day,
                     extra: {
                       'time': {'parser': 'MM/dd HH:mm'},
                     },
                   ),
-                  'y': LinearAxis(display: ScaleDisplay.off),
-                },
+                  LinearAxis(.y, display: ScaleDisplay.off),
+                ],
               ),
             ).lower(),
           );
@@ -1270,8 +1285,9 @@ void main() {
                       '02/22 10:00',
                       '02/23 11:00',
                     ],
-                    scales: {
-                      'x': TimeAxis(
+                    scales: [
+                      TimeAxis(
+                        .x,
                         bounds: bounds,
                         unit: TimeUnit.day,
                         ticks: AxisTicks(source: source),
@@ -1279,8 +1295,8 @@ void main() {
                           'time': {'parser': 'MM/dd HH:mm'},
                         },
                       ),
-                      'y': const LinearAxis(display: ScaleDisplay.off),
-                    },
+                      const LinearAxis(.y, display: ScaleDisplay.off),
+                    ],
                   ),
                 ).lower(),
               );
@@ -1361,23 +1377,26 @@ void main() {
                     LineDataset(data: [0, 1, 2, 3, 4]),
                   ],
                   labels: const ['2017', '2018', '2019', '2020', '2021'],
-                  scales: {
-                    'x': type == 'time'
-                        ? TimeAxis(
-                            unit: TimeUnit.year,
-                            ticks: AxisTicks(source: source),
-                            extra: const {
-                              'time': {'parser': 'yyyy'},
-                            },
-                          )
-                        : TimeSeriesAxis(
-                            unit: TimeUnit.year,
-                            ticks: AxisTicks(source: source),
-                            extra: const {
-                              'time': {'parser': 'yyyy'},
-                            },
-                          ),
-                  },
+                  scales: [
+                    if (type == 'time')
+                      TimeAxis(
+                        .x,
+                        unit: TimeUnit.year,
+                        ticks: AxisTicks(source: source),
+                        extra: const {
+                          'time': {'parser': 'yyyy'},
+                        },
+                      )
+                    else
+                      TimeSeriesAxis(
+                        .x,
+                        unit: TimeUnit.year,
+                        ticks: AxisTicks(source: source),
+                        extra: const {
+                          'time': {'parser': 'yyyy'},
+                        },
+                      ),
+                  ],
                 ),
               ).lower(),
             );
@@ -1461,23 +1480,26 @@ void main() {
                     LineDataset(data: [0, 1, 2, 3, 4, 5]),
                   ],
                   labels: const ['2017', '2019', '2020', '2025', '2042'],
-                  scales: {
-                    'x': type == 'time'
-                        ? TimeAxis(
-                            ticks: AxisTicks(source: source),
-                            extra: const {
-                              'id': 'x',
-                              'time': {'parser': 'yyyy'},
-                            },
-                          )
-                        : TimeSeriesAxis(
-                            ticks: AxisTicks(source: source),
-                            extra: const {
-                              'id': 'x',
-                              'time': {'parser': 'yyyy'},
-                            },
-                          ),
-                  },
+                  scales: [
+                    if (type == 'time')
+                      TimeAxis(
+                        .x,
+                        ticks: AxisTicks(source: source),
+                        extra: const {
+                          'id': 'x',
+                          'time': {'parser': 'yyyy'},
+                        },
+                      )
+                    else
+                      TimeSeriesAxis(
+                        .x,
+                        ticks: AxisTicks(source: source),
+                        extra: const {
+                          'id': 'x',
+                          'time': {'parser': 'yyyy'},
+                        },
+                      ),
+                  ],
                 ),
               ).lower(),
             );
@@ -1527,7 +1549,7 @@ void main() {
             ChartConfigLowering(
               const ChartConfig(
                 datasets: [LineDataset()],
-                scales: {'x': TimeAxis()},
+                scales: [TimeAxis(.x)],
               ),
             ).lower(),
           );
@@ -1569,8 +1591,9 @@ void main() {
             ChartConfigLowering(
               const ChartConfig(
                 datasets: [LineDataset()],
-                scales: {
-                  'x': TimeAxis(
+                scales: [
+                  TimeAxis(
+                    .x,
                     extra: {
                       'time': {
                         'displayFormats': {
@@ -1581,7 +1604,7 @@ void main() {
                       },
                     },
                   ),
-                },
+                ],
               ),
             ).lower(),
           );

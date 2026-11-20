@@ -76,9 +76,10 @@ final ChartConfig _config = ChartConfig(
     _dashes,
     sfDataLabels([for (final d in _downloads) sfNumber(d)]),
   ],
-  scales: {
-    'y': sfCategoryAxis(reverse: true),
-    'x': sfValueAxis(
+  scales: [
+    sfCategoryAxis(direction: .y, reverse: true),
+    sfValueAxis(
+      direction: .x,
       min: 0,
       max: 4.5,
       stepSize: 0.5,
@@ -86,7 +87,7 @@ final ChartConfig _config = ChartConfig(
       line: true,
       title: 'Downloads in Billion',
     ),
-  },
+  ],
 );
 
 class const SfCustomizedBar({super.key}) extends StatelessWidget {

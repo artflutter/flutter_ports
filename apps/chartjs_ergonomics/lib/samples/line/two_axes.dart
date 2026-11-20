@@ -6,6 +6,12 @@ import 'package:chartjs_ergonomics/samples/line/data.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion sample
+const marginAxis = LinearAxis(
+  .y,
+  position: .right,
+  grid: AxisGrid(drawOnChartArea: false),
+);
+
 const twoAxes = ChartConfig(
   labels: months,
   datasets: [
@@ -13,21 +19,17 @@ const twoAxes = ChartConfig(
       label: 'Sales',
       data: sales,
       borderColor: .constant(.solid(teal)),
-      yAxisID: 'y',
     ),
     LineDataset(
       label: 'Margin, %',
       data: [12, 18, 9, 22, 15, 30, 25],
       borderColor: .constant(.solid(orange)),
-      yAxisID: 'margin',
+      yAxis: marginAxis,
     ),
   ],
-  scales: {
-    'y': LinearAxis(position: .left),
-    'margin': LinearAxis(
-      position: .right,
-      grid: AxisGrid(drawOnChartArea: false),
-    ),
-  },
+  scales: [
+    LinearAxis(.y, position: .left),
+    marginAxis,
+  ],
 );
 // #enddocregion sample

@@ -60,12 +60,33 @@ const Map<ChartKind, Dataset> _empty = {
 };
 
 /// The dataset scope of [dataset] in a chart of its own type.
-JsObjectFace _lower(Dataset dataset) => lowerDataset(
-  dataset,
-  _empty.entries
-      .firstWhere((entry) => entry.value.runtimeType == dataset.runtimeType)
-      .key,
-);
+JsObjectFace _lower(Dataset dataset) {
+  final outer = currentScaleIds;
+  currentScaleIds = _axisIds;
+  try {
+    return lowerDataset(
+      dataset,
+      _empty.entries
+          .firstWhere((entry) => entry.value.runtimeType == dataset.runtimeType)
+          .key,
+    );
+  } finally {
+    currentScaleIds = outer;
+  }
+}
+
+/// The second x axis and the second y axis of the axis cases: the scale ids
+/// `x1` and `y1` (Chart.js ADR 0191).
+const _x2 = LinearAxis(.x, position: ChartPosition.top);
+const _y2 = LinearAxis(.y, position: ChartPosition.right);
+
+/// The scale ids of the axes of the dataset cases.
+final Map<ChartAxis, String> _axisIds = scaleIdsOf(const [
+  LinearAxis(.x),
+  LinearAxis(.y),
+  _x2,
+  _y2,
+]);
 
 /// The cases of the parameters of [Dataset]: a function that sets one
 /// parameter with `copyWith`, and the raw twin.
@@ -265,23 +286,23 @@ List<Dataset> _arcs({
 /// The cases of the parameters of the dataset classes, without `data` and
 /// `points`: the typed datasets with one parameter and the raw twin.
 final Map<String, (List<Dataset>, Map<String, Object?>)> _own = {
-  'xAxisID': (
+  'xAxis': (
     const [
-      BarDataset(xAxisID: 'x2'),
-      LineDataset(xAxisID: 'x2'),
-      ScatterDataset(xAxisID: 'x2'),
-      BubbleDataset(xAxisID: 'x2'),
+      BarDataset(xAxis: _x2),
+      LineDataset(xAxis: _x2),
+      ScatterDataset(xAxis: _x2),
+      BubbleDataset(xAxis: _x2),
     ],
-    {'xAxisID': 'x2'},
+    {'xAxisID': 'x1'},
   ),
-  'yAxisID': (
+  'yAxis': (
     const [
-      BarDataset(yAxisID: 'y2'),
-      LineDataset(yAxisID: 'y2'),
-      ScatterDataset(yAxisID: 'y2'),
-      BubbleDataset(yAxisID: 'y2'),
+      BarDataset(yAxis: _y2),
+      LineDataset(yAxis: _y2),
+      ScatterDataset(yAxis: _y2),
+      BubbleDataset(yAxis: _y2),
     ],
-    {'yAxisID': 'y2'},
+    {'yAxisID': 'y1'},
   ),
   'stack': (
     const [
@@ -451,11 +472,11 @@ JsObjectFace _options(ChartConfig config) =>
 
 /// The 6 axis classes, each without a parameter, with its scale type.
 const List<(ChartAxis, String)> _axes = [
-  (CategoryAxis(), 'category'),
-  (LinearAxis(), 'linear'),
-  (LogarithmicAxis(), 'logarithmic'),
-  (TimeAxis(), 'time'),
-  (TimeSeriesAxis(), 'timeseries'),
+  (CategoryAxis(.x), 'category'),
+  (LinearAxis(.y), 'linear'),
+  (LogarithmicAxis(.y), 'logarithmic'),
+  (TimeAxis(.x), 'time'),
+  (TimeSeriesAxis(.x), 'timeseries'),
   (RadialLinearAxis(), 'radialLinear'),
 ];
 
@@ -508,166 +529,172 @@ _axisCommon = {
 
 /// The cases of the parameters of the axis classes: the typed axes with
 /// one parameter and the raw twin without its `type`.
-final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)>
-_axisOwn = {
-  // The border object itself (Chart.js ADR 0141).
-  'border of a cartesian axis': (
-    const [
-      (CategoryAxis(border: _axisBorder), 'category'),
-      (LinearAxis(border: _axisBorder), 'linear'),
-      (LogarithmicAxis(border: _axisBorder), 'logarithmic'),
-      (TimeAxis(border: _axisBorder), 'time'),
-      (TimeSeriesAxis(border: _axisBorder), 'timeseries'),
-    ],
-    {'border': _axisBorder},
-  ),
-  'border of a radial axis': (
-    const [(RadialLinearAxis(border: _radialBorder), 'radialLinear')],
-    {'border': _radialBorder},
-  ),
-  'min of a category axis': (
-    const [(CategoryAxis(min: 'b'), 'category')],
-    {'min': 'b'},
-  ),
-  'max of a category axis': (
-    const [(CategoryAxis(max: 'c'), 'category')],
-    {'max': 'c'},
-  ),
-  'min': (
-    const [
-      (LinearAxis(min: -1), 'linear'),
-      (LogarithmicAxis(min: -1), 'logarithmic'),
-      (RadialLinearAxis(min: -1), 'radialLinear'),
-    ],
-    {'min': -1},
-  ),
-  'max': (
-    const [
-      (LinearAxis(max: 9), 'linear'),
-      (LogarithmicAxis(max: 9), 'logarithmic'),
-      (RadialLinearAxis(max: 9), 'radialLinear'),
-    ],
-    {'max': 9},
-  ),
-  'suggestedMin': (
-    const [
-      (LinearAxis(suggestedMin: 2), 'linear'),
-      (LogarithmicAxis(suggestedMin: 2), 'logarithmic'),
-      (RadialLinearAxis(suggestedMin: 2), 'radialLinear'),
-    ],
-    {'suggestedMin': 2},
-  ),
-  'suggestedMax': (
-    const [
-      (LinearAxis(suggestedMax: 8), 'linear'),
-      (LogarithmicAxis(suggestedMax: 8), 'logarithmic'),
-      (RadialLinearAxis(suggestedMax: 8), 'radialLinear'),
-    ],
-    {'suggestedMax': 8},
-  ),
-  'beginAtZero': (
-    const [
-      (LinearAxis(beginAtZero: true), 'linear'),
-      (RadialLinearAxis(beginAtZero: true), 'radialLinear'),
-    ],
-    {'beginAtZero': true},
-  ),
-  'min of a time axis': (
-    [
-      (TimeAxis(min: _start), 'time'),
-      (TimeSeriesAxis(min: _start), 'timeseries'),
-    ],
-    {'min': _start},
-  ),
-  'max of a time axis': (
-    [(TimeAxis(max: _end), 'time'), (TimeSeriesAxis(max: _end), 'timeseries')],
-    {'max': _end},
-  ),
-  'unit': (
-    const [
-      (TimeAxis(unit: .day), 'time'),
-      (TimeSeriesAxis(unit: .day), 'timeseries'),
-    ],
+final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
     {
-      'time': {'unit': TimeUnit.day},
-    },
-  ),
-  'tooltipFormat': (
-    const [
-      (TimeAxis(tooltipFormat: 'yyyy'), 'time'),
-      (TimeSeriesAxis(tooltipFormat: 'yyyy'), 'timeseries'),
-    ],
-    {
-      'time': {'tooltipFormat': 'yyyy'},
-    },
-  ),
-  'startAngle': (
-    const [(RadialLinearAxis(startAngle: 45), 'radialLinear')],
-    {'startAngle': 45},
-  ),
-  'pointLabelsDisplay': (
-    const [
-      (RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.off), 'radialLinear'),
-    ],
-    {
-      'pointLabels': {'display': ScaleDisplay.off},
-    },
-  ),
-  'pointLabelsFont': (
-    const [(RadialLinearAxis(pointLabelsFont: _font), 'radialLinear')],
-    {
-      'pointLabels': {'font': _fontValue},
-    },
-  ),
-  'pointLabelsColor': (
-    const [
-      (
-        RadialLinearAxis(pointLabelsColor: ChartPaint.solid(_blue)),
-        'radialLinear',
+      // The border object itself (Chart.js ADR 0141).
+      'border of a cartesian axis': (
+        const [
+          (CategoryAxis(.x, border: _axisBorder), 'category'),
+          (LinearAxis(.y, border: _axisBorder), 'linear'),
+          (LogarithmicAxis(.y, border: _axisBorder), 'logarithmic'),
+          (TimeAxis(.x, border: _axisBorder), 'time'),
+          (TimeSeriesAxis(.x, border: _axisBorder), 'timeseries'),
+        ],
+        {'border': _axisBorder},
       ),
-    ],
-    {
-      'pointLabels': {'color': _blueValue},
-    },
-  ),
-  'pointLabelsPadding': (
-    const [(RadialLinearAxis(pointLabelsPadding: 8), 'radialLinear')],
-    {
-      'pointLabels': {'padding': 8},
-    },
-  ),
-  'pointLabelsCallback': (
-    const [
-      (RadialLinearAxis(pointLabelsCallback: _pointLabel), 'radialLinear'),
-    ],
-    {
-      'pointLabels': {'callback': _function},
-    },
-  ),
-  'angleLinesDisplay': (
-    const [(RadialLinearAxis(angleLinesDisplay: false), 'radialLinear')],
-    {
-      'angleLines': {'display': false},
-    },
-  ),
-  'angleLinesColor': (
-    const [
-      (
-        RadialLinearAxis(angleLinesColor: ChartPaint.solid(_red)),
-        'radialLinear',
+      'border of a radial axis': (
+        const [(RadialLinearAxis(border: _radialBorder), 'radialLinear')],
+        {'border': _radialBorder},
       ),
-    ],
-    {
-      'angleLines': {'color': _redValue},
-    },
-  ),
-  'angleLinesLineWidth': (
-    const [(RadialLinearAxis(angleLinesLineWidth: 2), 'radialLinear')],
-    {
-      'angleLines': {'lineWidth': 2},
-    },
-  ),
-};
+      'min of a category axis': (
+        const [(CategoryAxis(.x, min: 'b'), 'category')],
+        {'min': 'b'},
+      ),
+      'max of a category axis': (
+        const [(CategoryAxis(.x, max: 'c'), 'category')],
+        {'max': 'c'},
+      ),
+      'min': (
+        const [
+          (LinearAxis(.y, min: -1), 'linear'),
+          (LogarithmicAxis(.y, min: -1), 'logarithmic'),
+          (RadialLinearAxis(min: -1), 'radialLinear'),
+        ],
+        {'min': -1},
+      ),
+      'max': (
+        const [
+          (LinearAxis(.y, max: 9), 'linear'),
+          (LogarithmicAxis(.y, max: 9), 'logarithmic'),
+          (RadialLinearAxis(max: 9), 'radialLinear'),
+        ],
+        {'max': 9},
+      ),
+      'suggestedMin': (
+        const [
+          (LinearAxis(.y, suggestedMin: 2), 'linear'),
+          (LogarithmicAxis(.y, suggestedMin: 2), 'logarithmic'),
+          (RadialLinearAxis(suggestedMin: 2), 'radialLinear'),
+        ],
+        {'suggestedMin': 2},
+      ),
+      'suggestedMax': (
+        const [
+          (LinearAxis(.y, suggestedMax: 8), 'linear'),
+          (LogarithmicAxis(.y, suggestedMax: 8), 'logarithmic'),
+          (RadialLinearAxis(suggestedMax: 8), 'radialLinear'),
+        ],
+        {'suggestedMax': 8},
+      ),
+      'beginAtZero': (
+        const [
+          (LinearAxis(.y, beginAtZero: true), 'linear'),
+          (RadialLinearAxis(beginAtZero: true), 'radialLinear'),
+        ],
+        {'beginAtZero': true},
+      ),
+      'min of a time axis': (
+        [
+          (TimeAxis(.x, min: _start), 'time'),
+          (TimeSeriesAxis(.x, min: _start), 'timeseries'),
+        ],
+        {'min': _start},
+      ),
+      'max of a time axis': (
+        [
+          (TimeAxis(.x, max: _end), 'time'),
+          (TimeSeriesAxis(.x, max: _end), 'timeseries'),
+        ],
+        {'max': _end},
+      ),
+      'unit': (
+        const [
+          (TimeAxis(.x, unit: .day), 'time'),
+          (TimeSeriesAxis(.x, unit: .day), 'timeseries'),
+        ],
+        {
+          'time': {'unit': TimeUnit.day},
+        },
+      ),
+      'tooltipFormat': (
+        const [
+          (TimeAxis(.x, tooltipFormat: 'yyyy'), 'time'),
+          (TimeSeriesAxis(.x, tooltipFormat: 'yyyy'), 'timeseries'),
+        ],
+        {
+          'time': {'tooltipFormat': 'yyyy'},
+        },
+      ),
+      'startAngle': (
+        const [(RadialLinearAxis(startAngle: 45), 'radialLinear')],
+        {'startAngle': 45},
+      ),
+      'pointLabelsDisplay': (
+        const [
+          (
+            RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.off),
+            'radialLinear',
+          ),
+        ],
+        {
+          'pointLabels': {'display': ScaleDisplay.off},
+        },
+      ),
+      'pointLabelsFont': (
+        const [(RadialLinearAxis(pointLabelsFont: _font), 'radialLinear')],
+        {
+          'pointLabels': {'font': _fontValue},
+        },
+      ),
+      'pointLabelsColor': (
+        const [
+          (
+            RadialLinearAxis(pointLabelsColor: ChartPaint.solid(_blue)),
+            'radialLinear',
+          ),
+        ],
+        {
+          'pointLabels': {'color': _blueValue},
+        },
+      ),
+      'pointLabelsPadding': (
+        const [(RadialLinearAxis(pointLabelsPadding: 8), 'radialLinear')],
+        {
+          'pointLabels': {'padding': 8},
+        },
+      ),
+      'pointLabelsCallback': (
+        const [
+          (RadialLinearAxis(pointLabelsCallback: _pointLabel), 'radialLinear'),
+        ],
+        {
+          'pointLabels': {'callback': _function},
+        },
+      ),
+      'angleLinesDisplay': (
+        const [(RadialLinearAxis(angleLinesDisplay: false), 'radialLinear')],
+        {
+          'angleLines': {'display': false},
+        },
+      ),
+      'angleLinesColor': (
+        const [
+          (
+            RadialLinearAxis(angleLinesColor: ChartPaint.solid(_red)),
+            'radialLinear',
+          ),
+        ],
+        {
+          'angleLines': {'color': _redValue},
+        },
+      ),
+      'angleLinesLineWidth': (
+        const [(RadialLinearAxis(angleLinesLineWidth: 2), 'radialLinear')],
+        {
+          'angleLines': {'lineWidth': 2},
+        },
+      ),
+    };
 
 /// The cases of the parameters of [AxisTicks] and the twin `ticks` Map.
 const Map<String, (AxisTicks, Map<String, Object?>)> _ticks = {
@@ -1199,7 +1226,7 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
   'scales': (
     ChartConfig(
       datasets: [BarDataset()],
-      scales: {'y': LinearAxis(beginAtZero: true)},
+      scales: [LinearAxis(.y, beginAtZero: true)],
     ),
     {
       'scales': {
@@ -1291,7 +1318,7 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
   'all options, in parameter order': (
     ChartConfig(
       datasets: [BarDataset()],
-      scales: {'x': CategoryAxis()},
+      scales: [CategoryAxis(.x)],
       indexAxis: XAxis(),
       responsive: true,
       maintainAspectRatio: true,
@@ -1608,8 +1635,8 @@ void main() {
             hoverBackgroundColor: const .constant(.solid(_blue)),
             hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
-            xAxisID: 'x2',
-            yAxisID: 'y2',
+            xAxis: _x2,
+            yAxis: _y2,
             stack: 's',
             indexAxis: const YAxis(),
             borderRadius: 4,
@@ -1633,8 +1660,8 @@ void main() {
           'hoverBackgroundColor': _blueValue,
           'hoverBorderColor': _redValue,
           'hoverBorderWidth': 3,
-          'xAxisID': 'x2',
-          'yAxisID': 'y2',
+          'xAxisID': 'x1',
+          'yAxisID': 'y1',
           'stack': 's',
           'indexAxis': const YAxis(),
           'borderRadius': 4,
@@ -1679,8 +1706,8 @@ void main() {
             hoverBackgroundColor: const .constant(.solid(_blue)),
             hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
-            xAxisID: 'x2',
-            yAxisID: 'y2',
+            xAxis: _x2,
+            yAxis: _y2,
             stack: 's',
             indexAxis: const XAxis(),
             fill: .toOrigin,
@@ -1711,8 +1738,8 @@ void main() {
           'hoverBackgroundColor': _blueValue,
           'hoverBorderColor': _redValue,
           'hoverBorderWidth': 3,
-          'xAxisID': 'x2',
-          'yAxisID': 'y2',
+          'xAxisID': 'x1',
+          'yAxisID': 'y1',
           'stack': 's',
           'indexAxis': const XAxis(),
           ...lineStyleTwin,
@@ -1733,8 +1760,8 @@ void main() {
             hoverBackgroundColor: const .constant(.solid(_blue)),
             hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
-            xAxisID: 'x2',
-            yAxisID: 'y2',
+            xAxis: _x2,
+            yAxis: _y2,
             stack: 's',
             fill: .toOrigin,
             tension: 0.4,
@@ -1764,8 +1791,8 @@ void main() {
           'hoverBackgroundColor': _blueValue,
           'hoverBorderColor': _redValue,
           'hoverBorderWidth': 3,
-          'xAxisID': 'x2',
-          'yAxisID': 'y2',
+          'xAxisID': 'x1',
+          'yAxisID': 'y1',
           'stack': 's',
           ...lineStyleTwin,
           'clip': const ChartClip.all(5),
@@ -1786,8 +1813,8 @@ void main() {
             hoverBackgroundColor: const .constant(.solid(_blue)),
             hoverBorderColor: const .constant(.solid(_red)),
             hoverBorderWidth: 3,
-            xAxisID: 'x2',
-            yAxisID: 'y2',
+            xAxis: _x2,
+            yAxis: _y2,
             radius: 7,
             hoverRadius: 2,
             pointStyle: const TrianglePointStyle(),
@@ -1805,8 +1832,8 @@ void main() {
           'hoverBackgroundColor': _blueValue,
           'hoverBorderColor': _redValue,
           'hoverBorderWidth': 3,
-          'xAxisID': 'x2',
-          'yAxisID': 'y2',
+          'xAxisID': 'x1',
+          'yAxisID': 'y1',
           'radius': 7,
           'hoverRadius': 2,
           'pointStyle': const TrianglePointStyle(),
@@ -2005,7 +2032,7 @@ void main() {
 
     test('the labels of a category axis go by reference', () {
       final labels = <Object>['a', 'b'];
-      final lowered = lowerAxis(CategoryAxis(labels: labels));
+      final lowered = lowerAxis(CategoryAxis(.x, labels: labels));
       expectTwin(lowered, {'type': 'category', 'labels': labels});
       expect(lowered['labels'], same(labels));
     });
@@ -2013,7 +2040,7 @@ void main() {
     group('each parameter of AxisTicks', () {
       for (final MapEntry(key: name, value: (ticks, twin)) in _ticks.entries) {
         test(name, () {
-          expectTwin(lowerAxis(LinearAxis(ticks: ticks)), {
+          expectTwin(lowerAxis(LinearAxis(.y, ticks: ticks)), {
             'type': 'linear',
             'ticks': twin,
           });
@@ -2022,7 +2049,7 @@ void main() {
 
       test('callback, the TickCallback itself', () {
         final lowered = lowerAxis(
-          const LinearAxis(ticks: AxisTicks(callback: _format)),
+          const LinearAxis(.y, ticks: AxisTicks(callback: _format)),
         );
         final ticks = lowered['ticks']!;
         expect(jsObjectKeys(ticks), ['callback']);
@@ -2033,7 +2060,7 @@ void main() {
     group('each parameter of AxisGrid', () {
       for (final MapEntry(key: name, value: (grid, twin)) in _grid.entries) {
         test(name, () {
-          expectTwin(lowerAxis(LinearAxis(grid: grid)), {
+          expectTwin(lowerAxis(LinearAxis(.y, grid: grid)), {
             'type': 'linear',
             'grid': twin,
           });
@@ -2045,7 +2072,7 @@ void main() {
       for (final MapEntry(key: name, value: (title, twin))
           in _axisTitle.entries) {
         test(name, () {
-          expectTwin(lowerAxis(LinearAxis(title: title)), {
+          expectTwin(lowerAxis(LinearAxis(.y, title: title)), {
             'type': 'linear',
             'title': twin,
           });
@@ -2057,6 +2084,7 @@ void main() {
       expectTwin(
         lowerAxis(
           const LinearAxis(
+            .y,
             grid: AxisGrid(color: ChartPaint.solid(_red)),
             extra: {
               'grid': {'tickLength': 4},
@@ -2095,6 +2123,7 @@ void main() {
       final cases = <(ChartAxis, Map<String, Object?>)>[
         (
           CategoryAxis(
+            .x,
             display: ScaleDisplay.on,
             position: .right,
             reverse: true,
@@ -2118,6 +2147,7 @@ void main() {
         ),
         (
           const LinearAxis(
+            .y,
             display: ScaleDisplay.on,
             position: .right,
             reverse: true,
@@ -2145,6 +2175,7 @@ void main() {
         ),
         (
           const LogarithmicAxis(
+            .y,
             display: ScaleDisplay.on,
             position: .right,
             reverse: true,
@@ -2171,6 +2202,7 @@ void main() {
         for (final (axis, type) in [
           (
             TimeAxis(
+              .x,
               display: ScaleDisplay.on,
               position: .right,
               reverse: true,
@@ -2188,6 +2220,7 @@ void main() {
           ),
           (
             TimeSeriesAxis(
+              .x,
               display: ScaleDisplay.on,
               position: .right,
               reverse: true,
@@ -2614,18 +2647,18 @@ void main() {
       expect(lowered['plugins'], same(plugins));
     });
 
-    test('the order of the scales is the order of the Map', () {
+    test('the order of the scales is the order of the List', () {
       final options = _options(
         const ChartConfig(
           datasets: [LineDataset()],
-          scales: {
-            'y2': LinearAxis(position: .right),
-            'x': CategoryAxis(),
-            'y': LinearAxis(),
-          },
+          scales: [
+            LinearAxis(.y, position: .right),
+            CategoryAxis(.x),
+            LinearAxis(.y),
+          ],
         ),
       );
-      expect(jsObjectKeys(options['scales']), ['y2', 'x', 'y']);
+      expect(jsObjectKeys(options['scales']), ['y', 'x', 'y1']);
     });
 
     test('extra merges into options, into a group and wins', () {

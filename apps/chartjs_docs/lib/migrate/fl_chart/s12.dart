@@ -129,8 +129,9 @@ class _Sample12State() extends State<Sample12> {
         ),
       ),
       plugins: _plugins,
-      scales: {
-        'x': LinearAxis(
+      scales: [
+        LinearAxis(
+          .x,
           min: _start,
           max: _end,
           grid: const AxisGrid(display: false),
@@ -148,12 +149,13 @@ class _Sample12State() extends State<Sample12> {
             extra: const {'minRotation': 45},
           ),
         ),
-        'y': LinearAxis(
+        LinearAxis(
+          .y,
           grid: flGrid(),
           border: flGridDash,
           ticks: const AxisTicks(color: ChartPaint.solid(Colors.white)),
         ),
-      },
+      ],
     ),
   );
 

@@ -36,10 +36,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
   pluginOptions: [zoom.options],
-  scales: {
-    'x': apexCategoryAxis(),
-    'y': apexValueAxis(min: 0, max: 120, stepSize: 20),
-  },
+  scales: [apexCategoryAxis(), apexValueAxis(min: 0, max: 120, stepSize: 20)],
 );
 
 class const ApexLineMulti({super.key}) extends StatelessWidget {

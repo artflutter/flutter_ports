@@ -131,9 +131,10 @@ final ChartConfig _config = ChartConfig(
     ),
   ),
   plugins: [_highLow],
-  scales: {
+  scales: [
     // DateTimeAxis(intervalType: months, interval: 3, dateFormat: yMMM)
-    'x': TimeAxis(
+    TimeAxis(
+      .x,
       min: DateTime(2018, 7),
       max: DateTime(2019, 4),
       unit: .month,
@@ -153,7 +154,8 @@ final ChartConfig _config = ChartConfig(
       border: const AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
     // NumericAxis(minimum: 1, maximum: 3.5, interval: 0.5), no grid lines.
-    'y': const LinearAxis(
+    const LinearAxis(
+      .y,
       min: 1,
       max: 3.5,
       grid: AxisGrid(
@@ -169,7 +171,7 @@ final ChartConfig _config = ChartConfig(
       ),
       border: AxisBorder(color: ChartPaint.solid(_axisLine)),
     ),
-  },
+  ],
 );
 
 class const SfCustomizedLine({super.key}) extends StatelessWidget {

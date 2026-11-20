@@ -33,10 +33,7 @@ final ChartConfig _config = ChartConfig(
   ),
   animation: apexAnimation,
   plugins: [apexDataLabels(), apexHover, apexTooltipLook],
-  scales: {
-    'x': apexCategoryAxis(),
-    'y': apexValueAxis(min: 0, max: 120, stepSize: 20),
-  },
+  scales: [apexCategoryAxis(), apexValueAxis(min: 0, max: 120, stepSize: 20)],
 );
 
 class const ApexBarGrouped({super.key}) extends StatelessWidget {

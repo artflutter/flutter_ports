@@ -31,10 +31,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   animation: shadcnBarAnimation,
   // <LabelList position="top" offset={12} className="fill-foreground" fontSize={12} />
   plugins: [shadcnLabels(id: 'values')],
-  scales: {
-    'x': shadcnCategoryAxis(tickMargin: 10),
-    'y': shadcnValueAxis(_desktop),
-  },
+  scales: [shadcnCategoryAxis(tickMargin: 10), shadcnValueAxis(_desktop)],
 );
 
 class const ShadcnBarLabel({super.key}) extends StatelessWidget {

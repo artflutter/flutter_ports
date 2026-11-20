@@ -39,6 +39,8 @@ ChartConfig _config(
 }) => ChartConfig(
   labels: labels ?? _labels,
   datasets: datasets,
+  // The axis of the case `an axis` (Chart.js ADR 0191).
+  scales: const [LinearAxis(.y)],
   title: title,
   padding: padding,
   animation: animation,
@@ -266,7 +268,10 @@ void main() {
           ('hidden', (data) => BarDataset(data: data, hidden: true)),
           ('an order', (data) => BarDataset(data: data, order: 1)),
           ('a stack', (data) => BarDataset(data: data, stack: 's')),
-          ('an axis id', (data) => BarDataset(data: data, yAxisID: 'y2')),
+          (
+            'an axis',
+            (data) => BarDataset(data: data, yAxis: const LinearAxis(.y)),
+          ),
           ('a width', (data) => BarDataset(data: data, borderWidth: 2)),
           (
             'a constant color',

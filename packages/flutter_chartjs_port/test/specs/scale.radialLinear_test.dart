@@ -229,7 +229,7 @@ void main() {
             RadarDataset(data: [150]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6'],
-          scales: {},
+          scales: [],
         ),
       );
 
@@ -378,11 +378,13 @@ void main() {
           const ChartConfig(
             datasets: [RadarDataset()],
             labels: [],
-            scales: {'rScale': RadialLinearAxis()},
+            scales: [RadialLinearAxis()],
           ),
         );
 
-        final scale = chart.scales['rScale']!;
+        // The typed axis has the scale id `r`; upstream names it `rScale`
+        // (Chart.js ADR 0191).
+        final scale = chart.scales['r']!;
 
         expect(scale.min, -1);
         expect(scale.max, 1);
@@ -398,7 +400,7 @@ void main() {
             RadarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6'],
-          scales: {'r': RadialLinearAxis(suggestedMin: -10, suggestedMax: 10)},
+          scales: [RadialLinearAxis(suggestedMin: -10, suggestedMax: 10)],
         ),
       );
 
@@ -413,7 +415,7 @@ void main() {
             RadarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6'],
-          scales: {'r': RadialLinearAxis(min: -1010, max: 1010)},
+          scales: [RadialLinearAxis(min: -1010, max: 1010)],
         ),
       );
 
@@ -435,7 +437,7 @@ void main() {
               RadarDataset(data: [20, 30, 40, 50]),
             ],
             labels: ['label1', 'label2', 'label3', 'label4'],
-            scales: {'r': RadialLinearAxis(beginAtZero: false)},
+            scales: [RadialLinearAxis(beginAtZero: false)],
           ),
         );
 
@@ -486,7 +488,7 @@ void main() {
               RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
             labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-            scales: {'r': RadialLinearAxis(reverse: true)},
+            scales: [RadialLinearAxis(reverse: true)],
           ),
         );
 
@@ -510,7 +512,7 @@ void main() {
             RadarDataset(data: [0.5, 1.5, 2.5]),
           ],
           labels: ['label1', 'label2', 'label3'],
-          scales: {'r': RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.off)},
+          scales: [RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.off)],
         ),
       );
 
@@ -554,9 +556,9 @@ void main() {
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-          scales: {
-            'r': RadialLinearAxis(ticks: AxisTicks(callback: indexTickLabel)),
-          },
+          scales: [
+            RadialLinearAxis(ticks: AxisTicks(callback: indexTickLabel)),
+          ],
         ),
       );
 
@@ -585,9 +587,7 @@ void main() {
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-          scales: {
-            'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
-          },
+          scales: [RadialLinearAxis(pointLabelsCallback: _indexPointLabel)],
         ),
       );
 
@@ -669,9 +669,7 @@ void main() {
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-          scales: {
-            'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
-          },
+          scales: [RadialLinearAxis(pointLabelsCallback: _indexPointLabel)],
         ),
       );
 
@@ -689,9 +687,7 @@ void main() {
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-          scales: {
-            'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
-          },
+          scales: [RadialLinearAxis(pointLabelsCallback: _indexPointLabel)],
         ),
       );
       expect(chart.scales['r']!.getLabelForValue(5), '5');
@@ -706,9 +702,7 @@ void main() {
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-          scales: {
-            'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
-          },
+          scales: [RadialLinearAxis(pointLabelsCallback: _indexPointLabel)],
         ),
       );
 
@@ -735,9 +729,7 @@ void main() {
               RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
             labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-            scales: {
-              'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
-            },
+            scales: [RadialLinearAxis(pointLabelsCallback: _indexPointLabel)],
           ),
         );
 
@@ -762,12 +754,12 @@ void main() {
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-          scales: {
-            'r': RadialLinearAxis(
+          scales: [
+            RadialLinearAxis(
               startAngle: 15,
               pointLabelsCallback: _indexPointLabel,
             ),
-          },
+          ],
         ),
       );
 
@@ -801,12 +793,12 @@ void main() {
               RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
             labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-            scales: {
-              'r': RadialLinearAxis(
+            scales: [
+              RadialLinearAxis(
                 pointLabelsCallback: _indexPointLabel,
                 ticks: AxisTicks(display: false),
               ),
-            },
+            ],
           ),
         );
 
@@ -859,8 +851,8 @@ void main() {
             PolarAreaDataset(data: [10, 5, 0, 25, 78]),
           ],
           labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
-          scales: {
-            'r': RadialLinearAxis(
+          scales: [
+            RadialLinearAxis(
               pointLabelsDisplay: ScaleDisplay.on,
               pointLabelsPadding: 5,
               ticks: AxisTicks(display: false),
@@ -868,7 +860,7 @@ void main() {
                 'pointLabels': {'centerPointLabels': true},
               },
             ),
-          },
+          ],
         ),
       );
 

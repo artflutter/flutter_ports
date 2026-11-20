@@ -58,8 +58,9 @@ ChartConfig _config(List<num> ys, {required bool average}) {
         callbacks: TooltipCallbacks(title: (tooltip, _) => null),
       ),
       plugins: [_border],
-      scales: {
-        'x': LinearAxis(
+      scales: [
+        LinearAxis(
+          .x,
           min: 0,
           max: 11,
           grid: AxisGrid(
@@ -75,7 +76,8 @@ ChartConfig _config(List<num> ys, {required bool average}) {
             callback: _bottom,
           ),
         ),
-        'y': LinearAxis(
+        LinearAxis(
+          .y,
           min: 0,
           max: 6,
           grid: AxisGrid(
@@ -90,7 +92,7 @@ ChartConfig _config(List<num> ys, {required bool average}) {
             callback: _left,
           ),
         ),
-      },
+      ],
     ),
   );
 }

@@ -23,7 +23,7 @@ const List<num?> values = [65, 59, 80, 81, 56, 55, 40];
 const offsetGrid = ChartConfig(
   labels: months,
   datasets: [BarDataset(label: 'Visitors', data: values)],
-  scales: {'x': CategoryAxis(grid: AxisGrid(offset: true))},
+  scales: [CategoryAxis(.x, grid: AxisGrid(offset: true))],
 );
 // #enddocregion bar-grid-offset
 

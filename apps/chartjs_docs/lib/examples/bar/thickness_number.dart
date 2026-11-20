@@ -28,7 +28,7 @@ final fixedBars = ChartConfig(
       barThickness: const BarThickness.pixels(12),
     ),
   ],
-  scales: const {'x': LinearAxis()},
+  scales: const [LinearAxis(.x)],
 );
 // #enddocregion bar-thickness-number
 

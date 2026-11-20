@@ -223,8 +223,8 @@ class _BarSample5State() extends State<BarSample5> {
           },
         ),
         plugins: [_letters, _touch],
-        scales: {
-          'x': groupAxis(
+        scales: [
+          groupAxis(
             count: 7,
             groupWidth: _width,
             alignment: .center,
@@ -232,7 +232,7 @@ class _BarSample5State() extends State<BarSample5> {
             reservedSize: 32,
             ticks: days,
           ),
-          'top': groupAxis(
+          groupAxis(
             count: 7,
             groupWidth: _width,
             alignment: .center,
@@ -242,7 +242,8 @@ class _BarSample5State() extends State<BarSample5> {
             ticks: days,
           ),
           // The vertical grid of fl_chart: 10 dashed lines over the width.
-          'grid': valueAxis(
+          valueAxis(
+            direction: .x,
             min: 0,
             max: 1,
             position: .bottom,
@@ -250,7 +251,7 @@ class _BarSample5State() extends State<BarSample5> {
             border: flGridDash,
             ticks: const AxisTicks(display: false),
           ),
-          'y': valueAxis(
+          valueAxis(
             min: -20,
             max: 20,
             interval: 5,
@@ -272,7 +273,7 @@ class _BarSample5State() extends State<BarSample5> {
             // Chart.js turns all the labels of an axis by one angle.
             ticks: _titles(padding: 4, rotation: 45),
           ),
-          'right': valueAxis(
+          valueAxis(
             min: -20,
             max: 20,
             interval: 5,
@@ -280,7 +281,7 @@ class _BarSample5State() extends State<BarSample5> {
             position: .right,
             ticks: _titles(padding: 0, rotation: 90),
           ),
-        },
+        ],
       ),
     );
   }

@@ -221,8 +221,8 @@ void main() {
       stack: '',
       stepped: SteppedLine.before,
       tension: 0,
-      xAxisID: '',
-      yAxisID: '',
+      xAxis: LinearAxis(.x),
+      yAxis: LinearAxis(.y),
     );
     expect(dataset.label, '');
     final named = {
@@ -258,8 +258,8 @@ void main() {
       'stack',
       'stepped',
       'tension',
-      'xAxisID',
-      'yAxisID',
+      'xAxis',
+      'yAxis',
     };
     expect(
       lineProperties.where((row) => !row.extra).map((row) => row.name).toSet(),

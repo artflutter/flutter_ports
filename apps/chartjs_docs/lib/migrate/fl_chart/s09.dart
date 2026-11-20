@@ -50,8 +50,9 @@ final ChartConfig _config = fills(
       ),
     ),
     plugins: [touchIndicator(color: Fl.pink, fromValue: 0)],
-    scales: {
-      'x': LinearAxis(
+    scales: [
+      LinearAxis(
+        .x,
         min: -5,
         max: 5,
         grid: AxisGrid(
@@ -68,7 +69,8 @@ final ChartConfig _config = fills(
           padding: 16,
         ),
       ),
-      'y': LinearAxis(
+      LinearAxis(
+        .y,
         min: -1.5,
         max: 1.5,
         grid: AxisGrid(
@@ -87,7 +89,7 @@ final ChartConfig _config = fills(
           ],
         ),
       ),
-    },
+    ],
   ),
 );
 
