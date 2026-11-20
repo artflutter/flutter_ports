@@ -197,55 +197,70 @@ void main() {
       expect(chart.scales['y3']!.max, 900);
     });
 
-    // A Map config: the data values are strings.
+    // Native scopes preserve string inputs for the parser.
     testWidgets(
       'should correctly determine the max & min of string data values',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>['42', '1000', '64', '100'],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y',
+                    'data': <Object?>['42', '1000', '64', '100'],
+                  },
+                ),
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y1',
+                    'data': <Object?>['10', '5', '5000', '78', '450'],
+                  },
+                ),
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y1',
+                    'data': <Object?>['150'],
+                  },
+                ),
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y2',
+                    'data': <Object?>['20', '0', '150', '1800', '3040'],
+                  },
+                ),
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y3',
+                    'data': <Object?>['67', '0.0004', '0', '820', '0.001'],
+                  },
+                ),
+              ]
+              ..labels = <Object?>['a', 'b', 'c', 'd', 'e'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'y': <String, Object?>{'type': 'logarithmic'},
+                'y1': <String, Object?>{
+                  'position': ChartPosition.right,
+                  'type': 'logarithmic',
+                },
+                'y2': <String, Object?>{
+                  'position': ChartPosition.right,
+                  'type': 'logarithmic',
+                },
+                'y3': <String, Object?>{
+                  'position': ChartPosition.right,
+                  'type': 'logarithmic',
+                },
               },
-              <String, Object?>{
-                'yAxisID': 'y1',
-                'data': <Object?>['10', '5', '5000', '78', '450'],
-              },
-              <String, Object?>{
-                'yAxisID': 'y1',
-                'data': <Object?>['150'],
-              },
-              <String, Object?>{
-                'yAxisID': 'y2',
-                'data': <Object?>['20', '0', '150', '1800', '3040'],
-              },
-              <String, Object?>{
-                'yAxisID': 'y3',
-                'data': <Object?>['67', '0.0004', '0', '820', '0.001'],
-              },
-            ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'logarithmic'},
-              'y1': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'logarithmic',
-              },
-              'y2': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'logarithmic',
-              },
-              'y3': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'logarithmic',
-              },
-            },
-          },
-        });
+            }),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, 40);
@@ -302,83 +317,94 @@ void main() {
       },
     );
 
-    // A Map config: the data has `undefined`, which a typed dataset cannot
-    // hold.
+    // Native scopes preserve `undefined` among the parser inputs.
     testWidgets(
       'should correctly determine the max & min data values when there is '
       'NaN data',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[
-                  undefined,
-                  10,
-                  null,
-                  5,
-                  5000,
-                  double.nan,
-                  78,
-                  450,
-                ],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y',
+                    'data': <Object?>[
+                      undefined,
+                      10,
+                      null,
+                      5,
+                      5000,
+                      double.nan,
+                      78,
+                      450,
+                    ],
+                  },
+                ),
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y',
+                    'data': <Object?>[
+                      undefined,
+                      28,
+                      null,
+                      1000,
+                      500,
+                      double.nan,
+                      50,
+                      42,
+                      double.infinity,
+                      double.negativeInfinity,
+                    ],
+                  },
+                ),
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y1',
+                    'data': <Object?>[
+                      undefined,
+                      30,
+                      null,
+                      9400,
+                      0,
+                      double.nan,
+                      54,
+                      836,
+                    ],
+                  },
+                ),
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y1',
+                    'data': <Object?>[
+                      undefined,
+                      0,
+                      null,
+                      800,
+                      9,
+                      double.nan,
+                      894,
+                      21,
+                    ],
+                  },
+                ),
+              ]
+              ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'y': <String, Object?>{'type': 'logarithmic'},
+                'y1': <String, Object?>{
+                  'position': ChartPosition.right,
+                  'type': 'logarithmic',
+                },
               },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[
-                  undefined,
-                  28,
-                  null,
-                  1000,
-                  500,
-                  double.nan,
-                  50,
-                  42,
-                  double.infinity,
-                  double.negativeInfinity,
-                ],
-              },
-              <String, Object?>{
-                'yAxisID': 'y1',
-                'data': <Object?>[
-                  undefined,
-                  30,
-                  null,
-                  9400,
-                  0,
-                  double.nan,
-                  54,
-                  836,
-                ],
-              },
-              <String, Object?>{
-                'yAxisID': 'y1',
-                'data': <Object?>[
-                  undefined,
-                  0,
-                  null,
-                  800,
-                  9,
-                  double.nan,
-                  894,
-                  21,
-                ],
-              },
-            ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'logarithmic'},
-              'y1': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'logarithmic',
-              },
-            },
-          },
-        });
+            }),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, 1);
@@ -587,29 +613,29 @@ void main() {
       expect(y.max, 2);
     });
 
-    // A Map config: the typed axis holds no string `min`.
+    // Preserve the string `min` input in the native scale scope.
     testWidgets('should ignore invalid min and max options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 1, 1, 2, 1, 0],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[1, 1, 1, 2, 1, 0],
+              }),
+            ]
+            ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'y': <String, Object?>{
+                'type': 'logarithmic',
+                'min': 'zero',
+                'max': null,
+                'ticks': <String, Object?>{'callback': valueTickLabel},
+              },
             },
-          ],
-          'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'logarithmic',
-              'min': 'zero',
-              'max': null,
-              'ticks': <String, Object?>{'callback': valueTickLabel},
-            },
-          },
-        },
-      });
+          }),
+      );
 
       final y = chart.scales['y']!;
       expect(y.min, 0.1);

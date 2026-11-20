@@ -10,8 +10,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -997,38 +995,37 @@ void main() {
 
     testWidgets('should update elements when the scales are stacked and data '
         'is strings', (tester) async {
-      // A Map config: the data are strings, which a typed dataset cannot
-      // hold.
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>['10', '-10', '10', '-10'],
-              'label': 'dataset1',
+      // Native scopes preserve string data for the parser.
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>['10', '-10', '10', '-10'],
+                'label': 'dataset1',
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>['10', '15', '0', '-4'],
+                'label': 'dataset2',
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'display': ScaleDisplay.off,
+              },
+              'y': <String, Object?>{
+                'type': 'linear',
+                'display': ScaleDisplay.off,
+                'stacked': StackMode.on,
+              },
             },
-            <String, Object?>{
-              'data': <Object?>['10', '15', '0', '-4'],
-              'label': 'dataset2',
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'display': ScaleDisplay.off,
-              'stacked': StackMode.on,
-            },
-          },
-        },
-      });
+          }),
+      );
 
       final meta0 = chart.getDatasetMeta(0);
 
@@ -1762,21 +1759,23 @@ void main() {
       testWidgets('Should return correct values from getMinMax', (
         tester,
       ) async {
-        // A Map config: the floating bar `[10, -10]` is a data item that a
-        // typed dataset cannot hold.
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'labels': <Object?>['a'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <Object?>[10, -10],
-                ],
-              },
-            ],
-          },
-        });
+        // Keep the floating bar `[10, -10]` as one data item.
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['a']
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <Object?>[10, -10],
+                    ],
+                  },
+                ),
+              ]),
+        );
 
         // `getMinMax()` without an argument: `canStack` is `undefined`,
         // falsy.
@@ -1836,84 +1835,84 @@ void main() {
 
     testWidgets('should correctly count the number of stacks when skipNull '
         'and different order datasets', (tester) async {
-      // A Map config: the data items are objects with other keys than
-      // `x` and `y`, read through `parsing`, which a typed dataset cannot
-      // hold.
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'id': '1',
-              'label': 'USA',
-              'data': <Object?>[
-                <String, Object?>{
-                  'xScale': 'First',
-                  'Country': 'USA',
-                  'yScale': 524,
+      // Preserve the custom data keys read through `parsing`.
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'id': '1',
+                'label': 'USA',
+                'data': <Object?>[
+                  <String, Object?>{
+                    'xScale': 'First',
+                    'Country': 'USA',
+                    'yScale': 524,
+                  },
+                  <String, Object?>{
+                    'xScale': 'Second',
+                    'Country': 'USA',
+                    'yScale': 325,
+                  },
+                ],
+
+                'yAxisID': 'yScale',
+                'xAxisID': 'xScale',
+
+                'parsing': <String, Object?>{
+                  'yAxisKey': 'yScale',
+                  'xAxisKey': 'xScale',
                 },
-                <String, Object?>{
-                  'xScale': 'Second',
-                  'Country': 'USA',
-                  'yScale': 325,
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'id': '2',
+                'label': 'BRA',
+                'data': <Object?>[
+                  <String, Object?>{
+                    'xScale': 'Second',
+                    'Country': 'BRA',
+                    'yScale': 183,
+                  },
+                  <String, Object?>{
+                    'xScale': 'First',
+                    'Country': 'BRA',
+                    'yScale': 177,
+                  },
+                ],
+
+                'yAxisID': 'yScale',
+                'xAxisID': 'xScale',
+
+                'parsing': <String, Object?>{
+                  'yAxisKey': 'yScale',
+                  'xAxisKey': 'xScale',
                 },
-              ],
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'id': '3',
+                'label': 'DEU',
+                'data': <Object?>[
+                  <String, Object?>{
+                    'xScale': 'First',
+                    'Country': 'DEU',
+                    'yScale': 162,
+                  },
+                ],
 
-              'yAxisID': 'yScale',
-              'xAxisID': 'xScale',
+                'yAxisID': 'yScale',
+                'xAxisID': 'xScale',
 
-              'parsing': <String, Object?>{
-                'yAxisKey': 'yScale',
-                'xAxisKey': 'xScale',
-              },
-            },
-            <String, Object?>{
-              'id': '2',
-              'label': 'BRA',
-              'data': <Object?>[
-                <String, Object?>{
-                  'xScale': 'Second',
-                  'Country': 'BRA',
-                  'yScale': 183,
+                'parsing': <String, Object?>{
+                  'yAxisKey': 'yScale',
+                  'xAxisKey': 'xScale',
                 },
-                <String, Object?>{
-                  'xScale': 'First',
-                  'Country': 'BRA',
-                  'yScale': 177,
-                },
-              ],
-
-              'yAxisID': 'yScale',
-              'xAxisID': 'xScale',
-
-              'parsing': <String, Object?>{
-                'yAxisKey': 'yScale',
-                'xAxisKey': 'xScale',
-              },
-            },
-            <String, Object?>{
-              'id': '3',
-              'label': 'DEU',
-              'data': <Object?>[
-                <String, Object?>{
-                  'xScale': 'First',
-                  'Country': 'DEU',
-                  'yScale': 162,
-                },
-              ],
-
-              'yAxisID': 'yScale',
-              'xAxisID': 'xScale',
-
-              'parsing': <String, Object?>{
-                'yAxisKey': 'yScale',
-                'xAxisKey': 'xScale',
-              },
-            },
-          ],
-        },
-        'options': <String, Object?>{'skipNull': true},
-      });
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'skipNull': true,
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       final controller = meta.controller! as BarController;

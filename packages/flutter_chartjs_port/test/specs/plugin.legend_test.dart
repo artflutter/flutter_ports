@@ -10,8 +10,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/painting.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -216,23 +214,22 @@ LegendItem _lineItem3() => _item(
 
 /// A line chart of four labels and one dataset with the legend options
 /// [legendOptions] (the config update cases).
-// A Map config: the config update cases write the raw options of the chart
-// by name, and the typed API has no form for a legend set to `false`.
-AnyObject _lineChart([Object? legendOptions]) => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'labels': <Object?>['A', 'B', 'C', 'D'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[10, 20, 30, 100],
-      },
-    ],
-  },
-  if (legendOptions != null)
-    'options': <String, Object?>{
-      'plugins': <String, Object?>{'legend': legendOptions},
-    },
-};
+// Native scopes keep the live option updates, including a disabled legend.
+ChartConfigurationScope _lineChart([Object? legendOptions]) {
+  final config = ChartConfigurationScope()
+    ..type = 'line'
+    ..data = (ChartDataScope()
+      ..labels = <Object?>['A', 'B', 'C', 'D']
+      ..datasets = [
+        LineControllerDatasetOptionsScope()..data = <Object?>[10, 20, 30, 100],
+      ]);
+  if (legendOptions != null) {
+    config.options = mergeExtra(ChartOptionsScope(), {
+      'plugins': {'legend': legendOptions},
+    });
+  }
+  return config;
+}
 
 /// A line chart of four labels and one dataset with the legend [legend]
 /// (the callbacks cases).
@@ -481,32 +478,45 @@ void main() {
     testWidgets('should not throw when the label options are missing', (
       tester,
     ) async {
+      // This case deliberately supplies the false sentinel outside the
+      // scope's dictionary type; all other foreign values stay audited.
+      final saved = foreignAudit;
+      foreignAudit = (owner, key, raw) {
+        if (owner == 'LegendOptionsScope' && key == 'labels' && raw == false) {
+          return;
+        }
+        saved?.call(owner, key, raw);
+      };
+      addTearDown(() => foreignAudit = saved);
+
       void makeChart() {
-        // A Map config: the typed API has no form for `labels: false`, a
-        // value outside the type of the key.
-        acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'label': 'dataset1',
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 51, 17, 1),
+        // Preserve the deliberately invalid `labels: false` option.
+        acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'label': 'dataset1',
+                    'backgroundColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(255, 51, 17, 1),
+                    ),
+                    'borderCapStyle': native_ui.StrokeCap.butt,
+                    'borderDash': <double>[2, 2],
+                    'borderDashOffset': 5.5,
+                    'data': <Object?>[],
+                  },
                 ),
-                'borderCapStyle': native_ui.StrokeCap.butt,
-                'borderDash': <double>[2, 2],
-                'borderDashOffset': 5.5,
-                'data': <Object?>[],
+              ]
+              ..labels = <Object?>[])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{
+                'legend': <String, Object?>{'labels': false},
               },
-            ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'legend': <String, Object?>{'labels': false},
-            },
-          },
-        });
+            }),
+        );
       }
 
       expect(makeChart, returnsNormally);
@@ -905,7 +915,7 @@ void main() {
 
     group('config update', () {
       testWidgets('should update the options', (tester) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _lineChart(<String, Object?>{'display': true}),
         );
         expect((chart.legend! as Legend).options.display, true);
@@ -916,20 +926,21 @@ void main() {
       });
 
       testWidgets('should update the associated layout item', (tester) async {
-        // A Map config: the spec writes the raw options of the chart by name.
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{},
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'legend': <String, Object?>{
-                'fullSize': true,
-                'position': ChartPosition.top,
-                'weight': 150,
+        // Native scopes keep the live option updates by name.
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope())
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{
+                'legend': <String, Object?>{
+                  'fullSize': true,
+                  'position': ChartPosition.top,
+                  'weight': 150,
+                },
               },
-            },
-          },
-        });
+            }),
+        );
 
         // `chart.legend` as a layout box, read at each assertion, as
         // upstream does.
@@ -952,7 +963,7 @@ void main() {
       testWidgets('should remove the legend if the new options are false', (
         tester,
       ) async {
-        final chart = acquireChart(_lineChart());
+        final chart = acquireChartRoot(_lineChart());
         expect(chart.legend, isNotNull);
 
         _pluginOptions(chart)['legend'] = false;
@@ -963,7 +974,7 @@ void main() {
       testWidgets(
         'should create the legend if the legend options are changed to exist',
         (tester) async {
-          final chart = acquireChart(_lineChart(false));
+          final chart = acquireChartRoot(_lineChart(false));
           expect(chart.legend, isNull);
 
           _pluginOptions(chart)['legend'] = <String, Object?>{};

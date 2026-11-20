@@ -8,8 +8,6 @@ import 'dart:convert';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -60,8 +58,8 @@ import '../support/parsed_items.dart';
 // a fake chart, fake scales and a test controller.
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `meta.data[index]`, an element of core.element.dart.
 Element _element(ChartMeta meta, int index) => meta.data[index] as Element;
@@ -209,14 +207,16 @@ void main() {
       tester,
     ) async {
       final data = <Object?>[0, 1, 2, 3, 4, 5];
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': data},
-          ],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': data,
+              }),
+            ]),
+      );
 
       final controller = chart.getDatasetMeta(0).controller!;
 
@@ -251,29 +251,32 @@ void main() {
 
     testWidgets('should not try to delete non existent stacks', (tester) async {
       void createAndUpdateChart() {
-        acquireChart(<String, Object?>{
-            'data': <String, Object?>{
-              'labels': <Object?>['q'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'id': 'dismissed',
-                  'label': 'Test before',
-                  'yAxisID': 'count',
-                  'data': <Object?>[816],
-                  'type': 'bar',
-                  'stack': 'stack',
+        acquireChartRoot(
+            ChartConfigurationScope()
+              ..data = (ChartDataScope()
+                ..labels = <Object?>['q']
+                ..datasets = [
+                  mergeExtra(
+                    BarControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'id': 'dismissed',
+                      'label': 'Test before',
+                      'yAxisID': 'count',
+                      'data': <Object?>[816],
+                      'type': 'bar',
+                      'stack': 'stack',
+                    },
+                  ),
+                ])
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'scales': <String, Object?>{
+                  'count': <String, Object?>{
+                    'axis': const YAxis(),
+                    'type': 'linear',
+                  },
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'count': <String, Object?>{
-                  'axis': const YAxis(),
-                  'type': 'linear',
-                },
-              },
-            },
-          })
+              }),
+          )
           ..data = dataScopeOf(<String, Object?>{
             'datasets': <Object?>[
               <String, Object?>{
@@ -298,14 +301,17 @@ void main() {
           final data = List<Object?>.unmodifiable(<Object?>[0, 1, 2, 3, 4, 5]);
           expect(_isExtensible(data), isFalse);
 
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{'data': data},
-              ],
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = [
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{'data': data},
+                  ),
+                ]),
+          );
 
           final dataset = _dataset(chart, 0);
           dataset['data'] = List<Object?>.unmodifiable(<Object?>[
@@ -338,14 +344,17 @@ void main() {
           ], growable: false);
           expect(_isExtensible(data), isFalse);
 
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{'data': data},
-              ],
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = [
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{'data': data},
+                  ),
+                ]),
+          );
 
           final dataset = _dataset(chart, 0);
           dataset['data'] = List<Object?>.of(<Object?>[
@@ -378,14 +387,17 @@ void main() {
           ], growable: false);
           expect(_isExtensible(data), isFalse);
 
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{'data': data},
-              ],
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = [
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{'data': data},
+                  ),
+                ]),
+          );
 
           final dataset = _dataset(chart, 0);
           dataset['data'] = List<Object?>.of(<Object?>[
@@ -410,32 +422,45 @@ void main() {
     testWidgets('should parse data using correct scales', (tester) async {
       final data1 = <Object?>[0, 1, 2, 3, 4, 5];
       final data2 = <Object?>['a', 'b', 'c', 'd', 'a'];
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': data1},
-            <String, Object?>{'data': data2, 'xAxisID': 'x2', 'yAxisID': 'y2'},
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'labels': <Object?>['one', 'two', 'three', 'four', 'five', 'six'],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': data1,
+              }),
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': data2,
+                'xAxisID': 'x2',
+                'yAxisID': 'y2',
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'labels': <Object?>[
+                  'one',
+                  'two',
+                  'three',
+                  'four',
+                  'five',
+                  'six',
+                ],
+              },
+              'x2': <String, Object?>{
+                'type': 'logarithmic',
+                'labels': <Object?>['1', '10', '100', '1000', '2000'],
+              },
+              'y': <String, Object?>{'type': 'linear'},
+              'y2': <String, Object?>{
+                'type': 'category',
+                'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
+              },
             },
-            'x2': <String, Object?>{
-              'type': 'logarithmic',
-              'labels': <Object?>['1', '10', '100', '1000', '2000'],
-            },
-            'y': <String, Object?>{'type': 'linear'},
-            'y2': <String, Object?>{
-              'type': 'category',
-              'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-            },
-          },
-        },
-      });
+          }),
+      );
 
       final meta1 = chart.getDatasetMeta(0);
       final parsedXValues1 = _parsedOf(meta1, 'x');
@@ -461,37 +486,37 @@ void main() {
     });
 
     testWidgets('should parse using provided keys', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{
-                  'x': 1,
-                  'data': <String, Object?>{'key': 'one', 'value': 20},
-                },
-                <String, Object?>{
-                  'data': <String, Object?>{'key': 'two', 'value': 30},
-                },
-              ],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{
+                    'x': 1,
+                    'data': <String, Object?>{'key': 'one', 'value': 20},
+                  },
+                  <String, Object?>{
+                    'data': <String, Object?>{'key': 'two', 'value': 30},
+                  },
+                ],
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'parsing': <String, Object?>{
+              'xAxisKey': 'data.key',
+              'yAxisKey': 'data.value',
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'parsing': <String, Object?>{
-            'xAxisKey': 'data.key',
-            'yAxisKey': 'data.value',
-          },
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'labels': <Object?>['one', 'two'],
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'category',
+                'labels': <Object?>['one', 'two'],
+              },
+              'y': <String, Object?>{'type': 'linear'},
             },
-            'y': <String, Object?>{'type': 'linear'},
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       final parsedXValues = _parsedOf(meta, 'x');
@@ -526,15 +551,20 @@ void main() {
           testWidgets('should remove old labels when data is updated', (
             tester,
           ) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{'data': data1},
-                ],
-              },
-              'options': <String, Object?>{'parsing': parsing},
-            });
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..type = 'line'
+                ..data = (ChartDataScope()
+                  ..datasets = [
+                    mergeExtra(
+                      LineControllerDatasetOptionsScope(),
+                      <String, Object?>{'data': data1},
+                    ),
+                  ])
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                  'parsing': parsing,
+                }),
+            );
 
             _dataset(chart, 0)['data'] = data2;
             chart.update();
@@ -547,15 +577,20 @@ void main() {
           testWidgets('should not remove any user added labels', (
             tester,
           ) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{'data': data1},
-                ],
-              },
-              'options': <String, Object?>{'parsing': parsing},
-            });
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..type = 'line'
+                ..data = (ChartDataScope()
+                  ..datasets = [
+                    mergeExtra(
+                      LineControllerDatasetOptionsScope(),
+                      <String, Object?>{'data': data1},
+                    ),
+                  ])
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                  'parsing': parsing,
+                }),
+            );
 
             (jsGet(chart.data, 'labels')! as List<Object?>).add('user-added');
             _dataset(chart, 0)['data'] = <Object?>[];
@@ -569,16 +604,21 @@ void main() {
           testWidgets('should not remove any user defined labels', (
             tester,
           ) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{'data': data1},
-                ],
-                'labels': <Object?>['user1', 'user2'],
-              },
-              'options': <String, Object?>{'parsing': parsing},
-            });
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..type = 'line'
+                ..data = (ChartDataScope()
+                  ..datasets = [
+                    mergeExtra(
+                      LineControllerDatasetOptionsScope(),
+                      <String, Object?>{'data': data1},
+                    ),
+                  ]
+                  ..labels = <Object?>['user1', 'user2'])
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                  'parsing': parsing,
+                }),
+            );
 
             final meta = chart.getDatasetMeta(0);
 
@@ -597,17 +637,25 @@ void main() {
           });
 
           testWidgets('should keep up with multiple datasets', (tester) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{'data': data1},
-                  <String, Object?>{'data': data2},
-                ],
-                'labels': <Object?>['One', 'Three'],
-              },
-              'options': <String, Object?>{'parsing': parsing},
-            });
+            final chart = acquireChartRoot(
+              ChartConfigurationScope()
+                ..type = 'line'
+                ..data = (ChartDataScope()
+                  ..datasets = [
+                    mergeExtra(
+                      LineControllerDatasetOptionsScope(),
+                      <String, Object?>{'data': data1},
+                    ),
+                    mergeExtra(
+                      LineControllerDatasetOptionsScope(),
+                      <String, Object?>{'data': data2},
+                    ),
+                  ]
+                  ..labels = <Object?>['One', 'Three'])
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                  'parsing': parsing,
+                }),
+            );
 
             final scale = chart.scales['x']!;
 
@@ -634,14 +682,17 @@ void main() {
       'parsing is on',
       (tester) async {
         final data = <Object?>[0, 1, 2, 3, 4, 5];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data},
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data},
+                ),
+              ]),
+        );
 
         final meta = chart.getDatasetMeta(0);
         List<Object?> parsedYValues() => _parsedOf(meta, 'y');
@@ -711,21 +762,24 @@ void main() {
           <String, Object?>{'x': 4, 'y': 4},
           <String, Object?>{'x': 5, 'y': 5},
         ]);
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data},
-            ],
-          },
-          'options': <String, Object?>{
-            'parsing': false,
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear'},
-              'y': <String, Object?>{'type': 'linear'},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data},
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'parsing': false,
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'linear'},
+                'y': <String, Object?>{'type': 'linear'},
+              },
+            }),
+        );
 
         final meta = chart.getDatasetMeta(0);
         final controller = meta.controller!;
@@ -825,21 +879,24 @@ void main() {
           <String, Object?>{'x': 2, 'y': 7},
           <String, Object?>{'x': 3, 'y': 5},
         ]);
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data},
-            ],
-          },
-          'options': <String, Object?>{
-            'parsing': false,
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
-              'y': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'scatter'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data},
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'parsing': false,
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
+                'y': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
+              },
+            }),
+        );
 
         final meta = chart.getDatasetMeta(0);
         final controller = meta.controller!;
@@ -866,14 +923,17 @@ void main() {
         final data1 = <Object?>[6, 7, 8];
         final data2 = <Object?>[1, 2, 3, 4, 5, 6, 7, 8];
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data0},
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data0},
+                ),
+              ]),
+        );
 
         final meta = chart.getDatasetMeta(0);
 
@@ -912,15 +972,19 @@ void main() {
       final data1 = <Object?>[6, 7, 8];
       final data2 = <Object?>[1, 2, 3, 4, 5, 6, 7, 8];
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': data0},
-          ],
-        },
-        'options': <String, Object?>{'animation': true},
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': data0,
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'animation': true,
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -956,14 +1020,17 @@ void main() {
       'should re-synchronize metadata when data are unusually altered',
       (tester) async {
         final data = <Object?>[0, 1, 2, 3, 4, 5];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data},
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data},
+                ),
+              ]),
+        );
 
         final meta = chart.getDatasetMeta(0);
 
@@ -988,15 +1055,18 @@ void main() {
       'should re-synchronize metadata when data is moved and values are equal',
       (tester) async {
         final data = <Object?>[10, 10, 10, 10, 10, 10];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-            'datasets': <Object?>[
-              <String, Object?>{'data': data, 'fill': FillTarget.toOrigin},
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f']
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data, 'fill': FillTarget.toOrigin},
+                ),
+              ]),
+        );
 
         final meta = chart.getDatasetMeta(0);
 
@@ -1021,15 +1091,18 @@ void main() {
           <String, Object?>{'x': 'b', 'y': 2},
           <String, Object?>{'x': 'c', 'y': 3},
         ];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['a', 'b', 'c'],
-            'datasets': <Object?>[
-              <String, Object?>{'data': data, 'fill': FillTarget.toOrigin},
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['a', 'b', 'c']
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data, 'fill': FillTarget.toOrigin},
+                ),
+              ]),
+        );
 
         final meta = chart.getDatasetMeta(0);
 
@@ -1045,38 +1118,38 @@ void main() {
     testWidgets('should re-synchronize metadata when scaleID changes', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[],
-              'xAxisID': 'firstXScaleID',
-              'yAxisID': 'firstYScaleID',
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[],
+                'xAxisID': 'firstXScaleID',
+                'yAxisID': 'firstYScaleID',
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'firstXScaleID': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
+              'secondXScaleID': <String, Object?>{
+                'type': 'category',
+                'position': ChartPosition.bottom,
+              },
+              'firstYScaleID': <String, Object?>{
+                'type': 'linear',
+                'position': ChartPosition.left,
+              },
+              'secondYScaleID': <String, Object?>{
+                'type': 'linear',
+                'position': ChartPosition.left,
+              },
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'firstXScaleID': <String, Object?>{
-              'type': 'category',
-              'position': ChartPosition.bottom,
-            },
-            'secondXScaleID': <String, Object?>{
-              'type': 'category',
-              'position': ChartPosition.bottom,
-            },
-            'firstYScaleID': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.left,
-            },
-            'secondYScaleID': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.left,
-            },
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -1094,26 +1167,26 @@ void main() {
     testWidgets('should re-synchronize stacks when stack is changed', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 10],
-              'stack': '1',
-            },
-            <String, Object?>{
-              'data': <Object?>[2, 20],
-              'stack': '2',
-            },
-            <String, Object?>{
-              'data': <Object?>[3, 30],
-              'stack': '1',
-            },
-          ],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..labels = <Object?>['a', 'b']
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[1, 10],
+                'stack': '1',
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[2, 20],
+                'stack': '2',
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[3, 30],
+                'stack': '1',
+              }),
+            ]),
+      );
 
       expect(
         _stacks(chart),
@@ -1194,26 +1267,26 @@ void main() {
     testWidgets('should re-synchronize stacks when data is removed', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 10],
-              'stack': '1',
-            },
-            <String, Object?>{
-              'data': <Object?>[2, 20],
-              'stack': '2',
-            },
-            <String, Object?>{
-              'data': <Object?>[3, 30],
-              'stack': '1',
-            },
-          ],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'bar'
+          ..data = (ChartDataScope()
+            ..labels = <Object?>['a', 'b']
+            ..datasets = [
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[1, 10],
+                'stack': '1',
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[2, 20],
+                'stack': '2',
+              }),
+              mergeExtra(BarControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[3, 30],
+                'stack': '1',
+              }),
+            ]),
+      );
 
       expect(
         _stacks(chart),
@@ -1318,14 +1391,17 @@ void main() {
       (tester) async {
         final data0 = <Object?>[0, 1, 2, 3, 4, 5];
         final data1 = <Object?>[6, 7, 8];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data0},
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data0},
+                ),
+              ]),
+        );
 
         // expect(data0._chartjs).toBeDefined(), the hooks of data0.
         final a0 = chart.getDatasetMeta(0).data[0];
@@ -1371,14 +1447,16 @@ void main() {
       Chart.defaults['borderColor'] = const ChartPaint.solid(
         native_ui.Color.fromRGBO(255, 0, 0, 1),
       );
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': data0},
-          ],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': data0,
+              }),
+            ]),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(
@@ -1400,21 +1478,21 @@ void main() {
       final originalDefault = Chart.defaults['parsing'];
       Chart.defaults['parsing'] = false;
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'t': 1, 'y': 0},
-              ],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'parsing': <String, Object?>{'xAxisKey': 't'},
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'t': 1, 'y': 0},
+                ],
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'parsing': <String, Object?>{'xAxisKey': 't'},
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(_element(meta, 0).x, isNot(isNaN));
@@ -1426,30 +1504,30 @@ void main() {
     testWidgets('should not fail to produce stacks when parsing is off', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 1, 'y': 10},
-              ],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 1, 'y': 10},
+                ],
+              }),
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 1, 'y': 20},
+                ],
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'parsing': false,
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'stacked': StackMode.on},
+              'y': <String, Object?>{'stacked': StackMode.on},
             },
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 1, 'y': 20},
-              ],
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'parsing': false,
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': StackMode.on},
-            'y': <String, Object?>{'stacked': StackMode.on},
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       // objectContaining({y: {...}}): the stack object of the axis `y`.
@@ -1468,16 +1546,19 @@ void main() {
 
     group('resolveDataElementOptions', () {
       testWidgets('should cache options when possible', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[1, 2, 3],
+                  },
+                ),
+              ]),
+        );
 
         final controller = chart.getDatasetMeta(0).controller!;
 
@@ -1494,16 +1575,19 @@ void main() {
       testWidgets('should not cache options when option sharing is disabled', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'radar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[1, 2, 3],
+                  },
+                ),
+              ]),
+        );
 
         final controller = chart.getDatasetMeta(0).controller!;
 
@@ -1520,19 +1604,22 @@ void main() {
       testWidgets('should not cache options when functions are used', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-                'backgroundColor': () => const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[1, 2, 3],
+                    'backgroundColor': () => const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(255, 0, 0, 1),
+                    ),
+                  },
                 ),
-              },
-            ],
-          },
-        });
+              ]),
+        );
 
         final controller = chart.getDatasetMeta(0).controller!;
 
@@ -1581,20 +1668,25 @@ void main() {
       testWidgets('should resolve to empty Animations when globally disabled', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1],
-                'animation': <String, Object?>{
-                  'test': <String, Object?>{'duration': 10},
-                },
-              },
-            ],
-          },
-          'options': <String, Object?>{'animation': false},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[1],
+                    'animation': <String, Object?>{
+                      'test': <String, Object?>{'duration': 10},
+                    },
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'animation': false,
+            }),
+        );
 
         final controller = chart.getDatasetMeta(0).controller!;
 
@@ -1604,17 +1696,20 @@ void main() {
       testWidgets(
         'should resolve to empty Animations when disabled at dataset level',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[1],
-                  'animation': false,
-                },
-              ],
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = [
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'data': <Object?>[1],
+                      'animation': false,
+                    },
+                  ),
+                ]),
+          );
 
           final controller = chart.getDatasetMeta(0).controller!;
 
@@ -1623,37 +1718,43 @@ void main() {
       );
 
       testWidgets('should fallback properly', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1],
-                'animation': <String, Object?>{'duration': 200},
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[1],
+                    'animation': <String, Object?>{'duration': 200},
+                  },
+                ),
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'type': 'bar',
+                    'data': <Object?>[2],
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'animation': <String, Object?>{'delay': 100},
+              'animations': <String, Object?>{
+                'x': <String, Object?>{'delay': 200},
               },
-              <String, Object?>{
-                'type': 'bar',
-                'data': <Object?>[2],
+              'transitions': <String, Object?>{
+                'show': <String, Object?>{
+                  'x': <String, Object?>{'delay': 300},
+                },
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'animation': <String, Object?>{'delay': 100},
-            'animations': <String, Object?>{
-              'x': <String, Object?>{'delay': 200},
-            },
-            'transitions': <String, Object?>{
-              'show': <String, Object?>{
-                'x': <String, Object?>{'delay': 300},
+              'datasets': <String, Object?>{
+                'bar': <String, Object?>{
+                  'animation': <String, Object?>{'duration': 500},
+                },
               },
-            },
-            'datasets': <String, Object?>{
-              'bar': <String, Object?>{
-                'animation': <String, Object?>{'duration': 500},
-              },
-            },
-          },
-        });
+            }),
+        );
         final controller = chart.getDatasetMeta(0).controller!;
 
         expect(
@@ -1675,19 +1776,22 @@ void main() {
 
     group('getContext', () {
       testWidgets('should reflect updated data', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 1, 'y': 0},
-                  <String, Object?>{'x': 2, 'y': '1'},
-                ],
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'scatter'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'x': 1, 'y': 0},
+                      <String, Object?>{'x': 2, 'y': '1'},
+                    ],
+                  },
+                ),
+              ]),
+        );
         var meta = chart.getDatasetMeta(0);
 
         expect(
@@ -1736,12 +1840,12 @@ void main() {
         );
 
         chart.data['datasets'] = <Object?>[
-          <String, Object?>{
+          mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': 0, 'y': 0},
               <String, Object?>{'x': 1, 'y': 1},
             ],
-          },
+          }),
         ];
         chart.update();
         // meta is re-created when dataset is replaced
@@ -1809,11 +1913,11 @@ void main() {
         // datasets array.
         (jsGet(chart.data, 'datasets')! as List<Object?>).insert(
           0,
-          <String, Object?>{
+          mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': 10, 'y': 20},
             ],
-          },
+          }),
         );
         chart.update();
         meta = chart.getDatasetMeta(0);

@@ -9,8 +9,6 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -149,39 +147,48 @@ void main() {
       expect(chart.scales['y']!.max, 150);
     });
 
-    // A Map config: string data values.
+    // Native scopes preserve string inputs for the parser.
     testWidgets(
       'Should correctly determine the max & min of string data values',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y',
+                    'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
+                  },
+                ),
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y2',
+                    'data': <Object?>['-1000', '1000'],
+                  },
+                ),
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y',
+                    'data': <Object?>['150'],
+                  },
+                ),
+              ]
+              ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'y': <String, Object?>{'type': 'linear'},
+                'y2': <String, Object?>{
+                  'type': 'linear',
+                  'position': ChartPosition.right,
+                },
               },
-              <String, Object?>{
-                'yAxisID': 'y2',
-                'data': <Object?>['-1000', '1000'],
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>['150'],
-              },
-            ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear'},
-              'y2': <String, Object?>{
-                'type': 'linear',
-                'position': ChartPosition.right,
-              },
-            },
-          },
-        });
+            }),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, -100);
@@ -222,41 +229,50 @@ void main() {
       expect(chart.scales['y']!.max, 0);
     });
 
-    // A Map config: string data values.
+    // Native scopes preserve string inputs for the parser.
     testWidgets(
       'Should correctly determine the max & min data values ignoring hidden '
       'datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y',
+                    'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
+                  },
+                ),
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y2',
+                    'data': <Object?>['-1000', '1000'],
+                  },
+                ),
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y',
+                    'data': <Object?>['150'],
+                    'hidden': true,
+                  },
+                ),
+              ]
+              ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'y': <String, Object?>{'type': 'linear'},
+                'y2': <String, Object?>{
+                  'position': ChartPosition.right,
+                  'type': 'linear',
+                },
               },
-              <String, Object?>{
-                'yAxisID': 'y2',
-                'data': <Object?>['-1000', '1000'],
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>['150'],
-                'hidden': true,
-              },
-            ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear'},
-              'y2': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'linear',
-              },
-            },
-          },
-        });
+            }),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, -100);
@@ -264,37 +280,40 @@ void main() {
       },
     );
 
-    // A Map config: `undefined` in the data.
+    // Native scopes preserve `undefined` in the data.
     testWidgets(
       'Should correctly determine the max & min data values ignoring data '
       'that is NaN',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[
-                  null,
-                  90,
-                  double.nan,
-                  undefined,
-                  45,
-                  30,
-                  double.infinity,
-                  double.negativeInfinity,
-                ],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'yAxisID': 'y',
+                    'data': <Object?>[
+                      null,
+                      90,
+                      double.nan,
+                      undefined,
+                      45,
+                      30,
+                      double.infinity,
+                      double.negativeInfinity,
+                    ],
+                  },
+                ),
+              ]
+              ..labels = <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'y': <String, Object?>{'type': 'linear', 'beginAtZero': false},
               },
-            ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'beginAtZero': false},
-            },
-          },
-        });
+            }),
+        );
 
         expect(chart.scales['y']!.min, 30);
         expect(chart.scales['y']!.max, 90);
@@ -1370,33 +1389,46 @@ void main() {
       expect(scale.getValueForPixel(start), closeTo(max, 5e-5));
     });
 
-    // A Map config: `plugins: false` has no typed form.
+    // Preserve the sentinel that disables every plugin.
     testWidgets('should not throw errors when chart size is negative', (
       tester,
     ) async {
+      // This case deliberately supplies the false sentinel outside the
+      // scope's dictionary type; all other foreign values stay audited.
+      final saved = foreignAudit;
+      foreignAudit = (owner, key, raw) {
+        if (owner == 'ChartOptionsScope' && key == 'plugins' && raw == false) {
+          return;
+        }
+        saved?.call(owner, key, raw);
+      };
+      addTearDown(() => foreignAudit = saved);
+
       Chart createChart() {
-        return acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'labels': <Object?>[0, 1, 2, 3, 4, 5, 6, 7, '7+'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[
-                    29.05,
-                    4,
-                    15.69,
-                    11.69,
-                    2.84,
-                    4,
-                    0,
-                    3.84,
-                    4,
-                  ],
-                },
-              ],
-            },
-            'options': <String, Object?>{
+        return acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>[0, 1, 2, 3, 4, 5, 6, 7, '7+']
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      29.05,
+                      4,
+                      15.69,
+                      11.69,
+                      2.84,
+                      4,
+                      0,
+                      3.84,
+                      4,
+                    ],
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'plugins': false,
               'layout': <String, Object?>{
                 'padding': const EdgeInsets.only(
@@ -1406,8 +1438,7 @@ void main() {
                   bottom: 1,
                 ),
               },
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 0, 'width': 0},
           },

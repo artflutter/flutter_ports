@@ -11,8 +11,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -64,8 +62,8 @@ import '../support/draw_recorder.dart';
 // Map `chart.options['plugins']`.
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `element.options` of [element].
 Object? _options(Object element) => (element as Element).options;
@@ -118,15 +116,17 @@ void main() {
     });
 
     testWidgets('should be constructed', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-          ],
-          'labels': <Object?>[],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[],
+              }),
+            ]
+            ..labels = <Object?>[]),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.type, 'line');
@@ -142,15 +142,18 @@ void main() {
     testWidgets(
       'Should use the first scale IDs if the dataset does not specify them',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': <Object?>[]},
+                ),
+              ]
+              ..labels = <Object?>[]),
+        );
 
         final meta = chart.getDatasetMeta(0);
         expect(meta.xAxisID, 'x');
@@ -163,15 +166,18 @@ void main() {
       (tester) async {
         // https://github.com/chartjs/Chart.js/issues/8676
         Chart createChart() {
-          return acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{'data': <Object?>[], 'tension': 0.5},
-              ],
-              'labels': <Object?>[],
-            },
-          });
+          return acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = [
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{'data': <Object?>[], 'tension': 0.5},
+                  ),
+                ]
+                ..labels = <Object?>[]),
+          );
         }
 
         expect(createChart, returnsNormally);
@@ -179,25 +185,25 @@ void main() {
     );
 
     testWidgets('should find min and max for stacked chart', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 11, 12, 13],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, 11, 12, 13],
+              }),
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[1, 2, 3, 4],
+              }),
+            ]
+            ..labels = <Object?>['a', 'b', 'c', 'd'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'y': <String, Object?>{'stacked': StackMode.on},
             },
-            <String, Object?>{
-              'data': <Object?>[1, 2, 3, 4],
-            },
-          ],
-          'labels': <Object?>['a', 'b', 'c', 'd'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'stacked': StackMode.on},
-          },
-        },
-      });
+          }),
+      );
       final y = chart.scales['y']!;
       expect(
         chart.getDatasetMeta(0).controller!.getMinMax(y, true),
@@ -222,18 +228,21 @@ void main() {
       'Should create line elements and point elements for each data item '
       'during initialization',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-                'label': 'dataset1',
-              },
-            ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 15, 0, -4],
+                    'label': 'dataset1',
+                  },
+                ),
+              ]
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+        );
 
         final meta = chart.getDatasetMeta(0);
         expect(meta.data.length, 4); // 4 points created
@@ -246,19 +255,21 @@ void main() {
     );
 
     testWidgets('should draw all elements', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset1',
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{'showLine': true},
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, 15, 0, -4],
+                'label': 'dataset1',
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'showLine': true,
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       final dataset = recordLineCalls(meta);
@@ -278,38 +289,38 @@ void main() {
     });
 
     testWidgets('should update elements when modifying data', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset',
-              'xAxisID': 'x',
-              'yAxisID': 'y',
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, 15, 0, -4],
+                'label': 'dataset',
+                'xAxisID': 'x',
+                'yAxisID': 'y',
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'showLine': true,
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            'elements': <String, Object?>{
+              'point': <String, Object?>{
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(255, 0, 0, 1),
+                ),
+                'borderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(0, 0, 255, 1),
+                ),
+              },
             },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'showLine': true,
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'elements': <String, Object?>{
-            'point': <String, Object?>{
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 0, 0, 1),
-              ),
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(0, 0, 255, 1),
-              ),
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'display': ScaleDisplay.off},
+              'y': <String, Object?>{'display': ScaleDisplay.off},
             },
-          },
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'display': ScaleDisplay.off},
-            'y': <String, Object?>{'display': ScaleDisplay.off},
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.data.length, 4);
@@ -351,31 +362,31 @@ void main() {
     testWidgets('should correctly calculate x scale for label and point', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['One'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..labels = <Object?>['One']
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[1],
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'plugins': <String, Object?>{'legend': false, 'title': false},
+            'hover': <String, Object?>{
+              'mode': const NearestInteractionMode(),
+              'intersect': true,
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'hover': <String, Object?>{
-            'mode': const NearestInteractionMode(),
-            'intersect': true,
-          },
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'display': ScaleDisplay.off},
-            'y': <String, Object?>{
-              'display': ScaleDisplay.off,
-              'beginAtZero': true,
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'display': ScaleDisplay.off},
+              'y': <String, Object?>{
+                'display': ScaleDisplay.off,
+                'beginAtZero': true,
+              },
             },
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       // 1 point
@@ -449,60 +460,22 @@ void main() {
     testWidgets('should update elements when the y scale is stacked', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, -10, 10, -10],
-              'label': 'dataset1',
-            },
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'display': ScaleDisplay.off},
-            'y': <String, Object?>{
-              'display': ScaleDisplay.off,
-              'stacked': StackMode.on,
-            },
-          },
-        },
-      });
-
-      expectStackedPixels(chart);
-    });
-
-    testWidgets(
-      'should update elements when the y scale is stacked with multiple axes',
-      (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
                 'data': <Object?>[10, -10, 10, -10],
                 'label': 'dataset1',
-              },
-              <String, Object?>{
+              }),
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
                 'data': <Object?>[10, 15, 0, -4],
                 'label': 'dataset2',
-              },
-              <String, Object?>{
-                'data': <Object?>[10, 10, -10, -10],
-                'label': 'dataset3',
-                'yAxisID': 'y2',
-              },
-            ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-          'options': <String, Object?>{
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
             'plugins': <String, Object?>{'legend': false, 'title': false},
             'scales': <String, Object?>{
               'x': <String, Object?>{'display': ScaleDisplay.off},
@@ -510,14 +483,61 @@ void main() {
                 'display': ScaleDisplay.off,
                 'stacked': StackMode.on,
               },
-              'y2': <String, Object?>{
-                'type': 'linear',
-                'position': ChartPosition.right,
-                'display': ScaleDisplay.off,
-              },
             },
-          },
-        });
+          }),
+      );
+
+      expectStackedPixels(chart);
+    });
+
+    testWidgets(
+      'should update elements when the y scale is stacked with multiple axes',
+      (tester) async {
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, -10, 10, -10],
+                    'label': 'dataset1',
+                  },
+                ),
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 15, 0, -4],
+                    'label': 'dataset2',
+                  },
+                ),
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 10, -10, -10],
+                    'label': 'dataset3',
+                    'yAxisID': 'y2',
+                  },
+                ),
+              ]
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{'legend': false, 'title': false},
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'display': ScaleDisplay.off},
+                'y': <String, Object?>{
+                  'display': ScaleDisplay.off,
+                  'stacked': StackMode.on,
+                },
+                'y2': <String, Object?>{
+                  'type': 'linear',
+                  'position': ChartPosition.right,
+                  'display': ScaleDisplay.off,
+                },
+              },
+            }),
+        );
 
         expectStackedPixels(chart);
       },
@@ -527,42 +547,48 @@ void main() {
       'should update elements when the y scale is stacked and datasets is '
       'scatter data',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 0, 'y': 10},
-                  <String, Object?>{'x': 1, 'y': -10},
-                  <String, Object?>{'x': 2, 'y': 10},
-                  <String, Object?>{'x': 3, 'y': -10},
-                ],
-                'label': 'dataset1',
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'x': 0, 'y': 10},
+                      <String, Object?>{'x': 1, 'y': -10},
+                      <String, Object?>{'x': 2, 'y': 10},
+                      <String, Object?>{'x': 3, 'y': -10},
+                    ],
+                    'label': 'dataset1',
+                  },
+                ),
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'x': 0, 'y': 10},
+                      <String, Object?>{'x': 1, 'y': 15},
+                      <String, Object?>{'x': 2, 'y': 0},
+                      <String, Object?>{'x': 3, 'y': -4},
+                    ],
+                    'label': 'dataset2',
+                  },
+                ),
+              ]
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{'legend': false, 'title': false},
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'display': ScaleDisplay.off},
+                'y': <String, Object?>{
+                  'display': ScaleDisplay.off,
+                  'stacked': StackMode.on,
+                },
               },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 0, 'y': 10},
-                  <String, Object?>{'x': 1, 'y': 15},
-                  <String, Object?>{'x': 2, 'y': 0},
-                  <String, Object?>{'x': 3, 'y': -4},
-                ],
-                'label': 'dataset2',
-              },
-            ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false, 'title': false},
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'display': ScaleDisplay.off},
-              'y': <String, Object?>{
-                'display': ScaleDisplay.off,
-                'stacked': StackMode.on,
-              },
-            },
-          },
-        });
+            }),
+        );
 
         expectStackedPixels(chart);
       },
@@ -571,32 +597,38 @@ void main() {
     testWidgets(
       'should update elements when the y scale is stacked and data is strings',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>['10', '-10', '10', '-10'],
-                'label': 'dataset1',
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>['10', '-10', '10', '-10'],
+                    'label': 'dataset1',
+                  },
+                ),
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>['10', '15', '0', '-4'],
+                    'label': 'dataset2',
+                  },
+                ),
+              ]
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'plugins': <String, Object?>{'legend': false, 'title': false},
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'display': ScaleDisplay.off},
+                'y': <String, Object?>{
+                  'display': ScaleDisplay.off,
+                  'stacked': StackMode.on,
+                },
               },
-              <String, Object?>{
-                'data': <Object?>['10', '15', '0', '-4'],
-                'label': 'dataset2',
-              },
-            ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false, 'title': false},
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'display': ScaleDisplay.off},
-              'y': <String, Object?>{
-                'display': ScaleDisplay.off,
-                'stacked': StackMode.on,
-              },
-            },
-          },
-        });
+            }),
+        );
 
         expectStackedPixels(chart);
       },
@@ -605,27 +637,27 @@ void main() {
     testWidgets('should fall back to the line styles for points', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[0, 0],
-              'label': 'dataset1',
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[0, 0],
+                'label': 'dataset1',
 
-              // line styles
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(98, 98, 98, 1),
-              ),
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(8, 8, 8, 1),
-              ),
-              'borderWidth': 0.55,
-            },
-          ],
-          'labels': <Object?>['label1', 'label2'],
-        },
-      });
+                // line styles
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(98, 98, 98, 1),
+                ),
+                'borderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(8, 8, 8, 1),
+                ),
+                'borderWidth': 0.55,
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2']),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -676,18 +708,21 @@ void main() {
           'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
         });
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, 0],
-                'label': 'dataset1',
-              },
-            ],
-            'labels': <Object?>['label1', 'label2'],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[0, 0],
+                    'label': 'dataset1',
+                  },
+                ),
+              ]
+              ..labels = <Object?>['label1', 'label2']),
+        );
 
         final options = chart.getDatasetMeta(0).dataset!.options;
 
@@ -721,32 +756,35 @@ void main() {
           'tension': 0.231,
         });
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, 0],
-                'label': 'dataset1',
-                'spanGaps': true,
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(221, 170, 221, 1),
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[0, 0],
+                    'label': 'dataset1',
+                    'spanGaps': true,
+                    'backgroundColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(221, 170, 221, 1),
+                    ),
+                  },
                 ),
+              ]
+              ..labels = <Object?>['label1', 'label2'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'datasets': <String, Object?>{
+                'line': <String, Object?>{
+                  'tension': 0.345,
+                  'backgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(170, 221, 221, 1),
+                  ),
+                },
               },
-            ],
-            'labels': <Object?>['label1', 'label2'],
-          },
-          'options': <String, Object?>{
-            'datasets': <String, Object?>{
-              'line': <String, Object?>{
-                'tension': 0.345,
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(170, 221, 221, 1),
-                ),
-              },
-            },
-          },
-        });
+            }),
+        );
 
         final options = chart.getDatasetMeta(0).dataset!.options;
 
@@ -810,45 +848,45 @@ void main() {
     }
 
     testWidgets('should obey the chart-level dataset options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[0, 0],
-              'label': 'dataset1',
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[0, 0],
+                'label': 'dataset1',
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'datasets': <String, Object?>{
+              'line': <String, Object?>{
+                ...lineOptions,
+                'borderDash': <double>[0],
+              },
             },
-          ],
-          'labels': <Object?>['label1', 'label2'],
-        },
-        'options': <String, Object?>{
-          'datasets': <String, Object?>{
-            'line': <String, Object?>{
-              ...lineOptions,
-              'borderDash': <double>[0],
-            },
-          },
-        },
-      });
+          }),
+      );
 
       expectLineOptions(chart.getDatasetMeta(0).dataset!.options);
     });
 
     testWidgets('should obey the dataset options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[0, 0],
-              'label': 'dataset1',
-              ...lineOptions,
-              'borderDash': <double>[0],
-            },
-          ],
-          'labels': <Object?>['label1', 'label2'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[0, 0],
+                'label': 'dataset1',
+                ...lineOptions,
+                'borderDash': <double>[0],
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2']),
+      );
 
       expectLineOptions(chart.getDatasetMeta(0).dataset!.options);
     });
@@ -856,18 +894,18 @@ void main() {
     testWidgets('should handle number of data point changes in update', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset1',
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, 15, 0, -4],
+                'label': 'dataset1',
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -891,34 +929,37 @@ void main() {
       late Chart chart;
 
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'offset': true},
-            },
-            'elements': <String, Object?>{
-              'point': <String, Object?>{
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(100, 150, 200, 1),
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['label1', 'label2', 'label3', 'label4']
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[10, 15, 0, -4],
+                  },
                 ),
-                'borderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(50, 100, 150, 1),
-                ),
-                'borderWidth': 2,
-                'radius': 3,
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'offset': true},
               },
-            },
-          },
-        });
+              'elements': <String, Object?>{
+                'point': <String, Object?>{
+                  'backgroundColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(100, 150, 200, 1),
+                  ),
+                  'borderColor': const ChartPaint.solid(
+                    native_ui.Color.fromRGBO(50, 100, 150, 1),
+                  ),
+                  'borderWidth': 2,
+                  'radius': 3,
+                },
+              },
+            }),
+        );
       }
 
       testWidgets('should handle default hover styles', (tester) async {
@@ -1096,19 +1137,19 @@ void main() {
     });
 
     testWidgets('should allow 0 as a point border width', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset1',
-              'pointBorderWidth': 0,
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, 15, 0, -4],
+                'label': 'dataset1',
+                'pointBorderWidth': 0,
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+      );
 
       final meta = chart.getDatasetMeta(0);
       final point = meta.data[0];
@@ -1119,19 +1160,19 @@ void main() {
     testWidgets('should allow an array as the point border width setting', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset1',
-              'pointBorderWidth': <Object?>[1, 2, 3, 4],
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, 15, 0, -4],
+                'label': 'dataset1',
+                'pointBorderWidth': <Object?>[1, 2, 3, 4],
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(_option(meta.data[0], 'borderWidth'), 1);
@@ -1146,39 +1187,46 @@ void main() {
         data.add(<String, Object?>{'x': x, 'y': math.sin(x / 10000)});
       }
       void createChart() {
-        acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data, 'borderWidth': 1, 'radius': 0},
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear'},
-              'y': <String, Object?>{'type': 'linear'},
-            },
-          },
-        });
+        acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': data,
+                    'borderWidth': 1,
+                    'radius': 0,
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'linear'},
+                'y': <String, Object?>{'type': 'linear'},
+              },
+            }),
+        );
       }
 
       expect(createChart, returnsNormally);
     });
 
     testWidgets('should set skipped points to the reset state', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, null, 0, -4],
-              'label': 'dataset1',
-              'pointBorderWidth': <Object?>[1, 2, 3, 4],
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[10, null, 0, -4],
+                'label': 'dataset1',
+                'pointBorderWidth': <Object?>[1, 2, 3, 4],
+              }),
+            ]
+            ..labels = <Object?>['label1', 'label2', 'label3', 'label4']),
+      );
 
       final meta = chart.getDatasetMeta(0);
       final point = meta.data[1] as PointElement;
@@ -1189,29 +1237,29 @@ void main() {
     });
 
     testWidgets('should honor spangap interval forwards', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'spanGaps': 10,
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 123},
-                <String, Object?>{'x': 15, 'y': 124},
-                <String, Object?>{'x': 26, 'y': 125},
-                <String, Object?>{'x': 30, 'y': 126},
-                <String, Object?>{'x': 35, 'y': 127},
-              ],
-              'label': 'dataset1',
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'spanGaps': 10,
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 123},
+                  <String, Object?>{'x': 15, 'y': 124},
+                  <String, Object?>{'x': 26, 'y': 125},
+                  <String, Object?>{'x': 30, 'y': 126},
+                  <String, Object?>{'x': 35, 'y': 127},
+                ],
+                'label': 'dataset1',
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear'},
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear'},
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       for (var i = 0; i < meta.data.length; ++i) {
@@ -1221,29 +1269,29 @@ void main() {
     });
 
     testWidgets('should honor spangap interval backwards', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'spanGaps': 10,
-              'data': <Object?>[
-                <String, Object?>{'x': 35, 'y': 123},
-                <String, Object?>{'x': 30, 'y': 124},
-                <String, Object?>{'x': 26, 'y': 125},
-                <String, Object?>{'x': 15, 'y': 126},
-                <String, Object?>{'x': 10, 'y': 127},
-              ],
-              'label': 'dataset1',
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'spanGaps': 10,
+                'data': <Object?>[
+                  <String, Object?>{'x': 35, 'y': 123},
+                  <String, Object?>{'x': 30, 'y': 124},
+                  <String, Object?>{'x': 26, 'y': 125},
+                  <String, Object?>{'x': 15, 'y': 126},
+                  <String, Object?>{'x': 10, 'y': 127},
+                ],
+                'label': 'dataset1',
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'linear'},
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear'},
-          },
-        },
-      });
+          }),
+      );
 
       final meta = chart.getDatasetMeta(0);
       for (var i = 0; i < meta.data.length; ++i) {
@@ -1255,25 +1303,25 @@ void main() {
     testWidgets('should correctly calc visible points on update', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 20},
-                <String, Object?>{'x': 15, 'y': 19},
-              ],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[
+                  <String, Object?>{'x': 10, 'y': 20},
+                  <String, Object?>{'x': 15, 'y': 19},
+                ],
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'y': <String, Object?>{'type': 'linear', 'min': 0, 'max': 25},
+              'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 50},
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'linear', 'min': 0, 'max': 25},
-            'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 50},
-          },
-        },
-      });
+          }),
+      );
 
       _dataset(chart, 0)['data'] = <Object?>[
         <String, Object?>{'x': 10, 'y': 20},
@@ -1306,24 +1354,27 @@ void main() {
       'should correctly calc _drawStart and _drawCount when first points '
       'beyond scale limits are null and spanGaps=true',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>[0, 10, 20, 30, 40, 50],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[3, null, 2, 3, null, 1.5],
-                'spanGaps': true,
-                'tension': 0.4,
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>[0, 10, 20, 30, 40, 50]
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[3, null, 2, 3, null, 1.5],
+                    'spanGaps': true,
+                    'tension': 0.4,
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
-            },
-          },
-        })..update();
+            }),
+        )..update();
 
         final controller = chart.getDatasetMeta(0).controller!;
 
@@ -1336,24 +1387,27 @@ void main() {
       'should correctly calc _drawStart and _drawCount when all points '
       'beyond scale limits are null and spanGaps=true',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>[0, 10, 20, 30, 40, 50],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[null, null, 2, 3, null, null],
-                'spanGaps': true,
-                'tension': 0.4,
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>[0, 10, 20, 30, 40, 50]
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[null, null, 2, 3, null, null],
+                    'spanGaps': true,
+                    'tension': 0.4,
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
-            },
-          },
-        })..update();
+            }),
+        )..update();
 
         final controller = chart.getDatasetMeta(0).controller!;
 
@@ -1365,24 +1419,27 @@ void main() {
     testWidgets(
       'should correctly calc _drawStart and _drawCount when spanGaps=false',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>[0, 10, 20, 30, 40, 50],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[3, null, 2, 3, null, 1.5],
-                'spanGaps': false,
-                'tension': 0.4,
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>[0, 10, 20, 30, 40, 50]
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[3, null, 2, 3, null, 1.5],
+                    'spanGaps': false,
+                    'tension': 0.4,
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', 'min': 11, 'max': 40},
-            },
-          },
-        })..update();
+            }),
+        )..update();
 
         final controller = chart.getDatasetMeta(0).controller!;
 
@@ -1395,26 +1452,26 @@ void main() {
     testWidgets('should not override tooltip title and label callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['Label 1', 'Label 2'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[21, 79],
-              'label': 'Dataset 1',
-            },
-            <String, Object?>{
-              'data': <Object?>[33, 67],
-              'label': 'Dataset 2',
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'maintainAspectRatio': true,
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..labels = <Object?>['Label 1', 'Label 2']
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[21, 79],
+                'label': 'Dataset 1',
+              }),
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[33, 67],
+                'label': 'Dataset 2',
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'responsive': true,
+            'maintainAspectRatio': true,
+          }),
+      );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];
 

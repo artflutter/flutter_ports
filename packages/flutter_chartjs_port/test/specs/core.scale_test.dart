@@ -10,8 +10,6 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets;
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -625,7 +623,7 @@ void main() {
         },
       );
 
-      // A Map config: the custom scale type has no axis class.
+      // Native scopes preserve the custom scale type.
       testWidgets('should default to one layer for custom scales', (
         tester,
       ) async {
@@ -638,25 +636,26 @@ void main() {
         customScale['defaults'] = <String, Object?>{};
         Chart.register([customScale]);
 
-        final chart = acquireChart({
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'customScale',
-                'grid': <String, Object?>{'z': 10},
-                'ticks': <String, Object?>{'z': 20},
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'customScale',
+                  'grid': <String, Object?>{'z': 10},
+                  'ticks': <String, Object?>{'z': 20},
+                },
               },
-            },
-          },
-        });
+            }),
+        );
 
         final scale = chart.scales['x']!;
         expect(scale.layers!().length, 1);
         expect(scale.layers!()[0].z, 20);
       });
 
-      // A Map config: the custom scale type has no axis class.
+      // Native scopes preserve the custom scale type.
       testWidgets('should default to one layer for custom scales for axis', (
         tester,
       ) async {
@@ -669,25 +668,26 @@ void main() {
         customScale1['defaults'] = <String, Object?>{'axis': const XAxis()};
         Chart.register([customScale1]);
 
-        final chart = acquireChart({
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'my': <String, Object?>{
-                'type': 'customScale1',
-                'grid': <String, Object?>{'z': 10},
-                'ticks': <String, Object?>{'z': 20},
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'my': <String, Object?>{
+                  'type': 'customScale1',
+                  'grid': <String, Object?>{'z': 10},
+                  'ticks': <String, Object?>{'z': 20},
+                },
               },
-            },
-          },
-        });
+            }),
+        );
 
         final scale = chart.scales['my']!;
         expect(scale.layers!().length, 1);
         expect(scale.layers!()[0].z, 20);
       });
 
-      // A Map config: the custom scale type has no axis class.
+      // Native scopes preserve the custom scale type.
       testWidgets(
         'should fail for custom scales without any axis or position',
         (tester) async {
@@ -701,14 +701,15 @@ void main() {
           Chart.register([customScale2]);
 
           Chart createChart() {
-            return acquireChart({
-              'type': 'line',
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'my': <String, Object?>{'type': 'customScale2'},
-                },
-              },
-            });
+            return acquireChartRoot(
+              ChartConfigurationScope()
+                ..type = 'line'
+                ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                  'scales': <String, Object?>{
+                    'my': <String, Object?>{'type': 'customScale2'},
+                  },
+                }),
+            );
           }
 
           expect(

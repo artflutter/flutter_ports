@@ -10,8 +10,6 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
 import 'package:clock/clock.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -90,14 +88,13 @@ Scale _createScale(
   jsSet(options, 'type', 'time');
   jsSet(options, 'id', 'xScale0');
 
-  final chart = acquireChart(
-    <String, Object?>{
-      'type': 'line',
-      'data': data,
-      'options': <String, Object?>{
+  final chart = acquireChartRoot(
+    ChartConfigurationScope()
+      ..type = 'line'
+      ..data = mergeExtra(ChartDataScope(), data)
+      ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
         'scales': <String, Object?>{'x': options},
-      },
-    },
+      }),
     <String, Object?>{
       'canvas': <String, Object?>{'width': width, 'height': height},
     },
@@ -263,25 +260,28 @@ void main() {
         date = _add(date, 1, TimeUnit.month);
       }
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'xAxisID': 'x', 'data': data},
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'ticks': <String, Object?>{
-                'source': TickSource.data,
-                'autoSkip': true,
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'xAxisID': 'x',
+                'data': data,
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'time',
+                'ticks': <String, Object?>{
+                  'source': TickSource.data,
+                  'autoSkip': true,
+                },
               },
             },
-          },
-        },
-      });
+          }),
+      );
 
       final scale = chart.scales['x']! as TimeScale;
 
@@ -378,31 +378,34 @@ void main() {
       // The beforeEach acquires a chart: a local function that each case
       // calls first in its body.
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'xAxisID': 'x', 'data': <Object?>[]},
-            ],
-            'labels': <Object?>[
-              '2015-01-01T20:00:00',
-              '2015-01-02T21:00:00',
-              '2015-01-03T22:00:00',
-              '2015-01-05T23:00:00',
-              '2015-01-07T03:00',
-              '2015-01-08T10:00',
-              '2015-01-10T12:00',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'time',
-                'position': ChartPosition.bottom,
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'xAxisID': 'x', 'data': <Object?>[]},
+                ),
+              ]
+              ..labels = <Object?>[
+                '2015-01-01T20:00:00',
+                '2015-01-02T21:00:00',
+                '2015-01-03T22:00:00',
+                '2015-01-05T23:00:00',
+                '2015-01-07T03:00',
+                '2015-01-08T10:00',
+                '2015-01-10T12:00',
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'time',
+                  'position': ChartPosition.bottom,
+                },
               },
-            },
-          },
-        });
+            }),
+        );
 
         scale = chart.scales['x']!;
       }
@@ -475,13 +478,12 @@ void main() {
       // The beforeEach acquires a chart: a local function that each case
       // calls first in its body.
       void beforeEach() {
-        chart = acquireChart(
-          <String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['2005-07-04', '2017-01-20'],
-            },
-            'options': <String, Object?>{
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['2005-07-04', '2017-01-20'])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
               'scales': <String, Object?>{
                 'x': <String, Object?>{
                   'type': 'time',
@@ -489,8 +491,7 @@ void main() {
                   'position': ChartPosition.bottom,
                 },
               },
-            },
-          },
+            }),
           <String, Object?>{
             'canvas': <String, Object?>{'width': 800, 'height': 200},
           },
@@ -568,38 +569,44 @@ void main() {
     testWidgets('should get the correct label for a data value', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'data': <Object?>[null, 10, 3],
-            },
-          ],
-          'labels': <Object?>[
-            '2015-01-01T20:00:00',
-            '2015-01-02T21:00:00',
-            '2015-01-03T22:00:00',
-            '2015-01-05T23:00:00',
-            '2015-01-07T03:00',
-            '2015-01-08T10:00',
-            '2015-01-10T12:00',
-          ], // days
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'position': ChartPosition.bottom,
-              'ticks': <String, Object?>{
-                'source': TickSource.labels,
-                'autoSkip': false,
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data =
+              (ChartDataScope()
+                ..datasets = [
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'xAxisID': 'x',
+                      'data': <Object?>[null, 10, 3],
+                    },
+                  ),
+                ]
+                ..labels = <Object?>[
+                  '2015-01-01T20:00:00',
+                  '2015-01-02T21:00:00',
+                  '2015-01-03T22:00:00',
+                  '2015-01-05T23:00:00',
+                  '2015-01-07T03:00',
+                  '2015-01-08T10:00',
+                  '2015-01-10T12:00',
+                ]
+              // days
+              )
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'time',
+                'position': ChartPosition.bottom,
+                'ticks': <String, Object?>{
+                  'source': TickSource.labels,
+                  'autoSkip': false,
+                },
               },
             },
-          },
-        },
-      });
+          }),
+      );
 
       final xScale = chart.scales['x']!;
       final controller = chart.getDatasetMeta(0).controller!;
@@ -628,36 +635,42 @@ void main() {
       // The beforeEach acquires a chart: a local function that each case
       // calls first in its body.
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'data': <Object?>[0, 0],
-              },
-            ],
-            'labels': <Object?>['2015-01-01T20:00:00', '2015-01-01T20:01:00'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'time',
-                'time': <String, Object?>{
-                  'displayFormats': <String, Object?>{'second': 'h:mm:ss'},
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'xAxisID': 'x',
+                    'data': <Object?>[0, 0],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
+                '2015-01-01T20:00:00',
+                '2015-01-01T20:01:00',
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'time',
+                  'time': <String, Object?>{
+                    'displayFormats': <String, Object?>{'second': 'h:mm:ss'},
+                  },
+                  'ticks': <String, Object?>{
+                    'callback': (
+                      Object? scale,
+                      double value,
+                      int i,
+                      Object? ticks,
+                    ) => ['<$i>'],
+                  },
                 },
-                'ticks': <String, Object?>{
-                  'callback': (
-                    Object? scale,
-                    double value,
-                    int i,
-                    Object? ticks,
-                  ) => ['<$i>'],
-                },
               },
-            },
-          },
-        });
+            }),
+        );
         scale = chart.scales['x']!;
       }
 
@@ -692,28 +705,31 @@ void main() {
     testWidgets(
       'should get the correct label when time is specified as a string',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'data': <Object?>[
-                  <String, Object?>{'x': '2015-01-01T20:00:00', 'y': 10},
-                  <String, Object?>{'x': '2015-01-02T21:00:00', 'y': 3},
-                ],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'xAxisID': 'x',
+                    'data': <Object?>[
+                      <String, Object?>{'x': '2015-01-01T20:00:00', 'y': 10},
+                      <String, Object?>{'x': '2015-01-02T21:00:00', 'y': 3},
+                    ],
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'time',
+                  'position': ChartPosition.bottom,
+                },
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'time',
-                'position': ChartPosition.bottom,
-              },
-            },
-          },
-        });
+            }),
+        );
 
         final xScale = chart.scales['x']!;
         final controller = chart.getDatasetMeta(0).controller!;
@@ -736,39 +752,39 @@ void main() {
     );
 
     testWidgets('should get the correct label for a timestamp', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'data': <Object?>[
-                // Normally (at least with the moment.js adapter), times would
-                // be in the user's local time zone.  To allow for more stable
-                // tests, our tests/index.js sets moment.js to use UTC; use `Z`
-                // here to match.
-                <String, Object?>{
-                  't': _dateValue('2018-01-08 05:14:23.234Z'),
-                  'y': 10,
-                },
-                <String, Object?>{
-                  't': _dateValue('2018-01-09 06:17:43.426Z'),
-                  'y': 3,
-                },
-              ],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'xAxisID': 'x',
+                'data': <Object?>[
+                  // Normally (at least with the moment.js adapter), times would
+                  // be in the user's local time zone.  To allow for more stable
+                  // tests, our tests/index.js sets moment.js to use UTC; use `Z`
+                  // here to match.
+                  <String, Object?>{
+                    't': _dateValue('2018-01-08 05:14:23.234Z'),
+                    'y': 10,
+                  },
+                  <String, Object?>{
+                    't': _dateValue('2018-01-09 06:17:43.426Z'),
+                    'y': 3,
+                  },
+                ],
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'parsing': <String, Object?>{'xAxisKey': 't'},
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'time',
+                'position': ChartPosition.bottom,
+              },
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'parsing': <String, Object?>{'xAxisKey': 't'},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'position': ChartPosition.bottom,
-            },
-          },
-        },
-      });
+          }),
+      );
 
       final xScale = chart.scales['x']!;
       final controller = chart.getDatasetMeta(0).controller!;
@@ -782,26 +798,29 @@ void main() {
     testWidgets(
       'should get the correct pixel for only one data in the dataset',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['2016-05-27'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'data': <Object?>[5],
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>['2016-05-27']
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'xAxisID': 'x',
+                    'data': <Object?>[5],
+                  },
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'display': ScaleDisplay.on,
+                  'type': 'time',
+                },
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'display': ScaleDisplay.on,
-                'type': 'time',
-              },
-            },
-          },
-        });
+            }),
+        );
 
         final xScale = chart.scales['x']!;
         final pixel = xScale.getPixelForValue(_moment('2016-05-27'));
@@ -816,15 +835,16 @@ void main() {
     testWidgets('does not create a negative width chart when hidden', (
       tester,
     ) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-            ],
-          },
-          'options': <String, Object?>{
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'data': <Object?>[],
+              }),
+            ])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
             'scales': <String, Object?>{
               'x': <String, Object?>{
                 'type': 'time',
@@ -840,8 +860,7 @@ void main() {
               },
             },
             'responsive': true,
-          },
-        },
+          }),
         <String, Object?>{
           'wrapper': <String, Object?>{'style': 'display: none'},
         },
@@ -859,26 +878,29 @@ void main() {
         // with a body calls first. `parser: 'YYYY'` is the moment format of
         // upstream. The cases with a body assert no value of that parse.
         void beforeEach() {
-          chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3, 4, 5],
+          chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..labels = <Object?>['2017', '2019', '2020', '2025', '2042']
+                ..datasets = [
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'data': <Object?>[0, 1, 2, 3, 4, 5],
+                    },
+                  ),
+                ])
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{
+                    'type': 'time',
+                    'time': <String, Object?>{'parser': 'YYYY'},
+                    'ticks': <String, Object?>{'source': TickSource.labels},
+                  },
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'time',
-                  'time': <String, Object?>{'parser': 'YYYY'},
-                  'ticks': <String, Object?>{'source': TickSource.labels},
-                },
-              },
-            },
-          });
+              }),
+          );
         }
 
         test(
@@ -976,33 +998,39 @@ void main() {
         // The beforeEach acquires a chart: a local function that the case
         // with a body calls first.
         void beforeEach() {
-          chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3, 4, 5],
+          chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..labels = <Object?>['2017', '2019', '2020', '2025', '2042']
+                ..datasets = [
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'data': <Object?>[0, 1, 2, 3, 4, 5],
+                    },
+                  ),
+                  mergeExtra(
+                    LineControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'data': <Object?>[
+                        <String, Object?>{'x': '2018', 'y': 6},
+                        <String, Object?>{'x': '2020', 'y': 7},
+                        <String, Object?>{'x': '2043', 'y': 8},
+                      ],
+                    },
+                  ),
+                ])
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'scales': <String, Object?>{
+                  'x': <String, Object?>{
+                    'type': 'time',
+                    'time': <String, Object?>{'parser': 'YYYY'},
+                    'ticks': <String, Object?>{'source': TickSource.data},
+                  },
                 },
-                <String, Object?>{
-                  'data': <Object?>[
-                    <String, Object?>{'x': '2018', 'y': 6},
-                    <String, Object?>{'x': '2020', 'y': 7},
-                    <String, Object?>{'x': '2043', 'y': 8},
-                  ],
-                },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'time',
-                  'time': <String, Object?>{'parser': 'YYYY'},
-                  'ticks': <String, Object?>{'source': TickSource.data},
-                },
-              },
-            },
-          });
+              }),
+          );
         }
 
         test(
@@ -1181,122 +1209,125 @@ void main() {
     testWidgets(
       'should handle offset when there are more data points than ticks',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 631180800000, 'y': '31.84'},
-                  <String, Object?>{'x': 631267200000, 'y': '30.89'},
-                  <String, Object?>{'x': 631353600000, 'y': '33.00'},
-                  <String, Object?>{'x': 631440000000, 'y': '33.52'},
-                  <String, Object?>{'x': 631526400000, 'y': '32.24'},
-                  <String, Object?>{'x': 631785600000, 'y': '32.74'},
-                  <String, Object?>{'x': 631872000000, 'y': '31.45'},
-                  <String, Object?>{'x': 631958400000, 'y': '32.60'},
-                  <String, Object?>{'x': 632044800000, 'y': '31.77'},
-                  <String, Object?>{'x': 632131200000, 'y': '32.45'},
-                  <String, Object?>{'x': 632390400000, 'y': '31.13'},
-                  <String, Object?>{'x': 632476800000, 'y': '31.82'},
-                  <String, Object?>{'x': 632563200000, 'y': '30.81'},
-                  <String, Object?>{'x': 632649600000, 'y': '30.07'},
-                  <String, Object?>{'x': 632736000000, 'y': '29.31'},
-                  <String, Object?>{'x': 632995200000, 'y': '29.82'},
-                  <String, Object?>{'x': 633081600000, 'y': '30.20'},
-                  <String, Object?>{'x': 633168000000, 'y': '30.78'},
-                  <String, Object?>{'x': 633254400000, 'y': '30.72'},
-                  <String, Object?>{'x': 633340800000, 'y': '31.62'},
-                  <String, Object?>{'x': 633600000000, 'y': '30.64'},
-                  <String, Object?>{'x': 633686400000, 'y': '32.36'},
-                  <String, Object?>{'x': 633772800000, 'y': '34.66'},
-                  <String, Object?>{'x': 633859200000, 'y': '33.96'},
-                  <String, Object?>{'x': 633945600000, 'y': '34.20'},
-                  <String, Object?>{'x': 634204800000, 'y': '32.20'},
-                  <String, Object?>{'x': 634291200000, 'y': '32.44'},
-                  <String, Object?>{'x': 634377600000, 'y': '32.72'},
-                  <String, Object?>{'x': 634464000000, 'y': '32.95'},
-                  <String, Object?>{'x': 634550400000, 'y': '32.95'},
-                  <String, Object?>{'x': 634809600000, 'y': '30.88'},
-                  <String, Object?>{'x': 634896000000, 'y': '29.44'},
-                  <String, Object?>{'x': 634982400000, 'y': '29.36'},
-                  <String, Object?>{'x': 635068800000, 'y': '28.84'},
-                  <String, Object?>{'x': 635155200000, 'y': '30.85'},
-                  <String, Object?>{'x': 635414400000, 'y': '32.00'},
-                  <String, Object?>{'x': 635500800000, 'y': '32.74'},
-                  <String, Object?>{'x': 635587200000, 'y': '33.16'},
-                  <String, Object?>{'x': 635673600000, 'y': '34.73'},
-                  <String, Object?>{'x': 635760000000, 'y': '32.89'},
-                  <String, Object?>{'x': 636019200000, 'y': '32.41'},
-                  <String, Object?>{'x': 636105600000, 'y': '31.15'},
-                  <String, Object?>{'x': 636192000000, 'y': '30.63'},
-                  <String, Object?>{'x': 636278400000, 'y': '29.60'},
-                  <String, Object?>{'x': 636364800000, 'y': '29.31'},
-                  <String, Object?>{'x': 636624000000, 'y': '29.83'},
-                  <String, Object?>{'x': 636710400000, 'y': '27.97'},
-                  <String, Object?>{'x': 636796800000, 'y': '26.18'},
-                  <String, Object?>{'x': 636883200000, 'y': '26.06'},
-                  <String, Object?>{'x': 636969600000, 'y': '26.34'},
-                  <String, Object?>{'x': 637228800000, 'y': '27.75'},
-                  <String, Object?>{'x': 637315200000, 'y': '29.05'},
-                  <String, Object?>{'x': 637401600000, 'y': '28.82'},
-                  <String, Object?>{'x': 637488000000, 'y': '29.43'},
-                  <String, Object?>{'x': 637574400000, 'y': '29.53'},
-                  <String, Object?>{'x': 637833600000, 'y': '28.50'},
-                  <String, Object?>{'x': 637920000000, 'y': '28.87'},
-                  <String, Object?>{'x': 638006400000, 'y': '28.11'},
-                  <String, Object?>{'x': 638092800000, 'y': '27.79'},
-                  <String, Object?>{'x': 638179200000, 'y': '28.18'},
-                  <String, Object?>{'x': 638438400000, 'y': '28.27'},
-                  <String, Object?>{'x': 638524800000, 'y': '28.29'},
-                  <String, Object?>{'x': 638611200000, 'y': '29.63'},
-                  <String, Object?>{'x': 638697600000, 'y': '29.13'},
-                  <String, Object?>{'x': 638784000000, 'y': '26.57'},
-                  <String, Object?>{'x': 639039600000, 'y': '27.19'},
-                  <String, Object?>{'x': 639126000000, 'y': '27.48'},
-                  <String, Object?>{'x': 639212400000, 'y': '27.79'},
-                  <String, Object?>{'x': 639298800000, 'y': '28.48'},
-                  <String, Object?>{'x': 639385200000, 'y': '27.88'},
-                  <String, Object?>{'x': 639644400000, 'y': '25.63'},
-                  <String, Object?>{'x': 639730800000, 'y': '25.02'},
-                  <String, Object?>{'x': 639817200000, 'y': '25.26'},
-                  <String, Object?>{'x': 639903600000, 'y': '25.00'},
-                  <String, Object?>{'x': 639990000000, 'y': '26.23'},
-                  <String, Object?>{'x': 640249200000, 'y': '26.22'},
-                  <String, Object?>{'x': 640335600000, 'y': '26.36'},
-                  <String, Object?>{'x': 640422000000, 'y': '25.45'},
-                  <String, Object?>{'x': 640508400000, 'y': '24.62'},
-                  <String, Object?>{'x': 640594800000, 'y': '26.65'},
-                  <String, Object?>{'x': 640854000000, 'y': '26.28'},
-                  <String, Object?>{'x': 640940400000, 'y': '27.25'},
-                  <String, Object?>{'x': 641026800000, 'y': '25.93'},
-                ],
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(255, 102, 102, 1),
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'bar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  BarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      <String, Object?>{'x': 631180800000, 'y': '31.84'},
+                      <String, Object?>{'x': 631267200000, 'y': '30.89'},
+                      <String, Object?>{'x': 631353600000, 'y': '33.00'},
+                      <String, Object?>{'x': 631440000000, 'y': '33.52'},
+                      <String, Object?>{'x': 631526400000, 'y': '32.24'},
+                      <String, Object?>{'x': 631785600000, 'y': '32.74'},
+                      <String, Object?>{'x': 631872000000, 'y': '31.45'},
+                      <String, Object?>{'x': 631958400000, 'y': '32.60'},
+                      <String, Object?>{'x': 632044800000, 'y': '31.77'},
+                      <String, Object?>{'x': 632131200000, 'y': '32.45'},
+                      <String, Object?>{'x': 632390400000, 'y': '31.13'},
+                      <String, Object?>{'x': 632476800000, 'y': '31.82'},
+                      <String, Object?>{'x': 632563200000, 'y': '30.81'},
+                      <String, Object?>{'x': 632649600000, 'y': '30.07'},
+                      <String, Object?>{'x': 632736000000, 'y': '29.31'},
+                      <String, Object?>{'x': 632995200000, 'y': '29.82'},
+                      <String, Object?>{'x': 633081600000, 'y': '30.20'},
+                      <String, Object?>{'x': 633168000000, 'y': '30.78'},
+                      <String, Object?>{'x': 633254400000, 'y': '30.72'},
+                      <String, Object?>{'x': 633340800000, 'y': '31.62'},
+                      <String, Object?>{'x': 633600000000, 'y': '30.64'},
+                      <String, Object?>{'x': 633686400000, 'y': '32.36'},
+                      <String, Object?>{'x': 633772800000, 'y': '34.66'},
+                      <String, Object?>{'x': 633859200000, 'y': '33.96'},
+                      <String, Object?>{'x': 633945600000, 'y': '34.20'},
+                      <String, Object?>{'x': 634204800000, 'y': '32.20'},
+                      <String, Object?>{'x': 634291200000, 'y': '32.44'},
+                      <String, Object?>{'x': 634377600000, 'y': '32.72'},
+                      <String, Object?>{'x': 634464000000, 'y': '32.95'},
+                      <String, Object?>{'x': 634550400000, 'y': '32.95'},
+                      <String, Object?>{'x': 634809600000, 'y': '30.88'},
+                      <String, Object?>{'x': 634896000000, 'y': '29.44'},
+                      <String, Object?>{'x': 634982400000, 'y': '29.36'},
+                      <String, Object?>{'x': 635068800000, 'y': '28.84'},
+                      <String, Object?>{'x': 635155200000, 'y': '30.85'},
+                      <String, Object?>{'x': 635414400000, 'y': '32.00'},
+                      <String, Object?>{'x': 635500800000, 'y': '32.74'},
+                      <String, Object?>{'x': 635587200000, 'y': '33.16'},
+                      <String, Object?>{'x': 635673600000, 'y': '34.73'},
+                      <String, Object?>{'x': 635760000000, 'y': '32.89'},
+                      <String, Object?>{'x': 636019200000, 'y': '32.41'},
+                      <String, Object?>{'x': 636105600000, 'y': '31.15'},
+                      <String, Object?>{'x': 636192000000, 'y': '30.63'},
+                      <String, Object?>{'x': 636278400000, 'y': '29.60'},
+                      <String, Object?>{'x': 636364800000, 'y': '29.31'},
+                      <String, Object?>{'x': 636624000000, 'y': '29.83'},
+                      <String, Object?>{'x': 636710400000, 'y': '27.97'},
+                      <String, Object?>{'x': 636796800000, 'y': '26.18'},
+                      <String, Object?>{'x': 636883200000, 'y': '26.06'},
+                      <String, Object?>{'x': 636969600000, 'y': '26.34'},
+                      <String, Object?>{'x': 637228800000, 'y': '27.75'},
+                      <String, Object?>{'x': 637315200000, 'y': '29.05'},
+                      <String, Object?>{'x': 637401600000, 'y': '28.82'},
+                      <String, Object?>{'x': 637488000000, 'y': '29.43'},
+                      <String, Object?>{'x': 637574400000, 'y': '29.53'},
+                      <String, Object?>{'x': 637833600000, 'y': '28.50'},
+                      <String, Object?>{'x': 637920000000, 'y': '28.87'},
+                      <String, Object?>{'x': 638006400000, 'y': '28.11'},
+                      <String, Object?>{'x': 638092800000, 'y': '27.79'},
+                      <String, Object?>{'x': 638179200000, 'y': '28.18'},
+                      <String, Object?>{'x': 638438400000, 'y': '28.27'},
+                      <String, Object?>{'x': 638524800000, 'y': '28.29'},
+                      <String, Object?>{'x': 638611200000, 'y': '29.63'},
+                      <String, Object?>{'x': 638697600000, 'y': '29.13'},
+                      <String, Object?>{'x': 638784000000, 'y': '26.57'},
+                      <String, Object?>{'x': 639039600000, 'y': '27.19'},
+                      <String, Object?>{'x': 639126000000, 'y': '27.48'},
+                      <String, Object?>{'x': 639212400000, 'y': '27.79'},
+                      <String, Object?>{'x': 639298800000, 'y': '28.48'},
+                      <String, Object?>{'x': 639385200000, 'y': '27.88'},
+                      <String, Object?>{'x': 639644400000, 'y': '25.63'},
+                      <String, Object?>{'x': 639730800000, 'y': '25.02'},
+                      <String, Object?>{'x': 639817200000, 'y': '25.26'},
+                      <String, Object?>{'x': 639903600000, 'y': '25.00'},
+                      <String, Object?>{'x': 639990000000, 'y': '26.23'},
+                      <String, Object?>{'x': 640249200000, 'y': '26.22'},
+                      <String, Object?>{'x': 640335600000, 'y': '26.36'},
+                      <String, Object?>{'x': 640422000000, 'y': '25.45'},
+                      <String, Object?>{'x': 640508400000, 'y': '24.62'},
+                      <String, Object?>{'x': 640594800000, 'y': '26.65'},
+                      <String, Object?>{'x': 640854000000, 'y': '26.28'},
+                      <String, Object?>{'x': 640940400000, 'y': '27.25'},
+                      <String, Object?>{'x': 641026800000, 'y': '25.93'},
+                    ],
+                    'backgroundColor': const ChartPaint.solid(
+                      native_ui.Color.fromRGBO(255, 102, 102, 1),
+                    ),
+                  },
                 ),
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'timeseries',
-                'offset': true,
-                'ticks': <String, Object?>{
-                  'source': TickSource.data,
-                  'autoSkip': true,
-                  'autoSkipPadding': 0,
-                  'maxRotation': 0,
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{
+                  'type': 'timeseries',
+                  'offset': true,
+                  'ticks': <String, Object?>{
+                    'source': TickSource.data,
+                    'autoSkip': true,
+                    'autoSkipPadding': 0,
+                    'maxRotation': 0,
+                  },
+                },
+                'y': <String, Object?>{
+                  'type': 'linear',
+                  'border': const AxisBorder(display: false),
                 },
               },
-              'y': <String, Object?>{
-                'type': 'linear',
-                'border': const AxisBorder(display: false),
-              },
-            },
-          },
-          'plugins': <String, Object?>{'legend': false},
-        });
+            })
+            ..plugins = <String, Object?>{'legend': false},
+        );
         final scale = chart.scales['x']!;
         expect(scale.getPixelForDecimal(0), toBeCloseToPixel(29));
         expect(scale.getPixelForDecimal(1), toBeCloseToPixel(512));
@@ -1345,17 +1376,18 @@ void main() {
       // `init`. Thus the test removes the member at its end.
       addTearDown(() => DateAdapterBase.prototype.remove('init'));
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{},
-        'options': <String, Object?>{
-          // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
-          'locale': const native_ui.Locale('es'),
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'time'},
-          },
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope())
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+            'locale': const native_ui.Locale('es'),
+            'scales': <String, Object?>{
+              'x': <String, Object?>{'type': 'time'},
+            },
+          }),
+      );
 
       // `chart.options` is a resolver. When `equals` fails, its message
       // reads the nested resolvers of the expected value without end, and
@@ -1372,32 +1404,32 @@ void main() {
 
     testWidgets('should pass timestamp to ticks callback', (tester) async {
       Object? callbackValue = undefined;
-      acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'data': <Object?>[0, 0],
-            },
-          ],
-          'labels': <Object?>['2015-01-01T20:00:00', '2015-01-01T20:01:00'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'ticks': <String, Object?>{
-                'callback':
-                    (Object? scale, double value, int index, Object? ticks) {
-                      callbackValue = value;
-                      return [jsToString(value)];
-                    },
+      acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'line'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
+                'xAxisID': 'x',
+                'data': <Object?>[0, 0],
+              }),
+            ]
+            ..labels = <Object?>['2015-01-01T20:00:00', '2015-01-01T20:01:00'])
+          ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+            'scales': <String, Object?>{
+              'x': <String, Object?>{
+                'type': 'time',
+                'ticks': <String, Object?>{
+                  'callback':
+                      (Object? scale, double value, int index, Object? ticks) {
+                        callbackValue = value;
+                        return [jsToString(value)];
+                      },
+                },
               },
             },
-          },
-        },
-      });
+          }),
+      );
 
       expect(callbackValue, isA<num>());
     });

@@ -6,8 +6,6 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -68,8 +66,8 @@ List<Object?> _elements(List<ActiveElement> items) => [
 Element _data(ChartMeta meta, int index) => meta.data[index] as Element;
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// The two datasets of the line charts of the spec: `data` of
 /// `Dataset 1` and `Dataset 2`, and their `pointRadius` (none for null).
@@ -79,7 +77,7 @@ List<Object?> _datasets(
   List<Object?>? radius1,
   List<Object?>? radius2,
 }) => <Object?>[
-  <String, Object?>{
+  mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
     'label': 'Dataset 1',
     'data': data1,
     'pointRadius': ?radius1,
@@ -89,8 +87,8 @@ List<Object?> _datasets(
     'pointHoverBackgroundColor': const ChartPaint.solid(
       native_ui.Color.fromRGBO(0, 255, 0, 1),
     ),
-  },
-  <String, Object?>{
+  }),
+  mergeExtra(LineControllerDatasetOptionsScope(), <String, Object?>{
     'label': 'Dataset 2',
     'data': data2,
     'pointRadius': ?radius2,
@@ -100,7 +98,7 @@ List<Object?> _datasets(
     'pointHoverBackgroundColor': const ChartPaint.solid(
       native_ui.Color.fromRGBO(0, 255, 255, 1),
     ),
-  },
+  }),
 ];
 
 /// The labels of the line charts of the spec.
@@ -186,13 +184,16 @@ void main() {
       late Chart chart;
 
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': _datasets(<Object?>[10, 20, 30], <Object?>[40, 20, 40]),
-            'labels': _labels(),
-          },
-        });
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = _datasets(
+                <Object?>[10, 20, 30],
+                <Object?>[40, 20, 40],
+              )
+              ..labels = _labels()),
+        );
       }
 
       testWidgets('should return all items under the point', (tester) async {
@@ -227,16 +228,16 @@ void main() {
         late Chart chart;
 
         void beforeEach() {
-          chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': _datasets(
-                <Object?>[10, 20, 30],
-                <Object?>[40, 40, 40],
-              ),
-              'labels': _labels(),
-            },
-          });
+          chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = _datasets(
+                  <Object?>[10, 20, 30],
+                  <Object?>[40, 40, 40],
+                )
+                ..labels = _labels()),
+          );
         }
 
         testWidgets('gets correct items', (tester) async {
@@ -277,7 +278,11 @@ void main() {
         late Chart chart;
 
         void beforeEach() {
-          chart = acquireChart(<String, Object?>{'type': 'line', 'data': data});
+          chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = mergeExtra(ChartDataScope(), data),
+          );
         }
 
         testWidgets('axis: x gets correct items', (tester) async {
@@ -301,11 +306,14 @@ void main() {
 
         testWidgets('axis: y gets correct items', (tester) async {
           beforeEach();
-          final chart = acquireChart(<String, Object?>{
-            'type': 'bar',
-            'data': data,
-            'options': <String, Object?>{'indexAxis': const YAxis()},
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'bar'
+              ..data = mergeExtra(ChartDataScope(), data)
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'indexAxis': const YAxis(),
+              }),
+          );
 
           final meta0 = chart.getDatasetMeta(0);
           final meta1 = chart.getDatasetMeta(1);
@@ -349,16 +357,16 @@ void main() {
         late Chart chart;
 
         void beforeEach() {
-          chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': _datasets(
-                <Object?>[10, 20, 30],
-                <Object?>[40, 40, 40],
-              ),
-              'labels': _labels(),
-            },
-          });
+          chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = _datasets(
+                  <Object?>[10, 20, 30],
+                  <Object?>[40, 40, 40],
+                )
+                ..labels = _labels()),
+          );
         }
 
         testWidgets(
@@ -405,16 +413,23 @@ void main() {
         late Chart chart;
 
         void beforeEach() {
-          chart = acquireChart(<String, Object?>{'type': 'line', 'data': data});
+          chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = mergeExtra(ChartDataScope(), data),
+          );
         }
 
         testWidgets('axis: x gets correct items', (tester) async {
           beforeEach();
-          final chart = acquireChart(<String, Object?>{
-            'type': 'bar',
-            'data': data,
-            'options': <String, Object?>{'indexAxis': const YAxis()},
-          });
+          final chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'bar'
+              ..data = mergeExtra(ChartDataScope(), data)
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'indexAxis': const YAxis(),
+              }),
+          );
 
           final evt = _Event(
             chart,
@@ -476,34 +491,37 @@ void main() {
         late Chart polarChart;
 
         void beforeEach() {
-          lineChart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': _datasets(
-                <Object?>[10, 40, 30],
-                <Object?>[40, 40, 40],
-                radius1: <Object?>[5, 5, 5],
-                radius2: <Object?>[10, 10, 10],
-              ),
-              'labels': _labels(),
-            },
-          });
-          polarChart = acquireChart(<String, Object?>{
-            'type': 'polarArea',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[1, 9, 5],
+          lineChart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = _datasets(
+                  <Object?>[10, 40, 30],
+                  <Object?>[40, 40, 40],
+                  radius1: <Object?>[5, 5, 5],
+                  radius2: <Object?>[10, 10, 10],
+                )
+                ..labels = _labels()),
+          );
+          polarChart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'polarArea'
+              ..data = (ChartDataScope()
+                ..datasets = [
+                  mergeExtra(
+                    PolarAreaControllerDatasetOptionsScope(),
+                    <String, Object?>{
+                      'data': <Object?>[1, 9, 5],
+                    },
+                  ),
+                ]
+                ..labels = _labels())
+              ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+                'plugins': <String, Object?>{
+                  'legend': <String, Object?>{'display': false},
                 },
-              ],
-              'labels': _labels(),
-            },
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'legend': <String, Object?>{'display': false},
-              },
-            },
-          });
+              }),
+          );
         }
 
         group('axis: xy', () {
@@ -727,16 +745,16 @@ void main() {
         late Chart chart;
 
         void beforeEach() {
-          chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'datasets': _datasets(
-                <Object?>[10, 20, 30],
-                <Object?>[40, 40, 40],
-              ),
-              'labels': _labels(),
-            },
-          });
+          chart = acquireChartRoot(
+            ChartConfigurationScope()
+              ..type = 'line'
+              ..data = (ChartDataScope()
+                ..datasets = _datasets(
+                  <Object?>[10, 20, 30],
+                  <Object?>[40, 40, 40],
+                )
+                ..labels = _labels()),
+          );
         }
 
         group('axis=xy', () {
@@ -835,18 +853,18 @@ void main() {
       late Chart chart;
 
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': _datasets(
-              <Object?>[10, 40, 30],
-              <Object?>[40, 40, 40],
-              radius1: <Object?>[5, 10, 5],
-              radius2: <Object?>[10, 10, 10],
-            ),
-            'labels': _labels(),
-          },
-        });
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = _datasets(
+                <Object?>[10, 40, 30],
+                <Object?>[40, 40, 40],
+                radius1: <Object?>[5, 10, 5],
+                radius2: <Object?>[10, 10, 10],
+              )
+              ..labels = _labels()),
+        );
       }
 
       testWidgets(
@@ -914,18 +932,18 @@ void main() {
       late Chart chart;
 
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': _datasets(
-              <Object?>[10, 40, 30],
-              <Object?>[40, 40, 40],
-              radius1: <Object?>[5, 10, 5],
-              radius2: <Object?>[10, 10, 10],
-            ),
-            'labels': _labels(),
-          },
-        });
+        chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..datasets = _datasets(
+                <Object?>[10, 40, 30],
+                <Object?>[40, 40, 40],
+                radius1: <Object?>[5, 10, 5],
+                radius2: <Object?>[10, 10, 10],
+              )
+              ..labels = _labels()),
+        );
       }
 
       testWidgets(
@@ -1014,19 +1032,22 @@ void main() {
           data.add(<String, Object?>{'x': i, 'y': i});
         }
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data},
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 2},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'scatter'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data},
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'min': 2},
+              },
+            }),
+        );
 
         final meta0 = chart.getDatasetMeta(0);
         final firstElement = _data(meta0, 0);
@@ -1049,19 +1070,22 @@ void main() {
           data.add(<String, Object?>{'x': i, 'y': i});
         }
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': data},
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 2},
-            },
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'scatter'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{'data': data},
+                ),
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{
+                'x': <String, Object?>{'min': 2},
+              },
+            }),
+        );
 
         final meta0 = chart.getDatasetMeta(0);
         final firstElement = _data(meta0, 0);
@@ -1086,21 +1110,24 @@ void main() {
           '$clickPointIndex in test case ${i + 1} if spanGaps=true', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>[1, 2, 3, 4, 5, 6, 7, 8, 9],
-            'datasets': <Object?>[
-              <String, Object?>{
-                // The `data` of a const record cannot change. The chart
-                // listens to the array of its dataset, and a chart writes
-                // no item into it here. Thus a copy gives the same result.
-                'data': List<Object?>.of(data),
-                'spanGaps': true,
-              },
-            ],
-          },
-        })..update();
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'line'
+            ..data = (ChartDataScope()
+              ..labels = <Object?>[1, 2, 3, 4, 5, 6, 7, 8, 9]
+              ..datasets = [
+                mergeExtra(
+                  LineControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    // The `data` of a const record cannot change. The chart
+                    // listens to the array of its dataset, and a chart writes
+                    // no item into it here. Thus a copy gives the same result.
+                    'data': List<Object?>.of(data),
+                    'spanGaps': true,
+                  },
+                ),
+              ]),
+        )..update();
         final meta = chart.getDatasetMeta(0);
         final point = _data(meta, clickPointIndex);
 

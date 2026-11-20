@@ -238,111 +238,134 @@ void main() {
       expect(chart.scales['r']!.max, 150);
     });
 
-    // A Map config: the data values are strings.
+    // Native scopes preserve string inputs for the parser.
     testWidgets(
       'Should correctly determine the max & min of string data values',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
-              },
-              <String, Object?>{
-                'data': <Object?>['150'],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-              'label6',
-            ],
-          },
-          'options': <String, Object?>{'scales': <String, Object?>{}},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'radar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
+                  },
+                ),
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>['150'],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
+                'label1',
+                'label2',
+                'label3',
+                'label4',
+                'label5',
+                'label6',
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{},
+            }),
+        );
 
         expect(chart.scales['r']!.min, -100);
         expect(chart.scales['r']!.max, 150);
       },
     );
 
-    // A Map config: the data values are strings.
+    // Native scopes preserve string inputs for the parser.
     testWidgets(
       'Should correctly determine the max & min data values when there are '
       'hidden datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
-              },
-              <String, Object?>{
-                'data': <Object?>['150'],
-              },
-              <String, Object?>{
-                'data': <Object?>[1000],
-                'hidden': true,
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-              'label6',
-            ],
-          },
-          'options': <String, Object?>{'scales': <String, Object?>{}},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'radar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>['10', '5', '0', '-5', '78', '-100'],
+                  },
+                ),
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>['150'],
+                  },
+                ),
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[1000],
+                    'hidden': true,
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
+                'label1',
+                'label2',
+                'label3',
+                'label4',
+                'label5',
+                'label6',
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{},
+            }),
+        );
 
         expect(chart.scales['r']!.min, -100);
         expect(chart.scales['r']!.max, 150);
       },
     );
 
-    // A Map config: the data has `undefined`, which a typed dataset cannot
-    // hold.
+    // Native scopes preserve `undefined` among the parser inputs.
     testWidgets(
       'Should correctly determine the max & min data values when there is '
       'NaN data',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  50,
-                  60,
-                  double.nan,
-                  70,
-                  null,
-                  undefined,
-                  double.infinity,
-                  double.negativeInfinity,
-                ],
-              },
-            ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-              'label6',
-              'label7',
-              'label8',
-            ],
-          },
-          'options': <String, Object?>{'scales': <String, Object?>{}},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigurationScope()
+            ..type = 'radar'
+            ..data = (ChartDataScope()
+              ..datasets = [
+                mergeExtra(
+                  RadarControllerDatasetOptionsScope(),
+                  <String, Object?>{
+                    'data': <Object?>[
+                      50,
+                      60,
+                      double.nan,
+                      70,
+                      null,
+                      undefined,
+                      double.infinity,
+                      double.negativeInfinity,
+                    ],
+                  },
+                ),
+              ]
+              ..labels = <Object?>[
+                'label1',
+                'label2',
+                'label3',
+                'label4',
+                'label5',
+                'label6',
+                'label7',
+                'label8',
+              ])
+            ..options = mergeExtra(ChartOptionsScope(), <String, Object?>{
+              'scales': <String, Object?>{},
+            }),
+        );
 
         expect(chart.scales['r']!.min, 50);
         expect(chart.scales['r']!.max, 70);
@@ -589,19 +612,22 @@ void main() {
       );
     });
 
-    // A Map config: the labels are `undefined`, `null`, `NaN` and `false`.
+    // Preserve the `undefined`, `null`, `NaN` and `false` labels.
     testWidgets('Should build point labels from falsy values', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78, 20],
-            },
-          ],
-          'labels': <Object?>[0, '', undefined, null, double.nan, false],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'radar'
+          ..data = (ChartDataScope()
+            ..datasets = [
+              mergeExtra(
+                RadarControllerDatasetOptionsScope(),
+                <String, Object?>{
+                  'data': <Object?>[10, 5, 0, 25, 78, 20],
+                },
+              ),
+            ]
+            ..labels = <Object?>[0, '', undefined, null, double.nan, false]),
+      );
 
       expect(
         _r(chart).pointLabels,
