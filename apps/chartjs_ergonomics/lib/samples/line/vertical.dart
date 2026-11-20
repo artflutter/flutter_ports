@@ -14,8 +14,6 @@ const vertical = ChartConfig(
       label: 'Sales',
       data: sales,
       borderColor: .constant(.solid(teal)),
-      // No parameter: the dataset `axis` goes through extra.
-      extra: {'axis': YAxis()},
     ),
   ],
   scales: [LinearAxis(.x, beginAtZero: true)],

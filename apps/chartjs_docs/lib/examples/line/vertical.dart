@@ -45,7 +45,6 @@ const verticalLine = ChartConfig(
         .solid(Color.fromRGBO(201, 203, 207, 1)),
       ]),
       borderWidth: 1,
-      extra: {'axis': YAxis()},
     ),
   ],
   scales: [LinearAxis(.x, beginAtZero: true)],

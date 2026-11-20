@@ -266,9 +266,7 @@ final List<Sample> lineSamples = [
   const Sample(
     file: 'vertical',
     title: 'Vertical line',
-    note:
-        'indexAxis YAxis puts the labels on y. The dataset axis has no '
-        'parameter.',
+    note: 'indexAxis YAxis puts the labels on y.',
     child: ChartView(config: vertical),
     accepted: true,
   ),
