@@ -1,3 +1,12 @@
+## 0.1.0-beta.3
+
+- On `flutter_chartjs_port` 0.1.0-beta.4.
+- `LimitOptions` is a class (Zoom ADR 0007): `x` and `y` give the limits of a direction, and
+  `axes` gives the limits of one axis object of a typed config. The limits of an axis win over
+  the limits of its direction: `LimitOptions(x: ScaleLimits(minRange: 50), axes: {right: ...})`.
+- `ZoomPlugin` is the class of `zoomPlugin`: `registry.getPlugin<ZoomPlugin>()` finds it.
+- The plugin writes the scale range through `Scale.setRange` and `Scale.clearRange` of the host.
+
 ## 0.1.0-beta.2
 
 - README: remove the status note of the port phases.
