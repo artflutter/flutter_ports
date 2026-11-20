@@ -32,8 +32,8 @@ import 'package:meta/meta.dart';
 ///   final int n;
 ///
 ///   @override
-///   List<Object?> decimate(
-///     List<Object?> data,
+///   List<ParsedItem?> decimate(
+///     List<ParsedItem?> data,
 ///     double start,
 ///     double count,
 ///     double availableWidth,
@@ -50,12 +50,13 @@ abstract class const DecimationAlgorithm() {
 
   /// The decimated items of the [count] items of [data] from the index
   /// [start], for a chart area of [availableWidth] pixels. The items are the
-  /// data items of the app (the plugin needs `parsing: false`). [options]
+  /// data items of the app (the plugin needs `parsing: false`): each one is a
+  /// [ParsedItem], for example a `DataPoint`. [options]
   /// are the resolved options of the plugin: a built-in algorithm reads
   /// `samples` from them. An algorithm of a program keeps its own settings in
   /// its fields.
-  List<Object?> decimate(
-    List<Object?> data,
+  List<ParsedItem?> decimate(
+    List<ParsedItem?> data,
     int start,
     int count,
     double availableWidth,

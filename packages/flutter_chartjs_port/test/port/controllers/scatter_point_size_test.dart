@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
@@ -156,7 +157,9 @@ Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
 
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
-  final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
+  final chart = reference
+      ? _ReferenceChart(canvas, withParsedDataItems(cfg))
+      : Chart(canvas, withParsedDataItems(cfg));
   addTearDown(chart.destroy);
   return chart;
 }
@@ -346,10 +349,10 @@ void main() {
         expect(_observe(first), _observe(second));
         for (var step = 0; step < 3; step++) {
           for (final cfg in [a, b]) {
-            _dataset(cfg)['data'] = <Object?>[
+            _dataset(cfg)['data'] = parsedItemsOf([
               for (var i = 0; i < _length; i++)
                 <String, Object?>{'x': i.toDouble(), 'y': step + i - 3.0},
-            ];
+            ]);
           }
           first.update(UpdateMode.none);
           second.update(UpdateMode.none);
@@ -371,10 +374,10 @@ void main() {
         final second = _chart(b, reference: true);
         for (final length in [12, 3, 2, 1, 0, 6]) {
           for (final cfg in [a, b]) {
-            _dataset(cfg)['data'] = <Object?>[
+            _dataset(cfg)['data'] = parsedItemsOf([
               for (var i = 0; i < length; i++)
                 <String, Object?>{'x': i.toDouble(), 'y': 1.0 + length},
-            ];
+            ]);
           }
           first.update(UpdateMode.none);
           second.update(UpdateMode.none);
@@ -400,10 +403,10 @@ void main() {
           final first = _chart(a);
           final second = _chart(b, reference: true);
           for (final cfg in [a, b]) {
-            _dataset(cfg)['data'] = <Object?>[
+            _dataset(cfg)['data'] = parsedItemsOf([
               for (var i = 0; i < _length; i++)
                 <String, Object?>{'x': i.toDouble(), 'y': i - 2.0},
-            ];
+            ]);
           }
           first.update();
           second.update();
@@ -680,10 +683,10 @@ void main() {
         expect(_observeAll(first), _observeAll(second));
         for (var step = 0; step < 3; step++) {
           for (final cfg in [a, b]) {
-            _dataset(cfg)['data'] = <Object?>[
+            _dataset(cfg)['data'] = parsedItemsOf([
               for (var i = 0; i < _length; i++)
                 <String, Object?>{'x': i.toDouble(), 'y': step + i - 3.0},
-            ];
+            ]);
             // The lists stay live: an item changes in place.
             final radius = _dataset(cfg)['radius'];
             if (radius is List<double>) radius[0] = 2.0 + step;
@@ -894,10 +897,10 @@ void main() {
         final second = _chart(b, reference: true);
         for (var step = 0; step < 3; step++) {
           for (final cfg in [a, b]) {
-            _dataset(cfg)['data'] = <Object?>[
+            _dataset(cfg)['data'] = parsedItemsOf([
               for (var i = 0; i < _length; i++)
                 <String, Object?>{'x': i.toDouble(), 'y': step * i - 3.0},
-            ];
+            ]);
             // The last item changes in place: the pass reads the live list.
             final radius = _dataset(cfg)['radius'];
             if (radius is List<double>) {

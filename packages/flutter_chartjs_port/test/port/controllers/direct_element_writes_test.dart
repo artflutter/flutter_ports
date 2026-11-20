@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const red = ui.Color(0xffff0000);
 const blue = ui.Color(0xff0000ff);
@@ -192,15 +193,16 @@ class _CustomList(final List<IElement> values) extends ListBase<IElement> {
 }
 
 /// A parsed list of the user: the loop must not treat it as a native list.
-class _CustomParsed(final List<Object?> values) extends ListBase<Object?> {
+class _CustomParsed(final List<ParsedItem?> values)
+    extends ListBase<ParsedItem?> {
   @override
   int get length => values.length;
   @override
   set length(int value) => values.length = value;
   @override
-  Object? operator [](int index) => values[index];
+  ParsedItem? operator [](int index) => values[index];
   @override
-  void operator []=(int index, Object? value) => values[index] = value;
+  void operator []=(int index, ParsedItem? value) => values[index] = value;
 }
 
 /// A scope of the user: each read of its `operator []` is user code.
@@ -377,7 +379,10 @@ Map<String, Object?> _config(
   'data': <String, Object?>{
     'labels': <Object?>[for (var i = 0; i < 10; i++) 'L$i'],
     'datasets': <Object?>[
-      <String, Object?>{'data': _data(type, 1, length), ...dataset},
+      <String, Object?>{
+        'data': _parsedFor(options, _data(type, 1, length)),
+        ...dataset,
+      },
     ],
   },
   'options': <String, Object?>{
@@ -419,13 +424,27 @@ Map<String, Object?> _liveConfig(
   },
 );
 
+/// [data] for the chart options [options]: with `parsing: false`, a number
+/// of a doughnut or a pie goes into `r` of a parsed item (row
+/// `adapt-parsed-data-items`).
+List<Object?> _parsedFor(Map<String, Object?>? options, List<Object?> data) =>
+    options?['parsing'] == false
+    ? <ParsedItem?>[
+        for (final value in data)
+          if (value is Map) parsedItemOf(value) else ParsedItem()..r = value,
+      ]
+    : data;
+
 List<Object?> _datasets(Map<String, Object?> cfg) =>
     jsGet(cfg['data'], 'datasets')! as List<Object?>;
 Map<String, Object?> _first(Map<String, Object?> cfg) =>
     _datasets(cfg)[0]! as Map<String, Object?>;
 
 Chart _chart(Map<String, Object?> cfg) {
-  final chart = Chart(UiCanvasElement(width: 480, height: 320), cfg);
+  final chart = Chart(
+    UiCanvasElement(width: 480, height: 320),
+    withParsedDataItems(cfg),
+  );
   addTearDown(chart.destroy);
   return chart;
 }
@@ -434,7 +453,10 @@ String _baseType(Map<String, Object?> cfg) =>
     (cfg['type']! as String).replaceFirst('writes-ref-', '');
 
 void _setData(Map<String, Object?> cfg, double step, int length) {
-  _first(cfg)['data'] = _data(_baseType(cfg), step, length);
+  _first(cfg)['data'] = _parsedFor(
+    cfg['options'] as Map<String, Object?>?,
+    _data(_baseType(cfg), step, length),
+  );
 }
 
 /// The steps of a twin: each mode, and each change of the task.
@@ -496,7 +518,10 @@ final Map<String, void Function(Chart chart, Map<String, Object?> cfg)> _steps =
           data[2] = double.nan;
           data[5] = null;
         }
-        _first(cfg)['data'] = data;
+        _first(cfg)['data'] = _parsedFor(
+          cfg['options'] as Map<String, Object?>?,
+          data,
+        );
         chart.update(UpdateMode.none);
       },
       'reset of a NaN value': (chart, cfg) => chart.update(UpdateMode.reset),
@@ -1193,7 +1218,7 @@ void main() {
           create: (cfg) {
             final chart = _ReferenceChart(
               UiCanvasElement(width: 480, height: 320),
-              cfg,
+              withParsedDataItems(cfg),
             );
             addTearDown(chart.destroy);
             return chart;

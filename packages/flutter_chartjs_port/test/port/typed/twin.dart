@@ -40,7 +40,7 @@ void _twin(Object? actual, Object? expected, String path) {
     return;
   }
   if (expected is Map<String, Object?> ||
-      (expected is JsObjectFace && expected is! TypedDataItem)) {
+      (expected is JsObjectFace && expected is! ParsedItem)) {
     expect(
       actual is Map<String, Object?> || actual is JsObjectFace,
       isTrue,

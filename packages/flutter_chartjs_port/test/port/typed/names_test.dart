@@ -46,7 +46,7 @@ const List<String> _typedNames = [
   // Datasets.
   'Dataset', 'BarDataset', 'LineDataset', 'ScatterDataset', 'BubbleDataset',
   'PieDataset', 'DoughnutDataset', 'PolarAreaDataset', 'RadarDataset',
-  'DataPoint',
+  // `DataPoint` is a ParsedItem of the core (row adapt-parsed-data-items).
   // Axes.
   'ChartAxis', 'CategoryAxis', 'LinearAxis', 'LogarithmicAxis', 'TimeAxis',
   'TimeSeriesAxis', 'RadialLinearAxis', 'AxisTicks', 'AxisGrid', 'AxisTitle',
@@ -145,8 +145,8 @@ void main() {
 
   tearDownAll(() => _collection.dispose());
 
-  test('the list has 71 distinct names', () {
-    expect(_typedNames.toSet(), hasLength(71));
+  test('the list has 70 distinct names', () {
+    expect(_typedNames.toSet(), hasLength(70));
   });
 
   test(

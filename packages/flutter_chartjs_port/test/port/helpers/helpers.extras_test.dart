@@ -10,6 +10,8 @@ import 'package:flutter/scheduler.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/parsed_items.dart';
+
 // test/specs has no helpers.extras.tests.js. These tests cover the nine
 // exports of src/helpers/helpers.extras.ts (AGENTS.md rule 3). The expected
 // values of the six pure exports come from the helpers of the chart.js 4.5.1
@@ -104,7 +106,7 @@ final class _Meta({
   @override final bool sorted = true,
   @override final IScale? iScale,
   @override final IScale? vScale,
-  @override final List<Map<String, Object?>> parsed = const [],
+  @override final List<ParsedItem?> parsed = const [],
   @override final IElement? dataset,
   @override final IScale? xScale,
   @override final IScale? yScale,
@@ -132,9 +134,9 @@ const List<double> _xs = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
     sorted: sorted,
     iScale: _Scale(bounds: bounds, pixel: pixel),
     vScale: _Scale(axis: const YAxis()),
-    parsed: [
+    parsed: parsedItemsOf([
       for (var i = 0; i < xs.length; i++) {'x': xs[i], 'y': ys[i]},
-    ],
+    ]),
     dataset: dataset,
   );
   final points = [for (final x in xs) _Point(x * 10, x)];
@@ -330,9 +332,9 @@ void main() {
       // spanGaps callbacks. Thus a meta without a vScale gives a result.
       final meta = _Meta(
         iScale: _Scale(bounds: both),
-        parsed: [
+        parsed: parsedItemsOf([
           for (final x in _xs) {'x': x, 'y': x},
-        ],
+        ]),
       );
       final points = [for (final x in _xs) _Point(x * 10, x)];
       expect(getStartAndCountOfVisiblePoints(meta, points, true), (

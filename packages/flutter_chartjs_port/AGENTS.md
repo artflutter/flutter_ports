@@ -148,7 +148,7 @@ repository.
     bits, extras, the JS key order, the face), `parsed.dart` (`ParsedItem`, `ItemStacks`,
     `StackEntry`, `IndexValues`, `FloatingBar`), `props.dart` (`PointProperties`,
     `BarProperties`, `ArcProperties`, `LineProperties`), `animated_prop.dart` (`AnimatedProp`),
-    `lib/src/types/data_item.dart` (`TypedDataItem`). `lib/src/types/plugin.dart` has the native
+    `ParsingKeys` and `DataPoint` in `parsed.dart`. `lib/src/types/plugin.dart` has the native
     plugins of Chart.js ADR 0144 (row `adapt-typed-plugins`): `Plugin<O>` with one typed field for
     each of the 35 hooks and no key by name, the generic enum `PluginHook<A>` (JS name, kind,
     argument class), the hook types `PluginHookFunction<A, O>` (returns `void`) and
@@ -396,9 +396,15 @@ repository.
       `ParsedItem`; `_stacks` is an `ItemStacks` and the stack objects `StackEntry` (`stacksOf`,
       `axisStackOf`, `visualValuesOf`, `setStackValue`, all `@internal`); the dataset options are
       an `OptionView`; the contexts are typed `ScriptableContext` objects; `_cachedDataOpts` is
-      two typed Maps (Chart.js ADR 0054 §8, §11). A parsed item reads with `parsedValueOf`
-      (`@internal`, the `ScaleAxis` of the scale), a `TypedDataItem` of `parsing: false` gives its typed `x` or `y`, another data item of
-      `parsing: false` and a `_stacks` object that user code gave read with `jsGetKey`. The index reads
+      two typed Maps (Chart.js ADR 0054 §8, §11). Each parsed item is a `ParsedItem`, and
+      `meta.parsed` is a `List<ParsedItem?>` (row `adapt-parsed-data-items`): the doughnut and the pie keep
+      their number in `r`, and with `parsing: false` each data item is a `ParsedItem` (a `List<DataPoint>`
+      is the parsed List with no copy; another item stops a debug build). `getParsed` gives a `ParsedItem?`,
+      and a parsed item reads with `parsedValueOf` (`@internal`, the `ScaleAxis` of the scale). A `_stacks`
+      object that user code wrote by name reads with `jsGetKey`. `applyStack` gives a `double?` (row
+      `adapt-apply-stack-number`). `parsing` is a `ParsingKeys?` (Dart `null` for `parsing: false`, row
+      `adapt-parsing-keys`), and `datasetElementType` and `dataElementType` are a `JsClass?` (row
+      `adapt-element-type-classes`). The index reads
       use `jsGetIndex`, the writes append at the length, and `getParsed` and the item reads of the parse functions read
       their List directly (Chart.js ADR 0096). `stacksOf` reads `item._stacks` of a parsed item, also of a List item,
       through an `Expando` (Chart.js ADR 0036).
@@ -448,7 +454,7 @@ repository.
     - [Chart.js ADR 0094](doc/adr/0094-scatter-bubble-point-loops.md): the scatter overflow takes one point size,
       and the bubble parse and loops take native paths. See `test/port/controllers/scatter_point_size_test.dart` and
       `bubble_point_options_test.dart`. Plans end before user code, at the original reads. `DataPoint.bubble` works
-      with `parsing: false` through the typed `r` in `_customOf` (row `adapt-bubble-typed-radius`).
+      with `parsing: false`: it keeps its radius in `_custom` too (row `adapt-bubble-typed-radius`).
     - [Chart.js ADR 0095](doc/adr/0095-radial-static-plans.md): the exact `RadialLinearScale` takes static plans
       for its fit, point labels and angle lines, and `RadarController` writes typed values. See
       `test/port/scales/scale.radialLinear_plans_test.dart` and
@@ -501,8 +507,8 @@ repository.
     (the port of `src/controllers/index.js`). Each controller file has the
     controller class and its class value `<Name>Controller.jsClass` (statics `id`, `defaults`,
     `overrides`; the doughnut also `descriptors`). The parsed items are typed `ParsedItem`
-    objects (Chart.js ADR 0054 §8) read with `parsedValueOf`; a data item of `parsing: false` reads with `jsGetKey`, or gives its typed `x` or `y` for a
-    `TypedDataItem`; the properties are the props classes of `lib/src/options/props.dart`.
+    objects (Chart.js ADR 0054 §8) read with `parsedValueOf`, also the data items of `parsing: false`;
+    the properties are the props classes of `lib/src/options/props.dart`.
     A controller reads the stacks with `stacksOf` and `axisStackOf`, and a raw option value stays
     `Object?` until its upstream operator (Chart.js ADR 0036). It reads the members of other modules through
     `lib/src/types/` (Chart.js ADR 0028). It casts only to a `types` interface or to a class of
@@ -970,7 +976,7 @@ repository.
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 69 names. 26 of them are the classes of
+    `typed.dart` is its export list of 68 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -995,7 +1001,8 @@ repository.
     `adapt-color-animation-by-value`). In the tests, `animationSpecOf` of
     `test/support/animation_spec_input.dart` gives the `AnimationSpec` of an upstream cfg. `config.dart` has `ChartConfig` and `ChartKind`; its
     `indexAxis` takes a `CartesianAxis` of the core. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
-    and `DataPoint`, a final class that implements `TypedDataItem`.
+    `DataPoint` is a final subclass of `ParsedItem` in `lib/src/options/parsed.dart`: a `List<DataPoint>` is
+    the parsed List of `parsing: false`. Its `x` and `y` are `Object?`, the fields of `ParsedItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver
     variants. All dataset background/border, hover and point-specific paint fields
     use `ChartValue<ChartPaint>?` (ADR 0128); lowering writes the corresponding

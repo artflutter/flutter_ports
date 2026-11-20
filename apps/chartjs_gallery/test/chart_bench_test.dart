@@ -420,7 +420,7 @@ void main() {
         final datasets = readByName(c.data, 'datasets')! as List<Object?>;
         final dataset = datasets.first! as Map<String, Object?>;
         final data = dataset['data']! as List<Object?>;
-        final first = data.first! as Map<String, Object?>;
+        final first = data.first! as ParsedItem;
         // Each update moved the data objects, and the points follow them.
         expect(first['x'], isNot(start.x[0]));
         expect(first['y'], isNot(start.y[0]));
@@ -464,8 +464,7 @@ void main() {
         expect(identical(meta.vScale, y), isTrue);
         final datasets = readByName(c.data, 'datasets')! as List<Object?>;
         final dataset = datasets.first! as Map<String, Object?>;
-        final data = (dataset['data']! as List<Object?>)
-            .cast<Map<String, Object?>>();
+        final data = (dataset['data']! as List<Object?>).cast<ParsedItem>();
         final point = meta.data[5] as PointElement;
         // The category x is the index of the label. The y values moved.
         expect(data[5]['x'], 5);
@@ -781,9 +780,13 @@ void main() {
           jsGet(scene.config['data'], 'datasets')! as List<Object?>;
       final data =
           (datasets.single! as Map<String, Object?>)['data']! as List<Object?>;
-      final before = jsonEncode(data);
+      // A parsed item encodes as the Map of its own keys.
+      Object? plain(Object? item) => item is ParsedItem
+          ? {for (final key in item.jsKeys()) key: item[key]}
+          : item;
+      final before = jsonEncode(data, toEncodable: plain);
       scene.change!();
-      expect(jsonEncode(data), isNot(before), reason: name);
+      expect(jsonEncode(data, toEncodable: plain), isNot(before), reason: name);
       expect(scene.takeParts!().keys, _parts, reason: name);
     }
   });

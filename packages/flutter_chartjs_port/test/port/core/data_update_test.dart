@@ -13,6 +13,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
 import '../../support/legend_item.dart';
+import '../../support/parsed_items.dart';
 
 final class _ObservedList(final List<Object?> values)
     extends ListBase<Object?> {
@@ -42,18 +43,6 @@ class _CustomLinear(super.cfg) extends LinearScale {
     statics: {'id': 'data-custom-linear'},
     construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
   );
-}
-
-/// A point class that the typed lowering does not register.
-final class _OtherPoint() implements TypedDataItem {
-  @override
-  Object get x => 1.0;
-  @override
-  double? get y => 2;
-  @override
-  double? get r => null;
-  @override
-  Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 final class _Event(@override final double? x, @override final double? y)
@@ -130,17 +119,24 @@ Map<String, Object?> config(
       'labels': <String>['a', 'b', 'c', 'd'],
       'datasets': <Object?>[
         <String, Object?>{
-          'data': <Object?>[
-            for (var i = 0; i < 4; i++)
-              if (xy)
-                <String, Object?>{
-                  'x': i.toDouble(),
-                  'y': i + 1.0,
-                  if (type == 'bubble') 'r': 2.0,
-                }
-              else
-                i + 1.0,
-          ],
+          // The data items of `parsing: false` are parsed items, in a
+          // List that the chart takes as its parsed List.
+          'data': prepared
+              ? parsedItemsOf([
+                  for (var i = 0; i < 4; i++)
+                    <String, Object?>{'x': i.toDouble(), 'y': i + 1.0},
+                ])
+              : <Object?>[
+                  for (var i = 0; i < 4; i++)
+                    if (xy)
+                      <String, Object?>{
+                        'x': i.toDouble(),
+                        'y': i + 1.0,
+                        if (type == 'bubble') 'r': 2.0,
+                      }
+                    else
+                      i + 1.0,
+                ],
           'backgroundColor': const ChartPaint.solid(ui.Color(0x803366aa)),
           'borderColor': const ChartPaint.solid(ui.Color(0xff3366aa)),
           'borderWidth': 1.0,
@@ -193,6 +189,8 @@ void change(Map<String, Object?> cfg, int step) {
     final item = values[i];
     if (item is Map) {
       item['y'] = value;
+    } else if (item is ParsedItem) {
+      item.y = value;
     } else {
       values[i] = value;
     }
@@ -201,7 +199,7 @@ void change(Map<String, Object?> cfg, int step) {
 
 Chart chart(Object cfg) {
   final canvas = UiCanvasElement(width: 640, height: 400);
-  final chart = Chart(canvas, cfg);
+  final chart = Chart(canvas, withParsedDataItems(cfg));
   addTearDown(() {
     chart.destroy();
     canvas.getContext2d().dispose();
@@ -425,7 +423,6 @@ void main() {
   });
   group('preflight of a list of points', () {
     final point = typed.DataPoint(1, 2);
-    setUpAll(() => registerDataUpdateTypes(const [], [typed.DataPoint]));
 
     test('the items after the first point classify as the first one', () {
       expect(dataUpdateValues(<Object?>[point, point, point]), isFalse);
@@ -451,7 +448,6 @@ void main() {
     });
     test('another class after a point falls back', () {
       expect(dataUpdateValues(<Object?>[point, Object()]), isNull);
-      expect(dataUpdateValues(<Object?>[point, _OtherPoint()]), isNull);
       expect(
         dataUpdateValues(<Object?>[
           point,
@@ -469,7 +465,7 @@ void main() {
     for (final cfg in [ca, cb]) {
       final values = dataset(cfg)['data']! as List;
       for (var i = 0; i < values.length; i++) {
-        (values[i] as Map)['x'] = i * 1.5;
+        (values[i]! as ParsedItem).x = i * 1.5;
       }
     }
     expect(a.updateData(), isTrue);
@@ -958,19 +954,19 @@ void main() {
     'narrow prepared-map lists keep opaque attributes and current geometry',
     () {
       final cfg = config('bar', prepared: true);
-      final values = <Map<String, Object?>>[
+      final values = <ParsedItem>[
         for (var i = 0; i < 4; i++)
-          <String, Object?>{
+          parsedItemOf(<String, Object?>{
             'x': i.toDouble(),
             'y': i + 1.0,
             'id': 'p$i',
             'opaque': Object(),
-          },
+          })!,
       ];
       dataset(cfg)['data'] = values;
       final a = chart(cfg);
       for (final v in values) {
-        v['y'] = 8.0;
+        v.y = 8.0;
       }
       expect(a.updateData(), isTrue);
       final before = observe(a);

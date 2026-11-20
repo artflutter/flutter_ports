@@ -2,7 +2,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
@@ -60,27 +60,6 @@ class _CustomScale(super.cfg) extends LinearScale {
   }
 }
 
-class _ObservedMap(final Map<String, Object?> fields)
-    extends MapBase<String, Object?> {
-  final List<Object?> reads = [];
-  void Function(Object?)? onRead;
-  @override
-  Object? operator [](Object? key) {
-    reads.add(key);
-    onRead?.call(key);
-    return fields[key];
-  }
-
-  @override
-  void operator []=(String key, Object? value) => fields[key] = value;
-  @override
-  Iterable<String> get keys => fields.keys;
-  @override
-  Object? remove(Object? key) => fields.remove(key);
-  @override
-  void clear() => fields.clear();
-}
-
 ChartConfigurationScope _config({
   bool line = false,
   int datasets = 1,
@@ -123,7 +102,9 @@ JsObjectFace _dataset(ChartConfigurationScope cfg, [int index = 0]) =>
 
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
-  final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
+  final chart = reference
+      ? _ReferenceChart(canvas, withParsedDataItems(cfg))
+      : Chart(canvas, withParsedDataItems(cfg));
   addTearDown(chart.destroy);
   return chart;
 }
@@ -189,9 +170,7 @@ void main() {
               final ds = _dataset(cfg, d);
               (ds['backgroundColor']! as List<ChartPaint>)[0] =
                   ChartPaint.solid(ui.Color(0xff001100 + step + d));
-              ((ds['data']! as List<Object?>)[3]!
-                  as Map<String, Object?>)['y'] = step
-                  .toDouble();
+              jsSet((ds['data']! as List<Object?>)[3], 'y', step.toDouble());
             }
           }
           a.update(UpdateMode.none);
@@ -234,37 +213,6 @@ void main() {
       }
     }
     expect(values[0], values[1]);
-    expect(states[0], states[1]);
-  });
-
-  test('effectful parsed reads terminate reuse before conversion', () {
-    final states = <Object>[];
-    final logs = <List<Object?>>[];
-    for (final reference in [false, true]) {
-      final cfg = _config();
-      final chart = _chart(cfg, reference: reference);
-      final probes = _probes(chart);
-      final observed = _ObservedMap({'x': 3.0, 'y': 4.0});
-      var changed = false;
-      observed.onRead = (key) {
-        if (key == 'y' && !changed) {
-          changed = true;
-          _dataset(cfg)['radius'] = 7.0;
-          (_dataset(cfg)['backgroundColor']! as List<ChartPaint>)[0] = green;
-          chart.config.clearCache();
-        }
-      };
-      final meta = chart.getDatasetMeta(0);
-      meta.parsed[3] = observed;
-      meta.controller!.updateElements(meta.data, 0, 8, 'none');
-      logs.add(List.of(observed.reads));
-      states.add(_observe(chart));
-      if (!reference) {
-        expect(probes[2].planReads, greaterThan(0));
-        expect(probes[5].planReads, 0);
-      }
-    }
-    expect(logs[0], logs[1]);
     expect(states[0], states[1]);
   });
 

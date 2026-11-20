@@ -58,6 +58,62 @@ final Expando<Map<String, Object?>> $test = Expando(r'$test');
 /// `a || b` of a JS value.
 Object? _or(Object? a, Object? b) => jsTruthy(a) ? a : b;
 
+/// The data items of `parsing: false` of the spec config [config] as
+/// [ParsedItem] objects (differences.md row `harness-parsed-data-items`): a
+/// spec of upstream gives plain objects there, and the port takes a
+/// `ParsedItem` (row `adapt-parsed-data-items`). Each Map item of a dataset
+/// with its own `parsing: false`, or of each dataset of a chart with
+/// `options.parsing: false` and no `parsing` of its own, becomes a
+/// `ParsedItem` with the own keys of the Map in their order. The List stays
+/// the same object when it can hold the new items, so a spec that changes
+/// its data List later sees the chart data. A typed root scope stays as it
+/// is.
+void _parseDataItems(Object? config) {
+  if (config is! Map) return;
+  final options = config['options'];
+  final chartParsing = options is Map ? options['parsing'] : null;
+  final data = config['data'];
+  final datasets = data is Map ? data['datasets'] : null;
+  if (datasets is! List) return;
+  for (final dataset in datasets) {
+    if (dataset is! Map) continue;
+    final parsing = dataset.containsKey('parsing')
+        ? dataset['parsing']
+        : chartParsing;
+    final items = dataset['data'];
+    if (parsing != false || items is! List || items is List<ParsedItem?>) {
+      continue;
+    }
+    final parsed = [for (final item in items) _parsedItemOf(item)];
+    if (_widePlainLists.contains(items.runtimeType)) {
+      for (var i = 0; i < parsed.length; i++) {
+        items[i] = parsed[i];
+      }
+    } else {
+      // A List of a narrower item type, for example of Maps: a new List.
+      dataset['data'] = parsed;
+    }
+  }
+}
+
+/// The classes of the growable Lists that can hold a [ParsedItem].
+final Set<Type> _widePlainLists = {
+  <Object?>[].runtimeType,
+  <Object>[].runtimeType,
+  <dynamic>[].runtimeType,
+};
+
+/// The [ParsedItem] of the plain data object [item]: a Map gives its own
+/// String keys in their order. Another value stays as it is.
+Object? _parsedItemOf(Object? item) {
+  if (item is! Map) return item;
+  final parsed = ParsedItem();
+  for (final MapEntry(:key, :value) in item.entries) {
+    if (key is String) parsed.jsWrite(key, value);
+  }
+  return parsed;
+}
+
 /// utils.js:36 `_acquireChart(config, options)`.
 ///
 /// Injects a new canvas (and div wrapper) and creates the associated Chart
@@ -157,6 +213,9 @@ Chart acquireChart([Object? config, Map<String, Object?>? options]) {
     'locale',
     _or(jsGet(chartOptions, 'locale'), const Locale('en', 'US')),
   );
+
+  // DIVERGES(chartjs): harness-parsed-data-items, the typed data items.
+  _parseDataItems(config);
 
   if (jsTruthy(options['useShadowDOM'])) {
     // If shadowDOM is not supported by the browsers, mark test as 'pending'.

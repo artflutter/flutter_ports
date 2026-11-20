@@ -91,8 +91,9 @@ bool isArray(Object? value) {
 /// (§5, the leaf rule), and so are the resolved options, the resolvers, the
 /// contexts and the other typed objects with a face.
 ///
-/// A data item of the typed API (`TypedDataItem`, Chart.js ADR 0054 §7) is
-/// an object too: it stands for the plain object {x, y} of the docs. The
+/// A data item of the typed API (a `ParsedItem`, for example a `DataPoint`,
+/// Chart.js ADR 0054 §7) is an object too: it stands for the plain object
+/// {x, y} of the docs. The
 /// readers read it by name through its face. [clone], [merge], [mergeIf]
 /// and their mergers keep it as a leaf, as an element: no copy into a Map,
 /// no merge into it.
@@ -102,11 +103,11 @@ bool isObject(Object? value) {
 
 /// The objects that [clone], [merge] and [mergeIf] copy and merge: a Map
 /// with `String` keys or a typed object with a face (a typed option scope,
-/// resolved options, a resolver, a context, ...). A [TypedDataItem] is a
-/// leaf there.
+/// resolved options, a resolver, a context, ...). A [ParsedItem] is a leaf
+/// there.
 bool _isMapObject(Object? value) {
   return value is Map<String, Object?> ||
-      (value is JsObjectFace && value is! TypedDataItem);
+      (value is JsObjectFace && value is! ParsedItem);
 }
 
 /// `object[key]` of a source or a target of [clone], [merge] and

@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/parsed_items.dart';
+
 // The ordinary path of Chart.js ADR 0157: a subclass of Chart takes neither
 // the native label source, nor the index proof, nor the bulk update.
 class _ReferenceChart(super.item, super.userConfig) extends Chart {
@@ -53,7 +55,9 @@ class _SubTime(super.cfg) extends TimeScale;
 
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
-  final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
+  final chart = reference
+      ? _ReferenceChart(canvas, withParsedDataItems(cfg))
+      : Chart(canvas, withParsedDataItems(cfg));
   addTearDown(chart.destroy);
   return chart;
 }
@@ -613,7 +617,7 @@ void main() {
       b.update(UpdateMode.none);
       expect(probes.skip(1).every((p) => p.bulkWrites == 1), isTrue);
       for (final chart in [a, b]) {
-        final item = chart.getDatasetMeta(0).parsed[3]! as ParsedItem;
+        final item = chart.getDatasetMeta(0).parsed[3]!;
         (item.custom! as JsObjectFace).jsWrite('barStart', '1');
       }
       for (final chart in [a, b]) {

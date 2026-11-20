@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 // Each case builds two charts from equal configs. Chart `a` is a `Chart`: it
 // takes the fast loop where the guards allow it. Chart `b` never takes
@@ -126,10 +127,10 @@ List<Object?> _datasets(Map<String, Object?> cfg) =>
 Chart _chart(Object cfg, {bool reference = false, bool upstream = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
   final chart = upstream
-      ? _UpstreamChart(canvas, cfg)
+      ? _UpstreamChart(canvas, withParsedDataItems(cfg))
       : reference
-      ? _ReferenceChart(canvas, cfg)
-      : Chart(canvas, cfg);
+      ? _ReferenceChart(canvas, withParsedDataItems(cfg))
+      : Chart(canvas, withParsedDataItems(cfg));
   addTearDown(chart.destroy);
   return chart;
 }

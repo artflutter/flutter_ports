@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
@@ -165,7 +166,7 @@ Map<String, Object?> _config({
   Object? backgroundColor = blue,
   Object? borderColor = blue,
   Map<String, Object?> dataset = const {},
-}) => {
+}) => withParsedDataItems({
   'type': type,
   'data': <String, Object?>{
     'datasets': <Object?>[
@@ -199,7 +200,7 @@ Map<String, Object?> _config({
       },
     },
   },
-};
+});
 
 Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
     (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
@@ -207,7 +208,9 @@ Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
 
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
-  final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
+  final chart = reference
+      ? _ReferenceChart(canvas, withParsedDataItems(cfg))
+      : Chart(canvas, withParsedDataItems(cfg));
   addTearDown(chart.destroy);
   return chart;
 }
@@ -267,7 +270,6 @@ void main() {
     PointElement.jsClass,
     LinearScale.jsClass,
   ]);
-  registerDataUpdateTypes([<DataPoint>[].runtimeType], [DataPoint]);
 
   /// The cases of the data and of the indexed colors, in two forms of parsing.
   final datas = <String, List<Object?> Function({double step})>{
@@ -296,6 +298,7 @@ void main() {
           for (var step = 1; step < 4; step++) {
             for (final cfg in configs) {
               _dataset(cfg)['data'] = data.value(step: step.toDouble());
+              withParsedDataItems(cfg);
             }
             a.update(UpdateMode.none);
             b.update(UpdateMode.none);
@@ -450,41 +453,6 @@ void main() {
         expect(jsGet(probes[4].options, 'borderWidth'), 1);
       });
     }
-
-    test('an effectful parsed item ends the plan before its read', () {
-      final states = <Object>[];
-      final logs = <List<Object?>>[];
-      for (final type in ['bubble', 'referenceBubble']) {
-        final cfg = _config(
-          type: type,
-          backgroundColor: <ChartPaint>[red, blue],
-        );
-        final chart = _chart(cfg, reference: type != 'bubble');
-        final probes = _probes(chart);
-        final observed = _ObservedMap({'x': 3.0, 'y': 4.0, '_custom': 6.0});
-        var changed = false;
-        observed.onRead = (key) {
-          if (key == 'y' && !changed) {
-            changed = true;
-            _dataset(cfg)['radius'] = 7.0;
-            (_dataset(cfg)['backgroundColor']! as List<ChartPaint>)[0] = green;
-            chart.config.clearCache();
-          }
-        };
-        final meta = chart.getDatasetMeta(0);
-        meta.parsed[3] = observed;
-        meta.controller!.updateElements(meta.data, 0, _length, 'none');
-        logs.add(List.of(observed.reads));
-        if (type == 'bubble') {
-          expect(probes[2].planReads, greaterThan(0));
-          expect(probes[5].planReads, 0);
-        }
-        states.add(_observe(chart));
-      }
-      expect(logs[0], isNotEmpty);
-      expect(logs[0], logs[1]);
-      expect(states[0], states[1]);
-    });
 
     test('a partial update keeps absolute indexes and untouched points', () {
       final a = _chart(_config(backgroundColor: <ChartPaint>[red, blue]));

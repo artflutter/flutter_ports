@@ -261,7 +261,15 @@ void main() {
     expect(names.skip(15).where((n) => !prefixed(n)), isEmpty);
   });
 
-  testControllerChartCases(_reference, extras: _extras);
+  testControllerChartCases(
+    _reference,
+    extras: _extras,
+    skips: {
+      // A parsing key is a String: a number key stops a debug build.
+      'parsed: object items with the parsing key 5':
+          'diverges: adapt-parsing-keys',
+    },
+  );
 
   group('theming.md §8 test 3: the light preset', () {
     // The `legend:` cases run unthemed only, as the `interfaces:` cases:
@@ -308,7 +316,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       expect(jsGet(_dataset(chart, 0), 'data'), 'abc');
       expect(meta.data, hasLength(3));
-      expect(meta.parsed, [isNaN, isNaN, isNaN]);
+      expect([for (final item in meta.parsed) item!.r], [isNaN, isNaN, isNaN]);
       expect((meta.controller! as DoughnutController).total, 0);
       expect(
         [
@@ -319,42 +327,17 @@ void main() {
       );
     });
 
-    testWidgets("the string data '123' with parsing false gives the arcs of "
-        '[1, 2, 3]', (tester) async {
+    testWidgets("parsing false with the r of [1, '2', null] gives the arcs "
+        'of [1, 2, null] and keeps the data List', (tester) async {
       final chart = acquireChartRoot(
-        stringData(<String, Object?>{'parsing': false}, '123'),
-      );
-      final meta = chart.getDatasetMeta(0);
-      expect(meta.data, hasLength(3));
-      expect(meta.parsed, ['1', '2', '3']);
-      expect((meta.controller! as DoughnutController).total, 6);
-      expect(
-        [
-          for (final arc in meta.data)
-            (arc as ElementPropertyRead)['circumference'],
-        ],
-        [1.0471975511965976, 2.0943951023931953, 3.141592653589793],
-      );
-      expect(meta.controller!.getContext(1).raw, '2');
-      expect(
-        _arcs(chart),
-        referenceMatcher(
-          _arcs(
-            acquireChartRoot(
-              _one(
-                <String, Object?>{'parsing': false},
-                <Object?>[1.0, 2.0, 3.0],
-              ),
-            ),
-          ),
+        _one(
+          <String, Object?>{'parsing': false},
+          <ParsedItem?>[
+            ParsedItem()..r = 1.0,
+            ParsedItem()..r = '2',
+            ParsedItem()..r = null,
+          ],
         ),
-      );
-    });
-
-    testWidgets("parsing false with [1, '2', null] gives the arcs of "
-        '[1, 2, null] and keeps the data List', (tester) async {
-      final chart = acquireChartRoot(
-        _one(<String, Object?>{'parsing': false}, <Object?>[1.0, '2', null]),
       );
       expect(
         identical(
@@ -385,7 +368,10 @@ void main() {
           ],
         ),
       );
-      expect(chart.getDatasetMeta(0).parsed, [1.0, 2.0, 3.0]);
+      expect(
+        [for (final item in chart.getDatasetMeta(0).parsed) item!.r],
+        [1.0, 2.0, 3.0],
+      );
       expect(
         _arcs(chart),
         referenceMatcher(

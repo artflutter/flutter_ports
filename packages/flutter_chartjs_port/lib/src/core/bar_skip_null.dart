@@ -70,7 +70,7 @@ final class BarSkipNullIndex(
 
   /// The class of the List that `_dataCheck` gives `meta._parsed`: a List of
   /// the SDK. A read of such a List runs no code of the app.
-  static final Type _plainList = <Object?>[].runtimeType;
+  static final Type _plainList = <ParsedItem?>[].runtimeType;
 
   /// The count of the visits of a parsed item by the `find` of `skipNull`:
   /// the items of each proof pass, each read of this object and each item
@@ -88,7 +88,7 @@ final class BarSkipNullIndex(
 
   /// The proven length of each parsed list of this update, or -1 for a list
   /// that is not positional. The keys compare by identity.
-  final Map<List<Object?>, int> _proven = Map.identity();
+  final Map<List<ParsedItem?>, int> _proven = Map.identity();
 
   /// The result of [_prove] for a list whose read can run code of the app.
   static const int _unsafe = -2;
@@ -201,7 +201,7 @@ final class BarSkipNullIndex(
   /// The length of [parsed] when it is positional, -1 when it is not, or
   /// [_unsafe] when a read of the list, of an item or of a value of an item
   /// can run code of the app.
-  int _prove(ChartMeta meta, List<Object?> parsed, ScaleAxis axis) {
+  int _prove(ChartMeta meta, List<ParsedItem?> parsed, ScaleAxis axis) {
     // With `parsing: false` the list is the data List of the app
     // (core.datasetController.js:461). Another List class can run code of
     // the app in a read.

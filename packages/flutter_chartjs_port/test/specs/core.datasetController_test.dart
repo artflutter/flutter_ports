@@ -17,6 +17,7 @@ import '../fixtures/index.dart' as fixture;
 import '../support/data_scope.dart';
 import '../support/draw_recorder.dart';
 import '../support/list_splice.dart';
+import '../support/parsed_items.dart';
 
 // The spec tests Chart.DatasetController, the DatasetController of
 // lib/src/core/core.datasetController.dart. Each case acquires a line, bar,
@@ -143,6 +144,12 @@ List<Object?> _parsedOf(ChartMeta meta, String key) => [
 
 /// `data.push(...items)`: the change, then the notification of the hooked
 /// method (differences.md row platform-array-events).
+/// The own keys and values of the parsed item [item], the plain object of
+/// upstream.
+Map<String, Object?> _keysOf(ParsedItem? item) => {
+  for (final key in item!.jsKeys()) key: item[key],
+};
+
 void _push(List<Object?> data, List<Object?> items) {
   data.addAll(items);
   notifyArrayListeners(data, 'push', items);
@@ -496,15 +503,17 @@ void main() {
     });
 
     group('labels array synchronization', () {
-      final data1 = <Object?>[
+      // DIVERGES(chartjs): adapt-parsed-data-items, the items are parsed
+      // items, which each form of `parsing` reads.
+      final data1 = parsedItemsOf([
         <String, Object?>{'x': 'One', 'name': 'One', 'y': 1, 'value': 1},
         <String, Object?>{'x': 'Two', 'name': 'Two', 'y': 2, 'value': 2},
-      ];
-      final data2 = <Object?>[
+      ]);
+      final data2 = parsedItemsOf([
         <String, Object?>{'x': 'Three', 'name': 'Three', 'y': 3, 'value': 3},
         <String, Object?>{'x': 'Four', 'name': 'Four', 'y': 4, 'value': 4},
         <String, Object?>{'x': 'Five', 'name': 'Five', 'y': 5, 'value': 5},
-      ];
+      ]);
       List<Object?> xOf(List<Object?> data) => [
         for (final n in data) jsGet(n, 'x'),
       ];
@@ -693,14 +702,15 @@ void main() {
       'should synchronize metadata when data are inserted or removed and '
       'parsing is off',
       (tester) async {
-        final data = <Object?>[
+        // DIVERGES(chartjs): adapt-parsed-data-items, parsed data items.
+        final data = parsedItemsOf([
           <String, Object?>{'x': 0, 'y': 0},
           <String, Object?>{'x': 1, 'y': 1},
           <String, Object?>{'x': 2, 'y': 2},
           <String, Object?>{'x': 3, 'y': 3},
           <String, Object?>{'x': 4, 'y': 4},
           <String, Object?>{'x': 5, 'y': 5},
-        ];
+        ]);
         final chart = acquireChart(<String, Object?>{
           'type': 'line',
           'data': <String, Object?>{
@@ -724,14 +734,20 @@ void main() {
 
         first = controller.getParsed(0);
         last = controller.getParsed(5);
-        _push(data, [
-          <String, Object?>{'x': 6, 'y': 6},
-          <String, Object?>{'x': 7, 'y': 7},
-          <String, Object?>{'x': 8, 'y': 8},
-        ]);
-        _push(data, [
-          <String, Object?>{'x': 9, 'y': 9},
-        ]);
+        _push(
+          data,
+          parsedItemsOf([
+            <String, Object?>{'x': 6, 'y': 6},
+            <String, Object?>{'x': 7, 'y': 7},
+            <String, Object?>{'x': 8, 'y': 8},
+          ]),
+        );
+        _push(
+          data,
+          parsedItemsOf([
+            <String, Object?>{'x': 9, 'y': 9},
+          ]),
+        );
         chart.update();
         expect(meta.data.length, 10);
         expect(controller.getParsed(0), same(first));
@@ -742,9 +758,9 @@ void main() {
         chart.update();
         expect(meta.data.length, 9);
         expect(controller.getParsed(0), same(first));
-        expect(controller.getParsed(9), same(undefined));
+        expect(controller.getParsed(9), isNull);
         expect(
-          controller.getParsed(8),
+          _keysOf(controller.getParsed(8)),
           equals(<String, Object?>{'x': 8, 'y': 8}),
         );
 
@@ -758,29 +774,40 @@ void main() {
 
         first = controller.getParsed(0);
         last = controller.getParsed(5);
-        _splice(data, 1, 4, [
-          <String, Object?>{'x': 10, 'y': 10},
-          <String, Object?>{'x': 11, 'y': 11},
-        ]);
+        _splice(
+          data,
+          1,
+          4,
+          parsedItemsOf([
+            <String, Object?>{'x': 10, 'y': 10},
+            <String, Object?>{'x': 11, 'y': 11},
+          ]),
+        );
         chart.update();
         expect(meta.data.length, 4);
         expect(controller.getParsed(0), same(first));
         expect(controller.getParsed(3), same(last));
         expect(
-          controller.getParsed(1),
+          _keysOf(controller.getParsed(1)),
           equals(<String, Object?>{'x': 10, 'y': 10}),
         );
 
-        _unshift(data, [
-          <String, Object?>{'x': 12, 'y': 12},
-          <String, Object?>{'x': 13, 'y': 13},
-          <String, Object?>{'x': 14, 'y': 14},
-          <String, Object?>{'x': 15, 'y': 15},
-        ]);
-        _unshift(data, [
-          <String, Object?>{'x': 16, 'y': 16},
-          <String, Object?>{'x': 17, 'y': 17},
-        ]);
+        _unshift(
+          data,
+          parsedItemsOf([
+            <String, Object?>{'x': 12, 'y': 12},
+            <String, Object?>{'x': 13, 'y': 13},
+            <String, Object?>{'x': 14, 'y': 14},
+            <String, Object?>{'x': 15, 'y': 15},
+          ]),
+        );
+        _unshift(
+          data,
+          parsedItemsOf([
+            <String, Object?>{'x': 16, 'y': 16},
+            <String, Object?>{'x': 17, 'y': 17},
+          ]),
+        );
         chart.update();
         expect(meta.data.length, 10);
         expect(controller.getParsed(6), same(first));
@@ -792,11 +819,12 @@ void main() {
       'should synchronize insert before removal when parsing is off',
       (tester) async {
         // https://github.com/chartjs/Chart.js/issues/9511
-        final data = <Object?>[
+        // DIVERGES(chartjs): adapt-parsed-data-items, parsed data items.
+        final data = parsedItemsOf([
           <String, Object?>{'x': 0, 'y': 1},
           <String, Object?>{'x': 2, 'y': 7},
           <String, Object?>{'x': 3, 'y': 5},
-        ];
+        ]);
         final chart = acquireChart(<String, Object?>{
           'type': 'scatter',
           'data': <String, Object?>{
@@ -816,10 +844,13 @@ void main() {
         final meta = chart.getDatasetMeta(0);
         final controller = meta.controller!;
 
-        _push(data, [
-          <String, Object?>{'x': 10, 'y': 6},
-        ]);
-        _splice(data, 0, 1, const []);
+        _push(
+          data,
+          parsedItemsOf([
+            <String, Object?>{'x': 10, 'y': 6},
+          ]),
+        );
+        _splice(data, 0, 1, const <ParsedItem?>[]);
         chart.update();
 
         expect(meta.data.length, 3);
@@ -1422,8 +1453,7 @@ void main() {
 
       final meta = chart.getDatasetMeta(0);
       // objectContaining({y: {...}}): the stack object of the axis `y`.
-      final itemStacks =
-          (meta.parsed[0]! as AnyObject)['_stacks']! as ItemStacks;
+      final itemStacks = meta.parsed[0]!.stacks!;
       expect(
         _stackEntry(itemStacks.entryOf(const YAxis())!),
         equals(<String, Object?>{

@@ -442,11 +442,11 @@ void main() {
     });
   });
 
-  group('js-semantics-resolver-objects', () {
+  group('adapt-parsed-data-items', () {
     // With `parsing: false` and a stacked value scale, updateStacks writes
     // `item._stacks = {}` into each data item
-    // (core.datasetController.js:165). A List item keeps the property
-    // through stacksOf (Chart.js ADR 0036). Each test registers its own test
+    // (core.datasetController.js:165). Each data item is a ParsedItem, which
+    // takes the stacks in its typed field. Each test registers its own test
     // controller and removes it at its end (Chart.js ADR 0022, section 8).
 
     /// Registers the test controller `stacksPoint` (point data elements, no
@@ -469,7 +469,7 @@ void main() {
         ChartConfig(
           type: const ChartKind('stacksPoint'),
           datasets: [
-            // Keep the original List, DateTime and narrow Map inputs.
+            // Keep the original data List.
             LineDataset(extra: {'type': 'stacksPoint', 'data': data}),
           ],
           scales: const {
@@ -483,73 +483,42 @@ void main() {
       ).lower(),
     );
 
-    testWidgets('List data items take the stacks', (tester) async {
+    testWidgets('DataPoint data items take the stacks', (tester) async {
       registerController();
-      final items = <Object?>[
-        <Object?>[0.0, 1.0],
-        <Object?>[1.0, 2.0],
-      ];
+      final items = [DataPoint(0, 1), DataPoint(1, 2)];
       final chart = stackedChart(items);
       final meta = chart.getDatasetMeta(0);
       expect(meta.stacked, StackMode.on);
       expect(identical(meta.parsed, items), isTrue);
       for (final item in items) {
-        final itemStacks = stacksOf(item);
-        expect(itemStacks, isA<JsObjectFace>());
-        expect(jsObjectKeys(itemStacks), ['y']);
+        expect(jsObjectKeys(item.stacks), ['y']);
       }
       expect(chart.stacks, isNotNull);
       // A second update reads the stacks of the items again.
       chart.update();
-      expect(jsObjectKeys(stacksOf(items[0])), ['y']);
+      expect(jsObjectKeys(items[0].stacks), ['y']);
     });
 
-    testWidgets('DateTime data items take the stacks', (tester) async {
-      // A Date is an object (Chart.js ADR 0024). The Node.js probe of the
-      // pinned build gives no throw and the key y.
-      registerController();
-      final items = <Object?>[DateTime.utc(1970), DateTime.utc(1971)];
-      final chart = stackedChart(items);
-      expect(chart.getDatasetMeta(0).stacked, StackMode.on);
-      for (final item in items) {
-        final itemStacks = stacksOf(item);
-        expect(itemStacks, isA<JsObjectFace>());
-        expect(jsObjectKeys(itemStacks), ['y']);
-      }
-    });
-
-    testWidgets('number and string data items throw at the write', (
+    testWidgets('a data item that is not a ParsedItem stops a debug build', (
       tester,
     ) async {
-      // A property write into a primitive in the strict code of an ES
-      // module. The port throws the plain TypeError of the write, not the
-      // Dart _TypeError of a later cast.
       registerController();
       for (final items in <List<Object?>>[
+        <Object?>[
+          <Object?>[0.0, 1.0],
+        ],
+        <Object?>[DateTime.utc(1970)],
         <Object?>[1.0, 2.0],
-        <Object?>['a', 'b'],
+        <Object?>[
+          <String, Object?>{'x': 0.0, 'y': 1.0},
+        ],
       ]) {
         expect(
           () => stackedChart(items),
-          throwsA(predicate((e) => e.runtimeType == TypeError)),
+          throwsA(isA<AssertionError>()),
           reason: '$items',
         );
       }
-    });
-
-    testWidgets('a data item of a narrow Map type throws a TypeError', (
-      tester,
-    ) async {
-      // The differences.md row: the write of `_stacks` into a
-      // Map<String, double> throws, where upstream writes into the object.
-      registerController();
-      expect(
-        () => stackedChart(<Object?>[
-          <String, double>{'x': 0, 'y': 1},
-          <String, double>{'x': 1, 'y': 2},
-        ]),
-        throwsA(isA<TypeError>()),
-      );
     });
   });
 }

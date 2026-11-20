@@ -105,8 +105,15 @@ void main() {
       final time = DateTime.utc(2020);
       expect(_map(DataPoint.time(time, 3)), {'x': time, 'y': 3});
       expect(_map(DataPoint.label('b', 4)), {'x': 'b', 'y': 4});
-      expect(_map(DataPoint.bubble(1, 2, 5)), {'x': 1, 'y': 2, 'r': 5});
-      expect(_map(DataPoint.bubble(1, 2, 5)).keys, ['x', 'y', 'r']);
+      // A bubble keeps its radius in `_custom` too (row
+      // adapt-bubble-typed-radius).
+      expect(_map(DataPoint.bubble(1, 2, 5)), {
+        'x': 1,
+        'y': 2,
+        'r': 5,
+        '_custom': 5,
+      });
+      expect(_map(DataPoint.bubble(1, 2, 5)).keys, ['x', 'y', 'r', '_custom']);
     });
 
     test('the fields are the typed values', () {
@@ -114,17 +121,22 @@ void main() {
       expect([point.x, point.y, point.r], [1.0, 2.0, 5.0]);
       expect(point.x, isA<double>());
       final gap = DataPoint.label('b', null);
-      expect([gap.x, gap.y, gap.r], ['b', null, null]);
+      expect([gap.x, gap.y], ['b', null]);
+      expect(gap.r, same(undefined));
     });
 
-    test('an absent r reads as undefined, and a write by name throws', () {
+    test('an absent r reads as undefined, and a write by name writes', () {
+      // A data point is a parsed item (row adapt-parsed-data-items): the
+      // chart writes its stacks into it, as into the object of upstream.
       final point = DataPoint(1, 2);
+      expect(point, isA<ParsedItem>());
       expect(point.jsRead('r'), same(undefined));
       expect(point.jsHas('r'), isFalse);
       expect(point, isNot(isA<Map<Object?, Object?>>()));
-      expect(() => point.jsWrite('y', 3), throwsA(isA<TypeError>()));
-      expect(() => point.jsDelete('x'), throwsA(isA<TypeError>()));
-      expect(point.y, 2.0);
+      point.jsWrite('y', 3.0);
+      expect(point.y, 3.0);
+      expect(point.jsDelete('x'), isTrue);
+      expect(point.x, same(undefined));
     });
   });
 

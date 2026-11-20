@@ -309,11 +309,9 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     final meta = cachedMeta;
 
     if (parsing == null) {
-      // The same List: `meta._parsed === dataset.data`. A string gives the
-      // List of its characters.
-      meta.parsed = data is String
-          ? JsStringList(data)
-          : data! as List<Object?>;
+      // The same List: `meta._parsed === dataset.data`, a List of parsed
+      // items (row `adapt-parsed-data-items`).
+      meta.parsed = parsedDataItems(data);
     } else {
       var getter = (int i) => jsToNumber(jsGetIndex(data, i));
 
@@ -325,7 +323,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       // DIVERGES(chartjs): adapt-parse-presize, one growth for numbers.
       presizeParsedNumbers(meta.parsed, data, start, count);
       for (var i = start, ilen = start + count; i < ilen; ++i) {
-        final value = getter(i);
+        // DIVERGES(chartjs): adapt-parsed-data-items, the number in `r`.
+        final value = ParsedItem()..r = getter(i);
         // `meta._parsed[i] = value`: a write at the length appends.
         if (i == meta.parsed.length) {
           meta.parsed.add(value);
@@ -473,12 +472,12 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
               ),
             )) ||
         !chart.getDataVisibility(i) ||
-        jsGetIndex(meta.parsed, i) == null ||
+        parsedNumberOf(meta.parsed, i) == null ||
         jsTruthy(meta.data[i].hidden)) {
       return 0;
     }
     return calculateCircumference(
-      jsToNumber(jsGetIndex(meta.parsed, i)) * circumference / tau,
+      jsToNumber(parsedNumberOf(meta.parsed, i)) * circumference / tau,
     );
   }
 
@@ -676,7 +675,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     int i;
 
     for (i = 0; i < metaData.length; i++) {
-      final value = jsGetIndex(meta.parsed, i);
+      final value = parsedNumberOf(meta.parsed, i);
       if (value != null &&
           !jsIsNaN(value) &&
           chart.getDataVisibility(i) &&
@@ -711,7 +710,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
     final labelsValue = jsGet(chart.data, 'labels');
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
     final value = formatNumber(
-      jsToNumber(jsGetIndex(meta.parsed, index)),
+      jsToNumber(parsedNumberOf(meta.parsed, index)),
       localeOf(readOption(chart.options, OptionKey.locale)),
     );
 

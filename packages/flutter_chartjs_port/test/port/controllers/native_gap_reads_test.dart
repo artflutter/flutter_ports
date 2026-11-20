@@ -9,6 +9,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/parsed_items.dart';
+
 /// The x values of `gapData` of tool/reference/controller_line_reference.mjs:
 /// the steps 1, 3, 1, 1, 3 and 1, with the value `null` at the index 3.
 const List<(num, num?)> _points = [
@@ -22,13 +24,17 @@ const List<(num, num?)> _points = [
 ];
 
 /// A data item of the [form] `parsed` (a plain Map that the parse turns into
-/// a [ParsedItem]), `map` (a plain Map with `parsing: false`), `int` (as
-/// `map` with `int` x values) or `point` (a [DataPoint]).
+/// a [ParsedItem]), `map` (a [ParsedItem] of a plain Map with `parsing:
+/// false`), `int` (as `map` with `int` x values) or `point` (a [DataPoint]).
 Object? _item(String form, (num, num?) point) {
   final (x, y) = point;
   return switch (form) {
     'point' => DataPoint(x, y),
-    'int' => <String, Object?>{'x': x.toInt(), 'y': y},
+    'int' => parsedItemOf(<String, Object?>{'x': x.toInt(), 'y': y}),
+    'map' => parsedItemOf(<String, Object?>{
+      'x': x.toDouble(),
+      'y': y?.toDouble(),
+    }),
     _ => <String, Object?>{'x': x.toDouble(), 'y': y?.toDouble()},
   };
 }
@@ -95,7 +101,10 @@ List<bool?> _stops(Chart chart) => [
   addTearDown(() => nativeGapReadsEnabled = saved);
   for (final enabled in [true, false]) {
     nativeGapReadsEnabled = enabled;
-    final chart = Chart(UiCanvasElement(width: 640, height: 400), config());
+    final chart = Chart(
+      UiCanvasElement(width: 640, height: 400),
+      withParsedDataItems(config()),
+    );
     addTearDown(chart.destroy);
     before?.call(chart);
     final start = nativeGapReadsTaken;
@@ -149,7 +158,7 @@ class _WritingScale(super.cfg) extends LinearScale {
   double getPixelForValue(double value, [int? index]) {
     if (armed && index == 2) {
       armed = false;
-      (data[1]! as Map<String, Object?>)['x'] = 100.0;
+      jsSet(data[1], 'x', 100.0);
     }
     return super.getPixelForValue(value, index);
   }
@@ -161,7 +170,7 @@ class _WritingValue(final List<Object?> data) {
   var _calls = 0;
   @override
   String toString() {
-    (data[1]! as Map<String, Object?>)['x'] = _calls.isEven ? 100.0 : 1.0;
+    jsSet(data[1], 'x', _calls.isEven ? 100.0 : 1.0);
     _calls++;
     return '5';
   }
@@ -181,7 +190,6 @@ class _UserPoint([final void Function()? onY]) extends PointElement {
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
-  registerDataUpdateTypes([<DataPoint>[].runtimeType], [DataPoint]);
 
   const stopsOf1_5 = [false, false, true, false, false, true, false];
   const noStops = [false, false, false, false, false, false, false];
@@ -358,7 +366,7 @@ void main() {
       test('a value whose ToNumber runs user code keeps the read', () {
         final twins = _twins(() {
           final data = <Object?>[for (final p in _points) _item('map', p)];
-          (data[2]! as Map<String, Object?>)['y'] = _WritingValue(data);
+          jsSet(data[2], 'y', _WritingValue(data));
           return _config(
             type,
             form: 'map',
@@ -372,83 +380,12 @@ void main() {
         expect(twins.takes, line ? 4 : 0);
       });
 
-      test('a user map item keeps each of its reads', () {
-        final logs = <List<Object?>>[];
-        for (final enabled in [true, false]) {
-          final saved = nativeGapReadsEnabled;
-          nativeGapReadsEnabled = enabled;
-          addTearDown(() => nativeGapReadsEnabled = saved);
-          final log = <Object?>[];
-          final cfg = _config(
-            type,
-            form: 'map',
-            spanGaps: 1.5,
-            data: <Object?>[
-              for (final (x, y) in _points)
-                _LoggedMap({'x': x.toDouble(), 'y': y?.toDouble()}, log),
-            ],
-          );
-          final chart = Chart(UiCanvasElement(width: 640, height: 400), cfg);
-          addTearDown(chart.destroy);
-          log.clear();
-          final start = nativeGapReadsTaken;
-          chart.update(UpdateMode.none);
-          expect(nativeGapReadsTaken, start);
-          expect(_stops(chart), stopsOf1_5);
-          logs.add(List.of(log));
-          nativeGapReadsEnabled = saved;
-        }
-        expect(logs[0], isNotEmpty);
-        expect(logs[0], logs[1]);
-      });
-
-      test('a map with user equality keeps each of its calls', () {
-        final counts = <int>[];
-        for (final enabled in [true, false]) {
-          final saved = nativeGapReadsEnabled;
-          nativeGapReadsEnabled = enabled;
-          addTearDown(() => nativeGapReadsEnabled = saved);
-          var calls = 0;
-          final cfg = _config(
-            type,
-            form: 'map',
-            spanGaps: 1.5,
-            data: <Object?>[
-              for (final (x, y) in _points)
-                LinkedHashMap<String, Object?>(
-                    equals: (a, b) {
-                      calls++;
-                      return a == b;
-                    },
-                    hashCode: (k) {
-                      calls++;
-                      return k.hashCode;
-                    },
-                  )
-                  ..['x'] = x.toDouble()
-                  ..['y'] = y?.toDouble(),
-            ],
-          );
-          final chart = Chart(UiCanvasElement(width: 640, height: 400), cfg);
-          addTearDown(chart.destroy);
-          calls = 0;
-          final start = nativeGapReadsTaken;
-          chart.update(UpdateMode.none);
-          expect(nativeGapReadsTaken, start);
-          expect(_stops(chart), stopsOf1_5);
-          counts.add(calls);
-          nativeGapReadsEnabled = saved;
-        }
-        expect(counts[0], greaterThan(0));
-        expect(counts[0], counts[1]);
-      });
-
       test('a point of a user class ends the proof at its pass', () {
         final twins = _twins(
           () => _config(type, form: 'map', spanGaps: 1.5, dataset: options),
           before: (chart) {
             final meta = chart.getDatasetMeta(0);
-            final item = meta.parsed[4]! as Map<String, Object?>;
+            final item = meta.parsed[4]!;
             // The write of y of the point 5 writes the x 8.5 into the item 4
             // before the gap test of the pass 5: |9 - 8.5| is not above 1.5.
             meta.data[5] = _UserPoint(() => item['x'] = 8.5);
@@ -549,7 +486,7 @@ void main() {
       // A native map after a user one, and the reverse.
       expect(gaps.qualify(<String, Object?>{}, 1.0, 2.0), 1.0);
       // A new parsed list of the meta ends the proof.
-      meta.parsed = <Object?>[...meta.parsed];
+      meta.parsed = <ParsedItem?>[...meta.parsed];
       expect(gaps.qualify(parsed, 1.0, 2.0), isNull);
     });
 

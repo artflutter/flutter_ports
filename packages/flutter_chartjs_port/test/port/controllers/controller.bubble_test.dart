@@ -11,6 +11,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
 import '../../support/light_theme.dart';
+import '../../support/parsed_items.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_bubble_reference.dart';
 import 'controller_chart_harness.dart';
@@ -87,6 +88,13 @@ Chart _labelsChart(List<Object?> labels) {
   return acquireChartRoot(root);
 }
 
+/// The reference cases with a data item of `parsing: false` that is not a
+/// ParsedItem: it stops a debug build (row `adapt-parsed-data-items`).
+const Map<String, String> _parsedItemSkips = {
+  'parsed: parsing false, [x, y, r] arrays':
+      'diverges: adapt-parsed-data-items',
+};
+
 void main() {
   testReferenceOrigin(
     node: controllerBubbleReferenceNode,
@@ -106,13 +114,18 @@ void main() {
     expect(names.skip(7).where((n) => !prefixed(n)), isEmpty);
   });
 
-  testControllerChartCases(controllerBubbleReference, functions: _functions);
+  testControllerChartCases(
+    controllerBubbleReference,
+    functions: _functions,
+    skips: _parsedItemSkips,
+  );
 
   group('theming.md §8 test 3: the light preset', () {
     testControllerChartCases(
       controllerBubbleReference,
       functions: _functions,
       theme: compileLightTheme(),
+      skips: _parsedItemSkips,
     );
 
     testWidgets('the light preset leaves no stale scale key', (tester) async {
@@ -131,26 +144,6 @@ void main() {
   // generated value. The generated cases `parsed: ...` give the upstream
   // values of the same configs.
   group('parsed data', () {
-    testWidgets('parsing false and [x, y, r] arrays give x and y NaN, skip '
-        'true and radius 3', (tester) async {
-      final chart = _chart(
-        _one(
-          <String, Object?>{'parsing': false},
-          <Object?>[
-            <Object?>[1.0, 2.0, 5.0],
-            <Object?>[3.0, 4.0, 6.0],
-          ],
-        ),
-      );
-      for (final point in chart.getDatasetMeta(0).data) {
-        final read = point as ElementPropertyRead;
-        expect(read['x'], isNaN);
-        expect(read['y'], isNaN);
-        expect(read['skip'], isTrue);
-        expect(jsGet(point.options, 'radius'), 3);
-      }
-    });
-
     testWidgets('parsing false and a null item throw a TypeError', (
       tester,
     ) async {
@@ -159,7 +152,7 @@ void main() {
           _one(
             <String, Object?>{'parsing': false},
             <Object?>[
-              <String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0},
+              parsedItemOf(<String, Object?>{'x': 1.0, 'y': 2.0, 'r': 3.0}),
               null,
             ],
           ),

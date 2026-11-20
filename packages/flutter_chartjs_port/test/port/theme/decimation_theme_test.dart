@@ -9,6 +9,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/parsed_items.dart';
 
 // theming.md section 10, the phase 8 row, and the theme spec of phase 8
 // (Chart.js ADR 0042): a theme leaves the decimated data and `_data` of
@@ -56,10 +57,11 @@ final List<(String, ChartOptionsScope? Function())> _runs = [
   ('a local theme', _localTheme),
 ];
 
-/// The 5000 input items `{x: i, y: f(i)}`, new for each chart.
+/// The 5000 input items `{x: i, y: f(i)}`, new for each chart: parsed
+/// items, the data items of `parsing: false`.
 List<Object?> _input() => <Object?>[
   for (var i = 0; i < 5000; i++)
-    <String, Object?>{'x': i, 'y': (i * 37) % 101 + (i ~/ 250)},
+    parsedItemOf(<String, Object?>{'x': i, 'y': (i * 37) % 101 + (i ~/ 250)}),
 ];
 
 /// What the test compares after a draw.

@@ -9,6 +9,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const red = ui.Color(0xffff0000);
 const blue = ui.Color(0xff0000ff);
@@ -215,6 +216,26 @@ class _ObservedMap(final Map<String, Object?> fields)
   void clear() => fields.clear();
 }
 
+/// A y value whose `ToNumber` (its `toString`) runs [onRead]: user code in
+/// the read of a parsed item, which runs none in its own reads (row
+/// `adapt-parsed-data-items`).
+class _ReadingValue(final double value) {
+  void Function()? onRead;
+  @override
+  String toString() {
+    onRead?.call();
+    return '$value';
+  }
+}
+
+/// A copy of the parsed item [item] with [y] as its y value.
+ParsedItem _withY(Object? item, Object? y) {
+  final source = item! as ParsedItem;
+  return ParsedItem()
+    ..x = source.x
+    ..y = y;
+}
+
 const _length = 12;
 
 Object? _plain(Object? value) {
@@ -380,7 +401,10 @@ Map<String, Object?> _config(
 }
 
 Chart _chart(Map<String, Object?> config) {
-  final chart = Chart(UiCanvasElement(width: 640, height: 400), config);
+  final chart = Chart(
+    UiCanvasElement(width: 640, height: 400),
+    withParsedDataItems(config),
+  );
   addTearDown(chart.destroy);
   return chart;
 }
@@ -680,10 +704,8 @@ void main() {
         final dataset =
             (data['datasets']! as List<Object?>)[0]! as Map<String, Object?>;
         final items = List<Object?>.of(dataset['data']! as List<Object?>);
-        final observed = _ObservedMap(
-          Map.of(items[0]! as Map<String, Object?>),
-        );
-        items[0] = observed;
+        final observed = _ReadingValue((items[0]! as ParsedItem).y! as double);
+        items[0] = _withY(items[0], observed);
         dataset['data'] = items;
         observed.onRead = () {
           if (!armed) return;
@@ -845,10 +867,8 @@ void main() {
         final dataset =
             (data['datasets']! as List<Object?>)[0]! as Map<String, Object?>;
         final items = List<Object?>.of(dataset['data']! as List<Object?>);
-        final observed = _ObservedMap(
-          Map.of(items[8]! as Map<String, Object?>),
-        );
-        items[8] = observed;
+        final observed = _ReadingValue((items[8]! as ParsedItem).y! as double);
+        items[8] = _withY(items[8], observed);
         dataset['data'] = items;
         chart.update(UpdateMode.none);
         var busy = false;

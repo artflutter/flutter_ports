@@ -20,6 +20,7 @@ import '../../support/fill_json.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/list_splice.dart';
+import '../../support/parsed_items.dart';
 import '../../support/point_style_json.dart';
 import '../../support/scale_options_of.dart';
 import 'dataset_controller_reference.dart';
@@ -631,14 +632,38 @@ final class _Run(final AnyObject spec) {
     chart = _FakeChart(config, spec);
   }
 
-  final Config config = Config(<String, Object?>{
-    'type': spec['chartType'] ?? 'test',
-    'data': <String, Object?>{
-      'labels': _materialize(spec['labels'] ?? <Object?>[]),
-      'datasets': _materialize(spec['datasets']),
-    },
-    'options': _materialize(spec['options'] ?? <String, Object?>{}),
-  });
+  // The data items of `parsing: false` are parsed items (row
+  // `adapt-parsed-data-items`).
+  final Config config = Config(
+    withParsedDataItems(<String, Object?>{
+      'type': spec['chartType'] ?? 'test',
+      'data': <String, Object?>{
+        'labels': _materialize(spec['labels'] ?? <Object?>[]),
+        'datasets': _materialize(spec['datasets']),
+      },
+      'options': _materialize(spec['options'] ?? <String, Object?>{}),
+    }),
+  );
+
+  /// Whether the dataset [ds] has `parsing: false`: its own option, or the
+  /// chart option.
+  bool _parsingOff(Object? ds) {
+    final dataset = _dataset(ds);
+    if (dataset.containsKey('parsing')) return dataset['parsing'] == false;
+    final options = spec['options'];
+    return options is Map && options['parsing'] == false;
+  }
+
+  /// The new data items [items] of the dataset [ds]: a Map is a parsed item
+  /// when the dataset has `parsing: false`.
+  List<Object?> _dataItems(Object? ds, Object? items) {
+    final list = items! as List<Object?>;
+    if (!_parsingOff(ds)) return list;
+    return [
+      for (final item in list)
+        if (item is Map) parsedItemOf(item) else item,
+    ];
+  }
 
   late final _FakeChart chart;
 
@@ -705,7 +730,7 @@ final class _Run(final AnyObject spec) {
           ..drawCount = (args[2] as num?)?.toInt();
       case 'push':
         final data = _dataOf(args[0]);
-        final items = _materialize(args.sublist(1))! as List<Object?>;
+        final items = _dataItems(args[0], _materialize(args.sublist(1)));
         data.addAll(items);
         notifyArrayListeners(data, 'push', items);
       case 'pop':
@@ -716,7 +741,7 @@ final class _Run(final AnyObject spec) {
         notifyArrayListeners(data, 'shift', const []);
       case 'splice':
         final data = _dataOf(args[0]);
-        final items = _materialize(args.sublist(3))! as List<Object?>;
+        final items = _dataItems(args[0], _materialize(args.sublist(3)));
         spliceList(
           data,
           jsToNumber(args[1]).toInt(),
@@ -726,14 +751,23 @@ final class _Run(final AnyObject spec) {
         notifyArrayListeners(data, 'splice', [args[1], args[2], ...items]);
       case 'unshift':
         final data = _dataOf(args[0]);
-        final items = _materialize(args.sublist(1))! as List<Object?>;
+        final items = _dataItems(args[0], _materialize(args.sublist(1)));
         data.insertAll(0, items);
         notifyArrayListeners(data, 'unshift', items);
       case 'setData':
-        _dataset(args[0])['data'] = _materialize(args[1]);
+        final data = _materialize(args[1]);
+        _dataset(args[0])['data'] = data is List<Object?>
+            ? _dataItems(args[0], data)
+            : data;
       case 'setItemKey':
-        (_dataOf(args[0])[_int(args[1])]! as AnyObject)[args[2]! as String] =
-            _materialize(args[3]);
+        final item = _dataOf(args[0])[_int(args[1])];
+        final value = _materialize(args[3]);
+        switch (item) {
+          case final ParsedItem parsed:
+            parsed[args[2]! as String] = value;
+          default:
+            (item! as AnyObject)[args[2]! as String] = value;
+        }
       case 'setDataset':
         _dataset(args[0])[args[1]! as String] = _materialize(args[2]);
       case 'hidden':
@@ -798,12 +832,13 @@ final class _Run(final AnyObject spec) {
         final c = controller(args[0]);
         final value = c.applyStack(
           chart.scales[args[1]]!,
-          c.getParsed(jsToNumber(args[2]).toInt()),
+          c.getParsed(jsToNumber(args[2]).toInt())!,
           _stackModeOf(args[3]),
         );
         out.add(
           'applyStack ${_s(args[0])} ${args[1]} ${_s(args[2])} '
-          '${_s(args[3])}: ${_enc(value)}',
+          // Dart `null` is the JS `undefined` of a `null` value.
+          '${_s(args[3])}: ${_enc(value ?? undefined)}',
         );
       case 'labelAndValue':
         final (:label, :value) = controller(args[0])
@@ -1055,7 +1090,12 @@ void main() {
     // The label of a value that is not a number on the fake scale: the port
     // gives the fake its number, where upstream gives the value as it is.
     'parsePrimitiveData with labels': 'diverges: adapt-native-scale-values',
-    'parsing false with primitive data': 'diverges: adapt-native-scale-values',
+    // The scenarios that the native types rule out: a string sum of a stack
+    // and a data item of `parsing: false` that is not a parsed item.
+    'stacked strings with parsing false': 'diverges: adapt-apply-stack-number',
+    'parsing false with primitive data': 'diverges: adapt-parsed-data-items',
+    'parsing false with stacked primitive data':
+        'diverges: adapt-parsed-data-items',
   };
 
   group('upstream scenarios', () {
@@ -1261,29 +1301,12 @@ void main() {
         [0.0, '_insertElements', 2.0, 1.0],
       ]);
     });
-
-    test('with parsing false, the parsed items are the characters', () {
-      final run = _runTo('parsing false and the array listener', 1);
-      run._dataset(0)['data'] = '12';
-      run.step(<Object?>['elements', false]);
-      final meta = run.meta(0);
-      expect(meta.data, hasLength(2));
-      expect(meta.parsed, ['1', '2']);
-      // A write into a string throws a TypeError in strict mode code.
-      expect(() => meta.parsed[0] = '3', throwsA(isA<TypeError>()));
-      // With parsing false, `meta.parsed` is the `_data` of `_dataCheck`.
-      // A notify on it reaches a listener if `_dataCheck` added one. The
-      // string has no listener (core.datasetController.js:386), thus the
-      // notify changes nothing (finding F3 of the X-fix review).
-      expect(run.chart.dataChanges, isEmpty);
-      notifyArrayListeners(meta.parsed, 'push', const ['3']);
-      expect(run.chart.dataChanges, isEmpty);
-    });
   });
 
-  group('js-semantics-resolver-objects', () {
+  group('adapt-parsed-data-items', () {
     // With parsing false and a stacked scale, updateStacks writes
     // `item._stacks = {}` into each data item (core.datasetController.js:165).
+    // Each data item is a ParsedItem, which takes the stacks in its field.
     Map<String, Object?> spec(Object? data) => {
       'name': 'stacked data items',
       'scales': <Object?>[
@@ -1302,197 +1325,43 @@ void main() {
       'steps': <Object?>[],
     };
 
-    test('a data item of a narrow Map type throws a TypeError', () {
-      final items = [
-        {'x': 0.0, 'y': 1.0},
-        {'x': 1.0, 'y': 2.0},
-      ];
-      expect(items, isA<List<Map<String, double>>>());
-      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
-      run._dataset(0)['data'] = items;
-      expect(
-        () => run.step(<Object?>['elements', false]),
-        throwsA(isA<TypeError>()),
-      );
-    });
-
-    test('a data item of the type Map<String, Object?> takes the stacks', () {
-      final items = <Object?>[
+    test('a parsed data item takes the stacks in its field', () {
+      final items = parsedItemsOf([
         <String, Object?>{'x': 0.0, 'y': 1.0},
         <String, Object?>{'x': 1.0, 'y': 2.0},
-      ];
+      ]);
       final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
       run._dataset(0)['data'] = items;
       run.step(<Object?>['elements', false]);
-      expect(
-        (items[0]! as Map<String, Object?>)['_stacks'],
-        isA<JsObjectFace>(),
-      );
-    });
-
-    // stacksOf is the read `item._stacks` (Chart.js ADR 0036). For a value
-    // that is not a List, it gives the value of the Map read for a Map and
-    // of jsGet for another value, as the earlier form of the readers.
-    test('stacksOf reads the _stacks of a Map, a number and null', () {
-      final stacks = <String, Object?>{};
-      expect(stacksOf(<String, Object?>{'_stacks': stacks}), same(stacks));
-      // An absent key gives Dart null, as the Map read does.
-      expect(stacksOf(<String, Object?>{'x': 1.0}), isNull);
-      expect(stacksOf(5.0), same(jsGet(5.0, '_stacks')));
-      expect(stacksOf(5.0), same(undefined));
-      expect(stacksOf(true), same(undefined));
-      expect(() => stacksOf(null), throwsA(isA<TypeError>()));
-      expect(() => stacksOf(undefined), throwsA(isA<TypeError>()));
-    });
-
-    test('stacksOf gives the entry that updateStacks writes for a List', () {
-      // core.datasetController.js:165 writes `item._stacks = {}` into an
-      // array item. The port keeps the property in an Expando.
-      final items = <Object?>[
-        <Object?>[0.0, 1.0],
-        <Object?>[1.0, 2.0],
-      ];
-      expect(stacksOf(items[0]), isNull);
-      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
-      run._dataset(0)['data'] = items;
-      run.step(<Object?>['elements', false]);
+      expect(identical(run.meta(0).parsed, items), isTrue);
       for (final item in items) {
-        final itemStacks = stacksOf(item);
-        expect(itemStacks, isA<JsObjectFace>());
-        expect(jsObjectKeys(itemStacks), ['y']);
-        // The same entry at each read.
-        expect(stacksOf(item), same(itemStacks));
+        expect(item!.stacks, isA<ItemStacks>());
+        expect(jsObjectKeys(item.stacks), ['y']);
       }
-      // An array has no property x or y: the index key of both items is
-      // 'undefined', so both items share one stack, as upstream.
-      final stack = jsGetKey(stacksOf(items[0]), 'y');
-      expect(jsGetKey(stacksOf(items[1]), 'y'), same(stack));
-      expect(jsObjectKeys(stack), ['0', '_top', '_bottom', '_visualValues']);
-      expect(jsGetKey(stack, '0'), same(undefined));
-      // The Expando entry belongs to the List object, not to its items.
-      expect(stacksOf(<Object?>[0.0, 1.0]), isNull);
     });
 
-    test('a stack change moves a List item to the new stack', () {
-      // core.datasetController.js:416-419: a change of the dataset stack
-      // calls clearStacks (:208-227), which reads `parsed._stacks` of each
-      // item. An array has no property y, so the value of the dataset in the
-      // old stack is undefined, and clearStacks skips the item (:220). Then
-      // updateStacks puts the item into the stack of the new key.
-      final items = <Object?>[
-        <Object?>[0.0, 1.0],
-      ];
-      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
-      run._dataset(0)['data'] = items;
-      run.step(<Object?>['elements', false]);
-      final itemStacks = stacksOf(items[0])! as JsObjectFace;
-      final oldStack = itemStacks['y']! as JsObjectFace;
-      expect(oldStack.jsHas('0'), isTrue);
-      run
-        ..step(<Object?>['setDataset', 0, 'stack', 'other'])
-        ..step(<Object?>['elements', false]);
-      expect(jsObjectKeys(run.chart.stacks), ['x.y.test', 'x.y.other']);
-      // The same `_stacks` object, with the stack of the new key.
-      expect(stacksOf(items[0]), same(itemStacks));
-      final newStack = itemStacks['y']! as JsObjectFace;
-      expect(identical(newStack, oldStack), isFalse);
-      expect(jsGetKey(newStack, '0'), same(undefined));
-      // clearStacks skips the undefined value: the key stays.
-      expect(oldStack.jsHas('0'), isTrue);
-    });
-
-    // applyStack (core.datasetController.js:599) and updateRangeFromParsed
-    // (:610) read `parsed._stacks[scale.axis]` through stacksOf. No upstream
-    // controller calls them with an array item: getMinMax skips the item
-    // (:633-636). A direct call reads the stack of the item.
-    test('applyStack and updateRangeFromParsed read the List stacks', () {
-      final items = <Object?>[
-        <Object?>[0.0, 1.0],
-        <Object?>[1.0, 2.0],
-      ];
-      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
-      run._dataset(0)['data'] = items;
-      run.step(<Object?>['elements', false]);
-      final controller = run.controller(0);
-      final yScale = run.chart.scales['y']!;
-      // The Node.js probe of the pinned build gives undefined.
-      expect(controller.applyStack(yScale, items[0]), same(undefined));
-      // The Node.js probe gives the range NaN, NaN without a throw.
-      final range = _MinMax(double.infinity, double.negativeInfinity);
-      final stack = DatasetStack(<int>[0], null);
-      controller.updateRangeFromParsed(range, yScale, items[0], stack);
-      expect(range.min, isNaN);
-      expect(range.max, isNaN);
-      // updateRangeFromParsed writes the stack of the item into the values.
-      expect(stack.values, same(jsGetKey(stacksOf(items[0]), 'y')));
-    });
-
-    // A Date (Chart.js ADR 0024) and a function are objects: the write
-    // `item._stacks = {}` (core.datasetController.js:165) adds the property.
-    // The Node.js probe of the pinned build gives no throw and the key y.
-    test('DateTime and function data items take the stacks', () {
+    test('a data item that is not a ParsedItem stops a debug build', () {
       Object? f0() => null;
-      Object? f1() => null;
-      for (final items in <List<Object?>>[
-        <Object?>[DateTime.utc(1970), DateTime.utc(1971)],
-        <Object?>[f0, f1],
-      ]) {
-        final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
-        run._dataset(0)['data'] = items;
-        run.step(<Object?>['elements', false]);
-        for (final item in items) {
-          final itemStacks = stacksOf(item);
-          expect(itemStacks, isA<JsObjectFace>());
-          expect(jsObjectKeys(itemStacks), ['y']);
-          expect(stacksOf(item), same(itemStacks));
-        }
-        // The applyStack of the Node.js probe gives undefined.
-        expect(
-          run.controller(0).applyStack(run.chart.scales['y']!, items[0]),
-          same(undefined),
-        );
-      }
-      // The Expando entry belongs to the object: an equal DateTime has none.
-      expect(stacksOf(DateTime.utc(1970)), isNull);
-    });
-
-    test('a class value takes the stacks as a static property', () {
-      // A class is a function (Chart.js ADR 0020). The Node.js probe with
-      // `class A { static x = 0; static y = 1; }` and `class B extends A {}`:
-      // A gets an own `_stacks`, B reads the `_stacks` of A through its
-      // static prototype and writes no own property. Both items put the
-      // value 1 into the stack '0' of A.
-      final a = JsClass('A', statics: <String, Object?>{'x': 0.0, 'y': 1.0});
-      final b = JsClass('B', superclass: a);
-      final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
-      run._dataset(0)['data'] = <Object?>[a, b];
-      run.step(<Object?>['elements', false]);
-      expect(a.has('_stacks'), isTrue);
-      final itemStacks = a['_stacks'];
-      expect(itemStacks, isA<JsObjectFace>());
-      expect(jsObjectKeys(itemStacks), ['y']);
-      expect(stacksOf(a), same(itemStacks));
-      expect(stacksOf(b), same(itemStacks));
-      expect(run.chart.stacks!['x.y.test']!.keys.toList(), ['0']);
-      expect(jsGetKey(jsGetKey(itemStacks, 'y'), '0'), 1.0);
-    });
-
-    test('a primitive data item throws at the write of _stacks', () {
-      // A property write into a number, a string or a boolean in the strict
-      // code of an ES module. The Node.js probe of the pinned build gives
-      // "Cannot create property '_stacks' on number '1'" and "... on string
-      // 'a'". The port throws the plain TypeError of the write, not the
-      // Dart _TypeError of a later cast.
-      for (final items in <List<Object?>>[
+      for (final items in <Object?>[
+        <Object?>[
+          <String, Object?>{'x': 0.0, 'y': 1.0},
+        ],
+        <Object?>[
+          <Object?>[0.0, 1.0],
+        ],
+        <Object?>[DateTime.utc(1970)],
+        <Object?>[f0],
+        <Object?>[JsClass('A')],
         <Object?>[1.0, 2.0],
         <Object?>['a', 'b'],
         <Object?>[true, false],
+        '12',
       ]) {
         final run = _Run(spec(<Object?>[]))..step(<Object?>['build']);
         run._dataset(0)['data'] = items;
         expect(
           () => run.step(<Object?>['elements', false]),
-          throwsA(predicate((e) => e.runtimeType == TypeError)),
+          throwsA(isA<AssertionError>()),
           reason: '$items',
         );
       }
@@ -1741,15 +1610,15 @@ void main() {
       expect(controller.getDataset(), isA<AnyObject>());
     });
 
-    test('getParsed gives undefined and getDataElement null for a missing '
+    test('getParsed and getDataElement give null for a missing '
         'index', () {
       final run = _runTo('parsePrimitiveData with labels', 2);
       final controller = run.controller(0);
       expect(controller.getParsed(0), isA<JsObjectFace>());
-      // A parsed item can be JS null. Thus a missing index gives the
-      // undefined sentinel.
-      expect(controller.getParsed(9), same(undefined));
-      expect(controller.getParsed(-1), same(undefined));
+      // A missing index gives Dart null, the JS undefined (row
+      // adapt-parsed-data-items).
+      expect(controller.getParsed(9), isNull);
+      expect(controller.getParsed(-1), isNull);
       expect(controller.getDataElement(4), isA<PointElement>());
       expect(controller.getDataElement(5), isNull);
     });
@@ -1817,7 +1686,3 @@ final class _ModeController(
     modes.add(mode);
   }
 }
-
-/// A plain `{min, max}` object for `updateRangeFromParsed`.
-final class _MinMax(@override var double min, @override var double max)
-    implements MinMax;

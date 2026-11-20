@@ -2,7 +2,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const _red = ChartPaint.solid(ui.Color(0xffff0000));
 const _blue = ChartPaint.solid(ui.Color(0xff0000ff));
@@ -30,25 +30,6 @@ class _SubScatter(super.chart, super.datasetIndex, [super.newTarget])
       return _SubScatter(chart, datasetIndex, newTarget);
     },
   );
-}
-
-/// A map item whose reads are user code: it logs each key that it gives.
-class _LoggedMap(final Map<String, Object?> fields, final List<Object?> log)
-    extends MapBase<String, Object?> {
-  @override
-  Object? operator [](Object? key) {
-    log.add(key);
-    return fields[key];
-  }
-
-  @override
-  void operator []=(String key, Object? value) => fields[key] = value;
-  @override
-  Iterable<String> get keys => fields.keys;
-  @override
-  Object? remove(Object? key) => fields.remove(key);
-  @override
-  void clear() => fields.clear();
 }
 
 /// The values of the points: steps of 1 and 3, a null value, a NaN, values
@@ -74,7 +55,11 @@ Object? _item(String form, (num, num?) point, {double shift = 0}) {
   final (x, y) = point;
   return switch (form) {
     'point' => DataPoint(x + shift, y),
-    'int' => <String, Object?>{'x': x.toInt(), 'y': y?.toInt()},
+    'int' => parsedItemOf(<String, Object?>{'x': x.toInt(), 'y': y?.toInt()}),
+    'map' => parsedItemOf(<String, Object?>{
+      'x': x.toDouble() + shift,
+      'y': y?.toDouble(),
+    }),
     _ => <String, Object?>{'x': x.toDouble() + shift, 'y': y?.toDouble()},
   };
 }
@@ -180,7 +165,10 @@ List<Object?> _observe(Chart chart) {
     final bulkBefore = bulkPointUpdatesTaken;
     final gapsBefore = nativeGapReadsTaken;
     final cfg = config();
-    final chart = Chart(UiCanvasElement(width: 400, height: 300), cfg);
+    final chart = Chart(
+      UiCanvasElement(width: 400, height: 300),
+      withParsedDataItems(cfg),
+    );
     addTearDown(chart.destroy);
     (steps ?? _newData)(chart, cfg);
     if (enabled) {
@@ -204,7 +192,7 @@ void _newData(Chart chart, ChartConfigurationScope cfg) {
   final kind = parsing == false
       ? (data.first is DataPoint
             ? 'point'
-            : ((data.first! as Map)['x'] is int ? 'int' : 'map'))
+            : ((data.first! as ParsedItem).x is int ? 'int' : 'map'))
       : 'parsed';
   _dataset(cfg)['data'] = _data(kind, shift: kind == 'int' ? 0 : 0.5);
   chart.update(UpdateMode.none);
@@ -212,7 +200,6 @@ void _newData(Chart chart, ChartConfigurationScope cfg) {
 
 void main() {
   Chart.register([_SubScatter.value]);
-  registerDataUpdateTypes([<DataPoint>[].runtimeType], [DataPoint]);
 
   group('the bulk run and its twin', () {
     for (final form in ['parsed', 'map', 'int', 'point']) {
@@ -311,27 +298,6 @@ void main() {
       expect(counts.bulk, greaterThan(0));
       final skip8 = (counts.observed[8]! as List)[2];
       expect(skip8, isFalse, reason: 'the string y is not null data');
-    });
-
-    testWidgets('a user map item keeps each of its reads', (tester) async {
-      final logs = <List<Object?>>[];
-      final counts = _twins(
-        () {
-          final log = <Object?>[];
-          logs.add(log);
-          final cfg = _config(form: 'map');
-          final data = _dataset(cfg)['data']! as List<Object?>;
-          data[8] = _LoggedMap({...data[8]! as Map<String, Object?>}, log);
-          return cfg;
-        },
-        (chart, cfg) {
-          logs.last.clear();
-          chart.update(UpdateMode.none);
-        },
-      );
-      expect(counts.bulk, greaterThan(0));
-      expect(logs[0], logs[1]);
-      expect(logs[0], isNotEmpty);
     });
   });
 }

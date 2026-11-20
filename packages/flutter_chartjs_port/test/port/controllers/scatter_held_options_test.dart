@@ -2,7 +2,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const _red = ChartPaint.solid(ui.Color(0xffff0000));
 const _blue = ChartPaint.solid(ui.Color(0xff0000ff));
@@ -32,13 +32,13 @@ class _SubScatter(super.chart, super.datasetIndex, [super.newTarget])
   );
 }
 
-List<Object?> _data(int n, {double shift = 0}) => <Object?>[
+List<Object?> _data(int n, {double shift = 0}) => parsedItemsOf([
   for (var i = 0; i < n; i++)
     <String, Object?>{
       'x': i * 1.0 + shift,
       'y': i.isEven ? (i * 7 % 13) * 1.0 : null,
     },
-];
+]);
 
 ChartConfigurationScope _config({
   String type = 'scatter',
@@ -133,7 +133,10 @@ JsObjectFace _dataset(ChartConfigurationScope cfg) =>
     final heldBefore = heldElementOptionsTaken;
     final gapsBefore = nativeGapReadsTaken;
     final cfg = config();
-    final chart = Chart(UiCanvasElement(width: 400, height: 300), cfg);
+    final chart = Chart(
+      UiCanvasElement(width: 400, height: 300),
+      withParsedDataItems(cfg),
+    );
     addTearDown(chart.destroy);
     steps(chart, cfg);
     end?.call(chart);
@@ -150,34 +153,27 @@ JsObjectFace _dataset(ChartConfigurationScope cfg) =>
   return (held: held, gaps: gaps);
 }
 
-/// A map item whose read of `x` runs [onX]: user code between two option
-/// calls of the loop.
-class _HookItem(final Map<String, Object?> fields, final void Function() onX)
-    extends MapBase<String, Object?> {
+/// A y value whose `ToNumber` (its `toString`) runs [onRead]: user code
+/// between two option calls of the loop. A parsed item runs no user code in
+/// its reads (row `adapt-parsed-data-items`), so the hook is in the value.
+class _HookValue(final double value, final void Function() onRead) {
   @override
-  Object? operator [](Object? key) {
-    if (key == 'x') onX();
-    return fields[key];
+  String toString() {
+    onRead();
+    return '$value';
   }
-
-  @override
-  void operator []=(String key, Object? value) => fields[key] = value;
-  @override
-  Iterable<String> get keys => fields.keys;
-  @override
-  Object? remove(Object? key) => fields.remove(key);
-  @override
-  void clear() => fields.clear();
 }
 
-/// The data of [_data] as [_HookItem]s: the read of `x` of the item [at] runs
-/// [onX] while [armed] gives true.
-List<Object?> _hookData(int at, bool Function() armed, void Function() onX) => [
-  for (final (i, item) in _data(12).indexed)
-    _HookItem(item! as Map<String, Object?>, () {
-      if (i == at && armed()) onX();
-    }),
-];
+/// The data of [_data]: the `ToNumber` of the y value of the item [at] runs
+/// [onRead] while [armed] gives true.
+List<Object?> _hookData(int at, bool Function() armed, void Function() onRead) {
+  final data = _data(12);
+  final item = data[at]! as ParsedItem;
+  item.y = _HookValue(item.y! as double, () {
+    if (armed()) onRead();
+  });
+  return data;
+}
 
 void _newData(Chart chart, ChartConfigurationScope cfg) {
   _dataset(cfg)['data'] = _data(12, shift: 0.5);

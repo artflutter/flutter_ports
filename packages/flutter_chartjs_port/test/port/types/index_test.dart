@@ -139,7 +139,7 @@ void main() {
       expect(identical(t.options, controller.options), isTrue);
       expect(identical(t.getParsed(0), controller.getParsed(0)), isTrue);
       expect(jsGet(t.getParsed(1), 'y'), 2.0);
-      expect(t.getParsed(2), same(undefined));
+      expect(t.getParsed(2), isNull);
       expect(
         _sameOptions(t.getStyle(0), controller.getStyle(0)),
         isTrue,

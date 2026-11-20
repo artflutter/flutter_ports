@@ -3,6 +3,8 @@
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
+import '../../support/parsed_items.dart';
+
 // The pure tests of `lttbDecimation` and `minMaxDecimation` of
 // lib/src/plugins/plugin.decimation.dart (Chart.js ADR 0038, section 9).
 // They run on the VM, with dart2js and with dart2wasm.
@@ -20,43 +22,49 @@ import 'package:test/test.dart';
 // (plugin.decimation.js:268-278).
 
 /// [n] items `{x: i, y: f(i)}`.
-List<Object?> _series(int n, Object? Function(int i) f) => <Object?>[
+List<ParsedItem?> _series(int n, Object? Function(int i) f) => parsedItemsOf([
   for (var i = 0; i < n; i++) <String, Object?>{'x': i, 'y': f(i)},
-];
+]);
 
 /// The y values of the cases: a fixed pattern with peaks.
 int _wave(int i) => (i * 37).remainder(23);
 
 /// [n] items in clusters of 4: the x values of a cluster are 0.25 apart,
 /// and the clusters are 10 apart.
-List<Object?> _clustered(int n) => <Object?>[
+List<ParsedItem?> _clustered(int n) => parsedItemsOf([
   for (var i = 0; i < n; i++)
     <String, Object?>{
       'x': (i ~/ 4) * 10 + (i.remainder(4)) * 0.25,
       'y': (i * 37).remainder(23) - 5,
     },
-];
+]);
 
 /// The matcher of one expected value: NaN matches NaN.
 Matcher _value(Object? expected) =>
     expected is double && expected.isNaN ? isNaN : equals(expected);
 
-/// Expects [actual] to have the items of [expected] in order. Each Map item
-/// has the keys of the expected Map in the same order, and the same values.
-void _expectItems(List<Object?> actual, List<Object?> expected) {
+/// Expects [actual] to have the items of [expected] in order. Each item of
+/// a Map has the keys of the expected Map in the same order, and the same
+/// values. An expected `undefined` item is a Dart `null` item (row
+/// `adapt-parsed-data-items`).
+void _expectItems(List<ParsedItem?> actual, List<Object?> expected) {
   expect(actual, hasLength(expected.length), reason: 'the item count');
   for (var i = 0; i < expected.length; i++) {
-    final want = expected[i];
+    final item = expected[i];
+    // An expected parsed item compares as the Map of its own keys.
+    final want = item is ParsedItem
+        ? <String, Object?>{for (final key in item.jsKeys()) key: item[key]}
+        : item;
     final got = actual[i];
     if (want is Map<String, Object?>) {
-      expect(got, isA<AnyObject>(), reason: 'item $i');
-      final map = got! as AnyObject;
-      expect(jsObjectKeys(map), want.keys.toList(), reason: 'keys of item $i');
+      expect(got, isA<ParsedItem>(), reason: 'item $i');
+      final item = got!;
+      expect(item.jsKeys(), want.keys.toList(), reason: 'keys of item $i');
       for (final MapEntry(:key, :value) in want.entries) {
-        expect(map[key], _value(value), reason: 'item $i.$key');
+        expect(item.jsRead(key), _value(value), reason: 'item $i.$key');
       }
     } else if (identical(want, undefined)) {
-      expect(got, same(undefined), reason: 'item $i');
+      expect(got, isNull, reason: 'item $i');
     } else {
       expect(got, _value(want), reason: 'item $i');
     }
@@ -73,7 +81,8 @@ DecimationOptions _lttb(double samples) => DecimationOptions(
 );
 
 /// `{x, y}`.
-AnyObject _p(Object? x, Object? y) => <String, Object?>{'x': x, 'y': y};
+ParsedItem _p(Object? x, Object? y) =>
+    parsedItemOf(<String, Object?>{'x': x, 'y': y})!;
 
 /// The chart members that `beforeElementsUpdate` reads before its switch
 /// on `algorithm`: one line dataset with [data] on a linear x scale, with
@@ -211,7 +220,7 @@ void main() {
     });
 
     test('lttb string values', () {
-      final data = <Object?>[
+      final data = <ParsedItem?>[
         for (var i = 0; i < 20; i++) _p('$i', '${_wave(i)}'),
       ];
       _expectItems(lttbDecimation(data, 0, 20, 100, _lttb(6)), [
@@ -225,10 +234,10 @@ void main() {
     });
 
     test('lttb no y in the first bucket, samples 3', () {
-      final data = <Object?>[
+      final data = parsedItemsOf([
         for (var i = 0; i < 9; i++)
           if (i < 5) <String, Object?>{'x': i} else _p(i, i),
-      ];
+      ]);
       _expectItems(lttbDecimation(data, 0, 9, 100, _lttb(3)), [
         <String, Object?>{'x': 0},
         undefined,
@@ -237,10 +246,10 @@ void main() {
     });
 
     test('lttb no y in the first bucket, samples 4', () {
-      final data = <Object?>[
+      final data = parsedItemsOf([
         for (var i = 0; i < 9; i++)
           if (i < 4) <String, Object?>{'x': i} else _p(i, i),
-      ];
+      ]);
       // `a` is undefined in the second pass: the read of `data[a]` throws.
       expect(
         () => lttbDecimation(data, 0, 9, 100, _lttb(4)),
@@ -259,14 +268,6 @@ void main() {
         ),
         throwsA(isA<TypeError>()),
       );
-    });
-
-    test('lttb number items', () {
-      _expectItems(lttbDecimation([1, 2, 3, 4, 5, 6], 0, 6, 100, _lttb(3)), [
-        1,
-        undefined,
-        6,
-      ]);
     });
   });
 
@@ -384,41 +385,18 @@ void main() {
       );
     });
 
-    test('min-max array items', () {
-      _expectItems(
-        minMaxDecimation(
-          [
-            _p(0, 5),
-            [9, 9],
-            _p(0.2, 1),
-            <String, Object?>{'x': 0.3, 'y': 3, 'z': 'k'},
-            _p(10, 7),
-          ],
-          0,
-          5,
-          2,
-        ),
-        [
-          _p(0, 5),
-          _p(double.nan, 1),
-          <String, Object?>{'x': 0.3, 'y': 3, 'z': 'k'},
-          _p(10, 7),
-        ],
-      );
-    });
-
     test('min-max key order', () {
       // The spread keeps the order of Object.keys: an index key first, and
       // `x` at its own place.
       _expectItems(
         minMaxDecimation(
-          [
+          parsedItemsOf([
             <String, Object?>{'y': 5, 'x': 0},
             <String, Object?>{'y': 9, '2': 'two', 'x': 0.1},
             <String, Object?>{'y': 1, 'x': 0.2},
             <String, Object?>{'y': 3, 'x': 0.3},
             <String, Object?>{'y': 7, 'x': 10},
-          ],
+          ]),
           0,
           5,
           2,
@@ -431,36 +409,6 @@ void main() {
           <String, Object?>{'y': 7, 'x': 10},
         ],
       );
-    });
-
-    test('min-max Map<dynamic, dynamic> items', () {
-      // An untyped literal gives a Map<dynamic, dynamic> item. The new item
-      // of :124-133 has its String keys in the order of Object.keys and `x`
-      // (probe fix-upstream.mjs, output fix-upstream.out, line F1a). The int
-      // key 7 is not a property: jsGet never reads it, and the copy leaves
-      // it out.
-      final items = <Object?>[
-        <dynamic, dynamic>{'x': 0, 'y': 5},
-        <dynamic, dynamic>{'x': 0.1, 'y': 9, 'z': 'a', '2': 'two', 7: 'int'},
-        <dynamic, dynamic>{'x': 0.2, 'y': 1},
-        <dynamic, dynamic>{'x': 0.3, 'y': 3},
-        <dynamic, dynamic>{'x': 10, 'y': 7},
-      ];
-      final decimated = minMaxDecimation(items, 0, 5, 2);
-      expect(decimated, hasLength(5));
-      for (final k in [0, 3, 4]) {
-        expect(decimated[k], same(items[k]), reason: 'item $k');
-      }
-      final min = decimated[1]! as AnyObject;
-      expect(jsObjectKeys(min), ['2', 'x', 'y', 'z']);
-      expect(min['2'], 'two');
-      expect(min['x'], 0.20000000000000004);
-      expect(min['y'], 9);
-      expect(min['z'], 'a');
-      final max = decimated[2]! as AnyObject;
-      expect(jsObjectKeys(max), ['x', 'y']);
-      expect(max['x'], 0.20000000000000004);
-      expect(max['y'], 1);
     });
 
     test('min-max dx 0', () {

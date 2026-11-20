@@ -5,6 +5,7 @@ import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart' as helpers;
 import 'package:test/test.dart';
 
+import '../../support/parsed_items.dart';
 import 'interaction_reference.dart';
 
 // Upstream behavior that test/specs/core.interaction.tests.js checks only
@@ -173,7 +174,7 @@ final class _Meta({
   @override required final int index,
   @override required final bool sorted,
   @override required final List<IElement> data,
-  @override required final List<Map<String, Object?>> parsed,
+  @override required final List<ParsedItem?> parsed,
   @override required final IElement? dataset,
   @override required final IScale? iScale,
   @override required final IScale? vScale,
@@ -268,7 +269,7 @@ _Chart _chart(InteractionReferenceScene scene, List<String> trace) {
         for (final (i, e) in m.data.indexed)
           _element(e, m.index.toInt(), i, trace),
       ],
-      parsed: m.parsed,
+      parsed: parsedItemsOf(m.parsed),
       dataset: identical(m.spanGaps, undefined)
           ? null
           : (Element()..options = {'spanGaps': m.spanGaps}),

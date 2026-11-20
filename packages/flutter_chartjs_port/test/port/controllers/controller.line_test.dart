@@ -148,6 +148,14 @@ void _expectLinePoints(Chart chart) {
 /// no number for `isNumber` (Chart.js ADR 0175).
 const Map<String, String> _typedNumberSkips = {
   "parsed: spanGaps '2'": 'diverges: adapt-typed-number-test',
+  // With parsing: false, each data item is a ParsedItem: a number or a List
+  // item stops a debug build.
+  'parsed: parsing false, a number item with segment':
+      'diverges: adapt-parsed-data-items',
+  'parsed: stacked List items with parsing false':
+      'diverges: adapt-parsed-data-items',
+  'parsed: stacked numbers with parsing false':
+      'diverges: adapt-parsed-data-items',
 };
 
 void main() {
@@ -310,40 +318,6 @@ void main() {
           ),
         ),
       );
-    });
-
-    testWidgets('stacked List items with parsing false take a stack object '
-        'with the key of the value axis', (tester) async {
-      final chart = acquireChartRoot(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <Object?>[0.0, 1.0],
-                <Object?>[1.0, 2.0],
-              ],
-              'parsing': false,
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'stacked': StackMode.on},
-          },
-        },
-      });
-      final meta = chart.getDatasetMeta(0);
-      for (final item in meta.parsed) {
-        expect(item, isA<List<Object?>>());
-        expect(jsObjectKeys(stacksOf(item)), ['y']);
-      }
-      for (final point in meta.data) {
-        final read = point as ElementPropertyRead;
-        expect(read['x'], isNaN);
-        expect(read['skip'], isTrue);
-      }
     });
 
     testWidgets("spanGaps '2' gives the points of spanGaps true", (

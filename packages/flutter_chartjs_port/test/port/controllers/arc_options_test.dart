@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
@@ -205,6 +206,13 @@ class _ObservedList(final List<Object?> values, final List<Object?> reads)
   void operator []=(int index, Object? value) => values[index] = value;
 }
 
+/// The data items of `parsing: false` with each of [values] in `r`: the
+/// parsed form of a doughnut, pie or polar area item (row
+/// `adapt-parsed-data-items`).
+List<ParsedItem?> _rItems(List<Object?> values) => <ParsedItem?>[
+  for (final value in values) ParsedItem()..r = value,
+];
+
 Map<String, Object?> _dataset([Map<String, Object?>? fields]) => {
   'data': <Object?>[3.0, 1.0, 4.0, 1.0, 5.0, 9.0, 2.0, 6.0],
   'borderWidth': 0.0,
@@ -238,7 +246,10 @@ Map<String, Object?> _first(Map<String, Object?> cfg) =>
 String _refType(String type) => 'ref-$type';
 
 Chart _native(Map<String, Object?> cfg) {
-  final chart = Chart(UiCanvasElement(width: 640, height: 400), cfg);
+  final chart = Chart(
+    UiCanvasElement(width: 640, height: 400),
+    withParsedDataItems(cfg),
+  );
   addTearDown(chart.destroy);
   return chart;
 }
@@ -247,7 +258,7 @@ Chart _reference(Map<String, Object?> cfg, _Reference reference) {
   final canvas = UiCanvasElement(width: 640, height: 400);
   final Chart chart;
   if (reference == _Reference.controller) {
-    chart = Chart(canvas, cfg);
+    chart = Chart(canvas, withParsedDataItems(cfg));
   } else {
     chart = _ConfigChart(canvas, _TrivialConfig(cfg));
   }
@@ -306,20 +317,26 @@ typedef _Step = void Function(Chart chart, Map<String, Object?> cfg);
 void _none(Chart chart, Map<String, Object?> cfg) =>
     chart.update(UpdateMode.none);
 
+/// [values] as the data of [dataset]: parsed items with each value in `r`
+/// for a dataset of `parsing: false` (row `adapt-parsed-data-items`).
+List<Object?> _dataOf(Map<String, Object?> dataset, List<Object?> values) =>
+    dataset['parsing'] == false ? _rItems(values) : values;
+
 void _newData(Chart chart, Map<String, Object?> cfg) {
   for (final dataset in _datasets(cfg)) {
-    (dataset! as Map<String, Object?>)['data'] = <Object?>[
+    final map = dataset! as Map<String, Object?>;
+    map['data'] = _dataOf(map, <Object?>[
       for (var i = 0; i < 8; i++) (i * 3 + 1).toDouble(),
-    ];
+    ]);
   }
   chart.update(UpdateMode.none);
 }
 
 // New data with two new arcs.
 void _growData(Chart chart, Map<String, Object?> cfg) {
-  _first(cfg)['data'] = <Object?>[
+  _first(cfg)['data'] = _dataOf(_first(cfg), <Object?>[
     for (var i = 0; i < 10; i++) (i * 5 + 2).toDouble(),
-  ];
+  ]);
   chart.update(UpdateMode.none);
 }
 
@@ -328,7 +345,9 @@ void _growData(Chart chart, Map<String, Object?> cfg) {
 // contexts after the throw.
 void _throwInActiveResolve(Chart chart, Map<String, Object?> cfg) {
   _first(cfg)
-    ..['data'] = <Object?>[for (var i = 0; i < 8; i++) (i * 7 + 3).toDouble()]
+    ..['data'] = _dataOf(_first(cfg), <Object?>[
+      for (var i = 0; i < 8; i++) (i * 7 + 3).toDouble(),
+    ])
     ..['borderColor'] = null;
   expect(() => chart.update(UpdateMode.none), throwsArgumentError);
   _first(cfg).remove('borderColor');
@@ -758,11 +777,8 @@ void main() {
         'backgroundColor': <ChartPaint>[red, blue],
         'parsing': false,
         'data': type.endsWith('polarArea')
-            ? <Object?>[
-                for (var i = 0; i < 8; i++)
-                  <String, Object?>{'r': i.toDouble()},
-              ]
-            : <Object?>[1.0, '2', 3.0, 4.0, null, 6.0, 7.0, 8.0],
+            ? _rItems([for (var i = 0; i < 8; i++) i.toDouble()])
+            : _rItems([1.0, '2', 3.0, 4.0, null, 6.0, 7.0, 8.0]),
       }),
     ]),
   );
@@ -1167,7 +1183,10 @@ void main() {
         probeChart(
           type,
           probes,
-          fields: {'parsing': false},
+          fields: {
+            'parsing': false,
+            'data': _rItems([3.0, 1.0, 4.0, 1.0, 5.0, 9.0, 2.0, 6.0]),
+          },
         ).update(UpdateMode.none);
         expect(probes.map((p) => p.contextReads), [4, 3, 3, 3, 3, 3, 3, 3]);
       });
@@ -1328,9 +1347,7 @@ void main() {
         probes,
         fields: {
           'parsing': false,
-          'data': <Object?>[
-            for (var i = 0; i < 8; i++) <String, Object?>{'r': i.toDouble()},
-          ],
+          'data': _rItems([for (var i = 0; i < 8; i++) i.toDouble()]),
         },
       ).update(UpdateMode.none);
       expect(probes.map((p) => p.contextReads), [2, 2, 2, 2, 2, 2, 2, 2]);

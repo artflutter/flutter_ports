@@ -136,7 +136,7 @@ class SankeyPageState() extends State<SankeyPage> {
 
   /// The text of the flow of [active]: its two nodes and its size.
   static String _flowText(SankeyController controller, ActiveElement active) {
-    final parsed = controller.getParsed(active.index)! as ParsedItem;
+    final parsed = controller.getParsed(active.index)!;
     final custom = parsed.custom! as SankeyParsedCustom;
     return '${custom.from.key} -> ${custom.to.key}: '
         '${jsNumberText(custom.flow)}';

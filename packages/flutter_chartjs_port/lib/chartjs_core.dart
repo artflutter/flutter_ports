@@ -132,7 +132,6 @@ export 'package:flutter_chartjs_port/src/types/chart_paint.dart';
 export 'package:flutter_chartjs_port/src/types/chart_shadow.dart';
 export 'package:flutter_chartjs_port/src/types/chart_text_style.dart';
 export 'package:flutter_chartjs_port/src/types/color.dart';
-export 'package:flutter_chartjs_port/src/types/data_item.dart';
 export 'package:flutter_chartjs_port/src/types/geometric.dart';
 export 'package:flutter_chartjs_port/src/types/index.dart';
 export 'package:flutter_chartjs_port/src/types/layout.dart';

@@ -72,7 +72,7 @@ final class _Point(@override final double x, @override final double y)
 final class _Meta(
   @override final IScale? iScale,
   @override final IScale? vScale,
-  @override final List<Map<String, Object?>> parsed,
+  @override final List<ParsedItem?> parsed,
 ) implements ChartMeta {
   @override
   bool get sorted => true;
@@ -102,7 +102,12 @@ List<BenchCase> _extrasCases() => [
       )),
       [
         for (var i = 0; i < count; i++)
-          <String, Object?>{'x': i.toDouble(), 'y': (i % 31).toDouble()},
+          ParsedItem.of(
+            const XAxis(),
+            i.toDouble(),
+            const YAxis(),
+            (i % 31).toDouble(),
+          ),
       ],
     );
     final points = <IPointElement>[

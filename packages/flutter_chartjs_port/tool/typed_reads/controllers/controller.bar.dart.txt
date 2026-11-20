@@ -9,5 +9,5 @@
 #   axis ids of the datasets (_getAxis): the JS key order.
 # `scale._cache.$bar` is the typed field ScaleCache.bar (the close step).
 jsGet 3
-jsGetKey 4
+jsGetKey 3
 jsObjectKeys 2

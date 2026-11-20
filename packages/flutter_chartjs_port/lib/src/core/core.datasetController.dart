@@ -105,11 +105,12 @@ List<int> _getSortedDatasetIndices(IChart chart, bool filterVisible) {
 /// [mode] and [all] are the keys of `options`: [mode] is the `_stacked`
 /// value of the meta, and Dart `null` stands for JS `undefined`.
 ///
-/// The result is the upstream result: [undefined] for a `null` [value], 0
-/// when the stack does not contain [dsIndex], else the sum. The sum keeps
-/// the JavaScript `+`: a string value appends text. A number result is a
-/// `double`.
-Object? _applyStack(
+/// The result is the upstream result: Dart `null` for a `null` [value]
+/// (the JS `undefined`), 0 when the stack does not contain [dsIndex], else
+/// the sum. A value that is not a number adds its `ToNumber`, where upstream
+/// appends the text of a string value (row `adapt-apply-stack-number`).
+// DIVERGES(chartjs): adapt-apply-stack-number, the sum is a number.
+double? _applyStack(
   DatasetStack stack,
   Object? value,
   int dsIndex, {
@@ -122,10 +123,10 @@ Object? _applyStack(
   Object? otherValue;
 
   if (value == null) {
-    return undefined;
+    return null;
   }
 
-  var sum = value;
+  var sum = value is double ? value : jsToNumber(value);
   var found = false;
   for (var i = 0, ilen = keys.length; i < ilen; ++i) {
     datasetIndex = keys[i];
@@ -139,36 +140,23 @@ Object? _applyStack(
     otherValue = _stackValueOf(stack.values, datasetIndex);
     if (isFinite(otherValue) &&
         (singleMode ||
-            (sum == 0 ||
-                sign(jsToNumber(sum)) == sign(jsToNumber(otherValue))))) {
-      sum = _plus(sum, otherValue! as num);
+            (sum == 0 || sign(sum) == sign(jsToNumber(otherValue))))) {
+      // An add of a double and a num is a call in an AOT build (performance.md
+      // §72). The sum is the same number.
+      sum += otherValue is double ? otherValue : (otherValue! as int) * 1.0;
     }
   }
 
   if (!found && !all) {
-    return 0.0;
+    return 0;
   }
 
   return sum;
 }
 
-/// The JavaScript `value + other` for a finite number [other]: a number sum,
-/// or the text of [value] with the text of [other] when [value] is a string
-/// or an object.
-Object _plus(Object? value, num other) {
-  // An add of a double and a num is a call in an AOT build (performance.md
-  // §72). The sum is the same number.
-  final add = other is double ? other : (other as int) * 1.0;
-  return switch (value) {
-    final double number => number + add,
-    null || Undefined() || bool() || num() => jsToNumber(value) + add,
-    _ => jsToString(value) + jsToString(other),
-  };
-}
-
 /// core.datasetController.js:102 `convertObjectDataToArray`.
 ///
-/// [data] is the object `data` of the user: a Map, or a [TypedDataItem]
+/// [data] is the object `data` of the user: a Map, or an object with a face
 /// (an object for `isObject`) that is not a Map, which reads its keys and
 /// values through its face. `Object.keys` gives the JS key order. Each item
 /// is a plain object of the data, as upstream: with `parsing: false` it is
@@ -180,7 +168,7 @@ List<Object?> _convertObjectDataToArray(Object data, ChartMeta meta) {
   final iAxisKey = iScale.axis is XAxis ? 'x' : 'y';
   final vAxisKey = vScale.axis is XAxis ? 'x' : 'y';
   final map = data is AnyObject ? data : null;
-  final face = map == null ? data as TypedDataItem : null;
+  final face = map == null ? data as JsObjectFace : null;
   final keys = map != null ? jsObjectKeys(map) : face!.jsKeys();
   final adata = <Object?>[];
   String key;
@@ -341,8 +329,8 @@ void _deleteIndexValue(IndexValues values, int index) {
 /// (core.datasetController.js:91, :143, :218-223).
 ///
 /// A [StackEntry] and an [IndexValues] read typed. Another value is a
-/// `_stacks` object that user code gave a data item of `parsing: false`:
-/// it reads by name, and Dart `null` and [undefined] throw a [TypeError].
+/// `_stacks` object that user code wrote into a parsed item by name: it
+/// reads by name, and Dart `null` and [undefined] throw a [TypeError].
 Object? _stackValueOf(Object? stack, int datasetIndex) => switch (stack) {
   final StackEntry entry => _indexValueOf(entry.datasetValues, datasetIndex),
   final IndexValues values => _indexValueOf(values, datasetIndex),
@@ -351,8 +339,8 @@ Object? _stackValueOf(Object? stack, int datasetIndex) => switch (stack) {
 
 /// `stack[datasetIndex] = value` of a stack object or of its
 /// `_visualValues` (controller.bar.js:615). Another value is a `_stacks`
-/// object of a user data item: a Map, else the cast throws a [TypeError],
-/// as the JS write into a primitive does.
+/// object that user code wrote into a parsed item: a Map, else the cast
+/// throws a [TypeError], as the JS write into a primitive does.
 void setStackValue(Object? stack, int datasetIndex, Object? value) {
   switch (stack) {
     case final StackEntry entry:
@@ -366,7 +354,8 @@ void setStackValue(Object? stack, int datasetIndex, Object? value) {
 
 /// `delete stack[datasetIndex]` (core.datasetController.js:221, :223) of a
 /// stack object or of its `_visualValues`. Another value is a `_stacks`
-/// object of a user data item: a Map, else the cast throws a [TypeError].
+/// object that user code wrote into a parsed item: a Map, else the cast
+/// throws a [TypeError].
 void _deleteStackValue(Object? stack, int datasetIndex) {
   switch (stack) {
     case final StackEntry entry:
@@ -381,7 +370,8 @@ void _deleteStackValue(Object? stack, int datasetIndex) {
 /// `stack._visualValues` of a stack object (core.datasetController.js:599,
 /// :222; controller.bar.js:615). A [StackEntry] reads typed; a value of
 /// another class that user code wrote reads through the face. Another stack
-/// object is a `_stacks` object of a user data item: it reads by name.
+/// object is a `_stacks` object that user code wrote into a parsed item: it
+/// reads by name.
 Object? visualValuesOf(Object? stack) => stack is StackEntry
     ? stack.visualValues ?? stack.jsRead('_visualValues')
     : jsGetKey(stack, '_visualValues');
@@ -390,9 +380,9 @@ Object? visualValuesOf(Object? stack) => stack is StackEntry
 /// (core.datasetController.js:218, :599, :610; controller.bar.js:405,
 /// :615). An [ItemStacks] reads typed; a value of another class that user
 /// code wrote reads through the face. Another object is a `_stacks` object
-/// that user code gave a data item of `parsing: false`: it reads by the key
-/// of the axis ([axisDataKey]), and Dart `null` and [undefined] throw a
-/// [TypeError]. An axis of another class has no key: [undefined].
+/// that user code wrote into a parsed item: it reads by the key of the axis
+/// ([axisDataKey]), and Dart `null` and [undefined] throw a [TypeError]. An
+/// axis of another class has no key: [undefined].
 Object? axisStackOf(Object? itemStacks, ScaleAxis axis) {
   final key = axisDataKey(axis);
   if (itemStacks is ItemStacks) {
@@ -404,40 +394,16 @@ Object? axisStackOf(Object? itemStacks, ScaleAxis axis) {
 
 /// `item._stacks || (item._stacks = {})` (core.datasetController.js:165).
 ///
-/// The new object is an [ItemStacks]. A [ParsedItem] takes it in its typed
-/// field. A data item of `parsing: false` takes it as a property: a Map by
-/// name, a class value as an own static property (Chart.js ADR 0020), and a
-/// List or another object, for example a [DateTime] (a JS `Date`, Chart.js
-/// ADR 0024) or a function, through [stacksOf] (Chart.js ADR 0036). A
-/// write into a primitive (a number, a string or a boolean) throws a
-/// `TypeError` in the strict code of an ES module, and so does the port. A
-/// write into a Map of a narrower value type than `Object?` throws a
-/// [TypeError] too, where upstream writes into the plain object
-/// (differences.md row `js-semantics-resolver-objects`).
-Object _itemStacksOf(Object? item) {
+/// The new object is an [ItemStacks] in the typed field of the item. A
+/// Dart `null` item (a JS `null` in the data List of `parsing: false`)
+/// throws a [TypeError], as the JS read of a property of `null` does.
+Object _itemStacksOf(ParsedItem? item) {
   final current = stacksOf(item);
   if (jsTruthy(current)) {
     return current!;
   }
   final created = ItemStacks();
-  // DIVERGES(chartjs): js-semantics-resolver-objects, a narrow Map throws.
-  switch (item) {
-    case final ParsedItem parsed:
-      parsed.stacks = created;
-    case final Map<dynamic, dynamic> map:
-      map['_stacks'] = created;
-    case final List<dynamic> list:
-      _objectStacksWritten = true;
-      _objectStacks[list] = created;
-    case final JsClass value:
-      value['_stacks'] = created;
-    case _ when _isPrimitive(item):
-      // A JavaScript TypeError: a property write into a primitive.
-      throw TypeError();
-    default:
-      _objectStacksWritten = true;
-      _objectStacks[item!] = created;
-  }
+  item!.stacks = created;
   return created;
 }
 
@@ -447,13 +413,13 @@ Object _itemStacksOf(Object? item) {
 /// value}}`: a Map of sub-stacks by stack key, and a sub-stack of
 /// [StackEntry] objects by index value ([_getOrCreateStack]).
 ///
-/// A parsed item is any value (`unknown[]`, index.d.ts:503): a [ParsedItem]
-/// of the parse functions, or a data item of `parsing: false`.
+/// A parsed item is a [ParsedItem]: an item of the parse functions, or a
+/// data item of `parsing: false` (row `adapt-parsed-data-items`).
 /// `item._stacks = {}` is [_itemStacksOf]. A `_stacks` object that user
-/// code gave a data item of `parsing: false` takes the stack by name, and
-/// so does a truthy `stack._visualValues` of another class that user code
+/// code wrote into a parsed item by name takes the stack by name, and so
+/// does a truthy `stack._visualValues` of another class that user code
 /// wrote (Chart.js ADR 0054 §8).
-void _updateStacks(DatasetController controller, List<Object?> parsed) {
+void _updateStacks(DatasetController controller, List<ParsedItem?> parsed) {
   final chart = controller.chart;
   final meta = controller.cachedMeta;
   // map structure is {stackKey: {datasetIndex: value}}
@@ -489,7 +455,7 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
     if (itemStacks is ItemStacks) {
       itemStacks.setEntry(vAxis, stack);
     } else {
-      // The `_stacks` object of a user data item: a Map, else the cast
+      // A `_stacks` object that user code wrote: a Map, else the cast
       // throws a TypeError, as the JS write into a primitive does. The key
       // is the key of the axis ([axisDataKey]).
       final vKey = axisDataKey(vAxis);
@@ -565,7 +531,7 @@ ScriptableContext _createDataContext(
 ///
 /// The loop continues after a parsed item without a value of the dataset in
 /// its stack (:220, ledger row #12155). v4.5.1 returns there.
-void _clearStacks(ChartMeta meta, [List<Object?>? items]) {
+void _clearStacks(ChartMeta meta, [List<ParsedItem?>? items]) {
   // Not using meta.index here, because it might be already updated if the
   // dataset changed location
   final datasetIndex = meta.controller!.index;
@@ -575,14 +541,6 @@ void _clearStacks(ChartMeta meta, [List<Object?>? items]) {
   }
 
   final parsedItems = items ?? meta.parsed;
-  // DIVERGES(chartjs): adapt-clear-stacks-guard, a typed data item holds
-  // stacks only through [_objectStacks]: with no entry, the walk of a native
-  // List finds none.
-  if (!_objectStacksWritten &&
-      parsedItems is List<TypedDataItem> &&
-      nativeDataUpdateList(parsedItems)) {
-    return;
-  }
   for (final parsed in parsedItems) {
     final stacks = stacksOf(parsed);
     if (!jsTruthy(stacks)) {
@@ -711,6 +669,11 @@ T? _at<T extends Object>(List<T> list, int index) =>
 Object? _itemAt(List<Object?> list, int index) =>
     index >= 0 && index < list.length ? list[index] : undefined;
 
+/// `meta._parsed[index]`: Dart `null` for an index that names no parsed item
+/// and for a hole, the JS `undefined`.
+ParsedItem? _parsedAt(List<ParsedItem?> list, int index) =>
+    index >= 0 && index < list.length ? list[index] : null;
+
 /// `dataset.data[index]` of `getContext`, the data of the dataset object of
 /// the user.
 Object? _rawOf(Object? dataset, int index) =>
@@ -721,7 +684,7 @@ Object? _rawOf(Object? dataset, int index) =>
 int _itemCount(int count) => count < 0 ? 0 : count;
 
 /// The class of the plain List that `_dataCheck` gives `meta._parsed`.
-final Type _plainParsedList = <Object?>[].runtimeType;
+final Type _plainParsedList = <ParsedItem?>[].runtimeType;
 
 /// Gives the empty plain List [items] the length of the [count] items of a
 /// parse from index 0 that copies the native List [source], and that then
@@ -734,7 +697,7 @@ final Type _plainParsedList = <Object?>[].runtimeType;
 /// [presizeParsedNumbers] takes only numbers (Chart.js ADR 0096).
 // DIVERGES(chartjs): adapt-parse-presize, one growth of the plain List.
 bool _presizeParsed(
-  List<Object?> items,
+  List<ParsedItem?> items,
   int start,
   int count,
   List<Object?> source,
@@ -755,7 +718,7 @@ bool _presizeParsed(
 /// [data] in a loop with no user code (controller.doughnut.js:153-165).
 /// Another [data] keeps the growth by one.
 void presizeParsedNumbers(
-  List<Object?> items,
+  List<ParsedItem?> items,
   Object? data,
   int start,
   int count,
@@ -785,26 +748,16 @@ String _numberKey(double value) {
 /// The JS read `item[axis]` of a parsed item: the hot read of Chart.js ADR
 /// 0054 §8.
 ///
-/// A [ParsedItem] reads the typed field of the axis [axis]
-/// ([ParsedItem.valueOf]). A parsed item is any value (index.d.ts:503): a
-/// [TypedDataItem] of `parsing: false` gives its typed field for [XAxis] or
-/// [YAxis], as [dataItemValue] does. Another data item, and the axis
-/// [RAxis], read by the key of the axis ([axisDataKey], [jsGetKey]), which
-/// gives [undefined] for a number or a boolean and throws a [TypeError] for
-/// `null` and [undefined]. An axis of another class has no key: [undefined]
-/// (row `adapt-axis-objects`).
+/// A parsed item is a [ParsedItem]: an item of the parse functions, or a
+/// data item of `parsing: false` (row `adapt-parsed-data-items`). It reads
+/// the typed field of the axis [axis] ([ParsedItem.valueOf]). A Dart `null`
+/// item (an index that names no parsed item, the JS `undefined`) throws a
+/// [TypeError], as the JS read of a property of `undefined` does. An axis of
+/// another class has no field: [undefined] (row `adapt-axis-objects`).
 @pragma('vm:prefer-inline')
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
-Object? parsedValueOf(Object? item, ScaleAxis axis) {
-  if (item is ParsedItem) return item.valueOf(axis);
-  return switch (axis) {
-    XAxis() => item is TypedDataItem ? item.x : jsGetKey(item, 'x'),
-    YAxis() => item is TypedDataItem ? item.y : jsGetKey(item, 'y'),
-    RAxis() => jsGetKey(item, 'r'),
-    _ => undefined,
-  };
-}
+Object? parsedValueOf(ParsedItem? item, ScaleAxis axis) => item!.valueOf(axis);
 
 /// `properties[axis] = value` of the properties of a point (for example
 /// controller.line.js:100-101, controller.bubble.js:127-128): the typed
@@ -826,10 +779,11 @@ void setPointAxis(PointProperties properties, ScaleAxis axis, double value) {
 /// `resolveObjectKey(item, key)` of a data item in the object parse
 /// (core.datasetController.js:571-572, controller.bar.js:333-334).
 ///
-/// A [TypedDataItem] gives its typed field for the parsing key `x` or `y`
-/// (Chart.js ADR 0054 §7). Another key, and an item of another class, read
-/// by the key path of [resolveObjectKey].
-Object? dataItemValue(Object? item, String key) => item is TypedDataItem
+/// A [ParsedItem] (for example a `DataPoint` of the typed API) gives its
+/// typed field for the parsing key `x` or `y` (Chart.js ADR 0054 §7).
+/// Another key, and an item of another class, read by the key path of
+/// [resolveObjectKey].
+Object? dataItemValue(Object? item, String key) => item is ParsedItem
     ? switch (key) {
         'x' => item.x,
         'y' => item.y,
@@ -837,49 +791,18 @@ Object? dataItemValue(Object? item, String key) => item is TypedDataItem
       }
     : resolveObjectKey(item, key);
 
-/// The `_stacks` property of the parsed items that are objects without a
-/// property Map: a List, and each value that is not a Map, a class value or
-/// a primitive, for example a [DateTime] or a function. Such a Dart value
-/// has no named property. Upstream writes `item._stacks = {}` into the
-/// array, the `Date` or the function (core.datasetController.js:165).
-final Expando<Object> _objectStacks = Expando('_stacks');
-
-/// Whether an item has an entry in [_objectStacks]. It stays true: the read
-/// of an entry needs no count of the live entries.
-bool _objectStacksWritten = false;
-
-/// Whether [item] is a JS primitive: a property write into it throws a
-/// `TypeError` in strict code. A record is not a JS value. It counts here,
-/// because an [Expando] cannot take it.
-bool _isPrimitive(Object? item) =>
-    item == null ||
-    item is Undefined ||
-    item is num ||
-    item is String ||
-    item is bool ||
-    item is Record;
-
 /// The read `item._stacks` of a parsed item (core.datasetController.js:165,
 /// :218, :599, :610; controller.bar.js:405, :615).
 ///
 /// A [ParsedItem] gives its typed [ItemStacks]; a value of another class
 /// that user code wrote reads through the face, and an absent key gives
-/// [undefined]. The other items are data items of `parsing: false`. A Map
-/// gives Dart `null` for an absent key. Each reader tests the truthiness,
-/// or reads a property of the result, which throws a [TypeError] for both
-/// `null` and [undefined]. A class value and a primitive give [jsGet]: the
-/// static property through the superclass chain for a class value,
-/// [undefined] for a number, a [TypeError] for `null`. Each other value, for
-/// example a List or a [DateTime], gives the entry that `_updateStacks`
-/// wrote for it, or Dart `null` (Chart.js ADR 0036).
-Object? stacksOf(Object? item) {
-  if (item is ParsedItem) {
-    return item.hasSlot(4) ? item.stacks ?? item.jsRead('_stacks') : undefined;
-  }
-  if (item is Map<dynamic, dynamic>) return item['_stacks'];
-  if (item is List<dynamic>) return _objectStacks[item];
-  if (item is JsClass || _isPrimitive(item)) return jsGet(item, '_stacks');
-  return _objectStacks[item!];
+/// [undefined]. A Dart `null` item throws a [TypeError], as the JS read of a
+/// property of `null` does.
+Object? stacksOf(ParsedItem? item) {
+  final parsed = item!;
+  return parsed.hasSlot(4)
+      ? parsed.stacks ?? parsed.jsRead('_stacks')
+      : undefined;
 }
 
 /// `this.datasetElementType.id` and `this.dataElementType.id`
@@ -1392,7 +1315,7 @@ class DatasetController(
         // Discard old parsed data and stacks
         final meta = cachedMeta;
         _clearStacks(meta);
-        meta.parsed = <Object?>[];
+        meta.parsed = <ParsedItem?>[];
       }
       final List<Object?> array;
       if (data is String) {
@@ -1511,16 +1434,17 @@ class DatasetController(
     final iAxis = iScale.axis;
 
     var sorted = (start == 0 && count == data.length) || meta.sorted;
-    // `start > 0 && meta._parsed[start - 1]`.
-    var prev = start > 0 ? jsGetIndex(meta.parsed, start - 1) : false;
+    // `start > 0 && meta._parsed[start - 1]`: Dart `null` is the falsy
+    // `false` and a hole.
+    var prev = start > 0 ? _parsedAt(meta.parsed, start - 1) : null;
     int i;
-    Object? cur;
-    List<Object?> parsed;
+    ParsedItem? cur;
+    List<ParsedItem?> parsed;
 
     if (parsing == null) {
-      // The data items are the parsed items, of any type (index.d.ts:503).
+      // DIVERGES(chartjs): adapt-parsed-data-items, the data items are typed.
       meta
-        ..parsed = parsed = data
+        ..parsed = parsed = parsedDataItems(data)
         ..sorted = true;
     } else {
       final first = jsGetIndex(data, start);
@@ -1534,7 +1458,7 @@ class DatasetController(
 
       bool isNotInOrderComparedToPrev() =>
           parsedValueOf(cur, iAxis) == null ||
-          (jsTruthy(prev) &&
+          (prev != null &&
               jsLessThan(
                 parsedValueOf(cur, iAxis),
                 parsedValueOf(prev, iAxis),
@@ -1680,8 +1604,9 @@ class DatasetController(
   /// The keys `xAxisKey` and `yAxisKey` of [parsing] default to `'x'` and
   /// `'y'` for Dart `null`.
   ///
-  /// Each item is a [ParsedItem] `{x, y}`. A [TypedDataItem] gives its typed
-  /// field for the default key ([dataItemValue]).
+  /// Each item is a [ParsedItem] `{x, y}`. A data item that is a
+  /// [ParsedItem] (a [DataPoint]) gives its typed field for the default key
+  /// ([dataItemValue]).
   List<ParsedItem> parseObjectData(
     ChartMeta meta,
     List<Object?> data,
@@ -1715,8 +1640,8 @@ class DatasetController(
   /// An index that names no parsed item gives [undefined]. Dart `null` is a
   /// JS `null` item.
   @override
-  Object? getParsed(int index) {
-    return _itemAt(cachedMeta.parsed, index);
+  ParsedItem? getParsed(int index) {
+    return _parsedAt(cachedMeta.parsed, index);
   }
 
   /// core.datasetController.js:586 `getDataElement(index)`.
@@ -1731,10 +1656,10 @@ class DatasetController(
   /// core.datasetController.js:593 `applyStack(scale, parsed, mode)`.
   /// @protected
   ///
-  /// [mode] is the `_stacked` value of the meta. The
-  /// result is the upstream result: [undefined] for a `null` value, else a
-  /// number, or a string for a string value.
-  Object? applyStack(IScale scale, Object? parsed, [StackMode? mode]) {
+  /// [mode] is the `_stacked` value of the meta. The result is the upstream
+  /// result: Dart `null` for a `null` value (the JS `undefined`), else a
+  /// number (row `adapt-apply-stack-number`).
+  double? applyStack(IScale scale, ParsedItem parsed, [StackMode? mode]) {
     final chart = this.chart;
     final meta = cachedMeta;
     final axis = scale.axis;
@@ -1756,9 +1681,9 @@ class DatasetController(
   /// user code (Chart.js ADR 0152). The result is the result of
   /// [applyStack].
   // DIVERGES(chartjs): adapt-bulk-bar-update, the sorted indexes read once.
-  Object? applyStackWith(
+  double? applyStackWith(
     IScale scale,
-    Object? parsed,
+    ParsedItem parsed,
     StackMode? mode,
     List<int> indexes,
   ) {
@@ -1779,7 +1704,7 @@ class DatasetController(
   void updateRangeFromParsed(
     MinMax range,
     IScale scale,
-    Object? parsed,
+    ParsedItem? parsed,
     DatasetStack? stack,
   ) {
     final axis = scale.axis;
@@ -1789,7 +1714,8 @@ class DatasetController(
     final values = stack == null ? null : axisStackOf(stacksOf(parsed), axis);
     if (stack != null && jsTruthy(values)) {
       stack.values = values;
-      value = _applyStack(stack, parsedValue, cachedMeta.index);
+      // The JS `undefined` of a `null` value gives NaN below.
+      value = _applyStack(stack, parsedValue, cachedMeta.index) ?? double.nan;
     }
     // Math.min and Math.max read the value with ToNumber.
     final number = jsToNumber(value);
@@ -1818,7 +1744,7 @@ class DatasetController(
     final axis = scale.axis;
     final otherAxis = otherScale.axis;
     var i = 0;
-    Object? parsed;
+    ParsedItem? parsed;
 
     bool skip() {
       parsed = parsedItems[i];
@@ -1914,7 +1840,7 @@ class DatasetController(
   }
 
   /// `parsed[scale.axis]`: [parsedValueOf] with the axis of [scale].
-  static Object? _axisValueOf(Object? parsed, IScale scale) {
+  static Object? _axisValueOf(ParsedItem? parsed, IScale scale) {
     return parsedValueOf(parsed, scale.axis);
   }
 
@@ -2689,7 +2615,7 @@ class DatasetController(
 
     if (parsing != null) {
       // `arr.length += count` leaves holes, JS `undefined`.
-      move<Object?>(meta.parsed, undefined);
+      move<ParsedItem?>(meta.parsed, null);
     }
     parse(start, count);
 

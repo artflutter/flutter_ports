@@ -37,7 +37,7 @@ double _max(Chart chart, String id) => chart.scales[id]!.max;
 void _setFirstX(Chart chart, double x) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
   final points = jsGet(datasets[0], 'data')! as List<DataPoint>;
-  points[0] = DataPoint(x, points[0].y);
+  points[0] = DataPoint(x, points[0].y as double?);
 }
 
 ChartConfig _scatter0to100([ZoomPluginOptions? zoom]) => ChartConfig(

@@ -119,11 +119,13 @@ class ChartMeta<C extends IDatasetController>({
   /// core.datasetController.js:316 `vScale`, the value scale.
   IScale? vScale;
 
-  /// core.controller.js:846 `_parsed`: the parsed items, the numbers of a
-  /// doughnut or pie, or the data List of the app itself with
-  /// `parsing: false` (core.datasetController.js:461). An add-on controller
-  /// writes it in its `parse` override.
-  List<Object?> parsed = [];
+  /// core.controller.js:846 `_parsed`: the parsed items, or the data List
+  /// of the app itself with `parsing: false`
+  /// (core.datasetController.js:461). Each item is a [ParsedItem]: a
+  /// doughnut or pie keeps its number in [ParsedItem.r] (row
+  /// `adapt-parsed-data-items`). Dart `null` is a hole, the JS `undefined`.
+  /// An add-on controller writes it in its `parse` override.
+  List<ParsedItem?> parsed = [];
 
   /// core.controller.js:847 `_sorted`: whether [parsed] ascends on the index
   /// axis.

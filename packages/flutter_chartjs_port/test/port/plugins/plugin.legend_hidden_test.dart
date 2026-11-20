@@ -16,6 +16,7 @@ import '../../support/context_keys.dart';
 import '../../support/data_scope.dart';
 import '../../support/legend_item.dart';
 import '../../support/object_keys.dart';
+import '../../support/parsed_items.dart';
 
 // The tests of Chart.js ADR 0092 and of the row `adapt-hidden-legend-items`
 // of differences.md. A hidden legend of a built-in slice chart leaves its
@@ -650,7 +651,9 @@ Chart _chartOf(Map<String, Object?> config, {required bool exact}) {
     ..['animation'] = false
     ..['responsive'] = false;
   final canvas = UiCanvasElement(width: 300, height: 300);
-  final chart = exact ? Chart(canvas, config) : _ChildChart(canvas, config);
+  final chart = exact
+      ? Chart(canvas, withParsedDataItems(config))
+      : _ChildChart(canvas, config);
   addTearDown(chart.destroy);
   return chart;
 }
@@ -2645,7 +2648,10 @@ void main() {
         expect(context.active, isFalse);
         expect(context.index, 2);
         expect(context.dataIndex, 2);
-        expect(context.parsed, type == 'polarArea' ? isA<ParsedItem>() : 3);
+        // The doughnut and the pie keep the number in `r` (row
+        // `adapt-parsed-data-items`).
+        expect(context.parsed, isA<ParsedItem>());
+        if (type != 'polarArea') expect((context.parsed! as ParsedItem).r, 3);
         expect(context.raw, 3);
       });
 

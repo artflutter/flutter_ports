@@ -683,7 +683,7 @@ class SankeyController(super.chart, super.datasetIndex, [super.newTarget])
         : 0.0;
 
     for (var i = start; i < start + count; i++) {
-      final parsed = getParsed(i)! as ParsedItem;
+      final parsed = getParsed(i)!;
       updateElement(elems[i]! as Element, i, <String, Object?>{
         'options': resolveDataElementOptions(i, mode),
         'progress': mode == 'reset' ? 0.0 : 1.0,

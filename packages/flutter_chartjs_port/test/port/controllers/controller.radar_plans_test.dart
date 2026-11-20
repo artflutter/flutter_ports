@@ -278,20 +278,17 @@ void main() {
       _expectTwin(
         (type) => _config(
           type,
-          data: <Object?>[
-            <String, Object?>{'r': 5.0},
-            <String, Object?>{'r': 6.0},
-          ],
+          data: <ParsedItem?>[ParsedItem()..r = 5.0, ParsedItem()..r = 6.0],
           extra: {'parsing': false},
         ),
       );
     });
 
-    testWidgets('parsing false with numbers', (tester) async {
+    testWidgets('parsing false with items without r', (tester) async {
       _expectTwin(
         (type) => _config(
           type,
-          data: const <num?>[5.0, 3.0, 1.0],
+          data: <ParsedItem?>[ParsedItem(), ParsedItem(), ParsedItem()],
           extra: {'parsing': false},
         ),
       );

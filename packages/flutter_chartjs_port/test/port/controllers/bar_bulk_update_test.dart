@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 class _ReferenceChart(super.item, super.userConfig) extends Chart {
   @override
@@ -174,7 +175,9 @@ Map<String, Object?> _axis(Map<String, Object?> cfg, String key) =>
         as Map<String, Object?>;
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
-  final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
+  final chart = reference
+      ? _ReferenceChart(canvas, withParsedDataItems(cfg))
+      : Chart(canvas, withParsedDataItems(cfg));
   addTearDown(chart.destroy);
   return chart;
 }

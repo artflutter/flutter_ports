@@ -2002,13 +2002,13 @@ class Tooltip(({IChart chart, Object? options}) config)
                     i.datasetIndex.toDouble(),
                   ),
                 ) &&
-                !identical(
-                  chart
-                      .getDatasetMeta(i.datasetIndex)
-                      .controller!
-                      .getParsed(i.index),
-                  undefined,
-                ),
+                // `getParsed(index) !== undefined`: Dart `null` is the JS
+                // `undefined` of an index with no parsed item.
+                chart
+                        .getDatasetMeta(i.datasetIndex)
+                        .controller!
+                        .getParsed(i.index) !=
+                    null,
           )
           .toList();
     }

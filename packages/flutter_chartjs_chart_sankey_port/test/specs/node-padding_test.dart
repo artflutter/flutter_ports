@@ -147,8 +147,7 @@ void main() {
         );
         final controller = chart.getDatasetMeta(0).controller!;
         return [
-          for (var i = 0; i < 3; i++)
-            jsToNumber((controller.getParsed(i)! as ParsedItem).y),
+          for (var i = 0; i < 3; i++) jsToNumber(controller.getParsed(i)!.y),
         ];
       }
 

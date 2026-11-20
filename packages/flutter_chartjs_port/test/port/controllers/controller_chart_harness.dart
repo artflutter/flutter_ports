@@ -47,6 +47,7 @@ import 'package:flutter_test/flutter_test.dart';
 import '../../support/color_json.dart';
 import '../../support/data_label.dart';
 import '../../support/list_splice.dart';
+import '../../support/parsed_items.dart';
 import '../../support/scale_border.dart';
 import '../../support/segment_style.dart';
 import '../scales/scale_chart_harness.dart';
@@ -355,7 +356,16 @@ Map<String, Object?> _observeDataset(Chart chart, int index) {
             when !identical(value, undefined))
           key: plainValue(value),
     },
-    'parsed': [for (final item in meta.parsed) _parsedItem(item)],
+    // The doughnut and the pie keep their number in `r` (row
+    // `adapt-parsed-data-items`): the upstream form is the number.
+    'parsed': [
+      for (var i = 0; i < meta.parsed.length; i++)
+        if (controller is DoughnutController &&
+            (controller.parsing != null || _numberItem(meta.parsed[i])))
+          plainValue(parsedNumberOf(meta.parsed, i))
+        else
+          _parsedItem(meta.parsed[i]),
+    ],
     'dataset': _datasetElement(meta.dataset),
     'data': [
       for (final element in data)
@@ -828,8 +838,10 @@ Future<void> runStep(
             ),
         ])
         ..update();
-    case ['push', final num d, ...final values]:
-      final data = _data(chart, d)..addAll(values);
+    case ['push', final num d, ...final rawValues]:
+      final data = _data(chart, d);
+      final values = _dataValues(data, rawValues);
+      data.addAll(values);
       notifyArrayListeners(data, 'push', values);
       chart.update();
     case [
@@ -837,9 +849,10 @@ Future<void> runStep(
       final num d,
       final num start,
       final num count,
-      ...final items,
+      ...final rawItems,
     ]:
       final data = _data(chart, d);
+      final items = _dataValues(data, rawItems);
       spliceList(data, start.toInt(), count.toInt(), items);
       notifyArrayListeners(data, 'splice', [start, count, ...items]);
       chart.update();
@@ -884,6 +897,60 @@ Future<void> runStep(
       throw ArgumentError.value(step, 'step', 'Not a reference step');
   }
 }
+
+/// Whether [item] is the parsed item of a number of [_doughnutDataItems]: an
+/// item with the one key `r`.
+bool _numberItem(ParsedItem? item) {
+  final keys = item?.jsKeys();
+  return keys != null && keys.length == 1 && keys.first == 'r';
+}
+
+/// The data items of `parsing: false` of each doughnut or pie dataset of
+/// [config] that are not objects, for example a number or JS `null`, as
+/// parsed items with the item in `r` (rows `adapt-parsed-data-items` and
+/// `harness-parsed-data-items`): the doughnut reads a number item of
+/// upstream as `r`. A Map item becomes a parsed item with its keys. A List
+/// with an array item stays for `acquireChart`.
+void _doughnutDataItems(AnyObject config) {
+  final options = config['options'];
+  final chartParsing = options is Map ? options['parsing'] : null;
+  final datasets = jsGet(config['data'], 'datasets');
+  if (datasets is! List) return;
+  for (final dataset in datasets) {
+    if (dataset is! Map) continue;
+    final type = dataset['type'] ?? config['type'];
+    final parsing = dataset.containsKey('parsing')
+        ? dataset['parsing']
+        : chartParsing;
+    final items = dataset['data'];
+    if ((type != 'doughnut' && type != 'pie') ||
+        parsing != false ||
+        items is! List) {
+      continue;
+    }
+    if (items.any((item) => item is List)) continue;
+    // A List of parsed items: the parsed List is the data List itself.
+    dataset['data'] = <ParsedItem?>[
+      for (final item in items)
+        if (item is Map) parsedItemOf(item) else ParsedItem()..r = item,
+    ];
+  }
+}
+
+/// The step values [values] for the data List [data]: the parsed items of
+/// the values for a List with a `ParsedItem` (`parsing: false`, row
+/// `harness-parsed-data-items`; a value that is no object goes into `r`,
+/// as [_doughnutDataItems] does), else the values themselves.
+List<Object?> _dataValues(List<Object?> data, List<Object?> values) =>
+    data is List<ParsedItem?> || data.any((item) => item is ParsedItem)
+    ? <ParsedItem?>[
+        for (final value in values)
+          if (value is Map || value is ParsedItem)
+            parsedItemOf(value)
+          else
+            ParsedItem()..r = value,
+      ]
+    : values;
 
 /// The data List of the dataset [d] of [chart]:
 /// `chart.data.datasets[d].data`. An absent dataset throws the
@@ -1061,6 +1128,7 @@ Future<void> _runCaseSteps(
   final options = copyReference(c.options)! as AnyObject;
 
   nativeFixtureColors(config);
+  _doughnutDataItems(config);
   if (at == 'initial') {
     expect(
       () => acquireChart(config, options),

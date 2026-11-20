@@ -319,9 +319,9 @@ double _round2(double value) => (value * 100).roundToDouble() / 100;
 
 /// The data of the chart: [count] points with the x values 0 to
 /// `count - 1`, sorted, as `parsing: false` needs.
-List<Map<String, Object?>> inputProbeData(int count) => [
+List<DataPoint> inputProbeData(int count) => [
   for (var i = 0; i < count; i++)
-    <String, Object?>{'x': i.toDouble(), 'y': 50 + 40 * math.sin(i / 400)},
+    DataPoint(i.toDouble(), 50 + 40 * math.sin(i / 400)),
 ];
 
 /// The fixed width of the y axis in logical pixels: room for a label of

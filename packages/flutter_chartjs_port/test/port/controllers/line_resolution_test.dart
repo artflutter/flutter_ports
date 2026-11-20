@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const red = Color(0xffff0000);
 const blue = Color(0xff0000ff);
@@ -214,8 +215,8 @@ void main() {
                   ),
                 );
               case 'parsed':
-                meta.parsed = _ObservedList<Object?>(
-                  List<Object?>.of(meta.parsed),
+                meta.parsed = _ObservedList<ParsedItem?>(
+                  List<ParsedItem?>.of(meta.parsed),
                   trace,
                 );
               case 'points':
@@ -259,7 +260,9 @@ void main() {
 
         dataset['backgroundColor'] = color;
         final canvas = UiCanvasElement(width: 640, height: 400);
-        chart = reference ? _Reference(canvas, cfg) : Chart(canvas, cfg);
+        chart = reference
+            ? _Reference(canvas, withParsedDataItems(cfg))
+            : Chart(canvas, withParsedDataItems(cfg));
         meta = chart.getDatasetMeta(0);
         points = [for (var i = 0; i < 8; i++) meta.data[i] = _Probe()];
         try {

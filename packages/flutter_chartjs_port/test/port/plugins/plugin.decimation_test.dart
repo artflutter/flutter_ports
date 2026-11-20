@@ -7,6 +7,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/light_theme.dart';
+import '../../support/parsed_items.dart';
 import '../controllers/controller_chart_harness.dart' show plainValue;
 import '../scales/scale_chart_harness.dart';
 import 'plugin_chart_harness.dart';
@@ -59,9 +60,19 @@ List<Object?> _datasets(Chart chart) =>
     jsGet(chart.data, 'datasets')! as List<Object?>;
 
 /// [n] items `{x: i, y: f(i)}` (`series` of the generator).
+/// The items are parsed items, the data items of `parsing: false` (row
+/// `adapt-parsed-data-items`).
 List<Object?> _series(int n, int Function(int i) f) => <Object?>[
-  for (var i = 0; i < n; i++) <String, Object?>{'x': i, 'y': f(i)},
+  for (var i = 0; i < n; i++)
+    parsedItemOf(<String, Object?>{'x': i, 'y': f(i)}),
 ];
+
+/// The own keys and values of the parsed item [item], for a compare with
+/// the plain object of upstream.
+Map<String, Object?> _itemKeys(Object? item) {
+  final parsed = item! as ParsedItem;
+  return {for (final key in parsed.jsKeys()) key: parsed[key]};
+}
 
 /// The `beforeUpdate` hook `writeData` of the inline plugin `writer` of the
 /// generator: when its option `write` is true, it writes 80 new items into
@@ -196,7 +207,10 @@ void main() {
       expect(dataset['data'], same(dataset['_decimated']));
       expect(dataset['_data'], same(data));
       expect(_metaCount(chart), 386);
-      expect((dataset['data']! as List<Object?>)[1], {'x': 19, 'y': 97});
+      expect(_itemKeys((dataset['data']! as List<Object?>)[1]), {
+        'x': 19,
+        'y': 97,
+      });
     });
 
     testWidgets('a user write, then the next update', (tester) async {
@@ -566,7 +580,10 @@ void main() {
       ]);
       expect(dataset['data'], same(data));
       expect(_length(dataset['_decimated']), 200);
-      expect((dataset['_decimated']! as List<Object?>)[1], {'x': 1, 'y': 1});
+      expect(_itemKeys((dataset['_decimated']! as List<Object?>)[1]), {
+        'x': 1,
+        'y': 1,
+      });
       expect(_metaCount(chart), 2000);
     });
 
@@ -577,7 +594,10 @@ void main() {
       // A13.
       expect(_length(dataset['data']), 50);
       expect(_metaCount(chart), 50);
-      expect((dataset['data']! as List<Object?>)[1], {'x': 8, 'y': 94});
+      expect(_itemKeys((dataset['data']! as List<Object?>)[1]), {
+        'x': 8,
+        'y': 94,
+      });
     });
 
     testWidgets('destroy does not clean: no code notifies the hook', (
@@ -635,25 +655,25 @@ void main() {
       return acquireChartRoot(root);
     }
 
-    /// 40 items `{x: i, y: i % 7}` with the narrow type `Map<String, int>`.
-    List<Map<String, int>> narrowData() => [
-      for (var i = 0; i < 40; i++) {'x': i, 'y': i % 7},
+    /// 40 parsed items `{x: i, y: i % 7}` in a List of the narrow type
+    /// `List<ParsedItem>`.
+    List<ParsedItem> narrowData() => [
+      for (var i = 0; i < 40; i++) parsedItemOf({'x': i, 'y': i % 7})!,
     ];
 
     testWidgets('a narrow dataset Map works when the plugin is off', (
       tester,
     ) async {
-      final chart = narrowChart(<String, List<Map<String, int>>>{
+      final chart = narrowChart(<String, List<ParsedItem>>{
         'data': narrowData(),
       }, enabled: false);
       expect(_metaCount(chart), 40);
     });
 
-    testWidgets('a Map<String, List<Map<String, int>>> dataset throws a '
+    testWidgets('a Map<String, List<ParsedItem>> dataset throws a '
         'TypeError at the write of the getter value', (tester) async {
       expect(
-        () =>
-            narrowChart(<String, List<Map<String, int>>>{'data': narrowData()}),
+        () => narrowChart(<String, List<ParsedItem>>{'data': narrowData()}),
         throwsA(isA<TypeError>()),
       );
     });
@@ -775,8 +795,8 @@ Object? _plain(Object? value) =>
 /// An algorithm of a program: each [n]-th item.
 final class const _EveryNth(final int n) extends DecimationAlgorithm {
   @override
-  List<Object?> decimate(
-    List<Object?> data,
+  List<ParsedItem?> decimate(
+    List<ParsedItem?> data,
     int start,
     int count,
     double availableWidth,

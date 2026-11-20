@@ -368,7 +368,7 @@ abstract interface class IDatasetController() {
   Object get options;
 
   /// index.d.ts:688 `getParsed(index)`. controller.bar.js:440 calls it.
-  Object? getParsed(int index);
+  ParsedItem? getParsed(int index);
 
   /// index.d.ts:656 `getStyle(index, active)`. controller.doughnut.js:101
   /// calls it.

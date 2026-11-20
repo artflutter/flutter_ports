@@ -113,9 +113,20 @@ void _expectSameBars(
 }
 
 /// The cases that the port does not run: a text `barThickness` stops a
-/// debug build (row adapt-bar-thickness-class).
+/// debug build (row adapt-bar-thickness-class), a parsing key that is not a
+/// string stops a debug build or takes the default key (row
+/// adapt-parsing-keys), and a data item of `parsing: false` that is not a
+/// ParsedItem stops a debug build (row adapt-parsed-data-items).
 const Map<String, String> _skips = {
   "parsed: barThickness '20'": 'diverges: adapt-bar-thickness-class',
+  'parsed: xAxisKey null': 'diverges: adapt-parsing-keys',
+  'parsed: xAxisKey 5': 'diverges: adapt-parsing-keys',
+  'parsed: a bad yAxisKey on a category index axis':
+      'diverges: adapt-parsing-keys',
+  'parsed: stacked List items with parsing false':
+      'diverges: adapt-parsed-data-items',
+  'parsed: stacked numbers with parsing false':
+      'diverges: adapt-parsed-data-items',
 };
 
 /// Audit only the deliberately coercible input slot of the current case.
@@ -237,60 +248,21 @@ void main() {
       );
     });
 
-    testWidgets('a bad yAxisKey on a category index axis throws after the '
-        'first label parse', (tester) async {
-      final data = <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[
-              <String, Object?>{'x': 'q', 'y': 1.0},
-              <String, Object?>{'x': 'r', 'y': 2.0},
-            ],
-            'parsing': <String, Object?>{'yAxisKey': 5.0},
-          },
-        ],
-      };
-      final config = <String, Object?>{'type': 'bar', 'data': data};
-      expect(() => acquireChartRoot(config), throwsA(isA<TypeError>()));
-      // The category scale parsed the label of the first item before the
-      // throw (category.js addIfString): the labels hold it. The data
-      // object of the chart is the scope of the boundary (row
-      // `adapt-config-objects`).
-      expect(jsGet(config['data'], 'labels'), ['q']);
-    });
-
-    // controller.bar.js:334-335: the index key and then the value key throw
-    // at their `resolveObjectKey` reads (helpers.core.ts:379), so a bad value
-    // key throws after the category index scale added the label of item 0,
-    // and a bad index key throws before it. The pinned build in x64 Node.js
-    // v24.12.0 gives the labels ['b', 'a'], ['b', 'a'] and ['b'] (a probe
-    // of these three configs on the pinned build). A parse of no item reads
-    // no key and does not throw.
-    for (final (name, indexAxis, axisClass, parsing, labels) in [
-      ('a yAxisKey null', 'x', const XAxis(), {'yAxisKey': null}, ['b', 'a']),
-      (
-        'an xAxisKey 5 with indexAxis y',
-        'y',
-        const YAxis(),
-        {'xAxisKey': 5.0},
-        ['b', 'a'],
-      ),
-      (
-        'a yAxisKey 5 with indexAxis y',
-        'y',
-        const YAxis(),
-        {'yAxisKey': 5.0},
-        ['b'],
-      ),
+    // A parsing key that is not a string stops a debug build when the
+    // controller reads the option, before any parse (row adapt-parsing-keys).
+    // Upstream throws at the `resolveObjectKey` read of the bad key.
+    for (final (name, indexAxis, axisClass, parsing) in [
+      ('an xAxisKey 5 with indexAxis y', 'y', const YAxis(), {'xAxisKey': 5.0}),
+      ('a yAxisKey 5 with indexAxis y', 'y', const YAxis(), {'yAxisKey': 5.0}),
+      ('a yAxisKey 5 with indexAxis x', 'x', const XAxis(), {'yAxisKey': 5.0}),
     ]) {
-      testWidgets('$name throws in the order of the key reads', (tester) async {
+      testWidgets('$name stops a debug build', (tester) async {
         final valueAxis = indexAxis == 'x' ? 'y' : 'x';
-        final chartLabels = <Object?>['b'];
         expect(
           () => acquireChartRoot(<String, Object?>{
             'type': 'bar',
             'data': <String, Object?>{
-              'labels': chartLabels,
+              'labels': <Object?>['b'],
               'datasets': <Object?>[
                 <String, Object?>{
                   'data': <Object?>[
@@ -308,47 +280,10 @@ void main() {
               },
             },
           }),
-          throwsA(isA<TypeError>()),
+          throwsA(isA<AssertionError>()),
         );
-        expect(chartLabels, labels);
       });
     }
-
-    testWidgets('stacked List items with parsing false take a stack object '
-        'with the key of the value axis', (tester) async {
-      final chart = acquireChartRoot(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <Object?>[0.0, 1.0],
-                <Object?>[1.0, 2.0],
-              ],
-              'parsing': false,
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': StackMode.on},
-            'y': <String, Object?>{'stacked': StackMode.on},
-          },
-        },
-      });
-      final meta = chart.getDatasetMeta(0);
-      for (final item in meta.parsed) {
-        expect(item, isA<List<Object?>>());
-        expect(jsObjectKeys(stacksOf(item)), ['y']);
-      }
-      for (final bar in meta.data) {
-        final edges = _edges(bar as ElementPropertyRead);
-        expect(edges[0], isFalse);
-        expect(plainValue(edges[1]), {'bottom': true});
-        expect((bar as ElementPropertyRead)['x'], isNaN);
-      }
-    });
   });
 
   // The pin tests of the interfaces spec, section 7.3, that need no

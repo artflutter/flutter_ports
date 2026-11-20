@@ -350,7 +350,7 @@ Opt<T>? _special<T>(Object? raw) {
   if (raw is List<Object?>) return OptList<T>(raw);
   if (raw is Map<String, Object?> ||
       raw is OptionObject ||
-      (raw is JsObjectFace && raw is! TypedDataItem)) {
+      (raw is JsObjectFace && raw is! ParsedItem)) {
     return OptScope<T>(raw);
   }
   return null;

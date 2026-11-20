@@ -2,7 +2,6 @@
 @TestOn('vm')
 library;
 
-import 'dart:collection';
 import 'dart:ui' as ui;
 
 import 'package:flutter_chartjs_port/chartjs.dart';
@@ -10,6 +9,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/parsed_items.dart';
 
 const red = ChartPaint.solid(ui.Color(0xffff0000));
 const blue = ChartPaint.solid(ui.Color(0xff0000ff));
@@ -46,27 +46,6 @@ class _CustomScale(super.cfg) extends LinearScale {
     calls++;
     return super.getPixelForValue(value, index);
   }
-}
-
-class _ObservedMap(final Map<String, Object?> fields)
-    extends MapBase<String, Object?> {
-  final List<Object?> reads = [];
-  void Function(Object?)? onRead;
-  @override
-  Object? operator [](Object? key) {
-    reads.add(key);
-    onRead?.call(key);
-    return fields[key];
-  }
-
-  @override
-  void operator []=(String key, Object? value) => fields[key] = value;
-  @override
-  Iterable<String> get keys => fields.keys;
-  @override
-  Object? remove(Object? key) => fields.remove(key);
-  @override
-  void clear() => fields.clear();
 }
 
 ChartConfigurationScope _config({
@@ -111,7 +90,9 @@ JsObjectFace _dataset(ChartConfigurationScope cfg, [int index = 0]) =>
 
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
-  final chart = reference ? _ReferenceChart(canvas, cfg) : Chart(canvas, cfg);
+  final chart = reference
+      ? _ReferenceChart(canvas, withParsedDataItems(cfg))
+      : Chart(canvas, withParsedDataItems(cfg));
   addTearDown(chart.destroy);
   return chart;
 }
@@ -177,9 +158,7 @@ void main() {
               final ds = _dataset(cfg, d);
               (ds['backgroundColor']! as List<ChartPaint>)[0] =
                   ChartPaint.solid(ui.Color(0xff001100 + step + d));
-              ((ds['data']! as List<Object?>)[3]!
-                  as Map<String, Object?>)['y'] = step
-                  .toDouble();
+              jsSet((ds['data']! as List<Object?>)[3], 'y', step.toDouble());
             }
           }
           a.update(UpdateMode.none);
@@ -198,37 +177,6 @@ void main() {
       },
     );
   }
-
-  test('effectful parsed reads terminate reuse before conversion', () {
-    final states = <Object>[];
-    final logs = <List<Object?>>[];
-    for (final reference in [false, true]) {
-      final cfg = _config();
-      final chart = _chart(cfg, reference: reference);
-      final probes = _probes(chart);
-      final observed = _ObservedMap({'x': 3.0, 'y': 4.0});
-      var changed = false;
-      observed.onRead = (key) {
-        if (key == 'y' && !changed) {
-          changed = true;
-          _dataset(cfg)['radius'] = 7.0;
-          (_dataset(cfg)['backgroundColor']! as List<ChartPaint>)[0] = green;
-          chart.config.clearCache();
-        }
-      };
-      final meta = chart.getDatasetMeta(0);
-      meta.parsed[3] = observed;
-      meta.controller!.updateElements(meta.data, 0, 8, 'none');
-      logs.add(List.of(observed.reads));
-      states.add(_observe(chart));
-      if (!reference) {
-        expect(probes[2].planReads, greaterThan(0));
-        expect(probes[5].planReads, 0);
-      }
-    }
-    expect(logs[0], logs[1]);
-    expect(states[0], states[1]);
-  });
 
   test('active point callback sees geometry and ends prepared resolution', () {
     final states = <Object>[];
@@ -337,14 +285,14 @@ void main() {
           final data = ds['data']! as List<Object?>;
           switch (step) {
             case 1:
-              (data[4]! as Map<String, Object?>)['y'] = null;
+              jsSet(data[4], 'y', null);
             case 2:
-              (data[4]! as Map<String, Object?>)['y'] = '2';
+              jsSet(data[4], 'y', '2');
             case 3:
-              ds['data'] = <Object?>[
+              ds['data'] = parsedItemsOf([
                 for (var i = 0; i < 12; i++)
                   <String, double>{'x': i / 2, 'y': i / 3},
-              ];
+              ]);
             case 4:
               data.removeRange(5, data.length);
             case 5:
@@ -354,16 +302,18 @@ void main() {
               ds['data'] = <Object?>[
                 ...data,
                 for (var i = 5; i < 10; i++)
-                  <String, Object?>{'x': i / 2, 'y': -0.0},
+                  parsedItemOf(<String, Object?>{'x': i / 2, 'y': -0.0}),
               ];
             case 7:
               for (var i = 0; i < data.length; i += 2) {
-                data[i] = Map<String, Object?>.of(
-                  data[i]! as Map<String, Object?>,
-                );
+                // A new item with the same keys and values.
+                final item = data[i]! as ParsedItem;
+                data[i] = parsedItemOf(<String, Object?>{
+                  for (final key in item.jsKeys()) key: item.jsRead(key),
+                });
               }
             case 8:
-              data[3] = _ObservedMap({'x': 1.5, 'y': 2.0});
+              data[3] = parsedItemOf(<String, Object?>{'x': 1.5, 'y': 2.0});
           }
         }
         final mode = step == 5 ? UpdateMode.reset : UpdateMode.none;
@@ -392,8 +342,7 @@ void main() {
         ChartPaint hover(ScriptableContext context) {
           calls.add(context.dataIndex);
           if (fail) throw StateError('hover failure');
-          ((ds['data']! as List<Object?>)[6]! as Map<String, Object?>)['y'] =
-              '3';
+          jsSet((ds['data']! as List<Object?>)[6], 'y', '3');
           (ds['backgroundColor']! as List<ChartPaint>)[0] = green;
           return green;
         }
@@ -415,7 +364,7 @@ void main() {
         point.active = false;
         chart.update(UpdateMode.none);
         states.add(_observe(chart));
-        ((ds['data']! as List<Object?>)[6]! as Map<String, Object?>)['y'] = 3.0;
+        jsSet((ds['data']! as List<Object?>)[6], 'y', 3.0);
         chart.update(UpdateMode.none);
         states.add(_observe(chart));
         logs.add(calls);

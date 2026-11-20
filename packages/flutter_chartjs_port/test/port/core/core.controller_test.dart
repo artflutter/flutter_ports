@@ -20,6 +20,7 @@ import '../../support/axis_json.dart';
 import '../../support/context_keys.dart';
 import '../../support/data_scope.dart';
 import '../../support/list_splice.dart';
+import '../../support/parsed_items.dart';
 import 'controller_reference.dart';
 import 'registry_observe.dart';
 
@@ -470,7 +471,7 @@ void _scenario(
 Chart _hostedChart(AnyObject config, {void Function(Chart chart)? replace}) {
   final canvas = document.createElement<HTMLCanvasElement>('canvas');
   final wrapper = document.createElement<HarnessElement>('div');
-  final chart = Chart(canvas, config);
+  final chart = Chart(canvas, withParsedDataItems(config));
   replace?.call(chart);
   wrapper.style.cssText = 'width: 300px; height: 200px';
   wrapper.appendChild(canvas);
@@ -1113,7 +1114,7 @@ void main() {
 
     _scenario('options and data', (o, charts) {
       final config = _testConfig([_points('a')]);
-      final chart = Chart(_Canvas(), config);
+      final chart = Chart(_Canvas(), withParsedDataItems(config));
       charts.add(chart);
       o.observe('data alias', identical(chart.data, config['data']));
       final data = dataScopeOf(<String, Object?>{
@@ -1297,44 +1298,47 @@ void main() {
   });
 
   group('the parsing keys of parseObjectData', () {
-    // core.datasetController.js:559-573: a key that is not a string throws
-    // at its `resolveObjectKey` read (helpers.core.ts:379), after the
-    // category x scale added the label of item 0. The pinned build in x64
-    // Node.js v24.12.0 gives the labels ['b', 'a'] (a probe of these two
-    // configs on the pinned build).
-    for (final (name, key) in [('5', 5.0 as Object?), ('null', null)]) {
-      testWidgets('a yAxisKey $name throws after the parse of x', (
-        tester,
-      ) async {
-        // A Map config: the parsing key is not a string, a value that a
-        // typed scope keeps only as a foreign value.
-        final labels = <Object?>['b'];
-        expect(
-          () => acquireChartRoot(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': labels,
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[
-                    <String, Object?>{'x': 'a', 'y': 1.0},
-                  ],
-                },
-              ],
-            },
-            'options': <String, Object?>{
-              'parsing': <String, Object?>{'yAxisKey': key},
-              'scales': <String, Object?>{
-                'x': <String, Object?>{'type': 'category'},
-                'y': <String, Object?>{'type': 'linear'},
-              },
-            },
-          }),
-          throwsA(isA<TypeError>()),
-        );
-        expect(labels, ['b', 'a']);
-      });
-    }
+    // A parsing key is a String (row adapt-parsing-keys): a number key stops
+    // a debug build when the controller reads the option, before the parse.
+    // A null key takes the default key, where upstream throws in the parse.
+    Map<String, Object?> config(List<Object?> labels, Object? key) => {
+      'type': 'line',
+      'data': <String, Object?>{
+        'labels': labels,
+        'datasets': <Object?>[
+          <String, Object?>{
+            'data': <Object?>[
+              <String, Object?>{'x': 'a', 'y': 1.0},
+            ],
+          },
+        ],
+      },
+      'options': <String, Object?>{
+        'parsing': <String, Object?>{'yAxisKey': key},
+        'scales': <String, Object?>{
+          'x': <String, Object?>{'type': 'category'},
+          'y': <String, Object?>{'type': 'linear'},
+        },
+      },
+    };
+
+    testWidgets('a yAxisKey 5 stops a debug build before the parse', (
+      tester,
+    ) async {
+      final labels = <Object?>['b'];
+      expect(
+        () => acquireChart(config(labels, 5.0)),
+        throwsA(isA<AssertionError>()),
+      );
+      expect(labels, ['b']);
+    });
+
+    testWidgets('a yAxisKey null takes the default key y', (tester) async {
+      final labels = <Object?>['b'];
+      final chart = acquireChart(config(labels, null));
+      expect(labels, ['b', 'a']);
+      expect(chart.getDatasetMeta(0).parsed[0]!.y, 1.0);
+    });
   });
 
   // A Map config: the controller `test` of the generator.

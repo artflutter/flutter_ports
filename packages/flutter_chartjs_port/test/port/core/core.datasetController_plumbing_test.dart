@@ -15,6 +15,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/data_scope.dart';
+import '../../support/parsed_items.dart';
 
 /// A value of a parsed item whose `toString` is user code.
 final class _Logged(final String text, final void Function() onRead) {
@@ -149,7 +150,7 @@ final class _ObservedNumbers(final List<double> values)
 
 Chart _chart(Object cfg) {
   final canvas = UiCanvasElement(width: 320, height: 200);
-  final chart = Chart(canvas, cfg);
+  final chart = Chart(canvas, withParsedDataItems(cfg));
   addTearDown(() {
     chart.destroy();
     canvas.getContext2d().dispose();
@@ -350,7 +351,10 @@ void main() {
 
     test('a chart subclass keeps its data getter', () {
       final canvas = UiCanvasElement(width: 320, height: 200);
-      final chart = _DataChart(canvas, _rawConfig(_maps(_points())));
+      final chart = _DataChart(
+        canvas,
+        withParsedDataItems(_rawConfig(_maps(_points()))),
+      );
       addTearDown(() {
         chart
           ..replacement = null
@@ -411,27 +415,17 @@ void main() {
       expect(parsedValueOf(items[4], const RAxis()), 3);
     });
 
-    test('another item reads by name', () {
-      final map = <String, Object?>{'x': 1.0, 'y': null, 'extra': 'e'};
-      expect(parsedValueOf(map, const XAxis()), 1.0);
-      expect(parsedValueOf(map, const YAxis()), isNull);
-      expect(parsedValueOf(map, const RAxis()), same(undefined));
-      // An axis of another class has no key (row adapt-axis-objects).
-      expect(parsedValueOf(map, _OtherAxis()), same(undefined));
-      expect(parsedValueOf(4.0, const XAxis()), same(undefined));
-      expect(parsedValueOf(false, const YAxis()), same(undefined));
+    test('a parsed item reads its fields, and null throws', () {
       expect(
         () => parsedValueOf(null, const XAxis()),
-        throwsA(isA<TypeError>()),
-      );
-      expect(
-        () => parsedValueOf(undefined, const XAxis()),
         throwsA(isA<TypeError>()),
       );
       final parsed = ParsedItem.of(const XAxis(), 1.0, const YAxis(), null);
       expect(parsedValueOf(parsed, const XAxis()), 1.0);
       expect(parsedValueOf(parsed, const YAxis()), isNull);
       expect(parsedValueOf(parsed, const RAxis()), same(undefined));
+      // An axis of another class has no field (row adapt-axis-objects).
+      expect(parsedValueOf(parsed, _OtherAxis()), same(undefined));
     });
 
     test('a chart of points and of Maps with extra keys draw the same', () {
@@ -466,8 +460,8 @@ void main() {
 
   group('clearStacks', () {
     Map<String, Object?> stackedConfig(
-      List<Object?> first,
-      List<Object?> second,
+      List<ParsedItem?> first,
+      List<ParsedItem?> second,
     ) => <String, Object?>{
       'type': 'line',
       'data': <String, Object?>{
@@ -485,13 +479,13 @@ void main() {
     ];
 
     /// The stack entry of the axis `y` of [item].
-    StackEntry entryOf(Object? item) =>
+    StackEntry entryOf(ParsedItem? item) =>
         axisStackOf(stacksOf(item), const YAxis())! as StackEntry;
 
-    final forms = <String, List<Object?> Function(List<typed.DataPoint>)>{
+    final forms = <String, List<ParsedItem?> Function(List<typed.DataPoint>)>{
       'a List of points': (points) => points,
-      'a plain List of points': (points) => <Object?>[...points],
-      'a List of Maps': _maps,
+      'a plain List of points': (points) => <ParsedItem?>[...points],
+      'a List of parsed items': (points) => parsedItemsOf(_maps(points)),
     };
 
     for (final MapEntry(key: name, value: form) in forms.entries) {
@@ -531,8 +525,8 @@ void main() {
       chart.update();
       expect(chart.getDatasetMeta(0).parsed, same(next));
       expect(_geometry(chart), before);
-      expect(stacksOf(points[0]), isNull);
-      expect(stacksOf(next[0]), isNull);
+      expect(stacksOf(points[0]), same(undefined));
+      expect(stacksOf(next[0]), same(undefined));
     });
   });
 
@@ -564,16 +558,6 @@ void main() {
       item['_stacks'] = undefined;
       expect(stacksOf(item), same(undefined));
     });
-
-    test('a data item keeps the reads of its class', () {
-      final map = <String, Object?>{'_stacks': 1};
-      expect(stacksOf(map), 1);
-      expect(stacksOf(<String, Object?>{}), isNull);
-      expect(stacksOf(<Object?>[]), isNull);
-      expect(stacksOf(4.0), same(undefined));
-      expect(stacksOf('text'), same(undefined));
-      expect(() => stacksOf(null), throwsA(isA<TypeError>()));
-    });
   });
 
   group('the presized parse lists', () {
@@ -594,7 +578,7 @@ void main() {
     };
 
     /// `parse(0, count)` of [meta] into [parsed].
-    Object parseInto(Chart chart, List<Object?> parsed, int count) {
+    Object parseInto(Chart chart, List<ParsedItem?> parsed, int count) {
       final meta = chart.getDatasetMeta(0)..parsed = parsed;
       _controllerOf(chart).parse(0, count);
       return _parsedOf(meta);
@@ -608,11 +592,11 @@ void main() {
         <double>[1, 2, 3, 4],
       ]) {
         final chart = _chart(lineConfig(<Object?>[...data], xType: 'category'));
-        final plain = parseInto(chart, <Object?>[], 4);
+        final plain = parseInto(chart, <ParsedItem?>[], 4);
         expect(chart.getDatasetMeta(0).parsed.length, 4);
         expect(
           chart.getDatasetMeta(0).parsed.runtimeType,
-          <Object?>[].runtimeType,
+          <ParsedItem?>[].runtimeType,
         );
         chart.getDatasetMeta(0).sorted = false;
         // The growth of a List that is not the plain one.
@@ -633,13 +617,13 @@ void main() {
         lineConfig(<Object?>[1.0, 2.0, 3.0, 4.0], xType: 'category'),
       );
       final meta = chart.getDatasetMeta(0);
-      final before = List<Object?>.of(meta.parsed);
+      final before = List<ParsedItem?>.of(meta.parsed);
       _controllerOf(chart).parse(1, 2);
       expect(meta.parsed.length, 4);
       expect(meta.parsed[0], same(before[0]));
       expect(meta.parsed[3], same(before[3]));
       expect(meta.parsed[1], isNot(same(before[1])));
-      meta.parsed = <Object?>[before[0]];
+      meta.parsed = <ParsedItem?>[before[0]];
       _controllerOf(chart).parse(1, 2);
       expect(meta.parsed.length, 3);
       expect(meta.parsed[0], same(before[0]));
@@ -649,7 +633,7 @@ void main() {
       final chart = _chart(
         lineConfig(<Object?>[1.0, 2.0, 3.0, 4.0], xType: 'category'),
       );
-      final meta = chart.getDatasetMeta(0)..parsed = <Object?>[];
+      final meta = chart.getDatasetMeta(0)..parsed = <ParsedItem?>[];
       expect(
         () => _controllerOf(chart).parse(1, 2),
         throwsA(isA<RangeError>()),
@@ -662,8 +646,8 @@ void main() {
         lineConfig(<Object?>[1.0, 2.0, 3.0, 4.0], xType: 'category'),
       );
       final meta = chart.getDatasetMeta(0);
-      final before = List<Object?>.of(meta.parsed);
-      expect(meta.parsed.runtimeType, <Object?>[].runtimeType);
+      final before = List<ParsedItem?>.of(meta.parsed);
+      expect(meta.parsed.runtimeType, <ParsedItem?>[].runtimeType);
       _controllerOf(chart).parse(0, 2);
       expect(meta.parsed.length, 4);
       expect(meta.parsed[0], isNot(same(before[0])));
@@ -678,7 +662,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       _ShortController.short = true;
       addTearDown(() => _ShortController.short = false);
-      meta.parsed = <Object?>[];
+      meta.parsed = <ParsedItem?>[];
       expect(
         () => _controllerOf(chart).parse(0, 3),
         throwsA(isA<RangeError>()),
@@ -692,7 +676,7 @@ void main() {
       final chart = _chart(
         lineConfig(<Object?>[1.0, 2.0, 3.0], type: 'plumbing-short'),
       );
-      final meta = chart.getDatasetMeta(0)..parsed = <Object?>[];
+      final meta = chart.getDatasetMeta(0)..parsed = <ParsedItem?>[];
       final log = <int>[];
       _ShortController.onItemRead = () => log.add(meta.parsed.length);
       addTearDown(() => _ShortController.onItemRead = null);
@@ -800,12 +784,12 @@ void main() {
       expect(nativeDataUpdateList(<double>[]), isTrue);
       for (final chart in [a, b]) {
         final meta = chart.getDatasetMeta(0);
-        expect(meta.parsed, <Object?>[1.0, 2.0, 3.0]);
-        expect(meta.parsed.runtimeType, <Object?>[].runtimeType);
-        meta.parsed = <Object?>[];
+        expect(_numbersOf(meta.parsed), <Object?>[1.0, 2.0, 3.0]);
+        expect(meta.parsed.runtimeType, <ParsedItem?>[].runtimeType);
+        meta.parsed = <ParsedItem?>[];
         _controllerOf(chart).parse(0, 3);
-        expect(meta.parsed, <Object?>[1.0, 2.0, 3.0]);
-        meta.parsed = <Object?>[];
+        expect(_numbersOf(meta.parsed), <Object?>[1.0, 2.0, 3.0]);
+        meta.parsed = <ParsedItem?>[];
         _controllerOf(chart).parse(1, 0);
         expect(meta.parsed, isEmpty);
       }
@@ -821,10 +805,10 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       _onLoggedRead = () => log.add(meta.parsed.length);
       addTearDown(() => _onLoggedRead = null);
-      meta.parsed = <Object?>[];
+      meta.parsed = <ParsedItem?>[];
       _controllerOf(chart).parse(0, 3);
       expect(log, [0, 1, 2]);
-      expect(meta.parsed, <Object?>[1.0, 2.0, 3.0]);
+      expect(_numbersOf(meta.parsed), <Object?>[1.0, 2.0, 3.0]);
     });
 
     test('a custom List of numbers sees the List of upstream', () {
@@ -834,7 +818,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       expect(data, isA<List<num?>>());
       data.onRead = () => log.add(meta.parsed.length);
-      meta.parsed = <Object?>[];
+      meta.parsed = <ParsedItem?>[];
       _controllerOf(chart).parse(0, 3);
       // The first read is the `isObject` test of the first item.
       expect(log, [0, 0, 1, 2]);
@@ -844,16 +828,22 @@ void main() {
 }
 
 /// A custom List of the parsed items: not the plain List of `_dataCheck`.
-final class _CustomObjects() extends ListBase<Object?> {
-  final List<Object?> items = [];
+/// The numbers of the parsed items [parsed] of a doughnut: the `r` of each
+/// item (row adapt-parsed-data-items).
+List<Object?> _numbersOf(List<ParsedItem?> parsed) => [
+  for (final item in parsed) item?.r,
+];
+
+final class _CustomObjects() extends ListBase<ParsedItem?> {
+  final List<ParsedItem?> items = [];
   @override
   int get length => items.length;
   @override
   set length(int value) => items.length = value;
   @override
-  Object? operator [](int index) => items[index];
+  ParsedItem? operator [](int index) => items[index];
   @override
-  void operator []=(int index, Object? value) => items[index] = value;
+  void operator []=(int index, ParsedItem? value) => items[index] = value;
 }
 
 /// The own keys of the parsed item [item].

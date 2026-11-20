@@ -89,6 +89,45 @@ final class const ParsingKeys({
   int get hashCode => Object.hash(xAxisKey, yAxisKey, key);
 }
 
+/// The parsed items of the data [data] of `parsing: false`
+/// (U `core.datasetController.js:461`, `controller.doughnut.js:153`): the data
+/// List itself when it is a List of [ParsedItem] (for example a
+/// `List<DataPoint>`), else a List of the same items.
+///
+/// Upstream takes any data items there. In the port, each data item of
+/// `parsing: false` is a [ParsedItem] (row `adapt-parsed-data-items`):
+/// another item stops a debug build, and a release build takes an empty
+/// item, which has no value.
+List<ParsedItem?> parsedDataItems(Object? data) {
+  if (data is List<ParsedItem?>) return data;
+  final items = data is String ? JsStringList(data) : data! as List<Object?>;
+  return [
+    for (final item in items)
+      if (item is ParsedItem?) item else _foreignDataItem(item),
+  ];
+}
+
+/// `meta._parsed[index]` of a controller that parses one number for each
+/// item, the doughnut and the pie (U `controller.doughnut.js:153-165`): the
+/// [ParsedItem.r] of the item, or [undefined] for an index that names no
+/// parsed item and for a hole (row `adapt-parsed-data-items`).
+Object? parsedNumberOf(List<ParsedItem?> parsed, int index) {
+  final item = index >= 0 && index < parsed.length ? parsed[index] : null;
+  return item == null ? undefined : item.r;
+}
+
+/// The parsed item of a data item [item] of `parsing: false` that is not a
+/// [ParsedItem]: a debug build stops, and a release build takes an empty
+/// item.
+ParsedItem _foreignDataItem(Object? item) {
+  assert(
+    false,
+    'With parsing: false, each data item is a ParsedItem (for example a '
+    'DataPoint), not $item.',
+  );
+  return ParsedItem();
+}
+
 /// One parsed item of a dataset (U `core.datasetController.js:502-578`):
 /// the object that `getParsed(index)` gives each time, and that a
 /// scriptable option can write into (`ctx.parsed`).
@@ -255,6 +294,72 @@ final class ParsedItem extends TypedRecord {
 
   @override
   void clearSlot(int slot) => writeSlot(slot, null);
+}
+
+/// A data item in the object form `{x, y}` or `{x, y, r}`
+/// (`docs/general/data-structures.md`, "Object[]"), for the typed API and
+/// for `parsing: false`.
+///
+/// A data point is a [ParsedItem]: the chart reads its fields where Chart.js
+/// reads the keys of the object `{x, y}`. Thus a `List<DataPoint>` goes to
+/// the chart with no copy, also as the parsed items of `parsing: false`. A
+/// data point does not implement `Map`.
+///
+/// A number is a `double`, as each number of Chart.js. A `null` [y] is a
+/// gap in the line. A bubble keeps its radius in [r], for the parse, and in
+/// [custom], the parsed form `_custom` of `parsing: false`.
+///
+/// ```dart
+/// final points = [DataPoint(1, 2), DataPoint(2, null), DataPoint(3, 4)];
+/// final bubble = DataPoint.bubble(1, 2, 8);
+/// ```
+final class DataPoint extends ParsedItem {
+  /// `{x, y}` with a number [x]: a value of a linear or a logarithmic x
+  /// axis, or an index of a category x axis.
+  new(num x, num? y) : super() {
+    this
+      ..x = _double(x)
+      ..y = y == null ? null : _double(y);
+  }
+
+  /// `{x, y}` with a time [x], for a time or a time series x axis.
+  new time(DateTime x, num? y) : super() {
+    this
+      ..x = x
+      ..y = y == null ? null : _double(y);
+  }
+
+  /// `{x, y}` with a label [x], for a category x axis. A label that is not
+  /// in the labels of the chart becomes a new label: the category scale adds
+  /// it to `data.labels`.
+  new label(String x, num? y) : super() {
+    this
+      ..x = x
+      ..y = y == null ? null : _double(y);
+  }
+
+  /// `{x, y, r}`: a bubble at ([x], [y]) with the radius [r] in pixels. The
+  /// radius is also `_custom`, the parsed radius of a bubble.
+  // DIVERGES(chartjs): adapt-bubble-typed-radius, the radius in `_custom`.
+  new bubble(num x, num y, num r) : super() {
+    final radius = _double(r);
+    this
+      ..x = _double(x)
+      ..y = _double(y)
+      ..r = radius
+      ..custom = radius;
+  }
+
+  /// The `double` of [value]: the product of an `int` and 1.0 is an inline
+  /// conversion (dart-lang/sdk issue 64209).
+  static double _double(num value) =>
+      value is double ? value : (value as int) * 1.0;
+
+  @override
+  String toString() {
+    final r = this.r;
+    return r is double ? 'DataPoint($x, $y, $r)' : 'DataPoint($x, $y)';
+  }
 }
 
 /// `item._stacks` (U `core.datasetController.js:152-175`): the stack

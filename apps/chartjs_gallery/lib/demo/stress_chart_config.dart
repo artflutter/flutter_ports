@@ -94,17 +94,19 @@ final class StressPointField(int count) {
     }
   }
 
-  /// The data objects `{x, y}` of the first [n] points, at their positions.
-  List<Map<String, Object?>> data(int n) => [
-    for (var i = 0; i < n; i++) <String, Object?>{'x': x[i], 'y': y[i]},
+  /// The data objects `{x, y}` of the first [n] points, at their positions:
+  /// parsed items, the data items of `parsing: false`.
+  List<ParsedItem> data(int n) => [
+    for (var i = 0; i < n; i++)
+      ParsedItem.of(const XAxis(), x[i], const YAxis(), y[i]),
   ];
 
   /// Writes the positions of the points into the data objects [data].
-  void write(List<Map<String, Object?>> data) {
+  void write(List<ParsedItem> data) {
     for (var i = 0; i < data.length; i++) {
       data[i]
-        ..['x'] = x[i]
-        ..['y'] = y[i];
+        ..x = x[i]
+        ..y = y[i];
     }
   }
 }
@@ -204,13 +206,12 @@ final class StressChartScene(
   ) {
     if (type.points) return field.data(n);
     if (type == StressChartType.bubble) {
-      return [
+      return <ParsedItem>[
         for (var i = 0; i < n; i++)
-          <String, Object?>{
-            'x': field.x[i],
-            'y': field.y[i],
-            'r': _radius(field.vx[i]),
-          },
+          ParsedItem()
+            ..x = field.x[i]
+            ..y = field.y[i]
+            ..r = _radius(field.vx[i]),
       ];
     }
     final arcs = _arcs(type);
@@ -228,9 +229,9 @@ final class StressChartScene(
     final y = field.y;
     if (type.points || type == StressChartType.bubble) {
       for (var i = 0; i < n; i++) {
-        (data[i]! as Map<String, Object?>)
-          ..['x'] = x[i]
-          ..['y'] = y[i];
+        (data[i]! as ParsedItem)
+          ..x = x[i]
+          ..y = y[i];
       }
       return;
     }

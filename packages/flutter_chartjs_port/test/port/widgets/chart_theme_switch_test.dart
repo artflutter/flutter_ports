@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/data_scope.dart';
+import '../../support/parsed_items.dart';
 
 // theming.md §8 test 8: the runtime theme switch of ChartView (Chart.js ADR
 // 0147 §13). The widget switches in its post-frame update
@@ -276,10 +277,11 @@ void _restorePalette(Chart chart, List<AnyObject> snapshot) {
   }
 }
 
-/// The 5000 input items `{x: i, y: f(i)}` of `decimation_theme_test.dart`.
+/// The 5000 input items `{x: i, y: f(i)}` of `decimation_theme_test.dart`,
+/// parsed items: the data items of `parsing: false`.
 List<Object?> _decimationInput() => <Object?>[
   for (var i = 0; i < 5000; i++)
-    <String, Object?>{'x': i, 'y': (i * 37) % 101 + (i ~/ 250)},
+    parsedItemOf(<String, Object?>{'x': i, 'y': (i * 37) % 101 + (i ~/ 250)}),
 ];
 
 /// A host whose state sets the config and the theme of its ChartView in one

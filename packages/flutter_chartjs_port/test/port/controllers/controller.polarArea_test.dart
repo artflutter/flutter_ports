@@ -211,6 +211,12 @@ void main() {
     ],
     functions: _functions,
     extras: _extras,
+    skips: {
+      // A data item of `parsing: false` is a ParsedItem: a number or a List
+      // stops a debug build.
+      'parsed: parsing false, Lists': 'diverges: adapt-parsed-data-items',
+      'parsed: parsing false, numbers': 'diverges: adapt-parsed-data-items',
+    },
   );
 
   group('the option-sharing subclass', () {

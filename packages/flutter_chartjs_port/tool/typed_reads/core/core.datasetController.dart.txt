@@ -18,7 +18,7 @@
 # jsObjectKeys: Object.keys of the object data of the user, of
 #   chart.scales (user scale ids, getFirstScaleId), and of a user object in
 #   `defaults.elements`.
-jsGet 10
-jsGetKey 6
-stringIndex 5
+jsGet 8
+jsGetKey 3
+stringIndex 2
 jsObjectKeys 3

@@ -337,10 +337,26 @@ AnyObject _nativeItems(AnyObject observation) => <String, Object?>{
   'plugins.tooltip': switch (observation['plugins.tooltip']) {
     final Map<String, Object?> tooltip => <String, Object?>{
       ...tooltip,
-      'dataPoints': nativeDataPoints(tooltip['dataPoints']),
+      'dataPoints': _numberParsed(nativeDataPoints(tooltip['dataPoints'])),
     },
     final other => other,
   },
+};
+
+/// [dataPoints] with a number `parsed` as the parsed item `{r}`: the doughnut
+/// and the pie keep their number in `r` (row `adapt-parsed-data-items`).
+Object? _numberParsed(Object? dataPoints) => switch (dataPoints) {
+  final List<Object?> items => [
+    for (final item in items)
+      if (item case {'parsed': final num parsed})
+        <String, Object?>{
+          ...item as Map<String, Object?>,
+          'parsed': {'r': parsed},
+        }
+      else
+        item,
+  ],
+  _ => dataPoints,
 };
 
 /// The reference cases of the themed run: [_reference] with the parsed text

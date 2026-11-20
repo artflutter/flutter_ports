@@ -4,6 +4,4 @@
 # chart.data.datasets. jsGetKey 10: the x and y of the data items of the
 # user (parsing: false) in lttbDecimation and minMaxDecimation.
 # jsObjectKeys 1: the spread of a data item.
-jsGet 3
-jsGetKey 10
-jsObjectKeys 1
+jsGet 2

@@ -348,7 +348,6 @@ NativePointSizeFields
 NativePointSizes
 NativeRadialPositionScale
 NativeTouch
-NativeTypedItems
 NearestInteractionMode
 NearestTooltipPositioner
 NoFill
@@ -554,7 +553,6 @@ TooltipYAlign
 TransitionOptionsScope
 TransitionsSpecScope
 TrianglePointStyle
-TypedDataItem
 TypedProperty
 TypedRecord
 TypedRegistry
@@ -883,7 +881,6 @@ nativeBulkBarLists
 nativeCategoryLabels
 nativeDataUpdateList
 nativeDataUpdateObject
-nativeDataUpdatePoint
 nativeDataUpdateRoot
 nativeEventStopped
 nativeGapReadsEnabled
@@ -921,6 +918,8 @@ parseDateWall
 parseObjectDataRadialScale
 parseObjectDataRadialScaleOf
 parseWithFormat
+parsedDataItems
+parsedNumberOf
 parsedValueOf
 partitionedBaselineFillDraws
 partitionedBaselineFillEnabled
@@ -951,7 +950,6 @@ readOption
 readProperty
 readUsedSize
 readValueToProps
-registerDataUpdateTypes
 registerables
 registry
 releaseObserver
@@ -1399,7 +1397,6 @@ NativePointSizeFields
 NativePointSizes
 NativeRadialPositionScale
 NativeTouch
-NativeTypedItems
 NearestInteractionMode
 NearestTooltipPositioner
 NoFill
@@ -1604,7 +1601,6 @@ TooltipYAlign
 TransitionOptionsScope
 TransitionsSpecScope
 TrianglePointStyle
-TypedDataItem
 TypedProperty
 TypedRecord
 TypedRegistry
@@ -1949,7 +1945,6 @@ nativeBulkBarLists
 nativeCategoryLabels
 nativeDataUpdateList
 nativeDataUpdateObject
-nativeDataUpdatePoint
 nativeDataUpdateRoot
 nativeEventStopped
 nativeGapReadsEnabled
@@ -1989,6 +1984,8 @@ parseDateWall
 parseObjectDataRadialScale
 parseObjectDataRadialScaleOf
 parseWithFormat
+parsedDataItems
+parsedNumberOf
 parsedValueOf
 partitionedBaselineFillDraws
 partitionedBaselineFillEnabled
@@ -2019,7 +2016,6 @@ readOption
 readProperty
 readUsedSize
 readValueToProps
-registerDataUpdateTypes
 registerables
 registry
 releaseObserver

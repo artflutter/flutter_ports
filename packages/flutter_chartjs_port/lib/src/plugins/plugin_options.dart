@@ -1027,8 +1027,8 @@ final class const DecimationOptions({
 final class const _UnsupportedAlgorithm(final String name)
     extends DecimationAlgorithm {
   @override
-  List<Object?> decimate(
-    List<Object?> data,
+  List<ParsedItem?> decimate(
+    List<ParsedItem?> data,
     int start,
     int count,
     double availableWidth,

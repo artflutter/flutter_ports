@@ -206,9 +206,12 @@ void main() {
         expect(point.y, y.getPixelForValue(scaleValueOf(y, item.y), i));
         expect(
           point.x,
-          closeTo(area.left + (item.x as double) * area.width, 1e-9),
+          closeTo(area.left + (item.x! as double) * area.width, 1e-9),
         );
-        expect(point.y, closeTo(area.bottom - item.y! * area.height, 1e-9));
+        expect(
+          point.y,
+          closeTo(area.bottom - (item.y! as double) * area.height, 1e-9),
+        );
       }
     }
     expect(_radius(_point(chart, 0, 0)), 6);
@@ -609,7 +612,8 @@ void main() {
     await _frames(tester, 176);
     expect(animator.running(chart), isTrue);
     final area = chart.chartArea!;
-    final target = area.bottom - state.dataOf(0).first.y! * area.height;
+    final target =
+        area.bottom - (state.dataOf(0).first.y! as double) * area.height;
     expect((point.y - y).abs(), lessThan((target - y).abs()));
     // 200 frames of 16 ms are 3200 ms.
     await _frames(tester, 20);
@@ -632,7 +636,10 @@ void main() {
     expect(animator.running(chart), isFalse);
     final area = chart.chartArea!;
     final item = state.dataOf(0).first;
-    expect(point.y, closeTo(area.bottom - item.y! * area.height, 1e-9));
+    expect(
+      point.y,
+      closeTo(area.bottom - (item.y! as double) * area.height, 1e-9),
+    );
     expect(point.y, isNot(y));
 
     await _tap(tester, 'core.data.add');
@@ -730,7 +737,7 @@ void main() {
     final item = state.dataOf(0).first;
     expect(
       _point(chart, 0, 0).y,
-      closeTo(area.bottom - item.y! * area.height, 1e-9),
+      closeTo(area.bottom - (item.y! as double) * area.height, 1e-9),
     );
     expect(tester.takeException(), isNull);
   });

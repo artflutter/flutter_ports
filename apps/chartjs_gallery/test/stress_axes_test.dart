@@ -105,8 +105,8 @@ Future<bool> _selected(WidgetTester tester, String key) =>
     stressSelected(tester, key);
 
 /// The data object [i] of the chart of the stress tab.
-Map<String, Object?> _item(WidgetTester tester, int i) =>
-    _state(tester).debugChartData[i]! as Map<String, Object?>;
+ParsedItem _item(WidgetTester tester, int i) =>
+    _state(tester).debugChartData[i]! as ParsedItem;
 
 /// The chart areas of the stress mode axes at commit `0e0ab93`, before
 /// Chart.js ADR 0031: the phase 5 gallery controller, overflow false.

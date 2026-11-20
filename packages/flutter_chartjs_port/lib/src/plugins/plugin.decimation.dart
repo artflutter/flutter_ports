@@ -45,8 +45,8 @@ final class const LttbDecimationAlgorithm() extends DecimationAlgorithm {
   this;
 
   @override
-  List<Object?> decimate(
-    List<Object?> data,
+  List<ParsedItem?> decimate(
+    List<ParsedItem?> data,
     int start,
     int count,
     double availableWidth,
@@ -69,8 +69,8 @@ final class const MinMaxDecimationAlgorithm() extends DecimationAlgorithm {
   this;
 
   @override
-  List<Object?> decimate(
-    List<Object?> data,
+  List<ParsedItem?> decimate(
+    List<ParsedItem?> data,
     int start,
     int count,
     double availableWidth,
@@ -100,12 +100,12 @@ final class const MinMaxDecimationAlgorithm() extends DecimationAlgorithm {
 /// [data] is the raw data of the dataset. [options] is the option object
 /// of the plugin: the function reads `options.samples` of the resolved
 /// [DecimationOptions]. The data items are the items of the user
-/// (`parsing: false`): their reads are by name ([jsGetKey]). An index past
-/// the end, a `null` or an `undefined` item throws a [TypeError] at the read of
-/// its `x`, as the destructuring of `:50` and the reads of `:40-41` and
-/// `:61-62` do.
-List<Object?> lttbDecimation(
-  List<Object?> data,
+/// (`parsing: false`), each a [ParsedItem] (row `adapt-parsed-data-items`):
+/// their reads are the typed fields. An index past the end and a Dart `null`
+/// item throw a [TypeError] at the read of its `x`, as the destructuring of
+/// `:50` and the reads of `:40-41` and `:61-62` do.
+List<ParsedItem?> lttbDecimation(
+  List<ParsedItem?> data,
   double start,
   double count,
   double availableWidth,
@@ -122,7 +122,7 @@ List<Object?> lttbDecimation(
     return _slice(data, start, start + count);
   }
 
-  final decimated = <Object?>[];
+  final decimated = <ParsedItem?>[];
 
   final bucketWidth = (count - 2) / (samples - 2);
   final endIndex = start + count - 1;
@@ -131,11 +131,11 @@ List<Object?> lttbDecimation(
   // a `nextA` that the loop of :59-70 never sets.
   double? a = start;
   double? nextA;
-  Object? maxAreaPoint = undefined;
+  ParsedItem? maxAreaPoint;
   double maxArea;
   double area;
 
-  decimated.add(jsGetIndex(data, a));
+  decimated.add(_itemAt(data, a));
 
   for (var i = 0.0; i < samples - 2; i++) {
     Object? avgX = 0.0;
@@ -148,8 +148,8 @@ List<Object?> lttbDecimation(
     final avgRangeLength = avgRangeEnd - avgRangeStart;
 
     for (var j = avgRangeStart; j < avgRangeEnd; j++) {
-      avgX = jsAdd(avgX, jsGetKey(jsGetIndex(data, j), 'x'));
-      avgY = jsAdd(avgY, jsGetKey(jsGetIndex(data, j), 'y'));
+      avgX = jsAdd(avgX, _itemAt(data, j)!.x);
+      avgY = jsAdd(avgY, _itemAt(data, j)!.y);
     }
 
     final avgXValue = jsToNumber(avgX) / avgRangeLength;
@@ -161,9 +161,9 @@ List<Object?> lttbDecimation(
         math.min(((i + 1) * bucketWidth).floorToDouble() + 1, count) + start;
     // `const {x: pointAx, y: pointAy} = data[a]`: an `undefined` a reads
     // `data[undefined]`.
-    final pointA = jsGetIndex(data, a ?? double.nan);
-    final pointAx = jsToNumber(jsGetKey(pointA, 'x'));
-    final pointAy = jsToNumber(jsGetKey(pointA, 'y'));
+    final pointA = _itemAt(data, a ?? double.nan)!;
+    final pointAx = jsToNumber(pointA.x);
+    final pointAy = jsToNumber(pointA.y);
 
     // Note that this is changed from the original algorithm which
     // initializes these values to 1. The reason for this change is that if
@@ -174,13 +174,11 @@ List<Object?> lttbDecimation(
     maxArea = area = -1;
 
     for (var j = rangeOffs; j < rangeTo; j++) {
-      final point = jsGetIndex(data, j);
+      final point = _itemAt(data, j)!;
       area =
           0.5 *
-          ((pointAx - avgXValue) *
-                      (jsToNumber(jsGetKey(point, 'y')) - pointAy) -
-                  (pointAx - jsToNumber(jsGetKey(point, 'x'))) *
-                      (avgYValue - pointAy))
+          ((pointAx - avgXValue) * (jsToNumber(point.y) - pointAy) -
+                  (pointAx - jsToNumber(point.x)) * (avgYValue - pointAy))
               .abs();
 
       if (area > maxArea) {
@@ -195,9 +193,18 @@ List<Object?> lttbDecimation(
   }
 
   // Include the last point
-  decimated.add(jsGetIndex(data, endIndex));
+  decimated.add(_itemAt(data, endIndex));
 
   return decimated;
+}
+
+/// `data[index]` of the data items: Dart `null` for an index that names no
+/// item, the JS `undefined`.
+ParsedItem? _itemAt(List<ParsedItem?> data, double index) {
+  if (index >= 0 && index < data.length && index == index.truncateToDouble()) {
+    return data[index.toInt()];
+  }
+  return null;
 }
 
 /// plugin.decimation.js:82 `minMaxDecimation(data, start, count,
@@ -208,9 +215,10 @@ List<Object?> lttbDecimation(
 ///
 /// The `y` values stay raw until the compare of `:101` and `:104`, which
 /// compares two strings by their code units ([jsLessThan]). A new item of
-/// `:124-133` is a new Map with the own keys of the item and `x` ([_withX]).
-List<Object?> minMaxDecimation(
-  List<Object?> data,
+/// `:124-133` is a new [ParsedItem] with the own keys of the item and `x`
+/// ([_withX]).
+List<ParsedItem?> minMaxDecimation(
+  List<ParsedItem?> data,
   double start,
   double count,
   double availableWidth,
@@ -224,18 +232,18 @@ List<Object?> minMaxDecimation(
   double? startIndex;
   Object? minY;
   Object? maxY;
-  final decimated = <Object?>[];
+  final decimated = <ParsedItem?>[];
   final endIndex = start + count - 1;
 
-  final xMin = jsGetKey(jsGetIndex(data, start), 'x');
-  final xMax = jsGetKey(jsGetIndex(data, endIndex), 'x');
+  final xMin = _itemAt(data, start)!.x;
+  final xMax = _itemAt(data, endIndex)!.x;
   final dx = jsToNumber(xMax) - jsToNumber(xMin);
 
   for (var i = start; i < start + count; ++i) {
-    final point = jsGetIndex(data, i);
-    final pointX = jsGetKey(point, 'x');
+    final point = _itemAt(data, i)!;
+    final pointX = point.x;
     final x = (jsToNumber(pointX) - jsToNumber(xMin)) / dx * availableWidth;
-    final y = jsGetKey(point, 'y');
+    final y = point.y;
     final truncX = jsToInt32(x);
 
     if (truncX == prevX) {
@@ -267,11 +275,11 @@ List<Object?> minMaxDecimation(
 
         if (intermediateIndex1 != startIndex &&
             intermediateIndex1 != lastIndex) {
-          decimated.add(_withX(jsGetIndex(data, intermediateIndex1), avgX));
+          decimated.add(_withX(_itemAt(data, intermediateIndex1), avgX));
         }
         if (intermediateIndex2 != startIndex &&
             intermediateIndex2 != lastIndex) {
-          decimated.add(_withX(jsGetIndex(data, intermediateIndex2), avgX));
+          decimated.add(_withX(_itemAt(data, intermediateIndex2), avgX));
         }
       }
 
@@ -279,7 +287,7 @@ List<Object?> minMaxDecimation(
       // which could happen with very uneven data
       if (i > 0 && lastIndex != startIndex) {
         // Last point in the previous interval
-        decimated.add(jsGetIndex(data, lastIndex));
+        decimated.add(_itemAt(data, lastIndex));
       }
 
       // Start of the new interval
@@ -295,41 +303,29 @@ List<Object?> minMaxDecimation(
 }
 
 /// The object literal `{...item, x: avgX}` of plugin.decimation.js:124-133:
-/// the own enumerable keys of [item] in the order of `Object.keys`, then
-/// `x`. A key `x` of [item] keeps its place and gets [x].
+/// a new [ParsedItem] with the own keys of [item] in the order of
+/// `Object.keys`, then `x`. A key `x` of [item] keeps its place and gets [x].
 ///
 /// Only an item with a `y` value that compares (`:101`, `:104`) becomes a
-/// min or max item. An array, a string, a number, `null` and `undefined`
-/// have no own `y`, so [item] is always a Map here. A Map gives its String
-/// keys, as the spread gives the own keys. This is also true for a Map with
-/// other type arguments, for example the `Map<dynamic, dynamic>` of an
-/// untyped literal, which [jsGet] and [jsGetKey] also read. A key that is
-/// not a String is not a property: [jsGet] never reads it, so the copy
-/// leaves it out.
-AnyObject _withX(Object? item, double x) {
-  final own = switch (item) {
-    final Map<String, Object?> map => map,
-    final Map<dynamic, dynamic> map => <String, Object?>{
-      for (final MapEntry(:key, :value) in map.entries)
-        if (key is String) key: value,
-    },
-    _ => const <String, Object?>{},
-  };
-  return <String, Object?>{
-    for (final key in jsObjectKeys(own)) key: jsGet(own, key),
-    'x': x,
-  };
+/// min or max item, so [item] is never Dart `null` here.
+ParsedItem _withX(ParsedItem? item, double x) {
+  final own = item!;
+  final copy = ParsedItem();
+  for (final key in own.jsKeys()) {
+    copy.jsWrite(key, own.jsRead(key));
+  }
+  return copy..x = x;
 }
 
 /// `array.slice(begin, end)` (ECMAScript 23.1.3.28) for the whole-number
 /// bounds of plugin.decimation.js:15: a new List.
-List<Object?> _slice(List<Object?> list, double begin, double end) {
+List<ParsedItem?> _slice(List<ParsedItem?> list, double begin, double end) {
   final length = list.length.toDouble();
   double bound(double value) =>
       value < 0 ? math.max(length + value, 0) : math.min(value, length);
   final from = bound(begin).toInt();
   final to = bound(end).toInt();
-  return from < to ? list.sublist(from, to) : <Object?>[];
+  return from < to ? list.sublist(from, to) : <ParsedItem?>[];
 }
 
 /// A dataset of `chart.data.datasets`, the object of the user (Chart.js ADR
@@ -603,8 +599,9 @@ void _beforeElementsUpdate(
     // object of the option in place of the `switch` by its name.
     // An option value that is not an algorithm throws the JavaScript Error
     // of the `default` case in its `decimate`.
+    // DIVERGES(chartjs): adapt-parsed-data-items, the data items are typed.
     final decimated = opts.algorithm.decimate(
-      data! as List<Object?>,
+      parsedDataItems(data),
       start,
       count,
       availableWidth,

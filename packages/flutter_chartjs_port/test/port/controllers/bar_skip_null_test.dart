@@ -10,6 +10,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/parsed_items.dart';
+
 const _colors = [
   ChartPaint.solid(ui.Color(0xFF3366AA)),
   ChartPaint.solid(ui.Color(0xFFAA6633)),
@@ -91,30 +93,6 @@ final class _CustomMap(final Map<String, Object?> _inner)
   Object? remove(Object? key) => _inner.remove(key);
 }
 
-/// A data item of the app whose reads call [onRead] (a review probe).
-final class _ReadingMap(
-  final Map<String, Object?> _inner,
-  final void Function(Object? key) onRead,
-) extends MapBase<String, Object?> {
-  @override
-  Object? operator [](Object? key) {
-    onRead(key);
-    return _inner[key];
-  }
-
-  @override
-  void operator []=(String key, Object? value) => _inner[key] = value;
-
-  @override
-  void clear() => _inner.clear();
-
-  @override
-  Iterable<String> get keys => _inner.keys;
-
-  @override
-  Object? remove(Object? key) => _inner.remove(key);
-}
-
 /// A value of the app whose text calls [hook] (a review probe).
 final class _ReadingValue(final void Function() hook) {
   @override
@@ -132,7 +110,10 @@ Map<String, Object?> _dataset(Map<String, Object?> cfg, int index) =>
         as Map<String, Object?>;
 
 Chart _chart(Object cfg) {
-  final chart = Chart(UiCanvasElement(width: 640, height: 400), cfg);
+  final chart = Chart(
+    UiCanvasElement(width: 640, height: 400),
+    withParsedDataItems(cfg),
+  );
   addTearDown(chart.destroy);
   return chart;
 }
@@ -572,15 +553,12 @@ void main() {
         for (var i = 0; i < 12; i++)
           if (d == 0 && i == 5) null else ((i * 7 + d) % 13) + 1.0,
       ];
-      Object item(int i) => switch (reader) {
-        'map' => _ReadingMap(<String, Object?>{
-          'x': i * 1.0,
-          'y': i + 2.0,
-        }, (key) => onRead(key, i * 1.0)),
-        _ => <String, Object?>{
-          'x': i * 1.0,
-          'y': i == 3 ? _ReadingValue(() => onRead('x', 3)) : i + 2.0,
-        },
+      // A data item of `parsing: false` is a ParsedItem (row
+      // adapt-parsed-data-items): its `y` runs code of the app in its
+      // `toString`.
+      Object item(int i) => <String, Object?>{
+        'x': i * 1.0,
+        'y': i == 3 ? _ReadingValue(() => onRead('x', 3)) : i + 2.0,
       };
       final cfg = <String, Object?>{
         'type': 'bar',
@@ -626,7 +604,7 @@ void main() {
       return _observe(chart, 3);
     }
 
-    for (final reader in ['map', 'toString']) {
+    for (final reader in ['toString']) {
       test('a write from the $reader of a parsing:false item equals the '
           'search', () {
         final fast = run(reader, UpdateMode.none, writes: true);
@@ -783,7 +761,7 @@ void main() {
     const y = YAxis();
 
     /// The meta of dataset 0 of a chart, with [items] as its parsed list.
-    ChartMeta metaOf(List<Object?> items) {
+    ChartMeta metaOf(List<ParsedItem?> items) {
       final chart = _chart(
         _config(
           labels: _labels(3),
@@ -795,7 +773,7 @@ void main() {
       return chart.getDatasetMeta(0)..parsed = items;
     }
 
-    List<Object?> positional([int count = 6]) => <Object?>[
+    List<ParsedItem?> positional([int count = 6]) => <ParsedItem?>[
       for (var i = 0; i < count; i++)
         ParsedItem.of(x, i == 2 ? null : i * 1.0, y, 1.0),
     ];
@@ -838,17 +816,12 @@ void main() {
     });
 
     test('a list that is not positional keeps the search', () {
-      for (final items in <List<Object?>>[
+      for (final items in <List<ParsedItem?>>[
         [ParsedItem.of(x, 0.0, y, 1.0), ParsedItem.of(x, 0.0, y, 1.0)],
         [ParsedItem.of(x, 1.0, y, 1.0), ParsedItem.of(x, 0.0, y, 1.0)],
         [ParsedItem.of(x, 0.0, y, 1.0), ParsedItem.of(x, double.nan, y, 1.0)],
         [ParsedItem.of(x, 0.0, y, 1.0), ParsedItem.of(x, '1', y, 1.0)],
-        [ParsedItem.of(x, 0.0, y, 1.0), 3.0],
         [ParsedItem.of(x, 0.0, y, 1.0), null],
-        [
-          ParsedItem.of(x, 0.0, y, 1.0),
-          <String, Object?>{'x': 1.0, 'y': 1.0},
-        ],
       ]) {
         final index = BarSkipNullIndex(() => true);
         final meta = metaOf(items);
@@ -858,9 +831,9 @@ void main() {
     });
 
     test('a List of another class keeps the search', () {
-      for (final items in <List<Object?>>[
+      for (final items in <List<ParsedItem?>>[
         UnmodifiableListView(positional()),
-        <ParsedItem>[for (final item in positional()) item! as ParsedItem],
+        <ParsedItem>[for (final item in positional()) item!],
       ]) {
         final index = BarSkipNullIndex(() => true);
         expect(
@@ -877,9 +850,7 @@ void main() {
           labels: _labels(3),
           dataset: {'parsing': false},
           data: [
-            <Object?>[
-              for (var i = 0; i < 3; i++) <String, Object?>{'x': i, 'y': 1.0},
-            ],
+            <DataPoint>[for (var i = 0; i < 3; i++) DataPoint(i, 1.0)],
           ],
         ),
       );
@@ -958,11 +929,7 @@ void main() {
     });
 
     test('another item at the position ends the proofs', () {
-      for (final other in <Object?>[
-        ParsedItem.of(x, 1.0, y, 1.0),
-        <String, Object?>{'x': 4.0},
-        null,
-      ]) {
+      for (final other in <ParsedItem?>[ParsedItem.of(x, 1.0, y, 1.0), null]) {
         final items = positional();
         final meta = metaOf(items);
         final index = BarSkipNullIndex(() => true);
@@ -977,7 +944,7 @@ void main() {
       final meta = metaOf(positional());
       final index = BarSkipNullIndex(() => true);
       expect(index.find(meta, x, 1.0), isA<ParsedItem>());
-      final repeated = <Object?>[
+      final repeated = <ParsedItem?>[
         ParsedItem.of(x, 1.0, y, 1.0),
         ParsedItem.of(x, 1.0, y, 1.0),
       ];
@@ -986,15 +953,11 @@ void main() {
     });
 
     test('a list whose search can run code of the app ends the proofs', () {
-      for (final unsafe in <List<Object?>>[
+      for (final unsafe in <List<ParsedItem?>>[
         // An object as the value: `jsIsNaN` calls its `toString`.
         [ParsedItem.of(x, 0.0, y, _ReadingValue(() {}))],
         // An object as the index value.
         [ParsedItem.of(x, _ReadingValue(() {}), y, 1.0)],
-        // A Map of the app as an item.
-        [
-          _ReadingMap(<String, Object?>{'x': 0.0, 'y': 1.0}, (_) {}),
-        ],
       ]) {
         final items = positional();
         final index = BarSkipNullIndex(() => true);
@@ -1009,7 +972,7 @@ void main() {
 
     test('proveAll declines a list whose read can run code of the app', () {
       final clean = metaOf(positional());
-      final notPositional = metaOf(<Object?>[
+      final notPositional = metaOf(<ParsedItem?>[
         ParsedItem.of(x, 1.0, y, 1.0),
         ParsedItem.of(x, 1.0, y, 1.0),
       ]);
@@ -1019,12 +982,9 @@ void main() {
       );
       final foreign = ParsedItem.of(x, 0.0, y, 1.0)..jsWrite('_stacks', 'text');
       expect(foreign.hasForeign, isTrue);
-      for (final unsafe in <List<Object?>>[
+      for (final unsafe in <List<ParsedItem?>>[
         [foreign],
         [ParsedItem.of(x, 0.0, y, _ReadingValue(() {}))],
-        [
-          <String, Object?>{'x': 0.0, 'y': 1.0},
-        ],
         UnmodifiableListView(positional()),
       ]) {
         expect(
@@ -1139,7 +1099,10 @@ void main() {
         final cfg = _random(math.Random(seed));
         final Chart chart;
         try {
-          chart = Chart(UiCanvasElement(width: 640, height: 400), cfg);
+          chart = Chart(
+            UiCanvasElement(width: 640, height: 400),
+            withParsedDataItems(cfg),
+          );
         } on Object {
           // The same config throws in the search: no bars to compare.
           continue;

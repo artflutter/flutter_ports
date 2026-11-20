@@ -600,7 +600,7 @@ Object? cloneValue(Object? value) => switch (value) {
   final Map<String, Object?> map => <String, Object?>{
     for (final MapEntry(:key, :value) in map.entries) key: cloneValue(value),
   },
-  final JsObjectFace face when face is! TypedDataItem => <String, Object?>{
+  final JsObjectFace face when face is! ParsedItem => <String, Object?>{
     for (final key in face.jsKeys()) key: cloneValue(face.jsRead(key)),
   },
   _ => value,

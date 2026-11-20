@@ -371,7 +371,9 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
         jsTruthy(chart.animationsDisabled) || reset || mode == 'none';
     final end = start + count;
     final pointsCount = points.length;
-    var prevParsed = start > 0 ? getParsed(start - 1) : false;
+    // The `false` of `start > 0 && ...` is Dart `null`: the gap test reads
+    // it only for an index above 0.
+    var prevParsed = start > 0 ? getParsed(start - 1) : null;
     final writes = _PointWrites(direct: directUpdate);
     // DIVERGES(chartjs): adapt-line-point-options, reuse native indexed colors
     // only inside this loop, with guards at each original observation point.
@@ -457,7 +459,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
           : vScale.getPixelForValue(
               scaleValueOf(
                 vScale,
-                hasStack ? applyStack(vScale, parsed, stacked) : vValue,
+                hasStack ? applyStack(vScale, parsed!, stacked) : vValue,
               ),
               index,
             );

@@ -464,7 +464,9 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         : double.infinity;
     final directUpdate =
         jsTruthy(chart.animationsDisabled) || reset || mode == 'none';
-    var prevParsed = start > 0 ? getParsed(start - 1) : false;
+    // The `false` of `start > 0 && ...` is Dart `null`: the gap test reads
+    // it only for an index above 0.
+    var prevParsed = start > 0 ? getParsed(start - 1) : null;
     final writes = _PointWrites(direct: directUpdate);
 
     // DIVERGES(chartjs): adapt-scatter-point-options, prepare only within this
@@ -576,7 +578,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           : vScale.getPixelForValue(
               scaleValueOf(
                 vScale,
-                hasStack ? applyStack(vScale, parsed, stacked) : vValue,
+                hasStack ? applyStack(vScale, parsed!, stacked) : vValue,
               ),
               i,
             );

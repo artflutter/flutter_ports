@@ -23,30 +23,7 @@ class _ObservedMap() extends MapBase<String, Object?> {
   Object? remove(Object? key) => null;
 }
 
-class _RegisteredItem() implements TypedDataItem {
-  @override
-  Object get x => 1.0;
-  @override
-  double? get y => 2;
-  @override
-  double? get r => 3;
-  @override
-  Never noSuchMethod(Invocation invocation) => throw UnimplementedError();
-}
-
-class _OtherItem() extends _RegisteredItem;
-
 void main() {
-  test('typed items classify by their class, one class after another', () {
-    registerDataUpdateTypes(const [], [_RegisteredItem]);
-    final items = NativeTypedItems();
-    expect(items.accepts(_RegisteredItem()), isTrue);
-    expect(items.accepts(_RegisteredItem()), isTrue);
-    expect(items.accepts(_OtherItem()), isFalse);
-    expect(items.accepts(_OtherItem()), isFalse);
-    expect(items.accepts(_RegisteredItem()), isTrue);
-  });
-
   group('the size arithmetic of a native point', () {
     const values = <double>[
       0,

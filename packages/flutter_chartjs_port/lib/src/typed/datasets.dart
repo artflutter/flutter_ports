@@ -200,17 +200,6 @@ OptionScope lowerDataset(
   ChartKind chartType, {
   TooltipCallbacks? Function()? currentTooltipCallbacks,
 }) {
-  if (!_dataUpdateTypesRegistered) {
-    registerDataUpdateTypes(
-      [
-        <DataPoint>[].runtimeType,
-        List<DataPoint>.empty().runtimeType,
-        const <DataPoint>[].runtimeType,
-      ],
-      [DataPoint],
-    );
-    _dataUpdateTypesRegistered = true;
-  }
   final kind = dataset._kind;
   final scope = _datasetScopeOf(kind);
   if (kind != chartType) put(scope, OptionKey.type, kind.name);
@@ -250,8 +239,6 @@ OptionScope lowerDataset(
   }
   return mergeExtra(scope, dataset.extra);
 }
-
-bool _dataUpdateTypesRegistered = false;
 
 /// A new dataset scope of the controller [kind] (Chart.js ADR 0054 §3): the
 /// dataset kind of `index.d.ts` of each controller (`line` and `scatter`
@@ -1726,117 +1713,4 @@ final class const RadarDataset({
     ..._lineProps,
     ('extra', byEntries(extra)),
   ];
-}
-
-/// `value.toDouble()` in another form: a `double` stays, and an `int` is
-/// multiplied by 1.0.
-///
-/// In an AOT build `num.toDouble()` is a call, and for an `int` from 2^30 on
-/// Android it is a runtime call (dart-lang/sdk issue 64209). The product of
-/// a static `int` and 1.0 is an inline conversion. dart2js emits the same
-/// code for both forms.
-@pragma('vm:prefer-inline')
-@pragma('dart2js:prefer-inline')
-@pragma('wasm:prefer-inline')
-double _toDouble(num value) => value is double ? value : (value as int) * 1.0;
-
-/// A data item in the object form `{x, y}` or `{x, y, r}`
-/// (`docs/general/data-structures.md`, "Object[]").
-///
-/// A data point is a typed data item (Chart.js ADR 0054 §7): the chart
-/// reads its fields [x], [y] and [r] where Chart.js reads the keys of the
-/// object `{x, y}`. Thus a `List<DataPoint>` goes to the chart with no
-/// copy. A data point does not implement `Map`.
-///
-/// A number is a `double`, as each number of Chart.js. A `null` [y] is a
-/// gap in the line.
-///
-/// A data point is immutable: the chart does not write into it. Code that
-/// writes a key into it by name gets the `TypeError` of a write into a
-/// frozen object (`Object.freeze`).
-@immutable
-final class DataPoint implements TypedDataItem {
-  /// `{x, y}` with a number [x]: a value of a linear or a logarithmic x
-  /// axis, or an index of a category x axis.
-  new(num x, num? y)
-    : x = _toDouble(x),
-      y = y == null ? null : _toDouble(y),
-      r = null;
-
-  /// `{x, y}` with a time [x], for a time or a time series x axis.
-  new time(DateTime this.x, num? y)
-    : y = y == null ? null : _toDouble(y),
-      r = null;
-
-  /// `{x, y}` with a label [x], for a category x axis. A label that is not
-  /// in the labels of the chart becomes a new label: the category scale adds
-  /// it to `data.labels`.
-  new label(String this.x, num? y)
-    : y = y == null ? null : _toDouble(y),
-      r = null;
-
-  /// `{x, y, r}`: a bubble at ([x], [y]) with the radius [r] in pixels.
-  new bubble(num x, num y, num r)
-    : x = _toDouble(x),
-      y = _toDouble(y),
-      r = _toDouble(r);
-
-  /// The x value: a `double`, a `DateTime` or a `String`.
-  @override
-  final Object x;
-
-  /// The y value. `null` is a gap.
-  @override
-  final double? y;
-
-  /// The bubble radius in pixels, or `null` for a data point that is not a
-  /// bubble.
-  @override
-  final double? r;
-
-  // The face of Chart.js ADR 0054 §5: the object `{x, y}` or `{x, y, r}`.
-
-  /// `point[name]`: [x], [y] (Dart `null` is JS `null`), [r] when the point
-  /// has it, else `undefined`.
-  @override
-  Object? jsRead(String name) => switch (name) {
-    'x' => x,
-    'y' => y,
-    'r' when r != null => r,
-    _ => undefined,
-  };
-
-  /// `point[name] = value`: a data point is frozen. A `TypeError`, as a
-  /// write into a frozen object in strict mode.
-  @override
-  void jsWrite(String name, Object? value) => throw TypeError();
-
-  /// `point[name]`: [jsRead].
-  @override
-  Object? operator [](String name) => jsRead(name);
-
-  /// `point[name] = value`: [jsWrite], a `TypeError`.
-  @override
-  void operator []=(String name, Object? value) => jsWrite(name, value);
-
-  /// `Object.keys(point)`: `x`, `y` and, for a bubble, `r`.
-  @override
-  List<String> jsKeys() => r == null ? const ['x', 'y'] : const ['x', 'y', 'r'];
-
-  /// Whether the point has the key [name].
-  @override
-  bool jsHas(String name) =>
-      name == 'x' || name == 'y' || (name == 'r' && r != null);
-
-  /// `delete point[name]`: a data point is frozen. A `TypeError` for an own
-  /// key, as a delete of a key of a frozen object in strict mode.
-  @override
-  bool jsDelete(String name) {
-    if (jsHas(name)) throw TypeError();
-    return true;
-  }
-
-  @override
-  String toString() =>
-      r == null ? 'DataPoint($x, $y)' : 'DataPoint($x, $y, $r)';
 }

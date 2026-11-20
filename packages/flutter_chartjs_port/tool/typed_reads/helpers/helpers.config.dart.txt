@@ -10,6 +10,6 @@
 #   indexable option, readOption for an options object that is not a view
 #   (a Map of the user) and the parsing key of _parseObjectDataRadialScale.
 # - jsObjectKeys 2: Reflect.ownKeys and Object.keys of a scope of any kind.
-jsGet 16
+jsGet 15
 stringIndex 14
 jsObjectKeys 2

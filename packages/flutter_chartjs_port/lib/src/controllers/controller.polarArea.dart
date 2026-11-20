@@ -260,7 +260,9 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
     final labelsValue = jsGet(chart.data, 'labels');
     final labels = jsTruthy(labelsValue) ? labelsValue : const <Object?>[];
     final value = formatNumber(
-      jsToNumber(parsedValueOf(jsGetIndex(meta.parsed, index), const RAxis())),
+      jsToNumber(
+        parsedValueOf(meta.parsed.elementAtOrNull(index), const RAxis()),
+      ),
       localeOf(readOption(chart.options, OptionKey.locale)),
     );
 

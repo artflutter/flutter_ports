@@ -20,7 +20,7 @@ import 'dart:ui' as ui;
 import 'package:chartjs_gallery/demo/stress_chart_config.dart';
 import 'package:flutter_chartjs_port/chartjs.dart' show ChartPaint, Plugin;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show Chart, ChartClip, CirclePointStyle;
+    show Chart, ChartClip, CirclePointStyle, ParsedItem, XAxis, YAxis;
 
 /// The scale types of the stress mode `axes`.
 ///
@@ -94,13 +94,16 @@ final class StressAxesScene(
       for (var i = 0; i < n; i++) 'Point $i',
   ];
 
-  /// The data objects `{x, y}`.
-  final List<Map<String, Object?>> data = [
+  /// The data objects `{x, y}`: parsed items, the data items of
+  /// `parsing: false`.
+  final List<ParsedItem> data = [
     for (var i = 0; i < n; i++)
-      <String, Object?>{
-        'x': _xValue(x, i, n),
-        'y': stressAxesValue(positions.y[i], y),
-      },
+      ParsedItem.of(
+        const XAxis(),
+        _xValue(x, i, n),
+        const YAxis(),
+        stressAxesValue(positions.y[i], y),
+      ),
   ];
 
   /// The x of the point [i] of [n] points: it increases with [i].
@@ -124,7 +127,7 @@ final class StressAxesScene(
   void write(StressPointField positions) {
     final ys = positions.y;
     for (var i = 0; i < n; i++) {
-      data[i]['y'] = stressAxesValue(ys[i], y);
+      data[i].y = stressAxesValue(ys[i], y);
     }
   }
 }

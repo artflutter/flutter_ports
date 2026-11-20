@@ -127,7 +127,15 @@ void main() {
     expect(names.skip(8).where((n) => !prefixed(n)), isEmpty);
   });
 
-  testControllerChartCases(controllerRadarReference, extras: _extras);
+  testControllerChartCases(
+    controllerRadarReference,
+    extras: _extras,
+    skips: {
+      // A data item of `parsing: false` is a ParsedItem: a number stops a
+      // debug build.
+      'parsed: parsing false with numbers': 'diverges: adapt-parsed-data-items',
+    },
+  );
 
   group('theming.md §8 test 3: the light preset', () {
     testControllerChartCases(
@@ -151,12 +159,11 @@ void main() {
   // The pin tests of the parsed-data spec, section 7.3. The generated cases
   // `parsed: ...` give the upstream values of the same configs.
   group('parsed data', () {
-    testWidgets('parsing false with numbers gives NaN points that skip', (
-      tester,
-    ) async {
+    testWidgets('parsing false with items without r gives NaN points that '
+        'skip', (tester) async {
       final chart = acquireChartRoot(
         _radar(
-          const [5.0, 3.0, 1.0],
+          [ParsedItem(), ParsedItem(), ParsedItem()],
           extra: const <String, Object?>{'parsing': false},
         ),
       );

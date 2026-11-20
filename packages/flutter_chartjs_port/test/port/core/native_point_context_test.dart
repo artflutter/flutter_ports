@@ -6,13 +6,13 @@ import 'package:test/test.dart';
 
 class _Meta(
   @override var List<IElement> data,
-  @override var List<Object?> parsed,
+  @override var List<ParsedItem?> parsed,
 ) implements ChartMeta {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class _ObservedList() extends ListBase<Object?> {
+class _ObservedList() extends ListBase<ParsedItem?> {
   int reads = 0;
   @override
   int get length {
@@ -23,13 +23,13 @@ class _ObservedList() extends ListBase<Object?> {
   @override
   set length(int value) {}
   @override
-  Object? operator [](int index) {
+  ParsedItem? operator [](int index) {
     reads++;
     return null;
   }
 
   @override
-  void operator []=(int index, Object? value) {}
+  void operator []=(int index, ParsedItem? value) {}
 }
 
 class _CustomPoint() extends PointElement {
@@ -49,9 +49,7 @@ void main() {
     final raw = <Object?>[
       <String, Object?>{'raw': 1},
     ];
-    final parsed = <Object?>[
-      <String, Object?>{'parsed': 1},
-    ];
+    final parsed = <ParsedItem?>[ParsedItem()..jsWrite('parsed', 1)];
     final meta = _Meta(<IElement>[point], parsed);
     final reader = NativePointContextReader.prepare(meta, raw, 'none')!;
     expect(reader.read(0), same(context));
@@ -60,12 +58,13 @@ void main() {
     expect(context.mode, 'none');
     expect(context.index, 0);
     raw[0] = null;
-    parsed[0] = 7.0;
+    final next = ParsedItem()..r = 7.0;
+    parsed[0] = next;
     reader.read(0);
     expect(context.raw, isNull);
-    expect(context.parsed, 7);
+    expect(context.parsed, same(next));
     final old = context.raw;
-    meta.parsed = List<Object?>.of(parsed);
+    meta.parsed = List<ParsedItem?>.of(parsed);
     expect(reader.read(0), isNull);
     expect(context.raw, old);
   });
@@ -75,7 +74,7 @@ void main() {
     final meta = _Meta(<IElement>[point], custom);
     expect(NativePointContextReader.prepare(meta, <Object?>[], 'none'), isNull);
     expect(custom.reads, 0);
-    meta.parsed = <Object?>[];
+    meta.parsed = <ParsedItem?>[];
     expect(NativePointContextReader.prepare(meta, custom, 'none'), isNull);
     expect(custom.reads, 0);
   });
@@ -84,7 +83,10 @@ void main() {
     () {
       final point = _CustomPoint();
       final native = PointElement();
-      final meta = _Meta(<IElement>[point, native], <Object?>[1, 2]);
+      final meta = _Meta(
+        <IElement>[point, native],
+        <ParsedItem?>[ParsedItem(), ParsedItem()],
+      );
       final reader = NativePointContextReader.prepare(meta, <Object?>[
         1,
         2,

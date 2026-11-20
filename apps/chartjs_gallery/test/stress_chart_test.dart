@@ -147,7 +147,7 @@ void _expectAllDrawn(Chart chart, StressChartScene scene, int n, String at) {
   expect(points, hasLength(n), reason: at);
   for (var i = 0; i < n; i++) {
     final point = points[i] as PointElement;
-    final item = scene.data[i]! as Map<String, Object?>;
+    final item = scene.data[i]! as ParsedItem;
     final x = item['x']! as double;
     final y = item['y']! as double;
     if (point.skip == true ||
@@ -222,7 +222,7 @@ void main() {
           final data = _state(tester).debugChartData;
           expect(data, hasLength(_n));
           final area = chart.chartArea!;
-          final item = data[7]! as Map<String, Object?>;
+          final item = data[7]! as ParsedItem;
           expect(
             points[7].x,
             closeTo(area.left + (item['x']! as double) * area.width, 1e-9),
@@ -461,9 +461,10 @@ void main() {
       );
     }
     final line = StressChartScene(StressChartType.line, 4, field);
-    expect(line.data[2], {'x': field.x[2], 'y': field.y[2]});
+    final item = line.data[2]! as ParsedItem;
+    expect([item.x, item.y], [field.x[2], field.y[2]]);
     final bubble = StressChartScene(StressChartType.bubble, 4, field);
-    final r = (bubble.data[1]! as Map<String, Object?>)['r']! as double;
+    final r = (bubble.data[1]! as ParsedItem).r! as double;
     final v = field.vx[1] / 0.3;
     expect(r, 2 + 4 * v * v);
     final bar = StressChartScene(StressChartType.bar, 4, field);
@@ -475,9 +476,11 @@ void main() {
     for (final scene in [line, bubble, bar, pie]) {
       scene.write(field);
     }
-    expect(line.data[2], {'x': field.x[2], 'y': field.y[2]});
+    final moved = line.data[2]! as ParsedItem;
+    expect([moved.x, moved.y], [field.x[2], field.y[2]]);
     // bubble keeps its r.
-    expect(bubble.data[1], {'x': field.x[1], 'y': field.y[1], 'r': r});
+    final ball = bubble.data[1]! as ParsedItem;
+    expect([ball.x, ball.y, ball.r], [field.x[1], field.y[1], r]);
     expect(bar.data[3], field.y[3]);
     expect(pie.data[0], 0.05 + 0.95 * field.y[0]);
   });

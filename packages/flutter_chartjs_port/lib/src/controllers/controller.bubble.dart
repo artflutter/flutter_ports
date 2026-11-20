@@ -12,9 +12,10 @@
 ///   parse functions is a [ParsedItem], and its `_custom` the radius. The
 ///   reads of a parsed value are [parsedValueOf]. A data item is any value
 ///   (Chart.js ADR 0036): the read `item[2]` is [jsGetIndex], and the read
-///   `item.r` is the typed field of a `TypedDataItem`, else a read by name.
-///   A parsed item of `parsing: false` is a data item of the user, read by
-///   name. The options of a point are a [PointOptions], and the
+///   `item.r` is the typed field of a [ParsedItem] (for example a
+///   [DataPoint]), else a read by name. A parsed item of `parsing: false` is
+///   a [ParsedItem] of the user (row `adapt-parsed-data-items`). The options
+///   of a point are a [PointOptions], and the
 ///   properties a [PointProperties] (Chart.js ADR 0054 §9). The exact
 ///   controller in a direct mode writes a built-in point with its typed
 ///   setters, with no object (row `adapt-direct-element-writes`, Chart.js ADR
@@ -33,8 +34,8 @@
 ///   and the copy of the shared options) is ported literally (Chart.js ADR
 ///   0036, section 8: the step 7 list), except inside the guarded native loops
 ///   of row `adapt-bubble-point-options` (Chart.js ADR 0094).
-/// - `_custom` of a `TypedDataItem` under `parsing: false` is its typed `r`
-///   (row `adapt-bubble-typed-radius`).
+/// - A [DataPoint.bubble] has its radius in `_custom` too, the parsed form
+///   of `parsing: false` (row `adapt-bubble-typed-radius`).
 ///
 /// This library imports `core.datasetController.dart`, which imports
 /// `core.animations.dart`. Thus it is not a pure layer.
@@ -48,15 +49,10 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// value ([ElementOptions.valueOf]), typed for a [PointOptions].
 Object? _radiusOf(ElementOptions options) => options.valueOf(OptionKey.radius);
 
-/// `parsed._custom` of a parsed item: the typed field of a [ParsedItem], the
-/// typed `r` of a [TypedDataItem] of `parsing: false` (Dart `null` is an absent
-/// value), else the read by name of a data item of `parsing: false`.
-Object? _customOf(Object? parsed) => switch (parsed) {
-  final ParsedItem item => item.custom,
-  // DIVERGES(chartjs): adapt-bubble-typed-radius, a typed item has its radius.
-  final TypedDataItem item => item.r ?? undefined,
-  _ => jsGetKey(parsed, '_custom'),
-};
+/// `parsed._custom` of a parsed item: the typed field of the [ParsedItem]. A
+/// Dart `null` item throws a [TypeError], as the JS read of a property of
+/// `undefined` does.
+Object? _customOf(ParsedItem? parsed) => parsed!.custom;
 
 /// The result of [_plainCustomOf] for a value that a native loop leaves to the
 /// ordinary path.
@@ -64,16 +60,12 @@ Object? _customOf(Object? parsed) => switch (parsed) {
 const Object _notPlain = Object();
 
 /// `parsed._custom` when its read and the `+=` of controller.bubble.js:165 run
-/// no user code: a number or `undefined` in a native item. Else [_notPlain].
+/// no user code: a number or `undefined` in a parsed item. Else [_notPlain].
 // DIVERGES(chartjs): adapt-bubble-point-options, the guard of a native loop.
-Object? _plainCustomOf(Object? parsed, NativeTypedItems typedItems) {
-  if (parsed is ParsedItem ||
-      (parsed is TypedDataItem && typedItems.accepts(parsed)) ||
-      (parsed is Map<String, Object?> && nativeDataUpdateObject(parsed))) {
-    final custom = _customOf(parsed);
-    return custom is num || custom is Undefined ? custom : _notPlain;
-  }
-  return _notPlain;
+Object? _plainCustomOf(ParsedItem? parsed) {
+  if (parsed == null) return _notPlain;
+  final custom = parsed.custom;
+  return custom is num || custom is Undefined ? custom : _notPlain;
 }
 
 /// Whether the `+=` of controller.bubble.js:165 on the radius of [options] runs
@@ -105,7 +97,6 @@ final class _ParseRadii(final BubbleController _owner, List<Object?> data) {
     if (_open) _takeEntry();
   }
 
-  final NativeTypedItems _typedItems = NativeTypedItems();
   bool _open =
       _owner._exact &&
       nativePointClass(_owner.dataElementType) &&
@@ -137,9 +128,8 @@ final class _ParseRadii(final BubbleController _owner, List<Object?> data) {
   /// A data item of `parseObjectData`, before the read of its `r`.
   void objectItem(Object? item) {
     if (!_open) return;
-    if (item is TypedDataItem) {
-      if (!_typedItems.accepts(item)) _end();
-    } else if (item != null &&
+    if (item is ParsedItem) return;
+    if (item != null &&
         item is! Undefined &&
         (item is! Map<String, Object?> || !nativeDataUpdateObject(item))) {
       _end();
@@ -162,8 +152,7 @@ final class _ParseRadii(final BubbleController _owner, List<Object?> data) {
   void oldItem(int index) {
     if (!_open) return;
     final parsed = _owner.getParsed(index);
-    if (jsTruthy(parsed) &&
-        identical(_plainCustomOf(parsed, _typedItems), _notPlain)) {
+    if (parsed != null && identical(_plainCustomOf(parsed), _notPlain)) {
       _end();
     }
   }
@@ -324,9 +313,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   ///
   /// `item && item.r && +item.r` is the value of the `&&` chain: a falsy
   /// item, else a falsy `r`, else the `ToNumber` of `r` (Chart.js ADR 0036,
-  /// section 7). `item.r` is the typed field of a `TypedDataItem` (Dart
-  /// `null` is an absent `r`), else the read by name of the data item of
-  /// the user.
+  /// section 7). `item.r` is the typed field of a [ParsedItem] (for example
+  /// a [DataPoint]), else the read by name of the data item of the user.
   @override
   List<ParsedItem> parseObjectData(
     ChartMeta meta,
@@ -343,9 +331,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
       if (!jsTruthy(item)) {
         r = item;
       } else {
-        final value = item is TypedDataItem
-            ? item.r ?? undefined
-            : jsGetKey(item, 'r');
+        final value = item is ParsedItem ? item.r : jsGetKey(item, 'r');
         radii.objectRadius(value);
         r = jsTruthy(value) ? jsToNumber(value) : value;
       }
@@ -391,7 +377,6 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
     // A custom point or a value with user code ends them before it can run.
     NativePointSizeFields? fields;
     NativePointContextReader? contexts;
-    final typedItems = NativeTypedItems();
     var indexed = false;
     final last = data.length - 1;
     for (var i = last; i >= 0; --i) {
@@ -402,10 +387,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
         // `getParsed(i)` of the exact controller on a native list.
         final items = cachedMeta.parsed;
         final custom = nativePointElement(point)
-            ? _plainCustomOf(
-                i < items.length ? items[i] : undefined,
-                typedItems,
-              )
+            ? _plainCustomOf(i < items.length ? items[i] : null)
             : _notPlain;
         if (!identical(custom, _notPlain)) {
           if (indexed && contexts?.readQualified(point, i) == null) {
@@ -518,7 +500,6 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
     NativePointContextReader? contexts;
     var indexed = false;
     final coordinates = NativePointCoordinates();
-    final typedItems = NativeTypedItems();
     final tryPrepare =
         _exact &&
         canPrepareNativePointUpdate(
@@ -535,12 +516,13 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
 
     for (var i = start; i < start + count; i++) {
       final point = points[i];
-      final parsed = reset ? false : getParsed(i);
+      // The `false` of `!reset && ...` is Dart `null`: a reset reads no item.
+      final parsed = reset ? null : getParsed(i);
       if (prepared != null &&
           (!nativePointElement(point) ||
               point.active ||
               !coordinates.accepts(parsed) ||
-              identical(_plainCustomOf(parsed, typedItems), _notPlain))) {
+              identical(_plainCustomOf(parsed), _notPlain))) {
         prepared = null;
       }
       final iPixel = reset
@@ -687,7 +669,7 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
   // DIVERGES(chartjs): adapt-bubble-point-options, shared with the update plan.
   ElementOptions _customRadius(
     ElementOptions values,
-    Object? parsed,
+    ParsedItem? parsed,
     String? mode,
   ) {
     // Custom radius resolution
@@ -699,7 +681,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
       OptionKey.radius,
       jsAdd(
         _radiusOf(values),
-        valueOrDefault(jsTruthy(parsed) ? _customOf(parsed) : parsed, radius),
+        // `parsed && parsed._custom`: Dart `null` is the JS `undefined`.
+        valueOrDefault(parsed != null ? _customOf(parsed) : undefined, radius),
       ),
     );
 

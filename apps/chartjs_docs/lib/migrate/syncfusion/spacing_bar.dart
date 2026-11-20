@@ -54,7 +54,7 @@ ChartConfig _config(double width, double spacing) => ChartConfig(
     header: true,
     text: (item) {
       final point = item.raw! as DataPoint;
-      return '${sfNumber(point.y!)} : ${sfNumber(point.x as num)}%';
+      return '${sfNumber(point.y! as num)} : ${sfNumber(point.x! as num)}%';
     },
   ),
   plugins: [sfTooltipLook],

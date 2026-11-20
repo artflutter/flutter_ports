@@ -3,4 +3,4 @@
 # jsGetKey: the user data items: `_custom` of an item of `parsing: false`
 #   (_customOf) and `item.r` of a data item that is not a TypedDataItem.
 jsGet 1
-jsGetKey 2
+jsGetKey 1

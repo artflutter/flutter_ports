@@ -109,7 +109,7 @@ void main() {
       final controller = _controllerOf(_chart(points));
       expect(nativeDataUpdateList(points), isTrue);
       controller.updateIndex(1);
-      expect(stacksOf(points[0]), isNull);
+      expect(stacksOf(points[0]), same(undefined));
       controller.updateIndex(0);
     });
   });
@@ -137,7 +137,7 @@ void main() {
       final walks = walked.walks;
       plain.updateIndex(1);
       expect(walked.walks, walks + 1);
-      expect(stacksOf(other[0]), isNull);
+      expect(stacksOf(other[0]), same(undefined));
       plain.updateIndex(0);
     });
   });

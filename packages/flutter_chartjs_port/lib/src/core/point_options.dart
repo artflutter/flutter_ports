@@ -236,26 +236,6 @@ final class NativePointCoordinateCache() {
   }
 }
 
-/// One loop's classifier of typed data items: the implementation class is
-/// cached by type, and the fields of an item stay live.
-final class NativeTypedItems() {
-  /// A classifier with no class seen yet.
-  this;
-
-  Type? _lastType;
-  bool _native = false;
-
-  /// True for an immutable point class that the typed facade registered.
-  bool accepts(TypedDataItem value) {
-    final type = value.runtimeType;
-    if (type != _lastType) {
-      _lastType = type;
-      _native = nativeDataUpdatePoint(value);
-    }
-    return _native;
-  }
-}
-
 /// Qualifies each parsed item at its original iteration, before any conversion
 /// can run user code. It never validates the whole dataset a second time.
 /// Container implementation is cached by type; coordinate values stay live.
@@ -266,7 +246,6 @@ final class NativePointCoordinates({
   /// Classifier state belongs to this loop; only proven map identities survive.
   this;
 
-  final NativeTypedItems _typedItems = NativeTypedItems();
   Type? _lastType;
   bool _nativeObject = false;
 
@@ -274,9 +253,6 @@ final class NativePointCoordinates({
   bool accepts(Object? value, [int? index]) {
     if (value is ParsedItem) {
       return !value.hasForeign && _number(value.x) && _number(value.y);
-    }
-    if (value is TypedDataItem && _typedItems.accepts(value)) {
-      return _number(value.x) && _number(value.y);
     }
     if (value is! Map<String, Object?> && value is! OptionScope) return false;
     final known = index != null && (cache?.contains(value, index) ?? false);
@@ -357,9 +333,6 @@ final class NativeGapReads._(
   /// class compare.
   Object? _map;
 
-  /// A registered typed item of this loop, as [_map].
-  TypedDataItem? _typed;
-
   /// The x that a pass holds for the next one, or Dart `null` for none.
   /// Each pass of the loop writes it once, after the last code of the pass
   /// that can run user code.
@@ -402,13 +375,6 @@ final class NativeGapReads._(
       if (map != null && item.runtimeType == map.runtimeType) return true;
       if (!nativeDataUpdateObject(item)) return false;
       _map = item;
-      return true;
-    }
-    if (item is TypedDataItem) {
-      final typed = _typed;
-      if (typed != null && item.runtimeType == typed.runtimeType) return true;
-      if (!nativeDataUpdatePoint(item)) return false;
-      _typed = item;
       return true;
     }
     return false;

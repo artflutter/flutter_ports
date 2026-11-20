@@ -329,14 +329,29 @@ List<ParsedItem> _parseArrayOrPrimitive(
 
 /// `parsed._custom` of a parsed item: the typed field of a [ParsedItem],
 /// else the read by name of a data item of `parsing: false`.
-Object? _customOf(Object? parsed) =>
-    parsed is ParsedItem ? parsed.custom : jsGetKey(parsed, '_custom');
+Object? _customOf(ParsedItem? parsed) => parsed!.custom;
 
 /// `custom[key]` of the `_custom` object of a data item of `parsing: false`
 /// (a user object), or of a [FloatingBar] that holds a value that user code
 /// wrote by name: the raw value, read by name. A [FloatingBar] of the
 /// parse reads typed at each site.
 Object? _userCustomValue(Object? custom, String key) => jsGetKey(custom, key);
+
+/// `meta._parsed.find((item) => item[iScale.axis] === iScaleValue)` of
+/// controller.bar.js:444: the first parsed item whose value of [axis] is
+/// [value], or Dart `null` (the JS `undefined`) for none. A loop, because
+/// `firstWhere` with an `orElse` of `null` fails on a `List<DataPoint>`.
+ParsedItem? _findParsed(
+  List<ParsedItem?> parsed,
+  ScaleAxis axis,
+  Object? value,
+) {
+  for (final item in parsed) {
+    assert(BarSkipNullIndex.debugCountVisit(), 'counts the visit');
+    if (_strictEquals(parsedValueOf(item, axis), value)) return item;
+  }
+  return null;
+}
 
 /// controller.bar.js:170 `isFloatBar(custom)`.
 ///
@@ -687,8 +702,9 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// the defaults of the Dart `null` keys of [parsing] (row
   /// `adapt-parsing-keys`).
   ///
-  /// Each item is a [ParsedItem]. A `TypedDataItem` data item gives its
-  /// typed field for the default key ([dataItemValue]).
+  /// Each item is a [ParsedItem]. A data item that is a [ParsedItem] (a
+  /// `DataPoint`) gives its typed field for the default key
+  /// ([dataItemValue]).
   @override
   List<ParsedItem> parseObjectData(
     ChartMeta meta,
@@ -723,7 +739,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   void updateRangeFromParsed(
     MinMax range,
     IScale scale,
-    Object? parsed,
+    ParsedItem? parsed,
     DatasetStack? stack,
   ) {
     super.updateRangeFromParsed(range, scale, parsed, stack);
@@ -791,7 +807,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
 
   /// `parsed[scale.axis]`: [parsedValueOf] with the key of the axis of
   /// [scale].
-  static Object? _axisValueOf(Object? parsed, IScale scale) {
+  static Object? _axisValueOf(ParsedItem? parsed, IScale scale) {
     final axis = scale.axis;
     return parsedValueOf(parsed, axis);
   }
@@ -1466,9 +1482,10 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         ? null
         : cachedMeta.controller!.getParsed(dataIndex);
     final iAxis = iScale.axis;
-    final iScaleValue = jsTruthy(currentParsed)
+    // `getParsed(index)` of an index that names no item is `undefined`.
+    final iScaleValue = currentParsed != null
         ? parsedValueOf(currentParsed, iAxis)
-        : currentParsed;
+        : undefined;
 
     // :443-450: `true`, or Dart `null` for the JS `undefined` of no return.
     bool? skipNull(ChartMeta meta) {
@@ -1478,15 +1495,11 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       final found =
           _skipNullIndex?.find(meta, iAxis, iScaleValue) ??
           BarSkipNullIndex.scan;
+      // The `undefined` of a proven list without a match is Dart `null`.
       final parsed = !identical(found, BarSkipNullIndex.scan)
-          ? found
-          : meta.parsed.firstWhere((item) {
-              assert(BarSkipNullIndex.debugCountVisit(), 'counts the visit');
-              return _strictEquals(parsedValueOf(item, iAxis), iScaleValue);
-            }, orElse: () => null);
-      final val = jsTruthy(parsed)
-          ? _axisValueOf(parsed, meta.vScale!)
-          : parsed;
+          ? (found is ParsedItem ? found : null)
+          : _findParsed(meta.parsed, iAxis, iScaleValue);
+      final val = parsed != null ? _axisValueOf(parsed, meta.vScale!) : null;
 
       if (isNullOrUndef(val) || jsIsNaN(val)) {
         return true;
@@ -1731,17 +1744,20 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     final vAxis = vScale!.axis;
     var value = parsedValueOf(parsed, vAxis);
     Object? start = 0.0;
-    var length = stacked != StackMode.off
-        ? (stackIndexes != null
-              ? applyStackWith(vScale, parsed, stacked, stackIndexes)
-              : applyStack(vScale, parsed, stacked))
-        : value;
+    var length = value;
     double head;
     double size;
 
-    if (length != value) {
-      start = jsToNumber(length) - jsToNumber(value);
-      length = value;
+    if (stacked != StackMode.off) {
+      final stackedValue = stackIndexes != null
+          ? applyStackWith(vScale, parsed!, stacked, stackIndexes)
+          : applyStack(vScale, parsed!, stacked);
+      // `length !== value`: Dart `null` is the JS `undefined` of a `null`
+      // value, which differs from each value.
+      if (stackedValue == null || stackedValue != value) {
+        start = (stackedValue ?? double.nan) - jsToNumber(value);
+        length = value;
+      }
     }
 
     if (floating) {

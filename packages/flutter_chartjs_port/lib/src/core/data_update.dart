@@ -42,6 +42,9 @@ final _lists = <Type>{
   <Map<String, Object?>>[].runtimeType,
   <Map<String, double>>[].runtimeType,
   <ParsedItem>[].runtimeType,
+  <ParsedItem?>[].runtimeType,
+  <DataPoint>[].runtimeType,
+  <DataPoint?>[].runtimeType,
   List<Object?>.empty().runtimeType,
   List<dynamic>.empty().runtimeType,
   List<Object>.empty().runtimeType,
@@ -50,6 +53,9 @@ final _lists = <Type>{
   List<Map<String, Object?>>.empty().runtimeType,
   List<Map<String, double>>.empty().runtimeType,
   List<ParsedItem>.empty().runtimeType,
+  List<ParsedItem?>.empty().runtimeType,
+  List<DataPoint>.empty().runtimeType,
+  const <DataPoint>[].runtimeType,
   List<double>.empty().runtimeType,
   List<double?>.empty().runtimeType,
   List<num>.empty().runtimeType,
@@ -73,13 +79,6 @@ final _lists = <Type>{
   const <Color?>[].runtimeType,
   const <ChartPaint?>[].runtimeType,
 };
-final _points = <Type>{};
-
-/// Typed lowering registers only standard containers and immutable point types.
-void registerDataUpdateTypes(Iterable<Type> lists, Iterable<Type> points) {
-  _lists.addAll(lists);
-  _points.addAll(points);
-}
 
 /// No custom Map/scope getters run merely to qualify the new lifecycle.
 bool nativeDataUpdateObject(Object? value) =>
@@ -104,10 +103,6 @@ bool nativeDataUpdateRoot(Object value) =>
 /// Native container eligibility, including the typed facade's point lists.
 bool nativeDataUpdateList(Object? value) =>
     _lists.contains(value.runtimeType) || value is TypedDataList<num>;
-
-/// Immutable point implementations registered by the typed facade.
-bool nativeDataUpdatePoint(TypedDataItem value) =>
-    _points.contains(value.runtimeType);
 
 /// Read only after native object qualification; routes cannot qualify.
 Object? dataUpdateField(Object object, String key) {
@@ -189,9 +184,6 @@ bool staticDataUpdateOptions(Object? value, {bool dataset = false}) {
 bool _number(Object? value) =>
     value == null || value is Undefined || value is num;
 
-bool _numericPoint(TypedDataItem point) =>
-    _number(point.x) && _number(point.y) && _number(point.r);
-
 /// The fields read by native default parsers. Custom parsing keys fall back.
 enum DataUpdateShape() {
   /// The fields `x` and `y`.
@@ -217,16 +209,14 @@ bool? dataUpdateValues(
   if (!nativeDataUpdateList(source)) return null;
   var primitive = true;
   Type? mapType;
-  Type? pointType;
   for (final item in source! as List<Object?>) {
     if (_number(item)) continue;
     primitive = false;
-    if (item.runtimeType == pointType) {
-      // The class of the last point: no set lookups for a list of one class.
-      if (!_numericPoint(item! as TypedDataItem)) return null;
-    } else if (item is ParsedItem) {
+    if (item is ParsedItem) {
+      // A parsed item or a `DataPoint`: a number `_custom` (the radius of a
+      // bubble) qualifies, and a `_stacks` object falls back, as for a map.
       if (item.hasForeign ||
-          item.hasSlot(3) ||
+          (item.hasSlot(3) && !_number(item.custom)) ||
           item.hasSlot(4) ||
           !_number(item.x) ||
           !_number(item.y) ||
@@ -253,9 +243,6 @@ bool? dataUpdateValues(
               (!_number(map['_custom']) || !_number(map['_stacks'])))) {
         return null;
       }
-    } else if (_points.contains(item.runtimeType)) {
-      pointType = item.runtimeType;
-      if (!_numericPoint(item! as TypedDataItem)) return null;
     } else if (nativeDataUpdateList(item)) {
       if (!(item! as List<Object?>).every(_number)) return null;
     } else {
