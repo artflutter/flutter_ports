@@ -77,8 +77,11 @@ List<TextSpan> highlightDart(String code) {
 }
 
 /// The code of the region `sample` of the asset [path].
-class const CodePanel({required final String path, super.key})
-    extends StatefulWidget {
+class const CodePanel({
+  /// The asset path of the source file.
+  required final String path,
+  super.key,
+}) extends StatefulWidget {
   /// Creates the panel of the source file at the asset [path].
   this;
 

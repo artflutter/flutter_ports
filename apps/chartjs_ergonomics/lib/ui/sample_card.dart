@@ -7,8 +7,13 @@ import 'package:material_ui/material_ui.dart';
 /// The card of [sample]: its number, title and note, the chart, and the
 /// code under the chart.
 class const SampleCard({
+  /// The number of the sample on the page.
   required final int number,
+
+  /// The sample of the card.
   required final Sample sample,
+
+  /// The asset folder of the source file of [sample].
   required final String folder,
   super.key,
 }) extends StatelessWidget {
