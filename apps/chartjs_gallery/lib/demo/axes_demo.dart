@@ -474,9 +474,8 @@ class AxesDemoState() extends State<AxesDemo> {
   static String _scaleText(Scale? scale) {
     if (scale == null) return '-';
     final ticks = scale.ticks?.length ?? 0;
-    // `labelRotation` holds a JS value: `undefined` before the first fit.
-    final raw = scale.labelRotation;
-    final rotation = raw is num ? raw.toDouble() : double.nan;
+    // `labelRotation` is NaN before the first fit.
+    final rotation = scale.labelRotation;
     return '${scale.type} · '
         '${_labelText(scale.getLabelForValue(scale.min))} to '
         '${_labelText(scale.getLabelForValue(scale.max))} · '

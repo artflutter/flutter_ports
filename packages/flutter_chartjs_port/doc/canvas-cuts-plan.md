@@ -2729,6 +2729,10 @@ changes. No trigger occurred.
   `platform-umd-dom-platform` becomes `platform-dom-platform-class`) and `test/specs/platform.dom_test.dart`, which
   takes `FlutterPlatform.jsClass` as `DomPlatform`. This plan cites no line of these files, and no canvas file changes.
   The tests of §2.6 and §3.5 and the estimates do not change. No deferred cut changes. No trigger occurred.
+- 2026-11-20, the typed scale state fields (the row `adapt-native-scale-options`). `Scale.labelRotation` is a
+  `double` (NaN before the first fit). `stressAxesTicks` of `stress_axes.dart` reads it with no type test. The read is
+  after the timed window. The `STRESS` and `BENCH` keys, the timed code and the estimates do not change. No deferred cut
+  changes. No trigger occurred.
 
 ## ChartPaint migration, 2026-11-13
 

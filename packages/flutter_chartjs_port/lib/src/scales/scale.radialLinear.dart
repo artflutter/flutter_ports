@@ -240,7 +240,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
 
   for (var i = 0; i < valueCount; i++) {
     final opts = pointLabelOpts.setContext(scale.getPointLabelContext(i)!);
-    padding[i] = scaleNumber(opts.padding);
+    padding[i] = opts.padding ?? double.nan;
     final pointPosition = scale.getPointPosition(
       i,
       jsToNumber(jsAdd(scale.drawingArea, padding[i])),

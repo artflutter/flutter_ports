@@ -971,7 +971,6 @@ rrectContains
 sameAxis
 scaleBorderOf
 scaleCfgArg
-scaleNumber
 scaleRangesChanged
 scales
 scanBarInteractionItems
@@ -2041,7 +2040,6 @@ rrectContains
 sameAxis
 scaleBorderOf
 scaleCfgArg
-scaleNumber
 scaleRangesChanged
 scales
 scanBarInteractionItems

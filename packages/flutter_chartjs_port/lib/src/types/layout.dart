@@ -20,7 +20,7 @@
 /// [ScaleValuePosition] for the object form. `core.layouts` tests the object
 /// form with `isObject` (core.layouts.js:121): a [ScaleValuePosition]. It
 /// compares a position with `===` (core.layouts.js:11, :15, :52): the enum
-/// value. [LayoutItem.position] holds the raw option value.
+/// value.
 ///
 /// ## The optional members
 ///
@@ -136,27 +136,25 @@ abstract interface class LayoutBoxOptions() {
 /// `core.layouts.js` also reads three members that layout.d.ts does not
 /// declare: [options], [axis] and [layers].
 abstract interface class LayoutItem() {
-  /// layout.d.ts:9 `position: LayoutPosition`: a `String` or a
-  /// `Map<String, Object?>` (see the library documentation).
+  /// layout.d.ts:9 `position: LayoutPosition` (see the library
+  /// documentation).
   ///
   /// `layouts.configure` writes the `position` option (core.layouts.js:333).
-  /// `layouts.addBox` writes `'top'` for a falsy value
-  /// (core.layouts.js:298). Dart `null` stands for JS `null`. The
-  /// `undefined` sentinel stands for JS `undefined`, the start value of the
-  /// legend and the title (plugin.legend.js:77, plugin.title.js:24).
-  abstract Object? position;
+  /// `layouts.addBox` writes [ChartPosition.top] for a falsy value
+  /// (core.layouts.js:298). Dart `null` stands for JS `undefined`, the start
+  /// value of the legend and the title (plugin.legend.js:77,
+  /// plugin.title.js:24).
+  abstract LayoutPosition? position;
 
   /// layout.d.ts:13 `weight: number`, the order of the boxes on one side.
   ///
-  /// `layouts.configure` writes the `weight` option as it is
-  /// (core.layouts.js:334). Thus the Dart type is `Object?`, as for every
-  /// option value (Chart.js ADR 0043): a number, or another value of the
-  /// option. Dart `null` stands for JS `null`. The `undefined` sentinel
-  /// stands for JS `undefined`. `sortByWeight` compares two values with
-  /// `===` (core.layouts.js:18-26): `undefined === undefined` is true, and
-  /// `null === 0` is false. A `double` cannot keep these two results.
-  /// `layouts.addBox` writes 0 for a falsy value (core.layouts.js:299).
-  abstract Object? weight;
+  /// `layouts.configure` writes the typed `weight` option
+  /// (core.layouts.js:334). Dart `null` stands for JS `undefined`.
+  /// `sortByWeight` compares two values with `===` (core.layouts.js:18-26):
+  /// `undefined === undefined` is true, as `null == null`, and NaN is not
+  /// equal to NaN in both. `layouts.addBox` writes 0 for a falsy value
+  /// (core.layouts.js:299).
+  abstract double? weight;
 
   /// layout.d.ts:17 `fullSize: boolean`.
   ///

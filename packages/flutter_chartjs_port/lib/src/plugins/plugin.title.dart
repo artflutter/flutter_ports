@@ -113,17 +113,17 @@ class Title(
   @override
   double height = double.nan;
 
-  /// plugin.title.js:24 `position`. The [undefined] sentinel stands for JS
+  /// plugin.title.js:24 `position`. Dart `null` stands for JS
   /// `undefined`, the start value. `layouts.configure` writes the
   /// `position` option (core.layouts.js:333).
   @override
-  Object? position = undefined;
+  LayoutPosition? position;
 
-  /// plugin.title.js:25 `weight`. The [undefined] sentinel stands for JS
+  /// plugin.title.js:25 `weight`. Dart `null` stands for JS
   /// `undefined`, the start value. `layouts.configure` writes the `weight`
   /// option (core.layouts.js:334).
   @override
-  Object? weight = undefined;
+  double? weight;
 
   /// plugin.title.js:26 `fullSize`. False stands for JS `undefined`, the
   /// start value: the readers test only its truthiness (Chart.js ADR 0038,

@@ -256,16 +256,16 @@ class Legend(
   /// `undefined`.
   TRBL? _margins;
 
-  /// plugin.legend.js:77 `position`. The [undefined] sentinel stands for JS
+  /// plugin.legend.js:77 `position`. Dart `null` stands for JS
   /// `undefined`, the start value. `layouts.configure` writes the
   /// `position` option (core.layouts.js:333).
   @override
-  Object? position = undefined;
+  LayoutPosition? position;
 
-  /// plugin.legend.js:78 `weight`. The [undefined] sentinel stands for JS
+  /// plugin.legend.js:78 `weight`. Dart `null` stands for JS
   /// `undefined`, the start value.
   @override
-  Object? weight = undefined;
+  double? weight;
 
   /// plugin.legend.js:79 `fullSize`. False stands for JS `undefined`, the
   /// start value: the readers test only its truthiness (Chart.js ADR 0038,

@@ -493,8 +493,8 @@ void main() {
       ]) {
         expect(value, isNaN);
       }
-      expect(box.position, same(undefined));
-      expect(box.weight, same(undefined));
+      expect(box.position, isNull);
+      expect(box.weight, isNull);
       expect(box.fullSize, isFalse);
       expect(box.legendItems, isNull);
       expect(box.columnSizes, isNull);

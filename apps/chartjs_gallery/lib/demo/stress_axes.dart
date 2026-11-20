@@ -198,11 +198,6 @@ Map<String, Object?> stressAxesConfig({
   final scale = chart.scales['x'];
   final ticks = scale?.ticks;
   if (scale == null || ticks == null) return null;
-  // `labelRotation` holds a JS value: `undefined` before the first fit, a
-  // number after it.
-  final rotation = scale.labelRotation;
-  return (
-    ticks: ticks.length,
-    rotation: rotation is num ? rotation.toDouble() : double.nan,
-  );
+  // `labelRotation` is NaN before the first fit.
+  return (ticks: ticks.length, rotation: scale.labelRotation);
 }

@@ -53,13 +53,13 @@ final class _LayoutWrap({
   required final LayoutItem box,
 
   /// `pos`, the [LayoutItem.position] of the box.
-  required final Object? pos,
+  required final LayoutPosition? pos,
 
   /// `horizontal`, the result of `box.isHorizontal()`.
   required final bool horizontal,
 
-  /// `weight`, the [LayoutItem.weight] of the box: the raw value.
-  required final Object? weight,
+  /// `weight`, the [LayoutItem.weight] of the box.
+  required final double? weight,
 
   /// `stack && (pos + stack)` (:41): the key of the stack, a `String`, or
   /// the falsy `stack` option.
@@ -313,32 +313,19 @@ List<_LayoutWrap> _filterDynamicPositionByAxis(
 /// core.layouts.js:18 `sortByWeight`.
 ///
 /// `array.sort` is [jsSort], the stable sort of JavaScript (Chart.js ADR
-/// 0146). The comparator compares the raw weights with `===`
-/// ([_strictEquals]). Thus two `undefined` weights are equal, and a `null`
-/// weight is not equal to 0. The subtraction `v0.weight - v1.weight` is the
-/// difference of the two `ToNumber` values ([jsToNumber]). A NaN result
-/// keeps the order: [jsSort] reads it as 0, as `Array.prototype.sort` does.
+/// 0146). The comparator compares the weights with `===`: Dart `null` is
+/// JS `undefined`, so two absent weights are equal, and NaN is not equal to
+/// NaN. The subtraction `v0.weight - v1.weight` reads an absent weight as
+/// NaN, the `ToNumber` of `undefined`. A NaN result keeps the order:
+/// [jsSort] reads it as 0, as `Array.prototype.sort` does.
 List<_LayoutWrap> _sortByWeight(List<_LayoutWrap> array, [bool? reverse]) {
   return jsSort(array, (a, b) {
     final v0 = reverse ?? false ? b : a;
     final v1 = reverse ?? false ? a : b;
-    return _strictEquals(v0.weight, v1.weight)
+    return v0.weight == v1.weight
         ? v0.index - v1.index
-        : jsToNumber(v0.weight) - jsToNumber(v1.weight);
+        : (v0.weight ?? double.nan) - (v1.weight ?? double.nan);
   });
-}
-
-/// The strict equality `a === b` of JavaScript.
-///
-/// Numbers compare by value: `0 === -0` is true and `NaN === NaN` is false,
-/// as Dart `==` on `num` gives. Strings compare by value. Every other value
-/// compares by identity: `true`, `false`, `null` and [undefined] are single
-/// instances, and objects compare by reference. A number and a string are
-/// never equal.
-bool _strictEquals(Object? a, Object? b) {
-  if (a is num && b is num) return a == b;
-  if (a is String && b is String) return a == b;
-  return identical(a, b);
 }
 
 /// core.layouts.js:28 `wrapBoxes`.
@@ -770,9 +757,12 @@ void _addBox(IChart chart, LayoutItem item) {
     // `item.fullSize || false` (:297) is `item.fullSize` for a bool.
     ..fullSize = item.fullSize
     // DIVERGES(chartjs): adapt-chart-position-enum, the enum value.
-    ..position = jsTruthy(item.position) ? item.position : ChartPosition.top
-    // `item.weight || 0` (:299) keeps a truthy value.
-    ..weight = jsTruthy(item.weight) ? item.weight : 0.0
+    ..position = item.position ?? ChartPosition.top
+    // `item.weight || 0` (:299): 0, NaN and an absent weight give 0.
+    ..weight = switch (item.weight) {
+      final double weight when weight != 0 && !weight.isNaN => weight,
+      _ => 0.0,
+    }
     // @ts-ignore
     ..layers = item.layers ?? () => [_BoxLayer(item)];
 
@@ -808,15 +798,21 @@ void _removeBox(IChart chart, LayoutItem? layoutItem) {
 ///
 /// [LayoutItem.fullSize] is a `bool` (layout.d.ts:17). Thus `configure`
 /// stores the truthiness of the `fullSize` option. The readers of
-/// `core.layouts` test only its truthiness. [LayoutItem.weight] is an
-/// `Object?`: `configure` stores the `weight` option as it is, as upstream
-/// does, because `sortByWeight` compares the raw values with `===`.
+/// `core.layouts` test only its truthiness. The typed `position` and
+/// `weight` options are a [LayoutPosition] and a number (row
+/// `adapt-native-scale-options`): Dart `null` stands for an absent option.
 void _configure(IChart chart, LayoutItem item, Object options) {
   item
     // DIVERGES(chartjs): adapt-layout-configure-types, a bool, not the value.
     ..fullSize = jsTruthy(readOption(options, OptionKey.fullSize))
-    ..position = readOption(options, OptionKey.position)
-    ..weight = readOption(options, OptionKey.weight);
+    ..position = switch (readOption(options, OptionKey.position)) {
+      final LayoutPosition position => position,
+      _ => null,
+    }
+    ..weight = switch (readOption(options, OptionKey.weight)) {
+      final num weight => weight.toDouble(),
+      _ => null,
+    };
 }
 
 /// core.layouts.js:345 `update`.

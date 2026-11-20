@@ -480,7 +480,7 @@ void _run(ScaleReferenceCase c) {
   final tickCount = scale.ticks!.length;
   final results = <String, Object?>{
     'isHorizontal': scale.isHorizontal(),
-    'isFullSize': jsTruthy(scale.isFullSize()),
+    'isFullSize': scale.isFullSize(),
     'userBounds': [
       userBounds.min,
       userBounds.max,
@@ -839,9 +839,8 @@ void main() {
       ]) {
         expect(value, isNaN);
       }
-      // core.scale.js:221: the field holds any JS value (the raw
-      // `minRotation`), so it starts as the sentinel.
-      expect(scale.labelRotation, same(undefined));
+      // core.scale.js:221: NaN stands for undefined.
+      expect(scale.labelRotation, isNaN);
       expect(scale.ticks, isEmpty);
       expect(scale.length, 0);
       expect(scale.maxLength, 0);
@@ -852,9 +851,9 @@ void main() {
       expect(scale.cache.labels, isNull);
       expect(scale.cache.all, isNull);
       expect(scale.cache.bar, isNull);
-      expect(scale.userMin, same(undefined));
-      expect(scale.userMax, same(undefined));
-      expect(scale.suggestedMin, same(undefined));
+      expect(scale.userMin, isNull);
+      expect(scale.userMax, isNull);
+      expect(scale.suggestedMin, isNull);
     });
 
     test('options before init throw a TypeError', () {

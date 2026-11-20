@@ -25,7 +25,9 @@ import 'layouts_reference.dart';
 // LayoutItem types `fullSize` as a bool (layout.dart): it keeps the
 // truthiness of the option (the difference adapt-layout-configure-types).
 // The tests compare it with the JavaScript value through this conversion.
-// `weight` keeps the raw value, as upstream does.
+// `position` and `weight` are typed (row adapt-native-scale-options): Dart
+// null stands for JS undefined. A scene with a weight that is not a number
+// skips.
 
 /// A fake box of the reference. Its [update] records the call in [log] and
 /// sets the size with the rule of the generator.
@@ -37,10 +39,10 @@ class _Box(
   final List<(String, String, List<double>)> log,
 ) implements LayoutItem {
   @override
-  Object? position = undefined;
+  LayoutPosition? position;
 
   @override
-  Object? weight = undefined;
+  double? weight;
 
   @override
   bool fullSize = false;
@@ -189,13 +191,19 @@ List<List<Object>> _flat(List<(String, String, List<double>)> log) => [
 /// A matcher of the number [expected]: `isNaN` for NaN, else `equals`.
 Matcher _number(double expected) => expected.isNaN ? isNaN : equals(expected);
 
-/// A matcher of the JavaScript value [expected]: `isNaN` for NaN, `same`
+/// A matcher of the JavaScript value [expected]: `isNaN` for NaN, `isNull`
 /// for the [undefined] sentinel, else `equals`.
 Matcher _value(Object? expected) => switch (expected) {
   final double d when d.isNaN => isNaN,
-  Undefined() => same(undefined),
+  Undefined() => isNull,
   _ => equals(expected),
 };
+
+/// Whether each box of [scene] has a number weight or none: the typed
+/// `weight` option holds no other value (row `adapt-native-scale-options`).
+bool _typedWeights(LayoutsReferenceScene scene) => scene.boxes.every(
+  (box) => box.weight is num || identical(box.weight, undefined),
+);
 
 /// Runs [scene] and compares the calls, the chart area, the boxes and the
 /// box order with the reference.
@@ -243,7 +251,7 @@ void _expectScene(LayoutsReferenceScene scene) {
     expect(box.width, _number(r.width), reason: '${r.name} width');
     expect(box.height, _number(r.height), reason: '${r.name} height');
     expect(box.fullSize, jsTruthy(r.fullSize), reason: r.name);
-    expect(box.position, r.position, reason: '${r.name} position');
+    expect(box.position, _value(r.position), reason: '${r.name} position');
     expect(box.weight, _value(r.weight), reason: '${r.name} weight');
   }
   expect(
@@ -251,61 +259,6 @@ void _expectScene(LayoutsReferenceScene scene) {
     [...scene.order],
   );
 }
-
-/// [scene] with the position [position] for the box [name], in its boxes
-/// and in its results.
-LayoutsReferenceScene _withPosition(
-  LayoutsReferenceScene scene,
-  String name,
-  Object position,
-) => (
-  name: scene.name,
-  padding: scene.padding,
-  width: scene.width,
-  height: scene.height,
-  minPadding: scene.minPadding,
-  reconfigure: scene.reconfigure,
-  boxes: [
-    for (final box in scene.boxes)
-      if (box.name == name)
-        (
-          name: box.name,
-          position: position,
-          weight: box.weight,
-          fullSize: box.fullSize,
-          axis: box.axis,
-          horizontal: box.horizontal,
-          options: box.options,
-          size: box.size,
-          padding: box.padding,
-          beforeLayout: box.beforeLayout,
-        )
-      else
-        box,
-  ],
-  error: scene.error,
-  log: scene.log,
-  results: [
-    for (final result in scene.results)
-      if (result.name == name)
-        (
-          name: result.name,
-          left: result.left,
-          top: result.top,
-          right: result.right,
-          bottom: result.bottom,
-          width: result.width,
-          height: result.height,
-          fullSize: result.fullSize,
-          position: position,
-          weight: result.weight,
-        )
-      else
-        result,
-  ],
-  chartArea: scene.chartArea,
-  order: scene.order,
-);
 
 void main() {
   setUpSpecs();
@@ -320,22 +273,13 @@ void main() {
 
   group('update against upstream', () {
     for (final scene in layoutsReference) {
-      test(scene.name, () => _expectScene(scene));
-    }
-  });
-
-  // A position that is neither an object nor a string takes the path of
-  // another string, as 'center' does: upstream writes `chartArea[pos]`, a
-  // key that no code reads. dart2wasm of Dart 3.14.0-315.3.beta trapped on
-  // the String switch of `chartArea[pos]` for such a position.
-  group('a position that is neither an object nor a string', () {
-    final scene = layoutsReference.singleWhere(
-      (scene) => scene.name == 'dynamic positions',
-    );
-    for (final position in <Object>[5.0, true]) {
-      test('$position', () {
-        _expectScene(_withPosition(scene, 'xc', position));
-      });
+      test(
+        scene.name,
+        skip: _typedWeights(scene)
+            ? false
+            : 'diverges: adapt-native-scale-options',
+        () => _expectScene(scene),
+      );
     }
   });
 
@@ -450,33 +394,27 @@ void main() {
 
     test('writes the truthiness of fullSize', () {
       final box = _box(spec, []);
-      layouts.configure(_Chart(EdgeInsets.zero), box, {
-        'fullSize': 1,
-        'weight': null,
-      });
+      layouts.configure(_Chart(EdgeInsets.zero), box, {'fullSize': 1});
 
       expect(box.fullSize, isTrue);
-      expect(box.position, same(undefined));
+      expect(box.position, isNull);
 
       layouts.configure(_Chart(EdgeInsets.zero), box, const {});
       expect(box.fullSize, isFalse);
     });
   });
 
-  group('configure keeps the raw weight', () {
+  group('configure writes the typed weight', () {
     // The vertical scale 'y' of the first scene.
     final spec = layoutsReference.first.boxes[1];
 
-    test('stores null, undefined and a string as they are', () {
+    test('stores a number, and null for an absent weight', () {
       final box = _box(spec, []);
-      layouts.configure(_Chart(EdgeInsets.zero), box, {'weight': null});
-      expect(box.weight, isNull);
+      layouts.configure(_Chart(EdgeInsets.zero), box, {'weight': 5.0});
+      expect(box.weight, 5);
 
       layouts.configure(_Chart(EdgeInsets.zero), box, const {});
-      expect(box.weight, same(undefined));
-
-      layouts.configure(_Chart(EdgeInsets.zero), box, {'weight': '5'});
-      expect(box.weight, '5');
+      expect(box.weight, isNull);
     });
 
     test('sorts two absent weights by the reversed index on the left', () {
@@ -499,9 +437,9 @@ void main() {
       expect(b.left, lessThan(a.left));
     });
 
-    test('keeps the order of a null and a 0 weight on the left', () {
-      // Upstream `null === 0` is false, and `null - 0` is 0, so the order
-      // stays. Equal numbers would reverse it.
+    test('keeps the order of a NaN and a 0 weight on the left', () {
+      // `NaN === 0` is false, and `NaN - 0` is NaN, which keeps the order.
+      // Equal numbers would reverse it.
       final chart = _Chart(EdgeInsets.zero);
       final a = _box(spec, []);
       final b = _box(spec, []);
@@ -509,7 +447,10 @@ void main() {
         layouts.addBox(chart, box);
       }
       layouts
-        ..configure(chart, a, {'position': ChartPosition.left, 'weight': null})
+        ..configure(chart, a, {
+          'position': ChartPosition.left,
+          'weight': double.nan,
+        })
         ..configure(chart, b, {'position': ChartPosition.left, 'weight': 0});
       layouts.update(chart, 300, 200);
 
