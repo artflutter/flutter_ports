@@ -854,18 +854,16 @@ void expectScaleObservations(
       for (final key in expectedScale.keys) {
         expect(
           scale[key],
-          referenceMatcher(
-            switch (key) {
-              'ticks' => _nativeTicks(expectedScale[key]),
-              // The label is the text of the upstream label (Chart.js ADR
-              // 0186): the `'' + label` of the callers.
-              'labelForValue' => [
-                for (final label in expectedScale[key]! as List<Object?>)
-                  jsToString(label),
-              ],
-              _ => expectedScale[key],
-            },
-          ),
+          referenceMatcher(switch (key) {
+            'ticks' => _nativeTicks(expectedScale[key]),
+            // The label is the text of the upstream label (Chart.js ADR
+            // 0186): the `'' + label` of the callers.
+            'labelForValue' => [
+              for (final label in expectedScale[key]! as List<Object?>)
+                jsToString(label),
+            ],
+            _ => expectedScale[key],
+          }),
           reason: '${prefix}scales.$id.$key',
         );
       }

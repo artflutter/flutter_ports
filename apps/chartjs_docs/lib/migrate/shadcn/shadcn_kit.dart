@@ -267,7 +267,7 @@ CategoryAxis shadcnCategoryYAxis({
 
 /// `tickFormatter={(value) => value.slice(0, 3)}`.
 List<String>? shortLabel(Scale scale, double value, int index, List<Tick> t) {
-  final label = '${(scale as CategoryScale).getLabelForValue(value)}';
+  final label = (scale as CategoryScale).getLabelForValue(value);
   return [if (label.length > 3) label.substring(0, 3) else label];
 }
 
