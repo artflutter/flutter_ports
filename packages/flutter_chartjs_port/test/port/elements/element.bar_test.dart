@@ -55,7 +55,7 @@ ElementOptions _genericOptions(AnyObject options) =>
 /// The two forms of the options of a bar (Chart.js ADR 0018, section 6): the
 /// generic options, and a [BarOptions] with the same entries in the same key
 /// order.
-const Map<String, Object Function(AnyObject options)> _optionsForms = {
+const Map<String, ElementOptions Function(AnyObject options)> _optionsForms = {
   'generic options': _genericOptions,
   'BarOptions': BarOptions.new,
 };
@@ -177,7 +177,11 @@ void main() {
     }
 
     test('includes the edges within the epsilon of _isBetween', () {
-      final bar = BarElement({'base': 0, 'width': 4, 'x': 10, 'y': 15});
+      final bar = BarElement()
+        ..base = 0
+        ..width = 4
+        ..x = 10
+        ..y = 15;
       expect(bar.inXRange(8 - 1e-6), isTrue);
       expect(bar.inXRange(8 - 2e-6), isFalse);
       expect(bar.inYRange(15 + 1e-6), isTrue);
@@ -185,7 +189,11 @@ void main() {
     });
 
     test('is false for NaN coordinates', () {
-      final bar = BarElement({'base': 0, 'width': 4, 'x': 10, 'y': 15});
+      final bar = BarElement()
+        ..base = 0
+        ..width = 4
+        ..x = 10
+        ..y = 15;
       expect(bar.inRange(double.nan, 5), isFalse);
       expect(bar.inXRange(double.nan), isFalse);
       expect(bar.inYRange(double.nan), isFalse);
@@ -232,7 +240,9 @@ void main() {
     }
 
     test('gives half the height for an axis other than x', () {
-      final bar = BarElement({'width': 6, 'height': 10});
+      final bar = BarElement()
+        ..width = 6
+        ..height = 10;
       expect(bar.getRange(const XAxis()), 3);
       expect(bar.getRange(const YAxis()), 5);
       expect(bar.getRange(const RAxis()), 5);
@@ -526,6 +536,7 @@ void main() {
     });
 
     test('a write of undefined restores the undefined state', () {
+      // The constructor Map: the case writes undefined by name over cfg.
       final bar = BarElement(_drawCfg({'enableBorderRadius': true}));
       for (final prop in const [
         'horizontal',
@@ -603,6 +614,7 @@ void main() {
     });
 
     test('the constructor writes cfg through operator []=', () {
+      // The constructor Map: the case is the write of cfg through []=.
       final bar = BarElement({
         'horizontal': true,
         'base': 1,
@@ -623,7 +635,9 @@ void main() {
     });
 
     test('getProps reads the bar properties by name', () {
-      final bar = BarElement({'base': 1, 'horizontal': true})
+      final bar = BarElement()
+        ..base = 1
+        ..horizontal = true
         ..$animations = {'base': _Animation(isActive: true, to: 9)};
       final current = bar.getProps(const ['base', 'horizontal', 'width']);
       expect(current, same(bar));

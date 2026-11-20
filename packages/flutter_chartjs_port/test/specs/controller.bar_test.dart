@@ -68,8 +68,8 @@ import '../support/draw_recorder.dart';
 // Map `chart.options['plugins']`.
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `meta.data[index]` of [meta], a bar.
 BarElement _bar(ChartMeta meta, int index) => meta.data[index] as BarElement;
@@ -90,6 +90,11 @@ Matcher _bodyItem(List<String> lines) => isA<TooltipBodyItem>()
     .having((b) => b.lines, 'lines', equals(lines))
     .having((b) => b.after, 'after', isEmpty);
 
+/// A chart of the typed [config]: its root scope through
+/// `ChartConfigLowering` (Chart.js ADR 0054 §7).
+Chart _acquire(ChartConfig config) =>
+    acquireChartRoot(ChartConfigLowering(config).lower());
+
 void main() {
   group('Chart.controllers.bar', () {
     group('auto', fixture.specs('controller.bar'));
@@ -99,16 +104,16 @@ void main() {
     });
 
     testWidgets('should be constructed', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: []),
+            BarDataset(data: []),
           ],
-          'labels': <Object?>[],
-        },
-      });
+          labels: [],
+        ),
+      );
 
       final meta = chart.getDatasetMeta(1);
       expect(meta.type, 'bar');
@@ -125,18 +130,15 @@ void main() {
     });
 
     testWidgets('should set null bars to the reset state', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, null, 0, -4],
-              'label': 'dataset1',
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [10, null, 0, -4], label: 'dataset1'),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+          labels: ['label1', 'label2', 'label3', 'label4'],
+        ),
+      );
 
       final meta = chart.getDatasetMeta(0);
       final bar = _bar(meta, 1);
@@ -149,16 +151,16 @@ void main() {
     testWidgets(
       'should use the first scale IDs if the dataset does not specify them',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-        });
+            labels: [],
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         expect(meta.xAxisID, 'x');
@@ -171,18 +173,18 @@ void main() {
       'should correctly count the number of stacks ignoring datasets of '
       'other types and hidden datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'type': 'line'},
-              <String, Object?>{'data': <Object?>[], 'hidden': true},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              LineDataset(data: []),
+              BarDataset(data: [], hidden: true),
+              BarDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-        });
+            labels: [],
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -195,18 +197,18 @@ void main() {
       'should correctly count the number of stacks when a group is not '
       'specified',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: []),
+              BarDataset(data: []),
+              BarDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-        });
+            labels: [],
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -219,24 +221,22 @@ void main() {
       'should correctly count the number of stacks when a group is not '
       'specified and the scale is stacked',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: []),
+              BarDataset(data: []),
+              BarDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.on},
-              'y': <String, Object?>{'stacked': StackMode.on},
+            labels: [],
+            scales: {
+              'x': CategoryAxis(stacked: StackMode.on),
+              'y': LinearAxis(stacked: StackMode.on),
             },
-          },
-        });
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -249,24 +249,22 @@ void main() {
       'should correctly count the number of stacks when a group is not '
       'specified and the scale is not stacked',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: []),
+              BarDataset(data: []),
+              BarDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.off},
-              'y': <String, Object?>{'stacked': StackMode.off},
+            labels: [],
+            scales: {
+              'x': CategoryAxis(stacked: StackMode.off),
+              'y': LinearAxis(stacked: StackMode.off),
             },
-          },
-        });
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -277,18 +275,18 @@ void main() {
     // :162
     testWidgets('should correctly count the number of stacks when a group is '
         'specified for some', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: []),
+            BarDataset(data: []),
           ],
-          'labels': <Object?>[],
-        },
-      });
+          labels: [],
+        ),
+      );
 
       final meta = chart.getDatasetMeta(3);
       final controller = meta.controller! as BarController;
@@ -298,24 +296,22 @@ void main() {
     // :180
     testWidgets('should correctly count the number of stacks when a group is '
         'specified for some and the scale is stacked', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: []),
+            BarDataset(data: []),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': StackMode.on},
-            'y': <String, Object?>{'stacked': StackMode.on},
+          labels: [],
+          scales: {
+            'x': CategoryAxis(stacked: StackMode.on),
+            'y': LinearAxis(stacked: StackMode.on),
           },
-        },
-      });
+        ),
+      );
 
       final meta = chart.getDatasetMeta(3);
       final controller = meta.controller! as BarController;
@@ -325,24 +321,22 @@ void main() {
     // :208
     testWidgets('should correctly count the number of stacks when a group is '
         'specified for some and the scale is not stacked', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: []),
+            BarDataset(data: []),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': StackMode.off},
-            'y': <String, Object?>{'stacked': StackMode.off},
+          labels: [],
+          scales: {
+            'x': CategoryAxis(stacked: StackMode.off),
+            'y': LinearAxis(stacked: StackMode.off),
           },
-        },
-      });
+        ),
+      );
 
       final meta = chart.getDatasetMeta(3);
       final controller = meta.controller! as BarController;
@@ -352,18 +346,18 @@ void main() {
     // :236
     testWidgets('should correctly count the number of stacks when a group is '
         'specified for all', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack2'),
+            BarDataset(data: [], stack: 'stack2'),
           ],
-          'labels': <Object?>[],
-        },
-      });
+          labels: [],
+        ),
+      );
 
       final meta = chart.getDatasetMeta(3);
       final controller = meta.controller! as BarController;
@@ -373,24 +367,22 @@ void main() {
     // :254
     testWidgets('should correctly count the number of stacks when a group is '
         'specified for all and the scale is stacked', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack2'),
+            BarDataset(data: [], stack: 'stack2'),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': StackMode.on},
-            'y': <String, Object?>{'stacked': StackMode.on},
+          labels: [],
+          scales: {
+            'x': CategoryAxis(stacked: StackMode.on),
+            'y': LinearAxis(stacked: StackMode.on),
           },
-        },
-      });
+        ),
+      );
 
       final meta = chart.getDatasetMeta(3);
       final controller = meta.controller! as BarController;
@@ -400,24 +392,22 @@ void main() {
     // :282
     testWidgets('should correctly count the number of stacks when a group is '
         'specified for all and the scale is not stacked', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-            <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack1'),
+            BarDataset(data: [], stack: 'stack2'),
+            BarDataset(data: [], stack: 'stack2'),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': StackMode.off},
-            'y': <String, Object?>{'stacked': StackMode.off},
+          labels: [],
+          scales: {
+            'x': CategoryAxis(stacked: StackMode.off),
+            'y': LinearAxis(stacked: StackMode.off),
           },
-        },
-      });
+        ),
+      );
 
       final meta = chart.getDatasetMeta(3);
       final controller = meta.controller! as BarController;
@@ -429,18 +419,18 @@ void main() {
       'should correctly get the stack index accounting for datasets of '
       'other types and hidden datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[], 'hidden': true},
-              <String, Object?>{'data': <Object?>[], 'type': 'line'},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: []),
+              BarDataset(data: [], hidden: true),
+              LineDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-        });
+            labels: [],
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -452,18 +442,18 @@ void main() {
     // :329
     testWidgets('should correctly get the stack index when a group is not '
         'specified', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: []),
+            BarDataset(data: []),
+            BarDataset(data: []),
+            BarDataset(data: []),
           ],
-          'labels': <Object?>[],
-        },
-      });
+          labels: [],
+        ),
+      );
 
       final meta = chart.getDatasetMeta(1);
       final controller = meta.controller! as BarController;
@@ -476,24 +466,22 @@ void main() {
     // :350
     testWidgets('should correctly get the stack index when a group is not '
         'specified and the scale is stacked', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: []),
+            BarDataset(data: []),
+            BarDataset(data: []),
+            BarDataset(data: []),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': StackMode.on},
-            'y': <String, Object?>{'stacked': StackMode.on},
+          labels: [],
+          scales: {
+            'x': CategoryAxis(stacked: StackMode.on),
+            'y': LinearAxis(stacked: StackMode.on),
           },
-        },
-      });
+        ),
+      );
 
       final meta = chart.getDatasetMeta(1);
       final controller = meta.controller! as BarController;
@@ -506,24 +494,22 @@ void main() {
     // :381
     testWidgets('should correctly get the stack index when a group is not '
         'specified and the scale is not stacked', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{'data': <Object?>[]},
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: []),
+            BarDataset(data: []),
+            BarDataset(data: []),
+            BarDataset(data: []),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'stacked': StackMode.off},
-            'y': <String, Object?>{'stacked': StackMode.off},
+          labels: [],
+          scales: {
+            'x': CategoryAxis(stacked: StackMode.off),
+            'y': LinearAxis(stacked: StackMode.off),
           },
-        },
-      });
+        ),
+      );
 
       final meta = chart.getDatasetMeta(1);
       final controller = meta.controller! as BarController;
@@ -538,18 +524,18 @@ void main() {
       'should correctly get the stack index when a group is specified '
       'for some',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-        });
+            labels: [],
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -565,24 +551,22 @@ void main() {
       'should correctly get the stack index when a group is specified '
       'for some and the scale is stacked',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.on},
-              'y': <String, Object?>{'stacked': StackMode.on},
+            labels: [],
+            scales: {
+              'x': CategoryAxis(stacked: StackMode.on),
+              'y': LinearAxis(stacked: StackMode.on),
             },
-          },
-        });
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -598,24 +582,22 @@ void main() {
       'should correctly get the stack index when a group is specified '
       'for some and the scale is not stacked',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{'data': <Object?>[]},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: []),
+              BarDataset(data: []),
             ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.off},
-              'y': <String, Object?>{'stacked': StackMode.off},
+            labels: [],
+            scales: {
+              'x': CategoryAxis(stacked: StackMode.off),
+              'y': LinearAxis(stacked: StackMode.off),
             },
-          },
-        });
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -631,18 +613,18 @@ void main() {
       'should correctly get the stack index when a group is specified '
       'for all',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack2'),
+              BarDataset(data: [], stack: 'stack2'),
             ],
-            'labels': <Object?>[],
-          },
-        });
+            labels: [],
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -658,24 +640,22 @@ void main() {
       'should correctly get the stack index when a group is specified '
       'for all and the scale is stacked',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack2'),
+              BarDataset(data: [], stack: 'stack2'),
             ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.on},
-              'y': <String, Object?>{'stacked': StackMode.on},
+            labels: [],
+            scales: {
+              'x': CategoryAxis(stacked: StackMode.on),
+              'y': LinearAxis(stacked: StackMode.on),
             },
-          },
-        });
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -691,24 +671,22 @@ void main() {
       'should correctly get the stack index when a group is specified '
       'for all and the scale is not stacked',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack1'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack2'},
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack1'),
+              BarDataset(data: [], stack: 'stack2'),
+              BarDataset(data: [], stack: 'stack2'),
             ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.off},
-              'y': <String, Object?>{'stacked': StackMode.off},
+            labels: [],
+            scales: {
+              'x': CategoryAxis(stacked: StackMode.off),
+              'y': LinearAxis(stacked: StackMode.off),
             },
-          },
-        });
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         final controller = meta.controller! as BarController;
@@ -722,18 +700,16 @@ void main() {
     testWidgets(
       'should create bar elements for each data item during initialization',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: []),
+              BarDataset(data: [10, 15, 0, -4]),
             ],
-            'labels': <Object?>[],
-          },
-        });
+            labels: [],
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
         expect(meta.data.length, 4); // 4 bars created
@@ -745,51 +721,41 @@ void main() {
     );
 
     testWidgets('should update elements when modifying data', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 2],
-              'label': 'dataset1',
-            },
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-              'borderColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(0, 0, 255, 1),
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [1, 2], label: 'dataset1'),
+            BarDataset(
+              data: [10, 15, 0, -4],
+              label: 'dataset2',
+              borderColor: ChartValue.constant(
+                ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
               ),
-            },
+            ),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'elements': <String, Object?>{
-            'bar': <String, Object?>{
-              'backgroundColor': const ChartPaint.solid(
+          labels: ['label1', 'label2', 'label3', 'label4'],
+          elements: ChartElements(
+            bar: BarElementStyle(
+              backgroundColor: ChartPaint.solid(
                 native_ui.Color.fromRGBO(255, 0, 0, 1),
               ),
-              'borderSkipped': BorderSkippedEdge.top,
-              'borderColor': const ChartPaint.solid(
+              borderColor: ChartPaint.solid(
                 native_ui.Color.fromRGBO(0, 128, 0, 1),
               ),
-              'borderWidth': 2,
-            },
+              borderWidth: 2,
+              extra: {'borderSkipped': BorderSkippedEdge.top},
+            ),
+          ),
+          scales: {
+            'x': CategoryAxis(display: ScaleDisplay.off),
+            'y': LinearAxis(display: ScaleDisplay.off, beginAtZero: false),
           },
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'display': ScaleDisplay.off,
-              'beginAtZero': false,
-            },
+          extra: {
+            'plugins': {'legend': false, 'title': false},
           },
-        },
-      });
+        ),
+      );
 
       final meta = chart.getDatasetMeta(1);
       expect(meta.data.length, 4);
@@ -841,41 +807,24 @@ void main() {
       'should get the correct bar points when datasets of different types '
       'exist',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2],
-                'label': 'dataset1',
-              },
-              <String, Object?>{
-                'type': 'line',
-                'data': <Object?>[4, 6],
-                'label': 'dataset2',
-              },
-              <String, Object?>{
-                'data': <Object?>[8, 10],
-                'label': 'dataset3',
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [1, 2], label: 'dataset1'),
+              LineDataset(data: [4, 6], label: 'dataset2'),
+              BarDataset(data: [8, 10], label: 'dataset3'),
             ],
-            'labels': <Object?>['label1', 'label2'],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false, 'title': false},
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'display': ScaleDisplay.off,
-              },
-              'y': <String, Object?>{
-                'type': 'linear',
-                'display': ScaleDisplay.off,
-                'beginAtZero': false,
-              },
+            labels: ['label1', 'label2'],
+            scales: {
+              'x': CategoryAxis(display: ScaleDisplay.off),
+              'y': LinearAxis(display: ScaleDisplay.off, beginAtZero: false),
             },
-          },
-        });
+            extra: {
+              'plugins': {'legend': false, 'title': false},
+            },
+          ),
+        );
 
         final meta = chart.getDatasetMeta(2);
         expect(meta.data.length, 2);
@@ -891,34 +840,22 @@ void main() {
     );
 
     testWidgets('should get the bar points for hidden dataset', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 2],
-              'label': 'dataset1',
-              'hidden': true,
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [1, 2], label: 'dataset1', hidden: true),
           ],
-          'labels': <Object?>['label1', 'label2'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'min': 0,
-              'max': 2,
-              'display': ScaleDisplay.off,
-            },
+          labels: ['label1', 'label2'],
+          scales: {
+            'x': CategoryAxis(display: ScaleDisplay.off),
+            'y': LinearAxis(min: 0, max: 2, display: ScaleDisplay.off),
           },
-        },
-      });
+          extra: {
+            'plugins': {'legend': false, 'title': false},
+          },
+        ),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.data.length, 2);
@@ -935,36 +872,23 @@ void main() {
     testWidgets('should update elements when the scales are stacked', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, -10, 10, -10],
-              'label': 'dataset1',
-            },
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [10, -10, 10, -10], label: 'dataset1'),
+            BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'display': ScaleDisplay.off,
-              'stacked': StackMode.on,
-            },
+          labels: ['label1', 'label2', 'label3', 'label4'],
+          scales: {
+            'x': CategoryAxis(display: ScaleDisplay.off),
+            'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
           },
-        },
-      });
+          extra: {
+            'plugins': {'legend': false, 'title': false},
+          },
+        ),
+      );
 
       final meta0 = chart.getDatasetMeta(0);
 
@@ -989,38 +913,28 @@ void main() {
       'should update elements when the scales are stacked and the y axis has '
       'a user defined minimum',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[50, 20, 10, 100],
-                'label': 'dataset1',
-              },
-              <String, Object?>{
-                'data': <Object?>[50, 80, 90, 0],
-                'label': 'dataset2',
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [50, 20, 10, 100], label: 'dataset1'),
+              BarDataset(data: [50, 80, 90, 0], label: 'dataset2'),
             ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false, 'title': false},
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'display': ScaleDisplay.off,
-              },
-              'y': <String, Object?>{
-                'type': 'linear',
-                'display': ScaleDisplay.off,
-                'stacked': StackMode.on,
-                'min': 50,
-                'max': 100,
-              },
+            labels: ['label1', 'label2', 'label3', 'label4'],
+            scales: {
+              'x': CategoryAxis(display: ScaleDisplay.off),
+              'y': LinearAxis(
+                display: ScaleDisplay.off,
+                stacked: StackMode.on,
+                min: 50,
+                max: 100,
+              ),
             },
-          },
-        });
+            extra: {
+              'plugins': {'legend': false, 'title': false},
+            },
+          ),
+        );
 
         final meta0 = chart.getDatasetMeta(0);
 
@@ -1044,36 +958,23 @@ void main() {
 
     testWidgets('should update elements when only the category scale is '
         'stacked', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[20, -10, 10, -10],
-              'label': 'dataset1',
-            },
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -14],
-              'label': 'dataset2',
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [20, -10, 10, -10], label: 'dataset1'),
+            BarDataset(data: [10, 15, 0, -14], label: 'dataset2'),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
-              'stacked': StackMode.on,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'display': ScaleDisplay.off,
-            },
+          labels: ['label1', 'label2', 'label3', 'label4'],
+          scales: {
+            'x': CategoryAxis(display: ScaleDisplay.off, stacked: StackMode.on),
+            'y': LinearAxis(display: ScaleDisplay.off),
           },
-        },
-      });
+          extra: {
+            'plugins': {'legend': false, 'title': false},
+          },
+        ),
+      );
 
       final meta0 = chart.getDatasetMeta(0);
 
@@ -1096,6 +997,8 @@ void main() {
 
     testWidgets('should update elements when the scales are stacked and data '
         'is strings', (tester) async {
+      // A Map config: the data are strings, which a typed dataset cannot
+      // hold.
       final chart = acquireChart(<String, Object?>{
         'type': 'bar',
         'data': <String, Object?>{
@@ -1150,38 +1053,31 @@ void main() {
       'should get the correct bar points for grouped stacked chart if the '
       'group name is same',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, -10, 10, -10],
-                'label': 'dataset1',
-                'stack': 'stack1',
-              },
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-                'label': 'dataset2',
-                'stack': 'stack1',
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(
+                data: [10, -10, 10, -10],
+                label: 'dataset1',
+                stack: 'stack1',
+              ),
+              BarDataset(
+                data: [10, 15, 0, -4],
+                label: 'dataset2',
+                stack: 'stack1',
+              ),
             ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false, 'title': false},
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'display': ScaleDisplay.off,
-              },
-              'y': <String, Object?>{
-                'type': 'linear',
-                'display': ScaleDisplay.off,
-                'stacked': StackMode.on,
-              },
+            labels: ['label1', 'label2', 'label3', 'label4'],
+            scales: {
+              'x': CategoryAxis(display: ScaleDisplay.off),
+              'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
             },
-          },
-        });
+            extra: {
+              'plugins': {'legend': false, 'title': false},
+            },
+          ),
+        );
 
         final meta0 = chart.getDatasetMeta(0);
 
@@ -1207,36 +1103,23 @@ void main() {
       'should get the correct bar points for grouped stacked chart if the '
       'group name is different',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2],
-                'stack': 'stack1',
-              },
-              <String, Object?>{
-                'data': <Object?>[1, 2],
-                'stack': 'stack2',
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(data: [1, 2], stack: 'stack1'),
+              BarDataset(data: [1, 2], stack: 'stack2'),
             ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false, 'title': false},
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'display': ScaleDisplay.off,
-              },
-              'y': <String, Object?>{
-                'type': 'linear',
-                'display': ScaleDisplay.off,
-                'stacked': StackMode.on,
-              },
+            labels: ['label1', 'label2', 'label3', 'label4'],
+            scales: {
+              'x': CategoryAxis(display: ScaleDisplay.off),
+              'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
             },
-          },
-        });
+            extra: {
+              'plugins': {'legend': false, 'title': false},
+            },
+          ),
+        );
 
         final meta = chart.getDatasetMeta(1);
 
@@ -1253,40 +1136,24 @@ void main() {
     testWidgets('should get the correct bar points for grouped stacked chart', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 2],
-              'stack': 'stack1',
-            },
-            <String, Object?>{
-              'data': <Object?>[0.5, 1],
-              'stack': 'stack2',
-            },
-            <String, Object?>{
-              'data': <Object?>[0.5, 1],
-              'stack': 'stack2',
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [1, 2], stack: 'stack1'),
+            BarDataset(data: [0.5, 1], stack: 'stack2'),
+            BarDataset(data: [0.5, 1], stack: 'stack2'),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'display': ScaleDisplay.off,
-              'stacked': StackMode.on,
-            },
+          labels: ['label1', 'label2', 'label3', 'label4'],
+          scales: {
+            'x': CategoryAxis(display: ScaleDisplay.off),
+            'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
           },
-        },
-      });
+          extra: {
+            'plugins': {'legend': false, 'title': false},
+          },
+        ),
+      );
 
       final meta = chart.getDatasetMeta(2);
 
@@ -1300,19 +1167,16 @@ void main() {
     });
 
     testWidgets('should draw all bars', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: []),
+            BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+          labels: ['label1', 'label2', 'label3', 'label4'],
+        ),
+      );
 
       final meta = chart.getDatasetMeta(1);
 
@@ -1330,32 +1194,27 @@ void main() {
     });
 
     testWidgets('should set hover styles on bars', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: []),
+            BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'elements': <String, Object?>{
-            'bar': <String, Object?>{
-              'backgroundColor': const ChartPaint.solid(
+          labels: ['label1', 'label2', 'label3', 'label4'],
+          elements: ChartElements(
+            bar: BarElementStyle(
+              backgroundColor: ChartPaint.solid(
                 native_ui.Color.fromRGBO(255, 0, 0, 1),
               ),
-              'borderColor': const ChartPaint.solid(
+              borderColor: ChartPaint.solid(
                 native_ui.Color.fromRGBO(0, 0, 255, 1),
               ),
-              'borderWidth': 2,
-            },
-          },
-        },
-      });
+              borderWidth: 2,
+            ),
+          ),
+        ),
+      );
 
       final meta = chart.getDatasetMeta(1);
       final bar = _bar(meta, 0);
@@ -1417,32 +1276,27 @@ void main() {
     });
 
     testWidgets('should remove a hover style from a bar', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-              'label': 'dataset2',
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: []),
+            BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'elements': <String, Object?>{
-            'bar': <String, Object?>{
-              'backgroundColor': const ChartPaint.solid(
+          labels: ['label1', 'label2', 'label3', 'label4'],
+          elements: ChartElements(
+            bar: BarElementStyle(
+              backgroundColor: ChartPaint.solid(
                 native_ui.Color.fromRGBO(255, 0, 0, 1),
               ),
-              'borderColor': const ChartPaint.solid(
+              borderColor: ChartPaint.solid(
                 native_ui.Color.fromRGBO(0, 0, 255, 1),
               ),
-              'borderWidth': 2,
-            },
-          },
-        },
-      });
+              borderWidth: 2,
+            ),
+          ),
+        ),
+      );
 
       final meta = chart.getDatasetMeta(1);
       final bar = _bar(meta, 0);
@@ -1541,13 +1395,16 @@ void main() {
     });
 
     group('Bar width', () {
-      late AnyObject data;
-      late AnyObject config;
+      // `this.data` is a typed config with the labels and the datasets, and
+      // each case gives its options through `copyWith`.
+      late ChartConfig data;
+      late ChartConfig config;
 
       setUp(() {
         // 2 datasets
-        data = <String, Object?>{
-          'labels': <Object?>[
+        data = const ChartConfig(
+          type: ChartKind.bar,
+          labels: [
             'January',
             'February',
             'March',
@@ -1556,20 +1413,16 @@ void main() {
             'June',
             'July',
           ],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 20, 30, 40, 50, 60, 70],
-            },
-            <String, Object?>{
-              'data': <Object?>[10, 20, 30, 40, 50, 60, 70],
-            },
+          datasets: [
+            BarDataset(data: [10, 20, 30, 40, 50, 60, 70]),
+            BarDataset(data: [10, 20, 30, 40, 50, 60, 70]),
           ],
-        };
+        );
       });
 
       // :1325 the afterEach acquires a chart: each test calls it last.
       void afterEach() {
-        final chart = acquireChart(config);
+        final chart = _acquire(config);
         final meta = chart.getDatasetMeta(0);
         final xScale = chart.scales[meta.xAxisID]!;
         final options = jsGet(jsGet(Chart.defaults, 'datasets'), 'bar');
@@ -1600,30 +1453,20 @@ void main() {
 
       testWidgets('should correctly set bar width when min and max option is '
           'set.', (tester) async {
-        config = <String, Object?>{
-          'type': 'bar',
-          'data': data,
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 'March', 'max': 'May'},
-            },
-          },
-        };
+        config = data.copyWith(
+          scales: const {'x': CategoryAxis(min: 'March', max: 'May')},
+        );
         afterEach();
       });
 
       testWidgets('should correctly set bar width when scale are stacked with '
           'min and max options.', (tester) async {
-        config = <String, Object?>{
-          'type': 'bar',
-          'data': data,
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 'March', 'max': 'May'},
-              'y': <String, Object?>{'stacked': StackMode.on},
-            },
+        config = data.copyWith(
+          scales: const {
+            'x': CategoryAxis(min: 'March', max: 'May'),
+            'y': LinearAxis(stacked: StackMode.on),
           },
-        };
+        );
         afterEach();
       });
     });
@@ -1633,13 +1476,16 @@ void main() {
     // relative to the scale height. Thus it passed before the legend was
     // registered, and it also passes with the legend.
     group('Bar height (horizontal type)', () {
-      late AnyObject data;
-      late AnyObject config;
+      // `this.data` is a typed config with the labels and the datasets, and
+      // each case gives its options through `copyWith`.
+      late ChartConfig data;
+      late ChartConfig config;
 
       setUp(() {
         // 2 datasets
-        data = <String, Object?>{
-          'labels': <Object?>[
+        data = const ChartConfig(
+          type: ChartKind.bar,
+          labels: [
             'January',
             'February',
             'March',
@@ -1648,20 +1494,16 @@ void main() {
             'June',
             'July',
           ],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 20, 30, 40, 50, 60, 70],
-            },
-            <String, Object?>{
-              'data': <Object?>[10, 20, 30, 40, 50, 60, 70],
-            },
+          datasets: [
+            BarDataset(data: [10, 20, 30, 40, 50, 60, 70]),
+            BarDataset(data: [10, 20, 30, 40, 50, 60, 70]),
           ],
-        };
+        );
       });
 
       // :1399 the afterEach acquires a chart: each test calls it last.
       void afterEach() {
-        final chart = acquireChart(config);
+        final chart = _acquire(config);
         final meta = chart.getDatasetMeta(0);
         final yScale = chart.scales[meta.yAxisID]!;
 
@@ -1692,32 +1534,22 @@ void main() {
 
       testWidgets('should correctly set bar height when min and max option is '
           'set.', (tester) async {
-        config = <String, Object?>{
-          'type': 'bar',
-          'data': data,
-          'options': <String, Object?>{
-            'indexAxis': const YAxis(),
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'min': 'March', 'max': 'May'},
-            },
-          },
-        };
+        config = data.copyWith(
+          indexAxis: const YAxis(),
+          scales: const {'y': CategoryAxis(min: 'March', max: 'May')},
+        );
         afterEach();
       });
 
       testWidgets('should correctly set bar height when scale are stacked '
           'with min and max options.', (tester) async {
-        config = <String, Object?>{
-          'type': 'bar',
-          'data': data,
-          'options': <String, Object?>{
-            'indexAxis': const YAxis(),
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.on},
-              'y': <String, Object?>{'min': 'March', 'max': 'May'},
-            },
+        config = data.copyWith(
+          indexAxis: const YAxis(),
+          scales: const {
+            'x': LinearAxis(stacked: StackMode.on),
+            'y': CategoryAxis(min: 'March', max: 'May'),
           },
-        };
+        );
         afterEach();
       });
     });
@@ -1729,35 +1561,33 @@ void main() {
 
           // :1465 the beforeEach acquires a chart: each test calls it first.
           void beforeEach() {
-            chart = acquireChart(<String, Object?>{
-              'type': 'bar',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[1, 2],
-                  },
-                  <String, Object?>{
-                    'data': <Object?>[1, 2],
-                  },
+            chart = _acquire(
+              ChartConfig(
+                type: ChartKind.bar,
+                datasets: const [
+                  BarDataset(data: [1, 2]),
+                  BarDataset(data: [1, 2]),
                 ],
-                'labels': <Object?>['label1', 'label2', 'label3'],
-              },
-              'options': <String, Object?>{
-                'legend': false,
-                'title': false,
-                'datasets': <String, Object?>{
-                  'bar': <String, Object?>{
-                    'barThickness': jsTruthy(barThickness)
-                        ? BarThickness.pixels(jsToNumber(barThickness))
-                        : barThickness,
+                labels: const ['label1', 'label2', 'label3'],
+                scales: const {
+                  'x': CategoryAxis(extra: {'id': 'x'}),
+                  'y': LinearAxis(),
+                },
+                extra: {
+                  'legend': false,
+                  'title': false,
+                  'datasets': {
+                    'bar': {
+                      // `barThickness: undefined` reads as an absent key.
+                      if (jsTruthy(barThickness))
+                        'barThickness': BarThickness.pixels(
+                          jsToNumber(barThickness),
+                        ),
+                    },
                   },
                 },
-                'scales': <String, Object?>{
-                  'x': <String, Object?>{'id': 'x', 'type': 'category'},
-                  'y': <String, Object?>{'type': 'linear'},
-                },
-              },
-            });
+              ),
+            );
           }
 
           testWidgets('should correctly set bar width', (tester) async {
@@ -1815,18 +1645,18 @@ void main() {
     testWidgets('minBarLength settings should be used on Y axis on bar chart', (
       tester,
     ) async {
-      const minBarLength = 4;
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'minBarLength': minBarLength,
-              'data': <Object?>[0.05, -0.05, 10, 15, 20, 25, 30, 35],
-            },
+      const minBarLength = 4.0;
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(
+              minBarLength: minBarLength,
+              data: [0.05, -0.05, 10, 15, 20, 25, 30, 35],
+            ),
           ],
-        },
-      });
+        ),
+      );
 
       final data = chart.getDatasetMeta(0).data;
       final halfBaseLine = chart.scales['y']!.getLineWidthForValue(0) / 2;
@@ -1840,19 +1670,19 @@ void main() {
     testWidgets(
       'minBarLength settings should be used on X axis on horizontal bar chart',
       (tester) async {
-        const minBarLength = 4;
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'indexAxis': const YAxis(),
-                'minBarLength': minBarLength,
-                'data': <Object?>[0.05, -0.05, 10, 15, 20, 25, 30, 35],
-              },
+        const minBarLength = 4.0;
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(
+                indexAxis: YAxis(),
+                minBarLength: minBarLength,
+                data: [0.05, -0.05, 10, 15, 20, 25, 30, 35],
+              ),
             ],
-          },
-        });
+          ),
+        );
 
         final data = chart.getDatasetMeta(0).data;
         final halfBaseLine = chart.scales['x']!.getLineWidthForValue(0) / 2;
@@ -1865,30 +1695,22 @@ void main() {
     );
 
     testWidgets('should respect the data visibility settings', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 2, 3, 4],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [1, 2, 3, 4]),
           ],
-          'labels': <Object?>['A', 'B', 'C', 'D'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'display': ScaleDisplay.off,
-            },
+          labels: ['A', 'B', 'C', 'D'],
+          scales: {
+            'x': CategoryAxis(display: ScaleDisplay.off),
+            'y': LinearAxis(display: ScaleDisplay.off),
           },
-        },
-      });
+          extra: {
+            'plugins': {'legend': false, 'title': false},
+          },
+        ),
+      );
 
       var data = chart.getDatasetMeta(0).data;
       expect((data[0] as BarElement).base, toBeCloseToPixel(512));
@@ -1905,35 +1727,23 @@ void main() {
 
     testWidgets('should hide bar dataset beneath the chart for correct '
         'animations', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 2, 3, 4],
-            },
-            <String, Object?>{
-              'data': <Object?>[1, 2, 3, 4],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [1, 2, 3, 4]),
+            BarDataset(data: [1, 2, 3, 4]),
           ],
-          'labels': <Object?>['A', 'B', 'C', 'D'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
-              'stacked': StackMode.on,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'display': ScaleDisplay.off,
-              'stacked': StackMode.on,
-            },
+          labels: ['A', 'B', 'C', 'D'],
+          scales: {
+            'x': CategoryAxis(display: ScaleDisplay.off, stacked: StackMode.on),
+            'y': LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on),
           },
-        },
-      });
+          extra: {
+            'plugins': {'legend': false, 'title': false},
+          },
+        ),
+      );
 
       var data = chart.getDatasetMeta(0).data;
       expect((data[0] as BarElement).base, toBeCloseToPixel(512));
@@ -1952,6 +1762,8 @@ void main() {
       testWidgets('Should return correct values from getMinMax', (
         tester,
       ) async {
+        // A Map config: the floating bar `[10, -10]` is a data item that a
+        // typed dataset cannot hold.
         final chart = acquireChart(<String, Object?>{
           'type': 'bar',
           'data': <String, Object?>{
@@ -1977,19 +1789,19 @@ void main() {
       testWidgets('Should not use ctx.clip when clip=false', (tester) async {
         final ctx = _ResetTransformContext();
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'labels': <Object?>['a', 'b', 'c'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            labels: ['a', 'b', 'c'],
+            datasets: [
+              BarDataset(
+                data: [1, 2, 3],
                 // DIVERGES(chartjs): adapt-chart-clip-option, the clip class.
-                'clip': ChartClip.none,
-              },
+                clip: ChartClip.none,
+              ),
             ],
-          },
-        });
+          ),
+        );
         final orig = chart.ctx;
 
         // Draw on mock context
@@ -2006,21 +1818,17 @@ void main() {
       tester,
     ) async {
       void unevenChart() {
-        acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'labels': <Object?>[1, 2],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2],
-              },
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3],
-              },
+        _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            labels: [1, 2],
+            datasets: [
+              BarDataset(data: [1, 2]),
+              BarDataset(data: [1, 2, 3]),
             ],
-          },
-          'options': <String, Object?>{'skipNull': true},
-        });
+            extra: {'skipNull': true},
+          ),
+        );
       }
 
       expect(unevenChart, returnsNormally);
@@ -2028,6 +1836,9 @@ void main() {
 
     testWidgets('should correctly count the number of stacks when skipNull '
         'and different order datasets', (tester) async {
+      // A Map config: the data items are objects with other keys than
+      // `x` and `y`, read through `parsing`, which a typed dataset cannot
+      // hold.
       final chart = acquireChart(<String, Object?>{
         'type': 'bar',
         'data': <String, Object?>{
@@ -2114,26 +1925,18 @@ void main() {
     testWidgets('should not override tooltip title and label callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['Label 1', 'Label 2'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[21, 79],
-              'label': 'Dataset 1',
-            },
-            <String, Object?>{
-              'data': <Object?>[33, 67],
-              'label': 'Dataset 2',
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          labels: ['Label 1', 'Label 2'],
+          datasets: [
+            BarDataset(data: [21, 79], label: 'Dataset 1'),
+            BarDataset(data: [33, 67], label: 'Dataset 2'),
           ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'maintainAspectRatio': true,
-        },
-      });
+          responsive: true,
+          maintainAspectRatio: true,
+        ),
+      );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];
 

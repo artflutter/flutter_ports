@@ -50,6 +50,14 @@ import '../support/tick_label.dart';
 // - `chart.scales.y.start` and `end` are fields of `LinearScaleBase`.
 // - `index.toString()` of a tick callback is `jsToString(index)`.
 // - `expect(fn).not.toThrow()` is `expect(fn, returnsNormally)`.
+// - A chart config is a typed `ChartConfig` (Chart.js ADR 0052). Three
+//   cases keep a Map config: two give string data values and one gives
+//   `undefined` in its data, which a typed dataset cannot hold. A fourth
+//   gives `plugins: false`, which has no typed form.
+
+/// The chart of the typed [config] (Chart.js ADR 0052).
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// scale.linear.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
@@ -57,8 +65,8 @@ List<Object?> _getLabels(Scale scale) => [
 ];
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `chart.options.scales.y`, or `chart.options.scales.y[key]` for a [key]:
 /// a resolver of the chart options.
@@ -87,35 +95,21 @@ void main() {
     testWidgets('Should correctly determine the max & min data values', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[10, 5, 0, -5, 78, -100],
-            },
-            <String, Object?>{
-              'yAxisID': 'y2',
-              'data': <Object?>[-1000, 1000],
-            },
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[150],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(yAxisID: 'y', data: [10, 5, 0, -5, 78, -100]),
+            BarDataset(yAxisID: 'y2', data: [-1000, 1000]),
+            BarDataset(yAxisID: 'y', data: [150]),
           ],
-          'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'linear'},
-            'y2': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.right,
-            },
+          labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+          scales: {
+            'y': LinearAxis(),
+            'y2': LinearAxis(position: ChartPosition.right),
           },
-        },
-      });
+        ),
+      );
 
       expect(chart.scales['y'], isNotNull); // must construct
       expect(chart.scales['y']!.min, -100);
@@ -125,22 +119,15 @@ void main() {
     testWidgets('Should handle when only a min value is provided', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[200],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(yAxisID: 'y', data: [200]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'linear', 'min': 250},
-          },
-        },
-      });
+          scales: {'y': LinearAxis(min: 250)},
+        ),
+      );
 
       expect(chart.scales['y']!.min, 250);
     });
@@ -148,27 +135,21 @@ void main() {
     testWidgets('Should handle when only a max value is provided', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[200],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(yAxisID: 'y', data: [200]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'linear', 'max': 150},
-          },
-        },
-      });
+          scales: {'y': LinearAxis(max: 150)},
+        ),
+      );
 
       expect(chart.scales['y'], isNotNull); // must construct
       expect(chart.scales['y']!.max, 150);
     });
 
+    // A Map config: string data values.
     testWidgets(
       'Should correctly determine the max & min of string data values',
       (tester) async {
@@ -212,24 +193,14 @@ void main() {
       'Should correctly determine the max & min when no values provided and '
       'suggested minimum and maximum are set',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'yAxisID': 'y', 'data': <Object?>[]},
-            ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'linear',
-                'suggestedMin': -10,
-                'suggestedMax': 15,
-              },
-            },
-          },
-        });
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [BarDataset(yAxisID: 'y', data: [])],
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {'y': LinearAxis(suggestedMin: -10, suggestedMax: 15)},
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, -10);
@@ -239,24 +210,19 @@ void main() {
 
     testWidgets('Should correctly determine the max & min when no datasets are '
         'associated and suggested minimum and maximum are set', (tester) async {
-      final chart = acquireChart({
-        'type': 'bar',
-        'data': <String, Object?>{'datasets': <Object?>[]},
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'suggestedMin': -10,
-              'suggestedMax': 0,
-            },
-          },
-        },
-      });
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [],
+          scales: {'y': LinearAxis(suggestedMin: -10, suggestedMax: 0)},
+        ),
+      );
 
       expect(chart.scales['y']!.min, -10);
       expect(chart.scales['y']!.max, 0);
     });
 
+    // A Map config: string data values.
     testWidgets(
       'Should correctly determine the max & min data values ignoring hidden '
       'datasets',
@@ -298,6 +264,7 @@ void main() {
       },
     );
 
+    // A Map config: `undefined` in the data.
     testWidgets(
       'Should correctly determine the max & min data values ignoring data '
       'that is NaN',
@@ -350,23 +317,16 @@ void main() {
     testWidgets(
       'Should correctly determine the max & min data values for small numbers',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[-1e-8, 3e-8, -4e-8, 6e-8],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [-1e-8, 3e-8, -4e-8, 6e-8]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear'},
-            },
-          },
-        });
+            labels: ['a', 'b', 'c', 'd'],
+            scales: {'y': LinearAxis()},
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min * 1e8, closeTo(-4, 5e-3));
@@ -377,32 +337,27 @@ void main() {
     testWidgets('Should correctly determine the max & min for scatter data', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 100},
-                <String, Object?>{'x': -10, 'y': 0},
-                <String, Object?>{'x': 0, 'y': 0},
-                <String, Object?>{'x': 99, 'y': 7},
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(
+              xAxisID: 'x',
+              yAxisID: 'y',
+              points: [
+                DataPoint(10, 100),
+                DataPoint(-10, 0),
+                DataPoint(0, 0),
+                DataPoint(99, 7),
               ],
-            },
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{'type': 'linear'},
+          scales: const {
+            'x': LinearAxis(position: ChartPosition.bottom),
+            'y': LinearAxis(),
           },
-        },
-      })..update();
+        ),
+      )..update();
 
       expect(chart.scales['x']!.min, -20);
       expect(chart.scales['x']!.max, 100);
@@ -413,32 +368,27 @@ void main() {
     testWidgets('Should correctly get the label for the given index', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 100},
-                <String, Object?>{'x': -10, 'y': 0},
-                <String, Object?>{'x': 0, 'y': 0},
-                <String, Object?>{'x': 99, 'y': 7},
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(
+              xAxisID: 'x',
+              yAxisID: 'y',
+              points: [
+                DataPoint(10, 100),
+                DataPoint(-10, 0),
+                DataPoint(0, 0),
+                DataPoint(99, 7),
               ],
-            },
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{'type': 'linear'},
+          scales: const {
+            'x': LinearAxis(position: ChartPosition.bottom),
+            'y': LinearAxis(),
           },
-        },
-      })..update();
+        ),
+      )..update();
 
       expect(chart.scales['y']!.getLabelForValue(7), '7');
     });
@@ -446,34 +396,29 @@ void main() {
     testWidgets(
       'Should correctly use the locale setting when getting a label',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 100},
-                  <String, Object?>{'x': -10, 'y': 0},
-                  <String, Object?>{'x': 0, 'y': 0},
-                  <String, Object?>{'x': 99, 'y': 7},
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(
+                xAxisID: 'x',
+                yAxisID: 'y',
+                points: [
+                  DataPoint(10, 100),
+                  DataPoint(-10, 0),
+                  DataPoint(0, 0),
+                  DataPoint(99, 7),
                 ],
-              },
+              ),
             ],
-          },
-          'options': <String, Object?>{
-            // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
-            'locale': const native_ui.Locale('de', 'DE'),
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'linear',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{'type': 'linear'},
+            scales: const {
+              'x': LinearAxis(position: ChartPosition.bottom),
+              'y': LinearAxis(),
             },
-          },
-        })..update();
+            // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+            extra: const {'locale': native_ui.Locale('de', 'DE')},
+          ),
+        )..update();
 
         expect(chart.scales['y']!.getLabelForValue(7.07), '7,07');
       },
@@ -483,42 +428,22 @@ void main() {
       'Should correctly determine the min and max data values when stacked '
       'mode is turned on',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 0, -5, 78, -100],
-                'type': 'bar',
-              },
-              <String, Object?>{
-                'yAxisID': 'y2',
-                'data': <Object?>[-1000, 1000],
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[150, 0, 0, -100, -10, 9],
-                'type': 'bar',
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10, 10, 10, 10, 10, 10],
-                'type': 'line',
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [10, 5, 0, -5, 78, -100]),
+              LineDataset(yAxisID: 'y2', data: [-1000, 1000]),
+              BarDataset(yAxisID: 'y', data: [150, 0, 0, -100, -10, 9]),
+              LineDataset(yAxisID: 'y', data: [10, 10, 10, 10, 10, 10]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'stacked': StackMode.on},
-              'y2': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'linear',
-              },
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {
+              'y': LinearAxis(stacked: StackMode.on),
+              'y2': LinearAxis(position: ChartPosition.right),
             },
-          },
-        })..update();
+          ),
+        )..update();
 
         expect(chart.scales['y']!.min, -150);
         expect(chart.scales['y']!.max, 200);
@@ -529,40 +454,26 @@ void main() {
       'Should correctly determine the min and max data values when stacked '
       'mode is turned on and there are hidden datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 0, -5, 78, -100],
-              },
-              <String, Object?>{
-                'yAxisID': 'y2',
-                'data': <Object?>[-1000, 1000],
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[150, 0, 0, -100, -10, 9],
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10, 20, 30, 40, 50, 60],
-                'hidden': true,
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [10, 5, 0, -5, 78, -100]),
+              BarDataset(yAxisID: 'y2', data: [-1000, 1000]),
+              BarDataset(yAxisID: 'y', data: [150, 0, 0, -100, -10, 9]),
+              BarDataset(
+                yAxisID: 'y',
+                data: [10, 20, 30, 40, 50, 60],
+                hidden: true,
+              ),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'stacked': StackMode.on},
-              'y2': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'linear',
-              },
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {
+              'y': LinearAxis(stacked: StackMode.on),
+              'y2': LinearAxis(position: ChartPosition.right),
             },
-          },
-        })..update();
+          ),
+        )..update();
 
         expect(chart.scales['y']!.min, -150);
         expect(chart.scales['y']!.max, 200);
@@ -573,32 +484,18 @@ void main() {
       'Should correctly determine the min and max data values when stacked '
       'mode is turned on there are multiple types of datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'type': 'bar',
-                'data': <Object?>[10, 5, 0, -5, 78, -100],
-              },
-              <String, Object?>{
-                'type': 'line',
-                'data': <Object?>[10, 10, 10, 10, 10, 10],
-              },
-              <String, Object?>{
-                'type': 'bar',
-                'data': <Object?>[150, 0, 0, -100, -10, 9],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [10, 5, 0, -5, 78, -100]),
+              LineDataset(data: [10, 10, 10, 10, 10, 10]),
+              BarDataset(data: [150, 0, 0, -100, -10, 9]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'stacked': StackMode.on},
-            },
-          },
-        });
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {'y': LinearAxis(stacked: StackMode.on)},
+          ),
+        );
 
         chart.scales['y']!.determineDataLimits();
         expect(chart.scales['y']!.min, -105);
@@ -609,18 +506,14 @@ void main() {
     testWidgets(
       'Should ensure that the scale has a max and min that are not equal',
       (tester) async {
-        final chart = acquireChart({
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear'},
-            },
-          },
-        });
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [],
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {'y': LinearAxis()},
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, 0);
@@ -633,23 +526,17 @@ void main() {
       'large positive numbers',
       (tester) async {
         // https://github.com/chartjs/Chart.js/issues/9377
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                // Value larger than Number.MAX_SAFE_INTEGER
-                'data': <Object?>[10000000000000000],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              // Value larger than Number.MAX_SAFE_INTEGER
+              LineDataset(data: [10000000000000000]),
             ],
-            'labels': <Object?>['a'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear'},
-            },
-          },
-        });
+            labels: ['a'],
+            scales: {'y': LinearAxis()},
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, 10000000000000000 * 0.95);
@@ -662,23 +549,17 @@ void main() {
       'large negative numbers',
       (tester) async {
         // https://github.com/chartjs/Chart.js/issues/9377
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                // Value larger than Number.MAX_SAFE_INTEGER
-                'data': <Object?>[-10000000000000000],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              // Value larger than Number.MAX_SAFE_INTEGER
+              LineDataset(data: [-10000000000000000]),
             ],
-            'labels': <Object?>['a'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear'},
-            },
-          },
-        });
+            labels: ['a'],
+            scales: {'y': LinearAxis()},
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.max, -10000000000000000 * 0.95);
@@ -690,18 +571,14 @@ void main() {
       'Should ensure that the scale has a max and min that are not equal when '
       'beginAtZero is set',
       (tester) async {
-        final chart = acquireChart({
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'beginAtZero': true},
-            },
-          },
-        });
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [],
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {'y': LinearAxis(beginAtZero: true)},
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, 0);
@@ -712,27 +589,16 @@ void main() {
     testWidgets('Should use the suggestedMin and suggestedMax options', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[1, 1, 1, 2, 1, 0],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(yAxisID: 'y', data: [1, 1, 1, 2, 1, 0]),
           ],
-          'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'suggestedMax': 10,
-              'suggestedMin': -10,
-            },
-          },
-        },
-      });
+          labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+          scales: {'y': LinearAxis(suggestedMax: 10, suggestedMin: -10)},
+        ),
+      );
 
       expect(chart.scales['y'], isNotNull); // must construct
       expect(chart.scales['y']!.min, -10);
@@ -740,23 +606,16 @@ void main() {
     });
 
     testWidgets('Should use the min and max options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[1, 1, 1, 2, 1, 0],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(yAxisID: 'y', data: [1, 1, 1, 2, 1, 0]),
           ],
-          'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'linear', 'max': 1010, 'min': -1010},
-          },
-        },
-      });
+          labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+          scales: {'y': LinearAxis(max: 1010, min: -1010)},
+        ),
+      );
 
       expect(chart.scales['y'], isNotNull); // must construct
       expect(chart.scales['y']!.min, -1010);
@@ -769,28 +628,18 @@ void main() {
     testWidgets(
       'Should use min, max and stepSize to create fixed spaced ticks',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10, 3, 6, 8, 3, 1],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [10, 3, 6, 8, 3, 1]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'linear',
-                'min': 1,
-                'max': 11,
-                'ticks': <String, Object?>{'stepSize': 2},
-              },
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {
+              'y': LinearAxis(min: 1, max: 11, ticks: AxisTicks(stepSize: 2)),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, 1);
@@ -805,19 +654,19 @@ void main() {
     testWidgets('Should not generate any ticks > max if max is specified', (
       tester,
     ) async {
-      final chart = acquireChart({
-        'type': 'line',
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'min': 2.404e-8,
-              'max': 2.4143e-8,
-              'ticks': <String, Object?>{'includeBounds': false},
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [],
+          scales: {
+            'x': LinearAxis(
+              min: 2.404e-8,
+              max: 2.4143e-8,
+              ticks: AxisTicks(extra: {'includeBounds': false}),
+            ),
           },
-        },
-      });
+        ),
+      );
 
       expect(chart.scales['x']!.min, 2.404e-8);
       expect(chart.scales['x']!.max, 2.4143e-8);
@@ -831,19 +680,19 @@ void main() {
       'Should not generate insane amounts of ticks with small stepSize and '
       'large range',
       (tester) async {
-        final chart = acquireChart({
-          'type': 'bar',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'linear',
-                'min': 1,
-                'max': 1E10,
-                'ticks': <String, Object?>{'stepSize': 2, 'autoSkip': false},
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [],
+            scales: {
+              'y': LinearAxis(
+                min: 1,
+                max: 10000000000,
+                ticks: AxisTicks(stepSize: 2, autoSkip: false),
+              ),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['y']!.min, 1);
         expect(chart.scales['y']!.max, 1E10);
@@ -854,26 +703,16 @@ void main() {
     testWidgets('Should create decimal steps if stepSize is a decimal number', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[10, 3, 6, 8, 3, 1],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(yAxisID: 'y', data: [10, 3, 6, 8, 3, 1]),
           ],
-          'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'ticks': <String, Object?>{'stepSize': 2.5},
-            },
-          },
-        },
-      });
+          labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+          scales: {'y': LinearAxis(ticks: AxisTicks(stepSize: 2.5))},
+        ),
+      );
 
       expect(chart.scales['y'], isNotNull); // must construct
       expect(chart.scales['y']!.min, 0);
@@ -888,26 +727,18 @@ void main() {
       testWidgets('Should create integer steps if precision is 0', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[0, 1, 2, 1, 0, 1],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [0, 1, 2, 1, 0, 1]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'linear',
-                'ticks': <String, Object?>{'precision': 0},
-              },
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {
+              'y': LinearAxis(ticks: AxisTicks(extra: {'precision': 0})),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, 0);
@@ -921,26 +752,21 @@ void main() {
       testWidgets(
         'Should round the step size to the given number of decimal places',
         (tester) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'yAxisID': 'y',
-                  'data': <Object?>[0, 0.001, 0.002, 0.003, 0, 0.001],
-                },
+          final chart = _acquire(
+            const ChartConfig(
+              type: ChartKind.bar,
+              datasets: [
+                BarDataset(
+                  yAxisID: 'y',
+                  data: [0, 0.001, 0.002, 0.003, 0, 0.001],
+                ),
               ],
-              'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'y': <String, Object?>{
-                  'type': 'linear',
-                  'ticks': <String, Object?>{'precision': 2},
-                },
+              labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+              scales: {
+                'y': LinearAxis(ticks: AxisTicks(extra: {'precision': 2})),
               },
-            },
-          });
+            ),
+          );
 
           expect(chart.scales['y'], isNotNull); // must construct
           expect(chart.scales['y']!.min, 0);
@@ -957,23 +783,16 @@ void main() {
       'should forcibly include 0 in the range if the beginAtZero option is '
       'used',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[20, 30, 40, 50],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [20, 30, 40, 50]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'beginAtZero': false},
-            },
-          },
-        });
+            labels: ['a', 'b', 'c', 'd'],
+            scales: {'y': LinearAxis(beginAtZero: false)},
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(
@@ -1031,23 +850,16 @@ void main() {
     testWidgets(
       'Should generate tick marks in the correct order in reversed mode',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [10, 5, 0, 25, 78]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'reverse': true},
-            },
-          },
-        });
+            labels: ['a', 'b', 'c', 'd'],
+            scales: {'y': LinearAxis(reverse: true)},
+          ),
+        );
 
         expect(
           _getLabels(chart.scales['y']!),
@@ -1072,23 +884,16 @@ void main() {
       'should use the correct number of decimal places in the default format '
       'function',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[0.06, 0.005, 0, 0.025, 0.0078],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [0.06, 0.005, 0, 0.025, 0.0078]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear'},
-            },
-          },
-        });
+            labels: ['a', 'b', 'c', 'd'],
+            scales: {'y': LinearAxis()},
+          ),
+        );
 
         expect(
           _getLabels(chart.scales['y']!),
@@ -1108,22 +913,16 @@ void main() {
     testWidgets('Should correctly limit the maximum number of ticks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[0.5, 2.5],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          labels: ['a', 'b'],
+          datasets: [
+            BarDataset(data: [0.5, 2.5]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'beginAtZero': false},
-          },
-        },
-      });
+          scales: {'y': LinearAxis(beginAtZero: false)},
+        ),
+      );
 
       expect(
         _getLabels(chart.scales['y']!),
@@ -1188,22 +987,16 @@ void main() {
     });
 
     testWidgets('Should bound to data', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 99],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          labels: ['a', 'b'],
+          datasets: [
+            LineDataset(data: [1, 99]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'bounds': ScaleBounds.data},
-          },
-        },
-      });
+          scales: {'y': LinearAxis(bounds: ScaleBounds.data)},
+        ),
+      );
 
       expect(chart.scales['y']!.min, equals(1));
       expect(chart.scales['y']!.max, equals(99));
@@ -1212,26 +1005,16 @@ void main() {
     testWidgets('Should build labels using the user supplied callback', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(yAxisID: 'y', data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['a', 'b', 'c', 'd'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'linear',
-              'ticks': <String, Object?>{'callback': indexTickLabel},
-            },
-          },
-        },
-      });
+          labels: ['a', 'b', 'c', 'd'],
+          scales: {'y': LinearAxis(ticks: AxisTicks(callback: indexTickLabel))},
+        ),
+      );
 
       // Just the index
       expect(
@@ -1243,28 +1026,19 @@ void main() {
     testWidgets('Should get the correct pixel value for a point', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>[-1, 1],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>[-1, 1],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          labels: [-1, 1],
+          datasets: [
+            LineDataset(xAxisID: 'x', yAxisID: 'y', data: [-1, 1]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{'type': 'linear'},
+          scales: {
+            'x': LinearAxis(position: ChartPosition.bottom),
+            'y': LinearAxis(),
           },
-        },
-      });
+        ),
+      );
 
       final xScale = chart.scales['x']!;
       expect(
@@ -1301,32 +1075,27 @@ void main() {
     });
 
     testWidgets('should fit correctly', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 100},
-                <String, Object?>{'x': -10, 'y': 0},
-                <String, Object?>{'x': 0, 'y': 0},
-                <String, Object?>{'x': 99, 'y': 7},
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(
+              xAxisID: 'x',
+              yAxisID: 'y',
+              points: [
+                DataPoint(10, 100),
+                DataPoint(-10, 0),
+                DataPoint(0, 0),
+                DataPoint(99, 7),
               ],
-            },
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{'type': 'linear'},
+          scales: const {
+            'x': LinearAxis(position: ChartPosition.bottom),
+            'y': LinearAxis(),
           },
-        },
-      });
+        ),
+      );
 
       final xScale = chart.scales['x']!;
       final yScale = chart.scales['y']!;
@@ -1367,38 +1136,32 @@ void main() {
     testWidgets('should fit correctly when display is turned off', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 100},
-                <String, Object?>{'x': -10, 'y': 0},
-                <String, Object?>{'x': 0, 'y': 0},
-                <String, Object?>{'x': 99, 'y': 7},
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(
+              xAxisID: 'x',
+              yAxisID: 'y',
+              points: [
+                DataPoint(10, 100),
+                DataPoint(-10, 0),
+                DataPoint(0, 0),
+                DataPoint(99, 7),
               ],
-            },
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'grid': <String, Object?>{'drawTicks': false},
-              'border': const AxisBorder(display: false),
-              'title': <String, Object?>{'display': false, 'lineHeight': 1.2},
-              'ticks': <String, Object?>{'display': false, 'padding': 0},
-            },
+          scales: const {
+            'x': LinearAxis(position: ChartPosition.bottom),
+            'y': LinearAxis(
+              grid: AxisGrid(drawTicks: false),
+              border: AxisBorder(display: false),
+              title: AxisTitle(display: false, extra: {'lineHeight': 1.2}),
+              ticks: AxisTicks(display: false, padding: 0),
+            ),
           },
-        },
-      });
+        ),
+      );
 
       final yScale = chart.scales['y']!;
       expect(yScale.width, toBeCloseToPixel(0));
@@ -1408,48 +1171,45 @@ void main() {
       'max and min value should be valid and finite when charts datasets are '
       'hidden',
       (tester) async {
-        final barData = <String, Object?>{
-          'labels': <Object?>['S1', 'S2', 'S3'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'Closed',
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(56, 39, 101, 1),
-              ),
-              'data': <Object?>[2500, 2000, 1500],
-            },
-            <String, Object?>{
-              'label': 'In Progress',
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(123, 194, 37, 1),
-              ),
-              'data': <Object?>[1000, 2000, 1500],
-            },
-            <String, Object?>{
-              'label': 'Assigned',
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(255, 194, 37, 1),
-              ),
-              'data': <Object?>[1000, 2000, 1500],
-            },
-          ],
-        };
+        final barData = <BarDataset>[
+          const BarDataset(
+            label: 'Closed',
+            backgroundColor: ChartValue.constant(
+              ChartPaint.solid(native_ui.Color.fromRGBO(56, 39, 101, 1)),
+            ),
+            data: [2500, 2000, 1500],
+          ),
+          const BarDataset(
+            label: 'In Progress',
+            backgroundColor: ChartValue.constant(
+              ChartPaint.solid(native_ui.Color.fromRGBO(123, 194, 37, 1)),
+            ),
+            data: [1000, 2000, 1500],
+          ),
+          const BarDataset(
+            label: 'Assigned',
+            backgroundColor: ChartValue.constant(
+              ChartPaint.solid(native_ui.Color.fromRGBO(255, 194, 37, 1)),
+            ),
+            data: [1000, 2000, 1500],
+          ),
+        ];
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': barData,
-          'options': <String, Object?>{
-            'indexAxis': const YAxis(),
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'stacked': StackMode.on},
-              'y': <String, Object?>{'stacked': StackMode.on},
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.bar,
+            labels: const ['S1', 'S2', 'S3'],
+            datasets: barData,
+            indexAxis: const YAxis(),
+            scales: const {
+              'x': LinearAxis(stacked: StackMode.on),
+              'y': CategoryAxis(stacked: StackMode.on),
             },
-          },
-        });
+          ),
+        );
 
         // barData.datasets.forEach((data, index) => {...}).
-        final datasets = barData['datasets']! as List<Object?>;
-        for (var index = 0; index < datasets.length; index++) {
+        for (var index = 0; index < barData.length; index++) {
           chart.getDatasetMeta(index).hidden = true;
           chart.update();
         }
@@ -1463,30 +1223,26 @@ void main() {
       'max and min value should be valid when min is set and all datasets are '
       'hidden',
       (tester) async {
-        final barData = <String, Object?>{
-          'labels': <Object?>['S1', 'S2', 'S3'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'label': 'dataset 1',
-              'backgroundColor': const ChartPaint.solid(
-                native_ui.Color.fromRGBO(56, 39, 101, 1),
-              ),
-              'data': <Object?>[2500, 2000, 1500],
-              'hidden': true,
-            },
-          ],
-        };
+        final barData = <BarDataset>[
+          const BarDataset(
+            label: 'dataset 1',
+            backgroundColor: ChartValue.constant(
+              ChartPaint.solid(native_ui.Color.fromRGBO(56, 39, 101, 1)),
+            ),
+            data: [2500, 2000, 1500],
+            hidden: true,
+          ),
+        ];
 
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': barData,
-          'options': <String, Object?>{
-            'indexAxis': const YAxis(),
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 20},
-            },
-          },
-        });
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.bar,
+            labels: const ['S1', 'S2', 'S3'],
+            datasets: barData,
+            indexAxis: const YAxis(),
+            scales: const {'x': LinearAxis(min: 20)},
+          ),
+        );
 
         expect(chart.scales['x']!.min, equals(20));
         expect(chart.scales['x']!.max, equals(21));
@@ -1494,57 +1250,49 @@ void main() {
     );
 
     testWidgets('min settings should be used if set to zero', (tester) async {
-      final barData = <String, Object?>{
-        'labels': <Object?>['S1', 'S2', 'S3'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'dataset 1',
-            'backgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(56, 39, 101, 1),
-            ),
-            'data': <Object?>[2500, 2000, 1500],
-          },
-        ],
-      };
+      final barData = <BarDataset>[
+        const BarDataset(
+          label: 'dataset 1',
+          backgroundColor: ChartValue.constant(
+            ChartPaint.solid(native_ui.Color.fromRGBO(56, 39, 101, 1)),
+          ),
+          data: [2500, 2000, 1500],
+        ),
+      ];
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': barData,
-        'options': <String, Object?>{
-          'indexAxis': const YAxis(),
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'min': 0, 'max': 3000},
-          },
-        },
-      });
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.bar,
+          labels: const ['S1', 'S2', 'S3'],
+          datasets: barData,
+          indexAxis: const YAxis(),
+          scales: const {'x': LinearAxis(min: 0, max: 3000)},
+        ),
+      );
 
       expect(chart.scales['x']!.min, equals(0));
     });
 
     testWidgets('max settings should be used if set to zero', (tester) async {
-      final barData = <String, Object?>{
-        'labels': <Object?>['S1', 'S2', 'S3'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'dataset 1',
-            'backgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(56, 39, 101, 1),
-            ),
-            'data': <Object?>[-2500, -2000, -1500],
-          },
-        ],
-      };
+      final barData = <BarDataset>[
+        const BarDataset(
+          label: 'dataset 1',
+          backgroundColor: ChartValue.constant(
+            ChartPaint.solid(native_ui.Color.fromRGBO(56, 39, 101, 1)),
+          ),
+          data: [-2500, -2000, -1500],
+        ),
+      ];
 
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': barData,
-        'options': <String, Object?>{
-          'indexAxis': const YAxis(),
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'min': -3000, 'max': 0},
-          },
-        },
-      });
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.bar,
+          labels: const ['S1', 'S2', 'S3'],
+          datasets: barData,
+          indexAxis: const YAxis(),
+          scales: const {'x': LinearAxis(min: -3000, max: 0)},
+        ),
+      );
 
       expect(chart.scales['x']!.max, equals(0));
     });
@@ -1552,22 +1300,16 @@ void main() {
     testWidgets('Should get correct pixel values when horizontal', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[0.05, -25, 10, 15, 20, 25, 30, 35],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [0.05, -25, 10, 15, 20, 25, 30, 35]),
           ],
-        },
-        'options': <String, Object?>{
-          'indexAxis': const YAxis(),
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear'},
-          },
-        },
-      });
+          indexAxis: YAxis(),
+          scales: {'x': LinearAxis()},
+        ),
+      );
 
       var start = chart.chartArea!.left;
       var end = chart.chartArea!.right;
@@ -1595,21 +1337,15 @@ void main() {
     testWidgets('Should get correct pixel values when vertical', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[0.05, -25, 10, 15, 20, 25, 30, 35],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [0.05, -25, 10, 15, 20, 25, 30, 35]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'linear'},
-          },
-        },
-      });
+          scales: {'y': LinearAxis()},
+        ),
+      );
 
       var start = chart.chartArea!.bottom;
       var end = chart.chartArea!.top;
@@ -1634,6 +1370,7 @@ void main() {
       expect(scale.getValueForPixel(start), closeTo(max, 5e-5));
     });
 
+    // A Map config: `plugins: false` has no typed form.
     testWidgets('should not throw errors when chart size is negative', (
       tester,
     ) async {

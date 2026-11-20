@@ -55,15 +55,24 @@ import '../support/tick_label.dart';
 //   that returns its argument. `index.toString()` is `jsToString(index)`.
 // - The first `when` group keeps the shared `data`, `dataWithEmptyStacks`
 //   and `config` of :756-839 in the group closure, as upstream.
+// - A chart is a typed `ChartConfig` (Chart.js ADR 0052). The `when`
+//   groups hold their datasets as typed datasets and their points as
+//   `DataPoint`s. Three cases keep a Map config: two give string or
+//   `undefined` data values, and one gives the invalid `min: 'zero'`; the
+//   typed API holds none of them.
+
+/// The chart of the typed [config] (Chart.js ADR 0052).
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// scale.logarithmic.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
   for (final t in scale.ticks!) upstreamTickLabel(t),
 ];
 
-/// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+/// `chart.data.datasets[index]`: the dataset scope of a typed config.
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `chart.options.scales[id]`: a resolver of the chart options.
 JsObjectFace _chartScaleOptions(Chart chart, String id) =>
@@ -89,42 +98,31 @@ const List<({String id, String start, String end})> _axes = [
 /// (scale.logarithmic.tests.js:977-1003 and :1099-1125): a line chart with
 /// the data of [setup] and two logarithmic scales.
 ///
-/// `setup.data || {datasets: [{data: setup.dataset}]}`: the shared `data` of
-/// the item, or a new object with the shared `dataset`. `setup.type` is not
-/// read, as upstream.
+/// `setup.data || {datasets: [{data: setup.dataset}]}`: the shared datasets
+/// of the item, or a new dataset with the shared points. `setup.type` is
+/// not read, as upstream. `Object.assign(xConfig, setup.scale)`: the keys of
+/// `setup.scale` go into both axes.
 Chart _acquireWhenChart(Map<String, Object?> setup) {
-  final xConfig = <String, Object?>{
-    'type': 'logarithmic',
-    'position': ChartPosition.bottom,
-  };
-  final yConfig = <String, Object?>{
-    'type': 'logarithmic',
-    'position': ChartPosition.left,
-  };
-  final data =
-      (setup['data'] ??
-              <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{'data': setup['dataset']},
-                ],
-              })
-          as Map<String, Object?>;
-  // Object.assign(target, source): an undefined source adds no key.
-  if (setup['scale'] case final Map<String, Object?> scale) {
-    xConfig.addAll(scale);
-    yConfig.addAll(scale);
-  }
-  if (setup['data'] case final Map<String, Object?> setupData
-      when !identical(setupData, data)) {
-    data.addAll(setupData);
-  }
-  return acquireChart(<String, Object?>{
-    'type': 'line',
-    'data': data,
-    'options': <String, Object?>{
-      'scales': <String, Object?>{'x': xConfig, 'y': yConfig},
-    },
-  });
+  final scale = setup['scale'] as Map<String, Object?>?;
+  LogarithmicAxis axisAt(ChartPosition position) => LogarithmicAxis(
+    position: position,
+    min: (scale?['min'] as num?)?.toDouble(),
+    max: (scale?['max'] as num?)?.toDouble(),
+    stacked: scale?['stacked'] as StackMode?,
+  );
+  final datasets =
+      setup['data'] as List<Dataset>? ??
+      [LineDataset(points: setup['dataset']! as List<DataPoint>)];
+  return _acquire(
+    ChartConfig(
+      type: ChartKind.line,
+      datasets: datasets,
+      scales: {
+        'x': axisAt(ChartPosition.bottom),
+        'y': axisAt(ChartPosition.left),
+      },
+    ),
+  );
 }
 
 void main() {
@@ -162,51 +160,25 @@ void main() {
     testWidgets('should correctly determine the max & min data values', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[42, 1000, 64, 100],
-            },
-            <String, Object?>{
-              'yAxisID': 'y1',
-              'data': <Object?>[10, 5, 5000, 78, 450],
-            },
-            <String, Object?>{
-              'yAxisID': 'y1',
-              'data': <Object?>[150],
-            },
-            <String, Object?>{
-              'yAxisID': 'y2',
-              'data': <Object?>[20, 0, 150, 1800, 3040],
-            },
-            <String, Object?>{
-              'yAxisID': 'y3',
-              'data': <Object?>[67, 0.0004, 0, 820, 0.001],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(yAxisID: 'y', data: [42, 1000, 64, 100]),
+            BarDataset(yAxisID: 'y1', data: [10, 5, 5000, 78, 450]),
+            BarDataset(yAxisID: 'y1', data: [150]),
+            BarDataset(yAxisID: 'y2', data: [20, 0, 150, 1800, 3040]),
+            BarDataset(yAxisID: 'y3', data: [67, 0.0004, 0, 820, 0.001]),
           ],
-          'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'id': 'y', 'type': 'logarithmic'},
-            'y1': <String, Object?>{
-              'type': 'logarithmic',
-              'position': ChartPosition.right,
-            },
-            'y2': <String, Object?>{
-              'type': 'logarithmic',
-              'position': ChartPosition.right,
-            },
-            'y3': <String, Object?>{
-              'position': ChartPosition.right,
-              'type': 'logarithmic',
-            },
+          labels: ['a', 'b', 'c', 'd', 'e'],
+          scales: {
+            'y': LogarithmicAxis(extra: {'id': 'y'}),
+            'y1': LogarithmicAxis(position: ChartPosition.right),
+            'y2': LogarithmicAxis(position: ChartPosition.right),
+            'y3': LogarithmicAxis(position: ChartPosition.right),
           },
-        },
-      });
+        ),
+      );
 
       expect(chart.scales['y'], isNotNull); // must construct
       expect(chart.scales['y']!.min, 10);
@@ -225,6 +197,7 @@ void main() {
       expect(chart.scales['y3']!.max, 900);
     });
 
+    // A Map config: the data values are strings.
     testWidgets(
       'should correctly determine the max & min of string data values',
       (tester) async {
@@ -296,49 +269,28 @@ void main() {
       'should correctly determine the max & min data values when there are '
       'hidden datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y1',
-                'data': <Object?>[10, 5, 5000, 78, 450],
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[42, 1000, 64, 100],
-              },
-              <String, Object?>{
-                'yAxisID': 'y1',
-                'data': <Object?>[50000],
-                'hidden': true,
-              },
-              <String, Object?>{
-                'yAxisID': 'y2',
-                'data': <Object?>[20, 0, 7400, 14, 291],
-              },
-              <String, Object?>{
-                'yAxisID': 'y2',
-                'data': <Object?>[6, 0.0007, 9, 890, 60000],
-                'hidden': true,
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(yAxisID: 'y1', data: [10, 5, 5000, 78, 450]),
+              LineDataset(yAxisID: 'y', data: [42, 1000, 64, 100]),
+              LineDataset(yAxisID: 'y1', data: [50000], hidden: true),
+              LineDataset(yAxisID: 'y2', data: [20, 0, 7400, 14, 291]),
+              LineDataset(
+                yAxisID: 'y2',
+                data: [6, 0.0007, 9, 890, 60000],
+                hidden: true,
+              ),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'logarithmic'},
-              'y1': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'logarithmic',
-              },
-              'y2': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'logarithmic',
-              },
+            labels: ['a', 'b', 'c', 'd', 'e'],
+            scales: {
+              'y': LogarithmicAxis(),
+              'y1': LogarithmicAxis(position: ChartPosition.right),
+              'y2': LogarithmicAxis(position: ChartPosition.right),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['y1'], isNotNull); // must construct
         expect(chart.scales['y1']!.min, 5);
@@ -350,6 +302,8 @@ void main() {
       },
     );
 
+    // A Map config: the data has `undefined`, which a typed dataset cannot
+    // hold.
     testWidgets(
       'should correctly determine the max & min data values when there is '
       'NaN data',
@@ -446,30 +400,25 @@ void main() {
     testWidgets('should correctly determine the max & min for scatter data', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 100},
-                <String, Object?>{'x': 2, 'y': 6},
-                <String, Object?>{'x': 65, 'y': 121},
-                <String, Object?>{'x': 99, 'y': 7},
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(
+              points: [
+                DataPoint(10, 100),
+                DataPoint(2, 6),
+                DataPoint(65, 121),
+                DataPoint(99, 7),
               ],
-            },
+            ),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'logarithmic',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{'type': 'logarithmic'},
+          scales: const {
+            'x': LogarithmicAxis(position: ChartPosition.bottom),
+            'y': LogarithmicAxis(),
           },
-        },
-      });
+        ),
+      );
 
       expect(chart.scales['x']!.min, 2);
       expect(chart.scales['x']!.max, 100);
@@ -482,30 +431,25 @@ void main() {
       'should correctly determine the max & min for scatter data when 0 '
       'values are present',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 7, 'y': 950},
-                  <String, Object?>{'x': 289, 'y': 0},
-                  <String, Object?>{'x': 0, 'y': 8},
-                  <String, Object?>{'x': 23, 'y': 0.04},
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(
+                points: [
+                  DataPoint(7, 950),
+                  DataPoint(289, 0),
+                  DataPoint(0, 8),
+                  DataPoint(23, 0.04),
                 ],
-              },
+              ),
             ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'logarithmic',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{'type': 'logarithmic'},
+            scales: const {
+              'x': LogarithmicAxis(position: ChartPosition.bottom),
+              'y': LogarithmicAxis(),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['x']!.min, 1);
         expect(chart.scales['x']!.max, 30);
@@ -519,45 +463,22 @@ void main() {
       'should correctly determine the min and max data values when stacked '
       'mode is turned on',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'type': 'bar',
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 1, 5, 78, 100],
-              },
-              <String, Object?>{
-                'yAxisID': 'y1',
-                'data': <Object?>[0, 1000],
-              },
-              <String, Object?>{
-                'type': 'bar',
-                'yAxisID': 'y',
-                'data': <Object?>[150, 10, 10, 100, 10, 9],
-              },
-              <String, Object?>{
-                'type': 'line',
-                'yAxisID': 'y',
-                'data': <Object?>[100, 100, 100, 100, 100, 100],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [10, 5, 1, 5, 78, 100]),
+              BarDataset(yAxisID: 'y1', data: [0, 1000]),
+              BarDataset(yAxisID: 'y', data: [150, 10, 10, 100, 10, 9]),
+              LineDataset(yAxisID: 'y', data: [100, 100, 100, 100, 100, 100]),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'logarithmic',
-                'stacked': StackMode.on,
-              },
-              'y1': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'logarithmic',
-              },
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {
+              'y': LogarithmicAxis(stacked: StackMode.on),
+              'y1': LogarithmicAxis(position: ChartPosition.right),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['y']!.min, 0.1);
         expect(chart.scales['y']!.max, 200);
@@ -568,47 +489,26 @@ void main() {
       'should correctly determine the min and max data values when stacked '
       'mode is turned on ignoring hidden datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 1, 5, 78, 100],
-                'type': 'bar',
-              },
-              <String, Object?>{
-                'yAxisID': 'y1',
-                'data': <Object?>[0, 1000],
-                'type': 'bar',
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[150, 10, 10, 100, 10, 9],
-                'type': 'bar',
-              },
-              <String, Object?>{
-                'yAxisID': 'y',
-                'data': <Object?>[10000, 10000, 10000, 10000, 10000, 10000],
-                'hidden': true,
-                'type': 'bar',
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(yAxisID: 'y', data: [10, 5, 1, 5, 78, 100]),
+              BarDataset(yAxisID: 'y1', data: [0, 1000]),
+              BarDataset(yAxisID: 'y', data: [150, 10, 10, 100, 10, 9]),
+              BarDataset(
+                yAxisID: 'y',
+                data: [10000, 10000, 10000, 10000, 10000, 10000],
+                hidden: true,
+              ),
             ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'logarithmic',
-                'stacked': StackMode.on,
-              },
-              'y1': <String, Object?>{
-                'position': ChartPosition.right,
-                'type': 'logarithmic',
-              },
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {
+              'y': LogarithmicAxis(stacked: StackMode.on),
+              'y1': LogarithmicAxis(position: ChartPosition.right),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['y']!.min, 0.1);
         expect(chart.scales['y']!.max, 200);
@@ -618,20 +518,14 @@ void main() {
     testWidgets(
       'should ensure that the scale has a max and min that are not equal',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'logarithmic'},
-            },
-          },
-        });
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [BarDataset(data: [])],
+            labels: [],
+            scales: {'y': LogarithmicAxis()},
+          ),
+        );
 
         expect(chart.scales['y']!.min, 1);
         expect(chart.scales['y']!.max, 10);
@@ -645,27 +539,22 @@ void main() {
     );
 
     testWidgets('should use the min and max options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 1, 1, 2, 1, 0],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'logarithmic',
-              'min': 10,
-              'max': 1010,
-              'ticks': <String, Object?>{'callback': valueTickLabel},
-            },
+          labels: [],
+          scales: {
+            'y': LogarithmicAxis(
+              min: 10,
+              max: 1010,
+              ticks: AxisTicks(callback: valueTickLabel),
+            ),
           },
-        },
-      });
+        ),
+      );
 
       final yScale = chart.scales['y']!;
       final tickCount = yScale.ticks!.length;
@@ -676,33 +565,29 @@ void main() {
     });
 
     testWidgets('should ignore negative min and max options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 1, 1, 2, 1, 0],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'logarithmic',
-              'min': -10,
-              'max': -1010,
-              'ticks': <String, Object?>{'callback': valueTickLabel},
-            },
+          labels: [],
+          scales: {
+            'y': LogarithmicAxis(
+              min: -10,
+              max: -1010,
+              ticks: AxisTicks(callback: valueTickLabel),
+            ),
           },
-        },
-      });
+        ),
+      );
 
       final y = chart.scales['y']!;
       expect(y.min, 0.1);
       expect(y.max, 2);
     });
 
+    // A Map config: the typed axis holds no string `min`.
     testWidgets('should ignore invalid min and max options', (tester) async {
       final chart = acquireChart(<String, Object?>{
         'type': 'bar',
@@ -732,28 +617,20 @@ void main() {
     });
 
     testWidgets('should generate tick marks', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 2, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [10, 5, 2, 25, 78]),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'logarithmic',
-              'ticks': <String, Object?>{
-                'autoSkip': false,
-                'callback': valueTickLabel,
-              },
-            },
+          labels: [],
+          scales: {
+            'y': LogarithmicAxis(
+              ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
+            ),
           },
-        },
-      });
+        ),
+      );
 
       final scale = chart.scales['y']! as LogarithmicScale;
       expect(
@@ -787,25 +664,18 @@ void main() {
     testWidgets('should generate tick marks when 0 values are present', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[11, 0.8, 0, 28, 7],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [11, 0.8, 0, 28, 7]),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'logarithmic',
-              'ticks': <String, Object?>{'callback': valueTickLabel},
-            },
+          labels: [],
+          scales: {
+            'y': LogarithmicAxis(ticks: AxisTicks(callback: valueTickLabel)),
           },
-        },
-      });
+        ),
+      );
 
       final scale = chart.scales['y']! as LogarithmicScale;
       // Counts down because the lines are drawn top to bottom
@@ -840,29 +710,21 @@ void main() {
     testWidgets(
       'should generate tick marks in the correct order in reversed mode',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 1, 25, 78],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(data: [10, 5, 1, 25, 78]),
             ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'logarithmic',
-                'reverse': true,
-                'ticks': <String, Object?>{
-                  'autoSkip': false,
-                  'callback': valueTickLabel,
-                },
-              },
+            labels: [],
+            scales: {
+              'y': LogarithmicAxis(
+                reverse: true,
+                ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
+              ),
             },
-          },
-        });
+          ),
+        );
 
         final scale = chart.scales['y']! as LogarithmicScale;
         expect(
@@ -881,26 +743,21 @@ void main() {
       'should generate tick marks in the correct order in reversed mode when '
       '0 values are present',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[21, 9, 0, 10, 25],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(data: [21, 9, 0, 10, 25]),
             ],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'logarithmic',
-                'reverse': true,
-                'ticks': <String, Object?>{'callback': valueTickLabel},
-              },
+            labels: [],
+            scales: {
+              'y': LogarithmicAxis(
+                reverse: true,
+                ticks: AxisTicks(callback: valueTickLabel),
+              ),
             },
-          },
-        });
+          ),
+        );
 
         final scale = chart.scales['y']! as LogarithmicScale;
         expect(
@@ -918,25 +775,16 @@ void main() {
     testWidgets('should build labels using the default template', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 1.1, 25, 0, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(data: [10, 5, 1.1, 25, 0, 78]),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'logarithmic',
-              'ticks': <String, Object?>{'autoSkip': false},
-            },
-          },
-        },
-      });
+          labels: [],
+          scales: {'y': LogarithmicAxis(ticks: AxisTicks(autoSkip: false))},
+        ),
+      );
 
       expect(
         _getLabels(chart.scales['y']!),
@@ -950,25 +798,18 @@ void main() {
     testWidgets('should build labels using the user supplied callback', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 2, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(data: [10, 5, 2, 25, 78]),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'logarithmic',
-              'ticks': <String, Object?>{'callback': indexTickLabel},
-            },
+          labels: [],
+          scales: {
+            'y': LogarithmicAxis(ticks: AxisTicks(callback: indexTickLabel)),
           },
-        },
-      });
+        ),
+      );
 
       // Just the index
       expect(
@@ -995,35 +836,21 @@ void main() {
     testWidgets('should correctly get the correct label for a data item', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[10, 5, 5000, 78, 450],
-            },
-            <String, Object?>{
-              'yAxisID': 'y1',
-              'data': <Object?>[1, 1000, 10, 100],
-            },
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[150],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(yAxisID: 'y', data: [10, 5, 5000, 78, 450]),
+            BarDataset(yAxisID: 'y1', data: [1, 1000, 10, 100]),
+            BarDataset(yAxisID: 'y', data: [150]),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'logarithmic'},
-            'y1': <String, Object?>{
-              'position': ChartPosition.right,
-              'type': 'logarithmic',
-            },
+          labels: [],
+          scales: {
+            'y': LogarithmicAxis(),
+            'y1': LogarithmicAxis(position: ChartPosition.right),
           },
-        },
-      });
+        ),
+      );
 
       expect(chart.scales['y']!.getLabelForValue(150), '150');
     });
@@ -1031,55 +858,35 @@ void main() {
     testWidgets('should correctly use the locale when generating the label', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[10, 5, 5000, 78, 450],
-            },
-            <String, Object?>{
-              'yAxisID': 'y1',
-              'data': <Object?>[1, 1000, 10, 100],
-            },
-            <String, Object?>{
-              'yAxisID': 'y',
-              'data': <Object?>[150],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.bar,
+          datasets: [
+            BarDataset(yAxisID: 'y', data: [10, 5, 5000, 78, 450]),
+            BarDataset(yAxisID: 'y1', data: [1, 1000, 10, 100]),
+            BarDataset(yAxisID: 'y', data: [150]),
           ],
-          'labels': <Object?>[],
-        },
-        'options': <String, Object?>{
-          // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
-          'locale': const Locale('de', 'DE'),
-          'scales': <String, Object?>{
-            'y': <String, Object?>{'type': 'logarithmic'},
-            'y1': <String, Object?>{
-              'position': ChartPosition.right,
-              'type': 'logarithmic',
-            },
+          labels: [],
+          scales: {
+            'y': LogarithmicAxis(),
+            'y1': LogarithmicAxis(position: ChartPosition.right),
           },
-        },
-      });
+          // DIVERGES(chartjs): adapt-intl-number-format, a Locale.
+          extra: {'locale': Locale('de', 'DE')},
+        ),
+      );
 
       expect(chart.scales['y']!.getLabelForValue(10.25), '10,25');
     });
 
     group('when', () {
-      final data = <Object?>[
-        <String, Object?>{
-          'data': <Object?>[1, 39],
-          'stack': 'stack',
-        },
-        <String, Object?>{
-          'data': <Object?>[1, 39],
-          'stack': 'stack',
-        },
+      const data = <Dataset>[
+        BarDataset(data: [1, 39], stack: 'stack'),
+        BarDataset(data: [1, 39], stack: 'stack'),
       ];
-      final dataWithEmptyStacks = <Object?>[
-        <String, Object?>{'data': <Object?>[]},
-        <String, Object?>{'data': <Object?>[]},
+      const dataWithEmptyStacks = <Dataset>[
+        BarDataset(data: []),
+        BarDataset(data: []),
         ...data,
       ];
       final config = <Map<String, Object?>>[
@@ -1141,7 +948,6 @@ void main() {
         },
       ];
       for (final setup in config) {
-        final scaleConfig = <String, Object?>{};
         // `setup.axis` is the id of the scale; the index axis is the other
         // axis class (row adapt-axis-objects).
         final CartesianAxis indexAxis;
@@ -1158,33 +964,32 @@ void main() {
           chartStart = 'bottom';
           chartEnd = 'top';
         }
-        scaleConfig[axis] = <String, Object?>{
-          'type': 'logarithmic',
-          'beginAtZero': false,
+        // `scaleConfig[axis]`: a logarithmic axis with `beginAtZero: false`.
+        // Object.assign(scaleConfig, setup.scale) replaces it with the axis
+        // object of `setup.scale` (an undefined source adds no key), and
+        // the type stays logarithmic.
+        final scaleConfig = switch (setup['scale']) {
+          final Map<String, Object?> scale => LogarithmicAxis(
+            min: ((scale[axis]! as Map<String, Object?>)['min']! as num)
+                .toDouble(),
+          ),
+          _ => const LogarithmicAxis(extra: {'beginAtZero': false}),
         };
-        // Object.assign(scaleConfig, setup.scale): an undefined source adds
-        // no key.
-        if (setup['scale'] case final Map<String, Object?> scale) {
-          scaleConfig.addAll(scale);
-        }
-        (scaleConfig[axis]! as Map<String, Object?>)['type'] = 'logarithmic';
 
         final description =
             'dataset has stack option and ${setup['describe']}'
             ' and axis is "$axis";';
         group(description, () {
           testWidgets('should define the correct axis limits', (tester) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'bar',
-              'data': <String, Object?>{
-                'labels': <Object?>['category 1', 'category 2'],
-                'datasets': setup['data'] ?? data,
-              },
-              'options': <String, Object?>{
-                'indexAxis': indexAxis,
-                'scales': scaleConfig,
-              },
-            });
+            final chart = _acquire(
+              ChartConfig(
+                type: ChartKind.bar,
+                labels: const ['category 1', 'category 2'],
+                datasets: setup['data'] as List<Dataset>? ?? data,
+                indexAxis: indexAxis,
+                scales: {axis: scaleConfig},
+              ),
+            );
 
             final axisID = axis;
             final scale = chart.scales[axisID]!;
@@ -1220,58 +1025,56 @@ void main() {
     group('when', () {
       final config = <Map<String, Object?>>[
         <String, Object?>{
-          'dataset': <Object?>[],
+          'dataset': <DataPoint>[],
           'firstTick': 1, // value of the first tick
           'lastTick': 10, // value of the last tick
           'describe': 'empty dataset, without min/max',
         },
         <String, Object?>{
-          'dataset': <Object?>[],
+          'dataset': <DataPoint>[],
           'scale': <String, Object?>{'stacked': StackMode.on},
           'firstTick': 1,
           'lastTick': 10,
           'describe': 'empty dataset, without min/max, with stacked: true',
         },
         <String, Object?>{
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack'},
-              <String, Object?>{'data': <Object?>[], 'stack': 'stack'},
-            ],
-          },
+          'data': const <Dataset>[
+            LineDataset(data: [], stack: 'stack'),
+            LineDataset(data: [], stack: 'stack'),
+          ],
           'type': 'bar',
           'firstTick': 1,
           'lastTick': 10,
           'describe': 'empty dataset with stack option, without min/max',
         },
         <String, Object?>{
-          'dataset': <Object?>[],
+          'dataset': <DataPoint>[],
           'scale': <String, Object?>{'min': 1},
           'firstTick': 1,
           'lastTick': 10,
           'describe': 'empty dataset, min: 1, without max',
         },
         <String, Object?>{
-          'dataset': <Object?>[],
+          'dataset': <DataPoint>[],
           'scale': <String, Object?>{'max': 80},
           'firstTick': 1,
           'lastTick': 80,
           'describe': 'empty dataset, max: 80, without min',
         },
         <String, Object?>{
-          'dataset': <Object?>[],
+          'dataset': <DataPoint>[],
           'scale': <String, Object?>{'max': 0.8},
           'firstTick': 0.01,
           'lastTick': 0.8,
           'describe': 'empty dataset, max: 0.8, without min',
         },
         <String, Object?>{
-          'dataset': <Object?>[
-            <String, Object?>{'x': 10, 'y': 10},
-            <String, Object?>{'x': 5, 'y': 5},
-            <String, Object?>{'x': 1, 'y': 1},
-            <String, Object?>{'x': 25, 'y': 25},
-            <String, Object?>{'x': 78, 'y': 78},
+          'dataset': <DataPoint>[
+            DataPoint(10, 10),
+            DataPoint(5, 5),
+            DataPoint(1, 1),
+            DataPoint(25, 25),
+            DataPoint(78, 78),
           ],
           'firstTick': 1,
           'lastTick': 80,
@@ -1342,51 +1145,51 @@ void main() {
     group('when', () {
       final config = <Map<String, Object?>>[
         <String, Object?>{
-          'dataset': <Object?>[],
+          'dataset': <DataPoint>[],
           'scale': <String, Object?>{'min': 0},
           'lastTick': 10, // value of the last tick
           'describe': 'empty dataset, min: 0, without max',
         },
         <String, Object?>{
-          'dataset': <Object?>[],
+          'dataset': <DataPoint>[],
           'scale': <String, Object?>{'min': 0, 'max': 80},
           'lastTick': 80,
           'describe': 'empty dataset, min: 0, max: 80',
         },
         <String, Object?>{
-          'dataset': <Object?>[],
+          'dataset': <DataPoint>[],
           'scale': <String, Object?>{'min': 0, 'max': 0.8},
           'lastTick': 0.8,
           'describe': 'empty dataset, min: 0, max: 0.8',
         },
         <String, Object?>{
-          'dataset': <Object?>[
-            <String, Object?>{'x': 0, 'y': 0},
-            <String, Object?>{'x': 10, 'y': 10},
-            <String, Object?>{'x': 1.2, 'y': 1.2},
-            <String, Object?>{'x': 25, 'y': 25},
-            <String, Object?>{'x': 78, 'y': 78},
+          'dataset': <DataPoint>[
+            DataPoint(0, 0),
+            DataPoint(10, 10),
+            DataPoint(1.2, 1.2),
+            DataPoint(25, 25),
+            DataPoint(78, 78),
           ],
           'lastTick': 80,
           'describe': 'dataset min point {x: 0, y: 0}, max point {x:78, y:78}',
         },
         <String, Object?>{
-          'dataset': <Object?>[
-            <String, Object?>{'x': 0, 'y': 0},
-            <String, Object?>{'x': 10, 'y': 10},
-            <String, Object?>{'x': 6.3, 'y': 6.3},
-            <String, Object?>{'x': 25, 'y': 25},
-            <String, Object?>{'x': 78, 'y': 78},
+          'dataset': <DataPoint>[
+            DataPoint(0, 0),
+            DataPoint(10, 10),
+            DataPoint(6.3, 6.3),
+            DataPoint(25, 25),
+            DataPoint(78, 78),
           ],
           'lastTick': 80,
           'describe': 'dataset min point {x: 0, y: 0}, max point {x:78, y:78}',
         },
         <String, Object?>{
-          'dataset': <Object?>[
-            <String, Object?>{'x': 10, 'y': 10},
-            <String, Object?>{'x': 1.2, 'y': 1.2},
-            <String, Object?>{'x': 25, 'y': 25},
-            <String, Object?>{'x': 78, 'y': 78},
+          'dataset': <DataPoint>[
+            DataPoint(10, 10),
+            DataPoint(1.2, 1.2),
+            DataPoint(25, 25),
+            DataPoint(78, 78),
           ],
           'scale': <String, Object?>{'min': 0},
           'lastTick': 80,
@@ -1395,11 +1198,11 @@ void main() {
               'min: 0',
         },
         <String, Object?>{
-          'dataset': <Object?>[
-            <String, Object?>{'x': 10, 'y': 10},
-            <String, Object?>{'x': 6.3, 'y': 6.3},
-            <String, Object?>{'x': 25, 'y': 25},
-            <String, Object?>{'x': 78, 'y': 78},
+          'dataset': <DataPoint>[
+            DataPoint(10, 10),
+            DataPoint(6.3, 6.3),
+            DataPoint(25, 25),
+            DataPoint(78, 78),
           ],
           'scale': <String, Object?>{'min': 0},
           'lastTick': 80,
@@ -1465,24 +1268,14 @@ void main() {
       'Should correctly determine the max & min when no values provided and '
       'suggested minimum and maximum are set',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'yAxisID': 'y', 'data': <Object?>[]},
-            ],
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{
-                'type': 'logarithmic',
-                'suggestedMin': 10,
-                'suggestedMax': 100,
-              },
-            },
-          },
-        });
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            datasets: [BarDataset(yAxisID: 'y', data: [])],
+            labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+            scales: {'y': LogarithmicAxis(suggestedMin: 10, suggestedMax: 100)},
+          ),
+        );
 
         expect(chart.scales['y'], isNotNull); // must construct
         expect(chart.scales['y']!.min, 10);
@@ -1491,25 +1284,16 @@ void main() {
     );
 
     testWidgets('Should bound to data', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'labels': <Object?>['a', 'b'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1.1, 99],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          labels: ['a', 'b'],
+          datasets: [
+            LineDataset(data: [1.1, 99]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'y': <String, Object?>{
-              'type': 'logarithmic',
-              'bounds': ScaleBounds.data,
-            },
-          },
-        },
-      });
+          scales: {'y': LogarithmicAxis(bounds: ScaleBounds.data)},
+        ),
+      );
 
       expect(chart.scales['y']!.min, equals(1.1));
       expect(chart.scales['y']!.max, equals(99));

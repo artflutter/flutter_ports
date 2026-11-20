@@ -67,6 +67,22 @@ import '../support/tick_label.dart';
 //   `scale.ctx = createMockContext()`, a mock context of
 //   package:chartjs_test_utils/pure.dart. A call of `getCalls()` is a Map
 //   with the keys `name` and `args`.
+// - A chart is a typed `ChartConfig` (Chart.js ADR 0052). The point label
+//   callback of the spec is `_indexPointLabel`. Four cases keep a Map
+//   config: three give string or `undefined` data values, and one gives
+//   `undefined`, `null`, `NaN` and `false` labels; the typed API holds none
+//   of them.
+
+/// The chart of the typed [config] (Chart.js ADR 0052).
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+
+/// The point label callback `function(value, index) { return
+/// index.toString(); }` of the spec. Chart.js ADR 0131: the scale, the lines
+/// of the label and the index; the result is the lines.
+List<String> _indexPointLabel(Scale scale, List<String> label, int index) => [
+  '$index',
+];
 
 /// scale.radialLinear.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
@@ -76,9 +92,9 @@ List<Object?> _getLabels(Scale scale) => [
 /// `chart.scales.r`, the radial linear scale of [chart].
 RadialLinearScale _r(Chart chart) => chart.scales['r']! as RadialLinearScale;
 
-/// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+/// `chart.data.datasets[index]`: the dataset scope of a typed config.
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `chart.options.scales.r`, or `chart.options.scales.r[key]` for a [key]:
 /// a resolver of the chart options.
@@ -206,33 +222,23 @@ void main() {
     testWidgets('Should correctly determine the max & min data values', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, -5, 78, -100],
-            },
-            <String, Object?>{
-              'data': <Object?>[150],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [10, 5, 0, -5, 78, -100]),
+            RadarDataset(data: [150]),
           ],
-          'labels': <Object?>[
-            'label1',
-            'label2',
-            'label3',
-            'label4',
-            'label5',
-            'label6',
-          ],
-        },
-        'options': <String, Object?>{'scales': <String, Object?>{}},
-      });
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6'],
+          scales: {},
+        ),
+      );
 
       expect(chart.scales['r']!.min, -100);
       expect(chart.scales['r']!.max, 150);
     });
 
+    // A Map config: the data values are strings.
     testWidgets(
       'Should correctly determine the max & min of string data values',
       (tester) async {
@@ -264,6 +270,7 @@ void main() {
       },
     );
 
+    // A Map config: the data values are strings.
     testWidgets(
       'Should correctly determine the max & min data values when there are '
       'hidden datasets',
@@ -300,6 +307,8 @@ void main() {
       },
     );
 
+    // A Map config: the data has `undefined`, which a typed dataset cannot
+    // hold.
     testWidgets(
       'Should correctly determine the max & min data values when there is '
       'NaN data',
@@ -343,16 +352,14 @@ void main() {
     testWidgets(
       'Should ensure that the scale has a max and min that are not equal',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[],
-            'labels': <Object?>[],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{'rScale': <String, Object?>{}},
-          },
-        });
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.radar,
+            datasets: [],
+            labels: [],
+            scales: {'rScale': RadialLinearAxis()},
+          ),
+        );
 
         final scale = chart.scales['rScale']!;
 
@@ -364,58 +371,32 @@ void main() {
     testWidgets('Should use the suggestedMin and suggestedMax options', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 1, 1, 2, 1, 0],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
-          'labels': <Object?>[
-            'label1',
-            'label2',
-            'label3',
-            'label4',
-            'label5',
-            'label6',
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{'suggestedMin': -10, 'suggestedMax': 10},
-          },
-        },
-      });
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6'],
+          scales: {'r': RadialLinearAxis(suggestedMin: -10, suggestedMax: 10)},
+        ),
+      );
 
       expect(chart.scales['r']!.min, -10);
       expect(chart.scales['r']!.max, 10);
     });
 
     testWidgets('Should use the min and max options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[1, 1, 1, 2, 1, 0],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
-          'labels': <Object?>[
-            'label1',
-            'label2',
-            'label3',
-            'label4',
-            'label5',
-            'label6',
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{'min': -1010, 'max': 1010},
-          },
-        },
-      });
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5', 'label6'],
+          scales: {'r': RadialLinearAxis(min: -1010, max: 1010)},
+        ),
+      );
 
       expect(chart.scales['r']!.min, -1010);
       expect(chart.scales['r']!.max, 1010);
@@ -429,22 +410,16 @@ void main() {
       'should forcibly include 0 in the range if the beginAtZero option is '
       'used',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[20, 30, 40, 50],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.radar,
+            datasets: [
+              RadarDataset(data: [20, 30, 40, 50]),
             ],
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{'beginAtZero': false},
-            },
-          },
-        });
+            labels: ['label1', 'label2', 'label3', 'label4'],
+            scales: {'r': RadialLinearAxis(beginAtZero: false)},
+          ),
+        );
 
         expect(
           _getLabels(chart.scales['r']!),
@@ -487,28 +462,16 @@ void main() {
     testWidgets(
       'Should generate tick marks in the correct order in reversed mode',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.radar,
+            datasets: [
+              RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{'reverse': true},
-            },
-          },
-        });
+            labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+            scales: {'r': RadialLinearAxis(reverse: true)},
+          ),
+        );
 
         expect(
           _getLabels(chart.scales['r']!),
@@ -524,24 +487,16 @@ void main() {
     testWidgets('Should correctly limit the maximum number of ticks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'labels': <Object?>['label1', 'label2', 'label3'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[0.5, 1.5, 2.5],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [0.5, 1.5, 2.5]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'pointLabels': <String, Object?>{'display': ScaleDisplay.off},
-            },
-          },
-        },
-      });
+          labels: ['label1', 'label2', 'label3'],
+          scales: {'r': RadialLinearAxis(pointLabelsDisplay: ScaleDisplay.off)},
+        ),
+      );
 
       expect(
         _getLabels(chart.scales['r']!),
@@ -577,24 +532,18 @@ void main() {
     testWidgets('Should build labels using the user supplied callback', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'ticks': <String, Object?>{'callback': indexTickLabel},
-            },
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+          scales: {
+            'r': RadialLinearAxis(ticks: AxisTicks(callback: indexTickLabel)),
           },
-        },
-      });
+        ),
+      );
 
       expect(
         _getLabels(chart.scales['r']!),
@@ -615,30 +564,18 @@ void main() {
     testWidgets('Should build point labels using the user supplied callback', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'pointLabels': <String, Object?>{
-                // Chart.js ADR 0131: the scale, the lines of the label and
-                // the index; the result is the lines.
-                'callback': (Scale scale, List<String> label, int index) => [
-                  '$index',
-                ],
-              },
-            },
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+          scales: {
+            'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
           },
-        },
-      });
+        ),
+      );
 
       expect(
         _r(chart).pointLabels,
@@ -652,6 +589,7 @@ void main() {
       );
     });
 
+    // A Map config: the labels are `undefined`, `null`, `NaN` and `false`.
     testWidgets('Should build point labels from falsy values', (tester) async {
       final chart = acquireChart(<String, Object?>{
         'type': 'radar',
@@ -684,17 +622,15 @@ void main() {
       tester,
     ) async {
       final chart =
-          acquireChart(<String, Object?>{
-              'type': 'polarArea',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[10, 5, 0, 25, 78, 20],
-                  },
+          _acquire(
+              const ChartConfig(
+                type: ChartKind.polarArea,
+                datasets: [
+                  PolarAreaDataset(data: [10, 5, 0, 25, 78, 20]),
                 ],
-                'labels': <Object?>['a', 'b', 'c', 'd', 'e', 'f'],
-              },
-            })
+                labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+              ),
+            )
             ..toggleDataVisibility(3)
             ..update();
 
@@ -711,30 +647,18 @@ void main() {
     });
 
     testWidgets('should correctly set the center point', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'pointLabels': <String, Object?>{
-                // Chart.js ADR 0131: the scale, the lines of the label and
-                // the index; the result is the lines.
-                'callback': (Scale scale, List<String> label, int index) => [
-                  '$index',
-                ],
-              },
-            },
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+          scales: {
+            'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
           },
-        },
-      });
+        ),
+      );
 
       expect(_r(chart).drawingArea, 215);
       expect(_r(chart).xCenter, 256);
@@ -744,60 +668,36 @@ void main() {
     testWidgets('should correctly get the label for a given data index', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'pointLabels': <String, Object?>{
-                // Chart.js ADR 0131: the scale, the lines of the label and
-                // the index; the result is the lines.
-                'callback': (Scale scale, List<String> label, int index) => [
-                  '$index',
-                ],
-              },
-            },
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+          scales: {
+            'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
           },
-        },
-      });
+        ),
+      );
       expect(chart.scales['r']!.getLabelForValue(5), '5');
     });
 
     testWidgets('should get the correct distance from the center point', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'pointLabels': <String, Object?>{
-                // Chart.js ADR 0131: the scale, the lines of the label and
-                // the index; the result is the lines.
-                'callback': (Scale scale, List<String> label, int index) => [
-                  '$index',
-                ],
-              },
-            },
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+          scales: {
+            'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
           },
-        },
-      });
+        ),
+      );
 
       expect(_r(chart).getDistanceFromCenterForValue(_r(chart).min), 0);
       expect(_r(chart).getDistanceFromCenterForValue(_r(chart).max), 215);
@@ -816,34 +716,18 @@ void main() {
     testWidgets(
       'should get the correct value for a distance from the center point',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.radar,
+            datasets: [
+              RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'pointLabels': <String, Object?>{
-                  'callback': (Scale scale, List<String> label, int index) => [
-                    '$index',
-                  ],
-                },
-              },
+            labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+            scales: {
+              'r': RadialLinearAxis(pointLabelsCallback: _indexPointLabel),
             },
-          },
-        });
+          ),
+        );
 
         expect(_r(chart).getValueForDistanceFromCenter(0), _r(chart).min);
         expect(_r(chart).getValueForDistanceFromCenter(215), _r(chart).max);
@@ -860,31 +744,21 @@ void main() {
     );
 
     testWidgets('should correctly get angles for all points', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'radar',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.radar,
+          datasets: [
+            RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'startAngle': 15,
-              'pointLabels': <String, Object?>{
-                // Chart.js ADR 0131: the scale, the lines of the label and
-                // the index; the result is the lines.
-                'callback': (Scale scale, List<String> label, int index) => [
-                  '$index',
-                ],
-              },
-            },
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+          scales: {
+            'r': RadialLinearAxis(
+              startAngle: 15,
+              pointLabelsCallback: _indexPointLabel,
+            ),
           },
-        },
-      });
+        ),
+      );
 
       double radToNearestDegree(double rad) {
         return ((360 * rad) / (2 * math.pi)).roundToDouble();
@@ -910,35 +784,21 @@ void main() {
     testWidgets(
       'should correctly get the correct label alignment for all points',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'radar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.radar,
+            datasets: [
+              RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
-            'labels': <Object?>[
-              'label1',
-              'label2',
-              'label3',
-              'label4',
-              'label5',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'r': <String, Object?>{
-                'pointLabels': <String, Object?>{
-                  'callback': (Scale scale, List<String> label, int index) => [
-                    '$index',
-                  ],
-                },
-                'ticks': <String, Object?>{'display': false},
-              },
+            labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+            scales: {
+              'r': RadialLinearAxis(
+                pointLabelsCallback: _indexPointLabel,
+                ticks: AxisTicks(display: false),
+              ),
             },
-          },
-        });
+          ),
+        );
 
         final scale = chart.scales['r']!;
 
@@ -983,29 +843,25 @@ void main() {
     testWidgets('should correctly get the point positions in center', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'polarArea',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.polarArea,
+          datasets: [
+            PolarAreaDataset(data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4', 'label5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'r': <String, Object?>{
-              'pointLabels': <String, Object?>{
-                'display': ScaleDisplay.on,
-                'padding': 5,
-                'centerPointLabels': true,
+          labels: ['label1', 'label2', 'label3', 'label4', 'label5'],
+          scales: {
+            'r': RadialLinearAxis(
+              pointLabelsDisplay: ScaleDisplay.on,
+              pointLabelsPadding: 5,
+              ticks: AxisTicks(display: false),
+              extra: {
+                'pointLabels': {'centerPointLabels': true},
               },
-              'ticks': <String, Object?>{'display': false},
-            },
+            ),
           },
-        },
-      });
+        ),
+      );
 
       const pi = math.pi;
       const lavelNum = 5;

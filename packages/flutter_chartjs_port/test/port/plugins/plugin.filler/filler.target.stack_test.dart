@@ -42,10 +42,9 @@ void main() {
     const bounds = (property: 'x', start: 30.681640625, end: 505.6630859375);
 
     test('P4: a bare point gives the bound segments of the Array', () {
-      final line = LineElement(<String, Object?>{
-        'points': _make(PointElement.new),
-        'options': LineOptions(<String, Object?>{}),
-      });
+      final line = LineElement()
+        ..points = _make(PointElement.new)
+        ..options = LineOptions(<String, Object?>{});
       expect(_segs(line.segments), [
         [0, 6, false],
       ]);
@@ -60,10 +59,9 @@ void main() {
     });
 
     test('P4: a point of NaN x and y gives other bound segments', () {
-      final line = LineElement(<String, Object?>{
-        'points': _make(() => _pe(double.nan, double.nan)),
-        'options': LineOptions(<String, Object?>{}),
-      });
+      final line = LineElement()
+        ..points = _make(() => _pe(double.nan, double.nan))
+        ..options = LineOptions(<String, Object?>{});
       expect(_segs(boundSegments(line, bounds)), [
         [0, 2, false],
         [3, 5, false],

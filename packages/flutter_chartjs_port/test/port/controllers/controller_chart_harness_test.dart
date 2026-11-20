@@ -32,9 +32,32 @@ import 'controller_chart_harness.dart';
 // errors at `initial` and at a step. The case 'an error at initial' below
 // keeps one record of that probe.
 
+/// The test controller as a chart type.
+const _scaleTest = ChartKind('scaleTest');
+
 /// The config of a chart of the test controller: two datasets of four
-/// points.
-Map<String, Object?> _config() => <String, Object?>{
+/// points. A dataset class gives its own controller: `extra` gives the
+/// test controller back. The data Lists are new and growable: the cases
+/// change them.
+ChartConfigurationScope _config({ChartAnimation? animation}) {
+  final first = <num?>[1, 5, 3, 4];
+  final second = <num?>[2, 1, 6, 2];
+  return ChartConfigLowering(
+    ChartConfig(
+      type: _scaleTest,
+      datasets: [
+        LineDataset(data: first, extra: {'type': _scaleTest.name}),
+        LineDataset(data: second, extra: {'type': _scaleTest.name}),
+      ],
+      labels: const ['a', 'b', 'c', 'd'],
+      animation: animation,
+    ),
+  ).lower();
+}
+
+/// [_config] as a Map: the steps `push` and `splice` add the `List<Object?>`
+/// of their arguments to the data List, which a typed `List<num?>` rejects.
+Map<String, Object?> _mapConfig() => <String, Object?>{
   'type': 'scaleTest',
   'data': <String, Object?>{
     'labels': <Object?>['a', 'b', 'c', 'd'],
@@ -50,30 +73,17 @@ Map<String, Object?> _config() => <String, Object?>{
 };
 
 /// The config of a line chart with a title: two datasets of four points.
-Map<String, Object?> _lineConfig() => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'labels': <Object?>['a', 'b', 'c', 'd'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'one',
-        'data': <Object?>[1, 5, 3, 4],
-      },
-      <String, Object?>{
-        'label': 'two',
-        'data': <Object?>[2, 1, 6, 2],
-      },
+ChartConfigurationScope _lineConfig() => ChartConfigLowering(
+  const ChartConfig(
+    type: ChartKind.line,
+    datasets: [
+      LineDataset(label: 'one', data: [1, 5, 3, 4]),
+      LineDataset(label: 'two', data: [2, 1, 6, 2]),
     ],
-  },
-  'options': <String, Object?>{
-    'plugins': <String, Object?>{
-      'title': <String, Object?>{
-        'display': true,
-        'text': ['T'],
-      },
-    },
-  },
-};
+    labels: ['a', 'b', 'c', 'd'],
+    title: ChartTitle(display: true, text: ['T']),
+  ),
+).lower();
 
 /// The `observeExtra` of the plugin cases: `plugins.title.display`.
 Map<String, Object?> _titleExtra(Chart chart) => <String, Object?>{
@@ -216,7 +226,7 @@ void main() {
   group('the hit queries', () {
     testWidgets('ReferenceEvent gives the hit of a point center with the '
         'mode point', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final (x, y) = _center(chart, 0, 1);
       final items = chart.getElementsAtEventForMode(
         ReferenceEvent(x, y),
@@ -276,7 +286,7 @@ void main() {
 
   group('runStep', () {
     testWidgets('update, update with a mode and reset', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       _data(chart, 0).add(7);
       await runStep(tester, chart, ['update']);
       expect(chart.getDatasetMeta(0).data, hasLength(5));
@@ -290,7 +300,7 @@ void main() {
     testWidgets('setDatasetVisibility and toggleDataVisibility', (
       tester,
     ) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       await runStep(tester, chart, ['setDatasetVisibility', 1.0, false]);
       expect(chart.isDatasetVisible(1), isFalse);
       expect(chart.isDatasetVisible(0), isTrue);
@@ -300,7 +310,7 @@ void main() {
     });
 
     testWidgets('setActive', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       await runStep(tester, chart, [
         'setActive',
         <Object?>[
@@ -316,7 +326,7 @@ void main() {
     });
 
     testWidgets('push and splice notify the controller', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChart(_mapConfig());
       await runStep(tester, chart, ['push', 0.0, 7.0, 8.0]);
       expect(_data(chart, 0), [1, 5, 3, 4, 7.0, 8.0]);
       expect(chart.getDatasetMeta(0).data, hasLength(6));
@@ -336,7 +346,7 @@ void main() {
     });
 
     testWidgets('hover and mouseout', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final (x, y) = _center(chart, 0, 1);
       await runStep(tester, chart, ['hover', x, y]);
       expect(_active(chart), [
@@ -347,7 +357,7 @@ void main() {
     });
 
     testWidgets('click, setTooltip and setOption', (tester) async {
-      final chart = acquireChart(_lineConfig());
+      final chart = acquireChartRoot(_lineConfig());
       final box = (chart.legend! as Legend).legendHitBoxes[1];
       expect(chart.isDatasetVisible(1), isTrue);
       // A click on legend item 1 calls the default onClick of the legend.
@@ -395,7 +405,7 @@ void main() {
     });
 
     testWidgets('an unknown step throws', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       expect(
         () => runStep(tester, chart, ['jump']),
         throwsA(isA<ArgumentError>()),
@@ -405,7 +415,7 @@ void main() {
 
   group('expectControllerObservations', () {
     testWidgets('passes for the observation of the chart', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final (x, y) = _center(chart, 0, 1);
       final observed = observeControllers(
         chart,
@@ -463,7 +473,7 @@ void main() {
     });
 
     testWidgets('an unknown expected key fails', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final observed = _asExpected(
         observeControllers(
           chart,
@@ -512,7 +522,7 @@ void main() {
     });
 
     testWidgets('hits false and observeExtra', (tester) async {
-      final chart = acquireChart(_lineConfig());
+      final chart = acquireChartRoot(_lineConfig());
       final own = observeControllers(
         chart,
         expectedHits: null,
@@ -570,7 +580,7 @@ void main() {
     });
 
     testWidgets('a changed value fails', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final observed = _asExpected(
         observeControllers(
           chart,
@@ -600,6 +610,7 @@ void main() {
     // A record of the probe of U0: `datasets: [null]` throws a TypeError in
     // `mergeScaleConfig` of `initConfig` (core.config.js:94,
     // `dataset.type`), on both sides.
+    // A Map config: the dataset null, which no typed config holds.
     testControllerChartCases([
       (
         name: 'an error at initial',
@@ -619,7 +630,7 @@ void main() {
 
   group('expectNoStaleScaleKeys', () {
     testWidgets('finds an emitted path in the scale options', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       expectNoStaleScaleKeys(chart, <String, Object?>{
         'color': 'x',
         'scale.ticks.padding': 3.0,
@@ -637,7 +648,7 @@ void main() {
 
   group('the recorders of test/support/draw_recorder.dart', () {
     testWidgets('recordElementDraws takes the slot of a point', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final meta = chart.getDatasetMeta(0);
       final original = meta.data[1];
       final draws = recordElementDraws(meta, 1);
@@ -669,12 +680,13 @@ void main() {
       // Upstream, spyOn keeps the object that the animation moves. The
       // recorder is a new object: the animation would move the original
       // element.
-      final chart = acquireChart({
-        ..._config(),
-        'options': <String, Object?>{
-          'animation': <String, Object?>{'duration': 500},
-        },
-      });
+      final chart = acquireChartRoot(
+        _config(
+          animation: const ChartAnimation(
+            duration: Duration(milliseconds: 500),
+          ),
+        ),
+      );
       final meta = chart.getDatasetMeta(0);
       await tester.pump(const Duration(seconds: 1));
       _data(chart, 0)[1] = 0;
@@ -688,7 +700,7 @@ void main() {
     });
 
     testWidgets('recordLineCalls takes the slot of the line', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final meta = chart.getDatasetMeta(0);
       meta.dataset = LineElement(<String, Object?>{
         'points': meta.data,
@@ -703,7 +715,7 @@ void main() {
     });
 
     testWidgets('recordArrayCalls records the array calls', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChart(_mapConfig());
       final data = _data(chart, 0);
       final calls = recordArrayCalls(data, chart.getDatasetMeta(0).controller!);
       await runStep(tester, chart, ['push', 0.0, 7.0, 8.0]);

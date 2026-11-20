@@ -25,6 +25,10 @@ import '../support/tick_label.dart';
 // - `chart.scales.x` is `chart.scales['x']!`.
 // - `toEqual` of an array of strings is `equals`.
 
+/// The chart of the typed [config] (Chart.js ADR 0052).
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+
 /// core.ticks.tests.js:1-3 `getLabels(scale)`.
 List<Object?> _getLabels(Scale scale) => [
   for (final t in scale.ticks!) upstreamTickLabel(t),
@@ -76,28 +80,22 @@ void main() {
     testWidgets('Should generate linear spaced ticks with correct precision', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-          ],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'linear',
-              'position': ChartPosition.bottom,
-              'ticks': <String, Object?>{'callback': valueTickLabel},
-            },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'ticks': <String, Object?>{'callback': valueTickLabel},
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [LineDataset(data: [])],
+          scales: {
+            'x': LinearAxis(
+              position: ChartPosition.bottom,
+              ticks: AxisTicks(callback: valueTickLabel),
+            ),
+            'y': LinearAxis(ticks: AxisTicks(callback: valueTickLabel)),
           },
-        },
-      });
+          extra: {
+            'plugins': {'legend': false},
+          },
+        ),
+      );
 
       final xLabels = _getLabels(chart.scales['x']!);
       final yLabels = _getLabels(chart.scales['y']!);
@@ -121,38 +119,28 @@ void main() {
     testWidgets(
       'Should generate logarithmic spaced ticks with correct precision',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-            ],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{'legend': false},
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'logarithmic',
-                'position': ChartPosition.bottom,
-                'min': 0.1,
-                'max': 1,
-                'ticks': <String, Object?>{
-                  'autoSkip': false,
-                  'callback': valueTickLabel,
-                },
-              },
-              'y': <String, Object?>{
-                'type': 'logarithmic',
-                'min': 0.1,
-                'max': 1,
-                'ticks': <String, Object?>{
-                  'autoSkip': false,
-                  'callback': valueTickLabel,
-                },
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(data: [])],
+            scales: {
+              'x': LogarithmicAxis(
+                position: ChartPosition.bottom,
+                min: 0.1,
+                max: 1,
+                ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
+              ),
+              'y': LogarithmicAxis(
+                min: 0.1,
+                max: 1,
+                ticks: AxisTicks(autoSkip: false, callback: valueTickLabel),
+              ),
             },
-          },
-        });
+            extra: {
+              'plugins': {'legend': false},
+            },
+          ),
+        );
 
         final xLabels = _getLabels(chart.scales['x']!);
         final yLabels = _getLabels(chart.scales['y']!);

@@ -58,17 +58,16 @@ List<double> _edges(TRBL trbl) => [
 ];
 
 /// A line of two points from (10, 20) to (30, 40).
-LineElement _line() => LineElement(<String, Object?>{
-  'points': [
+LineElement _line() => LineElement()
+  ..points = [
     PointElement()
       ..x = 10
       ..y = 20,
     PointElement()
       ..x = 30
       ..y = 40,
-  ],
-  'options': LineOptions(<String, Object?>{}),
-});
+  ]
+  ..options = LineOptions(<String, Object?>{});
 
 void main() {
   group('adapt-filler-target-classes', () {
@@ -109,15 +108,14 @@ void main() {
 
     test('a List result calls lineTo(NaN, NaN)', () {
       // A line whose x goes back: the value 2 lies in two parts.
-      final line = LineElement(<String, Object?>{
-        'points': [
+      final line = LineElement()
+        ..points = [
           for (final (x, y) in [(0.0, 1.0), (4.0, 2.0), (1.0, 3.0)])
             PointElement()
               ..x = x
               ..y = y,
-        ],
-        'options': LineOptions(<String, Object?>{}),
-      });
+        ]
+        ..options = LineOptions(<String, Object?>{});
       expect(
         line.interpolate(PointElement()..x = 2, 'x'),
         isA<List<Object?>>(),

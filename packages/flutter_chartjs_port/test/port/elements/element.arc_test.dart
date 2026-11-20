@@ -82,7 +82,7 @@ ElementOptions _genericOptions(AnyObject options) =>
 /// The two forms of the options of an arc (Chart.js ADR 0018, section 6):
 /// generic options, and an [ArcOptions] with the same entries in the same key
 /// order.
-const Map<String, Object Function(AnyObject options)> _optionsForms = {
+const Map<String, ElementOptions Function(AnyObject options)> _optionsForms = {
   'generic options': _genericOptions,
   'ArcOptions': ArcOptions.new,
 };
@@ -165,15 +165,14 @@ ArcOptions _options([Map<String, Object?> extra = const {}]) => ArcOptions({
 });
 
 /// An arc for the draw tests that do not come from the reference.
-ArcElement _drawArc([Map<String, Object?> extra = const {}]) => ArcElement({
-  'x': 50,
-  'y': 40,
-  'startAngle': 0.25,
-  'endAngle': 2,
-  'innerRadius': 10,
-  'outerRadius': 30,
-  'options': _options(extra),
-});
+ArcElement _drawArc([Map<String, Object?> extra = const {}]) => ArcElement()
+  ..x = 50
+  ..y = 40
+  ..startAngle = 0.25
+  ..endAngle = 2
+  ..innerRadius = 10
+  ..outerRadius = 30
+  ..options = _options(extra);
 
 /// The recorded calls named [name].
 List<ContextCall> _named(MockContext ctx, String name) => [
@@ -274,6 +273,7 @@ void main() {
 
     test('the constructor writes each key of cfg by name', () {
       final options = ArcOptions({'borderWidth': 1});
+      // The constructor Map: the case is the write of cfg by name.
       final arc = ArcElement({
         'circumference': 1,
         'startAngle': 2,
@@ -314,7 +314,9 @@ void main() {
     });
 
     test('a write by name of undefined restores the undefined state', () {
-      final arc = ArcElement({'pixelMargin': 1, 'circumference': 2});
+      final arc = ArcElement()
+        ..pixelMargin = 1
+        ..circumference = 2;
       arc['pixelMargin'] = undefined;
       arc['circumference'] = undefined;
       arc['circular'] = undefined;
@@ -327,7 +329,7 @@ void main() {
     });
 
     test('NaN is a value, not the undefined state', () {
-      final arc = ArcElement({'circumference': double.nan});
+      final arc = ArcElement()..circumference = double.nan;
       expect(arc.circumference, isNaN);
       expect(arc['circumference'], isA<double>());
     });
@@ -397,18 +399,17 @@ void main() {
     test('inXRange and inYRange are false', () {
       // Upstream ArcElement has no inXRange and no inYRange. The one caller,
       // getAxisItems (core.interaction.js:234), tests the method first.
-      final arc = ArcElement({
-        'x': 0,
-        'y': 0,
-        'startAngle': 0,
-        'endAngle': 7,
-        'innerRadius': 0,
-        'outerRadius': 10,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..x = 0
+        ..y = 0
+        ..startAngle = 0
+        ..endAngle = 7
+        ..innerRadius = 0
+        ..outerRadius = 10
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
       expect(arc.inRange(1, 1), isTrue);
       expect(arc.inXRange(1), isFalse);
       expect(arc.inYRange(1, true), isFalse);
@@ -532,14 +533,13 @@ void main() {
     }
 
     test('throws a TypeError when options is undefined', () {
-      final arc = ArcElement({
-        'x': 0,
-        'y': 0,
-        'startAngle': 0,
-        'endAngle': 1,
-        'innerRadius': 0,
-        'outerRadius': 10,
-      });
+      final arc = ArcElement()
+        ..x = 0
+        ..y = 0
+        ..startAngle = 0
+        ..endAngle = 1
+        ..innerRadius = 0
+        ..outerRadius = 10;
       expect(() => arc.inRange(1, 1), throwsA(isA<TypeError>()));
     });
 
@@ -559,16 +559,15 @@ void main() {
       for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
         for (final (options, hits) in cases) {
           test('$name $options', () {
-            final arc = ArcElement({
-              'x': 0,
-              'y': 0,
-              'startAngle': 0,
-              'endAngle': math.pi / 2,
-              'innerRadius': 10,
-              'outerRadius': 40,
-              'circumference': math.pi / 2,
-              'options': form(options),
-            });
+            final arc = ArcElement()
+              ..x = 0
+              ..y = 0
+              ..startAngle = 0
+              ..endAngle = math.pi / 2
+              ..innerRadius = 10
+              ..outerRadius = 40
+              ..circumference = math.pi / 2
+              ..options = form(options);
             for (final d in distances) {
               final c = d * math.sqrt1_2;
               expect(arc.inRange(c, c, false), hits.contains(d), reason: '$d');
@@ -659,15 +658,14 @@ void main() {
       for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
         for (final (options, x, y) in cases) {
           test('$name $options', () {
-            final arc = ArcElement({
-              'x': 100,
-              'y': 50,
-              'startAngle': 0,
-              'endAngle': 1,
-              'innerRadius': 10.5,
-              'outerRadius': 40.25,
-              'options': form(options),
-            });
+            final arc = ArcElement()
+              ..x = 100
+              ..y = 50
+              ..startAngle = 0
+              ..endAngle = 1
+              ..innerRadius = 10.5
+              ..outerRadius = 40.25
+              ..options = form(options);
             final center = arc.getCenterPoint(false);
             expect(center.x, x.isNaN ? isNaN : closeTo(x, 1e-9));
             expect(center.y, y.isNaN ? isNaN : closeTo(y, 1e-9));
@@ -685,7 +683,9 @@ void main() {
     });
 
     test('throws a TypeError when options is undefined', () {
-      final arc = ArcElement({'x': 0, 'y': 0});
+      final arc = ArcElement()
+        ..x = 0
+        ..y = 0;
       expect(arc.getCenterPoint, throwsA(isA<TypeError>()));
       expect(arc.tooltipPosition, throwsA(isA<TypeError>()));
     });
@@ -720,7 +720,7 @@ void main() {
     });
 
     test('throws a TypeError when options is undefined', () {
-      final arc = ArcElement({'circumference': 1});
+      final arc = ArcElement()..circumference = 1;
       final ctx = _CanvasContext();
       expect(() => arc.draw(ctx), throwsA(isA<TypeError>()));
       expect(ctx.getCalls(), isEmpty);

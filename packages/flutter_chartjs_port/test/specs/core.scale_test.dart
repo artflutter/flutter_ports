@@ -57,6 +57,15 @@ import '../support/tick_label.dart';
 // - `new Array(300).fill(value)` is `List.filled(300, value)`.
 // - `parseFloat(value.toFixed(2))` is
 //   `double.parse(value.toStringAsFixed(2))`.
+// - A chart config is a typed `ChartConfig` (Chart.js ADR 0052). The
+//   three cases of a custom scale class keep a Map config: the scale type
+//   of the class has no axis class. The options with no parameter go
+//   through `extra`. The case with no title stroke reads the title options
+//   through the face: `undefined` has no typed form.
+
+/// The chart of the typed [config] (Chart.js ADR 0052).
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// The member read `object.key` of the option object [object]: a resolver,
 /// read through its face (Chart.js ADR 0054 §5).
@@ -103,7 +112,7 @@ final class _CustomScale2(super.cfg) extends Scale {
 /// names get ` #2` (porting-flow.md section 1, step 5).
 const List<
   ({
-    List<Object?> labels,
+    List<Object> labels,
     bool offsetGridLines,
     bool offset,
     List<Object?> expected,
@@ -188,40 +197,33 @@ void main() {
     });
 
     group('displaying xAxis ticks with autoSkip=true', () {
-      Chart getChart(Map<String, Object?> data) {
-        return acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data,
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'ticks': <String, Object?>{'autoSkip': true},
-              },
-            },
-          },
-        });
+      Chart getChart(List<Object> labels, List<num?> data) {
+        return _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            labels: labels,
+            datasets: [LineDataset(data: data)],
+            scales: const {'x': CategoryAxis(ticks: AxisTicks(autoSkip: true))},
+          ),
+        );
       }
 
       Chart getChartBigData(int maxTicksLimit) {
-        return acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': List<Object?>.filled(300, 'red'),
-            'datasets': <Object?>[
-              <String, Object?>{'data': List<Object?>.filled(300, 5)},
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'ticks': <String, Object?>{
-                  'autoSkip': true,
-                  'maxTicksLimit': maxTicksLimit,
-                },
-              },
+        return _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            labels: List<Object>.filled(300, 'red'),
+            datasets: [LineDataset(data: List<num?>.filled(300, 5))],
+            scales: {
+              'x': CategoryAxis(
+                ticks: AxisTicks(
+                  autoSkip: true,
+                  extra: {'maxTicksLimit': maxTicksLimit},
+                ),
+              ),
             },
-          },
-        });
+          ),
+        );
       }
 
       Tick lastTick(Chart chart) {
@@ -251,18 +253,14 @@ void main() {
       testWidgets(
         'should display the last tick if it fits evenly with other ticks',
         (tester) async {
-          final chart = getChart(<String, Object?>{
-            'labels': <Object?>[
+          final chart = getChart(
+            [
               'January 2018', 'February 2018', 'March 2018', 'April 2018', //
               'May 2018', 'June 2018', 'July 2018', 'August 2018',
               'September 2018',
             ],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[12, 19, 3, 5, 2, 3, 7, 8, 9],
-              },
-            ],
-          });
+            [12, 19, 3, 5, 2, 3, 7, 8, 9],
+          );
 
           expect(upstreamTickLabel(lastTick(chart)), equals('September 2018'));
         },
@@ -271,8 +269,8 @@ void main() {
       testWidgets(
         'should not display the last tick if it does not fit evenly',
         (tester) async {
-          final chart = getChart(<String, Object?>{
-            'labels': <Object?>[
+          final chart = getChart(
+            [
               'January 2018', 'February 2018', 'March 2018', 'April 2018', //
               'May 2018', 'June 2018', 'July 2018', 'August 2018',
               'September 2018', 'October 2018', 'November 2018',
@@ -283,15 +281,11 @@ void main() {
               'December 2019',
               'January 2020', 'February 2020', 'March 2020', 'April 2020',
             ],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, //
-                  6, 6, 6, 6, 7, 7, 7, 7,
-                ],
-              },
+            [
+              1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3, 4, 4, 4, 4, 5, 5, 5, 5, //
+              6, 6, 6, 6, 7, 7, 7, 7,
             ],
-          });
+          );
 
           expect(upstreamTickLabel(lastTick(chart)), equals('March 2020'));
         },
@@ -311,29 +305,24 @@ void main() {
       }
       final test = _gridLineTests[t];
       testWidgets(horizontalNames[t], (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-            ],
-            'labels': test.labels,
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'grid': <String, Object?>{
-                  'offset': test.offsetGridLines,
-                  'drawTicks': false,
-                },
-                'ticks': <String, Object?>{'display': false},
-                'offset': test.offset,
-              },
-              'y': <String, Object?>{'display': ScaleDisplay.off},
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: const [LineDataset(data: [])],
+            labels: test.labels,
+            scales: {
+              'x': CategoryAxis(
+                grid: AxisGrid(offset: test.offsetGridLines, drawTicks: false),
+                ticks: const AxisTicks(display: false),
+                extra: {'offset': test.offset},
+              ),
+              'y': const LinearAxis(display: ScaleDisplay.off),
             },
-            'plugins': <String, Object?>{'legend': false},
-          },
-        });
+            extra: const {
+              'plugins': {'legend': false},
+            },
+          ),
+        );
 
         final xScale = chart.scales['x']!;
         final ctx = createMockContext();
@@ -361,28 +350,19 @@ void main() {
     testWidgets('should add the correct padding for long tick labels', (
       tester,
     ) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>[
-              'This is a very long label',
-              'This is a very long label',
-            ],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, 1],
-              },
-            ],
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          labels: ['This is a very long label', 'This is a very long label'],
+          datasets: [
+            LineDataset(data: [0, 1]),
+          ],
+          scales: {'y': LinearAxis(display: ScaleDisplay.off)},
+          extra: {
+            'plugins': {'legend': false},
           },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'display': ScaleDisplay.off},
-            },
-            'plugins': <String, Object?>{'legend': false},
-          },
-        },
-        <String, Object?>{
+        ),
+        {
           'canvas': <String, Object?>{'height': 100, 'width': 200},
         },
       );
@@ -398,30 +378,32 @@ void main() {
           'should draw the axes if at least one associated dataset is '
           'visible',
           (tester) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[100, 200, 100, 50],
-                    'xAxisId': 'foo',
-                    'hidden': true,
-                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
-                  },
-                  <String, Object?>{
-                    'data': <Object?>[100, 200, 100, 50],
-                    'xAxisId': 'foo',
-                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
-                  },
+            final chart = _acquire(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [
+                  LineDataset(
+                    data: [100, 200, 100, 50],
+                    hidden: true,
+                    extra: {
+                      'xAxisId': 'foo',
+                      'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
+                    },
+                  ),
+                  LineDataset(
+                    data: [100, 200, 100, 50],
+                    extra: {
+                      'xAxisId': 'foo',
+                      'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
+                    },
+                  ),
                 ],
-              },
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'x': <String, Object?>{'display': ScaleDisplay.auto},
-                  'y': <String, Object?>{'type': 'category'},
+                scales: {
+                  'x': CategoryAxis(display: ScaleDisplay.auto),
+                  'y': CategoryAxis(),
                 },
-              },
-            });
+              ),
+            );
 
             final scale = chart.scales['x']!;
             final ctx = createMockContext();
@@ -436,24 +418,22 @@ void main() {
         testWidgets(
           'should not draw the axes if no associated datasets are visible',
           (tester) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[100, 200, 100, 50],
-                    'xAxisId': 'foo',
-                    'hidden': true,
-                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
-                  },
+            final chart = _acquire(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [
+                  LineDataset(
+                    data: [100, 200, 100, 50],
+                    hidden: true,
+                    extra: {
+                      'xAxisId': 'foo',
+                      'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
+                    },
+                  ),
                 ],
-              },
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'x': <String, Object?>{'display': ScaleDisplay.auto},
-                },
-              },
-            });
+                scales: {'x': CategoryAxis(display: ScaleDisplay.auto)},
+              ),
+            );
 
             final scale = chart.scales['x']!;
             final ctx = createMockContext();
@@ -471,29 +451,29 @@ void main() {
           'should draw the axes if at least one associated dataset is '
           'visible',
           (tester) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[100, 200, 100, 50],
-                    'yAxisId': 'foo',
-                    'hidden': true,
-                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
-                  },
-                  <String, Object?>{
-                    'data': <Object?>[100, 200, 100, 50],
-                    'yAxisId': 'foo',
-                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
-                  },
+            final chart = _acquire(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [
+                  LineDataset(
+                    data: [100, 200, 100, 50],
+                    hidden: true,
+                    extra: {
+                      'yAxisId': 'foo',
+                      'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
+                    },
+                  ),
+                  LineDataset(
+                    data: [100, 200, 100, 50],
+                    extra: {
+                      'yAxisId': 'foo',
+                      'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
+                    },
+                  ),
                 ],
-              },
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'y': <String, Object?>{'display': ScaleDisplay.auto},
-                },
-              },
-            });
+                scales: {'y': LinearAxis(display: ScaleDisplay.auto)},
+              ),
+            );
 
             final scale = chart.scales['y']!;
             final ctx = createMockContext();
@@ -508,24 +488,22 @@ void main() {
         testWidgets(
           'should not draw the axes if no associated datasets are visible',
           (tester) async {
-            final chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[100, 200, 100, 50],
-                    'yAxisId': 'foo',
-                    'hidden': true,
-                    'labels': <Object?>['Q1', 'Q2', 'Q3', 'Q4'],
-                  },
+            final chart = _acquire(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [
+                  LineDataset(
+                    data: [100, 200, 100, 50],
+                    hidden: true,
+                    extra: {
+                      'yAxisId': 'foo',
+                      'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
+                    },
+                  ),
                 ],
-              },
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'y': <String, Object?>{'display': ScaleDisplay.auto},
-                },
-              },
-            });
+                scales: {'y': LinearAxis(display: ScaleDisplay.auto)},
+              ),
+            );
 
             final scale = chart.scales['y']!;
             final ctx = createMockContext();
@@ -541,61 +519,65 @@ void main() {
 
     group('afterBuildTicks', () {
       testWidgets('should allow filtering of ticks', (tester) async {
-        final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
-        final chart = acquireChart({
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'labels': labels,
-                'afterBuildTicks': (Scale scale) {
-                  scale.ticks = scale.ticks!.sublist(1);
+        final labels = <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: const [],
+            scales: {
+              'x': CategoryAxis(
+                labels: labels,
+                extra: {
+                  'afterBuildTicks': (Scale scale) {
+                    scale.ticks = scale.ticks!.sublist(1);
+                  },
                 },
-              },
+              ),
             },
-          },
-        });
+          ),
+        );
 
         final scale = chart.scales['x']!;
         expect(_getLabels(scale), labels.sublist(1));
       });
 
       testWidgets('should allow no return value from callback', (tester) async {
-        final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
-        final chart = acquireChart({
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'labels': labels,
-                'afterBuildTicks': (_) {},
-              },
+        final labels = <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: const [],
+            scales: {
+              'x': CategoryAxis(
+                labels: labels,
+                extra: {'afterBuildTicks': (_) {}},
+              ),
             },
-          },
-        });
+          ),
+        );
 
         final scale = chart.scales['x']!;
         expect(_getLabels(scale), labels);
       });
 
       testWidgets('should allow empty ticks', (tester) async {
-        final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
-        final chart = acquireChart({
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'labels': labels,
-                'afterBuildTicks': (Scale scale) {
-                  scale.ticks = [];
+        final labels = <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: const [],
+            scales: {
+              'x': CategoryAxis(
+                labels: labels,
+                extra: {
+                  'afterBuildTicks': (Scale scale) {
+                    scale.ticks = [];
+                  },
                 },
-              },
+              ),
             },
-          },
-        });
+          ),
+        );
 
         final scale = chart.scales['x']!;
         expect(scale.ticks!.length, 0);
@@ -604,14 +586,13 @@ void main() {
 
     group('_layers', () {
       testWidgets('should default to three layers', (tester) async {
-        final chart = acquireChart({
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear'},
-            },
-          },
-        });
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [],
+            scales: {'x': LinearAxis()},
+          ),
+        );
 
         final scale = chart.scales['x']!;
         expect(scale.layers!().length, 3);
@@ -622,40 +603,29 @@ void main() {
         'position options',
         (tester) async {
           Chart createChart() {
-            return acquireChart(<String, Object?>{
-              'type': 'scatter',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[
-                      <String, Object?>{'x': 0, 'y': 0},
-                      <String, Object?>{'x': 1, 'y': 1},
-                      <String, Object?>{'x': 2, 'y': 2},
-                    ],
-                    'xAxisID': 'customIDx',
-                    'yAxisID': 'customIDy',
-                  },
+            return _acquire(
+              ChartConfig(
+                type: ChartKind.scatter,
+                datasets: [
+                  ScatterDataset(
+                    points: [DataPoint(0, 0), DataPoint(1, 1), DataPoint(2, 2)],
+                    xAxisID: 'customIDx',
+                    yAxisID: 'customIDy',
+                  ),
                 ],
-              },
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'customIDx': <String, Object?>{
-                    'type': 'linear',
-                    'display': ScaleDisplay.off,
-                  },
-                  'customIDy': <String, Object?>{
-                    'type': 'linear',
-                    'display': ScaleDisplay.off,
-                  },
+                scales: const {
+                  'customIDx': LinearAxis(display: ScaleDisplay.off),
+                  'customIDy': LinearAxis(display: ScaleDisplay.off),
                 },
-              },
-            });
+              ),
+            );
           }
 
           expect(createChart, returnsNormally);
         },
       );
 
+      // A Map config: the custom scale type has no axis class.
       testWidgets('should default to one layer for custom scales', (
         tester,
       ) async {
@@ -686,6 +656,7 @@ void main() {
         expect(scale.layers!()[0].z, 20);
       });
 
+      // A Map config: the custom scale type has no axis class.
       testWidgets('should default to one layer for custom scales for axis', (
         tester,
       ) async {
@@ -716,6 +687,7 @@ void main() {
         expect(scale.layers!()[0].z, 20);
       });
 
+      // A Map config: the custom scale type has no axis class.
       testWidgets(
         'should fail for custom scales without any axis or position',
         (tester) async {
@@ -756,46 +728,42 @@ void main() {
       testWidgets(
         'should return 3 layers when z is not equal between ticks and grid',
         (tester) async {
-          var chart = acquireChart({
-            'type': 'line',
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'linear',
-                  'ticks': <String, Object?>{'z': 10},
-                },
+          var chart = _acquire(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [],
+              scales: {
+                'x': LinearAxis(ticks: AxisTicks(extra: {'z': 10})),
               },
-            },
-          });
+            ),
+          );
 
           expect(chart.scales['x']!.layers!().length, 3);
 
-          chart = acquireChart({
-            'type': 'line',
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'linear',
-                  'grid': <String, Object?>{'z': 11},
-                },
+          chart = _acquire(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [],
+              scales: {
+                'x': LinearAxis(grid: AxisGrid(extra: {'z': 11})),
               },
-            },
-          });
+            ),
+          );
 
           expect(chart.scales['x']!.layers!().length, 3);
 
-          chart = acquireChart({
-            'type': 'line',
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'linear',
-                  'ticks': <String, Object?>{'z': 10},
-                  'grid': <String, Object?>{'z': 11},
-                },
+          chart = _acquire(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [],
+              scales: {
+                'x': LinearAxis(
+                  ticks: AxisTicks(extra: {'z': 10}),
+                  grid: AxisGrid(extra: {'z': 11}),
+                ),
               },
-            },
-          });
+            ),
+          );
 
           expect(chart.scales['x']!.layers!().length, 3);
         },
@@ -804,36 +772,21 @@ void main() {
 
     group('min and max', () {
       testWidgets('should be limited to visible data', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 100, 'y': 100},
-                  <String, Object?>{'x': -100, 'y': -100},
-                ],
-              },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 10},
-                  <String, Object?>{'x': -10, 'y': -10},
-                ],
-              },
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [
+              ScatterDataset(
+                points: [DataPoint(100, 100), DataPoint(-100, -100)],
+              ),
+              ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
             ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'id': 'x',
-                'type': 'linear',
-                'min': -20,
-                'max': 20,
-              },
-              'y': <String, Object?>{'id': 'y', 'type': 'linear'},
+            scales: const {
+              'x': LinearAxis(min: -20, max: 20, extra: {'id': 'x'}),
+              'y': LinearAxis(extra: {'id': 'y'}),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['x']!.min, equals(-20));
         expect(chart.scales['x']!.max, equals(20));
@@ -844,30 +797,18 @@ void main() {
 
     group('overrides', () {
       testWidgets('should create new scale', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 100, 'y': 100},
-                  <String, Object?>{'x': -100, 'y': -100},
-                ],
-              },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 10},
-                  <String, Object?>{'x': -10, 'y': -10},
-                ],
-              },
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [
+              ScatterDataset(
+                points: [DataPoint(100, 100), DataPoint(-100, -100)],
+              ),
+              ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
             ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x2': <String, Object?>{'type': 'linear', 'min': -20, 'max': 20},
-            },
-          },
-        });
+            scales: const {'x2': LinearAxis(min: -20, max: 20)},
+          ),
+        );
 
         expect(
           jsSort(chart.scales.keys.toList(), (a, b) => a.compareTo(b)),
@@ -876,35 +817,20 @@ void main() {
       });
 
       testWidgets('should create new scale with custom name', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 100, 'y': 100},
-                  <String, Object?>{'x': -100, 'y': -100},
-                ],
-              },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 10},
-                  <String, Object?>{'x': -10, 'y': -10},
-                ],
-              },
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [
+              ScatterDataset(
+                points: [DataPoint(100, 100), DataPoint(-100, -100)],
+              ),
+              ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
             ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'scaleX': <String, Object?>{
-                'axis': const XAxis(),
-                'type': 'linear',
-                'min': -20,
-                'max': 20,
-              },
+            scales: const {
+              'scaleX': LinearAxis(min: -20, max: 20, extra: {'axis': XAxis()}),
             },
-          },
-        });
+          ),
+        );
 
         expect(
           jsSort(chart.scales.keys.toList(), (a, b) => a.compareTo(b)),
@@ -923,34 +849,20 @@ void main() {
         'should throw error on scale with custom name without axis type',
         (tester) async {
           expect(
-            () => acquireChart({
-              'type': 'scatter',
-              'data': <String, Object?>{
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[
-                      <String, Object?>{'x': 100, 'y': 100},
-                      <String, Object?>{'x': -100, 'y': -100},
-                    ],
-                  },
-                  <String, Object?>{
-                    'data': <Object?>[
-                      <String, Object?>{'x': 10, 'y': 10},
-                      <String, Object?>{'x': -10, 'y': -10},
-                    ],
-                  },
+            () => _acquire(
+              ChartConfig(
+                type: ChartKind.scatter,
+                datasets: [
+                  ScatterDataset(
+                    points: [DataPoint(100, 100), DataPoint(-100, -100)],
+                  ),
+                  ScatterDataset(
+                    points: [DataPoint(10, 10), DataPoint(-10, -10)],
+                  ),
                 ],
-              },
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'scaleX': <String, Object?>{
-                    'type': 'linear',
-                    'min': -20,
-                    'max': 20,
-                  },
-                },
-              },
-            }),
+                scales: const {'scaleX': LinearAxis(min: -20, max: 20)},
+              ),
+            ),
             throwsA(
               isA<StateError>().having(
                 (error) => error.message,
@@ -966,35 +878,20 @@ void main() {
       testWidgets('should read options first to determine axis', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 100, 'y': 100},
-                  <String, Object?>{'x': -100, 'y': -100},
-                ],
-              },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 10},
-                  <String, Object?>{'x': -10, 'y': -10},
-                ],
-              },
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [
+              ScatterDataset(
+                points: [DataPoint(100, 100), DataPoint(-100, -100)],
+              ),
+              ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
             ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'xavier': <String, Object?>{
-                'axis': const YAxis(),
-                'type': 'linear',
-                'min': -20,
-                'max': 20,
-              },
+            scales: const {
+              'xavier': LinearAxis(min: -20, max: 20, extra: {'axis': YAxis()}),
             },
-          },
-        });
+          ),
+        );
 
         expect(chart.scales['xavier']!.axis, isA<YAxis>());
       });
@@ -1002,32 +899,18 @@ void main() {
       testWidgets('should center labels when rotated in x axis', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>[
-              'Red',
-              'Blue',
-              'Yellow',
-              'Green',
-              'Purple',
-              'Orange',
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
+            datasets: [
+              LineDataset(label: '# of Votes', data: [12, 19, 3, 5, 2, 3]),
             ],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'label': '# of Votes',
-                'data': <Object?>[12, 19, 3, 5, 2, 3],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'ticks': <String, Object?>{'minRotation': 90},
-              },
+            scales: {
+              'x': CategoryAxis(ticks: AxisTicks(extra: {'minRotation': 90})),
             },
-          },
-        });
+          ),
+        );
         // `parseFloat(value.toFixed(2))`.
         double mapper(LabelItem item) =>
             double.parse(item.options.translation!.$1.toStringAsFixed(2));
@@ -1048,72 +931,74 @@ void main() {
     group('Scale Title stroke', () {
       /// core.scale.tests.js:821-849 `getChartWithScaleTitleStroke()`.
       Chart getChartWithScaleTitleStroke() {
-        return acquireChart({
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'linear',
-                'title': <String, Object?>{
-                  'display': true,
-                  'text': ['title-x'],
-                  'color': const ChartPaint.solid(
+        return _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [],
+            scales: {
+              'x': LinearAxis(
+                title: AxisTitle(
+                  display: true,
+                  text: ['title-x'],
+                  color: ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
-                  'strokeWidth': 1,
-                  'strokeColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(51, 51, 51, 1),
-                  ),
-                },
-              },
-              'y': <String, Object?>{
-                'type': 'linear',
-                'title': <String, Object?>{
-                  'display': true,
-                  'text': ['title-y'],
-                  'color': const ChartPaint.solid(
+                  extra: {
+                    'strokeWidth': 1,
+                    'strokeColor': ChartPaint.solid(
+                      native_ui.Color.fromRGBO(51, 51, 51, 1),
+                    ),
+                  },
+                ),
+              ),
+              'y': LinearAxis(
+                title: AxisTitle(
+                  display: true,
+                  text: ['title-y'],
+                  color: ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
-                  'strokeWidth': 2,
-                  'strokeColor': const ChartPaint.solid(
-                    native_ui.Color.fromRGBO(34, 34, 34, 1),
-                  ),
-                },
-              },
+                  extra: {
+                    'strokeWidth': 2,
+                    'strokeColor': ChartPaint.solid(
+                      native_ui.Color.fromRGBO(34, 34, 34, 1),
+                    ),
+                  },
+                ),
+              ),
             },
-          },
-        });
+          ),
+        );
       }
 
       /// core.scale.tests.js:851-875 `getChartWithoutScaleTitleStroke()`.
       Chart getChartWithoutScaleTitleStroke() {
-        return acquireChart({
-          'type': 'line',
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'linear',
-                'title': <String, Object?>{
-                  'display': true,
-                  'text': ['title-x'],
-                  'color': const ChartPaint.solid(
+        return _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [],
+            scales: {
+              'x': LinearAxis(
+                title: AxisTitle(
+                  display: true,
+                  text: ['title-x'],
+                  color: ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
-                },
-              },
-              'y': <String, Object?>{
-                'type': 'linear',
-                'title': <String, Object?>{
-                  'display': true,
-                  'text': ['title-y'],
-                  'color': const ChartPaint.solid(
+                ),
+              ),
+              'y': LinearAxis(
+                title: AxisTitle(
+                  display: true,
+                  text: ['title-y'],
+                  color: ChartPaint.solid(
                     native_ui.Color.fromRGBO(221, 221, 221, 1),
                   ),
-                },
-              },
+                ),
+              ),
             },
-          },
-        });
+          ),
+        );
       }
 
       testWidgets('should draw a scale title stroke when provided x-axis', (
@@ -1122,10 +1007,10 @@ void main() {
         final chart = getChartWithScaleTitleStroke();
         final scale = chart.scales['x']!;
         expect(
-          _member(scale.optionsView['title'], 'strokeColor'),
+          scale.options.title.strokeColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(51, 51, 51, 1)),
         );
-        expect(_member(scale.optionsView['title'], 'strokeWidth'), 1);
+        expect(scale.options.title.strokeWidth, 1);
       });
 
       testWidgets('should draw a scale title stroke when provided y-axis', (
@@ -1134,10 +1019,10 @@ void main() {
         final chart = getChartWithScaleTitleStroke();
         final scale = chart.scales['y']!;
         expect(
-          _member(scale.optionsView['title'], 'strokeColor'),
+          scale.options.title.strokeColor,
           const ChartPaint.solid(native_ui.Color.fromRGBO(34, 34, 34, 1)),
         );
-        expect(_member(scale.optionsView['title'], 'strokeWidth'), 2);
+        expect(scale.options.title.strokeWidth, 2);
       });
 
       testWidgets('should not draw a scale title stroke when not provided', (

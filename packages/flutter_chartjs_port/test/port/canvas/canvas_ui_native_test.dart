@@ -1129,25 +1129,25 @@ void main() {
       // fill (element.arc.ts:289-309).
       for (final inner in const [0.0, 25.0]) {
         final ctx = retina();
-        ArcElement({
-          'x': 80,
-          'y': 80,
-          'startAngle': 0.25,
-          'endAngle': 2,
-          'innerRadius': inner,
-          'outerRadius': 60,
-          'circumference': 1.75,
-          'options': ArcOptions(<String, Object?>{
-            'backgroundColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(54, 162, 235, 0.45),
-            ),
-            'borderColor': const ChartPaint.solid(
-              native_ui.Color.fromRGBO(54, 162, 235, 1),
-            ),
-            'borderWidth': 0,
-            'circular': true,
-          }),
-        }).draw(ctx);
+        (ArcElement()
+              ..x = 80
+              ..y = 80
+              ..startAngle = 0.25
+              ..endAngle = 2
+              ..innerRadius = inner
+              ..outerRadius = 60
+              ..circumference = 1.75
+              ..options = ArcOptions(<String, Object?>{
+                'backgroundColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(54, 162, 235, 0.45),
+                ),
+                'borderColor': const ChartPaint.solid(
+                  native_ui.Color.fromRGBO(54, 162, 235, 1),
+                ),
+                'borderWidth': 0,
+                'circular': true,
+              }))
+            .draw(ctx);
         final sector = ctx.debugPath.singleSector;
         expect(sector, isNotNull, reason: 'inner $inner');
         expect(sector!.inner, inner * 2);

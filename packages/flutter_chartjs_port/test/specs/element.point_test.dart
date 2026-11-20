@@ -24,11 +24,10 @@ void main() {
 
     test('Should correctly identify as in range', () {
       // Mock out the point as if we were made by the controller
-      final point = PointElement({
-        'options': PointOptions(<String, Object?>{'radius': 2, 'hitRadius': 3}),
-        'x': 10,
-        'y': 15,
-      });
+      final point = PointElement()
+        ..options = PointOptions(<String, Object?>{'radius': 2, 'hitRadius': 3})
+        ..x = 10
+        ..y = 15;
 
       expect(point.inRange(10, 15), isTrue);
       expect(point.inRange(10, 10), isFalse);
@@ -38,25 +37,23 @@ void main() {
 
     test('should get the correct tooltip position', () {
       // Mock out the point as if we were made by the controller
-      final point = PointElement({
-        'options': PointOptions(<String, Object?>{
+      final point = PointElement()
+        ..options = PointOptions(<String, Object?>{
           'radius': 2,
           'borderWidth': 6,
-        }),
-        'x': 10,
-        'y': 15,
-      });
+        })
+        ..x = 10
+        ..y = 15;
 
       expect(point.tooltipPosition(), const ElementPoint(10, 15));
     });
 
     test('should get the correct center point', () {
       // Mock out the point as if we were made by the controller
-      final point = PointElement({
-        'options': PointOptions(<String, Object?>{'radius': 2}),
-        'x': 10,
-        'y': 10,
-      });
+      final point = PointElement()
+        ..options = PointOptions(<String, Object?>{'radius': 2})
+        ..x = 10
+        ..y = 10;
 
       expect(point.getCenterPoint(), const ElementPoint(10, 10));
     });
@@ -67,12 +64,15 @@ void main() {
       // Mock out the point as if we were made by the controller
       // (`var point = …; point.draw(mockContext)` is one expression here,
       // for the lint cascade_invocations).
-      PointElement({
-        'options': PointOptions(<String, Object?>{'radius': 2, 'hitRadius': 3}),
-        'x': 10,
-        'y': 15,
-        'skip': true,
-      }).draw(mockContext);
+      (PointElement()
+            ..options = PointOptions(<String, Object?>{
+              'radius': 2,
+              'hitRadius': 3,
+            })
+            ..x = 10
+            ..y = 15
+            ..skip = true)
+          .draw(mockContext);
 
       expect(mockContext.getCalls(), <ContextCall>[]);
     });

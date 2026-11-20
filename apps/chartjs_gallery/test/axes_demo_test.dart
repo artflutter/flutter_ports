@@ -80,9 +80,8 @@ PointElement _point(Chart chart, int datasetIndex, int index) =>
 String _row(AxesDemoState state, String name) =>
     state.readoutRows.firstWhere((row) => row.$1 == name).$2;
 
-/// The option [key] of the ticks of the scale [id].
-Object? _tickOption(Chart chart, String id, String key) =>
-    jsGet(_scale(chart, id).optionsView['ticks'], key);
+/// The tick options of the scale [id].
+TickOptions _ticks(Chart chart, String id) => _scale(chart, id).options.ticks;
 
 /// Whether the segment of [key] is on: the selected segment of a
 /// [SegmentChoice], or an option of a [SegmentToggles] that is on.
@@ -154,8 +153,8 @@ void main() {
     expect(chart.height, 360);
     expect(_scale(chart, 'x'), isA<LinearScale>());
     expect(_scale(chart, 'y'), isA<LinearScale>());
-    expect(_scale(chart, 'x').optionsView['position'], ChartPosition.bottom);
-    expect(_scale(chart, 'y').optionsView['position'], ChartPosition.left);
+    expect(_scale(chart, 'x').options.position, ChartPosition.bottom);
+    expect(_scale(chart, 'y').options.position, ChartPosition.left);
     for (var d = 0; d < 2; d++) {
       expect(chart.getDatasetMeta(d).data, hasLength(12));
     }
@@ -437,11 +436,11 @@ void main() {
     final left = area.left;
 
     await _tap(tester, 'axes.x.position.top');
-    expect(_scale(chart, 'x').optionsView['position'], ChartPosition.top);
+    expect(_scale(chart, 'x').options.position, ChartPosition.top);
     expect(_scale(chart, 'x').bottom, lessThanOrEqualTo(chart.chartArea!.top));
     expect(chart.chartArea!.top, greaterThan(top));
     await _tap(tester, 'axes.y.position.right');
-    expect(_scale(chart, 'y').optionsView['position'], ChartPosition.right);
+    expect(_scale(chart, 'y').options.position, ChartPosition.right);
     expect(chart.chartArea!.left, lessThan(left));
     expect(
       _scale(chart, 'y').left,
@@ -451,7 +450,7 @@ void main() {
     final x = _scale(chart, 'x');
     expect(x.getPixelForValue(1.0), lessThan(x.getPixelForValue(12.0)));
     await _tap(tester, 'axes.reverse');
-    expect(x.optionsView['reverse'], true);
+    expect(x.options.reverse, true);
     expect(x.getPixelForValue(1.0), greaterThan(x.getPixelForValue(12.0)));
     _expectOnScales(chart);
     await _tap(tester, 'axes.reverse');
@@ -460,7 +459,7 @@ void main() {
     final y = _scale(chart, 'y');
     expect(y.min, greaterThan(0));
     await _tap(tester, 'axes.beginAtZero');
-    expect(y.optionsView['beginAtZero'], true);
+    expect(y.options.beginAtZero, true);
     expect(y.min, 0);
     await _tap(tester, 'axes.beginAtZero');
     expect(y.min, greaterThan(0));
@@ -469,11 +468,11 @@ void main() {
     // values 1 to 12. The bounds data give 1 to 12.
     expect(x.min, 0);
     await _tap(tester, 'axes.bounds.data');
-    expect(x.optionsView['bounds'], ScaleBounds.data);
+    expect(x.options.bounds, ScaleBounds.data);
     expect(x.min, 1);
     expect(x.max, 12);
     await _tap(tester, 'axes.bounds.auto');
-    expect(x.optionsView['bounds'], ScaleBounds.ticks);
+    expect(x.options.bounds, ScaleBounds.ticks);
     expect(x.min, 0);
     expect(tester.takeException(), isNull);
   });
@@ -491,7 +490,7 @@ void main() {
 
     // Without the auto skip, the axis has a tick for each label.
     await _tap(tester, 'axes.ticks.autoSkip');
-    expect(_tickOption(chart, 'x', 'autoSkip'), false);
+    expect(_ticks(chart, 'x').autoSkip, false);
     expect(x.ticks, hasLength(1000));
     await _tap(tester, 'axes.ticks.autoSkip');
     expect(x.ticks, hasLength(skipped));
@@ -500,39 +499,40 @@ void main() {
     await _tap(tester, 'axes.ticks.maxRotation.0');
     expect(_selected(tester, 'axes.ticks.maxRotation.0'), isTrue);
     expect(_selected(tester, 'axes.ticks.maxRotation.50'), isFalse);
-    expect(_tickOption(chart, 'x', 'maxRotation'), 0);
+    expect(_ticks(chart, 'x').maxRotation, 0);
     expect(jsToNumber(x.labelRotation), 0);
     // minRotation 90 turns them up.
     await _tap(tester, 'axes.ticks.minRotation.90');
-    expect(_tickOption(chart, 'x', 'minRotation'), 90);
+    expect(_ticks(chart, 'x').minRotation, 90);
     expect(jsToNumber(x.labelRotation), 90);
     expect(_row(state, 'x'), endsWith('rotation 90.0'));
     // minRotation 45 with maxRotation 0: minRotation >= maxRotation gives
     // the rotation minRotation (core.scale.js:595-596).
     await _tap(tester, 'axes.ticks.minRotation.45');
-    expect(_tickOption(chart, 'x', 'minRotation'), 45);
+    expect(_ticks(chart, 'x').minRotation, 45);
     expect(jsToNumber(x.labelRotation), 45);
     await _tap(tester, 'axes.ticks.minRotation.90');
 
     // maxTicksLimit 20 limits the auto skip. The value 0 writes no option.
     await _tap(tester, 'axes.ticks.maxTicksLimit.20');
-    expect(_tickOption(chart, 'x', 'maxTicksLimit'), 20);
+    expect(_ticks(chart, 'x').maxTicksLimit, 20);
     expect(x.ticks!.length, lessThanOrEqualTo(20));
     await _tap(tester, 'axes.ticks.maxTicksLimit.5');
-    expect(_tickOption(chart, 'x', 'maxTicksLimit'), 5);
+    expect(_ticks(chart, 'x').maxTicksLimit, 5);
     expect(x.ticks!.length, lessThanOrEqualTo(5));
     await _tap(tester, 'axes.ticks.maxTicksLimit.0');
-    expect(_tickOption(chart, 'x', 'maxTicksLimit'), same(undefined));
+    // An absent option reads as null.
+    expect(_ticks(chart, 'x').maxTicksLimit, isNull);
     // The flat labels of 90 degrees leave space for more ticks.
     expect(x.ticks!.length, greaterThan(30));
 
     await _tap(tester, 'axes.ticks.font.size.24');
-    expect((_tickOption(chart, 'y', 'font')! as TextStyle).fontSize, 24);
+    expect(_ticks(chart, 'y').font!.fontSize, 24);
 
     await _tap(tester, 'axes.ticks.align.start');
     expect(_selected(tester, 'axes.ticks.align.start'), isTrue);
-    expect(_tickOption(chart, 'x', 'align'), TickAlign.start);
-    expect(_tickOption(chart, 'y', 'align'), TickAlign.start);
+    expect(_ticks(chart, 'x').align, TickAlign.start);
+    expect(_ticks(chart, 'y').align, TickAlign.start);
     expect(tester.takeException(), isNull);
   });
 
@@ -543,19 +543,17 @@ void main() {
     final height = chart.chartArea!.height;
 
     await _tap(tester, 'axes.grid.display');
-    expect(jsGet(x.optionsView['grid'], 'display'), false);
+    expect(x.options.grid.display, false);
     await _tap(tester, 'axes.grid.offset');
-    expect(jsGet(x.optionsView['grid'], 'offset'), true);
+    expect(x.options.grid.offset, true);
     await _tap(tester, 'axes.border.display');
-    expect((x.optionsView['border']! as AxisBorder).display, isFalse);
+    expect((x.options.border! as AxisBorder).display, isFalse);
 
     // A title takes space from the chart area.
     await _tap(tester, 'axes.title.display');
-    expect(jsGet(x.optionsView['title'], 'display'), true);
-    expect(jsGet(x.optionsView['title'], 'text'), ['x: linear']);
-    expect(jsGet(_scale(chart, 'y').optionsView['title'], 'text'), [
-      'y: linear',
-    ]);
+    expect(x.options.title.display, true);
+    expect(x.options.title.text, ['x: linear']);
+    expect(_scale(chart, 'y').options.title.text, ['y: linear']);
     expect(chart.chartArea!.height, lessThan(height));
     expect(tester.takeException(), isNull);
   });
@@ -580,11 +578,11 @@ void main() {
     // ticks with the display format of the unit.
     await _tap(tester, 'axes.x.type.time');
     await _tap(tester, 'axes.time.unit.day');
-    final time = _scale(chart, 'x');
-    expect(jsGet(time.optionsView['time'], 'unit'), TimeUnit.day);
+    final time = _scale(chart, 'x') as TimeScale;
+    expect(time.options.time.unit, TimeUnit.day);
     expect(time.ticks!.first.label, ['Jan 1']);
     await _tap(tester, 'axes.time.unit.month');
-    expect(jsGet(time.optionsView['time'], 'unit'), TimeUnit.month);
+    expect(time.options.time.unit, TimeUnit.month);
     expect(time.ticks!.first.label, ['Jan 2024']);
     await _tap(tester, 'axes.time.unit.year');
     expect(

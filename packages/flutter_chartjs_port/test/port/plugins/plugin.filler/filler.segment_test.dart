@@ -25,22 +25,21 @@ PointElement _point(double x, double y, double angle, {bool skip = false}) {
 }
 
 /// The source line of the case P2: a radar line with a gap at index 2.
-LineElement _radarSource() => LineElement(<String, Object?>{
-  'points': [
+LineElement _radarSource() => LineElement()
+  ..points = [
     _point(256, 172.5, -1.5707963267948966),
     _point(460.477151003458, 213.56134620938633, -0.3141592653589793),
     _point(double.nan, double.nan, 0.9424777960769379, skip: true),
     _point(129.6261707571183, 453.93865379061367, 2.199114857512855),
     _point(153.76142449827097, 246.78067310469316, 3.4557519189487724),
-  ],
-  'options': LineOptions(<String, Object?>{}),
-  '_loop': true,
-});
+  ]
+  ..options = LineOptions(<String, Object?>{})
+  ..loop = true;
 
 /// The target line of the case P2: the polygon of the origin, five wrapped
 /// records `{x, y, angle}` at the center (filler.helper.js:28-33).
-LineElement _radarTarget() => LineElement(<String, Object?>{
-  'points': [
+LineElement _radarTarget() => LineElement()
+  ..points = [
     for (final angle in [
       -1.5707963267948966,
       -0.3141592653589793,
@@ -49,11 +48,10 @@ LineElement _radarTarget() => LineElement(<String, Object?>{
       3.4557519189487724,
     ])
       _point(256, 280, angle),
-  ],
-  'options': LineOptions(<String, Object?>{'tension': 0.0}),
-  '_loop': true,
-  '_fullLoop': true,
-});
+  ]
+  ..options = LineOptions(<String, Object?>{'tension': 0.0})
+  ..loop = true
+  ..fullLoop = true;
 
 /// `[x, y, angle]` of [point], read by name.
 List<Object?> _byName(IPointElement point) {
@@ -106,8 +104,8 @@ void main() {
     });
 
     test('pointsFromSegments makes points with only x and y', () {
-      final line = LineElement(<String, Object?>{
-        'points': [
+      final line = LineElement()
+        ..points = [
           PointElement()
             ..x = 10
             ..y = 20,
@@ -117,9 +115,8 @@ void main() {
           PointElement()
             ..x = 50
             ..y = double.nan,
-        ],
-        'options': LineOptions(<String, Object?>{}),
-      });
+        ]
+        ..options = LineOptions(<String, Object?>{});
       final horizontal = pointsFromSegments((x: null, y: 400), line);
       expect(
         [for (final p in horizontal) _byName(p)],
@@ -146,17 +143,16 @@ void main() {
   });
 
   group('segments with a target that is not a line', () {
-    LineElement source() => LineElement(<String, Object?>{
-      'points': [
+    LineElement source() => LineElement()
+      ..points = [
         PointElement()
           ..x = 10
           ..y = 20,
         PointElement()
           ..x = 30
           ..y = 40,
-      ],
-      'options': LineOptions(<String, Object?>{}),
-    });
+      ]
+      ..options = LineOptions(<String, Object?>{});
 
     test('a SimpleArc takes the simpleArc branch (filler.segment.js:15)', () {
       final line = source();

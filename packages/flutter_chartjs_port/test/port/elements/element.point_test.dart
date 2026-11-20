@@ -124,7 +124,7 @@ ElementOptions _genericOptions(AnyObject options) =>
 /// The two forms of the options of a point (Chart.js ADR 0018, section 6):
 /// generic options, and a [PointOptions] with the same entries in the same key
 /// order.
-const Map<String, Object Function(AnyObject options)> _optionsForms = {
+const Map<String, ElementOptions Function(AnyObject options)> _optionsForms = {
   'generic options': _genericOptions,
   'PointOptions': PointOptions.new,
 };
@@ -296,6 +296,7 @@ void main() {
       final parsed = <String, Object?>{'x': 1, 'y': 2};
       final options = PointOptions({'radius': 3});
       final context = <String, Object?>{'type': 'data'};
+      // The constructor Map: the case is the assign of cfg.
       final point = PointElement({
         'x': 10,
         'y': 1.5,
@@ -354,6 +355,7 @@ void main() {
     });
 
     test('a write of undefined restores the undefined state', () {
+      // The constructor Map: the case writes and reads the names by name.
       final point = PointElement({
         'parsed': <String, Object?>{},
         'skip': true,
@@ -443,9 +445,15 @@ void main() {
   group('control points', () {
     test('updateBezierControlPoints writes the control points', () {
       final points = [
-        PointElement({'x': 0, 'y': 0}),
-        PointElement({'x': 10, 'y': 10}),
-        PointElement({'x': 20, 'y': 0}),
+        PointElement()
+          ..x = 0
+          ..y = 0,
+        PointElement()
+          ..x = 10
+          ..y = 10,
+        PointElement()
+          ..x = 20
+          ..y = 0,
       ];
       updateBezierControlPoints(
         points,
@@ -479,7 +487,7 @@ void main() {
 
   group('angle', () {
     test('the property read of helpers.segment gives the radar angle', () {
-      final IPointElement radar = PointElement({'angle': 1.5});
+      final IPointElement radar = PointElement()..angle = 1.5;
       final IPointElement other = PointElement();
       // PointElementProperty, the read of helpers.segment.js:47 and :104.
       expect(radar['angle'], 1.5);
@@ -520,7 +528,9 @@ void main() {
     }
 
     test('the hit tests throw a TypeError without options', () {
-      final point = PointElement({'x': 10, 'y': 15});
+      final point = PointElement()
+        ..x = 10
+        ..y = 15;
       expect(() => point.inRange(10, 15), throwsA(isA<TypeError>()));
       expect(() => point.inXRange(10), throwsA(isA<TypeError>()));
       expect(() => point.inYRange(15), throwsA(isA<TypeError>()));
@@ -564,9 +574,11 @@ void main() {
     }
 
     test('ignores the axis', () {
-      final point = PointElement({
-        'options': PointOptions(<String, Object?>{'radius': 3, 'hitRadius': 1}),
-      });
+      final point = PointElement()
+        ..options = PointOptions(<String, Object?>{
+          'radius': 3,
+          'hitRadius': 1,
+        });
       expect(point.getRange(const XAxis()), 4);
       expect(point.getRange(const YAxis()), 4);
     });
@@ -598,11 +610,10 @@ void main() {
       group(name, () {
         for (final (options, range, hits, xHits) in cases) {
           test('$options', () {
-            final point = PointElement({
-              'x': 0.0,
-              'y': 0.0,
-              'options': form(options),
-            });
+            final point = PointElement()
+              ..x = 0.0
+              ..y = 0.0
+              ..options = form(options);
             expect(point.getRange(), range);
             for (final d in distances) {
               expect(point.inRange(d.toDouble(), 0), hits.contains(d));
@@ -628,7 +639,7 @@ void main() {
     for (final MapEntry(key: name, value: form) in _optionsForms.entries) {
       for (final (options, size) in sizes) {
         test('$name size $options', () {
-          final point = PointElement({'options': form(options)});
+          final point = PointElement()..options = form(options);
           expect(point.size(), size.isNaN ? isNaN : size);
         });
       }
@@ -662,18 +673,29 @@ void main() {
 
     test('throws a TypeError without options unless skip is true', () {
       expect(
-        () => PointElement({'x': 10, 'y': 15}).draw(_Context()),
+        () =>
+            (PointElement()
+                  ..x = 10
+                  ..y = 15)
+                .draw(_Context()),
         throwsA(isA<TypeError>()),
       );
       final ctx = _Context();
-      PointElement({'x': 10, 'y': 15, 'skip': true}).draw(ctx);
+      (PointElement()
+            ..x = 10
+            ..y = 15
+            ..skip = true)
+          .draw(ctx);
       expect(ctx.getCalls(), isEmpty);
     });
   });
 
   group('drawPoint adapter', () {
     test('draws the same calls with the kept adapter', () {
-      final point = PointElement({'options': _options(), 'x': 50, 'y': 40});
+      final point = PointElement()
+        ..options = _options()
+        ..x = 50
+        ..y = 40;
       final first = _Context();
       final second = _Context();
       point
@@ -685,7 +707,10 @@ void main() {
 
     test('reads a change of the options Map at the next draw', () {
       final options = _options();
-      final point = PointElement({'options': options, 'x': 50, 'y': 40})
+      final point = PointElement()
+        ..options = options
+        ..x = 50
+        ..y = 40
         ..draw(_Context());
       options['radius'] = 7;
       final ctx = _Context();
@@ -694,7 +719,10 @@ void main() {
     });
 
     test('reads a new options Map at the next draw', () {
-      final point = PointElement({'options': _options(), 'x': 50, 'y': 40})
+      final point = PointElement()
+        ..options = _options()
+        ..x = 50
+        ..y = 40
         ..draw(_Context())
         ..options = _options(radius: 9);
       final ctx = _Context();

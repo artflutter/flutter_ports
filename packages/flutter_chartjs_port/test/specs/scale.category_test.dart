@@ -47,6 +47,14 @@ import '../support/tick_label.dart';
 //   options: `xScale.options['offset'] = true`.
 // - `chart.options.scales.x.bounds = 'ticks'` writes into the resolver of
 //   the last read of the chain.
+// - A chart config is a typed `ChartConfig` (Chart.js ADR 0052). Seven
+//   cases keep a Map config: five give `data.xLabels` or `data.yLabels`
+//   (two of them also string data values), and two give the data as an
+//   object by label, which the typed config cannot hold.
+
+/// The chart of the typed [config] (Chart.js ADR 0052).
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 /// `toEqual(expected)` of a number: the value and the sign of a zero.
 Matcher _equalsNumber(num expected) => allOf(
@@ -82,6 +90,7 @@ void main() {
       expect(ticks.callbackCell?.raw, same(categoryTicks.callbackCell?.raw));
     });
 
+    // A Map config: `data.xLabels` has no typed form.
     testWidgets('Should generate ticks from the data xLabels', (tester) async {
       final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
       final chart = acquireChart(<String, Object?>{
@@ -105,6 +114,7 @@ void main() {
       expect(_getLabels(scale), equals(labels));
     });
 
+    // A Map config: `data.yLabels` has no typed form.
     testWidgets('Should generate ticks from the data yLabels', (tester) async {
       final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
       final chart = acquireChart(<String, Object?>{
@@ -129,27 +139,23 @@ void main() {
     });
 
     testWidgets('Should generate ticks from the axis labels', (tester) async {
-      final labels = <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final labels = <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: const [
+            LineDataset(data: [10, 5, 0, 25, 78]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'category', 'labels': labels},
-          },
-        },
-      });
+          scales: {'x': CategoryAxis(labels: labels)},
+        ),
+      );
 
       final scale = chart.scales['x']!;
       expect(_getLabels(scale), equals(labels));
     });
 
+    // A Map config: the data is an object by label, which a typed dataset
+    // cannot hold.
     testWidgets('Should generate missing labels', (tester) async {
       final labels = <Object?>['a', 'b', 'c', 'd'];
       final chart = acquireChart(<String, Object?>{
@@ -176,28 +182,19 @@ void main() {
     });
 
     testWidgets('should parse only to a valid index', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{'type': 'linear'},
+          labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+          scales: {
+            'x': CategoryAxis(position: ChartPosition.bottom),
+            'y': LinearAxis(),
           },
-        },
-      });
+        ),
+      );
 
       final scale = chart.scales['x']!;
 
@@ -212,28 +209,19 @@ void main() {
     });
 
     testWidgets('should get the correct label for the index', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{'type': 'linear'},
+          labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
+          scales: {
+            'x': CategoryAxis(position: ChartPosition.bottom),
+            'y': LinearAxis(),
           },
-        },
-      });
+        ),
+      );
 
       final scale = chart.scales['x']!;
 
@@ -243,28 +231,19 @@ void main() {
     testWidgets('Should get the correct pixel for a value when horizontal', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'yAxisID': 'y',
-              'data': <Object?>[10, 5, 0, 25, 78],
-            },
+      final chart = _acquire(
+        const ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
           ],
-          'labels': <Object?>['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'position': ChartPosition.bottom,
-            },
-            'y': <String, Object?>{'type': 'linear'},
+          labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
+          scales: {
+            'x': CategoryAxis(position: ChartPosition.bottom),
+            'y': LinearAxis(),
           },
-        },
-      });
+        ),
+      );
 
       final xScale = chart.scales['x']!;
       expect(
@@ -293,34 +272,19 @@ void main() {
       'Should get the correct pixel for a value when there are repeated '
       'labels',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
             ],
-            'labels': <Object?>[
-              'tick1',
-              'tick2',
-              'tick3',
-              'tick4',
-              'tick_last',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{'type': 'linear'},
+            labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
+            scales: {
+              'x': CategoryAxis(position: ChartPosition.bottom),
+              'y': LinearAxis(),
             },
-          },
-        });
+          ),
+        );
 
         final xScale = chart.scales['x']!;
         expect(
@@ -333,36 +297,23 @@ void main() {
     testWidgets(
       'Should get the correct pixel for a value when horizontal and zoomed',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>[10, 5, 0, 25, 78],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
             ],
-            'labels': <Object?>[
-              'tick1',
-              'tick2',
-              'tick3',
-              'tick4',
-              'tick_last',
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.bottom,
-                'min': 'tick2',
-                'max': 'tick4',
-              },
-              'y': <String, Object?>{'type': 'linear'},
+            labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
+            scales: {
+              'x': CategoryAxis(
+                position: ChartPosition.bottom,
+                min: 'tick2',
+                max: 'tick4',
+              ),
+              'y': LinearAxis(),
             },
-          },
-        });
+          ),
+        );
 
         final xScale = chart.scales['x']!;
         expect(
@@ -382,6 +333,8 @@ void main() {
       },
     );
 
+    // A Map config: string data values and `data.yLabels`, which the typed
+    // config cannot hold.
     testWidgets('should get the correct pixel for a value when vertical', (
       tester,
     ) async {
@@ -429,6 +382,8 @@ void main() {
       expect(yScale.getValueForPixel(167), 1);
     });
 
+    // A Map config: string data values and `data.yLabels`, which the typed
+    // config cannot hold.
     testWidgets(
       'should get the correct pixel for a value when vertical and zoomed',
       (tester) async {
@@ -477,34 +432,29 @@ void main() {
     testWidgets(
       'Should get the correct pixel for an object value when horizontal',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>[
-                  <String, Object?>{'x': 0, 'y': 10},
-                  <String, Object?>{'x': 1, 'y': 5},
-                  <String, Object?>{'x': 2, 'y': 0},
-                  <String, Object?>{'x': 3, 'y': 25},
-                  <String, Object?>{'x': 0, 'y': 78},
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(
+                xAxisID: 'x',
+                yAxisID: 'y',
+                points: [
+                  DataPoint(0, 10),
+                  DataPoint(1, 5),
+                  DataPoint(2, 0),
+                  DataPoint(3, 25),
+                  DataPoint(0, 78),
                 ],
-              },
+              ),
             ],
-            'labels': <Object?>[0, 1, 2, 3],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{'type': 'linear'},
+            labels: const [0, 1, 2, 3],
+            scales: const {
+              'x': CategoryAxis(position: ChartPosition.bottom),
+              'y': LinearAxis(),
             },
-          },
-        });
+          ),
+        );
 
         final xScale = chart.scales['x']!;
         expect(xScale.getPixelForValue(0), toBeCloseToPixel(29));
@@ -513,6 +463,7 @@ void main() {
       },
     );
 
+    // A Map config: `data.yLabels` has no typed form.
     testWidgets(
       'Should get the correct pixel for an object value when vertical',
       (tester) async {
@@ -558,34 +509,29 @@ void main() {
     testWidgets(
       'Should get the correct pixel for an object value in a bar chart',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'xAxisID': 'x',
-                'yAxisID': 'y',
-                'data': <Object?>[
-                  <String, Object?>{'x': 0, 'y': 10},
-                  <String, Object?>{'x': 1, 'y': 5},
-                  <String, Object?>{'x': 2, 'y': 0},
-                  <String, Object?>{'x': 3, 'y': 25},
-                  <String, Object?>{'x': 0, 'y': 78},
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(
+                xAxisID: 'x',
+                yAxisID: 'y',
+                points: [
+                  DataPoint(0, 10),
+                  DataPoint(1, 5),
+                  DataPoint(2, 0),
+                  DataPoint(3, 25),
+                  DataPoint(0, 78),
                 ],
-              },
+              ),
             ],
-            'labels': <Object?>[0, 1, 2, 3],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'category',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{'type': 'linear'},
+            labels: const [0, 1, 2, 3],
+            scales: const {
+              'x': CategoryAxis(position: ChartPosition.bottom),
+              'y': LinearAxis(),
             },
-          },
-        });
+          ),
+        );
 
         final xScale = chart.scales['x']!;
         expect(xScale.getPixelForValue(0), toBeCloseToPixel(89));
@@ -598,33 +544,28 @@ void main() {
       'Should get the correct pixel for an object value in a horizontal bar '
       'chart',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 0},
-                  <String, Object?>{'x': 5, 'y': 1},
-                  <String, Object?>{'x': 0, 'y': 2},
-                  <String, Object?>{'x': 25, 'y': 3},
-                  <String, Object?>{'x': 78, 'y': 0},
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.bar,
+            datasets: [
+              BarDataset(
+                points: [
+                  DataPoint(10, 0),
+                  DataPoint(5, 1),
+                  DataPoint(0, 2),
+                  DataPoint(25, 3),
+                  DataPoint(78, 0),
                 ],
-              },
+              ),
             ],
-            'labels': <Object?>[0, 1, 2, 3],
-          },
-          'options': <String, Object?>{
-            'indexAxis': const YAxis(),
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'linear',
-                'position': ChartPosition.bottom,
-              },
-              'y': <String, Object?>{'type': 'category'},
+            labels: const [0, 1, 2, 3],
+            indexAxis: const YAxis(),
+            scales: const {
+              'x': LinearAxis(position: ChartPosition.bottom),
+              'y': CategoryAxis(),
             },
-          },
-        });
+          ),
+        );
 
         final yScale = chart.scales['y']!;
         expect(yScale.getPixelForValue(0), toBeCloseToPixel(88));
@@ -636,21 +577,19 @@ void main() {
     testWidgets(
       'Should be consistent on pixels and values with autoSkipped ticks',
       (tester) async {
-        final labels = <Object?>[];
+        final labels = <Object>[];
         for (var i = 0; i < 50; i++) {
           labels.add('very long label $i');
         }
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'labels': labels,
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
-              },
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.bar,
+            labels: labels,
+            datasets: const [
+              BarDataset(data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
             ],
-          },
-        });
+          ),
+        );
 
         final scale = chart.scales['x']!;
         expect(scale.ticks!.length, lessThan(50));
@@ -667,6 +606,8 @@ void main() {
       },
     );
 
+    // A Map config: the data is an object by label, which a typed dataset
+    // cannot hold.
     testWidgets('Should bound to ticks/data', (tester) async {
       final chart = acquireChart(<String, Object?>{
         'type': 'line',

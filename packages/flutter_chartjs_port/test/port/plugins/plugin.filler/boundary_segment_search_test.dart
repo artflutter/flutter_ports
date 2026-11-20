@@ -9,10 +9,9 @@ PointElement _point(double x, double y) => PointElement()
   ..x = x
   ..y = y;
 
-LineElement _line(List<IPointElement> points) => LineElement({
-  'points': points,
-  'options': LineOptions(<String, Object?>{'tension': 0.0}),
-});
+LineElement _line(List<IPointElement> points) => LineElement()
+  ..points = points
+  ..options = LineOptions(<String, Object?>{'tension': 0.0});
 
 List<Object?> _segment(Segment segment) => [
   segment.start,

@@ -294,54 +294,69 @@ List<String> _everyFourth(Scale scale, List<String> label, int index) =>
 
 /// A radar or polar area config of [n] labels. [r] gives the options of the
 /// scale `r`, over labels with a [callback]. Each call gives new objects.
-AnyObject _config({
-  String type = 'radar',
+///
+/// [r] and [pointLabels] go through `extra`: their cases give scriptable,
+/// indexed, string and integer values, which the typed parameters cannot
+/// hold. A [callback] that is not a [PointLabelCallback] goes through `extra`
+/// too: its cases stop a debug build.
+ChartConfigurationScope _config({
+  ChartKind type = ChartKind.radar,
   String? scaleType,
   int n = 40,
-  List<Object?>? labels,
+  List<Object>? labels,
   AnyObject Function()? r,
   AnyObject Function()? pointLabels,
   Object? callback = _everyFourth,
-}) => <String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
-    'labels': labels ?? <Object?>[for (var i = 0; i < n; i++) 'Label $i'],
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          for (var i = 0; i < (labels?.length ?? n); i++)
-            ((i * 37) % 100).toDouble(),
-        ],
+}) {
+  final rOptions = r?.call() ?? const <String, Object?>{};
+  // A case with its own angle lines replaces the angle lines of the base.
+  final baseLines = !rOptions.containsKey('angleLines');
+  final data = <num?>[
+    for (var i = 0; i < (labels?.length ?? n); i++) ((i * 37) % 100).toDouble(),
+  ];
+  final typedCallback = callback is PointLabelCallback ? callback : null;
+  final rawCallback = typedCallback == null ? callback : null;
+  final labelOptions = <String, Object?>{
+    'callback': ?rawCallback,
+    ...?pointLabels?.call(),
+  };
+  return ChartConfigLowering(
+    ChartConfig(
+      type: type,
+      datasets: [
+        if (type == ChartKind.polarArea)
+          PolarAreaDataset(data: data)
+        else
+          RadarDataset(data: data),
+      ],
+      labels: labels ?? <Object>[for (var i = 0; i < n; i++) 'Label $i'],
+      responsive: false,
+      scales: {
+        'r': RadialLinearAxis(
+          min: 0,
+          max: 100,
+          grid: const AxisGrid(color: ChartPaint.solid(ui.Color(0x33000000))),
+          angleLinesDisplay: baseLines ? true : null,
+          angleLinesColor: baseLines
+              ? const ChartPaint.solid(ui.Color(0xFF336699))
+              : null,
+          ticks: const AxisTicks(display: false),
+          pointLabelsDisplay: ScaleDisplay.on,
+          pointLabelsCallback: typedCallback,
+          extra: {
+            'type': ?scaleType,
+            ...rOptions,
+            if (labelOptions.isNotEmpty) 'pointLabels': labelOptions,
+          },
+        ),
       },
-    ],
-  },
-  'options': <String, Object?>{
-    'responsive': false,
-    'events': <String>[],
-    'plugins': <String, Object?>{'legend': false},
-    'scales': <String, Object?>{
-      'r': <String, Object?>{
-        'type': ?scaleType,
-        'min': 0.0,
-        'max': 100.0,
-        'grid': <String, Object?>{
-          'color': const ChartPaint.solid(ui.Color(0x33000000)),
-        },
-        'angleLines': <String, Object?>{
-          'display': true,
-          'color': const ChartPaint.solid(ui.Color(0xFF336699)),
-        },
-        'ticks': <String, Object?>{'display': false},
-        ...?r?.call(),
-        'pointLabels': <String, Object?>{
-          'display': ScaleDisplay.on,
-          'callback': ?callback,
-          ...?pointLabels?.call(),
-        },
+      extra: const {
+        'events': <String>[],
+        'plugins': {'legend': false},
       },
-    },
-  },
-};
+    ),
+  ).lower();
+}
 
 /// What the plan must do in a case: `true` for a plan, on the recording
 /// context with the capability.
@@ -356,22 +371,23 @@ final class const _Expect({
 final class const _Case(
   final String name, {
   final _Expect expected = const _Expect(),
-  final List<Object?>? labels,
+  final List<Object>? labels,
   final AnyObject Function()? r,
   final AnyObject Function()? pointLabels,
   final Object? callback = _everyFourth,
   final List<int> hidden = const [],
   final int n = 40,
 }) {
-  AnyObject config(String type, {String? scaleType}) => _config(
-    type: type,
-    scaleType: scaleType,
-    n: n,
-    labels: labels,
-    r: r,
-    pointLabels: pointLabels,
-    callback: callback,
-  );
+  ChartConfigurationScope config(ChartKind type, {String? scaleType}) =>
+      _config(
+        type: type,
+        scaleType: scaleType,
+        n: n,
+        labels: labels,
+        r: r,
+        pointLabels: pointLabels,
+        callback: callback,
+      );
 }
 
 /// The user calls of the scriptable options of a run, with their contexts.
@@ -672,105 +688,107 @@ void main() {
   ]);
 
   group('twins', () {
-    for (final type in const ['radar', 'polarArea']) {
+    for (final type in const [ChartKind.radar, ChartKind.polarArea]) {
       for (final c in _cases) {
-        testWidgets('$type: ${c.name} draws and fits as the ordinary loops', (
-          tester,
-        ) async {
-          _userCalls.clear();
-          final chart = acquireChart(c.config(type));
-          if (c.hidden.isNotEmpty) {
-            c.hidden.forEach(chart.toggleDataVisibility);
-          }
-          final target = chart.ctx!;
+        testWidgets(
+          '${type.name}: ${c.name} draws and fits as the ordinary loops',
+          (tester) async {
+            _userCalls.clear();
+            final chart = acquireChartRoot(c.config(type));
+            if (c.hidden.isNotEmpty) {
+              c.hidden.forEach(chart.toggleDataVisibility);
+            }
+            final target = chart.ctx!;
 
-          // Fit: the same chart, one update on each context.
-          _userCalls.clear();
-          final ordinaryLayout = _layoutWith(chart, _Recorder(target));
-          final ordinaryFitCalls = [..._userCalls];
-          _userCalls.clear();
-          final planLayout = _layoutWith(chart, _PlanRecorder(target));
-          expect(planLayout, ordinaryLayout);
-          expect(_userCalls, ordinaryFitCalls);
+            // Fit: the same chart, one update on each context.
+            _userCalls.clear();
+            final ordinaryLayout = _layoutWith(chart, _Recorder(target));
+            final ordinaryFitCalls = [..._userCalls];
+            _userCalls.clear();
+            final planLayout = _layoutWith(chart, _PlanRecorder(target));
+            expect(planLayout, ordinaryLayout);
+            expect(_userCalls, ordinaryFitCalls);
 
-          // One fit alone: the calls of each form.
-          final ordinaryFit = _fitWith(chart, _Recorder(target));
-          final planFit = _fitWith(chart, _PlanRecorder(target));
-          expect(_layoutText(_scaleOf(chart)), planLayout);
-          final labels = _scaleOf(chart).pointLabels.length;
-          if (!c.expected.fit) {
-            expect(_count(planFit, 'save'), _count(ordinaryFit, 'save'));
-          } else if (labels > 2) {
-            expect(
-              _count(planFit, 'save'),
-              lessThan(_count(ordinaryFit, 'save')),
-            );
-          }
+            // One fit alone: the calls of each form.
+            final ordinaryFit = _fitWith(chart, _Recorder(target));
+            final planFit = _fitWith(chart, _PlanRecorder(target));
+            expect(_layoutText(_scaleOf(chart)), planLayout);
+            final labels = _scaleOf(chart).pointLabels.length;
+            if (!c.expected.fit) {
+              expect(_count(planFit, 'save'), _count(ordinaryFit, 'save'));
+            } else if (labels > 2) {
+              expect(
+                _count(planFit, 'save'),
+                lessThan(_count(ordinaryFit, 'save')),
+              );
+            }
 
-          // Draw: one scale draw on each context. A plan never adds a call.
-          _userCalls.clear();
-          final ordinary = _drawWith(chart, _Recorder(target));
-          final ordinaryDrawCalls = [..._userCalls];
-          _userCalls.clear();
-          final plan = _drawWith(chart, _PlanRecorder(target));
-          expect(_userCalls, ordinaryDrawCalls);
-          expect(_rawOperations(plan), _rawOperations(ordinary));
-          expect(_effectiveLog(plan), _effectiveLog(ordinary));
-          expect(plan.length, lessThanOrEqualTo(ordinary.length));
-          if (labels > 1) {
-            final emptyOrdinary = _emptyTexts(ordinary);
-            if (emptyOrdinary > 1) {
-              if (c.expected.labels) {
-                // Only the first ordinary label can have an empty string.
-                expect(_emptyTexts(plan), lessThanOrEqualTo(1));
-              } else {
-                expect(_emptyTexts(plan), emptyOrdinary);
+            // Draw: one scale draw on each context. A plan never adds a call.
+            _userCalls.clear();
+            final ordinary = _drawWith(chart, _Recorder(target));
+            final ordinaryDrawCalls = [..._userCalls];
+            _userCalls.clear();
+            final plan = _drawWith(chart, _PlanRecorder(target));
+            expect(_userCalls, ordinaryDrawCalls);
+            expect(_rawOperations(plan), _rawOperations(ordinary));
+            expect(_effectiveLog(plan), _effectiveLog(ordinary));
+            expect(plan.length, lessThanOrEqualTo(ordinary.length));
+            if (labels > 1) {
+              final emptyOrdinary = _emptyTexts(ordinary);
+              if (emptyOrdinary > 1) {
+                if (c.expected.labels) {
+                  // Only the first ordinary label can have an empty string.
+                  expect(_emptyTexts(plan), lessThanOrEqualTo(1));
+                } else {
+                  expect(_emptyTexts(plan), emptyOrdinary);
+                }
+              }
+              final strokesOrdinary = _count(ordinary, 'setStrokeStyle');
+              final strokesPlan = _count(plan, 'setStrokeStyle');
+              switch (c.expected.lines) {
+                case true when labels > 2:
+                  expect(strokesPlan, lessThan(strokesOrdinary));
+                case false:
+                  expect(strokesPlan, strokesOrdinary);
+                case _:
+                  break;
               }
             }
-            final strokesOrdinary = _count(ordinary, 'setStrokeStyle');
-            final strokesPlan = _count(plan, 'setStrokeStyle');
-            switch (c.expected.lines) {
-              case true when labels > 2:
-                expect(strokesPlan, lessThan(strokesOrdinary));
-              case false:
-                expect(strokesPlan, strokesOrdinary);
-              case _:
-                break;
-            }
-          }
-        });
+          },
+        );
 
-        testWidgets('$type: ${c.name} paints the pixels of a user subclass', (
-          tester,
-        ) async {
-          final planned = acquireChart(c.config(type));
-          final ordinary = acquireChart(
-            c.config(type, scaleType: 'ordinaryRadial'),
-          );
-          expect(_scaleOf(planned).runtimeType, RadialLinearScale);
-          expect(_scaleOf(ordinary).runtimeType, _OrdinaryRadial);
-          // The exact scale takes its plans on this native canvas.
-          expect(
-            (planned.ctx! as CanvasTextMetricsSource).textMetricsGeneration,
-            isNotNull,
-          );
-          if (c.hidden.isNotEmpty) {
-            c.hidden.forEach(planned.toggleDataVisibility);
-            c.hidden.forEach(ordinary.toggleDataVisibility);
-            planned.update(UpdateMode.none);
-            ordinary.update(UpdateMode.none);
-          }
-          expect(
-            _layoutText(_scaleOf(planned)),
-            _layoutText(_scaleOf(ordinary)),
-          );
-          final plannedPixels = await _pixels(tester, planned);
-          final ordinaryPixels = await _pixels(tester, ordinary);
-          expect(
-            plannedPixels.buffer.asUint8List(),
-            ordinaryPixels.buffer.asUint8List(),
-          );
-        });
+        testWidgets(
+          '${type.name}: ${c.name} paints the pixels of a user subclass',
+          (tester) async {
+            final planned = acquireChartRoot(c.config(type));
+            final ordinary = acquireChartRoot(
+              c.config(type, scaleType: 'ordinaryRadial'),
+            );
+            expect(_scaleOf(planned).runtimeType, RadialLinearScale);
+            expect(_scaleOf(ordinary).runtimeType, _OrdinaryRadial);
+            // The exact scale takes its plans on this native canvas.
+            expect(
+              (planned.ctx! as CanvasTextMetricsSource).textMetricsGeneration,
+              isNotNull,
+            );
+            if (c.hidden.isNotEmpty) {
+              c.hidden.forEach(planned.toggleDataVisibility);
+              c.hidden.forEach(ordinary.toggleDataVisibility);
+              planned.update(UpdateMode.none);
+              ordinary.update(UpdateMode.none);
+            }
+            expect(
+              _layoutText(_scaleOf(planned)),
+              _layoutText(_scaleOf(ordinary)),
+            );
+            final plannedPixels = await _pixels(tester, planned);
+            final ordinaryPixels = await _pixels(tester, ordinary);
+            expect(
+              plannedPixels.buffer.asUint8List(),
+              ordinaryPixels.buffer.asUint8List(),
+            );
+          },
+        );
       }
     }
   });
@@ -778,8 +796,8 @@ void main() {
   group('guards', () {
     testWidgets('a subclass with a recording context of the capability keeps '
         'each ordinary call', (tester) async {
-      final planned = acquireChart(_config());
-      final ordinary = acquireChart(_config(scaleType: 'ordinaryRadial'));
+      final planned = acquireChartRoot(_config());
+      final ordinary = acquireChartRoot(_config(scaleType: 'ordinaryRadial'));
       final plan = _drawWith(planned, _PlanRecorder(planned.ctx!));
       final subclass = _drawWith(ordinary, _PlanRecorder(ordinary.ctx!));
       expect(_emptyTexts(plan), lessThanOrEqualTo(1));
@@ -793,7 +811,7 @@ void main() {
       // In one draw, each label and each angle line read their own context, 24
       // in all. In one fit, each label reads its own context.
       ({int fit, int draw, List<ContextCall> calls}) run(String scaleType) {
-        final chart = acquireChart(_config(scaleType: scaleType, n: 12));
+        final chart = acquireChartRoot(_config(scaleType: scaleType, n: 12));
         final scale = _scaleOf(chart) as _CountedRadial;
         scale.contexts = 0;
         _fitWith(chart, _PlanRecorder(chart.ctx!));
@@ -830,7 +848,7 @@ void main() {
     testWidgets('the plan writes the state once and each line its path', (
       tester,
     ) async {
-      final chart = acquireChart(_config(n: 12));
+      final chart = acquireChartRoot(_config(n: 12));
       final calls = _drawWith(chart, _PlanRecorder(chart.ctx!));
       final names = [
         for (final call in calls)
@@ -861,7 +879,7 @@ void main() {
 
     testWidgets('a write into the resolver after the first update takes a new '
         'probe', (tester) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final scale = _scaleOf(chart);
       final target = chart.ctx!;
       // The set trap of the view: the next reads give the new color.
@@ -880,7 +898,7 @@ void main() {
     testWidgets('a deleted option leaves the plan to the ordinary reads', (
       tester,
     ) async {
-      final chart = acquireChart(_config());
+      final chart = acquireChartRoot(_config());
       final target = chart.ctx!;
       final scale = _scaleOf(chart);
       (scale.options.angleLines.view! as JsObjectFace).jsDelete('lineWidth');
@@ -894,7 +912,7 @@ void main() {
     testWidgets('has the fields, the key order and the parent of the literal', (
       tester,
     ) async {
-      final chart = acquireChart(_config(n: 4));
+      final chart = acquireChartRoot(_config(n: 4));
       final scale = _scaleOf(chart);
       final context = scale.getPointLabelContext(2)!;
       expect(context.jsKeys(), ['label', 'index', 'type']);
@@ -925,7 +943,7 @@ void main() {
     }) {
       List<String> run(String? scaleType) {
         final calls = <String>[];
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _config(scaleType: scaleType, n: n, callback: callback(calls)),
         );
         calls.add('update');
@@ -999,7 +1017,7 @@ void main() {
         addTearDown(() => foreignAudit = saved);
         for (final scaleType in [null, 'ordinaryRadial']) {
           expect(
-            () => acquireChart(
+            () => acquireChartRoot(
               _config(scaleType: scaleType, n: 4, callback: callback),
             ),
             throwsA(isA<AssertionError>()),
@@ -1025,7 +1043,7 @@ void main() {
         (calls) =>
             (Scale scale, List<String> label, int index) => results[index],
       );
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config(
           n: 8,
           callback: (Scale scale, List<String> label, int index) =>
@@ -1039,7 +1057,7 @@ void main() {
       Object? run(String? scaleType) {
         var calls = 0;
         try {
-          acquireChart(
+          acquireChartRoot(
             _config(
               scaleType: scaleType,
               callback: (Scale scale, List<String> label, int index) {
@@ -1082,7 +1100,7 @@ void main() {
           return ['first'];
         }
 
-        chart = acquireChart(_config(scaleType: scaleType, n: 5));
+        chart = acquireChartRoot(_config(scaleType: scaleType, n: 5));
         (jsGet(
                   jsGet(jsGet(chart.config.options, 'scales'), 'r'),
                   'pointLabels',
@@ -1102,7 +1120,7 @@ void main() {
         'callbacks', (tester) async {
       List<String> run(String? scaleType) {
         late Chart chart;
-        chart = acquireChart(
+        chart = acquireChartRoot(
           _config(scaleType: scaleType, n: 6, callback: null),
         );
         (jsGet(
@@ -1146,7 +1164,36 @@ void main() {
         false,
         <Object?>['l'],
       ];
-      final chart = acquireChart(_config(labels: labels, callback: null));
+      // A Map config: a null label, which the typed labels (`List<Object>`)
+      // cannot hold.
+      Map<String, Object?> config({String? scaleType}) => <String, Object?>{
+        'type': 'radar',
+        'data': <String, Object?>{
+          'labels': labels,
+          'datasets': <Object?>[
+            <String, Object?>{
+              'data': <Object?>[
+                for (var i = 0; i < labels.length; i++)
+                  ((i * 37) % 100).toDouble(),
+              ],
+            },
+          ],
+        },
+        'options': <String, Object?>{
+          'responsive': false,
+          'events': <String>[],
+          'plugins': <String, Object?>{'legend': false},
+          'scales': <String, Object?>{
+            'r': <String, Object?>{
+              'type': ?scaleType,
+              'min': 0.0,
+              'max': 100.0,
+              'pointLabels': <String, Object?>{'display': ScaleDisplay.on},
+            },
+          },
+        },
+      };
+      final chart = acquireChart(config());
       expect(_scaleOf(chart).pointLabels, <List<String>>[
         ['a'],
         [''],
@@ -1156,16 +1203,14 @@ void main() {
         [''],
         ['l'],
       ]);
-      final twin = acquireChart(
-        _config(labels: labels, callback: null, scaleType: 'ordinaryRadial'),
-      );
+      final twin = acquireChart(config(scaleType: 'ordinaryRadial'));
       expect(_scaleOf(twin).pointLabels, _scaleOf(chart).pointLabels);
     });
 
     testWidgets('no hidden index gives a growable list of the labels', (
       tester,
     ) async {
-      final chart = acquireChart(_config(n: 3));
+      final chart = acquireChartRoot(_config(n: 3));
       final labels = _scaleOf(chart).pointLabels;
       expect(labels, hasLength(3));
       labels.add(['more']);
@@ -1219,14 +1264,16 @@ void main() {
     }
 
     testWidgets('give the bits of the methods', (tester) async {
-      expectSameBits(acquireChart(_config()));
+      expectSameBits(acquireChartRoot(_config()));
     });
 
     testWidgets('give the bits of the methods with a start angle and reverse', (
       tester,
     ) async {
       expectSameBits(
-        acquireChart(_config(r: () => {'startAngle': 33.0, 'reverse': true})),
+        acquireChartRoot(
+          _config(r: () => {'startAngle': 33.0, 'reverse': true}),
+        ),
       );
     });
 
@@ -1234,7 +1281,7 @@ void main() {
       tester,
     ) async {
       expectSameBits(
-        acquireChart(
+        acquireChartRoot(
           _config(
             n: 0,
             r: () => {'startAngle': -725.5, 'min': -10.0, 'max': 10.0},
@@ -1244,7 +1291,7 @@ void main() {
     });
 
     testWidgets('are not for a user subclass', (tester) async {
-      final chart = acquireChart(_config(scaleType: 'ordinaryRadial'));
+      final chart = acquireChartRoot(_config(scaleType: 'ordinaryRadial'));
       expect(_scaleOf(chart).prepareRadialPositions(), isNull);
     });
 
@@ -1252,7 +1299,7 @@ void main() {
       tester,
     ) async {
       var reads = 0;
-      final chart = acquireChart(
+      final chart = acquireChartRoot(
         _config(
           r: () => {
             'startAngle': (Object? ctx) {

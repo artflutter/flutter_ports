@@ -29,19 +29,18 @@ void main() {
   group('Arc element tests', () {
     test('should determine if in range', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 5,
-        'outerRadius': 10,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi / 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 5
+        ..outerRadius = 10
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       expect(arc.inRange(2, 2), isFalse);
       expect(arc.inRange(7, 0), isTrue);
@@ -52,19 +51,18 @@ void main() {
 
     test('should determine if in range when full circle', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi * 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 5,
-        'outerRadius': 10,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi * 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 5
+        ..outerRadius = 10
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       for (final radius in [5.0, 7.5, 10.0]) {
         for (var angle = 0.0; angle <= 360; angle += 22.5) {
@@ -98,19 +96,18 @@ void main() {
 
     test('should include spacing for in range check', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 5,
-        'outerRadius': 10,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi / 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 5
+        ..outerRadius = 10
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 10,
           'offset': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       expect(arc.inRange(7, 0), isFalse);
       expect(arc.inRange(15, 0), isTrue);
@@ -118,19 +115,18 @@ void main() {
 
     test('should include borderWidth for in range check', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 5,
-        'outerRadius': 10,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi / 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 5
+        ..outerRadius = 10
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 10,
-        }),
-      });
+        });
 
       expect(arc.inRange(7, 0), isFalse);
       expect(arc.inRange(15, 0), isTrue);
@@ -138,39 +134,37 @@ void main() {
 
     test('should determine if in range, when full circle', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': -math.pi,
-        'endAngle': math.pi * 1.5,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 0,
-        'outerRadius': 10,
-        'circumference': math.pi * 2,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = -math.pi
+        ..endAngle = math.pi * 1.5
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 0
+        ..outerRadius = 10
+        ..circumference = math.pi * 2
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       expect(arc.inRange(7, 7), isTrue);
     });
 
     test('should get the tooltip position', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 0,
-        'outerRadius': math.sqrt(2),
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi / 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 0
+        ..outerRadius = math.sqrt(2)
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       final pos = arc.tooltipPosition();
       expect(pos.x, closeTo(0.5, 0.005));
@@ -179,19 +173,18 @@ void main() {
 
     test('should get the center', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 0,
-        'outerRadius': math.sqrt(2),
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi / 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 0
+        ..outerRadius = math.sqrt(2)
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       final center = arc.getCenterPoint();
       expect(center.x, closeTo(0.5, 5e-7));
@@ -200,19 +193,18 @@ void main() {
 
     test('should get the center with offset and spacing', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 0,
-        'outerRadius': math.sqrt(2),
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi / 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 0
+        ..outerRadius = math.sqrt(2)
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 10,
           'offset': 10,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       final center = arc.getCenterPoint();
       expect(center.x, closeTo(7.57, 5e-2));
@@ -221,19 +213,18 @@ void main() {
 
     test('should get the center of full circle before and after draw', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi * 2,
-        'x': 2,
-        'y': 2,
-        'innerRadius': 0,
-        'outerRadius': 2,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi * 2
+        ..x = 2
+        ..y = 2
+        ..innerRadius = 0
+        ..outerRadius = 2
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       var center = arc.getCenterPoint();
       expect(center.x, closeTo(1, 5e-7));
@@ -251,48 +242,48 @@ void main() {
       final ctx = createMockContext();
 
       // Upstream assigns each arc to `var arc` and then draws it.
-      ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': -0.1,
-        'outerRadius': math.sqrt(2),
-        'options': ArcOptions(<String, Object?>{
-          'spacing': 0,
-          'offset': 0,
-          'borderWidth': 0,
-        }),
-      }).draw(ctx);
+      (ArcElement()
+            ..startAngle = 0
+            ..endAngle = math.pi / 2
+            ..x = 0
+            ..y = 0
+            ..innerRadius = -0.1
+            ..outerRadius = math.sqrt(2)
+            ..options = ArcOptions(<String, Object?>{
+              'spacing': 0,
+              'offset': 0,
+              'borderWidth': 0,
+            }))
+          .draw(ctx);
 
       expect(ctx.getCalls().length, 0);
 
-      ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 0,
-        'outerRadius': -1,
-        'options': ArcOptions(<String, Object?>{
-          'spacing': 0,
-          'offset': 0,
-          'borderWidth': 0,
-        }),
-      }).draw(ctx);
+      (ArcElement()
+            ..startAngle = 0
+            ..endAngle = math.pi / 2
+            ..x = 0
+            ..y = 0
+            ..innerRadius = 0
+            ..outerRadius = -1
+            ..options = ArcOptions(<String, Object?>{
+              'spacing': 0,
+              'offset': 0,
+              'borderWidth': 0,
+            }))
+          .draw(ctx);
 
       expect(ctx.getCalls().length, 0);
     });
 
     test('should draw when circular: false', () {
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi * 2,
-        'x': 2,
-        'y': 2,
-        'innerRadius': 0,
-        'outerRadius': 2,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi * 2
+        ..x = 2
+        ..y = 2
+        ..innerRadius = 0
+        ..outerRadius = 2
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
@@ -304,8 +295,7 @@ void main() {
           'elements': <String, Object?>{
             'arc': <String, Object?>{'circular': false},
           },
-        }),
-      });
+        });
 
       final ctx = createMockContext();
       arc.draw(ctx);
@@ -315,20 +305,19 @@ void main() {
 
     test('should determine not in range when angle 0', () {
       // Mock out the arc as if the controller put it there
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': 0,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 0,
-        'outerRadius': 10,
-        'circumference': 0,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = 0
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 0
+        ..outerRadius = 10
+        ..circumference = 0
+        ..options = ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        }),
-      });
+        });
 
       final center = arc.getCenterPoint();
 
@@ -339,14 +328,14 @@ void main() {
       'should use angular spacing mode independently from proportional mode',
       () {
         ArcElement createArc(ArcSpacingMode spacingMode) {
-          return ArcElement({
-            'startAngle': 0,
-            'endAngle': math.pi / 2,
-            'x': 0,
-            'y': 0,
-            'innerRadius': 0,
-            'outerRadius': 100,
-            'options': ArcOptions(<String, Object?>{
+          return ArcElement()
+            ..startAngle = 0
+            ..endAngle = math.pi / 2
+            ..x = 0
+            ..y = 0
+            ..innerRadius = 0
+            ..outerRadius = 100
+            ..options = ArcOptions(<String, Object?>{
               'circular': true,
               'spacingMode': spacingMode,
               'spacing': 20,
@@ -359,8 +348,7 @@ void main() {
               'borderColor': const ChartPaint.solid(
                 ui.Color.fromRGBO(0, 0, 0, 1),
               ),
-            }),
-          });
+            });
         }
 
         double firstOuterArcStartAngle(ArcElement arc) {
@@ -408,14 +396,14 @@ void main() {
     );
 
     test('should keep valid arc direction with large parallel spacing', () {
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 40,
-        'outerRadius': 100,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi / 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 40
+        ..outerRadius = 100
+        ..options = ArcOptions(<String, Object?>{
           'circular': true,
           'spacingMode': ArcSpacingMode.parallel,
           'spacing': 40,
@@ -426,8 +414,7 @@ void main() {
             ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
-        }),
-      });
+        });
 
       final ctx = createMockContext();
       arc.draw(ctx);
@@ -442,14 +429,14 @@ void main() {
 
     test('should not reverse end separator angle in parallel mode with large '
         'spacing', () {
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi / 3,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 40,
-        'outerRadius': 100,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi / 3
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 40
+        ..outerRadius = 100
+        ..options = ArcOptions(<String, Object?>{
           'circular': true,
           'spacingMode': ArcSpacingMode.parallel,
           'spacing': 20,
@@ -460,8 +447,7 @@ void main() {
             ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
-        }),
-      });
+        });
 
       final ctx = createMockContext();
       arc.draw(ctx);
@@ -485,14 +471,14 @@ void main() {
       'should create a non-zero root for parallel spacing when innerRadius is '
       'zero',
       () {
-        final arc = ArcElement({
-          'startAngle': 0,
-          'endAngle': math.pi / 3,
-          'x': 0,
-          'y': 0,
-          'innerRadius': 0,
-          'outerRadius': 100,
-          'options': ArcOptions(<String, Object?>{
+        final arc = ArcElement()
+          ..startAngle = 0
+          ..endAngle = math.pi / 3
+          ..x = 0
+          ..y = 0
+          ..innerRadius = 0
+          ..outerRadius = 100
+          ..options = ArcOptions(<String, Object?>{
             'circular': true,
             'spacingMode': ArcSpacingMode.parallel,
             'spacing': 20,
@@ -505,8 +491,7 @@ void main() {
             'borderColor': const ChartPaint.solid(
               ui.Color.fromRGBO(0, 0, 0, 1),
             ),
-          }),
-        });
+          });
 
         final ctx = createMockContext();
         arc.draw(ctx);
@@ -527,14 +512,14 @@ void main() {
     test(
       'should render full-circle geometry for selfJoin with borderRadius',
       () {
-        final arc = ArcElement({
-          'startAngle': 0,
-          'endAngle': math.pi * 2,
-          'x': 0,
-          'y': 0,
-          'innerRadius': 50,
-          'outerRadius': 100,
-          'options': ArcOptions(<String, Object?>{
+        final arc = ArcElement()
+          ..startAngle = 0
+          ..endAngle = math.pi * 2
+          ..x = 0
+          ..y = 0
+          ..innerRadius = 50
+          ..outerRadius = 100
+          ..options = ArcOptions(<String, Object?>{
             'circular': true,
             'selfJoin': true,
             'spacing': 0,
@@ -547,8 +532,7 @@ void main() {
             'borderColor': const ChartPaint.solid(
               ui.Color.fromRGBO(0, 0, 0, 1),
             ),
-          }),
-        });
+          });
 
         final ctx = createMockContext();
         arc.draw(ctx);
@@ -571,14 +555,14 @@ void main() {
     );
 
     test('should apply spacing to a full circle when selfJoin is false', () {
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi * 2,
-        'x': 0,
-        'y': 0,
-        'innerRadius': 40,
-        'outerRadius': 100,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi * 2
+        ..x = 0
+        ..y = 0
+        ..innerRadius = 40
+        ..outerRadius = 100
+        ..options = ArcOptions(<String, Object?>{
           'circular': true,
           'selfJoin': false,
           'spacingMode': ArcSpacingMode.angular,
@@ -590,8 +574,7 @@ void main() {
             ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
-        }),
-      });
+        });
 
       final ctx = createMockContext();
       arc.draw(ctx);
@@ -610,14 +593,14 @@ void main() {
     test(
       'should not clip full-circle selfJoin borders with evenodd clipping',
       () {
-        final arc = ArcElement({
-          'startAngle': 0,
-          'endAngle': math.pi * 2,
-          'x': 0,
-          'y': 0,
-          'innerRadius': 40,
-          'outerRadius': 100,
-          'options': ArcOptions(<String, Object?>{
+        final arc = ArcElement()
+          ..startAngle = 0
+          ..endAngle = math.pi * 2
+          ..x = 0
+          ..y = 0
+          ..innerRadius = 40
+          ..outerRadius = 100
+          ..options = ArcOptions(<String, Object?>{
             'circular': true,
             'selfJoin': true,
             'spacing': 20,
@@ -631,8 +614,7 @@ void main() {
             'borderColor': const ChartPaint.solid(
               ui.Color.fromRGBO(0, 0, 0, 1),
             ),
-          }),
-        });
+          });
 
         final ctx = createMockContext();
         arc.draw(ctx);
@@ -651,14 +633,14 @@ void main() {
     );
 
     test('should not draw a radial seam for full-circle selfJoin pie', () {
-      final arc = ArcElement({
-        'startAngle': 0,
-        'endAngle': math.pi * 2,
-        'x': 10,
-        'y': 20,
-        'innerRadius': 0,
-        'outerRadius': 100,
-        'options': ArcOptions(<String, Object?>{
+      final arc = ArcElement()
+        ..startAngle = 0
+        ..endAngle = math.pi * 2
+        ..x = 10
+        ..y = 20
+        ..innerRadius = 0
+        ..outerRadius = 100
+        ..options = ArcOptions(<String, Object?>{
           'circular': true,
           'selfJoin': true,
           'spacing': 0,
@@ -670,8 +652,7 @@ void main() {
             ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
-        }),
-      });
+        });
 
       final ctx = createMockContext();
       arc.draw(ctx);

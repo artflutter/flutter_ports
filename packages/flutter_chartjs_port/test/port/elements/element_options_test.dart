@@ -248,9 +248,13 @@ void _deleteAll(ElementOptions options) {
 }
 
 /// The drawPoint calls of a point at (50, 40) with [options].
-List<ContextCall> _drawCalls(Object options) {
+List<ContextCall> _drawCalls(ElementOptions options) {
   final ctx = createMockContext();
-  PointElement({'options': options, 'x': 50, 'y': 40}).draw(ctx);
+  (PointElement()
+        ..options = options
+        ..x = 50
+        ..y = 40)
+      .draw(ctx);
   return ctx.getCalls();
 }
 
@@ -496,7 +500,10 @@ void main() {
         'borderWidth': 1,
         'pointStyle': const CirclePointStyle(),
       });
-      final point = PointElement({'options': options, 'x': 50, 'y': 40});
+      final point = PointElement()
+        ..options = options
+        ..x = 50
+        ..y = 40;
       options['radius'] = 7;
       final ctx = createMockContext();
       point.draw(ctx);

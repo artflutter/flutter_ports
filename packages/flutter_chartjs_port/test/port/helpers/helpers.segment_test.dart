@@ -393,10 +393,14 @@ void main() {
         boundSegment(
           const _Segment(0, 3, loop: false),
           [
-            PointElement({'y': 0}),
-            PointElement({'y': 1}),
-            PointElement({'x': 5, 'y': 2}),
-            PointElement({'x': 20, 'y': 3}),
+            PointElement()..y = 0,
+            PointElement()..y = 1,
+            PointElement()
+              ..x = 5
+              ..y = 2,
+            PointElement()
+              ..x = 20
+              ..y = 3,
           ],
           (property: 'x', start: 0, end: 10),
         ),
@@ -406,11 +410,17 @@ void main() {
         boundSegment(
           const _Segment(0, 4, loop: false),
           [
-            PointElement({'x': 0, 'y': 0}),
-            PointElement({'y': 1}),
-            PointElement({'y': 2}),
-            PointElement({'x': 5, 'y': 3}),
-            PointElement({'x': 20, 'y': 4}),
+            PointElement()
+              ..x = 0
+              ..y = 0,
+            PointElement()..y = 1,
+            PointElement()..y = 2,
+            PointElement()
+              ..x = 5
+              ..y = 3,
+            PointElement()
+              ..x = 20
+              ..y = 4,
           ],
           (property: 'x', start: 4, end: 10),
         ),
@@ -425,10 +435,18 @@ void main() {
         boundSegment(
           const _Segment(0, 3, loop: false),
           [
-            PointElement({'x': double.nan, 'y': 0}),
-            PointElement({'x': double.nan, 'y': 1}),
-            PointElement({'x': 5, 'y': 2}),
-            PointElement({'x': 20, 'y': 3}),
+            PointElement()
+              ..x = double.nan
+              ..y = 0,
+            PointElement()
+              ..x = double.nan
+              ..y = 1,
+            PointElement()
+              ..x = 5
+              ..y = 2,
+            PointElement()
+              ..x = 20
+              ..y = 3,
           ],
           (property: 'x', start: 0, end: 10),
         ),
@@ -438,10 +456,16 @@ void main() {
         boundSegment(
           const _Segment(0, 3, loop: false),
           [
-            PointElement({'y': 0}),
-            PointElement({'x': double.nan, 'y': 1}),
-            PointElement({'x': 5, 'y': 2}),
-            PointElement({'x': 20, 'y': 3}),
+            PointElement()..y = 0,
+            PointElement()
+              ..x = double.nan
+              ..y = 1,
+            PointElement()
+              ..x = 5
+              ..y = 2,
+            PointElement()
+              ..x = 20
+              ..y = 3,
           ],
           (property: 'x', start: 0, end: 10),
         ),

@@ -322,38 +322,60 @@ int _expectItemsOfPublicLoop(Chart chart, {bool? useFinalPosition}) {
 
 /// The points of a dataset: [count] items with x from 0 and y from 10 to
 /// 90.
-List<Object?> _values(int count, int seed) => <Object?>[
+List<DataPoint> _values(int count, int seed) => <DataPoint>[
   for (var i = 0; i < count; i++)
-    <String, Object?>{'x': i * 3 + seed, 'y': 10 + ((i * 37 + seed * 11) % 81)},
+    DataPoint(i * 3 + seed, 10 + ((i * 37 + seed * 11) % 81)),
 ];
 
+/// A chart of [datasets] datasets of [count] points. [datasetExtra] gives
+/// the options of a dataset with no parameter or with a scriptable value.
 Chart _scatterChart({
   required int count,
   int datasets = 1,
-  String type = 'scatter',
-  Map<String, Object?> options = const {},
-  Map<String, Object?> Function(int dataset)? datasetOptions,
-  List<Object?> Function(int dataset)? values,
-  Object? animation = false,
-}) => acquireChart(<String, Object?>{
-  'type': type,
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      for (var k = 0; k < datasets; k++)
-        <String, Object?>{
-          'label': 'series $k',
-          'data': values?.call(k) ?? _values(count, k),
-          ...?datasetOptions?.call(k),
-        },
-    ],
-  },
-  'options': <String, Object?>{'animation': animation, ...options},
-});
+  ChartKind type = ChartKind.scatter,
+  double? Function(int dataset)? pointRadius,
+  Map<String, Object?> Function(int dataset)? datasetExtra,
+  List<DataPoint> Function(int dataset)? values,
+  ChartInteraction? interaction,
+  Map<String, ChartAxis>? scales,
+  Map<String, Object?>? extra,
+  ChartAnimation animation = ChartAnimation.none,
+}) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: type,
+      datasets: [
+        for (var k = 0; k < datasets; k++)
+          if (type == ChartKind.line)
+            LineDataset(
+              label: 'series $k',
+              points: values?.call(k) ?? _values(count, k),
+              pointRadius: pointRadius?.call(k),
+              extra: datasetExtra?.call(k),
+            )
+          else
+            ScatterDataset(
+              label: 'series $k',
+              points: values?.call(k) ?? _values(count, k),
+              pointRadius: pointRadius?.call(k),
+              extra: datasetExtra?.call(k),
+            ),
+      ],
+      interaction: interaction,
+      scales: scales,
+      animation: animation,
+      extra: extra,
+    ),
+  ).lower(),
+);
+
+/// The dataset scope of the dataset [index] of [chart].
+JsObjectFace _dataset(Chart chart, int index) =>
+    ((chart.data as JsObjectFace)['datasets']! as List<Object?>)[index]!
+        as JsObjectFace;
 
 void _setData(Chart chart, int count, int seed) {
-  final data = chart.data as Map<String, Object?>;
-  ((data['datasets']! as List<Object?>)[0]! as Map<String, Object?>)['data'] =
-      _values(count, seed);
+  _dataset(chart, 0)['data'] = _values(count, seed);
 }
 
 void main() {
@@ -373,11 +395,11 @@ void main() {
       final chart = _scatterChart(
         count: 120,
         datasets: 4,
-        datasetOptions: (k) => <String, Object?>{
-          // A point with a hit radius only, a large point with no hit
-          // radius, a negative sum and the defaults.
-          'pointRadius': const [0, 9, 2, 3][k],
-          'pointHitRadius': const [6, 0, -5, 1][k],
+        // A point with a hit radius only, a large point with no hit
+        // radius, a negative sum and the defaults.
+        pointRadius: (k) => const [0.0, 9.0, 2.0, 3.0][k],
+        datasetExtra: (k) => <String, Object?>{
+          'pointHitRadius': const [6.0, 0.0, -5.0, 1.0][k],
         },
       );
       final first = chart.getDatasetMeta(0).data[10] as PointElement;
@@ -391,7 +413,8 @@ void main() {
       final chart = _scatterChart(
         count: 150,
         datasets: 2,
-        datasetOptions: (k) => <String, Object?>{
+        // A scriptable radius: no typed parameter holds it.
+        datasetExtra: (k) => <String, Object?>{
           'pointRadius': (Object? ctx) => switch (jsGet(ctx, 'dataIndex')) {
             final int i => i % 7 + k,
             _ => 3,
@@ -412,15 +435,9 @@ void main() {
       final chart = _scatterChart(
         count: 200,
         datasets: 2,
-        type: 'line',
-        options: <String, Object?>{
-          'interaction': <String, Object?>{
-            'mode': const PointInteractionMode(),
-          },
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear'},
-          },
-        },
+        type: ChartKind.line,
+        interaction: const ChartInteraction(mode: PointInteractionMode()),
+        scales: const {'x': LinearAxis()},
       );
       final data = chart.getDatasetMeta(0).data;
       expect((data[0] as Element).options, same((data[1] as Element).options));
@@ -443,13 +460,13 @@ void main() {
       final chart = _scatterChart(
         count: 100,
         datasets: 2,
-        options: <String, Object?>{'spanGaps': false},
-        values: (k) => <Object?>[
+        extra: const {'spanGaps': false},
+        values: (k) => <DataPoint>[
           for (var i = 0; i < 100; i++)
-            <String, Object?>{
-              'x': i * 3 + k,
-              'y': (i + k) % 4 == 0 ? null : 10 + ((i * 37 + k * 11) % 81),
-            },
+            DataPoint(
+              i * 3 + k,
+              (i + k) % 4 == 0 ? null : 10 + ((i * 37 + k * 11) % 81),
+            ),
         ],
       );
       final data = chart.getDatasetMeta(0).data;
@@ -495,7 +512,7 @@ void main() {
     ) async {
       final chart = _scatterChart(
         count: 200,
-        animation: <String, Object?>{'duration': 400},
+        animation: const ChartAnimation(duration: Duration(milliseconds: 400)),
       );
       expect(animator.has(chart), isTrue);
       await pumpFrame();
@@ -651,11 +668,7 @@ void main() {
       final moved = data[10] as PointElement;
       final target = data[150] as PointElement;
       final wide = data[60] as PointElement;
-      final dataset =
-          ((chart.data as Map<String, Object?>)['datasets']!
-                  as List<Object?>)[0]!
-              as Map<String, Object?>;
-      dataset['pointHitRadius'] = 40;
+      _dataset(chart, 0)['pointHitRadius'] = 40;
       chart.update(UpdateMode.none);
       expect(_reach(wide), 43);
       moved

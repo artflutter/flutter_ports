@@ -129,50 +129,59 @@ String _parsedText(Object? item) => item is ParsedItem
     ? '${item.jsKeys()} ${_bits(item.r)}'
     : 'raw ${_bits(item)}';
 
-AnyObject _config(
+/// A radar config of [n] values, or of [data], with the controller [type].
+///
+/// A [data] List that is not a `List<num?>` goes through the `extra` of the
+/// dataset: its cases give `undefined`, strings and objects, which the typed
+/// `data` cannot hold.
+ChartConfigurationScope _config(
   String type, {
   List<Object?>? data,
   int n = 24,
-  AnyObject Function()? dataset,
-  AnyObject Function()? options,
-  AnyObject Function()? scale,
+  List<Object>? labels,
+  Map<String, Object?> Function()? datasetExtra,
+  RadialLinearAxis axis = const RadialLinearAxis(min: 0, max: 100),
+  ChartElements? elements,
+  ChartAnimation? animation,
+  Map<String, Object?>? extra,
 }) {
   final values =
-      data ?? <Object?>[for (var i = 0; i < n; i++) ((i * 13) % 50) * 2.0];
-  return <String, Object?>{
-    'type': type,
-    'data': <String, Object?>{
-      'labels': <Object?>[for (var i = 0; i < values.length; i++) 'L$i'],
-      'datasets': <Object?>[
-        <String, Object?>{'data': values, ...?dataset?.call()},
+      data ?? <num?>[for (var i = 0; i < n; i++) ((i * 13) % 50) * 2.0];
+  return ChartConfigLowering(
+    ChartConfig(
+      type: ChartKind(type),
+      datasets: [
+        RadarDataset(
+          data: values is List<num?> ? values : null,
+          // The controller of the chart type: a RadarDataset alone gives
+          // the type `radar`.
+          extra: {
+            'type': type,
+            if (values is! List<num?>) 'data': values,
+            ...?datasetExtra?.call(),
+          },
+        ),
       ],
-    },
-    'options': <String, Object?>{
-      'responsive': false,
-      'events': <String>[],
-      'scales': <String, Object?>{
-        'r': <String, Object?>{
-          'type': 'radialLinear',
-          'min': 0.0,
-          'max': 100.0,
-          ...?scale?.call(),
-        },
-      },
-      ...?options?.call(),
-    },
-  };
+      labels: labels ?? [for (var i = 0; i < values.length; i++) 'L$i'],
+      responsive: false,
+      scales: {'r': axis},
+      elements: elements,
+      animation: animation,
+      extra: {'events': const <String>[], ...?extra},
+    ),
+  ).lower();
 }
 
 /// Compares the points of the exact controller and of the subclass, after the
 /// start and after [steps] in order. [calls] holds the user calls of a run.
 void _expectTwin(
-  AnyObject Function(String type) config, {
+  ChartConfigurationScope Function(String type) config, {
   List<void Function(Chart chart)> steps = const [],
   List<String>? calls,
 }) {
   ({List<String> points, List<String> calls}) run(String type) {
     calls?.clear();
-    final chart = acquireChart(config(type));
+    final chart = acquireChartRoot(config(type));
     final points = _pointsText(chart);
     for (final step in steps) {
       step(chart);
@@ -198,21 +207,21 @@ void main() {
     });
 
     testWidgets('numbers on a growing and shrinking dataset', (tester) async {
-      AnyObject config(String type) => _config(type, n: 8);
-      void setData(Chart chart, List<Object?> data) {
+      ChartConfigurationScope config(String type) => _config(type, n: 8);
+      void setData(Chart chart, List<num?> data) {
         final set = (jsGet(chart.data, 'datasets')! as List<Object?>)[0];
-        (set! as Map<String, Object?>)['data'] = data;
+        (set! as JsObjectFace)['data'] = data;
       }
 
       _expectTwin(
         config,
         steps: [
           (chart) {
-            setData(chart, <Object?>[for (var i = 0; i < 20; i++) i * 3.0]);
+            setData(chart, <num?>[for (var i = 0; i < 20; i++) i * 3.0]);
             chart.update(UpdateMode.none);
           },
           (chart) {
-            setData(chart, <Object?>[1.0, 2.0, 3.0]);
+            setData(chart, <num?>[1.0, 2.0, 3.0]);
             chart.update(UpdateMode.none);
           },
         ],
@@ -241,7 +250,7 @@ void main() {
 
     testWidgets('a first item that is null', (tester) async {
       _expectTwin(
-        (type) => _config(type, data: <Object?>[null, 1.0, null, 2.0, 3.0]),
+        (type) => _config(type, data: <num?>[null, 1.0, null, 2.0, 3.0]),
       );
     });
 
@@ -273,7 +282,7 @@ void main() {
             <String, Object?>{'r': 5.0},
             <String, Object?>{'r': 6.0},
           ],
-          options: () => {'parsing': false},
+          extra: {'parsing': false},
         ),
       );
     });
@@ -282,25 +291,28 @@ void main() {
       _expectTwin(
         (type) => _config(
           type,
-          data: const <Object?>[5.0, 3.0, 1.0],
-          options: () => {'parsing': false},
+          data: const <num?>[5.0, 3.0, 1.0],
+          extra: {'parsing': false},
         ),
       );
     });
 
     testWidgets('a reversed scale with a start angle', (tester) async {
       _expectTwin(
-        (type) =>
-            _config(type, scale: () => {'reverse': true, 'startAngle': 33.0}),
+        (type) => _config(
+          type,
+          axis: const RadialLinearAxis(
+            min: 0,
+            max: 100,
+            reverse: true,
+            startAngle: 33,
+          ),
+        ),
       );
     });
 
     testWidgets('a scale with no labels at all', (tester) async {
-      _expectTwin((type) {
-        final config = _config(type);
-        (config['data']! as Map<String, Object?>)['labels'] = <Object?>[];
-        return config;
-      });
+      _expectTwin((type) => _config(type, labels: []));
     });
 
     testWidgets('hidden data points', (tester) async {
@@ -335,16 +347,14 @@ void main() {
       _expectTwin(
         (type) => _config(
           type,
-          options: () => {
-            'elements': <String, Object?>{
-              'point': <String, Object?>{
-                'hoverRadius': 9.0,
-                'hoverBackgroundColor': const ChartPaint.solid(
-                  ui.Color(0xFFFF0000),
-                ),
+          elements: const ChartElements(
+            point: PointElementStyle(
+              hoverRadius: 9,
+              extra: {
+                'hoverBackgroundColor': ChartPaint.solid(ui.Color(0xFFFF0000)),
               },
-            },
-          },
+            ),
+          ),
         ),
         steps: [
           (chart) => chart
@@ -380,9 +390,7 @@ void main() {
       _expectTwin(
         (type) => _config(
           type,
-          options: () => {
-            'animation': <String, Object?>{'duration': 1000.0},
-          },
+          animation: const ChartAnimation(duration: Duration(seconds: 1)),
         ),
         steps: [
           (chart) => chart.update(),
@@ -398,7 +406,8 @@ void main() {
       _expectTwin(
         (type) => _config(
           type,
-          dataset: () => {
+          // A scriptable radius: no typed parameter holds it.
+          datasetExtra: () => {
             'pointRadius': (Object? ctx) {
               final context = ctx! as JsObjectFace;
               calls.add(
@@ -422,7 +431,8 @@ void main() {
         late Chart chart;
         return _config(
           type,
-          dataset: () => {
+          // A scriptable radius: no typed parameter holds it.
+          datasetExtra: () => {
             'pointRadius': (Object? ctx) {
               final context = ctx! as JsObjectFace;
               final index = (context.jsRead('index')! as num).toDouble();
@@ -443,7 +453,7 @@ void main() {
   group('guards', () {
     testWidgets('a user subclass gets each updateElement', (tester) async {
       _ObservedRadar.updates.clear();
-      final chart = acquireChart(_config('observedRadar', n: 4));
+      final chart = acquireChartRoot(_config('observedRadar', n: 4));
       _ObservedRadar.updates.clear();
       chart.update(UpdateMode.none);
       expect(_ObservedRadar.updates, [
@@ -458,7 +468,7 @@ void main() {
     testWidgets('a user point class gets each write by name, in order', (
       tester,
     ) async {
-      final chart = acquireChart(_config('radar', n: 6));
+      final chart = acquireChartRoot(_config('radar', n: 6));
       final meta = chart.getDatasetMeta(0);
       meta.data
         ..[0] = _ObservedPoint()
@@ -470,7 +480,7 @@ void main() {
       ]);
       expect(_pointsText(chart).first, startsWith('false '));
       // A point of the built-in class after the user point takes its position.
-      final twin = acquireChart(_config('ordinaryRadar', n: 6));
+      final twin = acquireChartRoot(_config('ordinaryRadar', n: 6));
       twin.getDatasetMeta(0).data
         ..[0] = _ObservedPoint()
         ..[3] = _ObservedPoint();
@@ -485,7 +495,7 @@ void main() {
       // user point at the index 3 ends it. The class test comes before each
       // read of that point: the ordinary loop makes the one read of upstream.
       int reads(String type) {
-        final chart = acquireChart(_config(type, n: 6));
+        final chart = acquireChartRoot(_config(type, n: 6));
         final meta = chart.getDatasetMeta(0);
         final point = _CountedActivePoint();
         meta.data[3] = point;
@@ -500,11 +510,11 @@ void main() {
     testWidgets('a controller with option sharing shares its cached options', (
       tester,
     ) async {
-      final chart = acquireChart(_config('radar', n: 4));
+      final chart = acquireChartRoot(_config('radar', n: 4));
       final controller = chart.getDatasetMeta(0).controller!;
       controller.enableOptionSharing = true;
       chart.update(UpdateMode.none);
-      final twin = acquireChart(_config('ordinaryRadar', n: 4));
+      final twin = acquireChartRoot(_config('ordinaryRadar', n: 4));
       (twin.getDatasetMeta(0).controller!).enableOptionSharing = true;
       twin.update(UpdateMode.none);
       expect(_pointsText(chart), _pointsText(twin));
@@ -513,7 +523,7 @@ void main() {
     testWidgets('a reset before the first layout writes undefined by name', (
       tester,
     ) async {
-      final chart = acquireChart(_config('radar', n: 2));
+      final chart = acquireChartRoot(_config('radar', n: 2));
       final scale = chart.scales['r']! as IRadialLinearScale;
       expect(scale.xCenter, isNotNull);
       chart.update(UpdateMode.reset);
@@ -525,7 +535,7 @@ void main() {
     testWidgets('the cached options stay frozen, and each copy is not', (
       tester,
     ) async {
-      final chart = acquireChart(_config('radar', n: 4));
+      final chart = acquireChartRoot(_config('radar', n: 4));
       final controller = chart.getDatasetMeta(0).controller!;
       chart.update(UpdateMode.none);
       final cached = controller.cachedPointNoneOptions;

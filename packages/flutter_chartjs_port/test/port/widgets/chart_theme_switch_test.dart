@@ -66,6 +66,9 @@ String _rgbaText(Color c, [double alpha = 1]) {
 
 /// A chart config of [type]: labels `a` to `c`, [datasets] datasets, the
 /// colors plugin on, `animation: false` unless [animated].
+// A Map config: the cases test the switch of `ChartView.raw`, which restores
+// the user `scales` and the palette keys of the dataset Maps in place, and
+// they edit these Maps by name.
 Map<String, Object?> _config({
   String type = 'bar',
   int datasets = 2,
@@ -136,14 +139,13 @@ Object? _elementOption(
   return jsGet(element.options, key);
 }
 
-/// The option at [path] of the scale [id].
-Object? _scaleOption(Chart chart, String id, List<String> path) {
-  Object? value = chart.scales[id]!.optionsView;
-  for (final key in path) {
-    value = jsGet(value, key);
-  }
-  return value;
-}
+/// The options of the scale [id].
+CoreScaleOptions _scaleOptions(Chart chart, String id) =>
+    chart.scales[id]!.options;
+
+/// The options of the radial scale [id].
+RadialLinearScaleOptions _radialOptions(Chart chart, String id) =>
+    _scaleOptions(chart, id) as RadialLinearScaleOptions;
 
 /// A registered plugin whose `beforeUpdate` records the mode of each
 /// update of each chart (the spy of `global.defaults_test.dart`). It
@@ -164,6 +166,7 @@ List<Object?> _spyOnUpdates() {
 
 /// The config of the probe F-P4: a line chart with two datasets, the colors
 /// plugin on, the title `user` and an `x` scale with a title.
+// A Map config: the forms F0, F1 and F3 copy and edit its `options` Map.
 AnyObject _formConfig() => <String, Object?>{
   'type': 'line',
   'data': <String, Object?>{
@@ -202,14 +205,13 @@ AnyObject _formConfig() => <String, Object?>{
 /// The state of the probe F-P4: the `x` tick color, `x.min`, the border
 /// color of the dataset 0, the visibility of the dataset 1 and the title.
 String _formState(Chart chart) {
-  final x = chart.scales['x']!.optionsView;
+  final x = _scaleOptions(chart, 'x');
   final title = jsGet(jsGet(chart.options, 'plugins'), 'title');
-  final tickColor =
-      (jsGet(jsGet(x, 'ticks'), 'color')! as SolidChartPaint).color;
+  final tickColor = (x.ticks.color as SolidChartPaint).color;
   final borderColor =
       (_dataset(chart, 0)['borderColor']! as SolidChartPaint).color;
   return 'x.ticks.color=${_rgbaText(tickColor)} '
-      'x.min=${jsGet(x, 'min')} '
+      'x.min=${x.min} '
       'ds0.borderColor=${_rgbaText(borderColor)} '
       'visible1=${chart.isDatasetVisible(1)} '
       'title.text=${(jsGet(title, 'text')! as List<Object?>).join()}';
@@ -427,23 +429,23 @@ void main() {
             reason: reason,
           );
           expect(
-            _scaleOption(chart, scale, ['grid', 'color']),
+            _scaleOptions(chart, scale).grid.color,
             ChartPaint.solid(line),
             reason: reason,
           );
           expect(
-            _scaleOption(chart, scale, ['ticks', 'color']),
+            _scaleOptions(chart, scale).ticks.color,
             ChartPaint.solid(line),
             reason: reason,
           );
           if (type == 'radar') {
             expect(
-              _scaleOption(chart, scale, ['pointLabels', 'color']),
+              _radialOptions(chart, scale).pointLabels.color,
               ChartPaint.solid(line),
               reason: reason,
             );
             expect(
-              _scaleOption(chart, scale, ['angleLines', 'color']),
+              _radialOptions(chart, scale).angleLines.color,
               ChartPaint.solid(line),
               reason: reason,
             );
@@ -490,6 +492,8 @@ void main() {
     ]) {
       testWidgets('keeps the decimated data ($name)', (tester) async {
         final input = _decimationInput();
+        // A Map config: the case reads `_data`, the input that the
+        // decimation keeps in the dataset Map.
         final config = <String, Object?>{
           'type': 'line',
           'data': <String, Object?>{
@@ -550,11 +554,11 @@ void main() {
         const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
       expect(
-        _scaleOption(chart, 'y', ['ticks', 'color']),
+        _scaleOptions(chart, 'y').ticks.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(
-        _scaleOption(chart, 'y', ['grid', 'color']),
+        _scaleOptions(chart, 'y').grid.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 0, 0.1)),
       );
     });
@@ -777,22 +781,22 @@ void main() {
       await tester.pumpWidget(build(_themeA));
       final chart = _chart(tester);
       expect(
-        _scaleOption(chart, 'y', ['ticks', 'color']),
+        _scaleOptions(chart, 'y').ticks.color,
         ChartPaint.solid(_rgba(_red)),
       );
       await tester.pumpWidget(build(_themeB));
       expect(
-        _scaleOption(chart, 'y', ['ticks', 'color']),
+        _scaleOptions(chart, 'y').ticks.color,
         ChartPaint.solid(_rgba(_blue)),
       );
       await tester.pumpWidget(build(_themeB, own: _themeA));
       expect(
-        _scaleOption(chart, 'y', ['ticks', 'color']),
+        _scaleOptions(chart, 'y').ticks.color,
         ChartPaint.solid(_rgba(_red)),
       );
       await tester.pumpWidget(build(_themeB, own: const ChartThemeData()));
       expect(
-        _scaleOption(chart, 'y', ['ticks', 'color']),
+        _scaleOptions(chart, 'y').ticks.color,
         const ChartPaint.solid(native_ui.Color.fromRGBO(102, 102, 102, 1)),
       );
       expect(chartThemeOf(chart.config), isNull);
@@ -898,7 +902,7 @@ void main() {
       await tester.pump();
       expect(animator.running(chart), isFalse);
       expect(
-        _scaleOption(chart, 'y', ['ticks', 'color']),
+        _scaleOptions(chart, 'y').ticks.color,
         ChartPaint.solid(_rgba(_blue)),
       );
     });

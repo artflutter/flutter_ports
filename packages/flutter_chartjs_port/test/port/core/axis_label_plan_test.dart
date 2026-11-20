@@ -90,34 +90,39 @@ final class _ObservedChart(super.item, super.userConfig) extends Chart {
   }
 }
 
-Map<String, Object?> _config() => {
-  'type': 'line',
-  'data': {
-    'labels': List<Object?>.generate(_n, (i) => 'Point $i'),
-    'datasets': [
-      {
-        'data': List<Map<String, Object?>>.generate(
-          _n,
-          (i) => {'x': i.toDouble(), 'y': (i % 100 + 1).toDouble()},
+ChartConfigurationScope _config() => ChartConfigLowering(
+  ChartConfig(
+    type: ChartKind.line,
+    datasets: [
+      LineDataset(
+        points: List<DataPoint>.generate(_n, (i) => DataPoint(i, i % 100 + 1)),
+        showLine: false,
+        backgroundColor: const ChartValue.constant(
+          ChartPaint.solid(ui.Color(0xFF36A2EB)),
         ),
-        'showLine': false,
-        'backgroundColor': const ChartPaint.solid(ui.Color(0xFF36A2EB)),
-      },
+      ),
     ],
-  },
-  'options': {
-    'responsive': false,
-    'maintainAspectRatio': false,
-    'animation': false,
-    'parsing': false,
-    'events': <String>[],
-    'plugins': false,
-    'scales': {
-      'x': {'type': 'category'},
-      'y': {'type': 'logarithmic'},
+    labels: List<Object>.generate(_n, (i) => 'Point $i'),
+    responsive: false,
+    maintainAspectRatio: false,
+    animation: ChartAnimation.none,
+    scales: const {'x': CategoryAxis(), 'y': LogarithmicAxis()},
+    // `plugins: false` as one entry for each built-in plugin.
+    extra: const {
+      'parsing': false,
+      'events': <String>[],
+      'plugins': {
+        'colors': false,
+        'decimation': false,
+        'filler': false,
+        'legend': false,
+        'subtitle': false,
+        'title': false,
+        'tooltip': false,
+      },
     },
-  },
-};
+  ),
+).lower();
 
 Map<String, Object?> _snapshot(Chart chart) => {
   'area': [
@@ -173,12 +178,14 @@ final class _Pair() {
   });
 }
 
-Map<String, Object?> _data(Chart chart) => chart.data as Map<String, Object?>;
+ChartDataScope _data(Chart chart) => chart.data as ChartDataScope;
 
-List<Map<String, Object?>> _points(Chart chart) =>
+List<Object> _labels(Chart chart) => _data(chart)['labels']! as List<Object>;
+
+List<DataPoint> _points(Chart chart) =>
     ((_data(chart)['datasets']! as List<Object?>).first!
-            as Map<String, Object?>)['data']!
-        as List<Map<String, Object?>>;
+            as JsObjectFace)['data']!
+        as List<DataPoint>;
 
 void main() {
   setUpDefaultsRestore();
@@ -301,7 +308,7 @@ void main() {
       ..update();
     pair.each((chart) => chart.resize(640, 400));
     pair.update();
-    pair.each((chart) => _points(chart)[123]['y'] = 1e8);
+    pair.each((chart) => _points(chart)[123] = DataPoint(123, 1e8));
     pair.update();
   });
 
@@ -310,16 +317,16 @@ void main() {
       ..update()
       ..update();
     pair.each((chart) {
-      (_data(chart)['labels']! as List<Object?>)[123] = 'very wide label ' * 20;
+      _labels(chart)[123] = 'very wide label ' * 20;
     });
     pair.update();
     pair.each((chart) {
-      _data(chart)['labels'] = List<Object?>.generate(_n, (i) => 'New $i');
+      _data(chart)['labels'] = List<Object>.generate(_n, (i) => 'New $i');
     });
     pair.update();
     pair.each((chart) {
-      (_data(chart)['labels']! as List<Object?>).add('Added label');
-      _points(chart).add({'x': _n.toDouble(), 'y': 123.0});
+      _labels(chart).add('Added label');
+      _points(chart).add(DataPoint(_n, 123));
     });
     pair.update();
   });
@@ -499,14 +506,19 @@ void main() {
   test('custom tick-list reads may replace the live label source', () {
     final chart = Chart(UiCanvasElement(width: 800, height: 480), _config());
     addTearDown(chart.destroy);
-    chart.data = <String, Object?>{..._data(chart)};
+    // A Map data: the case gives the chart a new data object of the user.
+    final data = <String, Object?>{
+      'labels': _labels(chart),
+      'datasets': _data(chart)['datasets'],
+    };
+    chart.data = data;
     expect(chart.categoryLabels(null, horizontal: true), isNotNull);
     final ticks = _Ticks([
       for (var i = 0; i < 3; i++) Tick(value: i.toDouble()),
     ]);
     ticks.onRead = (index) {
       if (index == 1) {
-        _data(chart)['labels'] = <Object?>['New 0', 'New 1', 'New 2'];
+        data['labels'] = <Object?>['New 0', 'New 1', 'New 2'];
       }
     };
     chart.scales['x']!.generateTickLabels(ticks);

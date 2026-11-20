@@ -278,14 +278,19 @@ Object? _expectedResult(LineReferenceStep step) {
 
 /// A line of the points `(0, 10)`, `(10, 20)` and `(20, 15)` with the
 /// options [options].
-LineElement _simpleLine([ElementOptions? options]) => LineElement({
-  'points': <IPointElement>[
-    PointElement({'x': 0, 'y': 10}),
-    PointElement({'x': 10, 'y': 20}),
-    PointElement({'x': 20, 'y': 15}),
-  ],
-  'options': ?options,
-});
+LineElement _simpleLine([ElementOptions? options]) => LineElement()
+  ..points = <IPointElement>[
+    PointElement()
+      ..x = 0
+      ..y = 10,
+    PointElement()
+      ..x = 10
+      ..y = 20,
+    PointElement()
+      ..x = 20
+      ..y = 15,
+  ]
+  ..options = options;
 
 /// The own keys and values of the typed scope [scope] as a plain Map, read
 /// through its face (Chart.js ADR 0054 §5).
@@ -431,7 +436,7 @@ void main() {
       // Upstream returns undefined, and each reader throws a TypeError.
       expect(() => LineElement().points, throwsA(isA<TypeError>()));
       expect(
-        () => LineElement({'options': _options()}).segments,
+        () => (LineElement()..options = _options()).segments,
         throwsA(isA<TypeError>()),
       );
     });
@@ -453,9 +458,8 @@ void main() {
 
     test('throws a TypeError for control points without points', () {
       // Upstream: Cannot read properties of undefined (reading '0').
-      final line = LineElement({
-        'options': LineOptions(<String, Object?>{'tension': 0.4}),
-      });
+      final line = LineElement()
+        ..options = LineOptions(<String, Object?>{'tension': 0.4});
       expect(
         () => line.updateControlPoints(const _Area(0, 0, 1, 1)),
         throwsA(isA<TypeError>()),
@@ -507,6 +511,7 @@ void main() {
     });
 
     test('writes undefined to the properties of the undefined state', () {
+      // The constructor Map: the case writes the private names by name.
       final line = LineElement({
         '_chart': _Chart(),
         '_loop': true,
@@ -529,7 +534,9 @@ void main() {
         ..['_path'] = path
         ..['_pointsUpdated'] = true
         ..['_points'] = <IPointElement>[
-          PointElement({'x': 0, 'y': 0}),
+          PointElement()
+            ..x = 0
+            ..y = 0,
         ];
       expect(line.segments, same(segments));
       expect(line['_path'], same(path));
@@ -561,6 +568,7 @@ void main() {
         () => LineElement()['segments'] = <Segment>[],
         throwsArgumentError,
       );
+      // The constructor Map: Object.assign writes the getter segments.
       expect(() => LineElement({'segments': <Segment>[]}), throwsArgumentError);
     });
 
@@ -590,6 +598,7 @@ void main() {
     });
 
     test('passes other names to Element', () {
+      // The constructor Map: the case reads the names that Element keeps.
       final line = LineElement({'x': 1, r'$context': 'context'});
       expect(line.x, 1.0);
       expect(line[r'$context'], 'context');
@@ -621,18 +630,18 @@ void main() {
     test('gives _loop when the line has no segments', () {
       // Upstream: true for `_loop: true` and no points, false without it.
       expect(
-        LineElement({
-          'points': <IPointElement>[],
-          'options': LineOptions(<String, Object?>{}),
-          '_loop': true,
-        }).path(createMockContext()),
+        (LineElement()
+              ..points = <IPointElement>[]
+              ..options = LineOptions(<String, Object?>{})
+              ..loop = true)
+            .path(createMockContext()),
         isTrue,
       );
       expect(
-        LineElement({
-          'points': <IPointElement>[],
-          'options': LineOptions(<String, Object?>{}),
-        }).path(createMockContext()),
+        (LineElement()
+              ..points = <IPointElement>[]
+              ..options = LineOptions(<String, Object?>{}))
+            .path(createMockContext()),
         isFalse,
       );
     });
@@ -682,10 +691,9 @@ void main() {
     /// The names and the arguments of the calls of pathSegment over the
     /// first segment of a line of [points] with the default options.
     (List<Object?>, List<List<Object?>>) fastPath(List<IPointElement> points) {
-      final line = LineElement({
-        'points': points,
-        'options': LineOptions(_plain(LineElement.defaults)),
-      });
+      final line = LineElement()
+        ..points = points
+        ..options = LineOptions(_plain(LineElement.defaults));
       final ctx = createMockContext();
       expect(line.pathSegment(ctx, line.segments[0]), isNull);
       final calls = ctx.getCalls();
@@ -699,10 +707,16 @@ void main() {
       // Upstream: moveTo(0,0) lineTo(0,0) lineTo(10,undefined)
       // lineTo(20,20).
       final (names, args) = fastPath([
-        PointElement({'x': 0, 'y': 0}),
-        PointElement({'x': 10}),
-        PointElement({'x': 10.5, 'y': 5}),
-        PointElement({'x': 20, 'y': 20}),
+        PointElement()
+          ..x = 0
+          ..y = 0,
+        PointElement()..x = 10,
+        PointElement()
+          ..x = 10.5
+          ..y = 5,
+        PointElement()
+          ..x = 20
+          ..y = 20,
       ]);
       expect(names, ['moveTo', 'lineTo', 'lineTo', 'lineTo']);
       expect(args[0], [0, 0]);
@@ -717,11 +731,19 @@ void main() {
       // Upstream: moveTo(0,0) lineTo(0,0) lineTo(10,undefined)
       // lineTo(20,20). `y < undefined` and `y > undefined` are false.
       final (names, args) = fastPath([
-        PointElement({'x': 0, 'y': 0}),
-        PointElement({'x': 10}),
-        PointElement({'x': 10.2, 'y': 5}),
-        PointElement({'x': 10.5, 'y': 8}),
-        PointElement({'x': 20, 'y': 20}),
+        PointElement()
+          ..x = 0
+          ..y = 0,
+        PointElement()..x = 10,
+        PointElement()
+          ..x = 10.2
+          ..y = 5,
+        PointElement()
+          ..x = 10.5
+          ..y = 8,
+        PointElement()
+          ..x = 20
+          ..y = 20,
       ]);
       expect(names, ['moveTo', 'lineTo', 'lineTo', 'lineTo']);
       expect(args[2][0], 10);
@@ -733,10 +755,18 @@ void main() {
       // Upstream: moveTo(0,0) lineTo(0,0) lineTo(10,NaN) lineTo(10.5,NaN)
       // lineTo(10.5,NaN) lineTo(10.5,5) lineTo(20,20).
       final (names, args) = fastPath([
-        PointElement({'x': 0, 'y': 0}),
-        PointElement({'x': 10, 'y': double.nan}),
-        PointElement({'x': 10.5, 'y': 5}),
-        PointElement({'x': 20, 'y': 20}),
+        PointElement()
+          ..x = 0
+          ..y = 0,
+        PointElement()
+          ..x = 10
+          ..y = double.nan,
+        PointElement()
+          ..x = 10.5
+          ..y = 5,
+        PointElement()
+          ..x = 20
+          ..y = 20,
       ]);
       expect(names, [
         'moveTo',
@@ -762,6 +792,7 @@ void main() {
     test('a write of plain points throws an ArgumentError', () {
       // Upstream stores any array: `points: Point[]` (index.d.ts:2026).
       expect(
+        // The constructor Map: the case writes a foreign value.
         () => LineElement({
           'points': <Point>[InterpolatedPoint(1, 2), InterpolatedPoint(3, 4)],
           'options': LineOptions({'tension': 0}),
@@ -780,13 +811,19 @@ void main() {
     // another list gives a typed copy with the same elements.
     test('a List<types.PointElement> stays the same list', () {
       final list = <IPointElement>[
-        PointElement({'x': 0, 'y': 1}),
-        PointElement({'x': 2, 'y': 3}),
+        PointElement()
+          ..x = 0
+          ..y = 1,
+        PointElement()
+          ..x = 2
+          ..y = 3,
       ];
       final line = LineElement()..points = list;
       expect(identical(line.points, list), isTrue);
       final other = <IPointElement>[
-        PointElement({'x': 4, 'y': 5}),
+        PointElement()
+          ..x = 4
+          ..y = 5,
       ];
       line['points'] = other;
       expect(identical(line.points, other), isTrue);
@@ -795,9 +832,15 @@ void main() {
 
     test('a List<types.Element> of point elements gives a typed copy', () {
       final elements = <IElement>[
-        PointElement({'x': 0, 'y': 10}),
-        PointElement({'x': 10, 'y': 20}),
-        PointElement({'x': 20, 'y': 15}),
+        PointElement()
+          ..x = 0
+          ..y = 10,
+        PointElement()
+          ..x = 10
+          ..y = 20,
+        PointElement()
+          ..x = 20
+          ..y = 15,
       ];
       for (final write in <void Function(LineElement line)>[
         (line) => line.points = elements,
@@ -829,7 +872,9 @@ void main() {
 
     test('an element that is not a point element throws a TypeError', () {
       final elements = <IElement>[
-        PointElement({'x': 0, 'y': 10}),
+        PointElement()
+          ..x = 0
+          ..y = 10,
         Element(),
       ];
       final line = _simpleLine(_options());
@@ -853,13 +898,16 @@ void main() {
       // Upstream, with the plain points {x: 1, y: 2} and {x: 3, y: 4}:
       // first() is {x: 1, y: 2}, and path draws moveTo(1,2) lineTo(1,2)
       // lineTo(3,4).
-      final line = LineElement({
-        'points': <IPointElement>[
-          PointElement({'x': 1, 'y': 2}),
-          PointElement({'x': 3, 'y': 4}),
-        ],
-        'options': LineOptions({'tension': 0}),
-      });
+      final line = LineElement()
+        ..points = <IPointElement>[
+          PointElement()
+            ..x = 1
+            ..y = 2,
+          PointElement()
+            ..x = 3
+            ..y = 4,
+        ]
+        ..options = LineOptions({'tension': 0});
       expect(line.first()!.x, 1);
       expect(line.first()!.y, 2);
       expect(line.last()!.y, 4);

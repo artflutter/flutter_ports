@@ -132,24 +132,27 @@ const double _day = 86400000;
 final double _t0 = DateTime.utc(2021, 1, 4).millisecondsSinceEpoch.toDouble();
 
 /// `{x, y}` points at the times [times].
-List<Object?> _xy(List<double> times) => [
-  for (var i = 0; i < times.length; i++)
-    <String, Object?>{'x': times[i], 'y': ((i * 37) % 11).toDouble()},
+List<DataPoint> _xy(List<double> times) => [
+  for (var i = 0; i < times.length; i++) DataPoint(times[i], (i * 37) % 11),
 ];
+
+/// The test controller as a chart type. A dataset class gives its own
+/// controller: the `extra` of a dataset gives the test controller back.
+const _timeTest = ChartKind('timeTest');
 
 /// A chart of the test controller with the data [data] and the options of
 /// the scale x [x].
-Chart _chart(List<Object?> data, [AnyObject? x]) => acquireChart({
-  'type': 'timeTest',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{'data': data},
-    ],
-  },
-  'options': <String, Object?>{
-    'scales': <String, Object?>{'x': ?x},
-  },
-});
+Chart _chart(List<DataPoint> data, [TimeAxis? x]) => acquireChartRoot(
+  ChartConfigLowering(
+    ChartConfig(
+      type: _timeTest,
+      datasets: [
+        LineDataset(points: data, extra: {'type': _timeTest.name}),
+      ],
+      scales: {'x': ?x},
+    ),
+  ).lower(),
+);
 
 /// The time scale `x` of [chart].
 TimeScale _x(Chart chart) => chart.scales['x']! as TimeScale;
@@ -181,9 +184,8 @@ JsObjectFace _scaleOptions(Chart chart) =>
 /// `Map.keys` of a resolver give the keys of all its scopes, also the keys
 /// of `defaults.scale`. Thus `equals` on the resolver fails, and the text of
 /// its mismatch reads the nested resolvers without end.
-Map<String, Object?> _displayFormats(Object? options) {
-  final formats =
-      jsGet(jsGet(options, 'time'), 'displayFormats')! as JsObjectFace;
+Map<String, Object?> _displayFormats(DisplayFormats displayFormats) {
+  final formats = displayFormats.raw! as JsObjectFace;
   return {for (final key in jsObjectKeys(formats)) key: formats[key]};
 }
 
@@ -319,8 +321,8 @@ void main() {
 
     testWidgets('a DateTime x is a JS Date: its time value', (tester) async {
       final chart = _chart([
-        <String, Object?>{'x': DateTime.utc(2021, 1, 4), 'y': 1.0},
-        <String, Object?>{'x': DateTime.utc(2021, 1, 6, 12), 'y': 2.0},
+        DataPoint.time(DateTime.utc(2021, 1, 4), 1),
+        DataPoint.time(DateTime.utc(2021, 1, 6, 12), 2),
       ]);
       final x = _x(chart);
       expect((x.min, x.max), (_t0, _t0 + 2.5 * _day));
@@ -336,11 +338,14 @@ void main() {
   group('adapt-time-generate-no-advance', () {
     /// The chart of the times [times] with the unit [unit] and the step
     /// [stepSize].
-    Chart stepChart(List<double> times, TimeUnit unit, Object? stepSize) =>
-        _chart(_xy(times), {
-          'time': <String, Object?>{'unit': unit},
-          'ticks': <String, Object?>{'stepSize': stepSize},
-        });
+    Chart stepChart(List<double> times, TimeUnit unit, double stepSize) =>
+        _chart(
+          _xy(times),
+          TimeAxis(
+            unit: unit,
+            ticks: AxisTicks(stepSize: stepSize),
+          ),
+        );
 
     for (final (unit, stepSize, times) in [
       (TimeUnit.day, 0.4, [_t0, _t0 + 5 * _day]),
@@ -382,7 +387,7 @@ void main() {
       tester,
     ) async {
       expect(
-        () => stepChart([_t0, _t0 + 200001], TimeUnit.millisecond, 2.0),
+        () => stepChart([_t0, _t0 + 200001], TimeUnit.millisecond, 2),
         throwsA(
           isA<StateError>().having(
             (e) => e.message,
@@ -413,9 +418,14 @@ void main() {
       foreignAudit = (owner, key, raw) {};
       addTearDown(() => foreignAudit = saved);
       expect(
-        () => _chart(_xy(times), {
-          'time': <String, Object?>{'minUnit': 7.0},
-        }),
+        () => _chart(
+          _xy(times),
+          const TimeAxis(
+            extra: {
+              'time': {'minUnit': 7.0},
+            },
+          ),
+        ),
         throwsA(isA<TypeError>()),
       );
     });
@@ -426,7 +436,7 @@ void main() {
         // object has no displayFormats: "Cannot read properties of
         // undefined (reading 'undefined')" (scale.time.js:615).
         expect(
-          () => _chart(_xy(times), {'time': time}),
+          () => _chart(_xy(times), TimeAxis(extra: {'time': time})),
           throwsA(isA<TypeError>()),
         );
       });
@@ -438,10 +448,13 @@ void main() {
       testWidgets('the stepSize $text throws the error', (tester) async {
         // 100000 * stepSize is negative (scale.time.js:474-476).
         expect(
-          () => _chart(_xy(times), {
-            'time': <String, Object?>{'unit': TimeUnit.day},
-            'ticks': <String, Object?>{'stepSize': stepSize},
-          }),
+          () => _chart(
+            _xy(times),
+            TimeAxis(
+              unit: TimeUnit.day,
+              ticks: AxisTicks(stepSize: stepSize),
+            ),
+          ),
           throwsA(
             isA<StateError>().having(
               (e) => e.message,
@@ -462,25 +475,26 @@ void main() {
   group('adapt-time-null-timestamp', () {
     /// The chart of the labels A, garbage and B with the options of the
     /// scale x [x].
-    Chart labelsChart(AnyObject x) => acquireChart({
-      'type': 'timeTest',
-      'data': <String, Object?>{
-        'labels': <Object?>['2021-01-04', 'garbage', '2021-01-20'],
-        'datasets': <Object?>[
-          <String, Object?>{
-            'data': <Object?>[1.0, 2.0, 3.0],
-          },
-        ],
-      },
-      'options': <String, Object?>{
-        'scales': <String, Object?>{'x': x},
-      },
-    });
+    Chart labelsChart(TimeAxis x) => acquireChartRoot(
+      ChartConfigLowering(
+        ChartConfig(
+          type: _timeTest,
+          datasets: [
+            LineDataset(
+              data: const [1.0, 2.0, 3.0],
+              extra: {'type': _timeTest.name},
+            ),
+          ],
+          labels: const ['2021-01-04', 'garbage', '2021-01-20'],
+          scales: {'x': x},
+        ),
+      ).lower(),
+    );
 
     testWidgets('the label timestamps keep null and sort it as 0', (
       tester,
     ) async {
-      final x = _x(labelsChart({}));
+      final x = _x(labelsChart(const TimeAxis()));
       expect(x.getLabelTimestamps(), [null, _t0, _t0 + 16 * _day]);
       // Math.min(min, null) is Math.min(min, 0).
       expect(x.min, 0);
@@ -488,9 +502,9 @@ void main() {
 
     testWidgets('a null tick of the labels has the value NaN', (tester) async {
       final x = _x(
-        labelsChart({
-          'ticks': <String, Object?>{'source': TickSource.labels},
-        }),
+        labelsChart(
+          const TimeAxis(ticks: AxisTicks(source: TickSource.labels)),
+        ),
       );
       final ticks = x.ticks!;
       // Upstream gives the tick value null. The scale reads the value of the
@@ -510,16 +524,17 @@ void main() {
       // Upstream gives the callback the null.
       final values = <double>[];
       final x = _x(
-        labelsChart({
-          'ticks': <String, Object?>{
-            'source': TickSource.labels,
-            'callback':
-                (Object? scale, double value, int index, Object? ticks) {
-                  values.add(value);
-                  return [jsToString(value)];
-                },
-          },
-        }),
+        labelsChart(
+          TimeAxis(
+            ticks: AxisTicks(
+              source: TickSource.labels,
+              callback: (scale, value, index, ticks) {
+                values.add(value);
+                return [jsToString(value)];
+              },
+            ),
+          ),
+        ),
       );
       expect(values, contains(isNaN));
       expect(x.ticks!.first.label, ['NaN']);
@@ -527,11 +542,12 @@ void main() {
 
     testWidgets('afterAutoSkip reads a null tick value as 0', (tester) async {
       final x = _x(
-        labelsChart({
-          'offset': true,
-          'offsetAfterAutoskip': true,
-          'ticks': <String, Object?>{'source': TickSource.labels},
-        }),
+        labelsChart(
+          const TimeAxis(
+            ticks: AxisTicks(source: TickSource.labels),
+            extra: {'offset': true, 'offsetAfterAutoskip': true},
+          ),
+        ),
       );
       // `+tick.value` is `+null`, 0 (scale.time.js:405). Thus the offsets
       // and the pixels stay finite.
@@ -542,10 +558,12 @@ void main() {
 
     testWidgets('a null bound of bounds ticks is 0', (tester) async {
       final x = _x(
-        labelsChart({
-          'bounds': ScaleBounds.ticks,
-          'ticks': <String, Object?>{'source': TickSource.labels},
-        }),
+        labelsChart(
+          const TimeAxis(
+            bounds: ScaleBounds.ticks,
+            ticks: AxisTicks(source: TickSource.labels),
+          ),
+        ),
       );
       // Upstream gives min the value null, which the arithmetic reads as 0.
       expect(x.min, 0);
@@ -599,17 +617,21 @@ void main() {
       tester,
     ) async {
       final x = _x(
-        _chart(_xy([_t0, _t0 + _day]), {
-          'time': <String, Object?>{
-            'displayFormats': <String, Object?>{'day': 'MMM'},
-          },
-        }),
+        _chart(
+          _xy([_t0, _t0 + _day]),
+          const TimeAxis(
+            extra: {
+              'time': {
+                'displayFormats': {'day': 'MMM'},
+              },
+            },
+          ),
+        ),
       );
-      final time = x.optionsView['time']! as JsObjectFace;
-      final formats = time['displayFormats']! as JsObjectFace;
-      expect(formats['day'], 'MMM');
-      expect(formats['hour'], 'ha');
-      expect(formats['datetime'], 'MMM d, yyyy, h:mm:ss a');
+      final formats = x.options.time.displayFormats;
+      expect(formats.formatOf(TimeUnit.day), 'MMM');
+      expect(formats.formatOf(TimeUnit.hour), 'ha');
+      expect(formats.datetime, 'MMM d, yyyy, h:mm:ss a');
     });
 
     testWidgets('mergeIf writes the formats into the scale config and not '
@@ -620,7 +642,7 @@ void main() {
       // (scale.time.js:277, helpers.config.ts:101-106, :373-386).
       final chart = _chart(_xy([_t0, _t0 + _day]));
       final scales =
-          (chart.config.options as AnyObject)['scales']! as JsObjectFace;
+          (chart.config.options as JsObjectFace)['scales']! as JsObjectFace;
       final x = scales['x']! as JsObjectFace;
       final time = x['time']! as JsObjectFace;
       final formats = time['displayFormats']! as JsObjectFace;
@@ -659,45 +681,40 @@ void main() {
   // dataset.
   group('adapt-date-moment-format', () {
     _lineTwin('should get the correct label for a data value by format', () {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'xAxisID': 'x',
-              'data': <Object?>[null, 10, 3],
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(xAxisID: 'x', data: [null, 10, 3]),
+            ],
+            labels: [
+              '2015-01-01T20:00:00',
+              '2015-01-02T21:00:00',
+              '2015-01-03T22:00:00',
+              '2015-01-05T23:00:00',
+              '2015-01-07T03:00',
+              '2015-01-08T10:00',
+              '2015-01-10T12:00',
+            ], // days
+            scales: {
+              'x': TimeAxis(
+                unit: TimeUnit.day,
+                position: ChartPosition.bottom,
+                ticks: AxisTicks(source: TickSource.labels, autoSkip: false),
+                extra: {
+                  'time': {
+                    'displayFormats': {'day': 'yyyy-MM-dd'},
+                  },
+                },
+              ),
             },
-          ],
-          'labels': <Object?>[
-            '2015-01-01T20:00:00',
-            '2015-01-02T21:00:00',
-            '2015-01-03T22:00:00',
-            '2015-01-05T23:00:00',
-            '2015-01-07T03:00',
-            '2015-01-08T10:00',
-            '2015-01-10T12:00',
-          ], // days
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'time': <String, Object?>{
-                'unit': TimeUnit.day,
-                'displayFormats': <String, Object?>{'day': 'yyyy-MM-dd'},
-              },
-              'position': ChartPosition.bottom,
-              'ticks': <String, Object?>{
-                'source': TickSource.labels,
-                'autoSkip': false,
-              },
-            },
-          },
-        },
-      });
+          ),
+        ).lower(),
+      );
 
       final xScale = _x(chart);
-      final labels = (chart.data as AnyObject)['labels']! as List<Object?>;
+      final labels = (chart.data as JsObjectFace)['labels']! as List<Object?>;
       for (final lbl in labels) {
         final dd = xScale.adapter.parse(lbl);
         final parsed = (lbl! as String).split('T');
@@ -715,32 +732,30 @@ void main() {
     // Mondays of the ISO weeks 15 and 16 of 2020, the labels '15' and '16'
     // of upstream.
     _lineTwin('should round to isoWeekday', () {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': '2020-04-12T20:00:00', 'y': 1},
-                <String, Object?>{'x': '2020-04-13T20:00:00', 'y': 2},
-              ],
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [
+              LineDataset(
+                points: [
+                  DataPoint.label('2020-04-12T20:00:00', 1),
+                  DataPoint.label('2020-04-13T20:00:00', 2),
+                ],
+              ),
+            ],
+            scales: const {
+              'x': TimeAxis(
+                unit: TimeUnit.week,
+                ticks: AxisTicks(source: TickSource.data),
+                extra: {
+                  'time': {'round': TimeUnit.week, 'isoWeekday': 1},
+                },
+              ),
             },
-          ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'time',
-              'ticks': <String, Object?>{'source': TickSource.data},
-              'time': <String, Object?>{
-                'unit': TimeUnit.week,
-                'round': TimeUnit.week,
-                'isoWeekday': 1,
-              },
-            },
-          },
-        },
-      });
+          ),
+        ).lower(),
+      );
 
       expect(
         [for (final tick in _x(chart).ticks!) tick.value],
@@ -751,26 +766,25 @@ void main() {
     group('when ticks.source', () {
       group('is "labels"', () {
         /// scale.time.tests.js:584-601 `beforeEach`.
-        Chart labelsChart() => acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, 1, 2, 3, 4, 5],
+        Chart labelsChart() => acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [
+                LineDataset(data: [0, 1, 2, 3, 4, 5]),
+              ],
+              labels: ['2017', '2019', '2020', '2025', '2042'],
+              scales: {
+                'x': TimeAxis(
+                  ticks: AxisTicks(source: TickSource.labels),
+                  extra: {
+                    'time': {'parser': 'yyyy'},
+                  },
+                ),
               },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'time',
-                'time': <String, Object?>{'parser': 'yyyy'},
-                'ticks': <String, Object?>{'source': TickSource.labels},
-              },
-            },
-          },
-        });
+            ),
+          ).lower(),
+        );
 
         _lineTwin('should generate ticks from "data.labels"', () {
           final scale = labelsChart().scales['x']!;
@@ -818,33 +832,32 @@ void main() {
 
       group('is "data"', () {
         /// scale.time.tests.js:668-694 `beforeEach`.
-        Chart dataChart() => acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, 1, 2, 3, 4, 5],
+        Chart dataChart() => acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: ChartKind.line,
+              datasets: [
+                const LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                LineDataset(
+                  points: [
+                    DataPoint.label('2018', 6),
+                    DataPoint.label('2020', 7),
+                    DataPoint.label('2043', 8),
+                  ],
+                ),
+              ],
+              labels: const ['2017', '2019', '2020', '2025', '2042'],
+              scales: const {
+                'x': TimeAxis(
+                  ticks: AxisTicks(source: TickSource.data),
+                  extra: {
+                    'time': {'parser': 'yyyy'},
+                  },
+                ),
               },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': '2018', 'y': 6},
-                  <String, Object?>{'x': '2020', 'y': 7},
-                  <String, Object?>{'x': '2043', 'y': 8},
-                ],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'time',
-                'time': <String, Object?>{'parser': 'yyyy'},
-                'ticks': <String, Object?>{'source': TickSource.data},
-              },
-            },
-          },
-        });
+            ),
+          ).lower(),
+        );
 
         _lineTwin('should generate ticks from "datasets.data"', () {
           final scale = dataChart().scales['x']!;
@@ -918,7 +931,7 @@ void main() {
           final chart = dataChart();
           final scale = chart.scales['x']!;
 
-          (chart.data as AnyObject)['labels'] = <Object?>[];
+          (chart.data as JsObjectFace)['labels'] = <Object>[];
           chart.update();
 
           expect(scale.min, _ms('2018', 'yyyy'));
@@ -932,28 +945,27 @@ void main() {
       group('when normalized is $normalized and scale type', () {
         group('is "timeseries"', () {
           /// scale.time.tests.js:765-790 `beforeEach`.
-          Chart seriesChart() => acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3, 4],
+          Chart seriesChart() => acquireChartRoot(
+            ChartConfigLowering(
+              ChartConfig(
+                type: ChartKind.line,
+                datasets: const [
+                  LineDataset(data: [0, 1, 2, 3, 4]),
+                ],
+                labels: const ['2017', '2019', '2020', '2025', '2042'],
+                scales: const {
+                  'x': TimeSeriesAxis(
+                    ticks: AxisTicks(source: TickSource.labels),
+                    extra: {
+                      'time': {'parser': 'yyyy'},
+                    },
+                  ),
+                  'y': LinearAxis(display: ScaleDisplay.off),
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'normalized': normalized,
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'timeseries',
-                  'time': <String, Object?>{'parser': 'yyyy'},
-                  'ticks': <String, Object?>{'source': TickSource.labels},
-                },
-                'y': <String, Object?>{'display': ScaleDisplay.off},
-              },
-            },
-          });
+                extra: {'normalized': normalized},
+              ),
+            ).lower(),
+          );
 
           _lineTwin(
             'should space data out with the same gap, whatever their time '
@@ -1059,27 +1071,26 @@ void main() {
 
         group('is "time"', () {
           /// scale.time.tests.js:842-866 `beforeEach`.
-          Chart timeChart() => acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3, 4, 5],
+          Chart timeChart() => acquireChartRoot(
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [
+                  LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                ],
+                labels: ['2017', '2019', '2020', '2025', '2042'],
+                scales: {
+                  'x': TimeAxis(
+                    ticks: AxisTicks(source: TickSource.labels),
+                    extra: {
+                      'time': {'parser': 'yyyy'},
+                    },
+                  ),
+                  'y': LinearAxis(display: ScaleDisplay.off),
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'time',
-                  'time': <String, Object?>{'parser': 'yyyy'},
-                  'ticks': <String, Object?>{'source': TickSource.labels},
-                },
-                'y': <String, Object?>{'display': ScaleDisplay.off},
-              },
-            },
-          });
+              ),
+            ).lower(),
+          );
 
           _lineTwin(
             'should space data out with a gap relative to their time values',
@@ -1155,35 +1166,32 @@ void main() {
     group('when bounds', () {
       group('is "data"', () {
         _lineTwin('should preserve the data range', () {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>[
-                '02/20 08:00',
-                '02/21 09:00',
-                '02/22 10:00',
-                '02/23 11:00',
-              ],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3, 4, 5],
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [
+                  LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                ],
+                labels: [
+                  '02/20 08:00',
+                  '02/21 09:00',
+                  '02/22 10:00',
+                  '02/23 11:00',
+                ],
+                scales: {
+                  'x': TimeAxis(
+                    bounds: ScaleBounds.data,
+                    unit: TimeUnit.day,
+                    extra: {
+                      'time': {'parser': 'MM/dd HH:mm'},
+                    },
+                  ),
+                  'y': LinearAxis(display: ScaleDisplay.off),
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'time',
-                  'bounds': ScaleBounds.data,
-                  'time': <String, Object?>{
-                    'parser': 'MM/dd HH:mm',
-                    'unit': TimeUnit.day,
-                  },
-                },
-                'y': <String, Object?>{'display': ScaleDisplay.off},
-              },
-            },
-          });
+              ),
+            ).lower(),
+          );
 
           final scale = chart.scales['x']!;
 
@@ -1203,35 +1211,32 @@ void main() {
 
       group('is "labels"', () {
         _lineTwin('should preserve the label range', () {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>[
-                '02/20 08:00',
-                '02/21 09:00',
-                '02/22 10:00',
-                '02/23 11:00',
-              ],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[0, 1, 2, 3, 4, 5],
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [
+                  LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                ],
+                labels: [
+                  '02/20 08:00',
+                  '02/21 09:00',
+                  '02/22 10:00',
+                  '02/23 11:00',
+                ],
+                scales: {
+                  'x': TimeAxis(
+                    bounds: ScaleBounds.ticks,
+                    unit: TimeUnit.day,
+                    extra: {
+                      'time': {'parser': 'MM/dd HH:mm'},
+                    },
+                  ),
+                  'y': LinearAxis(display: ScaleDisplay.off),
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'time',
-                  'bounds': ScaleBounds.ticks,
-                  'time': <String, Object?>{
-                    'parser': 'MM/dd HH:mm',
-                    'unit': TimeUnit.day,
-                  },
-                },
-                'y': <String, Object?>{'display': ScaleDisplay.off},
-              },
-            },
-          });
+              ),
+            ).lower(),
+          );
 
           final scale = chart.scales['x']!;
           final ticks = scale.getTicks()!;
@@ -1264,36 +1269,33 @@ void main() {
             'and ticks.source is "${source.name}" and bounds "${bounds.name}"',
             () {
               /// scale.time.tests.js:983-1008 `beforeEach`.
-              Chart rangeChart() => acquireChart(<String, Object?>{
-                'type': 'line',
-                'data': <String, Object?>{
-                  'labels': <Object?>[
-                    '02/20 08:00',
-                    '02/21 09:00',
-                    '02/22 10:00',
-                    '02/23 11:00',
-                  ],
-                  'datasets': <Object?>[
-                    <String, Object?>{
-                      'data': <Object?>[0, 1, 2, 3, 4, 5],
+              Chart rangeChart() => acquireChartRoot(
+                ChartConfigLowering(
+                  ChartConfig(
+                    type: ChartKind.line,
+                    datasets: const [
+                      LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                    ],
+                    labels: const [
+                      '02/20 08:00',
+                      '02/21 09:00',
+                      '02/22 10:00',
+                      '02/23 11:00',
+                    ],
+                    scales: {
+                      'x': TimeAxis(
+                        bounds: bounds,
+                        unit: TimeUnit.day,
+                        ticks: AxisTicks(source: source),
+                        extra: const {
+                          'time': {'parser': 'MM/dd HH:mm'},
+                        },
+                      ),
+                      'y': const LinearAxis(display: ScaleDisplay.off),
                     },
-                  ],
-                },
-                'options': <String, Object?>{
-                  'scales': <String, Object?>{
-                    'x': <String, Object?>{
-                      'type': 'time',
-                      'bounds': bounds,
-                      'time': <String, Object?>{
-                        'parser': 'MM/dd HH:mm',
-                        'unit': TimeUnit.day,
-                      },
-                      'ticks': <String, Object?>{'source': source},
-                    },
-                    'y': <String, Object?>{'display': ScaleDisplay.off},
-                  },
-                },
-              });
+                  ),
+                ).lower(),
+              );
 
               _lineTwin('should expand scale to the min/max range', () {
                 final chart = rangeChart();
@@ -1364,29 +1366,34 @@ void main() {
           'when ticks.source is "${source.name}" and scale type is "$type"',
           () {
             /// scale.time.tests.js:1062-1084 `beforeEach`.
-            Chart offsetChart() => acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'labels': <Object?>['2017', '2018', '2019', '2020', '2021'],
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[0, 1, 2, 3, 4],
+            Chart offsetChart() => acquireChartRoot(
+              ChartConfigLowering(
+                ChartConfig(
+                  type: ChartKind.line,
+                  datasets: const [
+                    LineDataset(data: [0, 1, 2, 3, 4]),
+                  ],
+                  labels: const ['2017', '2018', '2019', '2020', '2021'],
+                  scales: {
+                    'x': type == 'time'
+                        ? TimeAxis(
+                            unit: TimeUnit.year,
+                            ticks: AxisTicks(source: source),
+                            extra: const {
+                              'time': {'parser': 'yyyy'},
+                            },
+                          )
+                        : TimeSeriesAxis(
+                            unit: TimeUnit.year,
+                            ticks: AxisTicks(source: source),
+                            extra: const {
+                              'time': {'parser': 'yyyy'},
+                            },
+                          ),
                   },
-                ],
-              },
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'x': <String, Object?>{
-                    'type': type,
-                    'time': <String, Object?>{
-                      'parser': 'yyyy',
-                      'unit': TimeUnit.year,
-                    },
-                    'ticks': <String, Object?>{'source': source},
-                  },
-                },
-              },
-            });
+                ),
+              ).lower(),
+            );
 
             _lineTwin('should not add offset from the edges', () {
               final scale = offsetChart().scales['x']!;
@@ -1460,27 +1467,34 @@ void main() {
           'when ticks.source is "${source.name}" and scale type is "$type"',
           () {
             /// scale.time.tests.js:1164-1188 `beforeEach`.
-            Chart offsetChart() => acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': <String, Object?>{
-                'labels': <Object?>['2017', '2019', '2020', '2025', '2042'],
-                'datasets': <Object?>[
-                  <String, Object?>{
-                    'data': <Object?>[0, 1, 2, 3, 4, 5],
+            Chart offsetChart() => acquireChartRoot(
+              ChartConfigLowering(
+                ChartConfig(
+                  type: ChartKind.line,
+                  datasets: const [
+                    LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                  ],
+                  labels: const ['2017', '2019', '2020', '2025', '2042'],
+                  scales: {
+                    'x': type == 'time'
+                        ? TimeAxis(
+                            ticks: AxisTicks(source: source),
+                            extra: const {
+                              'id': 'x',
+                              'time': {'parser': 'yyyy'},
+                            },
+                          )
+                        : TimeSeriesAxis(
+                            ticks: AxisTicks(source: source),
+                            extra: const {
+                              'id': 'x',
+                              'time': {'parser': 'yyyy'},
+                            },
+                          ),
                   },
-                ],
-              },
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'x': <String, Object?>{
-                    'id': 'x',
-                    'type': type,
-                    'time': <String, Object?>{'parser': 'yyyy'},
-                    'ticks': <String, Object?>{'source': source},
-                  },
-                },
-              },
-            });
+                ),
+              ).lower(),
+            );
 
             _lineTwin(
               'should add offset if min and max extend the labels range and '
@@ -1523,15 +1537,15 @@ void main() {
         testWidgets('should generate defaults from adapter presets', (
           tester,
         ) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{},
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{'type': 'time'},
-              },
-            },
-          });
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [],
+                scales: {'x': TimeAxis()},
+              ),
+            ).lower(),
+          );
 
           // NOTE: the test suite is configured to use moment
           // The default adapter gives the moment presets as ICU patterns
@@ -1550,33 +1564,43 @@ void main() {
           };
 
           expect(
-            _displayFormats(chart.scales['x']!.optionsView),
+            _displayFormats(_x(chart).options.time.displayFormats),
             equals(expected),
           );
-          expect(_displayFormats(_scaleOptions(chart)), equals(expected));
+          expect(
+            _displayFormats(
+              DisplayFormats(
+                jsGet(jsGet(_scaleOptions(chart), 'time'), 'displayFormats'),
+              ),
+            ),
+            equals(expected),
+          );
         });
 
         testWidgets('should merge user formats with adapter presets', (
           tester,
         ) async {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{},
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'x': <String, Object?>{
-                  'type': 'time',
-                  'time': <String, Object?>{
-                    'displayFormats': <String, Object?>{
-                      'millisecond': 'foo',
-                      'hour': 'bar',
-                      'month': 'bla',
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [],
+                scales: {
+                  'x': TimeAxis(
+                    extra: {
+                      'time': {
+                        'displayFormats': {
+                          'millisecond': 'foo',
+                          'hour': 'bar',
+                          'month': 'bla',
+                        },
+                      },
                     },
-                  },
+                  ),
                 },
-              },
-            },
-          });
+              ),
+            ).lower(),
+          );
 
           // NOTE: the test suite is configured to use moment
           // The default adapter gives the moment presets as ICU patterns
@@ -1595,10 +1619,17 @@ void main() {
           };
 
           expect(
-            _displayFormats(chart.scales['x']!.optionsView),
+            _displayFormats(_x(chart).options.time.displayFormats),
             equals(expected),
           );
-          expect(_displayFormats(_scaleOptions(chart)), equals(expected));
+          expect(
+            _displayFormats(
+              DisplayFormats(
+                jsGet(jsGet(_scaleOptions(chart), 'time'), 'displayFormats'),
+              ),
+            ),
+            equals(expected),
+          );
         });
       });
     });

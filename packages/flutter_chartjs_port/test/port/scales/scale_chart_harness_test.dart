@@ -252,14 +252,14 @@ void main() {
     test('pairs the draw of a port bar with the amount 0 with upstream', () {
       // A bar of 30 x 80 pixels with a border of 2 and the bottom edge
       // skipped: the port draws the ring without a clip.
-      final bar = BarElement({
-        'horizontal': false,
-        'x': 50,
-        'y': 20,
-        'base': 100,
-        'width': 30,
-        'height': 80,
-        'options': BarOptions(<String, Object?>{
+      final bar = BarElement()
+        ..horizontal = false
+        ..x = 50
+        ..y = 20
+        ..base = 100
+        ..width = 30
+        ..height = 80
+        ..options = BarOptions(<String, Object?>{
           'borderColor': const ChartPaint.solid(
             native_ui.Color.fromRGBO(255, 0, 0, 1),
           ),
@@ -268,10 +268,9 @@ void main() {
           ),
           'borderWidth': 2,
           'borderRadius': 0,
-        }),
-        'borderSkipped': <String, Object?>{'bottom': true},
-        'inflateAmount': 0,
-      });
+        })
+        ..borderSkipped = <String, Object?>{'bottom': true}
+        ..inflateAmount = 0;
       final ctx = createMockContext();
       bar.draw(ctx);
       final actual = recordedCalls(ctx.getCalls());

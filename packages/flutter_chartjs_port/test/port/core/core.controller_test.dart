@@ -316,6 +316,8 @@ Plugin<Object?> _spy(
 }
 
 /// The config of a `test` chart with [datasets] on two `testlinear` scales.
+// A Map config: a typed config has no class for the controller `test` and
+// the scale `testlinear` of the generator.
 AnyObject _testConfig(
   List<Object?> datasets, {
   List<Plugin<Object?>>? plugins,
@@ -1237,6 +1239,7 @@ void main() {
     );
   });
 
+  // A Map config: the chart has no chart type, which a typed config needs.
   group('the meta clip', () {
     test('clip throws before the first write, then gives the clip', () {
       // core.datasetController.js:704 writes `meta._clip`. The literal of
@@ -1255,6 +1258,8 @@ void main() {
     // The axis id of the meta is a `String?` (row `adapt-native-chart-meta`).
     // The schema shape of `xAxisID` is `string`: a number stops a debug
     // build in `linkScales`.
+    // A Map config: the axis id is a number, which a typed dataset cannot
+    // hold.
     testWidgets('stops a debug build', (tester) async {
       expect(
         () => acquireChart(<String, Object?>{
@@ -1285,6 +1290,8 @@ void main() {
       testWidgets('a yAxisKey $name throws after the parse of x', (
         tester,
       ) async {
+        // A Map config: the parsing key is not a string, a value that a
+        // typed scope keeps only as a foreign value.
         final labels = <Object?>['b'];
         expect(
           () => acquireChart(<String, Object?>{
@@ -1314,6 +1321,7 @@ void main() {
     }
   });
 
+  // A Map config: the controller `test` of the generator.
   group('getDataVisibility', () {
     // core.controller.js:885 `!this._hiddenIndices[index]`, with the
     // port-only early return for an empty `_hiddenIndices` (Chart.js ADR
@@ -1441,6 +1449,7 @@ void main() {
     });
   });
 
+  // Map configs: the cases test the raw config, with no chart type.
   group('construction', () {
     test('a canvas without a chart host gives BasicPlatform', () {
       final chart = Chart(UiCanvasElement(), <String, Object?>{});
@@ -1555,6 +1564,7 @@ void main() {
       expect(() => Chart.register([null]), throwsA(isA<TypeError>()));
     });
 
+    // A Map config: the chart has no chart type, which a typed config needs.
     test('a register invalidates the plugins of each chart', () {
       final chart = Chart(_Canvas(), <String, Object?>{});
       addTearDown(chart.destroy);
@@ -1573,6 +1583,8 @@ void main() {
     });
   });
 
+  // Map configs: plain controller and scale classes, which a typed config
+  // cannot name.
   group('adapt-component-class-role', () {
     test('a plain controller class throws a TypeError in update()', () {
       // Upstream constructs the plain class and keeps it in meta.controller.
@@ -1618,6 +1630,7 @@ void main() {
     });
   });
 
+  // A Map config: the chart has no chart type, which a typed config needs.
   group('platform-to-base64-image', () {
     // Chart.js ADR 0048, section 8: toBase64Image returns the Future of
     // toDataURL of the canvas layer, a PNG data URL of the bitmap at the
@@ -1697,6 +1710,7 @@ void main() {
     });
   });
 
+  // Map configs: the charts have no chart type, which a typed config needs.
   group('harness-method-fields', () {
     test('_initialize and the attach listener call the resize field', () {
       final chart = _ResizeSpyChart(_Canvas(), <String, Object?>{});
@@ -1774,6 +1788,7 @@ void main() {
     });
   });
 
+  // A Map config: the chart has no chart type, which a typed config needs.
   group('platform-destroy-cancel-resize', () {
     testWidgets('destroy cancels the delayed update of a resize', (
       tester,
@@ -1793,6 +1808,7 @@ void main() {
     });
   });
 
+  // A Map config: the chart has no chart type, which a typed config needs.
   group('js-semantics-debounce-args', () {
     testWidgets('a delayed resize updates with the mode resize', (
       tester,
@@ -1815,6 +1831,7 @@ void main() {
     });
   });
 
+  // A Map config: the controller `test` of the generator.
   group('platform-animator-mute', () {
     testWidgets('a looping chart under TickerMode(enabled: false) schedules '
         'no frame, and it continues when TickerMode turns on', (tester) async {
@@ -1892,6 +1909,7 @@ void main() {
     });
   });
 
+  // Map configs: the cases test the raw config and its data object.
   group('adapt-config-objects', () {
     // core.controller.tests.js:581-599 gives `data: []`. Upstream writes
     // `datasets` and `labels` into the array. The port gives a new Map.
@@ -1937,6 +1955,7 @@ void main() {
     });
   });
 
+  // A Map config: the chart has no chart type, which a typed config needs.
   group('destroy() and the context', () {
     // platform.dom.tests.js:299-329 reads 13 attributes of the context after
     // destroy(). The chart starts detached and draws nothing before destroy().
@@ -1993,6 +2012,7 @@ void main() {
     });
   });
 
+  // A Map config: the chart has no chart type, which a typed config needs.
   group('the platform.dom spec cases', () {
     // platform.dom.tests.js:274-297 "should fit parent using aspect ratio to
     // calculate size" has no `done`. Upstream, the global afterEach destroys
