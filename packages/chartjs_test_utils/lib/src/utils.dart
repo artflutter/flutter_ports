@@ -341,7 +341,7 @@ Object? _property(Object el, String key) => switch (el) {
   if (el != null && jsTruthy(el)) {
     if (el is VisualElement && el is! LineElement) {
       final center = el.getCenterPoint();
-      point = (x: jsToNumber(center.x), y: jsToNumber(center.y));
+      point = (x: center.dx, y: center.dy);
     } else if (!identical(_property(el, 'x'), undefined) &&
         !identical(_property(el, 'y'), undefined)) {
       point = (

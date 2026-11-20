@@ -181,4 +181,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0185](0185-typed-element-options.md) Typed element options: accepted.
 - [0186](0186-typed-scale-value-methods.md) Typed scale value methods: accepted, supersedes 0025.
 - [0187](0187-flutter-border-radius-corners.md) Corner options hold a Flutter BorderRadius: accepted, supersedes 0123.
+- [0188](0188-offset-element-points.md) The point of an element is an Offset: accepted.
 <!-- adr-index:end -->

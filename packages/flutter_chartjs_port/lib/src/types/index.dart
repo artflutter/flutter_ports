@@ -36,7 +36,7 @@ library;
 // The canvas interface and the native event stand in for lib.dom.d.ts, which
 // index.d.ts names without an import. Both are pure, port-only interface
 // libraries (Chart.js ADR 0055, Chart.js ADR 0037).
-import 'dart:ui' show TextAlign;
+import 'dart:ui';
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
@@ -776,10 +776,10 @@ abstract interface class VisualElement() {
 
   /// index.d.ts:1851 `getCenterPoint(useFinalPosition?): Point`.
   ///
-  /// The element classes return the `ElementPoint` of `core.element.dart`,
-  /// which stands for the object literal `{x, y}` (Chart.js ADR 0017,
-  /// section 9).
-  Point getCenterPoint([bool? useFinalPosition]);
+  /// The element classes return a `dart:ui` [Offset] for the object literal
+  /// `{x, y}` (row `adapt-offset-points`).
+  // DIVERGES(chartjs): adapt-offset-points, the point is an Offset.
+  Offset getCenterPoint([bool? useFinalPosition]);
 }
 
 /// index.d.ts:1852 the optional member `getRange?(axis: 'x' | 'y'): number`

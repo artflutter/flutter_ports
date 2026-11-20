@@ -7,6 +7,7 @@ import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/offset_matcher.dart';
 import 'arc_reference.dart';
 
 // The spec element.arc.tests.js tests inRange, getCenterPoint and two draw
@@ -589,9 +590,12 @@ void main() {
           test(c.name, () {
             final arc = _arc(c.cfg, c.animations, form);
             final center = arc.getCenterPoint(c.useFinalPosition);
-            _expectValue(center.x, c.x, 'x');
-            _expectValue(center.y, c.y, 'y');
-            expect(arc.tooltipPosition(c.useFinalPosition), center);
+            _expectValue(center.dx, c.x, 'x');
+            _expectValue(center.dy, c.y, 'y');
+            expect(
+              arc.tooltipPosition(c.useFinalPosition),
+              offsetEquals(center),
+            );
           });
         }
       });
@@ -613,8 +617,8 @@ void main() {
         // the last bit: the center is within 1e-12 px of V8.
         test('${c.name} equals V8 within the last bits', () {
           final center = _arc(c.cfg).getCenterPoint(c.useFinalPosition);
-          expect(center.x, closeTo(c.x, 1e-12));
-          expect(center.y, closeTo(c.y, 1e-12));
+          expect(center.dx, closeTo(c.x, 1e-12));
+          expect(center.dy, closeTo(c.y, 1e-12));
         });
       }
 
@@ -667,8 +671,8 @@ void main() {
               ..outerRadius = 40.25
               ..options = form(options);
             final center = arc.getCenterPoint(false);
-            expect(center.x, x.isNaN ? isNaN : closeTo(x, 1e-9));
-            expect(center.y, y.isNaN ? isNaN : closeTo(y, 1e-9));
+            expect(center.dx, x.isNaN ? isNaN : closeTo(x, 1e-9));
+            expect(center.dy, y.isNaN ? isNaN : closeTo(y, 1e-9));
           });
         }
       }

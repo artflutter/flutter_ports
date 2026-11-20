@@ -201,7 +201,6 @@ EasingFunction
 Element
 ElementOptions
 ElementOptionsByTypeScope
-ElementPoint
 ElementPropertyRead
 ElementProps
 ElementXProp
@@ -1248,7 +1247,6 @@ DrawPointOptions
 EasingFunction
 ElementOptions
 ElementOptionsByTypeScope
-ElementPoint
 ElementPropertyRead
 ElementProps
 ElementXProp

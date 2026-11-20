@@ -547,7 +547,8 @@ class Flow([Map<String, Object?>? cfg])
   /// @param {boolean} useFinalPosition
   /// @return {{x: number, y:number}}
   @override
-  ElementPoint getCenterPoint([bool? useFinalPosition]) {
+  // DIVERGES(sankey): adapt-sankey-offset-points, the point is an Offset.
+  Offset getCenterPoint([bool? useFinalPosition]) {
     final x = _prop('x', useFinalPosition);
     final y = _prop('y', useFinalPosition);
     final x2 = _prop('x2', useFinalPosition);
@@ -555,7 +556,7 @@ class Flow([Map<String, Object?>? cfg])
     final height = _prop('height', useFinalPosition);
     final width = _prop('width', useFinalPosition);
     final vertical = _vertical;
-    return ElementPoint(
+    return Offset(
       (x + x2 + (vertical ? width : 0)) / 2,
       (y + y2 + (vertical ? 0 : height)) / 2,
     );
@@ -563,7 +564,7 @@ class Flow([Map<String, Object?>? cfg])
 
   /// flow.ts:290 `tooltipPosition(useFinalPosition = false)`.
   @override
-  ElementPoint tooltipPosition([bool? useFinalPosition]) =>
+  Offset tooltipPosition([bool? useFinalPosition]) =>
       getCenterPoint(useFinalPosition ?? false);
 
   /// flow.ts:298 `getRange(axis)`.

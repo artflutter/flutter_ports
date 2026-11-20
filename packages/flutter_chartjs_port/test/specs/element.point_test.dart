@@ -12,7 +12,7 @@ import '../fixtures/index.dart' as fixture;
 // PointElement of element.point.dart (Chart.js ADR 0017). An object literal
 // is a Map (Chart.js ADR 0043), and an integer becomes a double at the
 // write. The literal {x, y} of tooltipPosition and getCenterPoint is an
-// ElementPoint, which compares with equals.
+// Offset, which compares with equals.
 //
 // The fixture group `auto` runs charts (Chart.js ADR 0029). Thus the file
 // runs on the VM with flutter_test, and it does not call `setUpSpecs()`:
@@ -45,7 +45,7 @@ void main() {
         ..x = 10
         ..y = 15;
 
-      expect(point.tooltipPosition(), const ElementPoint(10, 15));
+      expect(point.tooltipPosition(), const Offset(10, 15));
     });
 
     test('should get the correct center point', () {
@@ -55,7 +55,7 @@ void main() {
         ..x = 10
         ..y = 10;
 
-      expect(point.getCenterPoint(), const ElementPoint(10, 10));
+      expect(point.getCenterPoint(), const Offset(10, 10));
     });
 
     test('should not draw if skipped', () {

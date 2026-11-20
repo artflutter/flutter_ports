@@ -28,6 +28,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'dart:ui';
+
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 /// element.point.ts:11 `inRange`, the hit test of [el] on one [axis].
@@ -546,13 +548,14 @@ class PointElement([AnyObject? cfg])
 
   /// element.point.ts:76 `getCenterPoint(useFinalPosition?)`.
   ///
-  /// The result stands for the literal `{x, y}` (Chart.js ADR 0017,
-  /// section 9). A property in the `undefined` state gives NaN, the
-  /// `ToNumber` of a copied `undefined`, as in [tooltipPosition].
+  /// The result stands for the literal `{x, y}`: an [Offset] (row
+  /// `adapt-offset-points`). A property in the `undefined` state gives NaN,
+  /// the `ToNumber` of a copied `undefined`, as in [tooltipPosition].
   @override
-  ElementPoint getCenterPoint([bool? useFinalPosition]) {
+  // DIVERGES(chartjs): adapt-offset-points, the point is an Offset.
+  Offset getCenterPoint([bool? useFinalPosition]) {
     // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
-    return ElementPoint(
+    return Offset(
       finalNumber(AnimatedProp.x, x, useFinalPosition),
       finalNumber(AnimatedProp.y, y, useFinalPosition),
     );

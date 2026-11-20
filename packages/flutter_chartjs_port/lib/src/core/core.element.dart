@@ -21,8 +21,8 @@
 ///   from NaN reads a point through it, without an import of this library
 ///   (Chart.js ADR 0017, section 5). The animations read and write their
 ///   targets through it (Chart.js ADR 0019, section 2).
-/// - [ElementPoint] is the object literal `{x, y}` of
-///   [Element.tooltipPosition] and of `getCenterPoint`.
+/// - The object literal `{x, y}` of [Element.tooltipPosition] and of
+///   `getCenterPoint` is a `dart:ui` [Offset] (row `adapt-offset-points`).
 ///
 /// The element classes give an option value to a canvas setter through the
 /// functions of `lib/src/canvas/canvas_values.dart`, and read `value || 0`
@@ -32,6 +32,8 @@
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.
 library;
+
+import 'dart:ui';
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:meta/meta.dart';
@@ -295,13 +297,14 @@ class Element() implements IElement, PropertyAccess, ElementProps {
   /// Point`.
   ///
   /// Upstream copies `x` and `y` into the literal `{x, y}`. The port gives
-  /// their `ToNumber`. Thus a property in the `undefined` state gives NaN,
-  /// as the [Point] rules of `geometric.dart` state for a copied
-  /// `undefined`. Dart `null` for [useFinalPosition] stands for JS
+  /// their `ToNumber` as an [Offset]. Thus a property in the `undefined`
+  /// state gives NaN, as the [Point] rules of `geometric.dart` state for a
+  /// copied `undefined`. Dart `null` for [useFinalPosition] stands for JS
   /// `undefined`: `plugin.tooltip.js:34` calls it with no argument.
-  ElementPoint tooltipPosition([bool? useFinalPosition]) {
+  // DIVERGES(chartjs): adapt-offset-points, the point is an Offset.
+  Offset tooltipPosition([bool? useFinalPosition]) {
     // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
-    return ElementPoint(
+    return Offset(
       finalNumber(AnimatedProp.x, x, useFinalPosition),
       finalNumber(AnimatedProp.y, y, useFinalPosition),
     );
@@ -715,44 +718,3 @@ final class _PlainProps(
     return value == null && !_values.containsKey(prop) ? undefined : value;
   }
 }
-
-/// core.element.ts:19 the object literal `{x, y}` of
-/// [Element.tooltipPosition], also the result of `getCenterPoint` of the
-/// element classes (Chart.js ADR 0017, section 9).
-///
-/// Two points are equal when their coordinates are equal, as the `toEqual`
-/// of a spec compares two object literals. Thus a spec compares a point
-/// with `equals`. NaN equals NaN, as in `toEqual`. 0 equals -0, as the Dart
-/// `==` of two numbers gives.
-@immutable
-final class const ElementPoint(
-  /// The `x` of the literal. NaN stands for a copied JS `undefined`
-  /// ([Point.x]).
-  @override final double x,
-
-  /// The `y` of the literal. NaN stands for a copied JS `undefined`
-  /// ([Point.y]).
-  @override final double y,
-) implements Point {
-  /// The object literal `{x, y}`.
-  this;
-
-  @override
-  bool operator ==(Object other) =>
-      other is ElementPoint && _same(x, other.x) && _same(y, other.y);
-
-  @override
-  int get hashCode => Object.hash(_hash(x), _hash(y));
-
-  /// The point, for test messages.
-  @override
-  String toString() => '{x: $x, y: $y}';
-}
-
-/// Whether [a] and [b] are equal coordinates of an [ElementPoint]. NaN is
-/// equal to NaN.
-bool _same(double a, double b) => a == b || (a.isNaN && b.isNaN);
-
-/// The hash of a coordinate of an [ElementPoint]: one value for all NaN
-/// values, and one value for 0 and -0.
-int _hash(double value) => value.isNaN || value == 0 ? 0 : value.hashCode;

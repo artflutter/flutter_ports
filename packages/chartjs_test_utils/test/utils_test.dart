@@ -614,7 +614,7 @@ void main() {
       // `getCenterPoint()` of an element.
       expect(await offsets(element), (30.0, 40.0));
       // `el.x` and `el.y` of a point and of a Map.
-      expect(await offsets(const ElementPoint(5, 6)), (5.0, 6.0));
+      expect(await offsets(const _XY(5, 6)), (5.0, 6.0));
       expect(await offsets({'x': 7, 'y': 8}), (7.0, 8.0));
       // JS null gives 0 in `rect.left + point.x`.
       expect(await offsets({'x': null, 'y': 8}), (0.0, 8.0));
@@ -988,3 +988,7 @@ final class _NativeEvent(super.type, String nativeType) extends _Event {
   @override
   NativeEvent get native => _native;
 }
+
+/// A point `{x, y}` that is not an element.
+final class const _XY(@override final double x, @override final double y)
+    implements Point;

@@ -104,7 +104,7 @@ List<Object?> _data(Chart chart, int index) =>
 (double, double) _center(Chart chart, int dataset, int index) {
   final element = chart.getDatasetMeta(dataset).data[index] as VisualElement;
   final center = element.getCenterPoint();
-  return (center.x!.roundToDouble(), center.y!.roundToDouble());
+  return (center.dx.roundToDouble(), center.dy.roundToDouble());
 }
 
 /// The active elements of [chart] as `[datasetIndex, index]`.

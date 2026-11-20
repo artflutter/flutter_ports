@@ -293,9 +293,9 @@ final class ChartKeyboard({
       if (elements[j] case final VisualElement element
           when chart.getDataVisibility(j)) {
         final center = element.getCenterPoint(true);
-        final x = center.x;
-        final y = center.y;
-        if (x != null && y != null && x.isFinite && y.isFinite) {
+        final x = center.dx;
+        final y = center.dy;
+        if (x.isFinite && y.isFinite) {
           points.add((x: x, y: y));
         }
       }

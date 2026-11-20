@@ -309,7 +309,7 @@ Plugin<Object?> sfDataLabels(
     for (final (i, element) in bars.indexed) {
       final bar = element as BarElement;
       final end = bar.tooltipPosition(true);
-      if (end.x != bar.x || end.y != bar.y || i >= texts.length) continue;
+      if (end.dx != bar.x || end.dy != bar.y || i >= texts.length) continue;
       final horizontal = bar.horizontal ?? false;
       final text = texts[i];
       // The size of the label along the bar, with a margin of 5 on each

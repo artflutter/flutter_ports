@@ -43,7 +43,7 @@ States:
 
 | Id | Upstream use | Host port | State | Next step |
 |---|---|---|---|---|
-| S5 | `tooltipPosition()` returns `{x, y}` (`src/flow.ts:290-292`). | `Element.tooltipPosition` returns `ElementPoint`. `chartjs.dart` exports it since Chart.js ADR 0132. | `connects` | None. |
+| S5 | `tooltipPosition()` returns `{x, y}` (`src/flow.ts:290-292`). | `Element.tooltipPosition` returns a `dart:ui` `Offset` (Chart.js ADR 0188). | `connects` | None. |
 | S6 | `getRange(axis)` (`src/flow.ts:298-302`). | The interaction of the host tests an element against `VisualElementRange`. `chartjs.dart` exports it since Chart.js ADR 0132. | `connects` | None. |
 | S12 | The properties of the element: `flow`, `x2`, `y2`, `width`, `height`, `progress`, `from`, `to` (`src/flow.ts:160-167`), written by `Object.assign` and by the animations. | The element protocol of the host (Chart.js ADR 0017) needs, for each property, a field, a getter, a setter, a case of `operator []`, a case of `operator []=` and a bit of the `undefined` state. `Flow` has about 90 lines for 8 properties. `AnimatedProp` is internal, so the animations write each property by name. | `sankey-side` | A helper or a generator for the properties of an element of another package. |
 | S14 | `this.options.colorFrom`, `.flowLabels.display` (`src/flow.ts:51-72`, `:197`). | `Element.options` is an `Object?`. The port reads it by name through the facade `FlowOptionsFace`. | `sankey-side` | As S10. |

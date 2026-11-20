@@ -69,7 +69,7 @@ Offset _global(WidgetTester tester, ({double x, double y}) point) =>
     final ArcElement arc => arc.getCenterPoint(),
     _ => throw ArgumentError.value(element),
   };
-  return (x: point.x, y: point.y);
+  return (x: point.dx, y: point.dy);
 }
 
 /// Checks that the readout and the state name [label].

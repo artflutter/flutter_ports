@@ -106,7 +106,7 @@ void main() {
       expect(context.callsOf('lineTo'), contains(equals([38.0, 120.0])));
       expect(flow.inRange(24, 70, false), isTrue);
       expect(flow.inRange(35, 70, false), isFalse);
-      expect(flow.getCenterPoint(false), const ElementPoint(24, 70));
+      expect(flow.getCenterPoint(false), const Offset(24, 70));
     });
   });
 }

@@ -564,7 +564,7 @@ and the items that stay open. In short:
   keeps the names that the class does not declare. The constructors write their `cfg` argument
   through `operator []=`, as `Object.assign` does.
 - `getProps` returns the element itself or an `ElementProps` over a new Map. `tooltipPosition`
-  and `getCenterPoint` return an `ElementPoint`.
+  and `getCenterPoint` return a `dart:ui` `Offset` (Chart.js ADR 0188).
 - The JS form `value || 0` before arithmetic is `jsOrZero` of `lib/src/js/js_number.dart`. The
   port-only file `lib/src/canvas/canvas_values.dart` gives an option value to a Canvas 2D setter
   (`canvasStyle`, `canvasNumber`, `canvasLineCap`, `canvasLineJoin` and `canvasLineDash`), with no

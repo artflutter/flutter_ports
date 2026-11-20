@@ -137,7 +137,7 @@ Widget _pair(Widget keys, Widget mouse) => _top(
   }
   final element = chart.getDatasetMeta(group).data[item] as VisualElement;
   final center = element.getCenterPoint(true);
-  return (x: center.x!, y: center.y!);
+  return (x: center.dx, y: center.dy);
 }
 
 /// The point of [target] on [chart] as the plain object of

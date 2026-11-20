@@ -397,8 +397,8 @@ void _hover(Chart chart) {
     final data = chart.getDatasetMeta(i).data;
     if (data.isEmpty) continue;
     final point = (data.first as Element).tooltipPosition(false);
-    if (point.x.isFinite && point.y.isFinite) {
-      _event(chart, 'mousemove', point.x, point.y);
+    if (point.dx.isFinite && point.dy.isFinite) {
+      _event(chart, 'mousemove', point.dx, point.dy);
       return;
     }
   }

@@ -126,8 +126,8 @@ Object? _average(List<ActiveElement> items) {
     if (el != null && (el as Element).hasValue()) {
       final pos = el.tooltipPosition();
       // `Set.prototype.add` stores +0 for -0.
-      xSet.add(pos.x == 0 ? 0.0 : pos.x);
-      y += pos.y;
+      xSet.add(pos.dx == 0 ? 0.0 : pos.dx);
+      y += pos.dy;
       ++count;
     }
   }
@@ -171,7 +171,8 @@ Object? _nearest(List<ActiveElement> items, Object? eventPosition) {
           jsToNumber(_readX(eventPosition)),
           jsToNumber(_readY(eventPosition)),
         ),
-        center,
+        // DIVERGES(chartjs): adapt-offset-points, the center is an Offset.
+        _NumberPoint(center.dx, center.dy),
       );
 
       if (d < minDistance) {
@@ -183,8 +184,8 @@ Object? _nearest(List<ActiveElement> items, Object? eventPosition) {
 
   if (nearestElement != null) {
     final tp = nearestElement.tooltipPosition();
-    x = tp.x;
-    y = tp.y;
+    x = tp.dx;
+    y = tp.dy;
   }
 
   return TooltipPosition()
@@ -192,8 +193,9 @@ Object? _nearest(List<ActiveElement> items, Object? eventPosition) {
     ..y = y;
 }
 
-/// The point that `distanceBetweenPoints` reads in [_nearest]: the
-/// `ToNumber` of each coordinate of the event position.
+/// A point that `distanceBetweenPoints` reads in [_nearest]: the
+/// `ToNumber` of each coordinate of the event position, and the center
+/// [Offset] of an element.
 final class const _NumberPoint(
   @override final double x,
   @override final double y,

@@ -1,4 +1,6 @@
 // Ported from Chart.js v4.6.1 test/specs/element.bar.tests.js (MIT, Chart.js Contributors).
+import 'dart:ui';
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
@@ -7,7 +9,7 @@ import 'package:test/test.dart';
 
 // The spec constructs Chart.elements.BarElement. Here it is the BarElement of
 // element.bar.dart (Chart.js ADR 0017). The object literal of a toEqual
-// expectation is an ElementPoint, which the spec compares with equals.
+// expectation is an Offset, which the spec compares with equals.
 
 void main() {
   setUpSpecs();
@@ -37,7 +39,7 @@ void main() {
     test('should get the correct tooltip position', () {
       final bar = BarElement({'base': 0, 'width': 4, 'x': 10, 'y': 15});
 
-      expect(bar.tooltipPosition(), equals(const ElementPoint(10, 15)));
+      expect(bar.tooltipPosition(), equals(const Offset(10, 15)));
 
       // Test when the y is below the base (negative bar)
       final negativeBar = BarElement({
@@ -47,16 +49,13 @@ void main() {
         'y': -15,
       });
 
-      expect(
-        negativeBar.tooltipPosition(),
-        equals(const ElementPoint(10, -15)),
-      );
+      expect(negativeBar.tooltipPosition(), equals(const Offset(10, -15)));
     });
 
     test('should get the center', () {
       final bar = BarElement({'base': 0, 'width': 4, 'x': 10, 'y': 15});
 
-      expect(bar.getCenterPoint(), equals(const ElementPoint(10, 7.5)));
+      expect(bar.getCenterPoint(), equals(const Offset(10, 7.5)));
     });
   });
 }

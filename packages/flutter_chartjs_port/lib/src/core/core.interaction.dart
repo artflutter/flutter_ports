@@ -33,6 +33,8 @@ library;
 
 import 'dart:math' as math;
 
+import 'dart:ui';
+
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 
 import 'package:meta/meta.dart';
@@ -236,16 +238,19 @@ void _evaluateInteractionItems(
 /// axis mode setting
 /// @param {string} axis - the axis mode. x|y|xy|r
 ///
-/// `Math.pow(delta, 2)` is `dart:math` `pow` (Chart.js ADR 0146 §4).
-double Function(Point pt1, Point pt2) _getDistanceMetricForAxis(
+/// `Math.pow(delta, 2)` is `dart:math` `pow` (Chart.js ADR 0146 §4). The
+/// second point is the center of an element, an [Offset] (row
+/// `adapt-offset-points`).
+// DIVERGES(chartjs): adapt-offset-points, the center is an Offset.
+double Function(Point pt1, Offset pt2) _getDistanceMetricForAxis(
   InteractionAxis axis,
 ) {
   final useX = axis.usesX;
   final useY = axis.usesY;
 
   return (pt1, pt2) {
-    final deltaX = useX ? ((pt1.x ?? 0) - (pt2.x ?? 0)).abs() : 0.0;
-    final deltaY = useY ? ((pt1.y ?? 0) - (pt2.y ?? 0)).abs() : 0.0;
+    final deltaX = useX ? ((pt1.x ?? 0) - pt2.dx).abs() : 0.0;
+    final deltaY = useY ? ((pt1.y ?? 0) - pt2.dy).abs() : 0.0;
     return math.sqrt(
       math.pow(deltaX, 2.0).toDouble() + math.pow(deltaY, 2.0).toDouble(),
     );
@@ -407,7 +412,8 @@ List<ActiveElement> _getNearestCartesianItems(
     }
 
     final center = visual.getCenterPoint(useFinalPosition);
-    final pointInArea = includeInvisible || chart.isPointInArea(center);
+    final pointInArea =
+        includeInvisible || chart.isPointInArea(_CenterPoint(center));
     if (!pointInArea && !inRange) {
       return;
     }
@@ -1041,4 +1047,14 @@ abstract final class Interaction() {
     InteractionHandler handler, [
     bool? intersect,
   ]) => _evaluateInteractionItems(chart, axis, position, handler, intersect);
+}
+
+/// The center [Offset] of an element as the [Point] of `isPointInArea`
+/// (core.interaction.js:156, row `adapt-offset-points`).
+final class const _CenterPoint(final Offset _center) implements Point {
+  @override
+  double get x => _center.dx;
+
+  @override
+  double get y => _center.dy;
 }

@@ -1325,7 +1325,7 @@ class LineElement([AnyObject? cfg])
   /// `getCenterPoint`: the call throws a [NoSuchMethodError], as for
   /// [inRange].
   @override
-  ElementPoint getCenterPoint([bool? useFinalPosition]) =>
+  ui.Offset getCenterPoint([bool? useFinalPosition]) =>
       throw NoSuchMethodError.withInvocation(
         this,
         Invocation.method(#getCenterPoint, [useFinalPosition]),

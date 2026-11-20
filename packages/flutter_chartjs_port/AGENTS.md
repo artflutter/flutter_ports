@@ -38,7 +38,7 @@ repository.
     (the JS runtime for add-on ports: each library of `lib/src/js/` with each of its names, with
     no `show` list, Chart.js ADR 0132; no other library exports it). `lib/chartjs.dart` also
     exports the names that a chart type of another package needs (Chart.js ADRs 0132 and 0133):
-    `ParsedItem`, `ElementPoint`, `VisualElementRange`, and `controllerArgs`, `elementCfgArg` and
+    `ParsedItem`, `VisualElementRange`, and `controllerArgs`, `elementCfgArg` and
     `scaleCfgArg` for the `construct` closure of a class value. `DatasetController.cachedMeta` is
     public for a controller of another package (Chart.js ADR 0133). An app imports the app library next to
     `material_ui.dart` with no prefix. `doc/public_api.txt` is the committed list of their export

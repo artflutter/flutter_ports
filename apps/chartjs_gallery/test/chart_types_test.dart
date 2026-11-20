@@ -319,7 +319,7 @@ Offset _elementCenter(Chart chart, int index) {
     final PointElement point => point.getCenterPoint(true),
     _ => throw StateError('$element'),
   };
-  return Offset(center.x, center.y);
+  return Offset(center.dx, center.dy);
 }
 
 void main() {

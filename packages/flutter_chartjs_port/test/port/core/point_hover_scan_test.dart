@@ -123,9 +123,9 @@ List<ActiveElement> _intersectItems(
 }
 
 /// The distance of `getDistanceMetricForAxis` (core.interaction.js:94).
-double _distance(Point a, Point b, InteractionAxis axis) {
-  final dx = axis.usesX ? ((a.x ?? 0) - (b.x ?? 0)).abs() : 0.0;
-  final dy = axis.usesY ? ((a.y ?? 0) - (b.y ?? 0)).abs() : 0.0;
+double _distance(Point a, Offset b, InteractionAxis axis) {
+  final dx = axis.usesX ? ((a.x ?? 0) - b.dx).abs() : 0.0;
+  final dy = axis.usesY ? ((a.y ?? 0) - b.dy).abs() : 0.0;
   return math.sqrt(math.pow(dx, 2.0) + math.pow(dy, 2.0));
 }
 

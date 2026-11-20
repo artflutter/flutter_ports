@@ -1026,9 +1026,10 @@ class BarElement([AnyObject? cfg])
   ///
   /// The numbers of `getProps` are read through its typed forms as numbers
   /// and `horizontal` with `jsTruthy` (Chart.js ADR 0017, section 7). A
-  /// copied `undefined` gives NaN in the [ElementPoint].
+  /// copied `undefined` gives NaN in the [Offset].
   @override
-  ElementPoint getCenterPoint([bool? useFinalPosition]) {
+  // DIVERGES(chartjs): adapt-offset-points, the point is an Offset.
+  Offset getCenterPoint([bool? useFinalPosition]) {
     // `getProps(['x', 'y', 'base', 'horizontal'], useFinalPosition)` in the
     // typed form.
     final x = finalNumber(AnimatedProp.x, this.x, useFinalPosition);
@@ -1037,7 +1038,7 @@ class BarElement([AnyObject? cfg])
     final horizontal = jsTruthy(
       finalValue(_horizontalProp, _horizontal ?? undefined, useFinalPosition),
     );
-    return ElementPoint(
+    return Offset(
       horizontal ? (x + base) / 2 : x,
       horizontal ? y : (y + base) / 2,
     );

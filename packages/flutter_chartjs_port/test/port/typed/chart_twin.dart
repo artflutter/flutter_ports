@@ -139,7 +139,7 @@ Future<List<ChartState>> _run(WidgetTester tester, Widget view) async {
 
   final element = chart.getDatasetMeta(0).data[1] as VisualElement;
   final center = element.getCenterPoint(true);
-  final target = Offset(center.x!, center.y!);
+  final target = Offset(center.dx, center.dy);
   final origin = tester.getTopLeft(find.byType(ChartHost));
   final mouse = await tester.createGesture(kind: PointerDeviceKind.mouse);
   await mouse.addPointer(location: origin + target / 2);

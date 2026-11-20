@@ -167,8 +167,8 @@ void main() {
         });
 
       final pos = arc.tooltipPosition();
-      expect(pos.x, closeTo(0.5, 0.005));
-      expect(pos.y, closeTo(0.5, 0.005));
+      expect(pos.dx, closeTo(0.5, 0.005));
+      expect(pos.dy, closeTo(0.5, 0.005));
     });
 
     test('should get the center', () {
@@ -187,8 +187,8 @@ void main() {
         });
 
       final center = arc.getCenterPoint();
-      expect(center.x, closeTo(0.5, 5e-7));
-      expect(center.y, closeTo(0.5, 5e-7));
+      expect(center.dx, closeTo(0.5, 5e-7));
+      expect(center.dy, closeTo(0.5, 5e-7));
     });
 
     test('should get the center with offset and spacing', () {
@@ -207,8 +207,8 @@ void main() {
         });
 
       final center = arc.getCenterPoint();
-      expect(center.x, closeTo(7.57, 5e-2));
-      expect(center.y, closeTo(7.57, 5e-2));
+      expect(center.dx, closeTo(7.57, 5e-2));
+      expect(center.dy, closeTo(7.57, 5e-2));
     });
 
     test('should get the center of full circle before and after draw', () {
@@ -227,15 +227,15 @@ void main() {
         });
 
       var center = arc.getCenterPoint();
-      expect(center.x, closeTo(1, 5e-7));
-      expect(center.y, closeTo(2, 5e-7));
+      expect(center.dx, closeTo(1, 5e-7));
+      expect(center.dy, closeTo(2, 5e-7));
 
       final ctx = createMockContext();
       arc.draw(ctx);
 
       center = arc.getCenterPoint();
-      expect(center.x, closeTo(1, 5e-7));
-      expect(center.y, closeTo(2, 5e-7));
+      expect(center.dx, closeTo(1, 5e-7));
+      expect(center.dy, closeTo(2, 5e-7));
     });
 
     test('should not draw when radius < 0', () {
@@ -321,7 +321,7 @@ void main() {
 
       final center = arc.getCenterPoint();
 
-      expect(arc.inRange(center.x, 1), isFalse);
+      expect(arc.inRange(center.dx, 1), isFalse);
     });
 
     test(

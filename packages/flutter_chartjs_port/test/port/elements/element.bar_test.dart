@@ -1,11 +1,13 @@
 // Original code, not ported from Chart.js: element.bar cases with no spec.
 import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/offset_matcher.dart';
 import '../helpers/rounded_rect_upstream.dart';
 import 'bar_reference.dart';
 
@@ -208,11 +210,11 @@ void main() {
             final bar = _bar(_withOptions(c.cfg, form), c.animations);
             final final_ = c.useFinalPosition;
             final center = bar.getCenterPoint(final_);
-            expect(center, isA<ElementPoint>());
-            expect(center, ElementPoint(c.center.$1, c.center.$2));
+            expect(center, isA<Offset>());
+            expect(center, offsetOf(c.center.$1, c.center.$2));
             expect(
               bar.tooltipPosition(final_),
-              ElementPoint(c.tooltip.$1, c.tooltip.$2),
+              offsetOf(c.tooltip.$1, c.tooltip.$2),
             );
           });
         }

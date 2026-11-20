@@ -83,7 +83,7 @@ void main() {
     final flow = chart.getDatasetMeta(0).data.first as sankey.Flow;
     final center = flow.getCenterPoint();
 
-    await tester.tapAt(tester.getTopLeft(_host) + Offset(center.x, center.y));
+    await tester.tapAt(tester.getTopLeft(_host) + Offset(center.dx, center.dy));
     await tester.pumpAndSettle();
 
     expect(chart.getActiveElements(), isNotEmpty);

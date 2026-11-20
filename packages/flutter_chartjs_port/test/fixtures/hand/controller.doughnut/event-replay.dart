@@ -5,6 +5,7 @@
 library;
 
 import 'dart:math' as math;
+import 'dart:ui';
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
@@ -16,10 +17,11 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 /// read at the place of the upstream call (`toImageSource()` of
 /// `UiCanvasElement`).
 Map<String, Object?> fixture() {
-  void drawMousePoint(CanvasRenderingContext2D ctx, ElementPoint center) {
+  // DIVERGES(chartjs): adapt-offset-points, the center is an Offset.
+  void drawMousePoint(CanvasRenderingContext2D ctx, Offset center) {
     ctx
       ..beginPath()
-      ..arc(center.x, center.y, 8, 0, math.pi * 2)
+      ..arc(center.dx, center.dy, 8, 0, math.pi * 2)
       ..fillStyle = const native_ui.Color(0xffffff00)
       ..fill();
   }

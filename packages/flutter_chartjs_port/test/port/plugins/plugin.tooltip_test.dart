@@ -469,7 +469,7 @@ final class _FakeElement(final double px) extends Element {
   bool hasValue() => true;
 
   @override
-  ElementPoint tooltipPosition([bool? useFinalPosition]) => ElementPoint(px, 1);
+  Offset tooltipPosition([bool? useFinalPosition]) => Offset(px, 1);
 }
 
 /// The probe chart of the groups: a line chart with the labels A, B and C,

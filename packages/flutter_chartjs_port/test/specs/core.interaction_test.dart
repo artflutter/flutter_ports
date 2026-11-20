@@ -311,7 +311,7 @@ void main() {
           final meta1 = chart.getDatasetMeta(1);
           final center = (meta0.data[0] as VisualElement).getCenterPoint();
 
-          final evt = _Event(chart, center.x, center.y! + 30);
+          final evt = _Event(chart, center.dx, center.dy + 30);
 
           final elements = _elements(
             const IndexInteractionMode().itemsAt(chart, evt, <String, Object?>{

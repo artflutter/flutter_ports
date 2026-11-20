@@ -1,11 +1,13 @@
 // Original code, not ported from Chart.js: PointElement cases with no spec.
 import 'dart:ui' as ui;
+import 'dart:ui';
 
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/offset_matcher.dart';
 import 'point_reference.dart';
 
 // Upstream behavior that test/specs/element.point.tests.js does not check
@@ -519,7 +521,7 @@ void main() {
             );
             expect(
               point.getCenterPoint(useFinalPosition),
-              ElementPoint(c.centerX, c.centerY),
+              offsetOf(c.centerX, c.centerY),
               reason: 'getCenterPoint',
             );
           });
@@ -534,7 +536,7 @@ void main() {
       expect(() => point.inRange(10, 15), throwsA(isA<TypeError>()));
       expect(() => point.inXRange(10), throwsA(isA<TypeError>()));
       expect(() => point.inYRange(15), throwsA(isA<TypeError>()));
-      expect(point.getCenterPoint(), const ElementPoint(10, 15));
+      expect(point.getCenterPoint(), const Offset(10, 15));
     });
   });
 

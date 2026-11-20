@@ -1,11 +1,15 @@
 // Original code, not ported from Chart.js: core.element cases with no spec.
+import 'dart:ui';
+
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
+
+import '../../support/offset_matcher.dart';
 
 // The spec core.element.tests.js tests only getProps with x and y. These
 // tests cover the element design of Chart.js ADR 0017: the undefined state,
 // the access by name, the subclass protocol, both branches of getProps,
-// tooltipPosition, hasValue, the statics and ElementPoint. The upstream
+// tooltipPosition, hasValue, the statics and Offset. The upstream
 // results come from a run of src/core/core.element.ts in Node.js v24.12.0
 // (V8 13.6) on x64, with type stripping: a new Element has the own keys x,
 // y, active, options and $animations, tooltipPosition() of a new Element
@@ -561,24 +565,21 @@ void main() {
 
   group('tooltipPosition', () {
     test('gives NaN for the undefined state', () {
-      expect(
-        Element().tooltipPosition(),
-        const ElementPoint(double.nan, double.nan),
-      );
+      expect(Element().tooltipPosition(), offsetOf(double.nan, double.nan));
     });
 
     test('gives the current or the final position', () {
       final elem = Element()
         ..x = 10
         ..y = 1.5;
-      expect(elem.tooltipPosition(), const ElementPoint(10, 1.5));
+      expect(elem.tooltipPosition(), const Offset(10, 1.5));
       elem.$animations = {
         'x': _Animation(20.0, active: false),
         'y': _Animation(7.0),
       };
-      expect(elem.tooltipPosition(true), const ElementPoint(10, 7));
-      expect(elem.tooltipPosition(false), const ElementPoint(10, 1.5));
-      expect(elem.tooltipPosition(), const ElementPoint(10, 1.5));
+      expect(elem.tooltipPosition(true), const Offset(10, 7));
+      expect(elem.tooltipPosition(false), const Offset(10, 1.5));
+      expect(elem.tooltipPosition(), const Offset(10, 1.5));
     });
 
     test('gives the ToNumber of a target that is not a double', () {
@@ -586,7 +587,7 @@ void main() {
         ..x = 1
         ..y = 2
         ..$animations = {'x': _Animation(undefined), 'y': _Animation('3')};
-      expect(elem.tooltipPosition(true), const ElementPoint(double.nan, 3));
+      expect(elem.tooltipPosition(true), offsetOf(double.nan, 3));
     });
   });
 
@@ -710,36 +711,6 @@ void main() {
           reason: '$value',
         );
       }
-    });
-  });
-
-  group('ElementPoint', () {
-    test('is a Point that compares by value', () {
-      const point = ElementPoint(1, 2);
-      expect(point, isA<Point>());
-      expect(point.x, 1.0);
-      expect(point.y, 2.0);
-      expect(point, const ElementPoint(1, 2));
-      expect(point.hashCode, const ElementPoint(1, 2).hashCode);
-      expect(point, isNot(const ElementPoint(2, 1)));
-      expect(point, isNot(const ElementPoint(1, 3)));
-    });
-
-    test('NaN equals NaN and 0 equals -0', () {
-      const nan = ElementPoint(0 / 0, 1);
-      expect(nan, const ElementPoint(double.nan, 1));
-      expect(nan.hashCode, const ElementPoint(double.nan, 1).hashCode);
-      expect(nan, isNot(const ElementPoint(0, 1)));
-      // Preserve the sign without DDC's const canonicalization.
-      final negativeZero = ElementPoint(-double.parse('0'), 1);
-      expect(negativeZero.x.isNegative, isTrue);
-      expect(const ElementPoint(0, 1), negativeZero);
-      expect(const ElementPoint(0, 1).hashCode, negativeZero.hashCode);
-    });
-
-    test('prints its fields', () {
-      const point = ElementPoint(1, 2.5);
-      expect(point.toString(), '{x: ${point.x}, y: ${point.y}}');
     });
   });
 

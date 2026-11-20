@@ -1,4 +1,6 @@
 // Original code, not ported from Chart.js: core.interaction cases with no spec.
+import 'dart:ui';
+
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 // The method isPointInArea hides the helper.
@@ -71,7 +73,7 @@ final class _SpyPoint(
   }
 
   @override
-  ElementPoint getCenterPoint([bool? useFinalPosition]) {
+  Offset getCenterPoint([bool? useFinalPosition]) {
     trace.add('getCenterPoint $name');
     return super.getCenterPoint(useFinalPosition);
   }
@@ -104,7 +106,7 @@ final class _SpyBar(
   }
 
   @override
-  ElementPoint getCenterPoint([bool? useFinalPosition]) {
+  Offset getCenterPoint([bool? useFinalPosition]) {
     trace.add('getCenterPoint $name');
     return super.getCenterPoint(useFinalPosition);
   }
@@ -126,7 +128,7 @@ final class _SpyArc(
   }
 
   @override
-  ElementPoint getCenterPoint([bool? useFinalPosition]) {
+  Offset getCenterPoint([bool? useFinalPosition]) {
     trace.add('getCenterPoint $name');
     return super.getCenterPoint(useFinalPosition);
   }

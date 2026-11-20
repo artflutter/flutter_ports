@@ -264,7 +264,7 @@ List<String> _elementProperties(IElement element) => switch (element) {
 };
 
 /// `[x, y]` of a point.
-List<Object?> _xy(Point point) => [point.x, point.y];
+List<Object?> _xy(Offset point) => [point.dx, point.dy];
 
 /// The plain copy of a parsed item: `_stacks` as its keys only.
 Object? _parsedItem(Object? item) => switch (item) {

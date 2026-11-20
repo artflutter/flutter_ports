@@ -1342,7 +1342,7 @@ void main() {
           final meta = chart.getDatasetMeta(0);
           final element = meta.data[slice];
           final center = (element as VisualElement).getCenterPoint();
-          final point = _point(center.x!, center.y!);
+          final point = _point(center.dx, center.dy);
           final tooltipPosition = (meta.data[slice] as Element)
               .tooltipPosition();
 
@@ -1359,7 +1359,7 @@ void main() {
             if (tooltip.width <= chart.width) {
               expect(tooltip.x + tooltip.width, lessThanOrEqualTo(chart.width));
             }
-            expect(tooltip.caretX, toBeCloseToPixel(tooltipPosition.x));
+            expect(tooltip.caretX, toBeCloseToPixel(tooltipPosition.dx));
             // if tooltip is longer than chart area then all tests done
             if (left == 0) {
               throw StateError('max iterations reached');

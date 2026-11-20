@@ -1238,11 +1238,11 @@ class ArcElement([AnyObject? cfg])
   bool inRange(double? chartX, double? chartY, [bool? useFinalPosition]) {
     // `getProps(['x', 'y'], useFinalPosition)` in the typed form.
     final (:angle, :distance) = getAngleFromPoint(
-      ElementPoint(
+      _ArcPoint(
         finalNumber(AnimatedProp.x, x, useFinalPosition),
         finalNumber(AnimatedProp.y, y, useFinalPosition),
       ),
-      ElementPoint(chartX ?? 0, chartY ?? 0),
+      _ArcPoint(chartX ?? 0, chartY ?? 0),
     );
     // `getProps(['startAngle', 'endAngle', 'innerRadius', 'outerRadius',
     // 'circumference'], useFinalPosition)` in the typed form. The
@@ -1319,7 +1319,8 @@ class ArcElement([AnyObject? cfg])
   /// applies `ToNumber` to the result. The center is the tooltip position
   /// and the point of the `nearest` and `index` hit modes.
   @override
-  ElementPoint getCenterPoint([bool? useFinalPosition]) {
+  // DIVERGES(chartjs): adapt-offset-points, the point is an Offset.
+  ui.Offset getCenterPoint([bool? useFinalPosition]) {
     // `getProps(['x', 'y', 'startAngle', 'endAngle', 'innerRadius',
     // 'outerRadius'], useFinalPosition)` in the typed form.
     final x = finalNumber(AnimatedProp.x, this.x, useFinalPosition);
@@ -1359,7 +1360,7 @@ class ArcElement([AnyObject? cfg])
           jsToNumber(jsAdd(jsAdd(innerRadius + outerRadius, spacing), offset)) /
           2;
     }
-    return ElementPoint(
+    return ui.Offset(
       x + math.cos(halfAngle) * halfRadius,
       y + math.sin(halfAngle) * halfRadius,
     );
@@ -1368,7 +1369,7 @@ class ArcElement([AnyObject? cfg])
   /// element.arc.ts:466 `tooltipPosition(useFinalPosition)`: the
   /// [getCenterPoint].
   @override
-  ElementPoint tooltipPosition([bool? useFinalPosition]) {
+  ui.Offset tooltipPosition([bool? useFinalPosition]) {
     return getCenterPoint(useFinalPosition);
   }
 
@@ -1661,3 +1662,8 @@ final class const ArcStartAngleProp() extends AnimatedBy<StartAngleAnimation> {
       ? element._undefinedBits & ArcElement._startAngleBit != 0
       : super.isUndefined(element);
 }
+
+/// The object literal `{x, y}` of `inRange` (element.arc.ts:262-263, the
+/// `getProps` result and the chart position) that `getAngleFromPoint` reads.
+final class const _ArcPoint(@override final double x, @override final double y)
+    implements Point;
