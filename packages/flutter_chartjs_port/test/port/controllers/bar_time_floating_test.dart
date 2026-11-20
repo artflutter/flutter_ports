@@ -272,8 +272,7 @@ void main() {
               for (var step = 0; step < 4; step++) {
                 for (final cfg in [ca, cb]) {
                   final dataset =
-                      ((cfg['data']! as Map<String, Object?>)['datasets']!
-                              as List<Object?>)[0]!
+                      (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
                           as Map<String, Object?>;
                   dataset['data'] =
                       (((config(step)['data']!
@@ -353,8 +352,7 @@ void main() {
           step: 2,
         );
         final dataset =
-            ((cfg['data']! as Map<String, Object?>)['datasets']!
-                    as List<Object?>)[0]!
+            (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
                 as Map<String, Object?>;
         final points = dataset['data']! as List<Object?>;
         for (var i = 1; i < points.length; i++) {
@@ -417,8 +415,7 @@ void main() {
               for (var step = 0; step < 4; step++) {
                 for (final cfg in [ca, cb]) {
                   final dataset =
-                      ((cfg['data']! as Map<String, Object?>)['datasets']!
-                              as List<Object?>)[0]!
+                      (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
                           as Map<String, Object?>;
                   dataset['data'] = _floatingData(step, gaps: gaps);
                 }

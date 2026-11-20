@@ -206,11 +206,12 @@ class AxesDemoState() extends State<AxesDemo> {
       },
   ];
 
-  /// The data of the chart: `labels` and `datasets`.
-  late final Map<String, Object?> _data = {
-    'labels': <Object?>[],
-    'datasets': _datasets,
-  };
+  /// The data of the chart: `labels` and `datasets`. It is a
+  /// `ChartDataScope`, the data object of the chart: a write of `labels`
+  /// reaches the chart, as `chart.data.labels = ...` upstream.
+  late final ChartDataScope _data = ChartDataScope()
+    ..labels = <Object?>[]
+    ..datasets = _datasets;
 
   // The user options. A control writes into them, then calls update().
   late final Map<String, Object?> _options = {

@@ -237,14 +237,11 @@ String _getStackKey(IScale indexScale, IScale valueScale, ChartMeta meta) {
 /// object ([StackEntry]) of each index value, by the property key of the
 /// index value, its `ToString`. Only this function writes `chart._stacks`.
 StackEntry _getOrCreateStack(
-  AnyObject stacks,
+  ChartStacks stacks,
   String stackKey,
   Object? indexValue,
 ) {
-  final subStack = switch (stacks[stackKey]) {
-    final Map<String, StackEntry> sub => sub,
-    _ => stacks[stackKey] = <String, StackEntry>{},
-  };
+  final subStack = stacks[stackKey] ??= {};
   final key = indexValue is double
       ? _numberKey(indexValue)
       : jsToString(indexValue);
@@ -253,11 +250,8 @@ StackEntry _getOrCreateStack(
 
 /// The sub-stack of [stackKey] in [stacks], as `getOrCreateStack` reads
 /// it (core.datasetController.js:137-138).
-Map<String, StackEntry> _subStackOf(AnyObject stacks, String stackKey) =>
-    switch (stacks[stackKey]) {
-      final Map<String, StackEntry> sub => sub,
-      _ => stacks[stackKey] = <String, StackEntry>{},
-    };
+Map<String, StackEntry> _subStackOf(ChartStacks stacks, String stackKey) =>
+    stacks[stackKey] ??= {};
 
 /// The stack object of [indexValue] in the sub-stack [subStack], as
 /// `getOrCreateStack` makes it (core.datasetController.js:139-140).
@@ -463,7 +457,7 @@ void _updateStacks(DatasetController controller, List<Object?> parsed) {
   final chart = controller.chart;
   final meta = controller.cachedMeta;
   // map structure is {stackKey: {datasetIndex: value}}
-  final stacks = chart.stacks ??= <String, Object?>{};
+  final stacks = chart.stacks ??= {};
   final iScale = meta.iScale!;
   final vScale = meta.vScale!;
   final datasetIndex = meta.index;

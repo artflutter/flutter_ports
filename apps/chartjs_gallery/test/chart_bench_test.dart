@@ -778,8 +778,7 @@ void main() {
           .singleWhere((c) => c.call == ChartBenchCall.update);
       final scene = benchCase.scene(10);
       final datasets =
-          (scene.config['data']! as Map<String, Object?>)['datasets']!
-              as List<Object?>;
+          jsGet(scene.config['data'], 'datasets')! as List<Object?>;
       final data =
           (datasets.single! as Map<String, Object?>)['data']! as List<Object?>;
       final before = jsonEncode(data);
@@ -1198,8 +1197,7 @@ void main() {
           .firstWhere((c) => c.call == ChartBenchCall.update);
       final scene = benchCase.scene(24);
       final datasets =
-          (scene.config['data']! as Map<String, Object?>)['datasets']!
-              as List<Object?>;
+          jsGet(scene.config['data'], 'datasets')! as List<Object?>;
       final data =
           (datasets.first! as Map<String, Object?>)['data']! as List<Object?>;
       final before = jsonEncode(data);
@@ -1662,9 +1660,7 @@ void main() {
     expect(indexable, isTrue);
 
     final scene = _case('chart.line.primitive').scene(10);
-    final datasets =
-        (scene.config['data']! as Map<String, Object?>)['datasets']!
-            as List<Object?>;
+    final datasets = jsGet(scene.config['data'], 'datasets')! as List<Object?>;
     final data =
         (datasets.single! as Map<String, Object?>)['data']! as List<Object?>;
     final before = List.of(data);

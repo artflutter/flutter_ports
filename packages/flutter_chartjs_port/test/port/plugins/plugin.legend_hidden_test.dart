@@ -12,6 +12,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/data_scope.dart';
 import '../../support/legend_item.dart';
 import '../../support/object_keys.dart';
 
@@ -1241,11 +1242,7 @@ void main() {
       ) async {
         // Raw: the typed config has no `xLabels`.
         final config = _config(type);
-        (config['data']! as Map<String, Object?>)['xLabels'] = <Object?>[
-          'x',
-          'y',
-          'z',
-        ];
+        jsSet(config['data'], 'xLabels', <Object?>['x', 'y', 'z']);
         final chart = acquireChart(config);
         expect(_legendOf(chart).legendItemsPending, isFalse);
         expect(chart.legend!.legendItems![0].text.single, 'a');
@@ -1412,14 +1409,11 @@ void main() {
 
     final replacements = <String, void Function(Chart)>{
       'a write at index 0': (chart) => _datasetsOf(chart)[0] = dataset(),
-      'a new List': (chart) =>
-          (chart.data as Map<String, Object?>)['datasets'] = <Object?>[
-            dataset(),
-          ],
-      'the data setter': (chart) => chart.data = <String, Object?>{
+      'a new List': (chart) => chart.data['datasets'] = <Object?>[dataset()],
+      'the data setter': (chart) => chart.data = dataScopeOf(<String, Object?>{
         'labels': <Object?>['p', 'q', 'r'],
         'datasets': <Object?>[dataset()],
-      },
+      }),
       'an insert at index 0': (chart) =>
           _datasetsOf(chart).insert(0, dataset()),
     };
@@ -2076,7 +2070,7 @@ void main() {
         for (final each in [chart, twin]) {
           _labelsOf(each)[0] = 'x';
           each.update();
-          (each.data as Map<String, Object?>)['labels'] = null;
+          each.data['labels'] = null;
         }
         // Upstream, and the twin: the snapshot of the last update, each time.
         expect(_texts(twin), ['x', 'b', 'c']);
@@ -2086,14 +2080,10 @@ void main() {
         expect(_texts(chart), ['a', 'b', 'c']);
         expect(_legendOf(chart).legendItemsPending, isTrue);
         // A string for the labels is no native List either.
-        (chart.data as Map<String, Object?>)['labels'] = 'mn';
+        chart.data['labels'] = 'mn';
         expect(_texts(chart), ['a', 'b', 'c']);
         // The build still waits: a read in a good state runs it.
-        (chart.data as Map<String, Object?>)['labels'] = <Object?>[
-          'y',
-          'b',
-          'c',
-        ];
+        chart.data['labels'] = <Object?>['y', 'b', 'c'];
         expect(_texts(chart), ['y', 'b', 'c']);
         expect(_legendOf(chart).legendItemsPending, isFalse);
       });
@@ -2110,7 +2100,7 @@ void main() {
         for (final each in [chart, twin]) {
           _labelsOf(each)[0] = 'x';
           each.update();
-          (each.data as Map<String, Object?>)['labels'] = <Object?>[];
+          each.data['labels'] = <Object?>[];
         }
         releaseChart(chart);
         releaseChart(twin);
@@ -2268,9 +2258,7 @@ void main() {
       final built = legend.legendItems;
       chart.update();
       expect(legend.legendItemsPending, isTrue);
-      (chart.data as Map<String, Object?>)['labels'] = <String, Object?>{
-        'length': 1,
-      };
+      chart.data['labels'] = <String, Object?>{'length': 1};
       releaseChart(chart);
       expect(legend.legendItemsPending, isFalse);
       expect(legend.legendItems, same(built));

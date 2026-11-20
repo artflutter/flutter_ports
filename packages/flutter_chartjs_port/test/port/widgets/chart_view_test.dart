@@ -575,7 +575,9 @@ void main() {
       await tester.pump();
       expect(counts['beforeUpdate'], 2);
       expect(_chart(tester), same(chart));
-      expect(chart.data, same(last['data']));
+      // The boundary makes a scope with the same values (row
+      // `adapt-config-objects`).
+      expect(chart.data['datasets'], same(jsGet(last['data'], 'datasets')));
       expect(chart.getDatasetMeta(0).data, hasLength(3));
       expect(jsGet(chart.getDatasetMeta(0).controller!.getParsed(0), 'y'), 10);
     });

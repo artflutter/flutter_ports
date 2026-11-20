@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/data_scope.dart';
 import '../../support/font_record.dart';
 import '../../support/tick_label.dart';
 import 'scale_reference.dart';
@@ -122,8 +123,9 @@ final class _Chart(Map<String, Object?> spec) implements IChart {
       : 1;
 
   @override
-  final AnyObject data =
-      _copy(spec['data'] ?? <String, Object?>{})! as AnyObject;
+  final ChartDataScope data = dataScopeOf(
+    _copy(spec['data'] ?? <String, Object?>{})! as AnyObject,
+  );
 
   @override
   final AnyObject options;

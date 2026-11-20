@@ -157,8 +157,7 @@ final Map<String, Object?> _functions = {
 
 /// The dataset [index] of [chart].
 Map<String, Object?> _dataset(Chart chart, int index) =>
-    ((chart.data as AnyObject)['datasets']! as List<Object?>)[index]!
-        as Map<String, Object?>;
+    (chart.data['datasets']! as List<Object?>)[index]! as Map<String, Object?>;
 
 /// The options of the scale [id] in the config of [chart].
 JsObjectFace _scaleConfig(Chart chart, String id) {

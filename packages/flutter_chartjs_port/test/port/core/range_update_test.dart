@@ -9,6 +9,7 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/data_scope.dart';
 import '../../support/light_theme.dart';
 import '../../support/plugin_defaults.dart';
 import '../controllers/controller_chart_harness.dart';
@@ -253,7 +254,7 @@ _Write _newData(int index, List<Object?> Function() values, {int? labels}) =>
       final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
       (datasets[index]! as Map<String, Object?>)['data'] = values();
       if (labels != null) {
-        (chart.data as Map<String, Object?>)['labels'] = <Object?>[
+        chart.data['labels'] = <Object?>[
           for (var i = 0; i < labels; i++) 'L$i',
         ];
       }
@@ -1082,8 +1083,10 @@ void main() {
       final changes = <String, void Function(Chart chart)>{
         'config.data': (chart) {
           final config = chart.config;
-          final data = config.data as Map<String, Object?>;
-          config.data = <String, Object?>{...data};
+          final data = config.data;
+          config.data = dataScopeOf(<String, Object?>{
+            for (final key in data.jsKeys()) key: data.jsRead(key),
+          });
         },
         'config.options': (chart) {
           final config = chart.config;

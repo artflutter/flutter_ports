@@ -88,11 +88,11 @@ void main() {
       final f = _Fixture();
       final plan = f.plan;
       expect(plan.valid(), isTrue);
-      final data = f.root['data']! as Map<String, Object?>;
+      final data = f.root['data']! as ChartDataScope;
       final datasets = data['datasets']! as List<Object?>;
       switch (mutation) {
         case 'data':
-          f.root['data'] = <String, Object?>{'datasets': datasets};
+          f.root['data'] = ChartDataScope()..datasets = datasets;
         case 'datasets':
           data['datasets'] = List<Object?>.of(datasets);
         case 'dataset':

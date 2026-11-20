@@ -13,6 +13,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/data_scope.dart';
+
 const _n = 1000;
 
 final class _Metrics(@override final double width) implements TextMetrics {
@@ -83,7 +85,7 @@ final class _ObservedChart(super.item, super.userConfig) extends Chart {
   void Function()? onDataRead;
 
   @override
-  Object get data {
+  ChartDataScope get data {
     dataReads++;
     onDataRead?.call();
     return super.data;
@@ -178,7 +180,7 @@ final class _Pair() {
   });
 }
 
-ChartDataScope _data(Chart chart) => chart.data as ChartDataScope;
+ChartDataScope _data(Chart chart) => chart.data;
 
 List<Object> _labels(Chart chart) => _data(chart)['labels']! as List<Object>;
 
@@ -506,11 +508,11 @@ void main() {
   test('custom tick-list reads may replace the live label source', () {
     final chart = Chart(UiCanvasElement(width: 800, height: 480), _config());
     addTearDown(chart.destroy);
-    // A Map data: the case gives the chart a new data object of the user.
-    final data = <String, Object?>{
+    // A new data object of the user.
+    final data = dataScopeOf(<String, Object?>{
       'labels': _labels(chart),
       'datasets': _data(chart)['datasets'],
-    };
+    });
     chart.data = data;
     expect(chart.categoryLabels(null, horizontal: true), isNotNull);
     final ticks = _Ticks([

@@ -133,6 +133,7 @@ ChartResolver
 ChartScript
 ChartShaderPaint
 ChartShadow
+ChartStacks
 ChartTextStyle
 ChartTheme
 ChartThemeData
@@ -1181,6 +1182,7 @@ ChartResolver
 ChartScript
 ChartShaderPaint
 ChartShadow
+ChartStacks
 ChartTextStyle
 ChartTheme
 ChartThemeData

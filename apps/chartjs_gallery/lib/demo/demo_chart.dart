@@ -73,7 +73,7 @@ final class DemoChart(
   CanvasRenderingContext2D? ctx;
 
   @override
-  Map<String, Object?>? platformProxies = {};
+  final Map<String, Object?> platformProxies = {};
 
   /// The configuration `{options, data}` of the chart.
   @override
@@ -81,7 +81,7 @@ final class DemoChart(
 
   /// No stacks: the demo has no datasets.
   @override
-  Map<String, Object?>? stacks;
+  ChartStacks? stacks;
 
   /// The demo has no animated updates.
   @override
@@ -127,10 +127,9 @@ final class DemoChart(
 
   /// The data of a chart without datasets.
   @override
-  final Map<String, Object?> data = {
-    'labels': <Object?>[],
-    'datasets': <Object?>[],
-  };
+  final ChartDataScope data = ChartDataScope()
+    ..labels = <Object?>[]
+    ..datasets = <Object?>[];
 
   /// core.controller.js:845 `isPointInArea`, without the padding of the
   /// layout.
@@ -400,7 +399,7 @@ final class DemoChart(
 /// The `config` of a [DemoChart]: its `options` and its `data`.
 final class _DemoConfiguration(
   @override final Map<String, Object?> options,
-  @override final Map<String, Object?> data,
+  @override final ChartDataScope data,
 ) implements ChartConfiguration;
 
 /// A [ChartHost] that shows a [DemoChart].

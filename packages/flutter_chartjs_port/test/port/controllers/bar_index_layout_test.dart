@@ -120,7 +120,7 @@ Map<String, Object?> _config({
   },
 };
 List<Object?> _datasets(Map<String, Object?> cfg) =>
-    (cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>;
+    jsGet(cfg['data'], 'datasets')! as List<Object?>;
 Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
     _datasets(cfg)[0]! as Map<String, Object?>;
 Map<String, Object?> _options(Map<String, Object?> cfg) =>
@@ -277,7 +277,7 @@ void main() {
       _datasets(cfg).removeLast();
       expect(source.read(const XAxis()), isTrue);
       final list = _ReadList();
-      (cfg['data']! as Map<String, Object?>)['datasets'] = list;
+      jsSet(cfg['data'], 'datasets', list);
       expect(source.read(const XAxis()), isFalse);
       expect(list.reads, 0);
       cfg['data'] = <String, Object?>{

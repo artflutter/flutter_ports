@@ -235,7 +235,7 @@ Object? _plain(Object? value) {
 /// code can read it.
 String _state(Chart chart) {
   final out = StringBuffer();
-  final data = chart.data as Map<String, Object?>;
+  final data = chart.data;
   final datasets = data['datasets']! as List<Object?>;
   for (var d = 0; d < datasets.length; d++) {
     final elements = chart.getDatasetMeta(d).data;
@@ -274,7 +274,7 @@ String _state(Chart chart) {
 /// The observable results of the elements beside the contexts.
 String _results(Chart chart) {
   final out = StringBuffer();
-  final data = chart.data as Map<String, Object?>;
+  final data = chart.data;
   final datasets = data['datasets']! as List<Object?>;
   for (var d = 0; d < datasets.length; d++) {
     final meta = chart.getDatasetMeta(d);
@@ -389,7 +389,7 @@ void _replaceData(
   int round, {
   int? length,
 }) {
-  final data = config['data']! as Map<String, Object?>;
+  final data = config['data']! as ChartDataScope;
   final datasets = data['datasets']! as List<Object?>;
   for (var d = 0; d < datasets.length; d++) {
     final dataset = datasets[d]! as Map<String, Object?>;
@@ -692,7 +692,7 @@ void main() {
         final chart = _chart(config);
         ran = false;
         armed = false;
-        final data = config['data']! as Map<String, Object?>;
+        final data = config['data']! as ChartDataScope;
         final dataset =
             (data['datasets']! as List<Object?>)[0]! as Map<String, Object?>;
         final items = List<Object?>.of(dataset['data']! as List<Object?>);
@@ -857,7 +857,7 @@ void main() {
         final seen = <String>[];
         final config = _config('scatter', id: id, options: {'parsing': false});
         final chart = _chart(config);
-        final data = config['data']! as Map<String, Object?>;
+        final data = config['data']! as ChartDataScope;
         final dataset =
             (data['datasets']! as List<Object?>)[0]! as Map<String, Object?>;
         final items = List<Object?>.of(dataset['data']! as List<Object?>);

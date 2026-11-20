@@ -101,8 +101,7 @@ Map<String, Object?> fixture() {
               native_ui.Offset(512, 256),
               [native_ui.Color(0xffff0000), native_ui.Color(0xff0000ff)],
             );
-            final datasets =
-                (chart.config.data as AnyObject)['datasets']! as List<Object?>;
+            final datasets = chart.config.data['datasets']! as List<Object?>;
             (datasets[2]! as AnyObject)
               ..['pointBorderColor'] = gradient
               ..['pointBackgroundColor'] = gradient;

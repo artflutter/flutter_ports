@@ -149,7 +149,7 @@ Map<String, Object?> _config({
 };
 
 Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
-    ((cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>)[0]!
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
         as Map<String, Object?>;
 
 Chart _chart(Object cfg, {bool reference = false}) {

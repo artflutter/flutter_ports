@@ -229,7 +229,7 @@ Map<String, Object?> _config(
 };
 
 List<Object?> _datasets(Map<String, Object?> cfg) =>
-    (cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>;
+    jsGet(cfg['data'], 'datasets')! as List<Object?>;
 Map<String, Object?> _first(Map<String, Object?> cfg) =>
     _datasets(cfg)[0]! as Map<String, Object?>;
 

@@ -107,7 +107,7 @@ List<Object?> _observe(Chart chart) {
 }
 
 Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
-    ((cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>)[0]!
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
         as Map<String, Object?>;
 
 /// One chart with the held entry and one without. [config] makes new objects

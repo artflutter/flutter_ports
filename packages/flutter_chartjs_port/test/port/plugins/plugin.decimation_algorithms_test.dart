@@ -79,13 +79,11 @@ AnyObject _p(Object? x, Object? y) => <String, Object?>{'x': x, 'y': y};
 /// on `algorithm`: one line dataset with [data] on a linear x scale, with
 /// `parsing: false`.
 final class _Chart(List<Object?> data) implements IChart {
-  // A Map: the fake chart gives the raw data that the hook reads by name.
   @override
-  final Object data = <String, Object?>{
-    'datasets': <Object?>[
+  final ChartDataScope data = ChartDataScope()
+    ..datasets = <Object?>[
       <String, Object?>{'data': data},
-    ],
-  };
+    ];
 
   @override
   final Object options = <String, Object?>{'parsing': false};
@@ -546,7 +544,7 @@ void main() {
           threshold: null,
         ),
       );
-      final datasets = (chart.data as AnyObject)['datasets']! as List<Object?>;
+      final datasets = chart.data['datasets']! as List<Object?>;
       final dataset = datasets.single! as AnyObject;
       expect(dataset['_data'], hasLength(50));
       expect(dataset['_decimated'], isA<List<Object?>>());

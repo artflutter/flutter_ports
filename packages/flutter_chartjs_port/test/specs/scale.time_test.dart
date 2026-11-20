@@ -908,7 +908,7 @@ void main() {
             beforeEach();
             final scale = chart.scales['x']!;
 
-            (chart.data as AnyObject)['labels'] = <Object?>[];
+            chart.data['labels'] = <Object?>[];
             chart.update();
 
             expect(
@@ -942,7 +942,7 @@ void main() {
             final options = _scaleOptionsX(chart);
 
             (jsGet(options, 'time')! as JsObjectFace)['unit'] = TimeUnit.year;
-            (chart.data as AnyObject)['labels'] = <Object?>[];
+            chart.data['labels'] = <Object?>[];
             chart.update();
 
             expect(
@@ -1039,7 +1039,7 @@ void main() {
             final options = _scaleOptionsX(chart);
 
             (jsGet(options, 'time')! as JsObjectFace)['unit'] = TimeUnit.year;
-            (chart.data as AnyObject)['labels'] = <Object?>[];
+            chart.data['labels'] = <Object?>[];
             chart.getDatasetMeta(1).hidden = true;
             chart.update();
 

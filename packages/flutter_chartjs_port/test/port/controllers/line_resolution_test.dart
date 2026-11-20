@@ -184,9 +184,7 @@ void main() {
               case 'datasets':
                 data['datasets'] = <Object?>[dataset];
               case 'data':
-                cfg['data'] = <String, Object?>{
-                  'datasets': <Object?>[dataset],
-                };
+                cfg['data'] = ChartDataScope()..datasets = <Object?>[dataset];
               case 'options':
                 cfg['options'] = Map<String, Object?>.of(options);
               case 'clear':

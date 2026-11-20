@@ -108,8 +108,7 @@ Map<String, Object?> _config({bool line = false, int datasets = 1}) => {
   },
 };
 Map<String, Object?> _dataset(Map<String, Object?> cfg, [int index = 0]) =>
-    ((cfg['data']! as Map<String, Object?>)['datasets']!
-            as List<Object?>)[index]!
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[index]!
         as Map<String, Object?>;
 Chart _chart(Object cfg, {bool reference = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);

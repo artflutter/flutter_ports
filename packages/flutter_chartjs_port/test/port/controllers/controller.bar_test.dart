@@ -233,13 +233,13 @@ void main() {
           },
         ],
       };
-      expect(
-        () => acquireChart(<String, Object?>{'type': 'bar', 'data': data}),
-        throwsA(isA<TypeError>()),
-      );
+      final config = <String, Object?>{'type': 'bar', 'data': data};
+      expect(() => acquireChart(config), throwsA(isA<TypeError>()));
       // The category scale parsed the label of the first item before the
-      // throw (category.js addIfString): the labels hold it.
-      expect(data['labels'], ['q']);
+      // throw (category.js addIfString): the labels hold it. The data
+      // object of the chart is the scope of the boundary (row
+      // `adapt-config-objects`).
+      expect(jsGet(config['data'], 'labels'), ['q']);
     });
 
     // controller.bar.js:334-335: the index key and then the value key throw

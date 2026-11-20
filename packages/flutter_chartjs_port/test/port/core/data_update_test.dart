@@ -184,7 +184,7 @@ Map<String, Object?> config(
 }
 
 Map<String, Object?> dataset(Map<String, Object?> cfg) =>
-    ((cfg['data']! as Map)['datasets'] as List).first as Map<String, Object?>;
+    (jsGet(cfg['data'], 'datasets')! as List).first as Map<String, Object?>;
 void change(Map<String, Object?> cfg, int step) {
   final values = dataset(cfg)['data']! as List<Object?>;
   for (var i = 0; i < values.length; i++) {
@@ -328,7 +328,7 @@ void main() {
     expect(a.updateData(), isTrue);
     (dataset(cfg)['data']! as List).add(5.0);
     expect(a.updateData(), isFalse);
-    (cfg['data']! as Map)['labels'] = <String>['A', 'B', 'C', 'D', 'E'];
+    jsSet(cfg['data'], 'labels', <String>['A', 'B', 'C', 'D', 'E']);
     expect(a.updateData(), isFalse);
     a.toggleDataVisibility(0);
     expect(a.updateData(), isFalse);
@@ -479,7 +479,7 @@ void main() {
     Map<String, Object?> cfg() {
       final c = config('bar');
       final d = dataset(c);
-      ((c['data']! as Map)['datasets'] as List).add(<String, Object?>{
+      (jsGet(c['data'], 'datasets')! as List).add(<String, Object?>{
         ...d,
         'data': <Object?>[2.0, 3.0, 1.0, 2.0],
       });
@@ -738,7 +738,7 @@ void main() {
   test('a category scale with an added label falls back once', () {
     final cfg = config('bar');
     final a = chart(cfg);
-    final labels = (cfg['data']! as Map)['labels'] as List<String>;
+    final labels = jsGet(cfg['data'], 'labels')! as List<String>;
     final numbers = dataset(cfg)['data'];
     // A full update parses the string, and adds it to the labels. The plan of
     // this update has the new length of the labels.
@@ -1183,7 +1183,7 @@ void main() {
         test('two datasets, one of them with a plain style', () {
           Map<String, Object?> make() {
             final cfg = indexed(type);
-            final datasets = (cfg['data']! as Map)['datasets']! as List;
+            final datasets = jsGet(cfg['data'], 'datasets')! as List;
             final plainStyle = config(type);
             datasets.add(dataset(plainStyle));
             return cfg;
@@ -1305,7 +1305,7 @@ void main() {
     test('stacked bars', () {
       expectTwin(() {
         final cfg = indexed('bar');
-        ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
+        (jsGet(cfg['data'], 'datasets')! as List).add(<String, Object?>{
           ...dataset(cfg),
           'data': <Object?>[2.0, 3.0, 1.0, 2.0],
         });
@@ -1320,7 +1320,7 @@ void main() {
     test('a line dataset beside indexed bars', () {
       expectTwin(() {
         final cfg = indexed('bar');
-        ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
+        (jsGet(cfg['data'], 'datasets')! as List).add(<String, Object?>{
           'type': 'line',
           'data': <Object?>[2.0, 3.0, 1.0, 2.0],
           'borderColor': blue,
@@ -1333,7 +1333,7 @@ void main() {
       for (final type in types) {
         expectTwin(() {
           final cfg = indexed(type);
-          ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
+          (jsGet(cfg['data'], 'datasets')! as List).add(<String, Object?>{
             ...dataset(config(type)),
             'backgroundColor': <Object?>[green, blue],
             'hidden': true,
@@ -1848,7 +1848,7 @@ void main() {
       /// A bar chart with a line dataset, the second type of [expectTwin].
       Map<String, Object?> mixed() {
         final cfg = config('bar');
-        ((cfg['data']! as Map)['datasets']! as List).add(<String, Object?>{
+        (jsGet(cfg['data'], 'datasets')! as List).add(<String, Object?>{
           'type': 'line',
           'data': <Object?>[2.0, 3.0, 1.0, 2.0],
           'borderColor': blue,

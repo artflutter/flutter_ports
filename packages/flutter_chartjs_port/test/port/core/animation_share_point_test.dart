@@ -384,9 +384,7 @@ void main() {
             return 3.0;
           },
         };
-        (config['data']! as Map<String, Object?>)['datasets'] = <Object?>[
-          dataset,
-        ];
+        jsSet(config['data'], 'datasets', <Object?>[dataset]);
         // The loop of the dataset update only: `getMaxOverflow` resolves the
         // options of each point before it.
         config['plugins'] = <Plugin<Object?>>[

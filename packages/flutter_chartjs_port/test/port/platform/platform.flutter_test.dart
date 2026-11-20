@@ -265,7 +265,7 @@ void main() {
         ..addEventListener(chart, 'click', (ChartEvent e) {
           received.add('second');
         });
-      final proxy = chart.platformProxies!['click'];
+      final proxy = chart.platformProxies['click'];
       expect(proxy, isA<void Function(NativeEvent)>());
       // platform.dom.js:95 `eventListenerOptions`: each proxy is passive
       // (Chart.js ADR 0108).
@@ -286,8 +286,8 @@ void main() {
       expect(received, ['second']);
 
       platform.removeEventListener(chart, 'click');
-      expect(chart.platformProxies!.containsKey('click'), isTrue);
-      expect(chart.platformProxies!['click'], isNull);
+      expect(chart.platformProxies.containsKey('click'), isTrue);
+      expect(chart.platformProxies['click'], isNull);
       expect(hasCanvasEventListener(canvas, 'click'), isFalse);
       // A type without a proxy does nothing.
       platform.removeEventListener(chart, 'mousemove');

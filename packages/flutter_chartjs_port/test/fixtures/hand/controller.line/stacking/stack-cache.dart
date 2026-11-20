@@ -6,6 +6,8 @@ library;
 import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 
+import '../../../../support/data_scope.dart';
+
 /// `module.exports` of the upstream file. Each call runs the module body.
 Map<String, Object?> fixture() {
   Map<String, Object?> makeDs(Object? label, Object? offset) {
@@ -62,9 +64,9 @@ Map<String, Object?> fixture() {
       'canvas': <String, Object?>{'height': 128, 'width': 256},
       'run': (Chart chart) async {
         chart
-          ..data = <String, Object?>{
+          ..data = dataScopeOf(<String, Object?>{
             'datasets': <Object?>[dsB, dsA],
-          }
+          })
           ..update();
       },
     },

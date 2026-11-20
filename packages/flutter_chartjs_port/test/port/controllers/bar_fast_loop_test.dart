@@ -119,7 +119,7 @@ Map<String, Object?> _config({
 };
 
 List<Object?> _datasets(Map<String, Object?> cfg) =>
-    (cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>;
+    jsGet(cfg['data'], 'datasets')! as List<Object?>;
 
 Chart _chart(Object cfg, {bool reference = false, bool upstream = false}) {
   final canvas = UiCanvasElement(width: 640, height: 400);
@@ -191,7 +191,7 @@ Object _stackTables(Chart chart) {
   return {
     for (final key in stacks.keys)
       key: {
-        for (final entry in (stacks[key]! as Map<String, Object?>).entries)
+        for (final entry in stacks[key]!.entries)
           entry.key: plainDeep(entry.value),
       },
   };
@@ -886,9 +886,9 @@ void main() {
       final maps = <_CountingMap>[];
       for (final chart in [a, b]) {
         final stacks = chart.stacks!;
-        final sub = stacks[stacks.keys.first]! as Map<String, Object?>;
+        final sub = stacks[stacks.keys.first]!;
         final map = _CountingMap(<String, Object?>{});
-        (sub['2']! as JsObjectFace).jsWrite('_visualValues', map);
+        sub['2']!.jsWrite('_visualValues', map);
         maps.add(map);
       }
       _step([ca, cb], 0);
@@ -950,9 +950,9 @@ void main() {
         expect(_stackTables(a), _stackTables(b));
       }
       final soloKey = a.stacks!.keys.firstWhere((k) => k.endsWith('.solo'));
-      final solo = a.stacks![soloKey]! as Map<String, Object?>;
+      final solo = a.stacks![soloKey]!;
       for (final entry in solo.values) {
-        expect((entry! as StackEntry).datasetValues.denseSlots, 0);
+        expect(entry.datasetValues.denseSlots, 0);
       }
     });
   });

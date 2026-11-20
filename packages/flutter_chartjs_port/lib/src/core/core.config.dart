@@ -330,22 +330,37 @@ bool _isConfigObject(Object? value) =>
 
 /// core.config.js:122 `initData`.
 ///
-/// An array [data] gives a new Map (row `adapt-config-objects`). Upstream
-/// writes the properties `datasets` and `labels` into the array, and no
-/// Chart.js code reads its items. Thus the Map gives the same results, and
-/// only the identity of `chart.data` differs. Another truthy [data] that is
-/// not an object (a Map or a typed scope) throws a [TypeError]. Upstream
+/// The result is a [ChartDataScope] (row `adapt-config-objects`). A typed
+/// [data] stays the same object. A Map of the user gives a new scope with
+/// its own keys, in their order: the values stay the same objects, so the
+/// datasets and the labels Lists of the user are the Lists of the chart. A
+/// falsy [data] or an array gives a new scope. Upstream writes the
+/// properties `datasets` and `labels` into the array, and no Chart.js code
+/// reads its items. Another truthy [data] throws a [TypeError]. Upstream
 /// throws a `TypeError` for a primitive and writes the properties of a
 /// function.
-Object _initData(Object? data) {
+ChartDataScope _initData(Object? data) {
   // Upstream reassigns its parameter.
-  // DIVERGES(chartjs): adapt-config-objects, an array gives a new Map.
-  final object = jsTruthy(data) && data is! List ? data : <String, Object?>{};
-  // DIVERGES(chartjs): adapt-config-objects, the data object is an object.
-  if (!_isConfigObject(object)) throw TypeError();
+  // DIVERGES(chartjs): adapt-config-objects, the data object is a scope.
+  final object = switch (data) {
+    final ChartDataScope scope => scope,
+    final AnyObject map => _dataScopeOf(map),
+    _ when !jsTruthy(data) || data is List => ChartDataScope(),
+    _ => throw TypeError(),
+  };
   jsSet(object, 'datasets', _or(jsGet(object, 'datasets'), <Object?>[]));
   jsSet(object, 'labels', _or(jsGet(object, 'labels'), <Object?>[]));
-  return object!;
+  return object;
+}
+
+/// The [ChartDataScope] of the data Map [map] of a raw config: each own
+/// key of [map] in its order, with the same value.
+ChartDataScope _dataScopeOf(AnyObject map) {
+  final scope = ChartDataScope();
+  for (final MapEntry(:key, :value) in map.entries) {
+    scope.jsWrite(key, value);
+  }
+  return scope;
 }
 
 /// core.config.js:129 `initConfig`.
@@ -509,24 +524,23 @@ class Config([Object? config]) implements ChartConfiguration {
 
   /// core.config.js:177 `get data()`.
   ///
-  /// `initData` makes it an object (a Map or a typed scope). Only a write
-  /// into the raw configuration gives it another value. Then the getter
-  /// throws a [TypeError] (row `adapt-config-objects`). Upstream returns the
-  /// value.
+  /// `initData` makes it a [ChartDataScope]. Only a write into the raw
+  /// configuration gives it another value. Then the getter throws a
+  /// [TypeError] (row `adapt-config-objects`). Upstream returns the value.
   @override
-  Object get data {
-    // DIVERGES(chartjs): adapt-config-objects, the data object is an object.
+  ChartDataScope get data {
+    // DIVERGES(chartjs): adapt-config-objects, the data object is a scope.
     final data = readOption(_config, OptionKey.data);
-    return data is OptionScope || _isConfigObject(data)
-        ? data!
-        : throw TypeError();
+    return data is ChartDataScope ? data : throw TypeError();
   }
 
+  /// The data object of the raw [data] of a config, as `initData` makes
+  /// it: `ChartView.raw` gives the data Map of a new config through it.
+  @internal
+  static ChartDataScope dataScopeOf(Object? data) => _initData(data);
+
   /// core.config.js:181 `set data(data)`.
-  ///
-  /// A falsy [data] or an array gives a new Map. Another truthy value that
-  /// is not an object throws a [TypeError] (row `adapt-config-objects`).
-  set data(Object? data) {
+  set data(ChartDataScope data) {
     jsSet(_config, 'data', _initData(data));
   }
 
@@ -822,10 +836,12 @@ class Config([Object? config]) implements ChartConfiguration {
       return null;
     }
     final data = root['data'];
-    if (data is! Map<String, Object?> || !nativeDataUpdateObject(data)) {
+    if (data is! ChartDataScope ||
+        !nativeDataUpdateObject(data) ||
+        data.routeOf('datasets') != null) {
       return null;
     }
-    final datasets = data['datasets'];
+    final datasets = dataUpdateField(data, 'datasets');
     if (datasets is! List<Object?> ||
         !nativeDataUpdateList(datasets) ||
         datasetIndex < 0 ||
@@ -866,7 +882,8 @@ class Config([Object? config]) implements ChartConfiguration {
         current() &&
         identical(root['data'], data) &&
         identical(root['options'], settings) &&
-        identical(data['datasets'], datasets) &&
+        data.routeOf('datasets') == null &&
+        identical(dataUpdateField(data, 'datasets'), datasets) &&
         datasetIndex < datasets.length &&
         identical(datasets[datasetIndex], dataset) &&
         identical(dataset['data'], raw) &&

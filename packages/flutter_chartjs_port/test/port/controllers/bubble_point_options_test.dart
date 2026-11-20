@@ -200,7 +200,7 @@ Map<String, Object?> _config({
 };
 
 Map<String, Object?> _dataset(Map<String, Object?> cfg) =>
-    ((cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>)[0]!
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[0]!
         as Map<String, Object?>;
 
 Chart _chart(Object cfg, {bool reference = false}) {
@@ -347,13 +347,12 @@ void main() {
   test('twin of the two datasets of one chart, by index', () {
     final configs = _pair((type) {
       final cfg = _config(type: type, backgroundColor: <ChartPaint>[red, blue]);
-      ((cfg['data']! as Map<String, Object?>)['datasets']! as List<Object?>)
-          .add(<String, Object?>{
-            'data': _maps(step: 2),
-            'backgroundColor': <ChartPaint>[green, red],
-            'borderColor': red,
-            'borderWidth': 2.0,
-          });
+      (jsGet(cfg['data'], 'datasets')! as List<Object?>).add(<String, Object?>{
+        'data': _maps(step: 2),
+        'backgroundColor': <ChartPaint>[green, red],
+        'borderColor': red,
+        'borderWidth': 2.0,
+      });
       return cfg;
     });
     final a = _chart(configs[0]);

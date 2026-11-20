@@ -187,6 +187,12 @@ const Set<String> reviewedForeignPairs = {
   'BarOptions\tinflateAmount\tobject',
   'BarOptions\tinflateAmount\tstring',
   'BarOptions\tinflateAmount\tundefined',
+  // The data Map of a raw config becomes a `ChartDataScope` with the same
+  // values (row `adapt-config-objects`): `Scale.getLabels` and the category
+  // label source read the raw value, as upstream reads the property.
+  'ChartDataScope\tlabels\tnumber',
+  'ChartDataScope\tlabels\tstring',
+  'ChartDataScope\txLabels\tnumber',
   'ChartOptionsScope\tcolor\tstring',
   'DescriptorsScope\t_rootDesc\tboolean',
   'FontSpecScope\tsize\tstring',

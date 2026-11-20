@@ -35,7 +35,7 @@ final class _Config() implements ChartConfiguration {
   final Map<String, Object?> options = {'animation': <String, Object?>{}};
 
   @override
-  final Map<String, Object?> data = {};
+  final ChartDataScope data = ChartDataScope();
 }
 
 void main() {

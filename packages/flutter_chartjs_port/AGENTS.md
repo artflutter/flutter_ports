@@ -111,8 +111,11 @@ repository.
     Both are a `JsProxyObject`: the face (`JsObjectFace`) over their traps, with `ownKeys` (the
     `ownKeys` trap) and `hasProperty` (the `has` trap). `mergeScaleConfig` of `core.config.dart`
     writes a typed `ScaleOptionsByIdScope` of `ScaleOptionsScope`s into `options.scales`; the
-    config, the data and the options of the user stay raw Maps (Chart.js ADR 0054 §5), and the
-    config boundary also takes the typed root, data and options of a typed config. The
+    config and the options of the user stay raw Maps (Chart.js ADR 0054 §5), and the config
+    boundary also takes the typed root, data and options of a typed config. The data object is
+    always a `ChartDataScope`: the boundary makes it from the data Map of a raw config, with the
+    same values (row `adapt-config-objects`). `chart.stacks` is a `ChartStacks`, and
+    `chart.platformProxies` a final Map. The
     sub-resolver of a top-level resolver (its parent scopes are its root scopes) walks the list
     once when the second walk adds nothing: plain keys, SDK Maps or native-face scopes with no route
     of the key, `_fallback` values that are not functions (row `adapt-resolver-single-walk`); any

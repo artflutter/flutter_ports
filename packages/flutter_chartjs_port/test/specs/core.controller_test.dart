@@ -14,6 +14,7 @@ import 'package:flutter/painting.dart' show EdgeInsets;
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/data_scope.dart';
 import '../support/list_splice.dart';
 
 // `Chart` is the class of core.controller.dart. The spec runs on the VM: a
@@ -327,8 +328,7 @@ void main() {
         final chart = acquireChart(<String, Object?>{});
         final data = chart.data;
 
-        expect(data, isA<Map<String, Object?>>());
-        data as AnyObject;
+        expect(data, isA<ChartDataScope>());
         expect(data['labels'], isA<List<Object?>>());
         expect(jsGet(data['labels'], 'length'), 0);
         expect(data['datasets'], isA<List<Object?>>());
@@ -351,17 +351,19 @@ void main() {
           'data': data,
         });
 
-        expect(chart.data, same(data));
-        expect((chart.data as AnyObject)['labels'], same(labels));
-        expect((chart.data as AnyObject)['datasets'], same(datasets));
-        expect(jsGet((chart.data as AnyObject)['datasets'], 0), same(ds0));
-        expect(jsGet((chart.data as AnyObject)['datasets'], 1), same(ds1));
+        // The boundary makes a scope from the data Map, with the same values
+        // (row `adapt-config-objects`): `chart.data` is not `data`.
+        expect(chart.data, isNot(same(data)));
+        expect(chart.data['labels'], same(labels));
+        expect(chart.data['datasets'], same(datasets));
+        expect(jsGet(chart.data['datasets'], 0), same(ds0));
+        expect(jsGet(chart.data['datasets'], 1), same(ds1));
         expect(
-          jsGet(jsGet((chart.data as AnyObject)['datasets'], 0), 'data'),
+          jsGet(jsGet(chart.data['datasets'], 0), 'data'),
           same(ds0['data']),
         );
         expect(
-          jsGet(jsGet((chart.data as AnyObject)['datasets'], 1), 'data'),
+          jsGet(jsGet(chart.data['datasets'], 1), 'data'),
           same(ds1['data']),
         );
       });
@@ -379,14 +381,14 @@ void main() {
 
         expect(chart.data, same(config['data']));
 
-        chart.data = <String, Object?>{
+        chart.data = dataScopeOf(<String, Object?>{
           'labels': <Object?>[1, 2, 3],
           'datasets': <Object?>[
             <String, Object?>{
               'data': <Object?>[4, 5, 6],
             },
           ],
-        };
+        });
 
         expect(config['data'], same(chart.data));
         expect(jsGet(config['data'], 'labels'), [1, 2, 3]);
@@ -396,14 +398,16 @@ void main() {
           6,
         ]);
 
-        config['data'] = <String, Object?>{
+        // A write into the raw config gives a scope (row
+        // `adapt-config-objects`).
+        config['data'] = dataScopeOf(<String, Object?>{
           'labels': <Object?>[7, 8, 9],
           'datasets': <Object?>[
             <String, Object?>{
               'data': <Object?>[10, 11, 12],
             },
           ],
-        };
+        });
 
         expect(chart.data, same(config['data']));
         expect(jsGet(chart.data, 'labels'), [7, 8, 9]);
@@ -579,12 +583,10 @@ void main() {
       testWidgets('should initialize the data object', (tester) async {
         final chart = acquireChart(<String, Object?>{'type': 'bar'});
         _expectEmptyData(chart);
-        chart.data = <String, Object?>{};
+        chart.data = ChartDataScope();
         _expectEmptyData(chart);
-        chart.data = null;
-        _expectEmptyData(chart);
-        chart.data = undefined;
-        _expectEmptyData(chart);
+        // The setter takes a `ChartDataScope`: `null` and `undefined` do not
+        // compile (row `adapt-config-objects`).
       });
 
       // Map configs: the cases test the merge of the keys `hover` and
@@ -2714,12 +2716,7 @@ void main() {
       ) async {
         beforeEach();
         final orig = _datasets(chart);
-        (chart.data as AnyObject)['datasets'] = <Object?>[
-          orig[0],
-          orig[2],
-          orig[1],
-          orig[3],
-        ];
+        chart.data['datasets'] = <Object?>[orig[0], orig[2], orig[1], orig[3]];
         chart.update();
         var metasets = chart.metasets;
         expect(metasets[0]!.label, equals('1'));
@@ -2727,7 +2724,7 @@ void main() {
         expect(metasets[2]!.label, equals('2'));
         expect(metasets[3]!.label, equals('4'));
 
-        (chart.data as AnyObject)['datasets'] = <Object?>[
+        chart.data['datasets'] = <Object?>[
           <String, Object?>{'label': 'new', 'order': 10},
           orig[3],
           orig[2],
@@ -2742,7 +2739,7 @@ void main() {
         expect(metasets[3]!.label, equals('2'));
         expect(metasets[4]!.label, equals('1'));
 
-        (chart.data as AnyObject)['datasets'] = <Object?>[
+        chart.data['datasets'] = <Object?>[
           orig[3],
           orig[2],
           orig[1],

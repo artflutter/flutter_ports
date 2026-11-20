@@ -14,6 +14,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
+import '../support/data_scope.dart';
 import '../support/draw_recorder.dart';
 import '../support/list_splice.dart';
 
@@ -69,8 +70,7 @@ Element _element(ChartMeta meta, int index) => meta.data[index] as Element;
 Map<String, Object?> _stacks(Chart chart) => {
   for (final MapEntry(key: stackKey, value: subStack) in chart.stacks!.entries)
     stackKey: {
-      for (final MapEntry(:key, :value)
-          in (subStack! as Map<String, StackEntry>).entries)
+      for (final MapEntry(:key, :value) in subStack.entries)
         key: _stackEntry(value),
     },
 };
@@ -267,7 +267,7 @@ void main() {
               },
             },
           })
-          ..data = <String, Object?>{
+          ..data = dataScopeOf(<String, Object?>{
             'datasets': <Object?>[
               <String, Object?>{
                 'id': 'tests',
@@ -278,7 +278,7 @@ void main() {
               },
             ],
             'labels': <Object?>['q'],
-          }
+          })
           ..update();
       }
 
@@ -1705,7 +1705,7 @@ void main() {
           ),
         );
 
-        (chart.data as AnyObject)['datasets'] = <Object?>[
+        chart.data['datasets'] = <Object?>[
           <String, Object?>{
             'data': <Object?>[
               <String, Object?>{'x': 0, 'y': 0},

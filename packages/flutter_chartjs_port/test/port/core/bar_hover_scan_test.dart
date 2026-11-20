@@ -375,7 +375,7 @@ Chart _barChart({
 });
 
 void _setData(Chart chart, int count, int seed) {
-  final data = chart.data as Map<String, Object?>;
+  final data = chart.data;
   data['labels'] = <Object?>[for (var i = 0; i < count; i++) 'd$i'];
   ((data['datasets']! as List<Object?>)[0]! as Map<String, Object?>)['data'] =
       _values(count, seed);

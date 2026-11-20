@@ -416,7 +416,7 @@ final class _FakeChart(@override final Config config, AnyObject spec)
   HTMLCanvasElement? get canvas => null;
 
   @override
-  Object get data => config.data;
+  ChartDataScope get data => config.data;
 
   @override
   final Map<String, IScale> scales = {};
@@ -425,7 +425,7 @@ final class _FakeChart(@override final Config config, AnyObject spec)
   ChartArea chartArea = _Area(0, 0, 100, 100);
 
   @override
-  AnyObject? stacks;
+  ChartStacks? stacks;
 
   @override
   final List<List<Object?>> dataChanges = [];
@@ -1452,7 +1452,7 @@ void main() {
       expect(jsObjectKeys(itemStacks), ['y']);
       expect(stacksOf(a), same(itemStacks));
       expect(stacksOf(b), same(itemStacks));
-      expect(jsObjectKeys(run.chart.stacks!['x.y.test']! as AnyObject), ['0']);
+      expect(run.chart.stacks!['x.y.test']!.keys.toList(), ['0']);
       expect(jsGetKey(jsGetKey(itemStacks, 'y'), '0'), 1.0);
     });
 

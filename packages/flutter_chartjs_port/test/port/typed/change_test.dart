@@ -327,7 +327,9 @@ void main() {
       expect(modes, hasLength(3));
       expect(_chart(tester), same(chart));
       expect(chart.config.type, 'bar');
-      expect(chart.data, same(raw['data']));
+      // The boundary makes a scope with the same values (row
+      // `adapt-config-objects`).
+      expect(chart.data['datasets'], same(jsGet(raw['data'], 'datasets')));
     });
 
     testWidgets('two ChartViews with one const config lower their own Maps', (

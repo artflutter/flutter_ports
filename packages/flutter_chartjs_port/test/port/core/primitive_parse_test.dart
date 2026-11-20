@@ -376,7 +376,7 @@ void main() {
     final a = _chart(ca);
     final b = _chart(cb, reference: true);
     for (final cfg in [ca, cb]) {
-      final data = cfg['data']! as Map<String, Object?>;
+      final data = cfg['data']! as ChartDataScope;
       data['labels'] = <Object?>['new', null, 'new'];
       final dataset = (data['datasets']! as List).first as Map;
       dataset['data'] = <Object?>[9, 8, 7, 6];

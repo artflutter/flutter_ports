@@ -496,7 +496,7 @@ void main() {
       final c = config(type);
       final options = c['options']! as Map<String, Object?>;
       final dataset =
-          ((c['data']! as Map<String, Object?>)['datasets']! as List).single
+          (jsGet(c['data'], 'datasets')! as List).single
               as Map<String, Object?>;
       expect(c['type'], type.name);
       expect(options['events'], isEmpty);
@@ -536,7 +536,7 @@ void main() {
     });
     final scatter = config(StressChartType.scatter, showLine: true);
     expect(
-      (((scatter['data']! as Map<String, Object?>)['datasets']! as List).single
+      ((jsGet(scatter['data'], 'datasets')! as List).single
           as Map<String, Object?>)['showLine'],
       true,
     );

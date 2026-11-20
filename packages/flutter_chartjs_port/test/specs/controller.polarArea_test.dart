@@ -416,7 +416,7 @@ void main() {
       expect(meta.data.length, 4);
 
       // remove 2 items
-      (chart.data as AnyObject)['labels'] = <Object?>['label1', 'label2'];
+      chart.data['labels'] = <Object?>['label1', 'label2'];
       _dataset(chart, 0)['data'] = <Object?>[1, 2];
       chart.update();
 
@@ -425,7 +425,7 @@ void main() {
       expect(meta.data[1], isA<ArcElement>());
 
       // add 3 items
-      (chart.data as AnyObject)['labels'] = <Object?>[
+      chart.data['labels'] = <Object?>[
         'label1',
         'label2',
         'label3',

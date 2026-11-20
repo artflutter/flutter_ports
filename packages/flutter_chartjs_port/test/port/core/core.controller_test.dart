@@ -17,6 +17,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/axis_json.dart';
+import '../../support/data_scope.dart';
 import '../../support/list_splice.dart';
 import 'controller_reference.dart';
 import 'registry_observe.dart';
@@ -698,8 +699,7 @@ void main() {
         ]),
       );
       charts.add(chart);
-      List<Object?> datasets() =>
-          (chart.data as AnyObject)['datasets']! as List<Object?>;
+      List<Object?> datasets() => chart.data['datasets']! as List<Object?>;
       o
         ..observe('metasets', _metas(chart.metasets))
         ..observe('sorted', _metas(chart.sortedMetasets))
@@ -709,14 +709,18 @@ void main() {
       chart.update();
       o.observe('removed from beginning', _metas(chart.metasets));
       chart
-        ..data = <String, Object?>{'datasets': List<Object?>.of(orig)}
+        ..data = dataScopeOf(<String, Object?>{
+          'datasets': List<Object?>.of(orig),
+        })
         ..update();
       o.observe('restored', _metas(chart.metasets));
       datasets().removeRange(1, 3);
       chart.update();
       o.observe('removed from middle', _metas(chart.metasets));
       chart
-        ..data = <String, Object?>{'datasets': List<Object?>.of(orig)}
+        ..data = dataScopeOf(<String, Object?>{
+          'datasets': List<Object?>.of(orig),
+        })
         ..update();
       datasets().insert(1, _points('1.5', 5));
       chart.update();
@@ -725,9 +729,9 @@ void main() {
       chart.update();
       o.observe('replaced', _metas(chart.metasets));
       chart
-        ..data = <String, Object?>{
+        ..data = dataScopeOf(<String, Object?>{
           'datasets': [orig[3], orig[2], orig[1], _points('new', 10)],
-        }
+        })
         ..update();
       o
         ..observe('swapped', _metas(chart.metasets))
@@ -1102,20 +1106,22 @@ void main() {
       final chart = Chart(_Canvas(), config);
       charts.add(chart);
       o.observe('data alias', identical(chart.data, config['data']));
-      final data = <String, Object?>{
+      final data = dataScopeOf(<String, Object?>{
         'datasets': [_points('b')],
-      };
+      });
       chart.data = data;
       o.observe(
         'set data',
         '${identical(chart.data, data)} ${identical(config['data'], data)} '
             '${o.json(jsObjectKeys(chart.data))}',
       );
-      chart.data = null;
+      // The setter takes a scope: an empty scope stands for `null` (row
+      // `adapt-config-objects`).
+      chart.data = ChartDataScope();
       o.observe('set null', o.json(chart.data));
-      chart.data = <String, Object?>{
+      chart.data = dataScopeOf(<String, Object?>{
         'datasets': [_points('c')],
-      };
+      });
       final before = chart.options;
       // A new options object has the animations of the defaults:
       // BasicPlatform disabled them in the options of the constructor only.
@@ -1388,13 +1394,10 @@ void main() {
       };
       final labels = <Object?>['0', '1', '2', '3'];
       final config = _testConfig([dataset(), dataset()]);
-      (config['data']! as AnyObject)['labels'] = labels;
+      jsSet(config['data'], 'labels', labels);
       final chart = acquireChart(config);
       List<Object?> dataOf(int i) =>
-          jsGet(
-                jsGet((chart.data as AnyObject)['datasets'], i.toDouble()),
-                'data',
-              )!
+          jsGet(jsGet(chart.data['datasets'], i.toDouble()), 'data')!
               as List<Object?>;
       // The hooked array methods: the change, then the listeners.
       void change(
@@ -1602,9 +1605,10 @@ void main() {
         _testConfig([], plugins: [_spy('spy', log, Observations())]),
       );
       addTearDown(chart.destroy);
-      ((chart.data as AnyObject)['datasets']! as List<Object?>).add(
-        <String, Object?>{'type': 'plainController', 'data': <Object?>[]},
-      );
+      (chart.data['datasets']! as List<Object?>).add(<String, Object?>{
+        'type': 'plainController',
+        'data': <Object?>[],
+      });
       log.clear();
       expect(chart.update, throwsA(isA<TypeError>()));
       expect(log, isNot(contains('beforeElementsUpdate()')));
@@ -1879,8 +1883,7 @@ void main() {
       // The test controller places a point at the same pixel in the reset
       // and in the update. A new value gives a looping animation of y.
       final dataset =
-          ((chart.data as AnyObject)['datasets']! as List<Object?>)[0]!
-              as AnyObject;
+          (chart.data['datasets']! as List<Object?>)[0]! as AnyObject;
       ((dataset['data']! as List<Object?>)[0]! as AnyObject)['y'] = 9;
       chart.update();
       expect(animator.running(chart), isTrue);
@@ -1920,8 +1923,8 @@ void main() {
         'data': array,
       });
       expect(chart.data, isNot(same(array)));
-      expect((chart.data as AnyObject)['datasets'], isEmpty);
-      expect((chart.data as AnyObject)['labels'], isEmpty);
+      expect(chart.data['datasets'], isEmpty);
+      expect(chart.data['labels'], isEmpty);
       chart.destroy();
     });
 

@@ -333,8 +333,7 @@ void main() {
             x: const {'type': 'gap-writing-scale', 'min': 0.0, 'max': 10.0},
           );
           _WritingScale.data =
-              ((cfg['data']! as Map<String, Object?>)['datasets']!
-                          as List<Object?>)
+              (jsGet(cfg['data'], 'datasets')! as List<Object?>)
                       .cast<Map<String, Object?>>()
                       .first['data']!
                   as List<Object?>;

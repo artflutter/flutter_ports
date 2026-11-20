@@ -11,6 +11,7 @@ import 'package:test/test.dart';
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/cubic_mode_json.dart';
+import '../../support/data_scope.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/plugin_defaults.dart';
@@ -231,7 +232,7 @@ final class _OtherConfiguration() implements ChartConfiguration {
   };
 
   @override
-  final Map<String, Object?> data = {};
+  final ChartDataScope data = ChartDataScope();
 }
 
 void main() {
@@ -546,15 +547,17 @@ void main() {
       final raw = <String, Object?>{'type': 'bar'};
       final config = Config(raw);
       expect(config.data, same(raw['data']));
-      config.data = <String, Object?>{
+      config.data = dataScopeOf(<String, Object?>{
         'labels': [1.0],
-      };
+      });
       expect(
         _json(raw['data']),
         referenceColorTokens('{"labels":[1],"datasets":[]}'),
       );
       expect(config.data, same(raw['data']));
-      config.data = null;
+      // The setter takes a scope: an empty scope stands for `null` (row
+      // `adapt-config-objects`).
+      config.data = ChartDataScope();
       expect(
         _json(raw['data']),
         referenceColorTokens('{"datasets":[],"labels":[]}'),
@@ -1031,11 +1034,11 @@ void main() {
         ['x', 'y'],
       );
       config
-        ..data = <String, Object?>{
+        ..data = dataScopeOf(<String, Object?>{
           'datasets': [
             <String, Object?>{'type': 'tline', 'xAxisID': 'xx'},
           ],
-        }
+        })
         ..update();
       expect(
         jsObjectKeys((config.options as AnyObject)['scales']! as JsObjectFace),
@@ -1910,18 +1913,12 @@ void main() {
       );
     });
 
-    test('an array data gives a new Map with datasets and labels', () {
+    test('an array data gives a new scope with datasets and labels', () {
       // Upstream keeps the array and writes `datasets` and `labels` into it
       // (core.config.js:122-127). No Chart.js code reads its items.
       final array = <Object?>[];
       final config = Config(<String, Object?>{'data': array});
       expect(config.data, isNot(same(array)));
-      expect(
-        _json(config.data),
-        referenceColorTokens('{"datasets":[],"labels":[]}'),
-      );
-
-      config.data = <Object?>[1, 2];
       expect(
         _json(config.data),
         referenceColorTokens('{"datasets":[],"labels":[]}'),

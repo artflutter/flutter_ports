@@ -131,7 +131,7 @@ void main() {
     labels[0] = 'changed';
     expect(first.single, 'changed');
     final replacement = <Object?>['replacement'];
-    (config['data']! as Map<String, Object?>)['labels'] = replacement;
+    jsSet(config['data'], 'labels', replacement);
     expect(
       nativeCategoryLabels(config, null, horizontal: true),
       same(replacement),

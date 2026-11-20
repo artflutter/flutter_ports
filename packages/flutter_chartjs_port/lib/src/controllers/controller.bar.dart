@@ -917,8 +917,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     // The data object, the dataset List and each dataset object: `_getAxis`,
     // `getDataset` and `isDatasetVisible` read them by name.
     final data = chart.data;
-    if (!nativeDataUpdateObject(data) ||
-        (data is OptionScope && data.routeOf('datasets') != null)) {
+    if (!nativeDataUpdateObject(data) || data.routeOf('datasets') != null) {
       return false;
     }
     final datasets = readOption(data, OptionKey.datasets);

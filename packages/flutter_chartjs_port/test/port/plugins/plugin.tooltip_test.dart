@@ -705,9 +705,7 @@ void main() {
             },
           ),
         });
-        final datasets =
-            (config['data']! as Map<String, Object?>)['datasets']!
-                as List<Object?>;
+        final datasets = jsGet(config['data'], 'datasets')! as List<Object?>;
         (datasets[0]! as Map<String, Object?>)['tooltip'] = {
           'callbacks': TooltipCallbacks(
             title: (tooltip, items) {
@@ -745,9 +743,7 @@ void main() {
           labelTextColor: (tooltip, item) => const ChartPaint.unchanged(),
         ),
       });
-      final datasets =
-          (config['data']! as Map<String, Object?>)['datasets']!
-              as List<Object?>;
+      final datasets = jsGet(config['data'], 'datasets')! as List<Object?>;
       (datasets[0]! as Map<String, Object?>).addAll({
         'backgroundColor': const ChartPaint.solid(fill),
         'borderColor': const ChartPaint.solid(border),
@@ -1758,7 +1754,7 @@ void main() {
     // items {datasetIndex: 0, index: 1} and {datasetIndex: 1, index: 1}.
     AnyObject twoDatasets(AnyObject tooltipOptions) {
       final config = _probeChart(tooltipOptions);
-      ((config['data']! as AnyObject)['datasets']! as List<Object?>).add(
+      (jsGet(config['data'], 'datasets')! as List<Object?>).add(
         <String, Object?>{
           'label': 'two',
           'data': <Object?>[1, 2, 3],

@@ -14,6 +14,8 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart' as typed;
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/data_scope.dart';
+
 /// A value of a parsed item whose `toString` is user code.
 final class _Logged(final String text, final void Function() onRead) {
   @override
@@ -132,10 +134,10 @@ final class _DatasetCountController(
 
 /// A chart whose `data` is a value of the user.
 final class _DataChart(super.item, super.userConfig) extends Chart {
-  Object? replacement;
+  ChartDataScope? replacement;
   int reads = 0;
   @override
-  Object get data {
+  ChartDataScope get data {
     reads++;
     return replacement ?? super.data;
   }
@@ -289,7 +291,7 @@ void main() {
         ),
       );
       expect(a.data, isA<OptionScope>());
-      expect(b.data, isA<Map<String, Object?>>());
+      expect(b.data, isA<ChartDataScope>());
       expect(_geometry(a), _geometry(b));
       for (final chart in [a, b]) {
         final controller = _controllerOf(chart);
@@ -373,9 +375,9 @@ void main() {
       final controller = _controllerOf(chart);
       final mine = <String, Object?>{'data': <Object?>[]};
       final before = chart.reads;
-      chart.replacement = <String, Object?>{
+      chart.replacement = dataScopeOf(<String, Object?>{
         'datasets': <Object?>[mine],
-      };
+      });
       expect(controller.getDataset(), same(mine));
       expect(chart.reads, greaterThan(before));
     });
@@ -513,8 +515,7 @@ void main() {
         final chart = _chart(stackedConfig(first, form(pointsOf(5))));
         final before = _geometry(chart);
         expect(entryOf(first[0]).datasetValues.hasIndex(0), isTrue);
-        final dataset =
-            (chart.data as Map<String, Object?>)['datasets']! as List<Object?>;
+        final dataset = chart.data['datasets']! as List<Object?>;
         // Other x values: a stack entry belongs to its index value.
         (dataset[0]! as Map<String, Object?>)['data'] = form(pointsOf(2, 5));
         chart.update();
@@ -539,8 +540,7 @@ void main() {
       final points = _points();
       final chart = _chart(_rawConfig(points));
       final next = _points();
-      final datasets =
-          (chart.data as Map<String, Object?>)['datasets']! as List<Object?>;
+      final datasets = chart.data['datasets']! as List<Object?>;
       final before = _geometry(chart);
       (datasets[0]! as Map<String, Object?>)['data'] = next;
       chart.update();

@@ -478,7 +478,7 @@ class FlutterPlatform() extends BasePlatform {
     // Can have only one listener per type, so make sure previous is removed
     removeEventListener(chart, type);
 
-    final proxies = chart.platformProxies ??= <String, Object?>{};
+    final proxies = chart.platformProxies;
     const handlers =
         <
           String,
@@ -498,7 +498,7 @@ class FlutterPlatform() extends BasePlatform {
   /// `undefined`.
   @override
   void removeEventListener(IChart chart, String type, [Function? listener]) {
-    final proxies = chart.platformProxies ??= <String, Object?>{};
+    final proxies = chart.platformProxies;
     final proxy = proxies[type];
 
     if (proxy == null) {

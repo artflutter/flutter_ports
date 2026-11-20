@@ -55,7 +55,7 @@ final class FakeChart(
   CanvasRenderingContext2D? ctx;
 
   @override
-  Map<String, Object?>? platformProxies = {};
+  final Map<String, Object?> platformProxies = {};
 
   @override
   double width = 0;

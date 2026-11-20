@@ -216,7 +216,7 @@ final Map<String, ScaleObservations> _extras = {
 /// `dateLabels` of the generator: puts a DateTime for each time of the
 /// labels of [chart] in the labels, and returns the labels.
 List<Object?> _dateLabels(Chart chart) {
-  final labels = (chart.data as AnyObject)['labels']! as List<Object?>;
+  final labels = chart.data['labels']! as List<Object?>;
   for (var i = 0; i < labels.length; i++) {
     labels[i] = DateTime.fromMillisecondsSinceEpoch(
       (labels[i]! as double).toInt(),
@@ -228,8 +228,7 @@ List<Object?> _dateLabels(Chart chart) {
 
 /// The dataset [index] of [chart], as a Map.
 Map<String, Object?> _dataset(Chart chart, int index) =>
-    ((chart.data as AnyObject)['datasets']! as List<Object?>)[index]!
-        as Map<String, Object?>;
+    (chart.data['datasets']! as List<Object?>)[index]! as Map<String, Object?>;
 
 /// The actions of the action cases of the generator (`runActionCase`), by
 /// the case name. Each one changes the chart and calls `chart.update()`.
@@ -242,7 +241,7 @@ final Map<String, void Function(Chart chart)> _actions = {
     chart.update();
   },
   'the next update keeps the added labels at other indexes': (chart) {
-    ((chart.data as AnyObject)['labels']! as List<Object?>).insert(0, 'z');
+    (chart.data['labels']! as List<Object?>).insert(0, 'z');
     chart.update();
   },
   'the next update removes a string min': (chart) {
@@ -267,7 +266,7 @@ final Map<String, void Function(Chart chart)> _actions = {
       <String, Object?>{'x': 'b', 'y': 2.0},
     ];
     chart.update();
-    ((chart.data as AnyObject)['labels']! as List<Object?>).add('d');
+    (chart.data['labels']! as List<Object?>).add('d');
     chart.update();
   },
   'the next update keeps a label that parse adds to options.labels': (chart) {

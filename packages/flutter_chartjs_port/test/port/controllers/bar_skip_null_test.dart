@@ -128,8 +128,7 @@ Map<String, Object?> _wrap(bool custom, Map<String, Object?> map) =>
     custom ? _CustomMap(map) : map;
 
 Map<String, Object?> _dataset(Map<String, Object?> cfg, int index) =>
-    ((cfg['data']! as Map<String, Object?>)['datasets']!
-            as List<Object?>)[index]!
+    (jsGet(cfg['data'], 'datasets')! as List<Object?>)[index]!
         as Map<String, Object?>;
 
 Chart _chart(Object cfg) {
@@ -1145,9 +1144,7 @@ void main() {
           // The same config throws in the search: no bars to compare.
           continue;
         }
-        final sets =
-            (cfg['data']! as Map<String, Object?>)['datasets']!
-                as List<Object?>;
+        final sets = jsGet(cfg['data'], 'datasets')! as List<Object?>;
         for (var d = 0; d < sets.length; d++) {
           final meta = chart.getDatasetMeta(d);
           final controller = meta.controller;

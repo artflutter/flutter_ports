@@ -655,7 +655,7 @@ void main() {
       final config = _mapLine(<String, Object?>{
         'position': ChartPosition.left,
       });
-      (((config['data']! as AnyObject)['datasets']! as List<Object?>)[0]!
+      ((jsGet(config['data'], 'datasets')! as List<Object?>)[0]!
               as AnyObject)['label'] =
           <Object?>[];
       expect(() => acquireChart(config), throwsA(isA<TypeError>()));

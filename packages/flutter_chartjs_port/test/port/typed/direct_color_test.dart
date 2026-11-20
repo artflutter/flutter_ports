@@ -146,8 +146,7 @@ void main() {
   test('built-in defaults and automatic palette render without CSS', () {
     final canvas = UiCanvasElement(width: 120, height: 80);
     final config = _raw();
-    final dataset =
-        ((config['data']! as Map)['datasets']! as List).first as Map;
+    final dataset = (jsGet(config['data'], 'datasets')! as List).first as Map;
     dataset.remove('backgroundColor');
     final chart = Chart(canvas, config);
     chart.update(UpdateMode.none);

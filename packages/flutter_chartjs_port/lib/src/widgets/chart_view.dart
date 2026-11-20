@@ -809,8 +809,9 @@ class _ChartViewState() extends State<ChartView> {
     }
     final data = _valueOf(config.dataCell);
     if (!identical(data, _valueOf(applied.dataCell))) {
-      // core.controller.js:217 `set data(data)`.
-      chart.data = data;
+      // core.controller.js:217 `set data(data)`: the data Map of a raw
+      // config becomes a scope at the boundary (row `adapt-config-objects`).
+      chart.data = Config.dataScopeOf(data);
     }
     final options = _valueOf(config.optionsCell);
     if (!identical(options, _valueOf(applied.optionsCell))) {

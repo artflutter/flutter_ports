@@ -196,9 +196,7 @@ void main() {
     ) async {
       final config = _rawLine(shadow: true);
       final dataset =
-          ((config['data']! as Map<String, Object?>)['datasets']!
-                      as List<Object?>)
-                  .single!
+          (jsGet(config['data'], 'datasets')! as List<Object?>).single!
               as Map<String, Object?>;
       dataset['shadow'] = <String, Object?>{'color': _red};
       await tester.pumpWidget(_box(ChartView.raw(config: config)));
@@ -210,9 +208,7 @@ void main() {
     ) async {
       final config = _rawLine(shadow: false);
       final dataset =
-          ((config['data']! as Map<String, Object?>)['datasets']!
-                      as List<Object?>)
-                  .single!
+          (jsGet(config['data'], 'datasets')! as List<Object?>).single!
               as Map<String, Object?>;
       // A color key holds a ChartPaint, as each color option of the port.
       dataset['shadowColor'] = const ChartPaint.solid(_red);

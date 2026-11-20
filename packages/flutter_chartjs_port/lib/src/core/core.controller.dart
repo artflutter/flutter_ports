@@ -497,7 +497,7 @@ class Chart(
 
   /// core.controller.js:156 `_stacks = undefined`. See `types.Chart.stacks`.
   @override
-  AnyObject? stacks;
+  ChartStacks? stacks;
 
   /// core.controller.js:157 `boxes = []`.
   @override
@@ -548,7 +548,7 @@ class Chart(
   /// core.controller.js:168 `$proxies = {}`. See
   /// `types.Chart.platformProxies`.
   @override
-  AnyObject? platformProxies = {};
+  final Map<String, Object?> platformProxies = {};
 
   /// core.controller.js:169 `_hiddenIndices = {}`: the hidden data indices.
   /// The keys are the `ToString` of the indices.
@@ -728,12 +728,12 @@ class Chart(
 
   /// core.controller.js:213 `get data()`.
   @override
-  Object get data {
+  ChartDataScope get data {
     return config.data;
   }
 
   /// core.controller.js:217 `set data(data)`.
-  set data(Object? data) {
+  set data(ChartDataScope data) {
     _invalidateDataUpdate();
     config.data = data;
   }

@@ -104,21 +104,22 @@ abstract interface class IChart() {
   /// it.
   ///
   /// The `$` prefix marks a property that Chart.js keeps on an object for
-  /// another module. The Dart name says whose it is. Dart `null` stands for
-  /// JS `undefined`: `platform.dom.js:335` assigns `{}` when it is absent.
-  /// A value of the map is a proxy, or `null` for the `undefined` that
-  /// `removeEventListener` assigns (`platform.dom.js:365`).
-  abstract Map<String, Object?>? platformProxies;
+  /// another module. The Dart name says whose it is. The chart makes the
+  /// Map at its construction, so `platform.dom.js:335` never assigns `{}`.
+  /// A value of the map is a proxy: the throttled event function, or the
+  /// observer of `attach`, `detach` or `resize`. Dart `null` is the
+  /// `undefined` that `removeEventListener` assigns (`platform.dom.js:365`).
+  Map<String, Object?> get platformProxies;
 
   /// core.controller.js:156 `_stacks`, the stacks of the datasets by stack
   /// key. `index.d.ts` does not declare it.
   ///
   /// The structure is `{stackKey: {indexValue: {datasetIndex: value}}}`
-  /// (core.datasetController.js:154). The keys are the `ToString` of the
-  /// upstream keys. `updateStacks` assigns `{}` when it is absent. Dart
-  /// `null` stands for JS `undefined`, the start value, and for the `delete`
-  /// of core.controller.js:406. JS `null` never reaches it.
-  abstract Map<String, Object?>? stacks;
+  /// (core.datasetController.js:154): a [ChartStacks]. The keys are the
+  /// `ToString` of the upstream keys. `updateStacks` assigns `{}` when it
+  /// is absent. Dart `null` stands for JS `undefined`, the start value, and
+  /// for the `delete` of core.controller.js:406. JS `null` never reaches it.
+  abstract ChartStacks? stacks;
 
   /// core.controller.js:171 `_animationsDisabled`: `!options.animation` of
   /// the last update (core.controller.js:480). `index.d.ts` does not
@@ -176,10 +177,10 @@ abstract interface class IChart() {
   Map<String, IScale> get scales;
 
   /// index.d.ts:546 `data: ChartData`, the data object of the
-  /// configuration: a Map of the user, or the typed `ChartDataScope` of a
-  /// typed config (Chart.js ADR 0054 §5). `Scale.getLabels` reads its
-  /// `labels`, `xLabels` and `yLabels` (core.scale.js:359-361).
-  Object get data;
+  /// configuration. The config boundary makes the scope from the data Map
+  /// of a raw config (row `adapt-config-objects`). `Scale.getLabels` reads
+  /// its `labels`, `xLabels` and `yLabels` (core.scale.js:359-361).
+  ChartDataScope get data;
 
   /// index.d.ts:547 `options: ChartOptions<TType>`.
   Object get options;
@@ -1297,7 +1298,7 @@ abstract interface class ChartConfiguration() {
   Object get options;
 
   /// core.config.js:177 `get data()`. plugin.colors.ts:107-110 reads it.
-  Object get data;
+  ChartDataScope get data;
 }
 
 // DIVERGES(chartjs): adapt-public-library-names, one name in the package.

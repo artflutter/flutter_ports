@@ -383,7 +383,7 @@ void main() {
       expect(point.x, toBeCloseToPixel(5));
 
       // 2 points
-      (chart.data as AnyObject)['labels'] = <Object?>['One', 'Two'];
+      chart.data['labels'] = <Object?>['One', 'Two'];
       _dataset(chart, 0)['data'] = <Object?>[1, 2];
       chart.update();
 
@@ -393,7 +393,7 @@ void main() {
       expect(points[1].x, toBeCloseToPixel(507));
 
       // 3 points
-      (chart.data as AnyObject)['labels'] = <Object?>['One', 'Two', 'Three'];
+      chart.data['labels'] = <Object?>['One', 'Two', 'Three'];
       _dataset(chart, 0)['data'] = <Object?>[1, 2, 3];
       chart.update();
 
@@ -404,12 +404,7 @@ void main() {
       expect(points[2].x, toBeCloseToPixel(507));
 
       // 4 points
-      (chart.data as AnyObject)['labels'] = <Object?>[
-        'One',
-        'Two',
-        'Three',
-        'Four',
-      ];
+      chart.data['labels'] = <Object?>['One', 'Two', 'Three', 'Four'];
       _dataset(chart, 0)['data'] = <Object?>[1, 2, 3, 4];
       chart.update();
 

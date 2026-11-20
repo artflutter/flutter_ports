@@ -28,8 +28,7 @@ bool fastBarHiddenReadsAreNative(IChart chart) {
   final Object config = owner.config;
   if (config.runtimeType != Config) return false;
   final data = (config as Config).data;
-  if (!nativeDataUpdateObject(data) ||
-      (data is OptionScope && data.routeOf('datasets') != null)) {
+  if (!nativeDataUpdateObject(data) || data.routeOf('datasets') != null) {
     return false;
   }
   final datasets = dataUpdateField(data, 'datasets');
@@ -190,8 +189,7 @@ bool fastBarSearchIsNative(DatasetController controller, IScale scale) {
 
   // `_getAxis` and `_indexAxisIdOf`: the dataset objects of the user.
   final data = config.data;
-  if (!nativeDataUpdateObject(data) ||
-      (data is OptionScope && data.routeOf('datasets') != null)) {
+  if (!nativeDataUpdateObject(data) || data.routeOf('datasets') != null) {
     return false;
   }
   final datasets = dataUpdateField(data, 'datasets');

@@ -1056,7 +1056,7 @@ void main() {
         // DIVERGES(chartjs): adapt-native-tooltip-item, the label lines.
         expect(tooltipItem.label, isA<List<String>>());
         expect(tooltipItem.label, [
-          ((chart.data as AnyObject)['labels']! as List<Object?>)[pointIndex],
+          (chart.data['labels']! as List<Object?>)[pointIndex],
         ]);
         expect(tooltipItem.formattedValue, isA<String>());
         expect(
@@ -1065,8 +1065,7 @@ void main() {
             '',
             jsGet(
               jsGet(
-                ((chart.data as AnyObject)['datasets']!
-                    as List<Object?>)[datasetIndex],
+                (chart.data['datasets']! as List<Object?>)[datasetIndex],
                 'data',
               ),
               pointIndex,
@@ -1348,8 +1347,7 @@ void main() {
               .tooltipPosition();
 
           Future<void> recursive(int left) async {
-            final labels =
-                (chart.data as AnyObject)['labels']! as List<Object?>;
+            final labels = chart.data['labels']! as List<Object?>;
             labels[slice] = '${labels[slice]}XX';
             chart.update();
 
@@ -1971,12 +1969,12 @@ void main() {
 
           expect(chart.tooltip!.getActiveElements(), [expectedPoint]);
 
-          (chart.data as AnyObject)['datasets'] = <Object?>[];
+          chart.data['datasets'] = <Object?>[];
           chart.update();
 
           expect(chart.tooltip!.getActiveElements(), equals(<Object?>[]));
 
-          (chart.data as AnyObject)['datasets'] = <Object?>[dataset];
+          chart.data['datasets'] = <Object?>[dataset];
           chart.update();
 
           expect(chart.tooltip!.getActiveElements(), [expectedPoint]);
@@ -2021,7 +2019,7 @@ void main() {
 
         expect(chart.tooltip!.getActiveElements(), expectedPoints);
 
-        (chart.data as AnyObject)['datasets'] = <Object?>[dataset1];
+        chart.data['datasets'] = <Object?>[dataset1];
         chart.update();
 
         await triggerMouseEvent(chart, 'mousemove', _point(2, 1));
@@ -2068,7 +2066,7 @@ void main() {
         expect(chart.tooltip!.getActiveElements(), expectedPoints);
 
         dataset1['data'] = (dataset1['data']! as List<Object?>).sublist(0, 1);
-        (chart.data as AnyObject)['datasets'] = <Object?>[dataset1];
+        chart.data['datasets'] = <Object?>[dataset1];
         chart.update();
 
         await triggerMouseEvent(chart, 'mousemove', _point(2, 1));

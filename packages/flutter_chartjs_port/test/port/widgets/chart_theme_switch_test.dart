@@ -9,6 +9,8 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/data_scope.dart';
+
 // theming.md §8 test 8: the runtime theme switch of ChartView (Chart.js ADR
 // 0147 §13). The widget switches in its post-frame update
 // callback (Chart.js ADR 0049, section 4): it writes the compiled theme
@@ -763,7 +765,9 @@ void main() {
       host.show(next, _themeB, mode: UpdateMode.none);
       await tester.pump();
       expect(modes, [null, 'theme']);
-      expect(chart.data, same(next['data']));
+      // The boundary makes a scope with the same values (row
+      // `adapt-config-objects`).
+      expect(chart.data['datasets'], same(jsGet(next['data'], 'datasets')));
       expect(_dataset(chart, 0)['borderColor'], ChartPaint.solid(_rgba(_blue)));
       // A config change alone takes updateMode.
       host.show({...next}, _themeB, mode: UpdateMode.none);
@@ -856,7 +860,7 @@ void main() {
         ..jsWrite('options', <String, Object?>{})
         ..jsWrite('data', data);
       switcher.start(root, null);
-      final chart = _FakeChart(data);
+      final chart = _FakeChart(dataScopeOf(data));
       expect(
         switcher.apply(chart, root, _themeA, reducedMotion: true),
         'themeFrame',
@@ -934,10 +938,10 @@ void main() {
 
 /// The datasets of the raw [config].
 List<Object?> _datasetsOf(Map<String, Object?> config) =>
-    (config['data']! as AnyObject)['datasets']! as List<Object?>;
+    jsGet(config['data'], 'datasets')! as List<Object?>;
 
 /// A chart for the unit case of `ChartThemeSwitch`: only [data].
-final class _FakeChart(@override final AnyObject data) implements IChart {
+final class _FakeChart(@override final ChartDataScope data) implements IChart {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

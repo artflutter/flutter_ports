@@ -243,6 +243,11 @@ final class ItemStacks() extends TypedRecord {
   void clearSlot(int slot) => _entries[slot] = null;
 }
 
+/// `chart._stacks` (core.controller.js:156): the sub-stack of each stack
+/// key, and in a sub-stack the [StackEntry] of each index value, by the
+/// `ToString` of the index value (core.datasetController.js:136-140).
+typedef ChartStacks = Map<String, Map<String, StackEntry>>;
+
 /// The stack object of `getOrCreateStack` (U
 /// `core.datasetController.js:136-139`): the value of each dataset index
 /// ([datasetValues]), `_top` ([top]), `_bottom` ([bottom]) and
