@@ -7,31 +7,25 @@ import 'package:flutter_chartjs_plugin_zoom_port/flutter_chartjs_plugin_zoom_por
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+
 void main() {
   group('gesture manager', () {
-    final data = <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 1, 'y': 3},
-            <String, Object?>{'x': 2, 'y': 2},
-            <String, Object?>{'x': 3, 'y': 1},
-          ],
-        },
-      ],
-    };
+    final points = [DataPoint(1, 3), DataPoint(2, 2), DataPoint(3, 1)];
 
     testWidgets('should disable text selection and browser touch actions while '
         'gestures are enabled', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'scatter',
-        'data': data,
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{
-            'zoom': const ZoomPluginOptions(pan: PanOptions(enabled: true)),
-          },
-        },
-      });
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.scatter,
+          datasets: [ScatterDataset(points: points)],
+          pluginOptions: const [
+            ZoomPluginOptions(pan: PanOptions(enabled: true)),
+          ],
+        ),
+      );
 
       expect(chart.canvas!.style.touchAction, equals('none'));
       expect(chart.canvas!.style.userSelect, equals('none'));
@@ -41,17 +35,17 @@ void main() {
       'should leave canvas styles untouched when neither pan nor pinch is '
       'enabled',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [ScatterDataset(points: points)],
+            pluginOptions: const [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         expect(chart.canvas!.style.userSelect, equals(''));
         expect(chart.canvas!.style.touchAction, equals(''));

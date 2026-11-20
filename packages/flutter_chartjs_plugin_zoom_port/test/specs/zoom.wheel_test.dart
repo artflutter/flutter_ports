@@ -9,23 +9,21 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
 
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+
 void main() {
   group('zoom with wheel', () {
     // zoom.wheel.spec.js:2 `const data = {...}`: one object for all the
     // charts of the file. The function gives a new object for each chart,
     // with the same values: a test of a CI shard does not need the charts of
     // the earlier tests of its file.
-    Map<String, Object?> data() => <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 1, 'y': 3},
-            <String, Object?>{'x': 2, 'y': 2},
-            <String, Object?>{'x': 3, 'y': 1},
-          ],
-        },
-      ],
-    };
+    List<DataPoint> points() => [
+      DataPoint(1, 3),
+      DataPoint(2, 2),
+      DataPoint(3, 1),
+    ];
 
     group('with modifierKey', () {
       for (final key in ModifierKey.values) {
@@ -39,25 +37,25 @@ void main() {
           ) async {
             // `createSpy('wheelFailed')`: the contexts of the calls.
             final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
-            chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': data(),
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
-                  'y': <String, Object?>{'type': 'linear'},
+            chart = _acquire(
+              ChartConfig(
+                type: ChartKind.line,
+                datasets: [LineDataset(points: points())],
+                scales: const {
+                  'x': LinearAxis(min: 0, max: 10),
+                  'y': LinearAxis(),
                 },
-                'plugins': <String, Object?>{
-                  'zoom': ZoomPluginOptions(
+                pluginOptions: [
+                  ZoomPluginOptions(
                     zoom: ZoomOptions(
                       wheel: WheelOptions(enabled: true, modifierKey: key),
                       mode: Mode.x,
                       onZoomRejected: rejectedCalls.add,
                     ),
                   ),
-                },
-              },
-            });
+                ],
+              ),
+            );
 
             scaleX = chart.scales['x']!;
             scaleY = chart.scales['y']!;
@@ -98,31 +96,26 @@ void main() {
       // zoom.wheel.spec.js:89 `const config = {...}`: one object for the two
       // charts of the group. The function gives a new object for each
       // chart, as `data`.
-      Map<String, Object?> config() => <String, Object?>{
-        'type': 'line',
-        'data': data(),
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear', 'min': 1, 'max': 10},
-            'y': <String, Object?>{'type': 'linear'},
-          },
-          'plugins': <String, Object?>{
-            'zoom': const ZoomPluginOptions(
-              zoom: ZoomOptions(
-                wheel: WheelOptions(enabled: true),
-                mode: Mode.xy,
-                overScaleMode: Mode.y,
-              ),
+      ChartConfig config() => ChartConfig(
+        type: ChartKind.line,
+        datasets: [LineDataset(points: points())],
+        scales: const {'x': LinearAxis(min: 1, max: 10), 'y': LinearAxis()},
+        pluginOptions: const [
+          ZoomPluginOptions(
+            zoom: ZoomOptions(
+              wheel: WheelOptions(enabled: true),
+              mode: Mode.xy,
+              overScaleMode: Mode.y,
             ),
-          },
-        },
-      };
+          ),
+        ],
+      );
 
       group('Wheel under Y scale', () {
         testWidgets('should be applied on Y, but not on X scales.', (
           tester,
         ) async {
-          final chart = acquireChart(config());
+          final chart = _acquire(config());
 
           final scaleX = chart.scales['x']!;
           final scaleY = chart.scales['y']!;
@@ -156,7 +149,7 @@ void main() {
         testWidgets('should be applied on X, but not on Y scales.', (
           tester,
         ) async {
-          final chart = acquireChart(config());
+          final chart = _acquire(config());
 
           final scaleX = chart.scales['x']!;
           final scaleY = chart.scales['y']!;
@@ -189,31 +182,26 @@ void main() {
 
     group('with scaleMode = y and mode = xy', () {
       // zoom.wheel.spec.js:173 `const config = {...}`, as above.
-      Map<String, Object?> config() => <String, Object?>{
-        'type': 'line',
-        'data': data(),
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear', 'min': 1, 'max': 10},
-            'y': <String, Object?>{'type': 'linear'},
-          },
-          'plugins': <String, Object?>{
-            'zoom': const ZoomPluginOptions(
-              zoom: ZoomOptions(
-                wheel: WheelOptions(enabled: true),
-                mode: Mode.xy,
-                scaleMode: Mode.y,
-              ),
+      ChartConfig config() => ChartConfig(
+        type: ChartKind.line,
+        datasets: [LineDataset(points: points())],
+        scales: const {'x': LinearAxis(min: 1, max: 10), 'y': LinearAxis()},
+        pluginOptions: const [
+          ZoomPluginOptions(
+            zoom: ZoomOptions(
+              wheel: WheelOptions(enabled: true),
+              mode: Mode.xy,
+              scaleMode: Mode.y,
             ),
-          },
-        },
-      };
+          ),
+        ],
+      );
 
       group('Wheel under Y scale', () {
         testWidgets('should be applied on Y, but not on X scales.', (
           tester,
         ) async {
-          final chart = acquireChart(config());
+          final chart = _acquire(config());
 
           final scaleX = chart.scales['x']!;
           final scaleY = chart.scales['y']!;
@@ -245,7 +233,7 @@ void main() {
 
       group('Wheel not under Y scale', () {
         testWidgets('should be applied on X and Y scales.', (tester) async {
-          final chart = acquireChart(config());
+          final chart = _acquire(config());
 
           final scaleX = chart.scales['x']!;
           final scaleY = chart.scales['y']!;
@@ -280,30 +268,22 @@ void main() {
       testWidgets('should zoom correctly when mouse in center of chart', (
         tester,
       ) async {
-        final config = <String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 10, 100, 1000, 10000],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'logarithmic'},
-            },
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
-                zoom: ZoomOptions(
-                  mode: Mode.y,
-                  wheel: WheelOptions(enabled: true),
-                ),
+        const config = ChartConfig(
+          type: ChartKind.line,
+          datasets: [
+            LineDataset(data: [1, 10, 100, 1000, 10000]),
+          ],
+          scales: {'y': LogarithmicAxis()},
+          pluginOptions: [
+            ZoomPluginOptions(
+              zoom: ZoomOptions(
+                mode: Mode.y,
+                wheel: WheelOptions(enabled: true),
               ),
-            },
-          },
-        };
-        final chart = acquireChart(config);
+            ),
+          ],
+        );
+        final chart = _acquire(config);
         final scaleY = chart.scales['y']!;
 
         final zoomIn = (
@@ -381,26 +361,24 @@ void main() {
     });
 
     testWidgets('should respect aspectRatio when mode = xy', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'line',
-        'data': data(),
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'type': 'linear'},
-            'y': <String, Object?>{'type': 'linear'},
-          },
-          'plugins': <String, Object?>{
-            'legend': false,
-            'title': false,
-            'zoom': const ZoomPluginOptions(
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.line,
+          datasets: [LineDataset(points: points())],
+          scales: const {'x': LinearAxis(), 'y': LinearAxis()},
+          pluginOptions: const [
+            ZoomPluginOptions(
               zoom: ZoomOptions(
                 drag: DragOptions(enabled: true, maintainAspectRatio: true),
                 mode: Mode.xy,
               ),
             ),
+          ],
+          extra: const {
+            'plugins': {'legend': false, 'title': false},
           },
-        },
-      });
+        ),
+      );
 
       final scaleX = chart.scales['x']!;
       final scaleY = chart.scales['y']!;
@@ -429,12 +407,12 @@ void main() {
           final startCalls = <ZoomStartContext<NativeEvent>>[];
           // `createSpy('zoom')`: the contexts of the calls.
           final zoomCalls = <ZoomTriggerContext>[];
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data(),
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points())],
+              pluginOptions: [
+                ZoomPluginOptions(
                   zoom: ZoomOptions(
                     wheel: const WheelOptions(enabled: true),
                     mode: Mode.xy,
@@ -446,9 +424,9 @@ void main() {
                     onZoomComplete: (_) => done(),
                   ),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
           final wheelEv = (
             x: chart.scales['x']!.getPixelForValue(1.5),
             y: chart.scales['y']!.getPixelForValue(1.1),
@@ -474,12 +452,12 @@ void main() {
       testWidgets('should detect configuration change', (tester) async {
         // `createSpy('started')`: the contexts of the calls.
         final startCalls = <ZoomStartContext<NativeEvent>>[];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data(),
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [ScatterDataset(points: points())],
+            pluginOptions: [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   wheel: const WheelOptions(enabled: false),
                   mode: Mode.xy,
@@ -489,9 +467,9 @@ void main() {
                   },
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
         final wheelEv = (
           x: chart.scales['x']!.getPixelForValue(1.5),
           y: chart.scales['y']!.getPixelForValue(1.1),
@@ -534,12 +512,12 @@ void main() {
       ) async {
         // `createSpy('rejected')`: the contexts of the calls.
         final rejectCalls = <ZoomEventContext<NativeEvent>>[];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data(),
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [ScatterDataset(points: points())],
+            pluginOptions: [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   wheel: const WheelOptions(enabled: true),
                   mode: Mode.xy,
@@ -547,9 +525,9 @@ void main() {
                   onZoomRejected: rejectCalls.add,
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
         final wheelEv = (
           x: chart.scales['x']!.getPixelForValue(1.5),
           y: chart.scales['y']!.getPixelForValue(1.1),

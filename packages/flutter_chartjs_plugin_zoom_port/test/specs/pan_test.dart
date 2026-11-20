@@ -9,37 +9,29 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
 
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+
 void main() {
   group('pan', () {
-    final data = <String, Object?>{
-      'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 1, 'y': 3},
-            <String, Object?>{'x': 2, 'y': 2},
-            <String, Object?>{'x': 3, 'y': 1},
-          ],
-        },
-      ],
-    };
+    final points = [DataPoint(1, 3), DataPoint(2, 2), DataPoint(3, 1)];
 
     group('delta', () {
       testWidgets('should be applied cumulatively', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
-                pan: PanOptions(enabled: true, mode: Mode.x),
-              ),
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points)],
+            labels: const ['a', 'b', 'c', 'd', 'e'],
+            pluginOptions: const [
+              ZoomPluginOptions(pan: PanOptions(enabled: true, mode: Mode.x)),
+            ],
+            scales: const {
+              'x': CategoryAxis(extra: {'min': 1, 'max': 2}),
             },
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 1, 'max': 2},
-            },
-          },
-        });
+          ),
+        );
         final scale = chart.scales['x']!;
         expect(scale.min, equals(1));
         expect(scale.max, equals(2));
@@ -55,21 +47,20 @@ void main() {
       });
 
       testWidgets('should not give credit', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [ScatterDataset(points: points)],
+            labels: const ['a', 'b', 'c', 'd', 'e'],
+            pluginOptions: const [
+              ZoomPluginOptions(
                 limits: {'x': ScaleLimits(max: ScaleLimit(4))},
                 pan: PanOptions(enabled: true, mode: Mode.x),
               ),
-            },
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 1, 'max': 3},
-            },
-          },
-        });
+            ],
+            scales: const {'x': LinearAxis(min: 1, max: 3)},
+          ),
+        );
         final scale = chart.scales['x']!;
         expect(scale.min, equals(1));
         expect(scale.max, equals(3));
@@ -85,20 +76,17 @@ void main() {
       });
 
       testWidgets('should handle zero-dimension scales', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
-                pan: PanOptions(enabled: true, mode: Mode.y),
-              ),
-            },
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'linear', 'min': 2, 'max': 2},
-            },
-          },
-        });
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points)],
+            labels: const ['a', 'b', 'c', 'd', 'e'],
+            pluginOptions: const [
+              ZoomPluginOptions(pan: PanOptions(enabled: true, mode: Mode.y)),
+            ],
+            scales: const {'y': LinearAxis(min: 2, max: 2)},
+          ),
+        );
         final scale = chart.scales['y']!;
         expect(scale.min, equals(2));
         expect(scale.max, equals(2));
@@ -110,12 +98,13 @@ void main() {
       });
 
       testWidgets('should respect original limits', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points)],
+            labels: const ['a', 'b', 'c', 'd', 'e'],
+            pluginOptions: const [
+              ZoomPluginOptions(
                 pan: PanOptions(enabled: true, mode: Mode.x),
                 limits: {
                   'x': ScaleLimits(
@@ -124,12 +113,12 @@ void main() {
                   ),
                 },
               ),
+            ],
+            scales: const {
+              'x': CategoryAxis(extra: {'min': 1, 'max': 2}),
             },
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 1, 'max': 2},
-            },
-          },
-        });
+          ),
+        );
         final scale = chart.scales['x']!;
         expect(scale.min, equals(1));
         expect(scale.max, equals(2));
@@ -141,12 +130,13 @@ void main() {
       testWidgets('should respect original limits for nonlinear scales', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points)],
+            labels: const ['a', 'b', 'c', 'd', 'e'],
+            pluginOptions: const [
+              ZoomPluginOptions(
                 pan: PanOptions(enabled: true, mode: Mode.x),
                 limits: {
                   'x': ScaleLimits(
@@ -155,16 +145,10 @@ void main() {
                   ),
                 },
               ),
-            },
-            'scales': <String, Object?>{
-              'x': <String, Object?>{
-                'type': 'logarithmic',
-                'min': 1,
-                'max': 10,
-              },
-            },
-          },
-        });
+            ],
+            scales: const {'x': LogarithmicAxis(min: 1, max: 10)},
+          ),
+        );
         final scale = chart.scales['x']!;
         expect(scale.min, equals(1));
         expect(scale.max, equals(10));
@@ -179,12 +163,13 @@ void main() {
         await waitForDone((done) {
           // `createSpy('started')`: the contexts of the calls.
           final startCalls = <ZoomStartContext<GestureEvent>>[];
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data,
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points)],
+              labels: const ['a', 'b', 'c', 'd', 'e'],
+              pluginOptions: [
+                ZoomPluginOptions(
                   pan: PanOptions(
                     enabled: true,
                     mode: Mode.xy,
@@ -194,9 +179,9 @@ void main() {
                     },
                   ),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
 
           simulatePan(
             chart,
@@ -216,12 +201,13 @@ void main() {
         await waitForDone((done) {
           // `createSpy('rejected')`: the contexts of the calls.
           final rejectCalls = <ZoomEventContext<GestureEvent>>[];
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data,
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points)],
+              labels: const ['a', 'b', 'c', 'd', 'e'],
+              pluginOptions: [
+                ZoomPluginOptions(
                   pan: PanOptions(
                     enabled: true,
                     mode: Mode.xy,
@@ -229,9 +215,9 @@ void main() {
                     onPanRejected: rejectCalls.add,
                   ),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
 
           simulatePan(
             chart,
@@ -253,12 +239,13 @@ void main() {
           await waitForDone((done) {
             // `createSpy('rejected')`: the contexts of the calls.
             final rejectCalls = <ZoomEventContext<GestureEvent>>[];
-            final chart = acquireChart(<String, Object?>{
-              'type': 'scatter',
-              'data': data,
-              'options': <String, Object?>{
-                'plugins': <String, Object?>{
-                  'zoom': ZoomPluginOptions(
+            final chart = _acquire(
+              ChartConfig(
+                type: ChartKind.scatter,
+                datasets: [ScatterDataset(points: points)],
+                labels: const ['a', 'b', 'c', 'd', 'e'],
+                pluginOptions: [
+                  ZoomPluginOptions(
                     pan: PanOptions(
                       enabled: true,
                       mode: Mode.xy,
@@ -266,9 +253,9 @@ void main() {
                       onPanRejected: rejectCalls.add,
                     ),
                   ),
-                },
-              },
-            });
+                ],
+              ),
+            );
 
             simulatePan(
               chart,
@@ -297,17 +284,18 @@ void main() {
         tester,
       ) async {
         await waitForDone((done) {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data,
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': const ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points)],
+              labels: const ['a', 'b', 'c', 'd', 'e'],
+              pluginOptions: const [
+                ZoomPluginOptions(
                   pan: PanOptions(enabled: true, mode: Mode.xy),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
 
           simulatePan(
             chart,
@@ -323,12 +311,13 @@ void main() {
 
       testWidgets('should call onPanComplete', (tester) async {
         await waitForDone((done) {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data,
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points)],
+              labels: const ['a', 'b', 'c', 'd', 'e'],
+              pluginOptions: [
+                ZoomPluginOptions(
                   pan: PanOptions(
                     enabled: true,
                     mode: Mode.xy,
@@ -338,9 +327,9 @@ void main() {
                     },
                   ),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
           simulatePan(chart, deltaX: -350);
         });
       });
@@ -350,21 +339,22 @@ void main() {
       ) async {
         // `createSpy('completed')`: the contexts of the calls.
         final completeCalls = <ZoomChartContext>[];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [ScatterDataset(points: points)],
+            labels: const ['a', 'b', 'c', 'd', 'e'],
+            pluginOptions: [
+              ZoomPluginOptions(
                 pan: PanOptions(
                   enabled: true,
                   mode: Mode.xy,
                   onPanComplete: completeCalls.add,
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         final node = chart.canvas!;
         final rect = node.getBoundingClientRect();
@@ -396,21 +386,22 @@ void main() {
       ) async {
         // `createSpy('completed')`: the contexts of the calls.
         final completeCalls = <ZoomChartContext>[];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [ScatterDataset(points: points)],
+            labels: const ['a', 'b', 'c', 'd', 'e'],
+            pluginOptions: [
+              ZoomPluginOptions(
                 pan: PanOptions(
                   enabled: true,
                   mode: Mode.xy,
                   onPanComplete: completeCalls.add,
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         final node = chart.canvas!;
         final rect = node.getBoundingClientRect();

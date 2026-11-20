@@ -126,46 +126,37 @@ Object? _resolver(Chart chart) => chart.options.jsRead('_proxy');
 /// options [zoom], and the port-only option `rangeOnlyUpdates` of
 /// [rangeOnly]. The title text is scriptable: it reads the zoom level and
 /// adds each text to [titles].
-Map<String, Object?> _rangeConfig(
+ChartConfig _rangeConfig(
   ZoomPluginOptions zoom, {
   required bool rangeOnly,
   required List<String> titles,
-}) => <String, Object?>{
-  'type': 'line',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'label': 'a',
-        'data': <Object?>[
-          for (var i = 0; i < 24; i++)
-            <String, Object?>{'x': i * 4.0, 'y': 10.0 + (i * 37) % 80},
-        ],
-        'pointRadius': 3.0,
+}) => ChartConfig(
+  type: ChartKind.line,
+  datasets: [
+    LineDataset(
+      label: 'a',
+      points: [
+        for (var i = 0; i < 24; i++) DataPoint(i * 4, 10 + (i * 37) % 80),
+      ],
+      pointRadius: 3,
+    ),
+  ],
+  animation: ChartAnimation.none,
+  scales: const {'x': LinearAxis(min: 0, max: 100), 'y': LinearAxis()},
+  title: ChartTitle(
+    display: true,
+    extra: {
+      'text': (Object? ctx) {
+        final chart = (ctx! as JsObjectFace).jsRead('chart')! as Chart;
+        final level = 'Zoom level ${chart.getZoomLevel()}';
+        titles.add(level);
+        return [level];
       },
-    ],
-  },
-  'options': <String, Object?>{
-    'animation': false,
-    'scales': <String, Object?>{
-      'x': <String, Object?>{'type': 'linear', 'min': 0.0, 'max': 100.0},
-      'y': <String, Object?>{'type': 'linear'},
     },
-    'plugins': <String, Object?>{
-      'title': <String, Object?>{
-        'display': true,
-        'text': (Object? ctx) {
-          final chart = (ctx! as JsObjectFace).jsRead('chart')! as Chart;
-          final level = 'Zoom level ${chart.getZoomLevel()}';
-          titles.add(level);
-          return [level];
-        },
-      },
-      // An explicit false: the run with the option in the defaults keeps
-      // the full path for this chart.
-      'zoom': zoom.merge(ZoomPluginOptions(rangeOnlyUpdates: rangeOnly)),
-    },
-  },
-};
+  ),
+  // Explicit false keeps the full path even when range-only updates default on.
+  pluginOptions: [zoom.merge(ZoomPluginOptions(rangeOnlyUpdates: rangeOnly))],
+);
 
 /// What a zoom step leaves: the ranges and the ticks of the scales, the zoom
 /// state, the chart area and the position of each point.
@@ -191,6 +182,10 @@ Object _rangeObserve(Chart chart) => [
   for (final element in chart.getDatasetMeta(0).data)
     ((element as Element).x, element.y),
 ];
+
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 void main() {
   group('range-only updates (Chart.js ADR 0111)', () {
@@ -254,10 +249,10 @@ void main() {
         'option', (tester) async {
       final fullTitles = <String>[];
       final rangeTitles = <String>[];
-      final full = acquireChart(
+      final full = _acquire(
         _rangeConfig(zoomOptions(), rangeOnly: false, titles: fullTitles),
       );
-      final ranges = acquireChart(
+      final ranges = _acquire(
         _rangeConfig(zoomOptions(), rangeOnly: true, titles: rangeTitles),
       );
       final levels = <String>{};
@@ -305,7 +300,7 @@ void main() {
         },
         onZoomComplete: (context) => completed.add(context.chart),
       );
-      final chart = acquireChart(
+      final chart = _acquire(
         _rangeConfig(options, rangeOnly: true, titles: <String>[]),
       );
       final resolver = _resolver(chart);
@@ -331,7 +326,9 @@ void main() {
     ) async {
       // The suite with --dart-define=ZOOM_RANGE_ONLY_UPDATES=true writes it
       // into Chart.defaults.plugins.zoom (flutter_test_config.dart).
-      final chart = acquireChart(<String, Object?>{'type': 'line'});
+      final chart = _acquire(
+        const ChartConfig(type: ChartKind.line, datasets: []),
+      );
       expect(
         getState(chart).options.rangeOnlyUpdates ?? false,
         zoomRangeOnlyUpdates,
@@ -341,7 +338,7 @@ void main() {
     testWidgets('with the option off, a zoom takes update', (tester) async {
       // A field that is not set: the update calls read it as false.
       expect(const ZoomPluginOptions().rangeOnlyUpdates, isNull);
-      final chart = acquireChart(
+      final chart = _acquire(
         _rangeConfig(zoomOptions(), rangeOnly: false, titles: <String>[]),
       );
       final resolver = _resolver(chart);
@@ -529,12 +526,11 @@ void main() {
     }
 
     /// A line chart with the zoom options [zoom].
-    Map<String, Object?> config(ZoomPluginOptions zoom) => <String, Object?>{
-      'type': 'line',
-      'options': <String, Object?>{
-        'plugins': <String, Object?>{'zoom': zoom},
-      },
-    };
+    ChartConfig config(ZoomPluginOptions zoom) => ChartConfig(
+      type: ChartKind.line,
+      datasets: const [],
+      pluginOptions: [zoom],
+    );
 
     // `start` warns about an own `zoom.enabled` (plugin.ts:75-79). The
     // removed option has no field of `ZoomOptions`: a config cannot give it,
@@ -553,7 +549,7 @@ void main() {
 
     testWidgets('the default options print nothing', (tester) async {
       final lines = printed(
-        () => acquireChart(
+        () => _acquire(
           config(
             const ZoomPluginOptions(
               zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),
@@ -566,7 +562,7 @@ void main() {
 
     testWidgets('an own overScaleMode prints the deprecation', (tester) async {
       final lines = printed(
-        () => acquireChart(
+        () => _acquire(
           config(
             const ZoomPluginOptions(pan: PanOptions(overScaleMode: Mode.y)),
           ),
@@ -582,24 +578,15 @@ void main() {
   group('the range in the scale options (seam H14)', () {
     testWidgets('a zoom writes min and max, an update keeps them, and a reset '
         'writes back the original options', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'scatter',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 0, 'y': 0},
-                <String, Object?>{'x': 100, 'y': 100},
-              ],
-            },
+      final chart = _acquire(
+        ChartConfig(
+          type: ChartKind.scatter,
+          datasets: [
+            ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
           ],
-        },
-        'options': <String, Object?>{
-          'scales': <String, Object?>{
-            'x': <String, Object?>{'min': 0, 'max': 100},
-          },
-        },
-      });
+          scales: const {'x': LinearAxis(min: 0, max: 100)},
+        ),
+      );
       final x = chart.scales['x']!;
       final y = chart.scales['y']!;
       expect(y.options.min, same(undefined));

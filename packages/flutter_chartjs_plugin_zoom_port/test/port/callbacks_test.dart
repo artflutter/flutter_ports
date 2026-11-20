@@ -10,22 +10,15 @@ import 'package:flutter_test/flutter_test.dart';
 import '../flutter_test_config.dart';
 
 /// A scatter chart from 0 to 100 on both axes with the zoom options [zoom].
-Chart _chart(ZoomOptions zoom) => acquireChart(<String, Object?>{
-  'type': 'scatter',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          <String, Object?>{'x': 0, 'y': 0},
-          <String, Object?>{'x': 100, 'y': 100},
-        ],
-      },
+Chart _chart(ZoomOptions zoom) => _acquire(
+  ChartConfig(
+    type: ChartKind.scatter,
+    datasets: [
+      ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
     ],
-  },
-  'options': <String, Object?>{
-    'plugins': <String, Object?>{'zoom': ZoomPluginOptions(zoom: zoom)},
-  },
-});
+    pluginOptions: [ZoomPluginOptions(zoom: zoom)],
+  ),
+);
 
 /// A wheel zoom in at the center of the chart area of [chart].
 void _wheel(Chart chart) {
@@ -37,6 +30,10 @@ void _wheel(Chart chart) {
     deltaY: -100,
   );
 }
+
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 void main() {
   group('native zoom callbacks (Zoom ADR 0004)', () {

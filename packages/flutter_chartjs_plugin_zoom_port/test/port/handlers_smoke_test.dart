@@ -12,28 +12,19 @@ import 'package:flutter_test/flutter_test.dart';
 /// options and adds the listeners itself, and removes them at its end (the
 /// document of the canvas outlives the chart).
 Chart _acquireChart(ZoomPluginOptions options) {
-  final chart = acquireChart(<String, Object?>{
-    'type': 'scatter',
-    'data': <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 0, 'y': 0},
-            <String, Object?>{'x': 100, 'y': 100},
-          ],
-        },
+  final chart = _acquire(
+    ChartConfig(
+      type: ChartKind.scatter,
+      datasets: [
+        ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
       ],
-    },
-    'options': <String, Object?>{
-      'plugins': <String, Object?>{
-        'legend': <String, Object?>{'display': false},
+      legend: const ChartLegend(display: false),
+      scales: const {
+        'x': LinearAxis(min: 0, max: 100),
+        'y': LinearAxis(min: 0, max: 100),
       },
-      'scales': <String, Object?>{
-        'x': <String, Object?>{'min': 0, 'max': 100},
-        'y': <String, Object?>{'min': 0, 'max': 100},
-      },
-    },
-  });
+    ),
+  );
   getState(chart).options = options;
   addListeners(chart, options);
   addTearDown(() => removeListeners(chart));
@@ -60,6 +51,10 @@ NativeEvent _mouse(
     shiftKey: shiftKey,
   );
 }
+
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 void main() {
   testWidgets('computeDragRect clamps the drag to the enabled directions', (

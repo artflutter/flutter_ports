@@ -26,27 +26,22 @@ Scale createCategoryScale({
   required double max,
   required double width,
 }) {
-  final labels = <Object?>[for (var i = 0; i < categories; i++) '$i'];
-  final chart = acquireChart(
-    <String, Object?>{
-      'type': 'bar',
-      'data': <String, Object?>{'labels': labels, 'datasets': <Object?>[]},
-      'options': <String, Object?>{
-        'layout': <String, Object?>{'padding': EdgeInsets.zero},
-        'plugins': <String, Object?>{
-          'legend': <String, Object?>{'display': false},
-        },
-        'scales': <String, Object?>{
-          'x': <String, Object?>{
-            'type': 'category',
-            'display': ScaleDisplay.off,
-            'min': min,
-            'max': max,
-          },
-          'y': <String, Object?>{'display': ScaleDisplay.off},
-        },
+  final labels = <String>[for (var i = 0; i < categories; i++) '$i'];
+  final chart = _acquire(
+    ChartConfig(
+      type: ChartKind.bar,
+      labels: labels,
+      datasets: const [],
+      padding: EdgeInsets.zero,
+      legend: const ChartLegend(display: false),
+      scales: {
+        'x': CategoryAxis(
+          display: ScaleDisplay.off,
+          extra: {'min': min, 'max': max},
+        ),
+        'y': const LinearAxis(display: ScaleDisplay.off),
       },
-    },
+    ),
     <String, Object?>{
       'canvas': <String, Object?>{'width': width, 'height': 100},
     },
@@ -95,6 +90,10 @@ Matcher _sameNumber(double expected) => expected.isNaN
         (x) => x == expected && x.isNegative == expected.isNegative,
         '$expected',
       );
+
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 void main() {
   group('utils', () {

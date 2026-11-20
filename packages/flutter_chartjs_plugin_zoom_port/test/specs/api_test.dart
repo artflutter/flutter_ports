@@ -21,8 +21,8 @@ import 'package:flutter_test/flutter_test.dart';
 //   the test of a tear-off.
 // - `chart.scales.x` is `chart.scales['x']!`, and the `undefined` of a scale
 //   with no zoom in `getZoomedScaleBounds()` is Dart `null`.
-// - `chart.data.datasets[0].data[0].x = -100` writes the data object of the
-//   config, which the chart reads (`_firstPoint`).
+// - The upstream write to the first point's x becomes a replacement of
+//   the immutable DataPoint through `_setFirstX`.
 // - The zoom options are a `ZoomPluginOptions` in `options.plugins.zoom`
 //   (Chart.js ADR 0148), and a limit is a `ScaleLimit`. The update mode
 //   `'default'` is `UpdateMode.defaultMode`.
@@ -33,47 +33,40 @@ double _min(Chart chart, String id) => chart.scales[id]!.min;
 /// `chart.scales[id].max`.
 double _max(Chart chart, String id) => chart.scales[id]!.max;
 
-/// `chart.data.datasets[0].data[0]`: the data object of the config.
-Map<String, Object?> _firstPoint(Chart chart) {
+/// Replaces the first point with [x] and its previous y value.
+void _setFirstX(Chart chart, double x) {
   final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
-  final data = jsGet(datasets[0], 'data')! as List<Object?>;
-  return data[0]! as Map<String, Object?>;
+  final points = jsGet(datasets[0], 'data')! as List<DataPoint>;
+  points[0] = DataPoint(x, points[0].y);
 }
 
-/// The options of a scatter chart with the scales `x` and `y` from 0 to 100,
-/// and the zoom options [zoom], if any.
-Map<String, Object?> _scatter0to100([ZoomPluginOptions? zoom]) =>
-    <String, Object?>{
-      'type': 'scatter',
-      'options': <String, Object?>{
-        'scales': <String, Object?>{
-          'x': <String, Object?>{'min': 0, 'max': 100},
-          'y': <String, Object?>{'min': 0, 'max': 100},
-        },
-        if (zoom != null) 'plugins': <String, Object?>{'zoom': zoom},
-      },
-    };
-
-/// A scatter chart with the two points (0, 0) and (100, 100) and fitted
-/// scales.
-Map<String, Object?> _scatterFitted() => <String, Object?>{
-  'type': 'scatter',
-  'data': <String, Object?>{
-    'datasets': <Object?>[
-      <String, Object?>{
-        'data': <Object?>[
-          <String, Object?>{'x': 0, 'y': 0},
-          <String, Object?>{'x': 100, 'y': 100},
-        ],
-      },
-    ],
+ChartConfig _scatter0to100([ZoomPluginOptions? zoom]) => ChartConfig(
+  type: ChartKind.scatter,
+  datasets: const [],
+  scales: const {
+    'x': LinearAxis(min: 0, max: 100),
+    'y': LinearAxis(min: 0, max: 100),
   },
-};
+  pluginOptions: [?zoom],
+);
+
+ChartConfig _scatterFitted() => ChartConfig(
+  type: ChartKind.scatter,
+  datasets: [
+    ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
+  ],
+);
+
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
 
 void main() {
   group('api', () {
     testWidgets('should add methods to chart instance', (tester) async {
-      final chart = acquireChart(<String, Object?>{'type': 'line'});
+      final chart = _acquire(
+        const ChartConfig(type: ChartKind.line, datasets: []),
+      );
 
       expect(chart.pan, isA<Function>());
       expect(chart.zoom, isA<Function>());
@@ -91,7 +84,7 @@ void main() {
       testWidgets('should accept zoom percentage as single parameter', (
         tester,
       ) async {
-        final chart = acquireChart(_scatter0to100());
+        final chart = _acquire(_scatter0to100());
         expect(_min(chart, 'x'), equals(0));
         expect(_max(chart, 'x'), equals(100));
         expect(_min(chart, 'y'), equals(0));
@@ -119,7 +112,7 @@ void main() {
       testWidgets('should accept different percentages per axis', (
         tester,
       ) async {
-        final chart = acquireChart(_scatter0to100());
+        final chart = _acquire(_scatter0to100());
         expect(_min(chart, 'x'), equals(0));
         expect(_max(chart, 'x'), equals(100));
         expect(_min(chart, 'y'), equals(0));
@@ -145,10 +138,10 @@ void main() {
       });
 
       testWidgets('should honor fitted scale updates on reset', (tester) async {
-        final chart = acquireChart(_scatterFitted());
+        final chart = _acquire(_scatterFitted());
 
         chart.zoom(const .all(1.5));
-        _firstPoint(chart)['x'] = -100;
+        _setFirstX(chart, -100);
         chart.update();
         chart.resetZoom();
         expect(_min(chart, 'x'), equals(-100));
@@ -156,7 +149,7 @@ void main() {
       });
 
       testWidgets('should no-op with fully constrained limits', (tester) async {
-        final chart = acquireChart(
+        final chart = _acquire(
           _scatter0to100(
             const ZoomPluginOptions(
               limits: {
@@ -176,7 +169,7 @@ void main() {
       });
 
       testWidgets('should no-op whan laready at limit', (tester) async {
-        final chart = acquireChart(
+        final chart = _acquire(
           // The upstream options give `mode: 'x'` at the top level, where
           // `ZoomPluginOptions` has no `mode`: no code reads it.
           // DIVERGES(zoom): adapt-native-zoom-options, no extra key.
@@ -218,7 +211,7 @@ void main() {
       });
 
       testWidgets('should honor zoom changes against a limit', (tester) async {
-        final chart = acquireChart(
+        final chart = _acquire(
           _scatter0to100(
             const ZoomPluginOptions(
               limits: {
@@ -259,26 +252,17 @@ void main() {
       testWidgets('should call onZoom', (tester) async {
         // `createSpy('start')`: a closure that records its context.
         final zoomCalls = <ZoomTriggerContext>[];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 1, 'y': 1},
-                  <String, Object?>{'x': 10, 'y': 10},
-                ],
-              },
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [
+              ScatterDataset(points: [DataPoint(1, 1), DataPoint(10, 10)]),
             ],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
-                zoom: ZoomOptions(onZoom: zoomCalls.add),
-              ),
-            },
-          },
-        });
+            pluginOptions: [
+              ZoomPluginOptions(zoom: ZoomOptions(onZoom: zoomCalls.add)),
+            ],
+          ),
+        );
 
         chart.zoomScale('x', (min: 2, max: 10), UpdateMode.defaultMode);
 
@@ -291,7 +275,7 @@ void main() {
         'should provide the correct initial scale bounds regardless of the '
         'zoom level',
         (tester) async {
-          final chart = acquireChart(_scatter0to100());
+          final chart = _acquire(_scatter0to100());
 
           chart.zoom(const .all(1));
           expect(chart.getInitialScaleBounds()['x']!.min, equals(0));
@@ -310,14 +294,14 @@ void main() {
       testWidgets('should provide updated scale bounds upon data update', (
         tester,
       ) async {
-        final chart = acquireChart(_scatterFitted());
+        final chart = _acquire(_scatterFitted());
 
         expect(chart.getInitialScaleBounds()['x']!.min, equals(0));
         expect(chart.getInitialScaleBounds()['x']!.max, equals(100));
         expect(chart.getInitialScaleBounds()['y']!.min, equals(0));
         expect(chart.getInitialScaleBounds()['y']!.max, equals(100));
 
-        _firstPoint(chart)['x'] = -100;
+        _setFirstX(chart, -100);
         chart.update();
 
         expect(chart.getInitialScaleBounds()['x']!.min, equals(-100));
@@ -331,7 +315,7 @@ void main() {
       testWidgets('should return whether or not the page is currently zoomed', (
         tester,
       ) async {
-        final chart = acquireChart(_scatter0to100());
+        final chart = _acquire(_scatter0to100());
 
         expect(chart.isZoomedOrPanned(), equals(false));
 
@@ -351,7 +335,7 @@ void main() {
       testWidgets('should return whether or not the page is currently panned', (
         tester,
       ) async {
-        final chart = acquireChart(_scatter0to100());
+        final chart = _acquire(_scatter0to100());
 
         expect(chart.isZoomedOrPanned(), equals(false));
 
@@ -368,11 +352,11 @@ void main() {
       testWidgets('should work with updated data and fitted scales', (
         tester,
       ) async {
-        final chart = acquireChart(_scatterFitted());
+        final chart = _acquire(_scatterFitted());
 
         // This sequence of operations captures a previous bug.
         chart.zoom(const .all(1.5));
-        _firstPoint(chart)['x'] = -100;
+        _setFirstX(chart, -100);
         chart.update();
         chart.resetZoom();
         expect(_min(chart, 'x'), equals(-100));
@@ -385,7 +369,7 @@ void main() {
       testWidgets('should return the zoom range, or undefined if not zoomed', (
         tester,
       ) async {
-        final chart = acquireChart(_scatter0to100());
+        final chart = _acquire(_scatter0to100());
         expect(chart.getZoomedScaleBounds()['x'], isNull);
 
         chart.zoom(const .all(1.5));
@@ -403,22 +387,16 @@ void main() {
       testWidgets('should zoom up to and out from single category', (
         tester,
       ) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3, 2, 1],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            labels: ['a', 'b', 'c', 'd', 'e'],
+            datasets: [
+              BarDataset(data: [1, 2, 3, 2, 1]),
             ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'min': 'b', 'max': 'd'},
-            },
-          },
-        });
+            scales: {'x': CategoryAxis(min: 'b', max: 'd')},
+          ),
+        );
         expect(_min(chart, 'x'), equals(1));
         expect(_max(chart, 'x'), equals(3));
         chart.zoom(const .all(1.1));
@@ -436,23 +414,19 @@ void main() {
       });
 
       testWidgets('should not exceed limits', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'labels': <Object?>['0', '1', '2', '3', '4', '5', '6'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 2, 3, 2, 1, 0, 1],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            labels: ['0', '1', '2', '3', '4', '5', '6'],
+            datasets: [
+              BarDataset(data: [1, 2, 3, 2, 1, 0, 1]),
             ],
-          },
-          'options': <String, Object?>{
-            'indexAxis': const YAxis(),
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'min': 2, 'max': 4},
+            indexAxis: YAxis(),
+            scales: {
+              'y': CategoryAxis(extra: {'min': 2, 'max': 4}),
             },
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
+            pluginOptions: [
+              ZoomPluginOptions(
                 limits: {
                   'y': ScaleLimits(
                     min: ScaleLimit(1),
@@ -465,9 +439,9 @@ void main() {
                   mode: Mode.y,
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
         expect(_min(chart, 'y'), equals(2));
         expect(_max(chart, 'y'), equals(4));
         chart.zoom(const .all(1.1));
@@ -496,22 +470,16 @@ void main() {
 
     group('with logarithmic scale', () {
       testWidgets('should zoom in and out', (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'labels': <Object?>['a', 'b', 'c', 'd', 'e'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 22, 3333, 22, 1],
-              },
+        final chart = _acquire(
+          const ChartConfig(
+            type: ChartKind.bar,
+            labels: ['a', 'b', 'c', 'd', 'e'],
+            datasets: [
+              BarDataset(data: [1, 22, 3333, 22, 1]),
             ],
-          },
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'y': <String, Object?>{'type': 'logarithmic'},
-            },
-          },
-        });
+            scales: {'y': LogarithmicAxis()},
+          ),
+        );
         expect(_min(chart, 'y'), equals(0.1));
         expect(_max(chart, 'y'), equals(4000));
         chart.zoom(const .all(1.1));

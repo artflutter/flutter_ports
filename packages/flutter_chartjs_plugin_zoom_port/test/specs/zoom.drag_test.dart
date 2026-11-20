@@ -9,23 +9,21 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
 
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+
 void main() {
   group('zoom with drag', () {
     // zoom.drag.spec.js:2 `const data = {...}`: one object for all the
     // charts of the file. The function gives a new object for each chart,
     // with the same values: a test of a CI shard does not need the charts of
     // the earlier tests of its file.
-    Map<String, Object?> data() => <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 1, 'y': 3},
-            <String, Object?>{'x': 2, 'y': 2},
-            <String, Object?>{'x': 3, 'y': 1},
-          ],
-        },
-      ],
-    };
+    List<DataPoint> points() => [
+      DataPoint(1, 3),
+      DataPoint(2, 2),
+      DataPoint(3, 1),
+    ];
 
     group('on linear scale', () {
       late Chart chart;
@@ -33,24 +31,24 @@ void main() {
       late Scale scaleY;
 
       testWidgets('should be applied on X scale when mode = x', (tester) async {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data(),
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'xScale0': <String, Object?>{'id': 'xScale0', 'type': 'linear'},
-              'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
+        chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points())],
+            scales: const {
+              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
+              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
             },
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
+            pluginOptions: const [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   drag: DragOptions(enabled: true),
                   mode: Mode.x,
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         scaleX = chart.scales['xScale0']!;
         scaleY = chart.scales['yScale0']!;
@@ -73,16 +71,16 @@ void main() {
       testWidgets('should be applied on X scale when mode = f() => x', (
         tester,
       ) async {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data(),
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'xScale0': <String, Object?>{'id': 'xScale0', 'type': 'linear'},
-              'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
+        chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points())],
+            scales: const {
+              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
+              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
             },
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
+            pluginOptions: [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   drag: const DragOptions(enabled: true),
                   mode: (ZoomChartContext _) {
@@ -90,9 +88,9 @@ void main() {
                   },
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         scaleX = chart.scales['xScale0']!;
         scaleY = chart.scales['yScale0']!;
@@ -113,24 +111,24 @@ void main() {
       });
 
       testWidgets('should be applied on Y scale when mode = y', (tester) async {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data(),
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'xScale0': <String, Object?>{'id': 'xScale0', 'type': 'linear'},
-              'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
+        chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points())],
+            scales: const {
+              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
+              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
             },
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
+            pluginOptions: const [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   drag: DragOptions(enabled: true),
                   mode: Mode.y,
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         scaleX = chart.scales['xScale0']!;
         scaleY = chart.scales['yScale0']!;
@@ -153,16 +151,16 @@ void main() {
       testWidgets('should be applied on Y scale when mode = f() => y', (
         tester,
       ) async {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data(),
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'xScale0': <String, Object?>{'id': 'xScale0', 'type': 'linear'},
-              'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
+        chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points())],
+            scales: const {
+              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
+              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
             },
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
+            pluginOptions: [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   drag: const DragOptions(enabled: true),
                   mode: (ZoomChartContext _) {
@@ -170,9 +168,9 @@ void main() {
                   },
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         scaleX = chart.scales['xScale0']!;
         scaleY = chart.scales['yScale0']!;
@@ -195,24 +193,24 @@ void main() {
       testWidgets('should be applied on X and Y scales when mode = xy', (
         tester,
       ) async {
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': data(),
-          'options': <String, Object?>{
-            'scales': <String, Object?>{
-              'xScale0': <String, Object?>{'id': 'xScale0', 'type': 'linear'},
-              'yScale0': <String, Object?>{'id': 'yScale0', 'type': 'linear'},
+        chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points())],
+            scales: const {
+              'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
+              'yScale0': LinearAxis(extra: {'id': 'yScale0'}),
             },
-            'plugins': <String, Object?>{
-              'zoom': const ZoomPluginOptions(
+            pluginOptions: const [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   drag: DragOptions(enabled: true),
                   mode: Mode.xy,
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         scaleX = chart.scales['xScale0']!;
         scaleY = chart.scales['yScale0']!;
@@ -245,25 +243,25 @@ void main() {
           ) async {
             // `createSpy('wheelFailed')`: the contexts of the calls.
             final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
-            chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': data(),
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
-                  'y': <String, Object?>{'type': 'linear'},
+            chart = _acquire(
+              ChartConfig(
+                type: ChartKind.line,
+                datasets: [LineDataset(points: points())],
+                scales: const {
+                  'x': LinearAxis(min: 0, max: 10),
+                  'y': LinearAxis(),
                 },
-                'plugins': <String, Object?>{
-                  'zoom': ZoomPluginOptions(
+                pluginOptions: [
+                  ZoomPluginOptions(
                     zoom: ZoomOptions(
                       drag: DragOptions(enabled: true, modifierKey: key),
                       mode: Mode.x,
                       onZoomRejected: rejectedCalls.add,
                     ),
                   ),
-                },
-              },
-            });
+                ],
+              ),
+            );
 
             scaleX = chart.scales['x']!;
             scaleY = chart.scales['y']!;
@@ -310,16 +308,16 @@ void main() {
             final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
             // `createSpy('clicked')`: the events of the calls.
             final clickCalls = <ChartEvent>[];
-            chart = acquireChart(<String, Object?>{
-              'type': 'line',
-              'data': data(),
-              'options': <String, Object?>{
-                'scales': <String, Object?>{
-                  'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 10},
-                  'y': <String, Object?>{'type': 'linear'},
+            chart = _acquire(
+              ChartConfig(
+                type: ChartKind.line,
+                datasets: [LineDataset(points: points())],
+                scales: const {
+                  'x': LinearAxis(min: 0, max: 10),
+                  'y': LinearAxis(),
                 },
-                'plugins': <String, Object?>{
-                  'zoom': ZoomPluginOptions(
+                pluginOptions: [
+                  ZoomPluginOptions(
                     pan: PanOptions(enabled: true, modifierKey: key),
                     zoom: ZoomOptions(
                       drag: const DragOptions(enabled: true),
@@ -327,14 +325,16 @@ void main() {
                       onZoomRejected: rejectedCalls.add,
                     ),
                   ),
+                ],
+                extra: {
+                  'onClick': (
+                    ChartEvent event,
+                    List<ActiveElement> elements,
+                    Chart _,
+                  ) => clickCalls.add(event),
                 },
-                'onClick': (
-                  ChartEvent event,
-                  List<ActiveElement> elements,
-                  Chart _,
-                ) => clickCalls.add(event),
-              },
-            });
+              ),
+            );
 
             scaleX = chart.scales['x']!;
             scaleY = chart.scales['y']!;
@@ -376,35 +376,23 @@ void main() {
       testWidgets('handles dragging to the right edge of the chart', (
         tester,
       ) async {
-        chart = acquireChart(
-          <String, Object?>{
-            'type': 'line',
-            'data': data(),
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'xScale0': <String, Object?>{
-                  'id': 'xScale0',
-                  'type': 'linear',
-                  'min': 0,
-                  'max': 4,
-                },
-                'yScale0': <String, Object?>{
-                  'id': 'yScale0',
-                  'type': 'linear',
-                  'min': 0,
-                  'max': 4,
-                },
-              },
-              'plugins': <String, Object?>{
-                'zoom': const ZoomPluginOptions(
-                  zoom: ZoomOptions(
-                    drag: DragOptions(enabled: true),
-                    mode: Mode.xy,
-                  ),
-                ),
-              },
+        chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points())],
+            scales: const {
+              'xScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'xScale0'}),
+              'yScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'yScale0'}),
             },
-          },
+            pluginOptions: const [
+              ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  drag: DragOptions(enabled: true),
+                  mode: Mode.xy,
+                ),
+              ),
+            ],
+          ),
           <String, Object?>{
             'wrapper': <String, Object?>{
               'style': 'position: absolute; left: 50px; top: 50px;',
@@ -433,35 +421,23 @@ void main() {
       testWidgets('handles dragging off the right edge of the chart canvas', (
         tester,
       ) async {
-        chart = acquireChart(
-          <String, Object?>{
-            'type': 'line',
-            'data': data(),
-            'options': <String, Object?>{
-              'scales': <String, Object?>{
-                'xScale0': <String, Object?>{
-                  'id': 'xScale0',
-                  'type': 'linear',
-                  'min': 0,
-                  'max': 4,
-                },
-                'yScale0': <String, Object?>{
-                  'id': 'yScale0',
-                  'type': 'linear',
-                  'min': 0,
-                  'max': 4,
-                },
-              },
-              'plugins': <String, Object?>{
-                'zoom': const ZoomPluginOptions(
-                  zoom: ZoomOptions(
-                    drag: DragOptions(enabled: true),
-                    mode: Mode.xy,
-                  ),
-                ),
-              },
+        chart = _acquire(
+          ChartConfig(
+            type: ChartKind.line,
+            datasets: [LineDataset(points: points())],
+            scales: const {
+              'xScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'xScale0'}),
+              'yScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'yScale0'}),
             },
-          },
+            pluginOptions: const [
+              ZoomPluginOptions(
+                zoom: ZoomOptions(
+                  drag: DragOptions(enabled: true),
+                  mode: Mode.xy,
+                ),
+              ),
+            ],
+          ),
           <String, Object?>{
             'wrapper': <String, Object?>{
               'style': 'position: absolute; left: 50px; top: 50px;',
@@ -512,12 +488,12 @@ void main() {
           final startCalls = <ZoomStartContext<NativeEvent>>[];
           // `createSpy('zoom')`: the contexts of the calls.
           final zoomCalls = <ZoomTriggerContext>[];
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data(),
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points())],
+              pluginOptions: [
+                ZoomPluginOptions(
                   zoom: ZoomOptions(
                     drag: const DragOptions(enabled: true),
                     mode: Mode.xy,
@@ -529,9 +505,9 @@ void main() {
                     onZoomComplete: (_) => done(),
                   ),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
 
           final pt = (
             x: chart.scales['x']!.getPixelForValue(1.5),
@@ -569,12 +545,12 @@ void main() {
         final rejectCalls = <ZoomEventContext<NativeEvent>>[];
         // `createSpy('done')`: the contexts of the calls.
         final doneCalls = <ZoomChartContext>[];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data(),
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [ScatterDataset(points: points())],
+            pluginOptions: [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   drag: const DragOptions(enabled: true),
                   mode: Mode.xy,
@@ -584,9 +560,9 @@ void main() {
                   onZoomRejected: rejectCalls.add,
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         final pt = (
           x: chart.scales['x']!.getPixelForValue(1.5),

@@ -9,31 +9,25 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../flutter_test_config.dart';
 
+/// Acquires a chart through the typed config boundary.
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+
 void main() {
   group('pinch', () {
-    final data = <String, Object?>{
-      'datasets': <Object?>[
-        <String, Object?>{
-          'data': <Object?>[
-            <String, Object?>{'x': 1, 'y': 3},
-            <String, Object?>{'x': 2, 'y': 2},
-            <String, Object?>{'x': 3, 'y': 1},
-          ],
-        },
-      ],
-    };
+    final points = [DataPoint(1, 3), DataPoint(2, 2), DataPoint(3, 1)];
 
     group('events', () {
       testWidgets('should call onZoomStart', (tester) async {
         await waitForDone((done) {
           // `createSpy('started')`: the contexts of the calls.
           final startCalls = <ZoomStartContext<NativeEvent>>[];
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data,
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points)],
+              pluginOptions: [
+                ZoomPluginOptions(
                   zoom: ZoomOptions(
                     mode: Mode.xy,
                     onZoomStart: (context) {
@@ -43,9 +37,9 @@ void main() {
                     pinch: const PinchOptions(enabled: true),
                   ),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
 
           simulatePinch(
             chart,
@@ -65,12 +59,12 @@ void main() {
         await waitForDone((done) {
           // `createSpy('rejected')`: the contexts of the calls.
           final rejectCalls = <ZoomEventContext<NativeEvent>>[];
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data,
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points)],
+              pluginOptions: [
+                ZoomPluginOptions(
                   zoom: ZoomOptions(
                     mode: Mode.xy,
                     onZoomStart: (_) => false,
@@ -78,9 +72,9 @@ void main() {
                     pinch: const PinchOptions(enabled: true),
                   ),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
 
           simulatePinch(
             chart,
@@ -95,12 +89,12 @@ void main() {
 
       testWidgets('should call onZoomComplete', (tester) async {
         await waitForDone((done) {
-          final chart = acquireChart(<String, Object?>{
-            'type': 'scatter',
-            'data': data,
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{
-                'zoom': ZoomPluginOptions(
+          final chart = _acquire(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [ScatterDataset(points: points)],
+              pluginOptions: [
+                ZoomPluginOptions(
                   zoom: ZoomOptions(
                     mode: Mode.xy,
                     onZoomComplete: (ctx) {
@@ -110,9 +104,9 @@ void main() {
                     pinch: const PinchOptions(enabled: true),
                   ),
                 ),
-              },
-            },
-          });
+              ],
+            ),
+          );
           simulatePinch(chart);
         });
       });
@@ -124,12 +118,12 @@ void main() {
         final startCalls = <ZoomStartContext<NativeEvent>>[];
         // `createSpy('completed')`: the contexts of the calls.
         final completeCalls = <ZoomChartContext>[];
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': data,
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'zoom': ZoomPluginOptions(
+        final chart = _acquire(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [ScatterDataset(points: points)],
+            pluginOptions: [
+              ZoomPluginOptions(
                 zoom: ZoomOptions(
                   mode: Mode.xy,
                   onZoomStart: (context) {
@@ -140,9 +134,9 @@ void main() {
                   pinch: const PinchOptions(enabled: true),
                 ),
               ),
-            },
-          },
-        });
+            ],
+          ),
+        );
 
         final node = chart.canvas!;
         final rect = node.getBoundingClientRect();
