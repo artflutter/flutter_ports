@@ -12,15 +12,12 @@
 # other than "sources".
 #
 # The port checks of packages/flutter_chartjs_port/tool read this file too
-# (ADR 0009 item 6): check:headers with this package as its first package,
-# check:lib-imports with this package after the host.
+# (ADR 0009 item 6): check:headers with this package as its first package.
 #
 # Top-level keys before "sources":
 # - marker: the tag of the DIVERGES markers, "// DIVERGES(sankey): <row id>,
 #   <reason>" (Sankey ADR 0002). The default is "chartjs".
-# - host: the host package of the add-on port (ADR 0009). check:lib-imports
-#   allows the imports of the public libraries of the host, the libraries
-#   directly in its lib/, and rejects package:<host>/src/.
+# - host: the host package of the add-on port (ADR 0009).
 #
 # The keys of an entry are those of
 # packages/flutter_chartjs_plugin_zoom_port/tool/port_sources.yaml. The pin

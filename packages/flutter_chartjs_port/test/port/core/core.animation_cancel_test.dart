@@ -29,8 +29,7 @@ import 'animation_reference.dart';
 // value and the active state that it sees. Thus the data also gives the
 // order of the write and of the settlement.
 //
-// The web legs do not compile this file: package:clock is not in the import
-// list of a web test (check:lib-imports).
+// The file runs on the VM only: it uses package:clock.
 
 /// Whether [actual] is the reference value [expected]: the same type and
 /// value, NaN for NaN, and the sign of a zero.

@@ -60,32 +60,14 @@ longer supported. No global color installer exists. Paint options carry `ChartPa
   with 0 without the summary of a run that passed: `flutter test` exits with 0 when a SIGTERM stops
   it. It needs a local Google Chrome. CI job: `test-web`.
 - `dart run melos run check:port`: the port checks of
-  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tools 1 and 2) and tool 9,
-  `options:gen:check` and `adr:index:check`, as melos steps. The CI job `port-checks` runs the five
+  `packages/flutter_chartjs_port/doc/porting-flow.md` §4 (tool 2) and tool 9,
+  `options:gen:check` and `adr:index:check`, as melos steps. The CI job `port-checks` runs the four
   checks with a shallow checkout of the three Chart.js submodules,
-  `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey`. `check:lib-imports` and
-  `check:headers` also examine the add-on ports `flutter_chartjs_plugin_zoom_port` and
+  `third_party/chartjs-plugin-zoom` and `third_party/chartjs-chart-sankey`.
+  `check:headers` also examines the add-on ports `flutter_chartjs_plugin_zoom_port` and
   `flutter_chartjs_chart_sankey_port` (ADR 0009 item 6). The other three checks examine only
   `flutter_chartjs_port`. The port has no JS-semantics check (Chart.js ADR 0178).
   Each check can also run alone:
-  - `check:lib-imports`: the import allowlists of `lib/`, of the pure layers and of the tests that
-    the web legs compile. It fails when a file of `flutter_chartjs_port` (`lib/` or `test/`)
-    imports a file of `lib/src/` (ADR 0012). It resolves the names that each file of `lib/src/`
-    and each ported test uses (`tool/src/name_uses.dart`, `package:analyzer`), and it fails when a
-    ported file uses a name of `lib/src/theme/` or `lib/src/typed/` or exports a file of them, and
-    when a file of `lib/src/widgets/` uses a name of `controllers/`, `scales/`, `elements/`,
-    `plugins/` or `lib/src/index.dart`: the widget registers no component (Chart.js ADR 0048 §3).
-    It fails when a file of `lib/src/typed/` imports a library of another package outside the
-    allowlist of Chart.js ADR 0052 §8 or uses a name outside it. It fails when a core layer imports `package:flutter/painting.dart` with a name other
-    than `EdgeInsets`, `TextStyle` and `TextOverflow` (Chart.js ADRs 0123 and 0116). It keeps the
-    `lib/pure.dart` closure of `packages/chartjs_test_utils` a pure layer. An
-    add-on port names its host in the top-level key `host` of its `tool/port_sources.yaml`. Its
-    `lib/` and `test/` import only the libraries directly in the `lib/` of the host
-    (`package:<host>/<name>.dart`), never `package:<host>/src/` (ADR 0009 item 3). Its `test/`
-    imports only `package:chartjs_test_utils/flutter.dart` and `pure.dart` of the harness. The
-    script passes `packages/flutter_chartjs_port packages/flutter_chartjs_plugin_zoom_port
-    packages/flutter_chartjs_chart_sankey_port`, host first: the check examines the harness closure
-    with the host only.
   - `check:headers`: the line-1 header of each Dart file in `lib/`, `test/` and `tool/` of the home
     package and of each package that a `dart` target of its `tool/port_sources.yaml` names. The
     script runs it seven times: `flutter_chartjs_port` with `chartjs_test_utils`, then
@@ -667,8 +649,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     (proposed), `parity.md`, `differences.md`, `upstream-ledger.md` (one section for each
     repository) and the prior-art survey `prior-art/`.
     - `doc/adr/`: the D3 ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
-  - `check:headers`, `test:web` and `test --no-select` examine the package. `check:lib-imports`
-    and `test:cases` do not examine it yet.
+  - `check:headers`, `test:web` and `test --no-select` examine the package. `test:cases` does
+    not examine it yet.
 - `packages/flutter_d3_color_port`: the d3-color 3.1.0 port (library, version 0.1.2, on pub.dev,
   ISC), the first module package of the D3 port (D3 ADR 0008), as `d3-color` on npm. Its
   `.pubignore` keeps `doc/`, `tool/` and `build/` out of the archive, its `analysis_options.yaml`
@@ -896,7 +878,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     header cell `Reserved ID`, so `check:headers` reads no rows from it) and `upstream-ledger.md`.
     `prior-art/README.md` is the prior-art survey (2026-11-10).
     - `doc/adr/`: the zoom ADRs. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
-  - `check:lib-imports` and `check:headers` examine the package (ADR 0009 item 6).
+  - `check:headers` examines the package (ADR 0009 item 6).
     `test:fixtures:zoom` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`
     and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
@@ -970,7 +952,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `upstream-ledger.md` and `prior-art/README.md` (2026-11-13: no Dart port of
     this library exists).
     - `doc/adr/`: the sankey ADRs, all proposed. `doc/adr/README.md` lists them with their status and their supersessions (`adr:index`).
-  - `check:lib-imports` and `check:headers` examine the package (ADR 0009 item 6).
+  - `check:headers` examines the package (ADR 0009 item 6).
     `test:fixtures:sankey` runs its fixtures. `test:web`, `test:cases`, `test:fixtures`
     and `check:typed-reads` do not examine it. `test --no-select` runs its
     tests without the tag `fixtures`.
@@ -1010,9 +992,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   - `tool/port_sources.yaml`: the pin of `third_party/kurkle-color`, with the top-level key
     `marker: kurkle` (the tag of `DIVERGES(kurkle)`). `doc/differences.md` has its rows.
   - `check:headers` examines the package as its own home. `test:web` and `test --no-select` run
-    its tests. `check:lib-imports`, `test:cases` and `check:typed-reads` do
-    not examine it. The core layers of `flutter_chartjs_port` may import its
-    public library (`colorLibrary` of `tool/src/lib_imports.dart`).
+    its tests. `test:cases` and `check:typed-reads` do not examine it. The core layers of
+    `flutter_chartjs_port` may import its public library.
 - `third_party/`: reference sources only: never imported, built or shipped. Excluded from
   analysis.
   - Shallow git submodules: `Chart.js` at the tag `v4.6.1`
@@ -1151,7 +1132,6 @@ of the generators and compare the names of its functions (`test/support/segment_
    in the same change. A person writes `parity.md` (Chart.js ADR 0179).
 5. **No JavaScript at runtime.** No WebView, no JS engine, no `dart:js_interop` in library code
    (ADR 0001). Library code must compile for every Flutter platform and for web WebAssembly.
-   `check:lib-imports` fails on a `lib/` import outside its allowlist.
 6. **Bumping upstream** is its own change (ADR 0005). The submodule is a shallow clone without
    tags, so fetch both tags first:
    `git -C third_party/Chart.js fetch --depth 1 origin tag <old-tag> tag <new-tag>`,
@@ -1308,7 +1288,7 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
   reference test gives a tolerance there or lists a hit point on an arc border (`hitBorders`).
 - The four theming invariants (specs run unthemed, no forui or Material in `lib/`, no
   `Chart.defaults` writes for theming, no name of `lib/src/theme/` in ported files): Chart.js ADR
-  0147 §19 and ADR 0012. `check:lib-imports` already fails on invariants 2 and 4.
+  0147 §19 and ADR 0012.
 
 The D3 port applies the rules above with these changes. D3 ADRs 0001 to 0006 are proposed, D3
 ADRs 0007 to 0011 are accepted. The doc paths
@@ -1387,8 +1367,7 @@ ADRs and ADR 0009 are proposed. The doc paths are relative to
   `package:flutter_chartjs_port/chartjs.dart`, `package:flutter_chartjs_port/helpers.dart`,
   `package:flutter_chartjs_port/js_semantics.dart` and the app library, never
   `package:flutter_chartjs_port/src/`. Its tests also import
-  `package:chartjs_test_utils/flutter.dart` and `pure.dart`. `check:lib-imports` fails on another
-  import. A part of the host that the public
+  `package:chartjs_test_utils/flutter.dart` and `pure.dart`. A part of the host that the public
   libraries do not give is a host change with a Chart.js ADR, first. `host-seams.md` lists each
   use of the host with its state. A change that closes a seam updates its row.
 - A difference carries `// DIVERGES(zoom): <row id>, <reason>` and a row in `differences.md`.
@@ -1437,8 +1416,7 @@ sankey ADRs are proposed. The doc paths are relative to
   `package:flutter` framework library through its direct or indirect imports (ADR 0061),
   except `package:flutter/animation.dart` for the curve classes of the option `easing`, and
   `package:flutter/painting.dart` with `show EdgeInsets, TextOverflow, TextStyle` for padding and fonts (Chart.js ADRs
-  0123 and 0116). `check:lib-imports` computes the core layers from the roots in
-  `packages/flutter_chartjs_port/tool/src/lib_imports.dart`. The roots include `lib/src/js/`,
+  0123 and 0116). The core layers are the files that these roots reach. The roots include `lib/src/js/`,
   `lib/src/types/`, the helpers except `helpers.extras`, the files of
   `lib/src/elements/`, `plugin.decimation` and the files of `plugin.filler/` of `lib/src/plugins/`,
   and `platform.base`, `platform.basic` and `native_event` of `lib/src/platform/`. Of
@@ -1450,10 +1428,7 @@ sankey ADRs are proposed. The doc paths are relative to
 - Write core tests with `package:test`. Execute them through Flutter on the VM
   (`test`) and in Chrome with JavaScript/DDC and WebAssembly (`test:web`).
 - A test file that imports `dart:io` or VM-only framework/engine test code needs
-  `@TestOn('vm')` after its header line. `test:web` does not compile it. `check:lib-imports` fails
-  on a test file without `@TestOn('vm')` that imports more than pure layers, `package:test` and
-  `package:chartjs_test_utils/pure.dart`. It does not examine the tests of `chartjs_test_utils`.
-  Keep the same rule there by hand.
+  `@TestOn('vm')` after its header line. `test:web` does not compile it.
 - `flutter test` runs `packages/flutter_chartjs_port/test/flutter_test_config.dart` around each test
   file of `flutter_chartjs_port`. It sets the test view to DPR 1 and 800 x 600 before each test, also
   after a test calls `tester.view.reset()`. It restores `defaults`, `overrides` and `descriptors`

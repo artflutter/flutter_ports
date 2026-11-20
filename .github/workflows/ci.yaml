@@ -222,7 +222,6 @@ jobs:
       - name: Check out the Chart.js, d3, chartjs-plugin-zoom and chartjs-chart-sankey submodules
         run: git submodule update --init --depth 1 -- third_party/Chart.js third_party/kurkle-color third_party/chartjs-test-utils third_party/d3 third_party/chartjs-plugin-zoom third_party/chartjs-chart-sankey
       - uses: ./.github/actions/setup
-      - run: dart run melos run check:lib-imports
       - run: dart run melos run check:headers
       - run: dart run melos run check:typed-reads
       - run: dart run melos run options:gen:check

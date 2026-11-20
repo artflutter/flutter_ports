@@ -11,9 +11,8 @@ import 'package:intl/intl.dart';
 import 'package:test/test.dart';
 
 // The cases of the default date adapter (Chart.js ADR 0024) that need
-// package:clock, Intl.defaultLocale or a file. A web test file can import
-// neither package:clock nor package:intl (check:lib-imports), so these cases
-// run on the VM only.
+// package:clock, Intl.defaultLocale or a file. These cases run on the VM
+// only.
 
 /// The environment variable that names the file of the full corpus of
 /// `tool/reference/date_adapter_reference.mjs --full <file>`.

@@ -15,7 +15,7 @@ repository.
   `example/main.dart` (port-only, no pubspec, Chart.js ADR 0047 §5) is the example of the archive:
   one typed `ChartView` with a new data List in `setState` and an `onClick` tear-off with `int`
   indexes (Chart.js ADR 0052 §13). The workspace formats and analyzes it with the package
-  rules. `check:headers` and `check:lib-imports` do not examine `example/`.
+  rules. `check:headers` does not examine `example/`.
   - The four public libraries (Chart.js ADRs 0048 §5 and 0108), port-only and not pure layers:
     `lib/flutter_chartjs_port.dart` (the app library: `chartjs.dart` without `Animation` and
     `Element`, the two Flutter names, `ChartView`, `ChartTheme` and `ChartThemeData`, and the
@@ -368,7 +368,7 @@ repository.
       `test/port/core/data_update_test.dart`.
     - [Chart.js ADR 0073](doc/adr/0073-sorted-bar-values.md): a linear scan removes the duplicates of the sorted
       finite bar values (`bar_sorted_values.dart`). See `test/port/core/bar_sorted_values_test.dart`. The helper
-      stays a core-layer root of `tool/src/lib_imports.dart`, so that `test:web` runs its tests.
+      stays a core layer, so that `test:web` runs its tests.
     - [Chart.js ADR 0071](doc/adr/0071-numeric-category-parsing.md): `primitive_parse.dart` parses native numeric
       data on a category scale for the bar and base controllers. See `test/port/core/primitive_parse_test.dart`.
       The preflight is local to each call, and each parsed item is fresh.
@@ -1002,9 +1002,9 @@ repository.
     paint and a font go to the chart as the `ChartPaint` and the `TextStyle` themselves (Chart.js ADRs
     0116 and 0147). Ported files never import
     `lib/src/typed/`, and no file of it imports
-    a component (`check:lib-imports`).
+    a component.
   - `lib/src/widgets/` (Chart.js ADRs 0049-0051, port-only, not pure layers). No file of it
-    imports a component or an index of the components (`check:lib-imports`), and no file writes
+    imports a component or an index of the components, and no file writes
     `defaults` or `overrides`.
     - `chart_view.dart` has `ChartView`, with the typed entry `ChartView(config: ChartConfig)` and
       the raw entry `ChartView.raw(config: Map)` (Chart.js ADR 0052 §9). A typed config lowers

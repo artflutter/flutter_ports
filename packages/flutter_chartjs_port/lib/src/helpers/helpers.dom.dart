@@ -20,8 +20,7 @@
 ///   (`platform-dom-computed-style`).
 /// - [isDomSupported] is false (`platform-dom-supported`).
 ///
-/// This file imports only pure layers. It is a pure-layer root
-/// (`tool/src/lib_imports.dart`).
+/// This file imports only pure layers.
 library;
 
 import 'dart:math' as math;

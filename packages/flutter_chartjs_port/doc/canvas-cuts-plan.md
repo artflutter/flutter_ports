@@ -1994,8 +1994,8 @@ Commit message examples:
 - The tests of §2.6 and §3.5 that exist now stay green without a change, except the changes that
   §3.5 names.
 - The new tests of A1 and A2 are green on the current code before C1 and C2 start.
-- `check:headers` needs the port-only line-1 marker on the new test files. `check:lib-imports`
-  needs `@TestOn('vm')` on each test file that imports `dart:ui` or `flutter_test`.
+- `check:headers` needs the port-only line-1 marker on the new test files. Each test file that
+  imports `dart:ui` or `flutter_test` needs `@TestOn('vm')`, so that `test:web` does not compile it.
 
 ### 6.2 Gates
 

@@ -999,7 +999,7 @@ free of `dart:ui` (2.2). Tool 1 computes the closure.
 
 These phase 5 files are pure layers too:
 - `core.config` ([Chart.js ADR 0021](adr/0021-typed-options-in-the-resolver.md), section 7) and
-  `core.adapters` (the `pureRoots` of `tool/src/lib_imports.dart`)
+  `core.adapters`
 - `core.interaction` and `core.layouts`
 - the port-only `tick_font_cache` ([Chart.js ADR 0063](adr/0063-static-tick-font.md))
 - `core.animation` and the port-only `animation_spec` ([Chart.js ADR 0019](adr/0019-animation.md),
@@ -1038,9 +1038,9 @@ cannot do this, because GitHub sets `CI=true` in every job ([Chart.js ADR
 
 ## 4. Tooling owned by this flow
 
-**1. Library import guard** (`tool/check_lib_imports.dart`, `check:lib-imports`, phase 1). The
-melos script `check:port` and the CI job `port-checks` run tools 1 and 2 and the checks of tools
-6 and 8. Tool 1 uses allowlists:
+**1. Library import guard** (removed on 2026-11-20 at the maintainer's request: no run of it
+caught an error). The melos script `check:port` and the CI job `port-checks` run tool 2 and the
+checks of tools 6 and 8. Tool 1 used these allowlists:
 - `lib/`: `dart:async`, `collection`, `convert`, `core`, `math`, `typed_data` and `ui`, the
   `package:flutter/` libraries `foundation`, `gestures`, `painting`, `rendering`, `scheduler`,
   `semantics`, `services` and `widgets`, `package:meta/meta.dart`, `package:intl/intl.dart` with
@@ -1048,7 +1048,7 @@ melos script `check:port` and the CI job `port-checks` run tools 1 and 2 and the
   `package:collection/collection.dart` with `show mergeSort`. From phase 5, also
   `package:clock/clock.dart` ([Chart.js ADR 0146](adr/0146-js-numeric-semantics.md) §6).
 - Pure layers: the same list without `dart:ui` and `package:flutter`, over the transitive closure.
-  The roots of the closure are the list `pureRoots` of `tool/src/lib_imports.dart`:
+  The roots of the closure were:
   - `lib/src/js/`, `lib/src/types/` and the helpers except `helpers.extras`; the public
     library of the color package `flutter_kurkle_color_port` is on the pure allowlist
   - `core.defaults`, `core.element`, `core.config`, `core.adapters`, `core.interaction`,
