@@ -4,8 +4,6 @@ library;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -30,8 +28,10 @@ void main() {
     testWidgets(
       'should automatically choose the BasicPlatform for offscreen canvas',
       (tester) async {
-        final chart = acquireChart(
-          {'type': 'line'},
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(type: ChartKind.line, datasets: []),
+          ).lower(),
           {'useOffscreenCanvas': true},
         );
 
@@ -42,11 +42,14 @@ void main() {
     );
 
     testWidgets('should disable animations', (tester) async {
-      final chart = acquireChart(
-        {
-          'type': 'line',
-          'options': <String, Object?>{'animation': <String, Object?>{}},
-        },
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          const ChartConfig(
+            type: ChartKind.line,
+            datasets: [],
+            animation: ChartAnimation(),
+          ),
+        ).lower(),
         {'useOffscreenCanvas': true},
       );
 
@@ -63,25 +66,16 @@ void main() {
 
     group('with offscreenCanvas', () {
       testWidgets('supports laying out a simple chart', (tester) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 5, 0, 25, 78, -10],
-                },
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.bar,
+              datasets: [
+                BarDataset(data: [10, 5, 0, 25, 78, -10]),
               ],
-              'labels': <Object?>[
-                'tick1',
-                'tick2',
-                'tick3',
-                'tick4',
-                'tick5',
-                'tick6',
-              ],
-            },
-          },
+              labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
+            ),
+          ).lower(),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 150, 'width': 250},
             'useOffscreenCanvas': true,
@@ -97,25 +91,16 @@ void main() {
       });
 
       testWidgets('supports resizing a chart', (tester) async {
-        final chart = acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 5, 0, 25, 78, -10],
-                },
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.bar,
+              datasets: [
+                BarDataset(data: [10, 5, 0, 25, 78, -10]),
               ],
-              'labels': <Object?>[
-                'tick1',
-                'tick2',
-                'tick3',
-                'tick4',
-                'tick5',
-                'tick6',
-              ],
-            },
-          },
+              labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
+            ),
+          ).lower(),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 150, 'width': 250},
             'useOffscreenCanvas': true,

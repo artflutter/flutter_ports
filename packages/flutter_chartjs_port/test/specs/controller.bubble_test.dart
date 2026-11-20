@@ -8,8 +8,6 @@ import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -52,8 +50,8 @@ import '../support/draw_recorder.dart';
 // Map `chart.options['plugins']`.
 
 /// `chart.data.datasets[index]`.
-AnyObject _dataset(Chart chart, int index) =>
-    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as AnyObject;
+JsObjectFace _dataset(Chart chart, int index) =>
+    (jsGet(chart.data, 'datasets')! as List<Object?>)[index]! as JsObjectFace;
 
 /// `meta.data[index]` of [meta], a point.
 PointElement _point(ChartMeta meta, int index) =>
@@ -81,14 +79,14 @@ void main() {
     });
 
     testWidgets('should be constructed', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bubble',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{'data': <Object?>[]},
-          ],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          const ChartConfig(
+            type: ChartKind.bubble,
+            datasets: [BubbleDataset(points: [])],
+          ),
+        ).lower(),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.type, 'bubble');
@@ -104,14 +102,14 @@ void main() {
     testWidgets(
       'should use the first scale IDs if the dataset does not specify them',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bubble',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'data': <Object?>[]},
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.bubble,
+              datasets: [BubbleDataset(points: [])],
+            ),
+          ).lower(),
+        );
 
         final meta = chart.getDatasetMeta(0);
 
@@ -123,16 +121,20 @@ void main() {
     testWidgets(
       'should create point elements for each data item during initialization',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bubble',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 15, 0, -4],
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.bubble,
+              datasets: [
+                BubbleDataset(
+                  extra: {
+                    'data': <Object?>[10, 15, 0, -4],
+                  },
+                ),
+              ],
+            ),
+          ).lower(),
+        );
 
         final meta = chart.getDatasetMeta(0);
 
@@ -145,17 +147,22 @@ void main() {
     );
 
     testWidgets('should draw all elements', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bubble',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[10, 15, 0, -4],
-            },
-          ],
-        },
-        'options': <String, Object?>{'animation': false, 'showLine': true},
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          const ChartConfig(
+            type: ChartKind.bubble,
+            datasets: [
+              BubbleDataset(
+                extra: {
+                  'data': <Object?>[10, 15, 0, -4],
+                },
+              ),
+            ],
+            animation: ChartAnimation.none,
+            extra: {'showLine': true},
+          ),
+        ).lower(),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -173,35 +180,31 @@ void main() {
     });
 
     testWidgets('should update elements when modifying style', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bubble',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 10, 'r': 5},
-                <String, Object?>{'x': -15, 'y': -10, 'r': 1},
-                <String, Object?>{'x': 0, 'y': -9, 'r': 2},
-                <String, Object?>{'x': -4, 'y': 10, 'r': 1},
-              ],
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            type: ChartKind.bubble,
+            datasets: [
+              BubbleDataset(
+                points: [
+                  DataPoint.bubble(10, 10, 5),
+                  DataPoint.bubble(-15, -10, 1),
+                  DataPoint.bubble(0, -9, 2),
+                  DataPoint.bubble(-4, 10, 1),
+                ],
+              ),
+            ],
+            labels: const ['label1', 'label2', 'label3', 'label4'],
+            scales: const {
+              'x': CategoryAxis(display: ScaleDisplay.off),
+              'y': LinearAxis(display: ScaleDisplay.off),
             },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{'legend': false, 'title': false},
-          'scales': <String, Object?>{
-            'x': <String, Object?>{
-              'type': 'category',
-              'display': ScaleDisplay.off,
+            extra: const {
+              'plugins': {'legend': false, 'title': false},
             },
-            'y': <String, Object?>{
-              'type': 'linear',
-              'display': ScaleDisplay.off,
-            },
-          },
-        },
-      });
+          ),
+        ).lower(),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -272,22 +275,24 @@ void main() {
     testWidgets('should handle number of data point changes in update', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bubble',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 10, 'r': 5},
-                <String, Object?>{'x': -15, 'y': -10, 'r': 1},
-                <String, Object?>{'x': 0, 'y': -9, 'r': 2},
-                <String, Object?>{'x': -4, 'y': 10, 'r': 1},
-              ],
-            },
-          ],
-          'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            type: ChartKind.bubble,
+            datasets: [
+              BubbleDataset(
+                points: [
+                  DataPoint.bubble(10, 10, 5),
+                  DataPoint.bubble(-15, -10, 1),
+                  DataPoint.bubble(0, -9, 2),
+                  DataPoint.bubble(-4, 10, 1),
+                ],
+              ),
+            ],
+            labels: const ['label1', 'label2', 'label3', 'label4'],
+          ),
+        ).lower(),
+      );
 
       final meta = chart.getDatasetMeta(0);
 
@@ -327,36 +332,38 @@ void main() {
 
       // :255 beforeEach: acquires a chart.
       void beforeEach() {
-        chart = acquireChart(<String, Object?>{
-          'type': 'bubble',
-          'data': <String, Object?>{
-            'labels': <Object?>['label1', 'label2', 'label3', 'label4'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 5, 'y': 5, 'r': 20},
-                  <String, Object?>{'x': -15, 'y': -10, 'r': 15},
-                  <String, Object?>{'x': 15, 'y': 10, 'r': 10},
-                  <String, Object?>{'x': -15, 'y': 10, 'r': 5},
-                ],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'elements': <String, Object?>{
-              'point': <String, Object?>{
-                'backgroundColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(100, 150, 200, 1),
+        chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: ChartKind.bubble,
+              datasets: [
+                BubbleDataset(
+                  points: [
+                    DataPoint.bubble(5, 5, 20),
+                    DataPoint.bubble(-15, -10, 15),
+                    DataPoint.bubble(15, 10, 10),
+                    DataPoint.bubble(-15, 10, 5),
+                  ],
                 ),
-                'borderColor': const ChartPaint.solid(
-                  native_ui.Color.fromRGBO(50, 100, 150, 1),
-                ),
-                'borderWidth': 2,
-                'radius': 3,
+              ],
+              labels: const ['label1', 'label2', 'label3', 'label4'],
+              extra: const {
+                'elements': <String, Object?>{
+                  'point': <String, Object?>{
+                    'backgroundColor': ChartPaint.solid(
+                      native_ui.Color.fromRGBO(100, 150, 200, 1),
+                    ),
+                    'borderColor': ChartPaint.solid(
+                      native_ui.Color.fromRGBO(50, 100, 150, 1),
+                    ),
+                    'borderWidth': 2,
+                    'radius': 3,
+                  },
+                },
               },
-            },
-          },
-        });
+            ),
+          ).lower(),
+        );
       }
 
       testWidgets('should handle default hover styles', (tester) async {
@@ -484,32 +491,32 @@ void main() {
     testWidgets('should not override tooltip title and label callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'bubble',
-        'data': <String, Object?>{
-          'labels': <Object?>['Label 1', 'Label 2'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 15, 'r': 15},
-                <String, Object?>{'x': 12, 'y': 10, 'r': 10},
-              ],
-              'label': 'Dataset 1',
-            },
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 20, 'y': 10, 'r': 5},
-                <String, Object?>{'x': 4, 'y': 8, 'r': 30},
-              ],
-              'label': 'Dataset 2',
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'maintainAspectRatio': true,
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            type: ChartKind.bubble,
+            datasets: [
+              BubbleDataset(
+                points: [
+                  DataPoint.bubble(10, 15, 15),
+                  DataPoint.bubble(12, 10, 10),
+                ],
+                label: 'Dataset 1',
+              ),
+              BubbleDataset(
+                points: [
+                  DataPoint.bubble(20, 10, 5),
+                  DataPoint.bubble(4, 8, 30),
+                ],
+                label: 'Dataset 2',
+              ),
+            ],
+            labels: const ['Label 1', 'Label 2'],
+            responsive: true,
+            maintainAspectRatio: true,
+          ),
+        ).lower(),
+      );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];
 

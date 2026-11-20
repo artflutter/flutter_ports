@@ -6,8 +6,6 @@ library;
 import 'dart:ui' as native_ui;
 
 import 'package:chartjs_test_utils/flutter.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -54,23 +52,22 @@ void main() {
           'given', (tester) async {
         beforeAll();
         addTearDown(afterAll);
-        final chart = acquireChart(<String, Object?>{
-          'type': 'bar',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[1, 10],
-                'label': 'dataset1',
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.bar,
+              datasets: [
+                BarDataset(data: [1, 10], label: 'dataset1'),
+              ],
+              labels: ['label1', 'label2'],
+              extra: {
+                'plugins': {
+                  'colors': <String, Object?>{'enabled': true},
+                },
               },
-            ],
-            'labels': <Object?>['label1', 'label2'],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'colors': <String, Object?>{'enabled': true},
-            },
-          },
-        });
+            ),
+          ).lower(),
+        );
 
         final meta = chart.getDatasetMeta(0);
         expect(

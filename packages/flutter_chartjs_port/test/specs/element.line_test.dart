@@ -3,8 +3,6 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -39,30 +37,27 @@ void main() {
     ) async {
       await waitForDone((done) {
         late final Chart chart;
-        chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[0, -1, 0],
-                'label': 'dataset1',
-              },
-            ],
-            'labels': <Object?>['label1', 'label2', 'label3'],
-          },
-          'options': <String, Object?>{
-            'animation': <String, Object?>{
-              'duration': 50,
-              'onComplete': (_) {
-                // The dataset element reads `_path` by name, which gives
-                // the `undefined` sentinel.
-                final line = chart.getDatasetMeta(0).dataset! as LineElement;
-                expect(line['_path'], same(undefined));
-                done();
-              },
-            },
-          },
-        });
+        chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: ChartKind.line,
+              datasets: const [
+                LineDataset(data: [0, -1, 0], label: 'dataset1'),
+              ],
+              labels: const ['label1', 'label2', 'label3'],
+              animation: ChartAnimation(
+                duration: const Duration(milliseconds: 50),
+                onComplete: (_) {
+                  // The dataset element reads `_path` by name, which gives
+                  // the `undefined` sentinel.
+                  final line = chart.getDatasetMeta(0).dataset! as LineElement;
+                  expect(line['_path'], same(undefined));
+                  done();
+                },
+              ),
+            ),
+          ).lower(),
+        );
       });
     });
   });

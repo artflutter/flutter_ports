@@ -3,8 +3,6 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -52,28 +50,23 @@ void main() {
     testWidgets(
       'should only show a single point in the tooltip on multiple datasets',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 15},
-                  <String, Object?>{'x': 12, 'y': 10},
-                ],
-                'label': 'dataset1',
-              },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 20, 'y': 10},
-                  <String, Object?>{'x': 4, 'y': 8},
-                ],
-                'label': 'dataset2',
-              },
-            ],
-          },
-          'options': <String, Object?>{},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [
+                ScatterDataset(
+                  points: [DataPoint(10, 15), DataPoint(12, 10)],
+                  label: 'dataset1',
+                ),
+                ScatterDataset(
+                  points: [DataPoint(20, 10), DataPoint(4, 8)],
+                  label: 'dataset2',
+                ),
+              ],
+            ),
+          ).lower(),
+        );
         final point = chart.getDatasetMeta(0).data[1];
 
         await triggerMouseEvent(chart, 'mousemove', point);
@@ -82,27 +75,23 @@ void main() {
     );
 
     testWidgets('should not create line element by default', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'scatter',
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 15},
-                <String, Object?>{'x': 12, 'y': 10},
-              ],
-              'label': 'dataset1',
-            },
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 20, 'y': 10},
-                <String, Object?>{'x': 4, 'y': 8},
-              ],
-              'label': 'dataset2',
-            },
-          ],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [
+              ScatterDataset(
+                points: [DataPoint(10, 15), DataPoint(12, 10)],
+                label: 'dataset1',
+              ),
+              ScatterDataset(
+                points: [DataPoint(20, 10), DataPoint(4, 8)],
+                label: 'dataset2',
+              ),
+            ],
+          ),
+        ).lower(),
+      );
 
       final meta = chart.getDatasetMeta(0);
       expect(meta.dataset is LineElement, false);
@@ -111,28 +100,24 @@ void main() {
     testWidgets(
       'should create line element if showline is true at datasets options',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'showLine': true,
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 15},
-                  <String, Object?>{'x': 12, 'y': 10},
-                ],
-                'label': 'dataset1',
-              },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 20, 'y': 10},
-                  <String, Object?>{'x': 4, 'y': 8},
-                ],
-                'label': 'dataset2',
-              },
-            ],
-          },
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [
+                ScatterDataset(
+                  showLine: true,
+                  points: [DataPoint(10, 15), DataPoint(12, 10)],
+                  label: 'dataset1',
+                ),
+                ScatterDataset(
+                  points: [DataPoint(20, 10), DataPoint(4, 8)],
+                  label: 'dataset2',
+                ),
+              ],
+            ),
+          ).lower(),
+        );
 
         final meta = chart.getDatasetMeta(0);
         expect(meta.dataset is LineElement, true);
@@ -142,28 +127,24 @@ void main() {
     testWidgets(
       'should create line element if showline is true at root options',
       (tester) async {
-        final chart = acquireChart(<String, Object?>{
-          'type': 'scatter',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 10, 'y': 15},
-                  <String, Object?>{'x': 12, 'y': 10},
-                ],
-                'label': 'dataset1',
-              },
-              <String, Object?>{
-                'data': <Object?>[
-                  <String, Object?>{'x': 20, 'y': 10},
-                  <String, Object?>{'x': 4, 'y': 8},
-                ],
-                'label': 'dataset2',
-              },
-            ],
-          },
-          'options': <String, Object?>{'showLine': true},
-        });
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: ChartKind.scatter,
+              datasets: [
+                ScatterDataset(
+                  points: [DataPoint(10, 15), DataPoint(12, 10)],
+                  label: 'dataset1',
+                ),
+                ScatterDataset(
+                  points: [DataPoint(20, 10), DataPoint(4, 8)],
+                  label: 'dataset2',
+                ),
+              ],
+              extra: const {'showLine': true},
+            ),
+          ).lower(),
+        );
 
         final meta = chart.getDatasetMeta(0);
         expect(meta.dataset is LineElement, true);
@@ -174,32 +155,26 @@ void main() {
     testWidgets('should not override tooltip title and label callbacks', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'type': 'scatter',
-        'data': <String, Object?>{
-          'labels': <Object?>['Label 1', 'Label 2'],
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 10, 'y': 15},
-                <String, Object?>{'x': 12, 'y': 10},
-              ],
-              'label': 'Dataset 1',
-            },
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'x': 20, 'y': 10},
-                <String, Object?>{'x': 4, 'y': 8},
-              ],
-              'label': 'Dataset 2',
-            },
-          ],
-        },
-        'options': <String, Object?>{
-          'responsive': true,
-          'maintainAspectRatio': true,
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            type: ChartKind.scatter,
+            datasets: [
+              ScatterDataset(
+                points: [DataPoint(10, 15), DataPoint(12, 10)],
+                label: 'Dataset 1',
+              ),
+              ScatterDataset(
+                points: [DataPoint(20, 10), DataPoint(4, 8)],
+                label: 'Dataset 2',
+              ),
+            ],
+            labels: const ['Label 1', 'Label 2'],
+            responsive: true,
+            maintainAspectRatio: true,
+          ),
+        ).lower(),
+      );
       final tooltip = chart.tooltip!;
       final point = chart.getDatasetMeta(0).data[0];
 

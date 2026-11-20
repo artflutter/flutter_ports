@@ -3,6 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../fixtures/index.dart' as fixture;
@@ -23,21 +24,19 @@ void main() {
     group('auto', fixture.specs('mixed'));
 
     testWidgets('shoud be constructed with doughnuts chart', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'type': 'line',
-              'data': <Object?>[10, 20, 30, 40],
-            },
-            <String, Object?>{
-              'type': 'doughnut',
-              'data': <Object?>[10, 20, 30, 50],
-            },
-          ],
-          'labels': <Object?>[],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..data = (ChartDataScope()
+            ..datasets = [
+              (LineControllerDatasetOptionsScope()
+                ..type = 'line'
+                ..data = [10, 20, 30, 40]),
+              (DoughnutControllerDatasetOptionsScope()
+                ..type = 'doughnut'
+                ..data = [10, 20, 30, 50]),
+            ]
+            ..labels = []),
+      );
 
       final meta0 = chart.getDatasetMeta(0);
       expect(meta0.type, 'line');
@@ -46,21 +45,19 @@ void main() {
     });
 
     testWidgets('shoud be constructed with pie chart', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'type': 'bar',
-              'data': <Object?>[10, 20, 30, 40],
-            },
-            <String, Object?>{
-              'type': 'pie',
-              'data': <Object?>[10, 20, 30, 50],
-            },
-          ],
-          'labels': <Object?>[],
-        },
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..data = (ChartDataScope()
+            ..datasets = [
+              (BarControllerDatasetOptionsScope()
+                ..type = 'bar'
+                ..data = [10, 20, 30, 40]),
+              (DoughnutControllerDatasetOptionsScope()
+                ..type = 'pie'
+                ..data = [10, 20, 30, 50]),
+            ]
+            ..labels = []),
+      );
 
       final meta0 = chart.getDatasetMeta(0);
       expect(meta0.type, 'bar');

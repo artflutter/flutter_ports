@@ -5,8 +5,6 @@ library;
 import 'dart:async';
 
 import 'package:chartjs_test_utils/flutter.dart';
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -53,38 +51,38 @@ Object? _decodedFillValue(Chart chart, int index) {
   return source!.fill;
 }
 
-/// `acquireChart(config)` in a zone that records each `print` line into
+/// `acquireChartRoot(config)` in a zone that records each `print` line into
 /// [warnings]: the spy of `console.warn`.
-Chart _acquireWithWarnSpy(AnyObject config, List<String> warnings) => runZoned(
-  () => acquireChart(config),
+Chart _acquireWithWarnSpy(
+  ChartConfigurationScope config,
+  List<String> warnings,
+) => runZoned(
+  () => acquireChartRoot(config),
   zoneSpecification: ZoneSpecification(
     print: (self, parent, zone, line) => warnings.add(line),
   ),
 );
 
-/// A line chart with the [datasets] and the chart [options].
-AnyObject _line(List<Object?> datasets, [AnyObject? options]) =>
-    <String, Object?>{
-      'type': 'line',
-      'data': <String, Object?>{'datasets': datasets},
-      'options': ?options,
-    };
+/// A line chart with the [datasets] and the chart [filler].
+ChartConfigurationScope _line(
+  List<LineDataset> datasets, [
+  ChartFiller? filler,
+]) => ChartConfigLowering(
+  ChartConfig(type: ChartKind.line, datasets: datasets, filler: filler),
+).lower();
 
-/// A dataset with the fill option [fill].
-AnyObject _fill(Object? fill) => <String, Object?>{'fill': fill};
+/// A dataset with the fill option [fill], including an explicit null.
+LineDataset _fill(FillTarget? fill) => fill == null
+    ? const LineDataset(extra: {'fill': null})
+    : LineDataset(fill: fill);
 
 /// A hidden dataset with the fill option [fill].
-AnyObject _hiddenFill(Object? fill) => <String, Object?>{
-  'fill': fill,
-  'hidden': true,
-};
+LineDataset _hiddenFill(FillTarget fill) =>
+    LineDataset(fill: fill, hidden: true);
 
 /// The options `{plugins: {filler: {propagate: propagate}}}`.
-AnyObject _propagate({required bool propagate}) => <String, Object?>{
-  'plugins': <String, Object?>{
-    'filler': <String, Object?>{'propagate': propagate},
-  },
-};
+ChartFiller _propagate({required bool propagate}) =>
+    ChartFiller(propagate: propagate);
 
 void main() {
   group('Plugin.filler', () {
@@ -98,9 +96,7 @@ void main() {
           final warnings = <String>[];
           Chart.unregister([filler]);
           _acquireWithWarnSpy(
-            _line([
-              <String, Object?>{'fill': FillTarget.toOrigin},
-            ]),
+            _line([const LineDataset(fill: FillTarget.toOrigin)]),
             warnings,
           );
 
@@ -118,10 +114,13 @@ void main() {
           final warnings = <String>[];
           Chart.unregister([filler]);
           _acquireWithWarnSpy(
-            _line(
-              [<String, Object?>{}],
-              <String, Object?>{'fill': FillTarget.toOrigin},
-            ),
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [LineDataset()],
+                extra: {'fill': FillTarget.toOrigin},
+              ),
+            ).lower(),
             warnings,
           );
 
@@ -133,7 +132,7 @@ void main() {
 
       testWidgets('should support boundaries', (tester) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([
             _fill(FillTarget.toOrigin),
             _fill(FillTarget.toStart),
@@ -149,7 +148,7 @@ void main() {
       });
 
       testWidgets('should support absolute dataset index', (tester) async {
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([
             _fill(const FillTarget.toDataset(1)),
             _fill(const FillTarget.toDataset(3)),
@@ -168,7 +167,7 @@ void main() {
 
       testWidgets('should support relative dataset index', (tester) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([
             _fill(const FillTarget.toRelative(3)),
             _fill(FillTarget.toPrevious),
@@ -189,7 +188,7 @@ void main() {
         tester,
       ) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([_fill(FillTarget.toOrigin), _fill(FillTarget.none)]),
         );
 
@@ -201,7 +200,7 @@ void main() {
 
       testWidgets('should ignore self dataset index', (tester) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([
             _fill(const FillTarget.toDataset(0)),
             _fill(const FillTarget.toRelative(0)),
@@ -220,7 +219,7 @@ void main() {
 
       testWidgets('should ignore out of bounds dataset index', (tester) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([
             _fill(const FillTarget.toDataset(-2)),
             _fill(const FillTarget.toDataset(4)),
@@ -242,7 +241,7 @@ void main() {
         // are no FillTarget (Chart.js ADR 0140): a debug build stops on
         // them. The cases of NaN and `null` stay, NaN as a value fill.
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([_fill(const FillTarget.toValue(double.nan)), _fill(null)]),
         );
 
@@ -258,7 +257,7 @@ void main() {
         tester,
       ) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([
             _hiddenFill(FillTarget.toStart),
             _hiddenFill(FillTarget.toPrevious),
@@ -287,7 +286,7 @@ void main() {
         tester,
       ) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([
             _hiddenFill(FillTarget.toStart),
             _hiddenFill(FillTarget.toPrevious),
@@ -314,7 +313,7 @@ void main() {
 
       testWidgets('should prevent recursive propagation', (tester) async {
         // DIVERGES(chartjs): adapt-fill-target-objects, the target values.
-        final chart = acquireChart(
+        final chart = acquireChartRoot(
           _line([
             _hiddenFill(const FillTarget.toRelative(2)),
             _hiddenFill(FillTarget.toPrevious),

@@ -10,8 +10,6 @@ import 'dart:ui' as native_ui;
 import 'package:chartjs_test_utils/flutter.dart';
 import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
-// The spec builds charts of flutter_chartjs_port, which does not export lib/src
-// yet.
 import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -305,23 +303,19 @@ void main() {
 
     group('config update', () {
       testWidgets('should update the options', (tester) async {
-        // A Map config: the spec writes the raw options of the chart by name.
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'title': <String, Object?>{'display': true},
-            },
-          },
-        });
+        // The lowered scopes remain mutable for the option updates below.
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [
+                LineDataset(data: [10, 20, 30, 100]),
+              ],
+              labels: ['A', 'B', 'C', 'D'],
+              title: ChartTitle(display: true),
+            ),
+          ).lower(),
+        );
         expect((chart.titleBlock! as Title).options!.display, true);
 
         _titleOptions(chart)['display'] = false;
@@ -330,20 +324,20 @@ void main() {
       });
 
       testWidgets('should update the associated layout item', (tester) async {
-        // A Map config: the spec writes the raw options of the chart by name.
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{},
-          'options': <String, Object?>{
-            'plugins': <String, Object?>{
-              'title': <String, Object?>{
-                'fullSize': true,
-                'position': ChartPosition.top,
-                'weight': 150,
-              },
-            },
-          },
-        });
+        // The lowered scopes remain mutable for the option updates below.
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [],
+              title: ChartTitle(
+                fullSize: true,
+                position: ChartPosition.top,
+                extra: {'weight': 150},
+              ),
+            ),
+          ).lower(),
+        );
 
         expect(chart.titleBlock!.fullSize, true);
         expect(chart.titleBlock!.position, ChartPosition.top);
@@ -363,18 +357,18 @@ void main() {
       testWidgets('should remove the title if the new options are false', (
         tester,
       ) async {
-        // A Map config: the spec writes the raw options of the chart by name.
-        final chart = acquireChart(<String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'labels': <Object?>['A', 'B', 'C', 'D'],
-            'datasets': <Object?>[
-              <String, Object?>{
-                'data': <Object?>[10, 20, 30, 100],
-              },
-            ],
-          },
-        });
+        // The lowered scopes remain mutable for the option updates below.
+        final chart = acquireChartRoot(
+          ChartConfigLowering(
+            const ChartConfig(
+              type: ChartKind.line,
+              datasets: [
+                LineDataset(data: [10, 20, 30, 100]),
+              ],
+              labels: ['A', 'B', 'C', 'D'],
+            ),
+          ).lower(),
+        );
         expect(chart.titleBlock, isNotNull);
 
         _pluginOptions(chart)['title'] = false;
@@ -385,22 +379,22 @@ void main() {
       testWidgets(
         'should create the title if the title options are changed to exist',
         (tester) async {
-          // A Map config: the typed API has no form for a plugin set to
-          // `false`, and the spec writes the raw options of the chart by name.
-          final chart = acquireChart(<String, Object?>{
-            'type': 'line',
-            'data': <String, Object?>{
-              'labels': <Object?>['A', 'B', 'C', 'D'],
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 20, 30, 100],
+          // A disabled plugin goes through extra; its live options
+          // stay mutable.
+          final chart = acquireChartRoot(
+            ChartConfigLowering(
+              const ChartConfig(
+                type: ChartKind.line,
+                datasets: [
+                  LineDataset(data: [10, 20, 30, 100]),
+                ],
+                labels: ['A', 'B', 'C', 'D'],
+                extra: {
+                  'plugins': {'title': false},
                 },
-              ],
-            },
-            'options': <String, Object?>{
-              'plugins': <String, Object?>{'title': false},
-            },
-          });
+              ),
+            ).lower(),
+          );
           expect(chart.titleBlock, isNull);
 
           _pluginOptions(chart)['title'] = <String, Object?>{};

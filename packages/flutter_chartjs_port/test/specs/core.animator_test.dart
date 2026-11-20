@@ -34,16 +34,14 @@ void main() {
           expect(animation.currentStep! <= 250, isTrue);
         }
 
-        acquireChart(
-          <String, Object?>{
-            'type': 'bar',
-            'data': <String, Object?>{
-              'datasets': <Object?>[
-                <String, Object?>{
-                  'data': <Object?>[10, 5, 0, 25, 78, -10],
-                },
+        acquireChartRoot(
+          ChartConfigLowering(
+            ChartConfig(
+              type: ChartKind.bar,
+              datasets: const [
+                BarDataset(data: [10, 5, 0, 25, 78, -10]),
               ],
-              'labels': <Object?>[
+              labels: const [
                 'tick1',
                 'tick2',
                 'tick3',
@@ -51,26 +49,24 @@ void main() {
                 'tick5',
                 'tick6',
               ],
-            },
-            'options': <String, Object?>{
-              'animation': <String, Object?>{
-                'duration': 250,
-                'onProgress': progress,
-                'onComplete': (_) {
+              plugins: <Plugin<Object?>>[
+                Plugin<Object?>(
+                  id: 'drawCount',
+                  afterDraw: (_, _, _) {
+                    drawCount++;
+                  },
+                ),
+              ],
+              animation: ChartAnimation(
+                duration: const Duration(milliseconds: 250),
+                onProgress: progress,
+                onComplete: (_) {
                   expect(count, drawCount);
                   done();
                 },
-              },
-            },
-            'plugins': <Plugin<Object?>>[
-              Plugin<Object?>(
-                id: 'drawCount',
-                afterDraw: (_, _, _) {
-                  drawCount++;
-                },
               ),
-            ],
-          },
+            ),
+          ).lower(),
           <String, Object?>{
             'canvas': <String, Object?>{'height': 150, 'width': 250},
           },
