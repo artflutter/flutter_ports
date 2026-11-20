@@ -19,6 +19,18 @@ For the ECharts packages, see the [ECharts prior-art survey](packages/flutter_ec
 > The chartjs-plugin-zoom port is in phase 0: the package, the pinned submodule, the design and
 > the list of its connections to the Chart.js port. It has no ported code.
 
+## Links
+
+The workflow `pages` publishes these pages on GitHub Pages:
+
+- [Root page](https://artflutter.github.io/flutter_ports/): the start page with a link to each page.
+- [Documentation](https://artflutter.github.io/flutter_ports/docs/): the docs site of the Chart.js port, with live charts and DartPad samples.
+- [Ergonomics samples](https://artflutter.github.io/flutter_ports/ergonomics/): small samples of the typed API, each with its chart and its code.
+- Chart benchmark lab: [stable](https://artflutter.github.io/flutter_ports/lab-stable/),
+  [beta](https://artflutter.github.io/flutter_ports/lab-beta/) and
+  [master](https://artflutter.github.io/flutter_ports/lab-master/), one build for each Flutter channel.
+- [Live Supabase dashboard](https://artflutter.github.io/flutter_ports/dashboard/): a live line chart on a Supabase table, with one build for each Flutter channel.
+
 ## Ports
 
 | Port | Upstream | Package | Progress |
