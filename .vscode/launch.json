@@ -24,6 +24,13 @@
       "program": "lib/main.dart"
     },
     {
+      "name": "chartjs_ergonomics",
+      "type": "dart",
+      "request": "launch",
+      "cwd": "apps/chartjs_ergonomics",
+      "program": "lib/main.dart"
+    },
+    {
       "name": "chart_benchmark_lab",
       "type": "dart",
       "request": "launch",
