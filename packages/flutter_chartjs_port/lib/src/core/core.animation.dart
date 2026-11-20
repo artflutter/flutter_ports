@@ -110,8 +110,10 @@ Object? _number(Object? from, Object? to, double factor) {
 Interpolator? _interpolatorOf(Object? from) => switch (from) {
   num() => _number,
   bool() => _boolean,
-  // DIVERGES(chartjs): adapt-color-animation-by-value, a native color.
-  SolidChartPaint() => _color,
+  // DIVERGES(chartjs): adapt-color-animation-by-value, a native color. A
+  // gradient or a pattern also takes the color interpolator, as the
+  // `type: 'color'` of the upstream colors defaults: `_color` gives `to`.
+  ChartPaint() => _color,
   _ => null,
 };
 

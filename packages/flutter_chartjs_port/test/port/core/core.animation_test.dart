@@ -403,6 +403,35 @@ void main() {
       expect(target['c'], blue);
     });
 
+    test('a gradient takes the color interpolator and gives its end', () {
+      // The upstream colors defaults have `type: 'color'`: `helpers.color`
+      // gives a gradient unchanged, with no `valid`, so the interpolator
+      // returns `to` (core.animation.js:15-21). Before the fix, a gradient
+      // had no interpolator, and the throw stopped the animator.
+      const red = ChartPaint.solid(ui.Color(0xFFFF0000));
+      const fade = ChartGradient.linear(ui.Offset.zero, ui.Offset(10, 0), [
+        ui.Color(0xFFFF0000),
+        ui.Color(0xFF0000FF),
+      ]);
+      const other = ChartGradient.linear(ui.Offset.zero, ui.Offset(20, 0), [
+        ui.Color(0xFFFF0000),
+        ui.Color(0xFF0000FF),
+      ]);
+      for (final (from, to) in [(fade, other), (red, fade), (fade, red)]) {
+        final target = <String, Object?>{'c': from};
+        final anim = Animation(
+          animationSpecOf({'duration': 1000}),
+          target,
+          'c',
+          to,
+        );
+        anim.tick(anim.start + 500);
+        expect(target['c'], to);
+        anim.tick(anim.start + 1000);
+        expect(target['c'], to);
+      }
+    });
+
     test('a value that is no number, boolean or color has no interpolator', () {
       // core.animation.js:35 `interpolators[typeof from]` is undefined, and
       // the call in tick throws a TypeError.
