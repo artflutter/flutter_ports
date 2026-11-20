@@ -1,5 +1,22 @@
-## Unreleased
+## 0.1.0-beta.4
 
+- The typed axes have no ids (Chart.js ADR 0191). `ChartConfig.scales` is a `List<ChartAxis>`, and
+  a cartesian axis takes its direction first: `scales: [CategoryAxis(.x), LinearAxis(.y)]`. The
+  chart gives the first axis of a direction the scale id `x`, `y` or `r`, and the next ones `x1`,
+  `y1` and so on. A dataset names its axis by the axis object: `yAxis: right` replaces
+  `yAxisID: 'right'`. `chart.scaleOf(axis)` and `chart.scaleIdOf(axis)` give the scale and the
+  id of an axis.
+- `ChartConfig` has no `type` (Chart.js ADR 0190): the class of the first dataset gives the chart
+  type. A config needs one dataset at least; for a chart with no data yet, give a dataset with no
+  data, for example `LineDataset(data: [])`.
+- `Dataset` is an open base class (Chart.js ADR 0189): a package gives the typed dataset of its
+  own chart type. `Dataset.copyWith` is gone; each dataset class keeps its own `copyWith`.
+- Each built-in plugin is an instance of its own class, and `registry.getPlugin<T>()` finds a
+  plugin by its class. The options of the built-in plugins and of the scales are typed classes
+  (`TitleOptions`, `LegendOptions`, `TooltipOptions`, `CoreScaleOptions` and the scale classes).
+- `Scale.setRange` and `Scale.clearRange` write and delete the range of a scale.
+- The corner options hold a Flutter `BorderRadius`.
+- Faster bar, scatter and line updates, and a faster hover search.
 - The animation options have typed values: `duration` and `delay` a number of milliseconds,
   `loop` a `bool` and `fn` an `Interpolator`. A value of another type, for example a text
   duration, stops a debug build. The animation option `type` is gone: the Dart type of the value
@@ -7,7 +24,7 @@
 - The scale option `display` and the radial `pointLabels.display` take a `ScaleDisplay`:
   `on` (the default), `off` or `auto`. The scale option `stacked` takes a `StackMode`: `on`,
   `off` or `single`, and null stacks only the datasets with a `stack`. The typed axes take the
-  same enums: `LinearAxis(display: ScaleDisplay.off, stacked: StackMode.on)`. A `bool` or a text
+  same enums: `LinearAxis(.y, display: ScaleDisplay.off, stacked: StackMode.on)`. A `bool` or a text
   stops a debug build.
 - The bar option `inflateAmount` is a number. A bar with no value has the upstream `'auto'`.
 - The `text` of the chart title, the subtitle, a scale title and the legend title is a
