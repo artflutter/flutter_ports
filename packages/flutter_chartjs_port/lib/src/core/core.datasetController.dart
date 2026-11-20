@@ -885,10 +885,24 @@ Object? stacksOf(Object? item) {
 /// `this.datasetElementType.id` and `this.dataElementType.id`
 /// (core.datasetController.js:789, :798, Chart.js ADR 0020, section 4).
 ///
-/// A class value gives its typed `id`. Another value gives its property
-/// `id`. Dart `null` (JS `null`) throws a [TypeError], as in JavaScript.
-Object? _idOf(Object? elementType) =>
-    elementType is JsClass ? elementType.id : jsGet(elementType, 'id');
+/// Dart `null` (the JS `null` or `false`) throws a [TypeError], as in
+/// JavaScript.
+Object? _idOf(JsClass? elementType) =>
+    elementType == null ? throw TypeError() : elementType.id;
+
+/// The element class of the static `datasetElementType` or `dataElementType`
+/// [value] of a controller class value: a class value, or Dart `null` for the
+/// JS `null` and `false`. Another value stops a debug build, and a release
+/// build takes no class.
+// DIVERGES(chartjs): adapt-element-type-classes, a class value or null.
+JsClass? _elementClassOf(Object? value) {
+  if (value is JsClass) return value;
+  assert(
+    value == null || value == false || value is Undefined,
+    'An element type is a JsClass, not $value.',
+  );
+  return null;
+}
 
 /// `console.warn(message)`.
 void _consoleWarn(String message) {
@@ -950,8 +964,8 @@ class DatasetController(
     cachedMeta = getMeta();
     type = cachedMeta.type;
     final target = newTarget ?? jsClass;
-    datasetElementType = target['datasetElementType'];
-    dataElementType = target['dataElementType'];
+    datasetElementType = _elementClassOf(target['datasetElementType']);
+    dataElementType = _elementClassOf(target['dataElementType']);
 
     initialize();
   }
@@ -1050,10 +1064,11 @@ class DatasetController(
   @override
   late OptionView options;
 
-  /// core.datasetController.js:264 `_parsing`, the `parsing` option: `false`
-  /// or an object of the parsing keys. `@type {boolean | object}`.
+  /// core.datasetController.js:264 `_parsing`, the `parsing` option: the
+  /// keys of the data items, or Dart `null` for `false`, the start value.
+  // DIVERGES(chartjs): adapt-parsing-keys, the keys of the option.
   @override
-  Object? parsing = false;
+  ParsingKeys? parsing;
 
   /// core.datasetController.js:265 `_data`: the data array, or the array of
   /// `convertObjectDataToArray` for object data. Dart `null` stands for JS
@@ -1106,7 +1121,7 @@ class DatasetController(
 
   /// Whether the cache has an entry of the element type [type], in another mode
   /// than `active`.
-  bool _hasCachedEntry(Object? type) {
+  bool _hasCachedEntry(JsClass? type) {
     final prefix = '${jsToString(_idOf(type))}-';
     return _cachedElementOptions.keys.any(
       (key) => key.startsWith(prefix) && key != '${prefix}active',
@@ -1209,13 +1224,14 @@ class DatasetController(
   List<List<Object?>> _syncList = [];
 
   /// core.datasetController.js:274 `datasetElementType`: the class value of
-  /// the dataset element, `false`, or Dart `null` for JS `null` (Chart.js
-  /// ADR 0020, section 4). controller.scatter.js:94 and :105 write it.
-  Object? datasetElementType;
+  /// the dataset element, or Dart `null` for the JS `null` and `false`
+  /// (Chart.js ADR 0020, section 4). controller.scatter.js:94 and :105 write
+  /// it.
+  JsClass? datasetElementType;
 
   /// core.datasetController.js:275 `dataElementType`: the class value of
   /// the data elements, or Dart `null` for JS `null`.
-  Object? dataElementType;
+  JsClass? dataElementType;
 
   /// core.datasetController.js:280 `initialize()`.
   void initialize() {
@@ -1401,7 +1417,7 @@ class DatasetController(
     _dataCheck();
 
     final datasetElementType = this.datasetElementType;
-    if (jsTruthy(datasetElementType)) {
+    if (datasetElementType != null) {
       // DIVERGES(chartjs): adapt-component-class-role, the cast throws earlier.
       meta.dataset = jsConstruct(datasetElementType, const []) as Element;
     }
@@ -1455,7 +1471,7 @@ class DatasetController(
     final scopes = config.getOptionScopes(getDataset(), scopeKeys, true);
     // The dataset context is an object: the result is a view.
     options = config.createResolver(scopes, getContext()) as OptionView;
-    parsing = options.readKey(OptionKey.parsing);
+    parsing = ParsingKeys.of(options.readKey(OptionKey.parsing));
     _cachedElementOptions.clear();
     // DIVERGES(chartjs): adapt-held-element-options, the clear ends a hold.
     _elementOptionsGeneration++;
@@ -1473,7 +1489,7 @@ class DatasetController(
   // DIVERGES(chartjs): adapt-range-updates, configure with a kept resolver.
   void configureKeptResolver() {
     options = attachContext(options.resolver, getContext());
-    parsing = options.readKey(OptionKey.parsing);
+    parsing = ParsingKeys.of(options.readKey(OptionKey.parsing));
     _cachedElementOptions.clear();
     // DIVERGES(chartjs): adapt-held-element-options, the clear ends a hold.
     _elementOptionsGeneration++;
@@ -1501,7 +1517,7 @@ class DatasetController(
     Object? cur;
     List<Object?> parsed;
 
-    if (parsing == false) {
+    if (parsing == null) {
       // The data items are the parsed items, of any type (index.d.ts:503).
       meta
         ..parsed = parsed = data
@@ -1662,10 +1678,7 @@ class DatasetController(
   /// @protected
   ///
   /// The keys `xAxisKey` and `yAxisKey` of [parsing] default to `'x'` and
-  /// `'y'` for [undefined]. A key that is not a string throws a [TypeError]
-  /// at its `resolveObjectKey` read in the loop, as upstream does: the
-  /// `xScale.parse` of the first item runs before a bad `yAxisKey` throws,
-  /// and no item reads a key of an empty range.
+  /// `'y'` for Dart `null`.
   ///
   /// Each item is a [ParsedItem] `{x, y}`. A [TypedDataItem] gives its typed
   /// field for the default key ([dataItemValue]).
@@ -1677,23 +1690,17 @@ class DatasetController(
   ) {
     final xScale = meta.xScale!;
     final yScale = meta.yScale!;
-    final xAxisKey = valueOrDefault(
-      readOption(parsing, OptionKey.xAxisKey),
-      'x',
-    );
-    final yAxisKey = valueOrDefault(
-      readOption(parsing, OptionKey.yAxisKey),
-      'y',
-    );
+    final xAxisKey = parsing?.xAxisKey ?? 'x';
+    final yAxisKey = parsing?.yAxisKey ?? 'y';
 
     return List<ParsedItem>.generate(_itemCount(count), (i) {
       final index = i + start;
       final item = _itemAt(data, index);
       return ParsedItem.of(
         const XAxis(),
-        xScale.parse(dataItemValue(item, xAxisKey! as String), index),
+        xScale.parse(dataItemValue(item, xAxisKey), index),
         const YAxis(),
-        yScale.parse(dataItemValue(item, yAxisKey! as String), index),
+        yScale.parse(dataItemValue(item, yAxisKey), index),
       );
     });
   }
@@ -2680,7 +2687,7 @@ class DatasetController(
       data[i] = jsConstruct(dataElementType, const []) as Element;
     }
 
-    if (jsTruthy(parsing)) {
+    if (parsing != null) {
       // `arr.length += count` leaves holes, JS `undefined`.
       move<Object?>(meta.parsed, undefined);
     }
@@ -2704,7 +2711,7 @@ class DatasetController(
   /// @private
   void _removeElements(int start, int count) {
     final meta = cachedMeta;
-    if (jsTruthy(parsing)) {
+    if (parsing != null) {
       final removed = _removeRange(meta.parsed, start, count);
       if (meta.stacked != StackMode.off) {
         _clearStacks(meta, removed);
@@ -2718,7 +2725,7 @@ class DatasetController(
   ///
   /// [args] is `[method, start, count]`.
   void _sync(List<Object?> args) {
-    if (jsTruthy(parsing)) {
+    if (parsing != null) {
       _syncList.add(args);
     } else {
       _call(args[0], args[1], args[2]);

@@ -59,7 +59,7 @@ final class _Meta(@override final IScale? iScale) implements ChartMeta {
 }
 
 /// A dataset controller with the `_parsing` option.
-final class _Controller(@override final Object? parsing)
+final class _Controller(@override final ParsingKeys? parsing)
     implements IDatasetController {
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -932,7 +932,7 @@ void main() {
     ) {
       final scale = _Scale();
       parseObjectDataRadialScale(
-        _Controller(parsing),
+        _Controller(ParsingKeys.of(parsing)),
         _Meta(scale),
         data,
         start,

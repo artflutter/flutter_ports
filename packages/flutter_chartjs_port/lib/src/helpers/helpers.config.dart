@@ -2955,21 +2955,19 @@ List<ParsedItem> parseObjectDataRadialScale(
 /// is the one of [parseObjectDataRadialScale].
 List<ParsedItem> parseObjectDataRadialScaleOf(
   IScale? iScale,
-  Object? parsing,
+  ParsingKeys? parsing,
   List<Object?> data,
   int start,
   int count,
 ) {
-  final parsingKey = jsGet(parsing, 'key');
-  final key = identical(parsingKey, undefined) ? 'r' : parsingKey;
+  final key = parsing?.key ?? 'r';
   final parsed = <ParsedItem>[];
 
   for (var i = 0, ilen = count; i < ilen; ++i) {
     final index = i + start;
     final item = jsGetIndex(data, index);
     parsed.add(
-      ParsedItem()
-        ..r = iScale!.parse(resolveObjectKey(item, key! as String), index),
+      ParsedItem()..r = iScale!.parse(resolveObjectKey(item, key), index),
     );
   }
   return parsed;

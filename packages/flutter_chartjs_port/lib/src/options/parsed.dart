@@ -18,6 +18,76 @@ library;
 import 'dart:collection' show SplayTreeMap;
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:meta/meta.dart';
+
+/// The object form of the option `parsing` of a dataset controller
+/// (U `core.datasetController.js:443`): the keys that the parse functions
+/// read in a data item. The value `parsing: false` is Dart `null` in place
+/// of an object, and `parsing: true` is `const ParsingKeys()`.
+///
+/// A null key takes the default of its reader: `'x'` and `'y'` for the
+/// object parse (U `core.datasetController.js:561`, `controller.bar.js:326`),
+/// `'value'` for the doughnut (U `controller.doughnut.js:158`) and `'r'` for
+/// the radial parse (U `helpers.config.ts:444`).
+///
+/// ```dart
+/// final keys = ParsingKeys(xAxisKey: 'time', yAxisKey: 'value');
+/// ```
+@immutable
+final class const ParsingKeys({
+  /// `xAxisKey`: the key of the x value, or Dart `null` for `'x'`.
+  final String? xAxisKey,
+
+  /// `yAxisKey`: the key of the y value, or Dart `null` for `'y'`.
+  final String? yAxisKey,
+
+  /// `key`: the key of the one value of a doughnut, pie, polar area or
+  /// radar item, or Dart `null` for the default of the controller.
+  final String? key,
+}) {
+  /// Creates the keys.
+  this;
+
+  /// The keys of the resolved option `parsing` [value]: Dart `null` for
+  /// `false`, the default keys for `true` and [undefined], and the string
+  /// keys of an object. A key that is not a string stops a debug build, and
+  /// a release build takes the default key.
+  static ParsingKeys? of(Object? value) {
+    if (value == false) return null;
+    if (value == null || value is bool || value is Undefined) {
+      return const ParsingKeys();
+    }
+    if (value is ParsingKeys) return value;
+    String? keyOf(OptionKey key) {
+      final read = readOption(value, key);
+      if (read is String) return read;
+      assert(
+        read == null || read is Undefined,
+        'The parsing key ${key.name} takes a String, not $read.',
+      );
+      return null;
+    }
+
+    return ParsingKeys(
+      xAxisKey: keyOf(OptionKey.xAxisKey),
+      yAxisKey: keyOf(OptionKey.yAxisKey),
+      key: keyOf(OptionKey.key),
+    );
+  }
+
+  /// Whether each key takes the default of its reader.
+  bool get isDefault => xAxisKey == null && yAxisKey == null && key == null;
+
+  @override
+  bool operator ==(Object other) =>
+      other is ParsingKeys &&
+      other.xAxisKey == xAxisKey &&
+      other.yAxisKey == yAxisKey &&
+      other.key == key;
+
+  @override
+  int get hashCode => Object.hash(xAxisKey, yAxisKey, key);
+}
 
 /// One parsed item of a dataset (U `core.datasetController.js:502-578`):
 /// the object that `getParsed(index)` gives each time, and that a

@@ -313,7 +313,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
 
     if (jsTruthy(options.readKey(OptionKey.showLine))) {
       // https://github.com/chartjs/Chart.js/issues/11333
-      if (!jsTruthy(datasetElementType)) {
+      if (datasetElementType == null) {
         addElements();
       }
       final line = meta.dataset;
@@ -349,10 +349,11 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
           ..options = options,
         mode,
       );
-    } else if (jsTruthy(datasetElementType)) {
+    } else if (datasetElementType != null) {
       // https://github.com/chartjs/Chart.js/issues/11333
       meta.dataset = null;
-      datasetElementType = false;
+      // `this.datasetElementType = false`: Dart `null` is `false`.
+      datasetElementType = null;
     }
 
     // Update Points
@@ -396,9 +397,9 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
   void addElements() {
     final showLine = options.readKey(OptionKey.showLine);
 
-    if (!jsTruthy(datasetElementType) && jsTruthy(showLine)) {
+    if (datasetElementType == null && jsTruthy(showLine)) {
       // DIVERGES(chartjs): adapt-chart-registry-getter, the registry singleton.
-      datasetElementType = registry.getElement('line');
+      datasetElementType = registry.getElement('line') as JsClass;
     }
 
     super.addElements();

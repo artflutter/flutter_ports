@@ -300,17 +300,15 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// `false`, `meta._parsed = data` gives a string the [JsStringList] of its
   /// characters: the parsed items are a List in the port.
   ///
-  /// The default `key = 'value'` of the destructuring is [valueOrDefault]:
-  /// only `undefined` gives it. The key goes to `resolveObjectKey` with the
-  /// cast `as String` (Chart.js ADR 0036, section 4): a key that is not a
-  /// string throws a [TypeError] at the first item.
+  /// The default `key = 'value'` of the destructuring is the default of the
+  /// Dart `null` key of [parsing] (row `adapt-parsing-keys`).
   @override
   void parse(int start, int count) {
     // `this._cachedMeta`'s dataset: the dataset object of the user.
     final data = jsGet(getDataset(), 'data');
     final meta = cachedMeta;
 
-    if (parsing == false) {
+    if (parsing == null) {
       // The same List: `meta._parsed === dataset.data`. A string gives the
       // List of its characters.
       meta.parsed = data is String
@@ -320,9 +318,8 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       var getter = (int i) => jsToNumber(jsGetIndex(data, i));
 
       if (isObject(jsGetIndex(data, start))) {
-        final key = valueOrDefault(readOption(parsing, OptionKey.key), 'value');
-        getter = (i) =>
-            jsToNumber(resolveObjectKey(jsGetIndex(data, i), key! as String));
+        final key = parsing?.key ?? 'value';
+        getter = (i) => jsToNumber(resolveObjectKey(jsGetIndex(data, i), key));
       }
 
       // DIVERGES(chartjs): adapt-parse-presize, one growth for numbers.
@@ -625,7 +622,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       identical(arcs, cachedMeta.data) &&
       nativePointList(arcs) &&
       nativeDataUpdateList(cachedMeta.parsed) &&
-      parsing != false;
+      parsing != null;
 
   /// The dataset options that [update] reads between its scans and the arcs.
   static const List<OptionKey> _updateOptions = [

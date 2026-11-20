@@ -884,7 +884,7 @@ void main() {
         ),
       );
       final meta = chart.getDatasetMeta(0);
-      expect(meta.controller!.parsing, isFalse);
+      expect(meta.controller!.parsing, isNull);
       meta.parsed = positional();
       final index = BarSkipNullIndex(() => true);
       expect(index.find(meta, x, 1.0), same(BarSkipNullIndex.scan));

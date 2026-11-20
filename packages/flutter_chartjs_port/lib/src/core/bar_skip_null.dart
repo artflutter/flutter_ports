@@ -205,7 +205,9 @@ final class BarSkipNullIndex(
     // With `parsing: false` the list is the data List of the app
     // (core.datasetController.js:461). Another List class can run code of
     // the app in a read.
-    if (meta.controller?.parsing == false || parsed.runtimeType != _plainList) {
+    final controller = meta.controller;
+    if ((controller != null && controller.parsing == null) ||
+        parsed.runtimeType != _plainList) {
       return _unsafe;
     }
     // `_axisValueOf(parsed, meta.vScale)` and `jsIsNaN` of the search read

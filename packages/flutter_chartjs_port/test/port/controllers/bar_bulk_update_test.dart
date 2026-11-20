@@ -128,25 +128,6 @@ class _ObservedData(final List<Object?> values) extends ListBase<Object?> {
   void operator []=(int index, Object? value) => values[index] = value;
 }
 
-class _ObservedElementClass() extends MapBase<String, Object?> {
-  final fields = <String, Object?>{'id': 'bar'};
-  int reads = 0;
-  @override
-  Object? operator [](Object? key) {
-    reads++;
-    return fields[key];
-  }
-
-  @override
-  void operator []=(String key, Object? value) => fields[key] = value;
-  @override
-  Iterable<String> get keys => fields.keys;
-  @override
-  void clear() => fields.clear();
-  @override
-  Object? remove(Object? key) => fields.remove(key);
-}
-
 Map<String, Object?> _config({
   bool horizontal = false,
   bool visible = false,
@@ -405,33 +386,6 @@ void main() {
       });
     }
   }
-
-  test('indexed bulk does not skip a custom element class id getter', () {
-    Map<String, Object?> config() => _config(
-      extra: {
-        'backgroundColor': <ChartPaint>[
-          const ChartPaint.solid(ui.Color(0xffff0000)),
-        ],
-      },
-    );
-    final a = _chart(config());
-    final b = _chart(config(), reference: true);
-    final probes = _probes(a);
-    final counts = <int>[];
-    for (final chart in [a, b]) {
-      final meta = chart.getDatasetMeta(0);
-      final elementClass = _ObservedElementClass();
-      (meta.controller! as BarController)
-        ..dataElementType = elementClass
-        ..updateElements(meta.data, 0, 6, 'none');
-      counts.add(elementClass.reads);
-    }
-    expect(counts[0], counts[1]);
-    expect(counts[0], greaterThan(1));
-    expect(probes.every((p) => p.bulkWrites == 0), isTrue);
-    expect(_observe(a), _observe(b));
-    expect(_stylesAndContexts(a), _stylesAndContexts(b));
-  });
 
   test('numeric bases, border edges, dimensions and reversal match', () {
     for (final horizontal in [false, true]) {

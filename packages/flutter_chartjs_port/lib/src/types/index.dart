@@ -333,8 +333,8 @@ abstract interface class IDatasetController() {
   /// core.datasetController.js:443 `_parsing`, the `parsing` option.
   /// `index.d.ts` does not declare it. `_parseObjectDataRadialScale`
   /// (helpers.config.ts:444) reads it as `this._parsing`. Its value is
-  /// `false` or an object of the parsing keys (Chart.js ADR 0043).
-  Object? get parsing;
+  /// the keys of the data items, or Dart `null` for `false`.
+  ParsingKeys? get parsing;
 
   /// index.d.ts:640 `getAllParsedValues(scale: Scale): number[]`. The time
   /// scale calls it (scale.time.js:638, :642).

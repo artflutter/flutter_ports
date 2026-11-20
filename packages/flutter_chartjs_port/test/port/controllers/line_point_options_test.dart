@@ -301,26 +301,6 @@ void main() {
     expect(probes[7].$context, isNull);
   });
 
-  test('custom class id getters retain their ordinary read count', () {
-    final states = <Object>[];
-    final counts = <int>[];
-    for (final reference in [false, true]) {
-      final chart = _chart(_config(), reference: reference);
-      final probes = _probes(chart);
-      final cls = _ObservedMap({'id': 'point'});
-      final meta = chart.getDatasetMeta(0);
-      (meta.controller! as LineController)
-        ..dataElementType = cls
-        ..getMaxOverflow()
-        ..updateElements(meta.data, 0, 8, 'none');
-      counts.add(cls.reads.length);
-      states.add(_observe(chart));
-      expect(probes.every((p) => p.planReads == 0), isTrue);
-    }
-    expect(counts[0], counts[1]);
-    expect(states[0], states[1]);
-  });
-
   test('custom scale projections retain ordinary option resolution', () {
     Chart.register([_CustomScale.value]);
     addTearDown(() => Chart.unregister([_CustomScale.value]));

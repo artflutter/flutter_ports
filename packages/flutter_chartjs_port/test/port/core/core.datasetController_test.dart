@@ -1107,7 +1107,7 @@ void main() {
       meta.controller = controller;
       expect(controller.runtimeType, DatasetController);
       expect(controller.dataElementType, same(_spyPointClass));
-      expect(controller.datasetElementType, false);
+      expect(controller.datasetElementType, isNull);
       expect(controller.index, 0);
       expect(controller.cachedMeta, same(meta));
       expect(controller.type, 'test');
@@ -1522,7 +1522,7 @@ void main() {
       final controller = run.controller(0);
       final cached = controller.resolveDataElementOptions(0);
       final id = _CountingElementId();
-      controller.dataElementType = <String, Object?>{'id': id};
+      controller.dataElementType = JsClass('Counting', statics: {'id': id});
       expect(controller.resolveDataElementOptions(0), same(cached));
       expect(controller.resolveDataElementOptions(1), same(cached));
       expect(id.calls, 2);
@@ -1535,7 +1535,10 @@ void main() {
         final controller = run.controller(0);
         final originalType = controller.dataElementType;
         final cached = controller.resolveDataElementOptions(0, 'default-x');
-        controller.dataElementType = <String, Object?>{'id': 'point-default'};
+        controller.dataElementType = JsClass(
+          'Hyphenated',
+          statics: {'id': 'point-default'},
+        );
         expect(controller.resolveDataElementOptions(0, 'x'), same(cached));
         controller.dataElementType = originalType;
         expect(
@@ -1763,17 +1766,20 @@ void main() {
       expect(modes, ['default', 'default', 'none']);
     });
 
-    test('the parsing keys must be strings', () {
+    // A parsing key is a `String` (row `adapt-parsing-keys`): a number key
+    // stops a debug build when the controller reads the option.
+    test('a parsing key that is not a string stops a debug build', () {
       final spec = {
         ..._spec('parseObjectData with parsing keys'),
         'options': <String, Object?>{
           'parsing': <String, Object?>{'xAxisKey': 5.0},
         },
       };
-      final run = _Run(spec)..step(<Object?>['build']);
       expect(
-        () => run.step(<Object?>['elements', false]),
-        throwsA(isA<TypeError>()),
+        () => _Run(spec)
+          ..step(<Object?>['build'])
+          ..step(<Object?>['elements', false]),
+        throwsA(isA<AssertionError>()),
       );
     });
 

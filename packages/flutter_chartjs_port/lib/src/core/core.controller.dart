@@ -1385,7 +1385,7 @@ class Chart(
       if (controller == null ||
           !controller.supportsDataUpdates ||
           !controller.hasDataUpdateOptions ||
-          (controller.parsing is! bool && controller.parsing is! Undefined) ||
+          !(controller.parsing?.isDefault ?? true) ||
           meta.data.length != snapshot.counts[i]) {
         return full();
       }
@@ -1405,7 +1405,7 @@ class Chart(
       final primitive = snapshot.validateValues(
         i,
         controller.dataUpdateShape,
-        prepared: controller.parsing == false,
+        prepared: controller.parsing == null,
       );
       if (primitive == null) return full();
       controller.primitiveDataUpdate = primitive;

@@ -118,7 +118,7 @@ bool fastBarModeWritesDirectly(IChart chart, String mode) {
 bool fastBarKeepsRulers(List<DatasetController> controllers) {
   if (controllers.length < 2) return false;
   for (final controller in controllers) {
-    if (!controller.primitiveDataUpdate || controller.parsing == false) {
+    if (!controller.primitiveDataUpdate || controller.parsing == null) {
       return false;
     }
   }

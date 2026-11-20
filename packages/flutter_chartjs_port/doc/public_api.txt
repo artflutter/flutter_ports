@@ -372,6 +372,7 @@ OuterRadiusAnimation
 OverridesByTypeScope
 PaddingScope
 ParsedItem
+ParsingKeys
 ParsingOptionsScope
 PartitionedFillCanvas
 Path2D
@@ -1422,6 +1423,7 @@ OuterRadiusAnimation
 OverridesByTypeScope
 PaddingScope
 ParsedItem
+ParsingKeys
 ParsingOptionsScope
 PartitionedFillCanvas
 Path2D

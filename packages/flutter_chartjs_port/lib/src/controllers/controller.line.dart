@@ -540,7 +540,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
         resolution = _prepareLineResolution();
         if (resolution != null) {
           resolutionConfig = chart.config as Config;
-          resolutionClass = dataElementType! as JsClass;
+          resolutionClass = dataElementType!;
           resolutionDataset = this.index;
           contextReader = NativePointContextReader.prepare(
             meta,

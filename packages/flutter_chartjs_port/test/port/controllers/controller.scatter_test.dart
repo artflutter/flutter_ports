@@ -409,7 +409,7 @@ void main() {
           _expectLinePoints(chart);
         } else {
           expect(meta.dataset, isNull);
-          expect(controller.datasetElementType, isFalse);
+          expect(controller.datasetElementType, isNull);
         }
         expect(controller.getMaxOverflow(), maxOverflow);
       }

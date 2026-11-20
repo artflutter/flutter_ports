@@ -779,30 +779,6 @@ void main() {
       );
       expect(_OrderLinear.log, ['x0', 'y0', 'x1', 'y1']);
     });
-
-    test('a key that is not a string throws in the loop', () {
-      final data = <Object?>[1.0];
-      final chart = _chart(lineConfig(data, xType: 'category'));
-      final meta = chart.getDatasetMeta(0);
-      final controller = _controllerOf(chart)
-        ..parsing = <String, Object?>{'xAxisKey': 5};
-      addTearDown(() => controller.parsing = false);
-      expect(
-        controller.parseObjectData(meta, const <Object?>[], 0, 0),
-        isEmpty,
-      );
-      expect(
-        () => controller.parseObjectData(
-          meta,
-          <Object?>[
-            <String, Object?>{'x': 1.0, 'y': 2.0},
-          ],
-          0,
-          1,
-        ),
-        throwsA(isA<TypeError>()),
-      );
-    });
   });
 
   group('the doughnut parse', () {

@@ -684,18 +684,8 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   /// @protected
   ///
   /// The destructuring defaults `{xAxisKey = 'x', yAxisKey = 'y'}` are
-  /// [valueOrDefault]. A key that is not a string throws a [TypeError] at
-  /// the cast inside the loop (Chart.js ADR 0036, section 4). A parse of no
-  /// item does not throw.
-  ///
-  /// Upstream throws at that call only when its resolver cache has no
-  /// entry for the `ToString` of the key: then `key.split` throws. The
-  /// cache holds `''`, `'x'`, `'y'` and each string key of an earlier
-  /// call. Thus the key `[]` (the string `''`) and the key `[['y']]` (the
-  /// option resolver gives `['y']`, the string `'y'`) do not throw upstream,
-  /// but throw here. The cache of `resolveObjectKey` is private to
-  /// `helpers.core.dart`, and the cast is the form of Chart.js ADR 0036,
-  /// section 4.
+  /// the defaults of the Dart `null` keys of [parsing] (row
+  /// `adapt-parsing-keys`).
   ///
   /// Each item is a [ParsedItem]. A `TypedDataItem` data item gives its
   /// typed field for the default key ([dataItemValue]).
@@ -708,14 +698,8 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
   ) {
     final iScale = meta.iScale;
     final vScale = meta.vScale;
-    final xAxisKey = valueOrDefault(
-      readOption(parsing, OptionKey.xAxisKey),
-      'x',
-    );
-    final yAxisKey = valueOrDefault(
-      readOption(parsing, OptionKey.yAxisKey),
-      'y',
-    );
+    final xAxisKey = parsing?.xAxisKey ?? 'x';
+    final yAxisKey = parsing?.yAxisKey ?? 'y';
     // `iScale.axis === 'x' ? xAxisKey : yAxisKey`.
     final iAxisKey = iScale!.axis is XAxis ? xAxisKey : yAxisKey;
     final vAxisKey = vScale!.axis is XAxis ? xAxisKey : yAxisKey;
@@ -723,13 +707,8 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     for (var i = start, ilen = start + count; i < ilen; ++i) {
       final obj = jsGetIndex(data, i);
       final item = ParsedItem()
-        ..setValue(
-          iScale.axis,
-          iScale.parse(dataItemValue(obj, iAxisKey! as String), i),
-        );
-      parsed.add(
-        _parseValue(dataItemValue(obj, vAxisKey! as String), item, vScale, i),
-      );
+        ..setValue(iScale.axis, iScale.parse(dataItemValue(obj, iAxisKey), i));
+      parsed.add(_parseValue(dataItemValue(obj, vAxisKey), item, vScale, i));
     }
     return parsed;
   }
@@ -1660,7 +1639,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     if (updatingData &&
         reuseDataLayout &&
         primitiveDataUpdate &&
-        parsing != false &&
+        parsing != null &&
         cached != null &&
         cached.scale.type == 'category' &&
         !jsTruthy(options.readKey(OptionKey.skipNull))) {
@@ -1712,7 +1691,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         updatingData &&
             reuseDataLayout &&
             primitiveDataUpdate &&
-            parsing != false &&
+            parsing != null &&
             ruler.scale.type == 'category'
         ? ruler
         : null;

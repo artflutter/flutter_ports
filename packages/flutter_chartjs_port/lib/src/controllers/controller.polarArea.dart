@@ -432,7 +432,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
         mode == 'none' &&
         start == 0 &&
         count > 2 &&
-        parsing != false &&
+        parsing != null &&
         _nativeRadialScale(scale);
     // An existing entry stands before a color plan. It is the premise of the
     // copy: each tick of `Chart.updateData` starts with the entry.
