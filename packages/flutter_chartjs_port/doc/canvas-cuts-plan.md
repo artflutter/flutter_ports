@@ -2932,3 +2932,12 @@ controller, tooltip, data-update and legend builders to native scopes, retaining
 Map objects where the probes observe their reads. No production canvas code or deferred
 cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates remain
 unchanged. No trigger occurred.
+
+## Ten typed widget lifecycle cases, 2026-11-20
+
+Ten additional cases in `test/port/widgets/chart_view_test.dart` now use its typed config
+helper and `ChartView`: four lifecycle/key cases, two sizing cases, two reduced-motion
+cases and two resize-callback cases. Their expectations and names are unchanged. Raw
+config identity and mutation coverage remains on the raw entry. No production canvas code
+or deferred cut changes. The named references, inventory, tests of §2.6 and §3.5, and
+estimates remain unchanged. No trigger occurred.

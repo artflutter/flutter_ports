@@ -417,11 +417,11 @@ void main() {
 
   group('life cycle and keys', () {
     testWidgets('a rebuild keeps the canvas and the chart', (tester) async {
-      final config = _config();
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      final config = _typedConfig();
+      await tester.pumpWidget(_box(ChartView(config: config)));
       final canvas = _canvas(tester);
       final chart = _chart(tester);
-      await tester.pumpWidget(_box(ChartView.raw(config: config), width: 380));
+      await tester.pumpWidget(_box(ChartView(config: config), width: 380));
       await tester.pump();
       expect(_canvas(tester), same(canvas));
       expect(_chart(tester), same(chart));
@@ -429,14 +429,14 @@ void main() {
     });
 
     testWidgets('a new key makes a new chart', (tester) async {
-      final config = _config();
+      final config = _typedConfig();
       await tester.pumpWidget(
-        _box(ChartView.raw(key: const ValueKey(1), config: config)),
+        _box(ChartView(key: const ValueKey(1), config: config)),
       );
       final canvas = _canvas(tester);
       final chart = _chart(tester)!;
       await tester.pumpWidget(
-        _box(ChartView.raw(key: const ValueKey(2), config: config)),
+        _box(ChartView(key: const ValueKey(2), config: config)),
       );
       expect(_canvas(tester), isNot(same(canvas)));
       expect(chart.canvas, isNull);
@@ -446,17 +446,17 @@ void main() {
 
     testWidgets('a GlobalKey move keeps the chart', (tester) async {
       final key = GlobalKey();
-      final config = _config(options: {'maintainAspectRatio': false});
+      final config = _typedConfig(options: {'maintainAspectRatio': false});
       Widget build({required bool left}) => _box(
         Row(
           children: [
             SizedBox(
               width: 200,
-              child: left ? ChartView.raw(key: key, config: config) : null,
+              child: left ? ChartView(key: key, config: config) : null,
             ),
             SizedBox(
               width: 200,
-              child: left ? null : ChartView.raw(key: key, config: config),
+              child: left ? null : ChartView(key: key, config: config),
             ),
           ],
         ),
@@ -477,8 +477,8 @@ void main() {
       final counts = <String, int>{};
       await tester.pumpWidget(
         _box(
-          ChartView.raw(
-            config: _config(
+          ChartView(
+            config: _typedConfig(
               plugins: [_counter('destroy', 'afterDestroy', counts)],
             ),
           ),
@@ -867,10 +867,10 @@ void main() {
 
     testWidgets('a change of the parent width resizes the chart in the next '
         'frame', (tester) async {
-      final config = _config();
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      final config = _typedConfig();
+      await tester.pumpWidget(_box(ChartView(config: config)));
       final chart = _chart(tester)!;
-      await tester.pumpWidget(_box(ChartView.raw(config: config), width: 300));
+      await tester.pumpWidget(_box(ChartView(config: config), width: 300));
       expect(chart.width, 400);
       await tester.pump();
       expect((chart.width, chart.height), (300.0, 150.0));
@@ -880,7 +880,7 @@ void main() {
     testWidgets('the intrinsic height before the start is the canvas default '
         '(Open 1)', (tester) async {
       await tester.pumpWidget(
-        _box(IntrinsicHeight(child: ChartView.raw(config: _config()))),
+        _box(IntrinsicHeight(child: ChartView(config: _typedConfig()))),
       );
       // IntrinsicHeight asks the host before its first layout: the canvas
       // has its default height of 150, not the 200 of the chart. The chart
@@ -905,7 +905,7 @@ void main() {
         'calls onComplete once and onProgress never', (tester) async {
       var complete = 0;
       var progress = 0;
-      final config = _config(
+      final config = _typedConfig(
         options: <String, Object?>{
           'animation': <String, Object?>{
             'onComplete': (Object? context) => complete++,
@@ -914,7 +914,7 @@ void main() {
         },
       );
       await tester.pumpWidget(
-        _motion(_box(ChartView.raw(config: config)), reduced: true),
+        _motion(_box(ChartView(config: config)), reduced: true),
       );
       final chart = _chart(tester)!;
       expect(animator.has(chart), isFalse);
@@ -935,14 +935,14 @@ void main() {
     testWidgets('a change of the preference to on ends a loop: true '
         'animation', (tester) async {
       final counts = <String, int>{};
-      final config = _config(
+      final config = _typedConfig(
         options: <String, Object?>{
           'animation': <String, Object?>{'loop': true},
         },
         plugins: [_counter('update', 'beforeUpdate', counts)],
       );
       Widget build({required bool reduced}) =>
-          _motion(_box(ChartView.raw(config: config)), reduced: reduced);
+          _motion(_box(ChartView(config: config)), reduced: reduced);
       await tester.pumpWidget(build(reduced: false));
       final chart = _chart(tester)!;
       for (var i = 0; i < 100; i++) {
@@ -1094,7 +1094,7 @@ void main() {
       tester,
     ) async {
       late StateSetter setOuter;
-      final config = _config(
+      final config = _typedConfig(
         options: <String, Object?>{
           'onResize': (Object? chart, Object? size) => setOuter(() {}),
         },
@@ -1103,7 +1103,7 @@ void main() {
         StatefulBuilder(
           builder: (context, setState) {
             setOuter = setState;
-            return _box(ChartView.raw(config: config));
+            return _box(ChartView(config: config));
           },
         ),
       );
@@ -1116,7 +1116,7 @@ void main() {
       late StateSetter setOuter;
       var resizes = 0;
       var builds = 0;
-      final config = _config(
+      final config = _typedConfig(
         options: <String, Object?>{
           'onResize': (Object? chart, Object? size) {
             resizes++;
@@ -1131,7 +1131,7 @@ void main() {
           builder: (context, setState) {
             setOuter = setState;
             builds++;
-            return _box(ChartView.raw(config: config));
+            return _box(ChartView(config: config));
           },
         ),
       );
