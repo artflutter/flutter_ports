@@ -605,17 +605,17 @@ void main() {
       final controller = chart.getDatasetMeta(0).controller!;
       expect(
         jsTruthy(
-          xScale.getLabelForValue(jsGet(controller.getParsed(0), xScale.id)),
+          scaleLabelOf(xScale, jsGet(controller.getParsed(0), xScale.id)),
         ),
         isTrue,
       );
       expect(
-        xScale.getLabelForValue(jsGet(controller.getParsed(0), xScale.id)),
+        scaleLabelOf(xScale, jsGet(controller.getParsed(0), xScale.id)),
         'Jan 1, 2015, 8:00:00 pm',
       );
       expect(
         xScale.getLabelForValue(
-          xScale.getValueForPixel(xScale.getPixelForTick(6)!),
+          xScale.getValueForPixel(xScale.getPixelForTick(6)!)!,
         ),
         'Jan 10, 2015, 12:00:00 pm',
       );
@@ -718,8 +718,8 @@ void main() {
         final xScale = chart.scales['x']!;
         final controller = chart.getDatasetMeta(0).controller!;
         final value = jsGet(controller.getParsed(0), xScale.id);
-        expect(jsTruthy(xScale.getLabelForValue(value)), isTrue);
-        expect(xScale.getLabelForValue(value), 'Jan 1, 2015, 8:00:00 pm');
+        expect(jsTruthy(scaleLabelOf(xScale, value)), isTrue);
+        expect(scaleLabelOf(xScale, value), 'Jan 1, 2015, 8:00:00 pm');
       },
     );
 
@@ -772,7 +772,8 @@ void main() {
 
       final xScale = chart.scales['x']!;
       final controller = chart.getDatasetMeta(0).controller!;
-      final label = xScale.getLabelForValue(
+      final label = scaleLabelOf(
+        xScale,
         jsGet(controller.getParsed(0), xScale.id),
       );
       expect(label, equals('Jan 8, 2018, 5:14:23 am'));

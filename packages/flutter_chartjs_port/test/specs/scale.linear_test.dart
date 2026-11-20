@@ -1317,8 +1317,8 @@ void main() {
       const max = 40;
       final scale = chart.scales['x']!;
 
-      expect(scale.getPixelForValue(max), toBeCloseToPixel(end));
-      expect(scale.getPixelForValue(min), toBeCloseToPixel(start));
+      expect(scale.getPixelForValue(max.toDouble()), toBeCloseToPixel(end));
+      expect(scale.getPixelForValue(min.toDouble()), toBeCloseToPixel(start));
       expect(scale.getValueForPixel(end), closeTo(max, 5e-5));
       expect(scale.getValueForPixel(start), closeTo(min, 5e-5));
 
@@ -1328,8 +1328,8 @@ void main() {
       start = chart.chartArea!.left;
       end = chart.chartArea!.right;
 
-      expect(scale.getPixelForValue(max), toBeCloseToPixel(start));
-      expect(scale.getPixelForValue(min), toBeCloseToPixel(end));
+      expect(scale.getPixelForValue(max.toDouble()), toBeCloseToPixel(start));
+      expect(scale.getPixelForValue(min.toDouble()), toBeCloseToPixel(end));
       expect(scale.getValueForPixel(end), closeTo(min, 5e-5));
       expect(scale.getValueForPixel(start), closeTo(max, 5e-5));
     });
@@ -1353,8 +1353,8 @@ void main() {
       const max = 40;
       final scale = chart.scales['y']!;
 
-      expect(scale.getPixelForValue(max), toBeCloseToPixel(end));
-      expect(scale.getPixelForValue(min), toBeCloseToPixel(start));
+      expect(scale.getPixelForValue(max.toDouble()), toBeCloseToPixel(end));
+      expect(scale.getPixelForValue(min.toDouble()), toBeCloseToPixel(start));
       expect(scale.getValueForPixel(end), closeTo(max, 5e-5));
       expect(scale.getValueForPixel(start), closeTo(min, 5e-5));
 
@@ -1364,8 +1364,8 @@ void main() {
       start = chart.chartArea!.bottom;
       end = chart.chartArea!.top;
 
-      expect(scale.getPixelForValue(max), toBeCloseToPixel(start));
-      expect(scale.getPixelForValue(min), toBeCloseToPixel(end));
+      expect(scale.getPixelForValue(max.toDouble()), toBeCloseToPixel(start));
+      expect(scale.getPixelForValue(min.toDouble()), toBeCloseToPixel(end));
       expect(scale.getValueForPixel(end), closeTo(min, 5e-5));
       expect(scale.getValueForPixel(start), closeTo(max, 5e-5));
     });

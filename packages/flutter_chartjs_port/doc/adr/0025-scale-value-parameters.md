@@ -2,6 +2,7 @@
 
 - Status: accepted (2026-10-20)
 - Superseded in part by: [Chart.js ADR 0033](0033-radial-scale-centers.md) (2026-10-21), for §5 `xCenter` and `yCenter`
+- Superseded in part by: [Chart.js ADR 0186](0186-typed-scale-value-methods.md) (2026-11-20), for §1 to §3 of `parse`, `getLabelForValue`, `getPixelForValue` and `getDecimalForValue`
 - Date: 2026-10-20
 - Related: [Chart.js ADR 0003](0003-type-only-dependencies.md) (type libraries, a member with its
   first caller, records for inline object types),

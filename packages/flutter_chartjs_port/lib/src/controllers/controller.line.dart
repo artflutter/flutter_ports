@@ -447,12 +447,18 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
       final nullData = isNullOrUndef(vValue);
       // :100, also :104 (one-read rule).
       final iValue = parsedValueOf(parsed, iAxis);
-      final iPixel = iScale.getPixelForValue(iValue, index);
+      final iPixel = iScale.getPixelForValue(
+        scaleValueOf(iScale, iValue),
+        index,
+      );
       writes.axis(iAxis, iPixel);
       final vPixel = reset || nullData
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
-              hasStack ? applyStack(vScale, parsed, stacked) : vValue,
+              scaleValueOf(
+                vScale,
+                hasStack ? applyStack(vScale, parsed, stacked) : vValue,
+              ),
               index,
             );
       // The x of a pass that qualifies (Chart.js ADR 0109), and the gap test

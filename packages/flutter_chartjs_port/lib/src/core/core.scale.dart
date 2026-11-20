@@ -334,7 +334,11 @@ TextAlign? _titleAlign(ChartAlign? align, Object? position, Object? reverse) {
       // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
       final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
       titleY =
-          scales[positionAxisID]!.getPixelForValue(value) + height - offset;
+          scales[positionAxisID]!.getPixelForValue(
+            scaleValueOf(scales[positionAxisID]!, value),
+          ) +
+          height -
+          offset;
     } else if (position == ChartPosition.center) {
       titleY = (chartArea!.bottom + chartArea.top) / 2 + height - offset;
     } else {
@@ -345,7 +349,12 @@ TextAlign? _titleAlign(ChartAlign? align, Object? position, Object? reverse) {
     if (position is ScaleValuePosition) {
       // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
       final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
-      titleX = scales[positionAxisID]!.getPixelForValue(value) - width + offset;
+      titleX =
+          scales[positionAxisID]!.getPixelForValue(
+            scaleValueOf(scales[positionAxisID]!, value),
+          ) -
+          width +
+          offset;
     } else if (position == ChartPosition.center) {
       titleX = (chartArea!.left + chartArea.right) / 2 - width + offset;
     } else {
@@ -709,10 +718,10 @@ class Scale(AnyObject cfg)
 
   /// core.scale.js:241 `_userMax`, the parsed `max` option.
   ///
-  /// [parse] gives a number, JS `null` or JS `undefined` (the logarithmic
-  /// parse of 0). Dart `null` stands for JS `null`, and NaN for JS
-  /// `undefined` ([_parsedBound]). Each reader gives the same result for NaN
-  /// and `undefined`.
+  /// [parse] gives a number or JS `null`, and the logarithmic parse of 0
+  /// gives NaN for the JS `undefined` of upstream. Dart `null`
+  /// stands for JS `null`, and NaN for JS `undefined` ([_parsedBound]).
+  /// Each reader gives the same result for NaN and `undefined`.
   /// scale.logarithmic.js:165 and scale.time.js:376 read it.
   double? userMax;
 
@@ -908,14 +917,12 @@ class Scale(AnyObject cfg)
 
   /// The number of the [parse] result [value] for [userMin], [userMax],
   /// [suggestedMin] and [_suggestedMax]: Dart `null` for JS `null`, and NaN
-  /// for another value. Another value is JS `undefined`, or the string of
-  /// a base scale with no parse, which each reader treats as `undefined`
+  /// for a value that is not finite. Such a value is the NaN of the
+  /// logarithmic parse of 0, the JS `undefined` of upstream (row
+  /// `adapt-native-scale-values`), which each reader treats as `undefined`
   /// (`finiteOrDefault`, `isFinite`, the truthiness).
-  static double? _parsedBound(Object? value) => switch (value) {
-    null => null,
-    num() => value.toDouble(),
-    _ => double.nan,
-  };
+  static double? _parsedBound(double? value) =>
+      value == null || value.isFinite ? value : double.nan;
 
   /// core.scale.js:270 `parse(raw, index)`.
   ///
@@ -923,10 +930,21 @@ class Scale(AnyObject cfg)
   /// @param {*} raw
   /// @param {number} [index]
   /// @since 3.0
+  ///
+  /// Upstream gives [raw] as it is. The port gives a number (row
+  /// `adapt-native-scale-values`): a number gives itself, Dart `null` and
+  /// the [undefined] sentinel give Dart `null`, and another value gives its
+  /// `ToNumber` ([jsToNumber]).
   @override
-  Object? parse(Object? raw, [int? index]) {
+  double? parse(Object? raw, [int? index]) {
     // eslint-disable-line no-unused-vars
-    return raw;
+    // DIVERGES(chartjs): adapt-native-scale-values, a number or null.
+    return switch (raw) {
+      final num number => number.toDouble(),
+      null => null,
+      _ when identical(raw, undefined) => null,
+      _ => jsToNumber(raw),
+    };
   }
 
   /// core.scale.js:283 `getUserBounds()`.
@@ -1863,9 +1881,14 @@ class Scale(AnyObject cfg)
   /// Used to get the label to display in the tooltip for the given value
   /// @param {*} value
   /// @return {string}
+  ///
+  /// Upstream gives [value] as it is. The port gives its text (row
+  /// `adapt-native-scale-values`), the `'' + label` of
+  /// core.datasetController.js:693-694.
   @override
-  Object? getLabelForValue(Object? value) {
-    return value;
+  String getLabelForValue(double value) {
+    // DIVERGES(chartjs): adapt-native-scale-values, the text of the number.
+    return jsToString(value);
   }
 
   /// core.scale.js:888 `getPixelForValue(value, index)`.
@@ -1877,9 +1900,9 @@ class Scale(AnyObject cfg)
   /// @param {number} [index]
   /// @return {number}
   ///
-  /// [value] is any JS value (Chart.js ADR 0025).
+  /// [value] is a number (row `adapt-native-scale-values`).
   @override
-  double getPixelForValue(Object? value, [int? index]) {
+  double getPixelForValue(double value, [int? index]) {
     // eslint-disable-line no-unused-vars
     return double.nan;
   }
@@ -2117,7 +2140,9 @@ class Scale(AnyObject cfg)
         // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
         final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
         borderValue = alignBorderValue(
-          chart.scales[positionAxisID]!.getPixelForValue(value),
+          chart.scales[positionAxisID]!.getPixelForValue(
+            scaleValueOf(chart.scales[positionAxisID]!, value),
+          ),
         );
       }
 
@@ -2132,7 +2157,9 @@ class Scale(AnyObject cfg)
         // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
         final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
         borderValue = alignBorderValue(
-          chart.scales[positionAxisID]!.getPixelForValue(value),
+          chart.scales[positionAxisID]!.getPixelForValue(
+            scaleValueOf(chart.scales[positionAxisID]!, value),
+          ),
         );
       }
 
@@ -2295,7 +2322,9 @@ class Scale(AnyObject cfg)
         // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
         final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
         y =
-            chart.scales[positionAxisID]!.getPixelForValue(value) +
+            chart.scales[positionAxisID]!.getPixelForValue(
+              scaleValueOf(chart.scales[positionAxisID]!, value),
+            ) +
             tickAndPadding;
       }
       textAlign = _getXAxisLabelAlignment();
@@ -2305,7 +2334,9 @@ class Scale(AnyObject cfg)
       } else if (position is ScaleValuePosition) {
         // DIVERGES(chartjs): adapt-chart-position-enum, the object form.
         final ScaleValuePosition(scaleId: positionAxisID, :value) = position;
-        x = chart.scales[positionAxisID]!.getPixelForValue(value);
+        x = chart.scales[positionAxisID]!.getPixelForValue(
+          scaleValueOf(chart.scales[positionAxisID]!, value),
+        );
       }
       textAlign = _getYAxisLabelAlignment(tl).textAlign;
     }

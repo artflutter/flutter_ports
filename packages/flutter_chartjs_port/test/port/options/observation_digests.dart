@@ -382,13 +382,13 @@ const Map<String, String> observationDigests = {
   'fixture controller.bar/stacking/issue-9105.js (trace)':
       '85c105567979f105befe2eefd1e1013b364f73b6457d0ff1abb735fe715d8ca9',
   'fixture controller.bar/stacking/logarithmic-strings.js (plain)':
-      '098a3e17f862172e52237447e53e2f00ba11915067ced22fb4d0db0c4920d2e7',
+      'd78695b5bb6457b9f18904c3eb7b10751e836f71cc2a72033d5616e3a2e7bcc5',
   'fixture controller.bar/stacking/logarithmic-strings.js (trace)':
-      '8060df88284b2dbf6dfe8ab3c235e601228d129842d68fe228dfb474230c0893',
+      '704e2450f1786fc21adae33a70a93f513a8f791184f992a98c2119d30a944952',
   'fixture controller.bar/stacking/logarithmic.js (plain)':
-      '098a3e17f862172e52237447e53e2f00ba11915067ced22fb4d0db0c4920d2e7',
+      'd78695b5bb6457b9f18904c3eb7b10751e836f71cc2a72033d5616e3a2e7bcc5',
   'fixture controller.bar/stacking/logarithmic.js (trace)':
-      '8060df88284b2dbf6dfe8ab3c235e601228d129842d68fe228dfb474230c0893',
+      '704e2450f1786fc21adae33a70a93f513a8f791184f992a98c2119d30a944952',
   'fixture controller.bar/stacking/order-default.json (plain)':
       '89e9ecc8528c1b33cbc3201e9c94d008130f997a8fda38d35991be16788b367e',
   'fixture controller.bar/stacking/order-default.json (trace)':

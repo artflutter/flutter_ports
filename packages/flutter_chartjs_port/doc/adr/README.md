@@ -27,7 +27,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0022](0022-chart-test-harness.md) Chart test harness on Flutter: accepted, superseded in part by 0108.
 - [0023](0023-underscore-member-collisions.md) Underscore members with a colliding name: accepted.
 - [0024](0024-dates.md) Dates: accepted, superseded in part by 0110, 0145, 0173.
-- [0025](0025-scale-value-parameters.md) Scale value parameters: accepted, superseded in part by 0033.
+- [0025](0025-scale-value-parameters.md) Scale value parameters: accepted, superseded in part by 0033, 0186.
 - [0026](0026-number-formatting-on-package-intl.md) Number formatting on package:intl: accepted, supersedes 0008, superseded by 0119.
 - [0027](0027-parsed-data.md) Parsed data in the controllers: accepted, superseded by 0036.
 - [0028](0028-controller-interfaces.md) Controller interfaces and values: accepted, superseded in part by 0145.
@@ -179,4 +179,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0182](0182-resolved-plugin-option-classes.md) Resolved option classes for the built-in plugins: accepted, supersedes 0150.
 - [0183](0183-typed-scale-option-classes.md) Typed scale option classes: accepted, supersedes 0054.
 - [0185](0185-typed-element-options.md) Typed element options: accepted.
+- [0186](0186-typed-scale-value-methods.md) Typed scale value methods: accepted, supersedes 0025.
 <!-- adr-index:end -->

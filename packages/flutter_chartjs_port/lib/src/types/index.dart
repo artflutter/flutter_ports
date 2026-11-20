@@ -471,24 +471,24 @@ abstract interface class IScale() implements IElement, LayoutItem {
 
   /// index.d.ts:1352 `getLabelForValue(value: number): string`.
   ///
-  /// The scale of `core.scale.js:877` returns [value] as it is. Thus the
-  /// parameter and the result are any value. `getLabelAndValue` applies
-  /// `ToString` to the result (core.datasetController.js:693-694).
-  Object? getLabelForValue(Object? value);
+  /// [value] is a number, as index.d.ts types it (row
+  /// `adapt-native-scale-values`). The result is the text of the label.
+  String getLabelForValue(double value);
 
   /// index.d.ts:1366 `getPixelForValue(value: number, index?: number):
   /// number`.
   ///
-  /// index.d.ts:1366 types [value] as a number. core.scale.js:884 documents
-  /// `@param {*} value`, and each scale tests the JS type of the value, for
-  /// example `scale.category.js:133-139` and `scale.logarithmic.js:210-220`.
-  /// Thus [value] is any JS value: Dart `null` is JS `null`, and the
-  /// `undefined` sentinel is JS `undefined` (Chart.js ADR 0025). Dart `null`
-  /// for [index] stands for JS `undefined`.
-  double getPixelForValue(Object? value, [int? index]);
+  /// [value] is a number, as index.d.ts types it: a caller with a value of
+  /// the user converts it through [scaleValueOf] first (row
+  /// `adapt-native-scale-values`). Dart `null` for [index] stands for JS
+  /// `undefined`.
+  double getPixelForValue(double value, [int? index]);
 
   /// index.d.ts:1385 `parse`.
-  Object? parse(Object? raw, [int? index]);
+  ///
+  /// [raw] is a value of the user. The result is a number, or Dart `null`
+  /// for a value with no number (row `adapt-native-scale-values`).
+  double? parse(Object? raw, [int? index]);
 
   /// index.d.ts:1386 `getUserBounds`.
   ({double min, double max, bool minDefined, bool maxDefined}) getUserBounds();

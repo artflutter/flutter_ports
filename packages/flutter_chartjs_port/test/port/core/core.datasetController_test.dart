@@ -246,13 +246,16 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
       final properties = <String, Object?>{};
       // `properties[iAxis]`: the key of the axis class.
       properties[axisDataKey(iAxis)!] = iScale.getPixelForValue(
-        parsedValueOf(parsed, iAxis),
+        scaleValueOf(iScale, parsedValueOf(parsed, iAxis)),
         i,
       );
       properties[axisDataKey(vAxis)!] = vScale.getPixelForValue(
-        stacked != StackMode.off
-            ? applyStack(vScale, parsed, stacked)
-            : parsedValueOf(parsed, vAxis),
+        scaleValueOf(
+          vScale,
+          stacked != StackMode.off
+              ? applyStack(vScale, parsed, stacked)
+              : parsedValueOf(parsed, vAxis),
+        ),
         i,
       );
       if (includeOptions) {
@@ -289,9 +292,9 @@ final class _Area(
   double get height => bottom - top;
 }
 
-/// A fake scale: a linear, category or raw parse, labels and user bounds.
-/// The raw parse returns the value as it is, for the `<` of the sorted
-/// test.
+/// A fake scale: a linear or category parse, labels and user bounds. The
+/// parse gives a number (row `adapt-native-scale-values`): the raw kind of
+/// the generator has no port.
 final class _FakeScale(@override final IChart chart, AnyObject spec)
     implements IScale {
   @override
@@ -314,17 +317,14 @@ final class _FakeScale(@override final IChart chart, AnyObject spec)
   final AnyObject? bounds = spec['bounds'] as AnyObject?;
 
   @override
-  Object? parse(Object? raw, [int? index]) {
-    if (kind == 'raw') {
-      return raw;
-    }
+  double? parse(Object? raw, [int? index]) {
     if (raw == null || raw is Undefined) {
       return null;
     }
     if (kind == 'category') {
       if (raw is String) {
         final i = getLabels().indexOf(raw);
-        return i == -1 ? (index ?? undefined) : i.toDouble();
+        return i == -1 ? index?.toDouble() : i.toDouble();
       }
       return raw is num ? raw.toDouble() : null;
     }
@@ -339,18 +339,17 @@ final class _FakeScale(@override final IChart chart, AnyObject spec)
       labels ?? jsGet(chart.data, 'labels')! as List<Object?>;
 
   @override
-  Object? getLabelForValue(Object? value) {
+  String getLabelForValue(double value) {
     if (kind == 'category') {
       final labels = getLabels();
-      if (value is num &&
-          value.isFinite &&
+      if (value.isFinite &&
           value == value.truncateToDouble() &&
           value >= 0 &&
           value < labels.length) {
-        return labels[value.toInt()];
+        return jsToString(labels[value.toInt()]);
       }
     }
-    return value;
+    return jsToString(value);
   }
 
   @override
@@ -386,8 +385,7 @@ final class _FakeScale(@override final IChart chart, AnyObject spec)
   }
 
   @override
-  double getPixelForValue(Object? value, [int? index]) =>
-      jsToNumber(value) * 10;
+  double getPixelForValue(double value, [int? index]) => value * 10;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -1038,9 +1036,20 @@ void main() {
     expect(datasetControllerReferenceArch, 'arm64');
   });
 
+  // A scale of the port gives a number from `parse` and takes a number in
+  // `getLabelForValue` (row `adapt-native-scale-values`).
+  const skips = {
+    'sorted raw values': 'diverges: adapt-native-scale-values',
+    // The label of a value that is not a number on the fake scale: the port
+    // gives the fake its number, where upstream gives the value as it is.
+    'parsePrimitiveData with labels': 'diverges: adapt-native-scale-values',
+    'parsing false with primitive data': 'diverges: adapt-native-scale-values',
+  };
+
   group('upstream scenarios', () {
     for (final (:spec, :observations) in datasetControllerReference) {
-      test(spec['name']! as String, () {
+      final name = spec['name']! as String;
+      test(name, skip: skips[name], () {
         final run = _Run(spec);
         expect(
           run.runAll().map(referenceColorTokens).toList(),

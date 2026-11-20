@@ -469,8 +469,8 @@ void main() {
         final point = meta.data[5] as PointElement;
         // The category x is the index of the label. The y values moved.
         expect(data[5]['x'], 5);
-        expect(point.x, x.getPixelForValue(5.0, 5));
-        expect(point.y, y.getPixelForValue(data[5]['y'], 5));
+        expect(point.x, x.getPixelForValue(5, 5));
+        expect(point.y, y.getPixelForValue(scaleValueOf(y, data[5]['y']), 5));
         expect(c.chartArea!.bottom, lessThan(chartBenchHeight));
       },
     );

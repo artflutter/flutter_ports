@@ -97,8 +97,7 @@ final class _Meta(Map<String, Object?> spec) implements ChartMeta {
 /// `getPixelForValue(v) = offset + ToNumber(v)`.
 final class _OtherScale(final double offset) implements IScale {
   @override
-  double getPixelForValue(Object? value, [int? index]) =>
-      offset + jsToNumber(value);
+  double getPixelForValue(double value, [int? index]) => offset + value;
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -185,8 +184,8 @@ final class _TestScale(super.cfg, final AnyObject spec) extends Scale {
   }
 
   @override
-  double getPixelForValue(Object? value, [int? index]) {
-    return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
+  double getPixelForValue(double value, [int? index]) {
+    return getPixelForDecimal((value - min) / (max - min));
   }
 
   /// `scale.configure()`.
@@ -567,7 +566,7 @@ final class _RecordingScale() implements IScale {
   final List<Object?> values = [];
 
   @override
-  double getPixelForValue(Object? value, [int? index]) {
+  double getPixelForValue(double value, [int? index]) {
     values.add(value);
     return 50;
   }
@@ -875,7 +874,10 @@ void main() {
       expect(scale.buildTicks(), isEmpty);
       expect(scale.getPixelForValue(1), isNaN);
       expect(scale.getValueForPixel(1), isNull);
-      expect(scale.getLabelForValue('a'), 'a');
+      // The label is the text of the number (Chart.js ADR 0186): upstream
+      // gives the value as it is.
+      expect(scale.getLabelForValue(12), '12');
+      expect(scaleLabelOf(scale, 'a'), 'NaN');
       expect(scale.parse(12), 12);
       expect(scale.getPixelForTick(0), isNull);
       expect(scale.getTicks(), same(scale.ticks));
@@ -1189,7 +1191,8 @@ void main() {
   group('object position value (core.scale.js:145, :156, :1064, :1077, '
       ':1182, :1191)', () {
     // Upstream passes the raw `position[positionAxisID]` to
-    // getPixelForValue. So does the port (Chart.js ADR 0025). Each scale
+    // getPixelForValue. The port passes its number, `scaleValueOf` of the
+    // value (Chart.js ADR 0186). Each scale
     // with a title makes three calls: the label items (:1182, :1191), the
     // grid line items (:1064, :1077) and the title (:145, :156).
     for (final (axis, axisClass, otherAxis) in const [
@@ -1198,12 +1201,12 @@ void main() {
     ]) {
       group('$axis scale', () {
         for (final (value, expected) in <(Object?, Matcher)>[
-          ('B', equals('B')),
-          (null, isNull),
-          ('7', equals('7')),
+          ('B', isNaN),
+          (null, isNaN),
+          ('7', equals(7)),
           (3, equals(3)),
         ]) {
-          test('passes $value unchanged', () {
+          test('passes the number of $value', () {
             final chart = _plainChart();
             final other = _RecordingScale();
             chart.scales[otherAxis] = other;

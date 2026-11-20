@@ -33,8 +33,8 @@ import 'scale_logarithmic_reference.dart';
 // section 1), as flutter_test_config.dart does. The other scales of the
 // dist do not change these charts: a scale registers only its own defaults.
 //
-// The groups of Chart.js ADR 0025 pin the fast path of getPixelForValue
-// (section 3) and the relations of the value types (section 9) without
+// The groups of Chart.js ADR 0186 pin the arithmetic of getPixelForValue
+// (section 3) and the values of scaleValueOf (section 2) without
 // generated values.
 
 /// The cartesian test controller `logTest` of the generator: the
@@ -70,6 +70,39 @@ Object _intIfIntegral(double value) =>
 /// second 100 and the second min are `int` values here, where the
 /// generator gives numbers: they take the literal lines of
 /// [LogarithmicScale.getPixelForValue].
+/// The value of the port for the probe value [v]: the `undefined` of
+/// upstream, the parse of a 0, is NaN (row
+/// `adapt-native-scale-values`).
+Object? _logValue(Object? v) => identical(v, undefined) ? double.nan : v;
+
+/// The upstream form of a parse result: NaN, the parse of a 0, is
+/// `undefined` (row `adapt-native-scale-values`).
+Object? _upstreamParse(double? v) => v != null && v.isNaN ? undefined : v;
+
+/// [expected] with the pixel of min for the probes NaN and `false` (indexes
+/// 5 and 17 of `pixelForValue`): NaN is the parse of a 0, the upstream
+/// `undefined`, so a NaN value draws at min, where upstream gives NaN, and
+/// `false` is the number 0, where upstream takes `log10(false)` (row
+/// `adapt-native-scale-values`). Index 1 is the probe 0.0, the pixel of min.
+Map<String, Object?> _withNaNAtMin(Map<String, Object?> expected) {
+  final scales = expected['scales']! as Map<String, Object?>;
+  return {
+    ...expected,
+    'scales': {
+      for (final MapEntry(:key, :value) in scales.entries)
+        key: switch (value) {
+          {'pixelForValue': final List<Object?> pixels} => {
+            ...value as Map<String, Object?>,
+            'pixelForValue': [...pixels]
+              ..[5] = pixels[1]
+              ..[17] = pixels[1],
+          },
+          _ => value,
+        },
+    },
+  };
+}
+
 Map<String, Object?> _logObservations(Scale scale, Chart chart) {
   if (scale is! LogarithmicScale) return const {};
   final horizontal = scale.isHorizontal();
@@ -92,7 +125,7 @@ Map<String, Object?> _logObservations(Scale scale, Chart chart) {
         true,
         0,
       ])
-        scale.getLabelForValue(v),
+        scaleLabelOf(scale, _logValue(v)),
     ],
     'parse': [
       for (final v in <Object?>[
@@ -114,7 +147,7 @@ Map<String, Object?> _logObservations(Scale scale, Chart chart) {
         <Object?>[7.0],
         <String, Object?>{},
       ])
-        scale.parse(v, 0),
+        _upstreamParse(scale.parse(v, 0)),
     ],
     'pixelForValue': [
       for (final v in <Object?>[
@@ -139,7 +172,7 @@ Map<String, Object?> _logObservations(Scale scale, Chart chart) {
         <Object?>[100.0],
         <String, Object?>{},
       ])
-        scale.getPixelForValue(v),
+        scale.getPixelForValue(scaleValueOf(scale, _logValue(v))),
     ],
     'valuesForPixels': [
       for (final p in [start - 50, start + 0.37 * (end - start), end + 50])
@@ -275,12 +308,16 @@ void main() {
           referenceAbsoluteTolerance = 1e-6;
           addTearDown(() => referenceAbsoluteTolerance = saved);
         }
-        expectScaleChart(chart, c.expected, extra: _logObservations);
+        expectScaleChart(
+          chart,
+          _withNaNAtMin(c.expected),
+          extra: _logObservations,
+        );
       });
     }
   });
 
-  group('fast path (Chart.js ADR 0025)', () {
+  group('the arithmetic (Chart.js ADR 0186)', () {
     for (final (name, data) in [
       ('a range from 1 to 100', <num?>[1.0, 10.0, 100.0]),
       ('a range from 0.001 to 1000', <num?>[0.001, 3.0, 1000.0]),
@@ -313,8 +350,9 @@ void main() {
           -7.0,
         ]) {
           final pixel = y.getPixelForValue(value);
-          // scale.logarithmic.js:211-219 with a number.
-          final number = value == 0 ? min : value;
+          // scale.logarithmic.js:211-219 with a number. NaN is the parse of
+          // a 0 (row adapt-native-scale-values).
+          final number = value == 0 || value.isNaN ? min : value;
           expect(
             pixel,
             _samePixel(
@@ -330,7 +368,7 @@ void main() {
           );
           if (value.isFinite && value == value.truncateToDouble()) {
             expect(
-              y.getPixelForValue(value.toInt()),
+              y.getPixelForValue(value.toInt().toDouble()),
               _samePixel(pixel),
               reason: '${value.toInt()} as an int',
             );
@@ -339,53 +377,61 @@ void main() {
         // 0 and 0.0 give the pixel of min. An integral min gives the same
         // pixel as an int.
         expect(y.getPixelForValue(0), y.getPixelForValue(min));
-        expect(y.getPixelForValue(0.0), y.getPixelForValue(min));
+        expect(y.getPixelForValue(0), y.getPixelForValue(min));
         expect(
-          y.getPixelForValue(_intIfIntegral(min)),
+          y.getPixelForValue(scaleValueOf(y, _intIfIntegral(min))),
           y.getPixelForValue(min),
         );
       });
     }
   });
 
-  group('value types (Chart.js ADR 0025)', () {
+  group('value types (Chart.js ADR 0186)', () {
     testWidgets('undefined, 0, 0.0 and -0.0 give the pixel of min', (
       tester,
     ) async {
       final y = _y(_chart([0.0, 10.0, 100.0]));
       final pixel = y.getPixelForValue(y.min);
       expect(pixel, isNot(isNaN));
-      expect(y.getPixelForValue(undefined), pixel);
+      expect(y.getPixelForValue(scaleValueOf(y, undefined)), pixel);
       expect(y.getPixelForValue(0), pixel);
-      expect(y.getPixelForValue(0.0), pixel);
-      expect(y.getPixelForValue(-0.0), pixel);
+      expect(y.getPixelForValue(0), pixel);
+      expect(y.getPixelForValue(-0), pixel);
     });
 
-    testWidgets('null and NaN give NaN', (tester) async {
+    testWidgets('null gives NaN, and NaN gives the pixel of min', (
+      tester,
+    ) async {
       final y = _y(_chart([1.0, 10.0, 100.0]));
-      expect(y.getPixelForValue(null), isNaN);
-      expect(y.getPixelForValue(double.nan), isNaN);
-      expect(y.getPixelForValue('abc'), isNaN);
+      expect(y.getPixelForValue(scaleValueOf(y, null)), isNaN);
+      // NaN is the parse of a 0 (row adapt-native-scale-values).
+      expect(y.getPixelForValue(double.nan), y.getPixelForValue(y.min));
+      expect(y.getPixelForValue(scaleValueOf(y, 'abc')), isNaN);
     });
 
     testWidgets("'100' gives the pixel of 100", (tester) async {
       final y = _y(_chart([1.0, 10.0, 1000.0]));
-      expect(y.getPixelForValue('100'), y.getPixelForValue(100.0));
-      expect(y.getPixelForValue('100'), y.getPixelForValue(100));
-      expect(y.getPixelForValue(true), y.getPixelForValue(1.0));
+      expect(
+        y.getPixelForValue(scaleValueOf(y, '100')),
+        y.getPixelForValue(100),
+      );
+      expect(
+        y.getPixelForValue(scaleValueOf(y, '100')),
+        y.getPixelForValue(100),
+      );
+      expect(y.getPixelForValue(scaleValueOf(y, true)), y.getPixelForValue(1));
     });
 
-    testWidgets('the parse of a 0 is undefined, and its label is 0', (
-      tester,
-    ) async {
+    testWidgets('the parse of a 0 is NaN, and its label is 0', (tester) async {
       final chart = _chart([0.0, 10.0, 100.0]);
       final y = _y(chart);
       final parsed = chart.getDatasetMeta(0).parsed;
-      // scale.logarithmic.js:105-108: the parsed value of the 0.
-      expect(jsGet(parsed[0], 'y'), same(undefined));
-      expect(y.parse(0), same(undefined));
-      expect(y.parse(-0.0), same(undefined));
-      expect(y.getLabelForValue(undefined), '0');
+      // scale.logarithmic.js:105-108: the parsed value of the 0, NaN for the
+      // upstream undefined (row adapt-native-scale-values).
+      expect(jsGet(parsed[0], 'y'), isNaN);
+      expect(y.parse(0), isNaN);
+      expect(y.parse(-0.0), isNaN);
+      expect(scaleLabelOf(y, undefined), '0');
       // The point of the 0 is at the pixel of min.
       expect(chart.getDatasetMeta(0).data[0].y, y.getPixelForValue(y.min));
     });

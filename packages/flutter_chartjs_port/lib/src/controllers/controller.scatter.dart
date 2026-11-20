@@ -258,8 +258,8 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     final xScale = meta.xScale;
     final yScale = meta.yScale;
     final parsed = getParsed(index);
-    final x = xScale!.getLabelForValue(parsedValueOf(parsed, const XAxis()));
-    final y = yScale!.getLabelForValue(parsedValueOf(parsed, const YAxis()));
+    final x = scaleLabelOf(xScale!, parsedValueOf(parsed, const XAxis()));
+    final y = scaleLabelOf(yScale!, parsedValueOf(parsed, const YAxis()));
     final label = jsGetIndex(labels, index);
 
     return (
@@ -568,12 +568,15 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
       final nullData = isNullOrUndef(vValue);
       // :129, also :133 (one-read rule).
       final iValue = parsedValueOf(parsed, iAxis);
-      final iPixel = iScale.getPixelForValue(iValue, i);
+      final iPixel = iScale.getPixelForValue(scaleValueOf(iScale, iValue), i);
       writes.axis(iAxis, iPixel);
       final vPixel = reset || nullData
           ? vScale.getBasePixel()
           : vScale.getPixelForValue(
-              hasStack ? applyStack(vScale, parsed, stacked) : vValue,
+              scaleValueOf(
+                vScale,
+                hasStack ? applyStack(vScale, parsed, stacked) : vValue,
+              ),
               i,
             );
       // The x of a pass that qualifies (Chart.js ADR 0109), and the gap test

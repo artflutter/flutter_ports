@@ -40,8 +40,7 @@ final class _Scale({
   getUserBounds() => bounds;
 
   @override
-  double getPixelForValue(Object? value, [int? index]) =>
-      pixel(jsToNumber(value));
+  double getPixelForValue(double value, [int? index]) => pixel(value);
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

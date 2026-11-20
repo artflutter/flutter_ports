@@ -36,8 +36,7 @@ final class _IndexScale({
   @override
   bool isHorizontal() => horizontal;
   @override
-  double getPixelForValue(Object? value, [int? index]) =>
-      10 * jsToNumber(value);
+  double getPixelForValue(double value, [int? index]) => 10 * value;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

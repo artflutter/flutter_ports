@@ -999,8 +999,14 @@ void main() {
             var start = _side(chart.chartArea!, chartStart);
             var end = _side(chart.chartArea!, chartEnd);
 
-            expect(scale.getPixelForValue(firstTick), toBeCloseToPixel(start));
-            expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
+            expect(
+              scale.getPixelForValue(firstTick.toDouble()),
+              toBeCloseToPixel(start),
+            );
+            expect(
+              scale.getPixelForValue(lastTick.toDouble()),
+              toBeCloseToPixel(end),
+            );
 
             expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
             expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
@@ -1012,8 +1018,14 @@ void main() {
             start = _side(chart.chartArea!, chartEnd);
             end = _side(chart.chartArea!, chartStart);
 
-            expect(scale.getPixelForValue(firstTick), toBeCloseToPixel(start));
-            expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
+            expect(
+              scale.getPixelForValue(firstTick.toDouble()),
+              toBeCloseToPixel(start),
+            );
+            expect(
+              scale.getPixelForValue(lastTick.toDouble()),
+              toBeCloseToPixel(end),
+            );
 
             expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
             expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
@@ -1108,10 +1120,13 @@ void main() {
               var end = _side(chart.chartArea!, axis.end);
 
               expect(
-                scale.getPixelForValue(firstTick),
+                scale.getPixelForValue(firstTick.toDouble()),
                 toBeCloseToPixel(start),
               );
-              expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
+              expect(
+                scale.getPixelForValue(lastTick.toDouble()),
+                toBeCloseToPixel(end),
+              );
               expect(
                 scale.getPixelForValue(0),
                 toBeCloseToPixel(start),
@@ -1129,10 +1144,13 @@ void main() {
               end = _side(chart.chartArea!, axis.start);
 
               expect(
-                scale.getPixelForValue(firstTick),
+                scale.getPixelForValue(firstTick.toDouble()),
                 toBeCloseToPixel(start),
               );
-              expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
+              expect(
+                scale.getPixelForValue(lastTick.toDouble()),
+                toBeCloseToPixel(end),
+              );
 
               expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
               expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
@@ -1240,7 +1258,10 @@ void main() {
               var end = _side(chart.chartArea!, axis.end);
 
               expect(scale.getPixelForValue(0), toBeCloseToPixel(start));
-              expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
+              expect(
+                scale.getPixelForValue(lastTick.toDouble()),
+                toBeCloseToPixel(end),
+              );
 
               expect(scale.getValueForPixel(start), closeTo(scale.min, 5e-5));
               expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
@@ -1254,7 +1275,10 @@ void main() {
               end = _side(chart.chartArea!, axis.start);
 
               expect(scale.getPixelForValue(0), toBeCloseToPixel(start));
-              expect(scale.getPixelForValue(lastTick), toBeCloseToPixel(end));
+              expect(
+                scale.getPixelForValue(lastTick.toDouble()),
+                toBeCloseToPixel(end),
+              );
 
               expect(scale.getValueForPixel(start), closeTo(scale.min, 5e-5));
               expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));

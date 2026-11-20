@@ -246,8 +246,14 @@ void main() {
           final scaleX = _scale(tester, 'x');
           final scaleY = _scale(tester, 'y');
           final item = _item(tester, 7);
-          expect(points[7].x, scaleX.getPixelForValue(item['x'], 7));
-          expect(points[7].y, scaleY.getPixelForValue(item['y'], 7));
+          expect(
+            points[7].x,
+            scaleX.getPixelForValue(scaleValueOf(scaleX, item['x']), 7),
+          );
+          expect(
+            points[7].y,
+            scaleY.getPixelForValue(scaleValueOf(scaleY, item['y']), 7),
+          );
           expect((points[7].options! as JsObjectFace)['radius'], 3);
 
           // Stopping publishes the figures with the x ticks.

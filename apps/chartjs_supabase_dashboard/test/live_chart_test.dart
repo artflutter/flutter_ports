@@ -427,7 +427,7 @@ void main() {
     final origin = tester.getTopLeft(
       find.byKey(const ValueKey('dashboard.chart')),
     );
-    final y = chart().scales['y']!.getPixelForValue(50.0);
+    final y = chart().scales['y']!.getPixelForValue(50);
     final dash = from + ((left + 20 - from) / 8).ceil() * 8;
     final result = (
       await colorAt(tester, origin + Offset(dash + 2, y)) == line,

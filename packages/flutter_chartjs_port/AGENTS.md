@@ -337,7 +337,11 @@ repository.
       `Tick` of `core.scale.js:15` is the native class `Tick` of `lib/src/types/tick.dart` (row
       `adapt-native-tick`). `core.scale.dart` and `core.scale.autoskip.dart` are not pure layers:
       `core.scale` imports `helpers.extras`, and `core.scale.autoskip` imports `core.scale`.
-      `Scale` implements `MinMax`. Its value methods take `Object?` (Chart.js ADR 0025).
+      `Scale` implements `MinMax`. `parse` gives a `double?`, `getLabelForValue` takes a `double`
+      and gives a `String`, and `getPixelForValue` takes a `double` (Chart.js ADR 0186, row
+      `adapt-native-scale-values`). A caller with a value of the user converts it with
+      `scaleValueOf` or `scaleLabelOf` of the pure `scale_value.dart`. The other value methods take `Object?`
+      (Chart.js ADR 0025).
       `Scale._alignToPixels` is a `bool`, the `ToBoolean` of the option at its write in
       `configure` (row `adapt-loop-invariant-truthiness`). `_convertTicksToLabels` removes the
       ticks with no label in one pass, where upstream does one `splice` for each (row
@@ -810,9 +814,9 @@ repository.
       `harness-method-fields`). The hooks cast `chart.tooltip` to `Tooltip`.
   - `lib/src/scales/`: the six scales of `scales/index.dart` and `scale.linearbase.dart`
     (`LinearScaleBase`: not exported, not registered). They are not pure layers: each imports
-    `core.scale`. The value methods take any JS value (`Object?`). The category, linear and
-    logarithmic `getPixelForValue` and the time `getDecimalForValue` have a port-only
-    `value is double` fast path (Chart.js ADR 0025). The `_` members that another file or a spec
+    `core.scale`. `getPixelForValue`, `getLabelForValue` and the time `getDecimalForValue` take a
+    `double`, and `parse` gives a `double?` (Chart.js ADR 0186). The logarithmic parse of a 0 gives
+    NaN for the `undefined` of upstream. The `_` members that another file or a spec
     reads drop the underscore: `startValue`, `endValue`, `valueRange`, `offsets`, `generate`,
     `unit`, `adapter`, `pointLabels`, `pointLabelItems`. The time scales read each date through
     `adapters._date` (Chart.js ADR 0024). A category `parse` of a value that is not a String skips

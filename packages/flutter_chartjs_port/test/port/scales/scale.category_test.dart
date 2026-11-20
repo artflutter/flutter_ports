@@ -38,8 +38,8 @@ import 'scale_chart_harness.dart';
 // label. Their actions put a DateTime for each label time in the labels, and
 // [_dateObservations] parses copies of the labels.
 //
-// The groups of Chart.js ADR 0025 pin the fast path of getPixelForValue
-// (section 3) and the relations of the value types (section 9) without
+// The groups of Chart.js ADR 0186 pin the arithmetic of getPixelForValue
+// (section 3) and the values of scaleValueOf (section 2) without
 // generated values. The group js-semantics-narrow-labels pins the row of
 // differences.md: a labels List with a narrow element type.
 
@@ -60,8 +60,8 @@ final class _TestLinearScale(super.cfg) extends Scale {
   ];
 
   @override
-  double getPixelForValue(Object? value, [int? index]) {
-    return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
+  double getPixelForValue(double value, [int? index]) {
+    return getPixelForDecimal((value - min) / (max - min));
   }
 
   @override
@@ -105,7 +105,7 @@ Map<String, Object?> _categoryObservations(Scale scale, Chart chart) {
     'labels': labels,
     'labelForValue': [
       for (final v in <Object?>[0, 1, 1.5, '1', -1, n, 'x', true, null])
-        scale.getLabelForValue(v),
+        scaleLabelOf(scale, v),
     ],
     'parse': [
       for (final v in <Object?>[
@@ -139,10 +139,11 @@ Map<String, Object?> _categoryObservations(Scale scale, Chart chart) {
         true,
         double.infinity,
       ])
-        scale.getPixelForValue(v),
+        scale.getPixelForValue(scaleValueOf(scale, v)),
     ],
     'pixelForLabel': [
-      for (final label in labels) scale.getPixelForValue(label),
+      for (final label in labels)
+        scale.getPixelForValue(scaleValueOf(scale, label)),
     ],
     'valuesForPixels': [
       for (final p in [start - 50, start + 0.37 * (end - start), end + 50])
@@ -164,7 +165,8 @@ Map<String, Object?> _addingObservations(Scale scale, Chart chart) {
   return {
     ...observations,
     'pixelForNewLabels': [
-      for (final v in ['zz', '1', 'zz']) scale.getPixelForValue(v),
+      for (final v in ['zz', '1', 'zz'])
+        scale.getPixelForValue(scaleValueOf(scale, v)),
     ],
     'labelsAfter': List<Object?>.of(scale.getLabels()),
   };
@@ -194,9 +196,13 @@ Map<String, Object?> _dateObservations(Scale scale, Chart chart) {
     'parseCopy': [for (final copy in copies) scale.parse(copy)],
     'parseCopyAt0': [for (final copy in copies) scale.parse(copy, 0)],
     'pixelForLabel': [
-      for (final label in labels) scale.getPixelForValue(label),
+      for (final label in labels)
+        scale.getPixelForValue(scaleValueOf(scale, label)),
     ],
-    'pixelForCopy': [for (final copy in copies) scale.getPixelForValue(copy)],
+    'pixelForCopy': [
+      for (final copy in copies)
+        scale.getPixelForValue(scaleValueOf(scale, copy)),
+    ],
   };
 }
 
@@ -251,7 +257,7 @@ final Map<String, void Function(Chart chart)> _actions = {
     chart.update();
   },
   'the next update removes the label of getPixelForValue': (chart) {
-    chart.scales['x']!.getPixelForValue('D');
+    chart.scales['x']!.getPixelForValue(scaleValueOf(chart.scales['x']!, 'D'));
     chart.update();
   },
   'bounds data, then bounds ticks': (chart) {
@@ -426,7 +432,7 @@ void main() {
     }
   });
 
-  group('fast path (Chart.js ADR 0025)', () {
+  group('the arithmetic (Chart.js ADR 0186)', () {
     // Without offset, the labels A, B and C give the start value 0 and the
     // value range 2. With offset, they give -0.5 and 3.
     for (final (offset, startValue, valueRange) in [
@@ -468,7 +474,7 @@ void main() {
           );
           if (value.isFinite && value == value.truncateToDouble()) {
             expect(
-              x.getPixelForValue(value.toInt()),
+              x.getPixelForValue(value.toInt().toDouble()),
               _samePixel(pixel),
               reason: '${value.toInt()} as an int',
             );
@@ -478,26 +484,26 @@ void main() {
     }
   });
 
-  group('value types (Chart.js ADR 0025)', () {
+  group('value types (Chart.js ADR 0186)', () {
     testWidgets('a label gives the pixel of its index', (tester) async {
       final x = _x(_abcChart());
-      expect(x.getPixelForValue('B'), x.getPixelForValue(1.0));
-      expect(x.getPixelForValue('B'), x.getPixelForValue(1));
-      expect(x.getPixelForValue('C'), x.getPixelForValue(2.0));
+      expect(x.getPixelForValue(scaleValueOf(x, 'B')), x.getPixelForValue(1));
+      expect(x.getPixelForValue(scaleValueOf(x, 'B')), x.getPixelForValue(1));
+      expect(x.getPixelForValue(scaleValueOf(x, 'C')), x.getPixelForValue(2));
       expect(x.getLabels(), ['A', 'B', 'C']);
     });
 
     testWidgets('null, undefined and NaN give NaN', (tester) async {
       final x = _x(_abcChart());
-      expect(x.getPixelForValue(null), isNaN);
-      expect(x.getPixelForValue(undefined), isNaN);
+      expect(x.getPixelForValue(scaleValueOf(x, null)), isNaN);
+      expect(x.getPixelForValue(scaleValueOf(x, undefined)), isNaN);
       expect(x.getPixelForValue(double.nan), isNaN);
       expect(x.getLabels(), ['A', 'B', 'C']);
     });
 
     testWidgets('a string that is not a label adds a label', (tester) async {
       final x = _x(_abcChart());
-      expect(x.getPixelForValue('D'), x.getPixelForValue(3.0));
+      expect(x.getPixelForValue(scaleValueOf(x, 'D')), x.getPixelForValue(3));
       expect(x.getLabels(), ['A', 'B', 'C', 'D']);
     });
 
@@ -505,9 +511,9 @@ void main() {
       tester,
     ) async {
       final x = _x(_abcChart());
-      final pixel = x.getPixelForValue('1');
-      expect(pixel, x.getPixelForValue(3.0));
-      expect(pixel, isNot(x.getPixelForValue(1.0)));
+      final pixel = x.getPixelForValue(scaleValueOf(x, '1'));
+      expect(pixel, x.getPixelForValue(3));
+      expect(pixel, isNot(x.getPixelForValue(1)));
       expect(x.getLabels(), ['A', 'B', 'C', '1']);
     });
 
@@ -520,7 +526,7 @@ void main() {
           },
         ),
       });
-      final pixel = _x(chart).getPixelForValue('B');
+      final pixel = _x(chart).getPixelForValue(scaleValueOf(_x(chart), 'B'));
       final items = chart.scales['y']!.getLabelItems();
       expect(items, isNotEmpty);
       for (final item in items) {
@@ -570,7 +576,7 @@ void main() {
       expect(x.parse(2022.0, 0), 2.0);
       expect(x.parse(1999.0), 2.0);
       expect(x.getLabels(), [2020, 2021, 2022]);
-      expect(chart.getDatasetMeta(0).data.single.x, x.getPixelForValue(2.0));
+      expect(chart.getDatasetMeta(0).data.single.x, x.getPixelForValue(2));
     });
 
     testWidgets('a List of labels that cannot grow throws at a string that '
@@ -591,7 +597,7 @@ void main() {
         'adds', (tester) async {
       final x = _x(labelsChart(<String>['a', 'b', 'c'], 'd'));
       expect(x.getLabels(), ['a', 'b', 'c', 'd']);
-      expect(x.getPixelForValue('d'), x.getPixelForValue(3.0));
+      expect(x.getPixelForValue(scaleValueOf(x, 'd')), x.getPixelForValue(3));
     });
   });
 

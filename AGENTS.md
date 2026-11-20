@@ -1481,9 +1481,9 @@ sankey ADRs are proposed. The doc paths are relative to
   plugin with `nativePlugin` of `test/support/native_plugin.dart` (`copyReference` of
   `test/port/scales/scale_chart_harness.dart` does it for the key `plugins`).
 - Jasmine `this` in a spec port is a set of `late` variables of the group closure.
-- A test scale overrides `getPixelForValue(Object? value, [int? index])` and applies
-  `jsToNumber(value)` before its arithmetic. A test controller passes the raw
-  `jsGet(parsed, axis)` (Chart.js ADR 0025).
+- A test scale overrides `getPixelForValue(double value, [int? index])`. A test controller
+  converts the raw `jsGet(parsed, axis)` with `scaleValueOf(scale, value)`, a label with
+  `scaleLabelOf(scale, value)` (Chart.js ADR 0186).
 - A scale reference test in `test/port/scales/` builds each chart of its generator with
   `acquireChart` in a `testWidgets` case and compares it through `scale_chart_harness.dart`. Its
   `main()` registers the test controller as a class value. The draw calls have the element draws:

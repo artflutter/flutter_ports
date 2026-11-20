@@ -111,7 +111,7 @@ class RadarController(super.chart, super.datasetIndex, [super.newTarget])
 
     return (
       label: dataLabelLinesOf(label),
-      value: jsToString(vScale.getLabelForValue(parsedValueOf(parsed, axis))),
+      value: scaleLabelOf(vScale, parsedValueOf(parsed, axis)),
     );
   }
 

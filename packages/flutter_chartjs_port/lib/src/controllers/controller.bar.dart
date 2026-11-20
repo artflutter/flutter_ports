@@ -799,14 +799,12 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
             );
       value = '[${jsToString(start)}, ${jsToString(end)}]';
     } else {
-      value = jsToString(
-        vScale!.getLabelForValue(_axisValueOf(parsed, vScale)),
-      );
+      value = scaleLabelOf(vScale!, _axisValueOf(parsed, vScale));
     }
 
     return (
       label: dataLabelLinesOf(
-        jsToString(iScale!.getLabelForValue(_axisValueOf(parsed, iScale))),
+        scaleLabelOf(iScale!, _axisValueOf(parsed, iScale)),
       ),
       value: value,
     );
@@ -1677,7 +1675,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
 
     for (var i = 0; i < ilen; ++i) {
       pixels[i] = iScale!.getPixelForValue(
-        parsedValueOf(getParsed(i), iScale.axis),
+        scaleValueOf(iScale, parsedValueOf(getParsed(i), iScale.axis)),
         i,
       );
     }
@@ -1793,10 +1791,12 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     final startValue = !isNullOrUndef(baseValue) && !floating
         ? baseValue
         : start;
-    var base = vScale.getPixelForValue(startValue);
+    var base = vScale.getPixelForValue(scaleValueOf(vScale, startValue));
 
     if (chart.getDataVisibility(index)) {
-      head = vScale.getPixelForValue(jsAdd(start, length));
+      head = vScale.getPixelForValue(
+        scaleValueOf(vScale, jsAdd(start, length)),
+      );
     } else {
       // When not visible, no height
       head = base;
@@ -1832,7 +1832,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
       }
     }
 
-    if (base == vScale.getPixelForValue(actualBase)) {
+    if (base == vScale.getPixelForValue(scaleValueOf(vScale, actualBase))) {
       final halfGrid = sign(size) * vScale.getLineWidthForValue(actualBase) / 2;
       base += halfGrid;
       size -= halfGrid;
@@ -1933,7 +1933,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
     } else {
       // For non-grouped bar charts, exact pixel values are used
       center = scale.getPixelForValue(
-        _axisValueOf(getParsed(index), scale),
+        scaleValueOf(scale, _axisValueOf(getParsed(index), scale)),
         index,
       );
       size = math.min(maxBarThickness, jsToNumber(ruler.min) * ruler.ratio);

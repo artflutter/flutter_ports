@@ -268,9 +268,9 @@ class _LiveChartState()
       final toValue = to.y;
       if (fromValue == null || toValue == null) continue;
       if ((to.x as double) - (from.x as double) > longest) continue;
-      final x0 = x.getPixelForValue(from.x);
+      final x0 = x.getPixelForValue(scaleValueOf(x, from.x));
       final y0 = y.getPixelForValue(fromValue);
-      final dx = x.getPixelForValue(to.x) - x0;
+      final dx = x.getPixelForValue(scaleValueOf(x, to.x)) - x0;
       final dy = y.getPixelForValue(toValue) - y0;
       final length = math.sqrt(dx * dx + dy * dy);
       if (dx <= 0 || !length.isFinite) continue;

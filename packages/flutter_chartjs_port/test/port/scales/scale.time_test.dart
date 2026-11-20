@@ -39,8 +39,8 @@ import 'scale_time_reference.dart';
 // HH:mm' skips in a zone where the local date at the `Date.now()` of the
 // generator is not its UTC date (_zoneSkips).
 //
-// The groups of Chart.js ADR 0025 pin the fast path of getDecimalForValue
-// (section 3) and the relations of the value types (section 9). The groups
+// The groups of Chart.js ADR 0186 pin the arithmetic of getDecimalForValue
+// (section 3) and the values of scaleValueOf (section 2). The groups
 // adapt-time-generate-no-advance and adapt-time-null-timestamp pin the rows
 // of differences.md. The group 'the throws of upstream' pins the errors of
 // the upstream update for options that a reference case cannot hold.
@@ -262,7 +262,7 @@ void main() {
     );
   });
 
-  group('fast path (Chart.js ADR 0025)', () {
+  group('the arithmetic (Chart.js ADR 0186)', () {
     testWidgets('a double and an int give the same decimal', (tester) async {
       final x = _x(_chart(_xy([_t0, _t0 + 3 * _day, _t0 + 10 * _day])));
       final min = x.min;
@@ -291,7 +291,7 @@ void main() {
         );
         if (value.isFinite && value == value.truncateToDouble()) {
           expect(
-            x.getDecimalForValue(value.toInt()),
+            x.getDecimalForValue(value.toInt().toDouble()),
             _same(decimal),
             reason: '${value.toInt()} as an int',
           );
@@ -300,23 +300,26 @@ void main() {
     });
   });
 
-  group('value types (Chart.js ADR 0025)', () {
+  group('value types (Chart.js ADR 0186)', () {
     testWidgets('null and undefined give NaN', (tester) async {
       final x = _x(_chart(_xy([_t0, _t0 + _day])));
-      expect(x.getDecimalForValue(null), isNaN);
-      expect(x.getPixelForValue(null), isNaN);
-      expect(x.getDecimalForValue(undefined), isNaN);
-      expect(x.getPixelForValue(undefined), isNaN);
+      expect(x.getDecimalForValue(scaleValueOf(x, null)), isNaN);
+      expect(x.getPixelForValue(scaleValueOf(x, null)), isNaN);
+      expect(x.getDecimalForValue(scaleValueOf(x, undefined)), isNaN);
+      expect(x.getPixelForValue(scaleValueOf(x, undefined)), isNaN);
     });
 
     testWidgets('a numeric string equals its number', (tester) async {
       final x = _x(_chart(_xy([_t0, _t0 + _day])));
       final value = _t0 + _day / 3;
       expect(
-        x.getDecimalForValue(jsToString(value)),
+        x.getDecimalForValue(scaleValueOf(x, jsToString(value))),
         x.getDecimalForValue(value),
       );
-      expect(x.getPixelForValue(jsToString(value)), x.getPixelForValue(value));
+      expect(
+        x.getPixelForValue(scaleValueOf(x, jsToString(value))),
+        x.getPixelForValue(value),
+      );
     });
 
     testWidgets('a DateTime x is a JS Date: its time value', (tester) async {

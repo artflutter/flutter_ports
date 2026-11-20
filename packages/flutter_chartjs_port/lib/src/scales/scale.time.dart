@@ -17,9 +17,8 @@
 ///   [DisplayFormats.formatOf].
 /// - Numbers are `double` (Chart.js ADR 0146). `+value` of an adapter
 ///   result is [jsToNumber]. `Date.now()` is `clock.now()`.
-/// - The value methods take any JS value (Chart.js ADR 0025).
-///   [TimeScale.getDecimalForValue] starts with the port-only fast path for
-///   a `double` of Chart.js ADR 0025, section 3.
+/// - The value methods take a `double` (row `adapt-native-scale-values`).
+///   A JS `null` timestamp is [TimeScale.nullValue] there.
 /// - The `_` members that other modules read drop the underscore and carry
 ///   `@internal` (Chart.js ADR 0012, Chart.js ADR 0025, section 6):
 ///   [TimeScale.unit], [TimeScale.adapter], [TimeScale.offsets] and
@@ -362,7 +361,7 @@ ScaleCache _newCache() => ScaleCache()
   ..all = <double?>[];
 
 /// scale.time.js:199 `TimeScale extends Scale`.
-class TimeScale(super.cfg) extends Scale {
+class TimeScale(super.cfg) extends Scale implements NullValueScale {
   /// scale.time.js:247 `constructor(props)`.
   ///
   /// `cfg` is the object `{id, type, ctx, chart}` of [Scale.new]. The
@@ -709,10 +708,12 @@ class TimeScale(super.cfg) extends Scale {
   /// down the original scale. Offsets are added when the `offset` option is
   /// true.
   ///
-  /// It sets [offsets]. A Dart `null` timestamp (JS `null`) gives NaN in
-  /// [getDecimalForValue], as upstream.
+  /// It sets [offsets]. A Dart `null` timestamp (JS `null`) goes to
+  /// [getDecimalForValue] as [nullValue].
   @protected
   void initOffsets([List<double?> timestamps = const []]) {
+    double getDecimalForValue(double? value) =>
+        this.getDecimalForValue(value ?? nullValue);
     var start = 0.0;
     var end = 0.0;
     double first;
@@ -841,15 +842,16 @@ class TimeScale(super.cfg) extends Scale {
   ///
   /// The text of `time.tooltipFormat`, or of the `datetime` display format.
   @override
-  Object? getLabelForValue(Object? value) {
+  String getLabelForValue(double value) {
     final adapter = this.adapter;
     final timeOpts = options.time;
     final tooltipFormat = timeOpts.tooltipFormat;
 
+    // DIVERGES(chartjs): adapt-native-scale-values, the text of the label.
     if (jsTruthy(tooltipFormat)) {
-      return adapter.format(value, tooltipFormat);
+      return jsToString(adapter.format(value, tooltipFormat));
     }
-    return adapter.format(value, timeOpts.displayFormats.datetime);
+    return jsToString(adapter.format(value, timeOpts.displayFormats.datetime));
   }
 
   /// scale.time.js:510 `format(value, format)`.
@@ -922,25 +924,26 @@ class TimeScale(super.cfg) extends Scale {
   /// scale.time.js:562 `getDecimalForValue(value)`.
   ///
   /// [value] - Milliseconds since epoch (1 January 1970 00:00:00 UTC)
-  ///
-  /// [value] is any JS value (Chart.js ADR 0025). `null` gives NaN. The `-`
-  /// operator applies `ToNumber` to another value.
-  double getDecimalForValue(Object? value) {
-    if (value is double) {
-      // Port-only fast path for a number (Chart.js ADR 0025, section 3).
-      return (value - min) / (max - min);
-    }
-    return value == null ? double.nan : (jsToNumber(value) - min) / (max - min);
+  double getDecimalForValue(double value) {
+    return (value - min) / (max - min);
   }
+
+  /// The number that [getDecimalForValue] gets for the JS `null` timestamp
+  /// of a label that the adapter cannot parse: NaN, the result of the `-`
+  /// operator of upstream. [TimeSeriesScale] reads it as 0 (row
+  /// `adapt-native-scale-values`).
+  @override
+  double get nullValue => double.nan;
+
+  /// A value with no number gives NaN, the result of the `-` operator.
+  @override
+  double get nanValue => double.nan;
 
   /// scale.time.js:570 `getPixelForValue(value)`.
   ///
   /// [value] - Milliseconds since epoch (1 January 1970 00:00:00 UTC)
-  ///
-  /// [value] is any JS value (Chart.js ADR 0025). The method gives it
-  /// unchanged to [getDecimalForValue].
   @override
-  double getPixelForValue(Object? value, [int? index]) {
+  double getPixelForValue(double value, [int? index]) {
     final offsets = this.offsets;
     final pos = getDecimalForValue(value);
     return getPixelForDecimal((offsets.start + pos) * offsets.factor);
@@ -957,9 +960,9 @@ class TimeScale(super.cfg) extends Scale {
   /// core.scale.js:906 `getPixelForTick(index)`, for the ticks of this
   /// library. Upstream has no override.
   ///
-  /// `ticks[index].value` is [_tickValue]: [getPixelForValue] gets `null`
-  /// for a `null` tick value, as upstream. The time scale gives NaN for it,
-  /// and the timeseries scale reads it as 0 (row
+  /// `ticks[index].value` is [_tickValue]: [getPixelForValue] gets
+  /// [nullValue] for a `null` tick value. The time scale gives NaN for
+  /// it, and the timeseries scale reads it as 0, as upstream (row
   /// `adapt-time-null-timestamp`). Dart `null` stands for the JS `null` of
   /// an index out of the range.
   @override
@@ -969,7 +972,7 @@ class TimeScale(super.cfg) extends Scale {
       return null;
     }
     // DIVERGES(chartjs): adapt-time-null-timestamp, the null tick value.
-    return getPixelForValue(_tickValue(ticks[index]));
+    return getPixelForValue(_tickValue(ticks[index]) ?? nullValue);
   }
 
   /// scale.time.js:591 `_getLabelSize(label)`.

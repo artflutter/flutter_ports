@@ -12,9 +12,8 @@
 ///   option with a getter of the facade (`options.ticks.minRotation`), and
 ///   applies [jsToNumber] before arithmetic.
 /// - Numbers are `double` (Chart.js ADR 0146).
-/// - The value methods take any JS value (Chart.js ADR 0025).
-///   [LinearScale.getPixelForValue] starts with the port-only fast path for
-///   a `double` of Chart.js ADR 0025, section 3.
+/// - The value methods take a `double` (Chart.js ADR 0186, row
+///   `adapt-native-scale-values`).
 /// - The scale reads the `@internal` members [LinearScaleBase.startValue]
 ///   and [LinearScaleBase.valueRange] (the upstream `_startValue` and
 ///   `_valueRange`) and [Scale.resolveTickFontOptions] (the upstream
@@ -150,19 +149,10 @@ class LinearScale(super.cfg)
 
   /// scale.linear.js:44 `getPixelForValue(value)`.
   ///
-  /// [value] is any JS value (Chart.js ADR 0025). Dart `null` (JS `null`)
-  /// gives NaN. Another value gets `ToNumber` ([jsToNumber]), as the
-  /// upstream subtraction applies it: the `undefined` sentinel and a string
-  /// that is not a number give NaN. [index] has no effect.
+  /// [index] has no effect.
   @override
-  double getPixelForValue(Object? value, [int? index]) {
-    if (value is double) {
-      // Port-only fast path for a number (Chart.js ADR 0025, section 3).
-      return getPixelForDecimal((value - startValue) / valueRange);
-    }
-    return value == null
-        ? double.nan
-        : getPixelForDecimal((jsToNumber(value) - startValue) / valueRange);
+  double getPixelForValue(double value, [int? index]) {
+    return getPixelForDecimal((value - startValue) / valueRange);
   }
 
   /// scale.linear.js:48 `getValueForPixel(pixel)`.

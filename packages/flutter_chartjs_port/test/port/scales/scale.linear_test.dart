@@ -31,8 +31,8 @@ import 'scale_linear_reference.dart';
 // scales of the dist do not change these charts: a scale registers only its
 // own defaults.
 //
-// The groups of Chart.js ADR 0025 pin the fast path of getPixelForValue
-// (section 3) and the relations of the value types (section 9) without
+// The groups of Chart.js ADR 0186 pin the arithmetic of getPixelForValue
+// (section 3) and the values of scaleValueOf (section 2) without
 // generated values.
 
 /// The test controller `scaleTest2` of the generator: the overrides of
@@ -93,7 +93,10 @@ Map<String, Object?> _linearObservations(Scale scale, Chart chart) {
     'endValue': scale.endValue,
     'valueRange': scale.valueRange,
     'tickLimit': scale.getTickLimit(),
-    'pixelForValue': [for (final v in _pixelValues) scale.getPixelForValue(v)],
+    'pixelForValue': [
+      for (final v in _pixelValues)
+        scale.getPixelForValue(scaleValueOf(scale, v)),
+    ],
     'valuesForPixels': [
       for (final p in [start - 50, start + 0.37 * (end - start), end + 50])
         scale.getValueForPixel(p),
@@ -254,7 +257,7 @@ void main() {
     }
   });
 
-  group('fast path (Chart.js ADR 0025)', () {
+  group('the arithmetic (Chart.js ADR 0186)', () {
     for (final (name, scales) in <(String, Map<String, ChartAxis>)>[
       ('a horizontal scale', {}),
       (
@@ -299,7 +302,7 @@ void main() {
             );
             if (value.isFinite && value == value.truncateToDouble()) {
               expect(
-                s.getPixelForValue(value.toInt()),
+                s.getPixelForValue(value.toInt().toDouble()),
                 _samePixel(pixel),
                 reason: '$id: ${value.toInt()} as an int',
               );
@@ -310,30 +313,30 @@ void main() {
     }
   });
 
-  group('value types (Chart.js ADR 0025)', () {
+  group('value types (Chart.js ADR 0186)', () {
     testWidgets('null gives NaN', (tester) async {
       final y = _scale(_linearChart(_scatter()), 'y');
-      expect(y.getPixelForValue(null), isNaN);
-      expect(y.getPixelForValue(null, 0), isNaN);
+      expect(y.getPixelForValue(scaleValueOf(y, null)), isNaN);
+      expect(y.getPixelForValue(scaleValueOf(y, null), 0), isNaN);
     });
 
     testWidgets("undefined and 'B' give NaN", (tester) async {
       final y = _scale(_linearChart(_scatter()), 'y');
-      expect(y.getPixelForValue(undefined), isNaN);
-      expect(y.getPixelForValue('B'), isNaN);
+      expect(y.getPixelForValue(scaleValueOf(y, undefined)), isNaN);
+      expect(y.getPixelForValue(scaleValueOf(y, 'B')), isNaN);
     });
 
     testWidgets("'5' and 5 give the same pixel", (tester) async {
       final y = _scale(_linearChart(_scatter()), 'y');
-      expect(y.getPixelForValue('5'), y.getPixelForValue(5.0));
-      expect(y.getPixelForValue('5'), y.getPixelForValue(5));
-      expect(y.getPixelForValue('5'), isNot(isNaN));
+      expect(y.getPixelForValue(scaleValueOf(y, '5')), y.getPixelForValue(5));
+      expect(y.getPixelForValue(scaleValueOf(y, '5')), y.getPixelForValue(5));
+      expect(y.getPixelForValue(scaleValueOf(y, '5')), isNot(isNaN));
     });
 
     testWidgets('true equals 1 and false equals 0', (tester) async {
       final y = _scale(_linearChart(_scatter()), 'y');
-      expect(y.getPixelForValue(true), y.getPixelForValue(1.0));
-      expect(y.getPixelForValue(false), y.getPixelForValue(0.0));
+      expect(y.getPixelForValue(scaleValueOf(y, true)), y.getPixelForValue(1));
+      expect(y.getPixelForValue(scaleValueOf(y, false)), y.getPixelForValue(0));
     });
 
     testWidgets('getValueForPixel inverts getPixelForValue', (tester) async {

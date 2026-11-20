@@ -12,9 +12,10 @@
 /// - Numbers are `double` (Chart.js ADR 0146). A label index is a `double`
 ///   too. A read of the labels at a value that is not an integer index in
 ///   the range gives the [undefined] sentinel, as JavaScript does.
-/// - The value methods take any JS value (Chart.js ADR 0025).
-///   [CategoryScale.getPixelForValue] starts with the port-only fast path
-///   for a `double` of Chart.js ADR 0025, section 3.
+/// - The value methods take a `double` (row `adapt-native-scale-values`):
+///   a caller with a label converts it through [scaleValueOf], which calls
+///   [CategoryScale.parse] of a [LabelIndexScale], as `getPixelForValue`
+///   does upstream.
 /// - The upstream `_` members that only this file reads keep the
 ///   underscore (Chart.js ADR 0012, Chart.js ADR 0025, section 6):
 ///   `_startValue`, `_valueRange` and `_addedLabels`.
@@ -172,11 +173,11 @@ Object? _labelAt(List<Object?> labels, Object? index) {
 /// [self] that is not a [Scale] throws a [TypeError], as the call
 /// `this.getLabels()` throws for a value without that method.
 ///
-/// `value >= 0` and `value < labels.length` apply `ToNumber` to [value].
-Object? _getLabelForValue(Object? self, Object? value) {
+/// The result is the label, or [value] when no label has that index.
+Object? _getLabelForValue(Object? self, double value) {
   final labels = (self! as Scale).getLabels();
 
-  if (jsToNumber(value) >= 0 && jsToNumber(value) < labels.length) {
+  if (value >= 0 && value < labels.length) {
     return _labelAt(labels, value);
   }
   return value;
@@ -221,7 +222,7 @@ int _relativeIndex(double value, int length) {
 /// The scale of the labels: the value of a label is its index.
 class CategoryScale(super.cfg)
     extends Scale
-    implements NativeCategoryParseScale {
+    implements NativeCategoryParseScale, LabelIndexScale {
   /// scale.category.js:47 `constructor(cfg)`.
   ///
   /// The fields `_startValue`, `_valueRange` and `_addedLabels` get their
@@ -473,11 +474,13 @@ class CategoryScale(super.cfg)
 
   /// scale.category.js:116 `getLabelForValue(value)`.
   ///
-  /// The label at the index [value], or [value] when no label has that
-  /// index.
+  /// The text of the label at the index [value], or of [value] when no
+  /// label has that index: the `'' + label` of
+  /// core.datasetController.js:693-694 (row `adapt-native-scale-values`).
   @override
-  Object? getLabelForValue(Object? value) {
-    return _getLabelForValue(this, value);
+  String getLabelForValue(double value) {
+    // DIVERGES(chartjs): adapt-native-scale-values, the text of the label.
+    return jsToString(_getLabelForValue(this, value));
   }
 
   /// scale.category.js:123 `configure()`.
@@ -500,23 +503,12 @@ class CategoryScale(super.cfg)
   /// Used to get data value locations. Value can either be an index or a
   /// numerical value
   ///
-  /// [value] is any JS value. A value that is not a number gets the index of
-  /// its label through [parse] (Chart.js ADR 0025).
+  /// [value] is a number. Upstream also takes a label and parses it: a
+  /// caller with a label converts it through [scaleValueOf] (row
+  /// `adapt-native-scale-values`).
   @override
-  double getPixelForValue(Object? value, [int? index]) {
-    if (value is double) {
-      // Port-only fast path for a number (Chart.js ADR 0025, section 3).
-      return getPixelForDecimal((value - _startValue) / _valueRange);
-    }
-    if (value is! num) {
-      // Upstream reassigns its parameter.
-      // ignore: parameter_assignments
-      value = parse(value);
-    }
-
-    return value == null
-        ? double.nan
-        : getPixelForDecimal((jsToNumber(value) - _startValue) / _valueRange);
+  double getPixelForValue(double value, [int? index]) {
+    return getPixelForDecimal((value - _startValue) / _valueRange);
   }
 
   /// scale.category.js:143 `getPixelForTick(index)`.

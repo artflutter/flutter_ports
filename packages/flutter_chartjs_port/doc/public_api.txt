@@ -268,6 +268,7 @@ JsFreezable
 JsObjectFace
 JsProxyObject
 JsStringList
+LabelIndexScale
 LabelItem
 LayoutBoxOptions
 LayoutItem
@@ -352,6 +353,7 @@ NativeTypedItems
 NearestInteractionMode
 NearestTooltipPositioner
 NoFill
+NullValueScale
 OffsetAnimation
 Opt
 OptForeign
@@ -972,7 +974,9 @@ rrectContains
 sameAxis
 scaleBorderOf
 scaleCfgArg
+scaleLabelOf
 scaleRangesChanged
+scaleValueOf
 scales
 scanBarInteractionItems
 segments
@@ -1316,6 +1320,7 @@ JsObjectFace
 JsProxyObject
 JsStringList
 KurkleColor
+LabelIndexScale
 LabelItem
 LayoutBoxOptions
 LayoutItem
@@ -1400,6 +1405,7 @@ NativeTypedItems
 NearestInteractionMode
 NearestTooltipPositioner
 NoFill
+NullValueScale
 OffsetAnimation
 Opt
 OptForeign
@@ -2042,7 +2048,9 @@ rrectContains
 sameAxis
 scaleBorderOf
 scaleCfgArg
+scaleLabelOf
 scaleRangesChanged
+scaleValueOf
 scales
 scanBarInteractionItems
 segments

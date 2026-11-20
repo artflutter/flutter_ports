@@ -202,8 +202,8 @@ void main() {
       for (var i = 0; i < data.length; i++) {
         final item = state.dataOf(d)[i];
         final point = data[i] as PointElement;
-        expect(point.x, x.getPixelForValue(item.x, i));
-        expect(point.y, y.getPixelForValue(item.y, i));
+        expect(point.x, x.getPixelForValue(scaleValueOf(x, item.x), i));
+        expect(point.y, y.getPixelForValue(scaleValueOf(y, item.y), i));
         expect(
           point.x,
           closeTo(area.left + (item.x as double) * area.width, 1e-9),

@@ -288,7 +288,7 @@ void main() {
 
         final xScale = chart.scales['x']!;
         expect(
-          xScale.getPixelForValue('tick1'),
+          xScale.getPixelForValue(scaleValueOf(xScale, 'tick1')),
           toBeCloseToPixel(23 + 6), // plus lineHeight
         );
       },
@@ -596,8 +596,8 @@ void main() {
 
         var x = 0.0;
         for (var i = 0; i < 50; i++) {
-          final x2 = scale.getPixelForValue(labels[i]);
-          final x3 = scale.getPixelForValue(i);
+          final x2 = scale.getPixelForValue(scaleValueOf(scale, labels[i]));
+          final x3 = scale.getPixelForValue(i.toDouble());
           expect(x2, _equalsNumber(x3));
           expect(x2, greaterThan(x));
           expect(scale.getValueForPixel(x2), i);

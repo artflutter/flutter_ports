@@ -12,9 +12,9 @@
 ///   (Chart.js ADR 0043): [lookupByKey] reads the entries by key. `time` can
 ///   be Dart `null`, the JS `null` timestamp of a label that the adapter
 ///   cannot parse. The arithmetic reads it with `ToNumber`, as upstream.
-/// - The value methods take any JS value (Chart.js ADR 0025).
-///   [TimeSeriesScale.getDecimalForValue] applies one `ToNumber` at the
-///   entry of `interpolate`. Thus `null` acts as 0.
+/// - The value methods take a `double` (row `adapt-native-scale-values`).
+///   The JS `null` timestamp acts as 0 ([TimeSeriesScale.nullValue]), the
+///   `ToNumber` of `null` at the entry of `interpolate`.
 /// - The `_` members of this file have readers only in this file. They keep
 ///   the underscore (Chart.js ADR 0012, Chart.js ADR 0025, section 6).
 ///
@@ -251,12 +251,15 @@ class TimeSeriesScale(super.cfg) extends TimeScale {
   ///
   /// [value] - Milliseconds since epoch (1 January 1970 00:00:00 UTC)
   ///
-  /// [value] is any JS value. `null` acts as 0 (Chart.js ADR 0025, probe
-  /// P5).
   @override
-  double getDecimalForValue(Object? value) {
-    return (_interpolate(_table, jsToNumber(value)) - _minPos) / _tableRange;
+  double getDecimalForValue(double value) {
+    return (_interpolate(_table, value) - _minPos) / _tableRange;
   }
+
+  /// The JS `null` timestamp acts as 0: `interpolate` applies `ToNumber` to
+  /// it (Chart.js ADR 0025, probe P5).
+  @override
+  double get nullValue => 0;
 
   /// scale.timeseries.js:170 `getValueForPixel(pixel)`.
   @override

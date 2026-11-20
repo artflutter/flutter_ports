@@ -331,7 +331,7 @@ class LinearScaleBase(super.cfg) extends Scale {
   ///
   /// The body is [prototypeParse].
   @override
-  Object? parse(Object? raw, [int? index]) {
+  double? parse(Object? raw, [int? index]) {
     // eslint-disable-line no-unused-vars
     return prototypeParse(raw, index);
   }
@@ -345,7 +345,7 @@ class LinearScaleBase(super.cfg) extends Scale {
   /// ([jsToNumber]), also NaN for a string that is not a number. Dart has
   /// no `Number` wrapper objects, so `raw instanceof Number` has no
   /// counterpart.
-  static Object? prototypeParse(Object? raw, [int? index]) {
+  static double? prototypeParse(Object? raw, [int? index]) {
     if (isNullOrUndef(raw)) {
       return null;
     }
@@ -514,21 +514,12 @@ class LinearScaleBase(super.cfg) extends Scale {
 
   /// scale.linearbase.js:310 `getLabelForValue(value)`.
   ///
-  /// [value] is any JS value. Upstream gives it without a change to
-  /// `Intl.NumberFormat.prototype.format`. `format` applies
-  /// `ToIntlMathematicalValue`: `ToPrimitive`, and then `ToNumber`, but not
-  /// to a String or a BigInt primitive. V8 keeps the exact decimal of such a
-  /// primitive. The port applies [jsToNumber] to [value]. Thus a string whose
-  /// decimal is not the shortest round-trip form of its double gets other
-  /// digits. For example, `'9007199254740993'` gives `9,007,199,254,740,993`
-  /// in V8 and `9,007,199,254,740,992` in the port. Only the digits of the
-  /// label change (Chart.js ADR 0034). The `ticks.format` option is a
-  /// `NumberFormat` of package:intl, which formats the value as it is
-  /// (Chart.js ADR 0119).
+  /// The `ticks.format` option is a `NumberFormat` of package:intl, which
+  /// formats [value] as it is (Chart.js ADR 0119).
   @override
-  Object? getLabelForValue(Object? value) {
+  String getLabelForValue(double value) {
     return formatNumber(
-      jsToNumber(value),
+      value,
       localeOf(readOption(chart.options, OptionKey.locale)),
       options.ticks.format,
     );

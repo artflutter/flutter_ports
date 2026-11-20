@@ -16,7 +16,7 @@ class _OrdinaryRadial(super.cfg) extends RadialLinearScale {
   int parses = 0;
 
   @override
-  Object? parse(Object? raw, [int? index]) {
+  double? parse(Object? raw, [int? index]) {
     parses++;
     return super.parse(raw, index);
   }

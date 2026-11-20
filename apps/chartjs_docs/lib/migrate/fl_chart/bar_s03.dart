@@ -36,7 +36,7 @@ class _BarSample3State() extends State<BarSample3> {
     final y = context.chart.scales['y']!;
     return ChartGradient.linear(
       Offset(0, y.getPixelForValue(0)),
-      Offset(0, y.getPixelForValue(_values[index])),
+      Offset(0, y.getPixelForValue(_values[index].toDouble())),
       const [_darkBlue, Fl.cyan],
     );
   }

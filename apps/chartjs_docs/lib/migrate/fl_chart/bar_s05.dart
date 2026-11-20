@@ -107,7 +107,7 @@ class _BarSample5State() extends State<BarSample5> {
     final sign = mirror ? -1 : 1;
     final from = values.take(item).fold<double>(0, (a, b) => a + b) * sign;
     final to = from + values[item] * sign;
-    final x = context.chart.scales['x']!.getPixelForValue(index);
+    final x = context.chart.scales['x']!.getPixelForValue(index.toDouble());
     final y = context.chart.scales['y']!;
     final (top, bottom) = (y.getPixelForValue(from), y.getPixelForValue(to));
     return ChartGradient.linear(

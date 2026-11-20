@@ -111,7 +111,7 @@ Map<String, Object?> timeObservations(Scale scale, Chart chart) {
         jsToString(mid),
         true,
       ])
-        scale.getDecimalForValue(v),
+        scale.getDecimalForValue(scaleValueOf(scale, v)),
     ],
     'pixelForValue': [
       for (final v in <Object?>[
@@ -121,14 +121,14 @@ Map<String, Object?> timeObservations(Scale scale, Chart chart) {
         jsToString(mid),
         true,
       ])
-        scale.getPixelForValue(v),
+        scale.getPixelForValue(scaleValueOf(scale, v)),
     ],
     'valuesForPixels': [
       for (final p in [start - 20, start + 0.3 * (end - start), end + 20])
         scale.getValueForPixel(p),
     ],
     'labelForValue': [
-      for (final v in <Object?>[min, max, mid, null]) scale.getLabelForValue(v),
+      for (final v in <Object?>[min, max, mid, null]) scaleLabelOf(scale, v),
     ],
     'format': [
       scale.format(min),

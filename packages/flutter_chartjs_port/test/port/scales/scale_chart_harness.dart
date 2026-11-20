@@ -117,11 +117,11 @@ final class ScaleTestController(
       // `properties[iAxis]`: the key of the axis class.
       final properties = <String, Object?>{
         axisDataKey(iAxis)!: iScale.getPixelForValue(
-          parsedValueOf(parsed, iAxis),
+          scaleValueOf(iScale, parsedValueOf(parsed, iAxis)),
           i,
         ),
         axisDataKey(vAxis)!: vScale.getPixelForValue(
-          parsedValueOf(parsed, vAxis),
+          scaleValueOf(vScale, parsedValueOf(parsed, vAxis)),
           i,
         ),
       };
@@ -855,9 +855,16 @@ void expectScaleObservations(
         expect(
           scale[key],
           referenceMatcher(
-            key == 'ticks'
-                ? _nativeTicks(expectedScale[key])
-                : expectedScale[key],
+            switch (key) {
+              'ticks' => _nativeTicks(expectedScale[key]),
+              // The label is the text of the upstream label (Chart.js ADR
+              // 0186): the `'' + label` of the callers.
+              'labelForValue' => [
+                for (final label in expectedScale[key]! as List<Object?>)
+                  jsToString(label),
+              ],
+              _ => expectedScale[key],
+            },
           ),
           reason: '${prefix}scales.$id.$key',
         );
@@ -1024,8 +1031,8 @@ final class _MockBoxMetrics(@override final double width, {required bool empty})
 Object? _jsValueForPixel(Scale s, double p) {
   final value = s.getValueForPixel(p);
   if (s.type != 'category' || value is! num) return value;
-  final p0 = s.getPixelForValue(0.0);
-  final p1 = s.getPixelForValue(1.0);
+  final p0 = s.getPixelForValue(0);
+  final p1 = s.getPixelForValue(1);
   if (p1 == p0 || !p0.isFinite || !p1.isFinite) return value;
   final raw = (p - p0) / (p1 - p0);
   final half = raw.floorToDouble() + 0.5;

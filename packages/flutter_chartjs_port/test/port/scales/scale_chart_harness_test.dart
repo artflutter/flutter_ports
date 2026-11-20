@@ -41,8 +41,8 @@ final class _HarnessLinearScale(super.cfg) extends Scale {
   ];
 
   @override
-  double getPixelForValue(Object? value, [int? index]) {
-    return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
+  double getPixelForValue(double value, [int? index]) {
+    return getPixelForDecimal((value - min) / (max - min));
   }
 
   @override

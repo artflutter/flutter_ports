@@ -459,8 +459,8 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
     final xScale = meta.xScale;
     final yScale = meta.yScale;
     final parsed = getParsed(index);
-    final x = xScale!.getLabelForValue(parsedValueOf(parsed, const XAxis()));
-    final y = yScale!.getLabelForValue(parsedValueOf(parsed, const YAxis()));
+    final x = scaleLabelOf(xScale!, parsedValueOf(parsed, const XAxis()));
+    final y = scaleLabelOf(yScale!, parsedValueOf(parsed, const YAxis()));
     final r = _customOf(parsed);
     final label = jsGetIndex(labels, index);
 
@@ -545,10 +545,14 @@ class BubbleController(super.chart, super.datasetIndex, [super.newTarget])
       }
       final iPixel = reset
           ? iScale.getPixelForDecimal(0.5)
-          : iScale.getPixelForValue(parsedValueOf(parsed, iAxis));
+          : iScale.getPixelForValue(
+              scaleValueOf(iScale, parsedValueOf(parsed, iAxis)),
+            );
       final vPixel = reset
           ? vScale.getBasePixel()
-          : vScale.getPixelForValue(parsedValueOf(parsed, vAxis));
+          : vScale.getPixelForValue(
+              scaleValueOf(vScale, parsedValueOf(parsed, vAxis)),
+            );
 
       final skip = iPixel.isNaN || vPixel.isNaN;
 

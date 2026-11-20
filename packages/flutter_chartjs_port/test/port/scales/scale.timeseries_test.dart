@@ -32,9 +32,8 @@ import 'scale_timeseries_reference.dart';
 // values, before the snapshot of the defaults restore (Chart.js ADR 0020,
 // section 8, and Chart.js ADR 0022, section 8).
 //
-// The group of Chart.js ADR 0025 pins the relations of the value types
-// (section 9, probe P5). The timeseries scale has no fast path (Chart.js
-// ADR 0025, Open 1).
+// The group of Chart.js ADR 0186 pins the values of scaleValueOf
+// (section 2) on the timeseries scale.
 
 /// The cartesian test controller `timeseriesTest` of the generator:
 /// timeseries on the index axis and linear on the value axis.
@@ -140,21 +139,21 @@ void main() {
     );
   });
 
-  group('value types (Chart.js ADR 0025)', () {
+  group('value types (Chart.js ADR 0186)', () {
     testWidgets('null and false act as 0', (tester) async {
       final x = _x([_t0, _t0 + _day, _t0 + 9 * _day]);
       final zero = x.getDecimalForValue(0);
       expect(zero, isNot(isNaN));
-      expect(x.getDecimalForValue(null), zero);
-      expect(x.getDecimalForValue(false), zero);
-      expect(x.getDecimalForValue(0.0), zero);
+      expect(x.getDecimalForValue(scaleValueOf(x, null)), zero);
+      expect(x.getDecimalForValue(scaleValueOf(x, false)), zero);
+      expect(x.getDecimalForValue(0), zero);
     });
 
     testWidgets('undefined and NaN give NaN', (tester) async {
       final x = _x([_t0, _t0 + _day, _t0 + 9 * _day]);
-      expect(x.getDecimalForValue(undefined), isNaN);
+      expect(x.getDecimalForValue(scaleValueOf(x, undefined)), isNaN);
       expect(x.getDecimalForValue(double.nan), isNaN);
-      expect(x.getPixelForValue(undefined), isNaN);
+      expect(x.getPixelForValue(scaleValueOf(x, undefined)), isNaN);
     });
 
     testWidgets('the data timestamps have equal distances', (tester) async {
@@ -195,7 +194,7 @@ void main() {
       expect(x.ticks!.first.value, isNaN);
       expect(x.getPixelForTick(0), isNotNaN);
       expect(x.getPixelForTick(0), x.getPixelForValue(0));
-      expect(x.getPixelForTick(0), x.getPixelForValue(null));
+      expect(x.getPixelForTick(0), x.getPixelForValue(scaleValueOf(x, null)));
       expect(x.paddingLeft, isNotNaN);
     });
   });

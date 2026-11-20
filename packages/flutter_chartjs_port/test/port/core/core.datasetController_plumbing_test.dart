@@ -25,22 +25,8 @@ final class _Logged(final String text, final void Function() onRead) {
   }
 }
 
-/// A scale whose `parse` gives a value that runs user code in a comparison.
-final class _ObjectLinear(super.cfg) extends LinearScale {
-  static void Function()? onRead;
-  static final value = JsClass(
-    'PlumbingObjectLinear',
-    superclass: LinearScale.jsClass,
-    statics: {'id': 'plumbing-object-linear'},
-    construct: (_, args) => _ObjectLinear(scaleCfgArg(args)),
-  );
-
-  // An item value runs user code. The bounds of `Scale.init` have no index.
-  @override
-  Object? parse(Object? raw, [int? index]) => index == null
-      ? super.parse(raw, index)
-      : _Logged('$index', () => onRead?.call());
-}
+/// The hook of the values of [_Logged]: a test sets it.
+void Function()? _onLoggedRead;
 
 /// A scale that logs the order of its `parse` calls.
 final class _OrderLinear(super.cfg) extends LinearScale {
@@ -53,7 +39,7 @@ final class _OrderLinear(super.cfg) extends LinearScale {
   );
 
   @override
-  Object? parse(Object? raw, [int? index]) {
+  double? parse(Object? raw, [int? index]) {
     log.add('$id$index');
     return super.parse(raw, index);
   }
@@ -273,7 +259,6 @@ DatasetController _controllerOf(Chart chart, [int index = 0]) =>
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   Chart.register([
-    _ObjectLinear.value,
     _OrderLinear.value,
     _ShortController.value,
     _DatasetCountController.value,
@@ -686,29 +671,6 @@ void main() {
       expect(meta.parsed[3], same(before[3]));
     });
 
-    test('a value that can run user code sees the List of upstream', () {
-      final chart = _chart(
-        lineConfig(<Object?>[1.0, 2.0, 3.0], xType: 'plumbing-object-linear'),
-      );
-      final meta = chart.getDatasetMeta(0);
-      final log = <int>[];
-      _ObjectLinear.onRead = () => log.add(meta.parsed.length);
-      addTearDown(() => _ObjectLinear.onRead = null);
-
-      // Two reads at each comparison, from the second item on.
-      meta.parsed = <Object?>[];
-      _controllerOf(chart).parse(0, 3);
-      expect(log, [2, 2, 3, 3]);
-      expect(meta.parsed.length, 3);
-      final plain = [for (final item in meta.parsed) (item! as ParsedItem).y];
-
-      log.clear();
-      meta.parsed = _CustomObjects();
-      _controllerOf(chart).parse(0, 3);
-      expect(log, [2, 2, 3, 3]);
-      expect([for (final item in meta.parsed) (item! as ParsedItem).y], plain);
-    });
-
     test('a user parse with fewer items leaves the same List', () {
       final chart = _chart(
         lineConfig(<Object?>[1.0, 2.0, 3.0], type: 'plumbing-short'),
@@ -877,12 +839,12 @@ void main() {
       final log = <int>[];
       final data = <Object?>[
         for (final text in ['1', '2', '3'])
-          _Logged(text, () => _ObjectLinear.onRead?.call()),
+          _Logged(text, () => _onLoggedRead?.call()),
       ];
       final chart = _chart(doughnutConfig(data));
       final meta = chart.getDatasetMeta(0);
-      _ObjectLinear.onRead = () => log.add(meta.parsed.length);
-      addTearDown(() => _ObjectLinear.onRead = null);
+      _onLoggedRead = () => log.add(meta.parsed.length);
+      addTearDown(() => _onLoggedRead = null);
       meta.parsed = <Object?>[];
       _controllerOf(chart).parse(0, 3);
       expect(log, [0, 1, 2]);

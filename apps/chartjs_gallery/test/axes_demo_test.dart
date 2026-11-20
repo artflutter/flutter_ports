@@ -131,8 +131,14 @@ void _expectOnScales(Chart chart) {
     for (var i = 0; i < meta.data.length; i++) {
       final point = meta.data[i] as PointElement;
       final parsed = meta.controller!.getParsed(i);
-      expect(point.x, x.getPixelForValue(jsGet(parsed, 'x'), i));
-      expect(point.y, y.getPixelForValue(jsGet(parsed, 'y'), i));
+      expect(
+        point.x,
+        x.getPixelForValue(scaleValueOf(x, jsGet(parsed, 'x')), i),
+      );
+      expect(
+        point.y,
+        y.getPixelForValue(scaleValueOf(y, jsGet(parsed, 'y')), i),
+      );
     }
   }
 }
@@ -448,10 +454,10 @@ void main() {
     );
 
     final x = _scale(chart, 'x');
-    expect(x.getPixelForValue(1.0), lessThan(x.getPixelForValue(12.0)));
+    expect(x.getPixelForValue(1), lessThan(x.getPixelForValue(12)));
     await _tap(tester, 'axes.reverse');
     expect(x.options.reverse, true);
-    expect(x.getPixelForValue(1.0), greaterThan(x.getPixelForValue(12.0)));
+    expect(x.getPixelForValue(1), greaterThan(x.getPixelForValue(12)));
     _expectOnScales(chart);
     await _tap(tester, 'axes.reverse');
 
@@ -647,7 +653,7 @@ void main() {
     // label P6, and the value gives the pixel of the label.
     final x = _scale(chart, 'x');
     expect(x.getValueForPixel(px), 5);
-    final back = (x.getPixelForValue(5.0) - px).toStringAsFixed(2);
+    final back = (x.getPixelForValue(5) - px).toStringAsFixed(2);
     expect(
       _row(state, 'pointer x'),
       '${px.toStringAsFixed(1)} px → 5.00 → P6 (round trip $back px)',

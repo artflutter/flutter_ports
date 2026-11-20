@@ -135,8 +135,14 @@ final class _TestController(super.chart, super.datasetIndex, [super.newTarget])
       final point = points[i] as Element;
       final parsed = getParsed(i);
       final properties = <String, Object?>{
-        'x': iScale.getPixelForValue(jsGet(parsed, 'x'), i),
-        'y': vScale.getPixelForValue(jsGet(parsed, 'y'), i),
+        'x': iScale.getPixelForValue(
+          scaleValueOf(iScale, jsGet(parsed, 'x')),
+          i,
+        ),
+        'y': vScale.getPixelForValue(
+          scaleValueOf(vScale, jsGet(parsed, 'y')),
+          i,
+        ),
       };
       if (includeOptions) {
         properties['options'] =
@@ -178,8 +184,8 @@ final class _TestScale(super.cfg) extends Scale {
   List<Tick>? buildTicks() => [Tick(value: 0), Tick(value: 5), Tick(value: 10)];
 
   @override
-  double getPixelForValue(Object? value, [int? index]) {
-    return getPixelForDecimal((jsToNumber(value) - min) / (max - min));
+  double getPixelForValue(double value, [int? index]) {
+    return getPixelForDecimal((value - min) / (max - min));
   }
 }
 

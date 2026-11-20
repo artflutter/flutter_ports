@@ -105,8 +105,8 @@ final class _FakeLinearScale(Map<String, Object?> d, final _FakeChart _chart)
   @override
   bool isHorizontal() => _horizontal;
   @override
-  double getPixelForValue(Object? value, [int? index]) =>
-      _horizontal ? 50 + 40 * jsToNumber(value) : 400 - 40 * jsToNumber(value);
+  double getPixelForValue(double value, [int? index]) =>
+      _horizontal ? 50 + 40 * value : 400 - 40 * value;
   @override
   double getBasePixel() => getPixelForValue(_baseValue);
   @override

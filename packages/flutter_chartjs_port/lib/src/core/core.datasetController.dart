@@ -1898,12 +1898,10 @@ class DatasetController(
     final parsed = getParsed(index);
     return (
       label: iScale != null
-          ? dataLabelLinesOf(
-              jsToString(iScale.getLabelForValue(_axisValueOf(parsed, iScale))),
-            )
+          ? dataLabelLinesOf(scaleLabelOf(iScale, _axisValueOf(parsed, iScale)))
           : const [],
       value: vScale != null
-          ? jsToString(vScale.getLabelForValue(_axisValueOf(parsed, vScale)))
+          ? scaleLabelOf(vScale, _axisValueOf(parsed, vScale))
           : '',
     );
   }

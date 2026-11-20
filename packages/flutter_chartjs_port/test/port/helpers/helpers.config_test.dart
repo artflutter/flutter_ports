@@ -37,10 +37,16 @@ Object? _tenTimesIndex(Object? ctx) => jsToNumber(_read(ctx, 'index')) * 10;
 /// The `parse` result of [_Scale]: the raw value and the index.
 typedef _Parsed = (Object?, double?);
 
-/// A scale whose `parse` returns its arguments.
+/// A scale whose `parse` records its arguments in [calls].
 final class _Scale() implements IScale {
+  /// The arguments of each `parse` call, in order.
+  final List<_Parsed> calls = [];
+
   @override
-  Object? parse(Object? raw, [int? index]) => (raw, index);
+  double? parse(Object? raw, [int? index]) {
+    calls.add((raw, index?.toDouble()));
+    return null;
+  }
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -924,14 +930,15 @@ void main() {
       int start,
       int count,
     ) {
-      final parsed = parseObjectDataRadialScale(
+      final scale = _Scale();
+      parseObjectDataRadialScale(
         _Controller(parsing),
-        _Meta(_Scale()),
+        _Meta(scale),
         data,
         start,
         count,
       );
-      return [for (final item in parsed) jsGet(item, 'r')];
+      return scale.calls;
     }
 
     test('the default key r', () {

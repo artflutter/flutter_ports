@@ -20,9 +20,11 @@
 ///   `undefined` and holds a number starts as NaN. `log10` of helpers.math
 ///   gives the exponent of an exact power of ten (Chart.js ADR 0146 §3).
 ///   `Math.pow` is `dart:math` `pow` with `double` operands.
-/// - [LogarithmicScale.parse] gives the [undefined] sentinel for a 0, and
-///   JS `null` (Dart `null`) for a value that is not a positive finite
-///   number (scale.logarithmic.js:103-110).
+/// - [LogarithmicScale.parse] gives NaN for a 0, where upstream gives
+///   `undefined`, and JS `null` (Dart `null`) for a value that is not a
+///   positive finite number (scale.logarithmic.js:103-110). NaN is not
+///   finite and compares false, as `undefined`, and the value methods read it
+///   as 0 (row `adapt-native-scale-values`).
 /// - `determineDataLimits` can store JS `null` in `this.min` and `this.max`
 ///   (scale.logarithmic.js:115-116), and `handleTickRangeOptions` reads that
 ///   `null` (:133-134). [Scale.min] and [Scale.max] are `double` fields.
@@ -30,9 +32,7 @@
 ///   upstream stores no NaN there. `handleTickRangeOptions` reads NaN as
 ///   Dart `null` and applies `ToNumber` to it ([jsToNumber]) where
 ///   JavaScript does: in `<=` and in `log10`.
-/// - The value methods take any JS value (Chart.js ADR 0025).
-///   [LogarithmicScale.getPixelForValue] starts with the port-only fast path
-///   for a `double` of Chart.js ADR 0025, section 3.
+/// - The value methods take a `double` (row `adapt-native-scale-values`).
 /// - The upstream `_` members that only this file reads keep the
 ///   underscore (Chart.js ADR 0012, Chart.js ADR 0025, section 6):
 ///   `_startValue`, `_valueRange` and `_zero`.
@@ -92,8 +92,8 @@ double _startExp(double min, double max) {
 /// The object `generationOptions` of [_generateTicks]
 /// (scale.logarithmic.js:163-166): `_userMin` and `_userMax`, the results of
 /// [LogarithmicScale.parse] for the `min` and `max` options. Each one is a
-/// number, Dart `null` (JS `null`) or the [undefined] sentinel.
-typedef _GenerationOptions = ({Object? min, Object? max});
+/// number, Dart `null` (JS `null`) or NaN (JS `undefined`).
+typedef _GenerationOptions = ({double? min, double? max});
 
 /// scale.logarithmic.js:42 `generateTicks(generationOptions, {min, max})`.
 ///
@@ -158,7 +158,7 @@ List<Tick> _generateTicks(
 double? _nullForNaN(double value) => value.isNaN ? null : value;
 
 /// scale.logarithmic.js:74 `LogarithmicScale`.
-class LogarithmicScale(super.cfg) extends Scale {
+class LogarithmicScale(super.cfg) extends Scale implements NullValueScale {
   /// scale.logarithmic.js:91 `constructor(cfg)`.
   ///
   /// `cfg` is the object `{id, type, ctx, chart}` of [Scale.new]. The
@@ -229,20 +229,33 @@ class LogarithmicScale(super.cfg) extends Scale {
   /// `undefined`. No method resets it.
   bool _zero = false;
 
+  /// The number of a JS `null` value: `-Infinity`, which has no logarithm,
+  /// so [getPixelForValue] gives NaN, as upstream gives for `null`. NaN is
+  /// the parse of a 0 (row `adapt-native-scale-values`).
+  @override
+  double get nullValue => double.negativeInfinity;
+
+  /// A value with no number gives `-Infinity`, as [nullValue]: upstream gives
+  /// NaN for it, and NaN is the parse of a 0 here.
+  @override
+  double get nanValue => double.negativeInfinity;
+
   /// scale.logarithmic.js:103 `parse(raw, index)`.
   ///
   /// The parse of `LinearScaleBase` gives a number or JS `null`
-  /// ([LinearScaleBase.prototypeParse]). A 0 sets `_zero` and gives the
-  /// [undefined] sentinel. A positive finite number gives that number.
-  /// Another value gives Dart `null` (JS `null`).
+  /// ([LinearScaleBase.prototypeParse]). A 0 sets `_zero` and gives NaN,
+  /// where upstream gives `undefined` (row
+  /// `adapt-native-scale-values`). A positive finite number gives that
+  /// number. Another value gives Dart `null` (JS `null`).
   @override
-  Object? parse(Object? raw, [int? index]) {
+  double? parse(Object? raw, [int? index]) {
     final value = LinearScaleBase.prototypeParse(raw, index);
     if (value == 0) {
       _zero = true;
-      return undefined;
+      // DIVERGES(chartjs): adapt-native-scale-values, NaN for undefined.
+      return double.nan;
     }
-    return isFinite(value) && (value! as num) > 0 ? value : null;
+    return value != null && value.isFinite && value > 0 ? value : null;
   }
 
   /// scale.logarithmic.js:112 `determineDataLimits()`.
@@ -344,25 +357,17 @@ class LogarithmicScale(super.cfg) extends Scale {
   /// @param {number} value
   /// @return {string}
   ///
-  /// [value] is any JS value. [undefined], the parse of a 0, gives `'0'`.
-  /// Upstream gives another value without a change to
-  /// `Intl.NumberFormat.prototype.format`. `format` applies
-  /// `ToIntlMathematicalValue`: `ToPrimitive`, and then `ToNumber`, but not
-  /// to a String or a BigInt primitive. V8 keeps the exact decimal of such a
-  /// primitive. The port applies [jsToNumber] to [value]. Thus a string whose
-  /// decimal is not the shortest round-trip form of its double gets other
-  /// digits. For example, `'9007199254740993'` gives `9,007,199,254,740,993`
-  /// in V8 and `9,007,199,254,740,992` in the port. Only the digits of the
-  /// label change (Chart.js ADR 0034). The `ticks.format` option is a
-  /// `NumberFormat` of package:intl, which formats the value as it is
-  /// (Chart.js ADR 0119).
+  /// NaN, the parse of a 0, gives `'0'`, as the `undefined` of upstream.
+  /// The `ticks.format` option is a `NumberFormat` of package:intl, which
+  /// formats the value as it is (Chart.js ADR 0119).
   @override
-  Object? getLabelForValue(Object? value) {
-    if (identical(value, undefined)) {
+  String getLabelForValue(double value) {
+    // DIVERGES(chartjs): adapt-native-scale-values, NaN for undefined.
+    if (value.isNaN) {
       return '0';
     }
     return formatNumber(
-      jsToNumber(value),
+      value,
       localeOf(readOption(chart.options, OptionKey.locale)),
       options.ticks.format,
     );
@@ -384,31 +389,37 @@ class LogarithmicScale(super.cfg) extends Scale {
 
   /// scale.logarithmic.js:210 `getPixelForValue(value)`.
   ///
-  /// [value] is any JS value. `undefined` (the parse of a 0) and 0 give the
-  /// pixel of [min]. `null` and NaN give NaN (Chart.js ADR 0025).
+  /// NaN (the parse of a 0, the `undefined` of upstream) and 0 give the
+  /// pixel of [min]. A JS `null` value comes as [nullValue] and gives NaN.
   @override
-  double getPixelForValue(Object? value, [int? index]) {
-    if (value is double) {
-      // Port-only fast path for a number (Chart.js ADR 0025, section 3).
-      final number = value == 0 ? min : value;
-      if (number.isNaN) {
-        return double.nan;
-      }
-      return getPixelForDecimal(
-        number == min ? 0 : (log10(number) - _startValue) / _valueRange,
-      );
-    }
-    if (identical(value, undefined) || value == 0) {
+  double getPixelForValue(double value, [int? index]) {
+    // DIVERGES(chartjs): adapt-native-scale-values, NaN for undefined.
+    if (value.isNaN || value == 0) {
       // Upstream reassigns its parameter.
       // ignore: parameter_assignments
       value = min;
     }
-    if (value == null || jsIsNaN(value)) {
-      return double.nan;
-    }
     return getPixelForDecimal(
-      value == min ? 0 : (log10(jsToNumber(value)) - _startValue) / _valueRange,
+      value == min ? 0 : (log10(value) - _startValue) / _valueRange,
     );
+  }
+
+  /// core.scale.js:906 `getPixelForTick(index)`, for the ticks of this
+  /// scale. Upstream has no override.
+  ///
+  /// A NaN tick value (the ticks of a scale with no data) gives NaN, as
+  /// upstream: a tick value is never the NaN of the parse of a 0, which
+  /// [getPixelForValue] reads as 0 (row `adapt-native-scale-values`). Dart
+  /// `null` stands for the JS `null` of an index out of the range.
+  @override
+  double? getPixelForTick(int index) {
+    final ticks = this.ticks!;
+    if (index < 0 || index > ticks.length - 1) {
+      return null;
+    }
+    final value = ticks[index].value;
+    // DIVERGES(chartjs): adapt-native-scale-values, NaN is not the parse of 0.
+    return value.isNaN ? double.nan : getPixelForValue(value);
   }
 
   /// scale.logarithmic.js:222 `getValueForPixel(pixel)`.

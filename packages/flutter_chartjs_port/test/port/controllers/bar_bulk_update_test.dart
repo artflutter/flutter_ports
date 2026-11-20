@@ -67,7 +67,7 @@ class _CustomLinear(super.cfg) extends LinearScale {
     construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
   );
   @override
-  double getPixelForValue(Object? value, [int? index]) {
+  double getPixelForValue(double value, [int? index]) {
     projections++;
     return super.getPixelForValue(value, index);
   }

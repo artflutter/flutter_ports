@@ -48,6 +48,7 @@ export 'package:flutter_chartjs_port/src/core/point_options.dart';
 export 'package:flutter_chartjs_port/src/core/reduced_motion.dart';
 export 'package:flutter_chartjs_port/src/core/scale_option_enums.dart';
 export 'package:flutter_chartjs_port/src/core/scale_options.dart';
+export 'package:flutter_chartjs_port/src/core/scale_value.dart';
 export 'package:flutter_chartjs_port/src/core/tick_font_cache.dart';
 export 'package:flutter_chartjs_port/src/elements/element.arc.dart';
 export 'package:flutter_chartjs_port/src/elements/element.bar.dart';

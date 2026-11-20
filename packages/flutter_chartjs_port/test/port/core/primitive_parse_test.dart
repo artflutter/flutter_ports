@@ -50,7 +50,7 @@ class _CustomLinear(super.cfg) extends LinearScale {
     construct: (_, args) => _CustomLinear(scaleCfgArg(args)),
   );
   @override
-  Object? parse(Object? raw, [int? index]) {
+  double? parse(Object? raw, [int? index]) {
     calls++;
     return super.parse(raw, index);
   }
