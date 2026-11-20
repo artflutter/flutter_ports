@@ -40,12 +40,13 @@ Map<String, Object?> _config({
 /// Typed setup for ordinary lifecycle checks. Raw identity and raw-option
 /// contract tests below retain [_config].
 ChartConfig _typedConfig({
+  Dataset dataset = const BarDataset(data: [1, 2, 3]),
+  bool? maintainAspectRatio,
   Map<String, Object?> options = const {},
   List<Plugin<Object?>>? plugins,
 }) => ChartConfig(
-  datasets: const [
-    BarDataset(data: [1, 2, 3]),
-  ],
+  datasets: [dataset],
+  maintainAspectRatio: maintainAspectRatio,
   labels: const ['a', 'b', 'c'],
   plugins: plugins,
   extra: {'animation': false, ...options},
@@ -778,6 +779,17 @@ void main() {
   });
 
   group('size', () {
+    Widget typedChart(String type, {bool? maintainAspectRatio}) => ChartView(
+      config: _typedConfig(
+        dataset: switch (type) {
+          'bar' => const BarDataset(data: [1, 2, 3]),
+          'doughnut' => const DoughnutDataset(data: [1, 2, 3]),
+          _ => throw ArgumentError.value(type, 'type'),
+        },
+        maintainAspectRatio: maintainAspectRatio,
+      ),
+    );
+
     // The rows of the table of Chart.js ADR 0049 §5: the bar chart has the
     // aspect ratio 2, the doughnut chart 1 (controller.doughnut.js:89). The
     // sizes come from FlutterPlatform.getMaximumSize and Chart.js ADR 0037
@@ -787,7 +799,7 @@ void main() {
           (
             String,
             Widget Function(Widget chart),
-            Map<String, Object?>,
+            Widget Function(String type),
             Size,
             Size,
           )
@@ -795,7 +807,7 @@ void main() {
           (
             'bounded width and height',
             _box,
-            const {},
+            typedChart,
             const Size(400, 200),
             const Size(300, 300),
           ),
@@ -803,7 +815,7 @@ void main() {
             'bounded width, unbounded height (Column)',
             (chart) =>
                 _box(SingleChildScrollView(child: Column(children: [chart]))),
-            const {},
+            typedChart,
             const Size(400, 200),
             const Size(400, 400),
           ),
@@ -811,21 +823,21 @@ void main() {
             'unbounded width, bounded height (Row)',
             (chart) =>
                 _box(SizedBox(height: 120, child: Row(children: [chart]))),
-            const {},
+            typedChart,
             const Size(240, 120),
             const Size(120, 120),
           ),
           (
             'unbounded width and height',
             (chart) => _box(UnconstrainedBox(child: chart)),
-            const {},
+            typedChart,
             const Size(300, 150),
             const Size(150, 150),
           ),
           (
             'maintainAspectRatio: false in a box',
             (chart) => _box(SizedBox(width: 350, height: 250, child: chart)),
-            const {'maintainAspectRatio': false},
+            (type) => typedChart(type, maintainAspectRatio: false),
             const Size(350, 250),
             const Size(350, 250),
           ),
@@ -833,28 +845,29 @@ void main() {
             'maintainAspectRatio: false, unbounded height',
             (chart) =>
                 _box(SingleChildScrollView(child: Column(children: [chart]))),
-            const {'maintainAspectRatio': false},
+            (type) => ChartView.raw(
+              config: _config(
+                type: type,
+                options: const {'maintainAspectRatio': false},
+              ),
+            ),
             const Size(400, 150),
             const Size(400, 150),
           ),
           (
             'responsive: false',
             _box,
-            const {'responsive': false},
+            (type) => ChartView.raw(
+              config: _config(type: type, options: const {'responsive': false}),
+            ),
             const Size(300, 150),
             const Size(300, 300),
           ),
         ];
-    for (final (name, wrap, options, bar, doughnut) in cases) {
+    for (final (name, wrap, buildChart, bar, doughnut) in cases) {
       for (final (type, expected) in [('bar', bar), ('doughnut', doughnut)]) {
         testWidgets('$name: $type', (tester) async {
-          await tester.pumpWidget(
-            wrap(
-              ChartView.raw(
-                config: _config(type: type, options: options),
-              ),
-            ),
-          );
+          await tester.pumpWidget(wrap(buildChart(type)));
           // The first ResizeObserver notification comes at the next layout.
           await tester.pump();
           await tester.pump();

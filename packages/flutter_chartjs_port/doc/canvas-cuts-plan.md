@@ -2941,3 +2941,13 @@ cases and two resize-callback cases. Their expectations and names are unchanged.
 config identity and mutation coverage remains on the raw entry. No production canvas code
 or deferred cut changes. The named references, inventory, tests of §2.6 and §3.5, and
 estimates remain unchanged. No trigger occurred.
+
+## Ten typed widget sizing cases, 2026-11-20
+
+The bar and doughnut cases of five parent-constraint scenarios in
+`test/port/widgets/chart_view_test.dart` now use typed datasets and `ChartView`: bounded
+width and height, each single unbounded dimension, both unbounded dimensions, and disabled
+aspect-ratio maintenance in a fixed box. Names and expected chart and host sizes are
+unchanged. The other sizing rows retain the raw entry. No production canvas code or
+deferred cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates
+remain unchanged. No trigger occurred.
