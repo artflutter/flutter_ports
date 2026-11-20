@@ -109,6 +109,16 @@ List<String> _nativePointLabel(Object? value) => switch (value) {
   _ => [jsToString(value)],
 };
 
+/// The reference cases with an option that the typed scale options read in
+/// another way (Chart.js ADR 0183): a string number is its number, and a JS
+/// `null` font is an absent font, where upstream joins the string or reads
+/// the size 0.
+const _typedNumberCases = {
+  'a null tick font',
+  'a string point label padding',
+  'a startAngle that is not a number',
+};
+
 /// [cases] with the upstream point labels of each radial scale and of each
 /// point label context in their lines.
 List<ScaleChartCase> _nativePointLabels(List<ScaleChartCase> cases) => [
@@ -392,10 +402,15 @@ void main() {
 
   group('radial linear scale charts against upstream', () {
     testScaleChartCases(
-      _nativePointLabels(scaleRadialLinearReference),
+      _nativePointLabels(scaleRadialLinearReference)
+          .where((c) => !_typedNumberCases.contains(c.name))
+          .toList(),
       functions: _functions,
       extra: _radialObservations,
     );
+    for (final name in _typedNumberCases) {
+      test(name, skip: 'diverges: adapt-native-scale-options', () {});
+    }
   });
 
   group('value types (Chart.js ADR 0025)', () {

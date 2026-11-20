@@ -82,7 +82,7 @@ String _row(AxesDemoState state, String name) =>
 
 /// The option [key] of the ticks of the scale [id].
 Object? _tickOption(Chart chart, String id, String key) =>
-    jsGet(_scale(chart, id).options['ticks'], key);
+    jsGet(_scale(chart, id).optionsView['ticks'], key);
 
 /// Whether the segment of [key] is on: the selected segment of a
 /// [SegmentChoice], or an option of a [SegmentToggles] that is on.
@@ -154,8 +154,8 @@ void main() {
     expect(chart.height, 360);
     expect(_scale(chart, 'x'), isA<LinearScale>());
     expect(_scale(chart, 'y'), isA<LinearScale>());
-    expect(_scale(chart, 'x').options['position'], ChartPosition.bottom);
-    expect(_scale(chart, 'y').options['position'], ChartPosition.left);
+    expect(_scale(chart, 'x').optionsView['position'], ChartPosition.bottom);
+    expect(_scale(chart, 'y').optionsView['position'], ChartPosition.left);
     for (var d = 0; d < 2; d++) {
       expect(chart.getDatasetMeta(d).data, hasLength(12));
     }
@@ -437,11 +437,11 @@ void main() {
     final left = area.left;
 
     await _tap(tester, 'axes.x.position.top');
-    expect(_scale(chart, 'x').options['position'], ChartPosition.top);
+    expect(_scale(chart, 'x').optionsView['position'], ChartPosition.top);
     expect(_scale(chart, 'x').bottom, lessThanOrEqualTo(chart.chartArea!.top));
     expect(chart.chartArea!.top, greaterThan(top));
     await _tap(tester, 'axes.y.position.right');
-    expect(_scale(chart, 'y').options['position'], ChartPosition.right);
+    expect(_scale(chart, 'y').optionsView['position'], ChartPosition.right);
     expect(chart.chartArea!.left, lessThan(left));
     expect(
       _scale(chart, 'y').left,
@@ -451,7 +451,7 @@ void main() {
     final x = _scale(chart, 'x');
     expect(x.getPixelForValue(1.0), lessThan(x.getPixelForValue(12.0)));
     await _tap(tester, 'axes.reverse');
-    expect(x.options['reverse'], true);
+    expect(x.optionsView['reverse'], true);
     expect(x.getPixelForValue(1.0), greaterThan(x.getPixelForValue(12.0)));
     _expectOnScales(chart);
     await _tap(tester, 'axes.reverse');
@@ -460,7 +460,7 @@ void main() {
     final y = _scale(chart, 'y');
     expect(y.min, greaterThan(0));
     await _tap(tester, 'axes.beginAtZero');
-    expect(y.options['beginAtZero'], true);
+    expect(y.optionsView['beginAtZero'], true);
     expect(y.min, 0);
     await _tap(tester, 'axes.beginAtZero');
     expect(y.min, greaterThan(0));
@@ -469,11 +469,11 @@ void main() {
     // values 1 to 12. The bounds data give 1 to 12.
     expect(x.min, 0);
     await _tap(tester, 'axes.bounds.data');
-    expect(x.options['bounds'], ScaleBounds.data);
+    expect(x.optionsView['bounds'], ScaleBounds.data);
     expect(x.min, 1);
     expect(x.max, 12);
     await _tap(tester, 'axes.bounds.auto');
-    expect(x.options['bounds'], ScaleBounds.ticks);
+    expect(x.optionsView['bounds'], ScaleBounds.ticks);
     expect(x.min, 0);
     expect(tester.takeException(), isNull);
   });
@@ -543,17 +543,19 @@ void main() {
     final height = chart.chartArea!.height;
 
     await _tap(tester, 'axes.grid.display');
-    expect(jsGet(x.options['grid'], 'display'), false);
+    expect(jsGet(x.optionsView['grid'], 'display'), false);
     await _tap(tester, 'axes.grid.offset');
-    expect(jsGet(x.options['grid'], 'offset'), true);
+    expect(jsGet(x.optionsView['grid'], 'offset'), true);
     await _tap(tester, 'axes.border.display');
-    expect((x.options['border']! as AxisBorder).display, isFalse);
+    expect((x.optionsView['border']! as AxisBorder).display, isFalse);
 
     // A title takes space from the chart area.
     await _tap(tester, 'axes.title.display');
-    expect(jsGet(x.options['title'], 'display'), true);
-    expect(jsGet(x.options['title'], 'text'), ['x: linear']);
-    expect(jsGet(_scale(chart, 'y').options['title'], 'text'), ['y: linear']);
+    expect(jsGet(x.optionsView['title'], 'display'), true);
+    expect(jsGet(x.optionsView['title'], 'text'), ['x: linear']);
+    expect(jsGet(_scale(chart, 'y').optionsView['title'], 'text'), [
+      'y: linear',
+    ]);
     expect(chart.chartArea!.height, lessThan(height));
     expect(tester.takeException(), isNull);
   });
@@ -579,10 +581,10 @@ void main() {
     await _tap(tester, 'axes.x.type.time');
     await _tap(tester, 'axes.time.unit.day');
     final time = _scale(chart, 'x');
-    expect(jsGet(time.options['time'], 'unit'), TimeUnit.day);
+    expect(jsGet(time.optionsView['time'], 'unit'), TimeUnit.day);
     expect(time.ticks!.first.label, ['Jan 1']);
     await _tap(tester, 'axes.time.unit.month');
-    expect(jsGet(time.options['time'], 'unit'), TimeUnit.month);
+    expect(jsGet(time.optionsView['time'], 'unit'), TimeUnit.month);
     expect(time.ticks!.first.label, ['Jan 2024']);
     await _tap(tester, 'axes.time.unit.year');
     expect(

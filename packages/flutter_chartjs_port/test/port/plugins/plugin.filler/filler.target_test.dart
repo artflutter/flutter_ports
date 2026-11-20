@@ -19,6 +19,7 @@ import 'package:chartjs_test_utils/pure.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
+import '../../../support/scale_options_of.dart';
 import 'filler_target_reference.dart';
 
 // ---------------------------------------------------------------------------
@@ -96,9 +97,9 @@ final class _FakeLinearScale(Map<String, Object?> d, final _FakeChart _chart)
   @override
   final double max = _n(d['max']);
   @override
-  final Map<String, Object?> options = <String, Object?>{
+  final CoreScaleOptions options = scaleOptionsOf(<String, Object?>{
     'reverse': d['reverse'],
-  };
+  });
   @override
   IChart get chart => _chart;
   @override
@@ -134,10 +135,12 @@ final class _FakeRadialScale(Map<String, Object?> d, final _FakeChart _chart)
   @override
   final double max = _n(d['max']);
   @override
-  final Map<String, Object?> options = <String, Object?>{
-    'reverse': d['reverse'],
-    'grid': <String, Object?>{'circular': d['circular']},
-  };
+  final RadialLinearScaleOptions options = radialScaleOptionsOf(
+    <String, Object?>{
+      'reverse': d['reverse'],
+      'grid': <String, Object?>{'circular': d['circular']},
+    },
+  );
   @override
   IChart get chart => _chart;
   @override

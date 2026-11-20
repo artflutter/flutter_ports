@@ -1,4 +1,4 @@
-// Original code, not ported from Chart.js: the scale option facades.
+// Original code, not ported from Chart.js: the typed scale option classes.
 import 'dart:ui' as ui;
 import 'dart:ui' show Color;
 
@@ -6,10 +6,11 @@ import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart' show NumberFormat;
 import 'package:test/test.dart';
 
-// The facades of lib/src/core/scale_options.dart (Chart.js ADR 0054 §4).
-// A getter is the typed read readKey of its key: it gives the value of the
+// The classes of lib/src/core/scale_options.dart (Chart.js ADR 0183). A
+// getter reads its key with readKey at each read: it gives the value of the
 // get trap of the view, `view[name]`, with the same cache, also for a
-// scriptable option, a nested option object and a value of another type.
+// scriptable option and a nested option object. A number option gives a
+// double: the ToNumber of a string, Dart null for an absent value.
 
 /// The view of the options [scopes] with the context [context]: the
 /// `ContextProxy` that a scale reads.
@@ -25,7 +26,6 @@ final Map<String, Object? Function(OptionView view)> _scaleGetters = {
   'backgroundColor': (v) => CoreScaleOptions(v).backgroundColor,
   'reverse': (v) => CoreScaleOptions(v).reverse,
   'clip': (v) => CoreScaleOptions(v).clip,
-  'weight': (v) => CoreScaleOptions(v).weight,
   'min': (v) => CoreScaleOptions(v).min,
   'max': (v) => CoreScaleOptions(v).max,
   'suggestedMin': (v) => CoreScaleOptions(v).suggestedMin,
@@ -41,12 +41,10 @@ final Map<String, Object? Function(OptionView view)> _scaleGetters = {
   'grace': (v) => CoreScaleOptions(v).grace,
   'fullSize': (v) => CoreScaleOptions(v).fullSize,
   'stack': (v) => CartesianScaleOptions(v).stack,
-  'stackWeight': (v) => CartesianScaleOptions(v).stackWeight,
   'stacked': (v) => CartesianScaleOptions(v).stacked,
   'offsetAfterAutoskip': (v) => TimeScaleOptions(v).offsetAfterAutoskip,
   'adapters': (v) => TimeScaleOptions(v).adapters,
   'animate': (v) => RadialLinearScaleOptions(v).animate,
-  'startAngle': (v) => RadialLinearScaleOptions(v).startAngle,
 };
 
 /// A value of each key of [_scaleGetters], with other types than the
@@ -57,7 +55,6 @@ Map<String, Object?> _scaleValues() => {
   'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
   'reverse': true,
   'clip': false,
-  'weight': '2',
   'min': 'a',
   'max': 10,
   'suggestedMin': null,
@@ -73,12 +70,10 @@ Map<String, Object?> _scaleValues() => {
   'grace': const PercentGrace(5),
   'fullSize': false,
   'stack': 'group',
-  'stackWeight': 2,
   'stacked': StackMode.single,
   'offsetAfterAutoskip': true,
   'adapters': <String, Object?>{'date': 'utc'},
   'animate': false,
-  'startAngle': '30',
 };
 
 void main() {
@@ -95,12 +90,22 @@ void main() {
       });
     }
 
+    test('a number option gives a double', () {
+      final view = _view([
+        <String, Object?>{'weight': '2', 'stackWeight': 2, 'startAngle': '30'},
+      ]);
+      expect(CoreScaleOptions(view).weight, 2.0);
+      expect(CoreScaleOptions(view).stackWeight, 2.0);
+      expect(RadialLinearScaleOptions(view).startAngle, 30.0);
+      expect(CoreScaleOptions(_view([<String, Object?>{}])).weight, isNull);
+    });
+
     test('an absent key reads undefined, and false for an on/off key', () {
       final view = _view([<String, Object?>{}]);
       // Row adapt-bool-options: an absent on/off option is false.
       expect(CoreScaleOptions(view).offset, isFalse);
       expect(CoreScaleOptions(view).min, same(undefined));
-      expect(CoreScaleOptions(view).ticks.raw, same(undefined));
+      expect(CoreScaleOptions(view).ticks.view, same(undefined));
     });
 
     test('stack is the option, not the _stack of the view', () {
@@ -148,12 +153,12 @@ void main() {
           },
         ]),
       );
-      expect(options.ticks.raw, isA<OptionView>());
-      // A string padding and a string tickLength stay strings: their
-      // readers join or convert them, as upstream.
-      expect(options.ticks.padding, '3');
+      expect(options.ticks.view, isA<OptionView>());
+      // A string padding and a string tickLength are numbers (Chart.js ADR
+      // 0183).
+      expect(options.ticks.padding, 3.0);
       expect(options.ticks.mirror, isTrue);
-      expect(options.grid.tickLength, '8');
+      expect(options.grid.tickLength, 8.0);
       expect(options.grid.drawTicks, isTrue);
       // The border is one object (Chart.js ADR 0141).
       expect(options.border, const AxisBorder(width: 2, dash: <double>[4]));
@@ -161,7 +166,7 @@ void main() {
       // No scope has `ticks.major` (the scale defaults hold `major: {}`):
       // the nested facade holds `undefined`, and its read throws the
       // `TypeError` of `undefined.enabled`, as upstream.
-      expect(options.ticks.major.raw, same(undefined));
+      expect(options.ticks.major.view, same(undefined));
       expect(() => options.ticks.major.enabled, throwsA(isA<TypeError>()));
     });
 
@@ -171,7 +176,7 @@ void main() {
           <String, Object?>{'ticks': false, 'grid': 0},
         ]),
       );
-      expect(options.ticks.raw, isFalse);
+      expect(options.ticks.view, isFalse);
       // An absent on/off option is false (row adapt-bool-options).
       expect(options.ticks.display, isFalse);
       expect(options.grid.display, isFalse);
@@ -192,7 +197,7 @@ void main() {
       final format = NumberFormat.compact();
       final ticks = TickOptions(<String, Object?>{'format': format});
       expect(ticks.format, same(format));
-      expect(ticks.count, same(undefined));
+      expect(ticks.count, isNull);
     });
 
     test('setContext gives a view with the context', () {
@@ -229,13 +234,13 @@ void main() {
   });
 
   group('the foreign values of the scopes', () {
-    test('a string startAngle of a typed scope stays a string', () {
+    test('a string startAngle of a typed scope is a number', () {
       final scope = ScaleOptionsScope()..jsWrite('startAngle', '30');
       final options = RadialLinearScaleOptions(_view([scope]));
-      expect(options.startAngle, '30');
+      expect(options.startAngle, 30.0);
     });
 
-    test('a string point label padding stays a string', () {
+    test('a string point label padding is a number', () {
       final options = RadialLinearScaleOptions(
         _view([
           <String, Object?>{
@@ -243,7 +248,7 @@ void main() {
           },
         ]),
       );
-      expect(options.pointLabels.padding, '5');
+      expect(options.pointLabels.padding, 5.0);
     });
   });
 

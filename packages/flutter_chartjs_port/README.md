@@ -35,7 +35,8 @@ calls `updateData` when only the data Lists of a new config changed. It needs
 what it does not re-run.
 
 After a change of the `min` and `max` options of the scales only, written
-through the scale options (`chart.scales['x']!.options['min'] = 10`),
+through the view of the scale options
+(`chart.scales['x']!.optionsView['min'] = 10`),
 `chart.updateRanges()` skips the rebuild of the configuration and gives the
 result of `chart.update()`. Change nothing else in place between full updates.
 The zoom port uses it with its option `rangeOnlyUpdates`

@@ -236,8 +236,6 @@ bool fastBarSearchIsNative(DatasetController controller, IScale scale) {
       return false;
     }
   }
-  final stacked = scale.options;
-  return stacked is OptionView &&
-      stacked.runtimeType == OptionView &&
-      stacked.hasCachedBarStacking;
+  final stacked = scale.optionsView;
+  return stacked.runtimeType == OptionView && stacked.hasCachedBarStacking;
 }

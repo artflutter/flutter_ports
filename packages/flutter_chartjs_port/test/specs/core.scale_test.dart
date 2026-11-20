@@ -1122,10 +1122,10 @@ void main() {
         final chart = getChartWithScaleTitleStroke();
         final scale = chart.scales['x']!;
         expect(
-          _member(scale.options['title'], 'strokeColor'),
+          _member(scale.optionsView['title'], 'strokeColor'),
           const ChartPaint.solid(native_ui.Color.fromRGBO(51, 51, 51, 1)),
         );
-        expect(_member(scale.options['title'], 'strokeWidth'), 1);
+        expect(_member(scale.optionsView['title'], 'strokeWidth'), 1);
       });
 
       testWidgets('should draw a scale title stroke when provided y-axis', (
@@ -1134,10 +1134,10 @@ void main() {
         final chart = getChartWithScaleTitleStroke();
         final scale = chart.scales['y']!;
         expect(
-          _member(scale.options['title'], 'strokeColor'),
+          _member(scale.optionsView['title'], 'strokeColor'),
           const ChartPaint.solid(native_ui.Color.fromRGBO(34, 34, 34, 1)),
         );
-        expect(_member(scale.options['title'], 'strokeWidth'), 2);
+        expect(_member(scale.optionsView['title'], 'strokeWidth'), 2);
       });
 
       testWidgets('should not draw a scale title stroke when not provided', (
@@ -1145,8 +1145,8 @@ void main() {
       ) async {
         final chart = getChartWithoutScaleTitleStroke();
         final scales = chart.scales;
-        final yTitle = scales['y']!.options['title'];
-        final xTitle = scales['x']!.options['title'];
+        final yTitle = scales['y']!.optionsView['title'];
+        final xTitle = scales['x']!.optionsView['title'];
         expect(_member(yTitle, 'strokeColor'), same(undefined));
         expect(_member(yTitle, 'strokeWidth'), same(undefined));
         expect(_member(xTitle, 'strokeColor'), same(undefined));

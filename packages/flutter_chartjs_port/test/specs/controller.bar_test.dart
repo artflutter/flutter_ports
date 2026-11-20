@@ -1576,7 +1576,7 @@ void main() {
 
         final categoryPercentage = jsGet(options, 'categoryPercentage');
         final barPercentage = jsGet(options, 'barPercentage');
-        final stacked = jsGet(xScale.options, 'stacked');
+        final stacked = xScale.options.stacked;
 
         var totalBarWidth = 0.0;
         final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;
@@ -1668,7 +1668,7 @@ void main() {
         final config0 = meta.controller!.options;
         final categoryPercentage = jsGet(config0, 'categoryPercentage');
         final barPercentage = jsGet(config0, 'barPercentage');
-        final stacked = jsGet(yScale.options, 'stacked');
+        final stacked = yScale.options.stacked;
 
         var totalBarHeight = 0.0;
         final datasets = jsGet(chart.data, 'datasets')! as List<Object?>;

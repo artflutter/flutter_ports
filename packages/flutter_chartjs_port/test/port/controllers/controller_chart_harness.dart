@@ -225,7 +225,7 @@ bool isJsObject(Object? value) =>
 /// The border is the upstream form of the border object of the port
 /// ([upstreamBorderOf], row `adapt-native-scale-border`).
 Map<String, Object?> _scaleOptions(Scale scale) {
-  final options = scale.options;
+  final options = scale.optionsView;
   final keys = [
     'grid',
     'border',

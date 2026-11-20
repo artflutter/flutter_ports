@@ -588,12 +588,41 @@ final class _DrawingScale(super.cfg) extends Scale {
 /// A scale subclass that inherits `draw` through another subclass.
 final class _SubScale(super.cfg, super.spec) extends _TestScale;
 
+/// The skip reason of a case with a string number option: the typed getter
+/// gives the number (Chart.js ADR 0183).
+const _typedNumbers = 'diverges: adapt-native-scale-options';
+
 /// The reference cases that the port draws in another way, by name.
 const Map<String, String> _referenceSkips = {
   // The string strokeWidth of the title is no number: the port gives the
   // canvas no width, where the DOM applies ToNumber (Chart.js ADR 0174).
   'bottom, title with a string strokeWidth and no strokeColor':
       'diverges: adapt-canvas-option-values',
+  // A string number option is a number at its read (Chart.js ADR 0183):
+  // the port draws the number, where upstream joins the strings.
+  'bottom, string padding, tickLength and labelOffset': _typedNumbers,
+  'top, string padding and labelOffset, rotated labels': _typedNumbers,
+  'top, mirror, string padding': _typedNumbers,
+  'center, x axis, string padding and tickLength': _typedNumbers,
+  'object position, x axis, string padding': _typedNumbers,
+  'bottom, string tickLength, tick labels hidden': _typedNumbers,
+  'bottom, string autoSkipPadding': _typedNumbers,
+  'left, string padding and tickLength': _typedNumbers,
+  'left, mirror, string padding, crossAlign center': _typedNumbers,
+  'left, mirror, string padding, crossAlign far': _typedNumbers,
+  'left, string padding, crossAlign center': _typedNumbers,
+  'right, mirror, string padding, crossAlign center': _typedNumbers,
+  'right, mirror, string padding, crossAlign far': _typedNumbers,
+  'right, string padding and tickLength, crossAlign center': _typedNumbers,
+  'center, y axis, string padding and tickLength': _typedNumbers,
+  'object position, y axis, string padding and tickLength': _typedNumbers,
+  'left, string tickLength, tick labels hidden': _typedNumbers,
+  'bottom, string tickLength 0': _typedNumbers,
+  'left, empty string tickLength': _typedNumbers,
+  'bottom, string autoSkipPadding, no rotation': _typedNumbers,
+  'left, string padding that is not a number': _typedNumbers,
+  'bottom, minRotation string 0': _typedNumbers,
+  'bottom, string minRotation 5 and maxRotation 30, long labels': _typedNumbers,
 };
 
 void main() {
@@ -626,7 +655,7 @@ void main() {
     expect(second, same(first));
     expect(scale.ticks![1].$context!.index, 1.0);
     expect(scale.ticks![1].$context!.tick, same(scale.ticks![1]));
-    final tickOptions = scale.options.ticks.raw! as ContextResolver;
+    final tickOptions = scale.options.ticks.view! as ContextResolver;
     tickOptions['font'] = const ChartTextStyle(fontSize: 22);
     expect(scale.resolveTickFontOptions(1).fontSize, 22);
   });
@@ -977,52 +1006,56 @@ void main() {
       expect(other.getLabels(), same(labels));
     });
 
-    test('a size or a translation that a string option joins is its '
-        'ToNumber', () {
-      // Upstream (Node.js v24.12.0 on x64) keeps the joined strings:
-      // `height` '80' (core.scale.js:649, :682) and the translations '405'
-      // and '5245' (:1210, :1322). The port fields are `double`.
-      final spec = <String, Object?>{
-        'ticks': <Object?>[
-          <Object?>[0],
-          <Object?>[1],
-        ],
-        'min': 0,
-        'max': 1,
-      };
-      final chart = _plainChart();
-      final hidden = _TestScale(_cfg(chart), spec)
-        ..init(
-          _scaleOptions({
-            'axis': const XAxis(),
-            'position': ChartPosition.bottom,
-            'ticks': <String, Object?>{'display': false},
-            'grid': <String, Object?>{'tickLength': '8'},
-          }, chart),
-        )
-        ..update(440, 200);
-      expect(hidden.height, 80);
+    test(
+      'a size or a translation that a string option joins is its '
+      'ToNumber',
+      skip: _typedNumbers,
+      () {
+        // Upstream (Node.js v24.12.0 on x64) keeps the joined strings:
+        // `height` '80' (core.scale.js:649, :682) and the translations '405'
+        // and '5245' (:1210, :1322). The port fields are `double`.
+        final spec = <String, Object?>{
+          'ticks': <Object?>[
+            <Object?>[0],
+            <Object?>[1],
+          ],
+          'min': 0,
+          'max': 1,
+        };
+        final chart = _plainChart();
+        final hidden = _TestScale(_cfg(chart), spec)
+          ..init(
+            _scaleOptions({
+              'axis': const XAxis(),
+              'position': ChartPosition.bottom,
+              'ticks': <String, Object?>{'display': false},
+              'grid': <String, Object?>{'tickLength': '8'},
+            }, chart),
+          )
+          ..update(440, 200);
+        expect(hidden.height, 80);
 
-      final bottom = _TestScale(_cfg(chart), spec)
-        ..init(
-          _scaleOptions({
-            'axis': const XAxis(),
-            'position': ChartPosition.bottom,
-            'ticks': <String, Object?>{'labelOffset': '5'},
-          }, chart),
-        )
-        ..update(440, 200);
-      bottom
-        ..left = 40
-        ..top = 350
-        ..right = 40 + bottom.width
-        ..bottom = 350 + bottom.height
-        ..configureForTest();
-      expect(
-        [for (final item in bottom.getLabelItems()) item.options.translation],
-        [(405, 361), (5245, 361)],
-      );
-    });
+        final bottom = _TestScale(_cfg(chart), spec)
+          ..init(
+            _scaleOptions({
+              'axis': const XAxis(),
+              'position': ChartPosition.bottom,
+              'ticks': <String, Object?>{'labelOffset': '5'},
+            }, chart),
+          )
+          ..update(440, 200);
+        bottom
+          ..left = 40
+          ..top = 350
+          ..right = 40 + bottom.width
+          ..bottom = 350 + bottom.height
+          ..configureForTest();
+        expect(
+          [for (final item in bottom.getLabelItems()) item.options.translation],
+          [(405, 361), (5245, 361)],
+        );
+      },
+    );
   });
 
   group('paddingTop and paddingBottom keep the joined padding', () {
@@ -1051,7 +1084,7 @@ void main() {
         ..update(250, 320);
     }
 
-    test('a string padding joins the number', () {
+    test('a string padding joins the number', skip: _typedNumbers, () {
       final scale = left('3');
       expect(scale.paddingTop, '7.1999999999999993');
       expect(scale.paddingBottom, '7.1999999999999993');
@@ -1059,14 +1092,18 @@ void main() {
       expect(scale.getPadding().bottom, 7.199999999999999);
     });
 
-    test('a joined string that is not a number gives the padding NaN', () {
-      // The string is truthy: `'7.199999999999999x' || 0` is the string,
-      // and Math.max makes NaN of it. A `double` field gave 0.
-      final scale = left('x');
-      expect(scale.paddingTop, '7.199999999999999x');
-      expect(scale.getPadding().top, isNaN);
-      expect(scale.getPadding().bottom, isNaN);
-    });
+    test(
+      'a joined string that is not a number gives the padding NaN',
+      skip: _typedNumbers,
+      () {
+        // The string is truthy: `'7.199999999999999x' || 0` is the string,
+        // and Math.max makes NaN of it. A `double` field gave 0.
+        final scale = left('x');
+        expect(scale.paddingTop, '7.199999999999999x');
+        expect(scale.getPadding().top, isNaN);
+        expect(scale.getPadding().bottom, isNaN);
+      },
+    );
 
     test('a NaN number gives the padding 0', () {
       // `NaN || 0` is 0.
@@ -1103,7 +1140,7 @@ void main() {
         ..update(260, 150);
     }
 
-    test('the string 0 stays a string', () {
+    test('the string 0 stays a string', skip: _typedNumbers, () {
       final chart = _plainChart();
       Object? rotation(Object? minRotation) =>
           (_TestScale(_cfg(chart), {
@@ -1128,7 +1165,7 @@ void main() {
       expect(rotation(''), 0);
     });
 
-    test('two strings compare by their code units', () {
+    test('two strings compare by their code units', skip: _typedNumbers, () {
       // '5' >= '30' is true: the early return keeps '5'. The numbers 5
       // and 30 calculate a rotation, and Math.max and Math.min limit it
       // to 30. The values come from the reference cases.

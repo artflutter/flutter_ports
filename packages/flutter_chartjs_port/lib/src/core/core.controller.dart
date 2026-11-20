@@ -701,10 +701,9 @@ class Chart(
       return false;
     }
     final grouped = controller.options;
-    final stacked = scale.options;
+    final stacked = scale.optionsView;
     if (grouped.runtimeType != OptionView ||
         !grouped.hasCachedBarGrouping ||
-        stacked is! OptionView ||
         stacked.runtimeType != OptionView ||
         !stacked.hasCachedBarStacking) {
       return false;

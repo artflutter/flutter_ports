@@ -104,9 +104,7 @@ Object _computeCircularBoundary(FillerSource source, IRadialLinearScale scale) {
   final fill = source.fill;
   final options = scale.options;
   final length = scale.getLabels().length;
-  final start = jsTruthy(optionOf(options, OptionKey.reverse))
-      ? scale.max
-      : scale.min;
+  final start = options.reverse ? scale.max : scale.min;
   final value = getTargetValue(fill, scale, start);
   final target = <IPointElement>[];
 

@@ -432,9 +432,11 @@ void main() {
       });
     }
 
-    for (final (stepSize, text) in [(null, 'null'), (-1.0, '-1')]) {
+    // A `null` stepSize is an absent option (Chart.js ADR 0183): it takes
+    // the step 1, where upstream throws for `null`.
+    for (final (stepSize, text) in [(-1.0, '-1')]) {
       testWidgets('the stepSize $text throws the error', (tester) async {
-        // 100000 * stepSize is 0 or negative (scale.time.js:474-476).
+        // 100000 * stepSize is negative (scale.time.js:474-476).
         expect(
           () => _chart(_xy(times), {
             'time': <String, Object?>{'unit': TimeUnit.day},
@@ -603,7 +605,7 @@ void main() {
           },
         }),
       );
-      final time = x.options['time']! as JsObjectFace;
+      final time = x.optionsView['time']! as JsObjectFace;
       final formats = time['displayFormats']! as JsObjectFace;
       expect(formats['day'], 'MMM');
       expect(formats['hour'], 'ha');
@@ -1547,7 +1549,10 @@ void main() {
             'year': 'yyyy',
           };
 
-          expect(_displayFormats(chart.scales['x']!.options), equals(expected));
+          expect(
+            _displayFormats(chart.scales['x']!.optionsView),
+            equals(expected),
+          );
           expect(_displayFormats(_scaleOptions(chart)), equals(expected));
         });
 
@@ -1589,7 +1594,10 @@ void main() {
             'year': 'yyyy',
           };
 
-          expect(_displayFormats(chart.scales['x']!.options), equals(expected));
+          expect(
+            _displayFormats(chart.scales['x']!.optionsView),
+            equals(expected),
+          );
           expect(_displayFormats(_scaleOptions(chart)), equals(expected));
         });
       });

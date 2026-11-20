@@ -333,13 +333,13 @@ void main() {
         expect(chart.scales['y']!.max, 90);
 
         // Scale is now stacked
-        chart.scales['y']!.options['stacked'] = StackMode.on;
+        chart.scales['y']!.optionsView['stacked'] = StackMode.on;
         chart.update();
 
         expect(chart.scales['y']!.min, 30);
         expect(chart.scales['y']!.max, 90);
 
-        chart.scales['y']!.options['beginAtZero'] = true;
+        chart.scales['y']!.optionsView['beginAtZero'] = true;
         chart.update();
 
         expect(chart.scales['y']!.min, 0);
@@ -981,7 +981,7 @@ void main() {
           equals(<Object?>['20', '25', '30', '35', '40', '45', '50']),
         );
 
-        chart.scales['y']!.options['beginAtZero'] = true;
+        chart.scales['y']!.optionsView['beginAtZero'] = true;
         chart.update();
         expect(
           _getLabels(chart.scales['y']!),
@@ -1019,7 +1019,7 @@ void main() {
           ]),
         );
 
-        chart.scales['y']!.options['beginAtZero'] = false;
+        chart.scales['y']!.optionsView['beginAtZero'] = false;
         chart.update();
         expect(
           _getLabels(chart.scales['y']!),
@@ -1345,8 +1345,8 @@ void main() {
       expect(yScale.height, toBeCloseToPixel(450));
 
       // Extra size when scale label showing
-      (jsGet(xScale.options, 'title')! as JsObjectFace)['display'] = true;
-      (jsGet(yScale.options, 'title')! as JsObjectFace)['display'] = true;
+      (jsGet(xScale.optionsView, 'title')! as JsObjectFace)['display'] = true;
+      (jsGet(yScale.optionsView, 'title')! as JsObjectFace)['display'] = true;
       chart.update();
 
       expect(xScale.paddingTop, toBeCloseToPixel(0));
@@ -1580,7 +1580,7 @@ void main() {
       expect(scale.getValueForPixel(end), closeTo(max, 5e-5));
       expect(scale.getValueForPixel(start), closeTo(min, 5e-5));
 
-      scale.options['reverse'] = true;
+      scale.optionsView['reverse'] = true;
       chart.update();
 
       start = chart.chartArea!.left;
@@ -1622,7 +1622,7 @@ void main() {
       expect(scale.getValueForPixel(end), closeTo(max, 5e-5));
       expect(scale.getValueForPixel(start), closeTo(min, 5e-5));
 
-      scale.options['reverse'] = true;
+      scale.optionsView['reverse'] = true;
       chart.update();
 
       start = chart.chartArea!.bottom;

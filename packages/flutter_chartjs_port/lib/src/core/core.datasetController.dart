@@ -200,22 +200,8 @@ List<Object?> _convertObjectDataToArray(Object data, ChartMeta meta) {
 // DIVERGES(chartjs): adapt-stacked-option-enum, the option is a
 // [StackMode], and Dart `null` is `undefined`.
 StackMode _isStacked(IScale? scale, ChartMeta meta) {
-  final stacked = scale == null
-      ? null
-      : stackModeOf(readOption(scale.options, OptionKey.stacked));
+  final stacked = scale?.options.stacked;
   return stacked ?? (meta.stack != null ? StackMode.on : StackMode.off);
-}
-
-/// The value of the scale option `stacked`: a [StackMode], or Dart
-/// `null` for no value. Another value stops a debug build (row
-/// `adapt-stacked-option-enum`).
-StackMode? stackModeOf(Object? value) {
-  if (value is StackMode) return value;
-  assert(
-    value == null || value is Undefined,
-    'The scale option stacked takes a StackMode, not $value.',
-  );
-  return null;
 }
 
 /// A `stack` or an axis id of a dataset as the value of the meta: Dart

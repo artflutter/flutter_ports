@@ -20,6 +20,7 @@ import '../../support/keyword_enum_json.dart';
 import '../../support/length_json.dart';
 import '../../support/list_splice.dart';
 import '../../support/point_style_json.dart';
+import '../../support/scale_options_of.dart';
 import 'dataset_controller_reference.dart';
 
 // The specs of core.datasetController.tests.js need the controllers of
@@ -302,8 +303,9 @@ final class _FakeScale(@override final IChart chart, AnyObject spec)
   final String kind = spec['kind']! as String;
 
   @override
-  final AnyObject options =
-      _materialize(spec['options'] ?? <String, Object?>{})! as AnyObject;
+  final CoreScaleOptions options = scaleOptionsOf(
+    _materialize(spec['options'] ?? <String, Object?>{})! as AnyObject,
+  );
 
   final List<Object?>? labels = spec.containsKey('labels')
       ? _materialize(spec['labels'])! as List<Object?>

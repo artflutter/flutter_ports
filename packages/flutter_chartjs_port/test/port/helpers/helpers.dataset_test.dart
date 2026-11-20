@@ -2,6 +2,8 @@
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
+import '../../support/scale_options_of.dart';
+
 // Upstream has no spec for helpers.dataset.ts (AGENTS.md rule 3). The
 // expected values come from src/helpers/helpers.dataset.ts of Chart.js
 // v4.5.1, run with the same inputs in Node.js v24.12.0 on x64.
@@ -42,9 +44,9 @@ final class _Scale(
   Object? clip,
 ) implements IScale {
   @override
-  final Map<String, Object?> options = {
+  final CoreScaleOptions options = scaleOptionsOf({
     if (!identical(clip, undefined)) 'clip': clip,
-  };
+  });
 
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
@@ -137,50 +139,40 @@ void main() {
       );
     });
 
-    test('uses the chart area edges of a scale whose clip is falsy', () {
-      final clip = _clip(5, 5, 5, 5);
-      expect(
-        getDatasetClipArea(chart, _Meta(clip, xScale(false), yScale(null))),
-        _isArea(5, 15, 305, 205),
-      );
-      expect(
-        getDatasetClipArea(
-          chart,
-          _Meta(clip, xScale(undefined), yScale(double.nan)),
-        ),
-        _isArea(5, 15, 305, 205),
-      );
-      expect(
-        getDatasetClipArea(
-          chart,
-          _Meta(clip, xScale(''), yScale(_negativeZero)),
-        ),
-        _isArea(5, 15, 305, 205),
-      );
-    });
+    test(
+      'uses the chart area edges of a scale whose clip is false or absent',
+      () {
+        final clip = _clip(5, 5, 5, 5);
+        expect(
+          getDatasetClipArea(chart, _Meta(clip, xScale(false), yScale(null))),
+          _isArea(5, 15, 305, 205),
+        );
+        expect(
+          getDatasetClipArea(
+            chart,
+            _Meta(clip, xScale(undefined), yScale(false)),
+          ),
+          _isArea(5, 15, 305, 205),
+        );
+      },
+    );
 
-    test('uses the scale edges of a scale whose clip is truthy', () {
+    test('uses the scale edges of a scale whose clip is true', () {
       expect(
         getDatasetClipArea(
           chart,
-          _Meta(_clip(5, 5, 5, 5), xScale(true), yScale(1)),
+          _Meta(_clip(5, 5, 5, 5), xScale(true), yScale(true)),
         ),
         _isArea(10, 20, 295, 195),
       );
-      // The x scale clips with 0 (falsy), the y scale with 'yes' (truthy).
+      // The x scale does not clip, the y scale clips. The scale option
+      // `clip` holds a bool (Chart.js ADRs 0121 and 0183).
       expect(
         getDatasetClipArea(
           chart,
-          _Meta(_clip(1, 2, 3, 4), xScale(0), yScale('yes')),
+          _Meta(_clip(1, 2, 3, 4), xScale(false), yScale(true)),
         ),
         _isArea(9, 23, 303, 194),
-      );
-      expect(
-        getDatasetClipArea(
-          chart,
-          _Meta(_clip(1, 2, 3, 4), xScale(<Object?>[]), yScale({})),
-        ),
-        _isArea(14, 23, 293, 194),
       );
     });
 

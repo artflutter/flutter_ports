@@ -138,7 +138,7 @@ Object? _elementOption(
 
 /// The option at [path] of the scale [id].
 Object? _scaleOption(Chart chart, String id, List<String> path) {
-  Object? value = chart.scales[id]!.options;
+  Object? value = chart.scales[id]!.optionsView;
   for (final key in path) {
     value = jsGet(value, key);
   }
@@ -202,7 +202,7 @@ AnyObject _formConfig() => <String, Object?>{
 /// The state of the probe F-P4: the `x` tick color, `x.min`, the border
 /// color of the dataset 0, the visibility of the dataset 1 and the title.
 String _formState(Chart chart) {
-  final x = chart.scales['x']!.options;
+  final x = chart.scales['x']!.optionsView;
   final title = jsGet(jsGet(chart.options, 'plugins'), 'title');
   final tickColor =
       (jsGet(jsGet(x, 'ticks'), 'color')! as SolidChartPaint).color;

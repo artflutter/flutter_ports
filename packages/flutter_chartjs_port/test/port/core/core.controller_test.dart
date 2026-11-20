@@ -1154,7 +1154,7 @@ void main() {
           jsObjectKeys(chart.scales)
               .map(
                 (id) =>
-                    '$id:${chart.scales[id]!.options['id']}:'
+                    '$id:${chart.scales[id]!.optionsView['id']}:'
                     '${_positionText(chart.scales[id]!.position)}',
               )
               .join(' '),

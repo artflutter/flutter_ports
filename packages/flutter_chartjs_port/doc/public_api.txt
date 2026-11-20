@@ -969,7 +969,9 @@ roundRectGeometry
 roundRectRadiusScale
 rrectContains
 sameAxis
+scaleBorderOf
 scaleCfgArg
+scaleNumber
 scaleRangesChanged
 scales
 scanBarInteractionItems
@@ -989,7 +991,6 @@ splineCurve
 splineCurveDefault
 splineCurveMonotone
 splitKey
-stackModeOf
 stackPointSearchEnabled
 stackResultPoint
 stacksOf
@@ -2038,7 +2039,9 @@ roundRectGeometry
 roundRectRadiusScale
 rrectContains
 sameAxis
+scaleBorderOf
 scaleCfgArg
+scaleNumber
 scaleRangesChanged
 scales
 scanBarInteractionItems
@@ -2059,7 +2062,6 @@ splineCurve
 splineCurveDefault
 splineCurveMonotone
 splitKey
-stackModeOf
 stackPointSearchEnabled
 stackResultPoint
 stacksOf

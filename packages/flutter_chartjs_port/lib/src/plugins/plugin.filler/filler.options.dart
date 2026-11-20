@@ -155,9 +155,7 @@ double getTargetValue(FillTarget fill, IScale scale, double startValue) {
   if (fill is StartFill) {
     value = startValue;
   } else if (fill is EndFill) {
-    value = jsTruthy(optionOf(scale.options, OptionKey.reverse))
-        ? scale.min
-        : scale.max;
+    value = scale.options.reverse ? scale.min : scale.max;
   } else if (fill is ValueFill) {
     value = fill.value;
   } else {

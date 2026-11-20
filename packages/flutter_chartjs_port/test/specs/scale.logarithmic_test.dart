@@ -1200,7 +1200,7 @@ void main() {
             expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
             expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
 
-            chart.scales[axisID]!.options['reverse'] = true; // Reverse mode
+            chart.scales[axisID]!.optionsView['reverse'] = true; // Reverse mode
             chart.update();
 
             // chartArea might have been resized in update
@@ -1317,7 +1317,8 @@ void main() {
               expect(scale.getValueForPixel(start), closeTo(firstTick, 5e-5));
               expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
 
-              chart.scales[axisID]!.options['reverse'] = true; // Reverse mode
+              chart.scales[axisID]!.optionsView['reverse'] =
+                  true; // Reverse mode
               chart.update();
 
               // chartArea might have been resized in update
@@ -1441,7 +1442,8 @@ void main() {
               expect(scale.getValueForPixel(start), closeTo(scale.min, 5e-5));
               expect(scale.getValueForPixel(end), closeTo(lastTick, 5e-5));
 
-              chart.scales[axisID]!.options['reverse'] = true; // Reverse mode
+              chart.scales[axisID]!.optionsView['reverse'] =
+                  true; // Reverse mode
               chart.update();
 
               // chartArea might have been resized in update

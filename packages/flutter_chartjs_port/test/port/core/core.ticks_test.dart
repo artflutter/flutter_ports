@@ -5,6 +5,8 @@ import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:intl/intl.dart';
 import 'package:test/test.dart';
 
+import '../../support/scale_options_of.dart';
+
 // The spec core.ticks.tests.js calls formatters.numeric only with one to two
 // ticks, and does not call formatters.values or formatters.logarithmic
 // outside a chart. The expected values come from Node.js v24.12.0 (V8 13.6)
@@ -22,8 +24,11 @@ final class _Chart(@override final Map<String, Object?> options)
 /// A `this` object `{chart, options}`, passed as a [IScale].
 final class _Scale(
   @override final IChart chart,
-  @override final Map<String, Object?> options,
+  Map<String, Object?> rawOptions,
 ) implements IScale {
+  @override
+  final CoreScaleOptions options = scaleOptionsOf(rawOptions);
+
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

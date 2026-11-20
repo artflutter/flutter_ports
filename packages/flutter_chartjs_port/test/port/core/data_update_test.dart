@@ -2164,7 +2164,7 @@ void main() {
           final b = chart(cb);
           final id = type == 'radar' ? 'r' : 'y';
           for (final c in [a, b]) {
-            c.scales[id]!.options
+            c.scales[id]!.optionsView
               ..jsWrite('min', 2.0)
               ..jsWrite('max', 8.0);
           }
@@ -2190,7 +2190,7 @@ void main() {
       final a = chart(cfg);
       change(cfg, 0);
       expect(a.updateData(), isTrue);
-      a.scales['y']!.options.jsWrite('max', 9.0);
+      a.scales['y']!.optionsView.jsWrite('max', 9.0);
       expect(a.updateRanges(UpdateMode.none), isTrue);
       expect(a.scales['y']!.max, 9);
       change(cfg, 1);

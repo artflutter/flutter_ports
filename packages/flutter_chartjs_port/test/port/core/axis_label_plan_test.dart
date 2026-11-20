@@ -169,7 +169,7 @@ final class _Pair() {
   }
 
   void tickOption(String key, Object? value) => each((chart) {
-    (chart.scales['x']!.options.ticks.raw! as OptionView)[key] = value;
+    (chart.scales['x']!.options.ticks.view! as OptionView)[key] = value;
   });
 }
 
@@ -247,7 +247,7 @@ void main() {
     }
 
     pair.each((chart) {
-      chart.scales['x']!.options
+      chart.scales['x']!.optionsView
         ..['beforeCalculateLabelRotation'] = beforeRotation
         ..['afterCalculateLabelRotation'] = afterRotation;
     });
@@ -262,7 +262,7 @@ void main() {
       ..update();
     late List<Tick> built;
     void capture(Scale scale) => built = scale.ticks!;
-    pair.fast.scales['x']!.options['afterBuildTicks'] = capture;
+    pair.fast.scales['x']!.optionsView['afterBuildTicks'] = capture;
     pair.update();
     final retained = built[1];
     final scale = pair.fast.scales['x']!;
@@ -414,7 +414,7 @@ void main() {
       ..update();
     void replaceTicks(Scale scale) => scale.ticks = _Ticks(scale.ticks!);
     pair.each((chart) {
-      chart.scales['x']!.options['afterBuildTicks'] = replaceTicks;
+      chart.scales['x']!.optionsView['afterBuildTicks'] = replaceTicks;
     });
     pair.context.fontWrites = 0;
     pair.update();
@@ -469,7 +469,7 @@ void main() {
       ) => ['changed $value'];
       chart.onDataRead = () {
         if (chart.dataReads == 2) {
-          (scale.options.ticks.raw! as OptionView)['callback'] = changedLabel;
+          (scale.options.ticks.view! as OptionView)['callback'] = changedLabel;
         }
       };
       scale.generateTickLabels(ticks);
@@ -488,7 +488,8 @@ void main() {
       ..update();
     void clearContext(Scale scale) => scale.$context = null;
     pair.each((chart) {
-      chart.scales['x']!.options['beforeCalculateLabelRotation'] = clearContext;
+      chart.scales['x']!.optionsView['beforeCalculateLabelRotation'] =
+          clearContext;
     });
     pair.context.fontWrites = 0;
     pair.update();

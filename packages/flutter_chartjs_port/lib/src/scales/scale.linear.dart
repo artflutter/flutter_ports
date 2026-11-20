@@ -49,7 +49,7 @@ class LinearScale(super.cfg)
       super.runtimeType == LinearScale &&
       getUserBounds().minDefined &&
       getUserBounds().maxDefined &&
-      options.cachedFixedDataBounds;
+      optionsView.cachedFixedDataBounds;
 
   /// scale.linear.js:13 `static defaults`.
   ///
@@ -101,10 +101,14 @@ class LinearScale(super.cfg)
 
   late final bool _nativeBarIndexReads = runtimeType == LinearScale;
 
-  /// The options of the scale, through the facade of the linear scale
-  /// options (index.d.ts:3356).
+  /// The options of the scale: the linear scale options (index.d.ts:3356).
   @override
-  LinearScaleOptions get options => LinearScaleOptions(super.options);
+  LinearScaleOptions get options => super.options as LinearScaleOptions;
+
+  /// The linear scale options of the view [view].
+  @override
+  @protected
+  LinearScaleOptions createOptions(OptionView view) => LinearScaleOptions(view);
 
   /// scale.linear.js:20 `determineDataLimits()`.
   ///

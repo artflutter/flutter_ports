@@ -451,7 +451,7 @@ void main() {
           equals(<Object?>['20', '25', '30', '35', '40', '45', '50']),
         );
 
-        chart.scales['r']!.options['beginAtZero'] = true;
+        chart.scales['r']!.optionsView['beginAtZero'] = true;
         chart.update();
 
         expect(
@@ -472,7 +472,7 @@ void main() {
           ]),
         );
 
-        chart.scales['r']!.options['beginAtZero'] = false;
+        chart.scales['r']!.optionsView['beginAtZero'] = false;
         chart.update();
 
         expect(
@@ -806,7 +806,7 @@ void main() {
       expect(position.x, toBeCloseToPixel(269));
       expect(position.y, toBeCloseToPixel(276));
 
-      _r(chart).options['reverse'] = true;
+      _r(chart).optionsView['reverse'] = true;
       chart.update();
 
       expect(_r(chart).getDistanceFromCenterForValue(_r(chart).min), 215);
@@ -851,7 +851,7 @@ void main() {
         final dist = _r(chart).getDistanceFromCenterForValue(5);
         expect(_r(chart).getValueForDistanceFromCenter(dist), 5);
 
-        _r(chart).options['reverse'] = true;
+        _r(chart).optionsView['reverse'] = true;
         chart.update();
 
         expect(_r(chart).getValueForDistanceFromCenter(0), _r(chart).max);
@@ -899,7 +899,7 @@ void main() {
         );
       }
 
-      _r(chart).options['startAngle'] = 0;
+      _r(chart).optionsView['startAngle'] = 0;
       chart.update();
 
       for (var x = 0; x < 5; x++) {
@@ -956,7 +956,7 @@ void main() {
             'textAlign': <Object?>['right', 'right', 'left', 'left', 'left'],
           },
         ]) {
-          scale.options['startAngle'] = expected['startAngle'];
+          scale.optionsView['startAngle'] = expected['startAngle'];
           chart.update();
 
           final ctx = createMockContext();
@@ -1014,7 +1014,7 @@ void main() {
       const additionalAngle = pi / lavelNum;
       final opts = _r(chart).options;
       final outerDistance = _r(chart).getDistanceFromCenterForValue(
-        jsTruthy(jsGet(opts['ticks'], 'reverse'))
+        jsTruthy(readOption(opts.ticks.view, OptionKey.reverse))
             ? _r(chart).min
             : _r(chart).max,
       );

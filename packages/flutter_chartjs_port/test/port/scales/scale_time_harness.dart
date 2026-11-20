@@ -81,7 +81,7 @@ Map<String, Object?> timeObservations(Scale scale, Chart chart) {
   final min = scale.min;
   final max = scale.max;
   final mid = (min + max) / 2;
-  final parse = jsTruthy(jsGet(scale.options['time'], 'parser'))
+  final parse = jsTruthy(jsGet(scale.optionsView['time'], 'parser'))
       ? const <Object?>[]
       : [
           for (final v in [

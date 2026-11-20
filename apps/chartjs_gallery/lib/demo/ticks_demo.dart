@@ -26,8 +26,14 @@ final class _DemoChart(@override final Map<String, Object?> options)
 /// `options.ticks.format`.
 final class _DemoScale(
   @override final IChart chart,
-  @override final Map<String, Object?> options,
+  Map<String, Object?> rawOptions,
 ) implements IScale {
+  /// The typed options of a view of the raw options (Chart.js ADR 0183).
+  @override
+  final CoreScaleOptions options = CoreScaleOptions(
+    attachContext(createResolver([rawOptions]), <String, Object?>{}),
+  );
+
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

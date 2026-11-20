@@ -43,7 +43,7 @@ Map<String, Object?> fixture() => <String, Object?>{
   },
   'options': <String, Object?>{
     'run': (Chart chart) {
-      chart.scales['x']!.options['min'] = 5;
+      chart.scales['x']!.optionsView['min'] = 5;
       chart.update();
     },
   },

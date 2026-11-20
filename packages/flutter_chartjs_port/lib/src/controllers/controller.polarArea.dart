@@ -614,9 +614,7 @@ class PolarAreaController(super.chart, super.datasetIndex, [super.newTarget])
   // DIVERGES(chartjs): adapt-arc-native-options, the guard of the plan.
   bool _nativeRadialScale(IRadialLinearScale scale) {
     if (!nativeArcScale(scale)) return false;
-    final view = scale.options;
-    return view is OptionView &&
-        view.rawOptionsAreScalar(const [OptionKey.reverse]);
+    return scale.optionsView.rawOptionsAreScalar(const [OptionKey.reverse]);
   }
 
   /// controller.polarArea.js:216 `countVisibleElements()`.

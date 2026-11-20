@@ -439,10 +439,14 @@ class TimeScale(super.cfg) extends Scale {
 
   late final bool _nativeBarIndexReads = runtimeType == TimeScale;
 
-  /// The options of the scale, through the facade of the time scale options
-  /// (index.d.ts:3484).
+  /// The options of the scale: the time scale options (index.d.ts:3484).
   @override
-  TimeScaleOptions get options => TimeScaleOptions(super.options);
+  TimeScaleOptions get options => super.options as TimeScaleOptions;
+
+  /// The time scale options of the view [view].
+  @override
+  @protected
+  TimeScaleOptions createOptions(OptionView view) => TimeScaleOptions(view);
 
   /// scale.time.js:258 `_unit`. The spec reads it (scale.time.tests.js:115).
   ///
@@ -488,7 +492,7 @@ class TimeScale(super.cfg) extends Scale {
   void init(Object options, [Object? opts]) {
     final chartOptions = opts ?? <String, Object?>{};
     final scaleOpts = TimeScaleOptions(options as OptionView);
-    final currentTime = scaleOpts.time.raw;
+    final currentTime = scaleOpts.time.view;
     final time = TimeScaleTimeOptions(
       jsTruthy(currentTime)
           ? currentTime
@@ -772,7 +776,9 @@ class TimeScale(super.cfg) extends Scale {
           max,
           _getLabelCapacity(min),
         );
-    final stepSize = valueOrDefault<Object?>(options.ticks.stepSize, 1.0);
+    // An absent `stepSize` (Dart `null`) takes the default of
+    // `valueOrDefault`.
+    final stepSize = options.ticks.stepSize ?? 1.0;
     final weekday = minor == TimeUnit.week ? timeOpts.isoWeekday : false;
     final hasWeekday = isNumber(weekday) || weekday == true;
     final ticks = <double, bool>{};

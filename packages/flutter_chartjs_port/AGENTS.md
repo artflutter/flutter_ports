@@ -343,13 +343,19 @@ repository.
       measurements. See `test/port/core/axis_label_plan_test.dart` and `category_label_source_test.dart`. Tick
       objects, contexts, callbacks and the fit stay live. A Flutter font notification (`canvas_font_tracking.dart`)
       ends the plans.
-    - `scale_options.dart` (port-only, pure through `core.ticks`) has the typed facades of the
-      scale options (Chart.js ADR 0054 §4): extension types over the `OptionView` of a scale.
-      `Scale.options` is a `CoreScaleOptions`, and each scale class narrows it to the facade of
-      its type. A getter gives the raw JS value, and the readers keep their JS operators. A
-      nested facade (`TickOptions`, …) holds any JS value and reads with `readOption`.
-      `TickOptions.format` gives the typed `NumberFormat?` of the tick option `format`. A getter
-      of an on/off key of the scale facades, and a field of a plugin option class, gives a
+    - `scale_options.dart` (port-only, pure) has the typed scale option classes (Chart.js ADR
+      0183, row `adapt-native-scale-options`): `CoreScaleOptions` and a subclass for each scale
+      type, and `TickOptions`, `GridLineOptions`, `ScaleTitleOptions`, `TimeScaleTimeOptions`,
+      `AngleLineOptions`, `PointLabelOptions` and `MajorTickOptions`. Each class has a `const`
+      constructor over the view and one typed getter for each key: a number is a `double?` (Dart
+      `null` for an absent value), a keyword an enum, a font a `TextStyle?`. A getter reads the
+      view at each read, so a scriptable option and a write behave as upstream. `min`, `max`,
+      the hooks, the label callbacks and the canvas colors give the raw value. `Scale.options`
+      (and `IScale.options`) is a `CoreScaleOptions`, one object for each view (`createOptions`),
+      and each scale class narrows it. `Scale.optionsView` gives the view: a write by name, the
+      internal plans and `setContext` use it. A nested class has its view in `view`. The tests
+      make the options of a fake scale with `scaleOptionsOf` of `test/support/scale_options_of.dart`.
+      A getter of an on/off key of the scale options, and a field of a plugin option class, gives a
       `bool` through `boolOption` of `helpers.config.dart` (Chart.js ADR 0121, row `adapt-bool-options`): an absent option is
       `false` (`includeBounds`: `true`), and another type stops a debug build.
     - [Chart.js ADR 0074](doc/adr/0074-incremental-data-updates.md): `Chart.updateData()` is an explicit data-only

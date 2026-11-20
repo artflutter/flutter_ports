@@ -110,7 +110,7 @@ List<String>? _numeric(
 
   // DIVERGES(chartjs): adapt-intl-number-format, a NumberFormat formats the
   // tick as it is: Dart cannot copy it to merge the digits of the tick.
-  final format = TickOptions(readOption(self.options, OptionKey.ticks)).format;
+  final format = self.options.ticks.format;
   if (format != null) return <String>[format.format(tickValue)];
   return <String>[
     formatNumberDigits(

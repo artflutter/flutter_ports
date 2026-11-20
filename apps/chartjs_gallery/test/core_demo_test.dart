@@ -197,8 +197,8 @@ void main() {
       final area = chart.chartArea!;
       final x = chart.scales['x']!;
       final y = chart.scales['y']!;
-      expect(x.options['display'], ScaleDisplay.off);
-      expect(y.options['display'], ScaleDisplay.off);
+      expect(x.optionsView['display'], ScaleDisplay.off);
+      expect(y.optionsView['display'], ScaleDisplay.off);
       for (var i = 0; i < data.length; i++) {
         final item = state.dataOf(d)[i];
         final point = data[i] as PointElement;

@@ -459,9 +459,14 @@ abstract interface class IScale() implements IElement, LayoutItem {
   double get maxLength;
 
   /// core.element.ts:14 `options: O`, through `Element<unknown, O>`
-  /// (index.d.ts:1303).
+  /// (index.d.ts:1303): the typed scale options (Chart.js ADR 0183).
   @override
-  Object get options;
+  CoreScaleOptions get options;
+
+  /// The resolver view of the options, the `ContextProxy` of upstream
+  /// (Chart.js ADR 0183). A write by name and the internal plans of the
+  /// controllers read it.
+  OptionView get optionsView;
 
   /// index.d.ts:1352 `getLabelForValue(value: number): string`.
   ///

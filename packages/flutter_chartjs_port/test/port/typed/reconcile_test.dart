@@ -522,13 +522,13 @@ void main() {
       final chart = _chart(tester);
       final map = _dataset(chart, 0);
       expect(map['type'], 'line');
-      expect(chart.scales['x']!.options['offset'], isTrue);
+      expect(chart.scales['x']!.optionsView['offset'], isTrue);
 
       await tester.pumpWidget(_view(config(ChartKind.line)));
       expect(_dataset(chart, 0), same(map));
       expect(map.jsHas('type'), isFalse);
       expect(chart.config.type, 'line');
-      expect(chart.scales['x']!.options['offset'], isFalse);
+      expect(chart.scales['x']!.optionsView['offset'], isFalse);
     });
   });
 

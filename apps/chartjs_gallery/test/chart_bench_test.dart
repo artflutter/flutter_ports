@@ -458,7 +458,7 @@ void main() {
         expect(x, isA<CategoryScale>());
         expect(y, isA<LinearScale>());
         expect(x.getLabels(), hasLength(30));
-        expect((x.options['ticks']! as JsObjectFace)['autoSkip'], true);
+        expect((x.optionsView['ticks']! as JsObjectFace)['autoSkip'], true);
         final meta = c.getDatasetMeta(0);
         expect(identical(meta.iScale, x), isTrue);
         expect(identical(meta.vScale, y), isTrue);
@@ -1167,7 +1167,7 @@ void main() {
             }
             if (name == 'stack') {
               expect(
-                jsGet(chart.scales['y']!.options, 'stacked'),
+                chart.scales['y']!.options.stacked,
                 StackMode.on,
                 reason: reason,
               );
@@ -1245,7 +1245,7 @@ void main() {
               expect(block.options!.text, ['Chart.js Line Chart']);
             }
             // The scales of the docs blocks are visible.
-            expect(chart.scales['x']!.options['display'], ScaleDisplay.on);
+            expect(chart.scales['x']!.optionsView['display'], ScaleDisplay.on);
             expect(chart.chartArea!.top, greaterThan(0), reason: reason);
           },
         );

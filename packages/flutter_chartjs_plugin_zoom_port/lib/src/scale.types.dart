@@ -238,7 +238,7 @@ bool updateRange(
 ]) {
   final (:min, :max) = minMax;
   final state = getState(scale.chart);
-  final scaleOpts = scale.options;
+  final scaleOpts = scale.optionsView;
 
   final scaleLimits = _getScaleLimits(scale, limits);
   final minRange = scaleLimits.minRangeOrDefault;
@@ -393,10 +393,9 @@ bool _panCategoryScale(Scale scale, double delta, LimitOptions limits) {
 /// time scale, in milliseconds.
 ///
 /// The host holds the unit as the enum `TimeUnit` (row
-/// `adapt-host-time-unit`). A value that is not a unit reads `undefined`,
-/// so the sum with the scale bound is NaN.
+/// `adapt-host-time-unit`), in the typed time options of the scale.
 // DIVERGES(zoom): adapt-host-time-unit, the enum of the host.
-double _offsets(Object? round) => switch (round) {
+double _offsets(TimeUnit round) => switch (round) {
   TimeUnit.millisecond => 0,
   TimeUnit.second => 500, // 500 ms
   TimeUnit.minute => 30 * 1000.0, // 30 s
@@ -406,7 +405,6 @@ double _offsets(Object? round) => switch (round) {
   TimeUnit.month => 15 * 24 * 60 * 60 * 1000.0, // 15 d
   TimeUnit.quarter => 60 * 24 * 60 * 60 * 1000.0, // 60 d
   TimeUnit.year => 182 * 24 * 60 * 60 * 1000.0, // 182 d
-  _ => double.nan,
 };
 
 /// scale.types.ts:252 `panNumericalScale(scale, delta, limits, canZoom)`.
@@ -421,9 +419,9 @@ bool _panNumericalScale(
   var offset = 0.0;
   if (_isTimeScale(scale)) {
     // scale.options.time?.round
-    final time = scale.options['time'];
-    final round = isNullOrUndef(time) ? undefined : jsGet(time, 'round');
-    offset = jsTruthy(round) ? _offsets(round) : 0;
+    final options = scale.options;
+    final round = options is TimeScaleOptions ? options.time.round : null;
+    offset = round != null ? _offsets(round) : 0;
   }
   final newMin = scale.getValueForPixel(
     scale.getPixelForValue(prevStart + offset) - delta,

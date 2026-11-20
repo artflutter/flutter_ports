@@ -5,6 +5,7 @@ library;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/scale_options_of.dart';
 import 'scale_autoskip_reference.dart';
 
 // test/specs has no core.scale.autoskip.tests.js. The chart cases of
@@ -21,11 +22,14 @@ import 'scale_autoskip_reference.dart';
 /// The scale object `{options, _tickSize(), _length, _maxLength}` of a
 /// case, passed as a [IScale]. autoSkip reads no other member.
 final class _Scale(
-  @override final Map<String, Object?> options,
+  Map<String, Object?> rawOptions,
   final double _tickSize,
   @override final double length,
   @override final double maxLength,
 ) implements IScale {
+  @override
+  final CoreScaleOptions options = scaleOptionsOf(rawOptions);
+
   @override
   double tickSize() => _tickSize;
 

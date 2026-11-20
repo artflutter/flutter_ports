@@ -220,7 +220,7 @@ Map<String, Object?> _scale(
 typedef _Write = void Function(Chart chart);
 
 /// The options view of the scale [id] of [chart].
-JsObjectFace _options(Chart chart, String id) => chart.scales[id]!.options;
+JsObjectFace _options(Chart chart, String id) => chart.scales[id]!.optionsView;
 
 /// `scale.options.min = min` and `scale.options.max = max`.
 _Write _range(String id, Object? min, Object? max) => (chart) {
@@ -810,17 +810,14 @@ void main() {
       final log = _Log();
       final chart = acquireChart(_small(log));
       final options = chart.options;
-      final scale = chart.scales['x']!.options;
+      final scale = chart.scales['x']!.optionsView;
       final dataset = chart.getDatasetMeta(0).controller!.options;
       final title = _pluginResolver(chart, 'title');
       expect(chart.updateRanges(), isTrue);
       expect(chart.options, isNot(same(options)));
       expect(chart.options.resolver, same(options.resolver));
-      expect(chart.scales['x']!.options, isNot(same(scale)));
-      expect(
-        (chart.scales['x']!.options as OptionView).resolver,
-        same((scale as OptionView).resolver),
-      );
+      expect(chart.scales['x']!.optionsView, isNot(same(scale)));
+      expect(chart.scales['x']!.optionsView.resolver, same(scale.resolver));
       final next = chart.getDatasetMeta(0).controller!.options;
       expect(next, isNot(same(dataset)));
       expect(next.resolver, same(dataset.resolver));

@@ -39,7 +39,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 ///
 /// The result is a new list of the same tick objects.
 List<Tick> autoSkip(IScale scale, List<Tick> ticks) {
-  final tickOpts = TickOptions(readOption(scale.options, OptionKey.ticks));
+  final tickOpts = scale.options.ticks;
   final determinedMaxTicks = _determineMaxTicks(scale);
   final maxTicksLimit = tickOpts.maxTicksLimit;
   final ticksLimit = math.min(
@@ -94,9 +94,9 @@ List<Tick> autoSkip(IScale scale, List<Tick> ticks) {
 
 /// core.scale.autoskip.js:49 `determineMaxTicks`.
 double _determineMaxTicks(IScale scale) {
-  final offset = readOption(scale.options, OptionKey.offset);
+  final offset = scale.options.offset;
   final tickLength = scale.tickSize();
-  final maxScale = scale.length / tickLength + (jsTruthy(offset) ? 0 : 1);
+  final maxScale = scale.length / tickLength + (offset ? 0 : 1);
   final maxChart = scale.maxLength / tickLength;
   return math.min(maxScale, maxChart).floorToDouble();
 }

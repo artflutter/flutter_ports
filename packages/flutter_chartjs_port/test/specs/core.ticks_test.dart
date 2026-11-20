@@ -10,6 +10,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../support/scale_options_of.dart';
 import '../support/tick_label.dart';
 
 // The spec reads `Chart.Ticks`, which src/index.umd.ts:43 sets. Here it is
@@ -43,8 +44,11 @@ final class _Chart(@override final Map<String, Object?> options)
 /// `options`.
 final class _Scale(
   @override final IChart chart,
-  @override final Map<String, Object?> options,
+  Map<String, Object?> rawOptions,
 ) implements IScale {
+  @override
+  final CoreScaleOptions options = scaleOptionsOf(rawOptions);
+
   @override
   Object? noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

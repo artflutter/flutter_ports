@@ -865,7 +865,7 @@ void main() {
       final scale = _scaleOf(chart);
       final target = chart.ctx!;
       // The set trap of the view: the next reads give the new color.
-      final labels = scale.options.pointLabels.raw! as JsObjectFace
+      final labels = scale.options.pointLabels.view! as JsObjectFace
         ..jsWrite('color', const ChartPaint.solid(ui.Color(0xFF010203)));
       expect(
         labels.jsRead('color'),
@@ -883,7 +883,7 @@ void main() {
       final chart = acquireChart(_config());
       final target = chart.ctx!;
       final scale = _scaleOf(chart);
-      (scale.options.angleLines.raw! as JsObjectFace).jsDelete('lineWidth');
+      (scale.options.angleLines.view! as JsObjectFace).jsDelete('lineWidth');
       final ordinary = _drawWith(chart, _Recorder(target));
       final plan = _drawWith(chart, _PlanRecorder(target));
       expect(_effectiveLog(plan), _effectiveLog(ordinary));
@@ -1074,7 +1074,7 @@ void main() {
         List<String> first(Scale scale, List<String> label, int index) {
           calls.add('first $label $index');
           if (index == 2) {
-            (_scaleOf(chart).options.pointLabels.raw! as JsObjectFace).jsWrite(
+            (_scaleOf(chart).options.pointLabels.view! as JsObjectFace).jsWrite(
               'callback',
               second,
             );
@@ -1269,7 +1269,7 @@ void main() {
       // A new view has no cached value: no plan, and no call.
       // The scale context stays the context of the new view.
       // ignore: invalid_use_of_protected_member
-      scale.options = scale.options.setContext(scale.getContext());
+      scale.options = scale.optionsView.setContext(scale.getContext());
       expect(scale.prepareRadialPositions(), isNull);
       expect(reads, before);
     });

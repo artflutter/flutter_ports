@@ -132,14 +132,13 @@ double _getTickBackdropHeight(CoreScaleOptions opts) {
     final padding = tickOpts.backdropPadding;
     final font = tickOpts.font;
     // DIVERGES(chartjs): adapt-text-style-fonts, the size of a TextStyle.
-    // `tickOpts.font && tickOpts.font.size`: a null font stays null, which
-    // valueOrDefault keeps and the `+` reads as 0, as upstream.
+    // `tickOpts.font && tickOpts.font.size`: an absent font or size takes
+    // the default size, as upstream.
     return jsToNumber(
       jsAdd(
         valueOrDefault<Object?>(
-          jsTruthy(font)
-              ? (font is TextStyle ? font.fontSize : null) ?? undefined
-              : font,
+          // An absent font (Dart `null`) is the `undefined` of upstream.
+          font?.fontSize ?? undefined,
           _defaultFontSize(),
         ),
         padding.vertical,
@@ -241,7 +240,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
 
   for (var i = 0; i < valueCount; i++) {
     final opts = pointLabelOpts.setContext(scale.getPointLabelContext(i)!);
-    padding[i] = opts.padding;
+    padding[i] = scaleNumber(opts.padding);
     final pointPosition = scale.getPointPosition(
       i,
       jsToNumber(jsAdd(scale.drawingArea, padding[i])),
@@ -277,7 +276,7 @@ void _fitWithPointLabels(RadialLinearScale scale) {
 
     // DIVERGES(chartjs): adapt-radial-static-plans, one font and one padding.
     if (i == 0 && valueCount > 1 && _nativeStaticPlan(scale)) {
-      final view = pointLabelOpts.raw;
+      final view = pointLabelOpts.view;
       final positions = scale.prepareRadialPositions();
       if (view is OptionView && positions != null) {
         final staticPadding = view.cachedStaticValue(OptionKey.padding);
@@ -631,7 +630,7 @@ void _drawPointLabels(RadialLinearScale scale, int labelCount) {
     // DIVERGES(chartjs): adapt-radial-static-plans, one font and one color.
     if (!planned) {
       planned = true;
-      final view = pointLabels.raw;
+      final view = pointLabels.view;
       if (view is OptionView &&
           _nativeStaticPlan(scale) &&
           _staticFont(view, plFont)) {
@@ -890,7 +889,7 @@ class RadialLinearScale(super.cfg)
       super.runtimeType == RadialLinearScale &&
       getUserBounds().minDefined &&
       getUserBounds().maxDefined &&
-      options.cachedFixedDataBounds;
+      optionsView.cachedFixedDataBounds;
 
   /// The exact class, for the options of a polar area loop (Chart.js ADR 0093).
   @override
@@ -911,8 +910,8 @@ class RadialLinearScale(super.cfg)
   RadialPositions? prepareRadialPositions() {
     final opts = options;
     if (super.runtimeType != RadialLinearScale ||
-        !opts.hasCachedValue(OptionKey.reverse) ||
-        !opts.hasCachedValue(OptionKey.startAngle)) {
+        !optionsView.hasCachedValue(OptionKey.reverse) ||
+        !optionsView.hasCachedValue(OptionKey.startAngle)) {
       return null;
     }
     final min = this.min;
@@ -1011,11 +1010,17 @@ class RadialLinearScale(super.cfg)
     construct: (newTarget, args) => RadialLinearScale(scaleCfgArg(args)),
   );
 
-  /// The options of the scale, through the facade of the radial linear
-  /// scale options (index.d.ts:3563).
+  /// The options of the scale: the radial linear scale options
+  /// (index.d.ts:3563).
   @override
   RadialLinearScaleOptions get options =>
-      RadialLinearScaleOptions(super.options);
+      super.options as RadialLinearScaleOptions;
+
+  /// The radial linear scale options of the view [view].
+  @override
+  @protected
+  RadialLinearScaleOptions createOptions(OptionView view) =>
+      RadialLinearScaleOptions(view);
 
   /// scale.radialLinear.js:416 `xCenter`, the x of the center.
   ///
@@ -1349,7 +1354,9 @@ class RadialLinearScale(super.cfg)
           // DIVERGES(chartjs): adapt-native-scale-border, the border of the
           // options of the tick context: a border function gets each context.
           final optsAtIndexBorder = _radialBorderOf(
-            RadialLinearScaleOptions(opts.setContext(context)).border,
+            scaleBorderOf(
+              optionsView.setContext(context).readKey(OptionKey.border),
+            ),
           );
 
           _drawRadiusLine(
@@ -1410,7 +1417,7 @@ class RadialLinearScale(super.cfg)
   /// A scriptable or an indexed value is no plain value. The probe reads the
   /// resolved value, so one that comes through the fallback to `grid` counts.
   bool _staticAngleLineStyle(AngleLineOptions angleLines) {
-    final view = angleLines.raw;
+    final view = angleLines.view;
     return view is OptionView &&
         _nativeStaticPlan(this) &&
         plainOptionValue(view.cachedStaticValue(OptionKey.color)) &&
@@ -1422,7 +1429,7 @@ class RadialLinearScale(super.cfg)
   /// the first line stay the state of each other line.
   bool _staticAngleLineState(AngleLineOptions angleLines) {
     if (!_staticAngleLineStyle(angleLines)) return false;
-    final view = angleLines.raw! as OptionView;
+    final view = angleLines.view! as OptionView;
     final dash = view.cachedStaticValue(OptionKey.borderDash);
     return dash is List<Object?> &&
         dash.isEmpty &&

@@ -165,7 +165,7 @@ void _expectEmptyData(Chart chart) {
 /// views read one resolver. They have the same `Object.keys`, and each key
 /// gives the same value: a nested options view reads the same resolver.
 void _expectSameScaleOptions(Chart chart, String id) {
-  final scaleOptions = chart.scales[id]!.options;
+  final scaleOptions = chart.scales[id]!.optionsView;
   final chartOptions = jsGet(chart.options['scales'], id)! as OptionView;
   expect(scaleOptions.resolver, same(chartOptions.resolver));
   final keys = scaleOptions.jsKeys();
@@ -185,7 +185,7 @@ void _expectSameScaleOptions(Chart chart, String id) {
 /// expected))`: each key of [expected] is an own property of the options of
 /// the scale [id] with the value of [expected].
 void _expectOwnOptions(Chart chart, String id, Map<String, Object?> expected) {
-  final options = chart.scales[id]!.options;
+  final options = chart.scales[id]!.optionsView;
   for (final MapEntry(:key, :value) in expected.entries) {
     expect(options.hasOwnProperty(key), isTrue, reason: key);
     expect(options[key], equals(value), reason: key);
@@ -950,11 +950,11 @@ void main() {
 
         expect(chart.options['_jasmineCheck'], isNot(same(undefined)));
         expect(
-          chart.scales['x']!.options['_jasmineCheck'],
+          chart.scales['x']!.optionsView['_jasmineCheck'],
           isNot(same(undefined)),
         );
         expect(
-          chart.scales['y']!.options['_jasmineCheck'],
+          chart.scales['y']!.optionsView['_jasmineCheck'],
           isNot(same(undefined)),
         );
 
@@ -2205,8 +2205,8 @@ void main() {
               ..update();
 
         final yScale = chart.scales['y']!;
-        expect(yScale.options['min'], 0);
-        expect(yScale.options['max'], 10);
+        expect(yScale.optionsView['min'], 0);
+        expect(yScale.optionsView['max'], 10);
       });
 
       testWidgets('should update scales options', (tester) async {
@@ -2229,8 +2229,8 @@ void main() {
         chart.update();
 
         final yScale = chart.scales['y']!;
-        expect(yScale.options['min'], 0);
-        expect(yScale.options['max'], 10);
+        expect(yScale.optionsView['min'], 0);
+        expect(yScale.optionsView['max'], 10);
       });
 
       testWidgets('should update scales options from new object', (
@@ -2257,8 +2257,8 @@ void main() {
         chart.update();
 
         final yScale = chart.scales['y']!;
-        expect(yScale.options['min'], 0);
-        expect(yScale.options['max'], 10);
+        expect(yScale.optionsView['min'], 0);
+        expect(yScale.optionsView['max'], 10);
       });
 
       testWidgets('should remove discarded scale', (tester) async {
@@ -2290,8 +2290,8 @@ void main() {
         final yScale = chart.scales['yAxis0'];
         expect(yScale, isNull);
         final newyScale = chart.scales['y']!;
-        expect(newyScale.options['min'], 0);
-        expect(newyScale.options['max'], 10);
+        expect(newyScale.optionsView['min'], 0);
+        expect(newyScale.optionsView['max'], 10);
       });
 
       testWidgets('should update tooltip options', (tester) async {

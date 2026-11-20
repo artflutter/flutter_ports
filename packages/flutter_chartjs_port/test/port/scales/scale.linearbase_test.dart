@@ -71,9 +71,7 @@ final class _TestLinearBaseLimitScale(super.cfg) extends _TestLinearBaseScale {
   double computeTickLimit() {
     final horizontal = isHorizontal();
     final length = horizontal ? width : height;
-    final minRotation = toRadians(
-      jsToNumber(jsGet(options['ticks'], 'minRotation')),
-    );
+    final minRotation = toRadians(jsToNumber(options.ticks.minRotation));
     final sinOrCos = horizontal ? math.sin(minRotation) : math.cos(minRotation);
     final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
     final tickFont = resolveTickFontOptions(0);

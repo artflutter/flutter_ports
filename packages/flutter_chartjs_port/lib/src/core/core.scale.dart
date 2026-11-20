@@ -260,8 +260,15 @@ void _garbageCollect(Map<TextStyle, _TextCache> caches, int length) {
 /// applies [jsAdd]: a string `tickLength` joins the other operand, for
 /// example `'8' + 0` gives `'80'` (core.scale.js:649).
 Object? _getTickMarkLength(GridLineOptions options) {
-  return options.drawTicks ? options.tickLength : 0.0;
+  return options.drawTicks ? scaleNumber(options.tickLength) : 0.0;
 }
+
+/// The JS value of the typed number option [value] (Chart.js ADR 0183): the
+/// number, or [undefined] for an absent option. The readers keep the JS
+/// operators of upstream (`+`, `-`, `ToNumber`), which give NaN for
+/// `undefined` and 0 for Dart `null`.
+// DIVERGES(chartjs): adapt-native-scale-options, typed getters.
+Object? scaleNumber(double? value) => value ?? undefined;
 
 /// The border [value] of a cartesian scale: the resolved scale option
 /// `border` (Chart.js ADR 0141, row `adapt-native-scale-border`).
@@ -866,17 +873,38 @@ class Scale(AnyObject cfg)
     return !usesTicks || _bulkTickLists.contains(ticks.runtimeType);
   }
 
+  /// The typed options of the last view, or Dart `null` before the first
+  /// read.
+  CoreScaleOptions? _typedOptions;
+
   /// core.scale.js:179 `options`, the resolved options of the scale.
   ///
-  /// [init] sets the `ContextProxy` of the options, an [OptionView]. The
-  /// getter gives it through the facade [CoreScaleOptions] (Chart.js ADR
-  /// 0054 §4), which is still the view and a Map. A subclass narrows the
-  /// facade to the options of its type. A read before [init] throws a
-  /// `TypeError`, as the JavaScript read of a property of the `undefined`
-  /// start value does.
+  /// [init] sets the `ContextProxy` of the options, an [OptionView]
+  /// ([optionsView]). The getter gives the typed options of that view
+  /// (Chart.js ADR 0183): one object for each view, which [createOptions]
+  /// makes at the first read after [init]. A subclass narrows it to the
+  /// options of its type. A read before [init] throws a `TypeError`, as the
+  /// JavaScript read of a property of the `undefined` start value does.
+  // DIVERGES(chartjs): adapt-native-scale-options, typed getters.
   @override
-  CoreScaleOptions get options =>
-      CoreScaleOptions(super.options! as OptionView);
+  CoreScaleOptions get options {
+    final view = optionsView;
+    final typed = _typedOptions;
+    if (typed != null && identical(typed.view, view)) return typed;
+    return _typedOptions = createOptions(view);
+  }
+
+  /// The resolver view of the options, the `ContextProxy` of upstream: the
+  /// value of `this.options` that [init] sets. A write by name
+  /// (`scale.optionsView['min'] = 5`) and a read in the order of upstream use
+  /// it. A read before [init] throws a `TypeError`.
+  @override
+  OptionView get optionsView => super.options! as OptionView;
+
+  /// The typed options of the view [view]: the options class of the scale
+  /// type. A subclass gives its own class.
+  @protected
+  CoreScaleOptions createOptions(OptionView view) => CoreScaleOptions(view);
 
   /// core.scale.js:256 `init(options)`.
   ///
@@ -898,17 +926,17 @@ class Scale(AnyObject cfg)
   /// [CoreScaleOptions].
   void init(Object options, [Object? opts]) {
     this.options = _setContext(options, getContext());
-    final view = CoreScaleOptions(options as OptionView);
+    final view = options as OptionView;
 
     // DIVERGES(chartjs): adapt-axis-objects, the axis is a class.
-    axis = view.axis! as ScaleAxis;
+    axis = view.readKey(OptionKey.axis)! as ScaleAxis;
 
     // parse min/max value, so we can properly determine min/max for other
     // scales
-    userMin = parse(view.min);
-    userMax = parse(view.max);
-    suggestedMin = parse(view.suggestedMin);
-    _suggestedMax = parse(view.suggestedMax);
+    userMin = parse(view.readKey(OptionKey.min));
+    userMax = parse(view.readKey(OptionKey.max));
+    suggestedMin = parse(view.readKey(OptionKey.suggestedMin));
+    _suggestedMax = parse(view.readKey(OptionKey.suggestedMax));
   }
 
   /// core.scale.js:270 `parse(raw, index)`.
@@ -1027,7 +1055,7 @@ class Scale(AnyObject cfg)
     final data = chart.data;
     final labels = options.labels;
     // DIVERGES(chartjs): adapt-scale-option-types, a List of labels only.
-    if (jsTruthy(labels)) return labels! as List<Object?>;
+    if (labels != null) return labels;
     final axisLabels = isHorizontal()
         ? jsGet(data, 'xLabels')
         : jsGet(data, 'yLabels');
@@ -1147,7 +1175,9 @@ class Scale(AnyObject cfg)
     // Compute tick rotation and fit using a sampled subset of labels
     // We generally don't need to compute the size of every single label for
     // determining scale size
-    final samplingEnabled = jsToNumber(sampleSize) < ticks!.length;
+    // An absent `sampleSize` (Dart `null`) is the `undefined` of upstream:
+    // `undefined < length` is false.
+    final samplingEnabled = sampleSize != null && sampleSize < ticks!.length;
     _convertTicksToLabels(
       samplingEnabled ? _sample(ticks!, sampleSize) : ticks!,
     );
@@ -1274,7 +1304,7 @@ class Scale(AnyObject cfg)
   /// the hook option, which reads with the typed key (Chart.js ADR 0144).
   void _callHooks(PluginHook<ScriptableScaleContext> hook, OptionKey name) {
     chart.notifyPlugins(hook, getContext());
-    _callHook(options.readKey(name), name);
+    _callHook(optionsView.readKey(name), name);
   }
 
   // Data limits
@@ -1378,9 +1408,9 @@ class Scale(AnyObject cfg)
     final options = this.options;
     final tickOpts = options.ticks;
     final numTicks = _getTicksLimit(ticks!.length, tickOpts.maxTicksLimit);
-    final minRotationOption = tickOpts.minRotation;
+    final minRotationOption = scaleNumber(tickOpts.minRotation);
     final minRotation = jsTruthy(minRotationOption) ? minRotationOption : 0.0;
-    final maxRotation = tickOpts.maxRotation;
+    final maxRotation = scaleNumber(tickOpts.maxRotation);
     var labelRotation = minRotation;
     double tickWidth;
     double maxHeight;
@@ -1412,7 +1442,7 @@ class Scale(AnyObject cfg)
       maxHeight =
           this.maxHeight -
           jsToNumber(_getTickMarkLength(options.grid)) -
-          jsToNumber(tickOpts.padding) -
+          jsToNumber(scaleNumber(tickOpts.padding)) -
           _getTitleHeight(
             options.title,
             readOption(chart.options, OptionKey.font),
@@ -1508,7 +1538,7 @@ class Scale(AnyObject cfg)
       // Don't bother fitting the ticks if we are not showing the labels
       if (tickOpts.display && ticks!.isNotEmpty) {
         final _LabelSizes(:first, :last, :widest, :highest) = _getLabelSizes();
-        final tickPadding = jsToNumber(tickOpts.padding) * 2;
+        final tickPadding = jsToNumber(scaleNumber(tickOpts.padding)) * 2;
         final angleRadians = _rotationRadians;
         final cos = math.cos(angleRadians);
         final sin = math.sin(angleRadians);
@@ -1568,7 +1598,7 @@ class Scale(AnyObject cfg)
     final tickOpts = options.ticks;
     // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
     final align = tickOpts.align;
-    final padding = tickOpts.padding;
+    final padding = scaleNumber(tickOpts.padding);
     final position = options.position;
     final isRotated = _isRotated;
     final labelsBelowTicks = position != ChartPosition.top && axis is XAxis;
@@ -1712,7 +1742,7 @@ class Scale(AnyObject cfg)
       final tickOpts = options.ticks;
       final sampleSize = tickOpts.sampleSize;
       var ticks = this.ticks!;
-      if (jsToNumber(sampleSize) < ticks.length) {
+      if (sampleSize != null && sampleSize < ticks.length) {
         ticks = _sample(ticks, sampleSize);
       }
 
@@ -1773,7 +1803,7 @@ class Scale(AnyObject cfg)
     TextStyle? planFont;
     List<String>? planLabels;
     final planOptions = canPlan ? options : null;
-    final planTicks = planOptions?.ticks.raw;
+    final planTicks = planOptions?.ticks.view;
     var widestLabelSize = 0.0;
     var highestLabelSize = 0.0;
     double i;
@@ -1796,7 +1826,7 @@ class Scale(AnyObject cfg)
           $context != null &&
           identical(ticks, this.ticks) &&
           identical(options, planOptions) &&
-          identical(options.ticks.raw, planTicks) &&
+          identical(options.ticks.view, planTicks) &&
           label != null &&
           label.length == 1) {
         final inputs = TickFontCache.staticInputs(planTicks);
@@ -2011,7 +2041,7 @@ class Scale(AnyObject cfg)
     final sin = math.sin(rot).abs();
 
     final labelSizes = _getLabelSizes();
-    final autoSkipPadding = optionTicks.autoSkipPadding;
+    final autoSkipPadding = scaleNumber(optionTicks.autoSkipPadding);
     final padding = jsTruthy(autoSkipPadding) ? autoSkipPadding : 0.0;
     // A label sizes object is always truthy.
     final w = jsToNumber(jsAdd(labelSizes.widest.width, padding));
@@ -2149,7 +2179,9 @@ class Scale(AnyObject cfg)
       x2 = chartArea.right;
     }
 
-    final limit = valueOrDefault(options.ticks.maxTicksLimit, ticksLength);
+    // An absent `maxTicksLimit` (Dart `null`) takes the default of
+    // `valueOrDefault`.
+    final limit = options.ticks.maxTicksLimit ?? ticksLength;
     final step = math.max<double>(
       1,
       (ticksLength / jsToNumber(limit)).ceilToDouble(),
@@ -2163,21 +2195,25 @@ class Scale(AnyObject cfg)
       // DIVERGES(chartjs): adapt-native-scale-border, the border of the
       // options of the tick context: a border function gets each context.
       final optsAtIndexBorder = _axisBorderOf(
-        CoreScaleOptions(options.setContext(context)).border,
+        scaleBorderOf(
+          optionsView.setContext(context).readKey(OptionKey.border),
+        ),
       );
 
-      final lineWidth = optsAtIndex.lineWidth;
+      final lineWidth = scaleNumber(optsAtIndex.lineWidth);
       final lineColor = optsAtIndex.color;
       final borderDash = optsAtIndexBorder.dash ?? const <double>[];
       // An absent offset is the `undefined` of upstream: the canvas ignores
       // it.
       final borderDashOffset = optsAtIndexBorder.dashOffset ?? undefined;
 
-      final tickWidth = optsAtIndex.tickWidth;
+      final tickWidth = scaleNumber(optsAtIndex.tickWidth);
       final tickColor = optsAtIndex.tickColor;
       final tickDash = optsAtIndex.tickBorderDash;
       final tickBorderDash = jsTruthy(tickDash) ? tickDash : <Object?>[];
-      final tickBorderDashOffset = optsAtIndex.tickBorderDashOffset;
+      final tickBorderDashOffset = scaleNumber(
+        optsAtIndex.tickBorderDashOffset,
+      );
 
       lineValue = _getPixelForGridLine(this, index, offset);
 
@@ -2252,7 +2288,7 @@ class Scale(AnyObject cfg)
     // DIVERGES(chartjs): adapt-scale-option-enums, the enum value.
     final align = optionTicks.align;
     final crossAlign = optionTicks.crossAlign;
-    final padding = optionTicks.padding;
+    final padding = scaleNumber(optionTicks.padding);
     final mirror = optionTicks.mirror;
     final tl = _getTickMarkLength(options.grid);
     final tickAndPadding = jsAdd(tl, padding);
@@ -2329,14 +2365,14 @@ class Scale(AnyObject cfg)
       label = tick.label;
 
       final optsAtIndex = optionTicks.setContext(getContext(i));
-      pixel = jsAdd(getPixelForTick(i), optionTicks.labelOffset);
+      pixel = jsAdd(getPixelForTick(i), scaleNumber(optionTicks.labelOffset));
       font = resolveTickFontOptions(i);
       lineHeight = font.lineHeight!;
       lineCount = label == null ? 1 : label.length;
       final halfCount = lineCount / 2;
       final color = optsAtIndex.color;
       final strokeColor = optsAtIndex.textStrokeColor;
-      final strokeWidth = optsAtIndex.textStrokeWidth;
+      final strokeWidth = scaleNumber(optsAtIndex.textStrokeWidth);
       var tickTextAlign = textAlign is TextAlign ? textAlign : null;
 
       if (isHorizontal) {
@@ -2505,7 +2541,7 @@ class Scale(AnyObject cfg)
     final ticks = options.ticks;
     final crossAlign = ticks.crossAlign;
     final mirror = ticks.mirror;
-    final padding = ticks.padding;
+    final padding = scaleNumber(ticks.padding);
     final labelSizes = _getLabelSizes();
     final tickAndPadding = jsAdd(tl, padding);
     final widest = labelSizes.widest.width;
@@ -2627,7 +2663,7 @@ class Scale(AnyObject cfg)
     final index = ticks.indexWhere((t) => t.value == value);
     if (index >= 0) {
       final opts = grid.setContext(getContext(index));
-      return jsToNumber(opts.lineWidth);
+      return jsToNumber(scaleNumber(opts.lineWidth));
     }
     return 0;
   }
@@ -2711,7 +2747,9 @@ class Scale(AnyObject cfg)
       return;
     }
     final width = axisWidth;
-    final lastLineWidth = jsToNumber(grid.setContext(getContext(0)).lineWidth);
+    final lastLineWidth = jsToNumber(
+      scaleNumber(grid.setContext(getContext(0)).lineWidth),
+    );
     final borderValue = _borderValue;
     double x1;
     double x2;
@@ -2861,10 +2899,10 @@ class Scale(AnyObject cfg)
     final ticks = opts.ticks;
     final grid = opts.grid;
     final border = opts.border;
-    final tz = jsOrZero(jsTruthy(ticks.raw) ? ticks.z : ticks.raw);
-    final gz = jsToNumber(
-      valueOrDefault<Object?>(jsTruthy(grid.raw) ? grid.z : grid.raw, -1.0),
-    );
+    final tz = jsOrZero(jsTruthy(ticks.view) ? ticks.z : ticks.view);
+    // `valueOrDefault(opts.grid && opts.grid.z, -1)`: an absent `z` (Dart
+    // `null`) takes -1, and a falsy `grid` gives its own number.
+    final gz = jsTruthy(grid.view) ? grid.z ?? -1.0 : jsToNumber(grid.view);
     // DIVERGES(chartjs): adapt-native-scale-border, the z of the border
     // object. The radial border has no z: 0, as `undefined` gives.
     final bz = (border is AxisBorder ? border.z : null) ?? 0.0;
@@ -2929,11 +2967,11 @@ class Scale(AnyObject cfg)
     // DIVERGES(chartjs): adapt-static-tick-font, guarded scalar font reuse.
     final ticks = options.ticks;
     final context = getContext(index);
-    final cached = _tickFontCache.read(ticks.raw);
+    final cached = _tickFontCache.read(ticks.view);
     if (cached != null) return cached;
     final opts = ticks.setContext(context);
     final font = toFont(opts.font);
-    _tickFontCache.remember(ticks.raw, font);
+    _tickFontCache.remember(ticks.view, font);
     return font;
   }
 

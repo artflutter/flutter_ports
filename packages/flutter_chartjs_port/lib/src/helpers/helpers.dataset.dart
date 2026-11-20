@@ -41,7 +41,7 @@ double _edgeOf(Object item, String field) => switch ((item, field)) {
 /// stands for the JS `undefined` of a chart before its first layout: the
 /// read of its edge throws a `TypeError`, as in JavaScript.
 double _getSizeForArea(IScale scale, ChartArea? chartArea, String field) {
-  return jsTruthy(readOption(scale.options, OptionKey.clip))
+  return scale.options.clip
       ? _edgeOf(scale, field)
       : _edgeOf(chartArea!, field);
 }

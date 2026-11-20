@@ -56,7 +56,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0051](0051-input-events-and-interaction-state.md) Input events and interaction state: accepted, superseded in part by 0108.
 - [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170.
 - [0053](0053-resolver-fast-paths.md) The resolver fast paths: rejected.
-- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165.
+- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165, 0183.
 - [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106.
 - [0056](0056-color-performance.md) Profile-guided color implementation: proposed.
 - [0057](0057-direct-typed-colors.md) Color-only inputs: implemented, supersedes 0050, 0052, 0054, superseded in part by 0061, 0128, 0147.
@@ -177,4 +177,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0180](0180-native-spec-matchers.md) Native matchers and recorders in the spec ports: accepted, supersedes 0030.
 - [0181](0181-plugin-classes-and-typed-get-plugin.md) A class for each plugin, and getPlugin by type: accepted, supersedes 0020, 0148.
 - [0182](0182-resolved-plugin-option-classes.md) Resolved option classes for the built-in plugins: accepted, supersedes 0150.
+- [0183](0183-typed-scale-option-classes.md) Typed scale option classes: accepted, supersedes 0054.
 <!-- adr-index:end -->

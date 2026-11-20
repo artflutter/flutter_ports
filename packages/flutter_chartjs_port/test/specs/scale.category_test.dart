@@ -276,7 +276,7 @@ void main() {
       expect(xScale.getPixelForValue(4), toBeCloseToPixel(487));
       expect(xScale.getValueForPixel(487), 4);
 
-      xScale.options['offset'] = true;
+      xScale.optionsView['offset'] = true;
       chart.update();
 
       expect(
@@ -371,7 +371,7 @@ void main() {
         );
         expect(xScale.getPixelForValue(3), toBeCloseToPixel(496));
 
-        xScale.options['offset'] = true;
+        xScale.optionsView['offset'] = true;
         chart.update();
 
         expect(
@@ -419,7 +419,7 @@ void main() {
       expect(yScale.getPixelForValue(4), toBeCloseToPixel(484));
       expect(yScale.getValueForPixel(144), 1);
 
-      yScale.options['offset'] = true;
+      yScale.optionsView['offset'] = true;
       chart.update();
 
       expect(yScale.getPixelForValue(0), toBeCloseToPixel(77));
@@ -466,7 +466,7 @@ void main() {
         expect(yScale.getPixelForValue(1), toBeCloseToPixel(32));
         expect(yScale.getPixelForValue(3), toBeCloseToPixel(482));
 
-        yScale.options['offset'] = true;
+        yScale.optionsView['offset'] = true;
         chart.update();
 
         expect(yScale.getPixelForValue(1), toBeCloseToPixel(107));

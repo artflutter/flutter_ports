@@ -203,7 +203,7 @@ Object? _applyStep(Chart chart, List<Object?> step) {
       final (object, key) = _parentOf(defaults, path);
       deleteOwnKey(object, key);
     case ['readScale', final String id, final String path]:
-      return _valueOf(_readPath(chart.scales[id]!.options, path), 0);
+      return _valueOf(_readPath(chart.scales[id]!.optionsView, path), 0);
     case ['readLegend', final String path]:
       // The legend keeps the resolved `LegendOptions` (Chart.js ADR 0182).
       final options = LegendOptions.of(chart.legend!.options);

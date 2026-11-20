@@ -196,10 +196,16 @@ class LogarithmicScale(super.cfg) extends Scale {
     construct: (newTarget, args) => LogarithmicScale(scaleCfgArg(args)),
   );
 
-  /// The options of the scale, through the facade of the logarithmic scale
-  /// options (index.d.ts:3405).
+  /// The options of the scale: the logarithmic scale options (index.d.ts:3405).
   @override
-  LogarithmicScaleOptions get options => LogarithmicScaleOptions(super.options);
+  LogarithmicScaleOptions get options =>
+      super.options as LogarithmicScaleOptions;
+
+  /// The logarithmic scale options of the view [view].
+  @override
+  @protected
+  LogarithmicScaleOptions createOptions(OptionView view) =>
+      LogarithmicScaleOptions(view);
 
   /// scale.logarithmic.js:95 `start`, the value at the start of the axis.
   /// NaN stands for JS `undefined`, the start value. [buildTicks] sets it.

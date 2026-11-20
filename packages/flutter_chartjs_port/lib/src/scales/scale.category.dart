@@ -234,7 +234,7 @@ class CategoryScale(super.cfg)
     if (super.runtimeType != CategoryScale || chart is! CategoryLabelSource) {
       return false;
     }
-    final cached = options.cachedCategoryLabelSource();
+    final cached = optionsView.cachedCategoryLabelSource();
     if (cached == null) return false;
     return identical(
       labels,
@@ -255,11 +255,11 @@ class CategoryScale(super.cfg)
   bool get supportsDataUpdates {
     if (super.runtimeType != CategoryScale ||
         _addedLabels.isNotEmpty ||
-        !options.cachedCategoryDataInputs ||
+        !optionsView.cachedCategoryDataInputs ||
         chart is! CategoryLabelSource) {
       return false;
     }
-    final cached = options.cachedCategoryLabelSource();
+    final cached = optionsView.cachedCategoryLabelSource();
     return cached != null &&
         (chart as CategoryLabelSource).categoryLabels(
               cached.labels,
@@ -306,9 +306,9 @@ class CategoryScale(super.cfg)
       );
       if (i == 0 &&
           ticks.runtimeType == _nativeTickListType &&
-          opts.raw is OptionView &&
+          opts.view is OptionView &&
           chart is CategoryLabelSource) {
-        final cached = options.cachedCategoryLabelSource();
+        final cached = optionsView.cachedCategoryLabelSource();
         if (cached != null) {
           labels = (chart as CategoryLabelSource).categoryLabels(
             cached.labels,
@@ -354,10 +354,15 @@ class CategoryScale(super.cfg)
 
   late final bool _nativeBarIndexReads = runtimeType == CategoryScale;
 
-  /// The options of the scale, through the facade of the category scale
-  /// options (index.d.ts:3344).
+  /// The options of the scale: the category scale options (index.d.ts:3344).
   @override
-  CategoryScaleOptions get options => CategoryScaleOptions(super.options);
+  CategoryScaleOptions get options => super.options as CategoryScaleOptions;
+
+  /// The category scale options of the view [view].
+  @override
+  @protected
+  CategoryScaleOptions createOptions(OptionView view) =>
+      CategoryScaleOptions(view);
 
   /// scale.category.js:51 `_startValue`, the value at the start of the
   /// range. NaN stands for JS `undefined`. [buildTicks] sets it.

@@ -963,15 +963,13 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         !chartOptions.rawOptionsAreScalar(const [OptionKey.indexAxis])) {
       return false;
     }
-    final indexOptions = iScale!.options;
-    if (indexOptions is! OptionView ||
-        !indexOptions.rawOptionsAreScalar(const [OptionKey.stacked])) {
+    final indexOptions = iScale!.optionsView;
+    if (!indexOptions.rawOptionsAreScalar(const [OptionKey.stacked])) {
       return false;
     }
     // `getLineWidthForValue` of the value scale reads `display`, `grid`,
     // `grid.display` and `grid.setContext(...).lineWidth`.
-    final scaleOptions = vScale!.options;
-    if (scaleOptions is! OptionView) return false;
+    final scaleOptions = vScale!.optionsView;
     final grid = scaleOptions.cachedSubView(OptionKey.grid);
     if (!scaleOptions.rawOptionsAreScalar(const [OptionKey.display]) ||
         grid == null ||
@@ -1484,7 +1482,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
         )
         .toList();
     // DIVERGES(chartjs): adapt-stacked-option-enum, the enum value.
-    final stacked = stackModeOf(readOption(iScale.options, OptionKey.stacked));
+    final stacked = iScale.options.stacked;
     final stacks = <Object?>[];
     // `getParsed(undefined)` is `undefined`. Dart `null` gives the same
     // result: without a data index, `skipNull` does not run.
