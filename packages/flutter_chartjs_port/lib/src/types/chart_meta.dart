@@ -1,7 +1,6 @@
 // Original code, not ported from Chart.js: the native dataset meta.
 
-/// The native dataset meta (doc/native-chart-meta-design-draft.md, row
-/// `adapt-native-chart-meta`).
+/// The native dataset meta (row `adapt-native-chart-meta`).
 library;
 
 import 'package:flutter_chartjs_port/chartjs_core.dart';

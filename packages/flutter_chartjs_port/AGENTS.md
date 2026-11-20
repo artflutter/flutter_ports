@@ -424,7 +424,7 @@ repository.
       returns a `Future<String>` from `HTMLCanvasElement.toDataURL` (row
       `platform-to-base64-image`): each fake canvas of the tests has that member. The dataset meta is the public
       open class `ChartMeta<C extends DatasetController>` of `lib/src/types/chart_meta.dart` (row
-      `adapt-native-chart-meta`, doc/native-chart-meta-design-draft.md), with no access by name;
+      `adapt-native-chart-meta`), with no access by name;
       the chart gives `ChartMeta<DatasetController>`. `getDatasetMeta` computes its `final` `type`,
       its `label` and its `indexAxis`. Its `_dataset` is `datasetConfig`. `getDataVisibility` returns
       `true` at once for an empty `_hiddenIndices`. `toggleDataVisibility` takes any JS value
@@ -786,11 +786,11 @@ repository.
       `types.LegendElement`, which the keyboard of `ChartView` reads, Chart.js ADR 0051 §2) and the
       column sizes use the shared native `LegendItem` and `LegendHitBox`, and the Flutter `Size`
       (`columnSizes` is a `List<Size>?`). `LegendItem` is extensible, with mutable native fields and
-      overridable `copyWith`/`merge` methods (doc/native-legend-item-design-draft.md).
+      overridable `copyWith`/`merge` methods.
       Generators, rendering and events share that object by identity. Map items, `TypedLegendItem`
       and `ChartLegendItem` are removed. `LegendHitBox` replaces `types.TypedLegendHitBox`: mutable
       double geometry, fixed integer row/column membership, and overridable `contains`, `center`,
-      `copyWith` and `merge` (doc/native-legend-hit-box-design-draft.md). Pointer and keyboard
+      `copyWith` and `merge`. Pointer and keyboard
       consumers use the same boxes. `LegendHitBoxX.equalsTo` lives beside the class,
       compares shared fields with the reference-test numeric tolerance, and preserves identity `==`/hashing.
       A tooltip item is the native `TooltipItem` (row `adapt-native-tooltip-item`).

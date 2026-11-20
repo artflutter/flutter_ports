@@ -1080,7 +1080,7 @@ rendered forms. The typed API uses `ChartTooltip.callbacks` and `Dataset.tooltip
 Map adapter is present in the runtime.
 
 A tooltip item is the native extensible class `TooltipItem` of `lib/src/types/tooltip_item.dart` (row
-`adapt-native-tooltip-item`, doc/native-tooltip-item-design-draft.md). It is immutable: `datasetIndex` and
+`adapt-native-tooltip-item`). It is immutable: `datasetIndex` and
 `dataIndex` are `int`, `label` is the `List<String>` of the lines of the label, `formattedValue` is a `String`,
 `element` is nullable, and `dataset`, `parsed` and `raw` are values of the app. A body item is the final class
 `TooltipBodyItem` with the `List<String>` fields `before`, `lines` and `after`. `TooltipModel.dataPoints` is a
@@ -1094,7 +1094,7 @@ config, with no `this`; a function of another type stops a debug build. The type
 reference label (`nativeDataLabel`) and the plain forms of the native items.
 
 An active element is the native extensible class `ActiveElement` of `lib/src/types/active_element.dart` (row
-`adapt-native-active-element`, doc/native-active-element-design-draft.md): `datasetIndex` and `index` are `int`,
+`adapt-native-active-element`): `datasetIndex` and `index` are `int`,
 and `element` is nullable. The interaction modes make it, `getActiveElements` gives it, and `setActiveElements`
 of the chart and of the tooltip take a `List<ActiveElement>` with no element. `InteractionItem`,
 `ActiveDataPoint` and the typed view `ChartHit` are removed.
@@ -1107,8 +1107,7 @@ and the count of a range of data elements, in the chart methods (`getDatasetMeta
 angle methods of the radial linear scale take a `num`. The decimation algorithms and the line segments keep
 their inner numbers. Ported code writes no `i.toDouble()` or `i * 1.0` for an index.
 
-A tick is the native extensible class `Tick` of `lib/src/types/tick.dart` (row `adapt-native-tick`,
-doc/native-tick-design-draft.md): `value` is a `double`, `label` is the `List<String>?` of its lines, `major` is a
+A tick is the native extensible class `Tick` of `lib/src/types/tick.dart` (row `adapt-native-tick`): `value` is a `double`, `label` is the `List<String>?` of its lines, `major` is a
 `bool`. The option `ticks.callback` holds a `TickCallback` of `core.scale.dart`, also in a raw config:
 `List<String>? Function(Scale scale, double value, int index, List<Tick> ticks)`. The scale is the first
 argument, null removes the tick, and an empty list keeps it with no line. A function of another type stops a
@@ -1197,7 +1196,8 @@ The rules below come from the accepted ADRs and from two plans. The plans, `port
 - Deferred plans (`porting-flow.md` §5.1), for example
   `packages/flutter_chartjs_port/doc/canvas-cuts-plan.md`: do not do their work in a phase. A change
   that edits a file that a deferred plan cites updates the plan in the same commit (the
-  references, the inventory, the pinning tests, the estimates). A trigger of §5.1 brings the plan
+  references, the inventory, the pinning tests, the estimates). It adds no entry when none of
+  these changes. A trigger of §5.1 brings the plan
   forward.
 - Performance (`porting-flow.md` §1.1, proposed): when two Dart forms give the upstream behavior,
   choose the form with the larger measured gain. The priority is the upstream behavior, then

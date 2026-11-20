@@ -11,11 +11,11 @@ This is a profiling investigation, not an upstream JavaScript speed comparison
 or proof that every measured cost can be removed while preserving behavior.
 Several costs follow Chart.js semantics; optimization needs guarded native paths.
 
-[Raw evidence, source snapshots and reproduction](benchmarks/library-audit/README.md).
+Raw evidence, source snapshots and reproduction (`doc/benchmarks/library-audit/`, commit `2be4e68a`).
 
 Implementation follow-up: [ADR 0076](adr/0076-indexed-element-options.md) adds a
 guarded native indexed point/bar option plan. The findings below are the original
-baseline; [the implementation evidence](benchmarks/indexed-options/README.md)
+baseline; the implementation evidence (`doc/benchmarks/indexed-options/`, commit `2be4e68a`)
 records the improvement and its fallback controls.
 
 
