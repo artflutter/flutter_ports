@@ -871,11 +871,36 @@ class Scale(AnyObject cfg)
   }
 
   /// The resolver view of the options, the `ContextProxy` of upstream: the
-  /// value of `this.options` that [init] sets. A write by name
-  /// (`scale.optionsView['min'] = 5`) and a read in the order of upstream use
-  /// it. A read before [init] throws a `TypeError`.
+  /// value of `this.options` that [init] sets. The reads in the order of
+  /// upstream use it. An app writes the range through [setRange] and
+  /// [clearRange]. A read before [init] throws a `TypeError`.
   @override
+  @internal
   OptionView get optionsView => super.options! as OptionView;
+
+  /// Writes the options `min` and `max` of the scale, as the upstream
+  /// `scale.options.min = min` and `scale.options.max = max` do. The write
+  /// lands in the user options of the scale and stays across `update`.
+  /// Each value is any value of the option: a number, a string, a
+  /// `DateTime`, or `undefined`.
+  ///
+  /// `Chart.updateRanges` (Chart.js ADR 0111) keeps its contract: an app
+  /// that calls it after [setRange] changes no other option.
+  // DIVERGES(chartjs): adapt-native-scale-options, a typed range write.
+  void setRange({required Object? min, required Object? max}) {
+    optionsView
+      ..jsWrite('min', min)
+      ..jsWrite('max', max);
+  }
+
+  /// Deletes the options `min` and `max` of the scale, as the upstream
+  /// `delete scale.options.min` and `delete scale.options.max` do.
+  // DIVERGES(chartjs): adapt-native-scale-options, a typed range write.
+  void clearRange() {
+    optionsView
+      ..jsDelete('min')
+      ..jsDelete('max');
+  }
 
   /// The typed options of the view [view]: the options class of the scale
   /// type. A subclass gives its own class.

@@ -634,16 +634,14 @@ class _LiveChartState()
           (toYMax - toYMin) * 1e-3;
       _yMin = yMin;
       _yMax = yMax;
-      y.optionsView['min'] = yMin;
-      y.optionsView['max'] = yMax;
+      y.setRange(min: yMin, max: yMax);
     }
 
     _xMin = xMin;
     _xMax = xMax;
     _toXMin = toXMin;
     _toXMax = toXMax;
-    x.optionsView['min'] = xMin;
-    x.optionsView['max'] = xMax;
+    x.setRange(min: xMin, max: xMax);
     chart.updateRanges(UpdateMode.none);
     _loadOlderIfNear();
 

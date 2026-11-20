@@ -359,8 +359,9 @@ repository.
       view at each read, so a scriptable option and a write behave as upstream. `min`, `max`,
       the hooks, the label callbacks and the canvas colors give the raw value. `Scale.options`
       (and `IScale.options`) is a `CoreScaleOptions`, one object for each view (`createOptions`),
-      and each scale class narrows it. `Scale.optionsView` gives the view: a write by name, the
-      internal plans and `setContext` use it. A nested class has its view in `view`. The tests
+      and each scale class narrows it. `Scale.optionsView` (`@internal`) gives the view: the internal
+      plans and `setContext` use it. An app or an add-on writes the range through `Scale.setRange`
+      and deletes it through `Scale.clearRange`. A nested class has its view in `view`. The tests
       make the options of a fake scale with `scaleOptionsOf` of `test/support/scale_options_of.dart`.
       A getter of an on/off key of the scale options, and a field of a plugin option class, gives a
       `bool` through `boolOption` of `helpers.config.dart` (Chart.js ADR 0121, row `adapt-bool-options`): an absent option is

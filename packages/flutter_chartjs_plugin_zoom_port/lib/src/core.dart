@@ -6,8 +6,8 @@
 /// Each loop over the scales of a chart takes the order of `Object.keys`
 /// (`jsObjectKeys`, seam H26): JavaScript puts the array index keys first,
 /// and a Dart `Map` keeps the insertion order. The `min` and `max` options of
-/// a scale are written and deleted through the face of the scale options
-/// (`scale.optionsView['min'] = value`, `jsDelete`, seam H14).
+/// a scale are written and deleted through `scale.setRange` and
+/// `scale.clearRange` of the host (seam H14).
 ///
 /// The update mode of each function is an `UpdateMode` of the host
 /// (Chart.js ADR 0148), with the defaults of upstream. [zoomUpdateMode] is
@@ -222,15 +222,11 @@ void resetZoom(Chart chart, [UpdateMode transition = UpdateMode.defaultMode]) {
   final originalScaleLimits = _storeOriginalScaleLimits(chart, state);
 
   for (final scale in _values(chart.scales)) {
-    final scaleOptions = scale.optionsView;
     final original = originalScaleLimits[scale.id];
     if (original != null) {
-      scaleOptions['min'] = original.min.options;
-      scaleOptions['max'] = original.max.options;
+      scale.setRange(min: original.min.options, max: original.max.options);
     } else {
-      scaleOptions
-        ..jsDelete('min')
-        ..jsDelete('max');
+      scale.clearRange();
     }
     state.updatedScaleLimits.remove(scale.id);
   }

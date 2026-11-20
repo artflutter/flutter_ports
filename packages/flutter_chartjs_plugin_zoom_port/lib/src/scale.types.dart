@@ -238,7 +238,6 @@ bool updateRange(
 ]) {
   final (:min, :max) = minMax;
   final state = getState(scale.chart);
-  final scaleOpts = scale.optionsView;
 
   final scaleLimits = _getScaleLimits(scale, limits);
   final minRange = scaleLimits.minRangeOrDefault;
@@ -273,8 +272,7 @@ bool updateRange(
     scale,
   );
 
-  scaleOpts['min'] = newRange.min;
-  scaleOpts['max'] = newRange.max;
+  scale.setRange(min: newRange.min, max: newRange.max);
 
   state.updatedScaleLimits[scale.id] = newRange;
 

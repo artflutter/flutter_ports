@@ -590,7 +590,7 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
   with no row gives no page. It merges the realtime inserts by id, loads the page before the oldest
   page on demand, and calls `pump_metric` in the middle of each slot of 5 seconds of the device
   clock (`clock.now()`). `LiveChart` moves the view
-  in a frame ticker: it writes `min` and `max` of the x and y scales through `scale.options` and
+  in a frame ticker: it writes `min` and `max` of the x and y scales through `scale.setRange` and
   calls `chart.updateRanges` (Chart.js ADR 0111). The right edge is `now` minus the longest recent
   realtime delay, and the y range eases to the values in view. The x axis has `time.minUnit`
   `TimeUnit.second`, and its `afterBuildTicks` hook gives it only the ticks of a fixed grid of
