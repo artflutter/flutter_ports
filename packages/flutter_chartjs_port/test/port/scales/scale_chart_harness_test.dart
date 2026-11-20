@@ -259,7 +259,7 @@ void main() {
         'base': 100,
         'width': 30,
         'height': 80,
-        'options': <String, Object?>{
+        'options': BarOptions(<String, Object?>{
           'borderColor': const ChartPaint.solid(
             native_ui.Color.fromRGBO(255, 0, 0, 1),
           ),
@@ -268,7 +268,7 @@ void main() {
           ),
           'borderWidth': 2,
           'borderRadius': 0,
-        },
+        }),
         'borderSkipped': <String, Object?>{'bottom': true},
         'inflateAmount': 0,
       });

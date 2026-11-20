@@ -33,7 +33,7 @@ LineElement _radarSource() => LineElement(<String, Object?>{
     _point(129.6261707571183, 453.93865379061367, 2.199114857512855),
     _point(153.76142449827097, 246.78067310469316, 3.4557519189487724),
   ],
-  'options': <String, Object?>{},
+  'options': LineOptions(<String, Object?>{}),
   '_loop': true,
 });
 
@@ -50,7 +50,7 @@ LineElement _radarTarget() => LineElement(<String, Object?>{
     ])
       _point(256, 280, angle),
   ],
-  'options': <String, Object?>{'tension': 0.0},
+  'options': LineOptions(<String, Object?>{'tension': 0.0}),
   '_loop': true,
   '_fullLoop': true,
 });
@@ -118,7 +118,7 @@ void main() {
             ..x = 50
             ..y = double.nan,
         ],
-        'options': <String, Object?>{},
+        'options': LineOptions(<String, Object?>{}),
       });
       final horizontal = pointsFromSegments((x: null, y: 400), line);
       expect(
@@ -155,7 +155,7 @@ void main() {
           ..x = 30
           ..y = 40,
       ],
-      'options': <String, Object?>{},
+      'options': LineOptions(<String, Object?>{}),
     });
 
     test('a SimpleArc takes the simpleArc branch (filler.segment.js:15)', () {

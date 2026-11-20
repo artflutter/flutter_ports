@@ -413,13 +413,19 @@ void main() {
       return options1;
     }
 
-    test('merges into an element target, as upstream', () {
-      final element = PointElement({'x': 1, 'y': 2});
-      mergeTwice(element);
-      expect(element.x, 100.0);
-      expect(element.y, 2.0);
-      expect(element.options, isA<Map<String, Object?>>());
-    });
+    // A merge writes a plain Map into `options`, which a typed element
+    // rejects (Chart.js ADR 0185).
+    test(
+      'merges into an element target, as upstream',
+      skip: 'diverges: adapt-native-element-options',
+      () {
+        final element = PointElement({'x': 1, 'y': 2});
+        mergeTwice(element);
+        expect(element.x, 100.0);
+        expect(element.y, 2.0);
+        expect(element.options, isA<Map<String, Object?>>());
+      },
+    );
 
     test('merges into another PropertyAccess target', () {
       final target = _ByName();
@@ -427,25 +433,31 @@ void main() {
       expect(target.values.keys, ['x', 'options', 'title']);
     });
 
-    test('the default merger enters a PropertyAccess value', () {
-      final element = PointElement({'x': 1});
-      final host = <String, Object?>{'el': element};
-      final output =
-          merge(host, <String, Object?>{
-                'el': <String, Object?>{
-                  'x': 5,
-                  'options': <String, Object?>{'r': 1},
-                },
-              })!
-              as Map<String, Object?>;
-      expect(output['el'], same(element));
-      expect(element.x, 5.0);
-      expect(element.options, {'r': 1});
+    // A merge writes a plain Map into `options`, which a typed element
+    // rejects (Chart.js ADR 0185).
+    test(
+      'the default merger enters a PropertyAccess value',
+      skip: 'diverges: adapt-native-element-options',
+      () {
+        final element = PointElement({'x': 1});
+        final host = <String, Object?>{'el': element};
+        final output =
+            merge(host, <String, Object?>{
+                  'el': <String, Object?>{
+                    'x': 5,
+                    'options': <String, Object?>{'r': 1},
+                  },
+                })!
+                as Map<String, Object?>;
+        expect(output['el'], same(element));
+        expect(element.x, 5.0);
+        expect(element.options, {'r': 1});
 
-      // A leaf source value replaces the element.
-      merge(host, <String, Object?>{'el': 3});
-      expect(host['el'], 3);
-    });
+        // A leaf source value replaces the element.
+        merge(host, <String, Object?>{'el': 3});
+        expect(host['el'], 3);
+      },
+    );
 
     test('a target that is not an object is the result', () {
       expect(merge(5, <String, Object?>{'a': 1}), 5);

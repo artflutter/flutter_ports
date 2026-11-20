@@ -153,16 +153,14 @@ final class SharedBarAnimations._(
           !element.takesProperties(properties)) {
         return false;
       }
-      final options = properties.options;
-      return options == null || options is ElementOptions;
+      return true;
     }
     if (properties is! BarProperties || properties.hasForeign) return false;
     if (element is! Element || !element.takesProperties(properties)) {
       return false;
     }
     final options = properties.options;
-    return options == null ||
-        (options is ElementOptions && jsTruthy(options.$sharedValue));
+    return options == null || jsTruthy(options.$sharedValue);
   }
 }
 

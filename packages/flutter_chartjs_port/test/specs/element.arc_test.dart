@@ -36,11 +36,11 @@ void main() {
         'y': 0,
         'innerRadius': 5,
         'outerRadius': 10,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       });
 
       expect(arc.inRange(2, 2), isFalse);
@@ -59,11 +59,11 @@ void main() {
         'y': 0,
         'innerRadius': 5,
         'outerRadius': 10,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       });
 
       for (final radius in [5.0, 7.5, 10.0]) {
@@ -105,11 +105,11 @@ void main() {
         'y': 0,
         'innerRadius': 5,
         'outerRadius': 10,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 10,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       });
 
       expect(arc.inRange(7, 0), isFalse);
@@ -125,11 +125,11 @@ void main() {
         'y': 0,
         'innerRadius': 5,
         'outerRadius': 10,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 10,
-        },
+        }),
       });
 
       expect(arc.inRange(7, 0), isFalse);
@@ -146,11 +146,11 @@ void main() {
         'innerRadius': 0,
         'outerRadius': 10,
         'circumference': math.pi * 2,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       });
 
       expect(arc.inRange(7, 7), isTrue);
@@ -165,11 +165,11 @@ void main() {
         'y': 0,
         'innerRadius': 0,
         'outerRadius': math.sqrt(2),
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       });
 
       final pos = arc.tooltipPosition();
@@ -186,11 +186,11 @@ void main() {
         'y': 0,
         'innerRadius': 0,
         'outerRadius': math.sqrt(2),
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       });
 
       final center = arc.getCenterPoint();
@@ -207,11 +207,11 @@ void main() {
         'y': 0,
         'innerRadius': 0,
         'outerRadius': math.sqrt(2),
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 10,
           'offset': 10,
           'borderWidth': 0,
-        },
+        }),
       });
 
       final center = arc.getCenterPoint();
@@ -228,11 +228,11 @@ void main() {
         'y': 2,
         'innerRadius': 0,
         'outerRadius': 2,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       });
 
       var center = arc.getCenterPoint();
@@ -258,11 +258,11 @@ void main() {
         'y': 0,
         'innerRadius': -0.1,
         'outerRadius': math.sqrt(2),
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       }).draw(ctx);
 
       expect(ctx.getCalls().length, 0);
@@ -274,11 +274,11 @@ void main() {
         'y': 0,
         'innerRadius': 0,
         'outerRadius': -1,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       }).draw(ctx);
 
       expect(ctx.getCalls().length, 0);
@@ -292,7 +292,7 @@ void main() {
         'y': 2,
         'innerRadius': 0,
         'outerRadius': 2,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
@@ -304,7 +304,7 @@ void main() {
           'elements': <String, Object?>{
             'arc': <String, Object?>{'circular': false},
           },
-        },
+        }),
       });
 
       final ctx = createMockContext();
@@ -323,11 +323,11 @@ void main() {
         'innerRadius': 0,
         'outerRadius': 10,
         'circumference': 0,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'spacing': 0,
           'offset': 0,
           'borderWidth': 0,
-        },
+        }),
       });
 
       final center = arc.getCenterPoint();
@@ -346,7 +346,7 @@ void main() {
             'y': 0,
             'innerRadius': 0,
             'outerRadius': 100,
-            'options': <String, Object?>{
+            'options': ArcOptions(<String, Object?>{
               'circular': true,
               'spacingMode': spacingMode,
               'spacing': 20,
@@ -359,7 +359,7 @@ void main() {
               'borderColor': const ChartPaint.solid(
                 ui.Color.fromRGBO(0, 0, 0, 1),
               ),
-            },
+            }),
           });
         }
 
@@ -415,7 +415,7 @@ void main() {
         'y': 0,
         'innerRadius': 40,
         'outerRadius': 100,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'circular': true,
           'spacingMode': ArcSpacingMode.parallel,
           'spacing': 40,
@@ -426,7 +426,7 @@ void main() {
             ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
-        },
+        }),
       });
 
       final ctx = createMockContext();
@@ -449,7 +449,7 @@ void main() {
         'y': 0,
         'innerRadius': 40,
         'outerRadius': 100,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'circular': true,
           'spacingMode': ArcSpacingMode.parallel,
           'spacing': 20,
@@ -460,7 +460,7 @@ void main() {
             ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
-        },
+        }),
       });
 
       final ctx = createMockContext();
@@ -492,7 +492,7 @@ void main() {
           'y': 0,
           'innerRadius': 0,
           'outerRadius': 100,
-          'options': <String, Object?>{
+          'options': ArcOptions(<String, Object?>{
             'circular': true,
             'spacingMode': ArcSpacingMode.parallel,
             'spacing': 20,
@@ -505,7 +505,7 @@ void main() {
             'borderColor': const ChartPaint.solid(
               ui.Color.fromRGBO(0, 0, 0, 1),
             ),
-          },
+          }),
         });
 
         final ctx = createMockContext();
@@ -534,7 +534,7 @@ void main() {
           'y': 0,
           'innerRadius': 50,
           'outerRadius': 100,
-          'options': <String, Object?>{
+          'options': ArcOptions(<String, Object?>{
             'circular': true,
             'selfJoin': true,
             'spacing': 0,
@@ -547,7 +547,7 @@ void main() {
             'borderColor': const ChartPaint.solid(
               ui.Color.fromRGBO(0, 0, 0, 1),
             ),
-          },
+          }),
         });
 
         final ctx = createMockContext();
@@ -578,7 +578,7 @@ void main() {
         'y': 0,
         'innerRadius': 40,
         'outerRadius': 100,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'circular': true,
           'selfJoin': false,
           'spacingMode': ArcSpacingMode.angular,
@@ -590,7 +590,7 @@ void main() {
             ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
-        },
+        }),
       });
 
       final ctx = createMockContext();
@@ -617,7 +617,7 @@ void main() {
           'y': 0,
           'innerRadius': 40,
           'outerRadius': 100,
-          'options': <String, Object?>{
+          'options': ArcOptions(<String, Object?>{
             'circular': true,
             'selfJoin': true,
             'spacing': 20,
@@ -631,7 +631,7 @@ void main() {
             'borderColor': const ChartPaint.solid(
               ui.Color.fromRGBO(0, 0, 0, 1),
             ),
-          },
+          }),
         });
 
         final ctx = createMockContext();
@@ -658,7 +658,7 @@ void main() {
         'y': 20,
         'innerRadius': 0,
         'outerRadius': 100,
-        'options': <String, Object?>{
+        'options': ArcOptions(<String, Object?>{
           'circular': true,
           'selfJoin': true,
           'spacing': 0,
@@ -670,7 +670,7 @@ void main() {
             ui.Color.fromRGBO(255, 0, 0, 1),
           ),
           'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
-        },
+        }),
       });
 
       final ctx = createMockContext();

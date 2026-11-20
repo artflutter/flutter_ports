@@ -17,14 +17,14 @@
 /// corner object `{topLeft, topRight, bottomLeft, bottomRight}` is a
 /// [TRBLCorners].
 ///
-/// The options of a bar are a [BarOptions] or a plain Map of user code or of
-/// a spec. Each option read of the geometry goes through one small function
-/// for each option, for example `_borderWidth`, which gives the typed field
-/// of a [BarOptions] with its presence bit (`rawOption`, Chart.js ADR 0054
-/// §6) or the read by name of a plain Map (`_byName`). Both give JS
-/// `undefined` for an absent key, and the read by name throws the
-/// [TypeError] of a property read of `undefined` options. [BarElement.draw]
-/// reads its two colors itself, with the same results.
+/// The options of a bar are a [BarOptions], or the [GenericElementOptions] of a
+/// user element type (Chart.js ADR 0185). Each option read of the geometry goes
+/// through one small function for each option, for example `_borderWidth`,
+/// which gives the typed field of a [BarOptions] with its presence bit
+/// (`rawOption`, Chart.js ADR 0054 §6) or the read by name of other options
+/// (`_byName`). Both give JS `undefined` for an absent key, and the read by
+/// name throws the [TypeError] of a property read of `undefined` options.
+/// [BarElement.draw] reads its two colors itself, with the same results.
 ///
 /// The skipped edges of a bar are a [BorderSkipped] of the bar controller,
 /// read through its typed fields, or a plain object, read by name
@@ -353,6 +353,18 @@ class BarElement([AnyObject? cfg])
     if (cfg != null) assign(cfg);
   }
 
+  /// core.element.ts:14 `options`: the resolved options of the element, a
+  /// [BarOptions] for the built-in type `bar` and a [GenericElementOptions] for
+  /// the type of a user subclass with its own id (Chart.js ADR 0185). Dart
+  /// `null` stands for JS `undefined`, the start value. A write of another
+  /// value, also a `Map`, throws a [TypeError].
+  // DIVERGES(chartjs): adapt-native-element-options, typed options.
+  @override
+  ElementOptions? get options => super.options as ElementOptions?;
+
+  @override
+  set options(covariant ElementOptions? value) => super.options = value;
+
   /// element.bar.js:143 `static id = 'bar'`.
   static const String id = 'bar';
 
@@ -566,7 +578,7 @@ class BarElement([AnyObject? cfg])
     required double y,
     required double height,
     required double width,
-    required Object options,
+    required ElementOptions options,
     required BorderSkipped skipped,
     required double inflate,
   }) {

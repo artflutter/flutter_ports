@@ -6,14 +6,14 @@
 /// [PointElement] follows the element design of Chart.js ADR 0017 with the
 /// storage of Chart.js ADR 0054 §9: typed properties with the `undefined`
 /// state, the access by name of `operator []` and `operator []=`, and the
-/// options as a Map.
+/// typed options.
 ///
-/// The options are the resolved options of the point: a [PointOptions], or
-/// a plain Map of user code or of a spec. The methods read a [PointOptions]
-/// through its typed fields with the presence bit and the foreign slot
-/// (`numberOption`, `rawOption` and `plainOption` of `element_options.dart`,
-/// Chart.js ADR 0054 §6), and a plain Map by name (`_byName`). Both give the
-/// upstream value:
+/// The options are the resolved options of the point: a [PointOptions], or the
+/// [GenericElementOptions] of a user element type (Chart.js ADR 0185). The
+/// methods read a [PointOptions] through its typed fields with the presence bit
+/// and the foreign slot (`numberOption`, `rawOption` and `plainOption` of
+/// `element_options.dart`, Chart.js ADR 0054 §6), and other options by name
+/// (`_byName`). Both give the upstream value:
 /// - A numeric option in arithmetic or in a comparison is its `ToNumber`
 ///   ([_number]): an absent key (JS `undefined`) gives NaN and JS `null`
 ///   gives 0. The read also throws the `TypeError` of a property read of
@@ -160,6 +160,18 @@ class PointElement([AnyObject? cfg])
     if (cfg != null) assign(cfg);
   }
 
+  /// core.element.ts:14 `options`: the resolved options of the element, a
+  /// [PointOptions] for the built-in type `point` and a [GenericElementOptions]
+  /// for the type of a user subclass with its own id (Chart.js ADR 0185). Dart
+  /// `null` stands for JS `undefined`, the start value. A write of another
+  /// value, also a `Map`, throws a [TypeError].
+  // DIVERGES(chartjs): adapt-native-element-options, typed options.
+  @override
+  ElementOptions? get options => super.options as ElementOptions?;
+
+  @override
+  set options(covariant ElementOptions? value) => super.options = value;
+
   /// element.point.ts:22 `static id = 'point'`.
   static const String id = 'point';
 
@@ -238,15 +250,15 @@ class PointElement([AnyObject? cfg])
   /// state (Chart.js ADR 0054 §9). All start set.
   int _undefinedBits = _cp1xBit | _cp1yBit | _cp2xBit | _cp2yBit | _angleBit;
 
-  /// The [DrawPointOptions] of the last [draw] with plain Map options: an
-  /// adapter over [options].
+  /// The [DrawPointOptions] of the last [draw] with options of another class:
+  /// an adapter over [options].
   ///
   /// [draw] runs for each point in each frame. Thus it keeps the adapter
   /// while [options] is the identical Map, and allocates a new adapter only
   /// when the Map changes. The adapter reads the Map at each call. Thus a
   /// change of the values in the same Map needs no new adapter. Typed
   /// options ([PointOptions]) need no adapter.
-  _MapPointOptions? _drawPointOptions;
+  _GenericPointOptions? _drawPointOptions;
 
   /// element.point.ts:24 `parsed: CartesianParsedData`, the parsed data of
   /// the point. `controller.line.js:106` and `controller.scatter.js:135`
@@ -608,7 +620,7 @@ class PointElement([AnyObject? cfg])
   /// ignores as the DOM ignores `undefined`, and the `ToNumber` of the DOM
   /// setter for `lineWidth`. `drawPoint` gets [options] itself when it is a
   /// [PointOptions] (Chart.js ADR 0054 §6 and §9), else the adapter
-  /// [_MapPointOptions] over [options] (Chart.js ADR 0017, section 8).
+  /// [_GenericPointOptions] over [options] (Chart.js ADR 0017, section 8).
   ///
   /// Throws a [TypeError] when [skip] is not true and [options] is in the
   /// `undefined` state, as the upstream property read of `undefined` does.
@@ -823,28 +835,29 @@ class PointElement([AnyObject? cfg])
   }
 
   /// The [DrawPointOptions] of [options]: [options] itself for a
-  /// [PointOptions]. For a plain Map, the adapter of the last [draw] when
-  /// its Map is [options], else a new adapter that [draw] keeps.
+  /// [PointOptions]. For options of another class, the adapter of the last
+  /// [draw] when its options are [options], else a new adapter that [draw]
+  /// keeps.
   DrawPointOptions _drawPointOptionsOf(Object options) {
     if (options is PointOptions) return options;
     final cached = _drawPointOptions;
     if (cached != null && identical(cached.options, options)) return cached;
-    return _drawPointOptions = _MapPointOptions(options);
+    return _drawPointOptions = _GenericPointOptions(options);
   }
 }
 
-/// The options object of element.point.ts:99 `drawPoint(ctx, options, …)` as
-/// a [DrawPointOptions], for plain Map options (Chart.js ADR 0017, section
-/// 8). [PointOptions] implements [DrawPointOptions] with the same results.
+/// The options object of element.point.ts:99 `drawPoint(ctx, options, …)` as a
+/// [DrawPointOptions], for options of another class than [PointOptions]
+/// (Chart.js ADR 0185). [PointOptions] implements [DrawPointOptions] with the
+/// same results.
 ///
 /// Each member reads [options] by name at the call ([_byName]), as upstream
 /// reads the object. An absent key reads as `undefined`, whose `ToNumber`
 /// is NaN. `drawPointLegend` treats 0 and NaN alike for these three
 /// numbers: `rotation || 0` (helpers.canvas.ts:178) and `!rotation` (:238),
 /// `isNaN(radius) || radius <= 0` (:192), and `borderWidth > 0` (:305).
-final class _MapPointOptions(
-  /// The options object of the point: a Map, or a typed object with a face
-  /// that is not a [PointOptions].
+final class _GenericPointOptions(
+  /// The options of the point, of another class than [PointOptions].
   final Object options,
 ) implements DrawPointOptions {
   /// helpers.canvas.ts:150 `pointStyle`, the value as it is.

@@ -43,7 +43,7 @@ const _colors = [
   ui.Color(0xff119944),
 ];
 
-Object _options(math.Random r) {
+ElementOptions _options(math.Random r) {
   final kind = r.nextInt(24);
   final radius = switch (r.nextInt(8)) {
     0 => 0.05,
@@ -61,11 +61,11 @@ Object _options(math.Random r) {
     'backgroundColor': ChartPaint.solid(_colors[r.nextInt(_colors.length)]),
     'borderColor': ChartPaint.solid(_colors[r.nextInt(_colors.length)]),
   };
-  // An option that is absent, of another type or a plain Map.
+  // An option that is absent, of another type, or options of another class.
   if (kind == 1) values.remove('borderColor');
   if (kind == 2) values['borderWidth'] = '2';
   if (kind == 3) values.remove('backgroundColor');
-  return kind == 4 ? values : PointOptions(values);
+  return kind == 4 ? GenericElementOptions(values) : PointOptions(values);
 }
 
 List<IElement> _elements(int seed) {

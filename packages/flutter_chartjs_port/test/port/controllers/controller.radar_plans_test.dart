@@ -115,7 +115,7 @@ List<String> _pointsText(Chart chart) {
           point['parsed'],
           point.active,
           _optionsText(options),
-          (options! as ElementOptions).isFrozen,
+          options!.isFrozen,
           point[r'$context'] == undefined,
         ].join(' ');
       }(),
@@ -538,7 +538,7 @@ void main() {
       expect(copies, hasLength(4));
       expect(copies.contains(cached), isFalse);
       for (final copy in copies) {
-        expect((copy! as ElementOptions).isFrozen, isFalse);
+        expect(copy!.isFrozen, isFalse);
       }
     });
   });

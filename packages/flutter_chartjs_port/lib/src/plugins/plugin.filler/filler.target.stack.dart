@@ -60,7 +60,8 @@ ILineElement buildStackLine(FillerSource source) {
   }
   return LineElement(<String, Object?>{
     'points': points,
-    'options': <String, Object?>{},
+    // DIVERGES(chartjs): adapt-native-element-options, typed options.
+    'options': LineOptions(),
   });
 }
 

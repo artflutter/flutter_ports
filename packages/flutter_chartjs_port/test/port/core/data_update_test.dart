@@ -1665,7 +1665,7 @@ void main() {
         final b = chart(cb);
         for (final c in [a, b]) {
           final data = c.getDatasetMeta(0).data;
-          data[1] = _UserArc()..options = data[1].options;
+          data[1] = _UserArc()..options = data[1].options as ElementOptions?;
           c.update(UpdateMode.none);
         }
         change(ca, 0);

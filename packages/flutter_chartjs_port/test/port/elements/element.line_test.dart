@@ -71,14 +71,16 @@ PointElement _point(LineReferencePointInput point) {
   return PointElement({'x': x, 'y': y, 'skip': ?skip, 'stop': ?stop});
 }
 
-/// [options] as they are: the plain Map form of the options.
-AnyObject _plainOptions(AnyObject options) => options;
+/// [options] as generic options, the form of the options of a user element
+/// type (Chart.js ADR 0185).
+ElementOptions _genericOptions(AnyObject options) =>
+    GenericElementOptions(options);
 
 /// The two forms of the options of a line (Chart.js ADR 0018, section 6): the
-/// plain Map, and a [LineOptions] with the same entries in the same key
+/// generic options, and a [LineOptions] with the same entries in the same key
 /// order.
 const Map<String, Object Function(AnyObject options)> _optionsForms = {
-  'Map options': _plainOptions,
+  'generic options': _genericOptions,
   'LineOptions': LineOptions.new,
 };
 
@@ -276,7 +278,7 @@ Object? _expectedResult(LineReferenceStep step) {
 
 /// A line of the points `(0, 10)`, `(10, 20)` and `(20, 15)` with the
 /// options [options].
-LineElement _simpleLine([AnyObject? options]) => LineElement({
+LineElement _simpleLine([ElementOptions? options]) => LineElement({
   'points': <IPointElement>[
     PointElement({'x': 0, 'y': 10}),
     PointElement({'x': 10, 'y': 20}),
@@ -292,11 +294,11 @@ AnyObject _plain(JsObjectFace scope) => {
 };
 
 /// The resolved options of a line: the defaults and a border color.
-AnyObject _options([AnyObject extra = const {}]) => {
+LineOptions _options([AnyObject extra = const {}]) => LineOptions({
   ..._plain(LineElement.defaults),
   'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 1)),
   ...extra,
-};
+});
 
 void main() {
   group('reference', () {
@@ -452,7 +454,7 @@ void main() {
     test('throws a TypeError for control points without points', () {
       // Upstream: Cannot read properties of undefined (reading '0').
       final line = LineElement({
-        'options': <String, Object?>{'tension': 0.4},
+        'options': LineOptions(<String, Object?>{'tension': 0.4}),
       });
       expect(
         () => line.updateControlPoints(const _Area(0, 0, 1, 1)),
@@ -621,7 +623,7 @@ void main() {
       expect(
         LineElement({
           'points': <IPointElement>[],
-          'options': <String, Object?>{},
+          'options': LineOptions(<String, Object?>{}),
           '_loop': true,
         }).path(createMockContext()),
         isTrue,
@@ -629,7 +631,7 @@ void main() {
       expect(
         LineElement({
           'points': <IPointElement>[],
-          'options': <String, Object?>{},
+          'options': LineOptions(<String, Object?>{}),
         }).path(createMockContext()),
         isFalse,
       );
@@ -682,7 +684,7 @@ void main() {
     (List<Object?>, List<List<Object?>>) fastPath(List<IPointElement> points) {
       final line = LineElement({
         'points': points,
-        'options': _plain(LineElement.defaults),
+        'options': LineOptions(_plain(LineElement.defaults)),
       });
       final ctx = createMockContext();
       expect(line.pathSegment(ctx, line.segments[0]), isNull);
@@ -762,7 +764,7 @@ void main() {
       expect(
         () => LineElement({
           'points': <Point>[InterpolatedPoint(1, 2), InterpolatedPoint(3, 4)],
-          'options': {'tension': 0},
+          'options': LineOptions({'tension': 0}),
         }),
         throwsArgumentError,
       );
@@ -856,7 +858,7 @@ void main() {
           PointElement({'x': 1, 'y': 2}),
           PointElement({'x': 3, 'y': 4}),
         ],
-        'options': {'tension': 0},
+        'options': LineOptions({'tension': 0}),
       });
       expect(line.first()!.x, 1);
       expect(line.first()!.y, 2);

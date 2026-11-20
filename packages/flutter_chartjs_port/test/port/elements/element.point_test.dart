@@ -116,14 +116,16 @@ List<Object?> _calls(List<(String, List<Object?>)> calls) => [
     },
 ];
 
-/// [options] as they are: the plain Map form of the options.
-AnyObject _plainOptions(AnyObject options) => options;
+/// [options] as generic options, the form of the options of a user element
+/// type (Chart.js ADR 0185).
+ElementOptions _genericOptions(AnyObject options) =>
+    GenericElementOptions(options);
 
 /// The two forms of the options of a point (Chart.js ADR 0018, section 6):
-/// the plain Map, and a [PointOptions] with the same entries in the same key
+/// generic options, and a [PointOptions] with the same entries in the same key
 /// order.
 const Map<String, Object Function(AnyObject options)> _optionsForms = {
-  'Map options': _plainOptions,
+  'generic options': _genericOptions,
   'PointOptions': PointOptions.new,
 };
 
@@ -153,13 +155,13 @@ PointElement _inRangePoint(
 }
 
 /// The options of a drawn point in the draw tests of the adapter.
-Map<String, Object?> _options({double radius = 5}) => {
+PointOptions _options({double radius = 5}) => PointOptions({
   'radius': radius,
   'borderWidth': 2,
   'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
   'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
   'pointStyle': const CirclePointStyle(),
-};
+});
 
 /// The radius of each `arc` call of [ctx].
 List<Object?> _arcRadii(MockContext ctx) => [
@@ -292,7 +294,7 @@ void main() {
 
     test('the constructor assigns cfg', () {
       final parsed = <String, Object?>{'x': 1, 'y': 2};
-      final options = <String, Object?>{'radius': 3};
+      final options = PointOptions({'radius': 3});
       final context = <String, Object?>{'type': 'data'};
       final point = PointElement({
         'x': 10,
@@ -408,7 +410,7 @@ void main() {
     });
 
     test(r'Element handles x, y, active, options and $animations', () {
-      final options = <String, Object?>{'radius': 1};
+      final options = PointOptions({'radius': 1});
       final animations = <String, IAnimation>{};
       final point = PointElement()
         ..['x'] = 1
@@ -563,7 +565,7 @@ void main() {
 
     test('ignores the axis', () {
       final point = PointElement({
-        'options': <String, Object?>{'radius': 3, 'hitRadius': 1},
+        'options': PointOptions(<String, Object?>{'radius': 3, 'hitRadius': 1}),
       });
       expect(point.getRange(const XAxis()), 4);
       expect(point.getRange(const YAxis()), 4);

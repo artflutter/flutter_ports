@@ -193,10 +193,7 @@ void main() {
               isFalse,
             );
             expect(jsGet(probes[d][3].options, r'$shared'), isFalse);
-            (probes[d][3].options! as ElementOptions).storeKey(
-              OptionKey.radius,
-              77.0,
-            );
+            probes[d][3].options!.storeKey(OptionKey.radius, 77.0);
           }
         }
         expect(probes.expand((x) => x).any((p) => p.planReads > 0), isTrue);

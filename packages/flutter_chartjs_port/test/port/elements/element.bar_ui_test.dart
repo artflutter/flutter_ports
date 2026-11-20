@@ -35,14 +35,16 @@ import '../helpers/rounded_rect_upstream.dart';
 
 const int _edge = 80;
 
-/// [options] as they are: the plain Map form of the options.
-Map<String, Object?> _plainOptions(Map<String, Object?> options) => options;
+/// [options] as generic options, the form of the options of a user element
+/// type (Chart.js ADR 0185).
+ElementOptions _genericOptions(Map<String, Object?> options) =>
+    GenericElementOptions(options);
 
 /// The two forms of the options of a bar (Chart.js ADR 0018, section 6): the
-/// plain Map, and a [BarOptions] with the same entries in the same key
+/// generic options, and a [BarOptions] with the same entries in the same key
 /// order.
 const Map<String, Object Function(Map<String, Object?>)> _optionsForms = {
-  'Map options': _plainOptions,
+  'generic options': _genericOptions,
   'BarOptions': BarOptions.new,
 };
 

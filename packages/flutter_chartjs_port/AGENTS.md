@@ -195,7 +195,7 @@ repository.
     setters for an element of the built-in class (`typedWrites`, the exact-class rule); a user
     subclass, an extra key and a foreign value take the writes by name. The element classes read resolved options through `plainOption`, `numberOption` and `rawOption`,
     `ArcElement` reads a key that is not a `double` through the generated `<key>Value` getter of
-    `ArcOptions` (Chart.js ADR 0102), and a plain Map reads by name. `Element` and each element class have a static `jsClass`, the class as a
+    `ArcOptions` (Chart.js ADR 0102). The `options` of the four elements are an `ElementOptions?` (Chart.js ADR 0185, row `adapt-native-element-options`): the typed class of the type, or the `GenericElementOptions` of a user element type, which reads by name; a `Map` throws a `TypeError`. `Element` and each element class have a static `jsClass`, the class as a
     value (Chart.js ADR 0020). `PointElement` and `BarElement` implement `types.VisualElementRange`,
     the interface of `getRange`. `getRange` gives an `Object`: the `PointElement` result is the JS
     `+` of `radius` and `hitRadius` (`jsAdd`), a `String` when an option is a string. The hit tests

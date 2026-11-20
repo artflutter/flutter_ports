@@ -545,7 +545,7 @@ void main() {
       final chart = _scatterChart(count: 100);
       final data = chart.getDatasetMeta(0).data;
       final point = data[50] as PointElement
-        ..options = <String, Object?>{'radius': 30, 'hitRadius': 2};
+        ..options = PointOptions({'radius': 30, 'hitRadius': 2});
       expect(_expectItemsOfPublicLoop(chart), greaterThan(300));
       // The large radius of the Map hits at 20 pixels.
       final items = const PointInteractionMode().itemsAt(

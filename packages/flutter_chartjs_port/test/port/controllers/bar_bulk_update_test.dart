@@ -30,7 +30,7 @@ class _ProbeBar() extends BarElement {
     required double y,
     required double height,
     required double width,
-    required Object options,
+    required ElementOptions options,
     required BorderSkipped skipped,
     required double inflate,
   }) {

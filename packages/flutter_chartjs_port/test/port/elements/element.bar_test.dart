@@ -47,14 +47,16 @@ final class _Animation({
   bool active() => isActive;
 }
 
-/// [options] as they are: the plain Map form of the options.
-AnyObject _plainOptions(AnyObject options) => options;
+/// [options] as generic options, the form of the options of a user element
+/// type (Chart.js ADR 0185).
+ElementOptions _genericOptions(AnyObject options) =>
+    GenericElementOptions(options);
 
 /// The two forms of the options of a bar (Chart.js ADR 0018, section 6): the
-/// plain Map, and a [BarOptions] with the same entries in the same key
+/// generic options, and a [BarOptions] with the same entries in the same key
 /// order.
 const Map<String, Object Function(AnyObject options)> _optionsForms = {
-  'Map options': _plainOptions,
+  'generic options': _genericOptions,
   'BarOptions': BarOptions.new,
 };
 
@@ -72,7 +74,7 @@ BarElement _bar(
   Map<String, Object?> cfg, [
   List<BarReferenceAnimation> animations = const [],
 ]) {
-  final bar = BarElement(cfg);
+  final bar = BarElement(_withOptions(cfg, BarOptions.new));
   if (animations.isNotEmpty) {
     bar.$animations = {
       for (final (prop, active, to) in animations)
@@ -129,12 +131,12 @@ Map<String, Object?> _drawCfg([Map<String, Object?> extra = const {}]) => {
   'base': 100,
   'width': 30,
   'height': 80,
-  'options': <String, Object?>{
+  'options': BarOptions(<String, Object?>{
     'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
     'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
     'borderWidth': 2,
     'borderRadius': 0,
-  },
+  }),
   'borderSkipped': <String, Object?>{'bottom': true},
   'inflateAmount': 0,
   ...extra,
@@ -337,7 +339,7 @@ void main() {
           for (final extra in <Map<String, Object?>>[
             {},
             {
-              'options': <String, Object?>{
+              'options': BarOptions(<String, Object?>{
                 'borderWidth': <String, Object?>{
                   'top': 3,
                   'right': 1,
@@ -345,14 +347,14 @@ void main() {
                   'left': 6,
                 },
                 'borderRadius': 9,
-              },
+              }),
               'enableBorderRadius': true,
             },
             {
-              'options': <String, Object?>{
+              'options': BarOptions(<String, Object?>{
                 'borderWidth': 40,
                 'borderRadius': 99,
-              },
+              }),
               'enableBorderRadius': true,
               'borderSkipped': <String, Object?>{},
             },
@@ -411,7 +413,10 @@ void main() {
       final ctx = createMockContext();
       _bar(
         _drawCfg({
-          'options': <String, Object?>{'borderWidth': 0, 'borderRadius': 4},
+          'options': BarOptions(<String, Object?>{
+            'borderWidth': 0,
+            'borderRadius': 4,
+          }),
           'enableBorderRadius': true,
         }),
       ).draw(ctx);
@@ -582,7 +587,7 @@ void main() {
     });
 
     test('passes the other names to Element', () {
-      final options = <String, Object?>{'borderWidth': 1};
+      final options = BarOptions({'borderWidth': 1});
       final bar = BarElement()
         ..['x'] = 4
         ..['y'] = 5

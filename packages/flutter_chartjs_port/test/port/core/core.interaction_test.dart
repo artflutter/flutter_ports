@@ -229,6 +229,16 @@ Element _element(
 ) {
   final name = '$datasetIndex:$index';
   final cfg = AnyObject.of(e.cfg);
+  // The options of the reference as the typed class of the element type
+  // (Chart.js ADR 0185).
+  final options = cfg['options'];
+  if (options is AnyObject) {
+    cfg['options'] = switch (e.type) {
+      'point' => PointOptions(options),
+      'bar' => BarOptions(options),
+      _ => ArcOptions(options),
+    };
+  }
   final element = switch (e.type) {
     'point' => _SpyPoint(name, trace, cfg),
     'bar' => _SpyBar(name, trace, cfg),

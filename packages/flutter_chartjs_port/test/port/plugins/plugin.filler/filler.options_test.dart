@@ -25,11 +25,11 @@ FillTarget _decode(
   Object? backgroundColor = undefined,
 }) => decodeFill(
   LineElement(<String, Object?>{
-    'options': <String, Object?>{
+    'options': LineOptions(<String, Object?>{
       if (!identical(fill, undefined)) 'fill': fill,
       if (!identical(backgroundColor, undefined))
         'backgroundColor': backgroundColor,
-    },
+    }),
   }),
   index,
   count,

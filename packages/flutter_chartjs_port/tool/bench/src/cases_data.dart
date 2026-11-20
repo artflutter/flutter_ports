@@ -97,7 +97,7 @@ final class _Chart() implements IChart {
 /// A line element `{points, options, _chart, _loop, _fullLoop, segments}`.
 final class _Line(
   @override final List<IPointElement> points,
-  @override final Map<String, Object?> options, {
+  @override final ElementOptions options, {
   @override final IChart? chart,
 }) implements ILineElement {
   @override
@@ -136,7 +136,7 @@ List<IPointElement> _linePoints(int count) => [
 ];
 
 /// The line style options of `element.line.js` defaults.
-Map<String, Object?> _lineStyle() => <String, Object?>{
+LineOptions _lineStyle() => LineOptions(<String, Object?>{
   'spanGaps': false,
   'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 0, 0.1)),
   'borderCapStyle': StrokeCap.butt,
@@ -145,7 +145,7 @@ Map<String, Object?> _lineStyle() => <String, Object?>{
   'borderJoinStyle': StrokeJoin.miter,
   'borderWidth': 3.0,
   'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(75, 192, 192, 1)),
-};
+});
 
 BenchCase _curve(int count, String mode) => BenchCase(
   'data',

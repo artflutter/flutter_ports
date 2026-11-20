@@ -178,4 +178,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0181](0181-plugin-classes-and-typed-get-plugin.md) A class for each plugin, and getPlugin by type: accepted, supersedes 0020, 0148.
 - [0182](0182-resolved-plugin-option-classes.md) Resolved option classes for the built-in plugins: accepted, supersedes 0150.
 - [0183](0183-typed-scale-option-classes.md) Typed scale option classes: accepted, supersedes 0054.
+- [0185](0185-typed-element-options.md) Typed element options: accepted.
 <!-- adr-index:end -->

@@ -234,12 +234,13 @@ void main() {
           final reads = <String>[];
           final cfg = _config();
           if (customOptions) {
-            cfg['options'] = _ReadMap({
+            // Options of another class than BarOptions: the read by name.
+            cfg['options'] = GenericElementOptions({
               'borderColor': const ChartPaint.solid(ui.Color(0xFF4488CC)),
               'backgroundColor': const ChartPaint.solid(ui.Color(0xFFDD8855)),
               'borderWidth': 1.0,
               'borderRadius': 0.0,
-            }, reads);
+            });
           }
           if (customEdges) {
             cfg['borderSkipped'] = _ReadMap({'bottom': true}, reads);

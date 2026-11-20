@@ -94,7 +94,7 @@ typedef _Hit = ({_Kind kind, int index});
 
 /// The options of an element in its two states: `base` for the normal
 /// state and `active` for the hover state.
-typedef _Options = ({JsObjectFace base, JsObjectFace active});
+typedef _Options = ({ElementOptions base, ElementOptions active});
 
 /// The ported elements of phase 4: bars, a line through points, and a
 /// doughnut of arcs.
@@ -249,7 +249,7 @@ class ElementsDemoState() extends State<ElementsDemo> {
   /// `PointOptions.new`.
   static _Options _pair(
     Map<String, Object?> base,
-    JsObjectFace Function(Map<String, Object?>) form,
+    ElementOptions Function(Map<String, Object?>) form,
   ) => (base: form(base), active: form(_resolveActive(base)));
 
   /// The defaults of an element class as a plain Map: the own keys of the

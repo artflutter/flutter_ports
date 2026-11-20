@@ -28,15 +28,15 @@
 /// with `toInt()`. Each index comes from a list length or from a segment of
 /// the same points, so it is finite. JS `%` is Dart `remainder`.
 ///
-/// `line.options` is an option object: a [LineOptions], or a plain Map of
-/// user code or of a spec. Each read goes through one small function for
-/// each option, for example `_stepped`, which gives the typed field of a
-/// [LineOptions] with its presence bit and foreign slot (`rawOption` and
-/// `plainOption`, Chart.js ADR 0054 §6), the field of a [SegmentStyle], or
-/// the read by name of a plain Map (`_byName`). Each gives
-/// JS `undefined` for an absent key. The read by name throws a [TypeError]
-/// for the `undefined` state, as a JavaScript property read of `undefined`
-/// does.
+/// `line.options` is an [ElementOptions]: a [LineOptions], or the
+/// [GenericElementOptions] of a user element type (Chart.js ADR 0185). Each
+/// read goes through one small function for each option, for example
+/// `_stepped`, which gives the typed field of a [LineOptions] with its presence
+/// bit and foreign slot (`rawOption` and `plainOption`, Chart.js ADR 0054 §6),
+/// the field of a [SegmentStyle], or the read by name of other options
+/// (`_byName`). Each gives JS `undefined` for an absent key. The read by name
+/// throws a [TypeError] for the `undefined` state, as a JavaScript property
+/// read of `undefined` does.
 ///
 /// This library is a pure layer (Chart.js ADR 0017, section 10). It imports
 /// neither `dart:ui` nor `package:flutter`.
@@ -805,6 +805,18 @@ class LineElement([AnyObject? cfg])
   this {
     if (cfg != null) assign(cfg);
   }
+
+  /// core.element.ts:14 `options`: the resolved options of the element, a
+  /// [LineOptions] for the built-in type `line` and a [GenericElementOptions]
+  /// for the type of a user subclass with its own id (Chart.js ADR 0185). Dart
+  /// `null` stands for JS `undefined`, the start value. A write of another
+  /// value, also a `Map`, throws a [TypeError].
+  // DIVERGES(chartjs): adapt-native-element-options, typed options.
+  @override
+  ElementOptions? get options => super.options as ElementOptions?;
+
+  @override
+  set options(covariant ElementOptions? value) => super.options = value;
 
   /// element.line.js:245 `static id = 'line'`.
   static const String id = 'line';

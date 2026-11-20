@@ -1137,7 +1137,7 @@ void main() {
           'innerRadius': inner,
           'outerRadius': 60,
           'circumference': 1.75,
-          'options': <String, Object?>{
+          'options': ArcOptions(<String, Object?>{
             'backgroundColor': const ChartPaint.solid(
               native_ui.Color.fromRGBO(54, 162, 235, 0.45),
             ),
@@ -1146,7 +1146,7 @@ void main() {
             ),
             'borderWidth': 0,
             'circular': true,
-          },
+          }),
         }).draw(ctx);
         final sector = ctx.debugPath.singleSector;
         expect(sector, isNotNull, reason: 'inner $inner');

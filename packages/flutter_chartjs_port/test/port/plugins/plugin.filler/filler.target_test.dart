@@ -195,7 +195,9 @@ IElement _makeLine(Map<String, Object?> d) {
   final loop = d['loop'];
   return LineElement(<String, Object?>{
     'points': points,
-    'options': Map<String, Object?>.of(d['options']! as Map<String, Object?>),
+    'options': LineOptions(
+      Map<String, Object?>.of(d['options']! as Map<String, Object?>),
+    ),
     if (!identical(loop, undefined)) '_loop': loop,
     if (!identical(loop, undefined)) '_fullLoop': loop,
   });
@@ -339,8 +341,8 @@ Object? _run(FillerTargetReferenceCase c) {
   switch (c.kind) {
     case 'decodeFill':
       final line = LineElement(<String, Object?>{
-        'options': Map<String, Object?>.of(
-          input['options']! as Map<String, Object?>,
+        'options': LineOptions(
+          Map<String, Object?>.of(input['options']! as Map<String, Object?>),
         ),
       });
       return _attempt(

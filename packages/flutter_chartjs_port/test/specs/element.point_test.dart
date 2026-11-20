@@ -25,7 +25,7 @@ void main() {
     test('Should correctly identify as in range', () {
       // Mock out the point as if we were made by the controller
       final point = PointElement({
-        'options': <String, Object?>{'radius': 2, 'hitRadius': 3},
+        'options': PointOptions(<String, Object?>{'radius': 2, 'hitRadius': 3}),
         'x': 10,
         'y': 15,
       });
@@ -39,7 +39,10 @@ void main() {
     test('should get the correct tooltip position', () {
       // Mock out the point as if we were made by the controller
       final point = PointElement({
-        'options': <String, Object?>{'radius': 2, 'borderWidth': 6},
+        'options': PointOptions(<String, Object?>{
+          'radius': 2,
+          'borderWidth': 6,
+        }),
         'x': 10,
         'y': 15,
       });
@@ -50,7 +53,7 @@ void main() {
     test('should get the correct center point', () {
       // Mock out the point as if we were made by the controller
       final point = PointElement({
-        'options': <String, Object?>{'radius': 2},
+        'options': PointOptions(<String, Object?>{'radius': 2}),
         'x': 10,
         'y': 10,
       });
@@ -65,7 +68,7 @@ void main() {
       // (`var point = …; point.draw(mockContext)` is one expression here,
       // for the lint cascade_invocations).
       PointElement({
-        'options': <String, Object?>{'radius': 2, 'hitRadius': 3},
+        'options': PointOptions(<String, Object?>{'radius': 2, 'hitRadius': 3}),
         'x': 10,
         'y': 15,
         'skip': true,

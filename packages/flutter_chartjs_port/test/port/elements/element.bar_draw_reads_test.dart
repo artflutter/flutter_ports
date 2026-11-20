@@ -123,7 +123,7 @@ void main() {
               );
               final byName = _calls(
                 make,
-                () => source(pair, borderWidth: width),
+                () => GenericElementOptions(source(pair, borderWidth: width)),
                 inflate,
               );
               expect(typed, byName, reason: 'inflate $inflate, width $width');

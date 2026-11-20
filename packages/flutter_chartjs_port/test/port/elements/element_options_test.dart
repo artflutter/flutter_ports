@@ -483,7 +483,7 @@ void main() {
           };
           expect(
             _drawCalls(PointOptions(map)),
-            _drawCalls(map),
+            _drawCalls(GenericElementOptions(map)),
             reason: '$style $rotation',
           );
         }

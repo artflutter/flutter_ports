@@ -74,14 +74,16 @@ final class _CanvasContext() extends MockContext {
   final HTMLCanvasElement canvas;
 }
 
-/// [options] as they are: the plain Map form of the options.
-AnyObject _plainOptions(AnyObject options) => options;
+/// [options] as generic options, the form of the options of a user element
+/// type (Chart.js ADR 0185).
+ElementOptions _genericOptions(AnyObject options) =>
+    GenericElementOptions(options);
 
 /// The two forms of the options of an arc (Chart.js ADR 0018, section 6):
-/// the plain Map, and an [ArcOptions] with the same entries in the same key
+/// generic options, and an [ArcOptions] with the same entries in the same key
 /// order.
 const Map<String, Object Function(AnyObject options)> _optionsForms = {
-  'Map options': _plainOptions,
+  'generic options': _genericOptions,
   'ArcOptions': ArcOptions.new,
 };
 
@@ -98,7 +100,7 @@ AnyObject _withOptions(AnyObject cfg, Object Function(AnyObject) form) => {
 ArcElement _arc(
   Map<String, Object?> cfg, [
   Map<String, ArcReferenceAnimation> animations = const {},
-  Object Function(AnyObject) form = _plainOptions,
+  Object Function(AnyObject) form = _genericOptions,
 ]) {
   final arc = ArcElement(_withOptions(cfg, form));
   if (animations.isNotEmpty) {
@@ -155,12 +157,12 @@ void _expectCalls(
 }
 
 /// The options of every draw test that does not come from the reference.
-Map<String, Object?> _options([Map<String, Object?> extra = const {}]) => {
+ArcOptions _options([Map<String, Object?> extra = const {}]) => ArcOptions({
   'backgroundColor': const ChartPaint.solid(ui.Color.fromRGBO(255, 0, 0, 1)),
   'borderColor': const ChartPaint.solid(ui.Color.fromRGBO(0, 0, 255, 1)),
   'borderWidth': 2,
   ...extra,
-};
+});
 
 /// An arc for the draw tests that do not come from the reference.
 ArcElement _drawArc([Map<String, Object?> extra = const {}]) => ArcElement({
@@ -210,16 +212,14 @@ void main() {
             ..startAngle = c.start
             ..endAngle = c.end
             ..circumference = c.end - c.start
-            ..options = ArcOptions(
-              _options({
-                'borderRadius': 4.0,
-                'spacing': c.spacing,
-                'offset': 0.0,
-                'circular': true,
-                'selfJoin': false,
-                'borderAlign': ArcBorderAlign.center,
-              }),
-            ))
+            ..options = _options({
+              'borderRadius': 4.0,
+              'spacing': c.spacing,
+              'offset': 0.0,
+              'circular': true,
+              'selfJoin': false,
+              'borderAlign': ArcBorderAlign.center,
+            }))
           .draw(ctx);
       final arcs = _named(ctx, 'arc').where((call) {
         final args = call['args']! as List<Object?>;
@@ -273,7 +273,7 @@ void main() {
     });
 
     test('the constructor writes each key of cfg by name', () {
-      final options = <String, Object?>{'borderWidth': 1};
+      final options = ArcOptions({'borderWidth': 1});
       final arc = ArcElement({
         'circumference': 1,
         'startAngle': 2,
@@ -404,7 +404,10 @@ void main() {
         'endAngle': 7,
         'innerRadius': 0,
         'outerRadius': 10,
-        'options': <String, Object?>{'spacing': 0, 'borderWidth': 0},
+        'options': ArcOptions(<String, Object?>{
+          'spacing': 0,
+          'borderWidth': 0,
+        }),
       });
       expect(arc.inRange(1, 1), isTrue);
       expect(arc.inXRange(1), isFalse);

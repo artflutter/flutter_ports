@@ -372,10 +372,10 @@ void main() {
       PointElement point() => PointElement({
         'x': 1,
         'y': 2,
-        'options': <String, Object?>{
+        'options': PointOptions({
           'radius': 3,
           'nested': <String, Object?>{'a': 1},
-        },
+        }),
       });
 
       test('passes with the expected keys', () {

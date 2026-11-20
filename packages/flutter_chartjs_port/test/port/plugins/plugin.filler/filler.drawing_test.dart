@@ -67,7 +67,7 @@ LineElement _line() => LineElement(<String, Object?>{
       ..x = 30
       ..y = 40,
   ],
-  'options': <String, Object?>{},
+  'options': LineOptions(<String, Object?>{}),
 });
 
 void main() {
@@ -116,7 +116,7 @@ void main() {
               ..x = x
               ..y = y,
         ],
-        'options': <String, Object?>{},
+        'options': LineOptions(<String, Object?>{}),
       });
       expect(
         line.interpolate(PointElement()..x = 2, 'x'),

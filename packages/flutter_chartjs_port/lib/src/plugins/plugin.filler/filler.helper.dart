@@ -34,7 +34,8 @@ ILineElement? createBoundaryLine(Object? boundary, ILineElement line) {
   return points.isNotEmpty
       ? LineElement(<String, Object?>{
           'points': points,
-          'options': <String, Object?>{'tension': 0.0},
+          // DIVERGES(chartjs): adapt-native-element-options, typed options.
+          'options': LineOptions({'tension': 0.0}),
           '_loop': loop,
           '_fullLoop': loop,
         })

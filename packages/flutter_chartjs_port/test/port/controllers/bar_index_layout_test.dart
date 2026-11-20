@@ -539,7 +539,7 @@ void main() {
     same();
     for (final p in [actual, expected]) {
       p
-        ..options = <String, Object?>{'shared': true}
+        ..options = BarOptions({'shared': true})
         ..borderSkipped = (BorderSkipped()..bottom = true)
         ..inflateAmount = 0
         ..jsDelete('x')

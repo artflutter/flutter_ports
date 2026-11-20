@@ -8,7 +8,7 @@ void main() {
   group('properties', () {
     test('PointProperties keeps the order of the writes', () {
       // controller.line.js:91-111 with the index axis y.
-      final options = <String, Object?>{};
+      final options = PointOptions();
       final p = PointProperties()
         ..y = 10
         ..x = 20

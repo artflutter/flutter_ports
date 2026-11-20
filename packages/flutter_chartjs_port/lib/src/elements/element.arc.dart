@@ -9,7 +9,7 @@
 /// [ArcElement] follows the element design of Chart.js ADR 0017. Its
 /// properties are typed members with an `undefined` state. The access by
 /// name of `Element` reads and writes them by their upstream names. Its
-/// [ArcElement.options] are the resolved options, a Map.
+/// [ArcElement.options] are the resolved options (Chart.js ADR 0185).
 ///
 /// The module functions of upstream (`clipSelf`, `clipArc`,
 /// `parseBorderRadius`, `pathFullCircle`, `pathArc`, `drawArc` and
@@ -17,12 +17,13 @@
 ///
 /// ## Options
 ///
-/// The options are an [ArcOptions] or a plain Map of user code or of a
-/// spec. The code reads an [ArcOptions] through its typed fields with the
-/// presence bit and the foreign slot (`numberOption`, `rawOption` and
-/// `plainOption` of `element_options.dart`, Chart.js ADR 0054 §6), and a
-/// plain Map by name (`_byName`). Both give JS `undefined` for an absent
-/// key. The code reads the options as Chart.js ADR 0017 (section 8) states:
+/// The options are an [ArcOptions], or the [GenericElementOptions] of a user
+/// element type (Chart.js ADR 0185). The code reads an [ArcOptions] through its
+/// typed fields with the presence bit and the foreign slot (`numberOption`,
+/// `rawOption` and `plainOption` of `element_options.dart`, Chart.js ADR 0054
+/// §6), and a other options by name (`_byName`). Both give JS `undefined` for
+/// an absent key. The code reads the options as Chart.js ADR 0017 (section 8)
+/// states:
 /// - A number in arithmetic is its `ToNumber` (`_number`): `undefined`
 ///   gives NaN, and `null` gives 0.
 /// - A test with `jsTruthy`, a compare with a string or with 0, `|| 0`
@@ -865,6 +866,18 @@ class ArcElement([AnyObject? cfg])
 
     if (cfg != null) assign(cfg);
   }
+
+  /// core.element.ts:14 `options`: the resolved options of the element, an
+  /// [ArcOptions] for the built-in type `arc` and a [GenericElementOptions] for
+  /// the type of a user subclass with its own id (Chart.js ADR 0185). Dart
+  /// `null` stands for JS `undefined`, the start value. A write of another
+  /// value, also a `Map`, throws a [TypeError].
+  // DIVERGES(chartjs): adapt-native-element-options, typed options.
+  @override
+  ElementOptions? get options => super.options as ElementOptions?;
+
+  @override
+  set options(covariant ElementOptions? value) => super.options = value;
 
   /// element.arc.ts:375 `static id = 'arc'`.
   static const String id = 'arc';

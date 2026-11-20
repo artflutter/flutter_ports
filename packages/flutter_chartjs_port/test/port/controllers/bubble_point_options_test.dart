@@ -445,10 +445,7 @@ void main() {
             expect(probes[i].$context?.jsRead('mode'), 'none');
           }
         }
-        (probes[3].options! as ElementOptions).storeKey(
-          OptionKey.borderWidth,
-          77.0,
-        );
+        probes[3].options!.storeKey(OptionKey.borderWidth, 77.0);
         expect(jsGet(probes[4].options, 'borderWidth'), 1);
       });
     }

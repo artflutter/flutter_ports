@@ -11,7 +11,7 @@ PointElement _point(double x, double y) => PointElement()
 
 LineElement _line(List<IPointElement> points) => LineElement({
   'points': points,
-  'options': <String, Object?>{'tension': 0.0},
+  'options': LineOptions(<String, Object?>{'tension': 0.0}),
 });
 
 class _UnreadPoint() extends PointElement {

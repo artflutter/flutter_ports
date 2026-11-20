@@ -118,7 +118,10 @@ final class _Line(
   @override final int? datasetIndex,
 }) implements ILineElement {
   @override
-  final Map<String, Object?> options = {'spanGaps': false, ...options};
+  final ElementOptions options = GenericElementOptions({
+    'spanGaps': false,
+    ...options,
+  });
 
   @override
   List<Segment> segments = const [];

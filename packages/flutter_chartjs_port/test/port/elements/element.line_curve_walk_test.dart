@@ -40,7 +40,7 @@ List<Object?> _trace(Path2D path) => [
 ];
 
 void main() {
-  test('typed options walk as options of a plain object', () {
+  test('typed options walk as generic options', () {
     for (var seed = 0; seed < 600; seed++) {
       final points = _points(seed);
       final values = <String, Object?>{
@@ -52,7 +52,7 @@ void main() {
         'borderDash': const <double>[],
         'spanGaps': false,
       };
-      Path2D walk(Object options, Map<String, Object?>? params) {
+      Path2D walk(ElementOptions options, Map<String, Object?>? params) {
         final line = LineElement()
           ..options = options
           ..points = points;
@@ -73,7 +73,7 @@ void main() {
       ]) {
         expect(
           _trace(walk(LineOptions(values), params)),
-          _trace(walk(values, params)),
+          _trace(walk(GenericElementOptions(values), params)),
           reason: 'seed $seed, params $params',
         );
       }

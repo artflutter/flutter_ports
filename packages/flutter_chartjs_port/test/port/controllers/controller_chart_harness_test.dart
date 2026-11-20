@@ -692,7 +692,7 @@ void main() {
       final meta = chart.getDatasetMeta(0);
       meta.dataset = LineElement(<String, Object?>{
         'points': meta.data,
-        'options': <String, Object?>{'borderWidth': 1},
+        'options': LineOptions({'borderWidth': 1}),
       });
       final calls = recordLineCalls(meta);
       chart.draw();

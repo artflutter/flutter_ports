@@ -846,7 +846,7 @@ abstract interface class ILineElement() implements IElement {
   /// JavaScript property read of `undefined` does. JS `null` never reaches
   /// it.
   @override
-  Object? get options;
+  ElementOptions? get options;
 
   /// element.line.js:284 `_chart`. Dart `null` stands for JS `undefined`,
   /// the start value. `controller.line.js:57` sets it. JS `null` never
@@ -955,7 +955,7 @@ abstract interface class PointElementWrites() {
   set parsed(Object value);
 
   /// core.element.ts:14 `options`. Dart `null` stands for JS `undefined`.
-  Object? get options;
+  ElementOptions? get options;
 
   set options(Object? value);
 
@@ -1052,7 +1052,7 @@ abstract interface class ArcElementWrites() {
   set innerRadius(double value);
 
   /// core.element.ts:14 `options`. Dart `null` stands for JS `undefined`.
-  Object? get options;
+  ElementOptions? get options;
 
   set options(Object? value);
 }
