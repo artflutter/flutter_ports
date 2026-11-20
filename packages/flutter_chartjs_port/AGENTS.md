@@ -1000,7 +1000,10 @@ repository.
     `type`: the Dart type of the start value selects the interpolator (row
     `adapt-color-animation-by-value`). In the tests, `animationSpecOf` of
     `test/support/animation_spec_input.dart` gives the `AnimationSpec` of an upstream cfg. `config.dart` has `ChartConfig` and `ChartKind`; its
-    `indexAxis` takes a `CartesianAxis` of the core. `datasets.dart` has the 8 dataset classes under `abstract final class Dataset`
+    `indexAxis` takes a `CartesianAxis` of the core. `datasets.dart` has the 8 dataset classes under `abstract base class Dataset`
+    (Chart.js ADR 0189): a package extends it with the `@protected` members `kind`, `chartData`,
+    `lowerOwn` and `props`, and `Dataset` has no `copyWith` (the tests call `BuiltInDatasetCopy` of
+    `test/support/dataset_copy.dart`).
     `DataPoint` is a final subclass of `ParsedItem` in `lib/src/options/parsed.dart`: a `List<DataPoint>` is
     the parsed List of `parsing: false`. Its `x` and `y` are `Object?`, the fields of `ParsedItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver

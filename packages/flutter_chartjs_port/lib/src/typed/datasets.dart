@@ -12,7 +12,7 @@ library;
 import 'dart:ui' show StrokeCap, StrokeJoin;
 
 import 'package:flutter/foundation.dart'
-    show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable;
+    show DiagnosticPropertiesBuilder, Diagnosticable, Key, immutable, protected;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 /// A dataset of a chart: an item of `data.datasets` of a Chart.js config.
@@ -34,13 +34,29 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 ///
 /// The keys that this class does not have go through [extra].
 ///
+/// A package can add the dataset class of its own chart type (Chart.js ADR
+/// 0189): a `final` subclass that gives [kind], [chartData], [lowerOwn] and
+/// [props]. The class takes the parameters of [Dataset] that its chart type
+/// reads, with `super.<name>`.
+///
+/// ```dart
+/// final class const SankeyDataset({
+///   super.label,
+///   final List<SankeyDataPoint>? data,
+/// }) extends Dataset {
+///   @override
+///   ChartKind get kind => const ChartKind('sankey');
+///   ...
+/// }
+/// ```
+///
 /// A dataset is immutable. `==` compares the parameters: a List of data
 /// items by identity, a small List of style values by its items, and a
 /// function with `==`. Use a method tear-off or a function in a field for
 /// resolvers in [backgroundColor] and [borderColor]: a new closure
 /// in each build is a new value, and the chart then updates.
 @immutable
-abstract final class const Dataset({
+abstract base class const Dataset({
   /// The identity of the dataset when the app gives a new config.
   ///
   /// The chart keeps the state of a dataset, for example its hidden state
@@ -118,42 +134,32 @@ abstract final class const Dataset({
   /// The parameters of each dataset class.
   this;
 
-  /// A copy of this dataset with the given parameters.
-  ///
-  /// A null parameter keeps its value. A new [backgroundColor] or [borderColor]
-  /// replaces that color's previous variant independently.
-  Dataset copyWith({
-    Key? key,
-    String? label,
-    bool? hidden,
-    int? order,
-    ChartClip? clip,
-    ChartValue<ChartPaint>? backgroundColor,
-    ChartValue<ChartPaint>? borderColor,
-    double? borderWidth,
-    ChartValue<ChartPaint>? hoverBackgroundColor,
-    ChartValue<ChartPaint>? hoverBorderColor,
-    double? hoverBorderWidth,
-    ChartShadow? shadow,
-    TooltipCallbacks? tooltipCallbacks,
-    Map<String, Object?>? extra,
-  });
+  /// The controller id of the dataset class: the `type` of the dataset when
+  /// it differs from the type of the chart.
+  @protected
+  ChartKind get kind;
 
-  /// The controller id of the dataset class.
-  ChartKind get _kind;
-
-  /// The `data` option: the data List or the points List of the app.
-  List<Object?>? get _data;
+  /// The `data` option: the data List or the points List of the app, by
+  /// reference.
+  @protected
+  List<Object?>? get chartData;
 
   /// Writes the keys of the dataset class into [scope], after the keys of
-  /// [Dataset].
-  void _lowerOwn(OptionScope scope);
+  /// [Dataset] and before [extra]. A key with no [OptionKey] goes by its
+  /// name: `scope['colorFrom'] = value`.
+  @protected
+  void lowerOwn(OptionScope scope);
 
-  /// The properties of the dataset, in parameter order.
-  List<TypedProperty> get _props;
+  /// The properties of the dataset, in parameter order: `==`, `hashCode`
+  /// and the diagnostics compare and show them. Include [styleProps] and
+  /// each own parameter, with `byItems` or `byEntries` for a List or a Map
+  /// of style values.
+  @protected
+  List<TypedProperty> get props;
 
-  /// The properties of [Dataset] from [hidden] to [hoverBorderWidth].
-  List<TypedProperty> get _styleProps => [
+  /// The properties of [Dataset] from [hidden] to [tooltipCallbacks].
+  @protected
+  List<TypedProperty> get styleProps => [
     ('hidden', hidden),
     ('order', order),
     ('clip', clip),
@@ -172,15 +178,15 @@ abstract final class const Dataset({
       identical(this, other) ||
       other is Dataset &&
           other.runtimeType == runtimeType &&
-          propsEqual(_props, other._props);
+          propsEqual(props, other.props);
 
   @override
-  int get hashCode => Object.hash(runtimeType, propsHash(_props));
+  int get hashCode => Object.hash(runtimeType, propsHash(props));
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    addProps(properties, _props);
+    addProps(properties, props);
   }
 }
 
@@ -200,11 +206,11 @@ OptionScope lowerDataset(
   ChartKind chartType, {
   TooltipCallbacks? Function()? currentTooltipCallbacks,
 }) {
-  final kind = dataset._kind;
+  final kind = dataset.kind;
   final scope = _datasetScopeOf(kind);
   if (kind != chartType) put(scope, OptionKey.type, kind.name);
   put(scope, OptionKey.label, dataset.label);
-  put(scope, OptionKey.data, dataset._data);
+  put(scope, OptionKey.data, dataset.chartData);
   put(scope, OptionKey.hidden, dataset.hidden);
   put(scope, OptionKey.order, dataset.order);
   put(scope, OptionKey.clip, dataset.clip);
@@ -223,7 +229,7 @@ OptionScope lowerDataset(
     scope.store(OptionKey.hoverBorderColor, value.toOptionCell());
   }
   put(scope, OptionKey.hoverBorderWidth, dataset.hoverBorderWidth);
-  dataset._lowerOwn(scope);
+  dataset.lowerOwn(scope);
   put(scope, OptionKey.shadow, dataset.shadow);
   if (dataset.tooltipCallbacks case final callbacks?) {
     scope.store(
@@ -354,7 +360,8 @@ final class const BarDataset({
   /// A bar dataset.
   this : assert(data == null || points == null, 'Give data or points.');
 
-  @override
+  /// A copy of this dataset with the given parameters. A null parameter
+  /// keeps its value.
   BarDataset copyWith({
     Key? key,
     String? label,
@@ -414,13 +421,13 @@ final class const BarDataset({
   );
 
   @override
-  ChartKind get _kind => ChartKind.bar;
+  ChartKind get kind => ChartKind.bar;
 
   @override
-  List<Object?>? get _data => data ?? points;
+  List<Object?>? get chartData => data ?? points;
 
   @override
-  void _lowerOwn(OptionScope scope) {
+  void lowerOwn(OptionScope scope) {
     put(scope, OptionKey.xAxisID, xAxisID);
     put(scope, OptionKey.yAxisID, yAxisID);
     put(scope, OptionKey.stack, stack);
@@ -435,12 +442,12 @@ final class const BarDataset({
   }
 
   @override
-  List<TypedProperty> get _props => [
+  List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
     ('data', data),
     ('points', points),
-    ..._styleProps,
+    ...styleProps,
     ('xAxisID', xAxisID),
     ('yAxisID', yAxisID),
     ('stack', stack),
@@ -682,7 +689,8 @@ final class const LineDataset({
   /// A line dataset.
   this : assert(data == null || points == null, 'Give data or points.');
 
-  @override
+  /// A copy of this dataset with the given parameters. A null parameter
+  /// keeps its value.
   LineDataset copyWith({
     Key? key,
     String? label,
@@ -766,13 +774,13 @@ final class const LineDataset({
   );
 
   @override
-  ChartKind get _kind => ChartKind.line;
+  ChartKind get kind => ChartKind.line;
 
   @override
-  List<Object?>? get _data => data ?? points;
+  List<Object?>? get chartData => data ?? points;
 
   @override
-  void _lowerOwn(OptionScope scope) {
+  void lowerOwn(OptionScope scope) {
     put(scope, OptionKey.xAxisID, xAxisID);
     put(scope, OptionKey.yAxisID, yAxisID);
     put(scope, OptionKey.stack, stack);
@@ -781,12 +789,12 @@ final class const LineDataset({
   }
 
   @override
-  List<TypedProperty> get _props => [
+  List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
     ('data', data),
     ('points', points),
-    ..._styleProps,
+    ...styleProps,
     ('xAxisID', xAxisID),
     ('yAxisID', yAxisID),
     ('stack', stack),
@@ -891,7 +899,8 @@ final class const ScatterDataset({
   /// A scatter dataset.
   this : assert(data == null || points == null, 'Give data or points.');
 
-  @override
+  /// A copy of this dataset with the given parameters. A null parameter
+  /// keeps its value.
   ScatterDataset copyWith({
     Key? key,
     String? label,
@@ -973,13 +982,13 @@ final class const ScatterDataset({
   );
 
   @override
-  ChartKind get _kind => ChartKind.scatter;
+  ChartKind get kind => ChartKind.scatter;
 
   @override
-  List<Object?>? get _data => data ?? points;
+  List<Object?>? get chartData => data ?? points;
 
   @override
-  void _lowerOwn(OptionScope scope) {
+  void lowerOwn(OptionScope scope) {
     put(scope, OptionKey.xAxisID, xAxisID);
     put(scope, OptionKey.yAxisID, yAxisID);
     put(scope, OptionKey.stack, stack);
@@ -987,12 +996,12 @@ final class const ScatterDataset({
   }
 
   @override
-  List<TypedProperty> get _props => [
+  List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
     ('data', data),
     ('points', points),
-    ..._styleProps,
+    ...styleProps,
     ('xAxisID', xAxisID),
     ('yAxisID', yAxisID),
     ('stack', stack),
@@ -1047,7 +1056,8 @@ final class const BubbleDataset({
   /// A bubble dataset.
   this;
 
-  @override
+  /// A copy of this dataset with the given parameters. A null parameter
+  /// keeps its value.
   BubbleDataset copyWith({
     Key? key,
     String? label,
@@ -1093,13 +1103,13 @@ final class const BubbleDataset({
   );
 
   @override
-  ChartKind get _kind => ChartKind.bubble;
+  ChartKind get kind => ChartKind.bubble;
 
   @override
-  List<Object?>? get _data => points;
+  List<Object?>? get chartData => points;
 
   @override
-  void _lowerOwn(OptionScope scope) {
+  void lowerOwn(OptionScope scope) {
     put(scope, OptionKey.xAxisID, xAxisID);
     put(scope, OptionKey.yAxisID, yAxisID);
     put(scope, OptionKey.radius, radius);
@@ -1108,11 +1118,11 @@ final class const BubbleDataset({
   }
 
   @override
-  List<TypedProperty> get _props => [
+  List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
     ('points', points),
-    ..._styleProps,
+    ...styleProps,
     ('xAxisID', xAxisID),
     ('yAxisID', yAxisID),
     ('radius', radius),
@@ -1243,7 +1253,8 @@ final class const PieDataset({
   /// A pie dataset.
   this;
 
-  @override
+  /// A copy of this dataset with the given parameters. A null parameter
+  /// keeps its value.
   PieDataset copyWith({
     Key? key,
     String? label,
@@ -1295,20 +1306,20 @@ final class const PieDataset({
   );
 
   @override
-  ChartKind get _kind => ChartKind.pie;
+  ChartKind get kind => ChartKind.pie;
 
   @override
-  List<Object?>? get _data => data;
+  List<Object?>? get chartData => data;
 
   @override
-  void _lowerOwn(OptionScope scope) => _lowerArc(scope);
+  void lowerOwn(OptionScope scope) => _lowerArc(scope);
 
   @override
-  List<TypedProperty> get _props => [
+  List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
     ('data', data),
-    ..._styleProps,
+    ...styleProps,
     ..._arcProps,
     ('extra', byEntries(extra)),
   ];
@@ -1367,7 +1378,8 @@ final class const DoughnutDataset({
   /// A doughnut dataset.
   this;
 
-  @override
+  /// A copy of this dataset with the given parameters. A null parameter
+  /// keeps its value.
   DoughnutDataset copyWith({
     Key? key,
     String? label,
@@ -1419,20 +1431,20 @@ final class const DoughnutDataset({
   );
 
   @override
-  ChartKind get _kind => ChartKind.doughnut;
+  ChartKind get kind => ChartKind.doughnut;
 
   @override
-  List<Object?>? get _data => data;
+  List<Object?>? get chartData => data;
 
   @override
-  void _lowerOwn(OptionScope scope) => _lowerArc(scope);
+  void lowerOwn(OptionScope scope) => _lowerArc(scope);
 
   @override
-  List<TypedProperty> get _props => [
+  List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
     ('data', data),
-    ..._styleProps,
+    ...styleProps,
     ..._arcProps,
     ('extra', byEntries(extra)),
   ];
@@ -1474,7 +1486,8 @@ final class const PolarAreaDataset({
   /// A polar area dataset.
   this;
 
-  @override
+  /// A copy of this dataset with the given parameters. A null parameter
+  /// keeps its value.
   PolarAreaDataset copyWith({
     Key? key,
     String? label,
@@ -1516,24 +1529,24 @@ final class const PolarAreaDataset({
   );
 
   @override
-  ChartKind get _kind => ChartKind.polarArea;
+  ChartKind get kind => ChartKind.polarArea;
 
   @override
-  List<Object?>? get _data => data;
+  List<Object?>? get chartData => data;
 
   @override
-  void _lowerOwn(OptionScope scope) {
+  void lowerOwn(OptionScope scope) {
     put(scope, OptionKey.offset, offset);
     put(scope, OptionKey.hoverOffset, hoverOffset);
     put(scope, OptionKey.spacing, spacing);
   }
 
   @override
-  List<TypedProperty> get _props => [
+  List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
     ('data', data),
-    ..._styleProps,
+    ...styleProps,
     ('offset', offset),
     ('hoverOffset', hoverOffset),
     ('spacing', spacing),
@@ -1622,7 +1635,8 @@ final class const RadarDataset({
   /// A radar dataset.
   this;
 
-  @override
+  /// A copy of this dataset with the given parameters. A null parameter
+  /// keeps its value.
   RadarDataset copyWith({
     Key? key,
     String? label,
@@ -1696,20 +1710,20 @@ final class const RadarDataset({
   );
 
   @override
-  ChartKind get _kind => ChartKind.radar;
+  ChartKind get kind => ChartKind.radar;
 
   @override
-  List<Object?>? get _data => data;
+  List<Object?>? get chartData => data;
 
   @override
-  void _lowerOwn(OptionScope scope) => _lowerLine(scope);
+  void lowerOwn(OptionScope scope) => _lowerLine(scope);
 
   @override
-  List<TypedProperty> get _props => [
+  List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
     ('data', data),
-    ..._styleProps,
+    ...styleProps,
     ..._lineProps,
     ('extra', byEntries(extra)),
   ];

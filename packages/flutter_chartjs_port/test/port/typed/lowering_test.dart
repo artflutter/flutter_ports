@@ -11,6 +11,7 @@ import 'package:flutter/painting.dart' show EdgeInsets, TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/dataset_copy.dart';
 import 'twin.dart';
 
 // Chart.js ADR 0052, sections 2 and 11: the lowering twins. For each typed

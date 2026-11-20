@@ -7,6 +7,7 @@ import 'dart:ui' as ui;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/dataset_copy.dart';
 import '../../support/drop_extra_args.dart';
 
 const _red = ChartPaint.solid(ui.Color(0xffff0000));

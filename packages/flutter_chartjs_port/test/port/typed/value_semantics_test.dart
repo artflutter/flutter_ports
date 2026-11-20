@@ -9,6 +9,8 @@ import 'package:flutter/foundation.dart'
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/dataset_copy.dart';
+
 // Chart.js ADR 0052, sections 1 and 9: each config class is immutable, with
 // a `const` constructor, `==`, `hashCode`, `copyWith` and the diagnostics
 // from one property list. `==` compares the Lists of the app by identity
