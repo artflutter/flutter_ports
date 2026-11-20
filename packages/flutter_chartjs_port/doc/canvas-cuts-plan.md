@@ -2951,3 +2951,13 @@ aspect-ratio maintenance in a fixed box. Names and expected chart and host sizes
 unchanged. The other sizing rows retain the raw entry. No production canvas code or
 deferred cut changes. The named references, inventory, tests of §2.6 and §3.5, and estimates
 remain unchanged. No trigger occurred.
+
+## Ten typed widget update and input cases, 2026-11-20
+
+The final four sizing cases in `test/port/widgets/chart_view_test.dart` now use typed
+configs, together with controller replacement, plugin replacement, animated data insertion,
+theme redraws, animation-default preservation and input callbacks. The shared test parent
+accepts both config forms so the raw identity cases keep their original path. The defaults
+case supplies an equivalent fresh data list to exercise an update under typed equality.
+No production canvas code or deferred cut changes. The named references, inventory, tests
+of §2.6 and §3.5, and estimates remain unchanged. No trigger occurred.

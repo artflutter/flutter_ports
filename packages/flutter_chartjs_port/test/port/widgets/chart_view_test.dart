@@ -42,11 +42,13 @@ Map<String, Object?> _config({
 ChartConfig _typedConfig({
   Dataset dataset = const BarDataset(data: [1, 2, 3]),
   bool? maintainAspectRatio,
+  bool? responsive,
   Map<String, Object?> options = const {},
   List<Plugin<Object?>>? plugins,
 }) => ChartConfig(
   datasets: [dataset],
   maintainAspectRatio: maintainAspectRatio,
+  responsive: responsive,
   labels: const ['a', 'b', 'c'],
   plugins: plugins,
   extra: {'animation': false, ...options},
@@ -114,18 +116,17 @@ List<String> _properties(Diagnosticable object) => [
 ];
 
 /// A parent that shows a ChartView of its config and a [Text] of its label.
-class const _Parent({required final Map<String, Object?> config})
-    extends StatefulWidget {
+class const _Parent({required final Object config}) extends StatefulWidget {
   @override
   State<_Parent> createState() => _ParentState();
 }
 
 class _ParentState() extends State<_Parent> {
-  late Map<String, Object?> config = widget.config;
+  late Object config = widget.config;
   String label = '';
   UpdateMode? updateMode;
 
-  void show(Map<String, Object?> next, {UpdateMode? mode}) => setState(() {
+  void show(Object next, {UpdateMode? mode}) => setState(() {
     config = next;
     updateMode = mode;
   });
@@ -142,7 +143,17 @@ class _ParentState() extends State<_Parent> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            ChartView.raw(config: config, updateMode: updateMode),
+            switch (config) {
+              ChartConfig value => ChartView(
+                config: value,
+                updateMode: updateMode,
+              ),
+              Map<String, Object?> value => ChartView.raw(
+                config: value,
+                updateMode: updateMode,
+              ),
+              _ => throw ArgumentError.value(config, 'config'),
+            },
             Text(label, key: const ValueKey('label')),
           ],
         ),
@@ -639,12 +650,20 @@ void main() {
     });
 
     testWidgets('a new type changes the controllers', (tester) async {
-      final config = _config();
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      final config = _typedConfig();
+      await tester.pumpWidget(_box(ChartView(config: config)));
       final chart = _chart(tester)!;
       expect(chart.getDatasetMeta(0).type, 'bar');
       await tester.pumpWidget(
-        _box(ChartView.raw(config: {...config, 'type': 'line'})),
+        _box(
+          ChartView(
+            config: config.copyWith(
+              datasets: const [
+                LineDataset(data: [1, 2, 3]),
+              ],
+            ),
+          ),
+        ),
       );
       expect(_chart(tester), same(chart));
       expect(chart.config.type, 'line');
@@ -664,20 +683,13 @@ void main() {
           log.add('$id.stop');
         },
       );
-      final config = _config(plugins: [plugin('a')]);
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      final config = _typedConfig(plugins: [plugin('a')]);
+      await tester.pumpWidget(_box(ChartView(config: config)));
       final chart = _chart(tester)!;
       final id = chart.id;
       expect(log, ['a.start']);
       await tester.pumpWidget(
-        _box(
-          ChartView.raw(
-            config: {
-              ...config,
-              'plugins': [plugin('b')],
-            },
-          ),
-        ),
+        _box(ChartView(config: config.copyWith(plugins: [plugin('b')]))),
       );
       expect(log, ['a.start', 'a.stop', 'b.start']);
       expect(_chart(tester), same(chart));
@@ -730,18 +742,20 @@ void main() {
     testWidgets('notifyArrayListeners after a push animates the insert', (
       tester,
     ) async {
-      final data = <Object?>[1, 2, 3];
-      final config = _config(
-        data: data,
-        options: <String, Object?>{'animation': <String, Object?>{}},
+      final data = <num?>[1, 2, 3];
+      final labels = <Object>['a', 'b', 'c'];
+      final config = ChartConfig(
+        datasets: [BarDataset(data: data)],
+        labels: labels,
+        animation: const ChartAnimation(),
       );
-      await tester.pumpWidget(_box(ChartView.raw(config: config)));
+      await tester.pumpWidget(_box(ChartView(config: config)));
       final chart = _chart(tester)!;
       await tester.pump(const Duration(seconds: 2));
       await tester.pump();
       expect(animator.has(chart), isFalse);
 
-      (jsGet(config['data'], 'labels')! as List<Object?>).add('d');
+      labels.add('d');
       data.add(4);
       notifyArrayListeners(data, 'push', [4]);
       chart.update();
@@ -779,7 +793,11 @@ void main() {
   });
 
   group('size', () {
-    Widget typedChart(String type, {bool? maintainAspectRatio}) => ChartView(
+    Widget typedChart(
+      String type, {
+      bool? maintainAspectRatio,
+      bool? responsive,
+    }) => ChartView(
       config: _typedConfig(
         dataset: switch (type) {
           'bar' => const BarDataset(data: [1, 2, 3]),
@@ -787,6 +805,7 @@ void main() {
           _ => throw ArgumentError.value(type, 'type'),
         },
         maintainAspectRatio: maintainAspectRatio,
+        responsive: responsive,
       ),
     );
 
@@ -845,21 +864,14 @@ void main() {
             'maintainAspectRatio: false, unbounded height',
             (chart) =>
                 _box(SingleChildScrollView(child: Column(children: [chart]))),
-            (type) => ChartView.raw(
-              config: _config(
-                type: type,
-                options: const {'maintainAspectRatio': false},
-              ),
-            ),
+            (type) => typedChart(type, maintainAspectRatio: false),
             const Size(400, 150),
             const Size(400, 150),
           ),
           (
             'responsive: false',
             _box,
-            (type) => ChartView.raw(
-              config: _config(type: type, options: const {'responsive': false}),
-            ),
+            (type) => typedChart(type, responsive: false),
             const Size(300, 150),
             const Size(300, 300),
           ),
@@ -1011,16 +1023,14 @@ void main() {
 
     testWidgets('a theme switch and a theme removal draw once', (tester) async {
       final counts = <String, int>{};
-      final config = _config(
+      final config = _typedConfig(
         options: <String, Object?>{'animation': <String, Object?>{}},
         plugins: [_counter('draw', 'afterDraw', counts)],
       );
       const themeA = ChartThemeData(color: Color(0xFFFF0000));
       const themeB = ChartThemeData(color: Color(0xFF0000FF));
-      Widget build(ChartThemeData? theme) => _motion(
-        _box(ChartView.raw(config: config, theme: theme)),
-        reduced: true,
-      );
+      Widget build(ChartThemeData? theme) =>
+          _motion(_box(ChartView(config: config, theme: theme)), reduced: true);
       await tester.pumpWidget(build(themeA));
       final chart = _chart(tester)!;
       await tester.pump(const Duration(seconds: 2));
@@ -1043,18 +1053,31 @@ void main() {
         for (final key in animation.jsKeys()) key: animation[key],
       };
       final before = entries();
-      final config = _config(
-        options: <String, Object?>{'animation': <String, Object?>{}},
+      const config = ChartConfig(
+        datasets: [
+          BarDataset(data: [1, 2, 3]),
+        ],
+        labels: ['a', 'b', 'c'],
+        animation: ChartAnimation(),
       );
-      Widget build(Map<String, Object?> config, {required bool reduced}) =>
-          _motion(_box(ChartView.raw(config: config)), reduced: reduced);
+      Widget build(ChartConfig config, {required bool reduced}) =>
+          _motion(_box(ChartView(config: config)), reduced: reduced);
       await tester.pumpWidget(build(config, reduced: true));
-      await tester.pumpWidget(build(Map.of(config), reduced: true));
+      await tester.pumpWidget(
+        build(
+          config.copyWith(
+            datasets: [
+              BarDataset(data: List<num?>.of([1, 2, 3])),
+            ],
+          ),
+          reduced: true,
+        ),
+      );
       await tester.pump();
       expect(defaults['animation'], same(animation));
       expect(entries(), before);
-      // The widget writes no animation option into the app config.
-      expect(jsGet(config['options'], 'animation'), <String, Object?>{});
+      // The widget leaves the typed animation settings unchanged.
+      expect(config.animation, const ChartAnimation());
     });
   });
 
@@ -1063,7 +1086,7 @@ void main() {
         'parameters, and a setState in each updates a Text', (tester) async {
       late _ParentState parent;
       final calls = <String>[];
-      final config = _config(
+      final config = _typedConfig(
         options: <String, Object?>{
           'onHover':
               (ChartEvent event, List<ActiveElement> active, Chart chart) {
