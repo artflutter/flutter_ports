@@ -206,7 +206,6 @@ List<Object?> _maps(List<typed.DataPoint> points) => <Object?>[
 
 typed.ChartConfig _typedConfig(List<typed.DataPoint> points) =>
     typed.ChartConfig(
-      type: typed.ChartKind.scatter,
       datasets: [
         typed.ScatterDataset(points: points, showLine: false, pointRadius: 3),
       ],

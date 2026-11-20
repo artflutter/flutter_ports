@@ -9,7 +9,6 @@ const _months = ['January', 'February', 'March', 'April', 'May', 'June'];
 const _desktop = <num>[186, 305, 237, 73, 209, 214];
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .bar,
   indexAxis: const YAxis(),
   labels: _months,
   datasets: const [

@@ -128,7 +128,6 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
     ],
   };
   return ChartConfig(
-    type: ChartKind.line,
     datasets: datasets,
     indexAxis: horizontal ? const YAxis() : null,
     scales: const {

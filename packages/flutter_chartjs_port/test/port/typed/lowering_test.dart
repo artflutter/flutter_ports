@@ -1198,8 +1198,7 @@ const Map<String, (ChartAnimation, Object)> _animation = {
 const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
   'scales': (
     ChartConfig(
-      type: .bar,
-      datasets: [],
+      datasets: [BarDataset()],
       scales: {'y': LinearAxis(beginAtZero: true)},
     ),
     {
@@ -1209,23 +1208,23 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     },
   ),
   'indexAxis': (
-    ChartConfig(type: .bar, datasets: [], indexAxis: YAxis()),
+    ChartConfig(datasets: [BarDataset()], indexAxis: YAxis()),
     {'indexAxis': YAxis()},
   ),
   'responsive': (
-    ChartConfig(type: .bar, datasets: [], responsive: false),
+    ChartConfig(datasets: [BarDataset()], responsive: false),
     {'responsive': false},
   ),
   'maintainAspectRatio': (
-    ChartConfig(type: .bar, datasets: [], maintainAspectRatio: false),
+    ChartConfig(datasets: [BarDataset()], maintainAspectRatio: false),
     {'maintainAspectRatio': false},
   ),
   'aspectRatio': (
-    ChartConfig(type: .bar, datasets: [], aspectRatio: 1.5),
+    ChartConfig(datasets: [BarDataset()], aspectRatio: 1.5),
     {'aspectRatio': 1.5},
   ),
   'padding': (
-    ChartConfig(type: .bar, datasets: [], padding: EdgeInsets.all(20)),
+    ChartConfig(datasets: [BarDataset()], padding: EdgeInsets.all(20)),
     {
       'layout': {
         'padding': EdgeInsets.only(left: 20, top: 20, right: 20, bottom: 20),
@@ -1233,67 +1232,65 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     },
   ),
   'legend': (
-    ChartConfig(type: .bar, datasets: [], legend: ChartLegend()),
+    ChartConfig(datasets: [BarDataset()], legend: ChartLegend()),
     {
       'plugins': {'legend': <String, Object?>{}},
     },
   ),
   'title': (
-    ChartConfig(type: .bar, datasets: [], title: ChartTitle()),
+    ChartConfig(datasets: [BarDataset()], title: ChartTitle()),
     {
       'plugins': {'title': <String, Object?>{}},
     },
   ),
   'subtitle': (
-    ChartConfig(type: .bar, datasets: [], subtitle: ChartTitle()),
+    ChartConfig(datasets: [BarDataset()], subtitle: ChartTitle()),
     {
       'plugins': {'subtitle': <String, Object?>{}},
     },
   ),
   'tooltip': (
-    ChartConfig(type: .bar, datasets: [], tooltip: ChartTooltip()),
+    ChartConfig(datasets: [BarDataset()], tooltip: ChartTooltip()),
     {
       'plugins': {'tooltip': <String, Object?>{}},
     },
   ),
   'filler': (
-    ChartConfig(type: .bar, datasets: [], filler: ChartFiller()),
+    ChartConfig(datasets: [BarDataset()], filler: ChartFiller()),
     {
       'plugins': {'filler': <String, Object?>{}},
     },
   ),
   'interaction': (
-    ChartConfig(type: .bar, datasets: [], interaction: ChartInteraction()),
+    ChartConfig(datasets: [BarDataset()], interaction: ChartInteraction()),
     {'interaction': <String, Object?>{}},
   ),
   'animation': (
-    ChartConfig(type: .bar, datasets: [], animation: ChartAnimation()),
+    ChartConfig(datasets: [BarDataset()], animation: ChartAnimation()),
     {'animation': <String, Object?>{}},
   ),
   'elements': (
-    ChartConfig(type: .bar, datasets: [], elements: ChartElements()),
+    ChartConfig(datasets: [BarDataset()], elements: ChartElements()),
     {'elements': <String, Object?>{}},
   ),
   'onClick': (
-    ChartConfig(type: .bar, datasets: [], onClick: _onEvent),
+    ChartConfig(datasets: [BarDataset()], onClick: _onEvent),
     {'onClick': _function},
   ),
   'onHover': (
-    ChartConfig(type: .bar, datasets: [], onHover: _onEvent),
+    ChartConfig(datasets: [BarDataset()], onHover: _onEvent),
     {'onHover': _function},
   ),
   'extra': (
     ChartConfig(
-      type: .bar,
-      datasets: [],
+      datasets: [BarDataset()],
       extra: {'locale': native_ui.Locale('de', 'DE')},
     ),
     {'locale': native_ui.Locale('de', 'DE')},
   ),
   'all options, in parameter order': (
     ChartConfig(
-      type: .bar,
-      datasets: [],
+      datasets: [BarDataset()],
       scales: {'x': CategoryAxis()},
       indexAxis: XAxis(),
       responsive: true,
@@ -2279,7 +2276,7 @@ void main() {
         test(name, () {
           expectTwin(
             _options(
-              ChartConfig(type: .bar, datasets: const [], legend: legend),
+              ChartConfig(datasets: const [BarDataset()], legend: legend),
             ),
             {
               'plugins': {'legend': twin},
@@ -2295,8 +2292,7 @@ void main() {
           expectTwin(
             _options(
               ChartConfig(
-                type: .bar,
-                datasets: const [],
+                datasets: const [BarDataset()],
                 title: title,
                 subtitle: title,
               ),
@@ -2315,7 +2311,7 @@ void main() {
         test(name, () {
           expectTwin(
             _options(
-              ChartConfig(type: .bar, datasets: const [], tooltip: tooltip),
+              ChartConfig(datasets: const [BarDataset()], tooltip: tooltip),
             ),
             {
               'plugins': {'tooltip': twin},
@@ -2332,8 +2328,7 @@ void main() {
           expectTwin(
             _options(
               ChartConfig(
-                type: .bar,
-                datasets: const [],
+                datasets: const [BarDataset()],
                 interaction: interaction,
               ),
             ),
@@ -2349,7 +2344,7 @@ void main() {
         test(name, () {
           expectTwin(
             _options(
-              ChartConfig(type: .line, datasets: const [], filler: filler),
+              ChartConfig(datasets: const [LineDataset()], filler: filler),
             ),
             {
               'plugins': {'filler': twin},
@@ -2365,7 +2360,7 @@ void main() {
         test(name, () {
           expectTwin(
             _options(
-              ChartConfig(type: .line, datasets: const [], elements: elements),
+              ChartConfig(datasets: const [LineDataset()], elements: elements),
             ),
             {'elements': twin},
           );
@@ -2379,7 +2374,7 @@ void main() {
         test(name, () {
           expectTwin(
             _options(
-              ChartConfig(type: .bar, datasets: const [], animation: animation),
+              ChartConfig(datasets: const [BarDataset()], animation: animation),
             ),
             {'animation': twin},
           );
@@ -2390,8 +2385,7 @@ void main() {
     test('each group with all its parameters, in parameter order', () {
       final options = _options(
         ChartConfig(
-          type: .bar,
-          datasets: const [],
+          datasets: const [BarDataset()],
           legend: const ChartLegend(
             display: true,
             position: .bottom,
@@ -2563,11 +2557,13 @@ void main() {
   group('the config', () {
     test('a config with the required parameters', () {
       expectTwin(
-        ChartConfigLowering(const ChartConfig(type: .bar, datasets: []))
+        ChartConfigLowering(const ChartConfig(datasets: [BarDataset()]))
             .lower(),
         {
           'type': 'bar',
-          'data': {'datasets': <Object?>[]},
+          'data': {
+            'datasets': <Object?>[<String, Object?>{}],
+          },
           'options': <String, Object?>{},
         },
       );
@@ -2587,7 +2583,6 @@ void main() {
       final labels = <Object>['a', 'b'];
       final lowered = ChartConfigLowering(
         ChartConfig(
-          type: .bar,
           labels: labels,
           datasets: [
             BarDataset(label: 'A', data: data),
@@ -2613,7 +2608,7 @@ void main() {
       final plugin = Plugin<Object?>(id: 'p');
       final plugins = [plugin];
       final lowered = ChartConfigLowering(
-        ChartConfig(type: .line, datasets: const [], plugins: plugins),
+        ChartConfig(datasets: const [LineDataset()], plugins: plugins),
       ).lower();
       expect(lowered.jsKeys(), ['type', 'data', 'options', 'plugins']);
       expect(lowered['plugins'], same(plugins));
@@ -2622,8 +2617,7 @@ void main() {
     test('the order of the scales is the order of the Map', () {
       final options = _options(
         const ChartConfig(
-          type: .line,
-          datasets: [],
+          datasets: [LineDataset()],
           scales: {
             'y2': LinearAxis(position: .right),
             'x': CategoryAxis(),
@@ -2638,8 +2632,7 @@ void main() {
       expectTwin(
         _options(
           const ChartConfig(
-            type: .bar,
-            datasets: [],
+            datasets: [BarDataset()],
             responsive: true,
             legend: ChartLegend(display: true),
             extra: {
@@ -2671,7 +2664,6 @@ void main() {
 
     test('a const config lowers to new Maps at each call', () {
       const config = ChartConfig(
-        type: .bar,
         datasets: [
           BarDataset(data: [1]),
         ],
@@ -2688,8 +2680,7 @@ void main() {
       final calls = <String>[];
       final lowering = ChartConfigLowering(
         ChartConfig(
-          type: .bar,
-          datasets: const [],
+          datasets: const [BarDataset()],
           tooltip: ChartTooltip(
             callbacks: TooltipCallbacks(
               label: (tooltip, item) {
@@ -2720,8 +2711,7 @@ void main() {
         ['first'],
       );
       lowering.config = ChartConfig(
-        type: .bar,
-        datasets: const [],
+        datasets: const [BarDataset()],
         tooltip: ChartTooltip(
           callbacks: TooltipCallbacks(
             label: (tooltip, item) {
@@ -2735,7 +2725,7 @@ void main() {
         (label as TooltipCallbacks).label!(const _CallbackTooltip(), item),
         isNull,
       );
-      lowering.config = const ChartConfig(type: .bar, datasets: []);
+      lowering.config = const ChartConfig(datasets: [BarDataset()]);
       expect(label.label!(const _CallbackTooltip(), item), isNull);
       expect(calls, ['first', 'second']);
     });

@@ -413,7 +413,6 @@ void main() {
   group('the config, the axes and the groups', () {
     test('a const config is canonical', () {
       const a = ChartConfig(
-        type: .bar,
         datasets: [
           BarDataset(data: [1]),
         ],
@@ -421,7 +420,6 @@ void main() {
         legend: ChartLegend(display: false),
       );
       const b = ChartConfig(
-        type: .bar,
         datasets: [
           BarDataset(data: [1]),
         ],
@@ -435,7 +433,6 @@ void main() {
       final data = <num?>[1, 2];
       final labels = <Object>['a', 'b'];
       ChartConfig build() => ChartConfig(
-        type: .bar,
         labels: labels,
         datasets: [
           BarDataset(
@@ -466,21 +463,19 @@ void main() {
 
     test('the Lists of the app compare by identity', () {
       expect(
-        ChartConfig(type: .bar, datasets: const [], labels: _runtime(['a'])),
+        ChartConfig(datasets: const [BarDataset()], labels: _runtime(['a'])),
         isNot(
-          ChartConfig(type: .bar, datasets: const [], labels: _runtime(['a'])),
+          ChartConfig(datasets: const [BarDataset()], labels: _runtime(['a'])),
         ),
       );
       expect(
         ChartConfig(
-          type: .bar,
-          datasets: const [],
+          datasets: const [BarDataset()],
           plugins: _runtime([Plugin<Object?>(id: 'p')]),
         ),
         isNot(
           ChartConfig(
-            type: .bar,
-            datasets: const [],
+            datasets: const [BarDataset()],
             plugins: _runtime([Plugin<Object?>(id: 'p')]),
           ),
         ),
@@ -490,7 +485,7 @@ void main() {
     test('the plugins compare by the identity of their items', () {
       final plugin = Plugin<Object?>(id: 'p');
       ChartConfig config(List<Plugin<Object?>> plugins) =>
-          ChartConfig(type: .bar, datasets: const [], plugins: plugins);
+          ChartConfig(datasets: const [BarDataset()], plugins: plugins);
       _expectEqual(config(_runtime([plugin])), config(_runtime([plugin])));
       expect(
         config(_runtime([plugin])),
@@ -502,7 +497,7 @@ void main() {
       );
       expect(
         config(_runtime([plugin])),
-        isNot(const ChartConfig(type: .bar, datasets: [])),
+        isNot(const ChartConfig(datasets: [BarDataset()])),
       );
     });
 
@@ -526,14 +521,12 @@ void main() {
     test('the scales compare by their entries, in key order', () {
       expect(
         const ChartConfig(
-          type: .bar,
-          datasets: [],
+          datasets: [BarDataset()],
           scales: {'x': CategoryAxis(), 'y': LinearAxis()},
         ),
         isNot(
           const ChartConfig(
-            type: .bar,
-            datasets: [],
+            datasets: [BarDataset()],
             scales: {'y': LinearAxis(), 'x': CategoryAxis()},
           ),
         ),
@@ -542,12 +535,12 @@ void main() {
 
     test('a callback behind a trampoline compares by its presence', () {
       _expectEqual(
-        ChartConfig(type: .bar, datasets: const [], onClick: (_, _, _) {}),
-        ChartConfig(type: .bar, datasets: const [], onClick: (_, _, _) {}),
+        ChartConfig(datasets: const [BarDataset()], onClick: (_, _, _) {}),
+        ChartConfig(datasets: const [BarDataset()], onClick: (_, _, _) {}),
       );
       expect(
-        ChartConfig(type: .bar, datasets: const [], onHover: (_, _, _) {}),
-        isNot(const ChartConfig(type: .bar, datasets: [])),
+        ChartConfig(datasets: const [BarDataset()], onHover: (_, _, _) {}),
+        isNot(const ChartConfig(datasets: [BarDataset()])),
       );
       _expectEqual(
         ChartLegend(onLeave: (_, _, _) {}),
@@ -625,9 +618,13 @@ void main() {
         radial.copyWith(border: const RadialAxisBorder(dashOffset: 1)).border,
         const RadialAxisBorder(dashOffset: 1),
       );
-      const config = ChartConfig(type: .bar, datasets: []);
+      const config = ChartConfig(datasets: [BarDataset()]);
       _expectEqual(config.copyWith(), config);
-      expect(config.copyWith(type: .line).type, ChartKind.line);
+      expect(config.type, ChartKind.bar);
+      expect(
+        config.copyWith(datasets: const [LineDataset()]).type,
+        ChartKind.line,
+      );
       for (final (object, copy, changed) in <(Object, Object, Object)>[
         (
           const AxisTicks(),
@@ -720,8 +717,7 @@ void main() {
         for (final property in object.toDiagnosticsNode().getProperties())
           property.name!,
       ];
-      expect(names(const ChartConfig(type: .bar, datasets: [])), [
-        'type',
+      expect(names(const ChartConfig(datasets: [BarDataset()])), [
         'datasets',
         'labels',
         'scales',
@@ -791,8 +787,7 @@ void main() {
       expect(names(ChartAnimation.none).first, 'none');
       expect(
         ChartConfig(
-          type: .bar,
-          datasets: const [],
+          datasets: const [BarDataset()],
           onClick: (_, _, _) {},
         ).toString(),
         contains('onClick: set'),

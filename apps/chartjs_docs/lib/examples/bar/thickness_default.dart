@@ -20,7 +20,6 @@ final unevenPoints = [
 ];
 
 final fitBars = ChartConfig(
-  type: .bar,
   datasets: [
     BarDataset(
       label: 'Equal widths',

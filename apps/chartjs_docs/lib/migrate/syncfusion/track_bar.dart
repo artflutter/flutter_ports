@@ -9,7 +9,6 @@ const _people = ['Mike', 'Chris', 'Helana', 'Tom', 'Federer', 'Hussain'];
 const List<num> _hours = [7.5, 7, 6, 5, 7, 7];
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   indexAxis: const YAxis(),
   labels: _people,
   datasets: const [

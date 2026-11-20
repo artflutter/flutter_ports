@@ -362,7 +362,6 @@ Chart _barChart({
 }) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.bar,
       labels: [for (var i = 0; i < count; i++) 'c$i'],
       datasets: [
         for (var k = 0; k < datasets; k++)

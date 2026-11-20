@@ -16,7 +16,6 @@ class _ClickedPointState() extends State<ClickedPoint> {
   String _clicked = 'Click a point.';
 
   late final ChartConfig _config = ChartConfig(
-    type: .line,
     labels: months,
     datasets: const [
       LineDataset(

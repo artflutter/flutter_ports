@@ -16,7 +16,6 @@ const Color red = Color.fromRGBO(255, 99, 132, 1);
 const trend = <num?>[65, 59, 80, 81, null, 55, 40, 62];
 
 const segmentLine = ChartConfig(
-  type: .line,
   labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun', 'Mon'],
   datasets: [
     LineDataset(

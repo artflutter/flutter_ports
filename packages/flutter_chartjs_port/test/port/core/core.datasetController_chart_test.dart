@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/context_keys.dart';
+import '../../support/test_dataset.dart';
 
 // The typed element options of Chart.js ADR 0021, section 7, on real charts
 // of the harness (Chart.js ADR 0022). core.datasetController_test.dart runs
@@ -179,9 +180,8 @@ Chart _chart(
 }) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: ChartKind(type),
       datasets: [
-        LineDataset(points: _points(), extra: {'type': type, ...dataset}),
+        TestDataset(ChartKind(type), points: _points(), extra: dataset),
       ],
       animation: animation,
     ),
@@ -467,10 +467,9 @@ void main() {
     Chart stackedChart(List<Object?> data) => acquireChartRoot(
       ChartConfigLowering(
         ChartConfig(
-          type: const ChartKind('stacksPoint'),
           datasets: [
             // Keep the original data List.
-            LineDataset(extra: {'type': 'stacksPoint', 'data': data}),
+            TestDataset(const ChartKind('stacksPoint'), extra: {'data': data}),
           ],
           scales: const {
             'y': LinearAxis(

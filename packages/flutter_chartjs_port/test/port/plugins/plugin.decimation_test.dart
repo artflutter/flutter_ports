@@ -100,8 +100,7 @@ final Map<String, Object?> _functions = {'writeData': _writeData};
   final data = _series(2000, (i) => (i * 37) % 101);
   final root = ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.line,
-      datasets: const [],
+      datasets: const [LineDataset()],
       scales: const {'x': LinearAxis()},
       extra: {
         'parsing': false,
@@ -634,8 +633,7 @@ void main() {
     Chart narrowChart(Object dataset, {bool enabled = true}) {
       final root = ChartConfigLowering(
         ChartConfig(
-          type: ChartKind.line,
-          datasets: const [],
+          datasets: const [LineDataset()],
           scales: const {'x': LinearAxis()},
           extra: {
             'parsing': false,
@@ -723,7 +721,6 @@ void main() {
       ];
       final root = ChartConfigLowering(
         ChartConfig(
-          type: ChartKind.line,
           datasets: [
             LineDataset(label: 'd0', extra: {'data': input}),
           ],

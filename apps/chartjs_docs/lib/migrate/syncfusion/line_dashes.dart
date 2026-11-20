@@ -67,7 +67,6 @@ TooltipLabelStyle _tooltipMarker(TooltipModel tooltip, TooltipItem item) =>
     );
 
 final ChartConfig _config = ChartConfig(
-  type: .line,
   datasets: [
     for (final (i, MapEntry(:key, :value)) in _series.entries.indexed)
       _line(key, _colors[i], value),

@@ -54,7 +54,6 @@ merged with the options of the chart. A typed config gives the object in
 ```dart
 ChartView(
   config: ChartConfig(
-    type: .line,
     datasets: [LineDataset(data: values)],
     pluginOptions: [
       ZoomPluginOptions(

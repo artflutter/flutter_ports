@@ -34,7 +34,6 @@ Chart _chart(ChartKind type, List<String> labels, List<num?> data) =>
     acquireChartRoot(
       ChartConfigLowering(
         ChartConfig(
-          type: type,
           labels: labels,
           datasets: [
             switch (type) {

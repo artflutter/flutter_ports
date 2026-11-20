@@ -803,7 +803,6 @@ void main() {
   });
   test('typed immutable point input participates without copying its list', () {
     typed.ChartConfig cfg(List<typed.DataPoint> points) => typed.ChartConfig(
-      type: typed.ChartKind.line,
       datasets: [typed.LineDataset(points: points)],
       scales: const {
         'x': typed.LinearAxis(min: 0, max: 10),
@@ -1926,7 +1925,6 @@ void main() {
 
       test('a route on the type of a typed root', () {
         typed.ChartConfig make() => const typed.ChartConfig(
-          type: typed.ChartKind.pie,
           labels: <Object>['a', 'b', 'c'],
           datasets: [
             typed.PieDataset(
@@ -2115,7 +2113,6 @@ void main() {
         List<double> values,
         typed.ChartValue<ChartPaint> c,
       ) => typed.ChartConfig(
-        type: typed.ChartKind.pie,
         labels: const <Object>['a', 'b', 'c'],
         datasets: [typed.PieDataset(data: values, backgroundColor: c)],
         responsive: false,

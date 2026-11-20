@@ -44,7 +44,6 @@ String? _typeValue(TooltipItem item) =>
     '${_types[item.datasetIndex]}: ${item.raw}';
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: _indexes,
   datasets: [for (final (i, type) in _types.indexed) _type(i, type)],
   scales: {

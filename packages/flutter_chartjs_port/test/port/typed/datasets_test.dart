@@ -213,7 +213,6 @@ void main() {
       // List cannot grow.
       final config = ChartConfigLowering(
         ChartConfig(
-          type: .line,
           labels: const ['a', 'b'],
           datasets: [
             LineDataset(points: [DataPoint.label('c', 2)]),

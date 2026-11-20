@@ -50,7 +50,6 @@ void main() {
     addTearDown(() => Chart.unregister(_lineSet));
     Chart? created;
     const config = ChartConfig(
-      type: ChartKind.line,
       labels: ['a', 'b', 'c'],
       datasets: [
         LineDataset(data: [1, 3, 2]),

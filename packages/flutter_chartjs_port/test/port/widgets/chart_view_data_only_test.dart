@@ -137,7 +137,6 @@ const List<ChartKind> _kinds = [
 /// The config of [type] at [step]: axes with a fixed range and no animation.
 ChartConfig _config(ChartKind type, int step, List<Object> labels) =>
     ChartConfig(
-      type: type,
       labels: labels,
       datasets: [_dataset(type, step)],
       scales: switch (type) {
@@ -183,7 +182,6 @@ ChartConfig _bars(
   List<Plugin<Object?>>? plugins,
   Map<String, Object?>? extra,
 }) => ChartConfig(
-  type: ChartKind.bar,
   labels: labels,
   datasets:
       datasets ??
@@ -495,7 +493,6 @@ void main() {
         'a full update', (tester) async {
       final spy = _spyOnChart();
       ChartConfig bubbles(int step) => ChartConfig(
-        type: ChartKind.bubble,
         datasets: [
           BubbleDataset(
             points: <DataPoint>[DataPoint.bubble(50, 50, 4.0 + step)],
@@ -852,7 +849,6 @@ void main() {
       Future<List<Object?>> run({required bool dataOnly}) async {
         final labels = _newLabels();
         ChartConfig line(int step) => ChartConfig(
-          type: ChartKind.line,
           labels: labels,
           datasets: [LineDataset(points: _points(step))],
           scales: _categoryAxes,
@@ -1114,7 +1110,6 @@ void main() {
       ChartLegend? legend = const ChartLegend(display: false),
       ChartTitle? title,
     }) => ChartConfig(
-      type: type,
       labels: labels,
       datasets: [dataset ?? colored(type, step)],
       scales: switch (type) {
@@ -1819,7 +1814,6 @@ void main() {
       Map<String, Object?>? xExtra,
       ChartLegend? legend,
     }) => ChartConfig(
-      type: ChartKind.bubble,
       datasets: [
         BubbleDataset(
           points: <DataPoint>[DataPoint.bubble(40 + step, 50, radius)],
@@ -1978,7 +1972,6 @@ void main() {
       Future<List<Object?>> run({required bool dataOnly}) async {
         final labels = _newLabels();
         ChartConfig line(int step) => ChartConfig(
-          type: ChartKind.line,
           labels: labels,
           datasets: [
             LineDataset(
@@ -2052,7 +2045,6 @@ void main() {
       Future<List<Object?>> run({required bool dataOnly}) async {
         final labels = <Object>['a', 'b'];
         ChartConfig line(List<DataPoint> points) => ChartConfig(
-          type: ChartKind.line,
           labels: labels,
           datasets: [LineDataset(points: points)],
           scales: _categoryAxes,

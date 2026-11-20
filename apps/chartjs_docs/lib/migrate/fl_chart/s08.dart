@@ -54,7 +54,6 @@ final List<Plugin<Object?>> _plugins = [
 
 final ChartConfig _config = fills(
   ChartConfig(
-    type: .line,
     datasets: [
       LineDataset(
         points: [

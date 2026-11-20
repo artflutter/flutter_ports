@@ -91,7 +91,6 @@ List<String>? _left(Scale scale, double value, int index, List<Tick> ticks) => [
 
 ChartConfig _config(bool main) => fills(
   ChartConfig(
-    type: .line,
     datasets: main ? _first : _second,
     animation: const ChartAnimation(duration: Duration(milliseconds: 250)),
     interaction: const ChartInteraction(mode: flX, intersect: false),

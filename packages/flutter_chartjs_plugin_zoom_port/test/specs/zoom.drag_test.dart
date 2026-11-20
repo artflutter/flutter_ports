@@ -33,7 +33,6 @@ void main() {
       testWidgets('should be applied on X scale when mode = x', (tester) async {
         chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points())],
             scales: const {
               'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
@@ -73,7 +72,6 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points())],
             scales: const {
               'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
@@ -113,7 +111,6 @@ void main() {
       testWidgets('should be applied on Y scale when mode = y', (tester) async {
         chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points())],
             scales: const {
               'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
@@ -153,7 +150,6 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points())],
             scales: const {
               'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
@@ -195,7 +191,6 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points())],
             scales: const {
               'xScale0': LinearAxis(extra: {'id': 'xScale0'}),
@@ -245,7 +240,6 @@ void main() {
             final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
             chart = _acquire(
               ChartConfig(
-                type: ChartKind.line,
                 datasets: [LineDataset(points: points())],
                 scales: const {
                   'x': LinearAxis(min: 0, max: 10),
@@ -310,7 +304,6 @@ void main() {
             final clickCalls = <ChartEvent>[];
             chart = _acquire(
               ChartConfig(
-                type: ChartKind.line,
                 datasets: [LineDataset(points: points())],
                 scales: const {
                   'x': LinearAxis(min: 0, max: 10),
@@ -378,7 +371,6 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points())],
             scales: const {
               'xScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'xScale0'}),
@@ -423,7 +415,6 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points())],
             scales: const {
               'xScale0': LinearAxis(min: 0, max: 4, extra: {'id': 'xScale0'}),
@@ -490,7 +481,6 @@ void main() {
           final zoomCalls = <ZoomTriggerContext>[];
           final chart = _acquire(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [ScatterDataset(points: points())],
               pluginOptions: [
                 ZoomPluginOptions(
@@ -547,7 +537,6 @@ void main() {
         final doneCalls = <ZoomChartContext>[];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [ScatterDataset(points: points())],
             pluginOptions: [
               ZoomPluginOptions(

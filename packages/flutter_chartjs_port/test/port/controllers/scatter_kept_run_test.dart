@@ -27,7 +27,6 @@ ChartConfig _config(
   ChartValue<ChartPaint>? hoverBackgroundColor,
   List<double>? radii,
 }) => ChartConfig(
-  type: ChartKind.scatter,
   datasets: [
     ScatterDataset(
       points: [

@@ -26,7 +26,6 @@ BarDataset _trade(
 );
 
 ChartConfig _config(double width, double spacing) => ChartConfig(
-  type: .bar,
   indexAxis: const YAxis(),
   datasets: [
     _trade(

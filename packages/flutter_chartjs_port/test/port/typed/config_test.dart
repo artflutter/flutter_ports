@@ -103,13 +103,41 @@ void main() {
     });
   });
 
+  // Chart.js ADR 0190: the class of the first dataset gives the chart type.
+  group('the chart type', () {
+    test('is the kind of the first dataset', () {
+      expect(const ChartConfig(datasets: [PieDataset()]).type, ChartKind.pie);
+      expect(
+        const ChartConfig(datasets: [BarDataset(), LineDataset()]).type,
+        ChartKind.bar,
+      );
+      final root = ChartConfigLowering(
+        const ChartConfig(datasets: [LineDataset(), BarDataset()]),
+      ).lower();
+      expect(root.typeCell!.raw, 'line');
+      final data = root.dataCell!.raw! as ChartDataScope;
+      final datasets = data['datasets']! as List<Object?>;
+      expect((datasets[0]! as OptionScope).jsKeys(), isNot(contains('type')));
+      expect((datasets[1]! as OptionScope)['type'], 'bar');
+    });
+
+    test('an empty datasets List stops a debug build', () {
+      expect(
+        () => ChartConfigLowering(const ChartConfig(datasets: [])).lower(),
+        throwsA(
+          isA<AssertionError>().having(
+            (e) => e.message,
+            'message',
+            contains('needs at least one dataset'),
+          ),
+        ),
+      );
+    });
+  });
+
   group('indexAxis', () {
     test('takes a cartesian axis class (row adapt-axis-objects)', () {
-      const config = ChartConfig(
-        type: ChartKind.bar,
-        datasets: [],
-        indexAxis: YAxis(),
-      );
+      const config = ChartConfig(datasets: [BarDataset()], indexAxis: YAxis());
       expect(config.indexAxis, same(const YAxis()));
       expect(config.copyWith(indexAxis: const XAxis()).indexAxis, isA<XAxis>());
     });
@@ -131,7 +159,6 @@ void main() {
       ];
       final typed = ChartConfigLowering(
         ChartConfig(
-          type: .bar,
           labels: labels,
           datasets: [
             BarDataset(
@@ -188,7 +215,6 @@ void main() {
     ) async {
       final typed = ChartConfigLowering(
         const ChartConfig(
-          type: .scatter,
           labels: ['January', 'February', 'March', 'April'],
           datasets: [
             BarDataset(
@@ -214,13 +240,14 @@ void main() {
           animation: ChartAnimation.none,
         ),
       ).lower();
+      // The first dataset gives the chart type (Chart.js ADR 0190): the docs
+      // give `type: 'scatter'`, and a bar dataset first.
       final twin = <String, Object?>{
-        'type': 'scatter',
+        'type': 'bar',
         'data': <String, Object?>{
           'labels': <Object?>['January', 'February', 'March', 'April'],
           'datasets': <Object?>[
             <String, Object?>{
-              'type': 'bar',
               'label': 'Bar Dataset',
               'data': <Object?>[10, 20, 30, 40],
               'backgroundColor': const ChartPaint.solid(
@@ -266,7 +293,6 @@ void main() {
       final points = [DataPoint(-10, 0), DataPoint(0, 10), DataPoint(10, 5)];
       final typed = ChartConfigLowering(
         ChartConfig(
-          type: .scatter,
           datasets: [
             ScatterDataset(
               label: 'Scatter Dataset',

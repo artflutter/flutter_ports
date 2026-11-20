@@ -284,7 +284,6 @@ void main() {
     ) async {
       final config = ChartConfigLowering(
         const ChartConfig(
-          type: ChartKind.line,
           datasets: [
             LineDataset(data: [1, 2, 3, 4]),
           ],
@@ -499,9 +498,8 @@ void main() {
         final pieDefaults = jsGet(defaults['datasets'], 'pie');
 
         final chart = acquireChartRoot(
-          ChartConfigLowering(
-            const ChartConfig(type: ChartKind.pie, datasets: []),
-          ).lower(),
+          ChartConfigLowering(const ChartConfig(datasets: [PieDataset()]))
+              .lower(),
         );
 
         final options = chart.options;
@@ -514,8 +512,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
-              datasets: [],
+              datasets: [LineDataset()],
               scales: {
                 'x': CategoryAxis(position: ChartPosition.left),
                 'y': LinearAxis(position: ChartPosition.bottom),
@@ -633,7 +630,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
                 LineDataset(data: [10, 20, 30, 100]),
@@ -703,7 +699,6 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
                 labels: ['A', 'B', 'C', 'D'],
                 datasets: [
                   LineDataset(
@@ -765,7 +760,6 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
                 labels: ['A', 'B', 'C', 'D'],
                 datasets: [
                   LineDataset(
@@ -1326,8 +1320,7 @@ void main() {
             final chart = acquireChartRoot(
               ChartConfigLowering(
                 const ChartConfig(
-                  type: ChartKind.line,
-                  datasets: [],
+                  datasets: [LineDataset()],
                   responsive: true,
                   maintainAspectRatio: false,
                 ),
@@ -1519,8 +1512,7 @@ void main() {
               canvas,
               ChartConfigLowering(
                 const ChartConfig(
-                  type: ChartKind.line,
-                  datasets: [],
+                  datasets: [LineDataset()],
                   responsive: true,
                   maintainAspectRatio: false,
                 ),
@@ -1564,8 +1556,7 @@ void main() {
               canvas,
               ChartConfigLowering(
                 const ChartConfig(
-                  type: ChartKind.line,
-                  datasets: [],
+                  datasets: [LineDataset()],
                   responsive: true,
                   maintainAspectRatio: false,
                 ),
@@ -1815,16 +1806,12 @@ void main() {
             );
 
             chart.destroy();
-            chart = Chart(
-              canvas,
-              ChartConfigLowering(
-                const ChartConfig(
-                  type: ChartKind.line,
-                  datasets: [],
-                  responsive: true,
-                ),
-              ).lower(),
-            );
+            // Raw: the upstream config has no dataset, and a typed config
+            // needs one (Chart.js ADR 0190).
+            chart = Chart(canvas, <String, Object?>{
+              'type': 'line',
+              'options': <String, Object?>{'responsive': true},
+            });
 
             waitForResize(chart, () {
               expect(
@@ -1857,8 +1844,7 @@ void main() {
               canvas,
               ChartConfigLowering(
                 const ChartConfig(
-                  type: ChartKind.line,
-                  datasets: [],
+                  datasets: [LineDataset()],
                   responsive: true,
                   maintainAspectRatio: false,
                 ),
@@ -1902,15 +1888,16 @@ void main() {
         'changes',
         (tester) async {
           await waitForDone((done) {
-            final chart = acquireChartRoot(
-              ChartConfigLowering(
-                const ChartConfig(
-                  type: ChartKind.line, // AR == 2
-                  datasets: [],
-                  responsive: true,
-                  maintainAspectRatio: true,
-                ),
-              ).lower(),
+            // Raw: the upstream config has no dataset, and a typed config
+            // needs one (Chart.js ADR 0190).
+            final chart = acquireChart(
+              <String, Object?>{
+                'options': <String, Object?>{
+                  // AR == 2
+                  'responsive': true,
+                  'maintainAspectRatio': true,
+                },
+              },
               <String, Object?>{
                 'canvas': <String, Object?>{'style': ''},
                 'wrapper': <String, Object?>{
@@ -2151,7 +2138,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
                 LineDataset(data: [10, 20, 30, 0]),
@@ -2327,7 +2313,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
                 LineDataset(data: [10, 20, 30, 100]),
@@ -2448,7 +2433,6 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               ChartConfig(
-                type: ChartKind.line,
                 datasets: const [LineDataset()],
                 plugins: [plugin],
                 responsive: true,
@@ -2550,7 +2534,6 @@ void main() {
           acquireChartRoot(
             ChartConfigLowering(
               ChartConfig(
-                type: ChartKind.line,
                 datasets: const [
                   LineDataset(),
                   LineDataset(hidden: true),
@@ -2584,7 +2567,6 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               ChartConfig(
-                type: ChartKind.line,
                 datasets: const [LineDataset()],
                 plugins: [Plugin<Object?>(id: 'blank')],
               ),
@@ -2764,7 +2746,6 @@ void main() {
         chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 LineDataset(label: '1', order: 2),
                 LineDataset(label: '2', order: 1),
@@ -2792,7 +2773,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 LineDataset(data: [0, 1, 2]),
               ],
@@ -2809,7 +2789,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.pie,
               datasets: [
                 PieDataset(data: [1, 2, 3]),
               ],
@@ -2836,7 +2815,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.pie,
               labels: labels,
               datasets: [
                 PieDataset(data: data0),
@@ -2909,7 +2887,6 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               ChartConfig(
-                type: ChartKind.pie,
                 labels: labels,
                 datasets: [
                   PieDataset(data: data0),
@@ -2939,7 +2916,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 LineDataset(data: [0, 1, 2]),
               ],
@@ -2965,7 +2941,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.pie,
               datasets: [
                 PieDataset(data: [1, 2, 3]),
               ],
@@ -2981,7 +2956,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.pie,
               datasets: [
                 PieDataset(data: [1, 2, 3]),
               ],
@@ -3002,7 +2976,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.pie,
               datasets: [
                 PieDataset(
                   data: [1, 2, 3],
@@ -3052,7 +3025,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               labels: [1, 2, 3],
               datasets: [
                 LineDataset(

@@ -25,7 +25,6 @@ const Color _defaultBorderColor = Color.fromRGBO(0, 0, 0, 0.1);
 Chart _cartesian(CategoryAxis x, {ChartOptionsScope? theme}) {
   final root = ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.line,
       labels: const ['a', 'b', 'c', 'd'],
       datasets: const [
         LineDataset(data: [1, 2, 3, 4]),
@@ -169,7 +168,6 @@ void main() {
     Chart radar(RadialLinearAxis r, {ChartOptionsScope? theme}) {
       final root = ChartConfigLowering(
         ChartConfig(
-          type: ChartKind.radar,
           labels: const ['a', 'b', 'c'],
           datasets: const [
             RadarDataset(data: [1, 2, 3]),

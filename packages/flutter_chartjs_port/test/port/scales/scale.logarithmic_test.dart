@@ -6,6 +6,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/test_dataset.dart';
 import 'scale_chart_harness.dart';
 import 'scale_logarithmic_reference.dart';
 
@@ -216,11 +217,8 @@ final Map<String, void Function(Chart chart)> _actions = {
 Chart _chart(List<num?> data) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: const ChartKind('logValueTest'),
       labels: const ['a', 'b', 'c'],
-      datasets: [
-        LineDataset(data: data, extra: const {'type': 'logValueTest'}),
-      ],
+      datasets: [TestDataset(const ChartKind('logValueTest'), data: data)],
     ),
   ).lower(),
 );

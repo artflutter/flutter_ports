@@ -69,7 +69,6 @@ String? _dateAndName(List<TooltipItem> items) =>
 String? _value(TooltipItem item) => 'points: ${item.raw}';
 
 final ChartConfig _config = ChartConfig(
-  type: .line,
   labels: _dates,
   datasets: [for (final (i, name) in _names.indexed) _group(i, name)],
   scales: {

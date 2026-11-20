@@ -1406,7 +1406,6 @@ void main() {
       for (final type in kinds.keys) {
         test('$type takes the native loop', () {
           final config = ChartConfig(
-            type: kinds[type]!,
             labels: const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
             datasets: [datasets[type]!(values(0))],
             animation: ChartAnimation.none,
@@ -1454,7 +1453,6 @@ void main() {
                   height: 400,
                   child: ChartView(
                     config: ChartConfig(
-                      type: kinds[type]!,
                       labels: const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
                       datasets: [datasets[type]!(values(0))],
                       animation: ChartAnimation.none,

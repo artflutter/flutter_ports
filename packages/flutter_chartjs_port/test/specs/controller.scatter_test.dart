@@ -53,7 +53,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [
                 ScatterDataset(
                   points: [DataPoint(10, 15), DataPoint(12, 10)],
@@ -78,7 +77,6 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [
               ScatterDataset(
                 points: [DataPoint(10, 15), DataPoint(12, 10)],
@@ -103,7 +101,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [
                 ScatterDataset(
                   showLine: true,
@@ -130,7 +127,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [
                 ScatterDataset(
                   points: [DataPoint(10, 15), DataPoint(12, 10)],
@@ -158,7 +154,6 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [
               ScatterDataset(
                 points: [DataPoint(10, 15), DataPoint(12, 10)],

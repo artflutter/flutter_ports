@@ -137,17 +137,6 @@ cj.Dataset _dataset(
   };
 }
 
-const Map<ChartType, cj.ChartKind> _kinds = {
-  ChartType.line: cj.ChartKind.line,
-  ChartType.bar: cj.ChartKind.bar,
-  ChartType.scatter: cj.ChartKind.scatter,
-  ChartType.bubble: cj.ChartKind.bubble,
-  ChartType.pie: cj.ChartKind.pie,
-  ChartType.doughnut: cj.ChartKind.doughnut,
-  ChartType.polarArea: cj.ChartKind.polarArea,
-  ChartType.radar: cj.ChartKind.radar,
-};
-
 /// One chart of a cell.
 cj.ChartConfig _config({
   required ChartType type,
@@ -166,7 +155,6 @@ cj.ChartConfig _config({
   // A time axis reads dates: one point each minute.
   final base = DateTime.utc(2026).millisecondsSinceEpoch.toDouble();
   return cj.ChartConfig(
-    type: _kinds[type]!,
     datasets: [
       for (var s = 0; s < datasets; s++)
         if (time)

@@ -24,7 +24,6 @@ final List<Plugin<Object?>> _plugins = [areaBorder(Fl.white54)];
 
 final ChartConfig _config = fills(
   ChartConfig(
-    type: .line,
     labels: _months,
     datasets: [
       LineDataset(

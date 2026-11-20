@@ -80,7 +80,6 @@ ChartConfigurationScope _config({
   Map<String, Object?> y = const {},
 }) => ChartConfigLowering(
   ChartConfig(
-    type: ChartKind(type),
     datasets: [
       ScatterDataset(
         pointRadius: 3,

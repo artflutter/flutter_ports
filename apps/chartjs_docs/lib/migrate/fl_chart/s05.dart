@@ -70,7 +70,6 @@ class _Sample5State() extends State<Sample5> {
 
   late final ChartConfig _config = fills(
     ChartConfig(
-      type: .line,
       labels: _hours,
       datasets: [
         LineDataset(

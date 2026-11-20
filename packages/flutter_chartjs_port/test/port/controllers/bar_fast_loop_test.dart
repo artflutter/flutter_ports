@@ -475,7 +475,6 @@ void main() {
 
     test('the typed API: three BarDataset objects take the fast loop', () {
       ChartConfig config(int step) => ChartConfig(
-        type: ChartKind.bar,
         labels: const <Object>['a', 'b', 'c', 'd'],
         datasets: [
           for (var k = 0; k < 3; k++)

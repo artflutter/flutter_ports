@@ -25,7 +25,6 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 
 // #docregion scopes
 const scopedLine = ChartConfig(
-  type: .line,
   labels: months,
   // For this dataset only.
   datasets: [

@@ -46,7 +46,6 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
     height: 320,
     child: ChartView(
       config: ChartConfig(
-        type: .line,
         datasets: [
           LineDataset(
             points: [for (final (x, y) in _values.indexed) DataPoint(x, y)],

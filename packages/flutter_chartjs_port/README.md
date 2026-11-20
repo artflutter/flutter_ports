@@ -92,7 +92,6 @@ class const VotesChart({super.key}) extends StatelessWidget {
     return const ChartView(
       semanticLabel: 'Bar chart of the votes for six colors',
       config: ChartConfig(
-        type: .bar,
         labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
         datasets: [
           BarDataset(
@@ -120,25 +119,26 @@ shows each chart type of the Chart.js docs.
 
 ### Datasets and data
 
-`type` names the chart type, and each chart type has its dataset class:
+Each chart type has its dataset class. The class of the first dataset gives the chart type, so a
+config has no `type`:
 
-| Chart | `type` | Dataset class |
-|---|---|---|
-| Bar | `.bar` | `BarDataset` |
-| Line and area | `.line` | `LineDataset` |
-| Scatter | `.scatter` | `ScatterDataset` |
-| Bubble | `.bubble` | `BubbleDataset` |
-| Pie | `.pie` | `PieDataset` |
-| Doughnut | `.doughnut` | `DoughnutDataset` |
-| Polar area | `.polarArea` | `PolarAreaDataset` |
-| Radar | `.radar` | `RadarDataset` |
+| Chart | Dataset class |
+|---|---|
+| Bar | `BarDataset` |
+| Line and area | `LineDataset` |
+| Scatter | `ScatterDataset` |
+| Bubble | `BubbleDataset` |
+| Pie | `PieDataset` |
+| Doughnut | `DoughnutDataset` |
+| Polar area | `PolarAreaDataset` |
+| Radar | `RadarDataset` |
 
-A dataset of another class than the chart type makes a mixed chart, as the `type` of a Chart.js
-dataset does:
+A chart needs one dataset at least. For a chart with no data yet, give a dataset with no data, for
+example `LineDataset(data: [])`. A dataset of another class than the first makes a mixed chart: the
+first dataset gives the chart-level defaults, for example the default axes:
 
 ```dart
 ChartConfig(
-  type: .bar,
   labels: const ['Jan', 'Feb', 'Mar', 'Apr'],
   datasets: [
     BarDataset(
@@ -257,7 +257,6 @@ other options. The order of the entries is the order of the axes in the layout.
 
 ```dart
 ChartConfig(
-  type: .bar,
   labels: labels,
   datasets: datasets,
   scales: const {
@@ -293,7 +292,6 @@ The option groups are parameters of `ChartConfig`:
 
 ```dart
 ChartConfig(
-  type: .bar,
   labels: labels,
   datasets: datasets,
   padding: const EdgeInsets.all(8),
@@ -366,7 +364,6 @@ class _VotesPageState() extends State<VotesPage> {
   Widget build(BuildContext context) {
     return ChartView(
       config: ChartConfig(
-        type: .bar,
         labels: const ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
         datasets: [
           BarDataset(
@@ -442,7 +439,6 @@ class _ScoresState() extends State<Scores> {
       children: [
         ChartView(
           config: ChartConfig(
-            type: .bar,
             labels: const ['A', 'B', 'C'],
             datasets: [BarDataset(label: 'Score', data: _scores)],
           ),
@@ -501,7 +497,6 @@ Chart.js options that go into the Map of that class last:
 
 ```dart
 ChartConfig(
-  type: .line,
   labels: labels,
   datasets: [
     LineDataset(

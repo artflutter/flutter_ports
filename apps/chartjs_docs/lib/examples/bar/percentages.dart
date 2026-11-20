@@ -14,7 +14,6 @@ const Color blue = Color.fromRGBO(54, 162, 235, 1);
 // #docregion bar-percentages
 ChartConfig percentages({required double category, required double bar}) =>
     ChartConfig(
-      type: .bar,
       labels: const ['Q1', 'Q2', 'Q3'],
       datasets: [
         for (final (label, data, color) in const [

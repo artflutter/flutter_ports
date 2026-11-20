@@ -21,7 +21,6 @@ Chart.register([zoomPlugin]);
 
 ChartView(
   config: ChartConfig(
-    type: .line,
     datasets: [LineDataset(data: values)],
     pluginOptions: const [
       ZoomPluginOptions(

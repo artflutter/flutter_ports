@@ -28,7 +28,6 @@ const Map<String, ChartAxis> _hiddenAxes = {
 };
 
 ChartConfig _line(List<double> data, {ChartShadow? shadow}) => ChartConfig(
-  type: ChartKind.line,
   labels: const ['a', 'b', 'c'],
   datasets: [
     LineDataset(

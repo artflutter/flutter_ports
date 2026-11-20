@@ -80,7 +80,6 @@ void main() {
         final compared = <LegendItem>[];
         LegendItem? clicked;
         final config = ChartConfig(
-          type: ChartKind.bar,
           labels: const ['x'],
           datasets: const [
             BarDataset(label: 'first', data: [1]),
@@ -139,7 +138,6 @@ void main() {
     tester,
   ) async {
     final config = ChartConfig(
-      type: ChartKind.bar,
       labels: const ['x'],
       datasets: const [
         BarDataset(data: [1]),

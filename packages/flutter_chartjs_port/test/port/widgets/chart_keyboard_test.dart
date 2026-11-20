@@ -73,7 +73,6 @@ ChartConfig _config(
     _ => throw ArgumentError.value(type, 'type'),
   };
   return ChartConfig(
-    type: ChartKind(type),
     labels: const ['a', 'b', 'c'],
     datasets: [
       dataset('d0', [3, 5, 4]),
@@ -843,25 +842,23 @@ void main() {
       expect(
         properties(
           ChartView(
-            config: const ChartConfig(type: ChartKind.bar, datasets: []),
+            config: const ChartConfig(datasets: [BarDataset()]),
             focusNode: node,
             autofocus: true,
           ),
         ),
         [
           'type: bar',
-          'datasets: 0',
+          'datasets: 1',
           startsWith('focusNode: FocusNode#'),
           'autofocus',
         ],
       );
       expect(
         properties(
-          const ChartView(
-            config: ChartConfig(type: ChartKind.bar, datasets: []),
-          ),
+          const ChartView(config: ChartConfig(datasets: [BarDataset()])),
         ),
-        ['type: bar', 'datasets: 0'],
+        ['type: bar', 'datasets: 1'],
       );
     });
 

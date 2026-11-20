@@ -80,7 +80,6 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
     final low = _sold.reduce(min);
     final high = _sold.reduce(max);
     return ChartConfig(
-      type: .bar,
       datasets: [
         // `tag: (tuple) => tuple['genre']`: each genre keeps its bar. The
         // bar of a genre stands at its rank, so it moves to its new rank.

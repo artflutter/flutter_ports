@@ -25,7 +25,6 @@ const Color blue = Color.fromRGBO(54, 162, 235, 1);
 
 // #docregion bar-skip-null
 const skipNullBars = ChartConfig(
-  type: .bar,
   labels: months,
   datasets: [
     BarDataset(

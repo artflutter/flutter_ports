@@ -334,7 +334,6 @@ void main() {
   testWidgets('a plugin casts the shadow of a line', (tester) async {
     Future<double> ink({required bool shadow}) async {
       final config = ChartConfig(
-        type: ChartKind.line,
         labels: const ['a', 'b', 'c'],
         datasets: const [
           LineDataset(

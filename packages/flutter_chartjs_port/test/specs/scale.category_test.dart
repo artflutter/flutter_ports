@@ -140,7 +140,6 @@ void main() {
       final labels = <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
       final chart = _acquire(
         ChartConfig(
-          type: ChartKind.line,
           datasets: const [
             LineDataset(data: [10, 5, 0, 25, 78]),
           ],
@@ -182,7 +181,6 @@ void main() {
     testWidgets('should parse only to a valid index', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           datasets: [
             LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
           ],
@@ -209,7 +207,6 @@ void main() {
     testWidgets('should get the correct label for the index', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           datasets: [
             LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
           ],
@@ -231,7 +228,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           datasets: [
             LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
           ],
@@ -272,7 +268,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
             ],
@@ -297,7 +292,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(xAxisID: 'x', yAxisID: 'y', data: [10, 5, 0, 25, 78]),
             ],
@@ -435,7 +429,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(
                 xAxisID: 'x',
@@ -515,7 +508,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(
                 xAxisID: 'x',
@@ -550,7 +542,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(
                 points: [
@@ -587,7 +578,6 @@ void main() {
         }
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.bar,
             labels: labels,
             datasets: const [
               BarDataset(data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),

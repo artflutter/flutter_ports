@@ -15,7 +15,6 @@ import 'package:flutter_test/flutter_test.dart';
 Chart _chart() => acquireChartRoot(
   ChartConfigLowering(
     const ChartConfig(
-      type: ChartKind.bar,
       labels: ['a', 'b', 'c'],
       datasets: [
         BarDataset(data: [1, 2, 3]),

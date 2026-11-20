@@ -17,7 +17,6 @@ const AxisBorder _border = AxisBorder(dash: [8, 2], display: false);
 
 final ChartConfig _config = fills(
   ChartConfig(
-    type: .line,
     datasets: [
       LineDataset(
         points: [

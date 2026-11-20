@@ -74,7 +74,6 @@ bool _isBand(
 ) => item.datasetIndex < _types.length;
 
 final ChartConfig _config = ChartConfig(
-  type: .line,
   labels: _dates,
   datasets: [
     for (var t = 0; t < _types.length; t++) _band(t),

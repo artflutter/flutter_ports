@@ -9,7 +9,6 @@ const _cities = ['New York', 'Tokyo', 'Chicago', 'Atlanta', 'Boston'];
 const List<num> _areas = [8683, 6993, 5498, 5083, 4497];
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: _cities,
   datasets: const [
     BarDataset(

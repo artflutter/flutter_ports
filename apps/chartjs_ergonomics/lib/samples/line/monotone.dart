@@ -9,7 +9,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 const curve = <num?>[0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170];
 
 const monotone = ChartConfig(
-  type: .line,
   labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
   datasets: [
     LineDataset(

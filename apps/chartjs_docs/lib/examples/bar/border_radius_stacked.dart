@@ -25,7 +25,6 @@ const Color blue = Color.fromRGBO(54, 162, 235, 1);
 
 // #docregion bar-border-radius-stacked
 const roundedStack = ChartConfig(
-  type: .bar,
   labels: months,
   datasets: [
     BarDataset(

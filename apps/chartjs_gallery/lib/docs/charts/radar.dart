@@ -21,7 +21,6 @@ const ChartPaint _white = ChartPaint.solid(Color.fromRGBO(255, 255, 255, 1));
 /// `registerables`. Thus the chart fills the area of each dataset, and
 /// `initialize` prints no `fill` warning (core.datasetController.js:287-289).
 ChartConfig radarConfig() => const ChartConfig(
-  type: .radar,
   labels: [
     'Eating',
     'Drinking',

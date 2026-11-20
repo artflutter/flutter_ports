@@ -18,7 +18,6 @@ const List<Object> months = [
 
 // #docregion bar-dataset-config
 const thinBars = ChartConfig(
-  type: .bar,
   labels: months,
   datasets: [
     BarDataset(

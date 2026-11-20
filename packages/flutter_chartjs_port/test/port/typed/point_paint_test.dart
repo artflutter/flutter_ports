@@ -83,7 +83,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: entry.key,
               labels: const ['a', 'b', 'c'],
               datasets: [entry.value(value)],
               animation: ChartAnimation.none,

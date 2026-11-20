@@ -33,7 +33,6 @@ void main() {
     );
 
     ChartConfig config() => ChartConfig(
-      type: ChartKind.bar,
       labels: [...labels],
       datasets: const [
         BarDataset(data: [1, 2, 3]),
@@ -91,7 +90,6 @@ void main() {
       // undefined or null to object`. In the port, `valueOf` resolves as an
       // absent key, and jsToNumber gives NaN: the arc has the endAngle NaN.
       const config = ChartConfig(
-        type: ChartKind.polarArea,
         labels: ['a', 'b'],
         datasets: [
           PolarAreaDataset(

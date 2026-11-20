@@ -36,7 +36,6 @@ List<Object?> _generateLabels(Chart chart) =>
 /// The config of a pie chart with the labels a, b, c and one dataset with
 /// [data].
 ChartConfig _one(List<num?> data) => ChartConfig(
-  type: ChartKind.pie,
   labels: const ['a', 'b', 'c'],
   datasets: [
     PieDataset(data: [...data]),

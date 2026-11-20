@@ -29,9 +29,8 @@ Scale createCategoryScale({
   final labels = <String>[for (var i = 0; i < categories; i++) '$i'];
   final chart = _acquire(
     ChartConfig(
-      type: ChartKind.bar,
       labels: labels,
-      datasets: const [],
+      datasets: const [BarDataset()],
       padding: EdgeInsets.zero,
       legend: const ChartLegend(display: false),
       scales: {

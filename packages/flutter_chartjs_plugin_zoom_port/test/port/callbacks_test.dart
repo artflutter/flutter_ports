@@ -12,7 +12,6 @@ import '../flutter_test_config.dart';
 /// A scatter chart from 0 to 100 on both axes with the zoom options [zoom].
 Chart _chart(ZoomOptions zoom) => _acquire(
   ChartConfig(
-    type: ChartKind.scatter,
     datasets: [
       ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
     ],

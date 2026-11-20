@@ -23,7 +23,6 @@ void main() {
     FlutterError.onError = details.add;
     addTearDown(() => FlutterError.onError = previous);
     const config = ChartConfig(
-      type: ChartKind.line,
       labels: ['a', 'b'],
       datasets: [
         LineDataset(data: [1, 2]),

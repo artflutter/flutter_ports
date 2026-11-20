@@ -16,7 +16,6 @@ final List<DataPoint> _visitors = [
 ];
 
 ChartConfig _config(ApexZoom zoom) => ChartConfig(
-  type: .line,
   datasets: [
     LineDataset(
       label: 'Visitors',

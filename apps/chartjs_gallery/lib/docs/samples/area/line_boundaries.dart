@@ -50,7 +50,6 @@ ChartConfig areaFalseConfig() => _config(.none, 'false');
 /// where the dataset has the fill value [fill] of an action, and [name] is
 /// the text of the fill of the action in the title.
 ChartConfig _config(FillTarget fill, String name) => ChartConfig(
-  type: .line,
   labels: const [
     'January',
     'February',

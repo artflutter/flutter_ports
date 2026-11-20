@@ -18,7 +18,6 @@ const ChartValue<ChartPaint> _backgrounds = ChartValue.indexed([
 /// The doughnut chart of `docs/charts/doughnut.md:15-47`, with each key and
 /// value of the docs block.
 ChartConfig doughnutConfig() => const ChartConfig(
-  type: .doughnut,
   labels: _labels,
   datasets: [
     DoughnutDataset(
@@ -33,7 +32,6 @@ ChartConfig doughnutConfig() => const ChartConfig(
 /// The pie chart of `docs/charts/doughnut.md:53-85`, with each key and
 /// value of the docs block.
 ChartConfig pieConfig() => const ChartConfig(
-  type: .pie,
   labels: _labels,
   datasets: [
     PieDataset(

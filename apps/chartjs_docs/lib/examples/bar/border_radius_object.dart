@@ -45,11 +45,7 @@ void main() {
           padding: EdgeInsets.all(16),
           child: Center(
             child: ChartView(
-              config: ChartConfig(
-                type: .bar,
-                labels: months,
-                datasets: [cornerBars],
-              ),
+              config: ChartConfig(labels: months, datasets: [cornerBars]),
             ),
           ),
         ),

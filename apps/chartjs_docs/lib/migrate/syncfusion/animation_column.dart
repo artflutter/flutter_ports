@@ -42,7 +42,6 @@ class _SfAnimationColumnState() extends State<SfAnimationColumn> {
     height: 320,
     child: ChartView(
       config: ChartConfig(
-        type: .bar,
         // The x values 1 to 7 on a CategoryAxis.
         labels: const ['1', '2', '3', '4', '5', '6', '7'],
         datasets: [

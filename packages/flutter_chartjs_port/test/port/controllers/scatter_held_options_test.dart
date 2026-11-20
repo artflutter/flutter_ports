@@ -48,7 +48,6 @@ ChartConfigurationScope _config({
   int n = 12,
 }) => ChartConfigLowering(
   ChartConfig(
-    type: ChartKind(type),
     datasets: [
       ScatterDataset(
         pointRadius: 3,

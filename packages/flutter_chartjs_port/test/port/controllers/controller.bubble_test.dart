@@ -55,7 +55,6 @@ Object? _rawRadius(ScriptableContext ctx) => contextRead(ctx, 'raw');
 /// The config of a bubble chart with one dataset with [data] and the keys of
 /// [extra] (`one` of the generator).
 ChartConfig _one(AnyObject extra, List<Object?> data) => ChartConfig(
-  type: ChartKind.bubble,
   datasets: [
     // These cases deliberately give arrays, nulls and string radii.
     BubbleDataset(
@@ -74,7 +73,6 @@ Chart _chart(ChartConfig config) =>
 Chart _labelsChart(List<Object?> labels) {
   final root = ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.bubble,
       datasets: [
         BubbleDataset(
           points: [

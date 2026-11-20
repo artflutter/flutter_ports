@@ -226,7 +226,6 @@ void main() {
           tester,
           (created) => ChartView(
             config: ChartConfig(
-              type: const ChartKind(SankeyController.id),
               datasets: [c.typed],
               animation: ChartAnimation.none,
               maintainAspectRatio: false,

@@ -13,7 +13,6 @@ List<String>? _dollarTick(Scale scale, double v, int i, List<Tick> t) => [
 ];
 
 ChartConfig _config(ApexZoom zoom) => ChartConfig(
-  type: .line,
   labels: const ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
   datasets: const [
     LineDataset(

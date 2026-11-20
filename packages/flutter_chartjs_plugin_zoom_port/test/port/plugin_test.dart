@@ -85,7 +85,6 @@ Widget _view(
       height: 300,
       child: ChartView(
         config: ChartConfig(
-          type: .scatter,
           datasets: [ScatterDataset(points: _points(step), pointRadius: 3)],
           scales: const {
             'x': LinearAxis(min: 0, max: 100),
@@ -131,7 +130,6 @@ ChartConfig _rangeConfig(
   required bool rangeOnly,
   required List<String> titles,
 }) => ChartConfig(
-  type: ChartKind.line,
   datasets: [
     LineDataset(
       label: 'a',
@@ -326,9 +324,7 @@ void main() {
     ) async {
       // The suite with --dart-define=ZOOM_RANGE_ONLY_UPDATES=true writes it
       // into Chart.defaults.plugins.zoom (flutter_test_config.dart).
-      final chart = _acquire(
-        const ChartConfig(type: ChartKind.line, datasets: []),
-      );
+      final chart = _acquire(const ChartConfig(datasets: [LineDataset()]));
       expect(
         getState(chart).options.rangeOnlyUpdates ?? false,
         zoomRangeOnlyUpdates,
@@ -526,11 +522,8 @@ void main() {
     }
 
     /// A line chart with the zoom options [zoom].
-    ChartConfig config(ZoomPluginOptions zoom) => ChartConfig(
-      type: ChartKind.line,
-      datasets: const [],
-      pluginOptions: [zoom],
-    );
+    ChartConfig config(ZoomPluginOptions zoom) =>
+        ChartConfig(datasets: const [LineDataset()], pluginOptions: [zoom]);
 
     // `start` warns about an own `zoom.enabled` (plugin.ts:75-79). The
     // removed option has no field of `ZoomOptions`: a config cannot give it,
@@ -580,7 +573,6 @@ void main() {
         'writes back the original options', (tester) async {
       final chart = _acquire(
         ChartConfig(
-          type: ChartKind.scatter,
           datasets: [
             ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
           ],

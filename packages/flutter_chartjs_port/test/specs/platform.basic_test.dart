@@ -29,9 +29,8 @@ void main() {
       'should automatically choose the BasicPlatform for offscreen canvas',
       (tester) async {
         final chart = acquireChartRoot(
-          ChartConfigLowering(
-            const ChartConfig(type: ChartKind.line, datasets: []),
-          ).lower(),
+          ChartConfigLowering(const ChartConfig(datasets: [LineDataset()]))
+              .lower(),
           {'useOffscreenCanvas': true},
         );
 
@@ -45,8 +44,7 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           const ChartConfig(
-            type: ChartKind.line,
-            datasets: [],
+            datasets: [LineDataset()],
             animation: ChartAnimation(),
           ),
         ).lower(),
@@ -69,7 +67,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.bar,
               datasets: [
                 BarDataset(data: [10, 5, 0, 25, 78, -10]),
               ],
@@ -94,7 +91,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.bar,
               datasets: [
                 BarDataset(data: [10, 5, 0, 25, 78, -10]),
               ],

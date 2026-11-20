@@ -6,7 +6,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   // plotOptions.bar.horizontal: true.
   indexAxis: const YAxis(),
   labels: const ['A', 'B', 'C', 'D', 'E', 'F'],

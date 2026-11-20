@@ -90,7 +90,6 @@ class _ParentState() extends State<_Parent> {
           children: [
             ChartView(
               config: ChartConfig(
-                type: .bar,
                 labels: const ['a', 'b', 'c'],
                 datasets: [
                   BarDataset(
@@ -147,7 +146,6 @@ void main() {
     ) async {
       final modes = _spyOnUpdates();
       const config = ChartConfig(
-        type: .line,
         labels: ['a', 'b'],
         datasets: [
           LineDataset(data: [1, 2]),
@@ -158,7 +156,6 @@ void main() {
         _box(
           const ChartView(
             config: ChartConfig(
-              type: .line,
               labels: ['a', 'b'],
               datasets: [
                 LineDataset(data: [1, 2]),
@@ -242,7 +239,6 @@ void main() {
       Widget view(Plugin<Object?> plugin) => _box(
         ChartView(
           config: ChartConfig(
-            type: .bar,
             labels: const ['a'],
             datasets: const [
               BarDataset(data: [1]),
@@ -304,7 +300,6 @@ void main() {
       await tester.pumpWidget(_box(ChartView.raw(config: raw)));
       final chart = _chart(tester);
       const typed = ChartConfig(
-        type: .line,
         labels: ['a', 'b'],
         datasets: [
           LineDataset(label: 'typed', data: [3, 4]),
@@ -337,7 +332,6 @@ void main() {
       tester,
     ) async {
       const config = ChartConfig(
-        type: .bar,
         labels: ['a'],
         datasets: [
           BarDataset(data: [1]),
@@ -380,7 +374,6 @@ void main() {
         'dataset count', (tester) async {
       const widget = ChartView(
         config: ChartConfig(
-          type: .pie,
           datasets: [
             PieDataset(data: [1]),
             PieDataset(data: [2]),
@@ -437,7 +430,6 @@ void main() {
       final modes = _spyOnUpdates();
       final clicks = <String>[];
       ChartConfig config(String name) => ChartConfig(
-        type: .bar,
         labels: const ['a', 'b'],
         datasets: const [
           BarDataset(label: 'A', data: [1, 2]),
@@ -473,7 +465,6 @@ void main() {
         'null gives the default text', (tester) async {
       String? text;
       ChartConfig config() => ChartConfig(
-        type: .bar,
         labels: const ['a', 'b'],
         datasets: const [
           BarDataset(label: 'A', data: [1, 2]),

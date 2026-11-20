@@ -74,7 +74,6 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
   ChartConfig get _config {
     final range = graphicRange(_sold);
     return ChartConfig(
-      type: .bar,
       labels: _genres,
       datasets: [
         BarDataset(

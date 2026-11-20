@@ -217,7 +217,6 @@ class const BenchmarkChart({
     final flows = sankeyFlows(frame.values);
     final view = cj.ChartView(
       config: cj.ChartConfig(
-        type: const cj.ChartKind(sk.SankeyController.id),
         datasets: [
           sk.SankeyDataset(
             key: const ValueKey('series'),
@@ -392,17 +391,6 @@ class const BenchmarkChart({
     );
     final view = cj.ChartView(
       config: cj.ChartConfig(
-        type: switch (config.type) {
-          ChartType.line => cj.ChartKind.line,
-          ChartType.bar => cj.ChartKind.bar,
-          ChartType.scatter => cj.ChartKind.scatter,
-          ChartType.bubble => cj.ChartKind.bubble,
-          ChartType.pie => cj.ChartKind.pie,
-          ChartType.doughnut => cj.ChartKind.doughnut,
-          ChartType.polarArea => cj.ChartKind.polarArea,
-          ChartType.radar => cj.ChartKind.radar,
-          ChartType.sankey => noSankey(),
-        },
         datasets: [dataset],
         labels: switch (config.type) {
           ChartType.line || ChartType.scatter || ChartType.bubble => null,

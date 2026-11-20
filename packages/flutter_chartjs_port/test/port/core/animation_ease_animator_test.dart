@@ -129,7 +129,6 @@ List<double> _data(int seed) => [
 /// or Dart `null` for the default. [log] gets a line for each animation
 /// event.
 ChartConfig _config(List<String> log, Curve? easing, int seed) => ChartConfig(
-  type: ChartKind.bar,
   labels: [for (var i = 0; i < _count; i++) 'l$i'],
   datasets: [BarDataset(data: _data(seed))],
   scales: const {'y': LinearAxis(min: 0, max: 100)},
@@ -140,7 +139,6 @@ ChartConfig _config(List<String> log, Curve? easing, int seed) => ChartConfig(
 /// the data of the first dataset.
 ChartConfig _stackedConfig(List<String> log, Curve? easing, int seed) =>
     ChartConfig(
-      type: ChartKind.bar,
       labels: [for (var i = 0; i < _count; i++) 'l$i'],
       datasets: [
         BarDataset(data: _data(seed)),

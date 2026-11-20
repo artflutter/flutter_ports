@@ -149,7 +149,6 @@ ChartConfigurationScope _config(
       data ?? <num?>[for (var i = 0; i < n; i++) ((i * 13) % 50) * 2.0];
   return ChartConfigLowering(
     ChartConfig(
-      type: ChartKind(type),
       datasets: [
         RadarDataset(
           data: values is List<num?> ? values : null,

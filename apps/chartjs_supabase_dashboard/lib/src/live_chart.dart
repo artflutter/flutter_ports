@@ -370,8 +370,7 @@ class _LiveChartState()
   /// the data List of the series: the options stay `==`, so the chart keeps
   /// the ranges that the frames write into them.
   late final ChartConfig _config = ChartConfig(
-    type: .line,
-    datasets: const [],
+    datasets: const [LineDataset()],
     maintainAspectRatio: false,
     // The room of the last time label: the x axis adds no padding for it.
     padding: const EdgeInsets.only(right: _labelRoom),

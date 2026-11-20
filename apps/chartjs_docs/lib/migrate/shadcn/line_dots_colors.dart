@@ -17,7 +17,6 @@ const _fills = <ChartPaint>[
 ];
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .line,
   labels: _browsers,
   datasets: const [
     LineDataset(

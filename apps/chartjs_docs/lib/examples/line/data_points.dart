@@ -11,7 +11,6 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 
 // #docregion data-points
 final pointsLine = ChartConfig(
-  type: .line,
   datasets: [
     LineDataset(
       label: 'An x and a y for each item',

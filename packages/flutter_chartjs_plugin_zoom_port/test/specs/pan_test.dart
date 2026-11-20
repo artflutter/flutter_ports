@@ -21,7 +21,6 @@ void main() {
       testWidgets('should be applied cumulatively', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points)],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
@@ -49,7 +48,6 @@ void main() {
       testWidgets('should not give credit', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [ScatterDataset(points: points)],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
@@ -78,7 +76,6 @@ void main() {
       testWidgets('should handle zero-dimension scales', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points)],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
@@ -100,7 +97,6 @@ void main() {
       testWidgets('should respect original limits', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points)],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
@@ -132,7 +128,6 @@ void main() {
       ) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [LineDataset(points: points)],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
@@ -165,7 +160,6 @@ void main() {
           final startCalls = <ZoomStartContext<GestureEvent>>[];
           final chart = _acquire(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [ScatterDataset(points: points)],
               labels: const ['a', 'b', 'c', 'd', 'e'],
               pluginOptions: [
@@ -203,7 +197,6 @@ void main() {
           final rejectCalls = <ZoomEventContext<GestureEvent>>[];
           final chart = _acquire(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [ScatterDataset(points: points)],
               labels: const ['a', 'b', 'c', 'd', 'e'],
               pluginOptions: [
@@ -241,7 +234,6 @@ void main() {
             final rejectCalls = <ZoomEventContext<GestureEvent>>[];
             final chart = _acquire(
               ChartConfig(
-                type: ChartKind.scatter,
                 datasets: [ScatterDataset(points: points)],
                 labels: const ['a', 'b', 'c', 'd', 'e'],
                 pluginOptions: [
@@ -286,7 +278,6 @@ void main() {
         await waitForDone((done) {
           final chart = _acquire(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [ScatterDataset(points: points)],
               labels: const ['a', 'b', 'c', 'd', 'e'],
               pluginOptions: const [
@@ -313,7 +304,6 @@ void main() {
         await waitForDone((done) {
           final chart = _acquire(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [ScatterDataset(points: points)],
               labels: const ['a', 'b', 'c', 'd', 'e'],
               pluginOptions: [
@@ -341,7 +331,6 @@ void main() {
         final completeCalls = <ZoomChartContext>[];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [ScatterDataset(points: points)],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: [
@@ -388,7 +377,6 @@ void main() {
         final completeCalls = <ZoomChartContext>[];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [ScatterDataset(points: points)],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: [

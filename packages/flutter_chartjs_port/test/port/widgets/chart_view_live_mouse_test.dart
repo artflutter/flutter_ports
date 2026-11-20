@@ -33,7 +33,6 @@ final class _Log() {
 
 /// A new config object with new data, as a live chart gets in each frame.
 ChartConfig _config(_Log log, int step) => ChartConfig(
-  type: ChartKind.line,
   plugins: log.plugins,
   labels: const ['a', 'b', 'c'],
   datasets: [

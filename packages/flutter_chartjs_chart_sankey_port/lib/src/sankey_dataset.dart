@@ -390,7 +390,6 @@ bool _listEquals(List<Object?> a, List<Object?> b) {
 /// ```dart
 /// ChartView(
 ///   config: ChartConfig(
-///     type: const ChartKind(SankeyController.id),
 ///     datasets: [
 ///       SankeyDataset(
 ///         label: 'Energy',

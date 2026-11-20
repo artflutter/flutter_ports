@@ -207,7 +207,6 @@ Object _observe(Chart chart) {
 
 ChartConfig _typed(List<DataPoint> points, {ChartValue<ChartPaint>? color}) =>
     ChartConfig(
-      type: .scatter,
       datasets: [
         ScatterDataset(
           points: points,

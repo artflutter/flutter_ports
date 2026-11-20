@@ -15,7 +15,6 @@ const _subjects = [
 const List<num> _marks = [71, 84, 48, 80, 76];
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: _subjects,
   datasets: const [
     BarDataset(

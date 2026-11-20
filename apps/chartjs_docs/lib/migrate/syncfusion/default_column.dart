@@ -16,7 +16,6 @@ const _countries = [
 const List<num> _growth = [0.541, 0.818, 1.51, 1.302, 2.017, 1.683];
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: _countries,
   datasets: const [
     BarDataset(

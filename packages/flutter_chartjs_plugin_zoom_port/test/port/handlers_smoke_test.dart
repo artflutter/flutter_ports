@@ -14,7 +14,6 @@ import 'package:flutter_test/flutter_test.dart';
 Chart _acquireChart(ZoomPluginOptions options) {
   final chart = _acquire(
     ChartConfig(
-      type: ChartKind.scatter,
       datasets: [
         ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
       ],

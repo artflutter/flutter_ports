@@ -104,7 +104,6 @@ void main() {
     testWidgets('should be constructed', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: []),
             BarDataset(data: []),
@@ -130,7 +129,6 @@ void main() {
     testWidgets('should set null bars to the reset state', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [10, null, 0, -4], label: 'dataset1'),
           ],
@@ -151,7 +149,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: []),
               BarDataset(data: []),
@@ -173,7 +170,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               LineDataset(data: []),
               BarDataset(data: [], hidden: true),
@@ -197,7 +193,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: []),
               BarDataset(data: []),
@@ -221,7 +216,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: []),
               BarDataset(data: []),
@@ -249,7 +243,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: []),
               BarDataset(data: []),
@@ -275,7 +268,6 @@ void main() {
         'specified for some', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [], stack: 'stack1'),
             BarDataset(data: [], stack: 'stack1'),
@@ -296,7 +288,6 @@ void main() {
         'specified for some and the scale is stacked', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [], stack: 'stack1'),
             BarDataset(data: [], stack: 'stack1'),
@@ -321,7 +312,6 @@ void main() {
         'specified for some and the scale is not stacked', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [], stack: 'stack1'),
             BarDataset(data: [], stack: 'stack1'),
@@ -346,7 +336,6 @@ void main() {
         'specified for all', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [], stack: 'stack1'),
             BarDataset(data: [], stack: 'stack1'),
@@ -367,7 +356,6 @@ void main() {
         'specified for all and the scale is stacked', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [], stack: 'stack1'),
             BarDataset(data: [], stack: 'stack1'),
@@ -392,7 +380,6 @@ void main() {
         'specified for all and the scale is not stacked', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [], stack: 'stack1'),
             BarDataset(data: [], stack: 'stack1'),
@@ -419,7 +406,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: []),
               BarDataset(data: [], hidden: true),
@@ -442,7 +428,6 @@ void main() {
         'specified', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: []),
             BarDataset(data: []),
@@ -466,7 +451,6 @@ void main() {
         'specified and the scale is stacked', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: []),
             BarDataset(data: []),
@@ -494,7 +478,6 @@ void main() {
         'specified and the scale is not stacked', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: []),
             BarDataset(data: []),
@@ -524,7 +507,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [], stack: 'stack1'),
               BarDataset(data: [], stack: 'stack1'),
@@ -551,7 +533,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [], stack: 'stack1'),
               BarDataset(data: [], stack: 'stack1'),
@@ -582,7 +563,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [], stack: 'stack1'),
               BarDataset(data: [], stack: 'stack1'),
@@ -613,7 +593,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [], stack: 'stack1'),
               BarDataset(data: [], stack: 'stack1'),
@@ -640,7 +619,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [], stack: 'stack1'),
               BarDataset(data: [], stack: 'stack1'),
@@ -671,7 +649,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [], stack: 'stack1'),
               BarDataset(data: [], stack: 'stack1'),
@@ -700,7 +677,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: []),
               BarDataset(data: [10, 15, 0, -4]),
@@ -721,7 +697,6 @@ void main() {
     testWidgets('should update elements when modifying data', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [1, 2], label: 'dataset1'),
             BarDataset(
@@ -807,7 +782,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [1, 2], label: 'dataset1'),
               LineDataset(data: [4, 6], label: 'dataset2'),
@@ -840,7 +814,6 @@ void main() {
     testWidgets('should get the bar points for hidden dataset', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [1, 2], label: 'dataset1', hidden: true),
           ],
@@ -872,7 +845,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [10, -10, 10, -10], label: 'dataset1'),
             BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
@@ -913,7 +885,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [50, 20, 10, 100], label: 'dataset1'),
               BarDataset(data: [50, 80, 90, 0], label: 'dataset2'),
@@ -958,7 +929,6 @@ void main() {
         'stacked', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [20, -10, 10, -10], label: 'dataset1'),
             BarDataset(data: [10, 15, 0, -14], label: 'dataset2'),
@@ -1052,7 +1022,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(
                 data: [10, -10, 10, -10],
@@ -1102,7 +1071,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(data: [1, 2], stack: 'stack1'),
               BarDataset(data: [1, 2], stack: 'stack2'),
@@ -1135,7 +1103,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [1, 2], stack: 'stack1'),
             BarDataset(data: [0.5, 1], stack: 'stack2'),
@@ -1166,7 +1133,6 @@ void main() {
     testWidgets('should draw all bars', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: []),
             BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
@@ -1193,7 +1159,6 @@ void main() {
     testWidgets('should set hover styles on bars', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: []),
             BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
@@ -1275,7 +1240,6 @@ void main() {
     testWidgets('should remove a hover style from a bar', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: []),
             BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
@@ -1400,7 +1364,6 @@ void main() {
       setUp(() {
         // 2 datasets
         data = const ChartConfig(
-          type: ChartKind.bar,
           labels: [
             'January',
             'February',
@@ -1481,7 +1444,6 @@ void main() {
       setUp(() {
         // 2 datasets
         data = const ChartConfig(
-          type: ChartKind.bar,
           labels: [
             'January',
             'February',
@@ -1560,7 +1522,6 @@ void main() {
           void beforeEach() {
             chart = _acquire(
               ChartConfig(
-                type: ChartKind.bar,
                 datasets: const [
                   BarDataset(data: [1, 2]),
                   BarDataset(data: [1, 2]),
@@ -1645,7 +1606,6 @@ void main() {
       const minBarLength = 4.0;
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(
               minBarLength: minBarLength,
@@ -1670,7 +1630,6 @@ void main() {
         const minBarLength = 4.0;
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(
                 indexAxis: YAxis(),
@@ -1694,7 +1653,6 @@ void main() {
     testWidgets('should respect the data visibility settings', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [1, 2, 3, 4]),
           ],
@@ -1726,7 +1684,6 @@ void main() {
         'animations', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [1, 2, 3, 4]),
             BarDataset(data: [1, 2, 3, 4]),
@@ -1790,7 +1747,6 @@ void main() {
 
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             labels: ['a', 'b', 'c'],
             datasets: [
               BarDataset(
@@ -1819,7 +1775,6 @@ void main() {
       void unevenChart() {
         _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             labels: [1, 2],
             datasets: [
               BarDataset(data: [1, 2]),
@@ -1926,7 +1881,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           labels: ['Label 1', 'Label 2'],
           datasets: [
             BarDataset(data: [21, 79], label: 'Dataset 1'),

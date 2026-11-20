@@ -111,7 +111,6 @@ const List<String> _upstreamHooks = ['start', 'stop', 'beforeUpdate'];
 Chart _lineWithSubtitle([ChartTitle? subtitle]) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.line,
       labels: const ['a', 'b'],
       datasets: const [
         LineDataset(data: [1, 2]),
@@ -130,7 +129,6 @@ Chart _lineWithSubtitle([ChartTitle? subtitle]) => acquireChartRoot(
 Chart _line(String text) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.line,
       labels: const ['a', 'b'],
       datasets: const [
         LineDataset(data: [1, 2]),

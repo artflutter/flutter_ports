@@ -22,7 +22,7 @@
 ///
 /// ```dart
 /// ChartConfig(
-///   type: .line,
+///   datasets: [LineDataset(data: values)],
 ///   pluginOptions: const [
 ///     ZoomPluginOptions(
 ///       pan: PanOptions(enabled: true, mode: Mode.x),
@@ -741,7 +741,7 @@ int _limitsHash(LimitOptions? limits) => limits == null
 ///
 /// ```dart
 /// ChartConfig(
-///   type: .line,
+///   datasets: [LineDataset(data: values)],
 ///   pluginOptions: const [
 ///     ZoomPluginOptions(pan: PanOptions(enabled: true)),
 ///   ],

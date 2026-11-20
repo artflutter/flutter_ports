@@ -62,7 +62,6 @@ Chart _chart(
 }) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.line,
       plugins: [_counting(counts)],
       labels: const ['a', 'b', 'c'],
       datasets: const [

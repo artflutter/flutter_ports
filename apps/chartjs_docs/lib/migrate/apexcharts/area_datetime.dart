@@ -78,7 +78,6 @@ final _annotationPlugin = Plugin<Object?>(
 );
 
 ChartConfig _config(ApexZoom zoom) => ChartConfig(
-  type: .line,
   datasets: [
     LineDataset(
       label: 'STOCK ABC',

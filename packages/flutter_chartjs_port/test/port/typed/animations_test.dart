@@ -35,7 +35,6 @@ Chart _chart(WidgetTester tester) {
 Widget _line(Color color, List<PropertyAnimation> animations) => _box(
   ChartView(
     config: ChartConfig(
-      type: .line,
       labels: const ['a', 'b', 'c'],
       datasets: [
         LineDataset(
@@ -54,7 +53,6 @@ Widget _line(Color color, List<PropertyAnimation> animations) => _box(
 Widget _bar(double borderWidth, List<PropertyAnimation> animations) => _box(
   ChartView(
     config: ChartConfig(
-      type: .bar,
       labels: const ['a', 'b', 'c'],
       datasets: [
         BarDataset(
@@ -118,18 +116,15 @@ void main() {
 
     test('a config with other items is another config', () {
       const one = ChartConfig(
-        type: .bar,
-        datasets: [],
+        datasets: [BarDataset()],
         animations: [RadiusAnimation()],
       );
       const same = ChartConfig(
-        type: .bar,
-        datasets: [],
+        datasets: [BarDataset()],
         animations: [RadiusAnimation()],
       );
       const other = ChartConfig(
-        type: .bar,
-        datasets: [],
+        datasets: [BarDataset()],
         animations: [RadiusAnimation(loop: true)],
       );
       expect(one, same);
@@ -144,7 +139,6 @@ void main() {
     Widget chartOf(Color color, ChartAnimation animation) => _box(
       ChartView(
         config: ChartConfig(
-          type: .line,
           labels: const ['a', 'b', 'c'],
           datasets: [
             LineDataset(
@@ -203,7 +197,6 @@ void main() {
       Widget chartOf(Color color) => _box(
         ChartView(
           config: ChartConfig(
-            type: .line,
             labels: const ['a', 'b', 'c'],
             datasets: [
               LineDataset(
@@ -346,7 +339,6 @@ void main() {
       ChartView(
         updateMode: UpdateMode.active,
         config: ChartConfig(
-          type: .line,
           labels: const ['a', 'b', 'c'],
           datasets: [
             LineDataset(
@@ -485,7 +477,6 @@ void main() {
         _box(
           const ChartView(
             config: ChartConfig(
-              type: .line,
               labels: ['a', 'b', 'c'],
               datasets: [
                 LineDataset(data: [1, 2, 3]),

@@ -8,6 +8,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/test_dataset.dart';
 import 'scale_chart_harness.dart';
 import 'scale_radial_linear_reference.dart';
 
@@ -264,11 +265,10 @@ Chart _chart(
 ]) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: const ChartKind('radialTest'),
       labels: labels,
       datasets: [
         // Keep strings and undefined in the parser boundary cases.
-        RadarDataset(extra: {'type': 'radialTest', 'data': data}),
+        TestDataset(const ChartKind('radialTest'), extra: {'data': data}),
       ],
       scales: {'r': r},
     ),

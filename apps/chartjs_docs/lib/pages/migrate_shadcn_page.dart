@@ -115,7 +115,7 @@ DocPageContent shadcnMigrationPage() => migrationPage(
     ),
     (
       Text('<LineChart data={chartData}>'),
-      DocText('`ChartConfig(type: .line, labels: ...)`'),
+      DocText('`ChartConfig( labels: ...)`'),
     ),
     (
       Text('<Line dataKey="desktop" stroke="var(--color-desktop)" />'),

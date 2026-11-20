@@ -44,7 +44,6 @@ Chart.register(sankeyRegisterables);
 
 final chart = ChartView(
   config: ChartConfig(
-    type: const ChartKind(SankeyController.id),
     datasets: [
       SankeyDataset(
         data: const [

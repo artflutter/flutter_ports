@@ -322,7 +322,6 @@ ChartConfigurationScope _config({
   };
   return ChartConfigLowering(
     ChartConfig(
-      type: type,
       datasets: [
         if (type == ChartKind.polarArea)
           PolarAreaDataset(data: data)
@@ -1329,7 +1328,6 @@ void main() {
             height: 400,
             child: ChartView(
               config: ChartConfig(
-                type: ChartKind.radar,
                 datasets: [
                   RadarDataset(
                     label: 'Values',

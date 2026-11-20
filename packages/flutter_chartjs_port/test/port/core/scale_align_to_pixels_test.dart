@@ -15,7 +15,6 @@ ChartConfig _config(Object? value) {
     extra: {if (!identical(value, undefined)) 'alignToPixels': value},
   );
   return ChartConfig(
-    type: ChartKind.line,
     datasets: [
       LineDataset(
         points: [for (var i = 0; i < 8; i++) DataPoint(i, i * 5 % 7)],

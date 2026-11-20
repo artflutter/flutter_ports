@@ -25,7 +25,6 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 
 // #docregion bar-min-length
 const minLengthBars = ChartConfig(
-  type: .bar,
   labels: months,
   datasets: [
     BarDataset(

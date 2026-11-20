@@ -18,7 +18,6 @@ const List<String> _months = [
 /// The line chart of `docs/charts/line.md:5-31`, with each key and value of
 /// the docs block.
 ChartConfig lineConfig() => const ChartConfig(
-  type: .line,
   labels: _months,
   datasets: [
     LineDataset(
@@ -36,7 +35,6 @@ ChartConfig lineConfig() => const ChartConfig(
 /// The vertical line chart of `docs/charts/line.md:233-285`, without the
 /// dataset key `axis`, which Chart.js does not read.
 ChartConfig lineVerticalConfig() => const ChartConfig(
-  type: .line,
   labels: _months,
   datasets: [
     LineDataset(

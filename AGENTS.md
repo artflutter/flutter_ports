@@ -894,8 +894,8 @@ Before a push, run `format:check`, `analyze`, `test --no-select`, `test:web`, `t
     `FromToElement`, `SankeyNodeGap`, `SankeyNodeCallback`, `SankeyParsedCustom` and the six
     enums) and `lib/src/upstream.dart` (`chartjsChartSankeyVersion`, `0.19.1`), and has the
     port-only List `sankeyRegisterables`. An app calls `Chart.register(sankeyRegisterables)` once
-    and gives a typed `ChartView` a `ChartConfig` with `type: ChartKind(SankeyController.id)` and a
-    `SankeyDataset`; `ChartView.raw` with a Map config also works. `Flow` is also a Flutter widget name: a library that imports Flutter
+    and gives a typed `ChartView` a `ChartConfig` with a `SankeyDataset`: the class of the first dataset
+    gives the chart type (Chart.js ADR 0190). `ChartView.raw` with a Map config also works. `Flow` is also a Flutter widget name: a library that imports Flutter
     and names the element imports the port with a prefix (seam S21).
   - `lib/src/`: the files of `src/` at their mapped paths: `types`, `lib/helpers`, `lib/core`,
     `lib/layout`, `labels`, `flow`, `controller` and `index.esm`; `src/index.ts`, the entry that

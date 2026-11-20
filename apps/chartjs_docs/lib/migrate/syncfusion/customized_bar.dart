@@ -52,7 +52,6 @@ final _dashes = Plugin<Object?>(
 );
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   indexAxis: const YAxis(),
   labels: _apps,
   datasets: const [

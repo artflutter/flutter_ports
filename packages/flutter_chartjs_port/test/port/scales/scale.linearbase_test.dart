@@ -8,6 +8,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/test_dataset.dart';
 import '../../support/tick_label.dart';
 import 'scale_chart_harness.dart';
 
@@ -279,12 +280,11 @@ void main() {
 
 /// A chart config of the test controller with the scale options [scales].
 ChartConfig _config(Map<String, ChartAxis> scales) => ChartConfig(
-  type: const ChartKind('linearBaseChart'),
   datasets: [
-    LineDataset(
+    TestDataset(
+      // The custom controller and its default testLinearBase scales.
+      const ChartKind('linearBaseChart'),
       points: [DataPoint(-12.5, 3), DataPoint(40, 117), DataPoint(7.25, -20)],
-      // Keep the custom controller and its default testLinearBase scales.
-      extra: const {'type': 'linearBaseChart'},
     ),
   ],
   scales: scales,

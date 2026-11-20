@@ -20,7 +20,6 @@ Chart.register(sankeyRegisterables);
 
 ChartView(
   config: ChartConfig(
-    type: const ChartKind(SankeyController.id),
     datasets: [
       SankeyDataset(
         data: const [

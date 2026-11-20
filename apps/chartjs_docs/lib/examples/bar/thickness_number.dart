@@ -20,7 +20,6 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 
 // #docregion bar-thickness-number
 final fixedBars = ChartConfig(
-  type: .bar,
   datasets: [
     BarDataset(
       label: '12 pixels',

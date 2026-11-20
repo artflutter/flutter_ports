@@ -53,7 +53,6 @@ final _activeOutline = Plugin<Object?>(
 );
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .bar,
   labels: _browsers,
   datasets: [
     BarDataset(

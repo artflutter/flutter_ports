@@ -30,7 +30,6 @@ final List<double> _dash = <double>[2, 3];
 
 ChartConfig _config(
   List<Dataset> datasets, {
-  ChartKind type = ChartKind.bar,
   List<Object>? labels,
   ChartTitle? title,
   EdgeInsets? padding,
@@ -38,7 +37,6 @@ ChartConfig _config(
   List<Plugin<Object?>>? plugins,
   Map<String, Object?>? extra,
 }) => ChartConfig(
-  type: type,
   labels: labels ?? _labels,
   datasets: datasets,
   title: title,
@@ -71,8 +69,8 @@ void main() {
       List<DataPoint> points() => <DataPoint>[DataPoint(1, 2)];
       expect(
         _report(
-          _config([ScatterDataset(points: points())], type: ChartKind.scatter),
-          _config([ScatterDataset(points: points())], type: ChartKind.scatter),
+          _config([ScatterDataset(points: points())]),
+          _config([ScatterDataset(points: points())]),
         ),
         isTrue,
       );
@@ -108,13 +106,7 @@ void main() {
     test('an equal borderDash in a new List', () {
       Dataset dataset() =>
           LineDataset(data: _data(), borderDash: <double>[..._dash]);
-      expect(
-        _report(
-          _config([dataset()], type: ChartKind.line),
-          _config([dataset()], type: ChartKind.line),
-        ),
-        isTrue,
-      );
+      expect(_report(_config([dataset()]), _config([dataset()])), isTrue);
     });
 
     test('a data List of another length: the chart checks that', () {
@@ -156,7 +148,7 @@ void main() {
       expect(
         _report(
           _config([BarDataset(data: _data())]),
-          _config([BarDataset(data: _data())], type: ChartKind.line),
+          _config([LineDataset(data: _data())]),
         ),
         isFalse,
       );

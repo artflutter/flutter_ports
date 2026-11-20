@@ -74,7 +74,6 @@ ChartConfig _config(double width) {
   final barsSpace = 4 * width / 400;
   return flBars(
     ChartConfig(
-      type: .bar,
       datasets: [
         // A rod with stack items is a stack of three datasets.
         for (var rod = 0; rod < 5; rod++)

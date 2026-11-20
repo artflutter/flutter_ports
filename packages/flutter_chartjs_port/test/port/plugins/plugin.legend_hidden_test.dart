@@ -160,7 +160,6 @@ ChartConfigurationScope _typedConfig(
   List<Plugin<Object?>>? plugins,
 }) => ChartConfigLowering(
   typed.ChartConfig(
-    type: typed.ChartKind(type),
     labels: labelValues ?? <Object>['a', 'b', 'c'],
     datasets: datasets ?? [_typedDataset(type, data: data)],
     scales: scales,
@@ -1235,9 +1234,8 @@ void main() {
         );
         expect(_legendOf(noLabels).legendItemsPending, isFalse);
         expect(noLabels.legend!.legendItems, isEmpty);
-        final noDatasets = acquireChartRoot(
-          _typedConfig(type, datasets: <typed.Dataset>[]),
-        );
+        // Raw: a typed config needs one dataset (Chart.js ADR 0190).
+        final noDatasets = acquireChart(_config(type, datasets: <Object?>[]));
         expect(_legendOf(noDatasets).legendItemsPending, isFalse);
         expect(noDatasets.legend!.legendItems, isEmpty);
       });
@@ -1334,12 +1332,10 @@ void main() {
     }
 
     testWidgets('a first dataset of another controller', (tester) async {
-      final chart = acquireChartRoot(
-        _typedConfig(
-          'polarArea',
-          datasets: [_typedDataset('doughnut')],
-          scales: const {'r': typed.RadialLinearAxis()},
-        ),
+      // Raw: a typed config takes the chart type from its first dataset
+      // (Chart.js ADR 0190).
+      final chart = acquireChart(
+        _config('polarArea', dataset: const {'type': 'doughnut'}),
       );
       final controller = chart.getDatasetMeta(0).controller!;
       expect(controller.nativeLegendGenerator, isNotNull);
@@ -2278,7 +2274,6 @@ void main() {
         ChartPaint.solid(Color(0xff4f6bed)),
       ),
     }) => typed.ChartConfig(
-      type: kind,
       labels: const ['a', 'b', 'c'],
       datasets: [
         switch (kind) {
@@ -2350,7 +2345,6 @@ void main() {
                 height: 300,
                 child: typed.ChartView(
                   config: typed.ChartConfig(
-                    type: kind,
                     labels: labels,
                     datasets: [
                       switch (kind) {
@@ -4185,7 +4179,6 @@ void main() {
                   height: 300,
                   child: typed.ChartView(
                     config: typed.ChartConfig(
-                      type: kind,
                       labels: labels,
                       datasets: [
                         switch (kind) {

@@ -9,6 +9,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/test_dataset.dart';
 import 'scale_chart_harness.dart';
 import 'scale_time_harness.dart';
 import 'scale_timeseries_reference.dart';
@@ -89,12 +90,10 @@ final double _t0 = DateTime.utc(2021, 1, 4).millisecondsSinceEpoch.toDouble();
 /// the options of the scale x [x].
 TimeSeriesScale _x(List<double> times, [TimeSeriesAxis? x]) {
   final config = ChartConfig(
-    type: const ChartKind('timeseriesTest'),
     datasets: [
-      LineDataset(
+      TestDataset(
+        const ChartKind('timeseriesTest'),
         points: [for (final time in times) DataPoint(time, 1)],
-        // Keep the test controller rather than the built-in line controller.
-        extra: const {'type': 'timeseriesTest'},
       ),
     ],
     scales: {'x': ?x},
@@ -178,10 +177,9 @@ void main() {
   group('adapt-time-null-timestamp', () {
     testWidgets('the pixel of a null tick is the pixel of 0', (tester) async {
       const config = ChartConfig(
-        type: ChartKind('timeseriesTest'),
         labels: ['2021-01-04', 'garbage', '2021-01-20'],
         datasets: [
-          LineDataset(data: [1.0, 2.0, 3.0], extra: {'type': 'timeseriesTest'}),
+          TestDataset(ChartKind('timeseriesTest'), data: [1.0, 2.0, 3.0]),
         ],
         scales: {
           'x': TimeSeriesAxis(ticks: AxisTicks(source: TickSource.labels)),

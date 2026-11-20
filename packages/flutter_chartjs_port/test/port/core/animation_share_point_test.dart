@@ -52,7 +52,6 @@ _Config _scatter({
 }) =>
     (log, {required twin}) => ChartConfigLowering(
       ChartConfig(
-        type: ChartKind(type),
         datasets: [
           for (var d = 0; d < datasets; d++)
             ScatterDataset(

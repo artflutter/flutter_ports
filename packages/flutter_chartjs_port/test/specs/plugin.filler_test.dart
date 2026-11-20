@@ -67,9 +67,9 @@ Chart _acquireWithWarnSpy(
 ChartConfigurationScope _line(
   List<LineDataset> datasets, [
   ChartFiller? filler,
-]) => ChartConfigLowering(
-  ChartConfig(type: ChartKind.line, datasets: datasets, filler: filler),
-).lower();
+]) =>
+    ChartConfigLowering(ChartConfig(datasets: datasets, filler: filler))
+        .lower();
 
 /// A dataset with the fill option [fill], including an explicit null.
 LineDataset _fill(FillTarget? fill) => fill == null
@@ -116,7 +116,6 @@ void main() {
           _acquireWithWarnSpy(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [LineDataset()],
                 extra: {'fill': FillTarget.toOrigin},
               ),

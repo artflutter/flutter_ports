@@ -38,7 +38,6 @@ final _pointedColumns = Plugin<Object?>(
 );
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: _vendors,
   datasets: [
     BarDataset(

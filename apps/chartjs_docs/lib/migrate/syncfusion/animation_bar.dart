@@ -41,7 +41,6 @@ class _SfAnimationBarState() extends State<SfAnimationBar> {
     height: 320,
     child: ChartView(
       config: ChartConfig(
-        type: .bar,
         indexAxis: const YAxis(),
         labels: const ['1', '2', '3', '4', '5', '6', '7'],
         datasets: [

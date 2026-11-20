@@ -48,7 +48,6 @@ ChartConfig _bars(
   ChartTitle? title,
   Map<String, Object?>? extra,
 }) => ChartConfig(
-  type: ChartKind.bar,
   labels: _labels,
   datasets: datasets,
   scales: const {'y': LinearAxis(min: 0, max: 50)},
@@ -196,7 +195,9 @@ void main() {
         ),
       );
       expect(_dataset(chart, 0), isNot(same(map)));
-      expect(_dataset(chart, 0)['type'], 'line');
+      // The first dataset gives the chart type (Chart.js ADR 0190).
+      expect(_dataset(chart, 0).jsHas('type'), isFalse);
+      expect(chart.config.type, 'line');
       expect(chart.getDatasetMeta(0), isNot(same(meta)));
       expect(chart.getDatasetMeta(0).type, 'line');
     });
@@ -489,7 +490,6 @@ void main() {
       await tester.pumpWidget(
         _view(
           ChartConfig(
-            type: ChartKind.bar,
             labels: labels,
             datasets: const [
               BarDataset(data: [4, 5, 6]),
@@ -506,26 +506,26 @@ void main() {
 
     testWidgets('a new type gives a new options Map: the axes of the new '
         'type, as a new chart', (tester) async {
-      final datasets = [
-        const LineDataset(data: [1, 2, 3]),
-      ];
-      // The x axis of the app takes the scale defaults of the chart type:
-      // `offset: true` of the bar overrides (`core.config.js:89`).
-      ChartConfig config(ChartKind type) => ChartConfig(
-        type: type,
+      const line = LineDataset(data: [1, 2, 3]);
+      // The class of the first dataset gives the chart type (Chart.js ADR
+      // 0190). The x axis of the app takes the scale defaults of the chart
+      // type: `offset: true` of the bar overrides (`core.config.js:89`).
+      ChartConfig config(Dataset first) => ChartConfig(
         labels: _labels,
-        datasets: datasets,
+        datasets: [first, line],
         scales: const {'x': CategoryAxis()},
         animation: ChartAnimation.none,
       );
-      await tester.pumpWidget(_view(config(ChartKind.bar)));
+      await tester.pumpWidget(_view(config(const BarDataset(data: [1, 2, 3]))));
       final chart = _chart(tester);
-      final map = _dataset(chart, 0);
+      final map = _dataset(chart, 1);
       expect(map['type'], 'line');
       expect(chart.scales['x']!.optionsView['offset'], isTrue);
 
-      await tester.pumpWidget(_view(config(ChartKind.line)));
-      expect(_dataset(chart, 0), same(map));
+      await tester.pumpWidget(
+        _view(config(const LineDataset(data: [3, 2, 1]))),
+      );
+      expect(_dataset(chart, 1), same(map));
       expect(map.jsHas('type'), isFalse);
       expect(chart.config.type, 'line');
       expect(chart.scales['x']!.optionsView['offset'], isFalse);
@@ -577,7 +577,6 @@ void main() {
         for (var i = 0; i < 5000; i++) DataPoint(i, (i * 37) % 101),
       ];
       ChartConfig config(List<DataPoint> points, String label) => ChartConfig(
-        type: ChartKind.line,
         datasets: [LineDataset(label: label, points: points, pointRadius: 0)],
         scales: const {'x': LinearAxis()},
         animation: ChartAnimation.none,

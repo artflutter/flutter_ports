@@ -84,7 +84,6 @@ final _zoneKey = Plugin<Object?>(
 );
 
 final ChartConfig _config = ChartConfig(
-  type: .line,
   datasets: [
     LineDataset(
       label: 'Rainfall',

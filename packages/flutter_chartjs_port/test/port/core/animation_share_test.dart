@@ -60,7 +60,6 @@ _Config _bar({
 }) =>
     (log, {required twin}) => ChartConfigLowering(
       ChartConfig(
-        type: ChartKind.bar,
         labels: [for (var i = 0; i < _count; i++) 'l$i'],
         datasets: [BarDataset(data: _data(1), extra: dataset)],
         animation: _animation(log, animation, twin: twin),
@@ -72,7 +71,6 @@ _Config _bar({
 ChartConfigurationScope _stacked(List<String> log, {required bool twin}) =>
     ChartConfigLowering(
       ChartConfig(
-        type: ChartKind.bar,
         labels: [for (var i = 0; i < _count; i++) 'l$i'],
         datasets: [
           BarDataset(data: _data(1)),

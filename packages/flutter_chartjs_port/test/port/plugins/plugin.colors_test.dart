@@ -133,7 +133,6 @@ ChartConfigurationScope _config(
   };
   final root = ChartConfigLowering(
     ChartConfig(
-      type: ChartKind(type),
       labels: const ['a', 'b', 'c'],
       datasets: [for (var d = 0; d < datasets; d++) dataset()],
       extra: const {
@@ -168,9 +167,17 @@ ChartConfigurationScope _datasetConfig(
 }) {
   final root = ChartConfigLowering(
     ChartConfig(
-      type: ChartKind(type),
       labels: const ['a', 'b', 'c'],
-      datasets: const [],
+      // The dataset of the lowering gives the chart type. The raw dataset
+      // below replaces it.
+      datasets: [
+        switch (type) {
+          'bar' => const BarDataset(),
+          'doughnut' => const DoughnutDataset(),
+          'polarArea' => const PolarAreaDataset(),
+          _ => throw ArgumentError.value(type, 'type'),
+        },
+      ],
       extra: {
         'plugins': {
           'colors': {'enabled': enabled},

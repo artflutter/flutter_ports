@@ -42,11 +42,7 @@ void main() {
           padding: EdgeInsets.all(16),
           child: Center(
             child: ChartView(
-              config: ChartConfig(
-                type: .line,
-                labels: months,
-                datasets: [noStep],
-              ),
+              config: ChartConfig(labels: months, datasets: [noStep]),
             ),
           ),
         ),

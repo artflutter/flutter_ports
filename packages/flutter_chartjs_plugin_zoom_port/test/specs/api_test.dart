@@ -41,8 +41,7 @@ void _setFirstX(Chart chart, double x) {
 }
 
 ChartConfig _scatter0to100([ZoomPluginOptions? zoom]) => ChartConfig(
-  type: ChartKind.scatter,
-  datasets: const [],
+  datasets: const [ScatterDataset()],
   scales: const {
     'x': LinearAxis(min: 0, max: 100),
     'y': LinearAxis(min: 0, max: 100),
@@ -51,7 +50,6 @@ ChartConfig _scatter0to100([ZoomPluginOptions? zoom]) => ChartConfig(
 );
 
 ChartConfig _scatterFitted() => ChartConfig(
-  type: ChartKind.scatter,
   datasets: [
     ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
   ],
@@ -64,9 +62,7 @@ Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
 void main() {
   group('api', () {
     testWidgets('should add methods to chart instance', (tester) async {
-      final chart = _acquire(
-        const ChartConfig(type: ChartKind.line, datasets: []),
-      );
+      final chart = _acquire(const ChartConfig(datasets: [LineDataset()]));
 
       expect(chart.pan, isA<Function>());
       expect(chart.zoom, isA<Function>());
@@ -254,7 +250,6 @@ void main() {
         final zoomCalls = <ZoomTriggerContext>[];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [
               ScatterDataset(points: [DataPoint(1, 1), DataPoint(10, 10)]),
             ],
@@ -389,7 +384,6 @@ void main() {
       ) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             labels: ['a', 'b', 'c', 'd', 'e'],
             datasets: [
               BarDataset(data: [1, 2, 3, 2, 1]),
@@ -416,7 +410,6 @@ void main() {
       testWidgets('should not exceed limits', (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             labels: ['0', '1', '2', '3', '4', '5', '6'],
             datasets: [
               BarDataset(data: [1, 2, 3, 2, 1, 0, 1]),
@@ -472,7 +465,6 @@ void main() {
       testWidgets('should zoom in and out', (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             labels: ['a', 'b', 'c', 'd', 'e'],
             datasets: [
               BarDataset(data: [1, 22, 3333, 22, 1]),

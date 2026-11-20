@@ -91,7 +91,6 @@ class _BarSample8State() extends State<BarSample8> {
 
   late final ChartConfig _config = flBars(
     ChartConfig(
-      type: .bar,
       datasets: [
         BarDataset(
           points: [

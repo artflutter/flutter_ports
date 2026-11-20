@@ -673,11 +673,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'Solid',
                   label: Text('Solid'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [solidLine],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [solidLine]),
                   region: CodeRegion(
                     '$lineExamples/line_solid.dart',
                     'line-solid',
@@ -686,11 +682,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'Dashed',
                   label: Text('Dashed'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [dashedLine],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [dashedLine]),
                   region: CodeRegion(
                     '$lineExamples/line_dashed.dart',
                     'line-dashed',
@@ -699,11 +691,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'Filled',
                   label: Text('Filled'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [filledLine],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [filledLine]),
                   region: CodeRegion(
                     '$lineExamples/line_filled.dart',
                     'line-filled',
@@ -713,7 +701,6 @@ DocPageContent lineChartPage() => DocPageContent(
                   name: 'Points only',
                   label: Text('Points only'),
                   config: ChartConfig(
-                    type: .line,
                     labels: months,
                     datasets: [pointsOnlyLine],
                   ),
@@ -725,11 +712,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'Shadow',
                   label: Text('Shadow'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [shadowLine],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [shadowLine]),
                   region: CodeRegion(
                     '$lineExamples/line_shadow.dart',
                     'line-shadow',
@@ -744,11 +727,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'spanGaps: false',
                   label: Text('spanGaps: false'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [brokenLine],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [brokenLine]),
                   region: CodeRegion(
                     '$lineExamples/gaps_break.dart',
                     'gaps-break',
@@ -757,11 +736,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'spanGaps: true',
                   label: Text('spanGaps: true'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [spannedLine],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [spannedLine]),
                   region: CodeRegion(
                     '$lineExamples/gaps_span.dart',
                     'gaps-span',
@@ -812,11 +787,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'Hover',
                   label: Text('Hover'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [hoverLine],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [hoverLine]),
                   region: CodeRegion(
                     '$lineExamples/interactions.dart',
                     'interactions',
@@ -954,11 +925,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'false',
                   label: Text('false'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [noStep],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [noStep]),
                   region: CodeRegion(
                     '$lineExamples/stepped_false.dart',
                     'stepped-false',
@@ -967,11 +934,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: 'true',
                   label: Text('true'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [stepTrue],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [stepTrue]),
                   region: CodeRegion(
                     '$lineExamples/stepped_true.dart',
                     'stepped-true',
@@ -980,11 +943,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: '.before',
                   label: Text('.before'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [stepBefore],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [stepBefore]),
                   region: CodeRegion(
                     '$lineExamples/stepped_before.dart',
                     'stepped-before',
@@ -993,11 +952,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: '.after',
                   label: Text('.after'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [stepAfter],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [stepAfter]),
                   region: CodeRegion(
                     '$lineExamples/stepped_after.dart',
                     'stepped-after',
@@ -1006,11 +961,7 @@ DocPageContent lineChartPage() => DocPageContent(
                 ExampleVariant(
                   name: '.middle',
                   label: Text('.middle'),
-                  config: ChartConfig(
-                    type: .line,
-                    labels: months,
-                    datasets: [stepMiddle],
-                  ),
+                  config: ChartConfig(labels: months, datasets: [stepMiddle]),
                   region: CodeRegion(
                     '$lineExamples/stepped_middle.dart',
                     'stepped-middle',

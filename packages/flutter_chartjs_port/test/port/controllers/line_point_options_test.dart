@@ -53,7 +53,6 @@ ChartConfigurationScope _config({
   int datasets = 1,
 }) => ChartConfigLowering(
   ChartConfig(
-    type: ChartKind.line,
     datasets: [
       for (var d = 0; d < datasets; d++)
         LineDataset(

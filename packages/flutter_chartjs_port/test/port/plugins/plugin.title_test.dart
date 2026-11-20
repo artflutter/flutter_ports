@@ -96,7 +96,6 @@ Object? _construct(List<Object?> args) => jsConstruct(Title.jsClass, args);
 Chart _lineWithoutTitle() => acquireChartRoot(
   ChartConfigLowering(
     const ChartConfig(
-      type: ChartKind.line,
       labels: ['a', 'b'],
       datasets: [
         LineDataset(data: [1, 2]),
@@ -113,7 +112,6 @@ Chart _lineWithoutTitle() => acquireChartRoot(
 Chart _line(ChartTitle title) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.line,
       labels: const ['a', 'b'],
       datasets: const [
         LineDataset(data: [1, 2]),

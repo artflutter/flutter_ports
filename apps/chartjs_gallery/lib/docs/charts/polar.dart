@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The polar area chart of `docs/charts/polar.md:7-43`, with each key and
 /// value of the docs block.
 ChartConfig polarAreaConfig() => const ChartConfig(
-  type: .polarArea,
   labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue'],
   datasets: [
     PolarAreaDataset(

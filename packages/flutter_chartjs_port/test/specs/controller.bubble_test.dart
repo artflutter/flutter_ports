@@ -81,10 +81,7 @@ void main() {
     testWidgets('should be constructed', (tester) async {
       final chart = acquireChartRoot(
         ChartConfigLowering(
-          const ChartConfig(
-            type: ChartKind.bubble,
-            datasets: [BubbleDataset(points: [])],
-          ),
+          const ChartConfig(datasets: [BubbleDataset(points: [])]),
         ).lower(),
       );
 
@@ -104,10 +101,7 @@ void main() {
       (tester) async {
         final chart = acquireChartRoot(
           ChartConfigLowering(
-            const ChartConfig(
-              type: ChartKind.bubble,
-              datasets: [BubbleDataset(points: [])],
-            ),
+            const ChartConfig(datasets: [BubbleDataset(points: [])]),
           ).lower(),
         );
 
@@ -124,7 +118,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.bubble,
               datasets: [
                 BubbleDataset(
                   extra: {
@@ -150,7 +143,6 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           const ChartConfig(
-            type: ChartKind.bubble,
             datasets: [
               BubbleDataset(
                 extra: {
@@ -183,7 +175,6 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           ChartConfig(
-            type: ChartKind.bubble,
             datasets: [
               BubbleDataset(
                 points: [
@@ -278,7 +269,6 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           ChartConfig(
-            type: ChartKind.bubble,
             datasets: [
               BubbleDataset(
                 points: [
@@ -335,7 +325,6 @@ void main() {
         chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.bubble,
               datasets: [
                 BubbleDataset(
                   points: [
@@ -494,7 +483,6 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           ChartConfig(
-            type: ChartKind.bubble,
             datasets: [
               BubbleDataset(
                 points: [

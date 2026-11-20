@@ -62,7 +62,6 @@ String? _typeValue(TooltipItem item) =>
     '${_types[item.datasetIndex]}: ${item.raw}';
 
 final ChartConfig _config = ChartConfig(
-  type: .radar,
   labels: _indexes,
   datasets: [
     // `BasicLineShape(loop: true)` in a `PolarCoord` is a radar line.

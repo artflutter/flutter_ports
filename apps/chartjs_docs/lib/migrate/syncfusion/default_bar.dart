@@ -19,7 +19,6 @@ BarDataset _arrivals(String year, Color color, int order, List<num> data) =>
     );
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   indexAxis: const YAxis(),
   labels: const ['France', 'Spain', 'US', 'Italy', 'Mexico', 'UK'],
   datasets: [

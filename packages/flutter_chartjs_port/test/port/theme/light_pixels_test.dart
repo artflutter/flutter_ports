@@ -89,7 +89,6 @@ Chart _chart(String type, {required bool colors, ChartOptionsScope? theme}) {
   }
 
   final config = ChartConfig(
-    type: ChartKind(type),
     labels: const ['alpha', 'beta', 'gamma'],
     datasets: [for (var d = 0; d < 2; d++) dataset(d)],
     title: const ChartTitle(display: true, text: ['Title']),

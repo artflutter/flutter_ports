@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion bar-data-points
 final pointsBar = ChartConfig(
-  type: .bar,
   datasets: [
     BarDataset(
       label: 'A label and a value for each item',

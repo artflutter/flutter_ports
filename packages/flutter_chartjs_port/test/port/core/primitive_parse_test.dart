@@ -90,7 +90,6 @@ ChartConfigurationScope _config({
   final value = LinearAxis(stacked: mode, extra: {'type': linear});
   final root = ChartConfigLowering(
     ChartConfig(
-      type: ChartKind(type),
       datasets: [
         dataset(values ?? <Object?>[1, -0.0, -2.0, 4]),
         if (stacked) dataset(<Object?>[2, 3, 4, 5]),

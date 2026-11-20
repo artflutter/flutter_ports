@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion sample
 const basic = ChartConfig(
-  type: .line,
   labels: months,
   datasets: [LineDataset(label: 'Sales', data: sales)],
 );

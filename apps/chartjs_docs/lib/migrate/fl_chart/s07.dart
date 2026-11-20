@@ -22,7 +22,6 @@ const _months = [
 
 final ChartConfig _config = fills(
   ChartConfig(
-    type: .line,
     labels: _months,
     datasets: [
       LineDataset(

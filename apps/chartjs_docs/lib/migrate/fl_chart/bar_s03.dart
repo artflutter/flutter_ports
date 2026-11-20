@@ -52,7 +52,6 @@ class _BarSample3State() extends State<BarSample3> {
 
   ChartConfig _config() => flBars(
     ChartConfig(
-      type: .bar,
       labels: _days,
       datasets: [
         BarDataset(

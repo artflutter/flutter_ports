@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The bubble chart of `docs/charts/bubble.md:5-36`, with each key and
 /// value of the docs block.
 ChartConfig bubbleConfig() => ChartConfig(
-  type: .bubble,
   datasets: [
     BubbleDataset(
       label: 'First Dataset',

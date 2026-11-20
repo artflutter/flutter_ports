@@ -999,7 +999,9 @@ repository.
     stops a debug build (row `adapt-animation-option-types`). The port has no animation option
     `type`: the Dart type of the start value selects the interpolator (row
     `adapt-color-animation-by-value`). In the tests, `animationSpecOf` of
-    `test/support/animation_spec_input.dart` gives the `AnimationSpec` of an upstream cfg. `config.dart` has `ChartConfig` and `ChartKind`; its
+    `test/support/animation_spec_input.dart` gives the `AnimationSpec` of an upstream cfg. `config.dart` has `ChartConfig` and `ChartKind`. `ChartConfig` has no `type` parameter: the
+    getter `type` gives the `kind` of the first dataset, and the lowering asserts one dataset at
+    least (Chart.js ADR 0190); a test controller takes `TestDataset` of `test/support/test_dataset.dart`. Its
     `indexAxis` takes a `CartesianAxis` of the core. `datasets.dart` has the 8 dataset classes under `abstract base class Dataset`
     (Chart.js ADR 0189): a package extends it with the `@protected` members `kind`, `chartData`,
     `lowerOwn` and `props`, and `Dataset` has no `copyWith` (the tests call `BuiltInDatasetCopy` of

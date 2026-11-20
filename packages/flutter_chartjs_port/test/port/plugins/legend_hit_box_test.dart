@@ -171,7 +171,6 @@ void main() {
   ) async {
     LegendItem? clicked;
     final config = ChartConfig(
-      type: ChartKind.bar,
       labels: const ['x'],
       datasets: const [
         BarDataset(label: 'one', data: [1]),

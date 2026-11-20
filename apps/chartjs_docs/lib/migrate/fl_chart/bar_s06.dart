@@ -82,7 +82,6 @@ final Plugin<Object?> _extraLines = Plugin(
 
 final ChartConfig _config = flBars(
   ChartConfig(
-    type: .bar,
     labels: _months,
     datasets: [
       for (var activity = 0; activity < 3; activity++)

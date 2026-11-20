@@ -79,7 +79,6 @@ class _VotesPageState() extends State<VotesPage> {
           // gives an equal config and no update.
           ChartView(
             config: ChartConfig(
-              type: .bar,
               labels: const [
                 'Red',
                 'Blue',

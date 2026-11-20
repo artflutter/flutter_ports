@@ -26,7 +26,6 @@ BarDataset _series(
 );
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: const ['France', 'United Kingdom', 'Italy'],
   datasets: [
     _series('2014', Sf.blue, 0.7, 2, const [66316092, 64613160, 60789140]),

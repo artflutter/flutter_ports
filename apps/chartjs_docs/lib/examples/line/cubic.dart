@@ -14,7 +14,6 @@ const Color blue = Color.fromRGBO(54, 162, 235, 1);
 
 // #docregion cubic
 const cubicLines = ChartConfig(
-  type: .line,
   labels: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
   datasets: [
     LineDataset(

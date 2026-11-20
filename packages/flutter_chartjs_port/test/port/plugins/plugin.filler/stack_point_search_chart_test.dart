@@ -16,7 +16,6 @@ void main() {
     tester,
   ) async {
     final config = ChartConfig(
-      type: ChartKind.line,
       labels: [for (var i = 0; i < 64; i++) '$i'],
       datasets: [
         for (var k = 0; k < 3; k++)

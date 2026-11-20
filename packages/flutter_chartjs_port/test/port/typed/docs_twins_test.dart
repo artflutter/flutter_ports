@@ -164,7 +164,6 @@ Map<String, Object?> _barVerticalRaw() => <String, Object?>{
 
 /// The typed `bar.md:5-54`.
 ChartConfig _barVerticalTyped() => ChartConfig(
-  type: .bar,
   labels: _months,
   datasets: [
     BarDataset(
@@ -204,7 +203,6 @@ Map<String, Object?> _barHorizontalRaw() => <String, Object?>{
 /// The typed `bar.md:304-351`, without the keys `axis` and `fill` that
 /// Chart.js does not read for a bar dataset.
 ChartConfig _barHorizontalTyped() => ChartConfig(
-  type: .bar,
   labels: _months,
   datasets: [
     BarDataset(
@@ -243,7 +241,6 @@ Map<String, Object?> _bubbleRaw() => <String, Object?>{
 
 /// The typed `bubble.md:5-36`.
 ChartConfig _bubbleTyped() => ChartConfig(
-  type: .bubble,
   datasets: [
     BubbleDataset(
       label: 'First Dataset',
@@ -280,7 +277,6 @@ Map<String, Object?> _doughnutRaw() => <String, Object?>{
 
 /// The typed `doughnut.md:15-47`.
 ChartConfig _doughnutTyped() => const ChartConfig(
-  type: .doughnut,
   labels: ['Red', 'Blue', 'Yellow'],
   datasets: [
     DoughnutDataset(
@@ -305,7 +301,6 @@ Map<String, Object?> _pieRaw() => <String, Object?>{
 
 /// The typed `doughnut.md:53-85`.
 ChartConfig _pieTyped() => const ChartConfig(
-  type: .pie,
   labels: ['Red', 'Blue', 'Yellow'],
   datasets: [
     PieDataset(
@@ -343,7 +338,6 @@ Map<String, Object?> _lineRaw() => <String, Object?>{
 
 /// The typed `line.md:5-31`.
 ChartConfig _lineTyped() => const ChartConfig(
-  type: .line,
   labels: _months,
   datasets: [
     LineDataset(
@@ -385,7 +379,6 @@ Map<String, Object?> _lineVerticalRaw() => <String, Object?>{
 /// The typed `line.md:233-285`, without the key `axis` that Chart.js does
 /// not read.
 ChartConfig _lineVerticalTyped() => ChartConfig(
-  type: .line,
   labels: _months,
   datasets: [
     LineDataset(
@@ -442,7 +435,6 @@ Map<String, Object?> _mixedRaw() => <String, Object?>{
 /// The typed `mixed.md:27-70`: a scatter chart with a bar and a line
 /// dataset.
 ChartConfig _mixedTyped() => const ChartConfig(
-  type: .scatter,
   labels: ['January', 'February', 'March', 'April'],
   datasets: [
     BarDataset(
@@ -488,7 +480,6 @@ Map<String, Object?> _polarAreaRaw() => <String, Object?>{
 
 /// The typed `polar.md:7-43`.
 ChartConfig _polarAreaTyped() => const ChartConfig(
-  type: .polarArea,
   labels: ['Red', 'Green', 'Yellow', 'Grey', 'Blue'],
   datasets: [
     PolarAreaDataset(
@@ -577,7 +568,6 @@ Map<String, Object?> _radarRaw() => <String, Object?>{
 
 /// The typed `radar.md:7-61`, with `FillTarget.toOrigin` for `fill: true`.
 ChartConfig _radarTyped() => const ChartConfig(
-  type: .radar,
   labels: [
     'Eating',
     'Drinking',
@@ -650,7 +640,6 @@ Map<String, Object?> _scatterRaw() => <String, Object?>{
 
 /// The typed `scatter.md:5-47`.
 ChartConfig _scatterTyped() => ChartConfig(
-  type: .scatter,
   datasets: [
     ScatterDataset(
       label: 'Scatter Dataset',
@@ -724,7 +713,6 @@ List<String> _areaTitleText(String name) => ['Fill: $name'];
 /// The typed Area config at the fill [fill], with the constant title
 /// [title].
 ChartConfig _areaTyped(FillTarget fill, String title) => ChartConfig(
-  type: .line,
   labels: _areaMonths,
   datasets: [
     LineDataset(
@@ -843,7 +831,6 @@ Object? _rawBarLabel(TooltipItem item) =>
 /// linear axis with ticks, grids, a title and a tick format, the legend,
 /// the title, the tooltip with a label text and the padding.
 ChartConfig _barTyped() => ChartConfig(
-  type: .bar,
   labels: const ['Q1', 'Q2', 'Q3', 'Q4'],
   datasets: const [
     BarDataset(
@@ -1094,7 +1081,6 @@ Map<String, Object?> _barRaw() => <String, Object?>{
 /// subtitle, the legend with point styles, the animation, the filler and the
 /// aspect ratio.
 ChartConfig _lineTypeTyped() => const ChartConfig(
-  type: .line,
   labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   datasets: [
     LineDataset(
@@ -1271,7 +1257,6 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
 /// axis, a line with a value fill, a dashed line with no points and the
 /// tooltip format.
 ChartConfig _scatterTypeTyped() => ChartConfig(
-  type: .scatter,
   datasets: [
     ScatterDataset(
       label: 'Readings',
@@ -1390,7 +1375,6 @@ Map<String, Object?> _scatterTypeRaw() => <String, Object?>{
 /// dataset whose points take the radius of the dataset, with the Lists of
 /// colors and two linear axes.
 ChartConfig _bubbleTypeTyped() => ChartConfig(
-  type: .bubble,
   datasets: [
     BubbleDataset(
       label: 'Cities',
@@ -1506,7 +1490,6 @@ Object? _rawBudgetFooter(Object? items) =>
 /// the circumference, the legend at the right and the tooltip with a body
 /// style and a footer text.
 ChartConfig _pieTypeTyped() => ChartConfig(
-  type: .pie,
   labels: const ['Rent', 'Food', 'Travel', 'Other'],
   datasets: const [
     PieDataset(
@@ -1602,7 +1585,6 @@ Map<String, Object?> _pieTypeRaw() => <String, Object?>{
 /// radius in pixels, the spacing and the hover border, the title at the
 /// bottom, the arc element style and the animation with a delay.
 ChartConfig _doughnutTypeTyped() => const ChartConfig(
-  type: .doughnut,
   labels: ['Done', 'Open', 'Blocked'],
   datasets: [
     DoughnutDataset(
@@ -1715,7 +1697,6 @@ Map<String, Object?> _doughnutTypeRaw() => <String, Object?>{
 /// start angle, ticks, a grid and the point labels, and the legend at the
 /// left.
 ChartConfig _polarAreaTypeTyped() => const ChartConfig(
-  type: .polarArea,
   labels: ['N', 'E', 'S', 'W', 'C'],
   datasets: [
     PolarAreaDataset(
@@ -1823,7 +1804,6 @@ Object? _rawRadarTitle(List<TooltipItem> items) =>
 /// the angle lines and the point labels, the point and line element styles
 /// and the tooltip with a title text.
 ChartConfig _radarTypeTyped() => ChartConfig(
-  type: .radar,
   labels: const ['Speed', 'Power', 'Range', 'Comfort', 'Price', 'Safety'],
   datasets: const [
     RadarDataset(

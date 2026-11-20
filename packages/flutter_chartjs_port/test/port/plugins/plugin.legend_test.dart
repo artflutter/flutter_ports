@@ -286,7 +286,6 @@ ChartConfigurationScope _mapLine(Object? legendOptions) =>
 /// [legend].
 ChartConfig _config([ChartLegend? legend, Map<String, Object?>? extra]) =>
     ChartConfig(
-      type: ChartKind.line,
       labels: const ['a', 'b'],
       datasets: const [
         LineDataset(label: 'one', data: [1, 2]),

@@ -115,7 +115,6 @@ Chart _acquireWhenChart(Map<String, Object?> setup) {
       [LineDataset(points: setup['dataset']! as List<DataPoint>)];
   return _acquire(
     ChartConfig(
-      type: ChartKind.line,
       datasets: datasets,
       scales: {
         'x': axisAt(ChartPosition.bottom),
@@ -162,7 +161,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(yAxisID: 'y', data: [42, 1000, 64, 100]),
             BarDataset(yAxisID: 'y1', data: [10, 5, 5000, 78, 450]),
@@ -286,7 +284,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(yAxisID: 'y1', data: [10, 5, 5000, 78, 450]),
               LineDataset(yAxisID: 'y', data: [42, 1000, 64, 100]),
@@ -428,7 +425,6 @@ void main() {
     ) async {
       final chart = _acquire(
         ChartConfig(
-          type: ChartKind.line,
           datasets: [
             LineDataset(
               points: [
@@ -459,7 +455,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(
                 points: [
@@ -491,7 +486,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(yAxisID: 'y', data: [10, 5, 1, 5, 78, 100]),
               BarDataset(yAxisID: 'y1', data: [0, 1000]),
@@ -517,7 +511,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(yAxisID: 'y', data: [10, 5, 1, 5, 78, 100]),
               BarDataset(yAxisID: 'y1', data: [0, 1000]),
@@ -546,7 +539,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [BarDataset(data: [])],
             labels: [],
             scales: {'y': LogarithmicAxis()},
@@ -567,7 +559,6 @@ void main() {
     testWidgets('should use the min and max options', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
@@ -593,7 +584,6 @@ void main() {
     testWidgets('should ignore negative min and max options', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
@@ -645,7 +635,6 @@ void main() {
     testWidgets('should generate tick marks', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [10, 5, 2, 25, 78]),
           ],
@@ -692,7 +681,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [11, 0.8, 0, 28, 7]),
           ],
@@ -738,7 +726,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(data: [10, 5, 1, 25, 78]),
             ],
@@ -771,7 +758,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(data: [21, 9, 0, 10, 25]),
             ],
@@ -803,7 +789,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           datasets: [
             LineDataset(data: [10, 5, 1.1, 25, 0, 78]),
           ],
@@ -826,7 +811,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(data: [10, 5, 2, 25, 78]),
           ],
@@ -864,7 +848,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(yAxisID: 'y', data: [10, 5, 5000, 78, 450]),
             BarDataset(yAxisID: 'y1', data: [1, 1000, 10, 100]),
@@ -886,7 +869,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(yAxisID: 'y', data: [10, 5, 5000, 78, 450]),
             BarDataset(yAxisID: 'y1', data: [1, 1000, 10, 100]),
@@ -1009,7 +991,6 @@ void main() {
           testWidgets('should define the correct axis limits', (tester) async {
             final chart = _acquire(
               ChartConfig(
-                type: ChartKind.bar,
                 labels: const ['category 1', 'category 2'],
                 datasets: setup['data'] as List<Dataset>? ?? data,
                 indexAxis: indexAxis,
@@ -1320,7 +1301,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.bar,
             datasets: [BarDataset(yAxisID: 'y', data: [])],
             labels: ['a', 'b', 'c', 'd', 'e', 'f'],
             scales: {'y': LogarithmicAxis(suggestedMin: 10, suggestedMax: 100)},
@@ -1336,7 +1316,6 @@ void main() {
     testWidgets('Should bound to data', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           labels: ['a', 'b'],
           datasets: [
             LineDataset(data: [1.1, 99]),

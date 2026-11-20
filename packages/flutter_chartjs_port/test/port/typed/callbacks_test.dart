@@ -407,7 +407,6 @@ void main() {
       ChartTooltip? tooltip,
       Map<String, ChartAxis>? scales,
     }) => ChartConfig(
-      type: .bar,
       labels: const ['a', 'b', 'c'],
       datasets: const [
         BarDataset(label: 'A', data: [1, 2, 3]),
@@ -607,8 +606,7 @@ void main() {
       final details = <IAnimationEvent>[];
       final lowering = ChartConfigLowering(
         ChartConfig(
-          type: .bar,
-          datasets: const [],
+          datasets: const [BarDataset()],
           animation: ChartAnimation(onComplete: details.add),
         ),
       );

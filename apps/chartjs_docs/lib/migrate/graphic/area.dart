@@ -29,7 +29,6 @@ String? _date(List<TooltipItem> items) =>
 String? _value(TooltipItem item) => 'Close: ${_close(item.dataIndex)}';
 
 final ChartConfig _config = ChartConfig(
-  type: .line,
   labels: [for (final day in invalidData) day.date],
   datasets: [
     LineDataset(

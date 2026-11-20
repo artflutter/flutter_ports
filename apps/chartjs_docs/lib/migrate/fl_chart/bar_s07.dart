@@ -135,7 +135,6 @@ class _BarSample7State() extends State<BarSample7> {
     );
     return flBars(
       ChartConfig(
-        type: .bar,
         indexAxis: horizontal ? const YAxis() : const XAxis(),
         datasets: [
           // A half turn or more puts the shadow bar first in the group.

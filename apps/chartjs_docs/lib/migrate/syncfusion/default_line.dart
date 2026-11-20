@@ -58,7 +58,6 @@ String? _tooltipLabel(TooltipItem item) {
 }
 
 final ChartConfig _config = ChartConfig(
-  type: .line,
   datasets: [
     _series('Germany', _germany, const [21, 24, 36, 38, 54, 57, 70]),
     _series('England', _england, const [28, 44, 48, 50, 66, 78, 84]),

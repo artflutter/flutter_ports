@@ -1154,7 +1154,6 @@ void main() {
 
     test('a typed config takes the plan', () {
       const config = ChartConfig(
-        type: ChartKind.polarArea,
         labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
         datasets: [
           PolarAreaDataset(
@@ -1726,7 +1725,6 @@ void main() {
       test('a typed config takes the plan on a data-only tick', () {
         // The polar area of the benchmark lab, with a fixed size.
         ChartConfig config(List<double> values) => ChartConfig(
-          type: ChartKind.polarArea,
           labels: const ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
           datasets: [
             PolarAreaDataset(

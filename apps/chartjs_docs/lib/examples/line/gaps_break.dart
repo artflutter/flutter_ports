@@ -39,11 +39,7 @@ void main() {
           padding: EdgeInsets.all(16),
           child: Center(
             child: ChartView(
-              config: ChartConfig(
-                type: .line,
-                labels: months,
-                datasets: [brokenLine],
-              ),
+              config: ChartConfig(labels: months, datasets: [brokenLine]),
             ),
           ),
         ),

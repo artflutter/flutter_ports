@@ -26,7 +26,6 @@ ChartConfig _config(int count, {required bool shown}) {
     extra: const {'maxTicksLimit': 5},
   );
   return ChartConfig(
-    type: ChartKind.bar,
     animation: ChartAnimation.none,
     datasets: [
       for (var k = 0; k < 3; k++)

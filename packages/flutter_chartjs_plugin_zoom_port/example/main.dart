@@ -81,7 +81,6 @@ class _ZoomPageState() extends State<ZoomPage> {
         children: [
           ChartView(
             config: ChartConfig(
-              type: .line,
               datasets: [
                 LineDataset(
                   label: 'Signal',

@@ -157,7 +157,6 @@ List<ChartConfig> _configs() {
   final points = [DataPoint(1, 2)];
   return [
     ChartConfig(
-      type: .bar,
       labels: const ['a', 'b'],
       datasets: [
         BarDataset(
@@ -409,7 +408,6 @@ List<ChartConfig> _configs() {
       plugins: const [],
     ),
     ChartConfig(
-      type: .doughnut,
       labels: const ['a', 'b'],
       datasets: [
         for (final dataset in [
@@ -440,7 +438,6 @@ List<ChartConfig> _configs() {
       ],
     ),
     ChartConfig(
-      type: .polarArea,
       labels: const ['a', 'b'],
       datasets: [
         PolarAreaDataset(data: data, offset: 1, hoverOffset: 2, spacing: 1),
@@ -466,7 +463,6 @@ List<ChartConfig> _configs() {
       },
     ),
     ChartConfig(
-      type: .radar,
       labels: const ['a', 'b'],
       datasets: [
         RadarDataset(

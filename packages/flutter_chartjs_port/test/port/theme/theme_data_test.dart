@@ -249,7 +249,6 @@ final class _Event(
 Chart _scatter(Object? theme) {
   final root = ChartConfigLowering(
     ChartConfig(
-      type: ChartKind.scatter,
       datasets: [
         ScatterDataset(
           points: [DataPoint(0, 0), DataPoint(5, 5), DataPoint(10, 10)],

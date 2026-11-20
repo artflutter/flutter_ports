@@ -11,6 +11,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/test_dataset.dart';
 import '../canvas/path2d_record.dart';
 import 'scale_chart_harness.dart';
 
@@ -109,10 +110,7 @@ List<List<Object?>> _upstreamBar({
 Chart _chart(List<DataPoint> points) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: const ChartKind('harnessTest'),
-      datasets: [
-        LineDataset(points: points, extra: const {'type': 'harnessTest'}),
-      ],
+      datasets: [TestDataset(const ChartKind('harnessTest'), points: points)],
     ),
   ).lower(),
 );

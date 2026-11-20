@@ -28,7 +28,6 @@ BarDataset _medals(
 );
 
 ChartConfig _config(double width, double spacing) => ChartConfig(
-  type: .bar,
   labels: const ['Norway', 'USA', 'Germany', 'Canada', 'Netherlands'],
   datasets: [
     _medals('Gold', _gold, const [16, 8, 12, 4, 8], width, spacing),

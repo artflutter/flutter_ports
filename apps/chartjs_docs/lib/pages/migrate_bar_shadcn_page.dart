@@ -47,7 +47,7 @@ DocPageContent shadcnBarMigrationPage() => migrationPage(
     ),
     (
       Text('<BarChart data={chartData}>'),
-      DocText('`ChartConfig(type: .bar, labels: ...)`'),
+      DocText('`ChartConfig( labels: ...)`'),
     ),
     (
       Text('<Bar dataKey="desktop" fill="var(--color-desktop)" />'),

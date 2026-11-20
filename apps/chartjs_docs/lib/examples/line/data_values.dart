@@ -11,7 +11,6 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 
 // #docregion data-values
 const valuesLine = ChartConfig(
-  type: .line,
   labels: ['Mon', 'Tue', 'Wed', 'Thu'],
   datasets: [
     LineDataset(

@@ -28,7 +28,6 @@ const Color tealFill = Color.fromRGBO(75, 192, 192, 0.25);
 // #docregion bar-border-skipped
 // A BorderSkippedEdge, false or true.
 ChartConfig borderSkipped(Object skipped) => ChartConfig(
-  type: .bar,
   labels: months,
   datasets: [
     BarDataset(

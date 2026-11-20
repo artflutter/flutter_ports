@@ -8,6 +8,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/test_dataset.dart';
 import 'scale_category_reference.dart';
 import 'scale_chart_harness.dart';
 
@@ -311,11 +312,10 @@ final Map<String, Object?> _functions = {
 Chart _abcChart([Map<String, ChartAxis>? scales]) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: const ChartKind('categoryTest'),
       // Category parsing adds labels to this list in several cases.
       labels: List<Object>.of(const ['A', 'B', 'C']),
       datasets: const [
-        LineDataset(data: [1.0, 3.0, 2.0], extra: {'type': 'categoryTest'}),
+        TestDataset(ChartKind('categoryTest'), data: [1.0, 3.0, 2.0]),
       ],
       scales: scales,
     ),
@@ -326,11 +326,10 @@ Chart _abcChart([Map<String, ChartAxis>? scales]) => acquireChartRoot(
 Chart _labelsChart(List<Object?> labels, Object? x) {
   final root = ChartConfigLowering(
     ChartConfig(
-      type: const ChartKind('categoryTest'),
       datasets: [
-        LineDataset(
+        TestDataset(
+          const ChartKind('categoryTest'),
           extra: {
-            'type': 'categoryTest',
             'data': <Object?>[
               <String, Object?>{'x': x, 'y': 1.0},
             ],

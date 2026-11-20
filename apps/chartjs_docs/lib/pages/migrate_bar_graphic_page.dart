@@ -66,7 +66,7 @@ DocPageContent graphicBarMigrationPage() => migrationPage(
   mapping: const [
     (
       Text('Chart(data:, variables:, marks: [IntervalMark()])'),
-      DocText('`ChartView(config: ChartConfig(type: .bar, ...))`'),
+      DocText('`ChartView(config: ChartConfig( ...))`'),
     ),
     (Text('IntervalMark'), DocText('`BarDataset`')),
     (Text("Varset('genre') * Varset('sold')"), DocText('`labels` and `data`')),

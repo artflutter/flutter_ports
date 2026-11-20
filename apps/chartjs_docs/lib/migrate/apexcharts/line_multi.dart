@@ -19,7 +19,6 @@ LineDataset _series(String name, Color color, List<num> values) => LineDataset(
 );
 
 ChartConfig _config(ApexZoom zoom) => ChartConfig(
-  type: .line,
   labels: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
   datasets: [
     _series('Team A', Apex.blue, const [31, 40, 28, 51, 42, 109, 100]),

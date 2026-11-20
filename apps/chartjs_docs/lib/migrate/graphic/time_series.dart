@@ -42,7 +42,6 @@ String? _sales(TooltipItem item) =>
     'sales: ${timeSeriesSales[item.dataIndex].sales}';
 
 final ChartConfig _config = ChartConfig(
-  type: .line,
   labels: _ticks,
   datasets: [
     LineDataset(

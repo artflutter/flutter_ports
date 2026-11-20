@@ -39,7 +39,6 @@ void main() {
             final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
             chart = _acquire(
               ChartConfig(
-                type: ChartKind.line,
                 datasets: [LineDataset(points: points())],
                 scales: const {
                   'x': LinearAxis(min: 0, max: 10),
@@ -97,7 +96,6 @@ void main() {
       // charts of the group. The function gives a new object for each
       // chart, as `data`.
       ChartConfig config() => ChartConfig(
-        type: ChartKind.line,
         datasets: [LineDataset(points: points())],
         scales: const {'x': LinearAxis(min: 1, max: 10), 'y': LinearAxis()},
         pluginOptions: const [
@@ -183,7 +181,6 @@ void main() {
     group('with scaleMode = y and mode = xy', () {
       // zoom.wheel.spec.js:173 `const config = {...}`, as above.
       ChartConfig config() => ChartConfig(
-        type: ChartKind.line,
         datasets: [LineDataset(points: points())],
         scales: const {'x': LinearAxis(min: 1, max: 10), 'y': LinearAxis()},
         pluginOptions: const [
@@ -269,7 +266,6 @@ void main() {
         tester,
       ) async {
         const config = ChartConfig(
-          type: ChartKind.line,
           datasets: [
             LineDataset(data: [1, 10, 100, 1000, 10000]),
           ],
@@ -363,7 +359,6 @@ void main() {
     testWidgets('should respect aspectRatio when mode = xy', (tester) async {
       final chart = _acquire(
         ChartConfig(
-          type: ChartKind.line,
           datasets: [LineDataset(points: points())],
           scales: const {'x': LinearAxis(), 'y': LinearAxis()},
           pluginOptions: const [
@@ -409,7 +404,6 @@ void main() {
           final zoomCalls = <ZoomTriggerContext>[];
           final chart = _acquire(
             ChartConfig(
-              type: ChartKind.scatter,
               datasets: [ScatterDataset(points: points())],
               pluginOptions: [
                 ZoomPluginOptions(
@@ -454,7 +448,6 @@ void main() {
         final startCalls = <ZoomStartContext<NativeEvent>>[];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [ScatterDataset(points: points())],
             pluginOptions: [
               ZoomPluginOptions(
@@ -514,7 +507,6 @@ void main() {
         final rejectCalls = <ZoomEventContext<NativeEvent>>[];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [ScatterDataset(points: points())],
             pluginOptions: [
               ZoomPluginOptions(

@@ -87,7 +87,6 @@ class _Sample11State() extends State<Sample11> {
                     updateMode: UpdateMode.none,
                     config: fills(
                       ChartConfig(
-                        type: .line,
                         datasets: const [LineDataset(points: <DataPoint>[])],
                         animation: ChartAnimation.none,
                         tooltip: const ChartTooltip(enabled: false),

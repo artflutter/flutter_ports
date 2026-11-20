@@ -24,7 +24,6 @@ BarDataset _bars(String label, List<num> data, Color color) => BarDataset(
 );
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .bar,
   labels: _months,
   datasets: [
     _bars('Desktop', _desktop, Shadcn.chart1),

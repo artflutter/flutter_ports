@@ -54,7 +54,6 @@ List<String> _records(List<ParsedItem> items) => [
 ];
 
 ChartConfig _config(List<Object?> data, String? scaleType) => ChartConfig(
-  type: ChartKind.radar,
   labels: [for (var i = 0; i < data.length; i++) 'L$i'],
   datasets: [
     // The guard cases need undefined, strings and the original List type.

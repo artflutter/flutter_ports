@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// The scatter chart of `docs/charts/scatter.md:5-47`, with each key and
 /// value of the docs block.
 ChartConfig scatterConfig() => ChartConfig(
-  type: .scatter,
   datasets: [
     ScatterDataset(
       label: 'Scatter Dataset',

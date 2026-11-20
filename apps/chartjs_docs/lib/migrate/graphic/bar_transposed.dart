@@ -45,7 +45,6 @@ ChartPaint _selectedFill(ScriptableContext context) => _gradient(
 String _sold(int dataset, int index) => '${basicData[index].sold}';
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   // `RectCoord(transposed: true)`.
   indexAxis: const YAxis(),
   labels: [for (final row in basicData) row.genre],

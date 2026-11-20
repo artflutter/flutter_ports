@@ -98,7 +98,9 @@ const Map<String, _Expected> _expected = {
     aspectRatio: 2,
   ),
   'mixed.mixed': (
-    type: 'scatter',
+    // The first dataset, a bar dataset, gives the chart type (Chart.js ADR
+    // 0190): upstream docs/charts/mixed.md gives `type: 'scatter'`.
+    type: 'bar',
     controllers: [BarController, LineController],
     counts: [4, 4],
     aspectRatio: 2,

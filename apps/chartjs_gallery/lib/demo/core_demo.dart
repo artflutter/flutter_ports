@@ -208,7 +208,6 @@ class CoreDemoState() extends State<CoreDemo> {
   /// data Lists. A rebuild with the same values gives an equal config, thus
   /// no update (Chart.js ADR 0052, section 9).
   ChartConfig _config() => ChartConfig(
-    type: .line,
     datasets: [
       for (var d = 0; d < _datasetStyles.length; d++)
         LineDataset(

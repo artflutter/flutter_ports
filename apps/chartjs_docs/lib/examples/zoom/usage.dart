@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion zoom-usage
 const zoomUsage = ChartConfig(
-  type: .line,
   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
   datasets: [
     LineDataset(

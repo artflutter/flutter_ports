@@ -51,7 +51,6 @@ void main() {
         final chart = acquireChartRoot(
           (ChartConfigLowering(
               ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(points: _originalData(), label: 'dataset1'),
                 ],
@@ -80,7 +79,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 LineDataset(points: _originalData(), label: 'dataset1'),
               ],
@@ -108,7 +106,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 LineDataset(points: _originalData(), label: 'dataset1'),
               ],
@@ -137,7 +134,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.line,
               datasets: [LineDataset(points: originalData, label: 'dataset1')],
               scales: const {'x': LinearAxis(min: 3, max: 6)},
               extra: const {
@@ -175,7 +171,6 @@ void main() {
         Chart createChart() => acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.line,
               datasets: [LineDataset(points: data)],
               scales: const {'x': LinearAxis()},
               extra: const {

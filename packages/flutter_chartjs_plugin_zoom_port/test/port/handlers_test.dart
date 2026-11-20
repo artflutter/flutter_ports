@@ -42,7 +42,6 @@ final List<DataPoint> _points = [
 /// animation and the zoom options [zoom], with a legend for [legend].
 ChartConfig _config(ZoomPluginOptions zoom, {bool legend = false}) =>
     ChartConfig(
-      type: .scatter,
       datasets: [ScatterDataset(points: _points, pointRadius: 4)],
       scales: const {
         'x': LinearAxis(min: 0, max: 100),

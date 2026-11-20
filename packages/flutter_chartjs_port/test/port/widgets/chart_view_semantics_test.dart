@@ -6,7 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/semantics.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart'
-    show BarDataset, ChartAnimation, ChartConfig, ChartKind, ChartView;
+    show BarDataset, ChartAnimation, ChartConfig, ChartView;
 import 'package:flutter_test/flutter_test.dart';
 
 // Chart.js ADR 0051, section 8: the chart is one semantics node, as the
@@ -23,7 +23,6 @@ ChartConfig _config({
   bool animated = false,
   List<num?> data = const [1, 3, 2],
 }) => ChartConfig(
-  type: ChartKind.bar,
   labels: const ['a', 'b', 'c'],
   datasets: [BarDataset(label: 'd0', data: data)],
   animation: animated ? null : ChartAnimation.none,
@@ -181,14 +180,14 @@ void main() {
     expect(
       properties(
         const ChartView(
-          config: ChartConfig(type: ChartKind.bar, datasets: []),
+          config: ChartConfig(datasets: [BarDataset()]),
           semanticLabel: 'Sales',
           excludeFromSemantics: true,
         ),
       ),
       [
         'type: bar',
-        'datasets: 0',
+        'datasets: 1',
         'semanticLabel: "Sales"',
         'excluded from semantics',
       ],

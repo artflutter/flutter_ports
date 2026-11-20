@@ -127,7 +127,6 @@ class _BarSample1State() extends State<BarSample1> {
     ];
     return flBars(
       ChartConfig(
-        type: .bar,
         datasets: [
           BarDataset(
             points: [

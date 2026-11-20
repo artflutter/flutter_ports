@@ -41,7 +41,7 @@ const Color blueFill = Color.fromRGBO(54, 162, 235, 0.25);
 
 /// A chart with the one dataset [dataset] over [months].
 ChartConfig oneLine(LineDataset dataset) =>
-    ChartConfig(type: .line, labels: months, datasets: [dataset]);
+    ChartConfig(labels: months, datasets: [dataset]);
 
 /// The data of the gap examples.
 const List<num?> gapValues = [65, 59, null, 81, 56, null, 40];

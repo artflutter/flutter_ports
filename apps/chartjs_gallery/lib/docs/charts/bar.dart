@@ -40,7 +40,6 @@ const ChartValue<ChartPaint> _borders = ChartValue.indexed([
 /// The vertical bar chart of `docs/charts/bar.md:5-54`, with each key and
 /// value of the docs block.
 ChartConfig barVerticalConfig() => const ChartConfig(
-  type: .bar,
   labels: _months,
   datasets: [
     BarDataset(
@@ -58,7 +57,6 @@ ChartConfig barVerticalConfig() => const ChartConfig(
 /// dataset keys `axis` and `fill`: Chart.js reads neither of them for a bar
 /// dataset.
 ChartConfig barHorizontalConfig() => const ChartConfig(
-  type: .bar,
   labels: _months,
   datasets: [
     BarDataset(

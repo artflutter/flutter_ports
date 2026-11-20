@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion sample
 final xyPoints = ChartConfig(
-  type: .line,
   datasets: [
     LineDataset(
       label: 'An x and a y for each item',

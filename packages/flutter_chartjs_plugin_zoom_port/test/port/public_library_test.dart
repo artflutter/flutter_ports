@@ -106,7 +106,6 @@ void main() {
         home: Scaffold(
           body: ChartView(
             config: ChartConfig(
-              type: .line,
               labels: const ['a', 'b', 'c'],
               datasets: const [
                 LineDataset(data: [1, 3, 2]),

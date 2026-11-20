@@ -54,10 +54,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
     ),
   ],
   mapping: const [
-    (
-      Text('SfCartesianChart'),
-      DocText('`ChartView(config: ChartConfig(type: .bar))`'),
-    ),
+    (Text('SfCartesianChart'), DocText('`ChartView(config: ChartConfig())`')),
     (Text('ColumnSeries'), DocText('`BarDataset`')),
     (
       Text('BarSeries'),

@@ -20,7 +20,6 @@ final List<(String, List<num>, Color, num)> _series = [
 ChartConfig _config(ShadcnTip tip, int active) {
   final (_, data, color, _) = _series[active];
   return ChartConfig(
-    type: .line,
     labels: _dates,
     datasets: [
       // <Line dataKey={activeChart} type="monotone" stroke={`var(--color-${activeChart})`} ...>

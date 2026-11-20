@@ -118,7 +118,6 @@ class _Sample13State() extends State<Sample13> {
 
   ChartConfig _config() => fills(
     ChartConfig(
-      type: .line,
       datasets: [
         LineDataset(
           points: [

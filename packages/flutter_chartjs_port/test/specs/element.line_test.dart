@@ -40,7 +40,6 @@ void main() {
         chart = acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.line,
               datasets: const [
                 LineDataset(data: [0, -1, 0], label: 'dataset1'),
               ],

@@ -33,7 +33,6 @@ List<String>? _wrap(Scale scale, double value, int index, List<Tick> ticks) {
 }
 
 ChartConfig _config(double crossAt) => ChartConfig(
-  type: .bar,
   labels: _countries,
   datasets: [
     BarDataset(

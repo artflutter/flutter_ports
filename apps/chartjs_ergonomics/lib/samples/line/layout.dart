@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion sample
 const layout = ChartConfig(
-  type: .line,
   labels: months,
   datasets: [
     LineDataset(

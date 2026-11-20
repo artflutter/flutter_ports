@@ -28,7 +28,6 @@ const Color blue = Color.fromRGBO(54, 162, 235, 1);
 
 // #docregion bar-stacked
 const stackedBars = ChartConfig(
-  type: .bar,
   labels: months,
   datasets: [
     BarDataset(

@@ -235,7 +235,6 @@ ChartConfigurationScope _lineChart([Object? legendOptions]) {
 /// (the callbacks cases).
 Chart _line(ChartLegend legend) => _acquire(
   ChartConfig(
-    type: ChartKind.line,
     labels: const ['A', 'B', 'C', 'D'],
     datasets: const [
       LineDataset(data: [10, 20, 30, 100]),
@@ -314,11 +313,7 @@ void main() {
 
     testWidgets('should update bar chart correctly', (tester) async {
       final chart = _acquire(
-        ChartConfig(
-          type: ChartKind.bar,
-          datasets: _barDatasets(),
-          labels: const [],
-        ),
+        ChartConfig(datasets: _barDatasets(), labels: const []),
       );
 
       expect(
@@ -368,11 +363,7 @@ void main() {
 
     testWidgets('should update line chart correctly', (tester) async {
       final chart = _acquire(
-        const ChartConfig(
-          type: ChartKind.line,
-          datasets: _lineDatasets,
-          labels: [],
-        ),
+        const ChartConfig(datasets: _lineDatasets, labels: []),
       );
 
       expect(
@@ -384,7 +375,6 @@ void main() {
     testWidgets('should reverse correctly', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           datasets: _lineDatasets,
           labels: [],
           legend: ChartLegend(reverse: true),
@@ -400,7 +390,6 @@ void main() {
     testWidgets('should filter items', (tester) async {
       final chart = _acquire(
         ChartConfig(
-          type: ChartKind.bar,
           datasets: _barDatasets(legendHidden: true, borderRadius: 10),
           labels: const [],
           legend: ChartLegend(
@@ -455,7 +444,6 @@ void main() {
     testWidgets('should sort items', (tester) async {
       final chart = _acquire(
         ChartConfig(
-          type: ChartKind.line,
           datasets: _lineDatasets,
           labels: const [],
           legend: ChartLegend(
@@ -527,7 +515,6 @@ void main() {
     ) async {
       final chart = _acquire(
         ChartConfig(
-          type: ChartKind.line,
           datasets: [
             for (final n in [1, 2, 3])
               LineDataset(label: 'dataset$n', data: const []),
@@ -553,7 +540,6 @@ void main() {
     testWidgets('should draw legend with multiline labels', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.doughnut,
           labels: [
             'ABCDE',
             ['ABCDE', 'ABCDE'],
@@ -601,7 +587,6 @@ void main() {
     testWidgets('should draw items with a custom boxHeight', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           datasets: [LineDataset(label: 'dataset1', data: [])],
           labels: [],
           legend: ChartLegend(position: ChartPosition.right, boxHeight: 40),
@@ -619,7 +604,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(
               label: 'dataset1',
@@ -667,7 +651,6 @@ void main() {
     testWidgets('should use the borderRadius in the legend', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           datasets: [
             BarDataset(
               label: 'dataset1',
@@ -724,7 +707,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.bar,
             datasets: [
               BarDataset(
                 label: 'dataset1',
@@ -785,7 +767,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           datasets: _pointStyleDatasets,
           labels: [],
           legend: ChartLegend(usePointStyle: true),
@@ -804,7 +785,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.line,
             datasets: _pointStyleDatasets,
             labels: [],
             legend: ChartLegend(
@@ -836,7 +816,6 @@ void main() {
 
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.doughnut,
           datasets: [
             DoughnutDataset(label: 'dataset1', data: [1, 2, 3, 4]),
           ],
@@ -853,7 +832,6 @@ void main() {
     testWidgets('should not read onClick from chart options', (tester) async {
       final chart = _acquire(
         ChartConfig(
-          type: ChartKind.bar,
           labels: const ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
           datasets: const [
             BarDataset(
@@ -881,7 +859,6 @@ void main() {
     testWidgets('should read labels.color from chart options', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.bar,
           labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May'],
           datasets: [
             BarDataset(
@@ -1074,7 +1051,6 @@ void main() {
 
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             labels: const ['A', 'B', 'C', 'D'],
             datasets: const [
               LineDataset(data: [10, 20, 30, 100], label: 'dataset 1'),

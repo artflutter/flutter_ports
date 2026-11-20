@@ -18,7 +18,6 @@ BarDataset _series(String name, Color color, List<num> values) => BarDataset(
 );
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: const ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
   datasets: [
     _series('2023', Apex.blue, const [44, 55, 57, 56, 61, 58]),

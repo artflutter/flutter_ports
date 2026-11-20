@@ -1294,7 +1294,6 @@ void main() {
               excludeFromSemantics: true,
               onChartCreated: (created) => chart = created,
               config: ChartConfig(
-                type: .bubble,
                 datasets: [
                   BubbleDataset(
                     points: [
@@ -1368,7 +1367,6 @@ void main() {
         UiCanvasElement(width: 640, height: 400),
         ChartConfigLowering(
           ChartConfig(
-            type: .bubble,
             datasets: [BubbleDataset(points: points())],
             animation: ChartAnimation.none,
           ),
@@ -1379,7 +1377,6 @@ void main() {
         UiCanvasElement(width: 640, height: 400),
         ChartConfigLowering(
           ChartConfig(
-            type: .bubble,
             datasets: [BubbleDataset(points: points())],
             animation: ChartAnimation.none,
             extra: const {'parsing': false},

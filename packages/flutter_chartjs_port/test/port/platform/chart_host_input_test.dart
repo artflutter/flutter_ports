@@ -95,7 +95,6 @@ ChartConfig _config(Map<String, Object?> reference, _Logs logs) {
   final data = reference['data']! as Map<String, Object?>;
   final options = reference['options']! as Map<String, Object?>;
   return ChartConfig(
-    type: ChartKind(reference['type']! as String),
     labels: (data['labels']! as List<Object?>).cast<Object>(),
     datasets: [
       for (final dataset

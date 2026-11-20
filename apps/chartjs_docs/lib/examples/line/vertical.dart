@@ -19,7 +19,6 @@ const List<Object> months = [
 
 // #docregion vertical
 const verticalLine = ChartConfig(
-  type: .line,
   labels: months,
   indexAxis: YAxis(),
   datasets: [

@@ -6,7 +6,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
 ChartConfig _config(ApexZoom zoom) => ChartConfig(
-  type: .line,
   labels: const ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug'],
   datasets: [
     LineDataset(

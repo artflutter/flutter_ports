@@ -345,7 +345,6 @@ Chart _scatterChart({
 }) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: type,
       datasets: [
         for (var k = 0; k < datasets; k++)
           if (type == ChartKind.line)

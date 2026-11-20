@@ -224,7 +224,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [10, 5, 0, -5, 78, -100]),
             RadarDataset(data: [150]),
@@ -377,8 +376,7 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.radar,
-            datasets: [],
+            datasets: [RadarDataset()],
             labels: [],
             scales: {'rScale': RadialLinearAxis()},
           ),
@@ -396,7 +394,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
@@ -412,7 +409,6 @@ void main() {
     testWidgets('Should use the min and max options', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [1, 1, 1, 2, 1, 0]),
           ],
@@ -435,7 +431,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.radar,
             datasets: [
               RadarDataset(data: [20, 30, 40, 50]),
             ],
@@ -487,7 +482,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.radar,
             datasets: [
               RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
@@ -512,7 +506,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [0.5, 1.5, 2.5]),
           ],
@@ -557,7 +550,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
@@ -589,7 +581,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
@@ -650,7 +641,6 @@ void main() {
       final chart =
           _acquire(
               const ChartConfig(
-                type: ChartKind.polarArea,
                 datasets: [
                   PolarAreaDataset(data: [10, 5, 0, 25, 78, 20]),
                 ],
@@ -675,7 +665,6 @@ void main() {
     testWidgets('should correctly set the center point', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
@@ -696,7 +685,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
@@ -714,7 +702,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
@@ -744,7 +731,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.radar,
             datasets: [
               RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
@@ -772,7 +758,6 @@ void main() {
     testWidgets('should correctly get angles for all points', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.radar,
           datasets: [
             RadarDataset(data: [10, 5, 0, 25, 78]),
           ],
@@ -812,7 +797,6 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.radar,
             datasets: [
               RadarDataset(data: [10, 5, 0, 25, 78]),
             ],
@@ -871,7 +855,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.polarArea,
           datasets: [
             PolarAreaDataset(data: [10, 5, 0, 25, 78]),
           ],

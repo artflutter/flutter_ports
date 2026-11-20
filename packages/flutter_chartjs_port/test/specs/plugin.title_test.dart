@@ -307,7 +307,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 LineDataset(data: [10, 20, 30, 100]),
               ],
@@ -328,8 +327,7 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
-              datasets: [],
+              datasets: [LineDataset()],
               title: ChartTitle(
                 fullSize: true,
                 position: ChartPosition.top,
@@ -361,7 +359,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 LineDataset(data: [10, 20, 30, 100]),
               ],
@@ -384,7 +381,6 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(data: [10, 20, 30, 100]),
                 ],

@@ -65,7 +65,6 @@ ChartConfigurationScope _config({
   int datasets = 1,
 }) => ChartConfigLowering(
   ChartConfig(
-    type: ChartKind.scatter,
     datasets: [
       for (var d = 0; d < datasets; d++)
         ScatterDataset(

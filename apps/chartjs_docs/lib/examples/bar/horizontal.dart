@@ -39,7 +39,6 @@ const List<Object> months = [
 
 // #docregion bar-horizontal
 const horizontalBar = ChartConfig(
-  type: .bar,
   labels: months,
   indexAxis: YAxis(),
   datasets: [

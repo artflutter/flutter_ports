@@ -18,7 +18,6 @@ const _fills = <ChartPaint>[
 ];
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .bar,
   indexAxis: const YAxis(),
   labels: _browsers,
   datasets: const [

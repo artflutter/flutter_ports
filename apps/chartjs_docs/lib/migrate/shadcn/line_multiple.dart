@@ -26,7 +26,6 @@ LineDataset _line(String label, List<num> data, Color color) => LineDataset(
 );
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .line,
   labels: _months,
   datasets: [
     _line('Desktop', _desktop, Shadcn.chart1),

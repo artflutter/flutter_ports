@@ -85,7 +85,6 @@ ChartPaint _blue(ScriptableContext context) =>
     const ChartPaint.solid(Color(0xff0000ff));
 
 ChartConfig config({ChartScript<ChartPaint> color = _blue}) => ChartConfig(
-  type: ChartKind.line,
   datasets: [
     LineDataset(
       points: [for (var i = 0; i < 8; i++) DataPoint(i, i)],

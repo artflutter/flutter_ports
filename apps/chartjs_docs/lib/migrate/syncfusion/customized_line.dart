@@ -71,7 +71,6 @@ List<String> _noTitle(TooltipModel tooltip, List<TooltipItem> items) =>
     const [];
 
 final ChartConfig _config = ChartConfig(
-  type: .line,
   datasets: [
     // A black line on the top and the right edges, with no tooltip.
     LineDataset(

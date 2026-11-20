@@ -84,7 +84,6 @@ class _Sample10State() extends State<Sample10> {
               updateMode: UpdateMode.none,
               config: fills(
                 ChartConfig(
-                  type: .line,
                   datasets: [_line(_sin, Fl.blue), _line(_cos, Fl.pink)],
                   animation: ChartAnimation.none,
                   tooltip: const ChartTooltip(enabled: false),

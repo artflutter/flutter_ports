@@ -13,7 +13,6 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 
 // #docregion live
 ChartConfig liveLine(List<DataPoint> points) => ChartConfig(
-  type: .line,
   datasets: [
     LineDataset(
       label: 'Signal',

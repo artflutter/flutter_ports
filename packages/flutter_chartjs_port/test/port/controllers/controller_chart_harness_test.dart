@@ -10,6 +10,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/draw_recorder.dart';
+import '../../support/test_dataset.dart';
 import '../canvas/path2d_record.dart';
 import '../scales/scale_chart_harness.dart';
 import 'controller_chart_harness.dart';
@@ -44,10 +45,9 @@ ChartConfigurationScope _config({ChartAnimation? animation}) {
   final second = <num?>[2, 1, 6, 2];
   return ChartConfigLowering(
     ChartConfig(
-      type: _scaleTest,
       datasets: [
-        LineDataset(data: first, extra: {'type': _scaleTest.name}),
-        LineDataset(data: second, extra: {'type': _scaleTest.name}),
+        TestDataset(_scaleTest, data: first),
+        TestDataset(_scaleTest, data: second),
       ],
       labels: const ['a', 'b', 'c', 'd'],
       animation: animation,
@@ -75,7 +75,6 @@ Map<String, Object?> _mapConfig() => <String, Object?>{
 /// The config of a line chart with a title: two datasets of four points.
 ChartConfigurationScope _lineConfig() => ChartConfigLowering(
   const ChartConfig(
-    type: ChartKind.line,
     datasets: [
       LineDataset(label: 'one', data: [1, 5, 3, 4]),
       LineDataset(label: 'two', data: [2, 1, 6, 2]),

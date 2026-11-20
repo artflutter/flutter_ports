@@ -50,7 +50,6 @@ Dataset _dataset(
 
 ChartConfig _config(ChartKind type, {required double borderWidth}) =>
     ChartConfig(
-      type: type,
       labels: [for (var i = 0; i < 8; i++) 'L$i'],
       datasets: [
         _dataset(
@@ -97,7 +96,6 @@ void main() {
     ) async {
       const n = 2000;
       final config = ChartConfig(
-        type: type,
         labels: [for (var i = 0; i < n; i++) i],
         datasets: [
           _dataset(

@@ -394,9 +394,6 @@ void main() {
       backgroundColor: ChartValue.indexed(List<ChartPaint>.of([_red, _blue])),
     );
     _equal(a, b);
-    _equal(
-      ChartConfig(type: ChartKind.bar, datasets: [a]),
-      ChartConfig(type: ChartKind.bar, datasets: [b]),
-    );
+    _equal(ChartConfig(datasets: [a]), ChartConfig(datasets: [b]));
   });
 }

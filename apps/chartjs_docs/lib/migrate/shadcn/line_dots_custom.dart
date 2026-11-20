@@ -39,7 +39,6 @@ final class const GitCommitVertical() extends PointStyle {
 }
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .line,
   labels: _months,
   datasets: const [
     LineDataset(

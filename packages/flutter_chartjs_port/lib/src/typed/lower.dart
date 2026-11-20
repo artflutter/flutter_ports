@@ -100,6 +100,7 @@ final class ChartConfigLowering(
   /// The new scopes become the live scopes of the next [apply].
   ChartConfigurationScope lower() {
     final config = this.config;
+    assert(config.datasets.isNotEmpty, _noDatasetMessage);
     assert(
       _duplicateKey(config.datasets) == null,
       _duplicateKeyMessage(config.datasets),
@@ -160,6 +161,7 @@ final class ChartConfigLowering(
       _lastApplyDataOnly = false;
       return _root;
     }
+    assert(next.datasets.isNotEmpty, _noDatasetMessage);
     assert(
       _duplicateKey(next.datasets) == null,
       _duplicateKeyMessage(next.datasets),
@@ -322,6 +324,12 @@ String _duplicateKeyMessage(List<Dataset> datasets) =>
     'Two datasets of the ChartConfig have the key '
     '${_duplicateKey(datasets)}. A key is the identity of a dataset from one '
     'config to the next: give each dataset its own key.';
+
+/// The message of a [ChartConfig] with no dataset (Chart.js ADR 0190).
+const String _noDatasetMessage =
+    'A ChartConfig needs at least one dataset: the class of the first '
+    'dataset gives the chart type. For a chart with no data yet, give a '
+    'dataset with no data, for example LineDataset(data: []).';
 
 /// The newest typed dataset of one live dataset scope: the tooltip
 /// callback trampolines of its scope read their callbacks from it.

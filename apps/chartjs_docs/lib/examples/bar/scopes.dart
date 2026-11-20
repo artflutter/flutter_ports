@@ -28,7 +28,6 @@ const Color tealFill = Color.fromRGBO(75, 192, 192, 0.25);
 
 // #docregion bar-scopes
 const scopedBar = ChartConfig(
-  type: .bar,
   labels: months,
   // For this dataset only.
   datasets: [

@@ -198,7 +198,7 @@ const List<DocProperty> barProperties = [
 
 /// A chart with the one dataset [dataset] over [months].
 ChartConfig _oneBar(BarDataset dataset) =>
-    ChartConfig(type: .bar, labels: months, datasets: [dataset]);
+    ChartConfig(labels: months, datasets: [dataset]);
 
 /// The content of the bar chart page.
 DocPageContent barChartPage() => DocPageContent(

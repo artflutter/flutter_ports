@@ -1053,7 +1053,6 @@ class _LiveChartState() extends State<_LiveChart> {
         ? const Color(0xFF65BEA1)
         : const Color(0xFF9AAEC7);
     final chartConfig = ChartConfig(
-      type: [ChartKind.line, ChartKind.bar, ChartKind.doughnut][_type],
       maintainAspectRatio: false,
       labels: const ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
       legend: const ChartLegend(display: false),

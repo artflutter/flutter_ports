@@ -129,7 +129,6 @@ void main() {
     ]) {
       final canvas = UiCanvasElement(width: 120, height: 80);
       final config = ChartConfig(
-        type: .line,
         datasets: [dataset],
         animation: ChartAnimation.none,
       );

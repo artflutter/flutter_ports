@@ -10,7 +10,6 @@ const _browsers = ['Chrome', 'Safari', 'Firefox', 'Edge', 'Other'];
 const _visitors = <num>[275, 200, 187, 173, 90];
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .line,
   labels: _browsers,
   datasets: const [
     LineDataset(

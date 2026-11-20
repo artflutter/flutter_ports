@@ -198,7 +198,6 @@ void main() {
       Chart getChart(List<Object> labels, List<num?> data) {
         return _acquire(
           ChartConfig(
-            type: ChartKind.line,
             labels: labels,
             datasets: [LineDataset(data: data)],
             scales: const {'x': CategoryAxis(ticks: AxisTicks(autoSkip: true))},
@@ -209,7 +208,6 @@ void main() {
       Chart getChartBigData(int maxTicksLimit) {
         return _acquire(
           ChartConfig(
-            type: ChartKind.line,
             labels: List<Object>.filled(300, 'red'),
             datasets: [LineDataset(data: List<num?>.filled(300, 5))],
             scales: {
@@ -305,7 +303,6 @@ void main() {
       testWidgets(horizontalNames[t], (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
             datasets: const [LineDataset(data: [])],
             labels: test.labels,
             scales: {
@@ -350,7 +347,6 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          type: ChartKind.line,
           labels: ['This is a very long label', 'This is a very long label'],
           datasets: [
             LineDataset(data: [0, 1]),
@@ -378,7 +374,6 @@ void main() {
           (tester) async {
             final chart = _acquire(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(
                     data: [100, 200, 100, 50],
@@ -418,7 +413,6 @@ void main() {
           (tester) async {
             final chart = _acquire(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(
                     data: [100, 200, 100, 50],
@@ -451,7 +445,6 @@ void main() {
           (tester) async {
             final chart = _acquire(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(
                     data: [100, 200, 100, 50],
@@ -488,7 +481,6 @@ void main() {
           (tester) async {
             final chart = _acquire(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(
                     data: [100, 200, 100, 50],
@@ -520,8 +512,7 @@ void main() {
         final labels = <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
-            datasets: const [],
+            datasets: const [LineDataset()],
             scales: {
               'x': CategoryAxis(
                 labels: labels,
@@ -543,8 +534,7 @@ void main() {
         final labels = <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
-            datasets: const [],
+            datasets: const [LineDataset()],
             scales: {
               'x': CategoryAxis(
                 labels: labels,
@@ -562,8 +552,7 @@ void main() {
         final labels = <Object>['tick1', 'tick2', 'tick3', 'tick4', 'tick5'];
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.line,
-            datasets: const [],
+            datasets: const [LineDataset()],
             scales: {
               'x': CategoryAxis(
                 labels: labels,
@@ -586,8 +575,7 @@ void main() {
       testWidgets('should default to three layers', (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.line,
-            datasets: [],
+            datasets: [LineDataset()],
             scales: {'x': LinearAxis()},
           ),
         );
@@ -603,7 +591,6 @@ void main() {
           Chart createChart() {
             return _acquire(
               ChartConfig(
-                type: ChartKind.scatter,
                 datasets: [
                   ScatterDataset(
                     points: [DataPoint(0, 0), DataPoint(1, 1), DataPoint(2, 2)],
@@ -731,8 +718,7 @@ void main() {
         (tester) async {
           var chart = _acquire(
             const ChartConfig(
-              type: ChartKind.line,
-              datasets: [],
+              datasets: [LineDataset()],
               scales: {
                 'x': LinearAxis(ticks: AxisTicks(extra: {'z': 10})),
               },
@@ -743,8 +729,7 @@ void main() {
 
           chart = _acquire(
             const ChartConfig(
-              type: ChartKind.line,
-              datasets: [],
+              datasets: [LineDataset()],
               scales: {
                 'x': LinearAxis(grid: AxisGrid(extra: {'z': 11})),
               },
@@ -755,8 +740,7 @@ void main() {
 
           chart = _acquire(
             const ChartConfig(
-              type: ChartKind.line,
-              datasets: [],
+              datasets: [LineDataset()],
               scales: {
                 'x': LinearAxis(
                   ticks: AxisTicks(extra: {'z': 10}),
@@ -775,7 +759,6 @@ void main() {
       testWidgets('should be limited to visible data', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [
               ScatterDataset(
                 points: [DataPoint(100, 100), DataPoint(-100, -100)],
@@ -800,7 +783,6 @@ void main() {
       testWidgets('should create new scale', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [
               ScatterDataset(
                 points: [DataPoint(100, 100), DataPoint(-100, -100)],
@@ -820,7 +802,6 @@ void main() {
       testWidgets('should create new scale with custom name', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [
               ScatterDataset(
                 points: [DataPoint(100, 100), DataPoint(-100, -100)],
@@ -852,7 +833,6 @@ void main() {
           expect(
             () => _acquire(
               ChartConfig(
-                type: ChartKind.scatter,
                 datasets: [
                   ScatterDataset(
                     points: [DataPoint(100, 100), DataPoint(-100, -100)],
@@ -881,7 +861,6 @@ void main() {
       ) async {
         final chart = _acquire(
           ChartConfig(
-            type: ChartKind.scatter,
             datasets: [
               ScatterDataset(
                 points: [DataPoint(100, 100), DataPoint(-100, -100)],
@@ -902,7 +881,6 @@ void main() {
       ) async {
         final chart = _acquire(
           const ChartConfig(
-            type: ChartKind.line,
             labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
             datasets: [
               LineDataset(label: '# of Votes', data: [12, 19, 3, 5, 2, 3]),
@@ -934,8 +912,7 @@ void main() {
       Chart getChartWithScaleTitleStroke() {
         return _acquire(
           const ChartConfig(
-            type: ChartKind.line,
-            datasets: [],
+            datasets: [LineDataset()],
             scales: {
               'x': LinearAxis(
                 title: AxisTitle(
@@ -976,8 +953,7 @@ void main() {
       Chart getChartWithoutScaleTitleStroke() {
         return _acquire(
           const ChartConfig(
-            type: ChartKind.line,
-            datasets: [],
+            datasets: [LineDataset()],
             scales: {
               'x': LinearAxis(
                 title: AxisTitle(

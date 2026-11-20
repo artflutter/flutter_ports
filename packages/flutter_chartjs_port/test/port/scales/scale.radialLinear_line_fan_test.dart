@@ -528,7 +528,6 @@ void main() {
               height: size.toDouble(),
               child: ChartView(
                 config: ChartConfig(
-                  type: ChartKind.radar,
                   datasets: [
                     RadarDataset(
                       label: 'Values',

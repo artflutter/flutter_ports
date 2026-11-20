@@ -99,7 +99,6 @@ Future<(_State, _State)> _run(
 }) async {
   final input = _input();
   final config = ChartConfig(
-    type: ChartKind.line,
     datasets: [
       LineDataset(
         label: 'd',

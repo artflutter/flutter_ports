@@ -27,7 +27,6 @@ const Color tealFill = Color.fromRGBO(75, 192, 192, 0.25);
 /// The point style example, with the style of the selected variant.
 // #docregion point-styling
 ChartConfig pointStyling(PointStyle style) => ChartConfig(
-  type: .line,
   labels: months,
   datasets: [
     LineDataset(

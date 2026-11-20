@@ -28,7 +28,6 @@ String? _soldLine(TooltipItem item) =>
     'sold: ${basicData[item.dataIndex].sold}';
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: [for (final row in basicData) row.genre],
   datasets: [
     BarDataset(

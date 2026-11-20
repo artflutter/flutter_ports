@@ -629,7 +629,6 @@ void main() {
     const shadow = ChartShadow(color: _shadow, blur: 8, offset: Offset(3, 4));
 
     ChartConfig config({double? borderWidth}) => ChartConfig(
-      type: ChartKind.bar,
       labels: [for (var i = 0; i < 40; i++) '$i'],
       datasets: [
         BarDataset(

@@ -138,7 +138,6 @@ ChartConfig _config({
   ChartEventHandler? onHover,
   List<String>? events,
 }) => ChartConfig(
-  type: ChartKind.line,
   plugins: plugins,
   labels: const ['a', 'b', 'c'],
   datasets: [

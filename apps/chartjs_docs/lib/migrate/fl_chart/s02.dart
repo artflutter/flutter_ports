@@ -34,7 +34,6 @@ ChartConfig _config(List<num> ys, {required bool average}) {
   final colors = average ? [_avg, _avg] : _colors;
   return fills(
     ChartConfig(
-      type: .line,
       datasets: [
         LineDataset(
           points: [for (final (i, x) in _xs.indexed) DataPoint(x, ys[i])],

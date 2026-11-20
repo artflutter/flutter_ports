@@ -45,7 +45,6 @@ List<String>? _hideBottom(
 
 final ChartConfig _config = fills(
   ChartConfig(
-    type: .line,
     datasets: [
       _line(const [1, 5, 3, 5], _orange, _orangeDark, _orange),
       _line(const [3, 1, 2, 1], _blueDark, Fl.blue, Fl.blue),

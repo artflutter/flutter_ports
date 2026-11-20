@@ -34,7 +34,6 @@ Chart _chart(
 }) {
   final canvas = UiCanvasElement(width: 600, height: 300);
   final config = ChartConfig(
-    type: ChartKind.line,
     datasets: [
       LineDataset(points: [DataPoint(0, 1), DataPoint(count - 1, 2)]),
     ],

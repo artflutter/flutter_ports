@@ -55,7 +55,6 @@ void main() {
         final chart = acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.bar,
               datasets: [
                 BarDataset(data: [1, 10], label: 'dataset1'),
               ],

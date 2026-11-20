@@ -37,7 +37,6 @@ const Color blueFill = Color.fromRGBO(54, 162, 235, 0.25);
 
 // #docregion bar-ungrouped
 const ungroupedBars = ChartConfig(
-  type: .bar,
   labels: months,
   datasets: [
     BarDataset(

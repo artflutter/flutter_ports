@@ -28,7 +28,6 @@ const barBorders = <ChartPaint>[
 ];
 
 const basicBar = ChartConfig(
-  type: .bar,
   labels: ['January', 'February', 'March', 'April', 'May', 'June', 'July'],
   datasets: [
     BarDataset(

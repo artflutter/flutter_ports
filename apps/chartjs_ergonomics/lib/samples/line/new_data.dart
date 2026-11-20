@@ -28,7 +28,6 @@ class _NewDataState() extends State<NewData> {
     children: [
       ChartView(
         config: ChartConfig(
-          type: .line,
           labels: months,
           datasets: [
             LineDataset(

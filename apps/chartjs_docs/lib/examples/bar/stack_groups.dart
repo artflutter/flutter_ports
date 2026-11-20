@@ -31,7 +31,6 @@ const Color blueFill = Color.fromRGBO(54, 162, 235, 0.25);
 
 // #docregion bar-stack-groups
 const groupedStacks = ChartConfig(
-  type: .bar,
   labels: months,
   datasets: [
     BarDataset(

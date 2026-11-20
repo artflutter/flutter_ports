@@ -7,7 +7,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 
 // #docregion sample
 final timeAxis = ChartConfig(
-  type: .line,
   datasets: [
     LineDataset(
       label: 'Visits',

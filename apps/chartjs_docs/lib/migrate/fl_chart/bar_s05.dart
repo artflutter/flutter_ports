@@ -196,7 +196,6 @@ class _BarSample5State() extends State<BarSample5> {
     );
     return flBars(
       ChartConfig(
-        type: .bar,
         datasets: [
           for (var item = 0; item < 4; item++) _rod(item, mirror: false),
           for (var item = 0; item < 4; item++) _rod(item, mirror: true),

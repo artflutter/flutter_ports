@@ -17,7 +17,7 @@ const Color red = Color.fromRGBO(255, 99, 132, 1);
 
 /// A chart with the one dataset [dataset] over [months].
 ChartConfig oneLine(LineDataset dataset) =>
-    ChartConfig(type: .line, labels: months, datasets: [dataset]);
+    ChartConfig(labels: months, datasets: [dataset]);
 
 /// The labels of `Utils.months({count: 7})`.
 const List<Object> months = [

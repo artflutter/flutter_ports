@@ -42,7 +42,6 @@ BarDataset _type(int index, String type) {
 }
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: _indexes,
   datasets: [for (final (i, type) in _types.indexed) _type(i, type)],
   scales: {

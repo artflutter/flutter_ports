@@ -65,7 +65,6 @@ class _Sample3State() extends State<Sample3> {
 
   ChartConfig _config() => fills(
     ChartConfig(
-      type: .line,
       labels: _days,
       datasets: [
         LineDataset(

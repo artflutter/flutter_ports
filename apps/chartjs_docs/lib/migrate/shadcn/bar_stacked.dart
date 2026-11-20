@@ -27,7 +27,6 @@ BarDataset _bars(
 );
 
 ChartConfig _config(ShadcnTip tip) => ChartConfig(
-  type: .bar,
   labels: _months,
   datasets: [
     // radius={[0, 0, 4, 4]}: the bottom corners of the lower bar.

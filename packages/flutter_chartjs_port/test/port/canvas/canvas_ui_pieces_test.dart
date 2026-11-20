@@ -1065,7 +1065,6 @@ void main() {
       Chart chartOf(int count) => acquireChartRoot(
         ChartConfigLowering(
           ChartConfig(
-            type: ChartKind.line,
             labels: [for (var i = 0; i < count; i++) '$i'],
             datasets: [
               LineDataset(
@@ -1149,7 +1148,6 @@ void main() {
       }) => acquireChartRoot(
         ChartConfigLowering(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [
               for (var d = 0; d < datasets; d++)
                 LineDataset(

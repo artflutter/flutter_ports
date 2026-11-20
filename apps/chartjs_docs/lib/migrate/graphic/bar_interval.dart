@@ -8,7 +8,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
 final ChartConfig _config = ChartConfig(
-  type: .bar,
   labels: [for (final row in intervalData) row.id],
   datasets: [
     BarDataset(

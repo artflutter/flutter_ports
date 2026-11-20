@@ -37,7 +37,6 @@ void main() {
         acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.bar,
               datasets: const [
                 BarDataset(data: [10, 5, 0, 25, 78, -10]),
               ],

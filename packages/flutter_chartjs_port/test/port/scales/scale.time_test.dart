@@ -10,6 +10,7 @@ import 'package:chartjs_test_utils/pure.dart' show toBeCloseToPixel;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/test_dataset.dart';
 import '../../support/tick_label.dart';
 import 'scale_chart_harness.dart';
 import 'scale_time_harness.dart';
@@ -145,10 +146,7 @@ const _timeTest = ChartKind('timeTest');
 Chart _chart(List<DataPoint> data, [TimeAxis? x]) => acquireChartRoot(
   ChartConfigLowering(
     ChartConfig(
-      type: _timeTest,
-      datasets: [
-        LineDataset(points: data, extra: {'type': _timeTest.name}),
-      ],
+      datasets: [TestDataset(_timeTest, points: data)],
       scales: {'x': ?x},
     ),
   ).lower(),
@@ -481,12 +479,8 @@ void main() {
     Chart labelsChart(TimeAxis x) => acquireChartRoot(
       ChartConfigLowering(
         ChartConfig(
-          type: _timeTest,
-          datasets: [
-            LineDataset(
-              data: const [1.0, 2.0, 3.0],
-              extra: {'type': _timeTest.name},
-            ),
+          datasets: const [
+            TestDataset(_timeTest, data: [1.0, 2.0, 3.0]),
           ],
           labels: const ['2021-01-04', 'garbage', '2021-01-20'],
           scales: {'x': x},
@@ -687,7 +681,6 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           const ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(xAxisID: 'x', data: [null, 10, 3]),
             ],
@@ -738,7 +731,6 @@ void main() {
       final chart = acquireChartRoot(
         ChartConfigLowering(
           ChartConfig(
-            type: ChartKind.line,
             datasets: [
               LineDataset(
                 points: [
@@ -772,7 +764,6 @@ void main() {
         Chart labelsChart() => acquireChartRoot(
           ChartConfigLowering(
             const ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 LineDataset(data: [0, 1, 2, 3, 4, 5]),
               ],
@@ -838,7 +829,6 @@ void main() {
         Chart dataChart() => acquireChartRoot(
           ChartConfigLowering(
             ChartConfig(
-              type: ChartKind.line,
               datasets: [
                 const LineDataset(data: [0, 1, 2, 3, 4, 5]),
                 LineDataset(
@@ -951,7 +941,6 @@ void main() {
           Chart seriesChart() => acquireChartRoot(
             ChartConfigLowering(
               ChartConfig(
-                type: ChartKind.line,
                 datasets: const [
                   LineDataset(data: [0, 1, 2, 3, 4]),
                 ],
@@ -1077,7 +1066,6 @@ void main() {
           Chart timeChart() => acquireChartRoot(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(data: [0, 1, 2, 3, 4, 5]),
                 ],
@@ -1172,7 +1160,6 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(data: [0, 1, 2, 3, 4, 5]),
                 ],
@@ -1217,7 +1204,6 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
                 datasets: [
                   LineDataset(data: [0, 1, 2, 3, 4, 5]),
                 ],
@@ -1275,7 +1261,6 @@ void main() {
               Chart rangeChart() => acquireChartRoot(
                 ChartConfigLowering(
                   ChartConfig(
-                    type: ChartKind.line,
                     datasets: const [
                       LineDataset(data: [0, 1, 2, 3, 4, 5]),
                     ],
@@ -1372,7 +1357,6 @@ void main() {
             Chart offsetChart() => acquireChartRoot(
               ChartConfigLowering(
                 ChartConfig(
-                  type: ChartKind.line,
                   datasets: const [
                     LineDataset(data: [0, 1, 2, 3, 4]),
                   ],
@@ -1473,7 +1457,6 @@ void main() {
             Chart offsetChart() => acquireChartRoot(
               ChartConfigLowering(
                 ChartConfig(
-                  type: ChartKind.line,
                   datasets: const [
                     LineDataset(data: [0, 1, 2, 3, 4, 5]),
                   ],
@@ -1543,8 +1526,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
-                datasets: [],
+                datasets: [LineDataset()],
                 scales: {'x': TimeAxis()},
               ),
             ).lower(),
@@ -1586,8 +1568,7 @@ void main() {
           final chart = acquireChartRoot(
             ChartConfigLowering(
               const ChartConfig(
-                type: ChartKind.line,
-                datasets: [],
+                datasets: [LineDataset()],
                 scales: {
                   'x': TimeAxis(
                     extra: {

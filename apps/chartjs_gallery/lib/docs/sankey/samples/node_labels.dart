@@ -46,10 +46,7 @@ ChartConfig sankeyNodeLabelsSample() {
   // </block:data>
 
   // <block:config:0>
-  final config = ChartConfig(
-    type: const ChartKind(SankeyController.id),
-    datasets: datasets,
-  );
+  final config = ChartConfig(datasets: datasets);
   // </block:config>
 
   return config;

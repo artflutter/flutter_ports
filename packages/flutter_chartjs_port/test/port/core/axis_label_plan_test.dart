@@ -94,7 +94,6 @@ final class _ObservedChart(super.item, super.userConfig) extends Chart {
 
 ChartConfigurationScope _config() => ChartConfigLowering(
   ChartConfig(
-    type: ChartKind.line,
     datasets: [
       LineDataset(
         points: List<DataPoint>.generate(_n, (i) => DataPoint(i, i % 100 + 1)),

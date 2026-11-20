@@ -86,7 +86,6 @@ Map<String, Object?> _resolve(Chart chart) => {
 Chart _chart(ChartOptionsScope? theme) {
   final root = ChartConfigLowering(
     const ChartConfig(
-      type: ChartKind.bar,
       labels: ['a', 'b'],
       datasets: [
         BarDataset(label: 'd', data: [1.0, 2.0]),

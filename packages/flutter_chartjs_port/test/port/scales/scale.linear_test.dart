@@ -6,6 +6,7 @@ import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+import '../../support/test_dataset.dart';
 import 'scale_chart_harness.dart';
 import 'scale_linear_reference.dart';
 
@@ -156,9 +157,8 @@ Chart _linearChart(List<DataPoint> points, [Map<String, ChartAxis>? scales]) =>
     acquireChartRoot(
       ChartConfigLowering(
         ChartConfig(
-          type: const ChartKind('linearTest'),
           datasets: [
-            LineDataset(points: points, extra: const {'type': 'linearTest'}),
+            TestDataset(const ChartKind('linearTest'), points: points),
           ],
           scales: scales,
         ),

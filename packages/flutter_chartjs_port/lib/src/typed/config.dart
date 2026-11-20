@@ -16,7 +16,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 ///
 /// ```dart
 /// ChartConfig(
-///   type: .bar,
 ///   labels: const ['Red', 'Blue', 'Yellow'],
 ///   datasets: [BarDataset(label: '# of Votes', data: votes)],
 ///   scales: const {'y': LinearAxis(beginAtZero: true)},
@@ -45,12 +44,13 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// another type.
 @immutable
 final class const ChartConfig({
-  /// The chart type: `type`. It gives the controller of each dataset that
-  /// has the class of this type, and the defaults of the options.
-  required final ChartKind type,
-
   /// The datasets of the chart: `data.datasets`. The legend shows them in
   /// this order.
+  ///
+  /// The class of the first dataset gives the chart type ([type]). A chart
+  /// needs one dataset at least: a debug build stops on an empty List. For
+  /// a chart with no data yet, give a dataset with no data, for example
+  /// `LineDataset(data: [])`.
   required final List<Dataset> datasets,
 
   /// The labels of the index axis: `data.labels`. An item is a `String`, a
@@ -176,10 +176,20 @@ final class const ChartConfig({
   /// A chart config.
   this;
 
+  /// The chart type, the `type` of the Chart.js config: the `kind` of the
+  /// first dataset (Chart.js ADR 0190). It selects the chart-level defaults
+  /// of the options, for example the default axes. A dataset of another
+  /// class in a mixed chart writes its own `type`. An empty [datasets] List
+  /// gives [ChartKind.line].
+  ChartKind get type => datasets.isEmpty
+      ? ChartKind.line
+      // The lowering of the typed API reads the kind (Chart.js ADR 0189).
+      // ignore: invalid_use_of_protected_member
+      : datasets.first.kind;
+
   /// A copy of this config with the given parameters. A parameter that is
   /// `null` keeps its value.
   ChartConfig copyWith({
-    ChartKind? type,
     List<Dataset>? datasets,
     List<Object>? labels,
     Map<String, ChartAxis>? scales,
@@ -204,7 +214,6 @@ final class const ChartConfig({
     List<Plugin<Object?>>? plugins,
     Map<String, Object?>? extra,
   }) => ChartConfig(
-    type: type ?? this.type,
     datasets: datasets ?? this.datasets,
     labels: labels ?? this.labels,
     scales: scales ?? this.scales,
@@ -231,7 +240,6 @@ final class const ChartConfig({
   );
 
   List<TypedProperty> get _props => [
-    ('type', type),
     ('datasets', byItems(datasets)),
     ('labels', labels),
     ..._optionProps,
