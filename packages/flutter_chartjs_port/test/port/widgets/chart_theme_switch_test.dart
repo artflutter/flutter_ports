@@ -4,7 +4,7 @@ library;
 
 import 'dart:ui' as native_ui;
 
-import 'package:chartjs_test_utils/flutter.dart' show acquireChart;
+import 'package:chartjs_test_utils/flutter.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -106,6 +106,31 @@ Widget _box(Widget child) => Directionality(
     child: SizedBox(width: 400, height: 300, child: child),
   ),
 );
+
+/// Typed setup for ordinary theme switches. Raw identity probes retain
+/// [_config] and [_view].
+ChartConfig _typedConfig({
+  bool animated = false,
+  List<Plugin<Object?>>? plugins,
+}) => ChartConfig(
+  labels: const ['a', 'b', 'c'],
+  datasets: [
+    for (var i = 0; i < 2; i++) BarDataset(label: 'd$i', data: [1 + i, 3, 2]),
+  ],
+  animation: animated ? const ChartAnimation() : ChartAnimation.none,
+  plugins: plugins,
+  extra: const {
+    'plugins': {
+      'colors': {'enabled': true},
+    },
+  },
+);
+
+Widget _typedView(ChartConfig config, {ChartThemeData? theme, Key? key}) =>
+    _box(ChartView(config: config, theme: theme, key: key));
+
+JsObjectFace _typedDataset(Chart chart, int index) =>
+    _datasets(chart)[index]! as JsObjectFace;
 
 /// A ChartView of [config] with [theme] in [_box].
 Widget _view(
@@ -481,8 +506,8 @@ void main() {
 
     testWidgets('keeps a hidden dataset hidden and keeps the controllers, '
         'the data arrays and the dataset objects', (tester) async {
-      final config = _config();
-      await tester.pumpWidget(_view(config, theme: _themeA));
+      final config = _typedConfig();
+      await tester.pumpWidget(_typedView(config, theme: _themeA));
       final chart = _chart(tester)..hide(1);
       final datasets = [..._datasets(chart)];
       final data = [for (final d in datasets) jsGet(d, 'data')];
@@ -490,7 +515,7 @@ void main() {
         for (var i = 0; i < 2; i++) chart.getDatasetMeta(i).controller,
       ];
       expect(chart.isDatasetVisible(1), isFalse);
-      await tester.pumpWidget(_view(config, theme: _themeB));
+      await tester.pumpWidget(_typedView(config, theme: _themeB));
       expect(chart.isDatasetVisible(1), isFalse);
       expect(chart.isDatasetVisible(0), isTrue);
       for (var i = 0; i < 2; i++) {
@@ -498,7 +523,10 @@ void main() {
         expect(jsGet(datasets[i], 'data'), same(data[i]));
         expect(chart.getDatasetMeta(i).controller, same(controllers[i]));
       }
-      expect(_dataset(chart, 0)['borderColor'], ChartPaint.solid(_rgba(_blue)));
+      expect(
+        _typedDataset(chart, 0)['borderColor'],
+        ChartPaint.solid(_rgba(_blue)),
+      );
     });
 
     for (final (name, algorithm) in <(String, AnyObject)>[
@@ -516,42 +544,40 @@ void main() {
     ]) {
       testWidgets('keeps the decimated data ($name)', (tester) async {
         final input = _decimationInput();
-        // A Map config: the case reads `_data`, the input that the
-        // decimation keeps in the dataset Map.
-        final config = <String, Object?>{
-          'type': 'line',
-          'data': <String, Object?>{
-            'datasets': <Object?>[
-              <String, Object?>{'label': 'd', 'data': input, 'pointRadius': 0},
-            ],
-          },
-          'options': <String, Object?>{
-            'animation': false,
+        final config = ChartConfig(
+          datasets: [
+            LineDataset(
+              label: 'd',
+              pointRadius: 0,
+              // Keep the original parsed-item list for the identity check.
+              extra: {'data': input},
+            ),
+          ],
+          animation: ChartAnimation.none,
+          scales: const [LinearAxis(.x)],
+          extra: {
             'parsing': false,
-            'scales': <String, Object?>{
-              'x': <String, Object?>{'type': 'linear'},
-            },
-            'plugins': <String, Object?>{
-              'colors': <String, Object?>{'enabled': true},
-              'decimation': <String, Object?>{'enabled': true, ...algorithm},
+            'plugins': {
+              'colors': const {'enabled': true},
+              'decimation': {'enabled': true, ...algorithm},
             },
           },
-        };
+        );
         List<(Object?, Object?)> items(Chart chart) => [
-          for (final item in jsGet(_dataset(chart, 0), 'data')! as List)
+          for (final item in jsGet(_typedDataset(chart, 0), 'data')! as List)
             (jsGet(item, 'x'), jsGet(item, 'y')),
         ];
-        await tester.pumpWidget(_view(config, theme: _themeA));
+        await tester.pumpWidget(_typedView(config, theme: _themeA));
         final chart = _chart(tester);
         final before = items(chart);
         expect(before.length, lessThan(5000));
         expect(before.length, greaterThan(0));
-        await tester.pumpWidget(_view(config, theme: _themeB));
+        await tester.pumpWidget(_typedView(config, theme: _themeB));
         expect(items(chart), before);
-        expect(jsGet(_dataset(chart, 0), '_data'), same(input));
+        expect(jsGet(_typedDataset(chart, 0), '_data'), same(input));
         expect(chart.getDatasetMeta(0).data, hasLength(before.length));
         expect(
-          _dataset(chart, 0)['borderColor'],
+          _typedDataset(chart, 0)['borderColor'],
           ChartPaint.solid(_rgba(_blue)),
         );
       });
@@ -561,16 +587,16 @@ void main() {
       tester,
     ) async {
       final modes = _spyOnUpdates();
-      final config = _config();
-      await tester.pumpWidget(_view(config, theme: _themeA));
+      final config = _typedConfig();
+      await tester.pumpWidget(_typedView(config, theme: _themeA));
       final chart = _chart(tester);
       expect(modes, [null]);
-      await tester.pumpWidget(_view(config));
+      await tester.pumpWidget(_typedView(config));
       expect(modes, [null, 'default']);
       expect(chartThemeOf(chart.config), isNull);
       // The first color of BORDER_COLORS (plugin.colors.ts:14-22).
       expect(
-        _dataset(chart, 0)['borderColor'],
+        _typedDataset(chart, 0)['borderColor'],
         const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
       );
       expect(
@@ -591,8 +617,8 @@ void main() {
       tester,
     ) async {
       final modes = _spyOnUpdates();
-      final config = _config(animated: true);
-      await tester.pumpWidget(_view(config, theme: _themeA));
+      final config = _typedConfig(animated: true);
+      await tester.pumpWidget(_typedView(config, theme: _themeA));
       final chart = _chart(tester);
       await tester.pump(const Duration(seconds: 2));
       await tester.pump();
@@ -600,7 +626,7 @@ void main() {
       final from = _elementOption(chart, 'backgroundColor');
       expect(from, ChartPaint.solid(_rgba(_green, 0.5)));
 
-      await tester.pumpWidget(_view(config, theme: _themeB));
+      await tester.pumpWidget(_typedView(config, theme: _themeB));
       expect(modes.last, 'theme');
       final to = _rgba(_blue, 0.5);
       // The colors interpolator of core.animation.js:15-21 at 0.5.
@@ -616,8 +642,8 @@ void main() {
     testWidgets('an equal theme and an empty theme against none give no '
         'update', (tester) async {
       final modes = _spyOnUpdates();
-      final config = _config();
-      await tester.pumpWidget(_view(config, theme: _themeA));
+      final config = _typedConfig();
+      await tester.pumpWidget(_typedView(config, theme: _themeA));
       expect(modes, [null]);
       // A new instance with equal tokens.
       final equal = ChartThemeData(
@@ -627,16 +653,16 @@ void main() {
       );
       expect(equal, isNot(same(_themeA)));
       expect(equal, _themeA);
-      await tester.pumpWidget(_view(config, theme: equal));
+      await tester.pumpWidget(_typedView(config, theme: equal));
       await tester.pump();
       expect(modes, [null]);
 
       // A new chart without a theme, then the empty theme.
-      final other = _config();
-      await tester.pumpWidget(_view(other, key: const ValueKey('none')));
+      final other = _typedConfig();
+      await tester.pumpWidget(_typedView(other, key: const ValueKey('none')));
       expect(modes, [null, null]);
       await tester.pumpWidget(
-        _view(
+        _typedView(
           other,
           theme: const ChartThemeData(),
           key: const ValueKey('none'),
@@ -799,10 +825,10 @@ void main() {
 
     testWidgets('the inherited theme: ChartTheme above, ChartView.theme '
         'beats it, and the empty theme turns theming off', (tester) async {
-      final config = _config();
+      final config = _typedConfig();
       Widget build(ChartThemeData data, {ChartThemeData? own}) => ChartTheme(
         data: data,
-        child: _view(config, theme: own),
+        child: _typedView(config, theme: own),
       );
       await tester.pumpWidget(build(_themeA));
       final chart = _chart(tester);
@@ -834,7 +860,9 @@ void main() {
     testWidgets(r'the plugin $chartView comes last, after the inline plugins '
         'of the app', (tester) async {
       final app = Plugin<Object?>(id: 'app');
-      await tester.pumpWidget(_view(_config(plugins: [app]), theme: _themeA));
+      await tester.pumpWidget(
+        _typedView(_typedConfig(plugins: [app]), theme: _themeA),
+      );
       final plugins = _chart(tester).config.plugins! as List;
       expect(plugins, hasLength(2));
       expect(plugins.first, same(app));
@@ -913,16 +941,15 @@ void main() {
     testWidgets("an update(const UpdateMode('themeFrame')) ends in one frame", (
       tester,
     ) async {
-      final config = _config(animated: true);
-      (config['options']! as AnyObject)['animation'] = <String, Object?>{};
+      final config = ChartConfigLowering(_typedConfig(animated: true)).lower();
       config[themeConfigKey] = compileThemeData(_themeA);
-      final chart = acquireChart(config);
+      final chart = acquireChartRoot(config);
       await tester.pump(const Duration(seconds: 2));
       await tester.pump();
       expect(animator.running(chart), isFalse);
       // Steps 2 and 3 of the switch: the config had no user scales.
       config[themeConfigKey] = compileThemeData(_themeB);
-      (config['options']! as AnyObject).remove('scales');
+      (config.optionsCell!.raw! as ChartOptionsScope).jsDelete('scales');
       chart.update(const UpdateMode('themeFrame'));
       expect(animator.has(chart), isFalse);
       await tester.pump();
@@ -937,10 +964,10 @@ void main() {
       testWidgets("a switch updates with 'themeFrame', a removal with "
           "'default', and both end in one frame", (tester) async {
         final modes = _spyOnUpdates();
-        final config = _config(animated: true);
+        final config = _typedConfig(animated: true);
         Widget build(ChartThemeData? theme) => MediaQuery(
           data: const MediaQueryData(disableAnimations: true),
-          child: _view(config, theme: theme),
+          child: _typedView(config, theme: theme),
         );
         await tester.pumpWidget(build(_themeA));
         final chart = _chart(tester);
