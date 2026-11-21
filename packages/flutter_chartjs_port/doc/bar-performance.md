@@ -17,7 +17,7 @@ implementation should address picture recording/painting first, then guarded
 bar-index planning. Neither reducing the item count nor disabling animations is
 required to investigate those improvements.
 
-Evidence, harnesses and reproduction (`doc/benchmarks/bar-pipeline/`, commit `2be4e68a`).
+Evidence, harnesses and reproduction (`doc/benchmarks/bar-pipeline/`, removed 2026-11-21).
 
 ## Reproduction and frame budget
 

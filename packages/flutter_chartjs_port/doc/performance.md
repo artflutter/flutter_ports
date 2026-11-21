@@ -5243,7 +5243,7 @@ especially for scriptable colors and palettes exceeding 512 entries. It does not
 close ADR 0054 Open 2. A production implementation must preserve observable option
 behavior, hover and animation semantics, then repeat the affected measurements.
 
-The reproduction package (`doc/benchmarks/direct-color/`, commit `2be4e68a`) retains the candidate
+The reproduction package (`doc/benchmarks/direct-color/`, removed 2026-11-21) retains the candidate
 patch, benchmark entries, pinned source revision and dependencies, build/run/report
 scripts, individual measurements and device/thermal metadata. The setup script was
 checked to reconstruct the measured source and successfully rebuild a release APK. APKs remain under
@@ -5349,7 +5349,7 @@ be dismissed as noise. Keep these as provisional regressions; this is not an
 across-the-board performance acceptance or an FPS claim. The code remains an
 uncommitted candidate for review, with iOS and broader release qualification pending.
 
-The implementation reproduction package (`doc/benchmarks/direct-color/implementation/`, commit `2be4e68a`)
+The implementation reproduction package (`doc/benchmarks/direct-color/implementation/`, removed 2026-11-21)
 retains the exact library patch, workload, dependency lockfile, commands, native
 binary hashes, individual process results and summaries. The standalone Android
 benchmark app was removed after collection; the gallery was not replaced.
@@ -5384,7 +5384,7 @@ lowering is outside the timer. The raw callback returns CSS in A and Color in B.
 
 Positive percentages below mean less time. Draw means drawing plus recording
 completion; update includes update, draw and completion. All measured process
-values and millisecond medians are in the reproduction package (`doc/benchmarks/direct-color/strict/`, commit `2be4e68a`).
+values and millisecond medians are in the reproduction package (`doc/benchmarks/direct-color/strict/`, removed 2026-11-21).
 
 | Case | Operation | macOS | Chrome Wasm | Android | iOS |
 | --- | --- | ---: | ---: | ---: | ---: |
@@ -5537,7 +5537,7 @@ the shortcut is reached and its recorded draw commands are identical. Existing
 stack/filler reference checks pass, as do 76 filler specification/fixture tests.
 Import/header rules, the typed-read ratchet and JS semantics checks pass.
 
-The reproduction package (`doc/benchmarks/stack-exact-points/`, commit `2be4e68a`) retains the
+The reproduction package (`doc/benchmarks/stack-exact-points/`, removed 2026-11-21) retains the
 measured two-file patch, protocol metadata, source hashes, benchmark entry points,
 setup/build/run scripts and all eight process records. The measured candidate was
 byte-for-byte equal to the working source at collection. `summary.json` retains
@@ -5590,7 +5590,7 @@ result, or validation on Android/iOS.
 
 The revised implementation is retained. Its guard/identity tests pass on VM,
 dart2js and dart2wasm, and public export checks confirm no new helper API leaks.
-The revision evidence (`doc/benchmarks/stack-exact-points/revision/`, commit `2be4e68a`) retains
+The revision evidence (`doc/benchmarks/stack-exact-points/revision/`, removed 2026-11-21) retains
 all isolated and final process records, the four-file measured patch, source
 hashes, the corrected harness and reproduction scripts. The original failed
 candidate and data remain in the parent evidence package.
@@ -5603,7 +5603,7 @@ candidate and data remain in the parent evidence package.
 
 2026-11-02. Implemented, with bounded release validation on the connected Pixel
 8a. [ADR 0059](adr/0059-boundary-exact-point-search.md) records the decision;
-the report and reproduction package (`doc/benchmarks/boundary-exact-points/`, commit `2be4e68a`)
+the report and reproduction package (`doc/benchmarks/boundary-exact-points/`, removed 2026-11-21)
 retain the profile, raw runs, source hashes and exact measured patch.
 
 The baseline is `3441804`, after the stack-fill work. Its Android CPU profile
@@ -5720,7 +5720,7 @@ before/after thermal statuses were 0.
 
 Two pairs do not give a confidence interval. This is bounded CPU evidence, with
 no GPU time, FPS or other-device performance claim. The
-report and reproduction package (`doc/benchmarks/boundary-segment-search/`, commit `2be4e68a`)
+report and reproduction package (`doc/benchmarks/boundary-segment-search/`, removed 2026-11-21)
 retain all four processes, the profile, source hashes and the exact measured patch.
 
 ### Correctness
@@ -5798,7 +5798,7 @@ scriptable line update -2.8%, polar-area update -4.0% and radar update -5.7%.
 Small changes in two pairs remain inconclusive. No GPU/FPS, other-device or
 zero-regression claim is made.
 
-The full report and reproduction package (`doc/benchmarks/element-option-cache-key/`, commit `2be4e68a`)
+The full report and reproduction package (`doc/benchmarks/element-option-cache-key/`, removed 2026-11-21)
 retain every process/component value, the baseline profile, APK/source hashes,
 prewritten protocol and exact measured patch. Reconstruction matches the measured
 library hash. Five new semantic tests passed on the unchanged baseline, then on
@@ -5877,7 +5877,7 @@ category layout or reach a 16.7 ms frame budget at 20000 points. A future reuse 
 resolved fonts needs separate treatment of scriptable/indexed options and
 mutation; the current change deliberately evaluates each tick as before.
 
-Reproduction and raw measurements (`doc/benchmarks/category-layout/`, commit `2be4e68a`) include
+Reproduction and raw measurements (`doc/benchmarks/category-layout/`, removed 2026-11-21) include
 the probe, original CPU samples, four process results and the numerical summary.
 The regression cases cover numeric boundaries, signed zero, nonfinite values,
 scriptable/indexed font fields, literal font styles, and tick-context identity,
@@ -5946,7 +5946,7 @@ Two preliminary implementations were measured and are retained in the evidence:
 one inspected descriptor keys as strings instead of typed keys; the next did
 not handle the absent `ticks.font` that this workload uses. Neither is retained.
 The final four-run comparison uses the complete default-font guard described
-above. Protocol, patches and raw measurements (`doc/benchmarks/static-tick-font/`, commit `2be4e68a`)
+above. Protocol, patches and raw measurements (`doc/benchmarks/static-tick-font/`, removed 2026-11-21)
 allow reproducing the baseline and candidate independently of the uncommitted
 working-tree documentation.
 
@@ -5963,7 +5963,7 @@ root in the import guard; its 33 checker tests pass as well.
 [The complete report](axis-pipeline-options.md) inventories 18 improvement
 families, describes the dependency/invalidation model, and distinguishes measured
 configuration changes, unsafe structural ceilings and unimplemented estimates.
-Evidence and reproduction (`doc/benchmarks/axis-pipeline-scan/`, commit `2be4e68a`) retain all
+Evidence and reproduction (`doc/benchmarks/axis-pipeline-scan/`, removed 2026-11-21) retain all
 three 20-case sweeps, paired layout observations, a fresh CPU profile and a label
 comparison microbenchmark. The baseline includes §27 and §28.
 
@@ -6042,7 +6042,7 @@ in-flight getter mutation: the resolved first font must match its scalar inputs,
 and root context, tick-list and option identities must remain valid before a hit.
 Non-string labels cannot populate a plan after side-effectful conversion.
 
-Raw measurements, protocol, patches, frame statistics and validation (`doc/benchmarks/axis-label-plan/`, commit `2be4e68a`)
+Raw measurements, protocol, patches, frame statistics and validation (`doc/benchmarks/axis-label-plan/`, removed 2026-11-21)
 include the preliminary measurement-only candidate and the final conservative
 guard refinements. Cached/uncached twins compare all point positions through
 label/font/domain/viewport changes, and user callback/getter behavior is pinned.
@@ -6086,7 +6086,7 @@ bounds agree exactly across all runs.
 This change adds CPU headroom to the previously measured 60 FPS implementation;
 no higher FPS is claimed or newly measured here. Layout is still about 2 ms with
 automatic y limits. The numeric-range and further label-loop experiments are not
-part of this change. Protocol, raw data and reproduction (`doc/benchmarks/lazy-tick-context/`, commit `2be4e68a`).
+part of this change. Protocol, raw data and reproduction (`doc/benchmarks/lazy-tick-context/`, removed 2026-11-21).
 
 Validation: all 10112 permanent VM package tests pass (84 skips), as do all 19
 context/layout integration cases on each of JavaScript and WebAssembly. The
@@ -6097,7 +6097,7 @@ Only this focused runtime change is retained.
 ## 32. Bar updates, looping animation and native picture painting
 
 2026-11-02. [Investigation and implementation priorities](bar-performance.md),
-with raw evidence and reproduction (`doc/benchmarks/bar-pipeline/`, commit `2be4e68a`). No
+with raw evidence and reproduction (`doc/benchmarks/bar-pipeline/`, removed 2026-11-21). No
 production runtime or gallery configuration change is included.
 
 The existing 20,000-bar stress configuration reproduces a 41.323 ms update,
@@ -6171,7 +6171,7 @@ These are local profile-mode FPS measurements, one process per cell, not mobile
 or web performance claims. The remaining bar-controller work still limits update
 FPS. Animation is much smoother but does not reach a measured 60 FPS here.
 
-Protocol, harnesses, patches, every raw measurement and validation (`doc/benchmarks/bar-implementation/`, commit `2be4e68a`)
+Protocol, harnesses, patches, every raw measurement and validation (`doc/benchmarks/bar-implementation/`, removed 2026-11-21)
 include an initial mislabeled line-control selector (excluded from bar-update
 results) and preliminary foreground runs with short candidate windows (excluded
 from the final FPS comparison). The corrected explicit bar-update series and
@@ -6226,7 +6226,7 @@ coverage is retained in the raw evidence. Its build P90 is 17.26 ms: animation i
 close to 60 FPS but is not a measured sustained 60 FPS result. Continuous updates
 remain limited by dataset-controller work.
 
-Protocol, patches, raw profiles/timings, foreground windows and validation (`doc/benchmarks/bar-draw/`, commit `2be4e68a`)
+Protocol, patches, raw profiles/timings, foreground windows and validation (`doc/benchmarks/bar-draw/`, removed 2026-11-21)
 retain the preliminary scalar implementation and the final signed-zero/degenerate
 fallback refinements separately. The test grid compares drawing traces for 3,456 input combinations,
 extra fallback/getter cases, and 108 exact pixel twins against the
@@ -6286,7 +6286,7 @@ These are local profile-mode measurements with exact process activation and
 60 FPS: the remaining update, parsing and drawing exceed the 16.67ms frame budget.
 No mobile/web performance gain is inferred.
 
-Protocol, patches, profiles, all timings, foreground windows and validation (`doc/benchmarks/bar-update/`, commit `2be4e68a`)
+Protocol, patches, profiles, all timings, foreground windows and validation (`doc/benchmarks/bar-update/`, removed 2026-11-21)
 retain the failed initial guard (runtimeType inspection dominated it), the
 identity-classification iteration and the final pure-trait/property-construction
 version. The native branch is tested against the original subclass path through
@@ -6343,7 +6343,7 @@ These are local profile-mode results, one process per cell. The full frame still
 exceeds the 16.67ms budget for 60 FPS; drawing/painting now costs more than the
 bulk update. No mobile/web performance gain is inferred.
 
-Protocol, source patches, every timing run, activity monitoring and validation (`doc/benchmarks/bar-bulk/`, commit `2be4e68a`)
+Protocol, source patches, every timing run, activity monitoring and validation (`doc/benchmarks/bar-bulk/`, removed 2026-11-21)
 retain the initial inactive guard and the shorter preliminary foreground sample.
 Activation and geometry tests cover both orientations, static visible grids,
 callback-preserving fallbacks, partial ranges, custom classes and late invalid
@@ -6394,7 +6394,7 @@ and all reported candidate/animation runs pass the activity monitor and retain
 cross-device guarantee. Updates still exceed the 16.67ms budget for 60 FPS;
 animation gains CPU headroom while remaining at the display-rate ceiling.
 
-Protocol, source, every timing run, activity logs and validation (`doc/benchmarks/bar-native/`, commit `2be4e68a`)
+Protocol, source, every timing run, activity logs and validation (`doc/benchmarks/bar-native/`, removed 2026-11-21)
 retain the invalid foreground run and its replacement. Exact pixel/state twins
 cover all blend modes, errors, observers and current-path use. No golden changed.
 
@@ -6442,7 +6442,7 @@ animation-only controls are broadly unchanged. No control has a repeatable regre
 The object-data line control does not use the primitive shortcut; activation
 and behavior for primitive line data are verified separately in the twins.
 
-Protocol, source hashes, raw timing runs, controls and validation (`doc/benchmarks/primitive-parse/`, commit `2be4e68a`)
+Protocol, source hashes, raw timing runs, controls and validation (`doc/benchmarks/primitive-parse/`, removed 2026-11-21)
 retain the complete comparison. The full update still exceeds 16.67ms; this is
 not a claim of 60 FPS or of equivalent gains on mobile/web.
 
@@ -6505,7 +6505,7 @@ N=20000, M=0. Average build falls 22.13 → 20.90ms; raster is 13.76 → 13.91ms
 Both stay active at every check and retain 24 complete one-second windows.
 These are local measurements, not a mobile/web or 60-FPS guarantee.
 
-Protocol, every attempt, exact sources, measurements and validation (`doc/benchmarks/bar-spacing/`, commit `2be4e68a`)
+Protocol, every attempt, exact sources, measurements and validation (`doc/benchmarks/bar-spacing/`, removed 2026-11-21)
 retain the unsuccessful position-reuse work as well as the accepted scan.
 
 Monitored animation remains 59.92 → 59.96 FPS, with average build
@@ -6613,7 +6613,7 @@ semantics before treating the 10.5ms prototype as a shipping implementation.
 Resolution-aware overview rendering is a separate opt-in feature. A general GPU
 rewrite is not the first recommendation from these results.
 
-Probe sources, raw runs, reference checks and metadata (`doc/benchmarks/bar-architecture/`, commit `2be4e68a`)
+Probe sources, raw runs, reference checks and metadata (`doc/benchmarks/bar-architecture/`, removed 2026-11-21)
 retain both comparisons. Supporting upstream guidance: [Chart.js updates](https://www.chartjs.org/docs/latest/developers/updates.html),
 [Chart.js performance](https://www.chartjs.org/docs/latest/general/performance.html),
 [decimation scope](https://www.chartjs.org/docs/latest/configuration/decimation.html),
@@ -6676,7 +6676,7 @@ gain, but not steady 60 FPS: UI frame-time spikes still exceed 16.67ms. These
 are local observations from one process per case. Earlier locked-desktop runs
 remain retained and excluded; foreground-unlocked.json records the valid runs.
 
-Source snapshots, full/partial controls, raw runs and validation (`doc/benchmarks/data-update/`, commit `2be4e68a`)
+Source snapshots, full/partial controls, raw runs and validation (`doc/benchmarks/data-update/`, removed 2026-11-21)
 retain the production comparison separately from the §40 upper-bound prototype.
 
 Validation: 10,812 workspace tests pass (10,278 Chart.js passes, 84 skips).
@@ -6739,7 +6739,7 @@ matches all three chart types. Fixtures, case coverage, analysis, formatting,
 parity and all port checks pass. No public export, generated schema/output,
 golden image or upstream pin changes.
 
-Source patch, raw paired measurements, profiles and verification (`doc/benchmarks/indexed-options/`, commit `2be4e68a`).
+Source patch, raw paired measurements, profiles and verification (`doc/benchmarks/indexed-options/`, removed 2026-11-21).
 
 ## 43. Sealed background-color API prototype
 
@@ -6785,7 +6785,7 @@ validate the actual values and callback behavior.
 
 Validation includes 442 typed API tests, 20 new value cases on VM/JS/Wasm, 10,867
 workspace tests, public exports/name collisions, and executed README snippets.
-Raw measurements, source snapshots and verification (`doc/benchmarks/chart-value/`, commit `2be4e68a`)
+Raw measurements, source snapshots and verification (`doc/benchmarks/chart-value/`, removed 2026-11-21)
 record the prototype and its limits.
 
 ## 44. Controlled estimates for further option/update improvements
@@ -6811,7 +6811,7 @@ incomplete production guards, not accepted optimizations or guaranteed gains.
 The static controls, instrumented baseline, reverse runs, callback counts,
 reference checks and fresh CPU profiles are retained.
 
-Full matrix, scope, limitations and reproduction (`doc/benchmarks/update-estimates/`, commit `2be4e68a`).
+Full matrix, scope, limitations and reproduction (`doc/benchmarks/update-estimates/`, removed 2026-11-21).
 
 ## 45. Prepared indexed styles and color-only bulk bars
 
@@ -6841,7 +6841,7 @@ analysis, formatting and port checks. General prepared styles do not reproduce
 the earlier unguarded prototype's line/radar gains. No callback, raster, FPS,
 mobile or browser-performance claim follows. There is no public API change.
 
-Raw results, checks and reproduction (`doc/benchmarks/prepared-options/`, commit `2be4e68a`).
+Raw results, checks and reproduction (`doc/benchmarks/prepared-options/`, removed 2026-11-21).
 
 ## 46. Remaining point, context and drawing estimates
 
@@ -6873,7 +6873,7 @@ much of bar drawing in native drawRect/drawPicture calls.
 Across three A/B/B/A matrices, all 76 candidate geometry/options/context/path
 and exact-pixel comparisons pass (104 timing cells); callback counts match.
 Production library source is unchanged. No general speed, raster or FPS claim
-follows. Evidence, limits and reproduction (`doc/benchmarks/next-estimates/`, commit `2be4e68a`).
+follows. Evidence, limits and reproduction (`doc/benchmarks/next-estimates/`, removed 2026-11-21).
 
 ## 47. Native scatter option loops
 
@@ -6898,14 +6898,14 @@ callback optimization is introduced; no raster, mobile/web speed or FPS claim
 follows. The 20000-point CPU time still exceeds a 16.67ms frame budget.
 
 All 10,899 workspace tests, 233 focused tests on each browser backend, analysis,
-formatting and port checks pass. Raw results and reproduction (`doc/benchmarks/scatter-options/`, commit `2be4e68a`).
+formatting and port checks pass. Raw results and reproduction (`doc/benchmarks/scatter-options/`, removed 2026-11-21).
 
 ## 48. Native line charts at 20,000 items
 
 2026-11-03–04; [ADR 0080](adr/0080-line-20k-options.md). Apple M3 Max,
 macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7, profile AOT and Impeller MetalSDF.
 The baseline includes the existing ADR 0078/0079 working-tree optimizations.
-Evidence, complete matrix and reproduction (`doc/benchmarks/line-20k/`, commit `2be4e68a`).
+Evidence, complete matrix and reproduction (`doc/benchmarks/line-20k/`, removed 2026-11-21).
 
 **60 FPS in every mode remains unachieved.** This pass preserves all 20,000
 points, callback execution, geometry, drawing order and operation semantics.
@@ -6962,7 +6962,7 @@ ordinary-path twins and validation scope are retained with the evidence.
 
 2026-11-04; [ADR 0081](adr/0081-option-resolution-setup.md). This pass starts
 from the ADR 0080 working tree. Estimation, production comparison, frame data
-and reproduction (`doc/benchmarks/option-setup/`, commit `2be4e68a`). Apple M3 Max, macOS 27.0.1,
+and reproduction (`doc/benchmarks/option-setup/`, removed 2026-11-21). Apple M3 Max, macOS 27.0.1,
 Flutter 3.47.8 / Dart 3.13.7, native profile AOT, Impeller MetalSDF.
 
 The isolated experiment separates setup reuse, allocation removal and their
@@ -7015,7 +7015,7 @@ mobile suite was run. Runtime source hashes match the isolated measured build.
 ## 50. Loop-local native line resolver and context sources
 
 2026-11-04; [ADR 0082](adr/0082-native-line-resolution.md). Baseline: the ADR 0081
-working tree. Profiles, separate estimates, production runs and source hashes (`doc/benchmarks/line-resolution/`, commit `2be4e68a`).
+working tree. Profiles, separate estimates, production runs and source hashes (`doc/benchmarks/line-resolution/`, removed 2026-11-21).
 Native M3 Max, macOS 27.0.1, Flutter 3.47.8 / Dart 3.13.7, profile AOT, Impeller.
 
 The refreshed baseline profile still places element-option resolution in 58.4%
@@ -7070,7 +7070,7 @@ seven port checks. No full browser, fixture, golden or mobile suite was run.
 
 ## 51. Estimates for varying fields, scalar callbacks and native point drawing
 
-2026-11-04. Detailed estimates, prototype sources and checks (`doc/benchmarks/three-estimates/`, commit `2be4e68a`).
+2026-11-04. Detailed estimates, prototype sources and checks (`doc/benchmarks/three-estimates/`, removed 2026-11-21).
 This investigation leaves production library sources unchanged. Baseline is the
 ADR 0082 working tree; native M3 Max, profile AOT, 20k items, 800×480/DPR1.
 
@@ -7109,7 +7109,7 @@ costs. The connected estimate still exceeds 16.67 ms before host overhead.
 
 ## 52. Ordered varying colors and scalar callback production path
 
-2026-11-04. Evidence and reproduction (`doc/benchmarks/color-resolution/`, commit `2be4e68a`),
+2026-11-04. Evidence and reproduction (`doc/benchmarks/color-resolution/`, removed 2026-11-21),
 [ADR 0083](adr/0083-ordered-color-resolution.md). This implements proposals 1 and
 2 from §51: ordered varying-color operations and a separate scalar callback loop.
 Fresh options, live callbacks, context timing and ordinary mutation continuation
@@ -7145,7 +7145,7 @@ browser, fixture, golden or mobile suite was run.
 
 ## 53. Native frame verification after ordered-color resolution
 
-2026-11-04. Full results and raw evidence (`doc/benchmarks/color-verification/`, commit `2be4e68a`).
+2026-11-04. Full results and raw evidence (`doc/benchmarks/color-verification/`, removed 2026-11-21).
 This closes the missing frame comparison of §52. The unchanged ADR 0082/0083
 profile chart binaries run in identical temporary native hosts that keep their
 benchmark windows visible and record occlusion. No production runtime changes.
@@ -7186,7 +7186,7 @@ only benchmark infrastructure and documentation.
 
 ## 54. Drawing, data-only fallback and slow-frame investigation
 
-2026-11-04. Detailed evidence and reproduction (`doc/benchmarks/ui-priorities/`, commit `2be4e68a`).
+2026-11-04. Detailed evidence and reproduction (`doc/benchmarks/ui-priorities/`, removed 2026-11-21).
 Unchanged ADR 0083 production build, native macOS profile AOT, 20k points,
 1036×520/DPR2. Timers and configuration experiments stay in an isolated copy;
 this pass changes no production library/gallery behavior.
@@ -7233,7 +7233,7 @@ pass; no 60 FPS achievement is claimed.
 ## 55. Scalar circles and compact native Path2D storage
 
 2026-11-04. [ADR 0084](adr/0084-scalar-circles-and-compact-paths.md),
-full evidence and reproduction (`doc/benchmarks/circle-path/`, commit `2be4e68a`).
+full evidence and reproduction (`doc/benchmarks/circle-path/`, removed 2026-11-21).
 Three runtime files remove native circle records/boxing and pack unobserved
 move/line/close commands before native path conversion. Command inspection and
 complex operations materialize one stable mutable list; public/custom replay
@@ -7282,7 +7282,7 @@ previous 96-case matrix was not repeated; data-only remains separate work.
 
 ## 56. Path-buffer growth triage
 
-2026-11-04. Isolated candidates, measurements and checks (`doc/benchmarks/path-growth/`, commit `2be4e68a`).
+2026-11-04. Isolated candidates, measurements and checks (`doc/benchmarks/path-growth/`, removed 2026-11-21).
 Production remains ADR 0084. Three native profile builds compare current doubling
 buffers, a delayed count-based reservation, and adaptive 1,024-command chunks.
 No old path storage is recycled, and no data-only/callback guard changes.
@@ -7320,7 +7320,7 @@ unchanged; this pass adds evidence only.
 ## 57. Production chunked path storage
 
 2026-11-04. [ADR 0085](adr/0085-chunked-path-storage.md),
-complete production validation (`doc/benchmarks/path-chunks/`, commit `2be4e68a`).
+complete production validation (`doc/benchmarks/path-chunks/`, removed 2026-11-21).
 Promote the adaptive chunk candidate from §56. The first private buffer grows
 from 16 to 1,024 commands, then full chunks are retained without copying or
 cross-path pooling. Public materialization, replay, native command order and
@@ -7368,7 +7368,7 @@ the measured implementation. Raw rows, controls and rejected attempts are kept.
 
 ## 58. Indexed-update classification and numeric-loop triage
 
-2026-11-05. Full candidates, controls and raw evidence (`doc/benchmarks/indexed-update-triage/`, commit `2be4e68a`).
+2026-11-05. Full candidates, controls and raw evidence (`doc/benchmarks/indexed-update-triage/`, removed 2026-11-21).
 Production remains ADR 0085. A fresh 20k indexed profile places coordinate
 eligibility in 32.2% of sampled stacks and runtimeType in 28.1%, versus about
 0.8% for PointOptions.clone. The unconnected profile agrees; the scriptable
@@ -7405,7 +7405,7 @@ investigation changes no runtime behavior or data-only guard.
 ## 59. Production bounded weak coordinate-map cache
 
 2026-11-05. [ADR 0086](adr/0086-weak-point-coordinate-cache.md),
-complete verification (`doc/benchmarks/coordinate-cache/`, commit `2be4e68a`).
+complete verification (`doc/benchmarks/coordinate-cache/`, removed 2026-11-21).
 
 LineController retains weak identities of accepted SDK coordinate maps at
 absolute point indexes. Each prepared indexed-color loop fills at most 1,024 new
@@ -7446,7 +7446,7 @@ were corrected without widening the existing native-container allowlist.
 ## 60. Shared native point contracts: regression verification
 
 2026-11-05. [ADR 0087](adr/0087-shared-native-point-contracts.md),
-verification and reproduction (`doc/benchmarks/native-contracts/`, commit `2be4e68a`).
+verification and reproduction (`doc/benchmarks/native-contracts/`, removed 2026-11-21).
 
 Line/scatter now share capability/class predicates, update prerequisites and
 indexed point preparation. Exact-controller gates and per-item observation
@@ -7475,7 +7475,7 @@ The 96-case matrix of §59 is not rerun for this behavior-preserving refactor.
 ## 61. Direct prepared scalar point resolution
 
 2026-11-05. [ADR 0088](adr/0088-prepared-scalar-point-resolution.md),
-full measurements and reproduction (`doc/benchmarks/scriptable-headroom/`, commit `2be4e68a`).
+full measurements and reproduction (`doc/benchmarks/scriptable-headroom/`, removed 2026-11-21).
 
 Fresh profiles identify general option-resolution setup around already-prepared
 scalar point colors as avoidable work. A captured native executor now bypasses
@@ -7538,7 +7538,7 @@ the same 1,024,000-byte native allocation block. The additional path and boundar
 vertices are separate costs. Sequential RSS was lower during the faster run,
 but this is not an isolated allocation measurement or a general RAM claim.
 
-See the comparison report (`apps/chart_benchmark_lab/doc/dart-baseline-fill/comparison.txt`, commit `2be4e68a`)
+See the comparison report (`apps/chart_benchmark_lab/doc/dart-baseline-fill/comparison.txt`, removed 2026-11-21)
 and its JSON records. The standalone diagnostic switch
 `CHARTJS_PARTITIONED_BASELINE_FILL=false` disables the optimization for a matched
 baseline build. It is recorded in benchmark exports. Correctness validation:
@@ -7582,7 +7582,7 @@ limit. UI p90 did not show this cost: it stayed near 1.7 ms, because the chart w
 build phase that this metric times.
 
 A moving mouse stays below 120 FPS with markers, because each new mouse event can draw by itself.
-The driver and logs are in `doc/benchmarks/replay-single-draw/` (commit `2be4e68a`).
+The driver and logs are in `doc/benchmarks/replay-single-draw/` (removed 2026-11-21).
 Broader device-specific performance remains unmeasured.
 
 ## 64. One hover pass and one draw for each frame of a live chart
@@ -7620,13 +7620,13 @@ no loss of engine FPS. Other load on the machine can reduce the FPS. Cheaper mar
 margin: a CPU profile before this change gave `PointElement.draw` 43% of the time in port code.
 
 A move now appears one frame later in a live chart: about 8 ms at 120 Hz. The driver and logs are in
-`doc/benchmarks/live-mouse/` (commit `2be4e68a`). Broader device-specific performance
+`doc/benchmarks/live-mouse/` (removed 2026-11-21). Broader device-specific performance
 remains unmeasured.
 
 ## 65. Common performance work on all chart types
 
 Chart.js ADRs 0092 to 0103 remove work that each chart type repeated on each frame. The setup is in
-`doc/benchmarks/common-chart-wins/` (commit `2be4e68a`). A cell is a chart type, an item
+`doc/benchmarks/common-chart-wins/` (removed 2026-11-21). A cell is a chart type, an item
 count and a preset of `apps/chart_benchmark_lab`. "Plain" has the defaults of the lab. "Full" has markers,
 fill, curves, axes, a grid and alternating colors. Old and new are passes on a locked screen. The first
 column is the only pass with the window in view.
@@ -7754,7 +7754,7 @@ On the line chart, the parts on a settled chart were: the bound search of the fi
 one native curve path with its walk about 1.15 ms, and the markers about 2.6 ms before and about 0.6 ms after. The
 draw still builds two native curve paths: the partitioned fill and the line.
 
-A pass of `apps/chart_benchmark_lab` on Impeller, in `doc/benchmarks/line-full/` (commit `2be4e68a`), gave
+A pass of `apps/chart_benchmark_lab` on Impeller, in `doc/benchmarks/line-full/` (removed 2026-11-21), gave
 these means of 2 runs for each side, at 20,000 items with the full preset:
 
 | Cell | FPS, old | FPS, new | UI busy P90, ms, old | UI busy P90, ms, new | Raster P90, ms, old | Raster P90, ms, new |
@@ -7770,7 +7770,7 @@ of 8.8 ms and raster mean of 8.5 ms are the limit that remains. The raster threa
 
 ## 67. The lab on the web and on phones
 
-The setup is in `doc/benchmarks/devices/` (commit `2be4e68a`). Each pass ran once, so that the figures are a map
+The setup is in `doc/benchmarks/devices/` (removed 2026-11-21). Each pass ran once, so that the figures are a map
 and not a comparison.
 
 FPS of the lab matrix at 5,000 items with the full preset. The Mac column is the last pass of §65:
@@ -7816,7 +7816,7 @@ Pixel, once for each change of the data. On the Pixel, it takes 16 to 19 ms at 1
 ## 68. Long paths in pieces on the web
 
 Chart.js ADR 0105 draws a long stroke and a long line fill in pieces on the web. The setup is in
-`doc/benchmarks/web-lines/` (commit `2be4e68a`). The old figures are the pass of §67. Each side ran once, with the
+`doc/benchmarks/web-lines/` (removed 2026-11-21). The old figures are the pass of §67. Each side ran once, with the
 Mac in use by day.
 
 | Lab matrix | WebAssembly, FPS, old | WebAssembly, FPS, new | Raster P90, ms, old | Raster P90, ms, new | JavaScript, FPS, old | JavaScript, FPS, new |

@@ -259,4 +259,4 @@ frames. Those ranges are grounded in the sampling and reuse probes, but the
 production cache and its validation overhead have not been implemented. Actual
 gallery FPS must be measured after implementation, at its real size/build mode.
 
-Evidence, full results, probe and reproduction (`doc/benchmarks/axis-pipeline-scan/`, commit `2be4e68a`).
+Evidence, full results, probe and reproduction (`doc/benchmarks/axis-pipeline-scan/`, removed 2026-11-21).
