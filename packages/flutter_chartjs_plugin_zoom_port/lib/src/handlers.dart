@@ -353,10 +353,10 @@ DragRect computeDragRect(
     bottom: rect.bottom,
     width: width,
     height: height,
-    zoomX: xEnabled && jsTruthy(width)
+    zoomX: xEnabled && (width != 0.0 && !width.isNaN)
         ? 1 + (chartWidth - width) / chartWidth
         : 1,
-    zoomY: yEnabled && jsTruthy(height)
+    zoomY: yEnabled && (height != 0.0 && !height.isNaN)
         ? 1 + (chartHeight - height) / chartHeight
         : 1,
   );

@@ -290,10 +290,10 @@ bool _inRange(BarElement bar, double? x, double? y, bool? useFinalPosition) {
 /// element.bar.js:114 `hasRadius`: whether a corner radius is truthy (not
 /// 0 and not NaN).
 bool _hasRadius(BorderRadius radius) {
-  return jsTruthy(radius.topLeft.x) ||
-      jsTruthy(radius.topRight.x) ||
-      jsTruthy(radius.bottomLeft.x) ||
-      jsTruthy(radius.bottomRight.x);
+  return (radius.topLeft.x != 0.0 && !radius.topLeft.x.isNaN) ||
+      (radius.topRight.x != 0.0 && !radius.topRight.x.isNaN) ||
+      (radius.bottomLeft.x != 0.0 && !radius.bottomLeft.x.isNaN) ||
+      (radius.bottomRight.x != 0.0 && !radius.bottomRight.x.isNaN);
 }
 
 /// element.bar.js:123 `addNormalRectPath`.

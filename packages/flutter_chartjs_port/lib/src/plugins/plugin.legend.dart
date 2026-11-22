@@ -972,7 +972,7 @@ class Legend(
         y + (itemHeight / 2),
         labelFont,
         RenderTextOpts(
-          strikethrough: jsTruthy(legendItem.hidden),
+          strikethrough: legendItem.hidden,
           // DIVERGES(chartjs): adapt-flutter-text-align, the Flutter enum.
           textAlign: rtlHelper.textAlign(canvasTextAlign(legendItem.textAlign)),
         ),
@@ -1025,7 +1025,7 @@ class Legend(
 
         final textWidth = ctx.measureText(jsToString(legendItem.text)).width;
         var itemAlign = legendItem.textAlign;
-        if (!jsTruthy(itemAlign)) {
+        if (itemAlign == null) {
           itemAlign = labelOpts.textAlign;
           legendItem.textAlign = itemAlign;
         }
@@ -1214,17 +1214,17 @@ class Legend(
     if (e.type == 'mousemove' || e.type == 'mouseout') {
       final previous = _hoveredItem;
       final sameItem = _itemsEqual(previous, hoveredItem);
-      if (jsTruthy(previous) && !sameItem) {
-        opts.onLeave?.call(e, previous!, this);
+      if (previous != null && !sameItem) {
+        opts.onLeave?.call(e, previous, this);
       }
 
       _hoveredItem = hoveredItem;
 
-      if (jsTruthy(hoveredItem) && !sameItem) {
-        opts.onHover?.call(e, hoveredItem!, this);
+      if (hoveredItem != null && !sameItem) {
+        opts.onHover?.call(e, hoveredItem, this);
       }
-    } else if (jsTruthy(hoveredItem)) {
-      opts.onClick?.call(e, hoveredItem!, this);
+    } else if (hoveredItem != null) {
+      opts.onClick?.call(e, hoveredItem, this);
     }
   }
 }
@@ -1493,10 +1493,10 @@ double _calculateLegendItemHeight(
 /// plugin.legend.js:582 `isListened(type, opts)`.
 bool _isListened(String type, LegendOptions opts) {
   if ((type == 'mousemove' || type == 'mouseout') &&
-      (jsTruthy(opts.onHover) || jsTruthy(opts.onLeave))) {
+      (opts.onHover != null || opts.onLeave != null)) {
     return true;
   }
-  if (jsTruthy(opts.onClick) && (type == 'click' || type == 'mouseup')) {
+  if (opts.onClick != null && (type == 'click' || type == 'mouseup')) {
     return true;
   }
   return false;

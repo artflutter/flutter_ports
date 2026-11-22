@@ -2055,7 +2055,9 @@ class Scale(AnyObject cfg)
 
     final labelSizes = _getLabelSizes();
     final autoSkipPadding = optionTicks.autoSkipPadding ?? double.nan;
-    final padding = jsTruthy(autoSkipPadding) ? autoSkipPadding : 0.0;
+    final padding = (autoSkipPadding != 0.0 && !autoSkipPadding.isNaN)
+        ? autoSkipPadding
+        : 0.0;
     // A label sizes object is always truthy.
     final w = labelSizes.widest.width + padding;
     final h = labelSizes.highest.height + padding;
@@ -2229,7 +2231,7 @@ class Scale(AnyObject cfg)
       final tickWidth = optsAtIndex.tickWidth ?? undefined;
       final tickColor = optsAtIndex.tickColor;
       final tickDash = optsAtIndex.tickBorderDash;
-      final tickBorderDash = jsTruthy(tickDash) ? tickDash : <Object?>[];
+      final tickBorderDash = tickDash ?? <Object?>[];
       final tickBorderDashOffset =
           optsAtIndex.tickBorderDashOffset ?? undefined;
 

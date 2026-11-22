@@ -401,7 +401,7 @@ Object _pluginOpts(
   final (:plugin, :local) = pluginAndLocal;
   final keys = config.pluginScopeKeys(plugin);
   final scopes = config.getOptionScopes(opts, keys);
-  if (local && jsTruthy(plugin.defaults)) {
+  if (local && plugin.defaults != null) {
     // make sure plugin defaults are in scopes for local (not registered)
     // plugins
     scopes.add(plugin.defaults);

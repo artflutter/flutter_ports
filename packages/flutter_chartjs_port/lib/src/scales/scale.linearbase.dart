@@ -276,7 +276,7 @@ double _relativeLabelSize(
   final minRotation = generationOptions.minRotation;
   final rad = toRadians(minRotation);
   final sinOrCos = horizontal ? math.sin(rad) : math.cos(rad);
-  final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
+  final ratio = (sinOrCos != 0.0 && !sinOrCos.isNaN) ? sinOrCos : 0.001;
   final length = 0.75 * minSpacing * jsToString(value).length;
   return math.min(minSpacing / ratio, length);
 }
@@ -401,7 +401,7 @@ class LinearScaleBase(super.cfg) extends Scale {
     final stepSize = tickOpts.stepSize;
     double maxTicks;
 
-    if (jsTruthy(stepSize)) {
+    if (stepSize != null && stepSize != 0.0 && !stepSize.isNaN) {
       maxTicks =
           (max / jsToNumber(stepSize)).ceilToDouble() -
           (min / jsToNumber(stepSize)).floorToDouble() +
@@ -416,10 +416,15 @@ class LinearScaleBase(super.cfg) extends Scale {
       }
     } else {
       maxTicks = computeTickLimit();
-      maxTicksLimit = jsTruthy(maxTicksLimit) ? maxTicksLimit : 11.0;
+      maxTicksLimit =
+          (maxTicksLimit != null &&
+              maxTicksLimit != 0.0 &&
+              !maxTicksLimit.isNaN)
+          ? maxTicksLimit
+          : 11.0;
     }
 
-    if (jsTruthy(maxTicksLimit)) {
+    if (maxTicksLimit != null && maxTicksLimit != 0.0 && !maxTicksLimit.isNaN) {
       maxTicks = math.min(jsToNumber(maxTicksLimit), maxTicks);
     }
 

@@ -618,14 +618,17 @@ class Chart(
       return jsToNumber(aspectRatio);
     }
 
-    if (jsTruthy(maintainAspectRatio) && jsTruthy(aspectRatioBefore)) {
+    if (jsTruthy(maintainAspectRatio) &&
+        (aspectRatioBefore != null &&
+            aspectRatioBefore != 0.0 &&
+            !aspectRatioBefore.isNaN)) {
       // If maintainAspectRatio is truthly and we had previously determined
       // _aspectRatio, use that
       return aspectRatioBefore;
     }
 
     // Calculate
-    return jsTruthy(height) ? width / height : null;
+    return (height != 0.0 && !height.isNaN) ? width / height : null;
   }
 
   /// Internal eligibility for native label-source reads. A subclass with
@@ -843,7 +846,7 @@ class Chart(
     final newRatio = jsTruthy(devicePixelRatio)
         ? jsToNumber(devicePixelRatio)
         : platform.getDevicePixelRatio();
-    final mode = jsTruthy(this.width)
+    final mode = (this.width != 0.0 && !this.width.isNaN)
         ? UpdateMode.resize
         : const UpdateMode('attach');
 
@@ -2606,7 +2609,7 @@ class Chart(
         )
         .toList();
     final deactivated = diff(lastActive, active);
-    final activated = jsTruthy(replay) ? active : diff(active, lastActive);
+    final activated = (replay ?? false) ? active : diff(active, lastActive);
 
     if (deactivated.isNotEmpty) {
       updateHoverStyle(
@@ -2794,7 +2797,7 @@ class Chart(
     }
 
     final changed = !elementsEqual(active, lastActive);
-    if (changed || jsTruthy(replay)) {
+    if (changed || (replay ?? false)) {
       this.active = active;
       _updateHoverStyles(active, lastActive, replay);
     }

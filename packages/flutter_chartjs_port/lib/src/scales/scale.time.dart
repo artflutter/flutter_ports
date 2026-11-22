@@ -165,7 +165,9 @@ TimeUnit _determineUnitForAutoTicks(
   for (var i = _indexOfUnit(minUnit); i < ilen - 1; ++i) {
     final interval = _intervalOf(_unitAt(i));
     final steps = interval.steps;
-    final factor = jsTruthy(steps) ? steps! : _maxSafeInteger;
+    final factor = (steps != null && steps != 0.0 && !steps.isNaN)
+        ? steps
+        : _maxSafeInteger;
 
     if (interval.common &&
         ((max - min) / (factor * interval.size)).ceilToDouble() <= capacity) {
@@ -640,9 +642,17 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
 
     if (options.bounds == ScaleBounds.ticks && timestamps.isNotEmpty) {
       // DIVERGES(chartjs): adapt-time-null-timestamp, a null bound is 0.
-      this.min = jsToNumber(jsTruthy(userMin) ? userMin : timestamps[0]);
+      final userMin = this.userMin;
+      final userMax = this.userMax;
+      this.min = jsToNumber(
+        userMin != null && userMin != 0.0 && !userMin.isNaN
+            ? userMin
+            : timestamps[0],
+      );
       this.max = jsToNumber(
-        jsTruthy(userMax) ? userMax : timestamps[timestamps.length - 1],
+        userMax != null && userMax != 0.0 && !userMax.isNaN
+            ? userMax
+            : timestamps[timestamps.length - 1],
       );
     }
 
@@ -693,7 +703,7 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
   void afterAutoSkip() {
     // Offsets for bar charts need to be handled with the auto skipped
     // ticks. Once ticks have been skipped, we re-compute the offsets.
-    if (jsTruthy(options.offsetAfterAutoskip)) {
+    if (options.offsetAfterAutoskip) {
       initOffsets([
         for (final tick in this.ticks!) jsToNumber(_tickValue(tick)),
       ]);
@@ -848,7 +858,7 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
     final tooltipFormat = timeOpts.tooltipFormat;
 
     // DIVERGES(chartjs): adapt-native-scale-values, the text of the label.
-    if (jsTruthy(tooltipFormat)) {
+    if (tooltipFormat?.isNotEmpty ?? false) {
       return jsToString(adapter.format(value, tooltipFormat));
     }
     return jsToString(adapter.format(value, timeOpts.displayFormats.datetime));

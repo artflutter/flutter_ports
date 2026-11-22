@@ -300,7 +300,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
     var (:start, :count) = getStartAndCountOfVisiblePoints(
       meta,
       points,
-      jsTruthy(animationsDisabled),
+      animationsDisabled ?? false,
     );
 
     drawStart = start;
@@ -345,7 +345,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         target,
         null,
         LineProperties()
-          ..animated = !jsTruthy(animationsDisabled)
+          ..animated = !(animationsDisabled ?? false)
           ..options = options,
         mode,
       );
@@ -463,7 +463,7 @@ class ScatterController(super.chart, super.datasetIndex, [super.newTarget])
         ? jsToNumber(spanGaps)
         : double.infinity;
     final directUpdate =
-        jsTruthy(chart.animationsDisabled) || reset || mode == 'none';
+        (chart.animationsDisabled ?? false) || reset || mode == 'none';
     // The `false` of `start > 0 && ...` is Dart `null`: the gap test reads
     // it only for an index above 0.
     var prevParsed = start > 0 ? getParsed(start - 1) : null;

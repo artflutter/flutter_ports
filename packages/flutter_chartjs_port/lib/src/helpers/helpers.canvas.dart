@@ -43,11 +43,11 @@ double measureText(
 ) {
   // DIVERGES(chartjs): adapt-measure-text-proto, no Object.prototype keys.
   var textWidth = data[string];
-  if (!jsTruthy(textWidth)) {
+  if (textWidth == null || textWidth == 0.0 || textWidth.isNaN) {
     textWidth = data[string] = ctx.measureText(string).width;
     gc.add(string);
   }
-  if (textWidth! > longest) {
+  if (textWidth > longest) {
     // Upstream reassigns its parameter.
     // ignore: parameter_assignments
     longest = textWidth;
@@ -271,8 +271,12 @@ void drawPointLegend(
   final style = options.pointStyle;
   final rotation = options.rotation;
   final radius = options.radius;
-  final rad = (jsTruthy(rotation) ? rotation! : 0) * radPerDeg;
-  final width = jsTruthy(w) ? w : null;
+  final rad =
+      ((rotation != null && rotation != 0.0 && !rotation.isNaN)
+          ? rotation
+          : 0) *
+      radPerDeg;
+  final width = (w != null && w != 0.0 && !w.isNaN) ? w : null;
 
   if (PointStyle.of(style) case final pointStyle?) {
     pointStyle.draw(
@@ -281,7 +285,7 @@ void drawPointLegend(
       y: y,
       radius: radius,
       rad: rad,
-      rotated: jsTruthy(rotation),
+      rotated: rotation != null && rotation != 0.0 && !rotation.isNaN,
       width: width,
       borderWidth: options.borderWidth,
     );
@@ -777,11 +781,11 @@ void _setRenderOpts(CanvasRenderingContext2D ctx, RenderTextOpts opts) {
   final fillStyle = opts.color;
   ctx.fillStyle = fillStyle;
 
-  if (jsTruthy(opts.textAlign)) {
+  if (opts.textAlign != null) {
     ctx.textAlign = opts.textAlign;
   }
 
-  if (jsTruthy(opts.textBaseline)) {
+  if (opts.textBaseline != null) {
     ctx.textBaseline = opts.textBaseline;
   }
 }
@@ -794,7 +798,7 @@ void _decorateText(
   String line,
   RenderTextOpts opts,
 ) {
-  if (jsTruthy(opts.strikethrough) || jsTruthy(opts.underline)) {
+  if ((opts.strikethrough ?? false) || (opts.underline ?? false)) {
     /**
      * Now that IE11 support has been dropped, we can use more
      * of the TextMetrics object. The actual bounding boxes
@@ -807,14 +811,20 @@ void _decorateText(
     final right = x + metrics.actualBoundingBoxRight;
     final top = y - metrics.actualBoundingBoxAscent;
     final bottom = y + metrics.actualBoundingBoxDescent;
-    final yDecoration = jsTruthy(opts.strikethrough)
+    final yDecoration = (opts.strikethrough ?? false)
         ? (top + bottom) / 2
         : bottom;
+    final decorationWidth = opts.decorationWidth;
 
     ctx
       ..strokeStyle = ctx.fillStyle
       ..beginPath()
-      ..lineWidth = jsTruthy(opts.decorationWidth) ? opts.decorationWidth : 2
+      ..lineWidth =
+          decorationWidth != null &&
+              decorationWidth != 0.0 &&
+              !decorationWidth.isNaN
+          ? decorationWidth
+          : 2
       ..moveTo(left, yDecoration)
       ..lineTo(right, yDecoration)
       ..stroke();

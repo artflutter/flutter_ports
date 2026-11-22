@@ -77,7 +77,7 @@ double _interpolate(
   }
 
   final span = nextSource - prevSource;
-  return jsTruthy(span)
+  return (span != 0.0 && !span.isNaN)
       ? prevTarget + (nextTarget - prevTarget) * (val - prevSource) / span
       : prevTarget;
 }

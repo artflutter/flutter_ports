@@ -127,7 +127,10 @@ double _computeMinSampleSize(ChartMeta meta) {
     if (defined(prev)) {
       // curr - prev === 0 is ignored
       final difference = (jsToNumber(curr) - jsToNumber(prev)).abs();
-      min = math.min(min, jsTruthy(difference) ? difference : min);
+      min = math.min(
+        min,
+        (difference != 0.0 && !difference.isNaN) ? difference : min,
+      );
     }
     prev = curr;
   }

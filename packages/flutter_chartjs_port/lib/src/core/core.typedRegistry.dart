@@ -186,7 +186,7 @@ void _registerDefaults(Object item, String scope, String? parentScope) {
   }
   // Inherit the parent's defaults and keep existing defaults
   final sources = [
-    if (jsTruthy(parentScope))
+    if (parentScope?.isNotEmpty ?? false)
       defaults.get(parentScope!)
     else
       <String, Object?>{},

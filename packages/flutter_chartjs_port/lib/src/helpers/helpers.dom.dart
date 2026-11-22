@@ -208,10 +208,15 @@ double _round1(double v) => (v * 10).roundToDouble() / 10;
   var height = containerSize.height;
 
   width = math.max(0, width);
-  height = math.max(0, jsTruthy(aspectRatio) ? width / aspectRatio! : height);
+  height = math.max(
+    0,
+    (aspectRatio != null && aspectRatio != 0.0 && !aspectRatio.isNaN)
+        ? width / aspectRatio
+        : height,
+  );
   width = _round1(math.min(width, containerSize.maxWidth));
   height = _round1(math.min(height, containerSize.maxHeight));
-  if (jsTruthy(width) && !jsTruthy(height)) {
+  if ((width != 0.0 && !width.isNaN) && (height == 0.0 || height.isNaN)) {
     // https://github.com/chartjs/Chart.js/issues/4659
     // If the canvas has width, but no height, default to aspectRatio of 2
     // (canvas default)
@@ -221,11 +226,11 @@ double _round1(double v) => (v * 10).roundToDouble() / 10;
   final maintainHeight = bbWidth != null || bbHeight != null;
 
   if (maintainHeight &&
-      jsTruthy(aspectRatio) &&
-      jsTruthy(containerSize.height) &&
+      (aspectRatio != null && aspectRatio != 0.0 && !aspectRatio.isNaN) &&
+      (containerSize.height != 0.0 && !containerSize.height.isNaN) &&
       height > containerSize.height) {
     height = containerSize.height;
-    width = _round1((height * aspectRatio!).floorToDouble());
+    width = _round1((height * aspectRatio).floorToDouble());
   }
 
   return (width: width, height: height);
@@ -268,7 +273,10 @@ int _toUint32(double value) {
 /// `scale(1 / devicePixelRatio)`, so the `setTransform` of the pixel ratio
 /// gives the identity in logical pixels (Chart.js ADR 0055).
 bool retinaScale(IChart chart, double? forceRatio, [bool? forceStyle]) {
-  final pixelRatio = jsTruthy(forceRatio) ? forceRatio! : 1.0;
+  final pixelRatio =
+      (forceRatio != null && forceRatio != 0.0 && !forceRatio.isNaN)
+      ? forceRatio
+      : 1.0;
   final deviceHeight = _round1(chart.height * pixelRatio);
   final deviceWidth = _round1(chart.width * pixelRatio);
 

@@ -102,14 +102,20 @@ class BasePlatform() implements IBasePlatform {
   ]) {
     final w = math.max<double>(
       0,
-      jsTruthy(width) ? width! : element.width.toDouble(),
+      (width != null && width != 0.0 && !width.isNaN)
+          ? width
+          : element.width.toDouble(),
     );
-    final h = jsTruthy(height) ? height! : element.height.toDouble();
+    final h = (height != null && height != 0.0 && !height.isNaN)
+        ? height
+        : element.height.toDouble();
     return (
       width: w,
       height: math.max(
         0,
-        jsTruthy(aspectRatio) ? (w / aspectRatio!).floorToDouble() : h,
+        (aspectRatio != null && aspectRatio != 0.0 && !aspectRatio.isNaN)
+            ? (w / aspectRatio).floorToDouble()
+            : h,
       ),
     );
   }

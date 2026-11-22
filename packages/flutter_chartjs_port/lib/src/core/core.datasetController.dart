@@ -625,7 +625,7 @@ ElementOptions _cloneIfNotShared(ElementOptions cached, bool shared) =>
 /// Dart `null` stands for each falsy result of the `&&` chain.
 DatasetStack? _createStack(Object? canStack, ChartMeta meta, IChart chart) =>
     jsTruthy(canStack) &&
-        !jsTruthy(meta.hidden) &&
+        !(meta.hidden ?? false) &&
         meta.stacked != StackMode.off
     ? DatasetStack(_getSortedDatasetIndices(chart, true), null)
     : null;
@@ -1970,7 +1970,7 @@ class DatasetController(
     if (legend != null) {
       return legend.styles.at(index! < legend.arcCount ? index : this.index);
     }
-    final mode = jsTruthy(active) ? 'active' : 'default';
+    final mode = (active ?? false) ? 'active' : 'default';
     return index == null && cachedMeta.dataset != null
         ? resolveDatasetElementOptions(mode)
         : resolveDataElementOptions(index ?? 0, mode);
@@ -2401,7 +2401,7 @@ class DatasetController(
   bool includeOptions(String mode, ElementOptions? sharedOptions) {
     return sharedOptions == null ||
         _isDirectUpdateMode(mode) ||
-        jsTruthy(chart.animationsDisabled);
+        (chart.animationsDisabled ?? false);
   }
 
   /// core.datasetController.js:885 `_getSharedOptions(start, mode)`.

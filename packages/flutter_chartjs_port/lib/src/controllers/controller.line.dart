@@ -263,7 +263,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
     var (:start, :count) = getStartAndCountOfVisiblePoints(
       meta,
       points,
-      jsTruthy(animationsDisabled),
+      animationsDisabled ?? false,
     );
 
     drawStart = start;
@@ -302,7 +302,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
       target,
       null,
       LineProperties()
-        ..animated = !jsTruthy(animationsDisabled)
+        ..animated = !(animationsDisabled ?? false)
         ..options = options,
       mode,
     );
@@ -368,7 +368,7 @@ class LineController(super.chart, super.datasetIndex, [super.newTarget])
         ? jsToNumber(spanGaps)
         : double.infinity;
     final directUpdate =
-        jsTruthy(chart.animationsDisabled) || reset || mode == 'none';
+        (chart.animationsDisabled ?? false) || reset || mode == 'none';
     final end = start + count;
     final pointsCount = points.length;
     // The `false` of `start > 0 && ...` is Dart `null`: the gap test reads

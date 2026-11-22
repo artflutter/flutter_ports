@@ -138,7 +138,7 @@ class LinearScale(super.cfg)
     final length = horizontal ? width : height;
     final minRotation = toRadians(jsToNumber(options.ticks.minRotation));
     final sinOrCos = horizontal ? math.sin(minRotation) : math.cos(minRotation);
-    final ratio = jsTruthy(sinOrCos) ? sinOrCos : 0.001;
+    final ratio = (sinOrCos != 0.0 && !sinOrCos.isNaN) ? sinOrCos : 0.001;
     final tickFont = resolveTickFontOptions(0);
     return (length /
             math.min<double>(40, jsToNumber(tickFont.lineHeight) / ratio))

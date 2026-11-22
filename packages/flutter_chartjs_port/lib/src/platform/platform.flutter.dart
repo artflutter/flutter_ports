@@ -145,7 +145,10 @@ HTMLCanvasElement initCanvas(HTMLCanvasElement canvas, [double? aspectRatio]) {
       // specified, use canvas aspect ratio of 2.
       // The DOM assigns the quotient with ToUint32 (canvas.dart).
       canvas.height = _toUint32(
-        canvas.width / (jsTruthy(aspectRatio) ? aspectRatio! : 2),
+        canvas.width /
+            ((aspectRatio != null && aspectRatio != 0.0 && !aspectRatio.isNaN)
+                ? aspectRatio
+                : 2),
       );
     } else {
       final displayHeight = readUsedSize(canvas, 'height');
@@ -557,7 +560,8 @@ class FlutterPlatform() extends BasePlatform {
     final containerHeight = height ?? container?.contentHeight ?? 0;
     final unboundedWidth = !containerWidth.isFinite;
     final unboundedHeight = !containerHeight.isFinite;
-    final ratio = jsTruthy(aspectRatio);
+    final ratio =
+        aspectRatio != null && aspectRatio != 0.0 && !aspectRatio.isNaN;
     final unbounded = chartjs.getMaximumSize(
       canvas,
       unboundedWidth && (unboundedHeight || !ratio)

@@ -142,10 +142,11 @@ bool Function(GestureEvent) _createEnabler(Chart chart, State state) {
 /// gestures.ts:81 `handlePinch(chart, state, e)`: one step of a pinch
 /// zoom.
 void _handlePinch(Chart chart, State state, GestureEvent e) {
-  if (jsTruthy(state.scale)) {
+  final scale = state.scale;
+  if (scale != null && scale != 0.0 && !scale.isNaN) {
     final GestureEvent(:center, :pointers) = e;
     // The event reports the total scaling. We need the incremental amount.
-    final zoomPercent = (1 / state.scale!) * e.scale;
+    final zoomPercent = (1 / scale) * e.scale;
     final rect = e.target.getBoundingClientRect();
     final pinch = _pinchAxes(pointers[0], pointers[1]);
     final mode = state.options.zoom?.mode;
@@ -190,7 +191,8 @@ void _startPinch(Chart chart, State state, GestureEvent e) {
 /// gestures.ts:117 `endPinch(chart, state, e)`: the last step of a pinch
 /// zoom, then `onZoomComplete`.
 void _endPinch(Chart chart, State state, GestureEvent e) {
-  if (jsTruthy(state.scale)) {
+  final scale = state.scale;
+  if (scale != null && scale != 0.0 && !scale.isNaN) {
     _handlePinch(chart, state, e);
     state.scale = null; // reset
     state.options.zoom?.onZoomComplete?.call((chart: chart));
@@ -374,7 +376,7 @@ final class _GestureManager(
     final pinchStartDistance = _pinchStartDistance;
     final scale =
         pinchStartDistance != null &&
-            jsTruthy(pinchStartDistance) &&
+            (pinchStartDistance != 0.0 && !pinchStartDistance.isNaN) &&
             pointers.length >= 2
         ? _distance(pointers[0], pointers[1]) / pinchStartDistance
         : 1.0;

@@ -601,7 +601,7 @@ class PointElement([AnyObject? cfg])
     // `borderWidth` joins (`3 + '1'` is `'31'`), and the `*` applies
     // `ToNumber`.
     final Object? borderWidth;
-    if (jsTruthy(radius)) {
+    if (radius != 0.0 && !radius.isNaN) {
       final value = _raw(options, OptionKey.borderWidth);
       borderWidth = jsTruthy(value) ? value : 0.0;
     } else {
