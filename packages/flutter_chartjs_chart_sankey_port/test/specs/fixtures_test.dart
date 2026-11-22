@@ -22,19 +22,20 @@ void main() {
     });
 
     testWidgets('should create a sankey chart without data', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'data': <String, Object?>{},
-        'options': <String, Object?>{
-          'plugins': <String, Object?>{
-            'legend': <String, Object?>{'display': false},
-            'title': <String, Object?>{
-              'display': true,
-              'text': ['OD pairs on hexagon level'],
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..type = 'sankey'
+          ..data = ChartDataScope()
+          ..options = mergeExtra(ChartOptionsScope(), {
+            'plugins': {
+              'legend': {'display': false},
+              'title': {
+                'display': true,
+                'text': ['OD pairs on hexagon level'],
+              },
             },
-          },
-        },
-        'type': 'sankey',
-      });
+          }),
+      );
 
       expect(chart.config.type, 'sankey');
       expect(jsGet(chart.data, 'datasets'), isEmpty);
@@ -43,22 +44,23 @@ void main() {
     testWidgets('should lay out a vertical sankey from top to bottom', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'flow': 10, 'from': 'A', 'to': 'B'},
-                <String, Object?>{'flow': 4, 'from': 'A', 'to': 'C'},
-              ],
-              // DIVERGES(sankey): adapt-sankey-option-enums, the enum value.
-              'orientation': SankeyOrientation.vertical,
-            },
-          ],
-        },
-        'options': <String, Object?>{'animation': false},
-        'type': 'sankey',
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          const ChartConfig(
+            datasets: [
+              SankeyDataset(
+                data: [
+                  SankeyDataPoint(flow: 10, from: 'A', to: 'B'),
+                  SankeyDataPoint(flow: 4, from: 'A', to: 'C'),
+                ],
+                // DIVERGES(sankey): adapt-sankey-option-enums, the enum value.
+                orientation: SankeyOrientation.vertical,
+              ),
+            ],
+            animation: ChartAnimation.none,
+          ),
+        ).lower(),
+      );
 
       final flow = chart.getDatasetMeta(0).data[0] as Flow;
       expect(jsGet(flow.options, 'orientation'), SankeyOrientation.vertical);
@@ -68,21 +70,22 @@ void main() {
     });
 
     testWidgets('should reserve space for custom node widths', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'data': <String, Object?>{
-          'datasets': <Object?>[
-            <String, Object?>{
-              'data': <Object?>[
-                <String, Object?>{'flow': 10, 'from': 'A', 'to': 'B'},
-                <String, Object?>{'flow': 4, 'from': 'A', 'to': 'C'},
-              ],
-              'nodeWidth': 18,
-            },
-          ],
-        },
-        'options': <String, Object?>{'animation': false},
-        'type': 'sankey',
-      });
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          const ChartConfig(
+            datasets: [
+              SankeyDataset(
+                data: [
+                  SankeyDataPoint(flow: 10, from: 'A', to: 'B'),
+                  SankeyDataPoint(flow: 4, from: 'A', to: 'C'),
+                ],
+                nodeWidth: 18,
+              ),
+            ],
+            animation: ChartAnimation.none,
+          ),
+        ).lower(),
+      );
       // Vitest's spyOn calls through by default, unlike Jasmine's.
       //
       // The spy is a recording context in `chart.ctx`: the controller draws

@@ -122,9 +122,9 @@ void main() {
 
     testWidgets('a chart with an animation that runs at the end of the body '
         'passes the end-of-test checks', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'plugins': [_destroyLog()],
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()..plugins = [_destroyLog()],
+      );
       final target = <String, Object?>{'value': 0.0};
       animator
         ..add(chart, [
@@ -141,15 +141,13 @@ void main() {
 
     testWidgets('a pending resizeDelay timer at the end of the body passes '
         'the end-of-test checks', (tester) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'options': <String, Object?>{
-            'responsive': true,
-            'maintainAspectRatio': false,
-            'resizeDelay': 100,
-          },
-          'plugins': [_destroyLog()],
-        },
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()
+          ..options = (ChartOptionsScope()
+            ..responsive = true
+            ..maintainAspectRatio = false
+            ..resizeDelay = 100)
+          ..plugins = [_destroyLog()],
         <String, Object?>{
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{'style': 'width: 300px; height: 350px'},
@@ -167,9 +165,9 @@ void main() {
 
     testWidgets('releaseCharts on released charts destroys them again '
         'without a throw', (tester) async {
-      final chart = acquireChart(<String, Object?>{
-        'plugins': [_destroyLog()],
-      });
+      final chart = acquireChartRoot(
+        ChartConfigurationScope()..plugins = [_destroyLog()],
+      );
       final wrapper = chart.canvas!.parentElement!;
       releaseCharts();
       expect(chart.canvas, isNull);

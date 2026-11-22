@@ -36,6 +36,40 @@ import 'scale_linear_reference.dart';
 // (section 3) and the values of scaleValueOf (section 2) without
 // generated values.
 
+/// Native setups for four reference cases. The generated expected scale,
+/// point and draw observations remain the comparison oracle.
+ChartConfig? _typedReference(String name) => switch (name) {
+  'primitives' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [10, 5, 0, -5, 78, -100]),
+    ],
+  ),
+  'string values' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd', 'e', 'f'],
+    datasets: [
+      TestDataset(
+        ChartKind('scaleTest'),
+        // Preserve strings so this still exercises the numeric parser.
+        extra: {
+          'data': ['10', '5', '0', '-5', '78', '-100'],
+        },
+      ),
+    ],
+  ),
+  'small numbers' => const ChartConfig(
+    labels: ['a', 'b', 'c', 'd'],
+    datasets: [
+      TestDataset(ChartKind('scaleTest'), data: [-1e-8, 3e-8, -4e-8, 6e-8]),
+    ],
+  ),
+  'empty data' => const ChartConfig(
+    labels: ['a', 'b', 'c'],
+    datasets: [TestDataset(ChartKind('scaleTest'), data: [])],
+  ),
+  _ => null,
+};
+
 /// The test controller `scaleTest2` of the generator: the overrides of
 /// `scaleTest`.
 final JsClass _scaleTest2Controller = cartesianTestController('scaleTest2', {
@@ -247,10 +281,14 @@ void main() {
 
     for (final c in scaleLinearReference) {
       testWidgets(c.name, (tester) async {
-        final chart = acquireChart(
-          copyReference(c.config, _functions)! as AnyObject,
-          copyReference(c.options)! as AnyObject,
-        );
+        final typed = _typedReference(c.name);
+        final options = copyReference(c.options)! as AnyObject;
+        final chart = typed == null
+            ? acquireChart(
+                copyReference(c.config, _functions)! as AnyObject,
+                options,
+              )
+            : acquireChartRoot(ChartConfigLowering(typed).lower(), options);
         _actions[c.name]?.call(chart);
         expectScaleChart(chart, c.expected, extra: _linearObservations);
       });
