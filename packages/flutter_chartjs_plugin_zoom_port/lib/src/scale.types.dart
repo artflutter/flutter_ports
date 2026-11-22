@@ -61,8 +61,7 @@ bool _isNotNumber(double? value) => value == null || value.isNaN;
 /// A `null` [val] or [min] is the `undefined` of upstream. A falsy [range]
 /// (0 or NaN) puts [newRange] above the value.
 ScaleRange zoomDelta(double? val, double? min, double range, double newRange) {
-  final minPercent =
-      (range != 0.0 && !range.isNaN) && isNumber(val) && isNumber(min)
+  final minPercent = range.isNonZero && isNumber(val) && isNumber(min)
       ? math.max<double>(0, math.min<double>(1, (val! - min!) / range))
       : 0.0;
   final maxPercent = 1 - minPercent;

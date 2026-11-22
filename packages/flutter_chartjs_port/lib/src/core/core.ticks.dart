@@ -148,8 +148,7 @@ List<String>? _logarithmic(
     throw TypeError();
   }
   final significand = ticks[index].significand;
-  final remain =
-      (significand != null && significand != 0.0 && !significand.isNaN)
+  final remain = significand.isNonZero
       ? significand
       : (tickValue / (math.pow(10.0, log10(tickValue).floorToDouble())));
   if (const <double>[1, 2, 3, 5, 10, 15].contains(remain) ||

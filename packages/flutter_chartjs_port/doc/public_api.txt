@@ -350,6 +350,7 @@ NativeTouch
 NearestInteractionMode
 NearestTooltipPositioner
 NoFill
+NonZeroDouble
 NullValueScale
 OffsetAnimation
 Opt
@@ -1402,6 +1403,7 @@ NativeTouch
 NearestInteractionMode
 NearestTooltipPositioner
 NoFill
+NonZeroDouble
 NullValueScale
 OffsetAnimation
 Opt

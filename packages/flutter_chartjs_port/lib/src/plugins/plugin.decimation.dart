@@ -115,9 +115,7 @@ List<ParsedItem?> lttbDecimation(
   // `samples` reaches only numeric operators (`>=`, `-`, `/`, `<`), which
   // apply ToNumber to it.
   final samples = jsToNumber(
-    (samplesOption != null && samplesOption != 0.0 && !samplesOption.isNaN)
-        ? samplesOption
-        : availableWidth,
+    samplesOption.isNonZero ? samplesOption! : availableWidth,
   );
   // There are less points than the threshold, returning the whole array
   if (samples >= count) {
@@ -577,11 +575,7 @@ void _beforeElementsUpdate(
     // `count <= threshold` applies ToNumber to the threshold, because
     // `count` is a number.
     if (count <=
-        jsToNumber(
-          (threshold != null && threshold != 0.0 && !threshold.isNaN)
-              ? threshold
-              : 4 * availableWidth,
-        )) {
+        jsToNumber(threshold.isNonZero ? threshold! : 4 * availableWidth)) {
       // No decimation is required until we are above this threshold
       _cleanDecimatedDataset(dataset);
       continue;

@@ -484,7 +484,7 @@ void _pathArc(
       : 0.001;
   final angleOffset = (alpha - beta) / 2;
 
-  if (spacing != 0.0 && !spacing.isNaN) {
+  if (spacing.isNonZero) {
     // When spacing is present, it is the same for all items
     // So we adjust the start and end angle of the arc such that
     // the distance is the same as it would be without the spacing
@@ -699,7 +699,7 @@ double _drawArc(
 ) {
   final ArcElement(:fullCircles, :startAngle, :circumference) = element;
   var endAngle = element.endAngle;
-  if (fullCircles != 0.0 && !fullCircles.isNaN) {
+  if (fullCircles.isNonZero) {
     _pathArc(ctx, element, offset, spacing, endAngle, circular);
     for (var i = 0; i < fullCircles; ++i) {
       ctx.fill();
@@ -758,7 +758,7 @@ void _drawBorder(
 
   var endAngle = element.endAngle;
   final isFullCircle = (endAngle - startAngle).abs() >= tau - 1e-4;
-  if (fullCircles != 0.0 && !fullCircles.isNaN) {
+  if (fullCircles.isNonZero) {
     _pathArc(ctx, element, offset, spacing, endAngle, circular);
     for (var i = 0; i < fullCircles; ++i) {
       ctx.stroke();
@@ -786,14 +786,14 @@ void _drawBorder(
     _clipSelf(ctx, element, endAngle);
   }
 
-  if (fullCircles == 0.0 || fullCircles.isNaN) {
+  if (!fullCircles.isNonZero) {
     _pathArc(ctx, element, offset, spacing, endAngle, circular);
     ctx.stroke();
   }
 }
 
 /// `value || TAU` for the number [value] (element.arc.ts:304, :346).
-double _orTau(double value) => (value != 0.0 && !value.isNaN) ? value : tau;
+double _orTau(double value) => value.isNonZero ? value : tau;
 
 /// element.arc.ts:365 `ArcProps`, the animated properties of an
 /// [ArcElement]: the `T` of `Element<ArcProps, ArcOptions>`.
@@ -1474,12 +1474,7 @@ class ArcElement([AnyObject? cfg])
       final fix =
           1 -
           math.sin(
-            math.min<double>(
-              pi,
-              (circumference != 0.0 && !circumference.isNaN)
-                  ? circumference
-                  : 0,
-            ),
+            math.min<double>(pi, circumference.isNonZero ? circumference : 0),
           );
       radiusOffset = offset * fix;
     }

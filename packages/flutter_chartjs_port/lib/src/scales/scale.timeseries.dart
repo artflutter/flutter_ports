@@ -77,7 +77,7 @@ double _interpolate(
   }
 
   final span = nextSource - prevSource;
-  return (span != 0.0 && !span.isNaN)
+  return span.isNonZero
       ? prevTarget + (nextTarget - prevTarget) * (val - prevSource) / span
       : prevTarget;
 }

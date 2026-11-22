@@ -282,7 +282,7 @@ TooltipItem _createTooltipItem(IChart chart, ActiveElement item) {
         (titleLineCount - 1) * options.titleSpacing +
         options.titleMarginBottom;
   }
-  if (combinedBodyLength != 0.0 && !combinedBodyLength.isNaN) {
+  if (combinedBodyLength.isNonZero) {
     // Body lines may include some extra height depending on boxHeight
     final bodyLineHeight = options.displayColors
         ? math.max(boxHeight, bodyFont.lineHeight!)
@@ -1808,7 +1808,7 @@ class Tooltip(({IChart chart, Object? options}) config)
   /// Only the plugin Map of this library reads it.
   bool _willRender() {
     final opacity = _opacity;
-    return opacity != null && opacity != 0.0 && !opacity.isNaN;
+    return opacity.isNonZero;
   }
 
   /// plugin.tooltip.js:1040 `draw(ctx)`.
@@ -1820,7 +1820,7 @@ class Tooltip(({IChart chart, Object? options}) config)
     final options = _resolveOptions();
     var opacity = _opacity ?? double.nan;
 
-    if (opacity == 0.0 || opacity.isNaN) {
+    if (!opacity.isNonZero) {
       return;
     }
 

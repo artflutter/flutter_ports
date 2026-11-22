@@ -831,7 +831,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
   /// `|| 1`: a total of 0 or NaN gives 1.
   double _getVisibleDatasetWeightTotal() {
     final total = _getRingWeightOffset(_datasetCount());
-    return (total != 0.0 && !total.isNaN) ? total : 1;
+    return total.isNonZero ? total : 1;
   }
 }
 

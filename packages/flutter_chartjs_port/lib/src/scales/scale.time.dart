@@ -165,9 +165,7 @@ TimeUnit _determineUnitForAutoTicks(
   for (var i = _indexOfUnit(minUnit); i < ilen - 1; ++i) {
     final interval = _intervalOf(_unitAt(i));
     final steps = interval.steps;
-    final factor = (steps != null && steps != 0.0 && !steps.isNaN)
-        ? steps
-        : _maxSafeInteger;
+    final factor = steps.isNonZero ? steps! : _maxSafeInteger;
 
     if (interval.common &&
         ((max - min) / (factor * interval.size)).ceilToDouble() <= capacity) {
@@ -644,15 +642,9 @@ class TimeScale(super.cfg) extends Scale implements NullValueScale {
       // DIVERGES(chartjs): adapt-time-null-timestamp, a null bound is 0.
       final userMin = this.userMin;
       final userMax = this.userMax;
-      this.min = jsToNumber(
-        userMin != null && userMin != 0.0 && !userMin.isNaN
-            ? userMin
-            : timestamps[0],
-      );
+      this.min = jsToNumber(userMin.isNonZero ? userMin : timestamps[0]);
       this.max = jsToNumber(
-        userMax != null && userMax != 0.0 && !userMax.isNaN
-            ? userMax
-            : timestamps[timestamps.length - 1],
+        userMax.isNonZero ? userMax : timestamps[timestamps.length - 1],
       );
     }
 

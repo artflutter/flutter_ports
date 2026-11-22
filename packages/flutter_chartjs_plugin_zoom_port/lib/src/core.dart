@@ -263,7 +263,7 @@ double getZoomLevel(Chart chart) {
   var max = 1.0;
   for (final scale in _values(chart.scales)) {
     final origRange = _getOriginalRange(state, scale.id);
-    if (origRange != null && origRange != 0.0 && !origRange.isNaN) {
+    if (origRange != null && origRange.isNonZero) {
       final level =
           ((origRange / (scale.max - scale.min)) * 100).roundToDouble() / 100;
       min = math.min(min, level);
@@ -279,9 +279,7 @@ void _panScale(Scale scale, double delta, LimitOptions limits, State state) {
   // Add possible cumulative delta from previous pan attempts where scale did
   // not change
   final stored = panDelta[scale.id];
-  final storedDelta = (stored != null && stored != 0.0 && !stored.isNaN)
-      ? stored
-      : 0.0;
+  final storedDelta = stored.isNonZero ? stored! : 0.0;
   final total = sign(storedDelta) == sign(delta) ? delta + storedDelta : delta;
   final fn = panFunctions[scale.type] ?? panFunctions['default'];
   if (fn?.call(scale, total, limits) ?? false) {

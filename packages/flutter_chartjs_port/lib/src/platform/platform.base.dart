@@ -102,18 +102,14 @@ class BasePlatform() implements IBasePlatform {
   ]) {
     final w = math.max<double>(
       0,
-      (width != null && width != 0.0 && !width.isNaN)
-          ? width
-          : element.width.toDouble(),
+      width.isNonZero ? width! : element.width.toDouble(),
     );
-    final h = (height != null && height != 0.0 && !height.isNaN)
-        ? height
-        : element.height.toDouble();
+    final h = height.isNonZero ? height! : element.height.toDouble();
     return (
       width: w,
       height: math.max(
         0,
-        (aspectRatio != null && aspectRatio != 0.0 && !aspectRatio.isNaN)
+        aspectRatio != null && aspectRatio.isNonZero
             ? (w / aspectRatio).floorToDouble()
             : h,
       ),

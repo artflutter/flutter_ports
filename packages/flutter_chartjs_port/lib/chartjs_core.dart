@@ -75,6 +75,7 @@ export 'package:flutter_chartjs_port/src/helpers/helpers.math.dart';
 export 'package:flutter_chartjs_port/src/helpers/helpers.options.dart';
 export 'package:flutter_chartjs_port/src/helpers/helpers.rtl.dart';
 export 'package:flutter_chartjs_port/src/helpers/helpers.segment.dart';
+export 'package:flutter_chartjs_port/src/helpers/non_zero.dart';
 export 'package:flutter_chartjs_port/src/helpers/point_style.dart';
 export 'package:flutter_chartjs_port/src/helpers/radius_length.dart';
 export 'package:flutter_chartjs_port/src/js/js_array.dart';

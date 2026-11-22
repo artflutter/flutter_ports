@@ -43,7 +43,7 @@ double measureText(
 ) {
   // DIVERGES(chartjs): adapt-measure-text-proto, no Object.prototype keys.
   var textWidth = data[string];
-  if (textWidth == null || textWidth == 0.0 || textWidth.isNaN) {
+  if (textWidth == null || !textWidth.isNonZero) {
     textWidth = data[string] = ctx.measureText(string).width;
     gc.add(string);
   }
@@ -271,12 +271,8 @@ void drawPointLegend(
   final style = options.pointStyle;
   final rotation = options.rotation;
   final radius = options.radius;
-  final rad =
-      ((rotation != null && rotation != 0.0 && !rotation.isNaN)
-          ? rotation
-          : 0) *
-      radPerDeg;
-  final width = (w != null && w != 0.0 && !w.isNaN) ? w : null;
+  final rad = (rotation.isNonZero ? rotation! : 0) * radPerDeg;
+  final width = w.isNonZero ? w : null;
 
   if (PointStyle.of(style) case final pointStyle?) {
     pointStyle.draw(
@@ -285,7 +281,7 @@ void drawPointLegend(
       y: y,
       radius: radius,
       rad: rad,
-      rotated: rotation != null && rotation != 0.0 && !rotation.isNaN,
+      rotated: rotation.isNonZero,
       width: width,
       borderWidth: options.borderWidth,
     );

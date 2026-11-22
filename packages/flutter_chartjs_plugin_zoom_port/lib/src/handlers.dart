@@ -353,10 +353,10 @@ DragRect computeDragRect(
     bottom: rect.bottom,
     width: width,
     height: height,
-    zoomX: xEnabled && (width != 0.0 && !width.isNaN)
+    zoomX: xEnabled && width.isNonZero
         ? 1 + (chartWidth - width) / chartWidth
         : 1,
-    zoomY: yEnabled && (height != 0.0 && !height.isNaN)
+    zoomY: yEnabled && height.isNonZero
         ? 1 + (chartHeight - height) / chartHeight
         : 1,
   );

@@ -628,7 +628,7 @@ class Chart(
     }
 
     // Calculate
-    return (height != 0.0 && !height.isNaN) ? width / height : null;
+    return height.isNonZero ? width / height : null;
   }
 
   /// Internal eligibility for native label-source reads. A subclass with
@@ -846,7 +846,7 @@ class Chart(
     final newRatio = jsTruthy(devicePixelRatio)
         ? jsToNumber(devicePixelRatio)
         : platform.getDevicePixelRatio();
-    final mode = (this.width != 0.0 && !this.width.isNaN)
+    final mode = this.width.isNonZero
         ? UpdateMode.resize
         : const UpdateMode('attach');
 

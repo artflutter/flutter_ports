@@ -43,9 +43,7 @@ List<Tick> autoSkip(IScale scale, List<Tick> ticks) {
   final determinedMaxTicks = _determineMaxTicks(scale);
   final maxTicksLimit = tickOpts.maxTicksLimit;
   final ticksLimit = math.min(
-    (maxTicksLimit != null && maxTicksLimit != 0.0 && !maxTicksLimit.isNaN)
-        ? jsToNumber(maxTicksLimit)
-        : determinedMaxTicks,
+    maxTicksLimit.isNonZero ? jsToNumber(maxTicksLimit) : determinedMaxTicks,
     determinedMaxTicks,
   );
   final majorIndices = tickOpts.major.enabled
@@ -207,7 +205,7 @@ void _skip(
   // ignore: parameter_assignments
   spacing = spacing.ceilToDouble();
   // `if (majorEnd)`: a major end of 0 is falsy.
-  if (majorEnd != null && (majorEnd != 0.0 && !majorEnd.isNaN)) {
+  if (majorEnd != null && majorEnd.isNonZero) {
     // `majorStart` is a number when `majorEnd` is truthy: autoSkip passes
     // both or neither.
     length = majorEnd - majorStart!;

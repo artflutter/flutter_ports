@@ -777,7 +777,7 @@ void _drawRadiusLine(
 
   if ((!circular && labelCount == 0) ||
       !jsTruthy(color) ||
-      (lineWidth == null || lineWidth == 0.0 || lineWidth.isNaN) ||
+      !lineWidth.isNonZero ||
       radius < 0) {
     return;
   }
@@ -1377,8 +1377,7 @@ class RadialLinearScale(super.cfg)
         final color = optsAtIndex.color;
         final lineWidth = optsAtIndex.lineWidth;
 
-        if ((lineWidth == null || lineWidth == 0.0 || lineWidth.isNaN) ||
-            !jsTruthy(color)) {
+        if (!lineWidth.isNonZero || !jsTruthy(color)) {
           // DIVERGES(chartjs): adapt-radial-static-plans, no line to draw.
           if (i == labelCount - 1 && _staticAngleLineStyle(angleLines)) break;
           continue;

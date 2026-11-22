@@ -143,7 +143,7 @@ bool Function(GestureEvent) _createEnabler(Chart chart, State state) {
 /// zoom.
 void _handlePinch(Chart chart, State state, GestureEvent e) {
   final scale = state.scale;
-  if (scale != null && scale != 0.0 && !scale.isNaN) {
+  if (scale != null && scale.isNonZero) {
     final GestureEvent(:center, :pointers) = e;
     // The event reports the total scaling. We need the incremental amount.
     final zoomPercent = (1 / scale) * e.scale;
@@ -192,7 +192,7 @@ void _startPinch(Chart chart, State state, GestureEvent e) {
 /// zoom, then `onZoomComplete`.
 void _endPinch(Chart chart, State state, GestureEvent e) {
   final scale = state.scale;
-  if (scale != null && scale != 0.0 && !scale.isNaN) {
+  if (scale != null && scale.isNonZero) {
     _handlePinch(chart, state, e);
     state.scale = null; // reset
     state.options.zoom?.onZoomComplete?.call((chart: chart));
@@ -376,7 +376,7 @@ final class _GestureManager(
     final pinchStartDistance = _pinchStartDistance;
     final scale =
         pinchStartDistance != null &&
-            (pinchStartDistance != 0.0 && !pinchStartDistance.isNaN) &&
+            pinchStartDistance.isNonZero &&
             pointers.length >= 2
         ? _distance(pointers[0], pointers[1]) / pinchStartDistance
         : 1.0;
