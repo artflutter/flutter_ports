@@ -62,7 +62,7 @@ final class _Dataset(@override final Map<String, Object?>? options)
   bool get active => false;
 
   @override
-  Object? get hidden => undefined;
+  bool get hidden => false;
 }
 
 /// A point element `{x, y}`, passed as a [IPointElement]. The control points
@@ -95,7 +95,7 @@ final class _Point(@override final double x, @override final double y)
   bool get active => false;
 
   @override
-  Object? get hidden => undefined;
+  bool get hidden => false;
 
   @override
   double size([Object? options]) => throw UnsupportedError('size');

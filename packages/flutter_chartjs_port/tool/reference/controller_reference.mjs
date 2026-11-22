@@ -611,7 +611,9 @@ scenario('visibility', (observe, charts) => {
   chart.show(0);
   observe('show', `${chart.isDatasetVisible(0)} ${chart.getDatasetMeta(0).visible} ${chart.getDatasetMeta(0).hidden}`);
   chart.hide(0, 1);
-  observe('hide element', `${chart.getDatasetMeta(0).data[1].hidden} ${chart.getDatasetMeta(0).data[0].hidden}`);
+  // The port holds `hidden` as a bool: an element that no code wrote reads
+  // false (differences.md row adapt-element-hidden-bool).
+  observe('hide element', `${chart.getDatasetMeta(0).data[1].hidden} ${Boolean(chart.getDatasetMeta(0).data[0].hidden)}`);
   chart.show(0, 1);
   observe('show element', `${chart.getDatasetMeta(0).data[1].hidden}`);
   observe('hide missing element', error(() => chart.hide(0, 7)));

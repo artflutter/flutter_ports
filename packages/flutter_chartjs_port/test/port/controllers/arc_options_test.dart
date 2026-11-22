@@ -88,7 +88,7 @@ class _ProbeArc() extends ArcElement {
   }
 
   @override
-  Object? get hidden {
+  bool get hidden {
     onHidden?.call(++hiddenReads);
     return super.hidden;
   }
@@ -104,7 +104,7 @@ class _UserArc(final List<Object?> trace) extends ArcElement {
   }
 
   @override
-  Object? get hidden {
+  bool get hidden {
     trace.add('hidden');
     onHidden?.call();
     return super.hidden;

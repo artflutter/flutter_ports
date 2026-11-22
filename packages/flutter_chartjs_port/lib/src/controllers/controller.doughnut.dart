@@ -473,7 +473,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
             )) ||
         !chart.getDataVisibility(i) ||
         parsedNumberOf(meta.parsed, i) == null ||
-        jsTruthy(meta.data[i].hidden)) {
+        meta.data[i].hidden) {
       return 0;
     }
     return calculateCircumference(
@@ -679,7 +679,7 @@ class DoughnutController(super.chart, super.datasetIndex, [super.newTarget])
       if (value != null &&
           !jsIsNaN(value) &&
           chart.getDataVisibility(i) &&
-          !jsTruthy(metaData[i].hidden)) {
+          !metaData[i].hidden) {
         total += jsToNumber(value).abs();
       }
     }

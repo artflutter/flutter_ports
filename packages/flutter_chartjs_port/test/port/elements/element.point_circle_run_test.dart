@@ -87,7 +87,7 @@ List<IElement> _elements(int seed) {
               ..options = options[mixed ? r.nextInt(options.length) : 0]
               ..active = r.nextInt(12) == 0;
         if (r.nextInt(12) == 0) point.skip = true;
-        if (r.nextInt(14) == 0) point.hidden = r.nextBool() ? true : 0;
+        if (r.nextInt(14) == 0) point.hidden = r.nextBool();
         return point;
       }(),
   ];
@@ -127,8 +127,7 @@ void _loop(
   final area = _Area();
   for (var i = from; i < elements.length; i++) {
     final element = elements[i] as PointElement;
-    final hidden = element.hidden;
-    if (hidden == true || (hidden is num && hidden != 0)) continue;
+    if (element.hidden) continue;
     if (element.active && activeOnTop) {
       active.add(element);
     } else {

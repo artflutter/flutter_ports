@@ -97,7 +97,7 @@ visible: true false false
 set visible: true false
 hide: false false true
 show: true true false
-hide element: true undefined
+hide element: true false
 show element: false
 hide missing element: TypeError
 data visibility: true false true true

@@ -37,7 +37,7 @@ final class _Point(
   bool get active => false;
 
   @override
-  Object? get hidden => undefined;
+  bool get hidden => false;
 
   @override
   double size([Object? options]) => throw UnsupportedError('size');
@@ -79,7 +79,7 @@ final class _RadialPoint(@override final double? angle)
   bool get active => false;
 
   @override
-  Object? get hidden => undefined;
+  bool get hidden => false;
 
   @override
   double size([Object? options]) => throw UnsupportedError('size');

@@ -624,6 +624,31 @@ String _parseCallTextColors(String text) => [
 // ---------------------------------------------------------------------------
 // The checks.
 
+/// The port holds `Element.hidden` as a bool: `false` stands for the
+/// `undefined` of an element that no code wrote (differences.md row
+/// `adapt-element-hidden-bool`).
+Map<String, Object?> _nativeHidden(Map<String, Object?> expected) => {
+  ...expected,
+  'datasets': [
+    for (final dataset in expected['datasets']! as List<Object?>)
+      switch (dataset) {
+        final Map<String, Object?> map when map['data'] is List<Object?> => {
+          ...map,
+          'data': [
+            for (final element in map['data']! as List<Object?>)
+              switch (element) {
+                final Map<String, Object?> item
+                    when identical(item['hidden'], undefined) =>
+                  {...item, 'hidden': false},
+                _ => element,
+              },
+          ],
+        },
+        _ => dataset,
+      },
+  ],
+};
+
 /// Expects [chart] to give [expected], an observation of the generator.
 /// [label] names the observation in each reason: `initial` or `step <k>`.
 /// [parseColors] is for the themed run (theming.md section 8 test 3): each
@@ -648,7 +673,7 @@ void expectControllerObservations(
   Map<String, Object?> Function(Chart chart)? observeExtra,
   Set<String> hitBorders = const {},
 }) {
-  var expectedMap = expected! as Map<String, Object?>;
+  var expectedMap = _nativeHidden(expected! as Map<String, Object?>);
   final scaleOptions = (expectedMap['scales']! as Map<String, Object?>).values
       .any((scale) => (scale! as Map<String, Object?>).containsKey('options'));
   var observed = observeControllers(

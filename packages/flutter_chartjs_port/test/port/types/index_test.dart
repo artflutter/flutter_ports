@@ -168,12 +168,12 @@ void main() {
       final IElement t = element;
       expect(t.active, isFalse);
       expect(t.active, element.active);
-      expect(t.hidden, same(undefined));
+      expect(t.hidden, isFalse);
       element
         ..active = true
-        ..hidden = null;
+        ..hidden = true;
       expect(t.active, isTrue);
-      expect(t.hidden, isNull);
+      expect(t.hidden, isTrue);
     });
   });
 

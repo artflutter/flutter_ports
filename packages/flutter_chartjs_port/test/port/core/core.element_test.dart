@@ -316,57 +316,47 @@ void main() {
     });
   });
 
-  // core.element.ts does not declare `hidden`. The port declares it for the
-  // read of each draw (performance.md section 10.6). It must keep any value
-  // as an extra property does: the draw tests its ToBoolean
-  // (core.datasetController.js:730, the scenario 'draw with hidden values'
-  // of core.datasetController_test.dart).
+  // core.element.ts does not declare `hidden`. The port declares it as a
+  // bool for the read of each draw (performance.md section 10.6, row
+  // adapt-element-hidden-bool).
   group('hidden', () {
-    test('starts undefined', () {
+    test('starts false', () {
       final elem = Element();
-      expect(elem.hidden, _isUndefined);
-      expect(elem['hidden'], _isUndefined);
-      expect(_Box()['hidden'], _isUndefined);
+      expect(elem.hidden, isFalse);
+      expect(elem['hidden'], isFalse);
+      expect(_Box()['hidden'], isFalse);
     });
 
-    test('keeps any value, as an extra property does', () {
-      final map = <String, Object?>{};
-      for (final value in <Object?>[
-        true,
-        false,
-        1,
-        0,
-        'a',
-        '',
-        map,
-        null,
-        undefined,
-      ]) {
+    test('reads and writes a bool by name', () {
+      for (final value in [true, false]) {
         final byName = Element()..['hidden'] = value;
-        final extra = Element()..['hiddenExtra'] = value;
-        expect(byName.hidden, same(value), reason: '$value');
-        expect(byName['hidden'], same(value), reason: '$value');
-        expect(byName['hidden'], same(extra['hiddenExtra']), reason: '$value');
+        expect(byName.hidden, value);
         final typed = Element()..hidden = value;
-        expect(typed['hidden'], same(value), reason: '$value');
+        expect(typed['hidden'], value);
       }
-      // NaN is not identical to itself in JavaScript (dart2js).
-      final nan = Element()..['hidden'] = double.nan;
-      expect(nan.hidden, isNaN);
-      expect(nan['hidden'], isNaN);
+    });
+
+    test('a write by name of another type stops a debug build', () {
+      for (final value in <Object?>[1, 0, 'a', '', null, undefined]) {
+        expect(
+          () => Element()['hidden'] = value,
+          throwsA(isA<AssertionError>()),
+          reason: '$value',
+        );
+      }
     });
 
     test('a subclass reads and writes it through super', () {
       final elem = _Box()..['hidden'] = true;
       expect(elem.hidden, isTrue);
       expect(elem['hidden'], isTrue);
-      elem.hidden = undefined;
-      expect(elem['hidden'], _isUndefined);
+      elem.hidden = false;
+      expect(elem['hidden'], isFalse);
     });
 
     test('assign writes it', () {
-      final elem = Element()..assign({'hidden': 0, 'x': 1});
-      expect(elem.hidden, 0);
+      final elem = Element()..assign({'hidden': true, 'x': 1});
+      expect(elem.hidden, isTrue);
       expect(elem.x, 1.0);
     });
   });

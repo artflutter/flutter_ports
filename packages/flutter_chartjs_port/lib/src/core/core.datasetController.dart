@@ -1939,7 +1939,7 @@ class DatasetController(
 
     for (; i < start + count; ++i) {
       final element = _at(elements, i)! as Element;
-      if (jsTruthy(element.hidden)) {
+      if (element.hidden) {
         continue;
       }
       if (element.active && drawActiveElementsOnTop) {

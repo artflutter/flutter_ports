@@ -278,20 +278,21 @@ class Element() implements IElement, PropertyAccess, ElementProps {
   /// `core.animations.js` creates the Map. JS `null` never reaches it.
   Map<String, IAnimation>? $animations;
 
-  /// core.datasetController.js:730 `element.hidden`: a truthy value hides
-  /// the data element in the draw of its dataset.
+  /// core.datasetController.js:730 `element.hidden`: `true` hides the data
+  /// element in the draw of its dataset.
   ///
   /// core.element.ts does not declare it, and the types give it no type.
-  /// `_updateVisibility` writes a boolean (core.controller.js:898), and user
-  /// code can write any value. `DatasetController.draw` reads it for each
-  /// element in each draw (core.datasetController.js:730). Thus the class
-  /// declares it, as Chart.js ADR 0017 (Consequences) permits for a property
-  /// that a ported caller reads often (performance.md §10.6).
+  /// `_updateVisibility` writes a boolean (core.controller.js:898).
+  /// `DatasetController.draw` reads it for each element in each draw
+  /// (core.datasetController.js:730). Thus the class declares it, as Chart.js
+  /// ADR 0017 (Consequences) permits for a property that a ported caller
+  /// reads often (performance.md §10.6).
   ///
-  /// It keeps any value, as the Map of extra properties does: the
-  /// [undefined] sentinel in the start state, and Dart `null` for JS `null`.
+  /// It is a bool: `false` stands for the `undefined` of the start state, and
+  /// a write by name of another type stops a debug build.
+  // DIVERGES(chartjs): adapt-element-hidden-bool, the property is a bool.
   @override
-  Object? hidden = undefined;
+  bool hidden = false;
 
   /// core.element.ts:17 `tooltipPosition(useFinalPosition: boolean):
   /// Point`.
@@ -459,7 +460,8 @@ class Element() implements IElement, PropertyAccess, ElementProps {
       case r'$animations':
         $animations = toObjectProp<Map<String, IAnimation>>(prop, value);
       case 'hidden':
-        hidden = value;
+        assert(value is bool, 'hidden takes a bool, not $value');
+        hidden = value == true;
       default:
         (_extras ??= <String, Object?>{})[prop] = value;
     }

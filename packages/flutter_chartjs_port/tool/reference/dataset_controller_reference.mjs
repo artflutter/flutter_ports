@@ -1162,8 +1162,8 @@ const SCENARIOS = [
     ],
   },
   {
-    // core.datasetController.js:730 `if (element.hidden)`: the ToBoolean of
-    // any value that a user writes into `hidden`.
+    // core.datasetController.js:730 `if (element.hidden)`: the port holds a
+    // bool in `hidden` (differences.md row adapt-element-hidden-bool).
     name: 'draw with hidden values',
     labels: ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'],
     scales: [CATEGORY_X, LINEAR_Y],
@@ -1172,13 +1172,10 @@ const SCENARIOS = [
     steps: [
       ['build'],
       ['elements', true],
-      ['setHidden', 0, 0, 1],
-      ['setHidden', 0, 1, 'a'],
-      ['setHidden', 0, 2, {}],
-      ['setHidden', 0, 3, 0],
-      ['setHidden', 0, 4, ''],
-      ['setHidden', 0, 5, null],
-      ['setHidden', 0, 6, UNDEFINED],
+      ['setHidden', 0, 0, true],
+      ['setHidden', 0, 2, true],
+      ['setHidden', 0, 3, false],
+      ['setHidden', 0, 5, true],
       ['setHidden', 0, 7, false],
       ['draw', 0],
       ['trace'],

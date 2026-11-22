@@ -36,7 +36,7 @@ final class _Point(@override final double x, @override final double y)
   bool get active => false;
 
   @override
-  Object? get hidden => undefined;
+  bool get hidden => false;
 
   @override
   double size([Object? options]) => throw UnsupportedError('size');

@@ -709,7 +709,7 @@ class PointElement([AnyObject? cfg])
         final element = elements[i];
         if (element is! PointElement || !element._builtIn) break;
         final point = element;
-        if (!identical(point.hidden, undefined) && jsTruthy(point.hidden)) {
+        if (point.hidden) {
           continue;
         }
         if (point.active && activeOnTop) {

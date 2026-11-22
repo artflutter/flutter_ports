@@ -1957,7 +1957,7 @@ class BarController(super.chart, super.datasetIndex, [super.newTarget])
 
     for (; i < ilen; ++i) {
       if (parsedValueOf(getParsed(i), vScale!.axis) != null &&
-          !jsTruthy(rects[i].hidden)) {
+          !rects[i].hidden) {
         (rects[i] as VisualElement).draw(ctx!);
       }
     }

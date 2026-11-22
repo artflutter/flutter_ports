@@ -1335,9 +1335,9 @@ abstract interface class IElement() implements Point {
 
   /// The `hidden` property: core.controller.js:898 writes it,
   /// core.datasetController.js:730 reads it. core.element.ts does not
-  /// declare it. Any JS value: the `undefined` sentinel in the start state.
+  /// declare it. A bool: `false` in the start state.
   /// controller.bar.js:676 reads it.
-  Object? get hidden;
+  bool get hidden;
 }
 
 /// The run of markers of the point element class of `element.point.dart`

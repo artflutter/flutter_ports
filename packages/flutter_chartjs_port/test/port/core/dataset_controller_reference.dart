@@ -4,7 +4,9 @@
 // Node.js v24.22.1 (darwin-arm64), V8 13.6.233.17-node.58:
 // src/core/core.datasetController.js at the pinned Chart.js. 34 scenarios.
 
-import 'package:flutter_chartjs_port/chartjs_core.dart';
+import 'package:flutter_chartjs_port/src/types/chart_axis.dart';
+import 'package:flutter_chartjs_port/src/types/chart_meta.dart'
+    show ChartClip, StackMode;
 
 /// The Node.js version that generated the data.
 const String datasetControllerReferenceNode = 'v24.22.1';
@@ -880,25 +882,17 @@ trace: ["line#0.draw(0,4)","point#1.draw","point#2.draw","point#4.draw"]''',
       'steps': <Object?>[
         <Object?>['build'],
         <Object?>['elements', true],
-        <Object?>['setHidden', 0.0, 0.0, 1.0],
-        <Object?>['setHidden', 0.0, 1.0, 'a'],
-        <Object?>['setHidden', 0.0, 2.0, <String, Object?>{}],
-        <Object?>['setHidden', 0.0, 3.0, 0.0],
-        <Object?>['setHidden', 0.0, 4.0, ''],
-        <Object?>['setHidden', 0.0, 5.0, null],
-        <Object?>[
-          'setHidden',
-          0.0,
-          6.0,
-          <String, Object?>{r'$undefined': true},
-        ],
+        <Object?>['setHidden', 0.0, 0.0, true],
+        <Object?>['setHidden', 0.0, 2.0, true],
+        <Object?>['setHidden', 0.0, 3.0, false],
+        <Object?>['setHidden', 0.0, 5.0, true],
         <Object?>['setHidden', 0.0, 7.0, false],
         <Object?>['draw', 0.0],
         <Object?>['trace'],
       ],
     },
     observations: '''
-trace: ["point#3.draw","point#4.draw","point#5.draw","point#6.draw","point#7.draw"]''',
+trace: ["point#1.draw","point#3.draw","point#4.draw","point#6.draw","point#7.draw"]''',
   ),
   (
     spec: <String, Object?>{
