@@ -550,7 +550,7 @@ Map<String, Object?> _leastWorkPlugins() => <String, Object?>{
   'title': <String, Object?>{'display': false},
   'subtitle': <String, Object?>{'display': false},
   'colors': <String, Object?>{'enabled': false},
-  'decimation': <String, Object?>{'enabled': false},
+  'decimation': const DecimationOptions(enabled: false),
 };
 
 /// A case `plugins.line` of the CT stage 1 (Chart.js ADR 0038, section 10,

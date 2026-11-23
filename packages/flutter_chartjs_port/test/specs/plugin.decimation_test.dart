@@ -21,8 +21,14 @@ import '../fixtures/index.dart' as fixture;
 //   changes
 //   the array or its items, so the results are the same.
 // - `toBe` of a number is `expect` with the number.
-// - The first case keeps the upstream `scales` key at the root of the
-//   config, where Chart.js does not read it.
+// - Each config is a typed `ChartConfig` with a `DecimationOptions` in
+//   `pluginOptions` (Chart.js ADR 0194).
+// - The first case has the upstream `scales` key at the root of the config,
+//   where Chart.js does not read it: the x scale is the default category
+//   scale and the parsing is on, so the plugin returns early
+//   (plugin.decimation.js:231, :236). A typed config has no root key: it
+//   gives the linear axis in the options. The parsing stays on, so the plugin
+//   still returns early and the data keep their 10 items.
 
 /// The data of :6-16.
 List<DataPoint> _originalData() => [
@@ -35,10 +41,15 @@ List<Object?> _data(Chart chart) =>
         as List<Object?>;
 
 /// The acquireChart options of a canvas and a wrapper of [width] x
-/// [height].
+/// [height] (the second argument of `acquireChart`, not a chart config).
 AnyObject _canvas(int width, int height) => <String, Object?>{
   'canvas': <String, Object?>{'height': height, 'width': width},
   'wrapper': <String, Object?>{'height': height, 'width': width},
+};
+
+/// The acquireChart options of a canvas of [width] x [height].
+AnyObject _canvasOnly(int width, int height) => <String, Object?>{
+  'canvas': <String, Object?>{'width': width, 'height': height},
 };
 
 void main() {
@@ -49,28 +60,21 @@ void main() {
       testWidgets('should draw all element if sample is greater than data '
           'based on canvas width', (tester) async {
         final chart = acquireChartRoot(
-          (ChartConfigLowering(
-              ChartConfig(
-                datasets: [
-                  LineDataset(
-                    data: .points(_originalData()),
-                    label: 'dataset1',
-                  ),
-                ],
-                extra: const {
-                  'plugins': {
-                    'decimation': <String, Object?>{
-                      'enabled': true,
-                      'algorithm': LttbDecimationAlgorithm(),
-                      'samples': 100,
-                    },
-                  },
-                },
-              ),
-            ).lower()
-            ..['scales'] = <String, Object?>{
-              'x': <String, Object?>{'type': 'linear', 'min': 0, 'max': 9},
-            }),
+          ChartConfigLowering(
+            ChartConfig(
+              datasets: [
+                LineDataset(data: .points(_originalData()), label: 'dataset1'),
+              ],
+              scales: const [LinearAxis(.x, min: 0, max: 9)],
+              pluginOptions: const [
+                DecimationOptions(
+                  enabled: true,
+                  algorithm: LttbDecimationAlgorithm(),
+                  samples: 100,
+                ),
+              ],
+            ),
+          ).lower(),
           _canvas(1, 1),
         );
 
@@ -86,16 +90,14 @@ void main() {
                 LineDataset(data: .points(_originalData()), label: 'dataset1'),
               ],
               scales: const [LinearAxis(.x, min: 0, max: 9)],
-              extra: const {
-                'parsing': false,
-                'plugins': {
-                  'decimation': <String, Object?>{
-                    'enabled': true,
-                    'algorithm': LttbDecimationAlgorithm(),
-                    'samples': 7,
-                  },
-                },
-              },
+              parsing: false,
+              pluginOptions: const [
+                DecimationOptions(
+                  enabled: true,
+                  algorithm: LttbDecimationAlgorithm(),
+                  samples: 7,
+                ),
+              ],
             ),
           ).lower(),
           _canvas(1, 1),
@@ -113,17 +115,15 @@ void main() {
                 LineDataset(data: .points(_originalData()), label: 'dataset1'),
               ],
               scales: const [LinearAxis(.x)],
-              extra: const {
-                'parsing': false,
-                'plugins': {
-                  'decimation': <String, Object?>{
-                    'enabled': true,
-                    'algorithm': LttbDecimationAlgorithm(),
-                    'samples': 5,
-                    'threshold': 7,
-                  },
-                },
-              },
+              parsing: false,
+              pluginOptions: const [
+                DecimationOptions(
+                  enabled: true,
+                  algorithm: LttbDecimationAlgorithm(),
+                  samples: 5,
+                  threshold: 7,
+                ),
+              ],
             ),
           ).lower(),
           _canvas(100, 100),
@@ -141,16 +141,14 @@ void main() {
                 LineDataset(data: .points(originalData), label: 'dataset1'),
               ],
               scales: const [LinearAxis(.x, min: 3, max: 6)],
-              extra: const {
-                'parsing': false,
-                'plugins': {
-                  'decimation': <String, Object?>{
-                    'enabled': true,
-                    'algorithm': LttbDecimationAlgorithm(),
-                    'samples': 7,
-                  },
-                },
-              },
+              parsing: false,
+              pluginOptions: const [
+                DecimationOptions(
+                  enabled: true,
+                  algorithm: LttbDecimationAlgorithm(),
+                  samples: 7,
+                ),
+              ],
             ),
           ).lower(),
           _canvas(1, 1),
@@ -160,11 +158,11 @@ void main() {
         const expectedPoints = 5;
         final data = _data(chart);
         expect(data.length, expectedPoints);
-        expect(jsGet(data[0], 'x'), jsGet(originalData[2], 'x'));
-        expect(jsGet(data[1], 'x'), jsGet(originalData[3], 'x'));
-        expect(jsGet(data[2], 'x'), jsGet(originalData[4], 'x'));
-        expect(jsGet(data[3], 'x'), jsGet(originalData[5], 'x'));
-        expect(jsGet(data[4], 'x'), jsGet(originalData[6], 'x'));
+        expect(jsGet(data[0], 'x'), originalData[2].x);
+        expect(jsGet(data[1], 'x'), originalData[3].x);
+        expect(jsGet(data[2], 'x'), originalData[4].x);
+        expect(jsGet(data[3], 'x'), originalData[5].x);
+        expect(jsGet(data[4], 'x'), originalData[6].x);
       });
 
       testWidgets('should not crash with uneven points', (tester) async {
@@ -178,21 +176,17 @@ void main() {
             ChartConfig(
               datasets: [LineDataset(data: .points(data))],
               scales: const [LinearAxis(.x)],
-              extra: const {
-                'devicePixelRatio': 1.25,
-                'parsing': false,
-                'plugins': {
-                  'decimation': <String, Object?>{
-                    'enabled': true,
-                    'algorithm': LttbDecimationAlgorithm(),
-                  },
-                },
-              },
+              devicePixelRatio: 1.25,
+              parsing: false,
+              pluginOptions: const [
+                DecimationOptions(
+                  enabled: true,
+                  algorithm: LttbDecimationAlgorithm(),
+                ),
+              ],
             ),
           ).lower(),
-          <String, Object?>{
-            'canvas': <String, Object?>{'width': 511, 'height': 511},
-          },
+          _canvasOnly(511, 511),
         );
         expect(createChart, returnsNormally);
       });

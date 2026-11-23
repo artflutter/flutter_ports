@@ -58315,12 +58315,12 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{'type': 'linear'},
         },
         'plugins': <String, Object?>{
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'threshold': 20.0,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 12.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            threshold: 20,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 12,
+          ),
         },
       },
     },
@@ -59637,11 +59637,11 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
           'x': <String, Object?>{'type': 'linear'},
         },
         'plugins': <String, Object?>{
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'threshold': 20.0,
-            'algorithm': MinMaxDecimationAlgorithm(),
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            threshold: 20,
+            algorithm: MinMaxDecimationAlgorithm(),
+          ),
         },
       },
     },

@@ -34,12 +34,12 @@ import 'package:meta/meta.dart';
 ///   @override
 ///   List<ParsedItem?> decimate(
 ///     List<ParsedItem?> data,
-///     double start,
-///     double count,
+///     int start,
+///     int count,
 ///     double availableWidth,
 ///     DecimationOptions options,
 ///   ) => [
-///     for (var i = start.toInt(); i < start + count; i += n) data[i],
+///     for (var i = start; i < start + count; i += n) data[i],
 ///   ];
 /// }
 /// ```
@@ -52,7 +52,7 @@ abstract class const DecimationAlgorithm() {
   /// [start], for a chart area of [availableWidth] pixels. The items are the
   /// data items of the app (the plugin needs `parsing: false`): each one is a
   /// [ParsedItem], for example a `DataPoint`. [options]
-  /// are the resolved options of the plugin: a built-in algorithm reads
+  /// are the merged options of the plugin: a built-in algorithm reads
   /// `samples` from them. An algorithm of a program keeps its own settings in
   /// its fields.
   List<ParsedItem?> decimate(
@@ -62,18 +62,4 @@ abstract class const DecimationAlgorithm() {
     double availableWidth,
     DecimationOptions options,
   );
-
-  /// The algorithm of [value], the value of the option `algorithm`, or Dart
-  /// `null` for a value that is not an algorithm: the plugin then throws, as
-  /// upstream throws for a name that is not a case of its `switch`. An
-  /// algorithm name of Chart.js is not an algorithm: a debug build stops on
-  /// it.
-  static DecimationAlgorithm? of(Object? value) {
-    assert(
-      value is! String,
-      'The option algorithm of the decimation takes a DecimationAlgorithm, '
-      'not the name "$value".',
-    );
-    return value is DecimationAlgorithm ? value : null;
-  }
 }

@@ -204,7 +204,7 @@ kinds:
     others: bool | scope GenericPluginOptions | pluginOptions
     keys:
       colors: bool | scope ColorsOptions
-      decimation: bool | scope DecimationOptions
+      decimation: bool | pluginOptions  # the DecimationOptions of plugin_options.dart (Chart.js ADR 0194)
       filler: bool | scope FillerOptions
       legend: bool | pluginOptions  # the LegendOptions of plugin_options.dart (Chart.js ADR 0193)
       subtitle: bool | scope TitleOptions
@@ -1011,14 +1011,6 @@ kinds:
     keys:
       drawTime: fillerDrawTime
       propagate: bool
-      events: list  # read at core.controller.js:1170
-  DecimationOptions:
-    doc: index.d.ts:2292 DecimationOptions (the union of index.d.ts:2283 LttbDecimationOptions and :2288 MinMaxDecimationOptions), the scope `plugins.decimation`.
-    keys:
-      enabled: bool
-      threshold: number
-      algorithm: decimationAlgorithm
-      samples: number
       events: list  # read at core.controller.js:1170
   ColorsOptions:
     doc: plugin.colors.ts:4 ColorsPluginOptions, the scope `plugins.colors`.

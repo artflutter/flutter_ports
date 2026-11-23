@@ -20,17 +20,6 @@ void main() {
   // Maps: the subject is `of`, the read of raw resolved options into the
   // classes of Chart.js ADR 0182.
   group('the fields that `of` reads from the resolved options', () {
-    test('a number of a truthy value, else null', () {
-      expect(
-        DecimationOptions.of(<String, Object?>{'samples': 50.0}).samples,
-        50,
-      );
-      expect(
-        DecimationOptions.of(<String, Object?>{'threshold': 0.0}).threshold,
-        isNull,
-      );
-    });
-
     test('the lines of a text', () {
       expect(
         TitleOptions.of(<String, Object?>{
@@ -289,6 +278,58 @@ void main() {
 
     test('the plugin id is tooltip', () {
       expect(const TooltipOptions().pluginId, 'tooltip');
+    });
+  });
+
+  // The decimation options are one object of the app (Chart.js ADR 0194).
+  group('DecimationOptions', () {
+    test('merge takes each field that the other options set', () {
+      const base = DecimationOptions(
+        enabled: false,
+        algorithm: MinMaxDecimationAlgorithm(),
+        threshold: 20,
+      );
+      final merged = base.merge(
+        const DecimationOptions(
+          enabled: true,
+          algorithm: LttbDecimationAlgorithm(),
+          samples: 50,
+          events: ['click'],
+        ),
+      );
+      expect(merged.enabled, isTrue);
+      expect(merged.algorithm, const LttbDecimationAlgorithm());
+      expect(merged.samples, 50);
+      expect(merged.threshold, 20);
+      expect(merged.events, ['click']);
+      expect(base.merge(const DecimationOptions()), base);
+      expect(const DecimationOptions().merge(base), base);
+    });
+
+    test('== and hashCode compare the fields', () {
+      DecimationOptions make({double samples = 50}) => DecimationOptions(
+        enabled: true,
+        algorithm: const LttbDecimationAlgorithm(),
+        samples: samples,
+        threshold: 100,
+        events: const ['click'],
+      );
+      expect(make(), make());
+      expect(make().hashCode, make().hashCode);
+      expect(make(), isNot(make(samples: 60)));
+      expect(const DecimationOptions(), const DecimationOptions());
+      expect(
+        const DecimationOptions(algorithm: LttbDecimationAlgorithm()),
+        isNot(const DecimationOptions(algorithm: MinMaxDecimationAlgorithm())),
+      );
+      expect(
+        const DecimationOptions(events: ['click']),
+        isNot(const DecimationOptions(events: ['click', 'mousemove'])),
+      );
+    });
+
+    test('the plugin id is decimation', () {
+      expect(const DecimationOptions().pluginId, 'decimation');
     });
   });
 

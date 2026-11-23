@@ -106,6 +106,7 @@ ChartAnimationItems
 ChartArea
 ChartAxis
 ChartClip
+ChartColors
 ChartConfig
 ChartConfigLowering
 ChartConfiguration
@@ -186,7 +187,6 @@ DateZone
 Debounced
 DecimationAlgorithm
 DecimationOptions
-DecimationOptionsScope
 DecimationPlugin
 DefaultCubicInterpolationMode
 Defaults
@@ -851,6 +851,7 @@ lookupByAxis
 lookupByKey
 lowerAnimation
 lowerAxis
+lowerColors
 lowerDataset
 lowerElements
 lowerFiller
@@ -1165,6 +1166,7 @@ ChartAnimationItems
 ChartArea
 ChartAxis
 ChartClip
+ChartColors
 ChartConfig
 ChartConfigLowering
 ChartConfiguration
@@ -1245,7 +1247,6 @@ DateZone
 Debounced
 DecimationAlgorithm
 DecimationOptions
-DecimationOptionsScope
 DecimationPlugin
 DefaultCubicInterpolationMode
 Defaults
@@ -1921,6 +1922,7 @@ lookupByAxis
 lookupByKey
 lowerAnimation
 lowerAxis
+lowerColors
 lowerDataset
 lowerElements
 lowerFiller

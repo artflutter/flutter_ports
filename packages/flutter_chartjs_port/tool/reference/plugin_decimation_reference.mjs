@@ -18,7 +18,8 @@
 // - three early returns: a category index axis (plugin.decimation.js:231),
 //   `parsing: true` (:236) and a dataset `indexAxis: 'y'` (:220);
 // - a user `min` and `max` of the x scale (the visible range of :176-195);
-// - the step `setOption` to `enabled: false` (the clean of :156-168);
+// - the step `setOption` of the options with `enabled: false` (the clean of
+//   :156-168);
 // - a write of `dataset.data` after the decimation (the setter of
 //   :261-263): an inline plugin `writer` writes new data in its
 //   `beforeUpdate` hook when its option `write` is true, and the step
@@ -200,7 +201,11 @@ const cases = [
     lineConfig(series(60, wave), decimationOn({algorithm: 'min-max', threshold: 20})),
     {
       options: {canvas: {width: 30, height: 100}},
-      steps: [['setOption', 'plugins.decimation.enabled', false]],
+      // The step writes the whole options object: the port holds one
+      // DecimationOptions (Chart.js ADR 0194), with no write of one key.
+      steps: [
+        ['setOption', 'plugins.decimation', {enabled: false, algorithm: 'min-max', threshold: 20}],
+      ],
     },
   ),
   decimationCase(

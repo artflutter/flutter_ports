@@ -133,12 +133,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 12.0,
-            'threshold': 20.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 12,
+            threshold: 20,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -2722,11 +2722,11 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': MinMaxDecimationAlgorithm(),
-            'threshold': 20.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: MinMaxDecimationAlgorithm(),
+            threshold: 20,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -5830,12 +5830,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 8.0,
-            'threshold': 100.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 8,
+            threshold: 100,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -7583,12 +7583,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 8.0,
-            'threshold': 10.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 8,
+            threshold: 10,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -9539,12 +9539,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 8.0,
-            'threshold': 10.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 8,
+            threshold: 10,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -11268,12 +11268,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 8.0,
-            'threshold': 10.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 8,
+            threshold: 10,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -13034,12 +13034,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 8.0,
-            'threshold': 10.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 8,
+            threshold: 10,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -14252,11 +14252,11 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': MinMaxDecimationAlgorithm(),
-            'threshold': 20.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: MinMaxDecimationAlgorithm(),
+            threshold: 20,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -16651,7 +16651,15 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.decimation.enabled', false],
+          'do': <Object?>[
+            'setOption',
+            'plugins.decimation',
+            DecimationOptions(
+              enabled: false,
+              algorithm: MinMaxDecimationAlgorithm(),
+              threshold: 20,
+            ),
+          ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[15.0, 10.2, 15.0, 71.63140947102644],
             'scales': <String, Object?>{
@@ -19787,12 +19795,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 10.0,
-            'threshold': 20.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 10,
+            threshold: 20,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -21763,12 +21771,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
         },
         'plugins': <String, Object?>{
           'colors': false,
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 6.0,
-            'threshold': 10.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 6,
+            threshold: 10,
+          ),
           'filler': false,
           'legend': false,
           'subtitle': false,
@@ -24591,12 +24599,12 @@ const List<PluginDecimationReferenceCase> pluginDecimationReference = [
           'x': <String, Object?>{'type': 'linear'},
         },
         'plugins': <String, Object?>{
-          'decimation': <String, Object?>{
-            'enabled': true,
-            'algorithm': LttbDecimationAlgorithm(),
-            'samples': 12.0,
-            'threshold': 20.0,
-          },
+          'decimation': DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 12,
+            threshold: 20,
+          ),
         },
       },
     },

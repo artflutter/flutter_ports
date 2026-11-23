@@ -12,7 +12,6 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/data_scope.dart';
-import '../../support/parsed_items.dart';
 
 // theming.md §8 test 8: the runtime theme switch of ChartView (Chart.js ADR
 // 0147 §13). The widget switches in its post-frame update
@@ -305,11 +304,10 @@ void _restorePalette(Chart chart, List<AnyObject> snapshot) {
   }
 }
 
-/// The 5000 input items `{x: i, y: f(i)}` of `decimation_theme_test.dart`,
-/// parsed items: the data items of `parsing: false`.
-List<Object?> _decimationInput() => <Object?>[
-  for (var i = 0; i < 5000; i++)
-    parsedItemOf(<String, Object?>{'x': i, 'y': (i * 37) % 101 + (i ~/ 250)}),
+/// The 5000 input points `(i, f(i))` of `decimation_theme_test.dart`: the
+/// data items of `parsing: false`.
+List<DataPoint> _decimationInput() => [
+  for (var i = 0; i < 5000; i++) DataPoint(i, (i * 37) % 101 + (i ~/ 250)),
 ];
 
 /// A host whose state sets the config and the theme of its ChartView in one
@@ -535,17 +533,21 @@ void main() {
       );
     });
 
-    for (final (name, algorithm) in <(String, AnyObject)>[
+    for (final (name, decimation) in const [
       (
         'min-max',
-        <String, Object?>{'algorithm': const MinMaxDecimationAlgorithm()},
+        DecimationOptions(
+          enabled: true,
+          algorithm: MinMaxDecimationAlgorithm(),
+        ),
       ),
       (
         'lttb',
-        <String, Object?>{
-          'algorithm': const LttbDecimationAlgorithm(),
-          'samples': 50,
-        },
+        DecimationOptions(
+          enabled: true,
+          algorithm: LttbDecimationAlgorithm(),
+          samples: 50,
+        ),
       ),
     ]) {
       testWidgets('keeps the decimated data ($name)', (tester) async {
@@ -555,19 +557,14 @@ void main() {
             LineDataset(
               label: 'd',
               pointRadius: const .constant(0),
-              // Keep the original parsed-item list for the identity check.
-              extra: {'data': input},
+              data: .points(input),
             ),
           ],
           animation: ChartAnimation.none,
           scales: const [LinearAxis(.x)],
-          extra: {
-            'parsing': false,
-            'plugins': {
-              'colors': const {'enabled': true},
-              'decimation': {'enabled': true, ...algorithm},
-            },
-          },
+          parsing: false,
+          colors: const ChartColors(enabled: true),
+          pluginOptions: [decimation],
         );
         List<(Object?, Object?)> items(Chart chart) => [
           for (final item in jsGet(_typedDataset(chart, 0), 'data')! as List)

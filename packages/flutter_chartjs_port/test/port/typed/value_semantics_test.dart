@@ -620,12 +620,8 @@ void main() {
           TooltipOptions(
             callbacks: TooltipCallbacks(label: _runtime(_tooltipLabel)),
           ),
+          DecimationOptions(enabled: _runtime(true)),
         ],
-        extra: {
-          'plugins': {
-            'decimation': {'enabled': _runtime(true)},
-          },
-        },
       );
       _expectEqual(build(), build());
     });
@@ -1115,6 +1111,11 @@ void main() {
           const ChartFiller().copyWith(propagate: false),
         ),
         (
+          const ChartColors(),
+          const ChartColors().copyWith(),
+          const ChartColors().copyWith(forceOverride: true),
+        ),
+        (
           const ChartElements(),
           const ChartElements().copyWith(),
           const ChartElements().copyWith(line: const LineElementStyle()),
@@ -1155,13 +1156,16 @@ void main() {
         'labels',
         'scales',
         'indexAxis',
+        'parsing',
         'responsive',
         'maintainAspectRatio',
         'aspectRatio',
+        'devicePixelRatio',
         'padding',
         'title',
         'subtitle',
         'filler',
+        'colors',
         'interaction',
         'animation',
         'animations',

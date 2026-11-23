@@ -212,11 +212,6 @@ enum ScopeKind(
   /// index.d.ts:2295 FillerOptions, the scope `plugins.filler`.
   fillerOptions('FillerOptions'),
 
-  /// index.d.ts:2292 DecimationOptions (the union of index.d.ts:2283
-  /// LttbDecimationOptions and :2288 MinMaxDecimationOptions), the scope
-  /// `plugins.decimation`.
-  decimationOptions('DecimationOptions'),
-
   /// plugin.colors.ts:4 ColorsPluginOptions, the scope `plugins.colors`.
   colorsOptions('ColorsOptions'),
 
@@ -316,8 +311,6 @@ enum ScopeKind(
         return TooltipDatasetOptionsScope();
       case ScopeKind.fillerOptions:
         return FillerOptionsScope();
-      case ScopeKind.decimationOptions:
-        return DecimationOptionsScope();
       case ScopeKind.colorsOptions:
         return ColorsOptionsScope();
       case ScopeKind.genericPluginOptions:
@@ -415,8 +408,6 @@ enum ScopeKind(
         return TooltipDatasetOptionsScope;
       case ScopeKind.fillerOptions:
         return FillerOptionsScope;
-      case ScopeKind.decimationOptions:
-        return DecimationOptionsScope;
       case ScopeKind.colorsOptions:
         return ColorsOptionsScope;
       case ScopeKind.genericPluginOptions:
@@ -1259,14 +1250,6 @@ enum ScopeKind(
           OptionKey.propagate,
           OptionKey.events,
         ];
-      case ScopeKind.decimationOptions:
-        return const [
-          OptionKey.enabled,
-          OptionKey.threshold,
-          OptionKey.algorithm,
-          OptionKey.samples,
-          OptionKey.events,
-        ];
       case ScopeKind.colorsOptions:
         return const [
           OptionKey.enabled,
@@ -1537,7 +1520,7 @@ enum ScopeKind(
           case OptionKey.colors:
             return 34;
           case OptionKey.decimation:
-            return 34;
+            return 5506;
           case OptionKey.filler:
             return 34;
           case OptionKey.legend:
@@ -2934,21 +2917,6 @@ enum ScopeKind(
           default:
             return 0;
         }
-      case ScopeKind.decimationOptions:
-        switch (key) {
-          case OptionKey.enabled:
-            return 2;
-          case OptionKey.threshold:
-            return 1;
-          case OptionKey.algorithm:
-            return 896;
-          case OptionKey.samples:
-            return 1;
-          case OptionKey.events:
-            return 16;
-          default:
-            return 0;
-        }
       case ScopeKind.colorsOptions:
         switch (key) {
           case OptionKey.enabled:
@@ -3041,8 +3009,6 @@ enum ScopeKind(
         switch (key) {
           case OptionKey.colors:
             return ScopeKind.colorsOptions;
-          case OptionKey.decimation:
-            return ScopeKind.decimationOptions;
           case OptionKey.filler:
             return ScopeKind.fillerOptions;
           case OptionKey.subtitle:
@@ -3356,8 +3322,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.fillerOptions:
         return null;
-      case ScopeKind.decimationOptions:
-        return null;
       case ScopeKind.colorsOptions:
         return null;
       case ScopeKind.genericPluginOptions:
@@ -3454,8 +3418,6 @@ enum ScopeKind(
       case ScopeKind.tooltipDatasetOptions:
         return 64;
       case ScopeKind.fillerOptions:
-        return 64;
-      case ScopeKind.decimationOptions:
         return 64;
       case ScopeKind.colorsOptions:
         return 64;
@@ -3554,8 +3516,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.fillerOptions:
         return null;
-      case ScopeKind.decimationOptions:
-        return null;
       case ScopeKind.colorsOptions:
         return null;
       case ScopeKind.genericPluginOptions:
@@ -3652,8 +3612,6 @@ enum ScopeKind(
       case ScopeKind.tooltipDatasetOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.fillerOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.decimationOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.colorsOptions:
         return classifyUnion(raw, 64);

@@ -77,4 +77,4 @@ export 'package:flutter_chartjs_port/src/typed/elements.dart'
         LineElementStyle,
         PointElementStyle;
 export 'package:flutter_chartjs_port/src/typed/groups.dart'
-    show ChartAnimation, ChartFiller, ChartInteraction, ChartTitle;
+    show ChartAnimation, ChartColors, ChartFiller, ChartInteraction, ChartTitle;

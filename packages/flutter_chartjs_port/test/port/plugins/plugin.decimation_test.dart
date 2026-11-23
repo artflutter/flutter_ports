@@ -3,6 +3,7 @@
 library;
 
 import 'package:chartjs_test_utils/flutter.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -31,7 +32,11 @@ import 'plugin_decimation_reference.dart';
 // The group `adapt-decimation-data-accessor` pins the accessor of
 // plugin.decimation.js:249-265 on real charts (Chart.js ADR 0038, section
 // 8): the keys, the arrays and the throws after each hook, and the four
-// results of the differences.md row. Each upstream value in a comment
+// results of the differences.md row. Each chart is a typed `ChartView`
+// (Chart.js ADR 0194): a change of an option pumps the next `ChartConfig`, as
+// an app does. The writes of `data`, `_data`, `_decimated` and `type` into
+// the dataset object are the subject of the row: the app writes its dataset
+// and calls `chart.update()`. Each upstream value in a comment
 // comes from a probe on the pinned build in Node.js v24.12.0 on x64
 // (controller_chart_common.mjs: loadChartJs, registerBuiltins, makeChart)
 // that made the chart of the test, ran its steps and logged the keys of
@@ -87,59 +92,96 @@ void _writeData(IChart chart, Object? args, Object? options) {
 /// The named functions of the configs of the generator.
 final Map<String, Object?> _functions = {'writeData': _writeData};
 
-/// The decimated chart of the group `adapt-decimation-data-accessor`: 2000
-/// items `{x: i, y: (i * 37) % 101}` in the dataset `{label, borderWidth,
-/// data, pointRadius}` and the keys of [dataset], `parsing: false`, a linear
-/// x scale, `min-max` with `samples: 50` and `threshold: 100` and the
-/// options of [decimation], a canvas of 100 x 100.
-({Chart chart, JsObjectFace dataset, List<Object?> data}) _accessorChart({
-  AnyObject decimation = const {},
-  AnyObject dataset = const {},
-  Object? theme,
-}) {
-  final data = _series(2000, (i) => (i * 37) % 101);
-  final root = ChartConfigLowering(
-    ChartConfig(
-      datasets: const [LineDataset()],
-      scales: const [LinearAxis(.x)],
-      extra: {
-        'parsing': false,
-        'plugins': {
-          'decimation': {
-            'enabled': true,
-            'algorithm': const MinMaxDecimationAlgorithm(),
-            'samples': 50,
-            'threshold': 100,
-            ...decimation,
-          },
-        },
-      },
+/// [n] data points `(i, f(i))`: the data items of `parsing: false`.
+List<DataPoint> _points(int n, int Function(int i) f) => [
+  for (var i = 0; i < n; i++) DataPoint(i, f(i)),
+];
+
+/// The options of the decimation of the group
+/// `adapt-decimation-data-accessor` (`min-max` with `samples: 50` and
+/// `threshold: 100`), with the fields of [decimation] over them.
+DecimationOptions _accessorDecimation(DecimationOptions decimation) =>
+    const DecimationOptions(
+      enabled: true,
+      algorithm: MinMaxDecimationAlgorithm(),
+      samples: 50,
+      threshold: 100,
+    ).merge(decimation);
+
+/// The config of the group `adapt-decimation-data-accessor`: the dataset
+/// `{label, data, borderWidth, pointRadius}` of [data] with [indexAxis],
+/// [parsing] (`false` by default), a linear x scale, no animation, the
+/// options of [_accessorDecimation] of [decimation], and the decimation
+/// plugin off when [pluginOff] is true.
+ChartConfig _accessorConfig(
+  List<DataPoint> data, {
+  DecimationOptions decimation = const DecimationOptions(),
+  bool parsing = false,
+  CartesianAxis? indexAxis,
+  bool pluginOff = false,
+}) => ChartConfig(
+  datasets: [
+    LineDataset(
+      label: 'd',
+      data: .points(data),
+      borderWidth: 1,
+      pointRadius: const .constant(0),
+      indexAxis: indexAxis,
     ),
-  ).lower();
-  if (theme != null) root.dollarTheme = theme;
-  // This test pins insertion order, including a user-owned _data key.
-  final ds = mergeExtra(
-    LineControllerDatasetOptionsScope()
-      ..label = 'd'
-      ..borderWidth = 1
-      ..data = data
-      ..pointRadius = 0,
-    dataset,
-  );
-  (root.dataCell!.raw! as ChartDataScope).datasets = <Object?>[ds];
-  final chart = acquireChartRoot(root, <String, Object?>{
-    'canvas': <String, Object?>{'width': 100, 'height': 100},
-  });
-  return (chart: chart, dataset: ds, data: data);
+  ],
+  scales: const [LinearAxis(.x)],
+  parsing: parsing,
+  maintainAspectRatio: false,
+  animation: ChartAnimation.none,
+  pluginOptions: [_accessorDecimation(decimation)],
+  disabledPlugins: pluginOff ? const [PluginOff<DecimationPlugin>()] : null,
+);
+
+/// A typed ChartView of [config] with [theme] in a box of 100 x 100 at the
+/// top left.
+Widget _view(ChartConfig config, {ChartThemeData? theme}) => Directionality(
+  textDirection: TextDirection.ltr,
+  child: Align(
+    alignment: Alignment.topLeft,
+    child: SizedBox(
+      width: 100,
+      height: 100,
+      child: ChartView(config: config, theme: theme),
+    ),
+  ),
+);
+
+/// The chart of the one ChartView of the tree.
+Chart _chart(WidgetTester tester) {
+  final host = tester.renderObject<RenderChartHost>(find.byType(ChartHost));
+  return Chart.getChart(host.canvas)!;
 }
 
-/// `chart.options.plugins`, the option resolver of the plugins.
-JsObjectFace _plugins(Chart chart) =>
-    jsGet(chart.options, 'plugins')! as JsObjectFace;
+/// The decimated chart of the group `adapt-decimation-data-accessor`: 2000
+/// points `(i, (i * 37) % 101)` in the config of [_accessorConfig] with
+/// [decimation], in a box of 100 x 100.
+Future<({Chart chart, JsObjectFace dataset, List<DataPoint> data})>
+_accessorChart(
+  WidgetTester tester, {
+  DecimationOptions decimation = const DecimationOptions(),
+  ChartThemeData? theme,
+}) async {
+  final data = _points(2000, (i) => (i * 37) % 101);
+  await tester.pumpWidget(
+    _view(_accessorConfig(data, decimation: decimation), theme: theme),
+  );
+  final chart = _chart(tester);
+  return (
+    chart: chart,
+    dataset: _datasets(chart)[0]! as JsObjectFace,
+    data: data,
+  );
+}
 
-/// `chart.options.plugins.decimation`.
-JsObjectFace _decimationOptions(Chart chart) =>
-    jsGet(_plugins(chart), 'decimation')! as JsObjectFace;
+/// Pumps the ChartView with the next config [config]: one update of the
+/// chart, as an app gives a new config.
+Future<void> _next(WidgetTester tester, ChartConfig config) =>
+    tester.pumpWidget(_view(config));
 
 /// `chart.getDatasetMeta(0).data.length`.
 int _metaCount(Chart chart) => chart.getDatasetMeta(0).data.length;
@@ -186,21 +228,25 @@ void main() {
       // The native plugin of Chart.js ADR 0144: the upstream keys are `id`,
       // `defaults`, `beforeElementsUpdate` and `destroy`. `destroy` is no
       // hook of the `Plugin` interface (`index.d.ts:856`), so no chart calls
-      // it, and the native plugin has no field for it.
+      // it, and the native plugin has no field for it. The defaults of
+      // :200-203 are one DecimationOptions (Chart.js ADR 0194).
       expect(pluginHookNames(decimation), ['beforeElementsUpdate']);
       expect(decimation.id, 'decimation');
-      expect(_plain(decimation.defaults), <String, Object?>{
-        'algorithm': const MinMaxDecimationAlgorithm(),
-        'enabled': false,
-      });
+      expect(
+        decimation.defaults,
+        const DecimationOptions(
+          algorithm: MinMaxDecimationAlgorithm(),
+          enabled: false,
+        ),
+      );
     });
   });
 
   group('adapt-decimation-data-accessor', () {
     testWidgets('the first decimation', (tester) async {
-      final (:chart, :dataset, :data) = _accessorChart();
-      // A1: the user Map is the dataset of the chart (plugins spec risk 4).
-      expect(_datasets(chart)[0], same(dataset));
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
+      // A1: the dataset scope is the dataset of the chart (plugins spec risk
+      // 4).
       expect(jsObjectKeys(dataset), _decimatedKeys);
       expect(_length(dataset['data']), 386);
       expect(dataset['data'], same(dataset['_decimated']));
@@ -213,9 +259,9 @@ void main() {
     });
 
     testWidgets('a user write, then the next update', (tester) async {
-      final (:chart, :dataset, :data) = _accessorChart();
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
       final decimated = dataset['data'];
-      final written = _series(3000, (i) => i % 7);
+      final written = _points(3000, (i) => i % 7);
       dataset['data'] = written;
       // Difference 1 of the row: before the next hook, `data` is the written
       // array and `_data` the old raw data. Upstream (A2), the read gives
@@ -237,8 +283,8 @@ void main() {
     testWidgets('difference 2: the write of the decimated array itself', (
       tester,
     ) async {
-      final (:chart, :dataset, data: _) = _accessorChart();
-      final written = _series(3000, (i) => i % 7);
+      final (:chart, :dataset, data: _) = await _accessorChart(tester);
+      final written = _points(3000, (i) => i % 7);
       dataset['data'] = written;
       chart.update();
       dataset['data'] = dataset['data'];
@@ -253,9 +299,14 @@ void main() {
     testWidgets('below the threshold, the clean restores the raw data', (
       tester,
     ) async {
-      final (:chart, :dataset, :data) = _accessorChart();
-      _decimationOptions(chart)['threshold'] = 100000;
-      chart.update();
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
+      await _next(
+        tester,
+        _accessorConfig(
+          data,
+          decimation: const DecimationOptions(threshold: 100000),
+        ),
+      );
       // A4.
       expect(jsObjectKeys(dataset), [
         'label',
@@ -268,10 +319,10 @@ void main() {
     });
 
     testWidgets('the clean keeps the place of data', (tester) async {
-      final (:chart, :dataset, data: _) = _accessorChart();
+      final (:chart, :dataset, data: _) = await _accessorChart(tester);
       dataset['foo'] = 1;
       expect(jsObjectKeys(dataset), [..._decimatedKeys, 'foo']);
-      final written = _series(3, (i) => i);
+      final written = _points(3, (i) => i);
       dataset['data'] = written;
       chart.update();
       // A5.
@@ -287,11 +338,16 @@ void main() {
     });
 
     testWidgets('a write, then enabled: false', (tester) async {
-      final (:chart, :dataset, data: _) = _accessorChart();
-      final written = _series(2, (i) => i + 1);
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
+      final written = _points(2, (i) => i + 1);
       dataset['data'] = written;
-      _decimationOptions(chart)['enabled'] = false;
-      chart.update();
+      await _next(
+        tester,
+        _accessorConfig(
+          data,
+          decimation: const DecimationOptions(enabled: false),
+        ),
+      );
       // A6.
       expect(jsObjectKeys(dataset), [
         'label',
@@ -303,34 +359,50 @@ void main() {
       expect(_metaCount(chart), 2);
     });
 
-    for (final (name, change, keys) in [
-      (
-        'parsing: true',
-        (Chart chart, JsObjectFace dataset) => chart.options['parsing'] = true,
-        _decimatedKeys,
-      ),
-      (
-        'indexAxis: YAxis()',
-        (Chart chart, JsObjectFace dataset) =>
-            dataset['indexAxis'] = const YAxis(),
-        [..._decimatedKeys, 'indexAxis'],
-      ),
-      // plugin.decimation.js:225. The new bar controller runs `_dataCheck`
-      // before the hook (difference 1 of the row). Upstream: line R5 of the
-      // probe review-upstream.
-      (
-        'a controller without supportsDecimation',
-        (Chart chart, JsObjectFace dataset) => dataset['type'] = 'bar',
-        [..._decimatedKeys, 'type'],
-      ),
-    ]) {
+    for (final (name, change, keys)
+        in <
+          (
+            String,
+            Future<void> Function(
+              WidgetTester tester,
+              Chart chart,
+              JsObjectFace dataset,
+              List<DataPoint> data,
+            ),
+            List<String>,
+          )
+        >[
+          (
+            'parsing: true',
+            (tester, chart, dataset, data) =>
+                _next(tester, _accessorConfig(data, parsing: true)),
+            _decimatedKeys,
+          ),
+          (
+            'indexAxis: YAxis()',
+            (tester, chart, dataset, data) =>
+                _next(tester, _accessorConfig(data, indexAxis: const YAxis())),
+            [..._decimatedKeys, 'indexAxis'],
+          ),
+          // plugin.decimation.js:225. The new bar controller runs `_dataCheck`
+          // before the hook (difference 1 of the row). Upstream: line R5 of the
+          // probe review-upstream. The type of the dataset changes in place: a
+          // typed config with a BarDataset makes a new dataset object.
+          (
+            'a controller without supportsDecimation',
+            (tester, chart, dataset, data) async {
+              dataset['type'] = 'bar';
+              chart.update();
+            },
+            [..._decimatedKeys, 'type'],
+          ),
+        ]) {
       testWidgets('an early return after a write: $name', (tester) async {
-        final (:chart, :dataset, data: _) = _accessorChart();
+        final (:chart, :dataset, :data) = await _accessorChart(tester);
         final decimated = dataset['data'];
-        final written = _series(2, (i) => i + 1);
+        final written = _points(2, (i) => i + 1);
         dataset['data'] = written;
-        change(chart, dataset);
-        chart.update();
+        await change(tester, chart, dataset, data);
         // A7: the sync runs before the early return.
         expect(dataset['data'], same(decimated));
         expect(dataset['_data'], same(written));
@@ -342,10 +414,9 @@ void main() {
     testWidgets('difference 3: a write while the plugin is off', (
       tester,
     ) async {
-      final (:chart, :dataset, data: _) = _accessorChart();
-      _plugins(chart)['decimation'] = false;
-      chart.update();
-      final written = _series(2, (i) => i + 1);
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
+      await _next(tester, _accessorConfig(data, pluginOff: true));
+      final written = _points(2, (i) => i + 1);
       dataset['data'] = written;
       chart.update();
       // Upstream (A8), the accessor stays: `data` gives the old decimated
@@ -357,9 +428,9 @@ void main() {
 
     testWidgets('difference 4: a delete of data, then a write before the '
         'update', (tester) async {
-      final (:chart, :dataset, :data) = _accessorChart();
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
       dataset.jsDelete('data');
-      final written = _series(3000, (i) => i % 7);
+      final written = _points(3000, (i) => i % 7);
       dataset['data'] = written;
       chart.update();
       // Upstream (line R3 of the probe review-upstream), the delete removes
@@ -386,7 +457,7 @@ void main() {
     // The cases of a user write or delete of `_decimated`. The upstream
     // values come from the lines F3a to F3d of the probe fix-upstream.
     testWidgets('a write of _decimated keeps _data', (tester) async {
-      final (:chart, :dataset, :data) = _accessorChart();
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
       final decimated = dataset['data'];
       final empty = <Object?>[];
       dataset['_decimated'] = empty;
@@ -406,11 +477,10 @@ void main() {
     });
 
     testWidgets('a write of _decimated, then an early return', (tester) async {
-      final (:chart, :dataset, :data) = _accessorChart();
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
       final empty = <Object?>[];
       dataset['_decimated'] = empty;
-      chart.options['parsing'] = true;
-      chart.update();
+      await _next(tester, _accessorConfig(data, parsing: true));
       // F3b: the sync gives the getter value, and `_data` stays.
       expect(jsObjectKeys(dataset), _decimatedKeys);
       expect(dataset['data'], same(empty));
@@ -419,7 +489,7 @@ void main() {
     });
 
     testWidgets('a delete of _decimated, then the update', (tester) async {
-      final (:chart, :dataset, :data) = _accessorChart();
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
       final decimated = dataset['data'];
       dataset.jsDelete('_decimated');
       // Difference 1 of the row: before the next hook, `data` is the old
@@ -441,10 +511,15 @@ void main() {
     });
 
     testWidgets('a delete of _decimated, then enabled: false', (tester) async {
-      final (:chart, :dataset, :data) = _accessorChart();
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
       dataset.jsDelete('_decimated');
-      _decimationOptions(chart)['enabled'] = false;
-      chart.update();
+      await _next(
+        tester,
+        _accessorConfig(
+          data,
+          decimation: const DecimationOptions(enabled: false),
+        ),
+      );
       // The clean sees no `_decimated` (plugin.decimation.js:157), so the
       // accessor stays. The sync writes the getter value `undefined` into
       // `data`, and `_dataCheck` (core.datasetController.js:367) then writes
@@ -470,82 +545,26 @@ void main() {
       expect(_metaCount(chart), 0);
     });
 
-    testWidgets('a value that is not an algorithm throws at two updates in '
-        'a row', (tester) async {
-      // adapt-decimation-algorithm-objects: the option holds a
-      // DecimationAlgorithm. Upstream throws for a name that is not a case of
-      // its switch; the port throws for a value that is not an algorithm.
-      final (:chart, :dataset, data: _) = _accessorChart(
-        decimation: {'enabled': false},
-      );
-      // The invalid value is the subject of this case, not an audit leak.
-      final savedAudit = foreignAudit;
-      var invalidWrites = 0;
-      foreignAudit = (owner, key, raw) {
-        expect((owner, key, raw), ('DecimationOptionsScope', 'algorithm', 5));
-        invalidWrites++;
-      };
-      addTearDown(() => foreignAudit = savedAudit);
-      _decimationOptions(chart)
-        ..['enabled'] = true
-        ..['algorithm'] = 5;
-      expect(invalidWrites, greaterThan(0));
-      for (var k = 0; k < 2; k++) {
-        // A9: the JS Error of plugin.decimation.js:277 is a StateError.
-        expect(
-          chart.update,
-          throwsA(
-            isA<StateError>().having(
-              (e) => e.message,
-              'message',
-              "Unsupported decimation algorithm '5'",
-            ),
-          ),
-        );
-        expect(jsObjectKeys(dataset), [
-          'label',
-          'borderWidth',
-          'pointRadius',
-          '_data',
-          'data',
-        ]);
-        expect(dataset['data'], same(undefined));
-        expect(_length(dataset['_data']), 2000);
-        expect(_metaCount(chart), 2000);
-      }
-      _decimationOptions(chart)['algorithm'] = const LttbDecimationAlgorithm();
-      chart.update();
-      expect(jsObjectKeys(dataset), _decimatedKeys);
-      expect(_length(dataset['data']), 50);
-      expect(_metaCount(chart), 50);
-    });
-
-    test('an algorithm name is not an algorithm: a debug build stops', () {
-      expect(
-        () => DecimationAlgorithm.of('lttb'),
-        throwsA(isA<AssertionError>()),
-      );
-      expect(DecimationAlgorithm.of(null), isNull);
-      const lttb = LttbDecimationAlgorithm();
-      expect(DecimationAlgorithm.of(lttb), same(lttb));
-    });
-
     testWidgets('an algorithm of a program decimates the data', (tester) async {
       // The option holds a subclass of a program, with no registration: the
       // plugin calls its `decimate`.
-      final (:chart, :dataset, data: _) = _accessorChart(
-        decimation: {'enabled': false},
+      final (:chart, :dataset, :data) = await _accessorChart(
+        tester,
+        decimation: const DecimationOptions(enabled: false),
       );
-      _decimationOptions(chart)
-        ..['enabled'] = true
-        ..['algorithm'] = const _EveryNth(100);
-      chart.update();
+      await _next(
+        tester,
+        _accessorConfig(
+          data,
+          decimation: const DecimationOptions(algorithm: _EveryNth(100)),
+        ),
+      );
       expect(_length(dataset['data']), 20);
       expect(_metaCount(chart), 20);
     });
 
     testWidgets('a delete of data removes the accessor', (tester) async {
-      final (:chart, :dataset, data: _) = _accessorChart();
+      final (:chart, :dataset, data: _) = await _accessorChart(tester);
       dataset.jsDelete('data');
       for (var k = 0; k < 2; k++) {
         chart.update();
@@ -565,14 +584,22 @@ void main() {
     });
 
     testWidgets('a user _data key without the accessor', (tester) async {
-      final own = _series(200, (i) => i % 9);
-      final (:chart, :dataset, :data) = _accessorChart(dataset: {'_data': own});
+      // The chart starts with the plugin off, and the app writes `_data`
+      // into the dataset before the plugin runs.
+      final (:chart, :dataset, :data) = await _accessorChart(
+        tester,
+        decimation: const DecimationOptions(enabled: false),
+      );
+      final own = _points(200, (i) => i % 9);
+      dataset['_data'] = own;
+      await _next(tester, _accessorConfig(data));
       // A12: `_data` is set, so plugin.decimation.js:249 sees no first time
-      // and `data` stays the plain raw data.
+      // and `data` stays the plain raw data. The keys are in the order of
+      // the typed dataset, `{label, data, borderWidth, pointRadius}`.
       expect(jsObjectKeys(dataset), [
         'label',
-        'borderWidth',
         'data',
+        'borderWidth',
         'pointRadius',
         '_data',
         '_decimated',
@@ -587,8 +614,11 @@ void main() {
     });
 
     testWidgets('lttb on the same data', (tester) async {
-      final (:chart, :dataset, data: _) = _accessorChart(
-        decimation: {'algorithm': const LttbDecimationAlgorithm()},
+      final (:chart, :dataset, data: _) = await _accessorChart(
+        tester,
+        decimation: const DecimationOptions(
+          algorithm: LttbDecimationAlgorithm(),
+        ),
       );
       // A13.
       expect(_length(dataset['data']), 50);
@@ -602,7 +632,7 @@ void main() {
     testWidgets('destroy does not clean: no code notifies the hook', (
       tester,
     ) async {
-      final (:chart, :dataset, :data) = _accessorChart();
+      final (:chart, :dataset, :data) = await _accessorChart(tester);
       chart.destroy();
       // A14: Chart.destroy notifies beforeDestroy and afterDestroy, not
       // destroy (core.controller.js), so the keys stay.
@@ -613,8 +643,9 @@ void main() {
     testWidgets('a theme leaves data, _data and _decimated unchanged', (
       tester,
     ) async {
-      final (chart: _, :dataset, :data) = _accessorChart(
-        theme: compileLightTheme(),
+      final (chart: _, :dataset, :data) = await _accessorChart(
+        tester,
+        theme: const ChartThemeData.light(),
       );
       expect(jsObjectKeys(dataset), _decimatedKeys);
       expect(_length(dataset['data']), 386);
@@ -626,7 +657,9 @@ void main() {
   // differences.md row js-semantics-narrow-datasets: the plugin writes
   // `_data`, `data` and `_decimated` into the dataset Map of the user
   // (plugin.decimation.js:156-168, 253-264, 280). Upstream sets the
-  // properties of any dataset object.
+  // properties of any dataset object. The subject is a dataset Map of a raw
+  // config: the typed config of the chart gets it in place of its typed
+  // dataset, the one raw part of the group.
   group('js-semantics-narrow-datasets', () {
     /// A line chart with the dataset [dataset] and the decimation on when
     /// [enabled] is true.
@@ -635,17 +668,15 @@ void main() {
         ChartConfig(
           datasets: const [LineDataset()],
           scales: const [LinearAxis(.x)],
-          extra: {
-            'parsing': false,
-            'plugins': {
-              'decimation': {
-                'enabled': enabled,
-                'algorithm': const LttbDecimationAlgorithm(),
-                'samples': 10,
-                'threshold': 20,
-              },
-            },
-          },
+          parsing: false,
+          pluginOptions: [
+            DecimationOptions(
+              enabled: enabled,
+              algorithm: const LttbDecimationAlgorithm(),
+              samples: 10,
+              threshold: 20,
+            ),
+          ],
         ),
       ).lower();
       // Preserve the dataset's Map type and mutability for the write guards.
@@ -655,16 +686,12 @@ void main() {
 
     /// 40 parsed items `{x: i, y: i % 7}` in a List of the narrow type
     /// `List<ParsedItem>`.
-    List<ParsedItem> narrowData() => [
-      for (var i = 0; i < 40; i++) parsedItemOf({'x': i, 'y': i % 7})!,
-    ];
+    List<ParsedItem> narrowData() => _points(40, (i) => i % 7);
 
     testWidgets('a narrow dataset Map works when the plugin is off', (
       tester,
     ) async {
-      final chart = narrowChart(<String, List<ParsedItem>>{
-        'data': narrowData(),
-      }, enabled: false);
+      final chart = narrowChart({'data': narrowData()}, enabled: false);
       expect(_metaCount(chart), 40);
     });
 
@@ -681,9 +708,7 @@ void main() {
     ) async {
       expect(
         () => narrowChart(
-          Map<String, Object?>.unmodifiable(<String, Object?>{
-            'data': narrowData(),
-          }),
+          Map<String, Object?>.unmodifiable({'data': narrowData()}),
         ),
         throwsA(isA<UnsupportedError>()),
       );
@@ -692,7 +717,9 @@ void main() {
     testWidgets('a Map<String, Object?> dataset takes the writes', (
       tester,
     ) async {
-      final chart = narrowChart(<String, Object?>{'data': narrowData()});
+      final chart = narrowChart(
+        Map<String, Object?>.of({'data': narrowData()}),
+      );
       expect(_length(jsGet(_datasets(chart)[0], 'data')), 10);
     });
   });
@@ -709,57 +736,51 @@ void main() {
   group('x scale types', () {
     final t0 = DateTime.utc(2020).millisecondsSinceEpoch;
 
-    /// A line chart of 60 hourly items `{x, y: (i * 37) % 23}` on the x
-    /// scale [type], with `lttb`, `samples: 8` and `threshold: 10`, the
-    /// other plugins off, and a canvas of 30 x 100.
-    ({Chart chart, JsObjectFace dataset, List<Object?> input}) typeChart(
+    /// A line chart of 60 hourly points `(x, (i * 37) % 23)` on the x scale
+    /// [type], with `lttb`, `samples: 8` and `threshold: 10`, the other
+    /// plugins off, and a canvas of 30 x 100.
+    ({Chart chart, JsObjectFace dataset, List<DataPoint> input}) typeChart(
       String type,
     ) {
-      final input = <Object?>[
-        for (var i = 0; i < 60; i++)
-          <String, Object?>{'x': t0 + i * 3600000, 'y': (i * 37) % 23},
+      final input = [
+        for (var i = 0; i < 60; i++) DataPoint(t0 + i * 3600000, (i * 37) % 23),
       ];
-      final root = ChartConfigLowering(
-        ChartConfig(
-          datasets: [
-            LineDataset(label: 'd0', extra: {'data': input}),
-          ],
-          scales: [
-            if (type == 'time')
-              const TimeAxis(.x)
-            else
-              const TimeSeriesAxis(.x),
-          ],
-          disabledPlugins: const [
-            PluginOff<ColorsPlugin>(),
-            PluginOff<FillerPlugin>(),
-            PluginOff<LegendPlugin>(),
-            PluginOff<SubtitlePlugin>(),
-            PluginOff<TitlePlugin>(),
-            PluginOff<TooltipPlugin>(),
-          ],
-          extra: const {
-            'parsing': false,
-            'plugins': {
-              'decimation': {
-                'enabled': true,
-                'algorithm': LttbDecimationAlgorithm(),
-                'samples': 8,
-                'threshold': 10,
-              },
-            },
-          },
-        ),
-      ).lower();
-      final ds =
-          ((root.dataCell!.raw! as ChartDataScope).datasetsCell!.raw!
-                      as List<Object?>)
-                  .single!
-              as JsObjectFace;
-      final chart = acquireChartRoot(root, <String, Object?>{
-        'canvas': <String, Object?>{'width': 30, 'height': 100},
-      });
-      return (chart: chart, dataset: ds, input: input);
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+          ChartConfig(
+            datasets: [LineDataset(label: 'd0', data: .points(input))],
+            scales: [
+              if (type == 'time')
+                const TimeAxis(.x)
+              else
+                const TimeSeriesAxis(.x),
+            ],
+            parsing: false,
+            disabledPlugins: const [
+              PluginOff<ColorsPlugin>(),
+              PluginOff<FillerPlugin>(),
+              PluginOff<LegendPlugin>(),
+              PluginOff<SubtitlePlugin>(),
+              PluginOff<TitlePlugin>(),
+              PluginOff<TooltipPlugin>(),
+            ],
+            pluginOptions: const [
+              DecimationOptions(
+                enabled: true,
+                algorithm: LttbDecimationAlgorithm(),
+                samples: 8,
+                threshold: 10,
+              ),
+            ],
+          ),
+        ).lower(),
+        _canvas(30, 100),
+      );
+      return (
+        chart: chart,
+        dataset: _datasets(chart)[0]! as JsObjectFace,
+        input: input,
+      );
     }
 
     testWidgets('time: the decimation runs', (tester) async {
@@ -783,16 +804,11 @@ void main() {
   });
 }
 
-/// [value] as plain Dart values for a compare with a Map literal: an object
-/// (a Map or a typed object with a face, Chart.js ADR 0054 §5) gives a new
-/// Map of its own keys in the `Object.keys` order, each value read by name;
-/// another value is itself.
-Object? _plain(Object? value) =>
-    value is Map<String, Object?> || value is JsObjectFace
-    ? <String, Object?>{
-        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
-      }
-    : value;
+/// The acquireChart options of a canvas of [width] x [height] (the second
+/// argument of `acquireChart`, not a chart config).
+AnyObject _canvas(int width, int height) => <String, Object?>{
+  'canvas': <String, Object?>{'width': width, 'height': height},
+};
 
 /// An algorithm of a program: each [n]-th item.
 final class const _EveryNth(final int n) extends DecimationAlgorithm {

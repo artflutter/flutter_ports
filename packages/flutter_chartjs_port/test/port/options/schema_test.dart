@@ -44,6 +44,9 @@ import 'package:test/test.dart';
 // the nested object. The legend has no `descriptors`, and the label and
 // title color functions are a fallback of the legend: the named exceptions
 // of [_legendExceptions].
+//
+// The decimation options are one DecimationOptions object (Chart.js ADR
+// 0194), with the rule of the tooltip: [_decimationFields] gives its fields.
 
 import '../../support/color_json.dart';
 import '../../support/keyword_enum_json.dart';
@@ -154,6 +157,11 @@ Object? _field(Object? value, String key) => value is TooltipOptions
     ? (_legendFields(value)!.containsKey(key)
           ? _legendFields(value)![key]
           : undefined)
+    // The same for the decimation options (Chart.js ADR 0194).
+    : value is DecimationOptions
+    ? (_decimationFields(value).containsKey(key)
+          ? _decimationFields(value)[key]
+          : undefined)
     : value is AnimationSettings
     ? _settingsFields(value)[key] ?? undefined
     : value is List<PropertyAnimation>
@@ -239,6 +247,27 @@ String? _legendPrefix(String group, String path) {
   }
   return null;
 }
+
+/// Each field of [options] by the name of its upstream option, in the order
+/// of the constructor of [DecimationOptions] (the order of the upstream
+/// defaults, plugin.decimation.js:200-203, then the other options). Dart
+/// `null` is a field that the options do not set.
+Map<String, Object?> _decimationFields(DecimationOptions options) => {
+  'algorithm': options.algorithm,
+  'enabled': options.enabled,
+  'samples': options.samples,
+  'threshold': options.threshold,
+  'events': options.events,
+};
+
+/// The prefix of the inventory paths of the decimation options.
+const String _decimationPrefix = 'plugins.decimation.';
+
+/// Whether the census path [path] is `options.plugins.decimation` or a path
+/// under it.
+bool _isDecimationCensusPath(String path) =>
+    path == 'options.plugins.decimation' ||
+    path.startsWith('options.plugins.decimation.');
 
 /// The prefix of the inventory paths of the tooltip options.
 const String _tooltipPrefix = 'plugins.tooltip.';
@@ -597,6 +626,11 @@ List<String>? _keysOf(Object? value) => value is TooltipOptions
         for (final MapEntry(:key, :value) in _legendFields(value)!.entries)
           if (value != null) key,
       ]
+    : value is DecimationOptions
+    ? [
+        for (final MapEntry(:key, :value) in _decimationFields(value).entries)
+          if (value != null) key,
+      ]
     : value is AnimationSettings
     ? _settingsFields(value).keys.toList()
     : value is List<PropertyAnimation>
@@ -808,6 +842,23 @@ void main() {
             } else if (!tooltipOptionFields(const TooltipOptions())
                 .containsKey(field)) {
               problems.add('$path: no field $field of TooltipOptions');
+            }
+            continue;
+          }
+          // A decimation path: `plugins.decimation` holds a
+          // DecimationOptions (Chart.js ADR 0194).
+          if (group == 'defaults' && path.startsWith(_decimationPrefix)) {
+            final decimation = _walk(root, ['plugins', 'decimation']);
+            final field = path
+                .substring(_decimationPrefix.length)
+                .split('.')[0];
+            if (decimation.shape == null ||
+                decimation.shape! & ShapeBits.typed !=
+                    ShapeBits.pluginOptions) {
+              problems.add('$path: plugins.decimation is no PluginOptions');
+            } else if (!_decimationFields(const DecimationOptions())
+                .containsKey(field)) {
+              problems.add('$path: no field $field of DecimationOptions');
             }
             continue;
           }
@@ -1086,6 +1137,8 @@ void main() {
             ? tooltipOptionFields(object).keys.toList()
             : object is LegendOptions
             ? legendOptionFields(object).keys.toList()
+            : object is DecimationOptions
+            ? _decimationFields(object).keys.toList()
             : _keysOf(object);
         if (actual == null) {
           problems.add('$file:${site['line']} not an object');
@@ -1134,7 +1187,11 @@ void main() {
       for (final (label, path, kind) in rows) {
         if (label == 'write') {
           final key = path.substring(path.indexOf('.') + 1);
-          if (optionKeyOf(key) == null && !_callbackFields.contains(key)) {
+          // A write of a field of the decimation options of the Map model
+          // (Chart.js ADR 0194): the field of the object.
+          if (optionKeyOf(key) == null &&
+              !_callbackFields.contains(key) &&
+              !_decimationFields(const DecimationOptions()).containsKey(key)) {
             if (writes.contains(key)) {
               usedWrites.add(key);
             } else {
@@ -1194,6 +1251,20 @@ void main() {
           if (field != null &&
               !tooltipOptionFields(const TooltipOptions()).containsKey(field)) {
             problems.add('$path ($kind): no field of TooltipOptions');
+          }
+          continue;
+        }
+        // The decimation options of the Map model are one
+        // DecimationOptions (Chart.js ADR 0194): the Map is the object, and
+        // each key is a field of it (a name of `algorithm` is its class).
+        if (_isDecimationCensusPath(path)) {
+          final field = path.length == 'options.plugins.decimation'.length
+              ? null
+              : path.substring('options.plugins.decimation.'.length);
+          if (field != null &&
+              !_decimationFields(const DecimationOptions())
+                  .containsKey(field)) {
+            problems.add('$path ($kind): no field of DecimationOptions');
           }
           continue;
         }

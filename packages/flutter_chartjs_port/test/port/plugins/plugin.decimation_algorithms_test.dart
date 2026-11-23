@@ -18,7 +18,7 @@ import '../../support/parsed_items.dart';
 // the `undefined` sentinel here.
 //
 // The group `beforeElementsUpdate` runs the hook of the plugin object over
-// fake chart members up to its switch on the option `algorithm`
+// fake chart members up to the call of the algorithm of the options
 // (plugin.decimation.js:268-278).
 
 /// [n] items `{x: i, y: f(i)}`.
@@ -71,31 +71,27 @@ void _expectItems(List<ParsedItem?> actual, List<Object?> expected) {
   }
 }
 
-/// The typed options of the LTTB algorithm with [samples] (Chart.js ADR
-/// 0182).
+/// The options of the LTTB algorithm with [samples] (Chart.js ADR 0194).
 DecimationOptions _lttb(double samples) => DecimationOptions(
   algorithm: const LttbDecimationAlgorithm(),
   enabled: true,
   samples: samples,
-  threshold: null,
 );
 
 /// `{x, y}`.
 ParsedItem _p(Object? x, Object? y) =>
     parsedItemOf(<String, Object?>{'x': x, 'y': y})!;
 
-/// The chart members that `beforeElementsUpdate` reads before its switch
-/// on `algorithm`: one line dataset with [data] on a linear x scale, with
+/// The chart members that `beforeElementsUpdate` reads before the call of
+/// the algorithm: one line dataset with [data] on a linear x scale, with
 /// `parsing: false`.
 final class _Chart(List<Object?> data) implements IChart {
   @override
   final ChartDataScope data = ChartDataScope()
-    ..datasets = <Object?>[
-      <String, Object?>{'data': data},
-    ];
+    ..datasets = <Object?>[LineControllerDatasetOptionsScope()..data = data];
 
   @override
-  final Object options = <String, Object?>{'parsing': false};
+  final Object options = ChartOptionsScope()..parsing = false;
 
   @override
   double width = 10;
@@ -179,20 +175,6 @@ void main() {
       expect(result, isNot(same(data)));
     });
 
-    test('lttb samples string', () {
-      _expectItems(
-        lttbDecimation(
-          _series(20, _wave),
-          0,
-          20,
-          100,
-          // A Map: the case reads the number of a string option in `of`.
-          DecimationOptions.of({'samples': '6'}),
-        ),
-        [_p(0, 0), _p(3, 19), _p(5, 1), _p(13, 21), _p(15, 3), _p(19, 13)],
-      );
-    });
-
     test('lttb samples 6.5', () {
       _expectItems(lttbDecimation(_series(20, _wave), 0, 20, 100, _lttb(6.5)), [
         _p(0, 0),
@@ -212,8 +194,8 @@ void main() {
           0,
           20,
           5,
-          // A Map: `of` turns the falsy 0 into no samples.
-          DecimationOptions.of({'samples': 0}),
+          // The falsy 0 is no samples (plugin.decimation.js:12).
+          _lttb(0),
         ),
         [_p(0, 0), _p(3, 19), _p(10, 2), _p(13, 21), _p(19, 13)],
       );
@@ -445,40 +427,25 @@ void main() {
 
   group('beforeElementsUpdate', () {
     // 50 points are above the threshold 4 x width (40). Thus the hook
-    // reaches the algorithm. A value that is not a DecimationAlgorithm throws
-    // the Error of :277, with the template text of the value.
-    // A name is not an algorithm (adapt-decimation-algorithm-objects): a
-    // debug build stops on it in `DecimationAlgorithm.of`, so the list has
-    // no String.
-    for (final (algorithm, text) in <(Object?, String)>[
-      (null, 'null'),
-      (undefined, 'undefined'),
-      (5.0, '5'),
-      (true, 'true'),
-      (<String, Object?>{}, '[object Object]'),
-    ]) {
-      test('the algorithm $text throws', () {
-        final chart = _Chart(_series(50, _wave));
-        expect(
-          () => decimation.beforeElementsUpdate!(
-            chart,
-            const PluginHookArgs(),
-            // A Map: the values are no algorithm, which the class cannot hold.
-            DecimationOptions.of(<String, Object?>{
-              'enabled': true,
-              'algorithm': algorithm,
-            }),
-          ),
-          throwsA(
-            isA<StateError>().having(
-              (e) => e.message,
-              'message',
-              "Unsupported decimation algorithm '$text'",
-            ),
-          ),
-        );
-      });
-    }
+    // reaches the algorithm. The field holds a DecimationAlgorithm, so no
+    // other value reaches the `default` case of :276-277
+    // (adapt-decimation-algorithm-objects). The defaults set the algorithm;
+    // an object with none takes min-max, the default of :201.
+    test('no algorithm takes min-max', () {
+      final chart = _Chart(_series(50, _wave));
+      decimation.beforeElementsUpdate!(
+        chart,
+        const PluginHookArgs(),
+        const DecimationOptions(enabled: true),
+      );
+      final datasets = chart.data['datasets']! as List<Object?>;
+      final dataset = datasets.single! as JsObjectFace;
+      expect(dataset['_data'], hasLength(50));
+      _expectItems(
+        dataset['_decimated']! as List<ParsedItem?>,
+        minMaxDecimation(_series(50, _wave), 0, 50, 10),
+      );
+    });
 
     test('the algorithm min-max decimates', () {
       final chart = _Chart(_series(50, _wave));
@@ -488,12 +455,10 @@ void main() {
         const DecimationOptions(
           algorithm: MinMaxDecimationAlgorithm(),
           enabled: true,
-          samples: null,
-          threshold: null,
         ),
       );
       final datasets = chart.data['datasets']! as List<Object?>;
-      final dataset = datasets.single! as AnyObject;
+      final dataset = datasets.single! as JsObjectFace;
       expect(dataset['_data'], hasLength(50));
       expect(dataset['_decimated'], isA<List<Object?>>());
     });

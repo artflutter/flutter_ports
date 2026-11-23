@@ -3139,7 +3139,7 @@ base class PluginOptionsByTypeScope() extends OptionScope {
       case OptionKey.colors:
         _colors = fitCell(cell, (raw) => classifyUnion(raw, 34));
       case OptionKey.decimation:
-        _decimation = fitCell(cell, (raw) => classifyUnion(raw, 34));
+        _decimation = fitCell(cell, (raw) => classifyUnion(raw, 5506));
       case OptionKey.filler:
         _filler = fitCell(cell, (raw) => classifyUnion(raw, 34));
       case OptionKey.legend:
@@ -3181,7 +3181,7 @@ base class PluginOptionsByTypeScope() extends OptionScope {
       case OptionKey.colors:
         return classifyUnion(raw, 34);
       case OptionKey.decimation:
-        return classifyUnion(raw, 34);
+        return classifyUnion(raw, 5506);
       case OptionKey.filler:
         return classifyUnion(raw, 34);
       case OptionKey.legend:
@@ -19883,174 +19883,6 @@ base class FillerOptionsScope() extends OptionScope {
         return classifyTyped<FillerDrawTime>(raw);
       case OptionKey.propagate:
         return classifyBool(raw);
-      case OptionKey.events:
-        return classifyUnion(raw, 16);
-      default:
-        return kind.classifyOther(raw);
-    }
-  }
-}
-
-/// index.d.ts:2292 DecimationOptions (the union of index.d.ts:2283
-/// LttbDecimationOptions and :2288 MinMaxDecimationOptions), the scope
-/// `plugins.decimation`.
-base class DecimationOptionsScope() extends OptionScope {
-  /// An empty scope.
-  this;
-
-  @override
-  ScopeKind get kind => ScopeKind.decimationOptions;
-
-  Opt<bool>? _enabled;
-
-  /// The cell of `enabled`, or Dart `null` when absent.
-  Opt<bool>? get enabledCell => _enabled;
-
-  /// Stores the cell of `enabled`. Dart `null` deletes the key.
-  set enabledCell(Opt<bool>? cell) {
-    if (cell == null) {
-      delete(OptionKey.enabled);
-    } else {
-      store(OptionKey.enabled, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `enabled`.
-  set enabled(bool value) => store(OptionKey.enabled, OptValue<bool>(value));
-
-  Opt<double>? _threshold;
-
-  /// The cell of `threshold`, or Dart `null` when absent.
-  Opt<double>? get thresholdCell => _threshold;
-
-  /// Stores the cell of `threshold`. Dart `null` deletes the key.
-  set thresholdCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.threshold);
-    } else {
-      store(OptionKey.threshold, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `threshold`.
-  set threshold(double value) =>
-      store(OptionKey.threshold, OptValue<double>(value));
-
-  Opt<DecimationAlgorithm>? _algorithm;
-
-  /// The cell of `algorithm`, or Dart `null` when absent.
-  Opt<DecimationAlgorithm>? get algorithmCell => _algorithm;
-
-  /// Stores the cell of `algorithm`. Dart `null` deletes the key.
-  set algorithmCell(Opt<DecimationAlgorithm>? cell) {
-    if (cell == null) {
-      delete(OptionKey.algorithm);
-    } else {
-      store(OptionKey.algorithm, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `algorithm`.
-  set algorithm(DecimationAlgorithm value) =>
-      store(OptionKey.algorithm, OptValue<DecimationAlgorithm>(value));
-
-  Opt<double>? _samples;
-
-  /// The cell of `samples`, or Dart `null` when absent.
-  Opt<double>? get samplesCell => _samples;
-
-  /// Stores the cell of `samples`. Dart `null` deletes the key.
-  set samplesCell(Opt<double>? cell) {
-    if (cell == null) {
-      delete(OptionKey.samples);
-    } else {
-      store(OptionKey.samples, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `samples`.
-  set samples(double value) =>
-      store(OptionKey.samples, OptValue<double>(value));
-
-  Opt<Object>? _events;
-
-  /// The cell of `events`, or Dart `null` when absent.
-  Opt<Object>? get eventsCell => _events;
-
-  /// Stores the cell of `events`. Dart `null` deletes the key.
-  set eventsCell(Opt<Object>? cell) {
-    if (cell == null) {
-      delete(OptionKey.events);
-    } else {
-      store(OptionKey.events, cell);
-    }
-  }
-
-  /// Stores the plain value [value] of `events`.
-  set events(Object value) =>
-      store(OptionKey.events, classify(OptionKey.events, value));
-
-  @override
-  Opt<Object?>? cellOf(OptionKey key) {
-    switch (key) {
-      case OptionKey.enabled:
-        return _enabled;
-      case OptionKey.threshold:
-        return _threshold;
-      case OptionKey.algorithm:
-        return _algorithm;
-      case OptionKey.samples:
-        return _samples;
-      case OptionKey.events:
-        return _events;
-      default:
-        return null;
-    }
-  }
-
-  @override
-  void setCell(OptionKey key, Opt<Object?>? cell) {
-    switch (key) {
-      case OptionKey.enabled:
-        _enabled = fitCell(cell, classifyBool);
-      case OptionKey.threshold:
-        _threshold = fitCell(cell, classifyNumber);
-      case OptionKey.algorithm:
-        _algorithm = fitCell(cell, classifyTyped<DecimationAlgorithm>);
-      case OptionKey.samples:
-        _samples = fitCell(cell, classifyNumber);
-      case OptionKey.events:
-        _events = fitCell(cell, (raw) => classifyUnion(raw, 16));
-      default:
-        throw ArgumentError.value(key, 'key', 'Not a key of DecimationOptions');
-    }
-  }
-
-  @override
-  bool hasField(OptionKey key) {
-    switch (key) {
-      case OptionKey.enabled:
-      case OptionKey.threshold:
-      case OptionKey.algorithm:
-      case OptionKey.samples:
-      case OptionKey.events:
-        return true;
-      default:
-        return false;
-    }
-  }
-
-  @override
-  Opt<Object?> classify(OptionKey key, Object? raw) {
-    switch (key) {
-      case OptionKey.enabled:
-        return classifyBool(raw);
-      case OptionKey.threshold:
-        return classifyNumber(raw);
-      case OptionKey.algorithm:
-        return classifyTyped<DecimationAlgorithm>(raw);
-      case OptionKey.samples:
-        return classifyNumber(raw);
       case OptionKey.events:
         return classifyUnion(raw, 16);
       default:

@@ -74,9 +74,6 @@ enum OptionKey(
   /// The key `afterUpdate`.
   afterUpdate('afterUpdate'),
 
-  /// The key `algorithm`.
-  algorithm('algorithm'),
-
   /// The key `align`.
   align('align'),
 
@@ -659,9 +656,6 @@ enum OptionKey(
   /// The key `sampleSize`.
   sampleSize('sampleSize'),
 
-  /// The key `samples`.
-  samples('samples'),
-
   /// The key `scale`.
   scale('scale'),
 
@@ -751,9 +745,6 @@ enum OptionKey(
 
   /// The key `textStrokeWidth`.
   textStrokeWidth('textStrokeWidth'),
-
-  /// The key `threshold`.
-  threshold('threshold'),
 
   /// The key `tickBorderDash`.
   tickBorderDash('tickBorderDash'),

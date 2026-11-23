@@ -883,7 +883,7 @@ void main() {
           'tooltip': const TooltipOptions(),
           'colors': true,
           'filler': true,
-          'decimation': <String, Object?>{'enabled': false},
+          'decimation': const DecimationOptions(enabled: false),
         },
       );
       dataset(cfg)['fill'] = FillTarget.toOrigin;
@@ -929,15 +929,33 @@ void main() {
         maxBound;
     final a = chart(cfg);
     expect(a.updateData(), isFalse);
-    final decimated = config('line', prepared: true);
-    ((decimated['options']! as JsObjectFace)['plugins']!
-        as OptionScope)['decimation'] = <String, Object?>{
-      'enabled': true,
-      'threshold': 2,
-      'algorithm': const LttbDecimationAlgorithm(),
-      'samples': 2,
-    };
-    final b = chart(decimated);
+    // A typed config with the decimation on (Chart.js ADR 0194).
+    final b = chart(
+      typed.ChartConfigLowering(
+        typed.ChartConfig(
+          datasets: [
+            typed.LineDataset(
+              data: .points([for (var i = 0; i < 4; i++) DataPoint(i, i + 1)]),
+            ),
+          ],
+          scales: const [
+            typed.LinearAxis(.x, min: 0, max: 10),
+            typed.LinearAxis(.y, min: 0, max: 10),
+          ],
+          parsing: false,
+          responsive: false,
+          animation: typed.ChartAnimation.none,
+          pluginOptions: const [
+            DecimationOptions(
+              enabled: true,
+              threshold: 2,
+              algorithm: LttbDecimationAlgorithm(),
+              samples: 2,
+            ),
+          ],
+        ),
+      ).lower(),
+    );
     expect(b.updateData(), isFalse);
   });
   test('bubble radius changes trigger the necessary layout refresh', () {

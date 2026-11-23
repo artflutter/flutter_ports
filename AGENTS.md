@@ -1106,6 +1106,14 @@ options is the one function `scripted`, `(context, options) => LegendOptions(...
 for each update. A data fixture with legend options has a hand port. The rules of the tooltip options for tests
 apply.
 
+The decimation options are one immutable object too, `DecimationOptions` (Chart.js ADR 0194, rows
+`adapt-native-plugin-options` and `adapt-decimation-algorithm-objects`): `enabled`, `algorithm` (a
+`DecimationAlgorithm`), `samples`, `threshold` and `events`, in `ChartConfig.pluginOptions` or in
+`options.plugins.decimation` of a raw config, where a Map stops a debug build. The scope kind
+`DecimationOptions`, `DecimationOptions.of` and `DecimationAlgorithm.of` are gone. `ChartConfig` has `parsing`,
+`devicePixelRatio` and `colors` (`ChartColors`). Each decimation test gives a typed `ChartConfig` with no `extra`
+and no Map patch, and a change of an option pumps a `ChartView` with the next config.
+
 A tooltip item is the native extensible class `TooltipItem` of `lib/src/types/tooltip_item.dart` (row
 `adapt-native-tooltip-item`). It is immutable: `datasetIndex` and
 `dataIndex` are `int`, `label` is the `List<String>` of the lines of the label, `formattedValue` is a `String`,

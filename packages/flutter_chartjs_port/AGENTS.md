@@ -579,7 +579,7 @@ repository.
     key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
     `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The options of each built-in
     plugin are an immutable final class of the port-only pure `plugin_options.dart` (row
-    `adapt-native-plugin-options`). The title, filler, decimation and colors classes hold
+    `adapt-native-plugin-options`). The title, filler and colors classes hold
     resolved values (Chart.js ADR 0182): `TitleOptions.of`
     and the other `of` methods read each key once, at the first hook of an update, and each hook of
     the update gets the same object. A field has the type of its key in the schema: a number, a
@@ -613,7 +613,11 @@ repository.
     `TooltipOptions.scripted` (row `adapt-tooltip-scripted`), which the tooltip calls where upstream
     calls `setContext`. `animation` is a `TooltipAnimation` (`TooltipAnimation.off`) and
     `animations` a `List<PropertyAnimation>` (also `CaretXAnimation`, `CaretYAnimation` and
-    `OpacityAnimation`); `Tooltip._animationsSpec` builds the animation config from them. A test reads a hook field of a plugin through `hookOf`. The library exports no class `Title`, `Legend` or
+    `OpacityAnimation`); `Tooltip._animationsSpec` builds the animation config from them.
+    `DecimationOptions` is one immutable `PluginOptions` too (Chart.js ADR 0194): the nullable
+    fields `enabled`, `algorithm`, `samples`, `threshold` and `events`, `merge`, `==` and
+    `hashCode`, the defaults one `const DecimationOptions`, and a Map in
+    `options.plugins.decimation` stops a debug build. A test reads a hook field of a plugin through `hookOf`. The library exports no class `Title`, `Legend` or
     `Tooltip`. `plugin.decimation.dart`, `plugin_options.dart` and the files of `plugin.filler/` are
     pure layers. The other plugin files are not: `plugin.title`, `plugin.legend` and
     `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports `core.animations`, and
@@ -632,12 +636,14 @@ repository.
       the pure test `test/port/plugins/plugin.decimation_algorithms_test.dart` calls them. They read
       the data items with the JS operators (`jsAdd`, `jsToNumber`, `jsToInt32`, `jsLessThan`). Data
       that is not a List throws a `TypeError` (row `js-semantics-decimation-data`). The option
-      `algorithm` holds a `DecimationAlgorithm` (row `adapt-decimation-algorithm-objects`, the
-      schema shape `decimationAlgorithm`), also in a raw config: an object with the method
-      `decimate`. `LttbDecimationAlgorithm` and `MinMaxDecimationAlgorithm` (the default) are the
-      algorithms of upstream; an app or a plugin gives its own as a subclass, with no
-      registration. The base class is in the pure `decimation_algorithm.dart`. A value that is not
-      an algorithm throws the `StateError` of upstream, and an algorithm name stops a debug build.
+      `algorithm` holds a `DecimationAlgorithm` (row `adapt-decimation-algorithm-objects`), the
+      field `DecimationOptions.algorithm`: an object with the method `decimate`.
+      `LttbDecimationAlgorithm` and `MinMaxDecimationAlgorithm` (the default) are the algorithms
+      of upstream; an app or a plugin gives its own as a subclass, with no registration. The base
+      class is in the pure `decimation_algorithm.dart`. The field takes no other value, so the
+      error of `plugin.decimation.js:277` has no port. A decimation test gives a typed
+      `ChartConfig` (`parsing: false`, `pluginOptions: [DecimationOptions(...)]`) with no
+      `extra`; a change of an option pumps a `ChartView` with the next config.
     - The scale options `bounds`, `ticks.source`, `ticks.align` and `ticks.crossAlign` hold the
       enums `ScaleBounds`, `TickSource`, `TickAlign` and `TickCrossAlign` of the pure
       `lib/src/core/scale_option_enums.dart` (row `adapt-scale-option-enums`), also in a raw
@@ -1002,7 +1008,7 @@ repository.
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 73 names. 26 of them are the classes of
+    `typed.dart` is its export list of 74 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -1049,10 +1055,12 @@ repository.
     of `lower.dart`: `x`, `y`, `r`, then `x1`, `y1`), a dataset names its axis by the axis object
     (`yAxis`), and `chart.scaleOf(axis)` gives the scale (Chart.js ADR 0191); an axis takes its `border` as an `AxisBorder` (a
     `RadialAxisBorder` for `RadialLinearAxis`) of `lib/chartjs.dart` (Chart.js ADR 0141).
-    `groups.dart` has `ChartTitle`, `ChartFiller`,
-    `ChartInteraction` and `ChartAnimation`. The legend and the tooltip have no group: a config
-    gives its `LegendOptions` and `TooltipOptions` in `ChartConfig.pluginOptions` (Chart.js ADRs
-    0192 and 0193), and `==` compares each object with its `==`, so a new closure in it is a new
+    `groups.dart` has `ChartTitle`, `ChartFiller`, `ChartColors` (the colors plugin,
+    `ChartConfig.colors`), `ChartInteraction` and `ChartAnimation`. `ChartConfig` also has
+    `parsing` and `devicePixelRatio` (Chart.js ADR 0194). The legend, the tooltip and the
+    decimation have no group: a config gives its `LegendOptions`, `TooltipOptions` and
+    `DecimationOptions` in `ChartConfig.pluginOptions` (Chart.js ADRs 0192, 0193 and 0194), and
+    `==` compares each object with its `==`, so a new closure in it is a new
     value. `elements.dart` has `ChartElements` and the 4 element
     styles. `callbacks.dart` has `ChartScript`, a function of the typed dataset or data context
     (`ScriptableContext`). The event callbacks take the function types

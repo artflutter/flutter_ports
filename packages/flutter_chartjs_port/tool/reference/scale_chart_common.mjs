@@ -1283,6 +1283,12 @@ function legendOptionsHaveFunctions(value) {
   return has(value) || has(value.labels) || has(value.title);
 }
 
+/**
+ * The decimation options of an input config (`options.plugins.decimation`):
+ * the DecimationOptions object of the port (Chart.js ADR 0194).
+ */
+class NativeDecimationOptions { constructor(value) { this.value = value; } }
+
 /** Native padding literal (row adapt-edge-insets-padding). */
 export class DartPadding {
   constructor(value) { this.value = value; }
@@ -1626,6 +1632,9 @@ function keyedValue(k, value, owner) {
   }
   if (k === 'legend' && owner === 'plugins' && value && value.constructor === Object) {
     return new NativeLegendOptions(value);
+  }
+  if (k === 'decimation' && owner === 'plugins' && value && value.constructor === Object) {
+    return new NativeDecimationOptions(value);
   }
   if (k === 'callbacks' && value && value.constructor === Object &&
       Object.values(value).every(v => typeof v === 'function' || typeof v === 'string' && v.startsWith('fn:'))) {
@@ -2060,6 +2069,24 @@ function dart(v, state, owner) {
       return `LegendOptions(${fields.join(', ')})`;
     };
     if (legendOptionsHaveFunctions(v.value)) return write();
+    return constLeaves ? nativeConstant(write) : write();
+  }
+  if (v instanceof NativeDecimationOptions) {
+    state.algorithms = true;
+    const write = () => {
+      const fields = Object.keys(v.value).map((k) => {
+        const x = v.value[k];
+        if (k === 'algorithm') return `algorithm: ${dart(new DartAlgorithm(x), state)}`;
+        if (k === 'samples' || k === 'threshold') {
+          if (typeof x !== 'number') throw new Error(`A decimation ${k} that is not a number`);
+          return `${k}: ${nativeNumber(x)}`;
+        }
+        if (k === 'enabled' && typeof x === 'boolean') return `enabled: ${x}`;
+        if (k === 'events') return `events: <String>[${x.map((e) => dart(e, state)).join(', ')}]`;
+        throw new Error(`A decimation option with no field form: ${k}`);
+      });
+      return `DecimationOptions(${fields.join(', ')})`;
+    };
     return constLeaves ? nativeConstant(write) : write();
   }
   if (v instanceof NativeTooltipPaint) {

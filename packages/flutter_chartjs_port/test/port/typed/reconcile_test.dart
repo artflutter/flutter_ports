@@ -624,16 +624,14 @@ void main() {
         ],
         scales: const [LinearAxis(.x)],
         animation: ChartAnimation.none,
-        extra: const {
-          'parsing': false,
-          'plugins': {
-            'decimation': {
-              'enabled': true,
-              'algorithm': LttbDecimationAlgorithm(),
-              'samples': 50,
-            },
-          },
-        },
+        parsing: false,
+        pluginOptions: const [
+          DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 50,
+          ),
+        ],
       );
       await tester.pumpWidget(_view(config(input, 'a')));
       final chart = _chart(tester);

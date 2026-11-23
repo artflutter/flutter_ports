@@ -22,6 +22,13 @@
   `CaretXAnimation`, `CaretYAnimation` and `OpacityAnimation`. `TooltipOptions.of` and `TooltipOptions.view`
   are gone. `ChartConfig ==` compares the object with `==`: a new closure in it gives a chart update, and
   `TooltipCallbacks` compare their functions.
+- BREAKING: the decimation options are one immutable object, `DecimationOptions` (Chart.js ADR 0194): give
+  `pluginOptions: [DecimationOptions(enabled: true, algorithm: LttbDecimationAlgorithm(), samples: 100)]`
+  with `parsing: false`. A raw config holds the object in `options.plugins.decimation`; a Map there stops a
+  debug build. `DecimationOptions.of`, `DecimationOptionsScope` and `DecimationAlgorithm.of` are gone, and
+  `algorithm` takes only a `DecimationAlgorithm`.
+- `ChartConfig` has `parsing`, `devicePixelRatio` and `colors` (`ChartColors`, the options `enabled` and
+  `forceOverride` of the colors plugin).
 
 ## 0.1.0-beta.4
 

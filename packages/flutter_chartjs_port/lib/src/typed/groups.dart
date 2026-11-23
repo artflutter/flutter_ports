@@ -1,10 +1,11 @@
 // Original code, not ported from Chart.js: the option groups of the typed API.
 
 /// The option groups of the typed API (Chart.js ADR 0052, sections 1 and
-/// 6): the plugins [ChartTitle] and [ChartFiller], and the options
-/// [ChartInteraction] and [ChartAnimation] of `ChartConfig`. The legend and
-/// the tooltip options are one `LegendOptions` and one `TooltipOptions` in
-/// `ChartConfig.pluginOptions` (Chart.js ADRs 0192 and 0193).
+/// 6): the plugins [ChartTitle], [ChartFiller] and [ChartColors], and the
+/// options [ChartInteraction] and [ChartAnimation] of `ChartConfig`. The
+/// legend, the tooltip and the decimation options are one `LegendOptions`,
+/// one `TooltipOptions` and one `DecimationOptions` in
+/// `ChartConfig.pluginOptions` (Chart.js ADRs 0192, 0193 and 0194).
 ///
 /// The callbacks of a group get one details object. The chart calls the
 /// callback of the newest config: `==` of a group compares a callback only
@@ -273,6 +274,66 @@ FillerOptionsScope lowerFiller(ChartFiller filler) {
   put(scope, OptionKey.propagate, filler.propagate);
   put(scope, OptionKey.drawTime, filler.drawTime);
   return mergeExtra(scope, filler.extra);
+}
+
+/// The colors plugin: `options.plugins.colors`
+/// (`docs/general/colors.md`, "Default color palette").
+///
+/// The plugin gives each dataset with no `borderColor` and no
+/// `backgroundColor` the next colors of its palette.
+///
+/// ```dart
+/// ChartConfig(
+///   datasets: [LineDataset(data: .values([3, 5, 2]))],
+///   colors: const ChartColors(forceOverride: true),
+/// );
+/// ```
+@immutable
+final class const ChartColors({
+  /// Whether the plugin colors the datasets: `enabled`. The default is
+  /// `true`.
+  final bool? enabled,
+
+  /// Whether the plugin also colors a dataset that has its own colors:
+  /// `forceOverride`. The default is `false`.
+  final bool? forceOverride,
+}) with Diagnosticable {
+  /// The colors plugin options.
+  this;
+
+  /// A copy of these options with the given parameters. A parameter that is
+  /// `null` keeps its value.
+  ChartColors copyWith({bool? enabled, bool? forceOverride}) => ChartColors(
+    enabled: enabled ?? this.enabled,
+    forceOverride: forceOverride ?? this.forceOverride,
+  );
+
+  List<TypedProperty> get _props => [
+    ('enabled', enabled),
+    ('forceOverride', forceOverride),
+  ];
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is ChartColors && propsEqual(_props, other._props);
+
+  @override
+  int get hashCode => propsHash(_props);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    addProps(properties, _props);
+  }
+}
+
+/// The `colors` scope of [colors].
+ColorsOptionsScope lowerColors(ChartColors colors) {
+  final scope = ColorsOptionsScope();
+  put(scope, OptionKey.enabled, colors.enabled);
+  put(scope, OptionKey.forceOverride, colors.forceOverride);
+  return scope;
 }
 
 /// The animation of the chart: `options.animation`

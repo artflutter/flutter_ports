@@ -12,11 +12,12 @@
 /// option gives its value at that read. Each hook of the update gets the
 /// same object. A field that still holds the raw value says why.
 ///
-/// The tooltip and the legend are the exceptions (Chart.js ADRs 0192 and
-/// 0193): [TooltipOptions] and [LegendOptions] are each one immutable
-/// `PluginOptions` object with a nullable field for each option, which the
-/// plugin service merges from the defaults to the chart, and the plugin
-/// resolves the fallbacks of upstream itself.
+/// The tooltip, the legend and the decimation are the exceptions (Chart.js
+/// ADRs 0192, 0193 and 0194): [TooltipOptions], [LegendOptions] and
+/// [DecimationOptions] are each one immutable `PluginOptions` object with a
+/// nullable field for each option, which the plugin service merges from the
+/// defaults to the chart, and the plugin resolves the fallbacks of upstream
+/// itself.
 ///
 /// A class takes the name of its `index.d.ts` interface (`LegendOptions`,
 /// `TitleOptions`, `TooltipOptions`, `FillerOptions`, `DecimationOptions`)
@@ -45,11 +46,6 @@ import 'package:meta/meta.dart' show immutable;
 @pragma('dart2js:prefer-inline')
 @pragma('wasm:prefer-inline')
 Object? optionOf(Object? options, OptionKey key) => readOption(options, key);
-
-/// The number of the option value [value] for a test `value ? value : x`
-/// of upstream: the `ToNumber` of a truthy value, else Dart `null`.
-double? _truthyNumber(Object? value) =>
-    jsTruthy(value) ? jsToNumber(value) : null;
 
 /// The lines of the text option [value], as `renderText` draws them
 /// (`helpers.canvas.ts:457`): each item of a List, else the value itself,
@@ -1114,55 +1110,70 @@ final class const FillerOptions({
       'FillerOptions(drawTime: $drawTime, propagate: $propagate)';
 }
 
-/// `DecimationOptions` (`index.d.ts`): the resolved options of the
-/// decimation plugin (`plugin.decimation.js:200-203`).
+/// `DecimationOptions` (`index.d.ts`): the options of the decimation plugin
+/// (`plugin.decimation.js:200-203`), one immutable `PluginOptions` object
+/// (Chart.js ADR 0194).
+///
+/// A null field is not set: the plugin service merges the objects of the
+/// defaults, the theme and the chart ([merge]), and the defaults set
+/// [enabled] and [algorithm]. Upstream plugin options are not scriptable
+/// (`core.plugins.js:184`), so the object has no scriptable form.
+///
+/// The fields follow the upstream defaults (`algorithm`, `enabled`), then the
+/// other options.
 ///
 /// ```dart
-/// final options = DecimationOptions.of({
-///   'enabled': true,
-///   'algorithm': const LttbDecimationAlgorithm(),
-///   'samples': 50,
-/// });
-/// print(options.samples); // 50.0
+/// ChartConfig(
+///   datasets: [LineDataset(data: .points(points))],
+///   parsing: false,
+///   pluginOptions: const [
+///     DecimationOptions(
+///       enabled: true,
+///       algorithm: LttbDecimationAlgorithm(),
+///       samples: 100,
+///     ),
+///   ],
+/// );
 /// ```
-// DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
 @immutable
 final class const DecimationOptions({
-  /// `algorithm`: the algorithm of the option. A value that is not an
-  /// algorithm gives an algorithm that throws the error of upstream at its
-  /// use (`Unsupported decimation algorithm`).
-  required final DecimationAlgorithm algorithm,
+  /// `algorithm`: the algorithm of the decimation (row
+  /// `adapt-decimation-algorithm-objects`). The default is
+  /// `MinMaxDecimationAlgorithm()`.
+  final DecimationAlgorithm? algorithm,
 
-  /// `enabled`.
-  required final bool enabled,
+  /// `enabled`: whether the plugin decimates the data. The default is
+  /// `false`.
+  final bool? enabled,
 
-  /// `samples`: the number of a truthy value, else Dart `null`
-  /// (`plugin.decimation.js:12`).
-  required final double? samples,
+  /// `samples`: the number of items of `LttbDecimationAlgorithm`. Null, 0 or
+  /// NaN gives the width of the chart (the test `options.samples ||
+  /// availableWidth` of `plugin.decimation.js:12`).
+  final double? samples,
 
-  /// `threshold`: the number of a truthy value, else Dart `null`
-  /// (`plugin.decimation.js:242`).
-  required final double? threshold,
-}) {
+  /// `threshold`: the item count above which the plugin decimates. Null, 0
+  /// or NaN gives 4 times the width of the chart (the test
+  /// `options.threshold || 4 * availableWidth` of
+  /// `plugin.decimation.js:242`).
+  final double? threshold,
+
+  @override final List<String>? events,
+}) extends PluginOptions<DecimationOptions> {
   /// The options with the given values.
   this;
 
-  /// The options of the resolved options [options].
-  // ignore: prefer_constructors_over_static_methods
-  static DecimationOptions of(Object? options) {
-    final algorithm = optionOf(options, OptionKey.algorithm);
-    return DecimationOptions(
-      algorithm:
-          DecimationAlgorithm.of(algorithm) ??
-          _UnsupportedAlgorithm(jsToString(algorithm)),
-      enabled: boolOption(
-        optionOf(options, OptionKey.enabled),
-        OptionKey.enabled,
-      ),
-      samples: _truthyNumber(optionOf(options, OptionKey.samples)),
-      threshold: _truthyNumber(optionOf(options, OptionKey.threshold)),
-    );
-  }
+  @override
+  String get pluginId => 'decimation';
+
+  @override
+  DecimationOptions merge(DecimationOptions over) => DecimationOptions(
+    algorithm: over.algorithm ?? algorithm,
+    enabled: over.enabled ?? enabled,
+    samples: over.samples ?? samples,
+    threshold: over.threshold ?? threshold,
+    events: over.events ?? events,
+  );
 
   @override
   bool operator ==(Object other) =>
@@ -1171,38 +1182,22 @@ final class const DecimationOptions({
           other.algorithm == algorithm &&
           other.enabled == enabled &&
           other.samples == samples &&
-          other.threshold == threshold;
+          other.threshold == threshold &&
+          _nullableListEquals(other.events, events);
 
   @override
-  int get hashCode => Object.hash(algorithm, enabled, samples, threshold);
+  int get hashCode => Object.hash(
+    algorithm,
+    enabled,
+    samples,
+    threshold,
+    events == null ? null : Object.hashAll(events!),
+  );
 
   @override
   String toString() =>
       'DecimationOptions(algorithm: $algorithm, enabled: $enabled, '
       'samples: $samples, threshold: $threshold)';
-}
-
-/// The algorithm of an option value that is not an algorithm: its
-/// [decimate] throws the error of `plugin.decimation.js:277`, the `default`
-/// of the `switch` by the name of the algorithm.
-// DIVERGES(chartjs): adapt-decimation-algorithm-objects, the error at its use.
-final class const _UnsupportedAlgorithm(final String name)
-    extends DecimationAlgorithm {
-  @override
-  List<ParsedItem?> decimate(
-    List<ParsedItem?> data,
-    int start,
-    int count,
-    double availableWidth,
-    DecimationOptions options,
-  ) => throw StateError("Unsupported decimation algorithm '$name'");
-
-  @override
-  bool operator ==(Object other) =>
-      other is _UnsupportedAlgorithm && other.name == name;
-
-  @override
-  int get hashCode => name.hashCode;
 }
 
 /// `ColorsPluginOptions` (`plugin.colors.ts:4-7`): the resolved options of

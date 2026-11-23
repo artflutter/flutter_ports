@@ -220,15 +220,10 @@ Map<String, Object?> _scale(
 /// A step: the writes of the ranges, the same on both charts.
 typedef _Write = void Function(Chart chart);
 
-/// The options view of the scale [id] of [chart].
-JsObjectFace _options(Chart chart, String id) => chart.scales[id]!.optionsView;
-
-/// `scale.options.min = min` and `scale.options.max = max`.
-_Write _range(String id, Object? min, Object? max) => (chart) {
-  _options(chart, id)
-    ..jsWrite('min', min)
-    ..jsWrite('max', max);
-};
+/// `scale.options.min = min` and `scale.options.max = max`: the range write
+/// of an app (`Scale.setRange`).
+_Write _range(String id, Object? min, Object? max) =>
+    (chart) => chart.scales[id]!.setRange(min: min, max: max);
 
 /// `chart.options.scales[id].min = min`: the write through the chart view.
 _Write _chartViewRange(String id, Object? min, Object? max) => (chart) {
@@ -238,12 +233,11 @@ _Write _chartViewRange(String id, Object? min, Object? max) => (chart) {
     ..jsWrite('max', max);
 };
 
-/// `delete scale.options.min` and `delete scale.options.max`.
+/// `delete scale.options.min` and `delete scale.options.max`: the range
+/// delete of an app (`Scale.clearRange`).
 _Write _reset(List<String> ids) => (chart) {
   for (final id in ids) {
-    _options(chart, id)
-      ..jsDelete('min')
-      ..jsDelete('max');
+    chart.scales[id]!.clearRange();
   }
 };
 
@@ -585,40 +579,36 @@ ChartConfigurationScope _twoAxes(_Log log, {required bool animated}) => _config(
   },
 );
 
-/// A line of 400 points with enabled decimation.
+/// A line of 400 points with enabled decimation: a typed config (Chart.js
+/// ADR 0194) with the recorder and the animation of the run, and no
+/// scriptable title, padding, ticks or grid (the typed API has none).
 ChartConfigurationScope _decimation(_Log log, {required bool animated}) =>
-    _config(
-      log,
-      animated: animated,
-      type: 'line',
-      data: <String, Object?>{
-        'datasets': <Object?>[
-          <String, Object?>{
-            'label': 'a',
-            'data': <Object?>[
-              for (var i = 0; i < 400; i++)
-                <String, Object?>{
-                  'x': i.toDouble(),
-                  'y': ((i * 37) % 101).toDouble(),
-                },
-            ],
-            'pointRadius': 0.0,
-          },
+    ChartConfigLowering(
+      ChartConfig(
+        datasets: [
+          LineDataset(
+            label: 'a',
+            data: .points([
+              for (var i = 0; i < 400; i++) DataPoint(i, (i * 37) % 101),
+            ]),
+            pointRadius: const .constant(0),
+          ),
         ],
-      },
-      scales: <String, Object?>{
-        'x': _scale(log, 'linear'),
-        'y': _scale(log, 'linear'),
-      },
-      plugins: <String, Object?>{
-        'decimation': <String, Object?>{
-          'enabled': true,
-          'algorithm': const LttbDecimationAlgorithm(),
-          'samples': 40.0,
-        },
-      },
-      extra: <String, Object?>{'parsing': false},
-    );
+        scales: const [LinearAxis(.x), LinearAxis(.y)],
+        parsing: false,
+        animation: animated
+            ? const ChartAnimation(duration: Duration(milliseconds: 120))
+            : ChartAnimation.none,
+        plugins: [_recorder(log)],
+        pluginOptions: const [
+          DecimationOptions(
+            enabled: true,
+            algorithm: LttbDecimationAlgorithm(),
+            samples: 40,
+          ),
+        ],
+      ),
+    ).lower();
 
 /// The line chart under the light theme.
 ChartConfigurationScope _themed(_Log log, {required bool animated}) =>

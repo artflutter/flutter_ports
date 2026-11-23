@@ -77,6 +77,12 @@ final class const ChartConfig({
   /// axes.
   final CartesianAxis? indexAxis,
 
+  /// Whether the chart parses the data items: `options.parsing`. The default
+  /// is `true`. With `false`, the chart reads the [DataPoint] items of the
+  /// datasets with no copy (`docs/general/performance.md`, "Data structure
+  /// and format"). The decimation plugin needs `false`.
+  final bool? parsing,
+
   /// Whether the chart resizes with its box: `options.responsive`. The
   /// default is `true`.
   final bool? responsive,
@@ -90,6 +96,10 @@ final class const ChartConfig({
   /// radar chart.
   final double? aspectRatio,
 
+  /// The pixel ratio of the canvas: `options.devicePixelRatio`. The default
+  /// is the device pixel ratio of the view.
+  final double? devicePixelRatio,
+
   /// The space around the chart: `options.layout.padding`.
   final EdgeInsets? padding,
 
@@ -102,6 +112,10 @@ final class const ChartConfig({
   /// The filler, the plugin that fills the area of a dataset with a `fill`:
   /// `options.plugins.filler`.
   final ChartFiller? filler,
+
+  /// The colors plugin, which gives the datasets with no color the colors of
+  /// its palette: `options.plugins.colors`.
+  final ChartColors? colors,
 
   /// The elements that an event hits: `options.interaction`.
   final ChartInteraction? interaction,
@@ -219,13 +233,16 @@ final class const ChartConfig({
     List<Object>? labels,
     List<ChartAxis>? scales,
     CartesianAxis? indexAxis,
+    bool? parsing,
     bool? responsive,
     bool? maintainAspectRatio,
     double? aspectRatio,
+    double? devicePixelRatio,
     EdgeInsets? padding,
     ChartTitle? title,
     ChartTitle? subtitle,
     ChartFiller? filler,
+    ChartColors? colors,
     ChartInteraction? interaction,
     ChartAnimation? animation,
     List<PropertyAnimation>? animations,
@@ -243,13 +260,16 @@ final class const ChartConfig({
     labels: labels ?? this.labels,
     scales: scales ?? this.scales,
     indexAxis: indexAxis ?? this.indexAxis,
+    parsing: parsing ?? this.parsing,
     responsive: responsive ?? this.responsive,
     maintainAspectRatio: maintainAspectRatio ?? this.maintainAspectRatio,
     aspectRatio: aspectRatio ?? this.aspectRatio,
+    devicePixelRatio: devicePixelRatio ?? this.devicePixelRatio,
     padding: padding ?? this.padding,
     title: title ?? this.title,
     subtitle: subtitle ?? this.subtitle,
     filler: filler ?? this.filler,
+    colors: colors ?? this.colors,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
     animations: animations ?? this.animations,
@@ -278,13 +298,16 @@ final class const ChartConfig({
   List<TypedProperty> get _optionProps => [
     ('scales', byItems(scales)),
     ('indexAxis', indexAxis),
+    ('parsing', parsing),
     ('responsive', responsive),
     ('maintainAspectRatio', maintainAspectRatio),
     ('aspectRatio', aspectRatio),
+    ('devicePixelRatio', devicePixelRatio),
     ('padding', padding),
     ('title', title),
     ('subtitle', subtitle),
     ('filler', filler),
+    ('colors', colors),
     ('interaction', interaction),
     ('animation', animation),
     ('animations', byItems(animations)),

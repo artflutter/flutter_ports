@@ -9,8 +9,8 @@
 /// `beforeElementsUpdate` and `destroy`. The hook `beforeElementsUpdate` is
 /// a private function of the hook type `(chart, args, options)`. `destroy`
 /// is no hook of the plugin service: it stays an extra key with the
-/// upstream parameter count. The hooks get the resolved options
-/// `DecimationOptions` of `plugin_options.dart`.
+/// upstream parameter count. The hooks get the merged options object
+/// `DecimationOptions` of `plugin_options.dart` (Chart.js ADR 0194).
 ///
 /// The data of a dataset: upstream replaces the own property `data` of a
 /// decimated dataset with an accessor (`plugin.decimation.js:249-265`). A
@@ -98,7 +98,7 @@ final class const MinMaxDecimationAlgorithm() extends DecimationAlgorithm {
 /// `@internal` for the tests of the algorithm (Chart.js ADR 0012).
 ///
 /// [data] is the raw data of the dataset. [options] is the option object
-/// of the plugin: the function reads `options.samples` of the resolved
+/// of the plugin: the function reads `options.samples` of the merged
 /// [DecimationOptions]. The data items are the items of the user
 /// (`parsing: false`), each a [ParsedItem] (row `adapt-parsed-data-items`):
 /// their reads are the typed fields. An index past the end and a Dart `null`
@@ -510,15 +510,16 @@ List<Object?> _datasets(IChart chart) =>
 
 /// plugin.decimation.js:205 `beforeElementsUpdate(chart, args, options)`.
 ///
-/// The hook gets the resolved [DecimationOptions], and reads the
-/// chart options through their typed reads ([optionOf]). The reads of the
-/// datasets of the user are reads by name ([_Dataset]).
+/// The hook gets the merged [DecimationOptions] (Chart.js ADR 0194), and
+/// reads the chart options through their typed reads ([optionOf]). The
+/// reads of the datasets of the user are reads by name ([_Dataset]).
 void _beforeElementsUpdate(
   IChart chart,
   PluginHookArgs args,
   DecimationOptions opts,
 ) {
-  if (!opts.enabled) {
+  // The defaults set `enabled` and `algorithm`: the merged object has both.
+  if (!(opts.enabled ?? false)) {
     // The decimation plugin may have been previously enabled. Need to remove
     // old `dataset._data` handlers
     _cleanDecimatedData(chart);
@@ -596,17 +597,12 @@ void _beforeElementsUpdate(
 
     // Point the chart to the decimated data
     // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the algorithm
-    // object of the option in place of the `switch` by its name.
-    // An option value that is not an algorithm throws the JavaScript Error
-    // of the `default` case in its `decimate`.
+    // object of the option in place of the `switch` by its name. The field
+    // type takes no other value, so the `default` case of :276-277 has no
+    // port.
     // DIVERGES(chartjs): adapt-parsed-data-items, the data items are typed.
-    final decimated = opts.algorithm.decimate(
-      parsedDataItems(data),
-      start,
-      count,
-      availableWidth,
-      opts,
-    );
+    final decimated = (opts.algorithm ?? const MinMaxDecimationAlgorithm())
+        .decimate(parsedDataItems(data), start, count, availableWidth, opts);
 
     target.write(OptionKey.descDecimated, decimated);
     final accessor = _dataAccessor[dataset!];
@@ -627,7 +623,7 @@ void _beforeElementsUpdate(
 /// src/plugins/index.js:2.
 ///
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
-/// ADR 0144). Its hooks get the resolved
+/// ADR 0144). Its hooks get the merged
 /// [DecimationOptions].
 final decimation = DecimationPlugin();
 
@@ -640,16 +636,18 @@ final class DecimationPlugin() extends Plugin<DecimationOptions> {
   this
     : super(
         id: 'decimation',
-        options: DecimationOptions.of,
-        // A typed scope of the kind `DecimationOptions` (Chart.js ADR 0054 §3).
-        defaults: DecimationOptionsScope()
+        // plugin.decimation.js:200-203: one DecimationOptions with each
+        // default (Chart.js ADR 0194). The hooks get the merged object.
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        defaults: const DecimationOptions(
           // DIVERGES(chartjs): adapt-decimation-algorithm-objects, the class.
-          ..algorithm = const MinMaxDecimationAlgorithm()
-          ..enabled = false,
+          algorithm: MinMaxDecimationAlgorithm(),
+          enabled: false,
+        ),
         beforeElementsUpdate: _beforeElementsUpdate,
         // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
         // opt-in.
         supportsDataUpdates: true,
-        dataUpdateGuard: (options) => !options.enabled,
+        dataUpdateGuard: (options) => !(options.enabled ?? false),
       );
 }

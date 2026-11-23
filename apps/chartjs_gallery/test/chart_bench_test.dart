@@ -918,7 +918,7 @@ void main() {
                   isFalse,
                 );
                 expect(
-                  DecimationOptions.of(jsGet(plugins, 'decimation')).enabled,
+                  (jsGet(plugins, 'decimation')! as DecimationOptions).enabled,
                   isFalse,
                 );
               } else {

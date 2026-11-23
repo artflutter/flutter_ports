@@ -292,6 +292,7 @@ final class ChartConfigLowering(
       plugins.subtitle = lowerTitle(subtitle);
     }
     if (config.filler case final filler?) plugins.filler = lowerFiller(filler);
+    if (config.colors case final colors?) plugins.colors = lowerColors(colors);
     // The options objects of add-on plugins, each under its plugin id
     // (Chart.js ADR 0148).
     for (final options
@@ -326,9 +327,11 @@ final class ChartConfigLowering(
       options.scales = byId;
     }
     put(options, OptionKey.indexAxis, config.indexAxis);
+    put(options, OptionKey.parsing, config.parsing);
     put(options, OptionKey.responsive, config.responsive);
     put(options, OptionKey.maintainAspectRatio, config.maintainAspectRatio);
     put(options, OptionKey.aspectRatio, config.aspectRatio);
+    put(options, OptionKey.devicePixelRatio, config.devicePixelRatio);
     if (config.padding case final padding?) {
       options.layout = LayoutOptionsScope()..padding = padding;
     }

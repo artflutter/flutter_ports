@@ -855,6 +855,12 @@ const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
   'extra': (AxisTitle(extra: {'strokeWidth': 1}), {'strokeWidth': 1}),
 };
 
+/// The cases of the parameters of [ChartColors] and the twin `colors` Map.
+const Map<String, (ChartColors, Map<String, Object?>)> _colors = {
+  'enabled': (ChartColors(enabled: false), {'enabled': false}),
+  'forceOverride': (ChartColors(forceOverride: true), {'forceOverride': true}),
+};
+
 /// The cases of the parameters of [ChartFiller] and the twin `filler` Map.
 const Map<String, (ChartFiller, Map<String, Object?>)> _filler = {
   'propagate': (ChartFiller(propagate: false), {'propagate': false}),
@@ -1212,6 +1218,10 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     ChartConfig(datasets: [BarDataset()], indexAxis: YAxis()),
     {'indexAxis': YAxis()},
   ),
+  'parsing': (
+    ChartConfig(datasets: [BarDataset()], parsing: false),
+    {'parsing': false},
+  ),
   'responsive': (
     ChartConfig(datasets: [BarDataset()], responsive: false),
     {'responsive': false},
@@ -1223,6 +1233,10 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
   'aspectRatio': (
     ChartConfig(datasets: [BarDataset()], aspectRatio: 1.5),
     {'aspectRatio': 1.5},
+  ),
+  'devicePixelRatio': (
+    ChartConfig(datasets: [BarDataset()], devicePixelRatio: 1.25),
+    {'devicePixelRatio': 1.25},
   ),
   'padding': (
     ChartConfig(datasets: [BarDataset()], padding: EdgeInsets.all(20)),
@@ -1260,6 +1274,12 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     ChartConfig(datasets: [BarDataset()], filler: ChartFiller()),
     {
       'plugins': {'filler': <String, Object?>{}},
+    },
+  ),
+  'colors': (
+    ChartConfig(datasets: [BarDataset()], colors: ChartColors()),
+    {
+      'plugins': {'colors': <String, Object?>{}},
     },
   ),
   'interaction': (
@@ -2446,6 +2466,22 @@ void main() {
       }
     });
 
+    group('each parameter of ChartColors', () {
+      for (final MapEntry(key: name, value: (colors, twin))
+          in _colors.entries) {
+        test(name, () {
+          expectTwin(
+            _options(
+              ChartConfig(datasets: const [LineDataset()], colors: colors),
+            ),
+            {
+              'plugins': {'colors': twin},
+            },
+          );
+        });
+      }
+    });
+
     group('each parameter of ChartElements and of the element styles', () {
       for (final MapEntry(key: name, value: (elements, twin))
           in _elements.entries) {
@@ -2766,11 +2802,11 @@ void main() {
             datasets: [BarDataset()],
             responsive: true,
             title: ChartTitle(display: true, text: ['T']),
+            pluginOptions: [DecimationOptions(enabled: true)],
             extra: {
               'responsive': false,
               'plugins': {
                 'title': {'display': false, 'padding': EdgeInsets.all(2)},
-                'decimation': {'enabled': true},
               },
               'locale': native_ui.Locale('de', 'DE'),
             },
@@ -2784,7 +2820,7 @@ void main() {
               'text': ['T'],
               'padding': const EdgeInsets.all(2),
             },
-            'decimation': {'enabled': true},
+            'decimation': const DecimationOptions(enabled: true),
           },
           'locale': const native_ui.Locale('de', 'DE'),
         },
