@@ -11,11 +11,11 @@
 /// in a raw config. The filler gets the same object.
 ///
 /// ```dart
-/// LineDataset(data: values, fill: .toOrigin);
-/// LineDataset(data: values, fill: .toPrevious);
-/// LineDataset(data: values, fill: .toValue(50));
+/// LineDataset(data: .values(values), fill: .toOrigin);
+/// LineDataset(data: .values(values), fill: .toPrevious);
+/// LineDataset(data: .values(values), fill: .toValue(50));
 /// LineDataset(
-///   data: values,
+///   data: .values(values),
 ///   fill: FillTarget.toOrigin.split(
 ///     above: const ChartPaint.solid(Color(0xFF4CAF50)),
 ///     below: const ChartPaint.solid(Color(0xFFF44336)),

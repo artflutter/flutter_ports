@@ -161,7 +161,7 @@ LineDataset apexJsLine(
   ChartShadow? shadow,
 }) => LineDataset(
   label: name,
-  data: values,
+  data: .values(values),
   borderColor: apexJsSeries(color),
   backgroundColor: .constant(.solid(color)),
   borderWidth: width,
@@ -191,7 +191,7 @@ BarDataset apexJsBar(
   Color strokeColor = Colors.white,
 }) => BarDataset(
   label: name,
-  data: values,
+  data: .values(values),
   backgroundColor: apexJsSeries(color, opacity: opacity),
   hoverBackgroundColor: apexJsLighten(color, opacity: opacity),
   borderColor: .constant(.solid(strokeColor)),

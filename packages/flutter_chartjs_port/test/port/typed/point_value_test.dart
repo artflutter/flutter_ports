@@ -22,14 +22,14 @@ void main() {
   final factories = <ChartKind, _Factory>{
     ChartKind.line: ({pointRadius, pointHoverRadius, pointStyle}) =>
         LineDataset(
-          data: const [1, 2, 3],
+          data: const .values([1, 2, 3]),
           pointRadius: pointRadius,
           pointHoverRadius: pointHoverRadius,
           pointStyle: pointStyle,
         ),
     ChartKind.scatter: ({pointRadius, pointHoverRadius, pointStyle}) =>
         ScatterDataset(
-          points: [DataPoint(0, 1), DataPoint(1, 2), DataPoint(2, 3)],
+          data: .points([DataPoint(0, 1), DataPoint(1, 2), DataPoint(2, 3)]),
           pointRadius: pointRadius,
           pointHoverRadius: pointHoverRadius,
           pointStyle: pointStyle,

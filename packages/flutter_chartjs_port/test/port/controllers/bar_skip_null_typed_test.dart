@@ -32,10 +32,10 @@ ChartConfig _config(int count, {required bool shown}) {
         BarDataset(
           key: ValueKey('series$k'),
           label: 'Values ${k + 1}',
-          data: [
+          data: .values([
             for (var i = 0; i < count; i++)
               if ((i + k * 3) % 10 == 0) null else 12.0 + (i * 7 + k) % 70,
-          ],
+          ]),
           backgroundColor: const ChartValue.constant(
             ChartPaint.solid(ui.Color(0xff4f6bed)),
           ),

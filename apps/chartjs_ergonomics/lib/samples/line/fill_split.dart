@@ -11,7 +11,7 @@ final fillSplit = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales against a target of 60',
-      data: sales,
+      data: const .values(sales),
       borderColor: const .constant(.solid(teal)),
       fill: const FillTarget.toValue(60)
           .split(above: const .solid(tealFill), below: const .solid(redFill)),

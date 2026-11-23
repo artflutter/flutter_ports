@@ -130,7 +130,7 @@ List<double> _data(int seed) => [
 /// event.
 ChartConfig _config(List<String> log, Curve? easing, int seed) => ChartConfig(
   labels: [for (var i = 0; i < _count; i++) 'l$i'],
-  datasets: [BarDataset(data: _data(seed))],
+  datasets: [BarDataset(data: .values(_data(seed)))],
   scales: const [LinearAxis(.y, min: 0, max: 100)],
   animation: _animation(log, easing),
 );
@@ -141,8 +141,8 @@ ChartConfig _stackedConfig(List<String> log, Curve? easing, int seed) =>
     ChartConfig(
       labels: [for (var i = 0; i < _count; i++) 'l$i'],
       datasets: [
-        BarDataset(data: _data(seed)),
-        BarDataset(data: _data(5)),
+        BarDataset(data: .values(_data(seed))),
+        BarDataset(data: .values(_data(5))),
       ],
       indexAxis: const YAxis(),
       scales: const [

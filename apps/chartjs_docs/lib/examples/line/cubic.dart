@@ -18,13 +18,13 @@ const cubicLines = ChartConfig(
   datasets: [
     LineDataset(
       label: 'default',
-      data: [0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170],
+      data: .values([0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170]),
       borderColor: .constant(.solid(red)),
       tension: 0.4,
     ),
     LineDataset(
       label: 'monotone',
-      data: [0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170],
+      data: .values([0, 20, 20, 60, 60, 120, 180, 120, 125, 105, 110, 170]),
       borderColor: .constant(.solid(blue)),
       tension: 0.4,
       cubicInterpolationMode: MonotoneCubicInterpolationMode(),

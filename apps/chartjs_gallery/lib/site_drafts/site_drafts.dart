@@ -460,7 +460,7 @@ class _DraftPageState() extends State<_DraftPage> {
                         '    type: ChartKind.line,\n'
                         "    labels: ['Mon', 'Tue', 'Wed'],\n"
                         '    datasets: [\n      LineDataset(\n'
-                        '        data: [24, 38, 31],\n'
+                        '        data: .values([24, 38, 31]),\n'
                         '      ),\n    ],\n  ),\n)',
                         style: TextStyle(
                           fontFamily: 'monospace',
@@ -1060,7 +1060,7 @@ class _LiveChartState() extends State<_LiveChart> {
         switch (_type) {
           1 => BarDataset(
             label: 'Sample series',
-            data: _data,
+            data: .values(_data),
             backgroundColor: ChartValue.constant(.solid(widget.accent)),
             borderRadius: 5,
           ),
@@ -1080,7 +1080,7 @@ class _LiveChartState() extends State<_LiveChart> {
           ),
           _ => LineDataset(
             label: 'Sample series',
-            data: _data,
+            data: .values(_data),
             borderColor: ChartValue.constant(.solid(widget.accent)),
             backgroundColor: ChartValue.constant(
               ChartPaint.solid(widget.accent.withValues(alpha: 0.10)),

@@ -24,7 +24,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
     // <Bar dataKey="visitors" radius={5} />: each bar takes its `fill`.
     BarDataset(
       label: 'Visitors',
-      data: _visitors,
+      data: .values(_visitors),
       backgroundColor: .indexed(_fills),
       hoverBackgroundColor: .indexed(_fills),
       borderRadius: 5,

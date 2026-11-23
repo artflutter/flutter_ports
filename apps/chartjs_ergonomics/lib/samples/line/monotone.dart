@@ -13,13 +13,13 @@ const monotone = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Default',
-      data: curve,
+      data: .values(curve),
       borderColor: .constant(.solid(red)),
       tension: 0.4,
     ),
     LineDataset(
       label: 'Monotone',
-      data: curve,
+      data: .values(curve),
       borderColor: .constant(.solid(blue)),
       tension: 0.4,
       cubicInterpolationMode: MonotoneCubicInterpolationMode(),

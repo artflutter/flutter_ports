@@ -96,7 +96,9 @@ ChartConfigurationScope _config() => ChartConfigLowering(
   ChartConfig(
     datasets: [
       LineDataset(
-        points: List<DataPoint>.generate(_n, (i) => DataPoint(i, i % 100 + 1)),
+        data: .points(
+          List<DataPoint>.generate(_n, (i) => DataPoint(i, i % 100 + 1)),
+        ),
         showLine: false,
         backgroundColor: const ChartValue.constant(
           ChartPaint.solid(ui.Color(0xFF36A2EB)),

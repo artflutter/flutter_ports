@@ -26,7 +26,7 @@ const List<num?> stepValues = [10, 40, 25, 60, 45, 80, 70];
 // #docregion stepped-false
 const noStep = LineDataset(
   label: 'stepped: false',
-  data: stepValues,
+  data: .values(stepValues),
   borderColor: .constant(.solid(blue)),
 );
 // #enddocregion stepped-false

@@ -9,7 +9,10 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 const valuesBar = ChartConfig(
   labels: ['Mon', 'Tue', 'Wed', 'Thu'],
   datasets: [
-    BarDataset(label: 'One value for each label', data: [20, 10, 30, 25]),
+    BarDataset(
+      label: 'One value for each label',
+      data: .values([20, 10, 30, 25]),
+    ),
   ],
 );
 // #enddocregion bar-data-values

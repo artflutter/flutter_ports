@@ -101,7 +101,7 @@ ChartConfig _config(Map<String, Object?> reference, _Logs logs) {
           in (data['datasets']! as List<Object?>).cast<Map<String, Object?>>())
         LineDataset(
           label: dataset['label']! as String,
-          data: (dataset['data']! as List<Object?>).cast<num?>(),
+          data: .values((dataset['data']! as List<Object?>).cast<num?>()),
         ),
     ],
     legend: ChartLegend(

@@ -134,9 +134,9 @@ void main() {
   group('the match rule', () {
     testWidgets('J2b: a key keeps the Map, the meta and the hidden state of '
         'a dataset after a removal at index 0', (tester) async {
-      const a = BarDataset(key: _a, label: 'A', data: [1, 2, 3]);
-      const b = BarDataset(key: _b, label: 'B', data: [4, 5, 6]);
-      const c = BarDataset(key: _c, label: 'C', data: [7, 8, 9]);
+      const a = BarDataset(key: _a, label: 'A', data: .values([1, 2, 3]));
+      const b = BarDataset(key: _b, label: 'B', data: .values([4, 5, 6]));
+      const c = BarDataset(key: _c, label: 'C', data: .values([7, 8, 9]));
       await tester.pumpWidget(_view(_bars([a, b, c])));
       final chart = _chart(tester)..hide(1);
       final mapB = _dataset(chart, 1);
@@ -157,9 +157,9 @@ void main() {
 
     testWidgets('J2a: without keys, the index rule gives the hidden state of '
         'B to the dataset C', (tester) async {
-      const a = BarDataset(label: 'A', data: [1, 2, 3]);
-      const b = BarDataset(label: 'B', data: [4, 5, 6]);
-      const c = BarDataset(label: 'C', data: [7, 8, 9]);
+      const a = BarDataset(label: 'A', data: .values([1, 2, 3]));
+      const b = BarDataset(label: 'B', data: .values([4, 5, 6]));
+      const c = BarDataset(label: 'C', data: .values([7, 8, 9]));
       await tester.pumpWidget(_view(_bars([a, b, c])));
       final chart = _chart(tester)..hide(1);
       final mapA = _dataset(chart, 0);
@@ -180,7 +180,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(data: [1, 2, 3]),
+            const BarDataset(data: .values([1, 2, 3])),
           ]),
         ),
       );
@@ -192,7 +192,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const LineDataset(data: [1, 2, 3]),
+            const LineDataset(data: .values([1, 2, 3])),
           ]),
         ),
       );
@@ -208,20 +208,24 @@ void main() {
       tester,
     ) async {
       final data = [1, 2, 3];
-      await tester.pumpWidget(_view(_bars([BarDataset(key: _a, data: data)])));
+      await tester.pumpWidget(
+        _view(_bars([BarDataset(key: _a, data: .values(data))])),
+      );
       final chart = _chart(tester);
       final first = _dataset(chart, 0);
-      await tester.pumpWidget(_view(_bars([BarDataset(key: _b, data: data)])));
+      await tester.pumpWidget(
+        _view(_bars([BarDataset(key: _b, data: .values(data))])),
+      );
       final second = _dataset(chart, 0);
       expect(second, isNot(same(first)));
-      await tester.pumpWidget(_view(_bars([BarDataset(data: data)])));
+      await tester.pumpWidget(_view(_bars([BarDataset(data: .values(data))])));
       expect(_dataset(chart, 0), isNot(same(second)));
     });
 
     testWidgets('an append keeps the Maps and adds a new Map; a removal of '
         'the last dataset keeps the others', (tester) async {
-      const a = BarDataset(label: 'A', data: [1, 2, 3]);
-      const b = BarDataset(label: 'B', data: [4, 5, 6]);
+      const a = BarDataset(label: 'A', data: .values([1, 2, 3]));
+      const b = BarDataset(label: 'B', data: .values([4, 5, 6]));
       await tester.pumpWidget(_view(_bars([a])));
       final chart = _chart(tester);
       final mapA = _dataset(chart, 0);
@@ -240,8 +244,8 @@ void main() {
     });
 
     testWidgets('a keyed reorder moves the Maps and the metas', (tester) async {
-      const a = BarDataset(key: _a, label: 'A', data: [1, 2, 3]);
-      const b = BarDataset(key: _b, label: 'B', data: [4, 5, 6]);
+      const a = BarDataset(key: _a, label: 'A', data: .values([1, 2, 3]));
+      const b = BarDataset(key: _b, label: 'B', data: .values([4, 5, 6]));
       await tester.pumpWidget(_view(_bars([a, b])));
       final chart = _chart(tester)..hide(0);
       final mapA = _dataset(chart, 0);
@@ -262,8 +266,8 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(key: _a, data: [1]),
-            const BarDataset(key: _a, data: [2]),
+            const BarDataset(key: _a, data: .values([1])),
+            const BarDataset(key: _a, data: .values([2])),
           ]),
         ),
       );
@@ -277,7 +281,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(key: _a, data: [1]),
+            const BarDataset(key: _a, data: .values([1])),
           ]),
         ),
       );
@@ -286,8 +290,8 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(key: _b, data: [1]),
-            const BarDataset(key: _b, data: [2]),
+            const BarDataset(key: _b, data: .values([1])),
+            const BarDataset(key: _b, data: .values([2])),
           ]),
         ),
       );
@@ -308,8 +312,8 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            BarDataset(label: 'A', borderWidth: 1, data: data),
-            BarDataset(label: 'B', data: data),
+            BarDataset(label: 'A', borderWidth: 1, data: .values(data)),
+            BarDataset(label: 'B', data: .values(data)),
           ]),
         ),
       );
@@ -323,8 +327,8 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            BarDataset(borderWidth: 2, data: data),
-            BarDataset(label: 'B', data: data),
+            BarDataset(borderWidth: 2, data: .values(data)),
+            BarDataset(label: 'B', data: .values(data)),
           ]),
         ),
       );
@@ -352,7 +356,11 @@ void main() {
       _spyOnUpdates((chart) => atUpdate.add(_dataset(chart, 0)['borderColor']));
       final data = [1, 2, 3];
       await tester.pumpWidget(
-        _view(_bars([BarDataset(label: 'A', data: data)], extra: _colorsOn)),
+        _view(
+          _bars([
+            BarDataset(label: 'A', data: .values(data)),
+          ], extra: _colorsOn),
+        ),
       );
       final chart = _chart(tester);
       final written = _dataset(chart, 0)['borderColor'];
@@ -362,7 +370,11 @@ void main() {
       );
 
       await tester.pumpWidget(
-        _view(_bars([BarDataset(label: 'B', data: data)], extra: _colorsOn)),
+        _view(
+          _bars([
+            BarDataset(label: 'B', data: .values(data)),
+          ], extra: _colorsOn),
+        ),
       );
       expect(_dataset(chart, 0)['label'], 'B');
       // The reconcile kept the key: `beforeUpdate` runs before the colors
@@ -377,7 +389,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(key: _a, data: [10, 20, 30]),
+            const BarDataset(key: _a, data: .values([10, 20, 30])),
           ], animated: true),
         ),
       );
@@ -389,7 +401,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(key: _a, data: [10, 40, 30]),
+            const BarDataset(key: _a, data: .values([10, 40, 30])),
           ], animated: true),
         ),
       );
@@ -403,7 +415,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(key: _b, data: [10, 20, 30]),
+            const BarDataset(key: _b, data: .values([10, 20, 30])),
           ], animated: true),
         ),
       );
@@ -420,7 +432,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(data: [1, 2, 3]),
+            const BarDataset(data: .values([1, 2, 3])),
           ], title: title),
         ),
       );
@@ -432,7 +444,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(data: [4, 5, 6]),
+            const BarDataset(data: .values([4, 5, 6])),
           ], title: title),
         ),
       );
@@ -443,7 +455,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(data: [4, 5, 6]),
+            const BarDataset(data: .values([4, 5, 6])),
           ], title: const ChartTitle(display: true, text: ['U'])),
         ),
       );
@@ -455,7 +467,7 @@ void main() {
     testWidgets('the data Map stays for an option change and goes for a new '
         'dataset List or new labels', (tester) async {
       final datasets = [
-        const BarDataset(data: [1, 2, 3]),
+        const BarDataset(data: .values([1, 2, 3])),
       ];
       await tester.pumpWidget(_view(_bars(datasets)));
       final chart = _chart(tester);
@@ -470,7 +482,7 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(data: [4, 5, 6]),
+            const BarDataset(data: .values([4, 5, 6])),
           ]),
         ),
       );
@@ -479,8 +491,8 @@ void main() {
       await tester.pumpWidget(
         _view(
           _bars([
-            const BarDataset(data: [4, 5, 6]),
-            const BarDataset(data: [7, 8, 9]),
+            const BarDataset(data: .values([4, 5, 6])),
+            const BarDataset(data: .values([7, 8, 9])),
           ]),
         ),
       );
@@ -494,8 +506,8 @@ void main() {
           ChartConfig(
             labels: labels,
             datasets: const [
-              BarDataset(data: [4, 5, 6]),
-              BarDataset(data: [7, 8, 9]),
+              BarDataset(data: .values([4, 5, 6])),
+              BarDataset(data: .values([7, 8, 9])),
             ],
             scales: const [LinearAxis(.y, min: 0, max: 50)],
             animation: ChartAnimation.none,
@@ -508,7 +520,7 @@ void main() {
 
     testWidgets('a new type gives a new options Map: the axes of the new '
         'type, as a new chart', (tester) async {
-      const line = LineDataset(data: [1, 2, 3]);
+      const line = LineDataset(data: .values([1, 2, 3]));
       // The class of the first dataset gives the chart type (Chart.js ADR
       // 0190). The x axis of the app takes the scale defaults of the chart
       // type: `offset: true` of the bar overrides (`core.config.js:89`).
@@ -518,14 +530,16 @@ void main() {
         scales: const [CategoryAxis(.x)],
         animation: ChartAnimation.none,
       );
-      await tester.pumpWidget(_view(config(const BarDataset(data: [1, 2, 3]))));
+      await tester.pumpWidget(
+        _view(config(const BarDataset(data: .values([1, 2, 3])))),
+      );
       final chart = _chart(tester);
       final map = _dataset(chart, 1);
       expect(map['type'], 'line');
       expect(chart.scales['x']!.optionsView['offset'], isTrue);
 
       await tester.pumpWidget(
-        _view(config(const LineDataset(data: [3, 2, 1]))),
+        _view(config(const LineDataset(data: .values([3, 2, 1])))),
       );
       expect(_dataset(chart, 1), same(map));
       expect(map.jsHas('type'), isFalse);
@@ -542,7 +556,7 @@ void main() {
       const themeB = ChartThemeData(palette: [_blue]);
       ChartConfig config(List<num?> data, {Color? borderColor}) => _bars([
         BarDataset(
-          data: data,
+          data: .values(data),
           borderColor: borderColor == null
               ? null
               : ChartValue.constant(.solid(borderColor)),
@@ -578,7 +592,7 @@ void main() {
     ) async {
       final data = <num?>[1, 2, 3];
       ChartConfig config({required bool off}) => _bars([
-        BarDataset(data: data),
+        BarDataset(data: .values(data)),
       ], disabledPlugins: off ? const [PluginOff<LegendPlugin>()] : null);
       // The `start` hook of the legend plugin writes `chart.legend`.
       await tester.pumpWidget(_view(config(off: true)));
@@ -604,7 +618,7 @@ void main() {
         datasets: [
           LineDataset(
             label: label,
-            points: points,
+            data: .points(points),
             pointRadius: const .constant(0),
           ),
         ],

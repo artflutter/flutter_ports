@@ -105,8 +105,8 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: []),
-            BarDataset(data: []),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
           ],
           labels: [],
         ),
@@ -130,7 +130,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [10, null, 0, -4], label: 'dataset1'),
+            BarDataset(data: .values([10, null, 0, -4]), label: 'dataset1'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
         ),
@@ -150,8 +150,8 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: []),
-              BarDataset(data: []),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
           ),
@@ -171,10 +171,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(data: []),
-              BarDataset(data: [], hidden: true),
-              BarDataset(data: []),
-              BarDataset(data: []),
+              LineDataset(data: .values([])),
+              BarDataset(data: .values([]), hidden: true),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
           ),
@@ -194,10 +194,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: []),
-              BarDataset(data: []),
-              BarDataset(data: []),
-              BarDataset(data: []),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
           ),
@@ -217,10 +217,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: []),
-              BarDataset(data: []),
-              BarDataset(data: []),
-              BarDataset(data: []),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
             scales: [
@@ -244,10 +244,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: []),
-              BarDataset(data: []),
-              BarDataset(data: []),
-              BarDataset(data: []),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
             scales: [
@@ -269,10 +269,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: []),
-            BarDataset(data: []),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
           ],
           labels: [],
         ),
@@ -289,10 +289,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: []),
-            BarDataset(data: []),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
           ],
           labels: [],
           scales: [
@@ -313,10 +313,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: []),
-            BarDataset(data: []),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
           ],
           labels: [],
           scales: [
@@ -337,10 +337,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack2'),
-            BarDataset(data: [], stack: 'stack2'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack2'),
+            BarDataset(data: .values([]), stack: 'stack2'),
           ],
           labels: [],
         ),
@@ -357,10 +357,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack2'),
-            BarDataset(data: [], stack: 'stack2'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack2'),
+            BarDataset(data: .values([]), stack: 'stack2'),
           ],
           labels: [],
           scales: [
@@ -381,10 +381,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack1'),
-            BarDataset(data: [], stack: 'stack2'),
-            BarDataset(data: [], stack: 'stack2'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack1'),
+            BarDataset(data: .values([]), stack: 'stack2'),
+            BarDataset(data: .values([]), stack: 'stack2'),
           ],
           labels: [],
           scales: [
@@ -407,10 +407,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: []),
-              BarDataset(data: [], hidden: true),
-              LineDataset(data: []),
-              BarDataset(data: []),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([]), hidden: true),
+              LineDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
           ),
@@ -429,10 +429,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: []),
-            BarDataset(data: []),
-            BarDataset(data: []),
-            BarDataset(data: []),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
           ],
           labels: [],
         ),
@@ -452,10 +452,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: []),
-            BarDataset(data: []),
-            BarDataset(data: []),
-            BarDataset(data: []),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
           ],
           labels: [],
           scales: [
@@ -479,10 +479,10 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: []),
-            BarDataset(data: []),
-            BarDataset(data: []),
-            BarDataset(data: []),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([])),
           ],
           labels: [],
           scales: [
@@ -508,10 +508,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: []),
-              BarDataset(data: []),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
           ),
@@ -534,10 +534,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: []),
-              BarDataset(data: []),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
             scales: [
@@ -564,10 +564,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: []),
-              BarDataset(data: []),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([])),
             ],
             labels: [],
             scales: [
@@ -594,10 +594,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack2'),
-              BarDataset(data: [], stack: 'stack2'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack2'),
+              BarDataset(data: .values([]), stack: 'stack2'),
             ],
             labels: [],
           ),
@@ -620,10 +620,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack2'),
-              BarDataset(data: [], stack: 'stack2'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack2'),
+              BarDataset(data: .values([]), stack: 'stack2'),
             ],
             labels: [],
             scales: [
@@ -650,10 +650,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack1'),
-              BarDataset(data: [], stack: 'stack2'),
-              BarDataset(data: [], stack: 'stack2'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack1'),
+              BarDataset(data: .values([]), stack: 'stack2'),
+              BarDataset(data: .values([]), stack: 'stack2'),
             ],
             labels: [],
             scales: [
@@ -678,8 +678,8 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: []),
-              BarDataset(data: [10, 15, 0, -4]),
+              BarDataset(data: .values([])),
+              BarDataset(data: .values([10, 15, 0, -4])),
             ],
             labels: [],
           ),
@@ -698,9 +698,9 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [1, 2], label: 'dataset1'),
+            BarDataset(data: .values([1, 2]), label: 'dataset1'),
             BarDataset(
-              data: [10, 15, 0, -4],
+              data: .values([10, 15, 0, -4]),
               label: 'dataset2',
               borderColor: ChartValue.constant(
                 ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
@@ -784,9 +784,9 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [1, 2], label: 'dataset1'),
-              LineDataset(data: [4, 6], label: 'dataset2'),
-              BarDataset(data: [8, 10], label: 'dataset3'),
+              BarDataset(data: .values([1, 2]), label: 'dataset1'),
+              LineDataset(data: .values([4, 6]), label: 'dataset2'),
+              BarDataset(data: .values([8, 10]), label: 'dataset3'),
             ],
             labels: ['label1', 'label2'],
             scales: [
@@ -817,7 +817,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [1, 2], label: 'dataset1', hidden: true),
+            BarDataset(data: .values([1, 2]), label: 'dataset1', hidden: true),
           ],
           labels: ['label1', 'label2'],
           scales: [
@@ -849,8 +849,8 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [10, -10, 10, -10], label: 'dataset1'),
-            BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
+            BarDataset(data: .values([10, -10, 10, -10]), label: 'dataset1'),
+            BarDataset(data: .values([10, 15, 0, -4]), label: 'dataset2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
           scales: [
@@ -890,8 +890,8 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [50, 20, 10, 100], label: 'dataset1'),
-              BarDataset(data: [50, 80, 90, 0], label: 'dataset2'),
+              BarDataset(data: .values([50, 20, 10, 100]), label: 'dataset1'),
+              BarDataset(data: .values([50, 80, 90, 0]), label: 'dataset2'),
             ],
             labels: ['label1', 'label2', 'label3', 'label4'],
             scales: [
@@ -936,8 +936,8 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [20, -10, 10, -10], label: 'dataset1'),
-            BarDataset(data: [10, 15, 0, -14], label: 'dataset2'),
+            BarDataset(data: .values([20, -10, 10, -10]), label: 'dataset1'),
+            BarDataset(data: .values([10, 15, 0, -14]), label: 'dataset2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
           scales: [
@@ -1031,12 +1031,12 @@ void main() {
           const ChartConfig(
             datasets: [
               BarDataset(
-                data: [10, -10, 10, -10],
+                data: .values([10, -10, 10, -10]),
                 label: 'dataset1',
                 stack: 'stack1',
               ),
               BarDataset(
-                data: [10, 15, 0, -4],
+                data: .values([10, 15, 0, -4]),
                 label: 'dataset2',
                 stack: 'stack1',
               ),
@@ -1080,8 +1080,8 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [1, 2], stack: 'stack1'),
-              BarDataset(data: [1, 2], stack: 'stack2'),
+              BarDataset(data: .values([1, 2]), stack: 'stack1'),
+              BarDataset(data: .values([1, 2]), stack: 'stack2'),
             ],
             labels: ['label1', 'label2', 'label3', 'label4'],
             scales: [
@@ -1113,9 +1113,9 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [1, 2], stack: 'stack1'),
-            BarDataset(data: [0.5, 1], stack: 'stack2'),
-            BarDataset(data: [0.5, 1], stack: 'stack2'),
+            BarDataset(data: .values([1, 2]), stack: 'stack1'),
+            BarDataset(data: .values([0.5, 1]), stack: 'stack2'),
+            BarDataset(data: .values([0.5, 1]), stack: 'stack2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
           scales: [
@@ -1144,8 +1144,8 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: []),
-            BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([10, 15, 0, -4]), label: 'dataset2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
         ),
@@ -1170,8 +1170,8 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: []),
-            BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([10, 15, 0, -4]), label: 'dataset2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
           elements: ChartElements(
@@ -1251,8 +1251,8 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: []),
-            BarDataset(data: [10, 15, 0, -4], label: 'dataset2'),
+            BarDataset(data: .values([])),
+            BarDataset(data: .values([10, 15, 0, -4]), label: 'dataset2'),
           ],
           labels: ['label1', 'label2', 'label3', 'label4'],
           elements: ChartElements(
@@ -1384,8 +1384,8 @@ void main() {
             'July',
           ],
           datasets: [
-            BarDataset(data: [10, 20, 30, 40, 50, 60, 70]),
-            BarDataset(data: [10, 20, 30, 40, 50, 60, 70]),
+            BarDataset(data: .values([10, 20, 30, 40, 50, 60, 70])),
+            BarDataset(data: .values([10, 20, 30, 40, 50, 60, 70])),
           ],
         );
       });
@@ -1464,8 +1464,8 @@ void main() {
             'July',
           ],
           datasets: [
-            BarDataset(data: [10, 20, 30, 40, 50, 60, 70]),
-            BarDataset(data: [10, 20, 30, 40, 50, 60, 70]),
+            BarDataset(data: .values([10, 20, 30, 40, 50, 60, 70])),
+            BarDataset(data: .values([10, 20, 30, 40, 50, 60, 70])),
           ],
         );
       });
@@ -1533,8 +1533,8 @@ void main() {
             chart = _acquire(
               ChartConfig(
                 datasets: const [
-                  BarDataset(data: [1, 2]),
-                  BarDataset(data: [1, 2]),
+                  BarDataset(data: .values([1, 2])),
+                  BarDataset(data: .values([1, 2])),
                 ],
                 labels: const ['label1', 'label2', 'label3'],
                 scales: const [
@@ -1619,7 +1619,7 @@ void main() {
           datasets: [
             BarDataset(
               minBarLength: minBarLength,
-              data: [0.05, -0.05, 10, 15, 20, 25, 30, 35],
+              data: .values([0.05, -0.05, 10, 15, 20, 25, 30, 35]),
             ),
           ],
         ),
@@ -1644,7 +1644,7 @@ void main() {
               BarDataset(
                 indexAxis: YAxis(),
                 minBarLength: minBarLength,
-                data: [0.05, -0.05, 10, 15, 20, 25, 30, 35],
+                data: .values([0.05, -0.05, 10, 15, 20, 25, 30, 35]),
               ),
             ],
           ),
@@ -1664,7 +1664,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [1, 2, 3, 4]),
+            BarDataset(data: .values([1, 2, 3, 4])),
           ],
           labels: ['A', 'B', 'C', 'D'],
           scales: [
@@ -1696,8 +1696,8 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [1, 2, 3, 4]),
-            BarDataset(data: [1, 2, 3, 4]),
+            BarDataset(data: .values([1, 2, 3, 4])),
+            BarDataset(data: .values([1, 2, 3, 4])),
           ],
           labels: ['A', 'B', 'C', 'D'],
           scales: [
@@ -1762,7 +1762,7 @@ void main() {
             labels: ['a', 'b', 'c'],
             datasets: [
               BarDataset(
-                data: [1, 2, 3],
+                data: .values([1, 2, 3]),
                 // DIVERGES(chartjs): adapt-chart-clip-option, the clip class.
                 clip: ChartClip.none,
               ),
@@ -1789,8 +1789,8 @@ void main() {
           const ChartConfig(
             labels: [1, 2],
             datasets: [
-              BarDataset(data: [1, 2]),
-              BarDataset(data: [1, 2, 3]),
+              BarDataset(data: .values([1, 2])),
+              BarDataset(data: .values([1, 2, 3])),
             ],
             extra: {'skipNull': true},
           ),
@@ -1895,8 +1895,8 @@ void main() {
         const ChartConfig(
           labels: ['Label 1', 'Label 2'],
           datasets: [
-            BarDataset(data: [21, 79], label: 'Dataset 1'),
-            BarDataset(data: [33, 67], label: 'Dataset 2'),
+            BarDataset(data: .values([21, 79]), label: 'Dataset 1'),
+            BarDataset(data: .values([33, 67]), label: 'Dataset 2'),
           ],
           responsive: true,
           maintainAspectRatio: true,

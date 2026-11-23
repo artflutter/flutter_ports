@@ -99,7 +99,6 @@ const List<(Dataset, List<String>)> _datasets = [
       'key',
       'label',
       'data',
-      'points',
       ..._style,
       'xAxis',
       'yAxis',
@@ -122,7 +121,6 @@ const List<(Dataset, List<String>)> _datasets = [
       'key',
       'label',
       'data',
-      'points',
       ..._style,
       'xAxis',
       'yAxis',
@@ -138,7 +136,6 @@ const List<(Dataset, List<String>)> _datasets = [
       'key',
       'label',
       'data',
-      'points',
       ..._style,
       'xAxis',
       'yAxis',
@@ -152,7 +149,7 @@ const List<(Dataset, List<String>)> _datasets = [
     [
       'key',
       'label',
-      'points',
+      'data',
       ..._style,
       'xAxis',
       'yAxis',
@@ -196,8 +193,8 @@ void _expectEqual(Object a, Object b) {
 void main() {
   group('the datasets', () {
     test('a const dataset is canonical', () {
-      const a = BarDataset(label: 'A', data: [1, 2]);
-      const b = BarDataset(label: 'A', data: [1, 2]);
+      const a = BarDataset(label: 'A', data: .values([1, 2]));
+      const b = BarDataset(label: 'A', data: .values([1, 2]));
       expect(identical(a, b), isTrue);
     });
 
@@ -208,7 +205,7 @@ void main() {
         BarDataset(
           key: const ValueKey('a'),
           label: 'A',
-          data: data,
+          data: .values(data),
           backgroundColor: const ChartValue.constant(.solid(_red)),
           borderColor: const ChartValue.resolver(_colorFor),
           extra: const {'clip': ChartClip.all(5)},
@@ -216,26 +213,26 @@ void main() {
         BarDataset(
           key: const ValueKey('a'),
           label: 'A',
-          data: data,
+          data: .values(data),
           backgroundColor: const ChartValue.constant(.solid(_red)),
           borderColor: const ChartValue.resolver(_colorFor),
           extra: const {'clip': ChartClip.all(5)},
         ),
       );
       _expectEqual(
-        LineDataset(points: points, fill: const .toValue(2)),
-        LineDataset(points: points, fill: const .toValue(2)),
+        LineDataset(data: .points(points), fill: const .toValue(2)),
+        LineDataset(data: .points(points), fill: const .toValue(2)),
       );
     });
 
     test('a data List compares by identity', () {
       expect(
-        BarDataset(data: _runtime([1, 2])),
-        isNot(BarDataset(data: _runtime([1, 2]))),
+        BarDataset(data: .values(_runtime([1, 2]))),
+        isNot(BarDataset(data: .values(_runtime([1, 2])))),
       );
       expect(
-        LineDataset(points: [DataPoint(1, 2)]),
-        isNot(LineDataset(points: [DataPoint(1, 2)])),
+        LineDataset(data: .points([DataPoint(1, 2)])),
+        isNot(LineDataset(data: .points([DataPoint(1, 2)]))),
       );
     });
 
@@ -459,9 +456,9 @@ void main() {
 
     test('copyWith of a class keeps its own parameters', () {
       final data = <num?>[1];
-      final bar = BarDataset(data: data, borderRadius: 4, stack: 's');
+      final bar = BarDataset(data: .values(data), borderRadius: 4, stack: 's');
       final copy = bar.copyWith(grouped: false);
-      expect(copy.data, same(data));
+      expect((copy.data! as DatasetValues).values, same(data));
       expect([copy.borderRadius, copy.stack, copy.grouped], [4, 's', false]);
       final skipped = copy.copyWith(borderSkipped: BorderSkip.none);
       expect(
@@ -505,15 +502,62 @@ void main() {
       );
     });
 
-    test('the constructor asserts data or points', () {
+    test('a DatasetData compares its List by identity', () {
+      final values = <num?>[1, 2];
+      _expectEqual(DatasetData.values(values), DatasetData.values(values));
       expect(
-        () => BarDataset(data: const [1], points: [DataPoint(1, 2)]),
-        throwsAssertionError,
+        DatasetData.values(values),
+        isNot(DatasetData.values(_runtime(<num?>[1, 2]))),
+      );
+      final points = [DataPoint(1, 2)];
+      _expectEqual(DatasetData.points(points), DatasetData.points(points));
+      expect(
+        DatasetData.points(points),
+        isNot(DatasetData.points([DataPoint(1, 2)])),
+      );
+      // The two forms differ also around one List.
+      final empty = <Never>[];
+      expect(DatasetData.values(empty), isNot(DatasetData.points(empty)));
+    });
+
+    test('a new DatasetData around the same List gives == datasets', () {
+      final values = <num?>[1, 2];
+      _expectEqual(
+        LineDataset(data: .values(values)),
+        LineDataset(data: .values(values)),
+      );
+      final points = [DataPoint(1, 2)];
+      _expectEqual(
+        ScatterDataset(data: .points(points)),
+        ScatterDataset(data: .points(points)),
+      );
+    });
+
+    test('chartData gives the List of either form by reference', () {
+      final values = <num?>[1, null];
+      final points = [DataPoint(1, 2)];
+      expect(
+        lowerDataset(
+          BarDataset(data: .values(values)),
+          ChartKind.bar,
+        ).ownCell(OptionKey.data)!.raw,
+        same(values),
       );
       expect(
-        () => ScatterDataset(data: const [1], points: [DataPoint(1, 2)]),
-        throwsAssertionError,
+        lowerDataset(
+          LineDataset(data: .points(points)),
+          ChartKind.line,
+        ).ownCell(OptionKey.data)!.raw,
+        same(points),
       );
+    });
+
+    test('a DatasetData shows its form and its List', () {
+      expect(
+        const DatasetData.values([1, null]).toString(),
+        'DatasetData.values([1, null])',
+      );
+      expect(const DatasetData.points([]).toString(), 'DatasetData.points([])');
     });
   });
 
@@ -521,14 +565,14 @@ void main() {
     test('a const config is canonical', () {
       const a = ChartConfig(
         datasets: [
-          BarDataset(data: [1]),
+          BarDataset(data: .values([1])),
         ],
         scales: [LinearAxis(.y, beginAtZero: true)],
         legend: ChartLegend(display: false),
       );
       const b = ChartConfig(
         datasets: [
-          BarDataset(data: [1]),
+          BarDataset(data: .values([1])),
         ],
         scales: [LinearAxis(.y, beginAtZero: true)],
         legend: ChartLegend(display: false),
@@ -543,7 +587,7 @@ void main() {
         labels: labels,
         datasets: [
           BarDataset(
-            data: data,
+            data: .values(data),
             backgroundColor: ChartValue.indexed(
               _runtime([const ChartPaint.solid(_red)]),
             ),

@@ -39,7 +39,7 @@ Widget _line(Color color, List<PropertyAnimation> animations) => _box(
       datasets: [
         LineDataset(
           key: const ValueKey('line'),
-          data: const [1, 2, 3],
+          data: const .values([1, 2, 3]),
           borderColor: ChartValue.constant(.solid(color)),
         ),
       ],
@@ -57,7 +57,7 @@ Widget _bar(double borderWidth, List<PropertyAnimation> animations) => _box(
       datasets: [
         BarDataset(
           key: const ValueKey('bar'),
-          data: const [1, 2, 3],
+          data: const .values([1, 2, 3]),
           borderWidth: borderWidth,
         ),
       ],
@@ -143,7 +143,7 @@ void main() {
           datasets: [
             LineDataset(
               key: const ValueKey('line'),
-              data: const [1, 2, 3],
+              data: const .values([1, 2, 3]),
               borderColor: ChartValue.constant(.solid(color)),
             ),
           ],
@@ -201,7 +201,7 @@ void main() {
             datasets: [
               LineDataset(
                 key: const ValueKey('line'),
-                data: const [1, 2, 3],
+                data: const .values([1, 2, 3]),
                 borderColor: ChartValue.constant(.solid(color)),
               ),
             ],
@@ -343,7 +343,7 @@ void main() {
           datasets: [
             LineDataset(
               key: const ValueKey('line'),
-              data: const [1, 2, 3],
+              data: const .values([1, 2, 3]),
               borderColor: ChartValue.constant(.solid(color)),
             ),
           ],
@@ -479,7 +479,7 @@ void main() {
             config: ChartConfig(
               labels: ['a', 'b', 'c'],
               datasets: [
-                LineDataset(data: [1, 2, 3]),
+                LineDataset(data: .values([1, 2, 3])),
               ],
               animations: [badge, radius],
               transitions: [pulse],

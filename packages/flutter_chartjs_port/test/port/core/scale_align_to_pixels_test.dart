@@ -18,7 +18,7 @@ ChartConfig _config(Object? value) {
   return ChartConfig(
     datasets: [
       LineDataset(
-        points: [for (var i = 0; i < 8; i++) DataPoint(i, i * 5 % 7)],
+        data: .points([for (var i = 0; i < 8; i++) DataPoint(i, i * 5 % 7)]),
       ),
     ],
     responsive: false,

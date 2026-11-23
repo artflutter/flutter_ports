@@ -108,7 +108,7 @@ void main() {
             config: ChartConfig(
               labels: const ['a', 'b', 'c'],
               datasets: const [
-                LineDataset(data: [1, 3, 2]),
+                LineDataset(data: .values([1, 3, 2])),
               ],
               animation: ChartAnimation.none,
               // The typed options slot of an add-on plugin (Chart.js ADR

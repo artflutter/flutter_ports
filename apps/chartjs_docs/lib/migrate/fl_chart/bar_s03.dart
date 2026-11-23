@@ -55,7 +55,7 @@ class _BarSample3State() extends State<BarSample3> {
       labels: _days,
       datasets: [
         BarDataset(
-          data: _values,
+          data: const .values(_values),
           backgroundColor: .resolver(_gradient),
           hoverBackgroundColor: .resolver(_gradient),
           barThickness: const BarThickness.pixels(8),

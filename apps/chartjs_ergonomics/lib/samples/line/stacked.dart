@@ -11,14 +11,14 @@ const stacked = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Mobile',
-      data: [30, 35, 28, 40, 45, 42, 50],
+      data: .values([30, 35, 28, 40, 45, 42, 50]),
       borderColor: .constant(.solid(teal)),
       backgroundColor: .constant(.solid(tealFill)),
       fill: .toStacked,
     ),
     LineDataset(
       label: 'Desktop',
-      data: [20, 25, 22, 18, 24, 30, 26],
+      data: .values([20, 25, 22, 18, 24, 30, 26]),
       borderColor: .constant(.solid(blue)),
       backgroundColor: .constant(.solid(blueFill)),
       fill: .toStacked,

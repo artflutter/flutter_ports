@@ -480,7 +480,7 @@ void main() {
           for (var k = 0; k < 3; k++)
             BarDataset(
               key: ValueKey('series$k'),
-              data: <double>[1.0 + k, step + 2.0, 3, 4.0 + k],
+              data: .values(<double>[1.0 + k, step + 2.0, 3, 4.0 + k]),
               backgroundColor: ChartValue.constant(
                 ChartPaint.solid(_colors[k]),
               ),

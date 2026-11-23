@@ -126,7 +126,7 @@ ChartConfigurationScope _config(
   AnyObject? theme,
 }) {
   Dataset dataset() => switch (type) {
-    'bar' => const BarDataset(data: [1, 2, 3]),
+    'bar' => const BarDataset(data: .values([1, 2, 3])),
     'doughnut' => const DoughnutDataset(data: [1, 2, 3]),
     'polarArea' => const PolarAreaDataset(data: [1, 2, 3]),
     _ => throw ArgumentError.value(type, 'type'),

@@ -212,7 +212,7 @@ class CoreDemoState() extends State<CoreDemo> {
       for (var d = 0; d < _datasetStyles.length; d++)
         LineDataset(
           label: _datasetStyles[d].label,
-          points: _data[d],
+          data: .points(_data[d]),
           backgroundColor: ChartValue.constant(
             .solid(_datasetStyles[d].background),
           ),

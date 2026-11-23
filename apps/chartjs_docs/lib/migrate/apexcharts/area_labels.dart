@@ -10,7 +10,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   datasets: [
     LineDataset(
       label: 'Revenue',
-      data: const [12, 18, 14, 26, 31, 28, 40, 52],
+      data: const .values([12, 18, 14, 26, 31, 28, 40, 52]),
       borderColor: const .constant(.solid(Apex.green)),
       // chart.type: 'area': the default gradient of an area.
       backgroundColor: apexAreaFill(Apex.green),

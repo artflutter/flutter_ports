@@ -13,7 +13,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   datasets: const [
     LineDataset(
       label: 'Desktop',
-      data: _desktop,
+      data: .values(_desktop),
       // type="linear": straight lines, the default of Chart.js (tension 0).
       borderColor: .constant(.solid(Shadcn.chart1)),
       borderWidth: 2,

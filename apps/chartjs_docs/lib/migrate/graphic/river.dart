@@ -40,7 +40,7 @@ List<double> _topEdge(int type) => [
 /// last dataset.
 LineDataset _band(int type) => LineDataset(
   label: _types[type],
-  data: _topEdge(type),
+  data: .values(_topEdge(type)),
   fill: type == 0 ? FillTarget.toDataset(_types.length) : .toPrevious,
   backgroundColor: .constant(.solid(Gx.colors10[type])),
   borderWidth: 0,
@@ -79,7 +79,7 @@ final ChartConfig _config = ChartConfig(
     for (var t = 0; t < _types.length; t++) _band(t),
     LineDataset(
       label: 'base',
-      data: _base,
+      data: .values(_base),
       borderWidth: 0,
       tension: 0.5,
       pointRadius: const .constant(0),

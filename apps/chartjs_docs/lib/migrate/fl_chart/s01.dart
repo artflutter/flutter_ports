@@ -14,7 +14,7 @@ LineDataset _line(
   FillTarget? fill,
   Color? fillColor,
 }) => LineDataset(
-  points: points,
+  data: .points(points),
   borderColor: .constant(.solid(color)),
   backgroundColor: fillColor == null ? null : .constant(.solid(fillColor)),
   borderWidth: width,

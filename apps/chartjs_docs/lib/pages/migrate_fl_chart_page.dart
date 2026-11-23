@@ -59,8 +59,8 @@ DocPageContent flChartMigrationPage() => migrationPage(
     (
       Text('spots: [FlSpot(x, y)]'),
       DocText(
-        '`points: [DataPoint(x, y)]`, or `data` with '
-        '`labels`',
+        '`data: .points([DataPoint(x, y)])`, or `data: .values(...)` '
+        'with `labels`',
       ),
     ),
     (

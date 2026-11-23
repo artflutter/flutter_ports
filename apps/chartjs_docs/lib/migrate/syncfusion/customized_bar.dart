@@ -56,7 +56,7 @@ final ChartConfig _config = ChartConfig(
   labels: _apps,
   datasets: const [
     BarDataset(
-      data: _downloads,
+      data: .values(_downloads),
       backgroundColor: .constant(.solid(Sf.blue)),
       hoverBackgroundColor: .constant(.solid(Sf.blue)),
       categoryPercentage: 0.7,

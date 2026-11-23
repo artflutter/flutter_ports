@@ -93,10 +93,10 @@ class _BarSample8State() extends State<BarSample8> {
     ChartConfig(
       datasets: [
         BarDataset(
-          points: [
+          data: .points([
             for (final (day, (value, _, _)) in _data.indexed)
               DataPoint(day, value),
-          ],
+          ]),
           backgroundColor: .indexed([
             for (var day = 0; day < 7; day++)
               .solid(_forecast(day) ? Colors.transparent : Colors.white),

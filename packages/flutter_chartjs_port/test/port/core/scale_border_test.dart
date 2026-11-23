@@ -27,7 +27,7 @@ Chart _cartesian(CategoryAxis x, {ChartOptionsScope? theme}) {
     ChartConfig(
       labels: const ['a', 'b', 'c', 'd'],
       datasets: const [
-        LineDataset(data: [1, 2, 3, 4]),
+        LineDataset(data: .values([1, 2, 3, 4])),
       ],
       scales: [x],
     ),

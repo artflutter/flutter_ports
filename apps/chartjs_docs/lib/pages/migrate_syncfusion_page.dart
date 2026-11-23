@@ -50,7 +50,7 @@ DocPageContent syncfusionMigrationPage() => migrationPage(
     (Text('LineSeries'), DocText('`LineDataset`')),
     (
       Text('dataSource, xValueMapper, yValueMapper'),
-      DocText('`labels` and `data`, or `points`'),
+      DocText('`labels` and `data: .values(...)`, or `data: .points(...)`'),
     ),
     (
       Text('CategoryAxis, NumericAxis, DateTimeAxis'),

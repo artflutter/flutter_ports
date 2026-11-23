@@ -23,7 +23,7 @@ final flexBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Widths from the spaces',
-      points: unevenPoints,
+      data: .points(unevenPoints),
       backgroundColor: const .constant(.solid(teal)),
       barThickness: BarThickness.flex,
     ),

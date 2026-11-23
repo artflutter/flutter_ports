@@ -73,7 +73,7 @@ class _Sample5State() extends State<Sample5> {
       labels: _hours,
       datasets: [
         LineDataset(
-          data: _values,
+          data: const .values(_values),
           tension: 0.35,
           borderWidth: 4,
           pointRadius: const .constant(0),

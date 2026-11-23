@@ -81,10 +81,10 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   datasets: [
     LineDataset(
       label: 'STOCK ABC',
-      points: [
+      data: .points([
         for (final (ms, value) in stockAbc)
           DataPoint.time(DateTime.fromMillisecondsSinceEpoch(ms), value),
-      ],
+      ]),
       borderColor: const .constant(.solid(Apex.blue)),
       // fill: {type: 'gradient', gradient: {shadeIntensity: 1,
       // opacityFrom: 0.7, opacityTo: 0.9}}: blue on the top, white on the

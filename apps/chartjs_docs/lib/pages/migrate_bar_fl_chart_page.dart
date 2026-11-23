@@ -65,7 +65,10 @@ DocPageContent flChartBarMigrationPage() => migrationPage(
     ),
     (
       Text('BarChartRodData(toY: y)'),
-      DocText('`data` with `labels`, or `points: [DataPoint(i, y)]`'),
+      DocText(
+        '`data: .values(...)` with `labels`, or '
+        '`data: .points([DataPoint(i, y)])`',
+      ),
     ),
     (Text('fromY'), DocText('a floating bar: a pair `[from, to]` in `extra`')),
     (

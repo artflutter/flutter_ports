@@ -51,7 +51,7 @@ ChartConfig _scatter0to100([ZoomPluginOptions? zoom]) => ChartConfig(
 
 ChartConfig _scatterFitted() => ChartConfig(
   datasets: [
-    ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
+    ScatterDataset(data: .points([DataPoint(0, 0), DataPoint(100, 100)])),
   ],
 );
 
@@ -251,7 +251,9 @@ void main() {
         final chart = _acquire(
           ChartConfig(
             datasets: [
-              ScatterDataset(points: [DataPoint(1, 1), DataPoint(10, 10)]),
+              ScatterDataset(
+                data: .points([DataPoint(1, 1), DataPoint(10, 10)]),
+              ),
             ],
             pluginOptions: [
               ZoomPluginOptions(zoom: ZoomOptions(onZoom: zoomCalls.add)),
@@ -386,7 +388,7 @@ void main() {
           const ChartConfig(
             labels: ['a', 'b', 'c', 'd', 'e'],
             datasets: [
-              BarDataset(data: [1, 2, 3, 2, 1]),
+              BarDataset(data: .values([1, 2, 3, 2, 1])),
             ],
             scales: [CategoryAxis(.x, min: 'b', max: 'd')],
           ),
@@ -412,7 +414,7 @@ void main() {
           const ChartConfig(
             labels: ['0', '1', '2', '3', '4', '5', '6'],
             datasets: [
-              BarDataset(data: [1, 2, 3, 2, 1, 0, 1]),
+              BarDataset(data: .values([1, 2, 3, 2, 1, 0, 1])),
             ],
             indexAxis: YAxis(),
             scales: [
@@ -467,7 +469,7 @@ void main() {
           const ChartConfig(
             labels: ['a', 'b', 'c', 'd', 'e'],
             datasets: [
-              BarDataset(data: [1, 22, 3333, 22, 1]),
+              BarDataset(data: .values([1, 22, 3333, 22, 1])),
             ],
             scales: [LogarithmicAxis(.y)],
           ),

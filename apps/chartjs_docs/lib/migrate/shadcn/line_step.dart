@@ -13,7 +13,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   datasets: const [
     LineDataset(
       label: 'Desktop',
-      data: _desktop,
+      data: .values(_desktop),
       // type="step": the step is halfway between two points.
       stepped: SteppedLine.middle,
       borderColor: .constant(.solid(Shadcn.chart1)),

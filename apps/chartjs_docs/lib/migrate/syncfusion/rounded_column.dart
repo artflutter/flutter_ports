@@ -12,7 +12,7 @@ final ChartConfig _config = ChartConfig(
   labels: _cities,
   datasets: const [
     BarDataset(
-      data: _areas,
+      data: .values(_areas),
       backgroundColor: .constant(.solid(Sf.blue)),
       hoverBackgroundColor: .constant(.solid(Sf.blue)),
       // width: 0.9, borderRadius: BorderRadius.circular(10)

@@ -29,7 +29,7 @@ const minLengthBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Small values stay visible',
-      data: [65, 0.5, 80, 1, 56, 0, 40],
+      data: .values([65, 0.5, 80, 1, 56, 0, 40]),
       backgroundColor: .constant(.solid(teal)),
       minBarLength: 10,
     ),

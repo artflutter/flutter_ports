@@ -18,14 +18,14 @@ const _gradient = ChartGradient.linear(Offset.zero, Offset(100, 0), [
 void main() {
   final factories = <ChartKind, Dataset Function(ChartValue<ChartPaint>)>{
     ChartKind.line: (paint) => LineDataset(
-      data: const [1, 2, 3],
+      data: const .values([1, 2, 3]),
       pointBackgroundColor: paint,
       pointBorderColor: paint,
       pointHoverBackgroundColor: paint,
       pointHoverBorderColor: paint,
     ),
     ChartKind.scatter: (paint) => ScatterDataset(
-      points: [DataPoint(0, 1), DataPoint(1, 2), DataPoint(2, 3)],
+      data: .points([DataPoint(0, 1), DataPoint(1, 2), DataPoint(2, 3)]),
       pointBackgroundColor: paint,
       pointBorderColor: paint,
       pointHoverBackgroundColor: paint,

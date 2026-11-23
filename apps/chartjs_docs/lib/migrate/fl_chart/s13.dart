@@ -120,9 +120,9 @@ class _Sample13State() extends State<Sample13> {
     ChartConfig(
       datasets: [
         LineDataset(
-          points: [
+          data: .points([
             for (final (i, d) in _months![_month].indexed) DataPoint(i, d.temp),
-          ],
+          ]),
           borderWidth: 1,
           pointRadius: const .constant(0),
           pointHoverRadius: const .constant(0),

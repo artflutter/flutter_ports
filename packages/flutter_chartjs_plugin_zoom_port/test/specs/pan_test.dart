@@ -21,7 +21,7 @@ void main() {
       testWidgets('should be applied cumulatively', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points)],
+            datasets: [LineDataset(data: .points(points))],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
               ZoomPluginOptions(pan: PanOptions(enabled: true, mode: Mode.x)),
@@ -48,7 +48,7 @@ void main() {
       testWidgets('should not give credit', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            datasets: [ScatterDataset(points: points)],
+            datasets: [ScatterDataset(data: .points(points))],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
               ZoomPluginOptions(
@@ -76,7 +76,7 @@ void main() {
       testWidgets('should handle zero-dimension scales', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points)],
+            datasets: [LineDataset(data: .points(points))],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
               ZoomPluginOptions(pan: PanOptions(enabled: true, mode: Mode.y)),
@@ -97,7 +97,7 @@ void main() {
       testWidgets('should respect original limits', (tester) async {
         final chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points)],
+            datasets: [LineDataset(data: .points(points))],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
               ZoomPluginOptions(
@@ -128,7 +128,7 @@ void main() {
       ) async {
         final chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points)],
+            datasets: [LineDataset(data: .points(points))],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: const [
               ZoomPluginOptions(
@@ -160,7 +160,7 @@ void main() {
           final startCalls = <ZoomStartContext<GestureEvent>>[];
           final chart = _acquire(
             ChartConfig(
-              datasets: [ScatterDataset(points: points)],
+              datasets: [ScatterDataset(data: .points(points))],
               labels: const ['a', 'b', 'c', 'd', 'e'],
               pluginOptions: [
                 ZoomPluginOptions(
@@ -197,7 +197,7 @@ void main() {
           final rejectCalls = <ZoomEventContext<GestureEvent>>[];
           final chart = _acquire(
             ChartConfig(
-              datasets: [ScatterDataset(points: points)],
+              datasets: [ScatterDataset(data: .points(points))],
               labels: const ['a', 'b', 'c', 'd', 'e'],
               pluginOptions: [
                 ZoomPluginOptions(
@@ -234,7 +234,7 @@ void main() {
             final rejectCalls = <ZoomEventContext<GestureEvent>>[];
             final chart = _acquire(
               ChartConfig(
-                datasets: [ScatterDataset(points: points)],
+                datasets: [ScatterDataset(data: .points(points))],
                 labels: const ['a', 'b', 'c', 'd', 'e'],
                 pluginOptions: [
                   ZoomPluginOptions(
@@ -278,7 +278,7 @@ void main() {
         await waitForDone((done) {
           final chart = _acquire(
             ChartConfig(
-              datasets: [ScatterDataset(points: points)],
+              datasets: [ScatterDataset(data: .points(points))],
               labels: const ['a', 'b', 'c', 'd', 'e'],
               pluginOptions: const [
                 ZoomPluginOptions(
@@ -304,7 +304,7 @@ void main() {
         await waitForDone((done) {
           final chart = _acquire(
             ChartConfig(
-              datasets: [ScatterDataset(points: points)],
+              datasets: [ScatterDataset(data: .points(points))],
               labels: const ['a', 'b', 'c', 'd', 'e'],
               pluginOptions: [
                 ZoomPluginOptions(
@@ -331,7 +331,7 @@ void main() {
         final completeCalls = <ZoomChartContext>[];
         final chart = _acquire(
           ChartConfig(
-            datasets: [ScatterDataset(points: points)],
+            datasets: [ScatterDataset(data: .points(points))],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: [
               ZoomPluginOptions(
@@ -377,7 +377,7 @@ void main() {
         final completeCalls = <ZoomChartContext>[];
         final chart = _acquire(
           ChartConfig(
-            datasets: [ScatterDataset(points: points)],
+            datasets: [ScatterDataset(data: .points(points))],
             labels: const ['a', 'b', 'c', 'd', 'e'],
             pluginOptions: [
               ZoomPluginOptions(

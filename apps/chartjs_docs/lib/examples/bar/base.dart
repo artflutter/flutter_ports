@@ -32,7 +32,7 @@ const baseBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Above or below 60',
-      data: values,
+      data: .values(values),
       backgroundColor: .constant(.solid(tealFill)),
       borderColor: .constant(.solid(teal)),
       borderWidth: 1,

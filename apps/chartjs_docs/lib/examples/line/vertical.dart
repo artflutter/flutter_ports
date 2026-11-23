@@ -24,7 +24,7 @@ const verticalLine = ChartConfig(
   datasets: [
     LineDataset(
       label: 'My First Dataset',
-      data: [65, 59, 80, 81, 56, 55, 40],
+      data: .values([65, 59, 80, 81, 56, 55, 40]),
       fill: .none,
       backgroundColor: .indexed([
         .solid(Color.fromRGBO(255, 99, 132, 0.2)),

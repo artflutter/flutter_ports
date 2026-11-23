@@ -25,7 +25,7 @@ void main() {
     const config = ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        LineDataset(data: [1, 2]),
+        LineDataset(data: .values([1, 2])),
       ],
     );
     await tester.pumpWidget(

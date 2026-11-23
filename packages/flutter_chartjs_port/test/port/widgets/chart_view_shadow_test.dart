@@ -31,7 +31,7 @@ ChartConfig _line(List<double> data, {ChartShadow? shadow}) => ChartConfig(
   labels: const ['a', 'b', 'c'],
   datasets: [
     LineDataset(
-      data: data,
+      data: .values(data),
       borderColor: const ChartValue.constant(.solid(_black)),
       pointRadius: const .constant(0),
       shadow: shadow,
@@ -116,7 +116,7 @@ void main() {
   group('Dataset.shadow', () {
     test('lowers to the option shadow with the ChartShadow itself', () {
       final scope = lowerDataset(
-        const LineDataset(data: [1], shadow: _shadow),
+        const LineDataset(data: .values([1]), shadow: _shadow),
         ChartKind.line,
       );
       expect(scope.jsRead('shadow'), same(_shadow));
@@ -126,14 +126,21 @@ void main() {
     test('an extra entry wins over the shadow', () {
       const other = ChartShadow(color: _black, blur: 2);
       final scope = lowerDataset(
-        const LineDataset(data: [1], shadow: _shadow, extra: {'shadow': other}),
+        const LineDataset(
+          data: .values([1]),
+          shadow: _shadow,
+          extra: {'shadow': other},
+        ),
         ChartKind.line,
       );
       expect(scope.jsRead('shadow'), same(other));
     });
 
     test('no shadow writes no key', () {
-      final scope = lowerDataset(const BarDataset(data: [1]), ChartKind.bar);
+      final scope = lowerDataset(
+        const BarDataset(data: .values([1])),
+        ChartKind.bar,
+      );
       expect(scope.jsKeys(), isNot(contains('shadow')));
     });
 

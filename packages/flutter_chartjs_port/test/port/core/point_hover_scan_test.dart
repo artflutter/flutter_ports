@@ -348,14 +348,14 @@ Chart _scatterChart({
           if (type == ChartKind.line)
             LineDataset(
               label: 'series $k',
-              points: values?.call(k) ?? _values(count, k),
+              data: .points(values?.call(k) ?? _values(count, k)),
               pointRadius: pointRadius?.call(k),
               extra: datasetExtra?.call(k),
             )
           else
             ScatterDataset(
               label: 'series $k',
-              points: values?.call(k) ?? _values(count, k),
+              data: .points(values?.call(k) ?? _values(count, k)),
               pointRadius: pointRadius?.call(k),
               extra: datasetExtra?.call(k),
             ),

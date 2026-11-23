@@ -13,7 +13,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   datasets: const [
     LineDataset(
       label: 'Desktop',
-      data: _desktop,
+      data: .values(_desktop),
       // <Line type="natural" stroke="var(--color-desktop)" strokeWidth={2}>
       cubicInterpolationMode: NaturalCurve(),
       borderColor: .constant(.solid(Shadcn.chart1)),

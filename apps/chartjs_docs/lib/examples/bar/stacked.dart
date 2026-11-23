@@ -32,17 +32,17 @@ const stackedBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Mobile',
-      data: [30, 35, 28, 40, 45, 42, 50],
+      data: .values([30, 35, 28, 40, 45, 42, 50]),
       backgroundColor: .constant(.solid(teal)),
     ),
     BarDataset(
       label: 'Desktop',
-      data: [20, 25, 22, 18, 24, 30, 26],
+      data: .values([20, 25, 22, 18, 24, 30, 26]),
       backgroundColor: .constant(.solid(blue)),
     ),
     BarDataset(
       label: 'Tablet',
-      data: [10, 8, 12, 14, 9, 11, 15],
+      data: .values([10, 8, 12, 14, 9, 11, 15]),
       backgroundColor: .constant(.solid(red)),
     ),
   ],

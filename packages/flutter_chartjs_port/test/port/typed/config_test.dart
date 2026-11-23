@@ -163,7 +163,7 @@ void main() {
           datasets: [
             BarDataset(
               label: 'My First Dataset',
-              data: data,
+              data: .values(data),
               backgroundColor: ChartValue.indexed([
                 for (final (r, g, b) in _rainbow)
                   ChartPaint.solid(Color.fromRGBO(r, g, b, 0.2)),
@@ -219,7 +219,7 @@ void main() {
           datasets: [
             BarDataset(
               label: 'Bar Dataset',
-              data: [10, 20, 30, 40],
+              data: .values([10, 20, 30, 40]),
               borderColor: ChartValue.constant(
                 .solid(Color.fromRGBO(255, 99, 132, 1)),
               ),
@@ -229,7 +229,7 @@ void main() {
             ),
             LineDataset(
               label: 'Line Dataset',
-              data: [50, 50, 50, 50],
+              data: .values([50, 50, 50, 50]),
               borderColor: ChartValue.constant(
                 .solid(Color.fromRGBO(54, 162, 235, 1)),
               ),
@@ -296,7 +296,7 @@ void main() {
           datasets: [
             ScatterDataset(
               label: 'Scatter Dataset',
-              points: points,
+              data: .points(points),
               backgroundColor: const ChartValue.constant(
                 ChartPaint.solid(Color.fromRGBO(255, 99, 132, 1)),
               ),

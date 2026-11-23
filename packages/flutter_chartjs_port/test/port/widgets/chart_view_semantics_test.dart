@@ -24,7 +24,7 @@ ChartConfig _config({
   List<num?> data = const [1, 3, 2],
 }) => ChartConfig(
   labels: const ['a', 'b', 'c'],
-  datasets: [BarDataset(label: 'd0', data: data)],
+  datasets: [BarDataset(label: 'd0', data: .values(data))],
   animation: animated ? null : ChartAnimation.none,
 );
 

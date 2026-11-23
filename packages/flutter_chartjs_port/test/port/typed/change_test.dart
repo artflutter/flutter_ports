@@ -94,7 +94,7 @@ class _ParentState() extends State<_Parent> {
                 datasets: [
                   BarDataset(
                     label: 'votes',
-                    data: data,
+                    data: .values(data),
                     backgroundColor: colorFor == null
                         ? null
                         : ChartValue.resolver(colorFor!),
@@ -148,7 +148,7 @@ void main() {
       const config = ChartConfig(
         labels: ['a', 'b'],
         datasets: [
-          LineDataset(data: [1, 2]),
+          LineDataset(data: .values([1, 2])),
         ],
       );
       await tester.pumpWidget(_box(const ChartView(config: config)));
@@ -158,7 +158,7 @@ void main() {
             config: ChartConfig(
               labels: ['a', 'b'],
               datasets: [
-                LineDataset(data: [1, 2]),
+                LineDataset(data: .values([1, 2])),
               ],
             ),
           ),
@@ -241,7 +241,7 @@ void main() {
           config: ChartConfig(
             labels: const ['a'],
             datasets: const [
-              BarDataset(data: [1]),
+              BarDataset(data: .values([1])),
             ],
             animation: ChartAnimation.none,
             plugins: [plugin],
@@ -302,7 +302,7 @@ void main() {
       const typed = ChartConfig(
         labels: ['a', 'b'],
         datasets: [
-          LineDataset(label: 'typed', data: [3, 4]),
+          LineDataset(label: 'typed', data: .values([3, 4])),
         ],
         animation: ChartAnimation.none,
       );
@@ -334,7 +334,7 @@ void main() {
       const config = ChartConfig(
         labels: ['a'],
         datasets: [
-          BarDataset(data: [1]),
+          BarDataset(data: .values([1])),
         ],
         animation: ChartAnimation.none,
       );
@@ -432,8 +432,8 @@ void main() {
       ChartConfig config(String name) => ChartConfig(
         labels: const ['a', 'b'],
         datasets: const [
-          BarDataset(label: 'A', data: [1, 2]),
-          BarDataset(label: 'B', data: [3, 4]),
+          BarDataset(label: 'A', data: .values([1, 2])),
+          BarDataset(label: 'B', data: .values([3, 4])),
         ],
         legend: ChartLegend(
           onClick: (_, item, _) => clicks.add(
@@ -467,7 +467,7 @@ void main() {
       ChartConfig config() => ChartConfig(
         labels: const ['a', 'b'],
         datasets: const [
-          BarDataset(label: 'A', data: [1, 2]),
+          BarDataset(label: 'A', data: .values([1, 2])),
         ],
         tooltip: ChartTooltip(
           callbacks: TooltipCallbacks(

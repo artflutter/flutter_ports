@@ -18,7 +18,7 @@ import 'package:meta/meta.dart' show immutable;
 ///
 /// ```dart
 /// const shadow = ChartShadow(color: Color(0x40000000), blur: 8);
-/// LineDataset(data: points, shadow: shadow);
+/// LineDataset(data: .points(points), shadow: shadow);
 /// <String, Object?>{'data': points, 'shadow': shadow};
 /// ```
 @immutable

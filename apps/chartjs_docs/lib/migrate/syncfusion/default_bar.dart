@@ -10,7 +10,7 @@ import 'package:material_ui/material_ui.dart';
 BarDataset _arrivals(String year, Color color, int order, List<num> data) =>
     BarDataset(
       label: year,
-      data: data,
+      data: .values(data),
       order: order,
       backgroundColor: .constant(.solid(color)),
       hoverBackgroundColor: .constant(.solid(color)),

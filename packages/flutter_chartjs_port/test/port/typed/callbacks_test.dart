@@ -409,8 +409,8 @@ void main() {
     }) => ChartConfig(
       labels: const ['a', 'b', 'c'],
       datasets: const [
-        BarDataset(label: 'A', data: [1, 2, 3]),
-        BarDataset(label: 'B', data: [3, 2, 7]),
+        BarDataset(label: 'A', data: .values([1, 2, 3])),
+        BarDataset(label: 'B', data: .values([3, 2, 7])),
       ],
       scales: scales,
       legend: legend,

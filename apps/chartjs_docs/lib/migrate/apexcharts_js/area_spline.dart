@@ -22,9 +22,9 @@ final List<DateTime> _times = [
 // gradient of an ApexCharts.js area and a line of 4 px.
 LineDataset _area(String name, List<num> values, Color color) => LineDataset(
   label: name,
-  points: [
+  data: .points([
     for (final (i, value) in values.indexed) DataPoint.time(_times[i], value),
-  ],
+  ]),
   fill: .toStart,
   backgroundColor: apexAreaFill(color),
   borderColor: .constant(.solid(color)),

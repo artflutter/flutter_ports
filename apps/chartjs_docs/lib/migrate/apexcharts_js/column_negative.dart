@@ -57,7 +57,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   datasets: [
     BarDataset(
       label: 'Cash Flow',
-      data: _cashFlow,
+      data: const .values(_cashFlow),
       backgroundColor: .indexed([
         for (final value in _cashFlow)
           .solid(_colorOf(value).withValues(alpha: 0.85)),

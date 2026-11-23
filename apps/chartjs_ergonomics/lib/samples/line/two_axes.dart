@@ -17,12 +17,12 @@ const twoAxes = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
     ),
     LineDataset(
       label: 'Margin, %',
-      data: [12, 18, 9, 22, 15, 30, 25],
+      data: .values([12, 18, 9, 22, 15, 30, 25]),
       borderColor: .constant(.solid(orange)),
       yAxis: marginAxis,
     ),

@@ -32,7 +32,7 @@ class _NewDataState() extends State<NewData> {
           datasets: [
             LineDataset(
               label: 'Sales',
-              data: _values,
+              data: .values(_values),
               borderColor: const .constant(.solid(teal)),
             ),
           ],

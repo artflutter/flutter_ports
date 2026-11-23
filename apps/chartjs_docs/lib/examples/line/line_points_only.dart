@@ -26,7 +26,7 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 // #docregion line-points-only
 const pointsOnlyLine = LineDataset(
   label: 'Points only',
-  data: values,
+  data: .values(values),
   borderColor: .constant(.solid(teal)),
   backgroundColor: .constant(.solid(teal)),
   showLine: false,

@@ -67,13 +67,13 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<ChartPaint>? color}) =>
     switch (type) {
       ChartKind.bar => BarDataset(
         label: 'd',
-        data: _values(step),
+        data: .values(_values(step)),
         backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
         borderWidth: 0,
       ),
       ChartKind.line => LineDataset(
         label: 'd',
-        points: _points(step),
+        data: .points(_points(step)),
         borderColor: color ?? const ChartValue.constant(.solid(_blue)),
         pointRadius: const .constant(3),
         tension: .3,
@@ -81,13 +81,13 @@ Dataset _dataset(ChartKind type, int step, {ChartValue<ChartPaint>? color}) =>
       ),
       ChartKind.scatter => ScatterDataset(
         label: 'd',
-        points: _points(step),
+        data: .points(_points(step)),
         backgroundColor: color ?? const ChartValue.constant(.solid(_blue)),
         pointRadius: const .constant(3),
       ),
       ChartKind.bubble => BubbleDataset(
         label: 'd',
-        points: <DataPoint>[
+        data: <DataPoint>[
           for (var i = 0; i < _count; i++)
             DataPoint.bubble(i * 10, _value(i, step), 4),
         ],
@@ -187,7 +187,7 @@ ChartConfig _bars(
         BarDataset(
           key: _a,
           label: 'd',
-          data: _values(step),
+          data: .values(_values(step)),
           backgroundColor: const ChartValue.constant(.solid(_blue)),
           borderWidth: 0,
         ),
@@ -463,7 +463,7 @@ void main() {
           _bars(
             step,
             labels,
-            datasets: [BarDataset(key: _a, data: _values(step))],
+            datasets: [BarDataset(key: _a, data: .values(_values(step)))],
             extra: const {
               'plugins': {
                 'colors': {'enabled': true},
@@ -493,7 +493,7 @@ void main() {
       ChartConfig bubbles(int step) => ChartConfig(
         datasets: [
           BubbleDataset(
-            points: <DataPoint>[DataPoint.bubble(50, 50, 4.0 + step)],
+            data: <DataPoint>[DataPoint.bubble(50, 50, 4.0 + step)],
           ),
         ],
         scales: _cartesianAxes,
@@ -662,7 +662,7 @@ void main() {
         (labels) => _bars(
           1,
           labels,
-          datasets: [BarDataset(key: _b, data: _values(1))],
+          datasets: [BarDataset(key: _b, data: .values(_values(1)))],
         ),
       );
       expect(spy.layouts, 1);
@@ -675,16 +675,16 @@ void main() {
           1,
           labels,
           datasets: [
-            BarDataset(key: _b, data: _values(1)),
-            BarDataset(key: _a, data: _values(2)),
+            BarDataset(key: _b, data: .values(_values(1))),
+            BarDataset(key: _a, data: .values(_values(2))),
           ],
         ),
         first: (step, labels) => _bars(
           step,
           labels,
           datasets: [
-            BarDataset(key: _a, data: _values(step)),
-            BarDataset(key: _b, data: _values(step + 3)),
+            BarDataset(key: _a, data: .values(_values(step))),
+            BarDataset(key: _b, data: .values(_values(step + 3))),
           ],
         ),
       );
@@ -698,35 +698,47 @@ void main() {
           1,
           labels,
           datasets: [
-            BarDataset(key: _a, data: _values(1)),
-            BarDataset(key: _b, data: _values(2)),
+            BarDataset(key: _a, data: .values(_values(1))),
+            BarDataset(key: _b, data: .values(_values(2))),
           ],
         ),
         first: (step, labels) => _bars(
           step,
           labels,
-          datasets: [BarDataset(key: _a, data: _values(step))],
+          datasets: [BarDataset(key: _a, data: .values(_values(step)))],
         ),
       );
       expect(spy.layouts, 1);
     });
 
     for (final (name, dataset) in <(String, Dataset Function(List<double>))>[
-      ('a label', (data) => BarDataset(key: _a, label: 'new', data: data)),
+      (
+        'a label',
+        (data) => BarDataset(key: _a, label: 'new', data: .values(data)),
+      ),
       (
         'a constant color',
         (data) => BarDataset(
           key: _a,
-          data: data,
+          data: .values(data),
           backgroundColor: const ChartValue.constant(.solid(_red)),
         ),
       ),
-      ('hidden', (data) => BarDataset(key: _a, data: data, hidden: true)),
-      ('an order', (data) => BarDataset(key: _a, data: data, order: 2)),
-      ('a stack', (data) => BarDataset(key: _a, data: data, stack: 's')),
+      (
+        'hidden',
+        (data) => BarDataset(key: _a, data: .values(data), hidden: true),
+      ),
+      (
+        'an order',
+        (data) => BarDataset(key: _a, data: .values(data), order: 2),
+      ),
+      (
+        'a stack',
+        (data) => BarDataset(key: _a, data: .values(data), stack: 's'),
+      ),
       (
         'a border width',
-        (data) => BarDataset(key: _a, data: data, borderWidth: 3),
+        (data) => BarDataset(key: _a, data: .values(data), borderWidth: 3),
       ),
     ]) {
       testWidgets('a dataset field: $name', (tester) async {
@@ -736,7 +748,7 @@ void main() {
           first: (step, labels) => _bars(
             step,
             labels,
-            datasets: [BarDataset(key: _a, data: _values(step))],
+            datasets: [BarDataset(key: _a, data: .values(_values(step)))],
           ),
         );
         expect(spy.layouts, 1);
@@ -746,7 +758,7 @@ void main() {
     testWidgets('a replaced indexed color', (tester) async {
       Dataset colored(int step, List<Color> colors) => BarDataset(
         key: _a,
-        data: _values(step),
+        data: .values(_values(step)),
         backgroundColor: ChartValue.indexed(
           colors.map(ChartPaint.solid).toList(),
         ),
@@ -782,14 +794,14 @@ void main() {
           datasets: [
             BarDataset(
               key: _a,
-              data: _values(1, count: _count + 1),
+              data: .values(_values(1, count: _count + 1)),
             ),
           ],
         ),
         first: (step, labels) => _bars(
           step,
           labels,
-          datasets: [BarDataset(key: _a, data: _values(step))],
+          datasets: [BarDataset(key: _a, data: .values(_values(step)))],
         ),
       );
       expect(spy.layouts, 1);
@@ -848,7 +860,7 @@ void main() {
         final labels = _newLabels();
         ChartConfig line(int step) => ChartConfig(
           labels: labels,
-          datasets: [LineDataset(points: _points(step))],
+          datasets: [LineDataset(data: .points(_points(step)))],
           scales: _categoryAxes,
           animation: ChartAnimation.none,
           extra: const {
@@ -1050,7 +1062,7 @@ void main() {
       ChartKind.bar => BarDataset(
         key: _a,
         label: 'd',
-        data: _values(step),
+        data: .values(_values(step)),
         backgroundColor: background,
         borderColor: border,
         borderWidth: 1,
@@ -1058,7 +1070,7 @@ void main() {
       ChartKind.scatter => ScatterDataset(
         key: _a,
         label: 'd',
-        points: _points(step),
+        data: .points(_points(step)),
         backgroundColor: background,
         borderColor: border,
         pointRadius: const .constant(3),
@@ -1066,7 +1078,7 @@ void main() {
       ChartKind.bubble => BubbleDataset(
         key: _a,
         label: 'd',
-        points: <DataPoint>[
+        data: <DataPoint>[
           for (var i = 0; i < _count; i++)
             DataPoint.bubble(i * 10, _value(i, step), radius),
         ],
@@ -1502,8 +1514,8 @@ void main() {
       step,
       labels,
       datasets: [
-        BarDataset(key: _a, data: _values(step)),
-        BarDataset(key: _b, data: _values(step + 1)),
+        BarDataset(key: _a, data: .values(_values(step))),
+        BarDataset(key: _b, data: .values(_values(step + 1))),
       ],
     );
 
@@ -1678,14 +1690,14 @@ void main() {
         BarDataset(
           key: _a,
           label: 'a',
-          data: _values(step),
+          data: .values(_values(step)),
           backgroundColor: const ChartValue.constant(.solid(_blue)),
           borderWidth: 0,
         ),
         BarDataset(
           key: _b,
           label: 'b',
-          data: _values(step + 1),
+          data: .values(_values(step + 1)),
           backgroundColor: const ChartValue.constant(.solid(_red)),
           borderWidth: 0,
         ),
@@ -1814,7 +1826,7 @@ void main() {
     }) => ChartConfig(
       datasets: [
         BubbleDataset(
-          points: <DataPoint>[DataPoint.bubble(40 + step, 50, radius)],
+          data: <DataPoint>[DataPoint.bubble(40 + step, 50, radius)],
           backgroundColor: const ChartValue.constant(.solid(_blue)),
           borderWidth: 0,
         ),
@@ -1975,10 +1987,10 @@ void main() {
           labels: labels,
           datasets: [
             LineDataset(
-              points: <DataPoint>[
+              data: .points(<DataPoint>[
                 DataPoint(step < 2 ? 0 : 3, 10 + step),
                 DataPoint(step < 2 ? 1 : 4, 20),
-              ],
+              ]),
             ),
           ],
           scales: dataBounds,
@@ -2014,9 +2026,11 @@ void main() {
           datasets: [
             BarDataset(
               key: _a,
-              data: List<double>.generate(
-                _count,
-                (i) => step >= 2 && i < 3 ? 500.0 : 50.0,
+              data: .values(
+                List<double>.generate(
+                  _count,
+                  (i) => step >= 2 && i < 3 ? 500.0 : 50.0,
+                ),
               ),
               backgroundColor: const ChartValue.constant(.solid(_blue)),
               borderWidth: 0,
@@ -2046,7 +2060,7 @@ void main() {
         final labels = <Object>['a', 'b'];
         ChartConfig line(List<DataPoint> points) => ChartConfig(
           labels: labels,
-          datasets: [LineDataset(points: points)],
+          datasets: [LineDataset(data: .points(points))],
           scales: _categoryAxes,
           animation: ChartAnimation.none,
         );

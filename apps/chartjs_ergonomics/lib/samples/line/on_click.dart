@@ -20,7 +20,7 @@ class _ClickedPointState() extends State<ClickedPoint> {
     datasets: const [
       LineDataset(
         label: 'Sales',
-        data: sales,
+        data: .values(sales),
         borderColor: .constant(.solid(teal)),
         pointRadius: .constant(6),
       ),

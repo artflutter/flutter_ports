@@ -11,7 +11,7 @@ const order = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales (order 1, below)',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
       backgroundColor: .constant(.solid(teal)),
       fill: .toOrigin,
@@ -19,7 +19,7 @@ const order = ChartConfig(
     ),
     LineDataset(
       label: 'Costs (order 0, on top)',
-      data: costs,
+      data: .values(costs),
       borderColor: .constant(.solid(red)),
       backgroundColor: .constant(.solid(red)),
       fill: .toOrigin,

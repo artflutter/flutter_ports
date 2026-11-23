@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 BarDataset _series(String name, Color color, List<num> values) => BarDataset(
   label: name,
-  data: values,
+  data: .values(values),
   backgroundColor: .constant(.solid(color)),
   hoverBackgroundColor: .constant(.solid(color)),
   borderWidth: 0,

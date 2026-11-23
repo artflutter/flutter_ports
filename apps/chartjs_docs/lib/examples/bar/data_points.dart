@@ -10,12 +10,12 @@ final pointsBar = ChartConfig(
   datasets: [
     BarDataset(
       label: 'A label and a value for each item',
-      points: [
+      data: .points([
         DataPoint.label('Mon', 20),
         DataPoint.label('Tue', 10),
         DataPoint.label('Wed', 30),
         DataPoint.label('Thu', 25),
-      ],
+      ]),
     ),
   ],
 );

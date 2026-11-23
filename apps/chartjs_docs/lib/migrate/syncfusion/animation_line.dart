@@ -48,7 +48,9 @@ class _SfAnimationLineState() extends State<SfAnimationLine> {
       config: ChartConfig(
         datasets: [
           LineDataset(
-            points: [for (final (x, y) in _values.indexed) DataPoint(x, y)],
+            data: .points([
+              for (final (x, y) in _values.indexed) DataPoint(x, y),
+            ]),
             borderColor: const .constant(.solid(_color)),
             borderWidth: 2,
             pointRadius: const .constant(4),

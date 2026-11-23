@@ -17,8 +17,8 @@ Chart _chart() => acquireChartRoot(
     const ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        BarDataset(data: [1, 2, 3]),
-        BarDataset(data: [4, 5, 6]),
+        BarDataset(data: .values([1, 2, 3])),
+        BarDataset(data: .values([4, 5, 6])),
       ],
       animation: ChartAnimation.none,
     ),

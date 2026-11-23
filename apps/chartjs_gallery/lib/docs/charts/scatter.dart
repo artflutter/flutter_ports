@@ -10,12 +10,12 @@ ChartConfig scatterConfig() => ChartConfig(
   datasets: [
     ScatterDataset(
       label: 'Scatter Dataset',
-      points: [
+      data: .points([
         DataPoint(-10, 0),
         DataPoint(0, 10),
         DataPoint(10, 5),
         DataPoint(0.5, 5.5),
-      ],
+      ]),
       backgroundColor: const ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(255, 99, 132, 1)),
       ),

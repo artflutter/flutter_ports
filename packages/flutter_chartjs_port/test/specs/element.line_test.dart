@@ -41,7 +41,7 @@ void main() {
           ChartConfigLowering(
             ChartConfig(
               datasets: const [
-                LineDataset(data: [0, -1, 0], label: 'dataset1'),
+                LineDataset(data: .values([0, -1, 0]), label: 'dataset1'),
               ],
               labels: const ['label1', 'label2', 'label3'],
               animation: ChartAnimation(

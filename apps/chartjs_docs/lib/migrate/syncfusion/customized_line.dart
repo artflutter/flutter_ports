@@ -74,11 +74,11 @@ final ChartConfig _config = ChartConfig(
   datasets: [
     // A black line on the top and the right edges, with no tooltip.
     LineDataset(
-      points: [
+      data: .points([
         DataPoint.time(DateTime(2018, 7), 3.5),
         DataPoint.time(DateTime(2019, 4), 3.5),
         DataPoint.time(DateTime(2019, 4), 1),
-      ],
+      ]),
       borderColor: const .constant(.solid(Colors.black)),
       borderWidth: 2,
       pointRadius: const .constant(0),
@@ -87,10 +87,10 @@ final ChartConfig _config = ChartConfig(
       extra: const {'pointHitRadius': 0, 'animation': false},
     ),
     LineDataset(
-      points: [
+      data: .points([
         for (final (i, share) in _share.indexed)
           DataPoint.time(DateTime(2018, 7 + i), share),
-      ],
+      ]),
       borderColor: const .constant(.solid(_lineColor)),
       borderWidth: 2,
       pointRadius: const .constant(4),

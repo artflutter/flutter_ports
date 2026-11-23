@@ -23,7 +23,7 @@ final fitBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Equal widths',
-      points: unevenPoints,
+      data: .points(unevenPoints),
       backgroundColor: const .constant(.solid(teal)),
     ),
   ],

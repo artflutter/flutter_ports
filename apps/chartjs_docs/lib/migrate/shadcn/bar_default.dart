@@ -14,7 +14,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
     // <Bar dataKey="desktop" fill="var(--color-desktop)" radius={8} />
     BarDataset(
       label: 'Desktop',
-      data: _desktop,
+      data: .values(_desktop),
       backgroundColor: .constant(.solid(Shadcn.chart1)),
       // No change on a hover.
       hoverBackgroundColor: .constant(.solid(Shadcn.chart1)),

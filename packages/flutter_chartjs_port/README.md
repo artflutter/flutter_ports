@@ -96,7 +96,7 @@ class const VotesChart({super.key}) extends StatelessWidget {
         datasets: [
           BarDataset(
             label: '# of Votes',
-            data: [12, 19, 3, 5, 2, 3],
+            data: .values([12, 19, 3, 5, 2, 3]),
             borderWidth: 1,
           ),
         ],
@@ -134,8 +134,8 @@ config has no `type`:
 | Radar | `RadarDataset` |
 
 A chart needs one dataset at least. For a chart with no data yet, give a dataset with no data, for
-example `LineDataset(data: [])`. A dataset of another class than the first makes a mixed chart: the
-first dataset gives the chart-level defaults, for example the default axes:
+example `LineDataset(data: .values([]))`. A dataset of another class than the first makes a
+mixed chart: the first dataset gives the chart-level defaults, for example the default axes:
 
 ```dart
 ChartConfig(
@@ -143,12 +143,12 @@ ChartConfig(
   datasets: [
     BarDataset(
       label: 'Orders',
-      data: orders,
+      data: .values(orders),
       backgroundColor: .constant(.solid(Colors.orange)),
     ),
     LineDataset(
       label: 'Visitors',
-      data: visitors,
+      data: .values(visitors),
       borderColor: .constant(.solid(Colors.blue)),
       backgroundColor: .constant(.solid(Colors.blue.withValues(alpha: 0.2))),
       fill: .toOrigin,
@@ -159,25 +159,26 @@ ChartConfig(
 )
 ```
 
-`data` is a `List<num?>` with one value for each label, and `null` is a gap. A bar, line,
-scatter or bubble dataset takes `points` instead: a `List<DataPoint>` with `x` and `y` values,
-and the radius `r` of a bubble. A `DataPoint.time` needs a `TimeAxis` for `x` ([Axes](#axes)):
+The `data` of a bar, line or scatter dataset is a `DatasetData` in one of two forms.
+`.values(...)` takes a `List<num?>` with one value for each label, and `null` is a gap.
+`.points(...)` takes a `List<DataPoint>` with `x` and `y` values. The `data` of a bubble dataset
+is a `List<DataPoint>` with the radius `r` of each bubble. A `DataPoint.time` needs a `TimeAxis` for `x` ([Axes](#axes)):
 
 ```dart
 ScatterDataset(
   label: 'Readings',
-  points: [DataPoint(1, 3), DataPoint(2, 5.5), DataPoint(4, 2)],
+  data: .points([DataPoint(1, 3), DataPoint(2, 5.5), DataPoint(4, 2)]),
 )
 BubbleDataset(
   label: 'Cities',
-  points: [DataPoint.bubble(20, 30, 15), DataPoint.bubble(40, 10, 10)],
+  data: [DataPoint.bubble(20, 30, 15), DataPoint.bubble(40, 10, 10)],
 )
 LineDataset(
   label: 'Temperature',
-  points: [
+  data: .points([
     DataPoint.time(DateTime.utc(2026, 3, 2), 3),
     DataPoint.time(DateTime.utc(2026, 3, 3), 5),
-  ],
+  ]),
 )
 ```
 
@@ -240,7 +241,7 @@ sigma of the blur is half of it.
 
 ```dart
 LineDataset(
-  data: [12, 19, 3, 5, 2, 3],
+  data: .values([12, 19, 3, 5, 2, 3]),
   shadow: ChartShadow(
     color: Color(0x59000000),
     blur: 8,
@@ -299,8 +300,8 @@ const right = LinearAxis(.y, position: .right);
 ChartConfig(
   labels: labels,
   datasets: [
-    LineDataset(label: 'Sales', data: sales),
-    LineDataset(label: 'Margin', data: margin, yAxis: right),
+    LineDataset(label: 'Sales', data: .values(sales)),
+    LineDataset(label: 'Margin', data: .values(margin), yAxis: right),
   ],
   scales: const [LinearAxis(.y), right],
 )
@@ -392,7 +393,7 @@ class _VotesPageState() extends State<VotesPage> {
         datasets: [
           BarDataset(
             label: '# of Votes',
-            data: _votes,
+            data: .values(_votes),
             backgroundColor: ChartValue.resolver(_barColor),
           ),
         ],
@@ -464,7 +465,7 @@ class _ScoresState() extends State<Scores> {
         ChartView(
           config: ChartConfig(
             labels: const ['A', 'B', 'C'],
-            datasets: [BarDataset(label: 'Score', data: _scores)],
+            datasets: [BarDataset(label: 'Score', data: .values(_scores))],
           ),
         ),
         TextButton(onPressed: _next, child: const Text('Next')),
@@ -500,7 +501,7 @@ class _ScoresState() extends State<Scores> {
       LineDataset(
         key: ValueKey(series.id),
         label: series.name,
-        data: series.values,
+        data: .values(series.values),
       ),
   ],
   ```
@@ -525,7 +526,7 @@ ChartConfig(
   datasets: [
     LineDataset(
       label: 'Visitors',
-      data: visitors,
+      data: .values(visitors),
       borderCapStyle: StrokeCap.round,
       extra: const {'cubicInterpolationMode': 'monotone'},
     ),

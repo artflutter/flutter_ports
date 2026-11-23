@@ -79,7 +79,7 @@ const List<DocProperty> lineProperties = [
   DocProperty(
     'data',
     section: 'data-structure',
-    type: 'List<num?>',
+    type: 'DatasetData',
     fallback: 'required',
   ),
   DocProperty(
@@ -249,12 +249,6 @@ const List<DocProperty> lineProperties = [
     scriptable: true,
     indexable: true,
     fallback: 'CirclePointStyle()',
-  ),
-  DocProperty(
-    'points',
-    section: 'data-structure',
-    type: 'List<DataPoint>',
-    fallback: 'none',
   ),
   DocProperty(
     'segment',
@@ -1000,13 +994,14 @@ DocPageContent lineChartPage() => DocPageContent(
       body: [
         const DocParagraph(
           DocText(
-            'A `LineDataset` takes `data` or `points`, not both. The parameter '
-            '`data` holds one value for each label. A `null` value is a gap.',
+            'A `LineDataset` takes its data in `data`, a `DatasetData` of '
+            'one of two forms. The form `.values(...)` holds one value for '
+            'each label. A `null` value is a gap.',
           ),
         ),
         const DocParagraph(
           DocText(
-            'The parameter `points` holds `DataPoint` items. Use `DataPoint` '
+            'The form `.points(...)` holds `DataPoint` items. Use `DataPoint` '
             'with a number on a `LinearAxis`, `DataPoint.time` with a '
             '`DateTime` on a time axis, and `DataPoint.label` with a '
             'category.',
@@ -1024,7 +1019,7 @@ DocPageContent lineChartPage() => DocPageContent(
           variants: [
             const ExampleVariant(
               name: 'data',
-              label: Text('data'),
+              label: Text('values'),
               config: valuesLine,
               region: CodeRegion(
                 '$lineExamples/data_values.dart',

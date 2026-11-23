@@ -115,7 +115,7 @@ DocPageContent apexJsMigrationPage() => migrationPage(
     (Text('xaxis.categories'), DocText('`labels`')),
     (
       Text("xaxis: {type: 'datetime'}"),
-      DocText('`TimeAxis`, and `points: [DataPoint.time(date, y)]`'),
+      DocText('`TimeAxis`, and `data: .points([DataPoint.time(date, y)])`'),
     ),
     (Text('colors'), DocText('`borderColor` and `backgroundColor`')),
     (

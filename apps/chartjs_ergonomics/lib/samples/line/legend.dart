@@ -11,12 +11,12 @@ const legendStyle = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
     ),
     LineDataset(
       label: 'Costs',
-      data: costs,
+      data: .values(costs),
       borderColor: .constant(.solid(red)),
     ),
   ],

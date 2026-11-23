@@ -11,7 +11,7 @@ const fillOrigin = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
       backgroundColor: .constant(.solid(tealFill)),
       fill: .toOrigin,

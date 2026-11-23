@@ -84,10 +84,10 @@ class _GraphicBarRankingState() extends State<GraphicBarRanking> {
         // `tag: (tuple) => tuple['genre']`: each genre keeps its bar. The
         // bar of a genre stands at its rank, so it moves to its new rank.
         BarDataset(
-          points: [
+          data: .points([
             for (var i = 0; i < _genres.length; i++)
               DataPoint(_ranks[i], _sold[i]),
-          ],
+          ]),
           backgroundColor: const .constant(.solid(Gx.primary)),
           barThickness: const BarThickness.pixels(barSize),
         ),

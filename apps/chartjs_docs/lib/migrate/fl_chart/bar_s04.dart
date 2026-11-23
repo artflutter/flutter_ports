@@ -79,7 +79,7 @@ ChartConfig _config(double width) {
         for (var rod = 0; rod < 5; rod++)
           for (var item = 0; item < 3; item++)
             BarDataset(
-              points: _points[rod * 3 + item],
+              data: .points(_points[rod * 3 + item]),
               stack: 'rod $rod',
               backgroundColor: .constant(.solid(_colors[item])),
               hoverBackgroundColor: .constant(.solid(_colors[item])),

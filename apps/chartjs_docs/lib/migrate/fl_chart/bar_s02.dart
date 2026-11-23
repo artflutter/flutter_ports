@@ -43,10 +43,10 @@ class _BarSample2State() extends State<BarSample2> {
 
   /// The touched group shows the average of its two bars.
   BarDataset _rods(List<double> values, Color color) => BarDataset(
-    points: [
+    data: .points([
       for (final (i, value) in values.indexed)
         DataPoint(i, i == _touched ? _mean(i) : value),
-    ],
+    ]),
     backgroundColor: .indexed([
       for (var i = 0; i < 7; i++) .solid(i == _touched ? _avgColor : color),
     ]),

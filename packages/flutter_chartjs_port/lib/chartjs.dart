@@ -77,6 +77,7 @@ export 'package:flutter_chartjs_port/src/typed/axes.dart';
 export 'package:flutter_chartjs_port/src/typed/callbacks.dart';
 export 'package:flutter_chartjs_port/src/typed/chart_value.dart';
 export 'package:flutter_chartjs_port/src/typed/config.dart';
+export 'package:flutter_chartjs_port/src/typed/dataset_data.dart';
 export 'package:flutter_chartjs_port/src/typed/datasets.dart';
 export 'package:flutter_chartjs_port/src/typed/elements.dart';
 export 'package:flutter_chartjs_port/src/typed/groups.dart';

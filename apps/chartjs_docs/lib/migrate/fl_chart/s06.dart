@@ -11,7 +11,7 @@ final Color _blueDark = Color.lerp(Fl.blue, Colors.black, 0.6)!;
 
 LineDataset _line(List<num> ys, Color from, Color to, Color text) =>
     LineDataset(
-      points: [for (final (i, y) in ys.indexed) DataPoint(i * 2, y)],
+      data: .points([for (final (i, y) in ys.indexed) DataPoint(i * 2, y)]),
       tension: 0.35,
       borderWidth: 10,
       pointRadius: const .constant(12),

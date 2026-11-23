@@ -87,7 +87,7 @@ const List<DocProperty> barProperties = [
   DocProperty(
     'data',
     section: 'data-structure',
-    type: 'List<num?>',
+    type: 'DatasetData',
     fallback: 'required',
   ),
   DocProperty('grouped', section: 'general', type: 'bool', fallback: 'true'),
@@ -160,12 +160,6 @@ const List<DocProperty> barProperties = [
     extra: true,
     scriptable: true,
     fallback: 'undefined',
-  ),
-  DocProperty(
-    'points',
-    section: 'data-structure',
-    type: 'List<DataPoint>',
-    fallback: 'none',
   ),
   DocProperty(
     'shadow',
@@ -276,7 +270,7 @@ DocPageContent barChartPage() => DocPageContent(
           DocText(
             'Each dataset has properties. These properties set the look of '
             'that dataset. For example, a dataset usually sets the color of '
-            'its bars. Only `data` or `points` must be in the dataset.',
+            'its bars. Only `data` must be in the dataset.',
           ),
         ),
         const DocParagraph(
@@ -1010,13 +1004,14 @@ DocPageContent barChartPage() => DocPageContent(
       body: [
         const DocParagraph(
           DocText(
-            'A `BarDataset` takes `data` or `points`, not both. The parameter '
-            '`data` holds one value for each label. A `null` value is a gap.',
+            'A `BarDataset` takes its data in `data`, a `DatasetData` of '
+            'one of two forms. The form `.values(...)` holds one value for '
+            'each label. A `null` value is a gap.',
           ),
         ),
         const DocParagraph(
           DocText(
-            'The parameter `points` holds `DataPoint` items. Use '
+            'The form `.points(...)` holds `DataPoint` items. Use '
             '`DataPoint.label` with a category, `DataPoint` with a number on a '
             '`LinearAxis`, and `DataPoint.time` with a `DateTime` on a time '
             'axis.',
@@ -1028,7 +1023,7 @@ DocPageContent barChartPage() => DocPageContent(
           variants: [
             const ExampleVariant(
               name: 'data',
-              label: Text('data'),
+              label: Text('values'),
               config: valuesBar,
               region: CodeRegion(
                 '$barExamples/data_values.dart',

@@ -68,7 +68,7 @@ class _Sample3State() extends State<Sample3> {
       labels: _days,
       datasets: [
         LineDataset(
-          data: _values,
+          data: const .values(_values),
           borderColor: const .constant(.solid(Fl.red)),
           borderWidth: 4,
           fill: .toOrigin,

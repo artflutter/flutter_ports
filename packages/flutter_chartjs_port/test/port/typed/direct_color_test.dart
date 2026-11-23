@@ -109,11 +109,11 @@ void main() {
   test('typed scalars, lists and callbacks keep their ChartPaint values', () {
     for (final dataset in [
       const LineDataset(
-        data: [1, 3, 2],
+        data: .values([1, 3, 2]),
         backgroundColor: ChartValue.constant(.solid(_blue)),
       ),
       const LineDataset(
-        data: [1, 3, 2],
+        data: .values([1, 3, 2]),
         backgroundColor: ChartValue.indexed([
           ChartPaint.solid(_blue),
           ChartPaint.solid(_red),
@@ -121,7 +121,7 @@ void main() {
         ]),
       ),
       LineDataset(
-        data: const [1, 3, 2],
+        data: const .values([1, 3, 2]),
         backgroundColor: ChartValue.resolver(
           (_) => const ChartPaint.solid(_blue),
         ),

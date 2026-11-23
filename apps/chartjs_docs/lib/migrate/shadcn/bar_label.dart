@@ -13,7 +13,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   datasets: const [
     BarDataset(
       label: 'Desktop',
-      data: _desktop,
+      data: .values(_desktop),
       backgroundColor: .constant(.solid(Shadcn.chart1)),
       hoverBackgroundColor: .constant(.solid(Shadcn.chart1)),
       borderRadius: 8,

@@ -129,11 +129,11 @@ class _BarSample1State() extends State<BarSample1> {
       ChartConfig(
         datasets: [
           BarDataset(
-            points: [
+            data: .points([
               for (final (i, value) in values.indexed)
                 // The touched bar grows by 1, as in the sample.
                 DataPoint(i, i == _touched ? value + 1 : value),
-            ],
+            ]),
             backgroundColor: .indexed(colors),
             hoverBackgroundColor: .indexed(colors),
             borderColor: .indexed(borders),

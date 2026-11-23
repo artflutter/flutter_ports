@@ -56,7 +56,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// ChartView(
 ///   config: ChartConfig(
 ///     labels: const ['Red', 'Blue', 'Yellow'],
-///     datasets: [BarDataset(label: '# of Votes', data: votes)],
+///     datasets: [BarDataset(label: '# of Votes', data: .values(votes))],
 ///   ),
 /// )
 /// ```

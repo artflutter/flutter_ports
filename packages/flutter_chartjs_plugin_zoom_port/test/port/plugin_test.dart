@@ -87,7 +87,7 @@ Widget _view(
         config: ChartConfig(
           datasets: [
             ScatterDataset(
-              points: _points(step),
+              data: .points(_points(step)),
               pointRadius: const .constant(3),
             ),
           ],
@@ -138,9 +138,9 @@ ChartConfig _rangeConfig(
   datasets: [
     LineDataset(
       label: 'a',
-      points: [
+      data: .points([
         for (var i = 0; i < 24; i++) DataPoint(i * 4, 10 + (i * 37) % 80),
-      ],
+      ]),
       pointRadius: const .constant(3),
     ),
   ],
@@ -579,7 +579,9 @@ void main() {
       final chart = _acquire(
         ChartConfig(
           datasets: [
-            ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
+            ScatterDataset(
+              data: .points([DataPoint(0, 0), DataPoint(100, 100)]),
+            ),
           ],
           scales: const [LinearAxis(.x, min: 0, max: 100)],
         ),
@@ -631,7 +633,7 @@ void main() {
   group('the plugin off (PluginOff)', () {
     ChartConfig config({List<PluginOff<Plugin<Object?>>>? off}) => ChartConfig(
       datasets: [
-        LineDataset(points: [DataPoint(1, 1), DataPoint(5, 5)]),
+        LineDataset(data: .points([DataPoint(1, 1), DataPoint(5, 5)])),
       ],
       scales: const [LinearAxis(.x, min: 0, max: 10), LinearAxis(.y)],
       pluginOptions: const [

@@ -25,7 +25,7 @@ ChartConfig _config(ShadcnTip tip, int active) {
       // <Line dataKey={activeChart} type="monotone" stroke={`var(--color-${activeChart})`} ...>
       LineDataset(
         label: 'Page Views',
-        data: data,
+        data: .values(data),
         cubicInterpolationMode: const MonotoneXCurve(),
         borderColor: .constant(.solid(color)),
         borderWidth: 2,

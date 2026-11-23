@@ -805,7 +805,7 @@ void main() {
   });
   test('typed immutable point input participates without copying its list', () {
     typed.ChartConfig cfg(List<typed.DataPoint> points) => typed.ChartConfig(
-      datasets: [typed.LineDataset(points: points)],
+      datasets: [typed.LineDataset(data: .points(points))],
       scales: const [
         typed.LinearAxis(.x, min: 0, max: 10),
         typed.LinearAxis(.y, min: 0, max: 10),

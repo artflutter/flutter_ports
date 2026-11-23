@@ -11,7 +11,7 @@ const logAxis = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Users',
-      data: [3, 40, 180, 2500, 9000, 60000, 410000],
+      data: .values([3, 40, 180, 2500, 9000, 60000, 410000]),
       borderColor: .constant(.solid(red)),
     ),
   ],

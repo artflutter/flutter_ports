@@ -66,7 +66,7 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
     ),
     (
       Text('dataSource, xValueMapper, yValueMapper'),
-      DocText('`labels` and `data`, or `points`'),
+      DocText('`labels` and `data: .values(...)`, or `data: .points(...)`'),
     ),
     (
       Text('CategoryAxis, NumericAxis'),
@@ -399,9 +399,10 @@ DocPageContent syncfusionBarMigrationPage() => migrationPage(
       ),
       notes: const [
         DocText(
-          'The years are on a `NumericAxis`. The replica gives `points` with '
-          'the value as `x` and the year as `y`, and a `LinearAxis` as the '
-          'index axis. `offset: false` puts 2005 and 2011 at the ends.',
+          'The years are on a `NumericAxis`. The replica gives '
+          '`data: .points(...)` with the value as `x` and the year as `y`, '
+          'and a `LinearAxis` as the index axis. `offset: false` puts 2005 '
+          'and 2011 at the ends.',
         ),
         DocText(
           '`width` and `spacing` map as in the column demo: '

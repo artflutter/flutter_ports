@@ -68,7 +68,7 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [
-                BarDataset(data: [10, 5, 0, 25, 78, -10]),
+                BarDataset(data: .values([10, 5, 0, 25, 78, -10])),
               ],
               labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
             ),
@@ -92,7 +92,7 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [
-                BarDataset(data: [10, 5, 0, 25, 78, -10]),
+                BarDataset(data: .values([10, 5, 0, 25, 78, -10])),
               ],
               labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5', 'tick6'],
             ),

@@ -298,7 +298,7 @@ void main() {
       final config = ChartConfigLowering(
         const ChartConfig(
           datasets: [
-            LineDataset(data: [1, 2, 3, 4]),
+            LineDataset(data: .values([1, 2, 3, 4])),
           ],
           labels: ['A', 'B', 'C', 'D'],
         ),
@@ -656,7 +656,7 @@ void main() {
             const ChartConfig(
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
-                LineDataset(data: [10, 20, 30, 100]),
+                LineDataset(data: .values([10, 20, 30, 100])),
               ],
             ),
           ).lower(),
@@ -727,7 +727,7 @@ void main() {
                 labels: ['A', 'B', 'C', 'D'],
                 datasets: [
                   LineDataset(
-                    data: [10, 20, 30, 100],
+                    data: .values([10, 20, 30, 100]),
                     extra: {'hoverRadius': 0},
                   ),
                 ],
@@ -790,7 +790,7 @@ void main() {
                 labels: ['A', 'B', 'C', 'D'],
                 datasets: [
                   LineDataset(
-                    data: [10, 20, 30, 100],
+                    data: .values([10, 20, 30, 100]),
                     extra: {'hoverRadius': 0},
                   ),
                 ],
@@ -2157,7 +2157,7 @@ void main() {
             const ChartConfig(
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
-                LineDataset(data: [10, 20, 30, 0]),
+                LineDataset(data: .values([10, 20, 30, 0])),
               ],
               responsive: true,
             ),
@@ -2345,7 +2345,7 @@ void main() {
             const ChartConfig(
               labels: ['A', 'B', 'C', 'D'],
               datasets: [
-                LineDataset(data: [10, 20, 30, 100]),
+                LineDataset(data: .values([10, 20, 30, 100])),
               ],
               responsive: true,
               extra: {
@@ -2806,7 +2806,7 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [
-                LineDataset(data: [0, 1, 2]),
+                LineDataset(data: .values([0, 1, 2])),
               ],
               labels: ['a', 'b', 'c'],
             ),
@@ -2949,7 +2949,7 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [
-                LineDataset(data: [0, 1, 2]),
+                LineDataset(data: .values([0, 1, 2])),
               ],
               labels: ['a', 'b', 'c'],
             ),
@@ -3060,7 +3060,7 @@ void main() {
               labels: [1, 2, 3],
               datasets: [
                 LineDataset(
-                  data: [1, 2, 3],
+                  data: .values([1, 2, 3]),
                   borderColor: ChartValue.constant(
                     ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
                   ),

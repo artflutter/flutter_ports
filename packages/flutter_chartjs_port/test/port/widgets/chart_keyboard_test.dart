@@ -66,8 +66,8 @@ ChartConfig _config(
   void entry(String name, ChartEvent event, LegendItem item) =>
       log?.add('$name ${event.type} ${item.text.join('\n')}');
   Dataset dataset(String label, List<num?> data) => switch (type) {
-    'bar' => BarDataset(label: label, data: data),
-    'line' => LineDataset(label: label, data: data),
+    'bar' => BarDataset(label: label, data: .values(data)),
+    'line' => LineDataset(label: label, data: .values(data)),
     'doughnut' => DoughnutDataset(label: label, data: data),
     'radar' => RadarDataset(label: label, data: data),
     _ => throw ArgumentError.value(type, 'type'),

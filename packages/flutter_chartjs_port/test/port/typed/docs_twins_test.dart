@@ -168,7 +168,7 @@ ChartConfig _barVerticalTyped() => ChartConfig(
   datasets: [
     BarDataset(
       label: 'My First Dataset',
-      data: _docsData,
+      data: const .values(_docsData),
       backgroundColor: ChartValue.indexed(
         _seven(0.2).map(ChartPaint.solid).toList(),
       ),
@@ -207,7 +207,7 @@ ChartConfig _barHorizontalTyped() => ChartConfig(
   datasets: [
     BarDataset(
       label: 'My First Dataset',
-      data: _docsData,
+      data: const .values(_docsData),
       backgroundColor: ChartValue.indexed(
         _seven(0.2).map(ChartPaint.solid).toList(),
       ),
@@ -244,7 +244,7 @@ ChartConfig _bubbleTyped() => ChartConfig(
   datasets: [
     BubbleDataset(
       label: 'First Dataset',
-      points: [DataPoint.bubble(20, 30, 15), DataPoint.bubble(40, 10, 10)],
+      data: [DataPoint.bubble(20, 30, 15), DataPoint.bubble(40, 10, 10)],
       backgroundColor: const ChartValue.constant(.solid(_red)),
     ),
   ],
@@ -342,7 +342,7 @@ ChartConfig _lineTyped() => const ChartConfig(
   datasets: [
     LineDataset(
       label: 'My First Dataset',
-      data: _docsData,
+      data: .values(_docsData),
       fill: .none,
       borderColor: ChartValue.constant(.solid(_green)),
       tension: 0.1,
@@ -383,7 +383,7 @@ ChartConfig _lineVerticalTyped() => ChartConfig(
   datasets: [
     LineDataset(
       label: 'My First Dataset',
-      data: _docsData,
+      data: const .values(_docsData),
       fill: .none,
       backgroundColor: ChartValue.indexed(
         _seven(0.2).map(ChartPaint.solid).toList(),
@@ -439,7 +439,7 @@ ChartConfig _mixedTyped() => const ChartConfig(
   datasets: [
     BarDataset(
       label: 'Bar Dataset',
-      data: [10, 20, 30, 40],
+      data: .values([10, 20, 30, 40]),
       borderColor: ChartValue.constant(.solid(_red)),
       backgroundColor: ChartValue.constant(
         .solid(Color.fromRGBO(255, 99, 132, 0.2)),
@@ -447,7 +447,7 @@ ChartConfig _mixedTyped() => const ChartConfig(
     ),
     LineDataset(
       label: 'Line Dataset',
-      data: [50, 50, 50, 50],
+      data: .values([50, 50, 50, 50]),
       fill: .none,
       borderColor: ChartValue.constant(.solid(_blue)),
     ),
@@ -643,12 +643,12 @@ ChartConfig _scatterTyped() => ChartConfig(
   datasets: [
     ScatterDataset(
       label: 'Scatter Dataset',
-      points: [
+      data: .points([
         DataPoint(-10, 0),
         DataPoint(0, 10),
         DataPoint(10, 5),
         DataPoint(0.5, 5.5),
-      ],
+      ]),
       backgroundColor: const ChartValue.constant(.solid(_red)),
     ),
   ],
@@ -717,7 +717,7 @@ ChartConfig _areaTyped(FillTarget fill, String title) => ChartConfig(
   datasets: [
     LineDataset(
       label: 'Dataset',
-      data: _areaData,
+      data: const .values(_areaData),
       borderColor: const ChartValue.constant(.solid(_red)),
       backgroundColor: const ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(255, 99, 132, 0.5)),
@@ -835,7 +835,7 @@ ChartConfig _barTyped() => ChartConfig(
   datasets: const [
     BarDataset(
       label: 'North',
-      data: [12, 19, 3, 5],
+      data: .values([12, 19, 3, 5]),
       backgroundColor: ChartValue.constant(.solid(_blue)),
       borderColor: ChartValue.constant(.solid(_navy)),
       borderWidth: 2,
@@ -848,7 +848,7 @@ ChartConfig _barTyped() => ChartConfig(
     ),
     BarDataset(
       label: 'South',
-      data: [7, 11, 5, 8],
+      data: .values([7, 11, 5, 8]),
       backgroundColor: ChartValue.indexed([
         ChartPaint.solid(_red),
         ChartPaint.solid(_orange),
@@ -861,7 +861,7 @@ ChartConfig _barTyped() => ChartConfig(
     ),
     BarDataset(
       label: 'Target',
-      data: [10, 10, 10, 10],
+      data: .values([10, 10, 10, 10]),
       borderColor: ChartValue.indexed([
         ChartPaint.solid(_grey),
         ChartPaint.solid(_grey),
@@ -1087,7 +1087,7 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
   datasets: [
     LineDataset(
       label: 'This week',
-      data: [3, 5, null, 8, 6, 9, 7],
+      data: .values([3, 5, null, 8, 6, 9, 7]),
       backgroundColor: ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(255, 99, 132, 0.25)),
       ),
@@ -1107,7 +1107,7 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
     ),
     LineDataset(
       label: 'Last week',
-      data: [2, 4, 6, 5, 4, 6, 5],
+      data: .values([2, 4, 6, 5, 4, 6, 5]),
       backgroundColor: ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(54, 162, 235, 0.25)),
       ),
@@ -1264,12 +1264,12 @@ ChartConfig _scatterTypeTyped() => ChartConfig(
   datasets: [
     ScatterDataset(
       label: 'Readings',
-      points: [
+      data: .points([
         DataPoint.time(DateTime.utc(2026, 3), 3),
         DataPoint.time(DateTime.utc(2026, 3, 2), 12),
         DataPoint.time(DateTime.utc(2026, 3, 4), 40),
         DataPoint.time(DateTime.utc(2026, 3, 5), 25),
-      ],
+      ]),
       backgroundColor: const ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(153, 102, 255, 0.3)),
       ),
@@ -1282,10 +1282,10 @@ ChartConfig _scatterTypeTyped() => ChartConfig(
     ),
     ScatterDataset(
       label: 'Limit',
-      points: [
+      data: .points([
         DataPoint.time(DateTime.utc(2026, 3), 50),
         DataPoint.time(DateTime.utc(2026, 3, 6), 50),
-      ],
+      ]),
       borderColor: const ChartValue.constant(.solid(_red)),
       showLine: true,
       borderDash: const [2, 2],
@@ -1384,7 +1384,7 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
   datasets: [
     BubbleDataset(
       label: 'Cities',
-      points: [
+      data: [
         DataPoint.bubble(10, 20, 8),
         DataPoint.bubble(25, 12, 14),
         DataPoint.bubble(32, 28, 5),
@@ -1399,7 +1399,7 @@ ChartConfig _bubbleTypeTyped() => ChartConfig(
     ),
     BubbleDataset(
       label: 'Towns',
-      points: [DataPoint(15, 8), DataPoint(28, 22)],
+      data: [DataPoint(15, 8), DataPoint(28, 22)],
       radius: 4,
       backgroundColor: const ChartValue.indexed([
         ChartPaint.solid(_orange),

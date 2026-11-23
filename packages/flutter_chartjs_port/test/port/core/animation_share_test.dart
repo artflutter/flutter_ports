@@ -61,7 +61,7 @@ _Config _bar({
     (log, {required twin}) => ChartConfigLowering(
       ChartConfig(
         labels: [for (var i = 0; i < _count; i++) 'l$i'],
-        datasets: [BarDataset(data: _data(1), extra: dataset)],
+        datasets: [BarDataset(data: .values(_data(1)), extra: dataset)],
         animation: _animation(log, animation, twin: twin),
         scales: const [LinearAxis(.y, min: 0, max: 100)],
       ),
@@ -73,8 +73,8 @@ ChartConfigurationScope _stacked(List<String> log, {required bool twin}) =>
       ChartConfig(
         labels: [for (var i = 0; i < _count; i++) 'l$i'],
         datasets: [
-          BarDataset(data: _data(1)),
-          BarDataset(data: _data(5)),
+          BarDataset(data: .values(_data(1))),
+          BarDataset(data: .values(_data(5))),
         ],
         indexAxis: const YAxis(),
         animation: _animation(log, null, twin: twin),

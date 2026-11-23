@@ -35,7 +35,7 @@ Chart _chart(
   final canvas = UiCanvasElement(width: 600, height: 300);
   final config = ChartConfig(
     datasets: [
-      LineDataset(points: [DataPoint(0, 1), DataPoint(count - 1, 2)]),
+      LineDataset(data: .points([DataPoint(0, 1), DataPoint(count - 1, 2)])),
     ],
     responsive: false,
     animation: ChartAnimation.none,

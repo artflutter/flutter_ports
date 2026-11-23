@@ -7,7 +7,7 @@ import 'package:material_ui/material_ui.dart';
 
 LineDataset _series(String name, Color color, List<num> values) => LineDataset(
   label: name,
-  data: values,
+  data: .values(values),
   borderColor: .constant(.solid(color)),
   // The legend takes this color.
   backgroundColor: .constant(.solid(color)),

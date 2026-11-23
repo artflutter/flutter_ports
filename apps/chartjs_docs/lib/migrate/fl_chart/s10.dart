@@ -9,7 +9,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:material_ui/material_ui.dart';
 
 LineDataset _line(List<DataPoint> points, Color color) => LineDataset(
-  points: points,
+  data: .points(points),
   borderWidth: 4,
   pointRadius: const .constant(0),
   extra: {

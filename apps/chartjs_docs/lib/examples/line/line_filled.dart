@@ -29,7 +29,7 @@ const Color tealFill = Color.fromRGBO(75, 192, 192, 0.25);
 // #docregion line-filled
 const filledLine = LineDataset(
   label: 'Filled',
-  data: values,
+  data: .values(values),
   borderColor: .constant(.solid(teal)),
   backgroundColor: .constant(.solid(tealFill)),
   fill: .toOrigin,

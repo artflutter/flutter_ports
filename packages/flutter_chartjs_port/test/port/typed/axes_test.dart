@@ -22,8 +22,8 @@ ChartConfig _config({
 }) => ChartConfig(
   labels: const ['a', 'b', 'c'],
   datasets: [
-    const LineDataset(data: [1, 2, 3]),
-    LineDataset(data: const [30, 20, 10], xAxis: xAxis, yAxis: yAxis),
+    const LineDataset(data: .values([1, 2, 3])),
+    LineDataset(data: const .values([30, 20, 10]), xAxis: xAxis, yAxis: yAxis),
   ],
   scales: scales,
 );

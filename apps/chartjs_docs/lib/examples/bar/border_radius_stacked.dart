@@ -29,13 +29,13 @@ const roundedStack = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Mobile',
-      data: [30, 35, 28, 40, 45, 42, 50],
+      data: .values([30, 35, 28, 40, 45, 42, 50]),
       backgroundColor: .constant(.solid(teal)),
       borderRadius: 10,
     ),
     BarDataset(
       label: 'Desktop',
-      data: [20, 25, 22, 18, 24, 30, 26],
+      data: .values([20, 25, 22, 18, 24, 30, 26]),
       backgroundColor: .constant(.solid(blue)),
       borderRadius: 10,
     ),

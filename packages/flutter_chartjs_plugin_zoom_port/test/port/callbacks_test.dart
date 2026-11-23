@@ -13,7 +13,7 @@ import '../flutter_test_config.dart';
 Chart _chart(ZoomOptions zoom) => _acquire(
   ChartConfig(
     datasets: [
-      ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
+      ScatterDataset(data: .points([DataPoint(0, 0), DataPoint(100, 100)])),
     ],
     pluginOptions: [ZoomPluginOptions(zoom: zoom)],
   ),

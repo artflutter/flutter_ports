@@ -36,7 +36,7 @@ ChartConfig _config(double crossAt) => ChartConfig(
   labels: _countries,
   datasets: [
     BarDataset(
-      data: _rates,
+      data: const .values(_rates),
       backgroundColor: .indexed([for (final c in _colors) .solid(c)]),
       hoverBackgroundColor: .indexed([for (final c in _colors) .solid(c)]),
       categoryPercentage: 0.7,

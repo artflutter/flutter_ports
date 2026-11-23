@@ -156,7 +156,7 @@ typed.Dataset _typedDataset(
     ),
     'line' => typed.LineDataset(
       label: label,
-      data: values,
+      data: .values(values),
       backgroundColor: backgroundColor,
       borderColor: borderColor,
       borderWidth: borderWidth,

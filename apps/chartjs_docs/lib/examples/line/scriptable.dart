@@ -33,7 +33,7 @@ const List<Object> months = [
 // #docregion scriptable
 const scriptableLine = LineDataset(
   label: 'Score',
-  data: values,
+  data: .values(values),
   borderColor: .constant(.solid(teal)),
   // A typed function for a color.
   backgroundColor: .resolver(pointFill),

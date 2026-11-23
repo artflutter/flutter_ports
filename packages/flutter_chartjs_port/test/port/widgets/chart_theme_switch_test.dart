@@ -115,7 +115,8 @@ ChartConfig _typedConfig({
 }) => ChartConfig(
   labels: const ['a', 'b', 'c'],
   datasets: [
-    for (var i = 0; i < 2; i++) BarDataset(label: 'd$i', data: [1 + i, 3, 2]),
+    for (var i = 0; i < 2; i++)
+      BarDataset(label: 'd$i', data: .values([1 + i, 3, 2])),
   ],
   animation: animated ? const ChartAnimation() : ChartAnimation.none,
   plugins: plugins,
@@ -438,8 +439,11 @@ void main() {
           datasets: [
             for (var i = 0; i < 2; i++)
               switch (type) {
-                'bar' => BarDataset(label: 'd$i', data: [1 + i, 3, 2]),
-                'line' => LineDataset(label: 'd$i', data: [1 + i, 3, 2]),
+                'bar' => BarDataset(label: 'd$i', data: .values([1 + i, 3, 2])),
+                'line' => LineDataset(
+                  label: 'd$i',
+                  data: .values([1 + i, 3, 2]),
+                ),
                 _ => RadarDataset(label: 'd$i', data: [1 + i, 3, 2]),
               },
           ],

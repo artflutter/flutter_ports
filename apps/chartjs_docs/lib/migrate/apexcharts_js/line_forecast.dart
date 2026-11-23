@@ -33,7 +33,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      points: _points,
+      data: .points(_points),
       borderColor: _gradient,
       backgroundColor: _gradient,
       // stroke: {width: 5, curve: 'smooth'}

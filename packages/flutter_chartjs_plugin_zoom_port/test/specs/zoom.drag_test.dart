@@ -33,7 +33,7 @@ void main() {
       testWidgets('should be applied on X scale when mode = x', (tester) async {
         chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points())],
+            datasets: [LineDataset(data: .points(points()))],
             scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: const [
               ZoomPluginOptions(
@@ -69,7 +69,7 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points())],
+            datasets: [LineDataset(data: .points(points()))],
             scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: [
               ZoomPluginOptions(
@@ -105,7 +105,7 @@ void main() {
       testWidgets('should be applied on Y scale when mode = y', (tester) async {
         chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points())],
+            datasets: [LineDataset(data: .points(points()))],
             scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: const [
               ZoomPluginOptions(
@@ -141,7 +141,7 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points())],
+            datasets: [LineDataset(data: .points(points()))],
             scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: [
               ZoomPluginOptions(
@@ -179,7 +179,7 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points())],
+            datasets: [LineDataset(data: .points(points()))],
             scales: const [LinearAxis(.x), LinearAxis(.y)],
             pluginOptions: const [
               ZoomPluginOptions(
@@ -225,7 +225,7 @@ void main() {
             final rejectedCalls = <ZoomEventContext<NativeEvent>>[];
             chart = _acquire(
               ChartConfig(
-                datasets: [LineDataset(points: points())],
+                datasets: [LineDataset(data: .points(points()))],
                 scales: const [LinearAxis(.x, min: 0, max: 10), LinearAxis(.y)],
                 pluginOptions: [
                   ZoomPluginOptions(
@@ -286,7 +286,7 @@ void main() {
             final clickCalls = <ChartEvent>[];
             chart = _acquire(
               ChartConfig(
-                datasets: [LineDataset(points: points())],
+                datasets: [LineDataset(data: .points(points()))],
                 scales: const [LinearAxis(.x, min: 0, max: 10), LinearAxis(.y)],
                 pluginOptions: [
                   ZoomPluginOptions(
@@ -350,7 +350,7 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points())],
+            datasets: [LineDataset(data: .points(points()))],
             scales: const [
               LinearAxis(.x, min: 0, max: 4),
               LinearAxis(.y, min: 0, max: 4),
@@ -394,7 +394,7 @@ void main() {
       ) async {
         chart = _acquire(
           ChartConfig(
-            datasets: [LineDataset(points: points())],
+            datasets: [LineDataset(data: .points(points()))],
             scales: const [
               LinearAxis(.x, min: 0, max: 4),
               LinearAxis(.y, min: 0, max: 4),
@@ -460,7 +460,7 @@ void main() {
           final zoomCalls = <ZoomTriggerContext>[];
           final chart = _acquire(
             ChartConfig(
-              datasets: [ScatterDataset(points: points())],
+              datasets: [ScatterDataset(data: .points(points()))],
               pluginOptions: [
                 ZoomPluginOptions(
                   zoom: ZoomOptions(
@@ -516,7 +516,7 @@ void main() {
         final doneCalls = <ZoomChartContext>[];
         final chart = _acquire(
           ChartConfig(
-            datasets: [ScatterDataset(points: points())],
+            datasets: [ScatterDataset(data: .points(points()))],
             pluginOptions: [
               ZoomPluginOptions(
                 zoom: ZoomOptions(

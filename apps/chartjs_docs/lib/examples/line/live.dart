@@ -16,7 +16,7 @@ ChartConfig liveLine(List<DataPoint> points) => ChartConfig(
   datasets: [
     LineDataset(
       label: 'Signal',
-      points: points,
+      data: .points(points),
       borderColor: const .constant(.solid(teal)),
       borderWidth: 1.5,
       pointRadius: const .constant(0),

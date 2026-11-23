@@ -84,7 +84,7 @@ class _ZoomPageState() extends State<ZoomPage> {
               datasets: [
                 LineDataset(
                   label: 'Signal',
-                  points: _points,
+                  data: .points(_points),
                   borderWidth: 1.5,
                   pointRadius: const .constant(0),
                 ),

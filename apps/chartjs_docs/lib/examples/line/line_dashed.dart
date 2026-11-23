@@ -26,7 +26,7 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 // #docregion line-dashed
 const dashedLine = LineDataset(
   label: 'Dashed',
-  data: values,
+  data: .values(values),
   borderColor: .constant(.solid(teal)),
   borderDash: [10, 6],
   borderCapStyle: StrokeCap.round,

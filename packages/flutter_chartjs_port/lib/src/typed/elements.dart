@@ -348,7 +348,11 @@ final class const LineElementStyle({
 /// same name ([BorderSkippedEdge]).
 ///
 /// ```dart
-/// BarDataset(data: values, borderWidth: 2, borderSkipped: BorderSkip.none),
+/// BarDataset(
+///   data: .values(values),
+///   borderWidth: 2,
+///   borderSkipped: BorderSkip.none,
+/// ),
 /// ```
 enum BorderSkip() {
   /// `false`: each edge draws its border.

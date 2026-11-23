@@ -56,7 +56,7 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [
-                BarDataset(data: [1, 10], label: 'dataset1'),
+                BarDataset(data: .values([1, 10]), label: 'dataset1'),
               ],
               labels: ['label1', 'label2'],
               extra: {

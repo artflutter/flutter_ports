@@ -81,7 +81,7 @@ void main() {
     testWidgets('should be constructed', (tester) async {
       final chart = acquireChartRoot(
         ChartConfigLowering(
-          const ChartConfig(datasets: [BubbleDataset(points: [])]),
+          const ChartConfig(datasets: [BubbleDataset(data: [])]),
         ).lower(),
       );
 
@@ -101,7 +101,7 @@ void main() {
       (tester) async {
         final chart = acquireChartRoot(
           ChartConfigLowering(
-            const ChartConfig(datasets: [BubbleDataset(points: [])]),
+            const ChartConfig(datasets: [BubbleDataset(data: [])]),
           ).lower(),
         );
 
@@ -177,7 +177,7 @@ void main() {
           ChartConfig(
             datasets: [
               BubbleDataset(
-                points: [
+                data: [
                   DataPoint.bubble(10, 10, 5),
                   DataPoint.bubble(-15, -10, 1),
                   DataPoint.bubble(0, -9, 2),
@@ -272,7 +272,7 @@ void main() {
           ChartConfig(
             datasets: [
               BubbleDataset(
-                points: [
+                data: [
                   DataPoint.bubble(10, 10, 5),
                   DataPoint.bubble(-15, -10, 1),
                   DataPoint.bubble(0, -9, 2),
@@ -328,7 +328,7 @@ void main() {
             ChartConfig(
               datasets: [
                 BubbleDataset(
-                  points: [
+                  data: [
                     DataPoint.bubble(5, 5, 20),
                     DataPoint.bubble(-15, -10, 15),
                     DataPoint.bubble(15, 10, 10),
@@ -486,17 +486,14 @@ void main() {
           ChartConfig(
             datasets: [
               BubbleDataset(
-                points: [
+                data: [
                   DataPoint.bubble(10, 15, 15),
                   DataPoint.bubble(12, 10, 10),
                 ],
                 label: 'Dataset 1',
               ),
               BubbleDataset(
-                points: [
-                  DataPoint.bubble(20, 10, 5),
-                  DataPoint.bubble(4, 8, 30),
-                ],
+                data: [DataPoint.bubble(20, 10, 5), DataPoint.bubble(4, 8, 30)],
                 label: 'Dataset 2',
               ),
             ],

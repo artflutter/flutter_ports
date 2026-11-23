@@ -75,9 +75,7 @@ Chart _labelsChart(List<Object?> labels) {
     ChartConfig(
       datasets: [
         BubbleDataset(
-          points: [
-            for (var v = 1.0; v <= 6; v++) DataPoint.bubble(v, 7 - v, v),
-          ],
+          data: [for (var v = 1.0; v <= 6; v++) DataPoint.bubble(v, 7 - v, v)],
         ),
       ],
     ),

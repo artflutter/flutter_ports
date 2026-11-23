@@ -12,7 +12,7 @@ final ChartConfig _config = ChartConfig(
   datasets: const [
     BarDataset(
       label: 'Score',
-      data: [44, 55, 41, 67, 22, 43],
+      data: .values([44, 55, 41, 67, 22, 43]),
       backgroundColor: .constant(.solid(Apex.red)),
       hoverBackgroundColor: .constant(.solid(Apex.red)),
       borderWidth: 0,

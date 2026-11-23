@@ -10,13 +10,13 @@ final timeAxis = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Visits',
-      points: [
+      data: .points([
         DataPoint.time(DateTime(2026, 11, 2), 120),
         DataPoint.time(DateTime(2026, 11, 3), 150),
         DataPoint.time(DateTime(2026, 11, 4), 90),
         DataPoint.time(DateTime(2026, 11, 6), 170),
         DataPoint.time(DateTime(2026, 11, 9), 140),
-      ],
+      ]),
       borderColor: const .constant(.solid(blue)),
     ),
   ],

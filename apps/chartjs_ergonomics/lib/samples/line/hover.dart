@@ -11,7 +11,7 @@ const hover = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
       pointRadius: .constant(5),
       pointHoverRadius: .constant(11),

@@ -216,7 +216,7 @@ void main() {
         return _acquire(
           ChartConfig(
             labels: labels,
-            datasets: [LineDataset(data: data)],
+            datasets: [LineDataset(data: .values(data))],
             scales: const [CategoryAxis(.x, ticks: AxisTicks(autoSkip: true))],
           ),
         );
@@ -226,7 +226,7 @@ void main() {
         return _acquire(
           ChartConfig(
             labels: List<Object>.filled(300, 'red'),
-            datasets: [LineDataset(data: List<num?>.filled(300, 5))],
+            datasets: [LineDataset(data: .values(List<num?>.filled(300, 5)))],
             scales: [
               CategoryAxis(
                 .x,
@@ -321,7 +321,7 @@ void main() {
       testWidgets(horizontalNames[t], (tester) async {
         final chart = _acquire(
           ChartConfig(
-            datasets: const [LineDataset(data: [])],
+            datasets: const [LineDataset(data: .values([]))],
             labels: test.labels,
             scales: [
               CategoryAxis(
@@ -366,7 +366,7 @@ void main() {
         const ChartConfig(
           labels: ['This is a very long label', 'This is a very long label'],
           datasets: [
-            LineDataset(data: [0, 1]),
+            LineDataset(data: .values([0, 1])),
           ],
           scales: [LinearAxis(.y, display: ScaleDisplay.off)],
           disabledPlugins: [PluginOff<LegendPlugin>()],
@@ -391,7 +391,7 @@ void main() {
               const ChartConfig(
                 datasets: [
                   LineDataset(
-                    data: [100, 200, 100, 50],
+                    data: .values([100, 200, 100, 50]),
                     hidden: true,
                     extra: {
                       'xAxisId': 'foo',
@@ -399,7 +399,7 @@ void main() {
                     },
                   ),
                   LineDataset(
-                    data: [100, 200, 100, 50],
+                    data: .values([100, 200, 100, 50]),
                     extra: {
                       'xAxisId': 'foo',
                       'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
@@ -430,7 +430,7 @@ void main() {
               const ChartConfig(
                 datasets: [
                   LineDataset(
-                    data: [100, 200, 100, 50],
+                    data: .values([100, 200, 100, 50]),
                     hidden: true,
                     extra: {
                       'xAxisId': 'foo',
@@ -462,7 +462,7 @@ void main() {
               const ChartConfig(
                 datasets: [
                   LineDataset(
-                    data: [100, 200, 100, 50],
+                    data: .values([100, 200, 100, 50]),
                     hidden: true,
                     extra: {
                       'yAxisId': 'foo',
@@ -470,7 +470,7 @@ void main() {
                     },
                   ),
                   LineDataset(
-                    data: [100, 200, 100, 50],
+                    data: .values([100, 200, 100, 50]),
                     extra: {
                       'yAxisId': 'foo',
                       'labels': ['Q1', 'Q2', 'Q3', 'Q4'],
@@ -498,7 +498,7 @@ void main() {
               const ChartConfig(
                 datasets: [
                   LineDataset(
-                    data: [100, 200, 100, 50],
+                    data: .values([100, 200, 100, 50]),
                     hidden: true,
                     extra: {
                       'yAxisId': 'foo',
@@ -786,9 +786,11 @@ void main() {
           ChartConfig(
             datasets: [
               ScatterDataset(
-                points: [DataPoint(100, 100), DataPoint(-100, -100)],
+                data: .points([DataPoint(100, 100), DataPoint(-100, -100)]),
               ),
-              ScatterDataset(points: [DataPoint(10, 10), DataPoint(-10, -10)]),
+              ScatterDataset(
+                data: .points([DataPoint(10, 10), DataPoint(-10, -10)]),
+              ),
             ],
             scales: const [
               LinearAxis(.x, min: -20, max: 20, extra: {'id': 'x'}),
@@ -932,7 +934,10 @@ void main() {
           const ChartConfig(
             labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
             datasets: [
-              LineDataset(label: '# of Votes', data: [12, 19, 3, 5, 2, 3]),
+              LineDataset(
+                label: '# of Votes',
+                data: .values([12, 19, 3, 5, 2, 3]),
+              ),
             ],
             scales: [
               CategoryAxis(.x, ticks: AxisTicks(extra: {'minRotation': 90})),

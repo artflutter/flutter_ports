@@ -77,7 +77,7 @@ class _GraphicBarAutoUpdateState() extends State<GraphicBarAutoUpdate> {
       labels: _genres,
       datasets: [
         BarDataset(
-          data: _sold,
+          data: .values(_sold),
           backgroundColor: const .constant(.solid(Gx.primary)),
           hoverBackgroundColor: const .constant(.solid(Gx.primary)),
           barThickness: const BarThickness.pixels(barSize),

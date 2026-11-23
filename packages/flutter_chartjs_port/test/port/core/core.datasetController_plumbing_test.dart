@@ -208,7 +208,7 @@ typed.ChartConfig _typedConfig(List<typed.DataPoint> points) =>
     typed.ChartConfig(
       datasets: [
         typed.ScatterDataset(
-          points: points,
+          data: .points(points),
           showLine: false,
           pointRadius: const .constant(3),
         ),

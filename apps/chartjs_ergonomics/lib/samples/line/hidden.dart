@@ -11,12 +11,12 @@ const hidden = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
     ),
     LineDataset(
       label: 'Costs (tap to show)',
-      data: costs,
+      data: .values(costs),
       borderColor: .constant(.solid(red)),
       hidden: true,
     ),

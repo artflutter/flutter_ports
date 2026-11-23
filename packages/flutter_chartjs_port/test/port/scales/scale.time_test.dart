@@ -683,7 +683,7 @@ void main() {
         ChartConfigLowering(
           const ChartConfig(
             datasets: [
-              LineDataset(data: [null, 10, 3]),
+              LineDataset(data: .values([null, 10, 3])),
             ],
             labels: [
               '2015-01-01T20:00:00',
@@ -731,10 +731,10 @@ void main() {
           ChartConfig(
             datasets: [
               LineDataset(
-                points: [
+                data: .points([
                   DataPoint.label('2020-04-12T20:00:00', 1),
                   DataPoint.label('2020-04-13T20:00:00', 2),
-                ],
+                ]),
               ),
             ],
             scales: const [
@@ -764,7 +764,7 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [
-                LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
               ],
               labels: ['2017', '2019', '2020', '2025', '2042'],
               scales: [
@@ -830,13 +830,13 @@ void main() {
           ChartConfigLowering(
             ChartConfig(
               datasets: [
-                const LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                const LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
                 LineDataset(
-                  points: [
+                  data: .points([
                     DataPoint.label('2018', 6),
                     DataPoint.label('2020', 7),
                     DataPoint.label('2043', 8),
-                  ],
+                  ]),
                 ),
               ],
               labels: const ['2017', '2019', '2020', '2025', '2042'],
@@ -943,7 +943,7 @@ void main() {
             ChartConfigLowering(
               ChartConfig(
                 datasets: const [
-                  LineDataset(data: [0, 1, 2, 3, 4]),
+                  LineDataset(data: .values([0, 1, 2, 3, 4])),
                 ],
                 labels: const ['2017', '2019', '2020', '2025', '2042'],
                 scales: const [
@@ -1069,7 +1069,7 @@ void main() {
             ChartConfigLowering(
               const ChartConfig(
                 datasets: [
-                  LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                  LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
                 ],
                 labels: ['2017', '2019', '2020', '2025', '2042'],
                 scales: [
@@ -1164,7 +1164,7 @@ void main() {
             ChartConfigLowering(
               const ChartConfig(
                 datasets: [
-                  LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                  LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
                 ],
                 labels: [
                   '02/20 08:00',
@@ -1209,7 +1209,7 @@ void main() {
             ChartConfigLowering(
               const ChartConfig(
                 datasets: [
-                  LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                  LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
                 ],
                 labels: [
                   '02/20 08:00',
@@ -1267,7 +1267,7 @@ void main() {
                 ChartConfigLowering(
                   ChartConfig(
                     datasets: const [
-                      LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                      LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
                     ],
                     labels: const [
                       '02/20 08:00',
@@ -1364,7 +1364,7 @@ void main() {
               ChartConfigLowering(
                 ChartConfig(
                   datasets: const [
-                    LineDataset(data: [0, 1, 2, 3, 4]),
+                    LineDataset(data: .values([0, 1, 2, 3, 4])),
                   ],
                   labels: const ['2017', '2018', '2019', '2020', '2021'],
                   scales: [
@@ -1467,7 +1467,7 @@ void main() {
               ChartConfigLowering(
                 ChartConfig(
                   datasets: const [
-                    LineDataset(data: [0, 1, 2, 3, 4, 5]),
+                    LineDataset(data: .values([0, 1, 2, 3, 4, 5])),
                   ],
                   labels: const ['2017', '2019', '2020', '2025', '2042'],
                   scales: [

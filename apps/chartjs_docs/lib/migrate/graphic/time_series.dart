@@ -45,10 +45,10 @@ final ChartConfig _config = ChartConfig(
   labels: _ticks,
   datasets: [
     LineDataset(
-      points: [
+      data: .points([
         for (final sale in timeSeriesSales)
           DataPoint.time(sale.time, sale.sales),
-      ],
+      ]),
       borderColor: const .constant(.solid(Gx.primary)),
       borderWidth: 2,
       borderDash: const [5, 2],

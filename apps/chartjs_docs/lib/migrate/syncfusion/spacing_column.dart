@@ -20,7 +20,7 @@ BarDataset _medals(
   double spacing,
 ) => BarDataset(
   label: name,
-  data: data,
+  data: .values(data),
   backgroundColor: .constant(.solid(color)),
   hoverBackgroundColor: .constant(.solid(color)),
   categoryPercentage: width,

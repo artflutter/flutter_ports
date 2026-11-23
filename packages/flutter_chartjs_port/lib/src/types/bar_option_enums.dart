@@ -59,8 +59,11 @@ enum BorderSkippedEdge() {
 /// category, the fit mode of upstream.
 ///
 /// ```dart
-/// BarDataset(data: values, barThickness: const BarThickness.pixels(12)),
-/// BarDataset(data: values, barThickness: BarThickness.flex),
+/// BarDataset(
+///   data: .values(values),
+///   barThickness: const BarThickness.pixels(12),
+/// ),
+/// BarDataset(data: .values(values), barThickness: BarThickness.flex),
 /// ```
 @immutable
 sealed class const BarThickness() {

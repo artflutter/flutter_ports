@@ -33,7 +33,7 @@ const scopedBar = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Sales',
-      data: values,
+      data: .values(values),
       backgroundColor: .constant(.solid(tealFill)),
       borderColor: .constant(.solid(teal)),
     ),

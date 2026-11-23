@@ -98,7 +98,7 @@ Chart _lineWithoutTitle() => acquireChartRoot(
     const ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        LineDataset(data: [1, 2]),
+        LineDataset(data: .values([1, 2])),
       ],
       // Disable the plugin itself, rather than only hiding its title.
       disabledPlugins: [PluginOff<TitlePlugin>()],
@@ -112,7 +112,7 @@ Chart _line(ChartTitle title) => acquireChartRoot(
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
-        LineDataset(data: [1, 2]),
+        LineDataset(data: .values([1, 2])),
       ],
       title: title,
     ),

@@ -88,7 +88,7 @@ Chart _chart(ChartOptionsScope? theme) {
     const ChartConfig(
       labels: ['a', 'b'],
       datasets: [
-        BarDataset(label: 'd', data: [1.0, 2.0]),
+        BarDataset(label: 'd', data: .values([1.0, 2.0])),
       ],
     ),
   ).lower();

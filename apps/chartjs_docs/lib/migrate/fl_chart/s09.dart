@@ -19,10 +19,10 @@ final ChartConfig _config = fills(
   ChartConfig(
     datasets: [
       LineDataset(
-        points: [
+        data: .points([
           for (var i = 0; i <= 100; i++)
             DataPoint((i - 50) / 10, cos((i - 50) / 10)),
-        ],
+        ]),
         tension: 0.35,
         borderWidth: 3,
         pointRadius: const .constant(0),

@@ -67,10 +67,10 @@ final ChartConfig _config = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Rainfall',
-      points: [
+      data: .points([
         for (final (i, (mm, _)) in _rainfall.indexed)
           DataPoint.time(DateTime(1925 + i), mm),
-      ],
+      ]),
       borderWidth: 2,
       pointRadius: const .constant(0),
       pointHoverRadius: const .constant(0),

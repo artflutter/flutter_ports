@@ -14,12 +14,12 @@ final pointsLine = ChartConfig(
   datasets: [
     LineDataset(
       label: 'An x and a y for each item',
-      points: [
+      data: .points([
         DataPoint(10, 20),
         DataPoint(15, 10),
         DataPoint(40, 30),
         DataPoint(45, 25),
-      ],
+      ]),
       borderColor: const .constant(.solid(teal)),
     ),
   ],

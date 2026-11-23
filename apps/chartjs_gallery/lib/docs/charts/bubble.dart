@@ -10,7 +10,7 @@ ChartConfig bubbleConfig() => ChartConfig(
   datasets: [
     BubbleDataset(
       label: 'First Dataset',
-      points: [DataPoint.bubble(20, 30, 15), DataPoint.bubble(40, 10, 10)],
+      data: [DataPoint.bubble(20, 30, 15), DataPoint.bubble(40, 10, 10)],
       backgroundColor: const ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(255, 99, 132, 1)),
       ),

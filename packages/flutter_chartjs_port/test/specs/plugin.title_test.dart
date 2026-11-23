@@ -308,7 +308,7 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [
-                LineDataset(data: [10, 20, 30, 100]),
+                LineDataset(data: .values([10, 20, 30, 100])),
               ],
               labels: ['A', 'B', 'C', 'D'],
               title: ChartTitle(display: true),
@@ -360,7 +360,7 @@ void main() {
           ChartConfigLowering(
             const ChartConfig(
               datasets: [
-                LineDataset(data: [10, 20, 30, 100]),
+                LineDataset(data: .values([10, 20, 30, 100])),
               ],
               labels: ['A', 'B', 'C', 'D'],
             ),
@@ -382,7 +382,7 @@ void main() {
             ChartConfigLowering(
               const ChartConfig(
                 datasets: [
-                  LineDataset(data: [10, 20, 30, 100]),
+                  LineDataset(data: .values([10, 20, 30, 100])),
                 ],
                 labels: ['A', 'B', 'C', 'D'],
                 disabledPlugins: [PluginOff<TitlePlugin>()],

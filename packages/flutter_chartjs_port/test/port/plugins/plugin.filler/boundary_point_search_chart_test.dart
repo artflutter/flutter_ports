@@ -38,15 +38,15 @@ void main() {
       labels: [for (var i = 0; i < 64; i++) '$i'],
       datasets: [
         LineDataset(
-          data: [for (var i = 0; i < 64; i++) 0],
+          data: .values([for (var i = 0; i < 64; i++) 0]),
           fill: FillTarget.none,
           pointRadius: const .constant(0),
         ),
         LineDataset(
-          data: [
+          data: .values([
             for (var i = 0; i < 64; i++)
               if (i % 12 == 5) null else i % 7 - 3,
-          ],
+          ]),
           fill: const FillTarget.toDataset(0),
           pointRadius: const .constant(0),
           backgroundColor: const ChartValue.constant(
@@ -99,7 +99,7 @@ void main() {
               datasets: [
                 for (var k = 0; k < 3; k++)
                   LineDataset(
-                    data: data[k],
+                    data: .values(data[k]),
                     fill: fill.split(
                       above: const ChartPaint.solid(Color(0x88334455)),
                       below: const ChartPaint.solid(Color(0x88778899)),

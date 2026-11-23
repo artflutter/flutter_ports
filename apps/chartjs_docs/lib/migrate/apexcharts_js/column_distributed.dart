@@ -34,7 +34,7 @@ final ChartConfig _config = ChartConfig(
     // plotOptions.bar.distributed: true: a color for each column.
     BarDataset(
       label: 'series-1',
-      data: const [21, 22, 10, 28, 16, 21, 13, 30],
+      data: const .values([21, 22, 10, 28, 16, 21, 13, 30]),
       backgroundColor: .indexed([
         for (final color in _colors) .solid(color.withValues(alpha: 0.85)),
       ]),

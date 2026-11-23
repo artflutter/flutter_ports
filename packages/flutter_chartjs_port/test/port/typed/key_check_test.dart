@@ -166,7 +166,7 @@ List<ChartConfig> _configs() {
       datasets: [
         BarDataset(
           label: 'A',
-          data: data,
+          data: .values(data),
           hidden: false,
           order: 1,
           backgroundColor: const ChartValue.constant(.solid(_red)),
@@ -189,7 +189,7 @@ List<ChartConfig> _configs() {
           borderSkipped: BorderSkip.start,
         ),
         LineDataset(
-          points: points,
+          data: .points(points),
           backgroundColor: const ChartValue.indexed([ChartPaint.solid(_red)]),
           borderColor: const ChartValue.resolver(_colorFor),
           xAxis: _xAxis,
@@ -212,7 +212,7 @@ List<ChartConfig> _configs() {
           pointHoverBorderColor: const .constant(.solid(_red)),
         ),
         ScatterDataset(
-          points: points,
+          data: .points(points),
           xAxis: _xAxis,
           yAxis: _yAxis,
           stack: 's',
@@ -232,7 +232,7 @@ List<ChartConfig> _configs() {
           pointHoverBorderColor: const .constant(.solid(_red)),
         ),
         BubbleDataset(
-          points: [DataPoint.bubble(1, 2, 3)],
+          data: [DataPoint.bubble(1, 2, 3)],
           xAxis: _xAxis,
           yAxis: _yAxis,
           radius: 3,

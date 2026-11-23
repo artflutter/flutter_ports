@@ -29,7 +29,7 @@ const shadowBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Shadow',
-      data: values,
+      data: .values(values),
       backgroundColor: .constant(.solid(teal)),
       shadow: ChartShadow(
         color: Color(0x66000000),

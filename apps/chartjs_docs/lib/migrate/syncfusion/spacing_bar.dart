@@ -17,7 +17,7 @@ BarDataset _trade(
   double spacing,
 ) => BarDataset(
   label: name,
-  points: [for (final (i, v) in values.indexed) DataPoint(v, _years[i])],
+  data: .points([for (final (i, v) in values.indexed) DataPoint(v, _years[i])]),
   order: order,
   backgroundColor: .constant(.solid(color)),
   hoverBackgroundColor: .constant(.solid(color)),

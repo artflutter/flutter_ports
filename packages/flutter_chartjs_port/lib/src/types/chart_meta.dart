@@ -163,9 +163,12 @@ enum StackMode() {
 /// omits is null; upstream gives `undefined` there, and its clip area is NaN.
 ///
 /// ```dart
-/// LineDataset(data: points, clip: const ChartClip.all(5));
-/// LineDataset(data: points, clip: const ChartClip(top: 8, right: -20));
-/// LineDataset(data: points, clip: ChartClip.none);
+/// LineDataset(data: .points(points), clip: const ChartClip.all(5));
+/// LineDataset(
+///   data: .points(points),
+///   clip: const ChartClip(top: 8, right: -20),
+/// );
+/// LineDataset(data: .points(points), clip: ChartClip.none);
 /// ```
 @immutable
 class const ChartClip({

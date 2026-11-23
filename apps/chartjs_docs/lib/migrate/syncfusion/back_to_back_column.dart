@@ -15,7 +15,7 @@ BarDataset _series(
   List<num> data,
 ) => BarDataset(
   label: year,
-  data: data,
+  data: .values(data),
   order: order,
   backgroundColor: .constant(.solid(color)),
   hoverBackgroundColor: .constant(.solid(color)),

@@ -16,7 +16,7 @@ const List<Color> _colors = [_germany, _england];
 
 LineDataset _series(String name, Color color, List<num> values) => LineDataset(
   label: name,
-  points: [for (final (i, v) in values.indexed) DataPoint(2005 + i, v)],
+  data: .points([for (final (i, v) in values.indexed) DataPoint(2005 + i, v)]),
   borderColor: .constant(.solid(color)),
   // The legend and the tooltip take this color.
   backgroundColor: .constant(.solid(color)),

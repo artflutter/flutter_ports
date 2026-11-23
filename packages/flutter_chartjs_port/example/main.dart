@@ -88,7 +88,11 @@ class _VotesPageState() extends State<VotesPage> {
                 'Orange',
               ],
               datasets: [
-                BarDataset(label: '# of Votes', data: _votes, borderWidth: 1),
+                BarDataset(
+                  label: '# of Votes',
+                  data: .values(_votes),
+                  borderWidth: 1,
+                ),
               ],
               scales: const [LinearAxis(.y, beginAtZero: true)],
               onClick: _onClick,

@@ -80,7 +80,7 @@ ChartConfig _config(int count, String variant, double ratio, [double t = 0]) {
   }) => LineDataset(
     key: ValueKey(key),
     label: key,
-    points: points,
+    data: .points(points),
     borderColor: const ChartValue.constant(.solid(_blue)),
     borderWidth: variant == 'noBorder' ? 0 : 2,
     borderDash: variant == 'dash' ? const [6, 3] : null,

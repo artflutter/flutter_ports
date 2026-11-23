@@ -73,8 +73,8 @@ void main() {
             config: ChartConfig(
               labels: const ['a', 'b', 'c'],
               datasets: const [
-                LineDataset(data: [1, 2, 3]),
-                LineDataset(data: [30, 20, 10], yAxis: _right),
+                LineDataset(data: .values([1, 2, 3])),
+                LineDataset(data: .values([30, 20, 10]), yAxis: _right),
               ],
               animation: ChartAnimation.none,
               scales: const [LinearAxis(.y), _right],

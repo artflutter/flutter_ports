@@ -86,7 +86,7 @@ class _Sample12State() extends State<Sample12> {
     ChartConfig(
       datasets: [
         LineDataset(
-          points: _points,
+          data: .points(_points),
           borderWidth: 1,
           pointRadius: const .constant(0),
           pointHoverRadius: const .constant(6),

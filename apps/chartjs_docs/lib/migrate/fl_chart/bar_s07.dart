@@ -69,10 +69,10 @@ class _BarSample7State() extends State<BarSample7> {
     required int order,
   }) => BarDataset(
     order: order,
-    points: [
+    data: .points([
       for (final (i, value) in values.indexed)
         if (horizontal) DataPoint(value, i) else DataPoint(i, value),
-    ],
+    ]),
     backgroundColor: .indexed([for (final c in colors) .solid(c)]),
     hoverBackgroundColor: .indexed([for (final c in colors) .solid(c)]),
     // Two bars of 6 pixels with 2 pixels between them.

@@ -45,7 +45,7 @@ class _SfAnimationBarState() extends State<SfAnimationBar> {
         labels: const ['1', '2', '3', '4', '5', '6', '7'],
         datasets: [
           BarDataset(
-            data: _values,
+            data: .values(_values),
             backgroundColor: const .constant(.solid(Sf.blue)),
             categoryPercentage: 0.7,
             barPercentage: 1,

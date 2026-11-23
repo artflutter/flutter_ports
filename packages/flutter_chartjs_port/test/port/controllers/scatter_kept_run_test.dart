@@ -29,9 +29,9 @@ ChartConfig _config(
 }) => ChartConfig(
   datasets: [
     ScatterDataset(
-      points: [
+      data: .points([
         for (var i = 0; i < count; i++) DataPoint(i * 37 % 101, i * 53 % 97),
-      ],
+      ]),
       pointRadius: radii == null ? const .constant(3) : null,
       borderWidth: borderWidth,
       backgroundColor: backgroundColor,

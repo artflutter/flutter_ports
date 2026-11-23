@@ -41,21 +41,21 @@ const stackedLines = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Mobile',
-      data: [30, 35, 28, 40, 45, 42, 50],
+      data: .values([30, 35, 28, 40, 45, 42, 50]),
       borderColor: .constant(.solid(teal)),
       backgroundColor: .constant(.solid(tealFill)),
       fill: .toStacked,
     ),
     LineDataset(
       label: 'Desktop',
-      data: [20, 25, 22, 18, 24, 30, 26],
+      data: .values([20, 25, 22, 18, 24, 30, 26]),
       borderColor: .constant(.solid(blue)),
       backgroundColor: .constant(.solid(blueFill)),
       fill: .toStacked,
     ),
     LineDataset(
       label: 'Tablet',
-      data: [10, 8, 12, 14, 9, 11, 15],
+      data: .values([10, 8, 12, 14, 9, 11, 15]),
       borderColor: .constant(.solid(red)),
       backgroundColor: .constant(.solid(redFill)),
       fill: .toStacked,

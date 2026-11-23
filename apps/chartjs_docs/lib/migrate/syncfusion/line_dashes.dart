@@ -26,7 +26,7 @@ const _series = {
 
 LineDataset _line(String name, Color color, List<double> values) => LineDataset(
   label: name,
-  points: [for (final (i, v) in values.indexed) DataPoint(2010 + i, v)],
+  data: .points([for (final (i, v) in values.indexed) DataPoint(2010 + i, v)]),
   borderColor: .constant(.solid(color)),
   backgroundColor: .constant(.solid(color)),
   borderWidth: 2,

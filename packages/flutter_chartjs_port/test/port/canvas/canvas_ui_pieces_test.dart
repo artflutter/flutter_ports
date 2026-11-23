@@ -1068,9 +1068,9 @@ void main() {
             labels: [for (var i = 0; i < count; i++) '$i'],
             datasets: [
               LineDataset(
-                data: [
+                data: .values([
                   for (var i = 0; i < count; i++) 50 + 40 * math.sin(i * .2),
-                ],
+                ]),
                 borderColor: const ChartValue.constant(ChartPaint.solid(_blue)),
                 backgroundColor: const ChartValue.constant(
                   ChartPaint.solid(_soft),
@@ -1153,7 +1153,7 @@ void main() {
               for (var d = 0; d < datasets; d++)
                 LineDataset(
                   label: 'Series $d',
-                  points: [
+                  data: .points([
                     for (var i = 0; i < count; i++)
                       DataPoint(
                         i * 100 / (count - 1),
@@ -1163,7 +1163,7 @@ void main() {
                             ? 0.0
                             : 50 + 38 * math.sin(i * .02 + d),
                       ),
-                  ],
+                  ]),
                   borderColor: const ChartValue.constant(
                     ChartPaint.solid(_blue),
                   ),

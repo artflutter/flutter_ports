@@ -12,7 +12,7 @@ const _mobile = <num>[80, 200, 120, 190, 130, 140];
 // <Bar dataKey={key} fill={color} radius={4} />
 BarDataset _bars(String label, List<num> data, Color color) => BarDataset(
   label: label,
-  data: data,
+  data: .values(data),
   backgroundColor: .constant(.solid(color)),
   hoverBackgroundColor: .constant(.solid(color)),
   borderRadius: 4,

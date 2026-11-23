@@ -70,7 +70,7 @@ DocPageContent apexChartsMigrationPage() => migrationPage(
     (Text('xaxis.categories'), DocText('`labels`')),
     (
       Text("xaxis: {type: 'datetime'}, data: [[ms, y]]"),
-      DocText('`TimeAxis`, and `points: [DataPoint.time(date, y)]`'),
+      DocText('`TimeAxis`, and `data: .points([DataPoint.time(date, y)])`'),
     ),
     (Text('xaxis.min, xaxis.max'), DocText('`min` and `max` of the axis')),
     (Text('colors'), DocText('`borderColor` and `backgroundColor`')),

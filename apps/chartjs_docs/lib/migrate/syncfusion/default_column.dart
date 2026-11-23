@@ -19,7 +19,7 @@ final ChartConfig _config = ChartConfig(
   labels: _countries,
   datasets: const [
     BarDataset(
-      data: _growth,
+      data: .values(_growth),
       backgroundColor: .constant(.solid(Sf.blue)),
       hoverBackgroundColor: .constant(.solid(Sf.blue)),
       // The default `width: 0.7` of a ColumnSeries.

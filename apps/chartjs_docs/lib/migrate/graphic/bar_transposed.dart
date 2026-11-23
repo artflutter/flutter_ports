@@ -50,7 +50,7 @@ final ChartConfig _config = ChartConfig(
   labels: [for (final row in basicData) row.genre],
   datasets: [
     BarDataset(
-      data: [for (final row in basicData) row.sold],
+      data: .values([for (final row in basicData) row.sold]),
       backgroundColor: const .resolver(_fill),
       hoverBackgroundColor: const .resolver(_selectedFill),
       barThickness: const BarThickness.pixels(barSize),

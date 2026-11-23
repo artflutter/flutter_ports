@@ -82,7 +82,7 @@ void main() {
     ) async {
       final chart = _acquire(
         const ChartConfig(
-          datasets: [LineDataset(data: [])],
+          datasets: [LineDataset(data: .values([]))],
           scales: [
             LinearAxis(
               .x,
@@ -119,7 +119,7 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            datasets: [LineDataset(data: [])],
+            datasets: [LineDataset(data: .values([]))],
             scales: [
               LogarithmicAxis(
                 .x,

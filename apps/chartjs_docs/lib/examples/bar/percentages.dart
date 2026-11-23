@@ -22,7 +22,7 @@ ChartConfig percentages({required double category, required double bar}) =>
         ])
           BarDataset(
             label: label,
-            data: data,
+            data: .values(data),
             backgroundColor: .constant(.solid(color)),
             categoryPercentage: category,
             barPercentage: bar,

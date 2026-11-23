@@ -288,8 +288,8 @@ ChartConfig _config([ChartLegend? legend, Map<String, Object?>? extra]) =>
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
-        LineDataset(label: 'one', data: [1, 2]),
-        LineDataset(label: 'two', data: [2, 1]),
+        LineDataset(label: 'one', data: .values([1, 2])),
+        LineDataset(label: 'two', data: .values([2, 1])),
       ],
       legend: legend,
       extra: extra,

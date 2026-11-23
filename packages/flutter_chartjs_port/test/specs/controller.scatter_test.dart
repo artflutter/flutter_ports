@@ -55,11 +55,11 @@ void main() {
             ChartConfig(
               datasets: [
                 ScatterDataset(
-                  points: [DataPoint(10, 15), DataPoint(12, 10)],
+                  data: .points([DataPoint(10, 15), DataPoint(12, 10)]),
                   label: 'dataset1',
                 ),
                 ScatterDataset(
-                  points: [DataPoint(20, 10), DataPoint(4, 8)],
+                  data: .points([DataPoint(20, 10), DataPoint(4, 8)]),
                   label: 'dataset2',
                 ),
               ],
@@ -79,11 +79,11 @@ void main() {
           ChartConfig(
             datasets: [
               ScatterDataset(
-                points: [DataPoint(10, 15), DataPoint(12, 10)],
+                data: .points([DataPoint(10, 15), DataPoint(12, 10)]),
                 label: 'dataset1',
               ),
               ScatterDataset(
-                points: [DataPoint(20, 10), DataPoint(4, 8)],
+                data: .points([DataPoint(20, 10), DataPoint(4, 8)]),
                 label: 'dataset2',
               ),
             ],
@@ -104,11 +104,11 @@ void main() {
               datasets: [
                 ScatterDataset(
                   showLine: true,
-                  points: [DataPoint(10, 15), DataPoint(12, 10)],
+                  data: .points([DataPoint(10, 15), DataPoint(12, 10)]),
                   label: 'dataset1',
                 ),
                 ScatterDataset(
-                  points: [DataPoint(20, 10), DataPoint(4, 8)],
+                  data: .points([DataPoint(20, 10), DataPoint(4, 8)]),
                   label: 'dataset2',
                 ),
               ],
@@ -129,11 +129,11 @@ void main() {
             ChartConfig(
               datasets: [
                 ScatterDataset(
-                  points: [DataPoint(10, 15), DataPoint(12, 10)],
+                  data: .points([DataPoint(10, 15), DataPoint(12, 10)]),
                   label: 'dataset1',
                 ),
                 ScatterDataset(
-                  points: [DataPoint(20, 10), DataPoint(4, 8)],
+                  data: .points([DataPoint(20, 10), DataPoint(4, 8)]),
                   label: 'dataset2',
                 ),
               ],
@@ -156,11 +156,11 @@ void main() {
           ChartConfig(
             datasets: [
               ScatterDataset(
-                points: [DataPoint(10, 15), DataPoint(12, 10)],
+                data: .points([DataPoint(10, 15), DataPoint(12, 10)]),
                 label: 'Dataset 1',
               ),
               ScatterDataset(
-                points: [DataPoint(20, 10), DataPoint(4, 8)],
+                data: .points([DataPoint(20, 10), DataPoint(4, 8)]),
                 label: 'Dataset 2',
               ),
             ],

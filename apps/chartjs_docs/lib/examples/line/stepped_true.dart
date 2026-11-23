@@ -26,7 +26,7 @@ const List<num?> stepValues = [10, 40, 25, 60, 45, 80, 70];
 // #docregion stepped-true
 const stepTrue = LineDataset(
   label: 'stepped: true',
-  data: stepValues,
+  data: .values(stepValues),
   borderColor: .constant(.solid(blue)),
   extra: {'stepped': true},
 );

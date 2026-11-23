@@ -12,7 +12,7 @@ const propertyAnimation = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Hover a point',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
       pointRadius: .constant(5),
       pointHoverRadius: .constant(12),

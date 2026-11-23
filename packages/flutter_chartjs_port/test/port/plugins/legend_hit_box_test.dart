@@ -173,8 +173,8 @@ void main() {
     final config = ChartConfig(
       labels: const ['x'],
       datasets: const [
-        BarDataset(label: 'one', data: [1]),
-        BarDataset(label: 'two', data: [2]),
+        BarDataset(label: 'one', data: .values([1])),
+        BarDataset(label: 'two', data: .values([2])),
       ],
       animation: ChartAnimation.none,
       legend: ChartLegend(onClick: (event, item, legend) => clicked = item),

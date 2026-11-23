@@ -26,7 +26,7 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 // #docregion bar-border-radius-object
 const cornerBars = BarDataset(
   label: 'A radius for each corner',
-  data: mixedSigns,
+  data: .values(mixedSigns),
   backgroundColor: .constant(.solid(teal)),
   extra: {
     'borderRadius': {'topLeft': 16, 'topRight': 2},

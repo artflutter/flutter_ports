@@ -263,31 +263,25 @@ OptionScope _datasetScopeOf(ChartKind kind) => switch (kind) {
 
 /// A dataset of a bar chart: the bar controller (`docs/charts/bar.md`).
 ///
-/// Give the values in [data], one for each label of the chart, or the
-/// items in [points]. A bar chart with `indexAxis: const YAxis()` has
+/// Give the data in [data]: one value for each label of the chart with
+/// [DatasetData.values], or items with their own x with
+/// [DatasetData.points]. A bar chart with `indexAxis: const YAxis()` has
 /// horizontal bars.
 final class const BarDataset({
   super.key,
   super.label,
 
   /// {@template flutter_chartjs_port.typed.data}
-  /// The values of the dataset, one for each label of the chart: `data`.
-  /// A `null` value is a gap.
-  ///
-  /// The chart reads this List: it goes to the chart with no copy. For new
-  /// values, give a new List in a new config. Or change this List and call
-  /// `chart.update()`. Give [data] or [points], not both.
-  /// {@endtemplate}
-  final List<num?>? data,
-
-  /// {@template flutter_chartjs_port.typed.points}
-  /// The data items in the object form `{x, y}`: `data` with objects
+  /// The data of the dataset: `data`. [DatasetData.values] gives one value
+  /// for each label of the chart; a `null` value is a gap.
+  /// [DatasetData.points] gives the items in the object form `{x, y}`
   /// (`docs/general/data-structures.md`).
   ///
-  /// The chart reads this List: it goes to the chart with no copy. Give
-  /// [data] or [points], not both.
+  /// The chart reads the List: it goes to the chart with no copy. For new
+  /// data, give a new List in a new config. Or change the List and call
+  /// `chart.update()`.
   /// {@endtemplate}
-  final List<DataPoint>? points,
+  final DatasetData? data,
   super.hidden,
   super.order,
   super.clip,
@@ -365,15 +359,14 @@ final class const BarDataset({
   super.extra,
 }) extends Dataset {
   /// A bar dataset.
-  this : assert(data == null || points == null, 'Give data or points.');
+  this;
 
   /// A copy of this dataset with the given parameters. A null parameter
   /// keeps its value.
   BarDataset copyWith({
     Key? key,
     String? label,
-    List<num?>? data,
-    List<DataPoint>? points,
+    DatasetData? data,
     bool? hidden,
     int? order,
     ChartClip? clip,
@@ -402,7 +395,6 @@ final class const BarDataset({
     key: key ?? this.key,
     label: label ?? this.label,
     data: data ?? this.data,
-    points: points ?? this.points,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
     clip: clip ?? this.clip,
@@ -433,7 +425,11 @@ final class const BarDataset({
   ChartKind get kind => ChartKind.bar;
 
   @override
-  List<Object?>? get chartData => data ?? points;
+  List<Object?>? get chartData => switch (data) {
+    DatasetValues(:final values) => values,
+    DatasetPoints(:final points) => points,
+    null => null,
+  };
 
   @override
   void lowerOwn(OptionScope scope) {
@@ -456,7 +452,6 @@ final class const BarDataset({
     ('key', key),
     ('label', label),
     ('data', data),
-    ('points', points),
     ...styleProps,
     ('xAxis', xAxis),
     ('yAxis', yAxis),
@@ -559,18 +554,16 @@ base mixin _LineStyle on Dataset {
 
 /// A dataset of a line chart: the line controller (`docs/charts/line.md`).
 ///
-/// Give the values in [data], one for each label of the chart, or the
-/// items in [points]. The line style parameters set the line, the fill and
+/// Give the data in [data]: one value for each label of the chart with
+/// [DatasetData.values], or items with their own x with
+/// [DatasetData.points]. The line style parameters set the line, the fill and
 /// the points.
 final class const LineDataset({
   super.key,
   super.label,
 
   /// {@macro flutter_chartjs_port.typed.data}
-  final List<num?>? data,
-
-  /// {@macro flutter_chartjs_port.typed.points}
-  final List<DataPoint>? points,
+  final DatasetData? data,
   super.hidden,
   super.order,
   super.clip,
@@ -708,15 +701,14 @@ final class const LineDataset({
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A line dataset.
-  this : assert(data == null || points == null, 'Give data or points.');
+  this;
 
   /// A copy of this dataset with the given parameters. A null parameter
   /// keeps its value.
   LineDataset copyWith({
     Key? key,
     String? label,
-    List<num?>? data,
-    List<DataPoint>? points,
+    DatasetData? data,
     bool? hidden,
     int? order,
     ChartClip? clip,
@@ -755,7 +747,6 @@ final class const LineDataset({
     key: key ?? this.key,
     label: label ?? this.label,
     data: data ?? this.data,
-    points: points ?? this.points,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
     clip: clip ?? this.clip,
@@ -798,7 +789,11 @@ final class const LineDataset({
   ChartKind get kind => ChartKind.line;
 
   @override
-  List<Object?>? get chartData => data ?? points;
+  List<Object?>? get chartData => switch (data) {
+    DatasetValues(:final values) => values,
+    DatasetPoints(:final points) => points,
+    null => null,
+  };
 
   @override
   void lowerOwn(OptionScope scope) {
@@ -814,7 +809,6 @@ final class const LineDataset({
     ('key', key),
     ('label', label),
     ('data', data),
-    ('points', points),
     ...styleProps,
     ('xAxis', xAxis),
     ('yAxis', yAxis),
@@ -828,17 +822,15 @@ final class const LineDataset({
 /// A dataset of a scatter chart: the scatter controller
 /// (`docs/charts/scatter.md`).
 ///
-/// Give the items in [points], with a number `x`. A scatter chart draws the
+/// Give the items in [data] with [DatasetData.points], each with a number
+/// `x`. A scatter chart draws the
 /// points with no line. Set [showLine] for a line.
 final class const ScatterDataset({
   super.key,
   super.label,
 
   /// {@macro flutter_chartjs_port.typed.data}
-  final List<num?>? data,
-
-  /// {@macro flutter_chartjs_port.typed.points}
-  final List<DataPoint>? points,
+  final DatasetData? data,
   super.hidden,
   super.order,
   super.clip,
@@ -918,15 +910,14 @@ final class const ScatterDataset({
   super.extra,
 }) extends Dataset with _LineStyle {
   /// A scatter dataset.
-  this : assert(data == null || points == null, 'Give data or points.');
+  this;
 
   /// A copy of this dataset with the given parameters. A null parameter
   /// keeps its value.
   ScatterDataset copyWith({
     Key? key,
     String? label,
-    List<num?>? data,
-    List<DataPoint>? points,
+    DatasetData? data,
     bool? hidden,
     int? order,
     ChartClip? clip,
@@ -964,7 +955,6 @@ final class const ScatterDataset({
     key: key ?? this.key,
     label: label ?? this.label,
     data: data ?? this.data,
-    points: points ?? this.points,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
     clip: clip ?? this.clip,
@@ -1006,7 +996,11 @@ final class const ScatterDataset({
   ChartKind get kind => ChartKind.scatter;
 
   @override
-  List<Object?>? get chartData => data ?? points;
+  List<Object?>? get chartData => switch (data) {
+    DatasetValues(:final values) => values,
+    DatasetPoints(:final points) => points,
+    null => null,
+  };
 
   @override
   void lowerOwn(OptionScope scope) {
@@ -1021,7 +1015,6 @@ final class const ScatterDataset({
     ('key', key),
     ('label', label),
     ('data', data),
-    ('points', points),
     ...styleProps,
     ('xAxis', xAxis),
     ('yAxis', yAxis),
@@ -1034,7 +1027,7 @@ final class const ScatterDataset({
 /// A dataset of a bubble chart: the bubble controller
 /// (`docs/charts/bubble.md`).
 ///
-/// Give the items in [points], each a [DataPoint.bubble] with its radius.
+/// Give the items in [data], each a [DataPoint.bubble] with its radius.
 final class const BubbleDataset({
   super.key,
   super.label,
@@ -1043,7 +1036,7 @@ final class const BubbleDataset({
   /// item is a [DataPoint.bubble].
   ///
   /// The chart reads this List: it goes to the chart with no copy.
-  final List<DataPoint>? points,
+  final List<DataPoint>? data,
   super.hidden,
   super.order,
   super.clip,
@@ -1082,7 +1075,7 @@ final class const BubbleDataset({
   BubbleDataset copyWith({
     Key? key,
     String? label,
-    List<DataPoint>? points,
+    List<DataPoint>? data,
     bool? hidden,
     int? order,
     ChartClip? clip,
@@ -1103,7 +1096,7 @@ final class const BubbleDataset({
   }) => BubbleDataset(
     key: key ?? this.key,
     label: label ?? this.label,
-    points: points ?? this.points,
+    data: data ?? this.data,
     hidden: hidden ?? this.hidden,
     order: order ?? this.order,
     clip: clip ?? this.clip,
@@ -1127,7 +1120,7 @@ final class const BubbleDataset({
   ChartKind get kind => ChartKind.bubble;
 
   @override
-  List<Object?>? get chartData => points;
+  List<Object?>? get chartData => data;
 
   @override
   void lowerOwn(OptionScope scope) {
@@ -1142,7 +1135,7 @@ final class const BubbleDataset({
   List<TypedProperty> get props => [
     ('key', key),
     ('label', label),
-    ('points', points),
+    ('data', data),
     ...styleProps,
     ('xAxis', xAxis),
     ('yAxis', yAxis),

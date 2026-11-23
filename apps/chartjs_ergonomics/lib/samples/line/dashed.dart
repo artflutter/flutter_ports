@@ -11,7 +11,7 @@ const dashed = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Forecast',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(blue)),
       borderWidth: 3,
       borderDash: [8, 6],

@@ -141,7 +141,10 @@ ChartConfig _config({
   plugins: plugins,
   labels: const ['a', 'b', 'c'],
   datasets: [
-    LineDataset(label: 'values', data: List<num?>.of(const [1.0, 2.0, 3.0])),
+    LineDataset(
+      label: 'values',
+      data: .values(List<num?>.of(const [1.0, 2.0, 3.0])),
+    ),
   ],
   onHover: onHover,
   pluginOptions: [
@@ -287,7 +290,7 @@ void main() {
         final config = _config(plugins: [plugin]);
         final chart = _chart(config);
         final dataset = config.datasets.single as LineDataset;
-        dataset.data![0] = 2.5;
+        (dataset.data! as DatasetValues).values[0] = 2.5;
 
         _calls.clear();
         expect(chart.updateData(), approved);

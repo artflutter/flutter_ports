@@ -17,7 +17,7 @@
 /// ```dart
 /// ChartView(
 ///   config: ChartConfig(
-///     datasets: [LineDataset(data: values)],
+///     datasets: [LineDataset(data: .values(values))],
 ///     pluginOptions: const [
 ///       ZoomPluginOptions(
 ///         pan: PanOptions(enabled: true, mode: Mode.x),

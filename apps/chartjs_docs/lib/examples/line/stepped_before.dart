@@ -26,7 +26,7 @@ const List<num?> stepValues = [10, 40, 25, 60, 45, 80, 70];
 // #docregion stepped-before
 const stepBefore = LineDataset(
   label: 'stepped: .before',
-  data: stepValues,
+  data: .values(stepValues),
   borderColor: .constant(.solid(blue)),
   stepped: SteppedLine.before,
 );

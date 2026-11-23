@@ -19,7 +19,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   datasets: [
     LineDataset(
       label: 'Visitors',
-      points: _visitors,
+      data: .points(_visitors),
       borderColor: const .constant(.solid(Apex.purple)),
       backgroundColor: const .constant(.solid(Apex.purple)),
       borderWidth: 3,

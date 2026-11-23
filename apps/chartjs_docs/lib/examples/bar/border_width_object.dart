@@ -29,7 +29,7 @@ const Color tealFill = Color.fromRGBO(75, 192, 192, 0.25);
 // #docregion bar-border-width-object
 const sideBorders = BarDataset(
   label: 'A width for each side',
-  data: values,
+  data: .values(values),
   backgroundColor: .constant(.solid(tealFill)),
   borderColor: .constant(.solid(teal)),
   // No bottom border: an omitted side has no border.

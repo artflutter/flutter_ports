@@ -367,7 +367,7 @@ Chart _barChart({
         for (var k = 0; k < datasets; k++)
           BarDataset(
             label: 'series $k',
-            data: values == null ? _values(count, k) : null,
+            data: values == null ? .values(_values(count, k)) : null,
             extra: values == null ? null : {'data': values(k)},
           ),
       ],

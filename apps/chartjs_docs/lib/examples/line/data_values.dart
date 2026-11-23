@@ -15,7 +15,7 @@ const valuesLine = ChartConfig(
   datasets: [
     LineDataset(
       label: 'One value for each label',
-      data: [20, 10, 30, 25],
+      data: .values([20, 10, 30, 25]),
       borderColor: .constant(.solid(teal)),
     ),
   ],

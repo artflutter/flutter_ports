@@ -386,11 +386,11 @@ void main() {
   test('equivalent values preserve Dataset and ChartConfig equality', () {
     final data = <num?>[1, 2];
     final a = BarDataset(
-      data: data,
+      data: .values(data),
       backgroundColor: ChartValue.indexed(List<ChartPaint>.of([_red, _blue])),
     );
     final b = BarDataset(
-      data: data,
+      data: .values(data),
       backgroundColor: ChartValue.indexed(List<ChartPaint>.of([_red, _blue])),
     );
     _equal(a, b);

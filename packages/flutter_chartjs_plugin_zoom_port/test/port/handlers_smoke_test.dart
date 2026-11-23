@@ -15,7 +15,7 @@ Chart _acquireChart(ZoomPluginOptions options) {
   final chart = _acquire(
     ChartConfig(
       datasets: [
-        ScatterDataset(points: [DataPoint(0, 0), DataPoint(100, 100)]),
+        ScatterDataset(data: .points([DataPoint(0, 0), DataPoint(100, 100)])),
       ],
       legend: const ChartLegend(display: false),
       scales: const [

@@ -52,7 +52,7 @@ void main() {
     const config = ChartConfig(
       labels: ['a', 'b', 'c'],
       datasets: [
-        LineDataset(data: [1, 3, 2]),
+        LineDataset(data: .values([1, 3, 2])),
       ],
       animation: ChartAnimation.none,
     );

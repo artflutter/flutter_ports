@@ -11,12 +11,12 @@ const fillBetween = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Low',
-      data: [20, 25, 30, 28, 35, 32, 30],
+      data: .values([20, 25, 30, 28, 35, 32, 30]),
       borderColor: .constant(.solid(blue)),
     ),
     LineDataset(
       label: 'High',
-      data: [50, 62, 58, 70, 75, 66, 72],
+      data: .values([50, 62, 58, 70, 75, 66, 72]),
       borderColor: .constant(.solid(blue)),
       backgroundColor: .constant(.solid(blueFill)),
       fill: .toPrevious,

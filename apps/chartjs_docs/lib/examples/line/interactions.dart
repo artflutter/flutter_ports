@@ -32,7 +32,7 @@ const Color redFill = Color.fromRGBO(255, 99, 132, 0.25);
 // #docregion interactions
 const hoverLine = LineDataset(
   label: 'Move the pointer over a point',
-  data: values,
+  data: .values(values),
   borderColor: .constant(.solid(teal)),
   pointRadius: .constant(5),
   pointHoverRadius: .constant(11),

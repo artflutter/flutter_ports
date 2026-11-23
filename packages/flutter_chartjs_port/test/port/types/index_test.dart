@@ -37,7 +37,7 @@ Chart _chart(ChartKind type, List<String> labels, List<num?> data) =>
           labels: labels,
           datasets: [
             switch (type) {
-              ChartKind.bar => BarDataset(data: data),
+              ChartKind.bar => BarDataset(data: .values(data)),
               ChartKind.polarArea => PolarAreaDataset(data: data),
               _ => throw ArgumentError.value(type, 'type'),
             },

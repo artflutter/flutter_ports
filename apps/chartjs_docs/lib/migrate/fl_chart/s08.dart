@@ -56,7 +56,7 @@ final ChartConfig _config = fills(
   ChartConfig(
     datasets: [
       LineDataset(
-        points: [
+        data: .points([
           DataPoint(0, 1),
           DataPoint(2, 1),
           DataPoint(4.9, 5),
@@ -67,7 +67,7 @@ final ChartConfig _config = fills(
           DataPoint(8, 1),
           DataPoint(10, 2),
           DataPoint(11, 2.5),
-        ],
+        ]),
         tension: 0.35,
         borderWidth: 4,
         borderDash: const [10, 6],

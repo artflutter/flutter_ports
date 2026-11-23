@@ -35,7 +35,7 @@ void main() {
     ChartConfig config() => ChartConfig(
       labels: [...labels],
       datasets: const [
-        BarDataset(data: [1, 2, 3]),
+        BarDataset(data: .values([1, 2, 3])),
       ],
       disabledPlugins: const [
         PluginOff<LegendPlugin>(),

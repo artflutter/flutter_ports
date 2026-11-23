@@ -60,8 +60,8 @@ void main() {
     test('a new data List', () {
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
-          _config([BarDataset(data: _data())]),
+          _config([BarDataset(data: .values(_data()))]),
+          _config([BarDataset(data: .values(_data()))]),
         ),
         isTrue,
       );
@@ -71,8 +71,8 @@ void main() {
       List<DataPoint> points() => <DataPoint>[DataPoint(1, 2)];
       expect(
         _report(
-          _config([ScatterDataset(points: points())]),
-          _config([ScatterDataset(points: points())]),
+          _config([ScatterDataset(data: .points(points()))]),
+          _config([ScatterDataset(data: .points(points()))]),
         ),
         isTrue,
       );
@@ -83,12 +83,12 @@ void main() {
       expect(
         _report(
           _config([
-            BarDataset(key: _a, data: _data()),
-            BarDataset(key: _b, data: same),
+            BarDataset(key: _a, data: .values(_data())),
+            BarDataset(key: _b, data: .values(same)),
           ]),
           _config([
-            BarDataset(key: _a, data: _data()),
-            BarDataset(key: _b, data: same),
+            BarDataset(key: _a, data: .values(_data())),
+            BarDataset(key: _b, data: .values(same)),
           ]),
         ),
         isTrue,
@@ -97,7 +97,7 @@ void main() {
 
     test('an equal indexed color in a new ChartValue', () {
       Dataset dataset() => BarDataset(
-        data: _data(),
+        data: .values(_data()),
         backgroundColor: ChartValue.indexed(
           <Color>[..._pair].map(ChartPaint.solid).toList(),
         ),
@@ -107,15 +107,15 @@ void main() {
 
     test('an equal borderDash in a new List', () {
       Dataset dataset() =>
-          LineDataset(data: _data(), borderDash: <double>[..._dash]);
+          LineDataset(data: .values(_data()), borderDash: <double>[..._dash]);
       expect(_report(_config([dataset()]), _config([dataset()])), isTrue);
     });
 
     test('a data List of another length: the chart checks that', () {
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
-          _config([BarDataset(data: _data(3))]),
+          _config([BarDataset(data: .values(_data()))]),
+          _config([BarDataset(data: .values(_data(3)))]),
         ),
         isTrue,
       );
@@ -123,13 +123,13 @@ void main() {
   });
 
   group('no report of data only', () {
-    final dataset = BarDataset(key: _a, data: _data());
+    final dataset = BarDataset(key: _a, data: .values(_data()));
 
     test('an equal config', () {
       final first = _config([dataset]);
       final lowering = ChartConfigLowering(first)
         ..lower()
-        ..apply(_config([BarDataset(key: _a, data: _data())]));
+        ..apply(_config([BarDataset(key: _a, data: .values(_data()))]));
       expect(lowering.lastApplyDataOnly, isTrue);
       final last = lowering.config;
       lowering.apply(last.copyWith(datasets: <Dataset>[...last.datasets]));
@@ -140,7 +140,7 @@ void main() {
       final first = _config([dataset]);
       final lowering = ChartConfigLowering(first)
         ..lower()
-        ..apply(_config([BarDataset(key: _a, data: _data())]));
+        ..apply(_config([BarDataset(key: _a, data: .values(_data()))]));
       expect(lowering.lastApplyDataOnly, isTrue);
       lowering.lower();
       expect(lowering.lastApplyDataOnly, isFalse);
@@ -149,8 +149,8 @@ void main() {
     test('the type', () {
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
-          _config([LineDataset(data: _data())]),
+          _config([BarDataset(data: .values(_data()))]),
+          _config([LineDataset(data: .values(_data()))]),
         ),
         isFalse,
       );
@@ -159,8 +159,11 @@ void main() {
     test('a new labels List with the same items', () {
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
-          _config([BarDataset(data: _data())], labels: <Object>[..._labels]),
+          _config([BarDataset(data: .values(_data()))]),
+          _config(
+            [BarDataset(data: .values(_data()))],
+            labels: <Object>[..._labels],
+          ),
         ),
         isFalse,
       );
@@ -169,18 +172,18 @@ void main() {
     test('an option field', () {
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
+          _config([BarDataset(data: .values(_data()))]),
           _config([
-            BarDataset(data: _data()),
+            BarDataset(data: .values(_data())),
           ], title: const ChartTitle(text: ['t'])),
         ),
         isFalse,
       );
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
+          _config([BarDataset(data: .values(_data()))]),
           _config([
-            BarDataset(data: _data()),
+            BarDataset(data: .values(_data())),
           ], padding: const EdgeInsets.all(2)),
         ),
         isFalse,
@@ -190,9 +193,9 @@ void main() {
     test('an entry of extra of the config', () {
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
+          _config([BarDataset(data: .values(_data()))]),
           _config(
-            [BarDataset(data: _data())],
+            [BarDataset(data: .values(_data()))],
             extra: const {'locale': Locale('de', 'DE')},
           ),
         ),
@@ -204,11 +207,11 @@ void main() {
       expect(
         _report(
           _config(
-            [BarDataset(data: _data())],
+            [BarDataset(data: .values(_data()))],
             plugins: [Plugin<Object?>(id: 'a')],
           ),
           _config(
-            [BarDataset(data: _data())],
+            [BarDataset(data: .values(_data()))],
             plugins: [Plugin<Object?>(id: 'b')],
           ),
         ),
@@ -219,8 +222,8 @@ void main() {
     test('a dataset key', () {
       expect(
         _report(
-          _config([BarDataset(key: _a, data: _data())]),
-          _config([BarDataset(key: _b, data: _data())]),
+          _config([BarDataset(key: _a, data: .values(_data()))]),
+          _config([BarDataset(key: _b, data: .values(_data()))]),
         ),
         isFalse,
       );
@@ -230,12 +233,12 @@ void main() {
       expect(
         _report(
           _config([
-            BarDataset(key: _a, data: _data()),
-            BarDataset(key: _b, data: _data()),
+            BarDataset(key: _a, data: .values(_data())),
+            BarDataset(key: _b, data: .values(_data())),
           ]),
           _config([
-            BarDataset(key: _b, data: _data()),
-            BarDataset(key: _a, data: _data()),
+            BarDataset(key: _b, data: .values(_data())),
+            BarDataset(key: _a, data: .values(_data())),
           ]),
         ),
         isFalse,
@@ -243,10 +246,10 @@ void main() {
     });
 
     test('a new and a removed dataset', () {
-      final one = _config([BarDataset(key: _a, data: _data())]);
+      final one = _config([BarDataset(key: _a, data: .values(_data()))]);
       final two = _config([
-        BarDataset(key: _a, data: _data()),
-        BarDataset(key: _b, data: _data()),
+        BarDataset(key: _a, data: .values(_data())),
+        BarDataset(key: _b, data: .values(_data())),
       ]);
       expect(_report(one, two), isFalse);
       expect(_report(two, one), isFalse);
@@ -255,8 +258,8 @@ void main() {
     test('another dataset class at the index', () {
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
-          _config([LineDataset(data: _data())]),
+          _config([BarDataset(data: .values(_data()))]),
+          _config([LineDataset(data: .values(_data()))]),
         ),
         isFalse,
       );
@@ -264,32 +267,38 @@ void main() {
 
     for (final (name, changed)
         in <(String, Dataset Function(List<double> data))>[
-          ('a label', (data) => BarDataset(data: data, label: 'l')),
-          ('hidden', (data) => BarDataset(data: data, hidden: true)),
-          ('an order', (data) => BarDataset(data: data, order: 1)),
-          ('a stack', (data) => BarDataset(data: data, stack: 's')),
+          ('a label', (data) => BarDataset(data: .values(data), label: 'l')),
+          ('hidden', (data) => BarDataset(data: .values(data), hidden: true)),
+          ('an order', (data) => BarDataset(data: .values(data), order: 1)),
+          ('a stack', (data) => BarDataset(data: .values(data), stack: 's')),
           (
             'an axis',
-            (data) => BarDataset(data: data, yAxis: const LinearAxis(.y)),
+            (data) =>
+                BarDataset(data: .values(data), yAxis: const LinearAxis(.y)),
           ),
-          ('a width', (data) => BarDataset(data: data, borderWidth: 2)),
+          (
+            'a width',
+            (data) => BarDataset(data: .values(data), borderWidth: 2),
+          ),
           (
             'a constant color',
             (data) => BarDataset(
-              data: data,
+              data: .values(data),
               backgroundColor: const ChartValue.constant(.solid(_red)),
             ),
           ),
           (
             'an extra entry',
-            (data) =>
-                BarDataset(data: data, extra: const {'clip': ChartClip.all(5)}),
+            (data) => BarDataset(
+              data: .values(data),
+              extra: const {'clip': ChartClip.all(5)},
+            ),
           ),
         ]) {
       test('a dataset field that comes: $name', () {
         expect(
           _report(
-            _config([BarDataset(data: _data())]),
+            _config([BarDataset(data: .values(_data()))]),
             _config([changed(_data())]),
           ),
           isFalse,
@@ -300,7 +309,7 @@ void main() {
         expect(
           _report(
             _config([changed(_data())]),
-            _config([BarDataset(data: _data())]),
+            _config([BarDataset(data: .values(_data()))]),
           ),
           isFalse,
         );
@@ -309,7 +318,7 @@ void main() {
 
     test('a replaced indexed color', () {
       Dataset colored(List<Color> colors) => BarDataset(
-        data: _data(),
+        data: .values(_data()),
         backgroundColor: ChartValue.indexed(
           colors.map(ChartPaint.solid).toList(),
         ),
@@ -343,13 +352,13 @@ void main() {
         _report(
           _config([
             BarDataset(
-              data: _data(),
+              data: .values(_data()),
               backgroundColor: const ChartValue.constant(.solid(_red)),
             ),
           ]),
           _config([
             BarDataset(
-              data: _data(),
+              data: .values(_data()),
               backgroundColor: const ChartValue.indexed([
                 ChartPaint.solid(_red),
               ]),
@@ -364,7 +373,7 @@ void main() {
       ChartPaint resolve(ScriptableContext context) =>
           const ChartPaint.solid(_red);
       Dataset colored() => BarDataset(
-        data: _data(),
+        data: .values(_data()),
         backgroundColor: ChartValue.resolver(resolve),
       );
       expect(_report(_config([colored()]), _config([colored()])), isFalse);
@@ -372,7 +381,7 @@ void main() {
 
     test('a new extra List with the same items: it goes by reference', () {
       Dataset dataset(List<Object?> list) => BarDataset(
-        data: _data(),
+        data: .values(_data()),
         extra: <String, Object?>{'backgroundColor': list},
       );
       expect(
@@ -391,7 +400,7 @@ void main() {
     test('the same extra List stays data only', () {
       final list = <Object?>[_red];
       Dataset dataset() => BarDataset(
-        data: _data(),
+        data: .values(_data()),
         extra: <String, Object?>{'backgroundColor': list},
       );
       expect(_report(_config([dataset()]), _config([dataset()])), isTrue);
@@ -399,7 +408,7 @@ void main() {
 
     test('an equal extra Map of a dataset: a new scope in each lowering', () {
       Dataset dataset() => BarDataset(
-        data: _data(),
+        data: .values(_data()),
         extra: const {
           'datalabels': {'a': 1},
         },
@@ -410,7 +419,7 @@ void main() {
     test('a data List that goes', () {
       expect(
         _report(
-          _config([BarDataset(data: _data())]),
+          _config([BarDataset(data: .values(_data()))]),
           _config([const BarDataset()]),
         ),
         isFalse,
@@ -421,7 +430,7 @@ void main() {
   group('the patch of an equal indexed color', () {
     test('still writes the new List and the new data', () {
       Dataset dataset() => BarDataset(
-        data: _data(),
+        data: .values(_data()),
         backgroundColor: ChartValue.indexed(
           <Color>[..._pair].map(ChartPaint.solid).toList(),
         ),
@@ -440,7 +449,10 @@ void main() {
         const ChartPaint.solid(_red),
         const ChartPaint.solid(_green),
       ]);
-      expect(scope['data'], same((next as BarDataset).data));
+      expect(
+        scope['data'],
+        same(((next as BarDataset).data! as DatasetValues).values),
+      );
       expect(written, isNot(same(firstColors)));
     });
   });
@@ -450,14 +462,14 @@ void main() {
         (ChartConfigLowering(config)..lower()).animationOff;
 
     test('ChartAnimation.none', () {
-      expect(off(_config([BarDataset(data: _data())])), isTrue);
+      expect(off(_config([BarDataset(data: .values(_data()))])), isTrue);
     });
 
     test('a copy of ChartAnimation.none', () {
       expect(
         off(
           _config(
-            [BarDataset(data: _data())],
+            [BarDataset(data: .values(_data()))],
             animation: ChartAnimation.none.copyWith(
               duration: const Duration(seconds: 1),
             ),
@@ -469,7 +481,7 @@ void main() {
 
     test('no animation parameter', () {
       expect(
-        off(_config([BarDataset(data: _data())], animation: null)),
+        off(_config([BarDataset(data: .values(_data()))], animation: null)),
         isFalse,
       );
     });
@@ -478,7 +490,7 @@ void main() {
       expect(
         off(
           _config([
-            BarDataset(data: _data()),
+            BarDataset(data: .values(_data())),
           ], animation: const ChartAnimation(duration: Duration(seconds: 1))),
         ),
         isFalse,
@@ -489,7 +501,7 @@ void main() {
       expect(
         off(
           _config(
-            [BarDataset(data: _data())],
+            [BarDataset(data: .values(_data()))],
             animation: null,
             extra: const {'animation': false},
           ),
@@ -502,7 +514,7 @@ void main() {
       expect(
         off(
           _config(
-            [BarDataset(data: _data())],
+            [BarDataset(data: .values(_data()))],
             extra: const {
               'animation': {'duration': 500},
             },
@@ -514,7 +526,7 @@ void main() {
 
     test('an imperative write into the live options', () {
       final lowering = ChartConfigLowering(
-        _config([BarDataset(data: _data())]),
+        _config([BarDataset(data: .values(_data()))]),
       );
       final root = lowering.lower();
       expect(lowering.animationOff, isTrue);

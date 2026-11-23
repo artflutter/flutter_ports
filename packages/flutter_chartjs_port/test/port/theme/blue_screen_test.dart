@@ -185,10 +185,14 @@ Chart _chart(
   Dataset dataset(int d) {
     final label = 'dataset $d';
     return switch (type) {
-      'bar' => BarDataset(label: label, data: values(d), borderWidth: 2),
+      'bar' => BarDataset(
+        label: label,
+        data: .values(values(d)),
+        borderWidth: 2,
+      ),
       'bubble' => BubbleDataset(
         label: label,
-        points: [
+        data: [
           for (final (x, y) in [(1, 2 + d), (5, 8 - d), (9, 4 + d)])
             DataPoint.bubble(x, y, 6),
         ],
@@ -198,7 +202,7 @@ Chart _chart(
         data: values(d),
         borderWidth: 2,
       ),
-      'line' => LineDataset(label: label, data: values(d)),
+      'line' => LineDataset(label: label, data: .values(values(d))),
       'pie' => PieDataset(label: label, data: values(d), borderWidth: 2),
       'polarArea' => PolarAreaDataset(
         label: label,
@@ -208,10 +212,10 @@ Chart _chart(
       'radar' => RadarDataset(label: label, data: values(d)),
       'scatter' => ScatterDataset(
         label: label,
-        points: [
+        data: .points([
           for (final (x, y) in [(1, 2 + d), (5, 8 - d), (9, 4 + d)])
             DataPoint(x, y),
-        ],
+        ]),
       ),
       _ => throw ArgumentError.value(type, 'type'),
     };

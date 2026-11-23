@@ -251,7 +251,7 @@ Chart _scatter(Object? theme) {
     ChartConfig(
       datasets: [
         ScatterDataset(
-          points: [DataPoint(0, 0), DataPoint(5, 5), DataPoint(10, 10)],
+          data: .points([DataPoint(0, 0), DataPoint(5, 5), DataPoint(10, 10)]),
         ),
       ],
     ),

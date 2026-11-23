@@ -781,7 +781,7 @@ class _LiveChartState()
       datasets: [
         LineDataset(
           label: 'value',
-          points: _chartPoints(),
+          data: .points(_chartPoints()),
           borderColor: const .constant(.solid(_lineColor)),
           backgroundColor: const .constant(.solid(Color(0x263ECF8E))),
           fill: FillTarget.toStart,

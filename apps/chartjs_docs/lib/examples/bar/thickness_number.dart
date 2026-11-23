@@ -23,7 +23,7 @@ final fixedBars = ChartConfig(
   datasets: [
     BarDataset(
       label: '12 pixels',
-      points: unevenPoints,
+      data: .points(unevenPoints),
       backgroundColor: const .constant(.solid(teal)),
       barThickness: const BarThickness.pixels(12),
     ),

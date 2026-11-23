@@ -14,7 +14,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   datasets: const [
     LineDataset(
       label: 'Visitors',
-      data: _visitors,
+      data: .values(_visitors),
       cubicInterpolationMode: NaturalCurve(),
       borderColor: .constant(.solid(Shadcn.chart2)),
       borderWidth: 2,

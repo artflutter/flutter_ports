@@ -30,7 +30,7 @@ const scopedLine = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: values,
+      data: .values(values),
       borderColor: .constant(.solid(teal)),
     ),
   ],

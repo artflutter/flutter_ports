@@ -12,7 +12,7 @@ const _mobile = <num>[80, 200, 120, 190, 130, 140];
 // <Line dataKey={key} type="monotone" stroke={color} strokeWidth={2} dot={false} />
 LineDataset _line(String label, List<num> data, Color color) => LineDataset(
   label: label,
-  data: data,
+  data: .values(data),
   cubicInterpolationMode: const MonotoneXCurve(),
   borderColor: .constant(.solid(color)),
   borderWidth: 2,

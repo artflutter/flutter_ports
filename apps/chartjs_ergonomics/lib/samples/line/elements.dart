@@ -9,8 +9,8 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 const elementDefaults = ChartConfig(
   labels: months,
   datasets: [
-    LineDataset(label: 'Sales', data: sales),
-    LineDataset(label: 'Costs', data: costs),
+    LineDataset(label: 'Sales', data: .values(sales)),
+    LineDataset(label: 'Costs', data: .values(costs)),
   ],
   // Defaults for all lines and points of this chart.
   elements: ChartElements(

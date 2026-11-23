@@ -32,7 +32,7 @@ const coloredBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Colors',
-      data: values,
+      data: .values(values),
       backgroundColor: .constant(.solid(tealFill)),
       borderColor: .constant(.solid(teal)),
       borderWidth: 2,

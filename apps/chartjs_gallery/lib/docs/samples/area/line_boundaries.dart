@@ -63,7 +63,16 @@ ChartConfig _config(FillTarget fill, String name) => ChartConfig(
   datasets: [
     LineDataset(
       label: 'Dataset',
-      data: const [97.81, -42.3, 84.05, -46.6, -31.77, 12.48, -59.53, -0.87],
+      data: const .values([
+        97.81,
+        -42.3,
+        84.05,
+        -46.6,
+        -31.77,
+        12.48,
+        -59.53,
+        -0.87,
+      ]),
       borderColor: const .constant(.solid(Color.fromRGBO(255, 99, 132, 1))),
       backgroundColor: const .constant(
         .solid(Color.fromRGBO(255, 99, 132, 0.5)),

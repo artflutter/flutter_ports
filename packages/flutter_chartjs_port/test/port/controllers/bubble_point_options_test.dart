@@ -1296,7 +1296,7 @@ void main() {
               config: ChartConfig(
                 datasets: [
                   BubbleDataset(
-                    points: [
+                    data: [
                       for (var i = 0; i < _length; i++)
                         DataPoint.bubble(i.toDouble(), 1.0, 2.0 + i),
                     ],
@@ -1367,7 +1367,7 @@ void main() {
         UiCanvasElement(width: 640, height: 400),
         ChartConfigLowering(
           ChartConfig(
-            datasets: [BubbleDataset(points: points())],
+            datasets: [BubbleDataset(data: points())],
             animation: ChartAnimation.none,
           ),
         ).lower(),
@@ -1377,7 +1377,7 @@ void main() {
         UiCanvasElement(width: 640, height: 400),
         ChartConfigLowering(
           ChartConfig(
-            datasets: [BubbleDataset(points: points())],
+            datasets: [BubbleDataset(data: points())],
             animation: ChartAnimation.none,
             extra: const {'parsing': false},
           ),

@@ -156,10 +156,10 @@ class _BarSample5State() extends State<BarSample5> {
   ];
 
   BarDataset _rod(int item, {required bool mirror}) => BarDataset(
-    points: [
+    data: .points([
       for (final (day, values) in _items.indexed)
         DataPoint(day, mirror ? -values[item] : values[item]),
-    ],
+    ]),
     stack: mirror ? 'mirror' : 'rod',
     // The rod and its mirror image share the place of the day.
     grouped: false,

@@ -10,13 +10,13 @@ final xyPoints = ChartConfig(
   datasets: [
     LineDataset(
       label: 'An x and a y for each item',
-      points: [
+      data: .points([
         DataPoint(0, 20),
         DataPoint(1.5, 10),
         DataPoint(4, 30),
         DataPoint(4.5, 25),
         DataPoint(9, 40),
-      ],
+      ]),
       borderColor: const .constant(.solid(blue)),
     ),
   ],

@@ -27,7 +27,7 @@ final ChartConfig _config = fills(
     labels: _months,
     datasets: [
       LineDataset(
-        data: const [4, 3.5, 4.5, 1, 4, 6, 6.5, 6, 4, 6, 6, 7],
+        data: const .values([4, 3.5, 4.5, 1, 4, 6, 6.5, 6, 4, 6, 6, 7]),
         tension: 0.35,
         borderWidth: 8,
         pointRadius: const .constant(0),

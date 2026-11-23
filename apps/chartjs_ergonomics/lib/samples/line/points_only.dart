@@ -11,7 +11,7 @@ const pointsOnly = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       showLine: false,
       pointRadius: .constant(6),
       pointBackgroundColor: .constant(.solid(teal)),

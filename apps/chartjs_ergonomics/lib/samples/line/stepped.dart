@@ -11,19 +11,19 @@ const stepped = ChartConfig(
   datasets: [
     LineDataset(
       label: 'before',
-      data: [10, 40, 25, 60, 45, 80, 70],
+      data: .values([10, 40, 25, 60, 45, 80, 70]),
       borderColor: .constant(.solid(teal)),
       stepped: .before,
     ),
     LineDataset(
       label: 'after',
-      data: [40, 70, 55, 90, 75, 110, 100],
+      data: .values([40, 70, 55, 90, 75, 110, 100]),
       borderColor: .constant(.solid(blue)),
       stepped: .after,
     ),
     LineDataset(
       label: 'middle',
-      data: [70, 100, 85, 120, 105, 140, 130],
+      data: .values([70, 100, 85, 120, 105, 140, 130]),
       borderColor: .constant(.solid(red)),
       stepped: .middle,
     ),

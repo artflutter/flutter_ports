@@ -35,25 +35,25 @@ const groupedStacks = ChartConfig(
   datasets: [
     BarDataset(
       label: 'Mobile 2026',
-      data: [30, 35, 28, 40, 45, 42, 50],
+      data: .values([30, 35, 28, 40, 45, 42, 50]),
       backgroundColor: .constant(.solid(teal)),
       stack: '2026',
     ),
     BarDataset(
       label: 'Desktop 2026',
-      data: [20, 25, 22, 18, 24, 30, 26],
+      data: .values([20, 25, 22, 18, 24, 30, 26]),
       backgroundColor: .constant(.solid(blue)),
       stack: '2026',
     ),
     BarDataset(
       label: 'Mobile 2025',
-      data: [25, 28, 30, 33, 36, 38, 41],
+      data: .values([25, 28, 30, 33, 36, 38, 41]),
       backgroundColor: .constant(.solid(tealFill)),
       stack: '2025',
     ),
     BarDataset(
       label: 'Desktop 2025',
-      data: [24, 26, 25, 21, 27, 29, 28],
+      data: .values([24, 26, 25, 21, 27, 29, 28]),
       backgroundColor: .constant(.solid(blueFill)),
       stack: '2025',
     ),

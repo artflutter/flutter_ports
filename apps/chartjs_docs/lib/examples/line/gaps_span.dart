@@ -23,7 +23,7 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 // #docregion gaps-span
 const spannedLine = LineDataset(
   label: 'Spanned gaps',
-  data: [65, 59, null, 81, 56, null, 40],
+  data: .values([65, 59, null, 81, 56, null, 40]),
   borderColor: .constant(.solid(teal)),
   spanGaps: true,
 );

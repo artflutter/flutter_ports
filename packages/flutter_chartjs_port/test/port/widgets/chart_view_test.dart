@@ -40,7 +40,7 @@ Map<String, Object?> _config({
 /// Typed setup for ordinary lifecycle checks. Raw identity and raw-option
 /// contract tests below retain [_config].
 ChartConfig _typedConfig({
-  Dataset dataset = const BarDataset(data: [1, 2, 3]),
+  Dataset dataset = const BarDataset(data: .values([1, 2, 3])),
   bool? maintainAspectRatio,
   bool? responsive,
   Map<String, Object?> options = const {},
@@ -659,7 +659,7 @@ void main() {
           ChartView(
             config: config.copyWith(
               datasets: const [
-                LineDataset(data: [1, 2, 3]),
+                LineDataset(data: .values([1, 2, 3])),
               ],
             ),
           ),
@@ -745,7 +745,7 @@ void main() {
       final data = <num?>[1, 2, 3];
       final labels = <Object>['a', 'b', 'c'];
       final config = ChartConfig(
-        datasets: [BarDataset(data: data)],
+        datasets: [BarDataset(data: .values(data))],
         labels: labels,
         animation: const ChartAnimation(),
       );
@@ -800,7 +800,7 @@ void main() {
     }) => ChartView(
       config: _typedConfig(
         dataset: switch (type) {
-          'bar' => const BarDataset(data: [1, 2, 3]),
+          'bar' => const BarDataset(data: .values([1, 2, 3])),
           'doughnut' => const DoughnutDataset(data: [1, 2, 3]),
           _ => throw ArgumentError.value(type, 'type'),
         },
@@ -1055,7 +1055,7 @@ void main() {
       final before = entries();
       const config = ChartConfig(
         datasets: [
-          BarDataset(data: [1, 2, 3]),
+          BarDataset(data: .values([1, 2, 3])),
         ],
         labels: ['a', 'b', 'c'],
         animation: ChartAnimation(),
@@ -1067,7 +1067,7 @@ void main() {
         build(
           config.copyWith(
             datasets: [
-              BarDataset(data: List<num?>.of([1, 2, 3])),
+              BarDataset(data: .values(List<num?>.of([1, 2, 3]))),
             ],
           ),
           reduced: true,

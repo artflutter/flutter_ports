@@ -86,7 +86,7 @@ void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
   // The first lowering registers the List classes of the typed points.
   ChartConfigLowering(
-    typed.ChartConfig(datasets: [typed.LineDataset(points: _points())]),
+    typed.ChartConfig(datasets: [typed.LineDataset(data: .points(_points()))]),
   ).lower();
 
   // A change of the index runs `clearStacks` (core.datasetController.js:292).

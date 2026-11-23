@@ -17,7 +17,7 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   datasets: const [
     LineDataset(
       label: 'Sales',
-      data: [10, 41, 35, 51, 49, 62, 69, 91, 148],
+      data: .values([10, 41, 35, 51, 49, 62, 69, 91, 148]),
       // stroke: {curve: 'straight', width: 3}
       borderColor: .constant(.solid(Apex.blue)),
       backgroundColor: .constant(.solid(Apex.blue)),

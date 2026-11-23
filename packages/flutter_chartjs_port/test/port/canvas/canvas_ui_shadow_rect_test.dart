@@ -632,7 +632,7 @@ void main() {
       labels: [for (var i = 0; i < 40; i++) '$i'],
       datasets: [
         BarDataset(
-          data: [for (var i = 0; i < 40; i++) 1 + (i * 7 % 11) / 3],
+          data: .values([for (var i = 0; i < 40; i++) 1 + (i * 7 % 11) / 3]),
           backgroundColor: const ChartValue.constant(.solid(_fill)),
           borderColor: const ChartValue.constant(.solid(_border)),
           borderWidth: borderWidth,

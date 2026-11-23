@@ -19,7 +19,7 @@ void main() {
         'gestures are enabled', (tester) async {
       final chart = _acquire(
         ChartConfig(
-          datasets: [ScatterDataset(points: points)],
+          datasets: [ScatterDataset(data: .points(points))],
           pluginOptions: const [
             ZoomPluginOptions(pan: PanOptions(enabled: true)),
           ],
@@ -36,7 +36,7 @@ void main() {
       (tester) async {
         final chart = _acquire(
           ChartConfig(
-            datasets: [ScatterDataset(points: points)],
+            datasets: [ScatterDataset(data: .points(points))],
             pluginOptions: const [
               ZoomPluginOptions(
                 zoom: ZoomOptions(wheel: WheelOptions(enabled: true)),

@@ -82,8 +82,8 @@ void main() {
         final config = ChartConfig(
           labels: const ['x'],
           datasets: const [
-            BarDataset(label: 'first', data: [1]),
-            BarDataset(label: 'second', data: [2]),
+            BarDataset(label: 'first', data: .values([1])),
+            BarDataset(label: 'second', data: .values([2])),
           ],
           animation: ChartAnimation.none,
           legend: ChartLegend(
@@ -140,7 +140,7 @@ void main() {
     final config = ChartConfig(
       labels: const ['x'],
       datasets: const [
-        BarDataset(data: [1]),
+        BarDataset(data: .values([1])),
       ],
       animation: ChartAnimation.none,
       legend: ChartLegend(

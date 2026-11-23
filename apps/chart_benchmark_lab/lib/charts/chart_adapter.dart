@@ -273,7 +273,9 @@ class const BenchmarkChart({
         : const cj.ChartValue<ChartPaint>.constant(.solid(chartBlue));
     final points =
         config.type == ChartType.line || config.type == ChartType.scatter
-        ? [for (final p in values) cj.DataPoint(p.x, p.y)]
+        ? cj.DatasetData.points([
+            for (final p in values) cj.DataPoint(p.x, p.y),
+          ])
         : null;
     // The canvas blur is twice the Gaussian sigma.
     final shadow = config.shadow
@@ -288,7 +290,7 @@ class const BenchmarkChart({
         key: const ValueKey('series'),
         label: 'Values',
         shadow: shadow,
-        points: points,
+        data: points,
         borderColor: const cj.ChartValue.constant(.solid(chartBlue)),
         borderWidth: 2,
         backgroundColor: const cj.ChartValue.constant(
@@ -305,7 +307,7 @@ class const BenchmarkChart({
         key: const ValueKey('series'),
         label: 'Values',
         shadow: shadow,
-        data: [for (final p in values) p.y],
+        data: .values([for (final p in values) p.y]),
         backgroundColor: color,
         borderWidth: 0,
         barPercentage: .8,
@@ -315,7 +317,7 @@ class const BenchmarkChart({
         key: const ValueKey('series'),
         label: 'Values',
         shadow: shadow,
-        points: points,
+        data: points,
         backgroundColor: color,
         pointRadius: const .constant(3),
         pointBorderWidth: 0,
@@ -325,7 +327,7 @@ class const BenchmarkChart({
         key: const ValueKey('series'),
         label: 'Values',
         shadow: shadow,
-        points: [for (final p in values) cj.DataPoint.bubble(p.x, p.y, p.r)],
+        data: [for (final p in values) cj.DataPoint.bubble(p.x, p.y, p.r)],
         backgroundColor: color,
         borderWidth: 0,
       ),

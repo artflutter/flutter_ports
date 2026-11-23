@@ -15,7 +15,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
     // chartConfig gives the desktop bars --chart-2.
     BarDataset(
       label: 'Desktop',
-      data: _desktop,
+      data: .values(_desktop),
       backgroundColor: .constant(.solid(Shadcn.chart2)),
       hoverBackgroundColor: .constant(.solid(Shadcn.chart2)),
       borderRadius: 4,

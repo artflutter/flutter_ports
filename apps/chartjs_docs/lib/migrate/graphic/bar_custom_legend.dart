@@ -30,7 +30,7 @@ BarDataset _type(int index, String type) {
   final color = ChartValue<ChartPaint>.constant(.solid(Gx.colors10[index]));
   return BarDataset(
     label: type,
-    data: _values(type),
+    data: .values(_values(type)),
     backgroundColor: color,
     hoverBackgroundColor: color,
     categoryPercentage: 0.5,

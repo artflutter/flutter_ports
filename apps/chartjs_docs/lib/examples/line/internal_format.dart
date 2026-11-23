@@ -7,7 +7,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 // #docregion internal-format
 final preparedLine = LineDataset(
   label: 'Sorted, with no parse step',
-  points: [DataPoint(0, 12), DataPoint(1, 18), DataPoint(2, 9)],
+  data: .points([DataPoint(0, 12), DataPoint(1, 18), DataPoint(2, 9)]),
   extra: const {'parsing': false},
 );
 // #enddocregion internal-format

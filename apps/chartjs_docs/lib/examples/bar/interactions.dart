@@ -35,7 +35,7 @@ const Color redFill = Color.fromRGBO(255, 99, 132, 0.25);
 // #docregion bar-interactions
 const hoverBars = BarDataset(
   label: 'Move the pointer over a bar',
-  data: values,
+  data: .values(values),
   backgroundColor: .constant(.solid(tealFill)),
   borderColor: .constant(.solid(teal)),
   borderWidth: 1,

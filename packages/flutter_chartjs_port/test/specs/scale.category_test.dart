@@ -141,7 +141,7 @@ void main() {
       final chart = _acquire(
         ChartConfig(
           datasets: const [
-            LineDataset(data: [10, 5, 0, 25, 78]),
+            LineDataset(data: .values([10, 5, 0, 25, 78])),
           ],
           scales: [CategoryAxis(.x, labels: labels)],
         ),
@@ -182,7 +182,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            LineDataset(data: [10, 5, 0, 25, 78]),
+            LineDataset(data: .values([10, 5, 0, 25, 78])),
           ],
           labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
           scales: [
@@ -208,7 +208,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            LineDataset(data: [10, 5, 0, 25, 78]),
+            LineDataset(data: .values([10, 5, 0, 25, 78])),
           ],
           labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick5'],
           scales: [
@@ -229,7 +229,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            LineDataset(data: [10, 5, 0, 25, 78]),
+            LineDataset(data: .values([10, 5, 0, 25, 78])),
           ],
           labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
           scales: [
@@ -269,7 +269,7 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(data: [10, 5, 0, 25, 78]),
+              LineDataset(data: .values([10, 5, 0, 25, 78])),
             ],
             labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
             scales: [
@@ -293,7 +293,7 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(data: [10, 5, 0, 25, 78]),
+              LineDataset(data: .values([10, 5, 0, 25, 78])),
             ],
             labels: ['tick1', 'tick2', 'tick3', 'tick4', 'tick_last'],
             scales: [
@@ -432,13 +432,13 @@ void main() {
           ChartConfig(
             datasets: [
               LineDataset(
-                points: [
+                data: .points([
                   DataPoint(0, 10),
                   DataPoint(1, 5),
                   DataPoint(2, 0),
                   DataPoint(3, 25),
                   DataPoint(0, 78),
-                ],
+                ]),
               ),
             ],
             labels: const [0, 1, 2, 3],
@@ -509,13 +509,13 @@ void main() {
           ChartConfig(
             datasets: [
               BarDataset(
-                points: [
+                data: .points([
                   DataPoint(0, 10),
                   DataPoint(1, 5),
                   DataPoint(2, 0),
                   DataPoint(3, 25),
                   DataPoint(0, 78),
-                ],
+                ]),
               ),
             ],
             labels: const [0, 1, 2, 3],
@@ -541,13 +541,13 @@ void main() {
           ChartConfig(
             datasets: [
               BarDataset(
-                points: [
+                data: .points([
                   DataPoint(10, 0),
                   DataPoint(5, 1),
                   DataPoint(0, 2),
                   DataPoint(25, 3),
                   DataPoint(78, 0),
-                ],
+                ]),
               ),
             ],
             labels: const [0, 1, 2, 3],
@@ -577,7 +577,7 @@ void main() {
           ChartConfig(
             labels: labels,
             datasets: const [
-              BarDataset(data: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]),
+              BarDataset(data: .values([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])),
             ],
           ),
         );

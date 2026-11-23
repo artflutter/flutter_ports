@@ -17,7 +17,7 @@ import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 /// ```dart
 /// ChartConfig(
 ///   labels: const ['Red', 'Blue', 'Yellow'],
-///   datasets: [BarDataset(label: '# of Votes', data: votes)],
+///   datasets: [BarDataset(label: '# of Votes', data: .values(votes))],
 ///   scales: const [LinearAxis(.y, beginAtZero: true)],
 ///   onClick: showVotes,
 /// )
@@ -50,7 +50,7 @@ final class const ChartConfig({
   /// The class of the first dataset gives the chart type ([type]). A chart
   /// needs one dataset at least: a debug build stops on an empty List. For
   /// a chart with no data yet, give a dataset with no data, for example
-  /// `LineDataset(data: [])`.
+  /// `LineDataset(data: .values([]))`.
   required final List<Dataset> datasets,
 
   /// The labels of the index axis: `data.labels`. An item is a `String`, a

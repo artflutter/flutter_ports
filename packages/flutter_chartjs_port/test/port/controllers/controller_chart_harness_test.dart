@@ -76,8 +76,8 @@ Map<String, Object?> _mapConfig() => <String, Object?>{
 ChartConfigurationScope _lineConfig() => ChartConfigLowering(
   const ChartConfig(
     datasets: [
-      LineDataset(label: 'one', data: [1, 5, 3, 4]),
-      LineDataset(label: 'two', data: [2, 1, 6, 2]),
+      LineDataset(label: 'one', data: .values([1, 5, 3, 4])),
+      LineDataset(label: 'two', data: .values([2, 1, 6, 2])),
     ],
     labels: ['a', 'b', 'c', 'd'],
     title: ChartTitle(display: true, text: ['T']),

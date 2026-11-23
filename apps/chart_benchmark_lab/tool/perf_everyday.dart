@@ -75,7 +75,7 @@ cj.Dataset _dataset(
     ChartType.line => cj.LineDataset(
       key: key,
       label: label,
-      points: [for (final p in values) cj.DataPoint(p.x, p.y)],
+      data: .points([for (final p in values) cj.DataPoint(p.x, p.y)]),
       borderColor: fill,
       backgroundColor: fill,
       tension: .35,
@@ -83,20 +83,20 @@ cj.Dataset _dataset(
     ChartType.bar => cj.BarDataset(
       key: key,
       label: label,
-      data: [for (final p in values) p.y],
+      data: .values([for (final p in values) p.y]),
       backgroundColor: fill,
       stack: stack,
     ),
     ChartType.scatter => cj.ScatterDataset(
       key: key,
       label: label,
-      points: [for (final p in values) cj.DataPoint(p.x, p.y)],
+      data: .points([for (final p in values) cj.DataPoint(p.x, p.y)]),
       backgroundColor: fill,
     ),
     ChartType.bubble => cj.BubbleDataset(
       key: key,
       label: label,
-      points: [for (final p in values) cj.DataPoint.bubble(p.x, p.y, p.r)],
+      data: [for (final p in values) cj.DataPoint.bubble(p.x, p.y, p.r)],
       backgroundColor: fill,
     ),
     ChartType.pie => cj.PieDataset(
@@ -161,10 +161,10 @@ cj.ChartConfig _config({
           cj.LineDataset(
             key: ValueKey('series$s'),
             label: 'Series $s',
-            points: [
+            data: .points([
               for (final p in values)
                 cj.DataPoint(base + p.index * 60000, p.y - s * 4),
-            ],
+            ]),
             borderColor: cj.ChartValue<ChartPaint>.constant(.solid(_colors[s])),
             backgroundColor: cj.ChartValue<ChartPaint>.constant(
               .solid(_colors[s]),

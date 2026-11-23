@@ -36,7 +36,9 @@ ChartConfig _config(List<num> ys, {required bool average}) {
     ChartConfig(
       datasets: [
         LineDataset(
-          points: [for (final (i, x) in _xs.indexed) DataPoint(x, ys[i])],
+          data: .points([
+            for (final (i, x) in _xs.indexed) DataPoint(x, ys[i]),
+          ]),
           tension: 0.35,
           borderWidth: 5,
           pointRadius: const .constant(0),

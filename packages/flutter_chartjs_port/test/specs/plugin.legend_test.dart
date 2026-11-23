@@ -74,7 +74,7 @@ List<Dataset> _barDatasets({bool? legendHidden, double? borderRadius}) => [
     backgroundColor: ChartValue.constant(
       ChartPaint.solid(native_ui.Color.fromRGBO(255, 51, 17, 1)),
     ),
-    data: [],
+    data: .values([]),
     extra: {
       'borderCapStyle': native_ui.StrokeCap.butt,
       'borderDash': <double>[2, 2],
@@ -84,7 +84,7 @@ List<Dataset> _barDatasets({bool? legendHidden, double? borderRadius}) => [
   BarDataset(
     label: 'dataset2',
     hidden: true,
-    data: const [],
+    data: const .values([]),
     extra: {
       'borderJoinStyle': native_ui.StrokeJoin.miter,
       'legendHidden': ?legendHidden,
@@ -97,7 +97,7 @@ List<Dataset> _barDatasets({bool? legendHidden, double? borderRadius}) => [
       ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
     ),
     borderRadius: borderRadius,
-    data: const [],
+    data: const .values([]),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     extra: const {'pointStyle': CrossRotPointStyle()},
   ),
@@ -112,14 +112,14 @@ const List<Dataset> _lineDatasets = [
     ),
     borderCapStyle: native_ui.StrokeCap.round,
     borderDash: [2, 2],
-    data: [],
+    data: .values([]),
     extra: {'borderDashOffset': 5.5},
   ),
   LineDataset(
     label: 'dataset2',
     hidden: true,
     borderJoinStyle: native_ui.StrokeJoin.round,
-    data: [],
+    data: .values([]),
   ),
   LineDataset(
     label: 'dataset3',
@@ -130,7 +130,7 @@ const List<Dataset> _lineDatasets = [
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     pointStyle: .constant(CrossRotPointStyle()),
     fill: FillTarget.none,
-    data: [],
+    data: .values([]),
   ),
 ];
 
@@ -237,7 +237,7 @@ Chart _line(ChartLegend legend) => _acquire(
   ChartConfig(
     labels: const ['A', 'B', 'C', 'D'],
     datasets: const [
-      LineDataset(data: [10, 20, 30, 100]),
+      LineDataset(data: .values([10, 20, 30, 100])),
     ],
     legend: legend,
   ),
@@ -517,7 +517,7 @@ void main() {
         ChartConfig(
           datasets: [
             for (final n in [1, 2, 3])
-              LineDataset(label: 'dataset$n', data: const []),
+              LineDataset(label: 'dataset$n', data: const .values([])),
           ],
           labels: const [],
           legend: const ChartLegend(position: ChartPosition.right),
@@ -587,7 +587,7 @@ void main() {
     testWidgets('should draw items with a custom boxHeight', (tester) async {
       final chart = _acquire(
         const ChartConfig(
-          datasets: [LineDataset(label: 'dataset1', data: [])],
+          datasets: [LineDataset(label: 'dataset1', data: .values([]))],
           labels: [],
           legend: ChartLegend(position: ChartPosition.right, boxHeight: 40),
         ),
@@ -617,7 +617,7 @@ void main() {
                 ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
                 ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
               ]),
-              data: [],
+              data: .values([]),
               // The typed borderWidth is one number: an array goes through
               // `extra`.
               extra: {
@@ -665,7 +665,7 @@ void main() {
                 ChartPaint.solid(native_ui.Color.fromRGBO(0, 0, 255, 1)),
               ]),
               borderRadius: 10,
-              data: [],
+              data: .values([]),
               // The typed borderWidth is one number: an array goes through
               // `extra`.
               extra: {
@@ -732,7 +732,7 @@ void main() {
                     ),
                   );
                 }),
-                data: const [5, 10, 15, 20],
+                data: const .values([5, 10, 15, 20]),
                 // The typed borderWidth is one number: a function goes
                 // through `extra`.
                 extra: const {'borderWidth': _dataValue},
@@ -842,7 +842,7 @@ void main() {
               borderColor: ChartValue.constant(
                 ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
               ),
-              data: [120, 23, 24, 45, 51],
+              data: .values([120, 23, 24, 45, 51]),
             ),
           ],
           responsive: true,
@@ -869,7 +869,7 @@ void main() {
               borderColor: ChartValue.constant(
                 ChartPaint.solid(native_ui.Color.fromRGBO(255, 0, 0, 1)),
               ),
-              data: [120, 23, 24, 45, 51],
+              data: .values([120, 23, 24, 45, 51]),
             ),
           ],
           responsive: true,
@@ -1053,8 +1053,8 @@ void main() {
           ChartConfig(
             labels: const ['A', 'B', 'C', 'D'],
             datasets: const [
-              LineDataset(data: [10, 20, 30, 100], label: 'dataset 1'),
-              LineDataset(data: [10, 20, 30, 100], label: 'dataset 2'),
+              LineDataset(data: .values([10, 20, 30, 100]), label: 'dataset 1'),
+              LineDataset(data: .values([10, 20, 30, 100]), label: 'dataset 2'),
             ],
             legend: ChartLegend(
               onClick: (_, item, _) {
@@ -1105,7 +1105,7 @@ const List<Dataset> _pointStyleDatasets = [
     pointBorderColor: ChartValue.constant(
       ChartPaint.solid(native_ui.Color.fromRGBO(0, 128, 0, 1)),
     ),
-    data: [],
+    data: .values([]),
     extra: {'borderDashOffset': 5.5},
   ),
   LineDataset(
@@ -1120,7 +1120,7 @@ const List<Dataset> _pointStyleDatasets = [
     ),
     // DIVERGES(chartjs): adapt-point-style-objects, the style class.
     pointStyle: .constant(CrossRotPointStyle()),
-    data: [],
+    data: .values([]),
     extra: {'pointRotation': 15},
   ),
 ];

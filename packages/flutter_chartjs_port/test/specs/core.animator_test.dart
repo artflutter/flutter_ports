@@ -38,7 +38,7 @@ void main() {
           ChartConfigLowering(
             ChartConfig(
               datasets: const [
-                BarDataset(data: [10, 5, 0, 25, 78, -10]),
+                BarDataset(data: .values([10, 5, 0, 25, 78, -10])),
               ],
               labels: const [
                 'tick1',

@@ -41,7 +41,7 @@ const ungroupedBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'This year',
-      data: values,
+      data: .values(values),
       backgroundColor: .constant(.solid(tealFill)),
       borderColor: .constant(.solid(teal)),
       borderWidth: 2,
@@ -49,7 +49,7 @@ const ungroupedBars = ChartConfig(
     ),
     BarDataset(
       label: 'Last year',
-      data: lastYear,
+      data: .values(lastYear),
       backgroundColor: .constant(.solid(blueFill)),
       borderColor: .constant(.solid(blue)),
       borderWidth: 2,

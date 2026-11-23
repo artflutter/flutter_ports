@@ -20,7 +20,7 @@ void main() {
       datasets: [
         for (var k = 0; k < 3; k++)
           LineDataset(
-            data: [for (var i = 0; i < 64; i++) 1 + (i + k) % 7],
+            data: .values([for (var i = 0; i < 64; i++) 1 + (i + k) % 7]),
             fill: FillTarget.toStacked,
             pointRadius: const .constant(0),
             backgroundColor: ChartValue.constant(

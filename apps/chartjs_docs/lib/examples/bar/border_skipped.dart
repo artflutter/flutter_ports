@@ -31,7 +31,7 @@ ChartConfig borderSkipped(BorderSkip skipped) => ChartConfig(
   datasets: [
     BarDataset(
       label: 'Border width 4',
-      data: mixedSigns,
+      data: const .values(mixedSigns),
       backgroundColor: const .constant(.solid(tealFill)),
       borderColor: const .constant(.solid(teal)),
       borderWidth: 4,

@@ -27,7 +27,7 @@
 /// ```dart
 /// ChartConfig(
 ///   indexAxis: const YAxis(), // a horizontal bar chart
-///   datasets: [BarDataset(data: [1, 2, 3])],
+///   datasets: [BarDataset(data: .values([1, 2, 3]))],
 /// );
 /// ```
 ///

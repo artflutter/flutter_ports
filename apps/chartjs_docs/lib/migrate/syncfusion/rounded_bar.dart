@@ -18,7 +18,7 @@ final ChartConfig _config = ChartConfig(
   ],
   datasets: const [
     BarDataset(
-      data: [1.13, -1.05, 1.37, -1.3, 1.82, -1.74, 1.7],
+      data: .values([1.13, -1.05, 1.37, -1.3, 1.82, -1.74, 1.7]),
       backgroundColor: .constant(.solid(Sf.blue)),
       hoverBackgroundColor: .constant(.solid(Sf.blue)),
       categoryPercentage: 0.7,

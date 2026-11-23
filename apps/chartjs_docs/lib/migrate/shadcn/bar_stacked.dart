@@ -18,7 +18,7 @@ BarDataset _bars(
   Map<String, double> corners,
 ) => BarDataset(
   label: label,
-  data: data,
+  data: .values(data),
   backgroundColor: .constant(.solid(color)),
   hoverBackgroundColor: .constant(.solid(color)),
   categoryPercentage: 0.8,

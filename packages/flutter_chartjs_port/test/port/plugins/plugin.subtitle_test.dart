@@ -113,7 +113,7 @@ Chart _lineWithSubtitle([ChartTitle? subtitle]) => acquireChartRoot(
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
-        LineDataset(data: [1, 2]),
+        LineDataset(data: .values([1, 2])),
       ],
       subtitle: subtitle,
       disabledPlugins: subtitle == null
@@ -129,7 +129,7 @@ Chart _line(String text) => acquireChartRoot(
     ChartConfig(
       labels: const ['a', 'b'],
       datasets: const [
-        LineDataset(data: [1, 2]),
+        LineDataset(data: .values([1, 2])),
       ],
       subtitle: ChartTitle(display: true, text: [text]),
     ),

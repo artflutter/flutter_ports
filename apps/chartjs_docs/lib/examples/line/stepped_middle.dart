@@ -26,7 +26,7 @@ const List<num?> stepValues = [10, 40, 25, 60, 45, 80, 70];
 // #docregion stepped-middle
 const stepMiddle = LineDataset(
   label: 'stepped: .middle',
-  data: stepValues,
+  data: .values(stepValues),
   borderColor: .constant(.solid(blue)),
   stepped: SteppedLine.middle,
 );

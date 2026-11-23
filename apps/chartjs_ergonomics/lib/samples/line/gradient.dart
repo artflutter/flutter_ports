@@ -12,7 +12,7 @@ const gradient = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       borderWidth: 4,
       // The points are canvas pixels, not chart values.
       borderColor: .constant(

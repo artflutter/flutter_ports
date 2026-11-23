@@ -337,7 +337,7 @@ void main() {
         labels: const ['a', 'b', 'c'],
         datasets: const [
           LineDataset(
-            data: [1.0, 3.0, 2.0],
+            data: .values([1.0, 3.0, 2.0]),
             borderColor: ChartValue.constant(ChartPaint.solid(_black)),
             pointRadius: .constant(0),
           ),

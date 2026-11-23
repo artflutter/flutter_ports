@@ -24,7 +24,7 @@ void main() {
           final startCalls = <ZoomStartContext<NativeEvent>>[];
           final chart = _acquire(
             ChartConfig(
-              datasets: [ScatterDataset(points: points)],
+              datasets: [ScatterDataset(data: .points(points))],
               pluginOptions: [
                 ZoomPluginOptions(
                   zoom: ZoomOptions(
@@ -60,7 +60,7 @@ void main() {
           final rejectCalls = <ZoomEventContext<NativeEvent>>[];
           final chart = _acquire(
             ChartConfig(
-              datasets: [ScatterDataset(points: points)],
+              datasets: [ScatterDataset(data: .points(points))],
               pluginOptions: [
                 ZoomPluginOptions(
                   zoom: ZoomOptions(
@@ -89,7 +89,7 @@ void main() {
         await waitForDone((done) {
           final chart = _acquire(
             ChartConfig(
-              datasets: [ScatterDataset(points: points)],
+              datasets: [ScatterDataset(data: .points(points))],
               pluginOptions: [
                 ZoomPluginOptions(
                   zoom: ZoomOptions(
@@ -117,7 +117,7 @@ void main() {
         final completeCalls = <ZoomChartContext>[];
         final chart = _acquire(
           ChartConfig(
-            datasets: [ScatterDataset(points: points)],
+            datasets: [ScatterDataset(data: .points(points))],
             pluginOptions: [
               ZoomPluginOptions(
                 zoom: ZoomOptions(

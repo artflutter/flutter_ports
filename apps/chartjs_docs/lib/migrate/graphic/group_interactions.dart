@@ -22,7 +22,7 @@ LineDataset _group(int index, String name) {
   final color = Gx.colors10[index];
   return LineDataset(
     label: name,
-    data: [for (final date in _dates) _points[(date, name)]],
+    data: .values([for (final date in _dates) _points[(date, name)]]),
     spanGaps: true,
     borderColor: .constant(.solid(color)),
     borderWidth: 0.5,

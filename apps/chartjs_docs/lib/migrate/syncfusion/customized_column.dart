@@ -41,7 +41,7 @@ final ChartConfig _config = ChartConfig(
   labels: _vendors,
   datasets: [
     BarDataset(
-      data: _shipments,
+      data: const .values(_shipments),
       // The hit area and the tooltip of each column.
       backgroundColor: .indexed([for (final c in _colors) .solid(c)]),
       categoryPercentage: 0.8,

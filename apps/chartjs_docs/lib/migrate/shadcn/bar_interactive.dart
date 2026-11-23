@@ -25,7 +25,7 @@ ChartConfig _config(ShadcnTip tip, int active) {
       // <Bar dataKey={activeChart} fill={`var(--color-${activeChart})`} />
       BarDataset(
         label: 'Page Views',
-        data: data,
+        data: .values(data),
         backgroundColor: .constant(.solid(color)),
         hoverBackgroundColor: .constant(.solid(color)),
         categoryPercentage: 0.8,

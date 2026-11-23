@@ -11,7 +11,7 @@ const axisTitle = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
     ),
   ],

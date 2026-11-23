@@ -32,7 +32,7 @@ final ChartConfig _config = ChartConfig(
   labels: [for (final day in invalidData) day.date],
   datasets: [
     LineDataset(
-      data: [for (var i = 0; i < invalidData.length; i++) _close(i)],
+      data: .values([for (var i = 0; i < invalidData.length; i++) _close(i)]),
       // The `LineMark` of 0.5 px over the `AreaMark` in the first color.
       borderColor: const .constant(.solid(Gx.primary)),
       borderWidth: 0.5,

@@ -35,12 +35,12 @@ const groupedBars = ChartConfig(
   datasets: [
     BarDataset(
       label: 'This year',
-      data: values,
+      data: .values(values),
       backgroundColor: .constant(.solid(teal)),
     ),
     BarDataset(
       label: 'Last year',
-      data: lastYear,
+      data: .values(lastYear),
       backgroundColor: .constant(.solid(blue)),
     ),
   ],

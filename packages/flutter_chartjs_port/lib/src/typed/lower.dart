@@ -389,7 +389,7 @@ String _duplicateKeyMessage(List<Dataset> datasets) =>
 const String _noDatasetMessage =
     'A ChartConfig needs at least one dataset: the class of the first '
     'dataset gives the chart type. For a chart with no data yet, give a '
-    'dataset with no data, for example LineDataset(data: []).';
+    'dataset with no data, for example LineDataset(data: .values([])).';
 
 /// The newest typed dataset of one live dataset scope: the tooltip
 /// callback trampolines of its scope read their callbacks from it.

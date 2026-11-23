@@ -13,7 +13,7 @@ final ChartConfig _config = ChartConfig(
   labels: _people,
   datasets: const [
     BarDataset(
-      data: _hours,
+      data: .values(_hours),
       backgroundColor: .constant(.solid(Sf.blue)),
       hoverBackgroundColor: .constant(.solid(Sf.blue)),
       categoryPercentage: 0.7,

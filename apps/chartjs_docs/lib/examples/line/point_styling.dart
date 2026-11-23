@@ -31,7 +31,7 @@ ChartConfig pointStyling(PointStyle style) => ChartConfig(
   datasets: [
     LineDataset(
       label: 'Visitors',
-      data: values,
+      data: const .values(values),
       borderColor: const .constant(.solid(teal)),
       pointStyle: .constant(style),
       pointRadius: const .constant(9),

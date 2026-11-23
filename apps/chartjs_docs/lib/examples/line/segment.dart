@@ -20,7 +20,7 @@ const segmentLine = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Trend',
-      data: trend,
+      data: .values(trend),
       borderColor: .constant(.solid(teal)),
       spanGaps: true,
       segment: LineSegmentStyle(

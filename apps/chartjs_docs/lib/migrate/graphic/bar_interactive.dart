@@ -31,7 +31,7 @@ final ChartConfig _config = ChartConfig(
   labels: [for (final row in basicData) row.genre],
   datasets: [
     BarDataset(
-      data: [for (final row in basicData) row.sold],
+      data: .values([for (final row in basicData) row.sold]),
       backgroundColor: const .resolver(_color),
       // The selected bar keeps the primary color.
       hoverBackgroundColor: const .constant(.solid(Gx.primary)),

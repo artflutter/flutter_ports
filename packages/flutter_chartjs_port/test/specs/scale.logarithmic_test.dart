@@ -114,7 +114,7 @@ Chart _acquireWhenChart(Map<String, Object?> setup) {
       );
   final datasets =
       setup['data'] as List<Dataset>? ??
-      [LineDataset(points: setup['dataset']! as List<DataPoint>)];
+      [LineDataset(data: .points(setup['dataset']! as List<DataPoint>))];
   return _acquire(
     ChartConfig(
       datasets: datasets,
@@ -183,11 +183,11 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [42, 1000, 64, 100]),
-            BarDataset(yAxis: _y1, data: [10, 5, 5000, 78, 450]),
-            BarDataset(yAxis: _y1, data: [150]),
-            BarDataset(yAxis: _y2, data: [20, 0, 150, 1800, 3040]),
-            BarDataset(yAxis: _y3, data: [67, 0.0004, 0, 820, 0.001]),
+            BarDataset(data: .values([42, 1000, 64, 100])),
+            BarDataset(yAxis: _y1, data: .values([10, 5, 5000, 78, 450])),
+            BarDataset(yAxis: _y1, data: .values([150])),
+            BarDataset(yAxis: _y2, data: .values([20, 0, 150, 1800, 3040])),
+            BarDataset(yAxis: _y3, data: .values([67, 0.0004, 0, 820, 0.001])),
           ],
           labels: ['a', 'b', 'c', 'd', 'e'],
           scales: [
@@ -306,13 +306,13 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(yAxis: _y1, data: [10, 5, 5000, 78, 450]),
-              LineDataset(data: [42, 1000, 64, 100]),
-              LineDataset(yAxis: _y1, data: [50000], hidden: true),
-              LineDataset(yAxis: _y2, data: [20, 0, 7400, 14, 291]),
+              LineDataset(yAxis: _y1, data: .values([10, 5, 5000, 78, 450])),
+              LineDataset(data: .values([42, 1000, 64, 100])),
+              LineDataset(yAxis: _y1, data: .values([50000]), hidden: true),
+              LineDataset(yAxis: _y2, data: .values([20, 0, 7400, 14, 291])),
               LineDataset(
                 yAxis: _y2,
-                data: [6, 0.0007, 9, 890, 60000],
+                data: .values([6, 0.0007, 9, 890, 60000]),
                 hidden: true,
               ),
             ],
@@ -444,12 +444,12 @@ void main() {
         ChartConfig(
           datasets: [
             LineDataset(
-              points: [
+              data: .points([
                 DataPoint(10, 100),
                 DataPoint(2, 6),
                 DataPoint(65, 121),
                 DataPoint(99, 7),
-              ],
+              ]),
             ),
           ],
           scales: const [
@@ -474,12 +474,12 @@ void main() {
           ChartConfig(
             datasets: [
               LineDataset(
-                points: [
+                data: .points([
                   DataPoint(7, 950),
                   DataPoint(289, 0),
                   DataPoint(0, 8),
                   DataPoint(23, 0.04),
-                ],
+                ]),
               ),
             ],
             scales: const [
@@ -504,10 +504,10 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [10, 5, 1, 5, 78, 100]),
-              BarDataset(yAxis: _y1, data: [0, 1000]),
-              BarDataset(data: [150, 10, 10, 100, 10, 9]),
-              LineDataset(data: [100, 100, 100, 100, 100, 100]),
+              BarDataset(data: .values([10, 5, 1, 5, 78, 100])),
+              BarDataset(yAxis: _y1, data: .values([0, 1000])),
+              BarDataset(data: .values([150, 10, 10, 100, 10, 9])),
+              LineDataset(data: .values([100, 100, 100, 100, 100, 100])),
             ],
             labels: ['a', 'b', 'c', 'd', 'e', 'f'],
             scales: [
@@ -529,11 +529,11 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              BarDataset(data: [10, 5, 1, 5, 78, 100]),
-              BarDataset(yAxis: _y1, data: [0, 1000]),
-              BarDataset(data: [150, 10, 10, 100, 10, 9]),
+              BarDataset(data: .values([10, 5, 1, 5, 78, 100])),
+              BarDataset(yAxis: _y1, data: .values([0, 1000])),
+              BarDataset(data: .values([150, 10, 10, 100, 10, 9])),
               BarDataset(
-                data: [10000, 10000, 10000, 10000, 10000, 10000],
+                data: .values([10000, 10000, 10000, 10000, 10000, 10000]),
                 hidden: true,
               ),
             ],
@@ -555,7 +555,7 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            datasets: [BarDataset(data: [])],
+            datasets: [BarDataset(data: .values([]))],
             labels: [],
             scales: [LogarithmicAxis(.y)],
           ),
@@ -576,7 +576,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [1, 1, 1, 2, 1, 0]),
+            BarDataset(data: .values([1, 1, 1, 2, 1, 0])),
           ],
           labels: [],
           scales: [
@@ -602,7 +602,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [1, 1, 1, 2, 1, 0]),
+            BarDataset(data: .values([1, 1, 1, 2, 1, 0])),
           ],
           labels: [],
           scales: [
@@ -654,7 +654,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [10, 5, 2, 25, 78]),
+            BarDataset(data: .values([10, 5, 2, 25, 78])),
           ],
           labels: [],
           scales: [
@@ -701,7 +701,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [11, 0.8, 0, 28, 7]),
+            BarDataset(data: .values([11, 0.8, 0, 28, 7])),
           ],
           labels: [],
           scales: [
@@ -746,7 +746,7 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(data: [10, 5, 1, 25, 78]),
+              LineDataset(data: .values([10, 5, 1, 25, 78])),
             ],
             labels: [],
             scales: [
@@ -779,7 +779,7 @@ void main() {
         final chart = _acquire(
           const ChartConfig(
             datasets: [
-              LineDataset(data: [21, 9, 0, 10, 25]),
+              LineDataset(data: .values([21, 9, 0, 10, 25])),
             ],
             labels: [],
             scales: [
@@ -811,7 +811,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            LineDataset(data: [10, 5, 1.1, 25, 0, 78]),
+            LineDataset(data: .values([10, 5, 1.1, 25, 0, 78])),
           ],
           labels: [],
           scales: [LogarithmicAxis(.y, ticks: AxisTicks(autoSkip: false))],
@@ -833,7 +833,7 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [10, 5, 2, 25, 78]),
+            BarDataset(data: .values([10, 5, 2, 25, 78])),
           ],
           labels: [],
           scales: [
@@ -870,9 +870,9 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [10, 5, 5000, 78, 450]),
-            BarDataset(yAxis: _y1, data: [1, 1000, 10, 100]),
-            BarDataset(data: [150]),
+            BarDataset(data: .values([10, 5, 5000, 78, 450])),
+            BarDataset(yAxis: _y1, data: .values([1, 1000, 10, 100])),
+            BarDataset(data: .values([150])),
           ],
           labels: [],
           scales: [LogarithmicAxis(.y), _y1],
@@ -888,9 +888,9 @@ void main() {
       final chart = _acquire(
         const ChartConfig(
           datasets: [
-            BarDataset(data: [10, 5, 5000, 78, 450]),
-            BarDataset(yAxis: _y1, data: [1, 1000, 10, 100]),
-            BarDataset(data: [150]),
+            BarDataset(data: .values([10, 5, 5000, 78, 450])),
+            BarDataset(yAxis: _y1, data: .values([1, 1000, 10, 100])),
+            BarDataset(data: .values([150])),
           ],
           labels: [],
           scales: [LogarithmicAxis(.y), _y1],
@@ -904,12 +904,12 @@ void main() {
 
     group('when', () {
       const data = <Dataset>[
-        BarDataset(data: [1, 39], stack: 'stack'),
-        BarDataset(data: [1, 39], stack: 'stack'),
+        BarDataset(data: .values([1, 39]), stack: 'stack'),
+        BarDataset(data: .values([1, 39]), stack: 'stack'),
       ];
       const dataWithEmptyStacks = <Dataset>[
-        BarDataset(data: []),
-        BarDataset(data: []),
+        BarDataset(data: .values([])),
+        BarDataset(data: .values([])),
         ...data,
       ];
       final config = <Map<String, Object?>>[
@@ -1075,8 +1075,8 @@ void main() {
         },
         <String, Object?>{
           'data': const <Dataset>[
-            LineDataset(data: [], stack: 'stack'),
-            LineDataset(data: [], stack: 'stack'),
+            LineDataset(data: .values([]), stack: 'stack'),
+            LineDataset(data: .values([]), stack: 'stack'),
           ],
           'type': 'bar',
           'firstTick': 1,
@@ -1318,7 +1318,7 @@ void main() {
       (tester) async {
         final chart = _acquire(
           const ChartConfig(
-            datasets: [BarDataset(data: [])],
+            datasets: [BarDataset(data: .values([]))],
             labels: ['a', 'b', 'c', 'd', 'e', 'f'],
             scales: [LogarithmicAxis(.y, suggestedMin: 10, suggestedMax: 100)],
           ),
@@ -1335,7 +1335,7 @@ void main() {
         const ChartConfig(
           labels: ['a', 'b'],
           datasets: [
-            LineDataset(data: [1.1, 99]),
+            LineDataset(data: .values([1.1, 99])),
           ],
           scales: [LogarithmicAxis(.y, bounds: ScaleBounds.data)],
         ),

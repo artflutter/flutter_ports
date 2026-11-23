@@ -43,7 +43,7 @@ final List<DataPoint> _points = [
 ChartConfig _config(ZoomPluginOptions zoom, {bool legend = false}) =>
     ChartConfig(
       datasets: [
-        ScatterDataset(points: _points, pointRadius: const .constant(4)),
+        ScatterDataset(data: .points(_points), pointRadius: const .constant(4)),
       ],
       scales: const [
         LinearAxis(.x, min: 0, max: 100),

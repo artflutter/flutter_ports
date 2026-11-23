@@ -67,7 +67,7 @@ Chart _chart(
       datasets: const [
         LineDataset(
           label: 'values',
-          data: [1, 2, 3],
+          data: .values([1, 2, 3]),
           pointRadius: .constant(3),
         ),
       ],

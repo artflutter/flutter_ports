@@ -11,7 +11,7 @@ const pointStyle = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Sales',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(orange)),
       pointStyle: .constant(TrianglePointStyle()),
       pointRadius: .constant(9),

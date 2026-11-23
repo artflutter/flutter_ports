@@ -1575,9 +1575,9 @@ void main() {
     test('data goes by reference', () {
       final data = <num?>[1, null, 3];
       final datasets = <Dataset>[
-        BarDataset(data: data),
-        LineDataset(data: data),
-        ScatterDataset(data: data),
+        BarDataset(data: .values(data)),
+        LineDataset(data: .values(data)),
+        ScatterDataset(data: .values(data)),
         PieDataset(data: data),
         DoughnutDataset(data: data),
         PolarAreaDataset(data: data),
@@ -1593,10 +1593,10 @@ void main() {
     test('points go by reference, under the key data', () {
       final points = [DataPoint(1, 2), DataPoint.bubble(3, 4, 5)];
       final datasets = <Dataset>[
-        BarDataset(points: points),
-        LineDataset(points: points),
-        ScatterDataset(points: points),
-        BubbleDataset(points: points),
+        BarDataset(data: .points(points)),
+        LineDataset(data: .points(points)),
+        ScatterDataset(data: .points(points)),
+        BubbleDataset(data: points),
       ];
       for (final dataset in datasets) {
         final lowered = _lower(dataset);
@@ -1793,7 +1793,7 @@ void main() {
           BarDataset(
             key: const ValueKey('a'),
             label: 'A',
-            data: data,
+            data: .values(data),
             hidden: false,
             order: 1,
             backgroundColor: const ChartValue.constant(.solid(_red)),
@@ -1864,7 +1864,7 @@ void main() {
         final lowered = _lower(
           LineDataset(
             label: 'A',
-            points: points,
+            data: .points(points),
             hidden: true,
             order: 2,
             backgroundColor: const ChartValue.indexed([ChartPaint.solid(_red)]),
@@ -1918,7 +1918,7 @@ void main() {
         final lowered = _lower(
           ScatterDataset(
             label: 'A',
-            points: points,
+            data: .points(points),
             hidden: true,
             order: 2,
             backgroundColor: const ChartValue.constant(.solid(_red)),
@@ -1971,7 +1971,7 @@ void main() {
         final lowered = _lower(
           BubbleDataset(
             label: 'A',
-            points: bubbles,
+            data: bubbles,
             hidden: false,
             order: 1,
             backgroundColor: const ChartValue.constant(.solid(_red)),
@@ -2791,8 +2791,8 @@ void main() {
         ChartConfig(
           labels: labels,
           datasets: [
-            BarDataset(label: 'A', data: data),
-            LineDataset(label: 'B', data: data),
+            BarDataset(label: 'A', data: .values(data)),
+            LineDataset(label: 'B', data: .values(data)),
           ],
         ),
       ).lower();
@@ -2950,7 +2950,7 @@ void main() {
     test('a const config lowers to new Maps at each call', () {
       const config = ChartConfig(
         datasets: [
-          BarDataset(data: [1]),
+          BarDataset(data: .values([1])),
         ],
         legend: ChartLegend(display: false),
       );

@@ -19,7 +19,7 @@ import 'package:meta/meta.dart' show immutable;
 ///
 /// ```dart
 /// LineDataset(
-///   data: values,
+///   data: .values(values),
 ///   segment: LineSegmentStyle(
 ///     // Red where the line goes down.
 ///     borderColor: (s) => values[s.p1DataIndex] < values[s.p0DataIndex]

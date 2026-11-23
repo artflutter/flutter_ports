@@ -11,7 +11,7 @@ ChartConfig mixedConfig() => const ChartConfig(
   datasets: [
     BarDataset(
       label: 'Bar Dataset',
-      data: [10, 20, 30, 40],
+      data: .values([10, 20, 30, 40]),
       borderColor: ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(255, 99, 132, 1)),
       ),
@@ -21,7 +21,7 @@ ChartConfig mixedConfig() => const ChartConfig(
     ),
     LineDataset(
       label: 'Line Dataset',
-      data: [50, 50, 50, 50],
+      data: .values([50, 50, 50, 50]),
       fill: .none,
       borderColor: ChartValue.constant(
         ChartPaint.solid(Color.fromRGBO(54, 162, 235, 1)),

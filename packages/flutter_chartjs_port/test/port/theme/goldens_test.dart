@@ -44,8 +44,8 @@ const ValueKey<String> _boundary = ValueKey('goldens.boundary');
 /// The typed config of the golden chart.
 ChartConfig _config() => const ChartConfig(
   datasets: [
-    BarDataset(label: 'Dataset 1', data: [12, 19, 3, 5, 2]),
-    BarDataset(label: 'Dataset 2', data: [7, 11, 15, 8, 4]),
+    BarDataset(label: 'Dataset 1', data: .values([12, 19, 3, 5, 2])),
+    BarDataset(label: 'Dataset 2', data: .values([7, 11, 15, 8, 4])),
   ],
   labels: ['A', 'B', 'C', 'D', 'E'],
   maintainAspectRatio: false,

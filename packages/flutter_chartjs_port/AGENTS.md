@@ -977,7 +977,7 @@ repository.
     the tag `golden`, `test:goldens`) compares `test/port/theme/goldens/bar_light.png` and
     `bar_dark.png`.
   - `lib/src/typed/` (Chart.js ADR 0052, port-only, not pure layers): the typed public API.
-    `typed.dart` is its export list of 68 names. 26 of them are the classes of
+    `typed.dart` is its export list of 75 names. 26 of them are the classes of
     `lib/src/options/property_animation.dart` (row `adapt-property-animations`): the items of
     `ChartConfig.animations` (the abstract `PropertyAnimation` and one ready class for each of the
     19 animated properties of the elements: `RadiusAnimation`, `BorderColorAnimation`, ...) and of
@@ -1007,6 +1007,10 @@ repository.
     (Chart.js ADR 0189): a package extends it with the `@protected` members `kind`, `chartData`,
     `lowerOwn` and `props`, and `Dataset` has no `copyWith` (the tests call `BuiltInDatasetCopy` of
     `test/support/dataset_copy.dart`).
+    The `data` of `BarDataset`, `LineDataset` and `ScatterDataset` is a `DatasetData` of
+    `dataset_data.dart`, sealed, with the forms `.values(List<num?>)` (`DatasetValues`) and
+    `.points(List<DataPoint>)` (`DatasetPoints`): `data: .values([5, 7, null])`. Its `==` compares
+    the List by identity. The `data` of `BubbleDataset` is a `List<DataPoint>`.
     `DataPoint` is a final subclass of `ParsedItem` in `lib/src/options/parsed.dart`: a `List<DataPoint>` is
     the parsed List of `parsing: false`. Its `x` and `y` are `Object?`, the fields of `ParsedItem`.
     `chart_value.dart` has sealed `ChartValue<T>` and its constant/indexed/resolver

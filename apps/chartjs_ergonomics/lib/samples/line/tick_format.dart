@@ -11,7 +11,7 @@ const tickFormat = ChartConfig(
   datasets: [
     LineDataset(
       label: 'Revenue',
-      data: sales,
+      data: .values(sales),
       borderColor: .constant(.solid(teal)),
     ),
   ],

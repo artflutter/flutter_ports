@@ -215,7 +215,7 @@ void main() {
         ChartConfig(
           labels: const ['a', 'b'],
           datasets: [
-            LineDataset(points: [DataPoint.label('c', 2)]),
+            LineDataset(data: .points([DataPoint.label('c', 2)])),
           ],
           animation: ChartAnimation.none,
         ),
@@ -255,7 +255,7 @@ void main() {
         _chartOf('bar', [
           lowerDataset(
             const BarDataset(
-              data: [1, 2, 3],
+              data: .values([1, 2, 3]),
               backgroundColor: ChartValue.constant(.solid(_red)),
             ),
             .bar,
@@ -285,7 +285,7 @@ void main() {
         _chartOf('bar', [
           lowerDataset(
             const BarDataset(
-              data: [1, 2, 3],
+              data: .values([1, 2, 3]),
               backgroundColor: ChartValue.indexed([
                 ChartPaint.solid(_red),
                 ChartPaint.solid(_blue),
@@ -318,7 +318,7 @@ void main() {
         _chartOf('bar', [
           lowerDataset(
             const BarDataset(
-              data: [1, 2, 3],
+              data: .values([1, 2, 3]),
               backgroundColor: ChartValue.resolver(_colorFor),
             ),
             .bar,
@@ -347,8 +347,8 @@ void main() {
     ) async {
       final chart = acquireChart(
         _chartOf('bar', [
-          lowerDataset(const BarDataset(data: [1, 2, 3]), .bar),
-          lowerDataset(const LineDataset(data: [3, 2, 1]), .bar),
+          lowerDataset(const BarDataset(data: .values([1, 2, 3])), .bar),
+          lowerDataset(const LineDataset(data: .values([3, 2, 1])), .bar),
         ]),
       );
       expect(chart.getDatasetMeta(0).type, 'bar');

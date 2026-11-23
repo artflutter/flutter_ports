@@ -20,7 +20,7 @@ ChartConfig _config(ShadcnTip tip) => ChartConfig(
   datasets: [
     BarDataset(
       label: 'Visitors',
-      data: _visitors,
+      data: const .values(_visitors),
       backgroundColor: .indexed(_fills),
       hoverBackgroundColor: .indexed(_fills),
       categoryPercentage: 0.8,

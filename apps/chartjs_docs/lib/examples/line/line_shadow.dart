@@ -26,7 +26,7 @@ const Color teal = Color.fromRGBO(75, 192, 192, 1);
 // #docregion line-shadow
 const shadowLine = LineDataset(
   label: 'Shadow',
-  data: values,
+  data: .values(values),
   borderColor: .constant(.solid(teal)),
   borderWidth: 3,
   shadow: ChartShadow(color: Color(0x66000000), blur: 10, offset: Offset(0, 6)),

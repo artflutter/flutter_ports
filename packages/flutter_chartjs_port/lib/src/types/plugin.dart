@@ -325,7 +325,7 @@ typedef Plugin<O> = PluginOf<O, IChart>;
 ///
 /// ```dart
 /// ChartConfig(
-///   datasets: [LineDataset(data: values)],
+///   datasets: [LineDataset(data: .values(values))],
 ///   disabledPlugins: const [PluginOff<LegendPlugin>()],
 /// )
 /// ```
