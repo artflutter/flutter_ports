@@ -3,6 +3,7 @@
 - Status: accepted (2026-11-15): the zoom tests, the fixtures, the range-only suite, analysis and port checks pass.
 - Date: 2026-11-15
 - Superseded in part by: [Zoom ADR 0007](0007-typed-zoom-limits.md): the limits are a class with direction and axis keys (2026-11-20)
+- Superseded in part by: [Zoom ADR 0008](0008-typed-mode-option.md): the mode fields are a sealed `ModeOption` (2026-11-23)
 - Supersedes: of [Zoom ADR 0003](0003-host-connection.md) item 9, the bullets of the update mode (seam H15), of the
   plugin object (seam H16), of the option facades (seam H17) and of the defaults Map; of
   [Zoom ADR 0004](0004-native-zoom-pan-callbacks.md), item 1 (the callback getters and the foreign value) and the

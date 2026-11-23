@@ -1,6 +1,6 @@
 # Zoom ADR 0008: Typed mode option
 
-- Status: proposed
+- Status: accepted (2026-11-23): the zoom tests, the fixtures, the range-only suite, analysis and port checks pass.
 - Date: 2026-11-23
 - Supersedes: [Zoom ADR 0005](0005-typed-zoom-options.md) item 1, the sentence "A `mode`, `scaleMode` or
   `overScaleMode` field holds a `Mode` or a `ModeFn`, and its constructor asserts it."
