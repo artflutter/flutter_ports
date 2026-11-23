@@ -54,9 +54,9 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0049](0049-chart-view-widget.md) The ChartView widget and reduced motion: accepted, superseded in part by 0052.
 - [0050](0050-public-theme-api.md) The public theme API, the presets, the theme switch and the touch sizes: accepted, supersedes 0042, superseded by 0147, superseded in part by 0054, 0057, 0116, 0117, 0118, 0141.
 - [0051](0051-input-events-and-interaction-state.md) Input events and interaction state: accepted, superseded in part by 0108.
-- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170, 0189, 0190, 0191, 0192, 0193, 0195.
+- [0052](0052-typed-public-api.md) The typed public API: accepted, supersedes 0043, 0048, 0049, superseded in part by 0057, 0077, 0116, 0123, 0130, 0140, 0144, 0145, 0170, 0189, 0190, 0191, 0192, 0193, 0194, 0195.
 - [0053](0053-resolver-fast-paths.md) The resolver fast paths: rejected.
-- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165, 0183, 0192, 0193.
+- [0054](0054-typed-internal-model.md) The typed internal model: accepted, supersedes 0017, 0018, 0021, 0036, 0038, 0043, 0050, superseded in part by 0057, 0108, 0118, 0121, 0123, 0141, 0142, 0144, 0145, 0147, 0165, 0183, 0192, 0193, 0194.
 - [0055](0055-native-draw-path.md) The native draw path of the canvas layer: accepted, supersedes 0013, superseded in part by 0106.
 - [0056](0056-color-performance.md) Profile-guided color implementation: proposed.
 - [0057](0057-direct-typed-colors.md) Color-only inputs: implemented, supersedes 0050, 0052, 0054, superseded in part by 0061, 0128, 0147.
@@ -176,7 +176,7 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0179](0179-no-parity-generator-or-port-order.md) No parity generator and no port-order tool: accepted, supersedes 0029.
 - [0180](0180-native-spec-matchers.md) Native matchers and recorders in the spec ports: accepted, supersedes 0030.
 - [0181](0181-plugin-classes-and-typed-get-plugin.md) A class for each plugin, and getPlugin by type: accepted, supersedes 0020, 0148.
-- [0182](0182-resolved-plugin-option-classes.md) Resolved option classes for the built-in plugins: accepted, supersedes 0150, superseded in part by 0192, 0193.
+- [0182](0182-resolved-plugin-option-classes.md) Resolved option classes for the built-in plugins: accepted, supersedes 0150, superseded in part by 0192, 0193, 0194.
 - [0183](0183-typed-scale-option-classes.md) Typed scale option classes: accepted, supersedes 0054.
 - [0185](0185-typed-element-options.md) Typed element options: accepted.
 - [0186](0186-typed-scale-value-methods.md) Typed scale value methods: accepted, supersedes 0025.
@@ -187,6 +187,6 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0191](0191-typed-axes.md) Typed axes with no ids: accepted, supersedes 0052.
 - [0192](0192-tooltip-options-object.md) The tooltip options are one object: accepted, supersedes 0052, 0054, 0124, 0125, 0148, 0182.
 - [0193](0193-legend-options-object.md) The legend options are one object: accepted, supersedes 0052, 0054, 0092, 0099, 0124, 0130, 0182.
-- [0194](0194-decimation-options-object.md) The decimation options are one object: proposed, supersedes 0052, 0054, 0182.
+- [0194](0194-decimation-options-object.md) The decimation options are one object: accepted, supersedes 0052, 0054, 0182.
 - [0195](0195-deprecate-raw-chart-view.md) Deprecate the raw ChartView config: accepted, supersedes 0052.
 <!-- adr-index:end -->

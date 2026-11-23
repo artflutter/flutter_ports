@@ -1,6 +1,6 @@
 # Chart.js ADR 0194: The decimation options are one object
 
-- Status: proposed
+- Status: accepted (2026-11-23): its code is on main, and all the gates of AGENTS.md pass.
 - Date: 2026-11-23
 - Supersedes: of [Chart.js ADR 0182](0182-resolved-plugin-option-classes.md), item 1 for `DecimationOptions`
   and item 6; of [Chart.js ADR 0054](0054-typed-internal-model.md), §2 for the kind `DecimationOptions` of the
