@@ -192,4 +192,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0196](0196-filler-colors-options-objects.md) The filler and colors options are one object each: accepted, supersedes 0052, 0054, 0147, 0182, 0194.
 - [0197](0197-title-options-objects.md) The title and subtitle options are one object each: accepted, supersedes 0052, 0054, 0147, 0181, 0182.
 - [0198](0198-remove-raw-chart-view.md) Remove the raw ChartView config: proposed, supersedes 0195.
+- [0200](0200-native-canvas-style-members.md) Native canvas style members and typed harness options: proposed, supersedes 0022, 0037, 0055, 0108, 0124.
 <!-- adr-index:end -->
