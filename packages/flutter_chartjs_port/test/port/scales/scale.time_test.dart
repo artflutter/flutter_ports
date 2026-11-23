@@ -547,7 +547,8 @@ void main() {
           const TimeAxis(
             .x,
             ticks: AxisTicks(source: TickSource.labels),
-            extra: {'offset': true, 'offsetAfterAutoskip': true},
+            offsetAfterAutoskip: true,
+            extra: {'offset': true},
           ),
         ),
       );

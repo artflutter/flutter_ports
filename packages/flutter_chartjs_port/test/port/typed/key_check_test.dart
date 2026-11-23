@@ -73,6 +73,7 @@ const Map<String, int> _allowlist = {
   'options.scales.*.title.align': 3313,
   'options.scales.*.title.font': 3323,
   'options.scales.*.time.tooltipFormat': 3453,
+  'options.scales.*.offsetAfterAutoskip': 3503,
   'options.plugins.legend.labels.boxHeight': 2479,
   'options.plugins.legend.labels.font': 2489,
   'options.plugins.legend.labels.usePointStyle': 2528,
@@ -254,6 +255,7 @@ List<ChartConfig> _configs() {
           unit: .month,
           tooltipFormat: 'yyyy',
           displayFormats: const TimeDisplayFormats(month: 'MMM yyyy'),
+          offsetAfterAutoskip: true,
         ),
         TimeSeriesAxis(
           .x,
@@ -262,6 +264,7 @@ List<ChartConfig> _configs() {
           unit: .month,
           tooltipFormat: 'yyyy',
           displayFormats: const TimeDisplayFormats(month: 'MMM yyyy'),
+          offsetAfterAutoskip: true,
         ),
       ],
       indexAxis: const XAxis(),

@@ -561,6 +561,33 @@ void main() {
       );
     });
 
+    test('offsetAfterAutoskip of a time axis compares with ==', () {
+      _expectEqual(
+        const TimeAxis(.x).copyWith(offsetAfterAutoskip: true),
+        const TimeAxis(.x, offsetAfterAutoskip: true),
+      );
+      _expectEqual(
+        const TimeSeriesAxis(.x).copyWith(offsetAfterAutoskip: true),
+        const TimeSeriesAxis(.x, offsetAfterAutoskip: true),
+      );
+      for (final (on, off, unset) in const <(ChartAxis, ChartAxis, ChartAxis)>[
+        (
+          TimeAxis(.x, offsetAfterAutoskip: true),
+          TimeAxis(.x, offsetAfterAutoskip: false),
+          TimeAxis(.x),
+        ),
+        (
+          TimeSeriesAxis(.x, offsetAfterAutoskip: true),
+          TimeSeriesAxis(.x, offsetAfterAutoskip: false),
+          TimeSeriesAxis(.x),
+        ),
+      ]) {
+        _expectEqual(on.copyWith(), on);
+        expect(on, isNot(off));
+        expect(off, isNot(unset));
+      }
+    });
+
     test('the scales compare by their entries, in key order', () {
       expect(
         const ChartConfig(
@@ -864,6 +891,27 @@ void main() {
         'title',
         'extra',
       ]);
+      for (final axis in const <ChartAxis>[TimeAxis(.x), TimeSeriesAxis(.x)]) {
+        expect(names(axis), [
+          'axis',
+          'display',
+          'position',
+          'reverse',
+          'stacked',
+          'min',
+          'max',
+          'unit',
+          'tooltipFormat',
+          'displayFormats',
+          'offsetAfterAutoskip',
+          'bounds',
+          'ticks',
+          'grid',
+          'border',
+          'title',
+          'extra',
+        ]);
+      }
       expect(names(const ChartLegend()), [
         'display',
         'position',

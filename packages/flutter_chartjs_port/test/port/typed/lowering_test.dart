@@ -674,6 +674,13 @@ final Map<String, (List<(ChartAxis, String)>, Map<String, Object?>)> _axisOwn =
           },
         },
       ),
+      'offsetAfterAutoskip': (
+        const [
+          (TimeAxis(.x, offsetAfterAutoskip: true), 'time'),
+          (TimeSeriesAxis(.x, offsetAfterAutoskip: true), 'timeseries'),
+        ],
+        {'offsetAfterAutoskip': true},
+      ),
       'startAngle': (
         const [(RadialLinearAxis(startAngle: 45), 'radialLinear')],
         {'startAngle': 45},

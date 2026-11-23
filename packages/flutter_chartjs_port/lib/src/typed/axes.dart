@@ -480,6 +480,7 @@ base mixin _TimeOptions on ChartAxis {
   TimeUnit? get unit;
   String? get tooltipFormat;
   TimeDisplayFormats? get displayFormats;
+  bool? get offsetAfterAutoskip;
 
   void _lowerTime(ScaleOptionsScope scope) {
     final time = TimeScaleTimeOptionsScope();
@@ -490,6 +491,7 @@ base mixin _TimeOptions on ChartAxis {
     }
     put(scope, OptionKey.min, min);
     put(scope, OptionKey.max, max);
+    put(scope, OptionKey.offsetAfterAutoskip, offsetAfterAutoskip);
     if (time.ownKeyCount != 0) scope.time = time;
   }
 
@@ -499,6 +501,7 @@ base mixin _TimeOptions on ChartAxis {
     ('unit', unit),
     ('tooltipFormat', tooltipFormat),
     ('displayFormats', displayFormats),
+    ('offsetAfterAutoskip', offsetAfterAutoskip),
   ];
 }
 
@@ -544,6 +547,14 @@ final class const TimeAxis(
   /// {@endtemplate}
   @override final TimeDisplayFormats? displayFormats,
 
+  /// {@template flutter_chartjs_port.typed.offsetAfterAutoskip}
+  /// Whether the axis computes its offsets again from the ticks that the
+  /// auto skip keeps: `offsetAfterAutoskip`
+  /// (`docs/axes/cartesian/time.md`), for the bars of a bar chart. The
+  /// default is `false`.
+  /// {@endtemplate}
+  @override final bool? offsetAfterAutoskip,
+
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
   super.ticks,
@@ -571,6 +582,7 @@ final class const TimeAxis(
     TimeUnit? unit,
     String? tooltipFormat,
     TimeDisplayFormats? displayFormats,
+    bool? offsetAfterAutoskip,
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
@@ -588,6 +600,7 @@ final class const TimeAxis(
     unit: unit ?? this.unit,
     tooltipFormat: tooltipFormat ?? this.tooltipFormat,
     displayFormats: displayFormats ?? this.displayFormats,
+    offsetAfterAutoskip: offsetAfterAutoskip ?? this.offsetAfterAutoskip,
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
@@ -642,6 +655,9 @@ final class const TimeSeriesAxis(
   /// {@macro flutter_chartjs_port.typed.displayFormats}
   @override final TimeDisplayFormats? displayFormats,
 
+  /// {@macro flutter_chartjs_port.typed.offsetAfterAutoskip}
+  @override final bool? offsetAfterAutoskip,
+
   /// {@macro flutter_chartjs_port.typed.bounds}
   final ScaleBounds? bounds,
   super.ticks,
@@ -669,6 +685,7 @@ final class const TimeSeriesAxis(
     TimeUnit? unit,
     String? tooltipFormat,
     TimeDisplayFormats? displayFormats,
+    bool? offsetAfterAutoskip,
     ScaleBounds? bounds,
     AxisTicks? ticks,
     AxisGrid? grid,
@@ -686,6 +703,7 @@ final class const TimeSeriesAxis(
     unit: unit ?? this.unit,
     tooltipFormat: tooltipFormat ?? this.tooltipFormat,
     displayFormats: displayFormats ?? this.displayFormats,
+    offsetAfterAutoskip: offsetAfterAutoskip ?? this.offsetAfterAutoskip,
     bounds: bounds ?? this.bounds,
     ticks: ticks ?? this.ticks,
     grid: grid ?? this.grid,
