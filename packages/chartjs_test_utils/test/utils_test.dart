@@ -21,8 +21,47 @@ import 'package:flutter_test/flutter_test.dart';
 // The other groups use acquireChart in testWidgets bodies. main() has the
 // set-up of flutter_test_config.dart that they need: a device pixel ratio
 // of 1 (test/index.js:5) and releaseCharts at the unmount of the harness
-// body, with a tearDown as the fallback. The test file registers no
-// built-in component: the charts have no type and no dataset.
+// body, with a tearDown as the fallback. A chart of a test is the typed
+// config of `_config` (Chart.js ADR 0195): a typed config has one dataset
+// at least (Chart.js ADR 0190), and a doughnut chart needs no scale. Thus
+// main() registers the doughnut controller and the arc element alone. The
+// test of the defaults of animation, responsive and locale keeps the Map
+// configs of the spec with no type and no dataset: its subject is the Map
+// handling of `_acquireChart`.
+
+/// The typed config of a doughnut chart with one dataset and no data, with
+/// the options [responsive], [maintainAspectRatio], [animation] and
+/// [events] and the inline plugins [plugins].
+ChartConfig _config({
+  bool? responsive,
+  bool? maintainAspectRatio,
+  ChartAnimation? animation,
+  List<String>? events,
+  List<Plugin<Object?>>? plugins,
+}) => ChartConfig(
+  datasets: const [DoughnutDataset()],
+  responsive: responsive,
+  maintainAspectRatio: maintainAspectRatio,
+  animation: animation,
+  events: events,
+  plugins: plugins,
+);
+
+/// The chart of the typed [config] with the acquisition options [options].
+Chart _acquire(ChartConfig config, [Map<String, Object?>? options]) =>
+    acquireChartRoot(ChartConfigLowering(config).lower(), options);
+
+/// A dataset of the controller id [kind], which no test registers.
+final class const _KindDataset(@override final ChartKind kind) extends Dataset {
+  @override
+  List<Object?>? get chartData => null;
+
+  @override
+  void lowerOwn(OptionScope scope) {}
+
+  @override
+  List<TypedProperty> get props => [('kind', kind)];
+}
 
 /// A chart event of [type] at (10, 10).
 final class _Event(@override final String type) implements ChartEvent {
@@ -106,6 +145,7 @@ Plugin<Object?> _eventLog(List<String> log) => Plugin<Object?>(
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  Chart.register([DoughnutController.jsClass, ArcElement.jsClass]);
 
   // The set-up of flutter_test_config.dart (Chart.js ADR 0022, section 8).
   _forceRatio();
@@ -182,7 +222,7 @@ void main() {
     testWidgets('the canvas of 512 x 512 through attributes, in a wrapper of '
         'the class chartjs-wrapper', (tester) async {
       final options = <String, Object?>{};
-      final chart = acquireChart(null, options);
+      final chart = _acquire(_config(), options);
       final canvas = chart.canvas!;
       final wrapper = canvas.parentElement!;
 
@@ -207,7 +247,7 @@ void main() {
     testWidgets('the attributes of the options canvas and wrapper', (
       tester,
     ) async {
-      final chart = acquireChart(<String, Object?>{}, <String, Object?>{
+      final chart = _acquire(_config(), <String, Object?>{
         'canvas': <String, Object?>{
           'style': 'width: 150px; height: 245px',
           'data-index': 3,
@@ -284,14 +324,12 @@ void main() {
     testWidgets('FlutterPlatform, and the chart is attached at its '
         'construction', (tester) async {
       final log = <String>[];
-      final chart = acquireChart(
-        <String, Object?>{
-          'options': <String, Object?>{
-            'responsive': true,
-            'maintainAspectRatio': false,
-          },
-          'plugins': [_resizeLog(log)],
-        },
+      final chart = _acquire(
+        _config(
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: [_resizeLog(log)],
+        ),
         <String, Object?>{
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{'style': 'width: 300px; height: 350px'},
@@ -342,10 +380,8 @@ void main() {
 
     testWidgets('useOffscreenCanvas gives the chart a canvas that no host '
         'shows, thus BasicPlatform', (tester) async {
-      final chart = acquireChart(
-        <String, Object?>{
-          'options': <String, Object?>{'animation': <String, Object?>{}},
-        },
+      final chart = _acquire(
+        _config(animation: const ChartAnimation()),
         <String, Object?>{'useOffscreenCanvas': true},
       );
       final wrappers = document.body.childNodes.whereType<HarnessElement>();
@@ -365,7 +401,7 @@ void main() {
     ) async {
       final children = document.body.childNodes.length;
       expect(
-        () => acquireChart(null, <String, Object?>{'useShadowDOM': true}),
+        () => _acquire(_config(), <String, Object?>{'useShadowDOM': true}),
         throwsUnsupportedError,
       );
       expect(document.body.childNodes, hasLength(children));
@@ -375,12 +411,11 @@ void main() {
       final children = document.body.childNodes.length;
       final instances = Chart.instances.length;
       expect(
-        () => acquireChart(<String, Object?>{
-          'type': 'harnessMissing',
-          'data': <String, Object?>{
-            'datasets': [<String, Object?>{}],
-          },
-        }),
+        () => _acquire(
+          const ChartConfig(
+            datasets: [_KindDataset(ChartKind('harnessMissing'))],
+          ),
+        ),
         throwsA(
           isA<StateError>().having(
             (e) => e.message,
@@ -409,7 +444,7 @@ void main() {
       waitForResize(chart, () {
         children.add(document.body.childNodes.length);
         try {
-          acquireChart();
+          _acquire(_config());
         } on Object catch (e) {
           error = e;
         }
@@ -430,11 +465,8 @@ void main() {
   group('harness-trigger-mouse-event', () {
     /// A chart of 200 x 100 with the events [events], whose plugin logs
     /// into [log].
-    Chart eventChart(List<String> log, [List<String>? events]) => acquireChart(
-      <String, Object?>{
-        'options': <String, Object?>{'events': ?events},
-        'plugins': [_eventLog(log)],
-      },
+    Chart eventChart(List<String> log, [List<String>? events]) => _acquire(
+      _config(events: events, plugins: [_eventLog(log)]),
       <String, Object?>{
         'canvas': <String, Object?>{'height': 100, 'width': 200},
       },
@@ -505,10 +537,8 @@ void main() {
     ) async {
       // The wrapper of zoom.drag.spec.js:441 of chartjs-plugin-zoom.
       final log = <String>[];
-      final chart = acquireChart(
-        <String, Object?>{
-          'plugins': [_eventLog(log)],
-        },
+      final chart = _acquire(
+        _config(plugins: [_eventLog(log)]),
         <String, Object?>{
           'canvas': <String, Object?>{'height': 100, 'width': 200},
           'wrapper': <String, Object?>{
@@ -649,20 +679,14 @@ void main() {
   // 11). Each test ports one case of core.controller.tests.js line by line,
   // as a check of the harness: the spec file ports the case itself.
   group('the host changes, on the shapes of core.controller.tests.js', () {
-    Map<String, Object?> responsive([List<Plugin<Object?>>? plugins]) =>
-        <String, Object?>{
-          'options': <String, Object?>{
-            'responsive': true,
-            'maintainAspectRatio': false,
-          },
-          'plugins': ?plugins,
-        };
+    ChartConfig responsive([List<Plugin<Object?>>? plugins]) =>
+        _config(responsive: true, maintainAspectRatio: false, plugins: plugins);
 
     testWidgets(':657 should resize the canvas when parent width changes', (
       tester,
     ) async {
       await waitForDone((done) {
-        final chart = acquireChart(responsive(), <String, Object?>{
+        final chart = _acquire(responsive(), <String, Object?>{
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{
             'style': 'width: 300px; height: 350px; position: relative',
@@ -698,7 +722,7 @@ void main() {
     testWidgets(':697 should restore the original size when parent became '
         'invisible', (tester) async {
       await waitForDone((done) {
-        final chart = acquireChart(responsive(), <String, Object?>{
+        final chart = _acquire(responsive(), <String, Object?>{
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{
             'style': 'width: 300px; height: 350px; position: relative',
@@ -752,7 +776,7 @@ void main() {
         'style changes from "none" to "block"', (tester) async {
       await waitForDone((done) {
         // https://github.com/chartjs/Chart.js/issues/4659
-        final chart = acquireChart(responsive(), <String, Object?>{
+        final chart = _acquire(responsive(), <String, Object?>{
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{
             'style': 'display: none; max-width: 600px; max-height: 400px;',
@@ -776,7 +800,7 @@ void main() {
         're-attached to the DOM', (tester) async {
       final log = <String>[];
       await waitForDone((done) {
-        final chart = acquireChart(responsive([_resizeLog(log)]), {
+        final chart = _acquire(responsive([_resizeLog(log)]), {
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{'style': 'width: 320px; height: 350px'},
         });
@@ -838,7 +862,7 @@ void main() {
     testWidgets(':1116 should detect detach/attach in series', (tester) async {
       final log = <String>[];
       await waitForDone((done) {
-        final chart = acquireChart(responsive([_resizeLog(log)]), {
+        final chart = _acquire(responsive([_resizeLog(log)]), {
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{'style': 'width: 320px; height: 350px'},
         });
@@ -868,7 +892,7 @@ void main() {
     ) async {
       final log = <String>[];
       await waitForDone((done) {
-        final chart = acquireChart(responsive([_resizeLog(log)]), {
+        final chart = _acquire(responsive([_resizeLog(log)]), {
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{'style': 'width: 320px; height: 350px'},
         });
@@ -899,7 +923,7 @@ void main() {
 
     testWidgets(':1179 should detect attach/detach in series', (tester) async {
       await waitForDone((done) {
-        final chart = acquireChart(responsive(), <String, Object?>{
+        final chart = _acquire(responsive(), <String, Object?>{
           'canvas': <String, Object?>{'style': ''},
           'wrapper': <String, Object?>{'style': 'width: 320px; height: 350px'},
         });
@@ -935,14 +959,9 @@ void main() {
       tester,
     ) async {
       await waitForDone((done) {
-        var chart = acquireChart(
-          <String, Object?>{
-            'options': <String, Object?>{'responsive': true},
-          },
-          <String, Object?>{
-            'wrapper': <String, Object?>{'style': 'width: 320px'},
-          },
-        );
+        var chart = _acquire(_config(responsive: true), <String, Object?>{
+          'wrapper': <String, Object?>{'style': 'width: 320px'},
+        });
 
         final wrapper = chart.canvas!.parentElement!;
 

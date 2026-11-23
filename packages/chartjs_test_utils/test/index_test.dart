@@ -12,7 +12,9 @@ import 'package:flutter_test/flutter_test.dart';
 // src/index.js, with _releaseChart of src/utils.js (Chart.js ADR 0022,
 // sections 4 and 8). main() has the set-up of flutter_test_config.dart:
 // releaseCharts at the unmount of the harness body, and in a tearDown as
-// the fallback (`harness-release-at-unmount`).
+// the fallback (`harness-release-at-unmount`). It registers the doughnut
+// controller and the arc element alone: a typed config has one dataset at
+// least, and a doughnut chart needs no scale.
 
 /// The hooks `beforeDestroy` and `afterDestroy` of each chart, by the name
 /// of its plugin.
@@ -30,11 +32,19 @@ Plugin<Object?> _destroyLog(String name) => Plugin<Object?>(
   },
 );
 
-/// A chart of [acquireChart] whose plugin logs as [name].
+/// A chart of [acquireChartRoot] whose plugin logs as [name]: the typed
+/// config of a doughnut chart with one dataset and no data (Chart.js ADRs
+/// 0190 and 0195).
 Chart _acquire(String name, [Map<String, Object?>? options]) =>
-    acquireChart(<String, Object?>{
-      'plugins': [_destroyLog(name)],
-    }, options);
+    acquireChartRoot(
+      ChartConfigLowering(
+        ChartConfig(
+          datasets: const [DoughnutDataset()],
+          plugins: [_destroyLog(name)],
+        ),
+      ).lower(),
+      options,
+    );
 
 /// The wrapper of the chart of the unmount test.
 late HarnessElement _released;
@@ -45,6 +55,7 @@ int _destroyCount(String name) =>
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
+  Chart.register([DoughnutController.jsClass, ArcElement.jsClass]);
 
   // The set-up of flutter_test_config.dart (Chart.js ADR 0022, section 8).
   setUp(() {
