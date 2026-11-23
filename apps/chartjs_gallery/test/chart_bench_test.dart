@@ -914,7 +914,7 @@ void main() {
                   isFalse,
                 );
                 expect(
-                  ColorsPluginOptions.of(jsGet(plugins, 'colors')).enabled,
+                  (jsGet(plugins, 'colors')! as ColorsPluginOptions).enabled,
                   isFalse,
                 );
                 expect(

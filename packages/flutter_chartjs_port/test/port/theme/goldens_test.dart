@@ -54,16 +54,12 @@ ChartConfig _config() => const ChartConfig(
   subtitle: ChartTitle(display: true, text: ['Subtitle']),
   pluginOptions: [
     LegendOptions(title: LegendTitleOptions(display: true, text: ['Legend'])),
+    ColorsPluginOptions(enabled: true),
   ],
   scales: [
     CategoryAxis(.x, title: AxisTitle(display: true, text: ['Label'])),
     LinearAxis(.y, title: AxisTitle(display: true, text: ['Value'])),
   ],
-  extra: {
-    'plugins': {
-      'colors': {'enabled': true},
-    },
-  },
 );
 
 /// Pumps the golden chart of [theme] and gives its chart, with the tooltip

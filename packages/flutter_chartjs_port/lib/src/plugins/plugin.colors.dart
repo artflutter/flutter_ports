@@ -9,8 +9,9 @@
 /// the upstream order: `id`, `defaults` and the hook `beforeLayout`.
 ///
 /// The TypeScript interface `ColorsPluginOptions` (`plugin.colors.ts:4-7`)
-/// is the final class `ColorsPluginOptions` of `plugin_options.dart`: the
-/// resolved options of `core.plugins.js:175-188` (Chart.js ADR 0182).
+/// is the final class `ColorsPluginOptions` of `plugin_options.dart`: one
+/// immutable options object, which the plugin service merges from the
+/// defaults, the theme and the chart (Chart.js ADR 0196).
 /// `ColorsDescriptor` (`:9-12`) is a type only: the descriptors are the
 /// datasets and the element options of the user, read by name.
 ///
@@ -19,13 +20,14 @@
 /// (Chart.js ADR 0054 §5).
 ///
 /// Four marked hunks add the theme palette (Chart.js ADR 0147, theming.md
-/// §3.5): H4a (the palette keys, two library variables and their reader),
-/// H4b and H4c (a theme branch before the unchanged `return` line of each
-/// getter) and H5 (the palette of the chart theme before each colorizer
-/// run). Without a theme, H5 sets both variables to Dart `null`, and the
-/// results are the upstream results. H5 reads the theme map through
-/// `chartThemeOf` of `core.config.dart` (hunk H0). This file never imports
-/// `lib/src/theme/` (invariant 4).
+/// §3.5): H4a (two library variables and their reader), H4b and H4c (a
+/// theme branch before the unchanged `return` line of each getter) and H5
+/// (the palette of the options before each colorizer run). The palette is
+/// the fields `borderColors` and `backgroundColors` of the merged
+/// `ColorsPluginOptions`, which a theme sets (Chart.js ADR 0196). Without a
+/// palette, H5 sets both variables to Dart `null`, and the results are the
+/// upstream results. This file never imports `lib/src/theme/` (invariant
+/// 4).
 ///
 /// `plugin.colors.ts:1` imports `DoughnutController`, `PolarAreaController`
 /// and `defaults` from `../index.js`. This file imports the three Dart files
@@ -55,33 +57,20 @@ final List<ui.Color> _backgroundColors = [
   for (final color in _borderColors) color.withValues(alpha: 0.5),
 ];
 
-// DIVERGES(chartjs): theme-H4a, the theme palette keys, variables and reader.
-/// The key of the border palette under `plugins.colors` of a theme map
-/// (Chart.js ADR 0147, theming.md §3.5).
-const String themeBorderColorsKey = r'$borderColors';
-
-/// The key of the background palette under `plugins.colors` of a theme map.
-const String themeBackgroundColorsKey = r'$backgroundColors';
-
+// DIVERGES(chartjs): theme-H4a, the palette variables and their reader.
 /// The border palette of the theme of the chart of the current colorizer
 /// run, or Dart `null` for the upstream palette. Hunk H5 sets it.
-List<Object?>? _themeBorderColors;
+List<ui.Color>? _themeBorderColors;
 
 /// The background palette of the theme of the chart of the current
 /// colorizer run, or Dart `null` for the upstream palette.
-List<Object?>? _themeBackgroundColors;
+List<ui.Color>? _themeBackgroundColors;
 
-/// The palette [key] under `plugins.colors` of the theme map [theme]: a
-/// List with at least one item, else Dart `null`. An empty List would give
-/// `i % 0` (a throw in Dart), and a String would give one character for
-/// each dataset in JavaScript.
-List<Object?>? _themePalette(Object? theme, String key) {
-  if (theme == null) return null;
-  final plugins = jsGet(theme, 'plugins');
-  final colors = jsIsObjectLike(plugins) ? jsGet(plugins, 'colors') : null;
-  final value = jsIsObjectLike(colors) ? jsGet(colors, key) : null;
-  return value is List<Object?> && value.isNotEmpty ? value : null;
-}
+/// The palette [colors] of the options (Chart.js ADR 0196): a List with at
+/// least one item, else Dart `null`. An empty List would give `i % 0`, a
+/// throw in Dart.
+List<ui.Color>? _themePalette(List<ui.Color>? colors) =>
+    colors != null && colors.isNotEmpty ? colors : null;
 
 /// plugin.colors.ts:27 `getBorderColor(i)`. The TypeScript source declares
 /// no return type. A theme palette holds any static JS value.
@@ -89,7 +78,7 @@ Object? _getBorderColor(int i) {
   // DIVERGES(chartjs): theme-H4b, the theme palette comes first.
   final themeColors = _themeBorderColors;
   if (themeColors != null) {
-    return ChartPaint.solid(themeColors[i % themeColors.length]! as ui.Color);
+    return ChartPaint.solid(themeColors[i % themeColors.length]);
   }
   return ChartPaint.solid(_borderColors[i % _borderColors.length]);
 }
@@ -99,7 +88,7 @@ Object? _getBackgroundColor(int i) {
   // DIVERGES(chartjs): theme-H4c, the theme palette comes first.
   final themeColors = _themeBackgroundColors;
   if (themeColors != null) {
-    return ChartPaint.solid(themeColors[i % themeColors.length]! as ui.Color);
+    return ChartPaint.solid(themeColors[i % themeColors.length]);
   }
   return ChartPaint.solid(_backgroundColors[i % _backgroundColors.length]);
 }
@@ -294,7 +283,8 @@ bool _isDefaultColor(Object? input) {
 bool _beforeLayout(Object hookChart, Object _, ColorsPluginOptions opts) {
   // The core gives its Chart: the hook type names the chart interface.
   final chart = hookChart as Chart;
-  if (!opts.enabled) {
+  // An absent option is the falsy `undefined` of upstream.
+  if (opts.enabled != true) {
     return true;
   }
 
@@ -309,14 +299,13 @@ bool _beforeLayout(Object hookChart, Object _, ColorsPluginOptions opts) {
       (jsTruthy(elements) && _containsColorsDefinitions(elements)) ||
       _containsDefaultColorsDefenitions();
 
-  if (!opts.forceOverride && containsColorDefenition) {
+  if (opts.forceOverride != true && containsColorDefenition) {
     return true;
   }
 
-  // DIVERGES(chartjs): theme-H5, the palette of the chart theme for this run.
-  final theme = chartThemeOf(config);
-  _themeBorderColors = _themePalette(theme, themeBorderColorsKey);
-  _themeBackgroundColors = _themePalette(theme, themeBackgroundColorsKey);
+  // DIVERGES(chartjs): theme-H5, the palette of the options for this run.
+  _themeBorderColors = _themePalette(opts.borderColors);
+  _themeBackgroundColors = _themePalette(opts.backgroundColors);
 
   final colorizer = _getColorizer(chart);
 
@@ -333,8 +322,8 @@ bool _beforeLayout(Object hookChart, Object _, ColorsPluginOptions opts) {
 /// src/plugins/index.js:1.
 ///
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
-/// ADR 0144). Its hooks get the resolved
-/// [ColorsPluginOptions].
+/// ADR 0144). Its hooks get the merged [ColorsPluginOptions] (Chart.js ADR
+/// 0196).
 final colors = ColorsPlugin()
   // With `forceOverride`, each layout writes new color Lists into the
   // datasets, a change of the config that a kept resolver of a range
@@ -351,11 +340,13 @@ final class ColorsPlugin() extends Plugin<ColorsPluginOptions> {
   this
     : super(
         id: 'colors',
-        options: ColorsPluginOptions.of,
-        // A typed scope of the kind `ColorsOptions` (Chart.js ADR 0054 §3).
-        defaults: ColorsOptionsScope()
-          ..enabled = true
-          ..forceOverride = false,
+        // plugin.colors.ts:97-100: one ColorsPluginOptions with each default
+        // (Chart.js ADR 0196).
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        defaults: const ColorsPluginOptions(
+          enabled: true,
+          forceOverride: false,
+        ),
         beforeLayout: _beforeLayout,
         // DIVERGES(chartjs): adapt-incremental-data-update, the opt-in.
         supportsDataUpdates: true,
@@ -365,4 +356,4 @@ final class ColorsPlugin() extends Plugin<ColorsPluginOptions> {
 /// Whether a range update keeps the colors of a full update: the plugin is
 /// off, or it writes no color of a dataset that it colored before.
 bool _rangeUpdateGuard(ColorsPluginOptions opts) =>
-    !opts.enabled || !opts.forceOverride;
+    opts.enabled != true || opts.forceOverride != true;

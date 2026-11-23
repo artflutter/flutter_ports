@@ -4,6 +4,9 @@ import 'package:flutter/painting.dart';
 import 'package:flutter_chartjs_port/chartjs_core.dart';
 import 'package:test/test.dart';
 
+/// A new List with the items of [items], not a constant.
+List<T> _copy<T>(List<T> items) => List.of(items);
+
 /// Options of an add-on with no field `events`.
 final class const _NoEvents() extends PluginOptions<_NoEvents> {
   @override
@@ -45,17 +48,11 @@ void main() {
       );
     });
 
-    test('a font, a text align and an enum', () {
+    test('a font and a text align', () {
       final font = TitleOptions.of(<String, Object?>{
         'font': const ChartTextStyle(fontSize: 20),
       }).font;
       expect(font.fontSize, 20);
-      expect(
-        FillerOptions.of(<String, Object?>{
-          'drawTime': FillerDrawTime.beforeDraw,
-        }).drawTime,
-        FillerDrawTime.beforeDraw,
-      );
     });
 
     test('a position', () {
@@ -330,6 +327,97 @@ void main() {
 
     test('the plugin id is decimation', () {
       expect(const DecimationOptions().pluginId, 'decimation');
+    });
+  });
+
+  // The filler and colors options are one object each (Chart.js ADR 0196).
+  group('FillerOptions', () {
+    test('merge takes each field that the other options set', () {
+      const base = FillerOptions(
+        propagate: true,
+        drawTime: FillerDrawTime.beforeDatasetDraw,
+      );
+      expect(
+        base.merge(const FillerOptions(drawTime: FillerDrawTime.beforeDraw)),
+        const FillerOptions(
+          propagate: true,
+          drawTime: FillerDrawTime.beforeDraw,
+        ),
+      );
+      expect(base.merge(const FillerOptions()), base);
+      expect(const FillerOptions().merge(base), base);
+      expect(base.merge(const FillerOptions(events: ['click'])).events, [
+        'click',
+      ]);
+    });
+
+    test('== and hashCode compare the fields', () {
+      expect(
+        FillerOptions(propagate: false, events: _copy(['click'])),
+        const FillerOptions(propagate: false, events: ['click']),
+      );
+      expect(
+        FillerOptions(propagate: false, events: _copy(['click'])).hashCode,
+        const FillerOptions(propagate: false, events: ['click']).hashCode,
+      );
+      expect(
+        const FillerOptions(propagate: false),
+        isNot(const FillerOptions(propagate: true)),
+      );
+      expect(
+        const FillerOptions(drawTime: FillerDrawTime.beforeDraw),
+        isNot(const FillerOptions()),
+      );
+    });
+
+    test('the plugin id is filler', () {
+      expect(const FillerOptions().pluginId, 'filler');
+    });
+  });
+
+  group('ColorsPluginOptions', () {
+    const red = Color(0xffff0000);
+    const blue = Color(0xff0000ff);
+
+    test('merge takes each field that the other options set', () {
+      const base = ColorsPluginOptions(enabled: true, forceOverride: false);
+      expect(
+        base.merge(const ColorsPluginOptions(enabled: false)),
+        const ColorsPluginOptions(enabled: false, forceOverride: false),
+      );
+      expect(base.merge(const ColorsPluginOptions()), base);
+      expect(const ColorsPluginOptions().merge(base), base);
+      expect(
+        base.merge(const ColorsPluginOptions(borderColors: [red])),
+        const ColorsPluginOptions(
+          enabled: true,
+          forceOverride: false,
+          borderColors: [red],
+        ),
+      );
+    });
+
+    test('== and hashCode compare the fields and the palette items', () {
+      expect(
+        ColorsPluginOptions(borderColors: _copy([red, blue])),
+        const ColorsPluginOptions(borderColors: [red, blue]),
+      );
+      expect(
+        ColorsPluginOptions(backgroundColors: _copy([red])).hashCode,
+        const ColorsPluginOptions(backgroundColors: [red]).hashCode,
+      );
+      expect(
+        const ColorsPluginOptions(borderColors: [red, blue]),
+        isNot(const ColorsPluginOptions(borderColors: [blue, red])),
+      );
+      expect(
+        const ColorsPluginOptions(forceOverride: true),
+        isNot(const ColorsPluginOptions()),
+      );
+    });
+
+    test('the plugin id is colors', () {
+      expect(const ColorsPluginOptions().pluginId, 'colors');
     });
   });
 

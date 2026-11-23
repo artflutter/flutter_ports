@@ -12,6 +12,7 @@ import 'package:flutter_kurkle_color_port/flutter_kurkle_color_port.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/filler_colors_option_fields.dart';
 import '../../support/tooltip_option_fields.dart';
 import '../scales/scale_chart_harness.dart' show drawCalls;
 
@@ -104,8 +105,8 @@ const String _backdropPath = 'scale.ticks.backdropColor';
 
 /// The two palette keys of `plugins.colors` in a compiled theme.
 const List<String> _palettePaths = [
-  r'plugins.colors.$borderColors',
-  r'plugins.colors.$backgroundColors',
+  'plugins.colors.borderColors',
+  'plugins.colors.backgroundColors',
 ];
 
 /// The known leaks of the 8 default charts: chart type to the leaking
@@ -235,6 +236,7 @@ Chart _chart(
       TooltipOptions(
         callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
       ),
+      ColorsPluginOptions(enabled: colors),
     ],
     scales: cartesian
         ? [
@@ -261,11 +263,6 @@ Chart _chart(
             ),
           ]
         : null,
-    extra: {
-      'plugins': {
-        'colors': {'enabled': colors},
-      },
-    },
   );
   final root = ChartConfigLowering(config).lower();
   final compiled = theme == null ? null : compileThemeData(theme);
@@ -409,6 +406,12 @@ Iterable<(String, Object?)> _themeColors(
     setTooltipOptionFields(options),
     path,
   ),
+  // The fields that the ColorsPluginOptions of plugins.colors sets (Chart.js
+  // ADR 0196).
+  final ColorsPluginOptions options => _themeColors(
+    setFillerColorsOptionFields(options),
+    path,
+  ),
   final Object map when map is Map<String, Object?> || map is JsObjectFace => [
     for (final key in jsObjectKeys(map))
       if (key == 'color' || key.endsWith('Color') || key.endsWith('Background'))
@@ -550,8 +553,8 @@ void main() {
         'plugins.tooltip.bodyColor',
         'plugins.tooltip.footerColor',
         'plugins.tooltip.multiKeyBackground',
-        r'plugins.colors.$borderColors[0]',
-        r'plugins.colors.$backgroundColors[0]',
+        'plugins.colors.borderColors[0]',
+        'plugins.colors.backgroundColors[0]',
       ]),
       reason: 'the plugin tokens and the palette',
     );

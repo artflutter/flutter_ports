@@ -12,6 +12,7 @@ import 'package:test/test.dart';
 import '../../support/axis_json.dart';
 import '../../support/color_json.dart';
 import '../../support/easing_json.dart';
+import '../../support/filler_colors_option_fields.dart';
 import '../../support/font_record.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/legend_option_fields.dart';
@@ -76,29 +77,36 @@ String _jsonRaw(Object? value) => switch (value) {
 /// The [TooltipOptions] of `plugins.tooltip` is an object too: its keys are
 /// its fields that it sets (Chart.js ADR 0192, [setTooltipOptionFields]),
 /// and so are the [LegendOptions] of `plugins.legend` and its label and
-/// title options (Chart.js ADR 0193, [setLegendOptionFields]).
+/// title options (Chart.js ADR 0193, [setLegendOptionFields]) and the
+/// [ColorsPluginOptions] of `plugins.colors` (Chart.js ADR 0196,
+/// [setFillerColorsOptionFields]).
 bool _isObject(Object? value) =>
     value is Map<String, Object?> ||
     value is JsObjectFace ||
     value is TooltipOptions ||
-    isLegendOptionObject(value);
+    isLegendOptionObject(value) ||
+    value is ColorsPluginOptions;
 
 /// The own keys of the object [value] in the `Object.keys` order: for a
-/// [TooltipOptions] or a legend option object, the fields that it sets in
-/// the order of upstream.
+/// [TooltipOptions], a legend option object or a [ColorsPluginOptions], the
+/// fields that it sets in the order of its constructor.
 List<String> _keys(Object? value) => value is TooltipOptions
     ? setTooltipOptionFields(value).keys.toList()
     : isLegendOptionObject(value)
     ? setLegendOptionFields(value!).keys.toList()
+    : value is ColorsPluginOptions
+    ? setFillerColorsOptionFields(value)!.keys.toList()
     : jsObjectKeys(value);
 
 /// The value of [key] in the object [value]: the typed field of a
-/// [TooltipOptions] or of a legend option object ([undefined] for a field
-/// that it does not set), else the read by name.
+/// [TooltipOptions], of a legend option object or of a [ColorsPluginOptions]
+/// ([undefined] for a field that it does not set), else the read by name.
 Object? _get(Object? value, String key) => value is TooltipOptions
     ? setTooltipOptionFields(value)[key] ?? undefined
     : isLegendOptionObject(value)
     ? setLegendOptionFields(value!)[key] ?? undefined
+    : value is ColorsPluginOptions
+    ? setFillerColorsOptionFields(value)![key] ?? undefined
     : jsGet(value, key);
 
 /// [value] as plain Dart values for a compare with a Map literal: an
@@ -176,8 +184,8 @@ const Set<String> _tokenPaths = {
   'plugins.tooltip.titleFont',
   'plugins.tooltip.bodyFont',
   'plugins.tooltip.footerFont',
-  r'plugins.colors.$borderColors',
-  r'plugins.colors.$backgroundColors',
+  'plugins.colors.borderColors',
+  'plugins.colors.backgroundColors',
 };
 
 /// The three `transitions` leaves that the compiler adds (theming.md §3.8).
@@ -395,7 +403,7 @@ void main() {
           fontStyle: ui.FontStyle.normal,
           height: 1.2,
         ),
-        r'plugins.colors.$borderColors': [
+        'plugins.colors.borderColors': [
           const ui.Color.fromRGBO(54, 162, 235, 1),
           const ui.Color.fromRGBO(255, 99, 132, 1),
           const ui.Color.fromRGBO(255, 159, 64, 1),
@@ -404,7 +412,7 @@ void main() {
           const ui.Color.fromRGBO(153, 102, 255, 1),
           const ui.Color.fromRGBO(201, 203, 207, 1),
         ],
-        r'plugins.colors.$backgroundColors': _upstreamBackgroundColors,
+        'plugins.colors.backgroundColors': _upstreamBackgroundColors,
         'elements.point.borderColor': const ChartPaint.solid(tenth),
         'elements.point.backgroundColor': const ChartPaint.solid(tenth),
         'elements.line.borderColor': const ChartPaint.solid(tenth),
@@ -447,8 +455,8 @@ void main() {
           'plugins.tooltip.titleFont',
           'plugins.tooltip.bodyFont',
           'plugins.tooltip.footerFont',
-          r'plugins.colors.$borderColors',
-          r'plugins.colors.$backgroundColors',
+          'plugins.colors.borderColors',
+          'plugins.colors.backgroundColors',
           'elements.point.borderColor',
           'elements.point.backgroundColor',
           'elements.line.borderColor',
@@ -753,10 +761,10 @@ void main() {
 
   group('the palette', () {
     // Chart.js ADR 0147 and theming.md §4: the palette token emits the two
-    // palette keys of plugins.colors. Hunk H5 of plugin.colors reads them
-    // from the theme map of the chart.
-    const border = r'plugins.colors.$borderColors';
-    const background = r'plugins.colors.$backgroundColors';
+    // palettes of the ColorsPluginOptions of plugins.colors (Chart.js ADR
+    // 0196). Hunk H5 of plugin.colors reads them from the merged options.
+    const border = 'plugins.colors.borderColors';
+    const background = 'plugins.colors.backgroundColors';
 
     test('the border colors keep their alpha, the background alpha is 0.5', () {
       final compiled = compileChartTheme(palette: [_red, _blue]);
@@ -800,8 +808,8 @@ void main() {
       final compiled = compileChartTheme(palette: [_blue, _red, _blue])!;
       expect(_keys(compiled), ['plugins', 'transitions']);
       expect(_keys(_at(compiled, 'plugins.colors')), [
-        r'$borderColors',
-        r'$backgroundColors',
+        'borderColors',
+        'backgroundColors',
       ]);
       expect(_at(compiled, border), [
         const ui.Color.fromRGBO(0, 0, 255, 0.8),
@@ -828,21 +836,18 @@ void main() {
       ]);
     });
 
-    test('the palette Lists are frozen', () {
+    test('the palette Lists are unmodifiable', () {
+      // The palettes are fields of one immutable ColorsPluginOptions
+      // (Chart.js ADR 0196).
       final compiled = compileLightTheme();
       for (final path in [border, background]) {
-        final list = _at(compiled, path)! as List<Object?>;
-        expect(list, isA<JsFreezable>(), reason: path);
-        expect((list as JsFreezable).isFrozen, isTrue, reason: path);
-        expect(() => list[0] = 'red', throwsA(isA<TypeError>()));
-        expect(() => list.add('red'), throwsA(isA<TypeError>()));
-        expect(() => list.length = 0, throwsA(isA<TypeError>()));
+        final list = _at(compiled, path)! as List<ui.Color>;
+        expect(() => list[0] = _red, throwsUnsupportedError);
+        expect(() => list.add(_red), throwsUnsupportedError);
+        expect(() => list.length = 0, throwsUnsupportedError);
         expect(list, hasLength(7), reason: path);
       }
-      expect(
-        _at(compiled, 'plugins.colors'),
-        isA<JsFreezable>().having((o) => o.isFrozen, 'frozen', isTrue),
-      );
+      expect(_at(compiled, 'plugins.colors'), isA<ColorsPluginOptions>());
     });
 
     test('a null or empty palette emits nothing', () {
@@ -1243,10 +1248,16 @@ void main() {
       final nodes = _nodes(compiled).toList();
       expect(nodes.length, greaterThan(10));
       for (final (path, node) in nodes) {
-        // The TooltipOptions of plugins.tooltip and the LegendOptions of
-        // plugins.legend are immutable objects (Chart.js ADRs 0192 and 0193):
-        // they have no write to freeze.
-        if (node is TooltipOptions || isLegendOptionObject(node)) continue;
+        // The TooltipOptions of plugins.tooltip, the LegendOptions of
+        // plugins.legend and the ColorsPluginOptions of plugins.colors are
+        // immutable objects (Chart.js ADRs 0192, 0193 and 0196): they have
+        // no write to freeze, and the palette Lists are unmodifiable.
+        if (node is TooltipOptions ||
+            isLegendOptionObject(node) ||
+            node is ColorsPluginOptions ||
+            path.startsWith('plugins.colors.')) {
+          continue;
+        }
         expect(node, isA<JsFreezable>(), reason: path);
         expect((node as JsFreezable).isFrozen, isTrue, reason: path);
       }
@@ -1265,11 +1276,13 @@ void main() {
         const ChartPaint.solid(ui.Color.fromRGBO(102, 102, 102, 1)),
       );
 
+      // The palette of the ColorsPluginOptions is unmodifiable (Chart.js ADR
+      // 0196).
       final palette =
-          _at(compiled, r'plugins.colors.$borderColors')! as List<Object?>;
-      expect(() => palette[0] = _red, throwsA(isA<TypeError>()));
-      expect(() => palette.add(_red), throwsA(isA<TypeError>()));
-      expect(() => palette.length = 0, throwsA(isA<TypeError>()));
+          _at(compiled, 'plugins.colors.borderColors')! as List<ui.Color>;
+      expect(() => palette[0] = _red, throwsUnsupportedError);
+      expect(() => palette.add(_red), throwsUnsupportedError);
+      expect(() => palette.length = 0, throwsUnsupportedError);
       expect(palette, _upstreamBorderColors);
     });
 

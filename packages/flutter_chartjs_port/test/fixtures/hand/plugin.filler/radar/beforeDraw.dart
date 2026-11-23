@@ -31,7 +31,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       'layout': <String, Object?>{'padding': const EdgeInsets.all(20)},
       'plugins': <String, Object?>{
         'legend': false,
-        'filler': <String, Object?>{'drawTime': FillerDrawTime.beforeDraw},
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'filler': const FillerOptions(drawTime: FillerDrawTime.beforeDraw),
       },
       'scales': <String, Object?>{
         'r': <String, Object?>{

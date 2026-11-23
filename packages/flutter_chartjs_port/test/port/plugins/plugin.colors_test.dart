@@ -135,28 +135,26 @@ ChartConfigurationScope _config(
     ChartConfig(
       labels: const ['a', 'b', 'c'],
       datasets: [for (var d = 0; d < datasets; d++) dataset()],
-      extra: const {
-        'plugins': {
-          'colors': {'enabled': true},
-        },
-      },
+      pluginOptions: const [ColorsPluginOptions(enabled: true)],
     ),
   ).lower();
   if (theme != null) root.dollarTheme = theme;
   return root;
 }
 
-/// A raw theme map with the palettes [border] and [background] under
-/// `plugins.colors` (the keys of hunk H4a).
-AnyObject _paletteTheme(Object? border, Object? background) =>
-    <String, Object?>{
-      'plugins': <String, Object?>{
-        'colors': <String, Object?>{
-          themeBorderColorsKey: border,
-          themeBackgroundColorsKey: background,
-        },
-      },
-    };
+/// A raw theme map with the palettes [border] and [background] in the
+/// `ColorsPluginOptions` of `plugins.colors` (Chart.js ADR 0196).
+AnyObject _paletteTheme(
+  List<native_ui.Color> border,
+  List<native_ui.Color> background,
+) => <String, Object?>{
+  'plugins': <String, Object?>{
+    'colors': ColorsPluginOptions(
+      borderColors: border,
+      backgroundColors: background,
+    ),
+  },
+};
 
 /// A chart config of [type] with the one dataset [dataset] and the colors
 /// plugin on when [enabled] is true.
@@ -178,11 +176,7 @@ ChartConfigurationScope _datasetConfig(
           _ => throw ArgumentError.value(type, 'type'),
         },
       ],
-      extra: {
-        'plugins': {
-          'colors': {'enabled': enabled},
-        },
-      },
+      pluginOptions: [ColorsPluginOptions(enabled: enabled)],
     ),
   ).lower();
   // The narrow and unmodifiable Map cases must keep the caller's dataset.
@@ -219,15 +213,11 @@ void main() {
       // `defaults` and the hook `beforeLayout`.
       expect(pluginHookNames(colors), ['beforeLayout']);
       expect(colors.id, 'colors');
-      expect(_plain(colors.defaults), <String, Object?>{
-        'enabled': true,
-        'forceOverride': false,
-      });
-    });
-
-    test('the palette keys of hunk H4a', () {
-      expect(themeBorderColorsKey, r'$borderColors');
-      expect(themeBackgroundColorsKey, r'$backgroundColors');
+      // plugin.colors.ts:97-100, one options object (Chart.js ADR 0196).
+      expect(
+        colors.defaults,
+        const ColorsPluginOptions(enabled: true, forceOverride: false),
+      );
     });
   });
 
@@ -342,9 +332,10 @@ void main() {
       );
     });
 
-    testWidgets('an empty List, a String or a Map palette gives the upstream '
-        'palette', (tester) async {
-      for (final value in <Object?>[<Object?>[], 'red', <String, Object?>{}]) {
+    testWidgets('an empty palette gives the upstream palette', (tester) async {
+      // A palette is a List<Color> (Chart.js ADR 0196): a String or a Map
+      // does not compile.
+      for (final value in [<native_ui.Color>[]]) {
         final chart = acquireChartRoot(
           _config('bar', theme: _paletteTheme(value, value)),
         );
@@ -359,19 +350,37 @@ void main() {
       }
     });
 
-    testWidgets('a palette key in the plugin options has no effect', (
-      tester,
-    ) async {
-      final config = _config('bar');
-      ((config['options']! as JsObjectFace)['plugins']!
-          as JsObjectFace)['colors'] = <String, Object?>{
-        'enabled': true,
-        themeBorderColorsKey: <Object?>[const native_ui.Color(0xff000005)],
-      };
-      final chart = acquireChartRoot(config);
+    testWidgets('a palette in the options of the chart comes over the '
+        'palette of the theme', (tester) async {
+      // The palette is a field of the merged ColorsPluginOptions (Chart.js
+      // ADR 0196): the options of the chart come over the theme.
+      final chart = acquireChartRoot(
+        ChartConfigLowering(
+            const ChartConfig(
+              labels: ['a', 'b', 'c'],
+              datasets: [
+                BarDataset(data: .values([1, 2, 3])),
+              ],
+              pluginOptions: [
+                ColorsPluginOptions(
+                  enabled: true,
+                  borderColors: [native_ui.Color(0xff000005)],
+                ),
+              ],
+            ),
+          ).lower()
+          ..dollarTheme = _paletteTheme(
+            [const native_ui.Color(0xff000001)],
+            [const native_ui.Color(0xff000003)],
+          ),
+      );
       expect(
         jsGet(_dataset(chart, 0), 'borderColor'),
-        const ChartPaint.solid(native_ui.Color.fromRGBO(54, 162, 235, 1)),
+        const ChartPaint.solid(native_ui.Color(0xff000005)),
+      );
+      expect(
+        jsGet(_dataset(chart, 0), 'backgroundColor'),
+        const ChartPaint.solid(native_ui.Color(0xff000003)),
       );
     });
   });
@@ -484,10 +493,10 @@ void main() {
       );
       final config = _config('bar');
       ((config['options']! as JsObjectFace)['plugins']!
-          as JsObjectFace)['colors'] = <String, Object?>{
-        'enabled': true,
-        'forceOverride': true,
-      };
+          as JsObjectFace)['colors'] = const ColorsPluginOptions(
+        enabled: true,
+        forceOverride: true,
+      );
       final chart = acquireChartRoot(config);
       expect(
         jsGet(_dataset(chart, 1), 'borderColor'),
@@ -500,14 +509,3 @@ void main() {
     });
   });
 }
-
-/// [value] as plain Dart values for a compare with a Map literal: an object
-/// (a Map or a typed object with a face, Chart.js ADR 0054 §5) gives a new
-/// Map of its own keys in the `Object.keys` order, each value read by name;
-/// another value is itself.
-Object? _plain(Object? value) =>
-    value is Map<String, Object?> || value is JsObjectFace
-    ? <String, Object?>{
-        for (final key in jsObjectKeys(value)) key: _plain(jsGet(value, key)),
-      }
-    : value;

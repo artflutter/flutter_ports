@@ -106,7 +106,6 @@ ChartAnimationItems
 ChartArea
 ChartAxis
 ChartClip
-ChartColors
 ChartConfig
 ChartConfigLowering
 ChartConfiguration
@@ -116,7 +115,6 @@ ChartDataScope
 ChartElements
 ChartEvent
 ChartEventHandler
-ChartFiller
 ChartGradient
 ChartHost
 ChartIndexed
@@ -150,7 +148,6 @@ CircleRunCanvas
 CircumferenceAnimation
 ClosePathCommand
 ColorAnimation
-ColorsOptionsScope
 ColorsPlugin
 ColorsPluginOptions
 Config
@@ -217,7 +214,6 @@ FillPart
 FillTarget
 FillerDrawTime
 FillerOptions
-FillerOptionsScope
 FillerPlugin
 FillerSource
 FilterCallback
@@ -851,10 +847,8 @@ lookupByAxis
 lookupByKey
 lowerAnimation
 lowerAxis
-lowerColors
 lowerDataset
 lowerElements
-lowerFiller
 lowerInteraction
 lowerTitle
 lowerTransitions
@@ -1016,8 +1010,6 @@ supportsEventListenerOptions
 tau
 textDirectionOption
 textX
-themeBackgroundColorsKey
-themeBorderColorsKey
 themeConfigKey
 throttled
 tickCallbackOf
@@ -1166,7 +1158,6 @@ ChartAnimationItems
 ChartArea
 ChartAxis
 ChartClip
-ChartColors
 ChartConfig
 ChartConfigLowering
 ChartConfiguration
@@ -1176,7 +1167,6 @@ ChartDataScope
 ChartElements
 ChartEvent
 ChartEventHandler
-ChartFiller
 ChartGradient
 ChartHost
 ChartIndexed
@@ -1210,7 +1200,6 @@ CircleRunCanvas
 CircumferenceAnimation
 ClosePathCommand
 ColorAnimation
-ColorsOptionsScope
 ColorsPlugin
 ColorsPluginOptions
 Config
@@ -1276,7 +1265,6 @@ FillPart
 FillTarget
 FillerDrawTime
 FillerOptions
-FillerOptionsScope
 FillerPlugin
 FillerSource
 FloatingBar
@@ -1922,10 +1910,8 @@ lookupByAxis
 lookupByKey
 lowerAnimation
 lowerAxis
-lowerColors
 lowerDataset
 lowerElements
-lowerFiller
 lowerInteraction
 lowerTitle
 lowerTransitions
@@ -2098,8 +2084,6 @@ supportsEventListenerOptions
 tau
 textDirectionOption
 textX
-themeBackgroundColorsKey
-themeBorderColorsKey
 themeConfigKey
 throttled
 tickCallbackOf

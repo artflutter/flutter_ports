@@ -20,9 +20,7 @@ bool _isColor(String key) =>
     key == 'below' ||
     key.endsWith('Color') ||
     key == 'fillStyle' ||
-    key == 'strokeStyle' ||
-    key == r'$borderColors' ||
-    key == r'$backgroundColors';
+    key == 'strokeStyle';
 
 /// The value of [values] with the name [value] for a String that is such a
 /// name, else [value] itself. An indexable value (a List) gives a new List
@@ -189,10 +187,6 @@ void nativeFixtureColors(Object? config) {
       } else if (key == 'borderSkipped') {
         // The keyword form takes its enum (row adapt-border-skipped-enum).
         value[key] = _enumValue(BorderSkippedEdge.values, value[key]);
-      } else if (key == 'drawTime' && owner == 'filler') {
-        // The filler draw time takes its enum (row
-        // adapt-filler-draw-time-enum).
-        value[key] = _enumValue(FillerDrawTime.values, value[key]);
       } else if (key == 'display' &&
           (owner == 'pointLabels' || grand == 'scales')) {
         // The display of a scale and of its point labels takes a

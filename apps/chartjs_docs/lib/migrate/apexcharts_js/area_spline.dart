@@ -42,17 +42,21 @@ ChartConfig _config(ApexZoom zoom) => ChartConfig(
   ],
   maintainAspectRatio: false,
   padding: const EdgeInsets.fromLTRB(4, 36, 10, 0),
-  // ApexCharts.js draws the areas under all lines. Chart.js fills each area
-  // just before its dataset by default: the first area would cover the
-  // second line.
-  filler: const ChartFiller(drawTime: .beforeDatasetsDraw),
   interaction: const ChartInteraction(
     mode: IndexInteractionMode(),
     intersect: false,
   ),
   animation: apexAnimation,
   plugins: apexZoomPlugins([apexHover, apexTooltipLook]),
-  pluginOptions: [apexJsLegend(), apexTooltip(), zoom.options],
+  pluginOptions: [
+    apexJsLegend(),
+    apexTooltip(),
+    zoom.options,
+    // ApexCharts.js draws the areas under all lines. Chart.js fills each
+    // area just before its dataset by default: the first area would cover
+    // the second line.
+    const FillerOptions(drawTime: .beforeDatasetsDraw),
+  ],
   scales: [
     // xaxis: {type: 'datetime'}, and tooltip.x.format: 'dd/MM/yy HH:mm'.
     const TimeAxis(

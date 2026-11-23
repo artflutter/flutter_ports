@@ -579,7 +579,7 @@ repository.
     key `_element` of upstream has no field (the tests read `Legend.jsClass`, `Title.jsClass` and
     `Tooltip.jsClass`), and the decimation plugin has no `destroy`. The options of each built-in
     plugin are an immutable final class of the port-only pure `plugin_options.dart` (row
-    `adapt-native-plugin-options`). The title, filler and colors classes hold
+    `adapt-native-plugin-options`). The title class holds
     resolved values (Chart.js ADR 0182): `TitleOptions.of`
     and the other `of` methods read each key once, at the first hook of an update, and each hook of
     the update gets the same object. A field has the type of its key in the schema: a number, a
@@ -617,14 +617,22 @@ repository.
     `DecimationOptions` is one immutable `PluginOptions` too (Chart.js ADR 0194): the nullable
     fields `enabled`, `algorithm`, `samples`, `threshold` and `events`, `merge`, `==` and
     `hashCode`, the defaults one `const DecimationOptions`, and a Map in
-    `options.plugins.decimation` stops a debug build. A test reads a hook field of a plugin through `hookOf`. The library exports no class `Title`, `Legend` or
+    `options.plugins.decimation` stops a debug build. `FillerOptions` (`propagate`, `drawTime`,
+    `events`) and `ColorsPluginOptions` (`enabled`, `forceOverride`, `events` and the theme
+    palettes `borderColors` and `backgroundColors`) are such objects too (Chart.js ADR 0196): an
+    app gives them in `ChartConfig.pluginOptions` or in `options.plugins.filler` and
+    `options.plugins.colors` of a raw config (a Map there stops a debug build), and the defaults
+    are one `const` object each. A field that no scope sets reads as the falsy `undefined` of
+    upstream in the hooks. The test harness turns the colors plugin off with a merge of
+    `ColorsPluginOptions(enabled: false)` over `defaults.plugins.colors`. A test reads a hook field of a plugin through `hookOf`. The library exports no class `Title`, `Legend` or
     `Tooltip`. `plugin.decimation.dart`, `plugin_options.dart` and the files of `plugin.filler/` are
     pure layers. The other plugin files are not: `plugin.title`, `plugin.legend` and
     `plugin.subtitle` reach `helpers.extras`, `plugin.tooltip` imports `core.animations`, and
     `plugin.colors` imports the controllers.
     - `plugin.colors.dart`: the plugin `colors` with the theme hunks H4a-H4c and H5 (Chart.js ADR
-      0147 §2). H5 reads the palette from the theme map of the chart through `chartThemeOf` of
-      `core.config.dart`. The doughnut and polar area colorizers throw a `TypeError` for a `data`
+      0147 §2). H5 reads the palettes `borderColors` and `backgroundColors` of the merged
+      `ColorsPluginOptions` (Chart.js ADR 0196): the theme writes one object with both palettes
+      into `plugins.colors`, and the options of a chart come over it. The doughnut and polar area colorizers throw a `TypeError` for a `data`
       that is not a List. The colorizers write a typed dataset scope through its typed keys, and
       the dataset Map of the user by name: a Map with a narrow value type or an unmodifiable Map
       throws (differences.md row `js-semantics-narrow-datasets`).
@@ -811,7 +819,7 @@ repository.
       interfaces in `lib/` (`test/port/plugins/plugin.filler/point_implementers_test.dart`).
       The option `drawTime` holds the enum `FillerDrawTime` of the pure
       `lib/src/plugins/filler_draw_time.dart` (row `adapt-filler-draw-time-enum`), also in a raw
-      config; the typed API has `ChartFiller.drawTime`.
+      config; an app gives it in `FillerOptions.drawTime` (Chart.js ADR 0196).
     - `plugin.legend.dart`: `Legend` (extends `Element`, implements `types.LegendElement`,
       `LayoutItem` and `TRBL`) with `Legend.jsClass`, and the plugin `legend`. The items of the
       built-in `generateLabels`, the hit boxes (`legendHitBoxes`, also a port-only member of
@@ -1055,11 +1063,12 @@ repository.
     of `lower.dart`: `x`, `y`, `r`, then `x1`, `y1`), a dataset names its axis by the axis object
     (`yAxis`), and `chart.scaleOf(axis)` gives the scale (Chart.js ADR 0191); an axis takes its `border` as an `AxisBorder` (a
     `RadialAxisBorder` for `RadialLinearAxis`) of `lib/chartjs.dart` (Chart.js ADR 0141).
-    `groups.dart` has `ChartTitle`, `ChartFiller`, `ChartColors` (the colors plugin,
-    `ChartConfig.colors`), `ChartInteraction` and `ChartAnimation`. `ChartConfig` also has
-    `parsing` and `devicePixelRatio` (Chart.js ADR 0194). The legend, the tooltip and the
-    decimation have no group: a config gives its `LegendOptions`, `TooltipOptions` and
-    `DecimationOptions` in `ChartConfig.pluginOptions` (Chart.js ADRs 0192, 0193 and 0194), and
+    `groups.dart` has `ChartTitle`, `ChartInteraction` and `ChartAnimation`. `ChartConfig` also
+    has `parsing` and `devicePixelRatio` (Chart.js ADR 0194). The legend, the tooltip, the
+    decimation, the filler and the colors plugin have no group: a config gives its
+    `LegendOptions`, `TooltipOptions`, `DecimationOptions`, `FillerOptions` and
+    `ColorsPluginOptions` in `ChartConfig.pluginOptions` (Chart.js ADRs 0192, 0193, 0194 and
+    0196), and
     `==` compares each object with its `==`, so a new closure in it is a new
     value. `elements.dart` has `ChartElements` and the 4 element
     styles. `callbacks.dart` has `ChartScript`, a function of the typed dataset or data context
@@ -1170,14 +1179,15 @@ repository.
     0180) are pure helper libraries. `test/tool/`: tests of the port tools.
   - `test/fixtures/` (Chart.js ADR 0029): `index.dart` is the registry of the fixture runner, not a
     test file. It has `specs` (`jasmine.fixture.specs` of `test/index.js:15-17`), `handFixtures`
-    (411 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
+    (421 hand ports, each with the first 12 hex digits of its manifest `sha256`) and `fixtureSkips`
     (39 skips, all `diverges: adapt-date-moment-format`). `hand/<path>.dart` is the hand port of the
     impure config `test/fixtures/<path>.js` of the pin, with the function `fixture()`. A pure data
     config whose config holds a keyword of an option with a class value (the 22 data fixtures with
     `cubicInterpolationMode`, the 25 with `pointStyle`, the 142 with a `fill` (Chart.js ADR 0140;
     the other 18 are moment skips), the 19 with a scale `border` (Chart.js ADR 0141), the 8 with
-    a length, the 35 with an axis letter, the 1 with a constant `segment` style and the 44 with
-    legend options, one `LegendOptions` (Chart.js ADR 0193)) also has a hand port, of `<path>.js` or
+    a length, the 35 with an axis letter, the 1 with a constant `segment` style, the 44 with
+    legend options, one `LegendOptions` (Chart.js ADR 0193), and the 10 with colors options, one
+    `ColorsPluginOptions` (Chart.js ADR 0196)) also has a hand port, of `<path>.js` or
     `<path>.json`, with the
     config of `fixtures.json` (Chart.js ADR 0115): the registry test lists the option keys, and
     O1 runs such a fixture from its hand port only.

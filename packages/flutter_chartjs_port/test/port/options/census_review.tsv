@@ -123,6 +123,7 @@ foreign	options.scales.*.time.isoWeekday	String
 foreign	plugins	Map
 write	a
 write	b
+write	forceOverride
 write	plugin
 write	r2
 write	test

@@ -1226,6 +1226,17 @@ class NativeTooltipPaint { constructor(value) { this.value = value; } }
  */
 class NativeTooltipOptions { constructor(value) { this.value = value; } }
 
+/**
+ * The options of the filler or the colors plugin of an input config
+ * (`options.plugins.filler`, `options.plugins.colors`): the FillerOptions or
+ * the ColorsPluginOptions object of the port (Chart.js ADR 0196). [type] is
+ * the Dart class.
+ */
+class NativePluginOptions { constructor(type, value) { this.type = type; this.value = value; } }
+
+/** The Dart class of the options object of each plugin id of Chart.js ADR 0196. */
+const PLUGIN_OPTIONS_CLASSES = {filler: 'FillerOptions', colors: 'ColorsPluginOptions'};
+
 /** The function type of each function option of the tooltip. */
 const TOOLTIP_FUNCTION_TYPES = {
   filter: 'TooltipItemFilter',
@@ -1635,6 +1646,9 @@ function keyedValue(k, value, owner) {
   }
   if (k === 'decimation' && owner === 'plugins' && value && value.constructor === Object) {
     return new NativeDecimationOptions(value);
+  }
+  if (k in PLUGIN_OPTIONS_CLASSES && owner === 'plugins' && value && value.constructor === Object) {
+    return new NativePluginOptions(PLUGIN_OPTIONS_CLASSES[k], value);
   }
   if (k === 'callbacks' && value && value.constructor === Object &&
       Object.values(value).every(v => typeof v === 'function' || typeof v === 'string' && v.startsWith('fn:'))) {
@@ -2089,6 +2103,20 @@ function dart(v, state, owner) {
     };
     return constLeaves ? nativeConstant(write) : write();
   }
+  if (v instanceof NativePluginOptions) {
+    state.pluginOptions = true;
+    const write = () => {
+      const fields = Object.keys(v.value).map((k) => {
+        const x = v.value[k];
+        if (typeof x === 'boolean') return `${k}: ${x}`;
+        if (k === 'drawTime' && typeof x === 'string') return `drawTime: FillerDrawTime.${x}`;
+        if (k === 'events') return `events: <String>[${x.map((e) => dart(e, state)).join(', ')}]`;
+        throw new Error(`A ${v.type} option with no field form: ${k}`);
+      });
+      return `${v.type}(${fields.join(', ')})`;
+    };
+    return constLeaves ? nativeConstant(write) : write();
+  }
   if (v instanceof NativeTooltipPaint) {
     state.tooltipValues = true;
     if (v.value == null || v.value === false) return nativeConstant(() => 'ChartPaint.unchanged()');
@@ -2354,7 +2382,7 @@ export function writeReference(outPath, name, cases, {title = name, notes = []} 
 // a build of Chart.js v${PIN.version} at the commit
 // ${buildCommit}, with the Liberation Sans mock
 // context of tool/reference/scale_chart_common.mjs. ${cases.length} cases, ${measured.size} widths.
-${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes && !state.borderRadii ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats || state.clips || state.stackModes || state.borders || state.fixturePaints ? '\n' : ''}${state.fixturePaints ? "import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;\n" : ''}${state.borderRadii ? "import 'package:flutter/painting.dart';\n" : state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.algorithms || state.aligns || state.arcEnums || state.borderSkips || state.borders || state.clips || state.cubicModes || state.fillTargets || state.fillerEnums || state.graceLengths || state.modes || state.pointStyles || state.positioners || state.positions || state.radiusLengths || state.scaleAxes || state.scaleEnums || state.stackModes || state.steppedLines || state.textStyles || state.timeUnits || state.tooltipCallbacks || state.tooltipValues || state.undefined ? `import 'package:flutter_chartjs_port/${state.positioners ? 'chartjs' : 'chartjs_core'}.dart';\n` : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
+${notes.length ? `//\n${notes.map((line) => `// ${line}`.trimEnd()).join('\n')}\n` : ''}${state.strokes && !state.borderRadii ? `\nimport 'dart:ui' show ${[...state.strokes].sort().join(', ')};\n` : ''}${state.modes || state.undefined || state.positioners || state.algorithms || state.scaleEnums || state.aligns || state.arcEnums || state.fillerEnums || state.timeUnits || state.positions || state.steppedLines || state.borderSkips || state.cubicModes || state.pointStyles || state.fillTargets || state.radiusLengths || state.graceLengths || state.scaleAxes || state.textStyles || state.numberFormats || state.clips || state.stackModes || state.borders || state.fixturePaints ? '\n' : ''}${state.fixturePaints ? "import 'package:chartjs_test_utils/pure.dart' show nativeFixturePaint;\n" : ''}${state.borderRadii ? "import 'package:flutter/painting.dart';\n" : state.edgeInsets ? "import 'package:flutter/painting.dart' show EdgeInsets;\n" : ''}${state.algorithms || state.aligns || state.arcEnums || state.borderSkips || state.borders || state.clips || state.cubicModes || state.fillTargets || state.fillerEnums || state.graceLengths || state.modes || state.pointStyles || state.positioners || state.positions || state.radiusLengths || state.scaleAxes || state.scaleEnums || state.stackModes || state.steppedLines || state.textStyles || state.timeUnits || state.tooltipCallbacks || state.tooltipValues || state.pluginOptions || state.undefined ? `import 'package:flutter_chartjs_port/${state.positioners ? 'chartjs' : 'chartjs_core'}.dart';\n` : ''}${state.numberFormats ? "import 'package:intl/intl.dart';\n" : ''}
 /// The Node.js version that generated the data.
 const String ${name}ReferenceNode = '${process.version}';
 

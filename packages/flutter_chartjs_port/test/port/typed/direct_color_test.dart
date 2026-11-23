@@ -95,10 +95,12 @@ void main() {
   });
 
   test('a shared palette list is also checked as a paint option', () {
+    // The palette is a field of the colors options (Chart.js ADR 0196): the
+    // List of bare colors still fails as a paint option of the dataset.
     final palette = <ui.Color>[_blue];
     final config = _raw(palette);
     (config['options']! as Map<String, Object?>)['plugins'] = <String, Object?>{
-      'colors': <String, Object?>{r'$borderColors': palette},
+      'colors': ColorsPluginOptions(borderColors: palette),
     };
     final canvas = UiCanvasElement(width: 120, height: 80);
     expect(() => Chart(canvas, config), throwsArgumentError);

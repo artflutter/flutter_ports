@@ -59,11 +59,7 @@ void main() {
                 BarDataset(data: .values([1, 10]), label: 'dataset1'),
               ],
               labels: ['label1', 'label2'],
-              extra: {
-                'plugins': {
-                  'colors': <String, Object?>{'enabled': true},
-                },
-              },
+              pluginOptions: [ColorsPluginOptions(enabled: true)],
             ),
           ).lower(),
         );

@@ -203,9 +203,9 @@ kinds:
     doc: index.d.ts:3029 PluginOptionsByType, the scope `plugins` (by plugin id). A plugin entry can be `false` (the plugin is off).
     others: bool | scope GenericPluginOptions | pluginOptions
     keys:
-      colors: bool | scope ColorsOptions
+      colors: bool | pluginOptions  # the ColorsPluginOptions of plugin_options.dart (Chart.js ADR 0196)
       decimation: bool | pluginOptions  # the DecimationOptions of plugin_options.dart (Chart.js ADR 0194)
-      filler: bool | scope FillerOptions
+      filler: bool | pluginOptions  # the FillerOptions of plugin_options.dart (Chart.js ADR 0196)
       legend: bool | pluginOptions  # the LegendOptions of plugin_options.dart (Chart.js ADR 0193)
       subtitle: bool | scope TitleOptions
       title: bool | scope TitleOptions
@@ -1006,20 +1006,6 @@ kinds:
     doc: index.d.ts:2974 TooltipDatasetOptions, the `tooltip` object of a dataset (read at plugin.tooltip.js:357).
     keys:
       callbacks: tooltipCallbacks
-  FillerOptions:
-    doc: index.d.ts:2295 FillerOptions, the scope `plugins.filler`.
-    keys:
-      drawTime: fillerDrawTime
-      propagate: bool
-      events: list  # read at core.controller.js:1170
-  ColorsOptions:
-    doc: plugin.colors.ts:4 ColorsPluginOptions, the scope `plugins.colors`.
-    keys:
-      enabled: bool
-      forceOverride: bool
-      events: list  # read at core.controller.js:1170
-      $borderColors: list  # port-only theme palette (Chart.js ADR 0147, hunk H4a of plugin.colors.dart)
-      $backgroundColors: list  # port-only theme palette (Chart.js ADR 0147, hunk H4a of plugin.colors.dart)
   GenericPluginOptions:
     doc: Port-only kind, the options of a plugin without a plugin kind (an inline or a registered user plugin).
     others: any

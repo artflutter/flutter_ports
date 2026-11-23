@@ -76,11 +76,23 @@ const Set<String> _classValueKeys = {
   'segment',
 };
 
-/// Whether [value] holds a key of [_classValueKeys] at any depth.
+/// The plugin ids whose options are one object of the port (Chart.js ADR
+/// 0196): a data fixture with such options in `plugins` gets a hand port.
+const Set<String> _pluginObjectIds = {'filler', 'colors'};
+
+/// Whether [value] holds a key of [_classValueKeys] or the options object of
+/// a plugin of [_pluginObjectIds] at any depth.
 bool _holdsClassValueKey(Object? value) => switch (value) {
   final Map<String, Object?> map => map.entries.any(
     (entry) =>
-        _classValueKeys.contains(entry.key) || _holdsClassValueKey(entry.value),
+        _classValueKeys.contains(entry.key) ||
+        (entry.key == 'plugins' &&
+            entry.value is Map<String, Object?> &&
+            (entry.value! as Map<String, Object?>).entries.any(
+              (plugin) =>
+                  _pluginObjectIds.contains(plugin.key) && plugin.value is Map,
+            )) ||
+        _holdsClassValueKey(entry.value),
   ),
   final List<Object?> list => list.any(_holdsClassValueKey),
   _ => false,

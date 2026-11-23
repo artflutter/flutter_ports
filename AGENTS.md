@@ -1110,9 +1110,18 @@ The decimation options are one immutable object too, `DecimationOptions` (Chart.
 `adapt-native-plugin-options` and `adapt-decimation-algorithm-objects`): `enabled`, `algorithm` (a
 `DecimationAlgorithm`), `samples`, `threshold` and `events`, in `ChartConfig.pluginOptions` or in
 `options.plugins.decimation` of a raw config, where a Map stops a debug build. The scope kind
-`DecimationOptions`, `DecimationOptions.of` and `DecimationAlgorithm.of` are gone. `ChartConfig` has `parsing`,
-`devicePixelRatio` and `colors` (`ChartColors`). Each decimation test gives a typed `ChartConfig` with no `extra`
-and no Map patch, and a change of an option pumps a `ChartView` with the next config.
+`DecimationOptions`, `DecimationOptions.of` and `DecimationAlgorithm.of` are gone. `ChartConfig` has `parsing`
+and `devicePixelRatio`. Each decimation test gives a typed `ChartConfig` with no `extra` and no Map patch, and a
+change of an option pumps a `ChartView` with the next config.
+
+The filler and colors options are one immutable object each (Chart.js ADR 0196, row
+`adapt-native-plugin-options`): `FillerOptions` (`propagate`, `drawTime`, `events`) and `ColorsPluginOptions`
+(`enabled`, `forceOverride`, `events`, and the theme palettes `borderColors` and `backgroundColors` of row
+`theme-H4a`), in `ChartConfig.pluginOptions` or in `options.plugins.filler` and `options.plugins.colors` of a raw
+config, where a Map stops a debug build. `ChartFiller`, `ChartColors`, `ChartConfig.filler`,
+`ChartConfig.colors` and the scope kinds `FillerOptions` and `ColorsOptions` are gone. The theme writes one
+`ColorsPluginOptions` with its palettes. A data fixture with colors options has a hand port. The rules of the
+tooltip options for tests apply.
 
 A tooltip item is the native extensible class `TooltipItem` of `lib/src/types/tooltip_item.dart` (row
 `adapt-native-tooltip-item`). It is immutable: `datasetIndex` and
@@ -1507,7 +1516,8 @@ sankey ADRs are proposed. The doc paths are relative to
 - `flutter_test_config.dart` registers the built-in components before `main()` of each test file and
   before the snapshot of the restore (`setUpBuiltins()`, the row `harness-register-builtins`,
   Chart.js ADR 0022 §8). After the registration, it sets `defaults.plugins.colors.enabled = false`
-  (the port of `test/index.js:25-28`), before the snapshot of the restore. `setUpSpecs()` and
+  (the port of `test/index.js:25-28`) with a merge of `ColorsPluginOptions(enabled: false)` over the
+  defaults object (Chart.js ADR 0196), before the snapshot of the restore. `setUpSpecs()` and
   `removeBuiltins()` remove them again, also the colors plugin and its defaults. Thus a pure-layer
   file has the same state under the VM and browser Flutter test runners.
 - The unmount of the harness body calls `releaseCharts` (the row `harness-release-at-unmount`).

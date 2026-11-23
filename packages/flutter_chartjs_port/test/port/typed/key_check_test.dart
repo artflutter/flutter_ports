@@ -34,10 +34,10 @@ import 'package:flutter_test/flutter_test.dart';
 // A path that is the start of a defaults path is a group: the check goes on
 // in its Map. A font Map and a padding Map are values, not groups. An options
 // object of `ChartConfig.pluginOptions` (the `LegendOptions` at
-// `options.plugins.legend` and the `TooltipOptions` at
-// `options.plugins.tooltip`, Chart.js ADRs 0192 and 0193) is a value too: it
-// has one field for each option of its plugin, so it lowers no key of its
-// own.
+// `options.plugins.legend`, the `TooltipOptions` at `options.plugins.tooltip`
+// and the `FillerOptions` at `options.plugins.filler`, Chart.js ADRs 0192,
+// 0193 and 0196) is a value too: it has one field for each option of its
+// plugin, so it lowers no key of its own.
 //
 // When the submodule third_party/Chart.js is checked out, a test reads
 // `src/types/index.d.ts` and checks that each allowlist line declares its
@@ -355,8 +355,8 @@ List<ChartConfig> _configs() {
             },
           ),
         ),
+        const FillerOptions(propagate: true),
       ],
-      filler: const ChartFiller(propagate: true),
       interaction: const ChartInteraction(
         mode: NearestInteractionMode(),
         intersect: true,

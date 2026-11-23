@@ -1026,10 +1026,7 @@ void main() {
         ChartConfigurationScope colors(_Log log) => _small(
           log,
           pluginOptions: <String, Object?>{
-            'colors': <String, Object?>{
-              'enabled': true,
-              'forceOverride': force,
-            },
+            'colors': ColorsPluginOptions(enabled: true, forceOverride: force),
           },
         );
         full = acquireChartRoot(colors(fullLog));

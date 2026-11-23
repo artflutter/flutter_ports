@@ -93,7 +93,7 @@ Map<String, Object?> _config({
   'options': <String, Object?>{
     if (!animated) 'animation': false,
     'plugins': <String, Object?>{
-      'colors': <String, Object?>{'enabled': true},
+      'colors': const ColorsPluginOptions(enabled: true),
     },
   },
   'plugins': ?plugins,
@@ -121,11 +121,7 @@ ChartConfig _typedConfig({
   ],
   animation: animated ? const ChartAnimation() : ChartAnimation.none,
   plugins: plugins,
-  extra: const {
-    'plugins': {
-      'colors': {'enabled': true},
-    },
-  },
+  pluginOptions: const [ColorsPluginOptions(enabled: true)],
 );
 
 Widget _typedView(ChartConfig config, {ChartThemeData? theme, Key? key}) =>
@@ -215,7 +211,7 @@ AnyObject _formConfig() => <String, Object?>{
   'options': <String, Object?>{
     'animation': false,
     'plugins': <String, Object?>{
-      'colors': <String, Object?>{'enabled': true},
+      'colors': const ColorsPluginOptions(enabled: true),
       'title': <String, Object?>{
         'display': true,
         'text': ['user'],
@@ -448,11 +444,7 @@ void main() {
               },
           ],
           animation: ChartAnimation.none,
-          extra: const {
-            'plugins': {
-              'colors': {'enabled': true},
-            },
-          },
+          pluginOptions: const [ColorsPluginOptions(enabled: true)],
         );
         await tester.pumpWidget(
           _box(ChartView(config: config, theme: _themeA)),
@@ -563,8 +555,7 @@ void main() {
           animation: ChartAnimation.none,
           scales: const [LinearAxis(.x)],
           parsing: false,
-          colors: const ChartColors(enabled: true),
-          pluginOptions: [decimation],
+          pluginOptions: [const ColorsPluginOptions(enabled: true), decimation],
         );
         List<(Object?, Object?)> items(Chart chart) => [
           for (final item in jsGet(_typedDataset(chart, 0), 'data')! as List)
@@ -752,11 +743,14 @@ void main() {
     testWidgets('forceOverride: the palette keys go back to the values '
         'before the first write', (tester) async {
       final config = _config();
-      final colors =
-          ((config['options']! as AnyObject)['plugins']!
-                  as AnyObject)['colors']!
-              as AnyObject;
-      colors['forceOverride'] = true;
+      // The colors options are one object (Chart.js ADR 0196): a change
+      // writes a new object into the options of the app.
+      final plugins =
+          (config['options']! as AnyObject)['plugins']! as AnyObject;
+      plugins['colors'] = const ColorsPluginOptions(
+        enabled: true,
+        forceOverride: true,
+      );
       (_datasetsOf(config)[1]! as AnyObject)['borderColor'] =
           const ChartPaint.solid(native_ui.Color.fromRGBO(9, 9, 9, 1));
       await tester.pumpWidget(_view(config, theme: _palette3A));
@@ -784,7 +778,10 @@ void main() {
       );
       // With the plugin off, a switch shows the restored values: the value
       // of the app, and no key where the app had none.
-      colors['enabled'] = false;
+      plugins['colors'] = const ColorsPluginOptions(
+        enabled: false,
+        forceOverride: true,
+      );
       await tester.pumpWidget(_view(config, theme: _palette3A));
       expect(
         _dataset(chart, 1)['borderColor'],

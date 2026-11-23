@@ -855,31 +855,6 @@ const Map<String, (AxisTitle, Map<String, Object?>)> _axisTitle = {
   'extra': (AxisTitle(extra: {'strokeWidth': 1}), {'strokeWidth': 1}),
 };
 
-/// The cases of the parameters of [ChartColors] and the twin `colors` Map.
-const Map<String, (ChartColors, Map<String, Object?>)> _colors = {
-  'enabled': (ChartColors(enabled: false), {'enabled': false}),
-  'forceOverride': (ChartColors(forceOverride: true), {'forceOverride': true}),
-};
-
-/// The cases of the parameters of [ChartFiller] and the twin `filler` Map.
-const Map<String, (ChartFiller, Map<String, Object?>)> _filler = {
-  'propagate': (ChartFiller(propagate: false), {'propagate': false}),
-  'drawTime': (
-    ChartFiller(drawTime: FillerDrawTime.beforeDraw),
-    {'drawTime': FillerDrawTime.beforeDraw},
-  ),
-  'extra': (
-    ChartFiller(
-      extra: {
-        'events': ['click'],
-      },
-    ),
-    {
-      'events': ['click'],
-    },
-  ),
-};
-
 /// The cases of the parameters of [ChartElements] and of the element
 /// styles, with the twin `elements` Map.
 const Map<String, (ChartElements, Map<String, Object?>)> _elements = {
@@ -1268,18 +1243,6 @@ const Map<String, (ChartConfig, Map<String, Object?>)> _config = {
     ChartConfig(datasets: [BarDataset()], pluginOptions: [TooltipOptions()]),
     {
       'plugins': {'tooltip': TooltipOptions()},
-    },
-  ),
-  'filler': (
-    ChartConfig(datasets: [BarDataset()], filler: ChartFiller()),
-    {
-      'plugins': {'filler': <String, Object?>{}},
-    },
-  ),
-  'colors': (
-    ChartConfig(datasets: [BarDataset()], colors: ChartColors()),
-    {
-      'plugins': {'colors': <String, Object?>{}},
     },
   ),
   'interaction': (
@@ -2445,38 +2408,6 @@ void main() {
               ),
             ),
             {'interaction': twin},
-          );
-        });
-      }
-    });
-
-    group('each parameter of ChartFiller', () {
-      for (final MapEntry(key: name, value: (filler, twin))
-          in _filler.entries) {
-        test(name, () {
-          expectTwin(
-            _options(
-              ChartConfig(datasets: const [LineDataset()], filler: filler),
-            ),
-            {
-              'plugins': {'filler': twin},
-            },
-          );
-        });
-      }
-    });
-
-    group('each parameter of ChartColors', () {
-      for (final MapEntry(key: name, value: (colors, twin))
-          in _colors.entries) {
-        test(name, () {
-          expectTwin(
-            _options(
-              ChartConfig(datasets: const [LineDataset()], colors: colors),
-            ),
-            {
-              'plugins': {'colors': twin},
-            },
           );
         });
       }

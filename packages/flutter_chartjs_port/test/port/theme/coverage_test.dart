@@ -10,9 +10,8 @@ import 'package:flutter/painting.dart' show TextStyle;
 import 'package:flutter_chartjs_port/flutter_chartjs_port.dart';
 import 'package:test/test.dart';
 
-// dart:io reads the manifest and the snapshot, so the web legs
-// (`dart test -p chrome`) cannot compile this file.
 import '../../support/color_json.dart';
+import '../../support/filler_colors_option_fields.dart';
 import '../../support/legend_option_fields.dart';
 import '../../support/light_theme.dart';
 import '../../support/scale_border.dart';
@@ -157,10 +156,10 @@ const Map<String, Object?> _notThemedValues = {
 /// with the reason (Chart.js ADR 0147, Consequences). The manifest does not
 /// have them. Test 3 compares their values.
 const Map<String, String> _moduleConstants = {
-  r'plugins.colors.$borderColors':
+  'plugins.colors.borderColors':
       'a module constant of plugin.colors.ts:14-25, not a default. Test 3 '
       'compares its values',
-  r'plugins.colors.$backgroundColors':
+  'plugins.colors.backgroundColors':
       'a module constant of plugin.colors.ts:14-25, not a default. Test 3 '
       'compares its values',
 };
@@ -206,6 +205,11 @@ Map<String, Object?> _leaves(Object? value, [String prefix = '']) {
   // labels and its title (Chart.js ADR 0193).
   if (isLegendOptionObject(value)) {
     return _leaves(setLegendOptionFields(value!), prefix);
+  }
+  // The fields that the ColorsPluginOptions of plugins.colors sets (Chart.js
+  // ADR 0196).
+  if (setFillerColorsOptionFields(value) case final fields?) {
+    return _leaves(fields, prefix);
   }
   if (!_isObject(value)) return {prefix: value};
   return {
@@ -818,7 +822,7 @@ void main() {
     test('a module constant is not REMOVED', () {
       // plugin.colors.ts:14-25: the palette is a module constant, not a
       // default. The manifest does not have it (Chart.js ADR 0147).
-      const palette = r'plugins.colors.$borderColors';
+      const palette = 'plugins.colors.borderColors';
       final withPalette = <String, Object?>{
         ...emitted,
         palette: [const native_ui.Color.fromRGBO(54, 162, 235, 1)],
@@ -842,7 +846,6 @@ void main() {
         ),
         {
           'STALE': ['$palette: a module constant in the manifest'],
-          'DOLLAR': [palette],
         },
       );
       expect(_report(emitted, manifest, notThemed, constants), {

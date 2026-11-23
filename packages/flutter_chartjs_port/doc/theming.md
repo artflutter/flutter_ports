@@ -174,9 +174,9 @@ Fonts stay `TextStyle` values: the compiled theme holds the token itself, or a n
 Emitted:
 
 - root `color` and the token keys of section 4
-- `plugins.colors.$borderColors` and `plugins.colors.$backgroundColors`, from the tokens
-  `palette` and `paletteBackgroundAlpha`: the colors at their alpha, and the colors at
-  `paletteBackgroundAlpha` (0.5 by default)
+- `plugins.colors`: one `ColorsPluginOptions` with `borderColors` and `backgroundColors`
+  (Chart.js ADR 0196), from the tokens `palette` and `paletteBackgroundAlpha`: the colors at their
+  alpha, and the colors at `paletteBackgroundAlpha` (0.5 by default)
 - `transitions.theme.animation.{duration,easing}` and `transitions.themeFrame.animation.duration: 0`
 
 In phase 5, the tokens emit only the root `color`, the `scale` keys and the element keys. Phase 6
@@ -290,14 +290,13 @@ Object? _getBorderColor(int i) {
 }
 ```
 
-Whenever `beforeLayout` reaches the colorizer, H5 sets both variables from the theme map of the
-chart (`chartThemeOf` of `core.config.dart`, the public H0 reader), Dart `null` included:
+Whenever `beforeLayout` reaches the colorizer, H5 sets both variables from the palettes of the
+merged `ColorsPluginOptions` of the chart (Chart.js ADR 0196), Dart `null` included:
 
 ```dart
-    // DIVERGES(chartjs): theme-H5, the palette of the chart theme for this run.
-    final theme = chartThemeOf(config);
-    _themeBorderColors = _themePalette(theme, themeBorderColorsKey);
-    _themeBackgroundColors = _themePalette(theme, themeBackgroundColorsKey);
+    // DIVERGES(chartjs): theme-H5, the palette of the options for this run.
+    _themeBorderColors = _themePalette(opts.borderColors);
+    _themeBackgroundColors = _themePalette(opts.backgroundColors);
 
     final colorizer = _getColorizer(chart);
 ```
@@ -305,8 +304,8 @@ chart (`chartThemeOf` of `core.config.dart`, the public H0 reader), Dart `null` 
 The reset at each run keeps the palette of one chart out of the next chart, also out of an
 unthemed chart. H5 comes after the returns of `:103` and `:119`. Thus it runs only when the
 colorizer runs. The colorizer runs synchronously right after H5. A test interleaves two charts with
-different palettes. H5 reads the theme map, not the plugin options. Thus a `$borderColors` key in
-the user options, `overrides[type]` or `defaults` has no effect, as upstream. An argument instead
+different palettes. H5 reads the merged plugin options (Chart.js ADR 0196): a palette in the
+options of the chart comes over the palette of the theme. An argument instead
 of the variables changes six upstream signatures: `getColorizer`, the three `colorize*` functions
 and both getters.
 
@@ -411,7 +410,7 @@ of `ChartThemeData` ([Chart.js ADR 0147](adr/0147-public-theme-api.md) §10). Th
 | `surface` | `'#fff'` (`element.arc.ts:379`), `'rgba(255, 255, 255, 0.75)'` (`core.scale.defaults.js:81`) | `elements.arc.borderColor`, `scale.ticks.backdropColor` at alpha 0.75 |
 | `inverseSurface` | `'rgba(0,0,0,0.8)'` (`plugin.tooltip.js:1279`) | `plugins.tooltip.backgroundColor` |
 | `onInverseSurface` | `'#fff'` (`plugin.tooltip.js:1280, 1287, 1292, 1305`) | `plugins.tooltip.{titleColor,bodyColor,footerColor,multiKeyBackground}` |
-| `palette`, `paletteBackgroundAlpha` | `BORDER_COLORS`, `BACKGROUND_COLORS` (`plugin.colors.ts:14-25`) | `plugins.colors.$borderColors` (the colors at their alpha), `plugins.colors.$backgroundColors` (the colors at `paletteBackgroundAlpha`, 0.5 by default). Null and an empty list emit nothing. `paletteBackgroundAlpha` alone emits nothing |
+| `palette`, `paletteBackgroundAlpha` | `BORDER_COLORS`, `BACKGROUND_COLORS` (`plugin.colors.ts:14-25`) | `plugins.colors.borderColors` (the colors at their alpha), `plugins.colors.backgroundColors` (the colors at `paletteBackgroundAlpha`, 0.5 by default), fields of one `ColorsPluginOptions` (Chart.js ADR 0196). Null and an empty list emit nothing. `paletteBackgroundAlpha` alone emits nothing |
 | `font` | `Defaults.font` (`core.defaults.js:54-60`) | `scale.ticks.font`, `scale.title.font`, `plugins.legend.labels.font`, `plugins.legend.title.font`, `plugins.tooltip.bodyFont`. Without weight: `plugins.title.font`, `plugins.subtitle.font`, `plugins.tooltip.titleFont`, `plugins.tooltip.footerFont` |
 | `pointLabelsFont` | point-label size 10 (`scale.radialLinear.js:383-385`) | `scales.radialLinear.pointLabels.font`: the base font without size, then this font |
 
@@ -910,7 +909,7 @@ groups `theme-H0` to `theme-H3` of `core.config_test.dart`, the group `theme pal
   tests of the seven plugins in `test/port/plugins/` run their cases again with the light
   preset, in the group `theming.md §8 test 3: the light preset`.
 - Test 4: `coverage_test.dart` has 25 `notThemed` keys and 2 module constants
-  (`plugins.colors.$borderColors` and `$backgroundColors`, `plugin.colors.ts:14-25`). A field of
+  (`plugins.colors.borderColors` and `backgroundColors`, `plugin.colors.ts:14-25`). A field of
   a manifest route leaf with a Map value (the tooltip fonts, `plugin.tooltip.js:1327-1331`) is a
   leaf with the route value of that field. The 10 "phase 8" entries of `notThemed` are gone
   (title 1, subtitle 1, tooltip 8).

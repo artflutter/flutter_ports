@@ -112,9 +112,11 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // the snapshot of `harness-defaults-restore`, so the restore keeps it.
   // A file that calls `removeBuiltins()` puts back the scopes of before the
   // registration, without the colors plugin.
-  ((defaults['plugins']! as JsObjectFace)['colors']!
-          as JsObjectFace)['enabled'] =
-      false;
+  // The options of the colors plugin are one ColorsPluginOptions (Chart.js
+  // ADR 0196): the line merges `enabled: false` over the defaults object.
+  final pluginScopes = defaults['plugins']! as JsObjectFace;
+  pluginScopes['colors'] = (pluginScopes['colors']! as ColorsPluginOptions)
+      .merge(const ColorsPluginOptions(enabled: false));
 
   // DIVERGES(chartjs): harness-defaults-restore, restore defaults after tests.
   setUpDefaultsRestore();

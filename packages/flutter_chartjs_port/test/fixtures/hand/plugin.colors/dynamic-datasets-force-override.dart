@@ -34,7 +34,11 @@ Map<String, Object?> fixture() {
         },
         'plugins': <String, Object?>{
           'legend': false,
-          'colors': <String, Object?>{'enabled': true, 'forceOverride': true},
+          // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+          'colors': const ColorsPluginOptions(
+            enabled: true,
+            forceOverride: true,
+          ),
         },
       },
     },

@@ -104,6 +104,7 @@ Chart _chart(String type, {required bool colors, ChartOptionsScope? theme}) {
       TooltipOptions(
         callbacks: TooltipCallbacks(footer: (tooltip, arg) => ['Footer']),
       ),
+      ColorsPluginOptions(enabled: colors),
     ],
     scales: cartesian
         ? [
@@ -130,11 +131,6 @@ Chart _chart(String type, {required bool colors, ChartOptionsScope? theme}) {
             ),
           ]
         : null,
-    extra: {
-      'plugins': {
-        'colors': {'enabled': colors},
-      },
-    },
   );
   final root = ChartConfigLowering(config).lower();
   if (theme != null) root.dollarTheme = theme;

@@ -17,12 +17,6 @@ enum OptionKey(
   /// The key `$animations`.
   dollarAnimations(r'$animations'),
 
-  /// The key `$backgroundColors`.
-  dollarBackgroundColors(r'$backgroundColors'),
-
-  /// The key `$borderColors`.
-  dollarBorderColors(r'$borderColors'),
-
   /// The key `$shared`.
   dollarShared(r'$shared'),
 
@@ -293,9 +287,6 @@ enum OptionKey(
   /// The key `drawTicks`.
   drawTicks('drawTicks'),
 
-  /// The key `drawTime`.
-  drawTime('drawTime'),
-
   /// The key `duration`.
   duration('duration'),
 
@@ -322,9 +313,6 @@ enum OptionKey(
 
   /// The key `font`.
   font('font'),
-
-  /// The key `forceOverride`.
-  forceOverride('forceOverride'),
 
   /// The key `format`.
   format('format'),
@@ -610,9 +598,6 @@ enum OptionKey(
 
   /// The key `precision`.
   precision('precision'),
-
-  /// The key `propagate`.
-  propagate('propagate'),
 
   /// The key `properties`.
   properties('properties'),

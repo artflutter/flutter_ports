@@ -109,14 +109,6 @@ final class const ChartConfig({
   /// The subtitle below the title: `options.plugins.subtitle`.
   final ChartTitle? subtitle,
 
-  /// The filler, the plugin that fills the area of a dataset with a `fill`:
-  /// `options.plugins.filler`.
-  final ChartFiller? filler,
-
-  /// The colors plugin, which gives the datasets with no color the colors of
-  /// its palette: `options.plugins.colors`.
-  final ChartColors? colors,
-
   /// The elements that an event hits: `options.interaction`.
   final ChartInteraction? interaction,
 
@@ -168,11 +160,13 @@ final class const ChartConfig({
   final List<String>? events,
 
   /// The options of the plugins as objects: each goes to
-  /// `options.plugins.<pluginId>` (Chart.js ADRs 0148, 0192 and 0193), for
-  /// example the [LegendOptions] of the legend, the [TooltipOptions] of the
-  /// tooltip and the options of an add-on plugin. A plugin and its options
-  /// come apart: a plugin that `Chart.register` adds for all charts takes
-  /// the options of each chart here.
+  /// `options.plugins.<pluginId>` (Chart.js ADRs 0148, 0192, 0193 and
+  /// 0196), for example the [LegendOptions] of the legend, the
+  /// [TooltipOptions] of the tooltip, the [FillerOptions] of the filler, the
+  /// [ColorsPluginOptions] of the colors plugin and the options of an add-on
+  /// plugin. A plugin and its options come apart: a plugin that
+  /// `Chart.register` adds for all charts takes the options of each chart
+  /// here.
   ///
   /// ```dart
   /// pluginOptions: const [
@@ -241,8 +235,6 @@ final class const ChartConfig({
     EdgeInsets? padding,
     ChartTitle? title,
     ChartTitle? subtitle,
-    ChartFiller? filler,
-    ChartColors? colors,
     ChartInteraction? interaction,
     ChartAnimation? animation,
     List<PropertyAnimation>? animations,
@@ -268,8 +260,6 @@ final class const ChartConfig({
     padding: padding ?? this.padding,
     title: title ?? this.title,
     subtitle: subtitle ?? this.subtitle,
-    filler: filler ?? this.filler,
-    colors: colors ?? this.colors,
     interaction: interaction ?? this.interaction,
     animation: animation ?? this.animation,
     animations: animations ?? this.animations,
@@ -306,8 +296,6 @@ final class const ChartConfig({
     ('padding', padding),
     ('title', title),
     ('subtitle', subtitle),
-    ('filler', filler),
-    ('colors', colors),
     ('interaction', interaction),
     ('animation', animation),
     ('animations', byItems(animations)),

@@ -311,9 +311,9 @@ DocPageContent apexJsMigrationPage() => migrationPage(
         ),
         DocText(
           'ApexCharts.js draws the areas under all lines. '
-          '`ChartFiller(drawTime: .beforeDatasetsDraw)` does the same. With '
-          'the default, the area of the first series covers the line of the '
-          'second.',
+          '`FillerOptions(drawTime: .beforeDatasetsDraw)` in `pluginOptions` '
+          'does the same. With the default, the area of the first series '
+          'covers the line of the second.',
         ),
       ],
       replica: (_) => const ApexJsAreaSpline(),

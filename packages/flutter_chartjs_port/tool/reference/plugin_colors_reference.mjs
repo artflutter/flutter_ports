@@ -158,7 +158,9 @@ const cases = [
       },
       options: colorsOn(),
     },
-    {steps: [['setOption', 'plugins.colors.forceOverride', true]]},
+    // The colors options are one object (Chart.js ADR 0196): the step writes
+    // the whole options, the `{enabled: true}` of colorsOn with forceOverride.
+    {steps: [['setOption', 'plugins.colors', {enabled: true, forceOverride: true}]]},
   ),
   colorsCase('chart colors given', {
     type: 'line',

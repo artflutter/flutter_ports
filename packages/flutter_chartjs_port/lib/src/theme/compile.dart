@@ -26,7 +26,6 @@
 /// Ported files never import this file (Chart.js ADR 0147, invariant 4).
 library;
 
-import 'dart:collection' show ListBase;
 import 'dart:ui' as ui;
 
 import 'package:flutter/animation.dart' show Curves;
@@ -58,14 +57,16 @@ const double _backdropAlpha = 0.75;
 ///   point-label font is [font] without its size, then [pointLabelsFont]
 ///   over it (theming.md §3.4). A font with no field that the chart reads
 ///   themes nothing.
-/// - A non-empty [palette] emits the two palette keys of `plugins.colors`:
-///   the colors, and the colors at [paletteBackgroundAlpha] (Chart.js ADR
-///   0147 §8, theming.md §4).
+/// - A non-empty [palette] emits one `ColorsPluginOptions` in
+///   `plugins.colors` with the two palettes: the colors, and the colors at
+///   [paletteBackgroundAlpha] (Chart.js ADRs 0147 §8 and 0196, theming.md
+///   §4).
 /// - The `transitions` keys of theming.md §3.8 come only beside other keys.
-/// - The result is frozen deeply: each scope and List is a [JsFreezable]
-///   after [jsObjectFreeze]. A write throws a [TypeError]. Thus a write of
-///   the set trap of a resolver into a theme scope throws, instead of a leak
-///   into other charts (`helpers.config.ts:101-106`).
+/// - The result is frozen deeply: each scope is a [JsFreezable] after
+///   [jsObjectFreeze]. A write throws a [TypeError]. Thus a write of the set
+///   trap of a resolver into a theme scope throws, instead of a leak into
+///   other charts (`helpers.config.ts:101-106`). The tooltip and colors
+///   options are immutable objects, and their Lists are unmodifiable.
 ///
 /// The keys go in the order of the token table of theming.md §4. Each scope
 /// gets its keys in the order of their first write, so the `plugins` scope
@@ -242,18 +243,20 @@ ChartOptionsScope? compileChartTheme({
   // `plugins.tooltip`: an immutable object, no scope of the tree.
   if (tooltip != const TooltipOptions()) t._plugins.tooltip = tooltip;
 
-  // `plugins.colors.$borderColors` gets the colors at their alpha.
-  // `plugins.colors.$backgroundColors` gets the same colors with the alpha
-  // replaced by [paletteBackgroundAlpha], as `plugin.colors.ts:25` derives
+  // `borderColors` of the colors options gets the colors at their alpha.
+  // `backgroundColors` gets the same colors with the alpha replaced by
+  // [paletteBackgroundAlpha], as `plugin.colors.ts:25` derives
   // `BACKGROUND_COLORS` from `BORDER_COLORS`. A null or empty [palette]
-  // emits nothing.
+  // emits nothing. The options of the colors plugin are one immutable
+  // [ColorsPluginOptions] (Chart.js ADR 0196), with unmodifiable Lists.
   if (palette != null && palette.isNotEmpty) {
-    t.colors
-      ..dollarBorderColors = _FrozenList.of(palette)
-      ..dollarBackgroundColors = _FrozenList.of([
+    t._plugins.colors = ColorsPluginOptions(
+      borderColors: List.unmodifiable(palette),
+      backgroundColors: List.unmodifiable([
         for (final color in palette)
           color.withValues(alpha: paletteBackgroundAlpha),
-      ]);
+      ]),
+    );
   }
 
   // The transitions come only beside other keys (theming.md §3.3).
@@ -317,10 +320,6 @@ final class _ThemeTree() {
   /// `plugins.subtitle`.
   late final TitleOptionsScope subtitle = _plugins.subtitle =
       add<TitleOptionsScope>(TitleOptionsScope());
-
-  /// `plugins.colors`.
-  late final ColorsOptionsScope colors = _plugins.colors =
-      add<ColorsOptionsScope>(ColorsOptionsScope());
 
   late final ElementOptionsByTypeScope _elements = root.elements = add(
     ElementOptionsByTypeScope(),
@@ -425,42 +424,3 @@ ChartTextStyle _fontWithout(
   fontFeatures: font.fontFeatures,
   fontVariations: font.fontVariations,
 );
-
-/// A palette List of the compiled theme in the frozen state of
-/// `Object.freeze` (Chart.js ADR 0021, section 5).
-///
-/// A write and a change of the length throw a [TypeError], as they do on a
-/// frozen array in strict mode.
-final class _FrozenList.of(List<ui.Color> colors)
-    extends ListBase<Object?>
-    implements JsFreezable {
-  /// A frozen copy of [colors].
-  this;
-
-  /// The items.
-  final List<Object?> _list = [...colors];
-
-  @override
-  bool get isFrozen => true;
-
-  @override
-  void freeze() {}
-
-  @override
-  int get length => _list.length;
-
-  @override
-  set length(int newLength) {
-    // A JavaScript TypeError: a write into a frozen array.
-    throw TypeError();
-  }
-
-  @override
-  Object? operator [](int index) => _list[index];
-
-  @override
-  void operator []=(int index, Object? value) {
-    // A JavaScript TypeError: a write into a frozen array.
-    throw TypeError();
-  }
-}

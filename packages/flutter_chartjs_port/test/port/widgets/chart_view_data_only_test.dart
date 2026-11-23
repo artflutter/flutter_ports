@@ -180,6 +180,7 @@ ChartConfig _bars(
   ChartAnimation? animation = ChartAnimation.none,
   ChartTitle? title,
   List<Plugin<Object?>>? plugins,
+  List<PluginOptions<Object?>>? pluginOptions,
   Map<String, Object?>? extra,
 }) => ChartConfig(
   labels: labels,
@@ -198,6 +199,7 @@ ChartConfig _bars(
   animation: animation,
   title: title,
   plugins: plugins,
+  pluginOptions: pluginOptions,
   extra: extra,
 );
 
@@ -466,11 +468,7 @@ void main() {
             step,
             labels,
             datasets: [BarDataset(key: _a, data: .values(_values(step)))],
-            extra: const {
-              'plugins': {
-                'colors': {'enabled': true},
-              },
-            },
+            pluginOptions: const [ColorsPluginOptions(enabled: true)],
           ),
           dataOnly: dataOnly,
         ),
@@ -1469,11 +1467,7 @@ void main() {
               labels,
               dataset: make(_values(step)),
             ).copyWith(
-              extra: const {
-                'plugins': {
-                  'colors': {'enabled': true},
-                },
-              },
+              pluginOptions: const [ColorsPluginOptions(enabled: true)],
             ),
             dataOnly: dataOnly,
           );

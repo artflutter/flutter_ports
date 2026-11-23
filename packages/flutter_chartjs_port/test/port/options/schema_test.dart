@@ -49,6 +49,7 @@ import 'package:test/test.dart';
 // 0194), with the rule of the tooltip: [_decimationFields] gives its fields.
 
 import '../../support/color_json.dart';
+import '../../support/filler_colors_option_fields.dart';
 import '../../support/keyword_enum_json.dart';
 import '../../support/legend_option_fields.dart';
 import '../../support/scale_border.dart';
@@ -162,6 +163,11 @@ Object? _field(Object? value, String key) => value is TooltipOptions
     ? (_decimationFields(value).containsKey(key)
           ? _decimationFields(value)[key]
           : undefined)
+    // The typed field of the filler and colors options (Chart.js ADR 0196).
+    : _objectFields(value) != null
+    ? (_objectFields(value)!.containsKey(key)
+          ? _objectFields(value)![key]
+          : undefined)
     : value is AnimationSettings
     ? _settingsFields(value)[key] ?? undefined
     : value is List<PropertyAnimation>
@@ -271,6 +277,31 @@ bool _isDecimationCensusPath(String path) =>
 
 /// The prefix of the inventory paths of the tooltip options.
 const String _tooltipPrefix = 'plugins.tooltip.';
+
+/// The fields of the filler and colors options objects (Chart.js ADR 0196)
+/// by their plugin id: each inventory path `plugins.<id>.<key>` and each
+/// census path `options.plugins.<id>.<key>` maps to the field `<key>`.
+final Map<String, Map<String, Object?>> _objectPluginFields = {
+  'filler': fillerOptionFields(const FillerOptions()),
+  'colors': colorsOptionFields(const ColorsPluginOptions()),
+};
+
+/// Each field of the filler or colors options [value], or Dart `null` for
+/// another value.
+Map<String, Object?>? _objectFields(Object? value) => switch (value) {
+  final FillerOptions options => fillerOptionFields(options),
+  final ColorsPluginOptions options => colorsOptionFields(options),
+  _ => null,
+};
+
+/// The plugin id of the filler or colors options of the path [path] under
+/// [prefix] (`plugins.` or `options.plugins.`), or Dart `null`.
+String? _objectPluginOf(String path, String prefix) {
+  for (final id in _objectPluginFields.keys) {
+    if (path == '$prefix$id' || path.startsWith('$prefix$id.')) return id;
+  }
+  return null;
+}
 
 /// The inventory paths of the tooltip that have no value in the port, each
 /// with its reason (Chart.js ADR 0192: one TooltipOptions object, no
@@ -631,6 +662,8 @@ List<String>? _keysOf(Object? value) => value is TooltipOptions
         for (final MapEntry(:key, :value) in _decimationFields(value).entries)
           if (value != null) key,
       ]
+    : setFillerColorsOptionFields(value) != null
+    ? setFillerColorsOptionFields(value)!.keys.toList()
     : value is AnimationSettings
     ? _settingsFields(value).keys.toList()
     : value is List<PropertyAnimation>
@@ -862,6 +895,23 @@ void main() {
             }
             continue;
           }
+          // A filler or colors path: `plugins.<id>` holds the options
+          // object, and the next segment is a field of it (Chart.js ADR
+          // 0196).
+          final objectPlugin = group == 'defaults'
+              ? _objectPluginOf(path, 'plugins.')
+              : null;
+          if (objectPlugin case final id?) {
+            final plugin = _walk(root, ['plugins', id]);
+            final field = path.substring('plugins.$id.'.length).split('.')[0];
+            if (plugin.shape == null ||
+                plugin.shape! & ShapeBits.typed != ShapeBits.pluginOptions) {
+              problems.add('$path: plugins.$id is no PluginOptions');
+            } else if (!_objectPluginFields[id]!.containsKey(field)) {
+              problems.add('$path: no field $field of the $id options');
+            }
+            continue;
+          }
           // A field of a font object: the font path holds a TextStyle.
           final font = _fontField.firstMatch(path);
           if (font != null && _isFontPath(root, font[1]!)) continue;
@@ -960,11 +1010,14 @@ void main() {
     // flutter_test_config.dart turns off the colors plugin (test/index.js:25-28);
     // the inventory has the upstream value. The defaults restore of the
     // harness puts the test value back after each test.
+    // The colors options are one object (Chart.js ADR 0196).
     void upstreamColors() {
-      final colors = _read(defaults, 'plugins.colors')! as JsObjectFace;
-      final enabled = colors['enabled'];
-      colors['enabled'] = true;
-      addTearDown(() => colors['enabled'] = enabled);
+      final plugins = defaults['plugins']! as JsObjectFace;
+      final colors = plugins['colors']! as ColorsPluginOptions;
+      plugins['colors'] = colors.merge(
+        const ColorsPluginOptions(enabled: true),
+      );
+      addTearDown(() => plugins['colors'] = colors);
     }
 
     final roots = <(String, Object)>[
@@ -1139,7 +1192,7 @@ void main() {
             ? legendOptionFields(object).keys.toList()
             : object is DecimationOptions
             ? _decimationFields(object).keys.toList()
-            : _keysOf(object);
+            : _objectFields(object)?.keys.toList() ?? _keysOf(object);
         if (actual == null) {
           problems.add('$file:${site['line']} not an object');
           continue;
@@ -1265,6 +1318,25 @@ void main() {
               !_decimationFields(const DecimationOptions())
                   .containsKey(field)) {
             problems.add('$path ($kind): no field of DecimationOptions');
+          }
+          continue;
+        }
+        // The filler and colors options of the Map model are one object each
+        // (Chart.js ADR 0196): each key is a field of it.
+        if (_objectPluginOf(path, 'options.plugins.') case final id?) {
+          final rest = path.substring('options.plugins.$id'.length);
+          final key = rest.isEmpty
+              ? null
+              : rest.substring(1).split('.')[0].replaceAll('[]', '');
+          // The palette keys of the Map model (Chart.js ADR 0147) are the
+          // palette fields of the colors options.
+          final field = switch (key) {
+            r'$borderColors' => 'borderColors',
+            r'$backgroundColors' => 'backgroundColors',
+            _ => key,
+          };
+          if (field != null && !_objectPluginFields[id]!.containsKey(field)) {
+            problems.add('$path ($kind): no field of the $id options');
           }
           continue;
         }

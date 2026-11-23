@@ -82,19 +82,18 @@ void main() {
     final plugins = TypedRegistry(jsObjectClass, 'plugins');
     final colors = Plugin<Object?>(
       id: 'colors',
-      defaults: ColorsOptionsScope()
-        ..enabled = true
-        ..forceOverride = false,
+      defaults: const ColorsPluginOptions(enabled: true, forceOverride: false),
     );
     setUpBuiltins(
       () => plugins.register(colors),
       () => plugins.unregister(colors),
     );
     // The colors line of flutter_test_config.dart.
-    ((defaults['plugins']! as JsObjectFace)['colors']!
-            as JsObjectFace)['enabled'] =
-        false;
-    expect(jsGet(jsGet(defaults['plugins'], 'colors'), 'enabled'), isFalse);
+    final scopes = defaults['plugins']! as JsObjectFace;
+    scopes['colors'] = (scopes['colors']! as ColorsPluginOptions).merge(
+      const ColorsPluginOptions(enabled: false),
+    );
+    expect((scopes['colors']! as ColorsPluginOptions).enabled, isFalse);
 
     removeBuiltins();
     expect(plugins.items, isEmpty);

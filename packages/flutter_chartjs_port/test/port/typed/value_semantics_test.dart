@@ -1106,16 +1106,6 @@ void main() {
           const ChartAnimation().copyWith(loop: true),
         ),
         (
-          const ChartFiller(),
-          const ChartFiller().copyWith(),
-          const ChartFiller().copyWith(propagate: false),
-        ),
-        (
-          const ChartColors(),
-          const ChartColors().copyWith(),
-          const ChartColors().copyWith(forceOverride: true),
-        ),
-        (
           const ChartElements(),
           const ChartElements().copyWith(),
           const ChartElements().copyWith(line: const LineElementStyle()),
@@ -1164,8 +1154,6 @@ void main() {
         'padding',
         'title',
         'subtitle',
-        'filler',
-        'colors',
         'interaction',
         'animation',
         'animations',

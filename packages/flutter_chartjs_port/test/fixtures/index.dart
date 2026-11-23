@@ -477,10 +477,21 @@ import 'hand/element.point/point-style-triangle.dart'
 import 'hand/element.point/rotation.dart' as element_point_rotation;
 import 'hand/mixed/bar+line-stacked.dart' as mixed_bar_line_stacked;
 import 'hand/mixed/bar+line.dart' as mixed_bar_line;
+import 'hand/plugin.colors/bar.dart' as plugin_colors_bar;
+import 'hand/plugin.colors/bubble.dart' as plugin_colors_bubble;
+import 'hand/plugin.colors/chart-options-colors.dart'
+    as plugin_colors_chart_options_colors;
+import 'hand/plugin.colors/doughnut.dart' as plugin_colors_doughnut;
 import 'hand/plugin.colors/dynamic-datasets-default.dart'
     as plugin_colors_dynamic_datasets_default;
 import 'hand/plugin.colors/dynamic-datasets-force-override.dart'
     as plugin_colors_dynamic_datasets_force_override;
+import 'hand/plugin.colors/line.dart' as plugin_colors_line;
+import 'hand/plugin.colors/mixed.dart' as plugin_colors_mixed;
+import 'hand/plugin.colors/pie.dart' as plugin_colors_pie;
+import 'hand/plugin.colors/polarArea.dart' as plugin_colors_polararea;
+import 'hand/plugin.colors/radar.dart' as plugin_colors_radar;
+import 'hand/plugin.colors/scatter.dart' as plugin_colors_scatter;
 import 'hand/plugin.filler/line/above-below-vertical-linechart.dart'
     as plugin_filler_line_above_below_vertical_linechart;
 import 'hand/plugin.filler/line/before-dataset-draw.dart'
@@ -1783,6 +1794,46 @@ final Map<String, HandFixture> handFixtures = {
     sha256: '9bc9ec2e5a3e',
   ),
   'mixed/bar+line.js': (load: mixed_bar_line.fixture, sha256: 'f125d76e617a'),
+  'plugin.colors/bar.js': (
+    load: plugin_colors_bar.fixture,
+    sha256: '5b7d6e37a317',
+  ),
+  'plugin.colors/bubble.js': (
+    load: plugin_colors_bubble.fixture,
+    sha256: '6fb32bf556f5',
+  ),
+  'plugin.colors/chart-options-colors.js': (
+    load: plugin_colors_chart_options_colors.fixture,
+    sha256: 'fb21860abf67',
+  ),
+  'plugin.colors/doughnut.js': (
+    load: plugin_colors_doughnut.fixture,
+    sha256: 'fd2dd53074e7',
+  ),
+  'plugin.colors/line.js': (
+    load: plugin_colors_line.fixture,
+    sha256: 'b95c8e8ea646',
+  ),
+  'plugin.colors/mixed.js': (
+    load: plugin_colors_mixed.fixture,
+    sha256: 'd0f227780986',
+  ),
+  'plugin.colors/pie.js': (
+    load: plugin_colors_pie.fixture,
+    sha256: '23c64ed648be',
+  ),
+  'plugin.colors/polarArea.js': (
+    load: plugin_colors_polararea.fixture,
+    sha256: '96de1594ef64',
+  ),
+  'plugin.colors/radar.js': (
+    load: plugin_colors_radar.fixture,
+    sha256: '94c1d1e9d1e0',
+  ),
+  'plugin.colors/scatter.js': (
+    load: plugin_colors_scatter.fixture,
+    sha256: '5ad61f0e7a29',
+  ),
   'plugin.colors/dynamic-datasets-default.js': (
     load: plugin_colors_dynamic_datasets_default.fixture,
     sha256: 'f855a092e685',

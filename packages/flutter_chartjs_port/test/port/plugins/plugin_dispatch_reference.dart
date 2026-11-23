@@ -88,7 +88,7 @@ const List<PluginDispatchReferenceCase> pluginDispatchReference = [
             'display': true,
             'text': <String>['T'],
           },
-          'colors': <String, Object?>{'enabled': false},
+          'colors': ColorsPluginOptions(enabled: false),
         },
       },
     },

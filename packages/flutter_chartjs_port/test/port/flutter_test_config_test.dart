@@ -259,11 +259,18 @@ void main() {
         'title',
         'tooltip',
       ]);
-      final colors = _pluginDefaults('colors')! as JsObjectFace;
-      expect(colors['enabled'], isFalse);
+      // The colors options are one object (Chart.js ADR 0196): the write
+      // puts a new object into `defaults.plugins.colors`.
+      final colors = _pluginDefaults('colors')! as ColorsPluginOptions;
+      expect(colors.enabled, isFalse);
       if (_colorsWritten) _colorsRestored = true;
-      colors['enabled'] = true;
-      expect(jsGet(_pluginDefaults('colors'), 'enabled'), isTrue);
+      (defaults['plugins']! as JsObjectFace)['colors'] = colors.merge(
+        const ColorsPluginOptions(enabled: true),
+      );
+      expect(
+        (_pluginDefaults('colors')! as ColorsPluginOptions).enabled,
+        isTrue,
+      );
       _colorsWritten = true;
       _colorsRuns++;
     }
@@ -292,7 +299,10 @@ void main() {
       // The resolved option of the colors plugin (probe at the pin:
       // `chart.options.plugins.colors.enabled` is false).
       final plugins = jsGet(chart.options, 'plugins');
-      expect(jsGet(jsGet(plugins, 'colors'), 'enabled'), isFalse);
+      expect(
+        (jsGet(plugins, 'colors')! as ColorsPluginOptions).enabled,
+        isFalse,
+      );
     });
   });
 

@@ -209,12 +209,6 @@ enum ScopeKind(
   /// (read at plugin.tooltip.js:357).
   tooltipDatasetOptions('TooltipDatasetOptions'),
 
-  /// index.d.ts:2295 FillerOptions, the scope `plugins.filler`.
-  fillerOptions('FillerOptions'),
-
-  /// plugin.colors.ts:4 ColorsPluginOptions, the scope `plugins.colors`.
-  colorsOptions('ColorsOptions'),
-
   /// Port-only kind, the options of a plugin without a plugin kind (an inline
   /// or a registered user plugin).
   genericPluginOptions('GenericPluginOptions'),
@@ -309,10 +303,6 @@ enum ScopeKind(
         return TitleOptionsScope();
       case ScopeKind.tooltipDatasetOptions:
         return TooltipDatasetOptionsScope();
-      case ScopeKind.fillerOptions:
-        return FillerOptionsScope();
-      case ScopeKind.colorsOptions:
-        return ColorsOptionsScope();
       case ScopeKind.genericPluginOptions:
         return GenericPluginOptionsScope();
       case ScopeKind.descriptors:
@@ -406,10 +396,6 @@ enum ScopeKind(
         return TitleOptionsScope;
       case ScopeKind.tooltipDatasetOptions:
         return TooltipDatasetOptionsScope;
-      case ScopeKind.fillerOptions:
-        return FillerOptionsScope;
-      case ScopeKind.colorsOptions:
-        return ColorsOptionsScope;
       case ScopeKind.genericPluginOptions:
         return GenericPluginOptionsScope;
       case ScopeKind.descriptors:
@@ -1244,20 +1230,6 @@ enum ScopeKind(
         ];
       case ScopeKind.tooltipDatasetOptions:
         return const [OptionKey.callbacks];
-      case ScopeKind.fillerOptions:
-        return const [
-          OptionKey.drawTime,
-          OptionKey.propagate,
-          OptionKey.events,
-        ];
-      case ScopeKind.colorsOptions:
-        return const [
-          OptionKey.enabled,
-          OptionKey.forceOverride,
-          OptionKey.events,
-          OptionKey.dollarBorderColors,
-          OptionKey.dollarBackgroundColors,
-        ];
       case ScopeKind.genericPluginOptions:
         return const [OptionKey.events];
       case ScopeKind.descriptors:
@@ -1518,11 +1490,11 @@ enum ScopeKind(
       case ScopeKind.pluginOptionsByType:
         switch (key) {
           case OptionKey.colors:
-            return 34;
+            return 5506;
           case OptionKey.decimation:
             return 5506;
           case OptionKey.filler:
-            return 34;
+            return 5506;
           case OptionKey.legend:
             return 5506;
           case OptionKey.subtitle:
@@ -2906,32 +2878,6 @@ enum ScopeKind(
           default:
             return 0;
         }
-      case ScopeKind.fillerOptions:
-        switch (key) {
-          case OptionKey.drawTime:
-            return 2176;
-          case OptionKey.propagate:
-            return 2;
-          case OptionKey.events:
-            return 16;
-          default:
-            return 0;
-        }
-      case ScopeKind.colorsOptions:
-        switch (key) {
-          case OptionKey.enabled:
-            return 2;
-          case OptionKey.forceOverride:
-            return 2;
-          case OptionKey.events:
-            return 16;
-          case OptionKey.dollarBorderColors:
-            return 16;
-          case OptionKey.dollarBackgroundColors:
-            return 16;
-          default:
-            return 0;
-        }
       case ScopeKind.genericPluginOptions:
         switch (key) {
           case OptionKey.events:
@@ -3007,10 +2953,6 @@ enum ScopeKind(
         }
       case ScopeKind.pluginOptionsByType:
         switch (key) {
-          case OptionKey.colors:
-            return ScopeKind.colorsOptions;
-          case OptionKey.filler:
-            return ScopeKind.fillerOptions;
           case OptionKey.subtitle:
             return ScopeKind.titleOptions;
           case OptionKey.title:
@@ -3320,10 +3262,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.tooltipDatasetOptions:
         return null;
-      case ScopeKind.fillerOptions:
-        return null;
-      case ScopeKind.colorsOptions:
-        return null;
       case ScopeKind.genericPluginOptions:
         return null;
       case ScopeKind.descriptors:
@@ -3416,10 +3354,6 @@ enum ScopeKind(
       case ScopeKind.titleOptions:
         return 64;
       case ScopeKind.tooltipDatasetOptions:
-        return 64;
-      case ScopeKind.fillerOptions:
-        return 64;
-      case ScopeKind.colorsOptions:
         return 64;
       case ScopeKind.genericPluginOptions:
         return 64;
@@ -3514,10 +3448,6 @@ enum ScopeKind(
         return null;
       case ScopeKind.tooltipDatasetOptions:
         return null;
-      case ScopeKind.fillerOptions:
-        return null;
-      case ScopeKind.colorsOptions:
-        return null;
       case ScopeKind.genericPluginOptions:
         return null;
       case ScopeKind.descriptors:
@@ -3610,10 +3540,6 @@ enum ScopeKind(
       case ScopeKind.titleOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.tooltipDatasetOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.fillerOptions:
-        return classifyUnion(raw, 64);
-      case ScopeKind.colorsOptions:
         return classifyUnion(raw, 64);
       case ScopeKind.genericPluginOptions:
         return classifyUnion(raw, 64);

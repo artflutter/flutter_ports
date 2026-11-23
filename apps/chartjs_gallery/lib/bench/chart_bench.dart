@@ -549,7 +549,7 @@ Map<String, Object?> _leastWorkPlugins() => <String, Object?>{
   'legend': const LegendOptions(display: false),
   'title': <String, Object?>{'display': false},
   'subtitle': <String, Object?>{'display': false},
-  'colors': <String, Object?>{'enabled': false},
+  'colors': const ColorsPluginOptions(enabled: false),
   'decimation': const DecimationOptions(enabled: false),
 };
 

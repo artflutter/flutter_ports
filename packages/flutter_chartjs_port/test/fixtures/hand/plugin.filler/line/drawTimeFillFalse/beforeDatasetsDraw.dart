@@ -25,7 +25,10 @@ Map<String, Object?> fixture() => <String, Object?>{
       'plugins': <String, Object?>{
         'legend': false,
         'title': false,
-        'filler': <String, Object?>{'drawTime': 'beforeDatasetsDraw'},
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'filler': const FillerOptions(
+          drawTime: FillerDrawTime.beforeDatasetsDraw,
+        ),
       },
     },
   },

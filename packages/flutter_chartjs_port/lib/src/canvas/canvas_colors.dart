@@ -27,11 +27,7 @@ Iterable<String> _keys(Object? object) => switch (object) {
 };
 
 bool _colorKey(String key) =>
-    key == 'color' ||
-    key.endsWith('Color') ||
-    key == 'multiKeyBackground' ||
-    key == r'$borderColors' ||
-    key == r'$backgroundColors';
+    key == 'color' || key.endsWith('Color') || key == 'multiKeyBackground';
 
 /// Rejects static CSS inputs before a failed constructor can acquire a canvas.
 /// Dataset data/labels are not color options. Callback results are checked when
@@ -39,25 +35,21 @@ bool _colorKey(String key) =>
 void validateChartColors(Object? config) {
   final seen = Set<Object>.identity();
   final paintLists = Set<Object>.identity();
-  final colorLists = Set<Object>.identity();
-  void color(Object? value, String path, {bool solidOnly = false}) {
+  void color(Object? value, String path) {
     if (value == null || value is Undefined || value is Function) return;
     if (value is List) {
-      // A shared list can occur as both a palette and a paint option.
-      // Validate it under each contract, while still breaking cycles.
-      if (!(solidOnly ? colorLists : paintLists).add(value)) return;
+      // A list visits once, which breaks cycles.
+      if (!paintLists.add(value)) return;
       for (var i = 0; i < value.length; i++) {
-        color(value[i], '$path[$i]', solidOnly: solidOnly);
+        color(value[i], '$path[$i]');
       }
       return;
     }
-    if (solidOnly ? value is ui.Color : value is ChartPaint) return;
+    if (value is ChartPaint) return;
     throw ArgumentError.value(
       value,
       path,
-      solidOnly
-          ? 'Expected Flutter Color'
-          : 'Expected ChartPaint; CSS color strings are unsupported',
+      'Expected ChartPaint; CSS color strings are unsupported',
     );
   }
 
@@ -95,18 +87,12 @@ void validateChartColors(Object? config) {
           'title',
           'subtitle',
           'tooltip',
-          'colors',
-          'filler',
           'decimation',
         ]) {
           scope(_field(child, plugin), '$path.plugins.$plugin');
         }
       } else if (_colorKey(key)) {
-        color(
-          child,
-          '$path.$key',
-          solidOnly: key == r'$borderColors' || key == r'$backgroundColors',
-        );
+        color(child, '$path.$key');
       } else if (const [
         'scale',
         'hover',

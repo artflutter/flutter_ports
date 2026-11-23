@@ -47,7 +47,8 @@ Map<String, Object?> fixture() => <String, Object?>{
       // class.
       'indexAxis': const YAxis(),
       'plugins': <String, Object?>{
-        'filler': <String, Object?>{'propagate': false},
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'filler': const FillerOptions(propagate: false),
         'datalabels': <String, Object?>{'display': false},
         // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
         'legend': const LegendOptions(display: false),

@@ -104,7 +104,7 @@
   "plugins.tooltip.footerFont.size": 12.0,
   "plugins.tooltip.footerFont.style": "normal",
   "plugins.tooltip.footerFont.lineHeight": 1.2,
-  "plugins.colors.$borderColors": [
+  "plugins.colors.borderColors": [
     "rgba(54, 162, 235, 1)",
     "rgba(255, 99, 132, 1)",
     "rgba(255, 159, 64, 1)",
@@ -113,7 +113,7 @@
     "rgba(153, 102, 255, 1)",
     "rgba(201, 203, 207, 1)"
   ],
-  "plugins.colors.$backgroundColors": [
+  "plugins.colors.backgroundColors": [
     "rgba(54, 162, 235, 0.5)",
     "rgba(255, 99, 132, 0.5)",
     "rgba(255, 159, 64, 0.5)",

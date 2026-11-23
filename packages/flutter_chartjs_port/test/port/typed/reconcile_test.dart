@@ -33,12 +33,11 @@ const Color _blue = Color(0xFF0000FF);
 /// The three labels of the bar charts.
 final List<Object> _labels = ['x', 'y', 'z'];
 
-/// The option `plugins.colors.enabled: true`, through `extra`.
-const Map<String, Object?> _colorsOn = {
-  'plugins': {
-    'colors': {'enabled': true},
-  },
-};
+/// The option `plugins.colors.enabled: true`, one options object (Chart.js
+/// ADR 0196).
+const List<PluginOptions<Object?>> _colorsOn = [
+  ColorsPluginOptions(enabled: true),
+];
 
 /// A bar chart of [datasets] with no animation unless [animated], a fixed y
 /// axis from 0 to 50, and the labels `x` to `z`.
@@ -47,7 +46,7 @@ ChartConfig _bars(
   bool animated = false,
   ChartTitle? title,
   List<PluginOff<Plugin<Object?>>>? disabledPlugins,
-  Map<String, Object?>? extra,
+  List<PluginOptions<Object?>>? pluginOptions,
 }) => ChartConfig(
   labels: _labels,
   datasets: datasets,
@@ -55,7 +54,7 @@ ChartConfig _bars(
   title: title,
   animation: animated ? null : ChartAnimation.none,
   disabledPlugins: disabledPlugins,
-  extra: extra,
+  pluginOptions: pluginOptions,
 );
 
 /// [child] at the top left of a box of 400 x 300.
@@ -359,7 +358,7 @@ void main() {
         _view(
           _bars([
             BarDataset(label: 'A', data: .values(data)),
-          ], extra: _colorsOn),
+          ], pluginOptions: _colorsOn),
         ),
       );
       final chart = _chart(tester);
@@ -373,7 +372,7 @@ void main() {
         _view(
           _bars([
             BarDataset(label: 'B', data: .values(data)),
-          ], extra: _colorsOn),
+          ], pluginOptions: _colorsOn),
         ),
       );
       expect(_dataset(chart, 0)['label'], 'B');
@@ -561,7 +560,7 @@ void main() {
               ? null
               : ChartValue.constant(.solid(borderColor)),
         ),
-      ], extra: _colorsOn);
+      ], pluginOptions: _colorsOn);
       await tester.pumpWidget(_Host(config: config([1, 2, 3]), theme: themeA));
       final host = tester.state<_HostState>(find.byType(_Host));
       final chart = _chart(tester);

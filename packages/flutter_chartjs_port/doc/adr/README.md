@@ -189,4 +189,5 @@ The list below comes from the header of each ADR (`dart run tool/adr_index.dart`
 - [0193](0193-legend-options-object.md) The legend options are one object: accepted, supersedes 0052, 0054, 0092, 0099, 0124, 0130, 0182.
 - [0194](0194-decimation-options-object.md) The decimation options are one object: accepted, supersedes 0052, 0054, 0182.
 - [0195](0195-deprecate-raw-chart-view.md) Deprecate the raw ChartView config: accepted, supersedes 0052.
+- [0196](0196-filler-colors-options-objects.md) The filler and colors options are one object each: proposed, supersedes 0052, 0054, 0147, 0182, 0194.
 <!-- adr-index:end -->

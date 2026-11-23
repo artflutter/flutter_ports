@@ -80,7 +80,7 @@ ChartConfig _config(FillTarget fill, String name) => ChartConfig(
       fill: fill,
     ),
   ],
-  filler: const ChartFiller(propagate: false),
+  pluginOptions: const [FillerOptions(propagate: false)],
   title: ChartTitle(display: true, text: ['Fill: $name']),
   interaction: const ChartInteraction(intersect: false),
 );

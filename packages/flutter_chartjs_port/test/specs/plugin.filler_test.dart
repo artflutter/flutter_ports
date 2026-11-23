@@ -63,13 +63,13 @@ Chart _acquireWithWarnSpy(
   ),
 );
 
-/// A line chart with the [datasets] and the chart [filler].
+/// A line chart with the [datasets] and the filler options [filler].
 ChartConfigurationScope _line(
   List<LineDataset> datasets, [
-  ChartFiller? filler,
-]) =>
-    ChartConfigLowering(ChartConfig(datasets: datasets, filler: filler))
-        .lower();
+  FillerOptions? filler,
+]) => ChartConfigLowering(
+  ChartConfig(datasets: datasets, pluginOptions: [?filler]),
+).lower();
 
 /// A dataset with the fill option [fill], including an explicit null.
 LineDataset _fill(FillTarget? fill) => fill == null
@@ -81,8 +81,8 @@ LineDataset _hiddenFill(FillTarget fill) =>
     LineDataset(fill: fill, hidden: true);
 
 /// The options `{plugins: {filler: {propagate: propagate}}}`.
-ChartFiller _propagate({required bool propagate}) =>
-    ChartFiller(propagate: propagate);
+FillerOptions _propagate({required bool propagate}) =>
+    FillerOptions(propagate: propagate);
 
 void main() {
   group('Plugin.filler', () {

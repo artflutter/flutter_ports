@@ -10,8 +10,8 @@
 /// and `Filler` of `src/plugins/index.js:3` (Chart.js ADR 0038, section 1).
 /// It is a typed `Plugin` (Chart.js ADR 0054 §12) with the upstream keys in
 /// the upstream order. Each hook is a private function of the hook type
-/// `(chart, args, options)`. The hooks get the resolved `FillerOptions` of
-/// `plugin_options.dart` (Chart.js ADR 0182). `beforeDatasetDraw` reads the
+/// `(chart, args, options)`. The hooks get the merged `FillerOptions` of
+/// `plugin_options.dart` (Chart.js ADR 0196). `beforeDatasetDraw` reads the
 /// typed `meta` of its [DatasetDrawHookArgs].
 ///
 /// [FillerSource] is the source object of `index.js:26-34`. The other
@@ -118,7 +118,8 @@ void _afterDatasetsUpdate(
       continue;
     }
 
-    source.fill = resolveTarget(sources, i, options.propagate);
+    // An absent option is the falsy `undefined` of upstream.
+    source.fill = resolveTarget(sources, i, options.propagate ?? false);
   }
 }
 
@@ -193,7 +194,7 @@ bool _beforeDatasetDraw(
 /// (Chart.js ADR 0038, section 1).
 ///
 /// A native [Plugin] with the upstream keys in the upstream order (Chart.js
-/// ADR 0144). Its hooks get the resolved [FillerOptions].
+/// ADR 0144). Its hooks get the merged [FillerOptions] (Chart.js ADR 0196).
 final filler = FillerPlugin();
 
 /// The filler plugin: a class of its own, so
@@ -205,18 +206,18 @@ final class FillerPlugin() extends Plugin<FillerOptions> {
   this
     : super(
         id: 'filler',
-        options: FillerOptions.of,
         afterDatasetsUpdate: _afterDatasetsUpdate,
         beforeDraw: _beforeDraw,
         beforeDatasetsDraw: _beforeDatasetsDraw,
         beforeDatasetDraw: _beforeDatasetDraw,
-        // index.js:93-96. A typed scope of the kind `FillerOptions` (Chart.js
-        // ADR
-        // 0054 §3).
-        defaults: FillerOptionsScope()
-          ..propagate = true
+        // index.js:93-96: one FillerOptions with each default (Chart.js ADR
+        // 0196).
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        defaults: const FillerOptions(
+          propagate: true,
           // DIVERGES(chartjs): adapt-filler-draw-time-enum, the enum value.
-          ..drawTime = FillerDrawTime.beforeDatasetDraw,
+          drawTime: FillerDrawTime.beforeDatasetDraw,
+        ),
         // DIVERGES(chartjs): adapt-incremental-data-update, partial-lifecycle
         // opt-in.
         supportsDataUpdates: true,

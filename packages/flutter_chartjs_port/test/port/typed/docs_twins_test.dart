@@ -695,7 +695,7 @@ Map<String, Object?> _areaRaw(FillTarget fill, String name) =>
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'filler': <String, Object?>{'propagate': false},
+          'filler': const FillerOptions(propagate: false),
           'title': <String, Object?>{
             'display': true,
             'text': (Object? ctx) => _areaTitleText(name),
@@ -725,7 +725,7 @@ ChartConfig _areaTyped(FillTarget fill, String title) => ChartConfig(
       fill: fill,
     ),
   ],
-  filler: const ChartFiller(propagate: false),
+  pluginOptions: const [FillerOptions(propagate: false)],
   title: ChartTitle(display: true, text: [title]),
   interaction: const ChartInteraction(intersect: false),
 );
@@ -1155,12 +1155,12 @@ ChartConfig _lineTypeTyped() => const ChartConfig(
       labels: LegendLabelOptions(usePointStyle: true),
       reverse: true,
     ),
+    FillerOptions(propagate: true),
   ],
   animation: ChartAnimation(
     duration: Duration(milliseconds: 400),
     easing: Curves.easeOutQuart,
   ),
-  filler: ChartFiller(propagate: true),
 );
 
 /// The raw twin of `_lineTypeTyped`.
@@ -1259,7 +1259,7 @@ Map<String, Object?> _lineTypeRaw() => <String, Object?>{
         reverse: true,
         labels: LegendLabelOptions(usePointStyle: true),
       ),
-      'filler': <String, Object?>{'propagate': true},
+      'filler': const FillerOptions(propagate: true),
     },
   },
 };

@@ -27,8 +27,15 @@
   with `parsing: false`. A raw config holds the object in `options.plugins.decimation`; a Map there stops a
   debug build. `DecimationOptions.of`, `DecimationOptionsScope` and `DecimationAlgorithm.of` are gone, and
   `algorithm` takes only a `DecimationAlgorithm`.
-- `ChartConfig` has `parsing`, `devicePixelRatio` and `colors` (`ChartColors`, the options `enabled` and
-  `forceOverride` of the colors plugin).
+- `ChartConfig` has `parsing` and `devicePixelRatio`.
+- BREAKING: the filler and colors options are one immutable object each, `FillerOptions` and
+  `ColorsPluginOptions` (Chart.js ADR 0196). `ChartFiller`, `ChartColors`, `ChartConfig.filler` and
+  `ChartConfig.colors` are gone: give `pluginOptions: [FillerOptions(propagate: false),
+  ColorsPluginOptions(forceOverride: true)]`. A raw config holds the objects in `options.plugins.filler` and
+  `options.plugins.colors`; a Map there stops a debug build. `FillerOptions.of`, `ColorsPluginOptions.of`,
+  `FillerOptionsScope`, `ColorsOptionsScope`, `themeBorderColorsKey` and `themeBackgroundColorsKey` are gone.
+  The palette of a theme is the fields `borderColors` and `backgroundColors` of the `ColorsPluginOptions` that
+  the theme writes; a palette in the options of a chart now comes over it.
 
 ## 0.1.0-beta.4
 

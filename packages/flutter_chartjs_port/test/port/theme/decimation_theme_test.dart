@@ -30,7 +30,7 @@ import 'package:flutter_test/flutter_test.dart';
 // flutter_test_config.dart registers the plugins with the built-in
 // components and sets `defaults.plugins.colors.enabled = false`, as
 // test/index.js:25-28 does (Chart.js ADR 0041, sections 1 and 6). Each chart
-// sets `ChartColors(enabled: true)`.
+// gives `ColorsPluginOptions(enabled: true)` (Chart.js ADR 0196).
 
 /// The color `rgb(200, 0, 0)`.
 const native_ui.Color _red = native_ui.Color.fromRGBO(200, 0, 0, 1);
@@ -114,8 +114,8 @@ Future<(_State, _State)> _run(
     scales: const [LinearAxis(.x)],
     parsing: false,
     animation: ChartAnimation.none,
-    colors: const ChartColors(enabled: true),
     pluginOptions: [
+      const ColorsPluginOptions(enabled: true),
       DecimationOptions(enabled: true, algorithm: algorithm, samples: samples),
     ],
   );

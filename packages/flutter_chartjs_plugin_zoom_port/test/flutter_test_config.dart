@@ -123,9 +123,11 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // Upstream runs the line in a top-level `beforeAll`, once, before the
   // first spec. Here it runs before `main()` of each test file and before
   // the snapshot of the restore, so the restore keeps it.
-  ((defaults['plugins']! as JsObjectFace)['colors']!
-          as JsObjectFace)['enabled'] =
-      false;
+  // The options of the colors plugin are one ColorsPluginOptions (Chart.js
+  // ADR 0196): the line merges `enabled: false` over the defaults object.
+  final pluginScopes = defaults['plugins']! as JsObjectFace;
+  pluginScopes['colors'] = (pluginScopes['colors']! as ColorsPluginOptions)
+      .merge(const ColorsPluginOptions(enabled: false));
 
   // Chart.js ADR 0111, section 9: with the define, each test runs with the
   // port-only option `rangeOnlyUpdates` in `Chart.defaults.plugins.zoom`, so
@@ -135,8 +137,7 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   // the option. It runs before the snapshot of the restore, so the restore
   // keeps it.
   if (zoomRangeOnlyUpdates) {
-    final plugins = defaults['plugins']! as JsObjectFace;
-    plugins['zoom'] = (plugins['zoom']! as ZoomPluginOptions).merge(
+    pluginScopes['zoom'] = (pluginScopes['zoom']! as ZoomPluginOptions).merge(
       const ZoomPluginOptions(rangeOnlyUpdates: true),
     );
   }

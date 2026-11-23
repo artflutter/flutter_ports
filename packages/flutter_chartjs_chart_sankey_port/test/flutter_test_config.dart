@@ -81,9 +81,11 @@ Future<void> testExecutable(FutureOr<void> Function() testMain) async {
   );
 
   // Disable colors plugin for tests.
-  ((defaults['plugins']! as JsObjectFace)['colors']!
-          as JsObjectFace)['enabled'] =
-      false;
+  // The options of the colors plugin are one ColorsPluginOptions (Chart.js
+  // ADR 0196): the line merges `enabled: false` over the defaults object.
+  final pluginScopes = defaults['plugins']! as JsObjectFace;
+  pluginScopes['colors'] = (pluginScopes['colors']! as ColorsPluginOptions)
+      .merge(const ColorsPluginOptions(enabled: false));
 
   // Upstream restores nothing. The restore keeps the order of the test
   // files from changing their results.

@@ -96,7 +96,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -1936,7 +1936,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -3065,7 +3065,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -3690,7 +3690,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -4506,7 +4506,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -5466,7 +5466,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -6493,7 +6493,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -7421,7 +7421,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -7827,7 +7827,11 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'steps': <Object?>[
         <String, Object?>{
-          'do': <Object?>['setOption', 'plugins.colors.forceOverride', true],
+          'do': <Object?>[
+            'setOption',
+            'plugins.colors',
+            ColorsPluginOptions(enabled: true, forceOverride: true),
+          ],
           'observations': <String, Object?>{
             'chartArea': <Object?>[
               27.34765625,
@@ -8643,7 +8647,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       'options': <String, Object?>{
         'backgroundColor': 'rgb(9, 8, 7)',
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -9652,7 +9656,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
           'line': <String, Object?>{'borderColor': 'rgb(9, 8, 7)'},
         },
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -10651,7 +10655,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -10678,7 +10682,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -11332,7 +11336,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
           'decimation': false,
           'filler': false,
           'legend': false,
@@ -13284,7 +13288,7 @@ const List<PluginColorsReferenceCase> pluginColorsReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
         },
       },
     },

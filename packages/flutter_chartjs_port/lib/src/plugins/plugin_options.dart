@@ -17,7 +17,8 @@
 /// [DecimationOptions] are each one immutable `PluginOptions` object with a
 /// nullable field for each option, which the plugin service merges from the
 /// defaults to the chart, and the plugin resolves the fallbacks of upstream
-/// itself.
+/// itself. [FillerOptions] and [ColorsPluginOptions] are such objects too
+/// (Chart.js ADR 0196).
 ///
 /// A class takes the name of its `index.d.ts` interface (`LegendOptions`,
 /// `TitleOptions`, `TooltipOptions`, `FillerOptions`, `DecimationOptions`)
@@ -1007,6 +1008,10 @@ List<PropertyAnimation>? _mergeAnimations(
 bool _nullableListEquals<T>(List<T>? a, List<T>? b) =>
     a == null || b == null ? identical(a, b) : _listEquals(a, b);
 
+/// The hash of the items of [list], or Dart `null` for no List.
+int? _listHash(List<Object?>? list) =>
+    list == null ? null : Object.hashAll(list);
+
 /// `animation` of the tooltip: the length, the wait, the curve and the
 /// repeat of a change of the tooltip (`plugin.tooltip.js:1311-1314`). The
 /// default is 400 milliseconds on `Curves.easeOutQuart`. [off] is the
@@ -1066,48 +1071,73 @@ final class TooltipAnimation extends AnimationSettings {
       : 'TooltipAnimation(duration: $duration, easing: $easing)';
 }
 
-/// `FillerOptions` (`index.d.ts`): the resolved options of the filler plugin
-/// (`plugin.filler/index.js:146-149`).
+/// `FillerOptions` (`index.d.ts:2295`): the options of the filler plugin as
+/// one immutable object (Chart.js ADR 0196), with a nullable field for each
+/// option. A null field is not set.
+///
+/// An app gives the options in `ChartConfig.pluginOptions`, or in
+/// `options.plugins.filler` of a raw config. A Map there stops a debug
+/// build. The plugin service merges the options of the defaults
+/// (`plugin.filler/index.js:93-96`), the theme and the chart from the
+/// defaults to the chart ([merge]), as for the options of an add-on
+/// (Chart.js ADR 0148): no resolver runs. Upstream resolves plugin options
+/// with `scriptable: false` (`core.plugins.js:182-187`), so no option is a
+/// function.
 ///
 /// ```dart
-/// final options = FillerOptions.of({'propagate': false});
-/// print(options.propagate); // false
+/// ChartConfig(
+///   datasets: [LineDataset(data: .values([3, 5, 2]), fill: .toOrigin)],
+///   pluginOptions: const [
+///     FillerOptions(drawTime: FillerDrawTime.beforeDatasetsDraw),
+///   ],
+/// );
 /// ```
-// DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
 @immutable
 final class const FillerOptions({
-  /// `drawTime`, a [FillerDrawTime] (row `adapt-filler-draw-time-enum`).
-  required final FillerDrawTime? drawTime,
+  /// `propagate`: whether the fill of a dataset whose target dataset is
+  /// hidden goes on to the target of that dataset. The default is `true`.
+  /// With `false`, the dataset has no fill when its target is hidden.
+  final bool? propagate,
 
-  /// `propagate`.
-  required final bool propagate,
-}) {
-  /// The options with the given values.
+  /// `drawTime`: the hook in which the filler fills the areas (row
+  /// `adapt-filler-draw-time-enum`). The default is
+  /// [FillerDrawTime.beforeDatasetDraw], just before each dataset draws.
+  final FillerDrawTime? drawTime,
+
+  /// `events`: the event types of the plugin, the option that the event
+  /// filter of the chart reads (`core.controller.js:1170`, Chart.js ADR
+  /// 0150). Null gives the `events` of the chart.
+  @override final List<String>? events,
+}) extends PluginOptions<FillerOptions> {
+  /// The filler options.
   this;
 
-  /// The options of the resolved options [options].
-  // ignore: prefer_constructors_over_static_methods
-  static FillerOptions of(Object? options) => FillerOptions(
-    drawTime: FillerDrawTime.of(optionOf(options, OptionKey.drawTime)),
-    propagate: boolOption(
-      optionOf(options, OptionKey.propagate),
-      OptionKey.propagate,
-    ),
+  @override
+  String get pluginId => 'filler';
+
+  /// These options with each field that [over] sets.
+  @override
+  FillerOptions merge(FillerOptions over) => FillerOptions(
+    propagate: over.propagate ?? propagate,
+    drawTime: over.drawTime ?? drawTime,
+    events: over.events ?? events,
   );
 
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
       other is FillerOptions &&
+          other.propagate == propagate &&
           other.drawTime == drawTime &&
-          other.propagate == propagate;
+          _nullableListEquals(other.events, events);
 
   @override
-  int get hashCode => Object.hash(drawTime, propagate);
+  int get hashCode => Object.hash(propagate, drawTime, _listHash(events));
 
   @override
   String toString() =>
-      'FillerOptions(drawTime: $drawTime, propagate: $propagate)';
+      'FillerOptions(propagate: $propagate, drawTime: $drawTime)';
 }
 
 /// `DecimationOptions` (`index.d.ts`): the options of the decimation plugin
@@ -1200,36 +1230,65 @@ final class const DecimationOptions({
       'samples: $samples, threshold: $threshold)';
 }
 
-/// `ColorsPluginOptions` (`plugin.colors.ts:4-7`): the resolved options of
-/// the colors plugin.
+/// `ColorsPluginOptions` (`plugin.colors.ts:4-7`): the options of the colors
+/// plugin as one immutable object (Chart.js ADR 0196), with a nullable field
+/// for each option. A null field is not set.
+///
+/// An app gives the options in `ChartConfig.pluginOptions`, or in
+/// `options.plugins.colors` of a raw config. A Map there stops a debug
+/// build. The plugin service merges the options of the defaults
+/// (`plugin.colors.ts:97-100`), the theme and the chart from the defaults to
+/// the chart ([merge]), as for the options of an add-on (Chart.js ADR 0148):
+/// no resolver runs.
 ///
 /// ```dart
-/// final options = ColorsPluginOptions.of({'forceOverride': true});
-/// print(options.forceOverride); // true
+/// ChartConfig(
+///   datasets: [BarDataset(data: .values([3, 5, 2]))],
+///   pluginOptions: const [ColorsPluginOptions(forceOverride: true)],
+/// );
 /// ```
-// DIVERGES(chartjs): adapt-native-plugin-options, resolved values.
+// DIVERGES(chartjs): adapt-native-plugin-options, one options object.
 @immutable
 final class const ColorsPluginOptions({
-  /// `enabled`.
-  required final bool enabled,
+  /// `enabled`: whether the plugin colors the datasets. The default is
+  /// `true`.
+  final bool? enabled,
 
-  /// `forceOverride`.
-  required final bool forceOverride,
-}) {
-  /// The options with the given values.
+  /// `forceOverride`: whether the plugin colors the datasets also when the
+  /// datasets, the chart options or the defaults give colors. The default is
+  /// `false`.
+  final bool? forceOverride,
+
+  /// The border colors of the datasets in place of `BORDER_COLORS`
+  /// (`plugin.colors.ts:14`): the palette of a chart theme (Chart.js ADR
+  /// 0147, row `theme-H4a`). Null or an empty List gives the palette of
+  /// Chart.js.
+  // DIVERGES(chartjs): theme-H4a, the palette of the theme.
+  final List<Color>? borderColors,
+
+  /// The background colors of the datasets in place of `BACKGROUND_COLORS`
+  /// (`plugin.colors.ts:25`), as [borderColors].
+  final List<Color>? backgroundColors,
+
+  /// `events`: the event types of the plugin, the option that the event
+  /// filter of the chart reads (`core.controller.js:1170`, Chart.js ADR
+  /// 0150). Null gives the `events` of the chart.
+  @override final List<String>? events,
+}) extends PluginOptions<ColorsPluginOptions> {
+  /// The colors plugin options.
   this;
 
-  /// The options of the resolved options [options].
-  // ignore: prefer_constructors_over_static_methods
-  static ColorsPluginOptions of(Object? options) => ColorsPluginOptions(
-    enabled: boolOption(
-      optionOf(options, OptionKey.enabled),
-      OptionKey.enabled,
-    ),
-    forceOverride: boolOption(
-      optionOf(options, OptionKey.forceOverride),
-      OptionKey.forceOverride,
-    ),
+  @override
+  String get pluginId => 'colors';
+
+  /// These options with each field that [over] sets.
+  @override
+  ColorsPluginOptions merge(ColorsPluginOptions over) => ColorsPluginOptions(
+    enabled: over.enabled ?? enabled,
+    forceOverride: over.forceOverride ?? forceOverride,
+    borderColors: over.borderColors ?? borderColors,
+    backgroundColors: over.backgroundColors ?? backgroundColors,
+    events: over.events ?? events,
   );
 
   @override
@@ -1237,10 +1296,19 @@ final class const ColorsPluginOptions({
       identical(this, other) ||
       other is ColorsPluginOptions &&
           other.enabled == enabled &&
-          other.forceOverride == forceOverride;
+          other.forceOverride == forceOverride &&
+          _nullableListEquals(other.borderColors, borderColors) &&
+          _nullableListEquals(other.backgroundColors, backgroundColors) &&
+          _nullableListEquals(other.events, events);
 
   @override
-  int get hashCode => Object.hash(enabled, forceOverride);
+  int get hashCode => Object.hash(
+    enabled,
+    forceOverride,
+    _listHash(borderColors),
+    _listHash(backgroundColors),
+    _listHash(events),
+  );
 
   @override
   String toString() =>

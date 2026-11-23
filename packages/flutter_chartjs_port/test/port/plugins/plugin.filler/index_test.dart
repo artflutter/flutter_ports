@@ -225,10 +225,14 @@ void main() {
     });
 
     test('the defaults are the upstream defaults (index.js:93-96)', () {
-      final defaults = filler.defaults! as JsObjectFace;
-      expect(jsObjectKeys(defaults), ['propagate', 'drawTime']);
-      expect(defaults['propagate'], isTrue);
-      expect(defaults['drawTime'], FillerDrawTime.beforeDatasetDraw);
+      // One FillerOptions with each default (Chart.js ADR 0196).
+      expect(
+        filler.defaults,
+        const FillerOptions(
+          propagate: true,
+          drawTime: FillerDrawTime.beforeDatasetDraw,
+        ),
+      );
     });
   });
 }

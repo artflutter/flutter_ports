@@ -1,8 +1,7 @@
 # L4 allowlist (Chart.js ADR 0054 §5): jsGet 3: the data of a dataset of the
 # user, the values of the for-in over a descriptor object of the user, and
-# chart.config.data.datasets. jsGet 3: the plugins.colors palette of the
-# compiled theme (hunk H5), a frozen typed ChartOptionsScope tree whose
-# palette keys are extras, read through the face. jsObjectKeys 1: the for-in
-# over a descriptor object of the user.
-jsGet 6
+# chart.config.data.datasets. The palette of the theme is a field of the
+# merged ColorsPluginOptions (Chart.js ADR 0196), with no read by name.
+# jsObjectKeys 1: the for-in over a descriptor object of the user.
+jsGet 3
 jsObjectKeys 1

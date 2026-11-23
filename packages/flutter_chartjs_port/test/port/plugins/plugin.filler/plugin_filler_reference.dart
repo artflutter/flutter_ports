@@ -25169,7 +25169,7 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
-          'filler': <String, Object?>{'drawTime': FillerDrawTime.beforeDraw},
+          'filler': FillerOptions(drawTime: FillerDrawTime.beforeDraw),
           'legend': false,
           'subtitle': false,
           'title': false,
@@ -26468,9 +26468,7 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
-          'filler': <String, Object?>{
-            'drawTime': FillerDrawTime.beforeDatasetsDraw,
-          },
+          'filler': FillerOptions(drawTime: FillerDrawTime.beforeDatasetsDraw),
           'legend': false,
           'subtitle': false,
           'title': false,
@@ -27807,7 +27805,7 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
-          'filler': <String, Object?>{'propagate': false},
+          'filler': FillerOptions(propagate: false),
           'legend': false,
           'subtitle': false,
           'title': false,
@@ -30681,7 +30679,7 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
         'plugins': <String, Object?>{
           'colors': false,
           'decimation': false,
-          'filler': <String, Object?>{'propagate': true},
+          'filler': FillerOptions(propagate: true),
           'legend': false,
           'subtitle': false,
           'title': false,
@@ -57065,7 +57063,7 @@ final List<PluginFillerReferenceCase> pluginFillerReference = [
       },
       'options': <String, Object?>{
         'plugins': <String, Object?>{
-          'colors': <String, Object?>{'enabled': true},
+          'colors': ColorsPluginOptions(enabled: true),
         },
       },
     },

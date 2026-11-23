@@ -37,7 +37,10 @@ Map<String, Object?> fixture() => <String, Object?>{
       'cubicInterpolationMode': const MonotoneCubicInterpolationMode(),
       'plugins': <String, Object?>{
         'legend': false,
-        'filler': <String, Object?>{'drawTime': 'beforeDatasetsDraw'},
+        // DIVERGES(chartjs): adapt-native-plugin-options, one options object.
+        'filler': const FillerOptions(
+          drawTime: FillerDrawTime.beforeDatasetsDraw,
+        ),
       },
       'scales': <String, Object?>{
         // DIVERGES(chartjs): adapt-scale-display-enum, the enum value.

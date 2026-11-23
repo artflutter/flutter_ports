@@ -13,6 +13,7 @@ import 'package:flutter_chartjs_port/chartjs.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import '../../support/color_json.dart';
+import '../../support/filler_colors_option_fields.dart';
 import '../../support/font_record.dart';
 import '../../support/legend_option_fields.dart';
 import '../../support/light_theme.dart';
@@ -147,32 +148,39 @@ Map<String, Object?> _slots(Object? value, [String prefix = '']) {
 
 /// Whether [value] is an object of a compiled theme: a Map, or a typed scope
 /// with its face (Chart.js ADR 0054 §5).
-/// The [TooltipOptions] of `plugins.tooltip` and the [LegendOptions] of
-/// `plugins.legend` (with its labels and its title) are objects too: their
-/// keys are the fields that they set (Chart.js ADRs 0192 and 0193,
-/// [setTooltipOptionFields], [setLegendOptionFields]).
+/// The [TooltipOptions] of `plugins.tooltip`, the [LegendOptions] of
+/// `plugins.legend` (with its labels and its title) and the
+/// [ColorsPluginOptions] of `plugins.colors` are objects too: their keys are
+/// the fields that they set (Chart.js ADRs 0192, 0193 and 0196,
+/// [setTooltipOptionFields], [setLegendOptionFields],
+/// [setFillerColorsOptionFields]).
 bool _isObject(Object? value) =>
     value is Map<String, Object?> ||
     value is JsObjectFace ||
     value is TooltipOptions ||
-    isLegendOptionObject(value);
+    isLegendOptionObject(value) ||
+    value is ColorsPluginOptions;
 
 /// The own keys of the object [value] in the `Object.keys` order: for a
-/// [TooltipOptions] or a legend option object, the fields that it sets in
-/// the order of upstream.
+/// [TooltipOptions], a legend option object or a [ColorsPluginOptions], the
+/// fields that it sets in the order of its constructor.
 List<String> _keys(Object? value) => value is TooltipOptions
     ? setTooltipOptionFields(value).keys.toList()
     : isLegendOptionObject(value)
     ? setLegendOptionFields(value!).keys.toList()
+    : value is ColorsPluginOptions
+    ? setFillerColorsOptionFields(value)!.keys.toList()
     : jsObjectKeys(value);
 
 /// The value of [key] in the object [value]: the typed field of a
-/// [TooltipOptions] or a legend option object ([undefined] for a field that
-/// it does not set), else the read by name.
+/// [TooltipOptions], of a legend option object or of a [ColorsPluginOptions]
+/// ([undefined] for a field that it does not set), else the read by name.
 Object? _get(Object? value, String key) => value is TooltipOptions
     ? setTooltipOptionFields(value)[key] ?? undefined
     : isLegendOptionObject(value)
     ? setLegendOptionFields(value!)[key] ?? undefined
+    : value is ColorsPluginOptions
+    ? setFillerColorsOptionFields(value)![key] ?? undefined
     : jsGet(value, key);
 
 /// [value] as plain Dart values for a compare with a Map literal: an object
@@ -251,10 +259,7 @@ const Map<String, Set<String>> _tokenPaths = {
     'scales.radialLinear.pointLabels.font',
   },
   'pointLabelsFont': {'scales.radialLinear.pointLabels.font'},
-  'palette': {
-    r'plugins.colors.$borderColors',
-    r'plugins.colors.$backgroundColors',
-  },
+  'palette': {'plugins.colors.borderColors', 'plugins.colors.backgroundColors'},
   'paletteBackgroundAlpha': {},
 };
 
@@ -566,16 +571,16 @@ void main() {
           paletteBackgroundAlpha: 1,
         ),
       );
-      expect(_at(compiled, r'plugins.colors.$borderColors'), [_red, _green]);
-      expect(_at(compiled, r'plugins.colors.$backgroundColors'), [
+      expect(_at(compiled, 'plugins.colors.borderColors'), [_red, _green]);
+      expect(_at(compiled, 'plugins.colors.backgroundColors'), [
         const native_ui.Color.fromRGBO(200, 0, 0, 1),
         const native_ui.Color.fromRGBO(0, 128, 0, 1),
       ]);
       final half = compileThemeData(const ChartThemeData(palette: [_green]));
-      expect(_at(half, r'plugins.colors.$borderColors'), [
+      expect(_at(half, 'plugins.colors.borderColors'), [
         const native_ui.Color.fromRGBO(0, 128, 0, 0.5),
       ]);
-      expect(_at(half, r'plugins.colors.$backgroundColors'), [
+      expect(_at(half, 'plugins.colors.backgroundColors'), [
         const native_ui.Color.fromRGBO(0, 128, 0, 0.5),
       ]);
     });
